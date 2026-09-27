@@ -1,0 +1,1183 @@
+E07 GAME FRAMEWORK - SPECIFICATION
+Working name: "the Shell" (the real name is decided in step 2)
+Version: draft 1, 2026-09-26
+Status: product spec only. It describes WHAT the framework and its games do,
+screen by screen and feature by feature. It does not choose libraries or
+write code. The app will be built with React Native, and the React Native
+specifics are decided in the "research the platform" step (see
+docs/00-README.md).
+
+Platforms: iOS FIRST, then Android. Both come from the same React Native
+code; Android follows once the iOS version of a game has shipped.
+
+Internet use (confirmed 2026-09-26): there is no server of ours. No user
+accounts, no cloud backups, nothing that users connect to. The internet is
+used only by AdMob (ads) and by the App Store / Google Play purchase
+system. That is expected, and the game itself works fully offline.
+
+
+======================================================================
+0. IN ONE PARAGRAPH
+======================================================================
+
+We are building one reusable game framework, the Shell, and then many small
+2D single-player games on top of it, one at a time. Every game ships as its
+own separate app in the App Store and Google Play. The Shell contains
+everything a game app needs apart from the game itself:
+  - home page, levels, daily challenge, statistics, settings
+  - the purchase page, ads, languages, saving, sound, tutorials, pause and
+    results screens
+A new game only has to provide its rules, its board, its levels and its
+texts. It plugs into the Shell and becomes a complete, shippable app.
+Everything works offline, there are no user accounts, and we run no server.
+The app speaks English and German (left-to-right) and Persian and Kurdish
+Sorani (right-to-left) from day one.
+
+
+======================================================================
+1. WHAT WE ARE BUILDING
+======================================================================
+
+1.1 The pieces
+
+  THE SHELL
+    Every screen and service that is the same in every game (listed in
+    sections 6-9). Built once, improved over time, reused by every game.
+
+  A GAME MODULE
+    The part that is different for each game: its rules, its board and
+    controls, its level generator, its tutorial, its extra statistics and
+    its texts in four languages (section 10).
+
+  A GAME APP
+    The Shell + one game module + that game's configuration (name, icon,
+    colours, ad IDs, purchase ID). One game = one app = one store listing.
+    Games never share an app.
+
+1.2 Build order
+
+  1. The Shell, together with ONE pilot game. A framework cannot be
+     judged without a real game inside it. Default pilot: Line Siege (the
+     recommendation from the idea hunt; see
+     idea-hunt/shortlist.md).
+  2. Ship the pilot app.
+  3. Every later game: copy the Shell, add a new game module and config,
+     ship (section 12).
+
+1.3 Why a framework first
+
+  - We plan ~26 games. If each rebuilt settings, languages, ads and
+    purchases, we would build the same things 26 times and fix every bug
+    26 times.
+  - Right-to-left support, four languages, ads consent and purchases are
+    the hardest parts to get right. They should be solved once, carefully.
+  - It keeps every game consistent for players, and makes each new game
+    mostly about the game itself.
+
+
+======================================================================
+2. WHO IT IS FOR
+======================================================================
+
+2.1 Players
+
+  Casual phone players who want a short, clever game for 2-15 minutes: on
+  a bus, in a queue, before sleep. They may be offline. They may read
+  English, German, Persian or Sorani. They will not create an account, read
+  a manual or tolerate ads in the middle of a move.
+
+  What this means for the design:
+  - Play starts in one tap from the home page.
+  - Every game teaches itself in the first level.
+  - Progress is saved after every move, so closing the app never loses
+    anything.
+  - Ads appear only at natural breaks (between levels), never during play.
+
+2.2 The owner (you)
+
+  You review and play-test; Claude Code builds and tests everything. So:
+  - Every game's rules must be testable automatically (section 11.9).
+  - A hidden debug menu in test builds lets you jump to any level or state
+    in seconds (section 8.13).
+  - Each game's configuration lives in one place, so a new game is mostly
+    filling in values.
+
+
+======================================================================
+3. NON-NEGOTIABLES
+======================================================================
+
+These are settled. Nothing later in this spec may contradict them.
+
+N1. OFFLINE FIRST.
+    Every game, every screen and every feature works in airplane mode,
+    forever.
+    The only things that need the internet are loading ads and talking to
+    the App Store or Google Play to buy or restore the purchase. Neither is
+    required to play.
+
+N2. NO ACCOUNTS, NO SERVER, NO CLOUD.
+    No sign-in, no user profile and no backend of ours. No cloud saves, no
+    online leaderboards, no multiplayer. No analytics, no crash reporting
+    service, no remote configuration.
+
+N3. OUR OWN CODE MAKES NO NETWORK REQUESTS.
+    The only network traffic in the app comes from:
+      (a) the Google AdMob ads component, and
+      (b) the operating system's store purchase system (Apple / Google).
+    A build check enforces this: the list of allowed network-capable
+    components contains exactly those two, and anything else fails the
+    build. See section 4 for why this exception exists and what it means
+    for the privacy promise.
+
+N4. ONE GAME = ONE APP.
+    Each game has its own name, icon, store listing, ad IDs and purchase.
+
+N5. ONE SHELL.
+    All shared screens and services live in the Shell. A game module never
+    re-implements settings, languages, ads, purchase, saving or statistics.
+    If a game needs something the Shell lacks, it is added to the Shell for
+    every future game.
+
+N6. FOUR LANGUAGES FROM DAY ONE, BOTH DIRECTIONS.
+      English (en), German (de):          left-to-right
+      Persian (fa), Kurdish Sorani (ckb): right-to-left
+    Right-to-left is a first-class target, not a later port. Every screen
+    is designed and checked in both directions.
+
+N7. ONE PURCHASE.
+    A single one-time purchase, "Premium", at about EUR 1.90. It removes all
+    ads forever (section 8.9). No subscriptions, no coins, no consumables,
+    no second product.
+
+N8. ADS NEVER INTERRUPT PLAY.
+    - No ad during a level, during the tutorial, or on app start.
+    - Full-screen ads only between levels, with frequency limits.
+    - Banners only on menu screens.
+
+N9. EVERYTHING IS MADE BY CLAUDE CODE.
+    All art is drawn in code (shapes, colours, glyphs). All sounds are
+    generated or come from public-domain (CC0) sources with the licence
+    recorded. No hand-made assets, and no paid or online generators.
+
+N10. SAVED PROGRESS SURVIVES EVERY APP UPDATE.
+    Saves carry a version number. Every change to the save format comes
+    with an upgrade step that is tested. Losing a player's progress is the
+    worst bug the Shell can have.
+
+N11. NO LAYOUT CODE SAYS "LEFT" OR "RIGHT".
+    Menus and interface use "start" and "end", so right-to-left works
+    automatically. Game boards are the exception and decide for
+    themselves (section 7.5).
+
+N12. EVERY SENTENCE IS ONE TRANSLATABLE MESSAGE.
+    No sentence is glued together from pieces. Numbers and names are
+    placeholders inside the translated sentence, and plural forms come from
+    the translation files.
+
+
+======================================================================
+4. THE ONE REAL CONFLICT: ADS vs "NOTHING ONLINE"
+======================================================================
+
+You asked for:
+  (a) an offline app with no requests to the internet, and
+  (b) Google AdMob ads and a paid purchase.
+Both cannot be fully true at once, because ads are downloaded from Google
+when they are shown, and a purchase is confirmed by Apple or Google. This
+section is how the spec resolves it.
+
+4.1 The resolution
+
+  - The GAME is 100% offline. Nothing about playing, saving, levels,
+    statistics, settings or languages ever needs the internet.
+  - OUR CODE never makes a network request (N3).
+  - Only two built-in components go online, and only when the phone
+    already has a connection:
+      * The ads component loads an ad. Offline, no ad appears, and the
+        player never sees an error, a wait or a "please connect" message.
+      * The store component buys or restores Premium. Offline, the Premium
+        page says "Connect to the internet to buy or restore." Premium
+        already bought keeps working offline (section 8.9).
+
+4.2 What this changes compared with a fully private app
+
+  1. PRIVACY LABELS.
+     Apple's "App Privacy" details and Google Play's "Data safety" form
+     must declare what the ads component collects. That usually includes
+     device identifiers, approximate location from the network, and ad
+     interaction data. So we cannot claim "collects no data". We CAN claim
+     no accounts, no personal data collected by us, and fully playable
+     offline.
+     (Exact wording is confirmed in the store-pages step.)
+
+  2. CONSENT IN EUROPE.
+     Google requires a consent message for players in the European
+     Economic Area, the UK and Switzerland before it serves personalised
+     ads. Germany is in the EEA. The Shell therefore includes Google's
+     consent step (screen S3) and a permanent "Ad privacy choices" entry
+     in Settings.
+     (Confirm the exact requirements in the platform step.)
+
+  3. iPHONE TRACKING PERMISSION.
+     Personalised ads on iPhone need Apple's "Allow tracking?" system
+     prompt. Without it, ads are still shown, just not personalised (lower
+     revenue). Default in this spec: do NOT ask in v1. It is simpler and
+     more private, and can be switched on later (open decision D4).
+
+  4. A PRIVACY POLICY WEB PAGE.
+     Both stores require a privacy-policy link, and ads make one mandatory
+     anyway. AdMob also expects an "app-ads.txt" file on the developer's
+     website. That is a static web page, not a server, and it is built in
+     step 8 (store pages). The app shows the same privacy text offline
+     inside Settings.
+
+4.3 If you ever want truly zero network
+
+  Drop AdMob and sell each game as a paid app, or make it free with no
+  ads. The Shell is designed so ads can be switched off entirely with one
+  configuration value. Every ad slot then simply stays empty, with no
+  empty boxes or gaps.
+
+
+======================================================================
+5. SCREEN MAP
+======================================================================
+
+  S1 Splash
+  S2 First-run language choice          (first launch only)
+  --> S13 Tutorial level                (first launch only)
+  S3 Ad consent                         (only where legally required;
+                                         before the first ad)
+  S4 Home
+     |-- S5  Game screen
+     |     |-- S6 Pause menu
+     |     |-- S7 Result screen (win / lose)
+     |-- S8  Levels
+     |-- S9  Daily challenge
+     |-- S10 Statistics
+     |-- S11 Settings
+     |     |-- S11a Language
+     |     |-- S11b About and credits
+     |     |-- S11c Privacy policy (offline text)
+     |     |-- S11d Licences (open-source and CC0 credits)
+     |-- S12 Premium (the purchase page)
+     |-- S13 How to play (and tutorial replay)
+  S14 Dialogs (confirmations, store states, errors)
+  S15 Debug menu (test builds only)
+
+  Navigation rules
+  - Home is the root. Every other screen has a Back control. In
+    right-to-left languages the Back arrow points right.
+  - The system back gesture/button always does the same as Back.
+  - On the Game screen, Back opens the Pause menu instead of leaving, so a
+    stray swipe never loses a run.
+  - Maximum depth from Home: 2 screens (for example Settings > Language).
+  - Transitions slide in the reading direction and mirror in RTL.
+
+
+======================================================================
+6. SCREENS IN DETAIL
+======================================================================
+
+----------------------------------------------------------------------
+S1  SPLASH
+----------------------------------------------------------------------
+  Purpose  Covers the load time.
+  Shows    The game's logo (drawn in code) on the game's background
+           colour.
+  Rules    - Under 1 second where possible; never waits for the network.
+           - Loads the save, settings and language.
+           - Then goes to S2 on first launch, otherwise straight to Home.
+           - No ad on launch, ever.
+
+----------------------------------------------------------------------
+S2  FIRST-RUN LANGUAGE CHOICE (first launch only)
+----------------------------------------------------------------------
+  Purpose  Make sure a Persian or Sorani speaker whose phone is set to
+           English (very common) can switch immediately.
+  Shows    - The four languages, each written in its own script:
+               English | Deutsch | فارسی | کوردیی ناوەندی
+           - The phone's language is pre-selected when it is one of the
+             four; otherwise English.
+           - One big "Continue" button, in the selected language.
+  Rules    - One tap and done. Can be changed any time in Settings.
+           - After Continue, the first launch goes to the tutorial level
+             (S13), not to Home.
+
+----------------------------------------------------------------------
+S3  AD CONSENT (only where required)
+----------------------------------------------------------------------
+  Purpose  The legal consent step for ads (section 4.2).
+  Shows    Google's consent message. Its content comes from Google, but
+           the Shell decides WHEN it appears.
+  Rules    - Never shown before the player has finished the tutorial
+             level: the first minute of the game is play, not paperwork.
+           - Shown before the first ad is ever requested.
+           - Only in regions where it is required. Everyone else never
+             sees it.
+           - Offline or Premium: skipped. It is shown later only if an ad
+             is ever about to load.
+           - Settings has a permanent "Ad privacy choices" row that
+             reopens it.
+
+----------------------------------------------------------------------
+S4  HOME
+----------------------------------------------------------------------
+  Purpose  One-tap start, and the door to everything else.
+
+  Shows, top to bottom (mirrored in RTL):
+    - Top bar: game logo/title at the start; Settings (gear) icon at the
+      end.
+    - Big PLAY button:
+        "Continue - Level 12" when a level is in progress;
+        "Play - Level 13" otherwise (the next unfinished level).
+    - Daily challenge card: today's date (in the chosen language and
+      digits), "Play today's challenge" or "Done - come back tomorrow",
+      and the current daily streak.
+    - Row of buttons: Levels | Statistics | How to play.
+    - Premium button with a small crown. Hidden once Premium is owned;
+      replaced by a small "Premium" badge on the logo.
+    - Banner ad at the very bottom (only if not Premium AND online AND
+      consent handled). When no banner loads, the space collapses; no
+      empty box.
+
+  Rules
+    - Background music, if the game has any, starts here and respects the
+      settings.
+    - Returning from a finished level shows updated stars and streak with
+      a short animation (reduced if "Reduce motion" is on).
+
+  Games with an Endless mode
+    - Games that support endless play (section 8.2) show a third mode card
+      on Home: "Endless - Best 4,210".
+
+----------------------------------------------------------------------
+S5  GAME SCREEN
+----------------------------------------------------------------------
+  Purpose  The game itself. The Shell provides the frame; the game module
+           provides the board.
+
+  Layout (portrait-first; landscape and tablets get a centred board with
+  side panels):
+    - Top bar (the Shell's), mirrored in RTL:
+        * Pause button (at the start).
+        * Mode and level label: "Level 12", "Daily - 26 Sep", "Endless".
+        * Goal/progress: for example "Moves 5 / Par 7" or "Monsters 3/10"
+          (the game decides what, the Shell draws it).
+        * Score.
+        * Undo button, if the game supports undo.
+        * Hint button, if the game supports hints. Free for Premium;
+          otherwise a rewarded ad or a small daily free allowance
+          (section 8.10).
+    - Board area (the game's): the game draws its board and handles its
+      input here.
+    - Bottom area (the game's, optional): for example Line Siege's tray of
+      three blocks.
+    - NO banner ad on this screen. Ever.
+
+  Rules
+    - Every move is saved at once (section 8.6). Killing the app mid-level
+      and reopening lands back here in the exact same state.
+    - The app going to the background pauses the game automatically;
+      coming back shows the Pause menu, not a running game.
+    - Touch targets are at least 44x44 points.
+    - Screen shake and particles respect "Reduce motion".
+    - Sounds respect the sound settings; vibration respects "Vibration".
+
+----------------------------------------------------------------------
+S6  PAUSE MENU (overlay on the game)
+----------------------------------------------------------------------
+  Shows    Resume (big) | Restart level | How to play | Sound on/off |
+           Music on/off | Vibration on/off | Home
+  Rules    - "Restart level" asks for confirmation only if progress would
+             be lost beyond a few moves.
+           - "Home" keeps the level saved, so Continue on Home resumes it.
+           - No ads here.
+
+----------------------------------------------------------------------
+S7  RESULT SCREEN
+----------------------------------------------------------------------
+  WIN
+    Shows    - "Level complete!" with 1-3 stars filling in one by one.
+             - Score, and "New best!" when it is one.
+             - The goal line, for example "7 moves - par 7".
+             - Buttons: NEXT LEVEL (big) | Replay | Levels.
+             - In Daily mode: today's result, streak and "Come back
+               tomorrow".
+
+  LOSE
+    Shows    - A short, friendly reason: "The monsters broke through",
+               "No moves left", "The wolf got a sheep".
+             - Buttons: TRY AGAIN (big) | Levels.
+             - Optional "Continue" (once per level): a rewarded ad, or free
+               for Premium. Only for games that allow continuing
+               (section 8.10).
+
+  Rules
+    - Stars and statistics are saved BEFORE this screen appears.
+    - A full-screen ad, if one is due (section 8.8), appears AFTER the
+      player taps Next / Replay / Try again. Never before they have seen
+      their result, and never on top of it.
+
+----------------------------------------------------------------------
+S8  LEVELS
+----------------------------------------------------------------------
+  Purpose  See progress and pick any unlocked level.
+  Shows    - Level packs as sections or tabs, for example "Pack 1 -
+             Beginnings (30 levels)"; pack names come from the game.
+           - A grid of level tiles. Each tile shows the level number (in
+             the chosen digits), 0-3 stars, and a lock if locked.
+           - Pack progress: "54 / 90 stars".
+           - Banner ad at the bottom (same rules as Home).
+  Rules    - Levels unlock one after another. Packs unlock by stars
+             collected (for example pack 2 needs 45 stars), so no player
+             is stuck forever on one hard level.
+           - Tapping a locked tile says how to unlock it.
+           - Premium does NOT unlock levels (decision D2; Premium is
+             about ads).
+
+----------------------------------------------------------------------
+S9  DAILY CHALLENGE
+----------------------------------------------------------------------
+  Purpose  One special level per day. It is the same level for every
+           player in the world, with no server needed.
+  How      The level is generated from today's date on the phone (see
+           8.3), so every phone makes the same level on the same day.
+  Shows    - Today's challenge: Play, or your result.
+           - The current streak and best streak.
+           - The last 7 days as a strip of marks (done / missed), mirrored
+             in RTL.
+  Rules    - The first completion of the day counts for the streak and
+             statistics. Replays are allowed for fun, but don't change
+             the day's result.
+           - The day changes at local midnight.
+           - If the phone's clock goes backwards, days that were already
+             done stay done, and nothing crashes or double-counts.
+           - Streaks follow the plain rule "played yesterday or today".
+             There is no streak insurance and no paid streak repair.
+
+----------------------------------------------------------------------
+S10  STATISTICS
+----------------------------------------------------------------------
+  Purpose  Show players their own history. Stored only on the phone.
+
+  Shows, in cards:
+    - Overview: games played, wins, win rate, total play time.
+    - Levels: levels completed, stars earned / total, 3-star levels.
+    - Best: best score (per mode), best level result, longest win streak.
+    - Daily: challenges completed, current streak, best streak.
+    - Last 7 days: a small bar chart of games played per day. Time runs
+      right-to-left in RTL.
+    - Game-specific card: 2-4 extra numbers the game defines, for example
+      Line Siege: "Monsters defeated", "Beams fired", "Biggest combo".
+    - "Reset statistics" button (with confirmation) at the bottom.
+    - Banner ad at the bottom (same rules as Home).
+
+  Rules
+    - Every number uses the chosen digits (section 7.3).
+    - Durations are shown as "2 h 14 min" and translated in full.
+    - Empty state for a new player: a friendly "Play a level to see your
+      stats here", not a wall of zeros.
+
+----------------------------------------------------------------------
+S11  SETTINGS
+----------------------------------------------------------------------
+  Rows, grouped:
+
+  LANGUAGE
+    - Language: System / English / Deutsch / فارسی / کوردیی ناوەندی
+      (opens S11a).
+    - Numbers: Automatic / Latin (0-9) / Local (۰-۹).
+
+  SOUND AND FEEL
+    - Sound effects: on/off + volume.
+    - Music: on/off + volume. Hidden if the game has no music.
+    - Vibration: on/off. Hidden on devices without vibration.
+
+  DISPLAY
+    - Theme: System / Light / Dark.
+    - Colour-blind friendly colours: on/off. Switches to a palette where
+      nothing is told apart by colour alone; shapes and symbols carry the
+      meaning.
+    - Reduce motion: on/off. Less screen shake, particles and bouncing.
+      Defaults to the phone's own reduce-motion setting.
+    - Hints during play: on/off (tutorial tips and nudges).
+
+  PREMIUM
+    - Status row: "Premium - active", or "Remove ads - EUR 1.90" (price
+      from the store), which opens S12.
+    - Restore purchase.
+
+  PRIVACY
+    - Ad privacy choices: reopens the consent step (S3). Shown only where
+      consent applies.
+    - Privacy policy: the offline text (S11c).
+
+  DATA
+    - Reset statistics (confirm).
+    - Reset all progress (confirm by typing or holding the button for 2
+      seconds). Deletes levels, stars, daily results and statistics. Keeps
+      Premium, language and settings.
+
+  ABOUT
+    - About and credits (S11b): game name, version, "Made with Claude
+      Code", support email.
+    - Licences (S11d): open-source components, fonts, and CC0 sound
+      sources with their licence notes.
+    - Rate this game: opens the store page. The store app handles this;
+      the game itself makes no request.
+    - Contact support: opens the phone's email app with the address and
+      version filled in.
+
+  Rules
+    - Every change applies immediately; there is no Save button.
+    - Changing the language switches the text at once. If the direction
+      flips (for example English to Persian) and the platform cannot
+      mirror the layout live, the Shell shows "Restart to apply" and
+      restarts itself with one tap. The save is untouched either way.
+      (Which case applies is found out in the platform step.)
+
+----------------------------------------------------------------------
+S12  PREMIUM (THE PURCHASE PAGE)
+----------------------------------------------------------------------
+  Purpose  Sell the one purchase honestly.
+
+  Shows
+    - Title: "Premium".
+    - What you get, as three short lines:
+        * No ads, ever.
+        * Hints and continues without watching ads.
+        * Support the developer of this game.
+    - Price, exactly as the store reports it, in the player's currency,
+      for example "EUR 1,90", "€1.90" or "۱٫۹۰ یورو". Never typed into
+      the code.
+    - One big BUY button.
+    - Restore purchase (link).
+    - Small print: "One-time purchase. No subscription. Works offline
+      after purchase. Applies to this game only."
+
+  States (every one must be designed and tested):
+    - Loading price           Spinner on the button, the rest readable.
+    - Store unavailable       "Connect to the internet to buy or restore."
+      / offline               BUY disabled.
+    - Purchase in progress    Buttons locked, spinner.
+    - Pending                 For example a parent must approve or a slow
+                              payment: "Waiting for approval - you can keep
+                              playing." Premium turns on automatically
+                              when it completes.
+    - Success                 A thank-you animation. Ads vanish
+                              everywhere at once, and the page shows
+                              "Premium - active".
+    - Cancelled by player     Quietly back to the normal page; no error.
+    - Error                   "The purchase couldn't be completed. You were
+                              not charged." plus Try again.
+    - Already owned           "Premium - active" plus Restore.
+
+  Rules
+    - Each game has its own Premium, because each game is a separate app.
+      Buying Premium in one game does not unlock another.
+    - Premium is never pushed with pop-ups. The only reminders are the
+      Home button, the Settings row, and one friendly line on the result
+      screen at most once per day ("Enjoying it? Remove ads for EUR 1.90").
+
+----------------------------------------------------------------------
+S13  HOW TO PLAY / TUTORIAL
+----------------------------------------------------------------------
+  First launch
+    - The game's scripted tutorial level. The game guides the first moves
+      with a pointing hand and one short sentence at a time. No text
+      walls, and no Skip until the second step.
+
+  How to play (from Home or Pause)
+    - 3-5 short illustrated steps drawn in code (from the game module),
+      swipeable, mirrored in RTL.
+    - "Play the tutorial again" button.
+
+----------------------------------------------------------------------
+S14  DIALOGS
+----------------------------------------------------------------------
+  - Confirm reset progress / statistics / restart level.
+  - Premium states (see S12).
+  - "A new version of the saved data was found" (a save from a NEWER app
+    version on an older app): keep it, don't touch it, and ask the player
+    to update.
+  - Damaged save: "Your progress couldn't be loaded. A backup copy was
+    restored." (section 8.6). Never a crash.
+  - All dialogs use start/end button order, which mirrors in RTL.
+
+----------------------------------------------------------------------
+S15  DEBUG MENU (test builds only; never in store builds)
+----------------------------------------------------------------------
+  For you and for Claude Code's automated tests:
+  - Jump to any level; unlock all; give stars.
+  - Set the date (to test daily challenges and streaks).
+  - Show the level seed and the game state as text.
+  - Force ads to always show test ads, or never show.
+  - Toggle Premium on/off without a purchase.
+  - Force the language, direction and digits.
+  - Simulate offline.
+  - Export and import the save as text (testing only).
+
+
+======================================================================
+7. LANGUAGES, RIGHT-TO-LEFT AND NUMBERS
+======================================================================
+
+7.1 The four languages
+
+  Code  Language        Direction  Default digits          Name shown
+  en    English         LTR        0-9                     English
+  de    German          LTR        0-9                     Deutsch
+  fa    Persian         RTL        ۰۱۲۳۴۵۶۷۸۹             فارسی
+  ckb   Kurdish Sorani  RTL        ۰۱۲۳۴۵۶۷۸۹             کوردیی ناوەندی
+
+  Sorani uses the same Persian-style digits (۰۱۲۳...) as Persian by
+  default, the same choice as in the E06 app. "Latin digits" is one
+  setting away for anyone who prefers 0-9.
+
+7.2 Choosing the language
+
+  1. If the player picked a language in S2 or Settings, use it.
+  2. Otherwise use the phone's first language that is one of the four.
+     Any Sorani tag counts as ckb, any Persian tag (including Dari) as fa.
+  3. Otherwise English.
+
+  Notes
+  - "ku" or "kmr" (Kurmanji, written in Latin letters) falls back to
+    English. Sorani script would be wrong for those players.
+  - The language list always shows each name in its own language and
+    script, so someone stuck in the wrong language can find their own.
+
+7.3 Numbers
+
+  - One digit style is active across the whole app at a time: Automatic
+    (the language's default) / Latin / Local.
+  - Digits are only a display choice; saves always store plain numbers.
+  - This applies to scores, levels, stats, dates, prices shown by the
+    Shell, and numbers drawn on game boards (for example monster health),
+    unless a game declares that a number is a code or symbol that must
+    stay Latin.
+  - Persian and Sorani use their own decimal and thousands marks (٫ and
+    ٬). Percentages use ٪.
+
+7.4 Writing and texts
+
+  - Every sentence is one translated message with named placeholders,
+    for example: "Level {level} complete in {moves} moves".
+    Nothing is glued together (N12).
+  - Plural forms come from the translation files; the code never checks
+    "if one".
+  - Names or numbers inside a right-to-left sentence are isolated at
+    display time, so they never jump to the wrong side.
+  - Punctuation lives in the translation: Persian and Sorani use ، ؛ ؟.
+  - Tone:
+      German uses informal "du" (normal for games; open decision D7).
+      Persian and Sorani use a friendly, neutral tone.
+  - Claude Code writes all four languages. Persian and Sorani texts
+    should be read once by a native speaker before each release.
+    Machine-written Sorani especially can sound unnatural.
+  - Game module texts (title, tutorial, how-to-play, piece and enemy
+    names, result reasons, stats labels) are required in all four
+    languages. A missing text fails the build.
+
+7.5 What mirrors in right-to-left
+
+  MIRRORS (anything that shows reading order or forward progress):
+    - Page layout, padding, alignment, list rows, top bars (Pause at the
+      start = right side in RTL).
+    - Back arrow (points right), next/previous arrows, page transitions.
+    - Button order in dialogs, tab order, the Levels grid order (level 1
+      at the top-right).
+    - Progress bars (fill right to left), the 7-day strip and bar chart.
+    - Swipeable how-to-play pages.
+
+  DOES NOT MIRROR:
+    - Game boards, by default. A swipe left moves things left, whatever
+      the language: the board is a physical space, not text. A game can
+      opt in to mirroring if its board reads like text (for example a word
+      game in Persian).
+    - Logos, icons of objects, clocks and circular progress (always
+      clockwise), play/pause symbols, sheep and robots.
+
+7.6 Fonts
+
+  - All fonts are bundled inside the app. Nothing is downloaded (N1).
+  - A Latin font for en/de, and an Arabic-script font that covers ALL
+    Persian and Sorani letters, including the Sorani-only ones:
+    ڕ ڵ ۆ ێ ە ڤ.
+  - A test page (debug menu) renders every letter and digit in every
+    font. It is checked in screenshots before each release.
+  - Font licences (free, open licences only) are listed in S11d.
+
+
+======================================================================
+8. FEATURES IN DETAIL
+======================================================================
+
+8.1 Levels and stars
+
+  - Each game defines level packs (v1 target: 3 packs x 30 levels = 90
+    levels per game, adjustable per game).
+  - Levels are GENERATED from a seed number plus a difficulty, not drawn
+    by hand. The same seed always makes the same level. Where the game
+    allows it, each level is checked by a solver before it ships, so no
+    level is impossible, and the solver also calculates "par" (the best
+    possible result).
+  - Stars are earned per level from a goal the game defines:
+      Puzzle games: 3 stars at or under par, 2 stars at par +2,
+                    1 star for finishing.
+      Score games:  3 / 2 / 1 stars at score thresholds.
+  - The best result per level is kept.
+  - Unlocking: see S8.
+
+8.2 Modes
+
+  The Shell supports three modes. Each game switches on the ones that
+  suit it:
+    LEVELS   Always on.
+    DAILY    One generated level per day (8.3). On by default.
+    ENDLESS  For games with no natural end (for example Line Siege
+             runs): play until you lose, beat your best. Optional per game.
+
+8.3 Daily challenge generation
+
+  - The level number comes from today's local date plus the game's own
+    salt, run through the same generator as normal levels, at a medium
+    difficulty.
+  - Every phone on the same date gets the same level, with no internet.
+  - Past days cannot be replayed for streaks. There is no archive in v1
+    (possible later).
+
+8.4 Scoring
+
+  The game defines what counts; the Shell stores and shows it: best per
+  level, best per mode, and totals for statistics.
+
+8.5 Undo and hints
+
+  - Undo: if the game supports it. The Shell keeps a history of states,
+    and Undo steps back one move (unlimited in puzzle games; the game can
+    limit it).
+  - Hints: if the game supports it. The game's solver suggests the next
+    good move, and the Shell highlights it. Hint budget: 1 free hint per
+    day, then a rewarded ad per hint, or unlimited with Premium
+    (open decision D2).
+
+8.6 Saving
+
+  - Everything is saved on the phone only: current level state, level
+    results, stars, daily results, statistics, settings, Premium status.
+  - Saved after EVERY move and every settings change. Writes are "safe
+    writes": write the new copy, then swap, so a crash mid-write never
+    corrupts the save.
+  - The previous good copy is kept as a backup. A damaged save falls back
+    to it (S14).
+  - Every save carries a version number. Opening an older save runs the
+    tested upgrade steps (N10).
+  - The phone's own device backup (iCloud / Google device backup) may
+    include the save, so progress follows a player to a new phone. That
+    is the operating system's feature, not a network request from us
+    (open decision D5).
+
+8.7 Sound, music and vibration
+
+  - Sound effects for every meaningful event (place, clear, win, lose,
+    button tap), generated as short synthesized sounds during
+    development, or taken from CC0 sources with the licence recorded.
+  - Music: optional per game; generated or CC0 only.
+  - Vibration: short taps on key events (clear, win, lose), off if
+    disabled.
+  - Audio follows the phone's silent switch where the platform allows,
+    and never plays over the player's own music unless they turn game
+    music on.
+
+8.8 Ads (AdMob)
+
+  Formats and where they appear:
+    BANNER        Bottom of Home, Levels, Statistics only. Never on the
+                  Game, Pause, Result, Premium, tutorial or dialog screens.
+    INTERSTITIAL  (full-screen) Only after the player taps Next / Replay /
+                  Try again on the Result screen, and only when ALL of
+                  these hold:
+                    - not Premium, online, consent handled;
+                    - the tutorial is finished and the player has
+                      completed at least 3 levels in total;
+                    - at least 3 minutes since the last interstitial;
+                    - at least 2 completed levels since the last one;
+                    - never twice in a row after losses (a losing player
+                      gets a break).
+    REWARDED      Always the player's choice, with a clear "Watch an ad
+                  to..." label:
+                    - get a hint (when out of free hints);
+                    - continue once after losing (games that allow it).
+                  The reward is given only when the ad completes. If no
+                  ad is available (offline), the button is hidden, not
+                  broken.
+
+  General rules
+    - All frequency numbers are configuration values per game, not
+      hard-coded.
+    - Ad slots never overlap game controls. Accidental taps must be
+      impossible.
+    - Development and test builds use only Google's test ads, never real
+      ones. Real ad IDs go in the game's configuration.
+    - Ads are loaded in the background at quiet moments. Play never waits
+      for an ad. A failed load is silent.
+    - Premium removes banners and interstitials immediately and turns
+      rewarded perks into free perks.
+    - Ad content filters: no gambling or other sensitive categories, as
+      far as the ad settings allow (set in the AdMob console).
+    - Audience: the games are rated for general audiences but NOT
+      designed for children, so the child-directed ad rules don't apply.
+      If a game is ever aimed at children, ads must switch to the
+      child-safe mode (open decision D8).
+
+8.9 Premium purchase
+
+  - One non-consumable product per game ("Premium", about EUR 1.90).
+  - Prices are set in the App Store and Google Play consoles, not in the
+    app. Apple uses fixed price points. If EUR 1.90 is not one of them,
+    use the nearest (for example EUR 1.99). Google allows any price
+    (open decision D3).
+  - After a purchase, the Shell stores "Premium = yes" on the phone. From
+    then on Premium works offline forever, without asking the store
+    again.
+  - When online, the Shell quietly re-checks the purchase with the store
+    at app start and updates the stored status (for example after a
+    refund).
+  - Restore purchase is required, and is available in S12 and Settings.
+    Reinstalling or a new phone plus Restore gives Premium back.
+  - No server receipt checks (we have no server). Any check is done on the
+    phone with the store's own tools.
+
+8.10 Continue after losing
+
+  - Games may allow ONE continue per level or run: for example the
+    monsters are pushed back one row, or the last move is undone.
+  - Cost: a rewarded ad, or free with Premium. Offline and not Premium:
+    no continue.
+
+8.11 Accessibility
+
+  - Text grows with the phone's text-size setting up to 200%, and
+    layouts reflow rather than cut off.
+  - Colour contrast meets normal readability guidelines in light and
+    dark themes.
+  - Nothing important is shown by colour alone (colour-blind option
+    adds shapes and symbols).
+  - Screen readers can read and use every menu, button and setting. Game
+    boards give a short spoken summary ("Level 12, 3 monsters, your turn")
+    where practical.
+  - Reduce motion (settings + phone setting).
+  - Everything can be played with one hand in portrait.
+  - Pause any time. No game in this family requires fast reactions
+    during the tutorial.
+
+8.12 Themes and look
+
+  - Each game has its own palette and logo, drawn in code, in light and
+    dark versions. The Shell's menus take the game's palette, so every
+    app looks like its game, not like a template.
+  - One shared type scale and spacing system, so all games feel related.
+  - Name specific patterns to avoid when designing (for example:
+    no generic gradient buttons, no emoji as icons, no pill-shaped
+    everything). The design system itself is step 4.
+
+8.13 Testing hooks (built into the Shell, used by Claude Code)
+
+  - Every game's rules run without the screen: a pure "next state from
+    this state and this move" function. A bot can play thousands of games
+    in seconds to check balance, winnability and difficulty.
+  - The whole game state can be exported as text (debug menu).
+  - Randomness always comes from a seed, so any bug can be replayed
+    exactly.
+  - Screenshots of every screen are captured automatically in all four
+    languages, light and dark, phone and tablet. These are the "does the
+    right-to-left layout look right" check and the store screenshots
+    later.
+  - An airplane-mode test: the full app, from first launch to finishing
+    levels, runs with the network off, with no errors.
+  - A network audit: the build fails if any component other than the ads
+    and store components can reach the internet (N3).
+
+8.14 Errors and stability
+
+  - No crash reporting service (N2). The Shell keeps a small local error
+    log (debug menu can show it) and recovers where possible: a broken
+    level falls back to Home with a gentle message, never a crash loop.
+
+
+======================================================================
+9. OFFLINE BEHAVIOUR - QUICK TABLE
+======================================================================
+
+  Feature                   Online                     Offline
+  -----------------------------------------------------------------------
+  Play levels, daily,       works                      works
+  endless
+  Save / statistics /       works                      works
+  settings / languages
+  Banner / interstitial     shown per rules            not shown, no message
+  ads
+  Rewarded ad buttons       shown                      hidden
+  Buy Premium               works                      "Connect to buy"
+  Restore Premium           works                      "Connect to restore"
+  Premium already owned     works                      works
+  Consent step              shown where required       deferred until online
+  Rate / contact            opens store / email app    OS handles it
+
+
+======================================================================
+10. THE GAME CONTRACT (WHAT EVERY GAME MODULE PROVIDES)
+======================================================================
+
+A game plugs into the Shell by providing exactly these things. Nothing
+else is needed to become a full app.
+
+  IDENTITY
+    - Game id (for example "line-siege"), and its name in 4 languages.
+    - Logo and app icon design (drawn in code).
+    - Palette: light and dark.
+    - Sound set (which sound for which event).
+
+  RULES
+    - Start state for a level (from its seed and difficulty).
+    - The list of moves allowed in a state.
+    - "Apply a move": returns the new state plus a list of events (what
+      happened, for animations and sounds, for example "column 3 cleared,
+      beam hit monster 2 for 8").
+    - "Is it over?": win, lose (with a reason), or still playing.
+    - Score and the goal/progress line for the top bar.
+    - Whether undo, hints and continue are supported, and how continue
+      works.
+
+  LEVELS
+    - Level generator: seed + difficulty -> level.
+    - Solver or checker (where possible): proves a level can be won and
+      calculates par.
+    - Pack layout: how many packs and levels, difficulty curve, star
+      thresholds, pack names.
+    - Daily: which difficulty the daily uses.
+    - Endless: supported or not.
+
+  BOARD AND CONTROLS
+    - Draws the board from the state (shapes and colours, no image
+      files).
+    - Turns taps / swipes / drags into moves.
+    - Animates the events (and respects Reduce motion).
+    - Declares whether the board mirrors in RTL (default: no).
+
+  TEACHING
+    - Scripted tutorial level (steps, pointer positions, one sentence
+      each).
+    - 3-5 how-to-play steps with small drawn illustrations.
+
+  STATISTICS
+    - 2-4 game-specific counters with labels in 4 languages.
+
+  TEXTS
+    - Every string above in en, de, fa, ckb.
+
+  TESTING
+    - A simple bot that can play the game (for balance and winnability
+      tests).
+    - Example states for automatic screenshots (start, middle, win, lose).
+
+
+======================================================================
+11. PER-GAME CONFIGURATION (ONE FILE PER GAME)
+======================================================================
+
+  - App name per language, store id / bundle id, version.
+  - Premium product id; price note (the price itself is set in the stores).
+  - AdMob app id and ad unit ids per platform (banner, interstitial,
+    rewarded). Test ids in development.
+  - Ad rules: frequency numbers (8.8), ads on/off master switch (4.3).
+  - Modes on/off, packs and level counts, free hints per day, continue
+    allowed.
+  - Privacy policy link and support email (for the stores and About).
+  - Age rating answers, target audience.
+
+
+======================================================================
+12. MAKING THE NEXT GAME FROM THE SHELL
+======================================================================
+
+  1. Copy the Shell into a new project for the new game.
+  2. Fill in the configuration file (section 11).
+  3. Write the game module (section 10): rules first, with tests and a
+     bot; then board, controls, levels, tutorial, texts.
+  4. Run the automatic checks:
+       - rules tests and bot balance runs;
+       - solver check of every level;
+       - the network audit;
+       - the airplane-mode run;
+       - screenshots in 4 languages x light/dark x phone/tablet.
+  5. You play-test on your phone and review the screenshots.
+  6. Store pages and release (pipeline steps 8-9).
+
+  Improvements made to the Shell while building game N are copied back
+  into the master Shell, so game N+1 starts from the best version. How
+  the "copy back" works technically is decided in the platform step.
+
+
+======================================================================
+13. THE GAME CATALOGUE
+======================================================================
+
+The idea hunt found 26 distinct ideas (32 candidates before merging
+duplicates). Details, sources and scores are in idea-hunt/research-notes.md
+and idea-hunt/shortlist.md. Suggested order: the best-tested ideas first,
+then the ones needing design work, then the risky ones. Each game gets its
+own design pass before it is built.
+
+  READY TO BUILD (toys exist and passed)
+   1. Line Siege    Block puzzle; cleared columns fire at marching
+                    monsters. PILOT GAME. Levels + Endless + Daily.
+   2. Flock Tilt    Tilt the field; all sheep slide; pen them, avoid the
+                    wolf. Levels + Daily.
+   3. Scrap Shove   Robots chase you and crash; shove scrap. The twist
+                    needs strengthening first (toy showed it rarely
+                    matters).
+
+  NEED A DESIGN FIX FIRST (toys found problems)
+   4. Snare Snake   Loop-capture snake; catching took too long in the toy.
+   5. Merge Siege   Merge tiles vs marching enemies; clashes felt like
+                    trades.
+
+  GOOD CANDIDATES, NOT YET PROTOTYPED
+   6. Jump Chain    Solo checkers against an advancing army.
+   7. Stepstone     The tile you stand on sets your next move (knight,
+                    rook...).
+   8. Swap Guard    Swap places so enemies hit each other.
+   9. Toggle Drop   Ball drop through flip-flop switches.
+  10. Poker Drop    Poker hands cascade in a falling-card well.
+  11. Trail Clear   Tile matching where closed loops clear.
+  12. Dig Site      Number clues find hidden fossils.
+  13. Floodline     Number clues; sandbags stop a spreading flood.
+  14. Sonar Hand    Probe shapes count hidden wrecks.
+  15. Deep Sweep    Mine-style clues on a collapsing descent.
+  16. Grove Shift   Sliding rows where moved tiles age.
+  17. Rank Ladder   Up-or-down card chains with deck editing between deals.
+
+  NEED SPECIAL CARE
+  18. Letter Bugs   Word game. Needs a word list per language (en, de, fa,
+                    ckb); Sorani and Persian dictionaries are hard. Build
+                    late.
+  19. Exact Zero    Card duel on a shared countdown. Needs a card set and
+                    balance.
+  20. Dice Foundry  Dice on combo machines. Content-heavy.
+  21. Fuseban       Timed charges push crates. Very close to an existing
+                    jam game; needs its own twist.
+  22. Ripple Ten    Sum-to-ten clears. Very close to an existing game;
+                    needs its own twist.
+  23. Dock Slide    Slide-merge with delivery docks. Close to 2048/Threes;
+                    store copycat risk.
+  24. Last Stop     Seat passengers by their wishes. Close to an
+                    award-winning game; copycat risk.
+  25. Bank Shot     Ball volleys with bounce multipliers. Physics feel is
+                    hard to test automatically.
+  26. Halo Drift    Real-time arena with a ring weapon. Feel-heavy, least
+                    testable.
+
+  What this means for the Shell: it must support turn-based games (most
+  of the list) AND real-time games (Bank Shot, Halo Drift), both tap/swipe
+  and drag input, and games with or without levels (endless-only). The
+  Shell must not assume a grid.
+
+
+======================================================================
+14. NOT IN VERSION 1
+======================================================================
+
+  - Accounts, cloud saves, online leaderboards, multiplayer, chat.
+  - Analytics, crash reporting services, remote config, push
+    notifications.
+  - Subscriptions, coins, gems, lives that refill over time, loot boxes,
+    any second purchase.
+  - Achievements and badges (possible later; they touch every system and
+    are a common source of bugs).
+  - Daily archive (replaying past days).
+  - Sharing results (possible later as a text share through the phone's
+    share sheet, which needs no network from us).
+  - Level editor, user-made levels.
+  - Tablet-specific layouts beyond a centred board.
+  - More languages (the system is built so adding one is only
+    translation work).
+
+
+======================================================================
+15. DEFINITION OF DONE (THE SHELL + PILOT GAME)
+======================================================================
+
+  1. Every screen in section 6 exists and works in en, de, fa, ckb.
+     Screenshots in LTR and RTL, light and dark, phone and tablet show
+     nothing cut off, overlapping or wrongly mirrored.
+  2. A full airplane-mode run passes: first launch -> tutorial -> 10
+     levels -> daily -> stats -> settings -> all language switches.
+  3. The network audit passes: only the ads and store components can go
+     online.
+  4. Ads:
+       - Test ads appear only where section 8.8 allows.
+       - The frequency rules pass their tests.
+       - Premium removes them instantly.
+       - Consent appears before the first ad in a simulated EU region.
+  5. Premium: buy, cancel, pending, error, restore and offline states
+     all tested with the stores' test tools. Premium works offline after
+     purchase.
+  6. Saving:
+       - Killing the app at any moment loses at most the move in
+         progress.
+       - An upgrade from the previous save version is tested.
+       - A damaged save recovers from its backup.
+  7. The pilot game:
+       - Every shipped level is proven winnable.
+       - Bots show a sensible difficulty curve.
+       - You have play-tested it and signed off.
+  8. Section 12's steps are written down, so game #2 can start from the
+     Shell without guesswork.
+
+
+======================================================================
+16. OPEN DECISIONS (WITH DEFAULTS)
+======================================================================
+
+The defaults are used unless you say otherwise.
+
+  D1  Pilot game. Default: Line Siege.
+  D2  What Premium includes. Default: removes all ads, and hints and
+      continues become free. Levels are never sold.
+  D3  Exact price. Default: EUR 1.90 where the store allows; otherwise
+      the nearest price point (for example EUR 1.99 on Apple).
+  D4  Ask iPhone players for tracking permission (more ad revenue, one
+      extra system prompt)? Default: no, not in v1.
+  D5  Allow the phone's own device backup to include the save (progress
+      follows players to a new phone)? Default: yes.
+  D6  Framework and app names. Default: decided in step 2 ("Name it").
+  D7  German informal "du". Default: yes (normal for games).
+  D8  Audience and age rating. Default: general audience, not designed
+      for children.
+  D9  Level count per game in v1. Default: 3 packs x 30 levels, plus
+      Daily; Endless where it fits.
+
+
+======================================================================
+17. YOUR REQUIREMENTS -> WHERE THEY ARE COVERED
+======================================================================
+
+  "One framework with all pages; reuse it for every game"
+                                           -> 1, N5, 10, 12
+  "Each game is its own application"       -> N4, 1.1, 8.9
+  "Homepage"                               -> S4
+  "Statistics"                             -> S10
+  "Settings"                               -> S11
+  "Levels"                                 -> S8, 8.1
+  "Google AdMob"                           -> 8.8, section 4
+  "Purchase section, about EUR 1.90"       -> S12, 8.9, D3
+  "Multi-language, LTR and RTL: English, German, Persian, Kurdish
+   Sorani"                                 -> N6, S2, section 7
+  "Offline, no user account, no internet requests"
+                                           -> N1-N3, section 4, section 9
+  "Build all the games from the research, one by one"
+                                           -> section 13, section 12

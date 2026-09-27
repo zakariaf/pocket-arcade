@@ -1,0 +1,374 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>50 Apps Challenge — episode slides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#141413;
+    --paper:#F5F4EF;
+    --dim:#7A7973;
+    --line:#302F2C;
+    --hot:#E8622F;
+    --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{display:grid;place-items:center;font-family:var(--sans)}
+
+  #stage{
+    width:min(100vw,177.78vh);
+    height:min(56.25vw,100vh);
+    background:var(--ink);
+    position:relative;
+    overflow:hidden;
+    container-type:size;
+    cursor:none;
+  }
+  body.showcursor #stage{cursor:default}
+
+  .slide{
+    position:absolute;inset:0;
+    padding:5.4cqw 7cqw 4.6cqw;
+    display:flex;flex-direction:column;
+    opacity:0;visibility:hidden;
+    transition:opacity .28s ease;
+  }
+  .slide.on{opacity:1;visibility:visible}
+  #stage::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:.55cqw;
+    background:var(--hot);z-index:3;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);font-size:1.25cqw;letter-spacing:.32em;
+    color:var(--dim);text-transform:uppercase;
+  }
+  .eyebrow b{color:var(--hot);font-weight:500}
+
+  /* ---------- title + outro ---------- */
+  .center{justify-content:center;padding:7cqw}
+  .hello{font-size:5.2cqw;font-weight:400;color:var(--paper);margin-top:2.4cqw;letter-spacing:-.01em}
+  .wordmark{
+    font-size:9.4cqw;font-weight:700;color:var(--hot);
+    line-height:1.02;letter-spacing:-.035em;margin-top:.4cqw;
+  }
+  .rule{width:7cqw;height:.28cqw;background:var(--line);margin:3.2cqw 0}
+  .lede{font-size:2.15cqw;font-weight:400;color:#B8B6AE;line-height:1.55;max-width:64cqw}
+  .kicker{
+    font-family:var(--mono);font-size:1.35cqw;color:var(--dim);
+    margin-top:auto;display:flex;gap:.8cqw;align-items:center;
+  }
+  .kicker b{color:var(--hot);font-weight:500}
+
+  .ring{position:absolute;right:7cqw;top:7cqw;width:16cqw;height:16cqw}
+  .ring circle{fill:none;stroke:var(--line);stroke-width:.12cqw}
+
+  /* ---------- shared head ---------- */
+  .phead{display:flex;justify-content:space-between;align-items:baseline;flex:0 0 auto}
+
+  /* ---------- agenda ---------- */
+  .list{margin-top:2.6cqw;display:flex;flex-direction:column;flex:1;justify-content:center}
+  .step{
+    display:grid;grid-template-columns:5.2cqw minmax(0,1fr) auto;gap:1.4cqw;align-items:baseline;
+    padding:.74cqw 0;border-top:.08cqw solid #232320;
+  }
+  .step:last-child{border-bottom:.08cqw solid #232320}
+  .step .num{font-family:var(--mono);font-size:1.45cqw;color:var(--dim)}
+  .step .name{
+    font-size:2.2cqw;font-weight:400;color:var(--paper);letter-spacing:-.015em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .step .out{
+    font-family:var(--mono);font-size:1.05cqw;color:#4A4943;text-align:right;
+    max-width:31cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  /* ---------- a process step ---------- */
+  .hero{display:grid;grid-template-columns:8.4cqw 1fr;gap:1.4cqw;margin-top:2.6cqw;flex:0 0 auto}
+  .bignum{
+    font-family:var(--mono);font-size:5.6cqw;font-weight:500;color:var(--hot);
+    line-height:.92;letter-spacing:-.04em;
+  }
+  .h1{font-size:4.1cqw;font-weight:700;color:var(--paper);line-height:1;letter-spacing:-.03em}
+  .sum{font-size:1.82cqw;color:#A5A39B;line-height:1.45;margin-top:.95cqw;max-width:74cqw}
+
+  .bullets{
+    margin-top:2.5cqw;flex:1;
+    display:grid;grid-template-columns:1fr 1fr;
+    grid-auto-rows:min-content;
+    column-gap:4.4cqw;row-gap:1.5cqw;align-content:start;
+  }
+  .b{display:grid;grid-template-columns:2.6cqw 1fr;gap:.7cqw;align-items:start}
+  .b i{
+    font-family:var(--mono);font-style:normal;font-size:1.1cqw;color:var(--hot);
+    padding-top:.36cqw;letter-spacing:.04em;
+  }
+  .b p{font-size:1.42cqw;color:#CFCDC5;line-height:1.5}
+
+  .foot{margin-top:auto;padding-top:1.9cqw;display:flex;justify-content:space-between;
+        align-items:flex-end;gap:3cqw;border-top:.08cqw solid #232320;flex:0 0 auto}
+  .pin{font-size:1.6cqw;color:var(--hot);font-weight:500;line-height:1.35;max-width:64cqw}
+  .pin::before{content:"■ ";font-size:.8em;vertical-align:.08em}
+  .outp{font-family:var(--mono);font-size:1.1cqw;color:#5A5952;text-align:right;line-height:1.5;
+        white-space:nowrap}
+  .outp span{color:#3E3D38;letter-spacing:.22em;text-transform:uppercase;display:block;font-size:.92em}
+
+  /* ---------- chrome ---------- */
+  #dots{position:absolute;left:7cqw;bottom:2.1cqw;display:flex;gap:.6cqw;z-index:4}
+  .dot{width:.5cqw;height:.5cqw;border-radius:50%;background:#302F2C}
+  .dot.on{background:var(--hot)}
+  #hint{
+    position:absolute;right:7cqw;bottom:1.9cqw;z-index:4;
+    font-family:var(--mono);font-size:1.05cqw;color:#46453F;
+  }
+  @media (prefers-reduced-motion:reduce){.slide{transition:none}}
+</style>
+
+<div id="stage">
+  <div id="dots"></div>
+  <div id="hint">← → &nbsp;·&nbsp; F fullscreen</div>
+</div>
+
+<script>
+/* ============================================================
+   CHANGE THESE TWO LINES EACH EPISODE
+   ============================================================ */
+const EPISODE  = 7;
+const APP_NAME = "";   // optional, e.g. "Tally" — shows in the header once you have a name
+/* ========================================================= */
+
+const STEPS = [
+  {
+    title:   "Hunt the idea",
+    summary: "Never ask Claude Code for ideas — have it write the prompt that goes hunting for them, then run that prompt yourself.",
+    bullets: [
+      "Ask Claude Code to find the documentation on writing a good prompt, and read the best practice before you write one.",
+      "Be honest, literally: “I want to build something. I don’t know what I want to build.” Then explain your whole situation.",
+      "Have Claude Code interview you first — constraints, platform, time, who you are — then write a prompt spanning many idea areas.",
+      "Load it with reject filters, a 7-axis 1-5 rubric and an evidence bar: 3 complaints from 3 people, URLs and exact quotes.",
+      "Run it over four rounds — forums, 1-3 star store reviews, non-English communities, printable niches — logging finds to MD files.",
+      "Pick one idea. Check it doesn’t already exist, that people actually want it, and that one person can ship it.",
+    ],
+    pin:     "Three complaints from three real people, with URLs, or the idea never makes the shortlist.",
+    output:  "idea-hunt-prompt.md, research notes, shortlist",
+  },
+  {
+    title:   "Name it, spec it, create the repo",
+    summary: "Turn the chosen idea into a name that is actually free and a full SPEC.md, then create the GitHub repo that will hold it.",
+    bullets: [
+      "Ask Claude Code to write the chosen idea into a short MD file — what it is and who it is for, in plain words.",
+      "Ask Claude Code for candidate names first — you name the thing before you describe it, while the name is cheap to change.",
+      "Check each on the App Store, Google Play and the domain — the obvious name is usually already taken.",
+      "Then have Claude Code write SPEC.md — every feature, every page and screen, how they connect, the integrations.",
+      "Keep step 1’s idea files beside it, and log every change to the spec in a file next to SPEC.md.",
+      "Only then create the GitHub repo — the idea exists as MD files before it exists as a repo.",
+    ],
+    pin:     "No code yet. The idea is MD files and a name you can actually register.",
+    output:  "the name, SPEC.md, the GitHub repo",
+  },
+  {
+    title:   "Research the platform",
+    summary: "Have Claude Code work out which platform the idea demands, then research that platform to the bone and write it down.",
+    bullets: [
+      "Ask Claude Code which platform SPEC.md demands — a research question with an answer, not your preference.",
+      "For a mobile app keep the question narrow: Android or iOS, and which of the two you build first.",
+      "Split a web app into two or three codebases: frontend (HTML, Vue, React), backend (Rails, Python), sometimes two backends.",
+      "Once the platform is fixed, send Claude Code deep on it — best practices, and how code is really written there.",
+      "Demand the specifics: folder structure, file and class naming, components, the structure the code should take.",
+      "Save all of it as MD files in the repo. They run big — 80 to 150 KB in past episodes.",
+    ],
+    pin:     "These MD files are the raw material for step 5. Deep here, or shallow skills there.",
+    output:  "platform decision + deep-research MD files",
+  },
+  {
+    title:   "Choose the design system",
+    summary: "Have Claude Code build two or three named design systems as HTML mockups, pick one winner, then screenshot every screen.",
+    bullets: [
+      "Ask Claude Code for two or three design systems, each with a real name — Almanac, Beacon, Daybreak last time.",
+      "Force them totally apart. Three variations on one idea is one design system, not three.",
+      "Build each system as two files: name-system.html for the system itself, name-screens.html for the mockups.",
+      "Demand HTML mockups for at least half the app’s pages, not just the home screen.",
+      "Open them side by side and pick one winner. The losers stay in design/, unused but not deleted.",
+      "Screenshot every winning screen to design/reference/ with headless Chrome — light and dark, LTR and RTL.",
+    ],
+    pin:     "The reference PNGs are the contract. You compare every screen you build back to them.",
+    output:  "design/*.html, design/reference/*.png",
+  },
+  {
+    title:   "Build the Claude Code skills",
+    summary: "Give Claude Code the standing rules it will build against — the platform skills first, then the design skills.",
+    bullets: [
+      "Ask Claude Code to research what a complete skill looks like — a folder, not a file: SKILL.md, references, scripts, examples.",
+      "On Flutter, skip all of that — install the 40 ready-made skills from github.com/zakariaf/Flutter-Skills.",
+      "On Swift, React Native, Python, Rails or anything else, have Claude Code generate the skills from step 3’s research MD files.",
+      "Then have it generate the design skills from step 4’s winner — tokens, components, bilingual type.",
+      "Add one skill that captures the built screen and diffs it against the reference PNGs, difference by difference.",
+      "They follow the open Agent Skills standard, so the same files work in Cursor, Codex and 70+ other agents.",
+    ],
+    pin:     "Fix the implementation, never the reference. Edit the PNG once and the contract is gone.",
+    output:  ".claude/skills/ — 44 of them last time",
+  },
+  {
+    title:   "Write the epics, tasks and tests",
+    summary: "Break the build into epic MD files — start, end, skills, tasks — write every task test first, then point CLAUDE.md at them.",
+    bullets: [
+      "Ask Claude Code to split SPEC.md into epics in dependency order — epic 01 is always foundation and CI.",
+      "Write into each epic file the start state, the work, the end state, every skill to load, and the contracts it owes.",
+      "One MD file per task on a complex app; on a simpler one, the full task detail lives in the epic file.",
+      "Test first, code second — and never size a task in human time; what a human calls a month is a few Claude Code hours.",
+      "One branch per epic, or per task. /simplify and /code-review after each task and before the PR, then merge on green.",
+      "Write CLAUDE.md last, once the epics exist — where they live, which skills to load when, the non-negotiables.",
+    ],
+    pin:     "Tests first. Without them Claude Code ships bugs; with them it can’t break what works.",
+    output:  "epics/EPIC-NN-*.md, task files, CLAUDE.md",
+  },
+  {
+    title:   "Implement and test, epic by epic",
+    summary: "Hand Claude Code a goal, run the epics in batches, and check every screen it builds against step 4’s reference PNGs.",
+    bullets: [
+      "Open the epic file and go — the skills, the tests and the detail are written, so nothing is left to decide.",
+      "Set the goal with /goal: “/goal complete epic 3”, “/goal finish all tasks in epic 4”.",
+      "Choose the batch yourself — the first 10 epics, all of them, five at a time, or one at a time.",
+      "Set it running and wait: a few hours, a day or two, sometimes a week, depending on the app.",
+      "Run step 5’s comparison skill after every epic, and after any task worth checking, against the reference PNGs.",
+      "Put the built screen beside its reference PNG; where the design is off, tell Claude Code to make it better.",
+    ],
+    pin:     "An epic isn’t done when it compiles. It’s done when it matches the reference PNG.",
+    output:  "app code, docs/screenshots/, closed epics",
+  },
+  {
+    title:   "Build the pages the stores demand",
+    summary: "Generate the store-mandated pages — landing, privacy policy, support and the rest — through the AppLander MCP server, not by hand.",
+    bullets: [
+      "Ship the three pages the stores demand: a landing page with hero, features and call to action, privacy policy, support.",
+      "Add the ads text file link if you run Google Ads, and an account deletion request page if the app has accounts.",
+      "Don’t hand-build them with Claude Code — applander.io is already prepared and hands you the URLs step 9 pastes in.",
+      "Add the AppLander MCP to Claude Code and have it create the app and every page it needs, starting with the landing page.",
+      "Generate support, FAQ, guides, docs, status, changelog, blog and terms on the same site; guide bodies are markdown, not HTML.",
+      "Upload the store screenshots yourself in the AppLander dashboard — the MCP cannot set them.",
+    ],
+    pin:     "No live privacy and support URL, no listing. The stores check your links before your app.",
+    output:  "live landing, privacy, support and FAQ URLs",
+  },
+  {
+    title:   "Publish to the App Store and Play",
+    summary: "Walk the last mile — build, listing, screenshots, review — where a taken name, an old SDK and the wrong key role cost days.",
+    bullets: [
+      "Re-check the store name in App Store Connect; if the plain one has gone, ship as “Name: What It Does”.",
+      "Create the app record by hand in the App Store Connect web UI — neither Claude Code nor the API can create it.",
+      "Generate an ADMIN App Store Connect API key; an App Manager key registers the App ID, then fails cloud signing.",
+      "Build against the current Xcode and iOS SDK — last year’s SDK is rejected — then upload the signed build.",
+      "Attach the build to the version, paste the listing fields and step 8’s URLs, add the 6.9-inch store screenshots.",
+      "Fill App Privacy (Data Not Collected if offline), answer export compliance, submit, then repeat for Google Play.",
+    ],
+    pin:     "The blockers here are a name, an SDK version and a key role — none of them are code.",
+    output:  "signed build, listing, live on both stores",
+  },
+];
+
+const pad = n => String(n).padStart(2,"0");
+const stage = document.getElementById("stage");
+const slides = [];
+
+function add(html, cls=""){
+  const d = document.createElement("div");
+  d.className = "slide " + cls;
+  d.innerHTML = html;
+  stage.insertBefore(d, document.getElementById("dots"));
+  slides.push(d);
+}
+
+const head = right => `
+  <div class="phead">
+    <div class="eyebrow">Episode ${pad(EPISODE)}${APP_NAME ? " — " + APP_NAME : ""}</div>
+    <div class="eyebrow">${right}</div>
+  </div>`;
+
+/* ---------- title ---------- */
+add(`
+  <svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48"/><circle cx="50" cy="50" r="31"/><circle cx="50" cy="50" r="14" fill="#E8622F" fill-opacity=".16" stroke="none"/></svg>
+  <div class="eyebrow">Episode ${pad(EPISODE)}</div>
+  <div class="hello">Hello and welcome</div>
+  <div class="wordmark">50 Apps<br>Challenge</div>
+  <div class="rule"></div>
+  <div class="lede">One real app per episode — built end to end in Claude Code and shipped to the App Store and Google Play.</div>
+  <div class="kicker"><b>■</b> No feature tours. No throwaway HTML pages. Real apps.</div>
+`, "center");
+
+/* ---------- agenda ---------- */
+add(`
+  ${head("The process — " + pad(STEPS.length) + " steps")}
+  <div class="list">
+    ${STEPS.map((s,i) => `
+      <div class="step">
+        <div class="num">${pad(i+1)}</div>
+        <div class="name">${s.title}</div>
+        <div class="out">${s.output}</div>
+      </div>`).join("")}
+  </div>
+`);
+
+/* ---------- one slide per step ---------- */
+STEPS.forEach((s,i) => add(`
+  ${head("Step " + pad(i+1) + " of " + pad(STEPS.length))}
+  <div class="hero">
+    <div class="bignum">${pad(i+1)}</div>
+    <div>
+      <div class="h1">${s.title}</div>
+      <div class="sum">${s.summary}</div>
+    </div>
+  </div>
+  <div class="bullets">
+    ${s.bullets.map((b,k) => `<div class="b"><i>${pad(k+1)}</i><p>${b}</p></div>`).join("")}
+  </div>
+  <div class="foot">
+    <div class="pin">${s.pin}</div>
+    <div class="outp"><span>Output</span>${s.output}</div>
+  </div>
+`));
+
+/* ---------- outro ---------- */
+add(`
+  <div class="eyebrow">Episode ${pad(EPISODE)} — done</div>
+  <div class="wordmark" style="margin-top:2.4cqw">Shipped.</div>
+  <div class="rule"></div>
+  <div class="lede">That's one down, ${50 - EPISODE} to go. Next episode: a new idea, the same ${STEPS.length} steps, another app on the store.</div>
+  <div class="kicker"><b>■</b> Subscribe if you want to watch the other ${50 - EPISODE}.</div>
+`, "center");
+
+/* ---------- nav ---------- */
+const dots = document.getElementById("dots");
+slides.forEach(() => dots.insertAdjacentHTML("beforeend", '<div class="dot"></div>'));
+const dotEls = [...dots.children];
+let i = 0;
+function show(n){
+  i = Math.max(0, Math.min(slides.length-1, n));
+  slides.forEach((s,k) => s.classList.toggle("on", k===i));
+  dotEls.forEach((d,k) => d.classList.toggle("on", k===i));
+  history.replaceState(null, "", "#" + i);
+}
+show(Number(location.hash.slice(1)) || 0);
+
+addEventListener("keydown", e => {
+  const k = e.key;
+  if (k==="ArrowRight" || k==="ArrowDown" || k===" " || k==="PageDown"){ e.preventDefault(); show(i+1); }
+  else if (k==="ArrowLeft" || k==="ArrowUp" || k==="PageUp"){ e.preventDefault(); show(i-1); }
+  else if (k==="Home"){ show(0); }
+  else if (k==="End"){ show(slides.length-1); }
+  else if (k>="1" && k<="9"){ show(Number(k)+1); }
+  else if (k==="f" || k==="F"){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  else if (k==="h" || k==="H"){ document.getElementById("hint").style.display = "none"; }
+});
+stage.addEventListener("click", e => show(e.clientX < innerWidth/2 ? i-1 : i+1));
+
+let t;
+addEventListener("mousemove", () => {
+  document.body.classList.add("showcursor");
+  clearTimeout(t);
+  t = setTimeout(() => document.body.classList.remove("showcursor"), 1800);
+});
+</script>

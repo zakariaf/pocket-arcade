@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Line Siege</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14161c; overscroll-behavior: none; }
+  canvas { display: block; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<script>
+(function () {
+'use strict';
+var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+var COL = { bg: '#14161c', panel: '#1d2029', cell: '#272b37', block: '#4f86e8', ok: '#5fe0a0', bad: '#ef5b5b',
+  mon: '#f2b441', monHi: '#e8743a', text: '#e9ecf2', dim: '#9aa2b2', beam: '#bfe8ff', wall: '#4a5162', ink: '#191b22' };
+var HOW = 'Pick a block, tap the grid to place it. Fill a column to fire up its lane; fill a row to hit them all.';
+var PIECES = [
+  [[0, 0]],
+  [[0, 0], [1, 0]], [[0, 0], [0, 1]],
+  [[0, 0], [1, 0], [2, 0]], [[0, 0], [0, 1], [0, 2]],
+  [[0, 0], [1, 0], [0, 1], [1, 1]],
+  [[0, 0], [0, 1], [1, 1]], [[0, 0], [1, 0], [0, 1]], [[0, 0], [1, 0], [1, 1]], [[1, 0], [0, 1], [1, 1]],
+  [[0, 0], [1, 0], [2, 0], [1, 1]]
+];
+var LANE_ROWS = 4, BEAM_DMG = 8, SHOCK_DMG = 2, MARCH_EVERY = 2, SPAWN_EVERY = 3; // pacing knobs (eased from the spec so a first run lasts long enough to judge)
+
+// ================= RULES (pure state) =================
+var S = null, seed = 20260923;
+function rnd() { // mulberry32, state kept in S.rng
+  var t = (S.rng = (S.rng + 0x6D2B79F5) | 0);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+function ri(n) { return Math.floor(rnd() * n); }
+function cellFilled(x, y) { return S.board[y * 8 + x] === 1; }
+function rowFull(y) { for (var x = 0; x < 8; x++) if (!cellFilled(x, y)) return false; return true; }
+function colFull(x) { for (var y = 0; y < 8; y++) if (!cellFilled(x, y)) return false; return true; }
+function fits(p, ax, ay) {
+  for (var i = 0; i < p.length; i++) {
+    var x = ax + p[i][0], y = ay + p[i][1];
+    if (x < 0 || y < 0 || x > 7 || y > 7 || cellFilled(x, y)) return false;
+  }
+  return true;
+}
+function fitsAnywhere(p) { for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) if (fits(p, x, y)) return true; return false; }
+function anyTrayFits() { for (var i = 0; i < 3; i++) if (S.tray[i] !== null && fitsAnywhere(PIECES[S.tray[i]])) return true; return false; }
+function spawn(lane, row, hp) { var m = { id: S.nextId++, lane: lane, row: row, hp: hp }; S.monsters.push(m); return m; }
+function deal() { for (var i = 0; i < 3; i++) S.tray[i] = ri(PIECES.length); }
+
+function newGame(sd) {
+  S = { seed: sd, rng: sd | 0, board: [], tray: [null, null, null], selected: -1, monsters: [],
+        hearts: 3, score: 0, placements: 0, nextId: 1, over: '' };
+  for (var i = 0; i < 64; i++) S.board.push(0);
+  // one column 2 short (vertical gap), one row 2 short (horizontal gap)
+  var C = ri(8), R = ri(8), a, k;
+  do { a = ri(7); } while (a === R || a + 1 === R);
+  do { k = ri(7); } while (k === C || k + 1 === C);
+  for (var y = 0; y < 8; y++) if (y !== a && y !== a + 1) S.board[y * 8 + C] = 1;
+  for (var x = 0; x < 8; x++) if (x !== k && x !== k + 1) S.board[R * 8 + x] = 1;
+  for (var n = 0, tries = 0; n < 11 && tries < 300; tries++) {
+    var sx = ri(8), sy = ri(8), idx = sy * 8 + sx;
+    if (S.board[idx] || sx === C || sy === R) continue;
+    S.board[idx] = 1;
+    if (rowFull(sy) || colFull(sx)) { S.board[idx] = 0; continue; }
+    n++;
+  }
+  S.tray = [ri(PIECES.length), 2, 1]; // vertical 2 and horizontal 2 guarantee a first clear
+  spawn(C, 1, 6 + ri(3));              // this one dies to the first beam up its lane
+  var l1, l2;
+  do { l1 = ri(8); } while (l1 === C);
+  do { l2 = ri(8); } while (l2 === C || l2 === l1);
+  spawn(l1, 0, 5 + ri(8));
+  spawn(l2, 0, 5 + ri(8));
+}
+
+function select(i) {
+  if (S.over) return;
+  if (i >= 0 && (i > 2 || S.tray[i] === null)) return;
+  S.selected = i;
+}
+
+function lowestIn(lane) {
+  var best = null;
+  S.monsters.forEach(function (m) { if (m.lane === lane && m.hp > 0 && (!best || m.row > best.row)) best = m; });
+  return best;
+}
+
+// Place the selected piece with its top-left at (ax, ay). Returns an event record for the cosmetic layer, or null.
+function place(ax, ay) {
+  if (S.over || S.selected < 0) return null;
+  var p = PIECES[S.tray[S.selected]];
+  if (!fits(p, ax, ay)) return null;
+  var ev = { cells: [], cleared: [], rows: [], cols: [], beams: [], hits: [], pops: [], wall: [], spawned: [] };
+  p.forEach(function (c) { S.board[(ay + c[1]) * 8 + ax + c[0]] = 1; ev.cells.push([ax + c[0], ay + c[1]]); });
+  S.tray[S.selected] = null; S.selected = -1; S.placements++;
+  for (var i = 0; i < 8; i++) { if (rowFull(i)) ev.rows.push(i); if (colFull(i)) ev.cols.push(i); }
+  var clear = {};
+  ev.rows.forEach(function (y) { for (var x = 0; x < 8; x++) clear[y * 8 + x] = 1; });
+  ev.cols.forEach(function (x) { for (var y = 0; y < 8; y++) clear[y * 8 + x] = 1; });
+  Object.keys(clear).forEach(function (k) { S.board[+k] = 0; ev.cleared.push([k % 8, Math.floor(k / 8)]); });
+  function hit(m, d) { m.hp = Math.max(0, m.hp - d); ev.hits.push({ id: m.id, lane: m.lane, row: m.row, d: d }); }
+  ev.cols.forEach(function (lane) {
+    var m = lowestIn(lane);
+    ev.beams.push({ lane: lane, row: m ? m.row : -1 });
+    if (m) hit(m, BEAM_DMG);
+  });
+  if (ev.rows.length) S.monsters.forEach(function (m) { if (m.hp > 0) hit(m, SHOCK_DMG * ev.rows.length); });
+  S.monsters = S.monsters.filter(function (m) {
+    if (m.hp > 0) return true;
+    S.score++; ev.pops.push({ id: m.id, lane: m.lane, row: m.row }); return false;
+  });
+  // monster turn: march down one row; past the bottom row = hits the wall
+  if (S.placements % MARCH_EVERY === 0) S.monsters = S.monsters.filter(function (m) {
+    m.row++;
+    if (m.row < LANE_ROWS) return true;
+    S.hearts--; ev.wall.push(m.lane); return false;
+  });
+  if (S.placements % SPAWN_EVERY === 0) ev.spawned.push(spawn(ri(8), 0, 5 + ri(8)).id);
+  if (S.hearts <= 0) { S.hearts = 0; S.over = 'Overrun'; return ev; }
+  if (S.tray[0] === null && S.tray[1] === null && S.tray[2] === null) deal();
+  if (!anyTrayFits()) S.over = 'Board locked';
+  return ev;
+}
+
+// Which rows/cols would complete if piece p went at (ax, ay) (used for the preview only).
+function wouldClear(p, ax, ay) {
+  var extra = {}, out = { rows: [], cols: [] };
+  p.forEach(function (c) { extra[(ay + c[1]) * 8 + ax + c[0]] = 1; });
+  for (var i = 0; i < 8; i++) {
+    var r = true, co = true;
+    for (var j = 0; j < 8; j++) {
+      if (!S.board[i * 8 + j] && !extra[i * 8 + j]) r = false;
+      if (!S.board[j * 8 + i] && !extra[j * 8 + i]) co = false;
+    }
+    if (r) out.rows.push(i);
+    if (co) out.cols.push(i);
+  }
+  return out;
+}
+
+// ================= COSMETIC LAYER =================
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+var W = 0, H = 0, L = {}, now = 0, last = 0;
+var fx;
+function resetFx() { fx = { beams: [], shocks: [], flashes: [], parts: [], texts: [], hitT: {}, wallT: -1e9, wallLanes: [], disp: {}, hold: 0 }; }
+
+function restart() { seed = (seed + 1) | 0; newGame(seed); resetFx(); drag = null; }
+
+function applyEvents(ev) {
+  var t = now;
+  ev.cleared.forEach(function (c) { fx.flashes.push({ x: c[0], y: c[1], t: t }); });
+  ev.beams.forEach(function (b) { fx.beams.push({ lane: b.lane, row: b.row, t: t }); });
+  if (ev.rows.length) fx.shocks.push({ t: t });
+  ev.hits.forEach(function (h) { fx.texts.push({ lane: h.lane, row: h.row, s: '-' + h.d, t: t }); fx.hitT[h.id] = t; });
+  ev.pops.forEach(function (p) { fx.parts.push({ lane: p.lane, row: p.row, t: t }); });
+  if (ev.wall.length) { fx.wallT = t + 250; fx.wallLanes = ev.wall; }
+  ev.spawned.forEach(function (id) { fx.disp[id] = -0.9; });
+  fx.hold = t + (ev.hits.length ? 280 : 60);
+}
+
+function wrap(text, w) {
+  var words = text.split(' '), lines = [], cur = '';
+  words.forEach(function (wd) {
+    var t = cur ? cur + ' ' + wd : wd;
+    if (cur && ctx.measureText(t).width > w) { lines.push(cur); cur = wd; } else cur = t;
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function layout() {
+  var dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var pad = 16, land = W > H * 1.1, fs = W < 500 ? 13 : 14, lh = fs + 5;
+  var uW = land ? 11 : 8, uH = land ? 11.8 : 14.4;
+  ctx.font = fs + 'px ' + FONT;
+  function fitC(n) { return Math.max(12, Math.floor(Math.min((W - 2 * pad) / uW, (H - (52 + n * lh + 34) - pad) / uH, 64))); }
+  var lines = wrap(HOW, Math.min(W - 2 * pad, 760)), c = fitC(lines.length);
+  var hw = Math.min(W - 2 * pad, Math.max(uW * c, land ? 620 : 330));
+  lines = wrap(HOW, hw); c = Math.min(c, fitC(lines.length));
+  var playTop = 52 + lines.length * lh + 34, A = H - playTop - pad, gh = uH * c, gw = uW * c;
+  var oy = playTop + Math.max(0, (A - gh) / 2), gx = (W - gw) / 2, hx = (W - hw) / 2;
+  L = { land: land, fs: fs, lh: lh, lines: lines, hx: hx, hw: hw, c: c, lr: 3.2 * c / LANE_ROWS, bx: gx, ly: oy,
+        wallY: oy + 3.2 * c, by: oy + 3.6 * c, statsY: oy - 16, restart: { x: hx + hw - 88, y: 12, w: 88, h: 34 }, slots: [] };
+  for (var i = 0; i < 3; i++) {
+    if (land) L.slots.push({ x: gx + 8.6 * c, y: L.by + i * 8 * c / 3 + 0.05 * c, w: 2.4 * c, h: 8 * c / 3 - 0.1 * c });
+    else L.slots.push({ x: gx + i * 8 * c / 3 + 0.05 * c, y: L.by + 8.35 * c, w: 8 * c / 3 - 0.1 * c, h: 2.4 * c });
+  }
+  L.overBtn = { x: gx + 4 * c - 70, y: L.by + 4.4 * c, w: 140, h: 42 };
+}
+
+function rr(x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function text(s, x, y, size, color, align, bold) {
+  ctx.font = (bold ? 'bold ' : '') + size + 'px ' + FONT; ctx.fillStyle = color;
+  ctx.textAlign = align || 'left'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
+}
+function button(r, label) {
+  ctx.fillStyle = COL.panel; rr(r.x, r.y, r.w, r.h, 8); ctx.fill();
+  ctx.strokeStyle = COL.dim; ctx.lineWidth = 1.5; ctx.stroke();
+  text(label, r.x + r.w / 2, r.y + r.h / 2 + 1, 15, COL.text, 'center', true);
+}
+function heart(x, y, s) { // x = centre, y = top
+  ctx.beginPath(); ctx.moveTo(x, y + s * 0.3);
+  ctx.bezierCurveTo(x, y, x - s * 0.5, y, x - s * 0.5, y + s * 0.3);
+  ctx.bezierCurveTo(x - s * 0.5, y + s * 0.6, x - s * 0.1, y + s * 0.75, x, y + s);
+  ctx.bezierCurveTo(x + s * 0.1, y + s * 0.75, x + s * 0.5, y + s * 0.6, x + s * 0.5, y + s * 0.3);
+  ctx.bezierCurveTo(x + s * 0.5, y, x, y, x, y + s * 0.3); ctx.closePath();
+}
+function laneX(l) { return L.bx + (l + 0.5) * L.c; }
+function laneY(r) { return L.ly + (r + 0.5) * L.lr; }
+function ptrCell() {
+  if (!ptr.on) return null;
+  var x = Math.floor((ptr.x - L.bx) / L.c), y = Math.floor((ptr.y - L.by) / L.c);
+  return (x < 0 || y < 0 || x > 7 || y > 7) ? null : [x, y];
+}
+function drawPiece(p, x, y, s, color) {
+  ctx.fillStyle = color;
+  p.forEach(function (c) { rr(x + c[0] * s + 1.5, y + c[1] * s + 1.5, s - 3, s - 3, Math.min(5, s * 0.15)); ctx.fill(); });
+}
+function pieceSize(p) { var w = 0, h = 0; p.forEach(function (c) { w = Math.max(w, c[0] + 1); h = Math.max(h, c[1] + 1); }); return [w, h]; }
+
+function drawMonster(m, x, y, r, flash, alpha) {
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = flash ? '#ffffff' : (m.hp > BEAM_DMG ? COL.monHi : COL.mon);
+  var k = m.id % 3;
+  ctx.beginPath();
+  if (k === 0) { ctx.moveTo(x - r, y - r * 0.75); ctx.lineTo(x + r, y - r * 0.75); ctx.lineTo(x, y + r); ctx.closePath(); }
+  else if (k === 1) rr(x - r * 0.85, y - r * 0.85, r * 1.7, r * 1.7, r * 0.3);
+  else { ctx.moveTo(x, y - r * 1.1); ctx.lineTo(x + r * 1.1, y); ctx.lineTo(x, y + r * 1.1); ctx.lineTo(x - r * 1.1, y); ctx.closePath(); }
+  ctx.fill();
+  text(String(m.hp), x, k === 0 ? y - r * 0.2 : y + 1, Math.round(r * 0.95), COL.ink, 'center', true);
+  ctx.globalAlpha = 1;
+}
+
+function draw() {
+  var c = L.c, lr = L.lr, i, age;
+  ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, W, H);
+  // header
+  text('Line Siege', L.hx, 29, 22, COL.text, 'left', true);
+  button(L.restart, 'Restart');
+  L.lines.forEach(function (ln, j) { text(ln, L.hx, 52 + j * L.lh + L.lh / 2, L.fs, COL.dim, 'left'); });
+  for (i = 0; i < 3; i++) {
+    heart(L.bx + 10 + i * 26, L.statsY - 9, 18);
+    if (i < S.hearts) { ctx.fillStyle = COL.bad; ctx.fill(); } else { ctx.strokeStyle = COL.wall; ctx.lineWidth = 2; ctx.stroke(); }
+  }
+  text('Score ' + S.score, L.bx + 8 * c, L.statsY, 16, COL.text, 'right', true);
+  var toSpawn = SPAWN_EVERY - (S.placements % SPAWN_EVERY);
+  text('new monster in ' + toSpawn, L.bx + 4 * c, L.statsY, 12, COL.dim, 'center');
+
+  // ghost + preview
+  var cell = S.selected >= 0 && !S.over ? ptrCell() : null, gp = null, ok = false, prev = null;
+  if (cell) { gp = PIECES[S.tray[S.selected]]; ok = fits(gp, cell[0], cell[1]); if (ok) prev = wouldClear(gp, cell[0], cell[1]); }
+
+  // lanes
+  for (i = 0; i < 8; i++) {
+    ctx.fillStyle = COL.panel; ctx.fillRect(L.bx + i * c + 1, L.ly, c - 2, LANE_ROWS * lr);
+    ctx.fillStyle = 'rgba(239,91,91,0.13)'; ctx.fillRect(L.bx + i * c + 1, L.ly + (LANE_ROWS - 1) * lr, c - 2, lr);
+    if (prev && prev.cols.indexOf(i) >= 0) { ctx.fillStyle = 'rgba(191,232,255,0.16)'; ctx.fillRect(L.bx + i * c + 1, L.ly, c - 2, LANE_ROWS * lr); }
+  }
+  if (prev && prev.rows.length) { ctx.fillStyle = 'rgba(191,232,255,0.07)'; ctx.fillRect(L.bx, L.ly, 8 * c, LANE_ROWS * lr); }
+  // wall
+  var wallAge = now - fx.wallT, wallHot = wallAge > 0 && wallAge < 600;
+  ctx.fillStyle = COL.wall; ctx.fillRect(L.bx, L.wallY + 0.12 * c, 8 * c, 0.16 * c);
+  if (wallHot) {
+    ctx.globalAlpha = 1 - wallAge / 600; ctx.fillStyle = COL.bad;
+    ctx.fillRect(L.bx, L.wallY + 0.06 * c, 8 * c, 0.28 * c);
+    fx.wallLanes.forEach(function (l) { ctx.fillRect(L.bx + l * c, L.ly + (LANE_ROWS - 1) * lr, c, lr); });
+    ctx.globalAlpha = 1;
+  }
+  // monsters
+  S.monsters.forEach(function (m) {
+    var d = fx.disp[m.id], alpha = Math.max(0, Math.min(1, d + 1));
+    var ht = fx.hitT[m.id], flash = ht !== undefined && now - ht < 160;
+    drawMonster(m, laneX(m.lane), laneY(d), Math.min(c, lr) * 0.4, flash, alpha);
+  });
+
+  // board
+  for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+    ctx.fillStyle = S.board[y * 8 + x] ? COL.block : COL.cell;
+    rr(L.bx + x * c + 1.5, L.by + y * c + 1.5, c - 3, c - 3, 5); ctx.fill();
+  }
+  if (prev) {
+    ctx.fillStyle = 'rgba(191,232,255,0.18)';
+    prev.rows.forEach(function (r) { ctx.fillRect(L.bx, L.by + r * c, 8 * c, c); });
+    prev.cols.forEach(function (q) { ctx.fillRect(L.bx + q * c, L.by, c, 8 * c); });
+  }
+  if (gp) {
+    ctx.save(); ctx.beginPath(); ctx.rect(L.bx, L.by, 8 * c, 8 * c); ctx.clip();
+    ctx.globalAlpha = 0.6; drawPiece(gp, L.bx + cell[0] * c, L.by + cell[1] * c, c, ok ? COL.ok : COL.bad);
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
+  // cleared-cell flashes
+  fx.flashes.forEach(function (f) {
+    age = now - f.t; if (age > 450) return;
+    ctx.globalAlpha = 1 - age / 450; ctx.fillStyle = '#ffffff';
+    rr(L.bx + f.x * c + 1.5, L.by + f.y * c + 1.5, c - 3, c - 3, 5); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // tray
+  for (i = 0; i < 3; i++) {
+    var s = L.slots[i], sel = S.selected === i;
+    ctx.fillStyle = COL.panel; rr(s.x, s.y, s.w, s.h, 10); ctx.fill();
+    if (sel) { ctx.strokeStyle = COL.ok; ctx.lineWidth = 2.5; ctx.stroke(); }
+    if (S.tray[i] === null) continue;
+    var p = PIECES[S.tray[i]], sz = pieceSize(p), ts = Math.min(s.w, s.h) / 3.6;
+    var dragging = drag && drag.kind === 'tray' && drag.slot === i && drag.moved;
+    ctx.globalAlpha = dragging ? 0.3 : 1;
+    drawPiece(p, s.x + (s.w - sz[0] * ts) / 2, s.y + (s.h - sz[1] * ts) / 2, ts, sel ? COL.ok : COL.block);
+    ctx.globalAlpha = 1;
+  }
+  if (drag && drag.kind === 'tray' && drag.moved && !cell) {
+    ctx.globalAlpha = 0.8; drawPiece(PIECES[S.tray[drag.slot]], ptr.x, ptr.y, L.c * 0.8, COL.ok); ctx.globalAlpha = 1;
+  }
+
+  // beams, shockwaves, bursts, damage numbers
+  fx.beams.forEach(function (b) {
+    age = now - b.t; if (age > 450) return;
+    var k = 1 - age / 450, top = b.row >= 0 ? laneY(b.row) : L.ly, bot = L.by + 8 * c, x = laneX(b.lane);
+    ctx.globalAlpha = k * 0.55; ctx.fillStyle = COL.beam; ctx.fillRect(x - c * 0.3, top, c * 0.6, bot - top);
+    ctx.globalAlpha = k; ctx.fillStyle = '#ffffff'; ctx.fillRect(x - c * 0.09, top, c * 0.18, bot - top);
+  });
+  fx.shocks.forEach(function (sh) {
+    age = now - sh.t; if (age > 500) return;
+    var k = age / 500, y = L.wallY - k * LANE_ROWS * lr;
+    ctx.globalAlpha = (1 - k) * 0.7; ctx.fillStyle = COL.beam; ctx.fillRect(L.bx, y - 0.12 * c, 8 * c, 0.24 * c);
+  });
+  fx.parts.forEach(function (pt) {
+    age = now - pt.t; if (age > 650) return;
+    var k = age / 650;
+    ctx.globalAlpha = 1 - k; ctx.fillStyle = pt.row % 2 ? COL.mon : COL.monHi;
+    for (var j = 0; j < 12; j++) {
+      var ang = j / 12 * Math.PI * 2 + 0.3, sp = (j % 2 ? 0.9 : 1.4) * c * (1 - (1 - k) * (1 - k));
+      var r = c * 0.1 * (1 - k * 0.6);
+      ctx.fillRect(laneX(pt.lane) + Math.cos(ang) * sp - r, laneY(pt.row) + Math.sin(ang) * sp - r, r * 2, r * 2);
+    }
+  });
+  fx.texts.forEach(function (t) {
+    age = now - t.t; if (age > 800) return;
+    ctx.globalAlpha = 1 - age / 800;
+    text(t.s, laneX(t.lane) + c * 0.28, laneY(t.row) - lr * 0.3 - (age / 800) * lr * 0.7, Math.round(c * 0.34), '#ffffff', 'center', true);
+  });
+  ctx.globalAlpha = 1;
+
+  if (S.over) {
+    ctx.fillStyle = 'rgba(12,13,18,0.82)'; ctx.fillRect(L.bx - 4, L.by - 4, 8 * c + 8, 8 * c + 8);
+    text(S.over, L.bx + 4 * c, L.by + 3 * c, Math.round(c * 0.8), S.over === 'Overrun' ? COL.bad : COL.mon, 'center', true);
+    text('Score ' + S.score, L.bx + 4 * c, L.by + 3.8 * c, 18, COL.text, 'center', true);
+    button(L.overBtn, 'Restart');
+  }
+}
+
+function frame(t) {
+  now = t; var dt = Math.min(0.05, Math.max(0, (t - last) / 1000)); last = t;
+  if (now > fx.hold) {
+    S.monsters.forEach(function (m) {
+      var d = fx.disp[m.id]; if (d === undefined) d = m.row;
+      fx.disp[m.id] = Math.abs(m.row - d) < 0.01 ? m.row : d + (m.row - d) * Math.min(1, dt * 9);
+    });
+  }
+  S.monsters.forEach(function (m) { if (fx.disp[m.id] === undefined) fx.disp[m.id] = m.row; });
+  draw();
+  requestAnimationFrame(frame);
+}
+
+// ================= INPUT =================
+var ptr = { x: -1, y: -1, on: false }, drag = null;
+function pos(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function inR(r, x, y) { return !!r && x >= r.x && y >= r.y && x <= r.x + r.w && y <= r.y + r.h; }
+function tryPlace() {
+  var cell = ptrCell(); if (!cell) return;
+  var ev = place(cell[0], cell[1]); if (ev) applyEvents(ev);
+}
+cv.addEventListener('pointerdown', function (e) {
+  e.preventDefault();
+  var p = pos(e); ptr.x = p[0]; ptr.y = p[1]; ptr.on = true;
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+  if (inR(L.restart, p[0], p[1]) || (S.over && inR(L.overBtn, p[0], p[1]))) { restart(); return; }
+  if (S.over) return;
+  for (var i = 0; i < 3; i++) {
+    if (S.tray[i] !== null && inR(L.slots[i], p[0], p[1])) {
+      drag = { kind: 'tray', slot: i, was: S.selected === i, x0: p[0], y0: p[1], moved: false };
+      select(i); return;
+    }
+  }
+  if (S.selected >= 0 && ptrCell()) drag = { kind: 'board' };
+});
+cv.addEventListener('pointermove', function (e) {
+  var p = pos(e); ptr.x = p[0]; ptr.y = p[1]; ptr.on = true;
+  if (drag && drag.kind === 'tray' && Math.hypot(p[0] - drag.x0, p[1] - drag.y0) > 10) drag.moved = true;
+});
+cv.addEventListener('pointerup', function (e) {
+  var p = pos(e); ptr.x = p[0]; ptr.y = p[1];
+  if (drag && !S.over) {
+    if (drag.kind === 'tray') { if (drag.moved) tryPlace(); else if (drag.was) select(-1); }
+    else tryPlace();
+  }
+  drag = null;
+  if (e.pointerType !== 'mouse') ptr.on = false;
+});
+cv.addEventListener('pointercancel', function () { drag = null; ptr.on = false; });
+cv.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse' && !drag) ptr.on = false; });
+cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+window.addEventListener('keydown', function (e) {
+  if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === '1' || e.key === '2' || e.key === '3') select(+e.key - 1);
+  else if (e.key === 'Escape') select(-1);
+});
+window.addEventListener('resize', layout);
+
+// ================= TEST HOOK =================
+window.__toy = {
+  getState: function () { return JSON.parse(JSON.stringify(S)); },
+  probes: function () {
+    // tap a tray piece, then the board cell where it completes the most lines (columns preferred)
+    var slot = -1, best = null, bestN = -1;
+    for (var i = 0; i < 3; i++) {
+      if (S.tray[i] === null) continue;
+      var p = PIECES[S.tray[i]];
+      for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+        if (!fits(p, x, y)) continue;
+        var w = wouldClear(p, x, y), n = w.rows.length + w.cols.length * 1.5;
+        if (n > bestN) { bestN = n; best = [x, y]; slot = i; }
+      }
+    }
+    if (slot < 0 || S.over) return [];
+    var s = L.slots[slot];
+    return [{ type: 'click', x: s.x + s.w / 2, y: s.y + s.h / 2 },
+            { type: 'click', x: L.bx + (best[0] + 0.5) * L.c, y: L.by + (best[1] + 0.5) * L.c }];
+  }
+};
+
+newGame(seed); resetFx(); layout();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

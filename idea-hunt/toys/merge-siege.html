@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Merge Siege</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14161c; overscroll-behavior: none; }
+  canvas { display: block; position: fixed; left: 0; top: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(function () {
+'use strict';
+
+// ---------- seeded randomness ----------
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+var START_SEED = 20260923;
+var seed = START_SEED, restarts = 0;
+var rng = mulberry32(seed);          // rules (spawns)
+var fx = mulberry32(START_SEED + 1); // cosmetic only (particles, shake)
+
+// ---------- rules (pure state, no drawing) ----------
+var COLS = 5, ROWS = 6, HEARTS = 3;
+var HOWTO = 'Swipe or tap a side to slide your tiles. Equal tiles merge. In every clash, the bigger number wins.';
+var DIRS = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
+var S;
+
+function put(s, x, y, v, foe) { var t = { id: s.nextId++, v: v, foe: foe }; s.grid[y][x] = t; return t; }
+
+function newGame(sd) {
+  seed = sd; rng = mulberry32(sd);
+  S = { grid: [], hearts: HEARTS, score: 0, turn: 0, status: 'play', next: null, nextId: 1, tone: '',
+        msg: 'Enemies step down one row after each of your moves.' };
+  for (var y = 0; y < ROWS; y++) S.grid.push([null, null, null, null, null]);
+  put(S, 1, 0, 2, true); put(S, 3, 1, 4, true);                          // two enemies near the top
+  put(S, 0, 4, 2, false); put(S, 2, 4, 2, false); put(S, 3, 5, 4, false); // yours, incl. a mergeable pair
+  S.next = rollNext(S);
+}
+
+// Next enemy: seeded column, value slowly grows with the turn count.
+function rollNext(s) {
+  var col = Math.floor(rng() * COLS), p = rng(), t = s.turn;
+  var v = t < 6 ? (p < 0.65 ? 2 : 4) : t < 16 ? (p < 0.3 ? 2 : p < 0.75 ? 4 : 8) : (p < 0.15 ? 2 : p < 0.55 ? 4 : p < 0.9 ? 8 : 16);
+  return { col: col, v: v };
+}
+
+function positions(s) {
+  var m = {};
+  for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) {
+    var t = s.grid[y][x]; if (t) m[t.id] = { x: x, y: y, v: t.v, foe: t.foe };
+  }
+  return m;
+}
+
+// Attacker a (at ax,ay; ay = -1 means entering from above) runs into defender d at (x,y).
+// Bigger number wins and ends up in that cell with its value; equal numbers cancel.
+function clash(s, a, ax, ay, d, x, y, ev, ph) {
+  if (ay >= 0) s.grid[ay][ax] = null;
+  var win = a.v > d.v ? a : a.v < d.v ? d : null;
+  s.grid[y][x] = win;
+  [a, d].forEach(function (t) {
+    if (t === win) return;
+    ev.push({ t: 'die', id: t.id, x: x, y: y, ph: ph, v: t.v, foe: t.foe });
+    if (t.foe) s.score++;
+  });
+  ev.push({ t: 'clash', x: x, y: y, ph: ph, win: win ? (win.foe ? 'foe' : 'mine') : 'tie' });
+}
+
+// 2048-style slide of YOUR tiles only. Returns true if anything changed.
+function slide(s, dx, dy, ev) {
+  var g = s.grid, moved = false, merged = {}, xs = [], ys = [], i;
+  for (i = 0; i < COLS; i++) xs.push(dx > 0 ? COLS - 1 - i : i);
+  for (i = 0; i < ROWS; i++) ys.push(dy > 0 ? ROWS - 1 - i : i);
+  ys.forEach(function (y) { xs.forEach(function (x) {
+    var t = g[y][x], cx = x, cy = y;
+    if (!t || t.foe) return;
+    for (;;) {
+      var nx = cx + dx, ny = cy + dy;
+      if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) break;
+      var o = g[ny][nx];
+      if (!o) { g[ny][nx] = t; g[cy][cx] = null; cx = nx; cy = ny; moved = true; continue; }
+      if (o.foe) { clash(s, t, cx, cy, o, nx, ny, ev, 1); moved = true; }
+      else if (o.v === t.v && !merged[o.id]) {
+        o.v *= 2; merged[o.id] = 1; g[cy][cx] = null; moved = true;
+        ev.push({ t: 'die', id: t.id, x: nx, y: ny, ph: 1, v: t.v, foe: false, merged: true }, { t: 'merge', id: o.id, v: o.v, x: nx, y: ny });
+      }
+      break;
+    }
+  }); });
+  return moved;
+}
+
+// Every enemy steps down one row (bottom rows first). Off the bottom costs a heart.
+function enemyStep(s, ev) {
+  var g = s.grid;
+  for (var y = ROWS - 1; y >= 0; y--) for (var x = 0; x < COLS; x++) {
+    var t = g[y][x];
+    if (!t || !t.foe) continue;
+    if (y === ROWS - 1) { g[y][x] = null; s.hearts = Math.max(0, s.hearts - 1); ev.push({ t: 'die', id: t.id, x: x, y: ROWS, ph: 2, v: t.v, foe: true }, { t: 'heart' }); continue; }
+    var o = g[y + 1][x];
+    if (!o) { g[y + 1][x] = t; g[y][x] = null; }
+    else if (!o.foe) clash(s, t, x, y, o, x, y + 1, ev, 2);
+  }
+}
+
+function spawn(s, ev) {
+  var g = s.grid, empty = [], x, y;
+  for (y = ROWS - 2; y < ROWS; y++) for (x = 0; x < COLS; x++) if (!g[y][x]) empty.push([x, y]);
+  if (empty.length) { var c = empty[Math.floor(rng() * empty.length)]; put(s, c[0], c[1], rng() < 0.12 ? 4 : 2, false); }
+  var n = s.next, e = { id: s.nextId++, v: n.v, foe: true }, o = g[0][n.col];
+  ev.push({ t: 'enter', id: e.id, x: n.col });
+  if (!o) g[0][n.col] = e; else if (!o.foe) clash(s, e, n.col, -1, o, n.col, 0, ev, 2);
+  s.next = rollNext(s);
+}
+
+function canMove(s) {
+  for (var k in DIRS) if (slide(JSON.parse(JSON.stringify(s)), DIRS[k][0], DIRS[k][1], [])) return true;
+  return false;
+}
+
+function describe(s, ev) {
+  var smash = 0, lost = 0, merge = 0, hurt = 0, top = 0, out = [];
+  ev.forEach(function (e) {
+    if (e.t === 'die' && e.foe && e.y < ROWS) smash++;
+    if (e.t === 'die' && !e.foe && !e.merged) lost++;
+    if (e.t === 'merge') { merge++; top = Math.max(top, e.v); }
+    if (e.t === 'heart') hurt++;
+  });
+  if (merge) out.push('Merged to ' + top);
+  if (smash) out.push('Smashed ' + smash);
+  if (lost) out.push('Lost ' + (lost > 1 ? lost + ' tiles' : 'a tile'));
+  if (hurt) out.push('Broke through: -' + hurt + (hurt > 1 ? ' hearts' : ' heart'));
+  s.tone = hurt || (lost && !smash && !merge) ? 'bad' : out.length ? 'good' : '';
+  s.msg = out.length ? out.join('  ·  ') + '!' : '';
+}
+
+// One full turn: your slide, enemy step, spawns. Returns events for cosmetics, or null.
+function move(s, dir) {
+  if (s.status !== 'play' || !DIRS[dir]) return null;
+  var ev = [];
+  if (!slide(s, DIRS[dir][0], DIRS[dir][1], ev)) { s.msg = 'Nothing can slide that way.'; s.tone = ''; return { bump: dir }; }
+  s.turn++;
+  ev.mid = positions(s);
+  enemyStep(s, ev);
+  spawn(s, ev);
+  describe(s, ev);
+  if (s.hearts <= 0) s.status = 'overrun';
+  else if (!canMove(s)) s.status = 'stuck';
+  return { ev: ev };
+}
+
+// ---------- canvas, layout ----------
+var cv = document.getElementById('c'), ctx = cv.getContext('2d');
+var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+var C = { bg: '#14161c', floor: '#1c1f28', line: '#272b36', frame: '#3b4050', danger: '#7a2f36', text: '#e9eaf0', dim: '#9095a3',
+  foe: '#ff6b5e', foeDark: '#8f2a33', foeInk: '#2b0b0e', mineInk: '#0f1a26', accent: '#ffd23f', btn: '#2a2f3c', btnLine: '#4a5063' };
+var MINE = ['#5ec8c8', '#62b3ee', '#7f9cf5', '#a58cf2', '#c79af0', '#e3b3f5'];
+function mineCol(v) { return MINE[Math.max(0, Math.min(MINE.length - 1, Math.round(Math.log(v) / Math.LN2) - 1))]; }
+var W = 0, H = 0, L = {};
+
+function wrap(text, maxW) {
+  var words = text.split(' '), lines = [], cur = '';
+  words.forEach(function (w) {
+    var t = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t;
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function resize() {
+  var dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var pad = 16, small = W < 600, bw = small ? 92 : 110, bh = small ? 36 : 40;
+  L.small = small; L.pad = pad; L.titleSize = small ? 22 : 28; L.textSize = small ? 14 : 16; L.lh = small ? 19 : 22;
+  ctx.font = L.textSize + 'px ' + FONT;
+  L.how = wrap(HOWTO, W - 2 * pad);
+  var headerH = bh + 34, msgH = 34, howH = L.how.length * L.lh, wall = small ? 5 : 7;
+  var cell = Math.floor(Math.min((W - 2 * pad - 2 * wall) / COLS, (H - 2 * pad - headerH - msgH - howH - 2 * wall) / (ROWS + 0.8)));
+  L.cell = cell = Math.max(24, Math.min(110, cell));
+  L.wall = wall; L.nextH = Math.round(cell * 0.8); L.bw = cell * COLS; L.bh = cell * ROWS;
+  var total = headerH + L.nextH + L.bh + 2 * wall + msgH + howH;
+  var top = Math.max(pad, Math.round((H - total) / 2));
+  L.restart = { x: W - pad - bw, y: top, w: bw, h: bh };
+  L.titleY = top + bh / 2; L.statusY = top + bh + 20;
+  L.gx = Math.round((W - L.bw) / 2); L.gy = top + headerH + L.nextH + wall;
+  L.msgY = L.gy + L.bh + wall + msgH / 2;
+  L.howY = L.gy + L.bh + wall + msgH + L.lh / 2;
+  L.over = { x: Math.round(W / 2 - 70), y: Math.round(L.gy + L.bh / 2 + 18), w: 140, h: 44 };
+}
+window.addEventListener('resize', resize);
+
+// ---------- cosmetics (animation reads state, never writes it) ----------
+var SL = 120, EN = 150; // slide phase, enemy phase (ms)
+var anim, parts = [], pending = [], flashAt = -1e9, shakeAt = -1e9, bump = null, hoverDir = null;
+
+function ease(t) { t = t < 0 ? 0 : t > 1 ? 1 : t; return 1 - (1 - t) * (1 - t); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function still() {
+  var p = positions(S);
+  anim = { t0: -1e9, pops: {}, list: Object.keys(p).map(function (id) { var q = p[id]; return { id: +id, foe: q.foe, v0: q.v, v1: q.v, k0: q, k1: q, k2: q, start: 0, end: Infinity }; }) };
+}
+
+function doMove(dir) {
+  var now = performance.now(), pre = positions(S), r = move(S, dir);
+  if (!r) return;
+  if (r.bump) { bump = { dir: r.bump, t0: now }; return; }
+  var mid = r.ev.mid, fin = positions(S), die = {}, enter = {}, pops = {}, ids = {};
+  [pre, mid, fin].forEach(function (m) { for (var id in m) ids[id] = 1; });
+  r.ev.forEach(function (e) {
+    var at = now + (e.ph === 1 ? SL : SL + EN);
+    if (e.t === 'die') { die[e.id] = e; ids[e.id] = 1; }
+    if (e.t === 'enter') enter[e.id] = e.x;
+    if (e.t === 'merge') { pops[e.id] = 1; pending.push({ x: e.x, y: e.y, at: now + SL, kind: 'merge' }); }
+    if (e.t === 'clash') pending.push({ x: e.x, y: e.y, at: at, kind: e.win });
+    if (e.t === 'heart') flashAt = now + SL + EN;
+  });
+  anim = { t0: now, pops: pops, list: Object.keys(ids).map(function (id) {
+    var a = pre[id], m = mid[id], f = fin[id], d = die[id], any = a || m || f || d;
+    var k = { id: +id, foe: any.foe, v0: any.v, v1: (f || m || d || a).v, k0: a, k1: m || (d && d.ph === 1 ? d : null), k2: f || (d && d.ph === 2 ? d : null), start: 0, end: d ? (d.ph === 1 ? SL : SL + EN) : Infinity };
+    if (!a) {
+      if (enter[id] !== undefined) { k.k0 = k.k1 = { x: enter[id], y: -1 }; k.start = SL; }
+      else { k.k0 = k.k1 = k.k2; k.start = SL + EN; k.pop = 1; }
+    }
+    k.k1 = k.k1 || k.k0; k.k2 = k.k2 || k.k1;
+    return k;
+  }) };
+}
+
+function spawnBurst(b) {
+  var cx = cxOf(b.x), cy = cyOf(b.y), c = L.cell;
+  if (b.kind !== 'merge') {
+    for (var i = 0; i < 18; i++) {
+      var a = fx() * Math.PI * 2, sp = (0.5 + fx()) * c * 4.5;
+      var col = b.kind === 'mine' ? (fx() < 0.5 ? C.foe : C.accent) : b.kind === 'foe' ? (fx() < 0.5 ? C.foe : MINE[0]) : (fx() < 0.5 ? C.foe : MINE[1]);
+      parts.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: 0.3 + fx() * 0.3, col: col, r: c * (0.04 + fx() * 0.05) });
+    }
+    shakeAt = performance.now();
+  }
+  parts.push({ ring: 1, x: cx, y: cy, life: 0, max: 0.3, col: b.kind === 'merge' ? '255,210,63' : '255,240,220' });
+}
+
+// ---------- drawing ----------
+function rr(x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+function button(b, label, strong) {
+  rr(b.x, b.y, b.w, b.h, 8); ctx.fillStyle = strong ? C.accent : C.btn; ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = strong ? C.accent : C.btnLine; ctx.stroke();
+  ctx.fillStyle = strong ? '#1a1a1a' : C.text; ctx.font = '600 ' + (L.small ? 15 : 16) + 'px ' + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, b.x + b.w / 2, b.y + b.h / 2 + 1);
+}
+function cxOf(x) { return L.gx + (x + 0.5) * L.cell; }
+function cyOf(y) { return L.gy + (y + 0.5) * L.cell; }
+function num(v, px, py, c, col, f) {
+  ctx.fillStyle = col; ctx.font = '700 ' + Math.round(c * (v >= 100 ? f * 0.75 : f)) + 'px ' + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(v), px, py);
+}
+function drawMine(px, py, c, v) {
+  var h = c * 0.86;
+  rr(px - h / 2, py - h / 2, h, h, c * 0.16); ctx.fillStyle = mineCol(v); ctx.fill();
+  ctx.lineWidth = Math.max(1.5, c * 0.03); ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.stroke();
+  num(v, px, py + c * 0.02, c, C.mineInk, 0.4);
+}
+function drawFoe(px, py, c, v) {
+  var n = 12; ctx.beginPath();
+  for (var i = 0; i < n * 2; i++) {
+    var a = i / (n * 2) * Math.PI * 2 - Math.PI / 2, r = c * (i % 2 ? 0.36 : 0.48);
+    if (i) ctx.lineTo(px + Math.cos(a) * r, py + Math.sin(a) * r); else ctx.moveTo(px + Math.cos(a) * r, py + Math.sin(a) * r);
+  }
+  ctx.closePath(); ctx.fillStyle = C.foe; ctx.fill(); ctx.lineWidth = Math.max(1.5, c * 0.035); ctx.strokeStyle = C.foeDark; ctx.stroke();
+  num(v, px, py - c * 0.05, c, C.foeInk, 0.34);
+  ctx.beginPath(); ctx.moveTo(px - c * 0.09, py + c * 0.19); ctx.lineTo(px + c * 0.09, py + c * 0.19); ctx.lineTo(px, py + c * 0.29); ctx.closePath();
+  ctx.fillStyle = C.foeInk; ctx.fill();
+}
+function heart(x, y, s, col) {
+  ctx.beginPath(); ctx.moveTo(x, y + s * 0.45);
+  ctx.bezierCurveTo(x - s * 0.62, y + s * 0.02, x - s * 0.5, y - s * 0.55, x, y - s * 0.18);
+  ctx.bezierCurveTo(x + s * 0.5, y - s * 0.55, x + s * 0.62, y + s * 0.02, x, y + s * 0.45);
+  ctx.fillStyle = col; ctx.fill();
+}
+
+function draw(now) {
+  var c = L.cell, t = now - anim.t0, settled = t >= SL + EN, i;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  // header
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = C.text; ctx.font = '700 ' + L.titleSize + 'px ' + FONT; ctx.fillText('Merge Siege', L.pad, L.titleY);
+  for (i = 0; i < HEARTS; i++) heart(L.pad + 9 + i * 24, L.statusY, 18, i < S.hearts ? C.foe : C.btnLine);
+  ctx.fillStyle = C.dim; ctx.font = L.textSize + 'px ' + FONT;
+  ctx.fillText('Smashed: ' + S.score + '   ·   Turn ' + S.turn, L.pad + HEARTS * 24 + 10, L.statusY);
+  button(L.restart, 'Restart (R)');
+  // board (shake on smash, nudge on a blocked move)
+  var sk = Math.max(0, 1 - (now - shakeAt) / 200), ox = (fx() - 0.5) * c * 0.1 * sk, oy = (fx() - 0.5) * c * 0.1 * sk;
+  if (bump) { var bt = (now - bump.t0) / 160; if (bt < 1) { var bs = Math.sin(bt * Math.PI) * c * 0.08; ox += DIRS[bump.dir][0] * bs; oy += DIRS[bump.dir][1] * bs; } }
+  ctx.save(); ctx.translate(ox, oy);
+  var w = L.wall;
+  ctx.fillStyle = C.frame; ctx.fillRect(L.gx - w, L.gy - w, L.bw + 2 * w, L.bh + 2 * w);
+  ctx.fillStyle = C.danger; ctx.fillRect(L.gx - w, L.gy + L.bh, L.bw + 2 * w, w);
+  ctx.fillStyle = C.floor; ctx.fillRect(L.gx, L.gy, L.bw, L.bh);
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.beginPath();
+  for (i = 1; i < COLS; i++) { ctx.moveTo(L.gx + i * c + 0.5, L.gy); ctx.lineTo(L.gx + i * c + 0.5, L.gy + L.bh); }
+  for (i = 1; i < ROWS; i++) { ctx.moveTo(L.gx, L.gy + i * c + 0.5); ctx.lineTo(L.gx + L.bw, L.gy + i * c + 0.5); }
+  ctx.stroke();
+  if (S.status === 'play') {
+    // next enemy: column marker + value, and a tint on the cell it will enter
+    var na = ease((t - SL - EN) / 150), nx = cxOf(S.next.col), ny = L.gy - w - L.nextH / 2;
+    ctx.globalAlpha = na;
+    ctx.fillStyle = 'rgba(255,107,94,0.12)'; ctx.fillRect(L.gx + S.next.col * c + 1, L.gy + 1, c - 1, c - 1);
+    drawFoe(nx, ny, Math.min(c * 0.62, L.nextH * 0.9), S.next.v);
+    ctx.fillStyle = C.dim; ctx.font = '600 ' + (L.small ? 12 : 13) + 'px ' + FONT; ctx.textBaseline = 'middle';
+    ctx.textAlign = S.next.col < 3 ? 'left' : 'right';
+    ctx.fillText('NEXT', nx + (S.next.col < 3 ? 1 : -1) * c * 0.38, ny);
+    ctx.globalAlpha = 1;
+    if (hoverDir) {
+      var d = DIRS[hoverDir]; ctx.fillStyle = 'rgba(255,210,63,0.55)';
+      if (d[0]) ctx.fillRect(d[0] < 0 ? L.gx - w : L.gx + L.bw, L.gy, w, L.bh);
+      else ctx.fillRect(L.gx, d[1] < 0 ? L.gy - w : L.gy + L.bh, L.bw, w);
+    }
+  }
+  // tiles (clipped to the board so enemies slide in from above and out at the bottom)
+  ctx.save(); ctx.beginPath(); ctx.rect(L.gx, L.gy, L.bw, L.bh); ctx.clip();
+  [false, true].forEach(function (foe) {
+    anim.list.forEach(function (k) {
+      if (k.foe !== foe || t < k.start || t >= k.end) return;
+      var e = t < SL ? ease(t / SL) : ease((t - SL) / EN), p = t < SL ? k.k0 : k.k1, q = t < SL ? k.k1 : k.k2;
+      var px = cxOf(lerp(p.x, q.x, e)), py = cyOf(lerp(p.y, q.y, e)), sc = 1;
+      if (k.pop) sc = ease((t - k.start) / 140);
+      if (anim.pops[k.id] && t >= SL) sc = 1 + 0.2 * Math.sin(Math.min(1, (t - SL) / 170) * Math.PI);
+      if (sc <= 0) return;
+      ctx.save(); ctx.translate(px, py); ctx.scale(sc, sc);
+      if (foe) drawFoe(0, 0, c, t < SL ? k.v0 : k.v1); else drawMine(0, 0, c, t < SL ? k.v0 : k.v1);
+      ctx.restore();
+    });
+  });
+  ctx.restore();
+  // particles
+  parts.forEach(function (p) {
+    var f = p.life / p.max;
+    if (p.ring) { ctx.strokeStyle = 'rgba(' + p.col + ',' + (1 - f) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x, p.y, c * (0.3 + f * 0.5), 0, Math.PI * 2); ctx.stroke(); return; }
+    ctx.globalAlpha = 1 - f; ctx.fillStyle = p.col; ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); ctx.globalAlpha = 1;
+  });
+  // heart lost: red flash at the bottom edge
+  var fl = now >= flashAt ? 1 - (now - flashAt) / 450 : 0;
+  if (fl > 0) { ctx.fillStyle = 'rgba(255,60,60,' + (0.7 * fl) + ')'; ctx.fillRect(L.gx - w, L.gy + L.bh - c * 0.3, L.bw + 2 * w, c * 0.3 + w * 2); }
+  ctx.restore();
+  // game over
+  if (S.status !== 'play' && settled) {
+    var cy = L.gy + L.bh / 2;
+    ctx.fillStyle = 'rgba(12,13,18,0.84)'; ctx.fillRect(L.gx - w, cy - 88, L.bw + 2 * w, 176);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = S.status === 'overrun' ? C.foe : C.accent; ctx.font = '700 ' + (L.small ? 30 : 38) + 'px ' + FONT;
+    ctx.fillText(S.status === 'overrun' ? 'Overrun' : 'Stuck', W / 2, cy - 52);
+    ctx.fillStyle = C.text; ctx.font = L.textSize + 'px ' + FONT;
+    ctx.fillText((S.status === 'overrun' ? 'Enemies broke through.' : 'No move changes the board.') + ' Smashed ' + S.score + '.', W / 2, cy - 14);
+    button(L.over, 'Restart', true);
+  }
+  // message + how to play
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = S.tone === 'bad' ? C.foe : S.tone === 'good' ? C.accent : C.dim; ctx.font = '600 ' + L.textSize + 'px ' + FONT;
+  if (S.status === 'play') ctx.fillText(S.msg, W / 2, L.msgY);
+  ctx.fillStyle = C.text; ctx.font = L.textSize + 'px ' + FONT;
+  L.how.forEach(function (line, j) { ctx.fillText(line, W / 2, L.howY + j * L.lh); });
+}
+
+var last = performance.now();
+function frame() {
+  var now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+  pending = pending.filter(function (b) { if (now >= b.at) { spawnBurst(b); return false; } return true; });
+  parts.forEach(function (p) { p.life += dt; if (!p.ring) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.9; p.vy *= 0.9; } });
+  parts = parts.filter(function (p) { return p.life < p.max; });
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+// ---------- input ----------
+function hit(b, x, y) { return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h; }
+function dirAt(x, y) {
+  var dx = (x - L.gx - L.bw / 2) / L.bw, dy = (y - L.gy - L.bh / 2) / L.bh;
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+}
+function restart() { restarts++; newGame(START_SEED + restarts * 7919); still(); parts = []; pending = []; bump = null; flashAt = -1e9; }
+function tap(x, y) {
+  if (hit(L.restart, x, y)) { restart(); return; }
+  if (S.status !== 'play') { if (hit(L.over, x, y)) restart(); return; }
+  doMove(dirAt(x, y));
+}
+
+var down = null;
+cv.addEventListener('pointerdown', function (e) { e.preventDefault(); down = { x: e.clientX, y: e.clientY }; });
+cv.addEventListener('pointerup', function (e) {
+  e.preventDefault();
+  if (!down) return;
+  var d = down, dx = e.clientX - d.x, dy = e.clientY - d.y; down = null;
+  if (Math.hypot(dx, dy) < 24) { tap(d.x, d.y); return; }
+  if (S.status === 'play') doMove(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+});
+cv.addEventListener('pointercancel', function () { down = null; });
+cv.addEventListener('pointermove', function (e) { hoverDir = e.pointerType === 'mouse' && !hit(L.restart, e.clientX, e.clientY) ? dirAt(e.clientX, e.clientY) : null; });
+cv.addEventListener('pointerleave', function () { hoverDir = null; });
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+var KEYS = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right' };
+window.addEventListener('keydown', function (e) {
+  var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (k === 'r') { restart(); return; }
+  if (k === 'Enter' && S.status !== 'play') { restart(); return; }
+  if (KEYS[k]) { e.preventDefault(); doMove(KEYS[k]); }
+});
+
+// ---------- test hook ----------
+window.__toy = {
+  getState: function () {
+    return { seed: seed, turn: S.turn, status: S.status, hearts: S.hearts, score: S.score, next: [S.next.col, S.next.v], msg: S.msg,
+      grid: S.grid.map(function (row) { return row.map(function (t) { return t ? (t.foe ? 'E' : 'm') + t.v : '.'; }).join(' '); }) };
+  },
+  probes: function () {
+    // Taps on two different sides of the board whose slide would change the board right now.
+    var out = [], at = { left: [0.1, 0.5], up: [0.5, 0.08], right: [0.9, 0.5], down: [0.5, 0.92] };
+    ['left', 'up', 'right', 'down'].forEach(function (d) {
+      if (out.length >= 2 || S.status !== 'play') return;
+      if (slide(JSON.parse(JSON.stringify(S)), DIRS[d][0], DIRS[d][1], [])) out.push({ type: 'click', x: L.gx + L.bw * at[d][0], y: L.gy + L.bh * at[d][1] });
+    });
+    return out;
+  }
+};
+
+newGame(START_SEED);
+still();
+resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Snare Snake</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14161c; overscroll-behavior: none; }
+  canvas { display: block; position: fixed; left: 0; top: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(function () {
+  'use strict';
+  // ---------- constants ----------
+  var COLS = 11, ROWS = 13, START_LEN = 5, CRITTERS = 4, PELLETS = 2, GOAL = 6, SPAWN_EVERY = 4, BASE_SEED = 20260923;
+  var TITLE = 'Snare Snake';
+  var HOW = "Tap or swipe to steer one step at a time. Cross your own body to close a loop and catch what's inside.";
+  var COL = { bg: '#14161c', board: '#1b1f28', cellAlt: '#1f2430', wall: '#454c5e', snake: '#4fc47f', snakeDark: '#2f8a55',
+    head: '#b5f5cc', critter: '#f2a93b', pellet: '#6fb7ff', flash: '#ffe66b', text: '#e9edf4', dim: '#98a1b3', danger: '#ff6b6b', btn: '#2a303d' };
+  var DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+  // ---------- rule state ----------
+  var S = null;
+  var restarts = 0;
+
+  function rand() { // mulberry32, state kept in S.rng so the whole game is reproducible
+    var a = S.rng = (S.rng + 0x6D2B79F5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function ri(n) { return Math.floor(rand() * n); }
+  function inB(x, y) { return x >= 0 && y >= 0 && x < COLS && y < ROWS; }
+  function snakeIdx(x, y) { for (var i = 0; i < S.snake.length; i++) if (S.snake[i][0] === x && S.snake[i][1] === y) return i; return -1; }
+  function critterAt(x, y) { for (var i = 0; i < S.critters.length; i++) if (S.critters[i].x === x && S.critters[i].y === y) return i; return -1; }
+  function pelletAt(x, y) { for (var i = 0; i < S.pellets.length; i++) if (S.pellets[i][0] === x && S.pellets[i][1] === y) return i; return -1; }
+  function isFree(x, y) { return inB(x, y) && snakeIdx(x, y) < 0 && critterAt(x, y) < 0 && pelletAt(x, y) < 0; }
+
+  function randomFree(minHeadDist) {
+    var h = S.snake[0];
+    for (var tries = 0; tries < 300; tries++) {
+      var x = ri(COLS), y = ri(ROWS);
+      if (isFree(x, y) && Math.abs(x - h[0]) + Math.abs(y - h[1]) >= minHeadDist) return [x, y];
+    }
+    return null;
+  }
+  function spawnCritter() {
+    var p = randomFree(3); if (!p) return;
+    var d = DIRS[ri(4)];
+    S.critters.push({ x: p[0], y: p[1], dx: d[0], dy: d[1], nx: p[0], ny: p[1] });
+  }
+  function refillPellets() {
+    while (S.pellets.length < PELLETS) { var p = randomFree(2); if (!p) break; S.pellets.push(p); }
+  }
+  // Decide (and show) where each critter will step next tick.
+  function planCritters() {
+    var taken = {};
+    S.critters.forEach(function (c) {
+      var opts = [], keep = null;
+      DIRS.forEach(function (d) {
+        var tx = c.x + d[0], ty = c.y + d[1];
+        if (inB(tx, ty) && snakeIdx(tx, ty) < 0 && pelletAt(tx, ty) < 0 && critterAt(tx, ty) < 0 && !taken[tx + ',' + ty]) {
+          opts.push(d); if (d[0] === c.dx && d[1] === c.dy) keep = d;
+        }
+      });
+      var pick = (keep && rand() < 0.7) ? keep : (opts.length ? opts[ri(opts.length)] : null);
+      if (pick) { c.dx = pick[0]; c.dy = pick[1]; c.nx = c.x + pick[0]; c.ny = c.y + pick[1]; }
+      else { c.nx = c.x; c.ny = c.y; }
+      taken[c.nx + ',' + c.ny] = 1;
+    });
+  }
+  function moveCritters() {
+    S.critters.forEach(function (c) {
+      if ((c.nx !== c.x || c.ny !== c.y) && snakeIdx(c.nx, c.ny) < 0 && critterAt(c.nx, c.ny) < 0) { c.x = c.nx; c.y = c.ny; }
+    });
+  }
+  // Cells that can't be reached from outside the grid without crossing the loop.
+  function enclosed(loop) {
+    var W = COLS + 2, H = ROWS + 2, block = new Uint8Array(W * H), seen = new Uint8Array(W * H), q = [0], out = [];
+    loop.forEach(function (c) { block[(c[1] + 1) * W + c[0] + 1] = 1; });
+    seen[0] = 1;
+    while (q.length) {
+      var i = q.pop(), x = i % W, y = (i / W) | 0;
+      for (var d = 0; d < 4; d++) {
+        var nx = x + DIRS[d][0], ny = y + DIRS[d][1], j = ny * W + nx;
+        if (nx >= 0 && ny >= 0 && nx < W && ny < H && !seen[j] && !block[j]) { seen[j] = 1; q.push(j); }
+      }
+    }
+    for (var yy = 0; yy < ROWS; yy++) for (var xx = 0; xx < COLS; xx++) {
+      var k = (yy + 1) * W + xx + 1; if (!seen[k] && !block[k]) out.push([xx, yy]);
+    }
+    return out;
+  }
+  function inList(list, x, y) { for (var i = 0; i < list.length; i++) if (list[i][0] === x && list[i][1] === y) return true; return false; }
+
+  function newGame(seed) {
+    S = { seed: seed, rng: seed, snake: [], dir: [1, 0], critters: [], pellets: [], score: 0, caught: 0, tick: 0,
+      spawnTimer: 0, status: 'play', msg: 'Loop your body around the orange critters.', msgKind: 'info' };
+    for (var i = 0; i < START_LEN; i++) S.snake.push([6 - i, 7]);
+    for (i = 0; i < CRITTERS; i++) spawnCritter();
+    refillPellets();
+    planCritters();
+  }
+
+  // One tick. Returns cosmetic events, or null if the move was ignored.
+  function step(dx, dy) {
+    if (S.status !== 'play') return null;
+    var h = S.snake[0], x = h[0] + dx, y = h[1] + dy, ev = [];
+    if (S.snake.length > 1 && S.snake[1][0] === x && S.snake[1][1] === y) return null; // no reversing into the neck
+    S.dir = [dx, dy];
+    if (!inB(x, y)) { S.status = 'over'; S.msg = 'Bonk! You hit the wall.'; S.msgKind = 'bad'; ev.push({ t: 'die', x: h[0], y: h[1] }); return ev; }
+    if (critterAt(x, y) >= 0) { S.status = 'over'; S.msg = 'You ran into a critter.'; S.msgKind = 'bad'; ev.push({ t: 'die', x: x, y: y }); return ev; }
+    var k = snakeIdx(x, y);
+    if (k >= 1) { // crossed own body: close a loop
+      var loop = S.snake.slice(0, k + 1), enc = enclosed(loop), got = [], gotP = 0;
+      S.critters = S.critters.filter(function (c) { if (inList(enc, c.x, c.y)) { got.push([c.x, c.y]); return false; } return true; });
+      S.pellets = S.pellets.filter(function (p) { if (inList(enc, p[0], p[1])) { gotP++; return false; } return true; });
+      var n = got.length, gain = 10 * n * n + 2 * gotP;
+      S.score += gain; S.caught += n;
+      S.snake = S.snake.slice(k);
+      S.msg = n ? ('Snared ' + n + ' critter' + (n > 1 ? 's' : '') + '! +' + gain + (n > 1 ? ' combo' : '') + '  (spent ' + k + ' segments)')
+                : ('Empty loop: spent ' + k + ' segments' + (gotP ? ', +' + gain : '') + '.');
+      S.msgKind = n ? 'good' : 'info';
+      ev.push({ t: 'loop', loop: loop, enc: enc, got: got });
+    } else {
+      S.snake.unshift([x, y]);
+      var pi = pelletAt(x, y);
+      if (pi >= 0) { S.pellets.splice(pi, 1); S.score += 1; S.msg = 'Pellet: +1 length.'; S.msgKind = 'info'; ev.push({ t: 'eat', x: x, y: y }); }
+      else S.snake.pop();
+    }
+    S.tick++;
+    moveCritters();
+    if (S.critters.length < CRITTERS) {
+      S.spawnTimer++;
+      if (S.spawnTimer >= SPAWN_EVERY || S.critters.length === 0) { spawnCritter(); S.spawnTimer = 0; }
+    } else S.spawnTimer = 0;
+    refillPellets();
+    planCritters();
+    if (S.caught >= GOAL) { S.status = 'won'; S.msg = 'Field clear!'; S.msgKind = 'good'; }
+    return ev;
+  }
+  function restart() { restarts++; newGame(BASE_SEED + restarts * 7919); fx.flash = null; fx.die = null; fx.parts = []; }
+
+  // ---------- cosmetic effects (never read by rules) ----------
+  var fx = { flash: null, die: null, parts: [] };
+  function now() { return performance.now(); }
+  function onEvents(ev) {
+    ev.forEach(function (e) {
+      if (e.t === 'loop') {
+        fx.flash = { loop: e.loop, enc: e.enc, t0: now() };
+        e.got.forEach(function (g) {
+          for (var i = 0; i < 16; i++) {
+            var a = i / 16 * Math.PI * 2, sp = 1.6 + (i % 3) * 0.9;
+            fx.parts.push({ x: g[0] + 0.5, y: g[1] + 0.5, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, t0: now(), c: i % 2 ? COL.critter : COL.flash });
+          }
+        });
+      } else if (e.t === 'die') fx.die = { x: e.x, y: e.y, t0: now() };
+    });
+  }
+
+  // ---------- layout & drawing (reads state only) ----------
+  var cv = document.getElementById('c'), ctx = cv.getContext('2d'), L = {};
+  var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+  function font(sz, w) { return (w || '') + ' ' + sz + 'px ' + FONT; }
+  function wrap(text, maxW) {
+    var words = text.split(' '), lines = [], line = '';
+    words.forEach(function (w) { var t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; });
+    if (line) lines.push(line);
+    return lines;
+  }
+  function layout() {
+    var W = window.innerWidth, H = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 3);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var small = W < 600;
+    L.W = W; L.H = H; L.pad = small ? 14 : 24; L.small = small;
+    L.titleSize = small ? 22 : 28; L.howSize = small ? 14 : 15; L.hudSize = small ? 15 : 16;
+    L.btn = { w: small ? 88 : 112, h: small ? 34 : 38 }; L.btn.x = W - L.pad - L.btn.w; L.btn.y = L.pad;
+    ctx.font = font(L.howSize);
+    L.how = wrap(HOW, W - 2 * L.pad);
+    L.howLH = Math.round(L.howSize * 1.35);
+    L.howY = L.pad + L.btn.h + 8 + L.howSize;
+    L.hudY = L.howY + L.how.length * L.howLH + 8;
+    var top = L.hudY + 12, statusH = 34, availH = H - top - statusH - L.pad, availW = W - 2 * L.pad;
+    var cell = Math.floor(Math.min(availW / (COLS + 0.8), availH / (ROWS + 0.8)));
+    L.cell = Math.max(10, cell);
+    L.bw = L.cell * COLS; L.bh = L.cell * ROWS; L.wall = Math.round(L.cell * 0.4);
+    L.bx = Math.round((W - L.bw) / 2);
+    L.by = Math.round(top + L.wall + Math.max(0, (availH - L.bh - 2 * L.wall) * 0.25));
+    L.statusY = L.by + L.bh + L.wall + 22;
+  }
+  function cx(x) { return L.bx + (x + 0.5) * L.cell; }
+  function cy(y) { return L.by + (y + 0.5) * L.cell; }
+  function rr(x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function diamond(x, y, r) { ctx.beginPath(); ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y); ctx.closePath(); }
+
+  function drawBoard(t) {
+    var c = L.cell, i;
+    ctx.fillStyle = COL.wall; rr(L.bx - L.wall, L.by - L.wall, L.bw + 2 * L.wall, L.bh + 2 * L.wall, L.wall * 0.8); ctx.fill();
+    ctx.fillStyle = COL.board; ctx.fillRect(L.bx, L.by, L.bw, L.bh);
+    ctx.fillStyle = COL.cellAlt;
+    for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) if ((x + y) % 2) ctx.fillRect(L.bx + x * c, L.by + y * c, c, c);
+    // hint: any body segment next to the head would close a loop; tint what it would enclose
+    if (S.status === 'play') {
+      var h = S.snake[0];
+      DIRS.forEach(function (d) {
+        var k = snakeIdx(h[0] + d[0], h[1] + d[1]);
+        if (k < 3 || (S.snake.length > 1 && k === 1)) return;
+        ctx.fillStyle = 'rgba(255,230,107,0.10)';
+        enclosed(S.snake.slice(0, k + 1)).forEach(function (e) { ctx.fillRect(L.bx + e[0] * c, L.by + e[1] * c, c, c); });
+      });
+    }
+    // loop capture flash
+    if (fx.flash) {
+      var a = 1 - (t - fx.flash.t0) / 700;
+      if (a <= 0) fx.flash = null;
+      else {
+        ctx.fillStyle = 'rgba(255,230,107,' + (0.55 * a) + ')';
+        fx.flash.enc.forEach(function (e) { ctx.fillRect(L.bx + e[0] * c, L.by + e[1] * c, c, c); });
+        ctx.strokeStyle = 'rgba(255,230,107,' + a + ')'; ctx.lineWidth = Math.max(2, c * 0.12);
+        fx.flash.loop.forEach(function (e) { rr(L.bx + e[0] * c + 3, L.by + e[1] * c + 3, c - 6, c - 6, c * 0.2); ctx.stroke(); });
+      }
+    }
+    // pellets
+    ctx.fillStyle = COL.pellet;
+    S.pellets.forEach(function (p) { ctx.beginPath(); ctx.arc(cx(p[0]), cy(p[1]), c * 0.17, 0, Math.PI * 2); ctx.fill(); });
+    // critter intentions (faint) then critters
+    ctx.lineWidth = Math.max(1.5, c * 0.06);
+    S.critters.forEach(function (k) {
+      if (k.nx === k.x && k.ny === k.y) return;
+      ctx.strokeStyle = 'rgba(242,169,59,0.45)';
+      ctx.beginPath(); ctx.moveTo(cx(k.x), cy(k.y)); ctx.lineTo(cx(k.nx), cy(k.ny)); ctx.stroke();
+      diamond(cx(k.nx), cy(k.ny), c * 0.22); ctx.stroke();
+    });
+    ctx.fillStyle = COL.critter;
+    S.critters.forEach(function (k) { diamond(cx(k.x), cy(k.y), c * 0.34); ctx.fill(); });
+    // snake: connectors, then segments, head last
+    var s = S.snake, pad = c * 0.14;
+    ctx.fillStyle = COL.snakeDark;
+    for (i = 0; i < s.length - 1; i++) {
+      var ax = Math.min(s[i][0], s[i + 1][0]), ay = Math.min(s[i][1], s[i + 1][1]);
+      var hw = s[i][0] !== s[i + 1][0];
+      ctx.fillRect(L.bx + ax * c + (hw ? c * 0.5 : c * 0.3), L.by + ay * c + (hw ? c * 0.3 : c * 0.5), hw ? c : c * 0.4, hw ? c * 0.4 : c);
+    }
+    for (i = s.length - 1; i >= 0; i--) {
+      ctx.fillStyle = i === 0 ? COL.head : COL.snake;
+      rr(L.bx + s[i][0] * c + pad, L.by + s[i][1] * c + pad, c - 2 * pad, c - 2 * pad, c * 0.22); ctx.fill();
+    }
+    // eyes
+    var hx = cx(s[0][0]), hy = cy(s[0][1]), dx = S.dir[0], dy = S.dir[1];
+    ctx.fillStyle = '#12301f';
+    [-1, 1].forEach(function (side) {
+      ctx.beginPath(); ctx.arc(hx + dx * c * 0.15 - dy * side * c * 0.16, hy + dy * c * 0.15 + dx * side * c * 0.16, c * 0.065, 0, Math.PI * 2); ctx.fill();
+    });
+    // loop-closing hint rings on segments adjacent to the head
+    if (S.status === 'play') {
+      ctx.setLineDash([c * 0.12, c * 0.1]); ctx.strokeStyle = COL.flash; ctx.lineWidth = Math.max(1.5, c * 0.07);
+      DIRS.forEach(function (d) {
+        var k = snakeIdx(s[0][0] + d[0], s[0][1] + d[1]);
+        if (k >= 3) { ctx.beginPath(); ctx.arc(cx(s[k][0]), cy(s[k][1]), c * 0.42, 0, Math.PI * 2); ctx.stroke(); }
+      });
+      ctx.setLineDash([]);
+    }
+    // particles
+    fx.parts = fx.parts.filter(function (p) {
+      var age = (t - p.t0) / 1000; if (age > 0.6) return false;
+      ctx.globalAlpha = 1 - age / 0.6; ctx.fillStyle = p.c;
+      ctx.fillRect(L.bx + (p.x + p.vx * age) * c - 3, L.by + (p.y + p.vy * age) * c - 3, 6, 6);
+      ctx.globalAlpha = 1; return true;
+    });
+    if (fx.die) {
+      var da = 1 - (t - fx.die.t0) / 600;
+      if (da > 0) { ctx.fillStyle = 'rgba(255,107,107,' + (0.7 * da) + ')'; ctx.fillRect(L.bx + fx.die.x * c, L.by + fx.die.y * c, c, c); }
+    }
+    if (S.status !== 'play') {
+      ctx.fillStyle = 'rgba(12,14,19,0.72)'; ctx.fillRect(L.bx, L.by, L.bw, L.bh);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = S.status === 'won' ? COL.flash : COL.danger;
+      ctx.font = font(Math.round(c * 0.8), '700');
+      ctx.fillText(S.status === 'won' ? 'Field clear!' : 'Game over', L.bx + L.bw / 2, L.by + L.bh / 2 - c * 0.6);
+      ctx.fillStyle = COL.text; ctx.font = font(Math.max(14, Math.round(c * 0.42)));
+      ctx.fillText('Score ' + S.score + '  -  tap to play again', L.bx + L.bw / 2, L.by + L.bh / 2 + c * 0.5);
+    }
+  }
+  function drawUI() {
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = COL.text; ctx.font = font(L.titleSize, '700');
+    ctx.fillText(TITLE, L.pad, L.btn.y + L.btn.h / 2);
+    var b = L.btn;
+    ctx.fillStyle = COL.btn; rr(b.x, b.y, b.w, b.h, 8); ctx.fill();
+    ctx.strokeStyle = '#586074'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = COL.text; ctx.font = font(L.small ? 14 : 15, '600'); ctx.textAlign = 'center';
+    ctx.fillText(L.small ? 'Restart' : 'Restart (R)', b.x + b.w / 2, b.y + b.h / 2 + 1);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = COL.dim; ctx.font = font(L.howSize);
+    L.how.forEach(function (ln, i) { ctx.fillText(ln, L.pad, L.howY + i * L.howLH); });
+    ctx.font = font(L.hudSize, '600'); ctx.fillStyle = COL.text;
+    var hud = 'Score ' + S.score + '     Caught ' + S.caught + '/' + GOAL + '     Length ' + S.snake.length;
+    ctx.textAlign = 'center'; ctx.fillText(hud, L.W / 2, L.hudY);
+    ctx.font = font(L.small ? 14 : 15, S.msgKind === 'info' ? '' : '600');
+    ctx.fillStyle = S.msgKind === 'good' ? COL.flash : S.msgKind === 'bad' ? COL.danger : COL.dim;
+    ctx.fillText(S.msg, L.W / 2, Math.min(L.statusY, L.H - 10));
+    ctx.textAlign = 'left';
+  }
+  function frame() {
+    var t = now();
+    ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, L.W, L.H);
+    drawBoard(t); drawUI();
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- input ----------
+  function tryMove(d) { var ev = step(d[0], d[1]); if (ev) { onEvents(ev); return true; } return false; }
+  function sgn(v) { return v > 0 ? 1 : -1; }
+  function pos(e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function onButton(p) { var b = L.btn; return p.x >= b.x - 6 && p.x <= b.x + b.w + 6 && p.y >= b.y - 6 && p.y <= b.y + b.h + 6; }
+  var down = null;
+  cv.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    var p = pos(e);
+    if (onButton(p)) { restart(); down = null; return; }
+    down = { id: e.pointerId, x: p.x, y: p.y };
+  });
+  cv.addEventListener('pointerup', function (e) {
+    e.preventDefault();
+    if (!down || down.id !== e.pointerId) return;
+    var p = pos(e), sx = p.x - down.x, sy = p.y - down.y, start = down;
+    down = null;
+    if (S.status !== 'play') { restart(); return; }
+    if (Math.abs(sx) + Math.abs(sy) >= 28) { tryMove(Math.abs(sx) >= Math.abs(sy) ? [sgn(sx), 0] : [0, sgn(sy)]); return; } // swipe
+    var h = S.snake[0], tx = start.x - cx(h[0]), ty = start.y - cy(h[1]), half = L.cell * 0.5; // tap: toward the tap
+    if (Math.abs(tx) < half && Math.abs(ty) < half) return;
+    var xMajor = Math.abs(tx) >= Math.abs(ty);
+    var first = xMajor ? [sgn(tx), 0] : [0, sgn(ty)];
+    var second = xMajor ? (Math.abs(ty) > half ? [0, sgn(ty)] : null) : (Math.abs(tx) > half ? [sgn(tx), 0] : null);
+    if (!tryMove(first) && second) tryMove(second);
+  });
+  cv.addEventListener('pointercancel', function () { down = null; });
+  document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key, map = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1], a: [-1, 0], d: [1, 0], w: [0, -1], s: [0, 1] };
+    if (k === 'r' || k === 'R') { restart(); e.preventDefault(); return; }
+    if (map[k]) { e.preventDefault(); if (S.status === 'play') tryMove(map[k]); }
+  });
+  window.addEventListener('resize', layout);
+
+  // ---------- test hook ----------
+  window.__toy = {
+    getState: function () { return JSON.parse(JSON.stringify(S)); },
+    probes: function () {
+      var h = S.snake[0], x = cx(h[0]), y = cy(h[1]), c = L.cell;
+      return [
+        { type: 'click', x: x + 1.5 * c, y: y },  // right of the head -> step right
+        { type: 'click', x: x, y: y - 2 * c },    // above -> step up
+        { type: 'click', x: x, y: y - 3 * c }     // above again -> step up
+      ];
+    }
+  };
+
+  newGame(BASE_SEED);
+  layout();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

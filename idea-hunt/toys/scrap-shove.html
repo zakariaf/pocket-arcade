@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Scrap Shove</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14161c; overscroll-behavior: none; }
+  canvas { display: block; position: fixed; left: 0; top: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(function () {
+'use strict';
+
+// ---------- seeded randomness ----------
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+var START_SEED = 20260923;
+var seed = START_SEED, restarts = 0;
+var rng = mulberry32(seed);          // rules (layouts)
+var fx = mulberry32(START_SEED + 1); // cosmetic only (particles, shake)
+
+// ---------- rules (pure state, no drawing) ----------
+var N = 9;
+var HOWTO = 'Tap a square next to you to step. Walk into scrap to shove it. Make the robots crash.';
+var S;
+
+function sign(v) { return v > 0 ? 1 : v < 0 ? -1 : 0; }
+function inside(x, y) { return x >= 0 && y >= 0 && x < N && y < N; }
+function cheb(ax, ay, bx, by) { return Math.max(Math.abs(ax - bx), Math.abs(ay - by)); }
+function findAt(list, x, y) { for (var i = 0; i < list.length; i++) if (list[i].x === x && list[i].y === y) return i; return -1; }
+
+function newGame(sd) {
+  seed = sd; rng = mulberry32(sd);
+  S = { floor: 1, turn: 0, status: 'play', player: { x: 4, y: 4 }, robots: [], heaps: [], nextId: 1, wrecked: 0, msg: '' };
+  setupFloor(S);
+}
+
+function pickCell(s, minDist) {
+  var c = [];
+  for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+    if (cheb(x, y, s.player.x, s.player.y) < minDist) continue;
+    if (findAt(s.heaps, x, y) >= 0 || findAt(s.robots, x, y) >= 0) continue;
+    c.push({ x: x, y: y });
+  }
+  return c.length ? c[Math.floor(rng() * c.length)] : null;
+}
+
+function setupFloor(s) {
+  s.player = { x: (N - 1) / 2, y: (N - 1) / 2 };
+  s.robots = []; s.heaps = []; s.status = 'play'; s.turn = 0;
+  s.msg = 'Arrows show where each robot steps next.';
+  var i, p, nR = Math.min(5 + 2 * (s.floor - 1), 40);
+  for (i = 0; i < 3; i++) { p = pickCell(s, 2); if (p) s.heaps.push({ id: s.nextId++, x: p.x, y: p.y }); }
+  for (i = 0; i < nR; i++) { p = pickCell(s, 3); if (p) s.robots.push({ id: s.nextId++, x: p.x, y: p.y }); }
+}
+
+// What would tapping the neighbour (dx,dy) do?
+function classify(s, dx, dy) {
+  if (s.status !== 'play') return 'invalid';
+  if (dx === 0 && dy === 0) return 'wait';
+  var tx = s.player.x + dx, ty = s.player.y + dy;
+  if (!inside(tx, ty) || findAt(s.robots, tx, ty) >= 0) return 'invalid';
+  if (findAt(s.heaps, tx, ty) < 0) return 'step';
+  var bx = tx + dx, by = ty + dy;
+  if (!inside(bx, by) || findAt(s.heaps, bx, by) >= 0) return 'blocked';
+  return findAt(s.robots, bx, by) >= 0 ? 'crush' : 'shove';
+}
+
+// Player action then robots' turn. Returns a list of events (for cosmetics), or null if nothing happened.
+function playerAct(s, dx, dy) {
+  var kind = classify(s, dx, dy), ev = [];
+  if (kind === 'invalid') return null;
+  var tx = s.player.x + dx, ty = s.player.y + dy;
+  if (kind === 'blocked') { s.msg = 'Blocked: that scrap can\'t move.'; ev.push({ t: 'bump', x: tx, y: ty }); return ev; }
+  s.msg = '';
+  if (kind === 'shove' || kind === 'crush') {
+    var h = s.heaps[findAt(s.heaps, tx, ty)], bx = tx + dx, by = ty + dy;
+    if (kind === 'crush') {
+      var ri = findAt(s.robots, bx, by), r = s.robots[ri];
+      s.robots.splice(ri, 1); s.wrecked++;
+      ev.push({ t: 'crush', id: r.id, x: bx, y: by });
+      s.msg = 'Crushed a robot with scrap!';
+    }
+    h.x = bx; h.y = by;
+  }
+  if (kind !== 'wait') { s.player.x = tx; s.player.y = ty; }
+  s.turn++;
+  if (s.robots.length === 0) { s.status = 'clear'; return ev; }
+  robotsTurn(s, ev);
+  return ev;
+}
+
+function robotsTurn(s, ev) {
+  var p = s.player, caught = false, hitHeap = 0, crashed = 0, from = {};
+  s.robots.forEach(function (r) {
+    from[r.id] = { x: r.x, y: r.y };
+    r.x += sign(p.x - r.x); r.y += sign(p.y - r.y);
+    if (r.x === p.x && r.y === p.y) caught = true;
+  });
+  var cells = {}, order = [];
+  s.robots.forEach(function (r) {
+    if (!(r.x === p.x && r.y === p.y) && findAt(s.heaps, r.x, r.y) >= 0) {
+      hitHeap++; s.wrecked++;
+      ev.push({ t: 'wreck', id: r.id, x0: from[r.id].x, y0: from[r.id].y, x: r.x, y: r.y });
+      return;
+    }
+    var k = r.x + ',' + r.y;
+    if (!cells[k]) { cells[k] = []; order.push(k); }
+    cells[k].push(r);
+  });
+  s.robots = [];
+  order.forEach(function (k) {
+    var g = cells[k], r0 = g[0];
+    if (g.length > 1 && !(r0.x === p.x && r0.y === p.y)) {
+      g.forEach(function (r) { ev.push({ t: 'wreck', id: r.id, x0: from[r.id].x, y0: from[r.id].y, x: r.x, y: r.y }); });
+      var hid = s.nextId++;
+      s.heaps.push({ id: hid, x: r0.x, y: r0.y });
+      ev.push({ t: 'pile', id: hid });
+      crashed += g.length; s.wrecked += g.length;
+    } else g.forEach(function (r) { s.robots.push(r); });
+  });
+  if (crashed) s.msg = crashed + ' robots crashed into each other!';
+  else if (hitHeap) s.msg = hitHeap > 1 ? hitHeap + ' robots ran into scrap!' : 'A robot ran into scrap!';
+  if (caught) { s.status = 'caught'; s.msg = ''; }
+  else if (s.robots.length === 0) s.status = 'clear';
+}
+
+// ---------- canvas, layout ----------
+var cv = document.getElementById('c'), ctx = cv.getContext('2d');
+var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+var C = { bg: '#14161c', floor: '#1c1f28', line: '#272b36', wall: '#3b4050', text: '#e9eaf0', dim: '#9095a3',
+  player: '#ffd23f', robot: '#ff5d5d', robotDark: '#8f2a33', heap: '#8d929e', heapDark: '#4f5460',
+  hi: 'rgba(255,210,63,0.10)', hiLine: 'rgba(255,210,63,0.40)', crush: 'rgba(255,140,60,0.30)',
+  arrow: 'rgba(255,93,93,0.55)', btn: '#2a2f3c', btnLine: '#4a5063', accent: '#ffb347' };
+var W = 0, H = 0, L = {};
+
+function wrap(text, maxW) {
+  var words = text.split(' '), lines = [], cur = '';
+  words.forEach(function (w) {
+    var t = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t;
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function resize() {
+  var dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var pad = 16, small = W < 600;
+  L.small = small; L.pad = pad;
+  L.titleSize = small ? 22 : 28; L.textSize = small ? 14 : 16;
+  var bw = small ? 92 : 110, bh = small ? 36 : 40, headerH = bh + 40;
+  L.lh = small ? 19 : 22;
+  ctx.font = L.textSize + 'px ' + FONT;
+  L.how = wrap(HOWTO, W - 2 * pad);
+  var msgH = 34, howH = L.how.length * L.lh;
+  var room = Math.min(W - 2 * pad, H - 2 * pad - headerH - msgH - howH);
+  L.cell = Math.max(14, Math.floor(room / (N + 0.5)));
+  L.wall = Math.max(4, Math.round(L.cell * 0.25));
+  L.size = L.cell * N;
+  var total = headerH + L.size + 2 * L.wall + msgH + howH;
+  var top = Math.max(pad, Math.round((H - total) / 2));
+  L.restart = { x: W - pad - bw, y: top, w: bw, h: bh };
+  L.titleY = top + bh / 2;
+  L.statusY = top + bh + 24;
+  L.gx = Math.round((W - L.size) / 2);
+  L.gy = top + headerH + L.wall;
+  L.msgY = L.gy + L.size + L.wall + msgH / 2 + 2;
+  L.howY = L.gy + L.size + L.wall + msgH + L.lh / 2;
+  L.over = { x: Math.round(W / 2 - 75), y: Math.round(L.gy + L.size / 2 + 18), w: 150, h: 46 };
+}
+window.addEventListener('resize', resize);
+
+// ---------- cosmetics (animation reads state, never writes it) ----------
+var PM = 110, RM = 140;
+var anim = { t0: -1e9, prevP: null, prevR: {}, prevH: {}, newH: {}, dying: [], bursts: [], bump: null, shake: -1e9 };
+var parts = [], hover = null;
+
+function ease(t) { t = t < 0 ? 0 : t > 1 ? 1 : t; return 1 - (1 - t) * (1 - t); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function doAction(dx, dy) {
+  var now = performance.now();
+  var prevP = { x: S.player.x, y: S.player.y }, prevR = {}, prevH = {};
+  S.robots.forEach(function (r) { prevR[r.id] = { x: r.x, y: r.y }; });
+  S.heaps.forEach(function (h) { prevH[h.id] = { x: h.x, y: h.y }; });
+  var ev = playerAct(S, dx, dy);
+  if (!ev) return;
+  if (ev.length && ev[0].t === 'bump') { anim.bump = { x: ev[0].x, y: ev[0].y, t0: now, dx: dx, dy: dy }; return; }
+  anim = { t0: now, prevP: prevP, prevR: prevR, prevH: prevH, newH: {}, dying: [], bursts: [], bump: null, shake: anim.shake };
+  ev.forEach(function (e) {
+    if (e.t === 'crush') { anim.dying.push({ x0: e.x, y0: e.y, x1: e.x, y1: e.y, ph: 'p' }); anim.bursts.push({ x: e.x, y: e.y, at: now + PM, big: 1 }); }
+    if (e.t === 'wreck') { anim.dying.push({ x0: e.x0, y0: e.y0, x1: e.x, y1: e.y, ph: 'r' }); anim.bursts.push({ x: e.x, y: e.y, at: now + PM + RM }); }
+    if (e.t === 'pile') anim.newH[e.id] = 1;
+  });
+}
+
+function spawnBurst(b) {
+  var cx = L.gx + (b.x + 0.5) * L.cell, cy = L.gy + (b.y + 0.5) * L.cell, n = b.big ? 22 : 14;
+  for (var i = 0; i < n; i++) {
+    var a = fx() * Math.PI * 2, sp = (0.5 + fx()) * L.cell * (b.big ? 5 : 4);
+    parts.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: 0.35 + fx() * 0.3,
+      col: fx() < 0.5 ? C.accent : (fx() < 0.5 ? C.robot : C.heap), r: L.cell * (0.05 + fx() * 0.06) });
+  }
+  parts.push({ ring: 1, x: cx, y: cy, life: 0, max: 0.3 });
+  anim.shake = performance.now();
+}
+
+// ---------- drawing ----------
+function rr(x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+function button(b, label, strong) {
+  rr(b.x, b.y, b.w, b.h, 8); ctx.fillStyle = strong ? C.player : C.btn; ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = strong ? C.player : C.btnLine; ctx.stroke();
+  ctx.fillStyle = strong ? '#1a1a1a' : C.text; ctx.font = '600 ' + (L.small ? 15 : 16) + 'px ' + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, b.x + b.w / 2, b.y + b.h / 2 + 1);
+}
+function cxOf(x) { return L.gx + (x + 0.5) * L.cell; }
+function cyOf(y) { return L.gy + (y + 0.5) * L.cell; }
+
+function drawHeap(id, px, py) {
+  var r = mulberry32(id * 7919 + 13), c = L.cell, n = 12, pts = [];
+  for (var i = 0; i < n; i++) { var a = (i / n) * Math.PI * 2 + r() * 0.3, d = c * (i % 2 ? 0.24 + r() * 0.06 : 0.36 + r() * 0.08); pts.push([px + Math.cos(a) * d, py + Math.sin(a) * d * 0.9]); }
+  ctx.beginPath(); pts.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }); ctx.closePath();
+  ctx.fillStyle = C.heap; ctx.fill(); ctx.lineWidth = Math.max(1.5, c * 0.04); ctx.strokeStyle = C.heapDark; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pts[1][0] * 0.6 + px * 0.4, pts[1][1] * 0.6 + py * 0.4); ctx.lineTo(px, py); ctx.lineTo(pts[5][0] * 0.6 + px * 0.4, pts[5][1] * 0.6 + py * 0.4); ctx.stroke();
+}
+function drawRobot(px, py, ang, alpha) {
+  var r = L.cell * 0.36;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(px, py); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(r, 0); ctx.lineTo(-r * 0.75, -r * 0.8); ctx.lineTo(-r * 0.25, 0); ctx.lineTo(-r * 0.75, r * 0.8); ctx.closePath();
+  ctx.fillStyle = C.robot; ctx.fill(); ctx.lineWidth = Math.max(1.5, L.cell * 0.04); ctx.strokeStyle = C.robotDark; ctx.stroke();
+  ctx.restore();
+}
+function arrow(x1, y1, x2, y2, col, w) {
+  var a = Math.atan2(y2 - y1, x2 - x1), h = L.cell * 0.14;
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2 + Math.cos(a) * h, y2 + Math.sin(a) * h);
+  ctx.lineTo(x2 + Math.cos(a + 2.4) * h, y2 + Math.sin(a + 2.4) * h); ctx.lineTo(x2 + Math.cos(a - 2.4) * h, y2 + Math.sin(a - 2.4) * h); ctx.closePath(); ctx.fill();
+}
+
+function draw(now) {
+  var c = L.cell, tp = ease((now - anim.t0) / PM), tr = ease((now - anim.t0 - PM) / RM), done = tr >= 1;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  // header
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = C.text; ctx.font = '700 ' + L.titleSize + 'px ' + FONT; ctx.fillText('Scrap Shove', L.pad, L.titleY);
+  ctx.fillStyle = C.dim; ctx.font = L.textSize + 'px ' + FONT;
+  ctx.fillText('Floor ' + S.floor + '   ·   Robots left: ' + S.robots.length + '   ·   Wrecked: ' + S.wrecked, L.pad, L.statusY);
+  button(L.restart, 'Restart (R)');
+  // board (shakes)
+  var sk = Math.max(0, 1 - (now - anim.shake) / 220), ox = (fx() - 0.5) * c * 0.16 * sk, oy = (fx() - 0.5) * c * 0.16 * sk;
+  ctx.save(); ctx.translate(ox, oy);
+  ctx.fillStyle = C.wall; ctx.fillRect(L.gx - L.wall, L.gy - L.wall, L.size + 2 * L.wall, L.size + 2 * L.wall);
+  ctx.fillStyle = C.floor; ctx.fillRect(L.gx, L.gy, L.size, L.size);
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.beginPath();
+  for (var i = 1; i < N; i++) { ctx.moveTo(L.gx + i * c + 0.5, L.gy); ctx.lineTo(L.gx + i * c + 0.5, L.gy + L.size); ctx.moveTo(L.gx, L.gy + i * c + 0.5); ctx.lineTo(L.gx + L.size, L.gy + i * c + 0.5); }
+  ctx.stroke();
+  // tappable cells
+  if (S.status === 'play' && done) {
+    for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+      var k = classify(S, dx, dy), x = S.player.x + dx, y = S.player.y + dy;
+      if (k === 'invalid' || k === 'blocked') continue;
+      var isHover = hover && hover.x === x && hover.y === y;
+      ctx.fillStyle = k === 'crush' ? C.crush : C.hi; ctx.fillRect(L.gx + x * c + 2, L.gy + y * c + 2, c - 3, c - 3);
+      ctx.strokeStyle = isHover ? C.player : C.hiLine; ctx.lineWidth = isHover ? 2 : 1;
+      ctx.strokeRect(L.gx + x * c + 2.5, L.gy + y * c + 2.5, c - 4, c - 4);
+    }
+  }
+  // heaps
+  S.heaps.forEach(function (h) {
+    if (anim.newH[h.id] && !done) return;
+    var p = anim.prevH[h.id] || h, px = cxOf(lerp(p.x, h.x, tp)), py = cyOf(lerp(p.y, h.y, tp));
+    var b = anim.bump;
+    if (b && b.x === h.x && b.y === h.y) { var bt = (now - b.t0) / 180; if (bt < 1) { var s = Math.sin(bt * Math.PI) * c * 0.12; px += b.dx * s; py += b.dy * s; } }
+    drawHeap(h.id, px, py);
+  });
+  // shove hints on heaps you can push
+  if (S.status === 'play' && done) {
+    for (dy = -1; dy <= 1; dy++) for (dx = -1; dx <= 1; dx++) {
+      k = classify(S, dx, dy);
+      if (k !== 'shove' && k !== 'crush') continue;
+      var hx = cxOf(S.player.x + dx), hy = cyOf(S.player.y + dy), m = Math.hypot(dx, dy);
+      arrow(hx + dx / m * c * 0.1, hy + dy / m * c * 0.1, hx + dx / m * c * 0.62, hy + dy / m * c * 0.62, k === 'crush' ? C.accent : 'rgba(255,210,63,0.7)', Math.max(2, c * 0.06));
+    }
+  }
+  // robot intent arrows
+  if (S.status === 'play' && done) {
+    S.robots.forEach(function (r) {
+      var sx = sign(S.player.x - r.x), sy = sign(S.player.y - r.y), m = Math.hypot(sx, sy) || 1;
+      arrow(cxOf(r.x) + sx / m * c * 0.4, cyOf(r.y) + sy / m * c * 0.4, cxOf(r.x) + sx / m * c * 0.82, cyOf(r.y) + sy / m * c * 0.82, C.arrow, Math.max(1.5, c * 0.04));
+    });
+  }
+  // dying robots
+  anim.dying.forEach(function (d) {
+    var t = d.ph === 'p' ? tp : tr; if (t >= 1) return;
+    drawRobot(cxOf(lerp(d.x0, d.x1, t)), cyOf(lerp(d.y0, d.y1, t)), Math.atan2(d.y1 - d.y0, d.x1 - d.x0), 1);
+  });
+  // player
+  var pp = anim.prevP || S.player, plx = cxOf(lerp(pp.x, S.player.x, tp)), ply = cyOf(lerp(pp.y, S.player.y, tp));
+  ctx.beginPath(); ctx.arc(plx, ply, c * 0.3, 0, Math.PI * 2);
+  ctx.fillStyle = S.status === 'caught' && done ? '#ff8a8a' : C.player; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,210,63,0.35)'; ctx.beginPath(); ctx.arc(plx, ply, c * 0.38, 0, Math.PI * 2); ctx.stroke();
+  // robots
+  S.robots.forEach(function (r) {
+    var p = anim.prevR[r.id] || r, rx = lerp(p.x, r.x, tr), ry = lerp(p.y, r.y, tr);
+    var ang = (r.x === S.player.x && r.y === S.player.y) ? Math.atan2(r.y - p.y, r.x - p.x) : Math.atan2(S.player.y - r.y, S.player.x - r.x);
+    drawRobot(cxOf(rx), cyOf(ry), ang, 1);
+  });
+  // particles
+  parts.forEach(function (q) {
+    var f = q.life / q.max;
+    if (q.ring) { ctx.strokeStyle = 'rgba(255,240,200,' + (1 - f) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(q.x, q.y, c * (0.2 + f * 0.7), 0, Math.PI * 2); ctx.stroke(); return; }
+    ctx.globalAlpha = 1 - f; ctx.fillStyle = q.col; ctx.fillRect(q.x - q.r, q.y - q.r, q.r * 2, q.r * 2); ctx.globalAlpha = 1;
+  });
+  ctx.restore();
+  // overlay
+  if (S.status !== 'play' && done) {
+    ctx.fillStyle = 'rgba(12,13,18,0.78)'; ctx.fillRect(L.gx - L.wall, L.gy + L.size / 2 - c * 1.6 - 20, L.size + 2 * L.wall, c * 1.6 + 110);
+    ctx.textAlign = 'center'; ctx.fillStyle = S.status === 'clear' ? C.player : C.robot;
+    ctx.font = '700 ' + Math.round(L.small ? 28 : 38) + 'px ' + FONT;
+    ctx.fillText(S.status === 'clear' ? 'Floor clear!' : 'Caught!', W / 2, L.gy + L.size / 2 - c * 0.9);
+    ctx.fillStyle = C.dim; ctx.font = L.textSize + 'px ' + FONT;
+    ctx.fillText(S.status === 'clear' ? 'Next floor adds 2 more robots.' : 'A robot reached you.', W / 2, L.gy + L.size / 2 - c * 0.9 + (L.small ? 28 : 34));
+    button(L.over, S.status === 'clear' ? 'Next floor' : 'Try again', true);
+  }
+  // message + how to play
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = S.msg.indexOf('!') >= 0 ? C.accent : C.dim; ctx.font = '600 ' + L.textSize + 'px ' + FONT;
+  if (S.status === 'play') ctx.fillText(S.msg, W / 2, L.msgY);
+  ctx.fillStyle = C.text; ctx.font = L.textSize + 'px ' + FONT;
+  L.how.forEach(function (line, i) { ctx.fillText(line, W / 2, L.howY + i * L.lh); });
+}
+
+var last = performance.now();
+function frame() {
+  var now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+  anim.bursts.forEach(function (b) { if (!b.fired && now >= b.at) { b.fired = 1; spawnBurst(b); } });
+  parts.forEach(function (q) { q.life += dt; if (!q.ring) { q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 0.9; q.vy *= 0.9; } });
+  parts = parts.filter(function (q) { return q.life < q.max; });
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+// ---------- input ----------
+function hit(b, x, y) { return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h; }
+function cellAt(x, y) { var gx = Math.floor((x - L.gx) / L.cell), gy = Math.floor((y - L.gy) / L.cell); return inside(gx, gy) ? { x: gx, y: gy } : null; }
+function restart() { restarts++; newGame(START_SEED + restarts * 7919); anim = { t0: -1e9, prevP: null, prevR: {}, prevH: {}, newH: {}, dying: [], bursts: [], bump: null, shake: -1e9 }; parts = []; }
+function nextFloor() { S.floor++; setupFloor(S); anim = { t0: -1e9, prevP: null, prevR: {}, prevH: {}, newH: {}, dying: [], bursts: [], bump: null, shake: -1e9 }; }
+function overlayAction() { if (S.status === 'clear') nextFloor(); else if (S.status === 'caught') restart(); }
+
+cv.addEventListener('pointerdown', function (e) {
+  e.preventDefault();
+  var x = e.clientX, y = e.clientY;
+  if (hit(L.restart, x, y)) { restart(); return; }
+  if (S.status !== 'play') { if (hit(L.over, x, y)) overlayAction(); return; }
+  var cl = cellAt(x, y);
+  if (!cl) return;
+  var dx = cl.x - S.player.x, dy = cl.y - S.player.y;
+  if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) doAction(dx, dy);
+});
+cv.addEventListener('pointermove', function (e) { hover = e.pointerType === 'mouse' ? cellAt(e.clientX, e.clientY) : null; });
+cv.addEventListener('pointerup', function (e) { e.preventDefault(); });
+cv.addEventListener('pointerleave', function () { hover = null; });
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+var KEYS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], q: [-1, -1], w: [0, -1], e: [1, -1], a: [-1, 0], s: [0, 0], ' ': [0, 0], d: [1, 0], z: [-1, 1], x: [0, 1], c: [1, 1] };
+window.addEventListener('keydown', function (e) {
+  var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (k === 'r') { restart(); return; }
+  if (k === 'Enter' || k === 'n') { overlayAction(); return; }
+  if (KEYS[k] && S.status === 'play') { e.preventDefault(); doAction(KEYS[k][0], KEYS[k][1]); }
+});
+
+// ---------- test hook ----------
+window.__toy = {
+  getState: function () {
+    return { seed: seed, floor: S.floor, turn: S.turn, status: S.status, robotsLeft: S.robots.length, wrecked: S.wrecked, msg: S.msg,
+      player: [S.player.x, S.player.y], robots: S.robots.map(function (r) { return [r.x, r.y]; }), heaps: S.heaps.map(function (h) { return [h.x, h.y]; }) };
+  },
+  probes: function () {
+    // Simulate a few safe plain steps from the current state; return taps on those cells.
+    var sim = JSON.parse(JSON.stringify(S)), out = [];
+    for (var n = 0; n < 3 && sim.status === 'play'; n++) {
+      var best = null, bestScore = -1;
+      for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+        if ((dx || dy) && classify(sim, dx, dy) === 'step') {
+          var tx = sim.player.x + dx, ty = sim.player.y + dy, sc = 99;
+          sim.robots.forEach(function (r) { sc = Math.min(sc, cheb(r.x, r.y, tx, ty)); });
+          if (sc > bestScore) { bestScore = sc; best = [dx, dy]; }
+        }
+      }
+      if (!best) break;
+      out.push({ type: 'click', x: cxOf(sim.player.x + best[0]), y: cyOf(sim.player.y + best[1]) });
+      playerAct(sim, best[0], best[1]);
+    }
+    return out;
+  }
+};
+
+newGame(START_SEED);
+resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

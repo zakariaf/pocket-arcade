@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Flock Tilt</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14161c; overscroll-behavior: none; }
+  canvas { display: block; position: fixed; left: 0; top: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(function () {
+'use strict';
+
+// RULES-BEGIN (pure: no DOM, no drawing)
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+var N = 7, DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+function isSheep(a) { return a.k === 's'; }
+function cloneAnimals(list) { return list.map(function (a) { return { id: a.id, k: a.k, x: a.x, y: a.y }; }); }
+function animalAt(list, x, y) { for (var i = 0; i < list.length; i++) if (!list[i].penned && list[i].x === x && list[i].y === y) return list[i]; return null; }
+
+// Tilt the field: every animal slides (leading edge first) until it hits a fence, rock or animal.
+// Sheep that reach the pen drop in; wolves treat the pen as a rock.
+function tilt(board, animals, dx, dy) {
+  var list = cloneAnimals(animals), penned = [], eaten = [], moved = false;
+  list.sort(function (a, b) { return (b.x * dx + b.y * dy) - (a.x * dx + a.y * dy); });
+  list.forEach(function (a) {
+    for (;;) {
+      var nx = a.x + dx, ny = a.y + dy, cell = ny * N + nx;
+      if (nx < 0 || ny < 0 || nx >= N || ny >= N || board.rock[cell] || animalAt(list, nx, ny)) break;
+      if (cell === board.pen && a.k === 'w') break;
+      a.x = nx; a.y = ny; moved = true;
+      if (cell === board.pen) { a.penned = true; penned.push(a.id); break; }
+    }
+  });
+  var left = list.filter(function (a) { return !a.penned; }).sort(function (a, b) { return a.id - b.id; });
+  left.forEach(function (s) {
+    if (!isSheep(s)) return;
+    var f = animalAt(left, s.x + dx, s.y + dy), b = animalAt(left, s.x - dx, s.y - dy);
+    if ((f && f.k === 'w') || (b && b.k === 'w')) eaten.push(s.id);
+  });
+  return { animals: left, penned: penned, eaten: eaten, moved: moved };
+}
+
+function keyOf(animals) {
+  var s = [], w = [];
+  animals.forEach(function (a) { (isSheep(a) ? s : w).push(a.y * N + a.x); });
+  return s.sort(function (a, b) { return a - b; }).join(',') + '|' + w.sort(function (a, b) { return a - b; }).join(',');
+}
+
+// Breadth-first search: fewest tilts that pen every sheep without feeding the wolf (-1 if none within maxDepth).
+function solve(board, animals, maxDepth) {
+  var seen = {}, frontier = [animals];
+  seen[keyOf(animals)] = 1;
+  for (var depth = 1; depth <= maxDepth && frontier.length; depth++) {
+    var next = [];
+    for (var i = 0; i < frontier.length; i++) for (var d = 0; d < 4; d++) {
+      var r = tilt(board, frontier[i], DIRS[d][0], DIRS[d][1]);
+      if (!r.moved || r.eaten.length) continue;
+      if (!r.animals.some(isSheep)) return depth;
+      var k = keyOf(r.animals);
+      if (!seen[k]) { seen[k] = 1; next.push(r.animals); }
+    }
+    frontier = next;
+  }
+  return -1;
+}
+
+// From a seed: 5-8 rocks, a pen, 3 sheep, 1 wolf. Keep only fields with par 3-8; else try the next seed.
+function makeField(seed0) {
+  for (var seed = seed0; seed < seed0 + 100000; seed++) {
+    var rng = mulberry32(seed), cells = [], i;
+    for (i = 0; i < N * N; i++) cells.push(i);
+    for (i = cells.length - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)), t = cells[i]; cells[i] = cells[j]; cells[j] = t; }
+    var nRocks = 5 + Math.floor(rng() * 4), board = { rock: [], pen: cells[nRocks] }, animals = [];
+    for (i = 0; i < N * N; i++) board.rock.push(0);
+    for (i = 0; i < nRocks; i++) board.rock[cells[i]] = 1;
+    for (i = 0; i < 4; i++) { var c = cells[nRocks + 1 + i]; animals.push({ id: i + 1, k: i < 3 ? 's' : 'w', x: c % N, y: Math.floor(c / N) }); }
+    var par = solve(board, animals, 10);
+    if (par >= 3 && par <= 8) return { seed: seed, board: board, animals: animals, par: par };
+  }
+  throw new Error('no field found');
+}
+// RULES-END
+
+// ---------- game state (rules only) ----------
+var START_SEED = 20261152;
+var HOWTO = 'Swipe or tap a side to tilt the field. Everything slides until it hits something. Pen every sheep - keep them off the wolf.';
+var S;
+
+function loadField(num, seed0) {
+  var f = makeField(seed0);
+  S = { field: num, seed: f.seed, par: f.par, board: f.board, start: f.animals, animals: cloneAnimals(f.animals),
+    sheepTotal: f.animals.filter(isSheep).length, penned: 0, swipes: 0, status: 'play', eaten: [], msg: '', history: [] };
+  S.msg = 'Par ' + f.par + ': pen all ' + S.sheepTotal + ' sheep in ' + f.par + ' tilts.';
+}
+function restartField() {
+  S.animals = cloneAnimals(S.start); S.penned = 0; S.swipes = 0; S.status = 'play'; S.eaten = []; S.history = [];
+  S.msg = 'Field reset.';
+}
+function doTilt(s, dx, dy) {
+  if (s.status !== 'play') return null;
+  var r = tilt(s.board, s.animals, dx, dy);
+  if (!r.moved && !r.eaten.length) { s.msg = 'Nothing can slide that way.'; return { noop: true }; }
+  s.history.push({ animals: cloneAnimals(s.animals), penned: s.penned, swipes: s.swipes, msg: s.msg });
+  s.animals = r.animals; s.penned += r.penned.length; s.swipes++;
+  if (r.eaten.length) { s.status = 'lost'; s.eaten = r.eaten; s.msg = 'The wolf got one!'; }
+  else if (s.penned === s.sheepTotal) { s.status = 'won'; s.msg = 'Every sheep penned!'; }
+  else if (solve(s.board, s.animals, 10) < 0) s.msg = 'Looks stuck: no win within 10 tilts. Undo?';
+  else s.msg = r.penned.length ? (r.penned.length > 1 ? r.penned.length + ' sheep penned at once!' : 'A sheep is penned!') : '';
+  return r;
+}
+function undoTilt(s) {
+  var h = s.history.pop();
+  if (!h) { s.msg = 'Nothing to undo.'; return false; }
+  s.animals = h.animals; s.penned = h.penned; s.swipes = h.swipes; s.msg = h.msg; s.status = 'play'; s.eaten = [];
+  return true;
+}
+
+// ---------- canvas, layout ----------
+var cv = document.getElementById('c'), ctx = cv.getContext('2d');
+var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+var C = { bg: '#14161c', grass: '#3a5732', grass2: '#3f5e37', fence: '#8a6a45', fenceDark: '#5a4430', fenceHi: '#e2bf86',
+  rock: '#9a948a', rockDark: '#5f5a53', sheep: '#f4f1e8', sheepLine: '#b3ab98', face: '#2b2824', wolf: '#2a2e37', snout: '#474d5a',
+  pen: '#6b5234', text: '#e9eaf0', dim: '#9aa0ad', btn: '#2a2f3c', btnLine: '#4a5063', gold: '#ffd23f', red: '#ff5d5d' };
+var W = 0, H = 0, L = {};
+
+function wrap(text, maxW) {
+  var words = text.split(' '), lines = [], cur = '';
+  words.forEach(function (w) {
+    var t = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t;
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function resize() {
+  var dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var pad = 16, small = W < 600;
+  L.small = small; L.pad = pad;
+  L.titleSize = small ? 22 : 28; L.textSize = small ? 14 : 16; L.lh = small ? 19 : 22;
+  var bh = small ? 36 : 40, headerH = bh + 40, rw = small ? 84 : 118, uw = small ? 70 : 104;
+  ctx.font = L.textSize + 'px ' + FONT;
+  L.how = wrap(HOWTO, W - 2 * pad);
+  var msgH = 36, howH = L.how.length * L.lh;
+  var room = Math.min(W - 2 * pad, H - 2 * pad - headerH - msgH - howH);
+  L.cell = Math.max(14, Math.floor(room / (N + 0.7)));
+  L.wall = Math.max(5, Math.round(L.cell * 0.35));
+  L.size = L.cell * N;
+  var total = headerH + L.size + 2 * L.wall + msgH + howH;
+  var top = Math.max(pad, Math.round((H - total) / 2));
+  L.restart = { x: W - pad - rw, y: top, w: rw, h: bh, label: small ? 'Restart' : 'Restart (R)' };
+  L.undo = { x: L.restart.x - 8 - uw, y: top, w: uw, h: bh, label: small ? 'Undo' : 'Undo (U)' };
+  L.titleY = top + bh / 2; L.statusY = top + bh + 24;
+  L.gx = Math.round((W - L.size) / 2); L.gy = top + headerH + L.wall;
+  L.bcx = L.gx + L.size / 2; L.bcy = L.gy + L.size / 2;
+  L.msgY = L.gy + L.size + L.wall + msgH / 2 + 2;
+  L.howY = L.gy + L.size + L.wall + msgH + L.lh / 2;
+  L.panelH = small ? 136 : 170;
+  L.over = { x: Math.round(W / 2 - 75), y: 0, w: 150, h: 44 };
+}
+window.addEventListener('resize', resize);
+
+// ---------- cosmetics (read state, never write it) ----------
+var BASE = 70, PER = 45, BUMP = 150;
+var fx = mulberry32(START_SEED + 1);
+function blankAnim() { return { t0: -1e9, end: -1e9, dx: 0, dy: 0, from: {}, gone: [], bursts: [], shakeAt: -1e9 }; }
+var anim = blankAnim(), parts = [], hoverSide = null, nudge = null, drag = null;
+
+function clamp01(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function durFor(f, a) { return BASE + PER * (Math.abs(a.x - f.x) + Math.abs(a.y - f.y)); }
+function penXY() { return { x: S.board.pen % N, y: Math.floor(S.board.pen / N) }; }
+
+function animateFrom(before, dx, dy, now) {
+  var from = {}, end = now;
+  before.forEach(function (a) { from[a.id] = { x: a.x, y: a.y }; });
+  anim = { t0: now, dx: dx, dy: dy, from: from, gone: [], bursts: [], shakeAt: -1e9, end: now };
+  S.animals.forEach(function (a) { if (from[a.id]) end = Math.max(end, now + durFor(from[a.id], a)); });
+  return end;
+}
+function move(dx, dy) {
+  if (S.status !== 'play') return;
+  var now = performance.now(), before = cloneAnimals(S.animals), r = doTilt(S, dx, dy);
+  if (!r) return;
+  if (r.noop) { nudge = { t0: now, dx: dx, dy: dy }; return; }
+  var end = animateFrom(before, dx, dy, now), pen = penXY();
+  r.penned.forEach(function (id) {
+    var f = anim.from[id], d = durFor(f, pen);
+    anim.gone.push({ x0: f.x, y0: f.y, dur: d });
+    anim.bursts.push({ at: now + d, x: pen.x, y: pen.y });
+    end = Math.max(end, now + d);
+  });
+  if (r.eaten.length) anim.shakeAt = end;
+  anim.end = end + BUMP + (S.status !== 'play' ? 350 : 0);
+}
+function undo() { var before = cloneAnimals(S.animals); if (undoTilt(S)) anim.end = animateFrom(before, 0, 0, performance.now()); }
+function restart() { restartField(); anim = blankAnim(); parts = []; }
+function nextField() { loadField(S.field + 1, S.seed + 1); anim = blankAnim(); parts = []; }
+function overlayAction() { if (S.status === 'won') nextField(); else if (S.status === 'lost') undo(); }
+
+function spawnBurst(b) {
+  var cx = L.gx + (b.x + 0.5) * L.cell, cy = L.gy + (b.y + 0.5) * L.cell;
+  for (var i = 0; i < 16; i++) {
+    var a = fx() * Math.PI * 2, sp = (0.6 + fx()) * L.cell * 3.5;
+    parts.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0, max: 0.35 + fx() * 0.3,
+      col: fx() < 0.6 ? C.sheep : C.gold, r: L.cell * (0.04 + fx() * 0.05) });
+  }
+  parts.push({ ring: 1, x: cx, y: cy, life: 0, max: 0.35 });
+}
+
+// ---------- drawing ----------
+function rr(x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+function button(b, label, strong) {
+  rr(b.x, b.y, b.w, b.h, 8); ctx.fillStyle = strong ? C.gold : C.btn; ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = strong ? C.gold : C.btnLine; ctx.stroke();
+  ctx.fillStyle = strong ? '#1a1a1a' : C.text; ctx.font = '600 ' + (L.small ? 15 : 16) + 'px ' + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, b.x + b.w / 2, b.y + b.h / 2 + 1);
+}
+function cxOf(x) { return L.gx + (x + 0.5) * L.cell; }
+function cyOf(y) { return L.gy + (y + 0.5) * L.cell; }
+function poly(pts, s) { ctx.beginPath(); pts.forEach(function (p, i) { if (i) ctx.lineTo(p[0] * s, p[1] * s); else ctx.moveTo(p[0] * s, p[1] * s); }); ctx.closePath(); }
+
+function drawRock(cell) {
+  var r = mulberry32(cell * 7919 + 13), c = L.cell, px = cxOf(cell % N), py = cyOf(Math.floor(cell / N)), pts = [];
+  for (var i = 0; i < 9; i++) { var a = (i / 9) * Math.PI * 2 + r() * 0.3, d = c * (0.34 + r() * 0.1); pts.push([px + Math.cos(a) * d, py + Math.sin(a) * d * 0.85]); }
+  poly(pts, 1); ctx.fillStyle = C.rock; ctx.fill(); ctx.lineWidth = Math.max(1.5, c * 0.045); ctx.strokeStyle = C.rockDark; ctx.stroke();
+}
+var FLUFF = [[0, -0.2], [0.19, -0.1], [0.19, 0.1], [0, 0.2], [-0.19, 0.1], [-0.19, -0.1], [0, 0]];
+function drawSheep(px, py, sx, sy, red, scale) {
+  var c = L.cell * (scale || 1), lw = Math.max(1.5, c * 0.04);
+  ctx.save(); ctx.translate(px, py); ctx.scale(sx, sy);
+  [[red ? C.red : C.sheepLine, c * 0.14 + lw], [red ? '#ffc2c2' : C.sheep, c * 0.14]].forEach(function (pass) {
+    ctx.fillStyle = pass[0]; ctx.beginPath();
+    FLUFF.forEach(function (f) { ctx.moveTo(f[0] * c + pass[1], f[1] * c); ctx.arc(f[0] * c, f[1] * c, pass[1], 0, Math.PI * 2); });
+    ctx.fill();
+  });
+  ctx.fillStyle = C.face; ctx.beginPath(); ctx.ellipse(0, c * 0.06, c * 0.11, c * 0.14, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-c * 0.15, -c * 0.01, c * 0.07, c * 0.035, -0.4, 0, Math.PI * 2); ctx.ellipse(c * 0.15, -c * 0.01, c * 0.07, c * 0.035, 0.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-c * 0.045, c * 0.02, c * 0.022, 0, Math.PI * 2); ctx.arc(c * 0.045, c * 0.02, c * 0.022, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+var WOLF = [[-0.3, -0.36], [-0.11, -0.17], [0.11, -0.17], [0.3, -0.36], [0.31, 0.02], [0.13, 0.2], [0, 0.35], [-0.13, 0.2], [-0.31, 0.02]];
+function drawWolf(px, py, sx, sy) {
+  var c = L.cell;
+  ctx.save(); ctx.translate(px, py); ctx.scale(sx, sy);
+  ctx.beginPath(); ctx.arc(0, 0, c * 0.43, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,93,93,0.16)'; ctx.fill();
+  poly(WOLF, c); ctx.fillStyle = C.wolf; ctx.fill(); ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(1.5, c * 0.04); ctx.strokeStyle = C.red; ctx.stroke();
+  poly([[-0.1, 0.07], [0.1, 0.07], [0, 0.31]], c); ctx.fillStyle = C.snout; ctx.fill();
+  ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(-c * 0.12, -c * 0.02, c * 0.045, 0, Math.PI * 2); ctx.arc(c * 0.12, -c * 0.02, c * 0.045, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(0, c * 0.27, c * 0.04, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function sideAt(x, y) {
+  var dx = x - L.bcx, dy = y - L.bcy, reach = L.size / 2 + L.wall + L.cell * 0.6;
+  if (Math.abs(dx) > reach || Math.abs(dy) > reach || Math.max(Math.abs(dx), Math.abs(dy)) < L.cell * 0.35) return null;
+  return Math.abs(dx) > Math.abs(dy) ? [dx > 0 ? 1 : -1, 0] : [0, dy > 0 ? 1 : -1];
+}
+
+// Result panel sits clear of the bite, so you can see what went wrong.
+function panelTop() {
+  if (S.status === 'lost') {
+    var ys = S.animals.filter(function (a) { return !isSheep(a) || S.eaten.indexOf(a.id) >= 0; }).map(function (a) { return a.y; });
+    if (Math.min.apply(null, ys) >= 3) return L.gy;
+    if (Math.max.apply(null, ys) <= 3) return L.gy + L.size - L.panelH;
+  }
+  return L.bcy - L.panelH / 2;
+}
+
+function draw(now) {
+  var c = L.cell, settled = now >= anim.end, half = L.size / 2;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+  // header
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillStyle = C.text; ctx.font = '700 ' + L.titleSize + 'px ' + FONT; ctx.fillText('Flock Tilt', L.pad, L.titleY);
+  ctx.fillStyle = C.dim; ctx.font = L.textSize + 'px ' + FONT;
+  ctx.fillText('Field ' + S.field + '  ·  Par ' + S.par + '  ·  Swipes ' + S.swipes + '  ·  Penned ' + S.penned + '/' + S.sheepTotal, L.pad, L.statusY);
+  button(L.undo, L.undo.label); button(L.restart, L.restart.label);
+  // board: leans the way it tilts, shakes when the wolf strikes, wiggles when nothing can move
+  var ox = 0, oy = 0, lt = clamp01((now - anim.t0) / (anim.end - anim.t0 || 1)), sk = clamp01(1 - (now - anim.shakeAt) / 280);
+  if (lt < 1) { var lean = Math.sin(lt * Math.PI) * c * 0.08; ox += anim.dx * lean; oy += anim.dy * lean; }
+  if (now >= anim.shakeAt && sk > 0) { ox += (fx() - 0.5) * c * 0.25 * sk; oy += (fx() - 0.5) * c * 0.25 * sk; }
+  if (nudge && now - nudge.t0 < 240) { var nt = (now - nudge.t0) / 240, nw = Math.sin(nt * Math.PI * 3) * c * 0.06 * (1 - nt); ox += nudge.dx * nw; oy += nudge.dy * nw; }
+  ctx.save(); ctx.translate(ox, oy);
+  rr(L.gx - L.wall, L.gy - L.wall, L.size + 2 * L.wall, L.size + 2 * L.wall, L.wall * 0.6); ctx.fillStyle = C.fence; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = C.fenceDark; ctx.stroke();
+  for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) { ctx.fillStyle = (x + y) % 2 ? C.grass2 : C.grass; ctx.fillRect(L.gx + x * c, L.gy + y * c, c, c); }
+  // tap-a-side hints: chevrons on the fence, wedge under the mouse
+  DIRS.forEach(function (d) {
+    var on = hoverSide && hoverSide[0] === d[0] && hoverSide[1] === d[1] && S.status === 'play';
+    if (on) {
+      ctx.fillStyle = 'rgba(255,210,63,0.08)'; ctx.beginPath(); ctx.moveTo(L.bcx, L.bcy);
+      ctx.lineTo(L.bcx + d[0] * half - d[1] * half, L.bcy + d[1] * half + d[0] * half); ctx.lineTo(L.bcx + d[0] * half + d[1] * half, L.bcy + d[1] * half - d[0] * half); ctx.fill();
+    }
+    var mx = L.bcx + d[0] * (half + L.wall / 2), my = L.bcy + d[1] * (half + L.wall / 2), s = L.wall * 0.34;
+    ctx.fillStyle = on ? C.gold : C.fenceHi; ctx.beginPath();
+    ctx.moveTo(mx + d[0] * s, my + d[1] * s); ctx.lineTo(mx - d[0] * s - d[1] * s * 1.3, my - d[1] * s - d[0] * s * 1.3); ctx.lineTo(mx - d[0] * s + d[1] * s * 1.3, my - d[1] * s + d[0] * s * 1.3); ctx.fill();
+  });
+  // pen (with the sheep already inside)
+  var pen = penXY(), ppx = L.gx + pen.x * c, ppy = L.gy + pen.y * c, lw = Math.max(2, c * 0.07);
+  ctx.fillStyle = C.pen; ctx.fillRect(ppx + 1, ppy + 1, c - 2, c - 2);
+  ctx.strokeStyle = C.fenceHi; ctx.lineWidth = lw; ctx.strokeRect(ppx + c * 0.1, ppy + c * 0.1, c * 0.8, c * 0.8);
+  ctx.beginPath(); ctx.moveTo(ppx + c * 0.1, ppy + c * 0.5); ctx.lineTo(ppx + c * 0.9, ppy + c * 0.5); ctx.lineWidth = lw * 0.6; ctx.stroke();
+  var shown = S.penned - anim.gone.filter(function (g) { return now < anim.t0 + g.dur; }).length;
+  for (var i = 0; i < shown; i++) drawSheep(ppx + c * (0.3 + 0.2 * i), ppy + c * (i % 2 ? 0.62 : 0.4), 1, 1, false, 0.45);
+  S.board.rock.forEach(function (r, cell) { if (r) drawRock(cell); });
+  // sheep dropping into the pen
+  anim.gone.forEach(function (g) {
+    var t = clamp01((now - anim.t0) / g.dur); if (t >= 1) return;
+    var e = t * t; drawSheep(cxOf(lerp(g.x0, pen.x, e)), cyOf(lerp(g.y0, pen.y, e)), 1, 1, false, 1 - 0.5 * e);
+  });
+  // animals: accelerate as the field tilts, squash against whatever stopped them
+  S.animals.forEach(function (a) {
+    var f = anim.from[a.id] || a, d = durFor(f, a), t = clamp01((now - anim.t0) / d), e = t * t;
+    var px = cxOf(lerp(f.x, a.x, e)), py = cyOf(lerp(f.y, a.y, e)), sx = 1, sy = 1, u = (now - anim.t0 - d) / BUMP;
+    if ((f.x !== a.x || f.y !== a.y) && u >= 0 && u < 1 && (anim.dx || anim.dy)) {
+      var k = Math.sin(u * Math.PI) * 0.22;
+      sx = 1 - k * Math.abs(anim.dx) + k * 0.5 * Math.abs(anim.dy); sy = 1 - k * Math.abs(anim.dy) + k * 0.5 * Math.abs(anim.dx);
+      px += anim.dx * k * c * 0.2; py += anim.dy * k * c * 0.2;
+    }
+    if (isSheep(a)) drawSheep(px, py, sx, sy, S.eaten.indexOf(a.id) >= 0 && now >= anim.shakeAt);
+    else drawWolf(px, py, sx, sy);
+  });
+  parts.forEach(function (q) {
+    var fr = q.life / q.max;
+    if (q.ring) { ctx.strokeStyle = 'rgba(255,210,63,' + (1 - fr) + ')'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(q.x, q.y, c * (0.25 + fr * 0.8), 0, Math.PI * 2); ctx.stroke(); return; }
+    ctx.globalAlpha = 1 - fr; ctx.fillStyle = q.col; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  });
+  ctx.restore();
+  // result panel
+  if (S.status !== 'play' && settled) {
+    var won = S.status === 'won', top = panelTop();
+    L.over.y = Math.round(top + L.panelH - 62);
+    ctx.fillStyle = 'rgba(12,13,18,0.82)'; ctx.fillRect(L.gx - L.wall, top, L.size + 2 * L.wall, L.panelH);
+    ctx.textAlign = 'center'; ctx.fillStyle = won ? C.gold : C.red; ctx.font = '700 ' + (L.small ? 26 : 34) + 'px ' + FONT;
+    ctx.fillText(won ? 'Field clear!' : 'The wolf got one!', W / 2, top + (L.small ? 28 : 34));
+    ctx.fillStyle = C.text; ctx.font = L.textSize + 'px ' + FONT;
+    ctx.fillText(won ? (S.swipes + ' swipes  ·  par ' + S.par + (S.swipes <= S.par ? '  ·  perfect!' : '')) : 'Undo (U) or Restart (R) to try again.', W / 2, top + (L.small ? 60 : 70));
+    button(L.over, won ? 'Next field' : 'Undo', true);
+  }
+  // message + how to play
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = S.status === 'lost' || S.msg.indexOf('stuck') >= 0 ? C.red : S.msg.indexOf('!') >= 0 ? C.gold : C.dim; ctx.font = '600 ' + L.textSize + 'px ' + FONT;
+  ctx.fillText(S.msg, W / 2, L.msgY, W - 2 * L.pad);
+  ctx.fillStyle = C.text; ctx.font = L.textSize + 'px ' + FONT;
+  L.how.forEach(function (line, i) { ctx.fillText(line, W / 2, L.howY + i * L.lh); });
+}
+
+var last = performance.now();
+function frame() {
+  var now = performance.now(), dt = Math.min(0.05, (now - last) / 1000); last = now;
+  anim.bursts.forEach(function (b) { if (!b.fired && now >= b.at) { b.fired = 1; spawnBurst(b); } });
+  parts.forEach(function (q) { q.life += dt; if (!q.ring) { q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 0.9; q.vy *= 0.9; } });
+  parts = parts.filter(function (q) { return q.life < q.max; });
+  draw(now);
+  requestAnimationFrame(frame);
+}
+
+// ---------- input ----------
+function hit(b, x, y) { return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h; }
+cv.addEventListener('pointerdown', function (e) {
+  e.preventDefault();
+  var x = e.clientX, y = e.clientY;
+  if (hit(L.restart, x, y)) { restart(); return; }
+  if (hit(L.undo, x, y)) { undo(); return; }
+  if (S.status !== 'play') { if (hit(L.over, x, y) && performance.now() >= anim.end) overlayAction(); return; }
+  drag = { id: e.pointerId, x: x, y: y, fired: false };
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+});
+cv.addEventListener('pointermove', function (e) {
+  hoverSide = e.pointerType === 'mouse' ? sideAt(e.clientX, e.clientY) : null;
+  if (!drag || drag.fired || e.pointerId !== drag.id) return;
+  var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 26) return;
+  drag.fired = true;
+  if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 1 : -1, 0); else move(0, dy > 0 ? 1 : -1);
+});
+cv.addEventListener('pointerup', function (e) {
+  e.preventDefault();
+  if (drag && !drag.fired && e.pointerId === drag.id) { var s = sideAt(drag.x, drag.y); if (s) move(s[0], s[1]); }
+  drag = null;
+});
+cv.addEventListener('pointercancel', function () { drag = null; });
+cv.addEventListener('pointerleave', function () { hoverSide = null; });
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+document.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+var KEYS = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowUp: [0, -1], w: [0, -1], ArrowDown: [0, 1], s: [0, 1] };
+window.addEventListener('keydown', function (e) {
+  var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (k === 'r') { restart(); return; }
+  if (k === 'u') { undo(); return; }
+  if (k === 'Enter' || k === 'n') { overlayAction(); return; }
+  if (KEYS[k]) { e.preventDefault(); move(KEYS[k][0], KEYS[k][1]); }
+});
+
+// ---------- test hook ----------
+window.__toy = {
+  getState: function () {
+    return { field: S.field, seed: S.seed, par: S.par, swipes: S.swipes, status: S.status, penned: S.penned, msg: S.msg, pen: S.board.pen,
+      sheep: S.animals.filter(isSheep).map(function (a) { return [a.x, a.y]; }),
+      wolves: S.animals.filter(function (a) { return !isSheep(a); }).map(function (a) { return [a.x, a.y]; }),
+      eaten: S.eaten.slice(), undoDepth: S.history.length };
+  },
+  probes: function () {
+    // Up to 3 side taps, each of which moves something (preferring tilts that don't feed the wolf).
+    var sim = cloneAnimals(S.animals), out = [], reach = L.size * 0.38;
+    for (var n = 0; n < 3; n++) {
+      var pick = null;
+      for (var d = 0; d < 4 && !pick; d++) { var r = tilt(S.board, sim, DIRS[d][0], DIRS[d][1]); if (r.moved && !r.eaten.length) pick = [DIRS[d], r]; }
+      if (!pick) break;
+      out.push({ type: 'click', x: L.bcx + pick[0][0] * reach, y: L.bcy + pick[0][1] * reach });
+      sim = pick[1].animals;
+      if (!sim.some(isSheep)) break;
+    }
+    return out;
+  }
+};
+
+loadField(1, START_SEED);
+resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
