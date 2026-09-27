@@ -23,3 +23,7 @@ The repository holds the planning stage. The idea research, the product spec and
 - **One Shell, many apps.** Each game plugs into the shared framework through one `GameModule` contract.
 - **No game engine.** Boards are drawn with Skia, animated with Reanimated and driven by pure TypeScript rules, so every game can be tested headlessly.
 - **Machine-enforced quality.** Strict TypeScript and ESLint, size limits, TDD, pixel and data goldens, test bots, and end-to-end tests on the iOS simulator.
+
+## Licence
+
+[MIT](LICENSE). You're free to use, change, fork and build on anything here.
