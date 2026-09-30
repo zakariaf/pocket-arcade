@@ -3,7 +3,7 @@
 > **What this doc decides.** Sound effects are synthesised in code from small typed recipes and played through one `AudioContext` (react-native-audio-api 0.13.6, exact pin, iOS session category `ambient`, music off by default) behind `AudioPort`. Vibration goes through `HapticsPort` (expo-haptics) with a fixed cue table and a 40 ms throttle.
 > Every image is drawn by code: a headless-Skia script renders the app icon (light, dark, tinted), the splash logos and any store art from the game's own draw functions and palette tokens. Sprites are pre-rendered at device pixels and re-rendered when the theme changes. The S11d licences screen reads data files defined here.
 > All code below was compiled, linted and tested on 2026-09-26; the audio adapter, haptics adapter and fonts also ran in a Release build on the iOS 26.5 simulator.
-> **Related docs:** [08-game-engine.md](08-game-engine.md) (timeline cues and board kit), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (fonts), [02-architecture-and-folders.md](02-architecture-and-folders.md) (ports and app zones), [14-ios-build-and-release.md](14-ios-build-and-release.md) (withShell and ITMS-90683), [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) (licence audit and verify). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
+> **Related docs:** [08-game-engine.md](08-game-engine.md) (timeline cues and board kit), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (fonts), [18-design-system-toybox.md](18-design-system-toybox.md) (the Toybox design system: UI palettes, Lilita One and Rubik, icon paths, logo art), [02-architecture-and-folders.md](02-architecture-and-folders.md) (ports and app zones), [14-ios-build-and-release.md](14-ios-build-and-release.md) (withShell and ITMS-90683), [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) (licence audit and verify). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ## Intro
 
@@ -1167,7 +1167,7 @@ Import JSON with `with { type: 'json' }`. This was verified to work in `tsc`, ES
 - All four sets have the same keys; `PaletteSet<BoardToken>` rejects a missing token.
 - Colour-blind sets use a CVD-safe hue family (the example uses Okabe–Ito colours). Meaning is also carried by shape or symbol in `draw()`, because spec S11 says nothing may be told apart by colour alone.
 - `#RRGGBBAA` is allowed for translucent tokens (the ghost).
-- docs/05 derives the UI tokens (backgrounds, text, accents) from this file, and docs/15's contrast tests check them (docs/05 open issue 8 tracks the mapping).
+- These are board tokens only. The Shell's UI colours (backgrounds, text, accents) are the game's Toybox paint in `design/toybox/tokens.json` and `apps/<game>/src/theme/palette.ts` (docs/18 sections 3.2 and 9.1); docs/15's contrast tests check both.
 
 `makeBoardColors(skia, palettes, { scheme, isColorBlind })` (docs/08, `board-kit.ts`) resolves the tokens once per theme change.
 
@@ -1521,6 +1521,7 @@ docs/10 owns the font files (`apps/<game>/assets/fonts/Vazirmatn-{Regular,Bold}.
 - **In Jest goldens and Node scripts.** Load the TTF with `Skia.Typeface.MakeFreeTypeFaceFromData(Skia.Data.fromBytes(bytes))`, and register it in a `Skia.TypefaceFontProvider` for paragraphs. The docs/08 goldens do this.
 - **Board line height.** For Paragraph labels, set `heightMultiplier: 1.5` in the text style for Arabic script, the same ratio as docs/10.
 - **Icons.** They contain no text, so `render-art.ts` loads no fonts.
+- **Toybox fonts.** The design system (docs/18 section 3.6) adds the Latin UI faces **Lilita One** 1.002 (display; `LilitaOne.ttf`) and **Rubik** 2.300 (text; `Rubik-Regular.ttf`, `Rubik-Bold.ttf`, static cuts of the variable font) to the same `assets/fonts/` folder and `expo-font` entry, each with its OFL text. Boards and art that set Latin text use them the same way (`matchFamilyStyle('Lilita One', …)` or `'Rubik'`); both are SIL OFL 1.1, so S11d lists them (section 9).
 
 ## 8. App icon requirements (summary)
 
@@ -1713,9 +1714,27 @@ export type CreditEntry = {
     "license": "OFL-1.1",
     "copyright": "Copyright 2015 The Vazirmatn Project Authors (https://github.com/rastikerdar/vazirmatn)",
     "url": "https://github.com/rastikerdar/vazirmatn"
+  },
+  {
+    "kind": "font",
+    "name": "Lilita One",
+    "version": "1.002",
+    "license": "OFL-1.1",
+    "copyright": "Copyright (c) 2011 Juan Montoreano (juan@remolacha.biz), with Reserved Font Names \"Lilita One\"",
+    "url": "https://github.com/google/fonts/tree/main/ofl/lilitaone"
+  },
+  {
+    "kind": "font",
+    "name": "Rubik",
+    "version": "2.300",
+    "license": "OFL-1.1",
+    "copyright": "Copyright 2015 The Rubik Project Authors (https://github.com/googlefonts/rubik)",
+    "url": "https://github.com/googlefonts/rubik"
   }
 ]
 ```
+
+The Lilita One and Rubik rows are the Toybox UI fonts (docs/18 section 3.6); their copyright lines are the fonts' own name-table notices (read from the Google Fonts files on 2026-09-28), and the three rows pass `creditProblems`' licence, https and copyright checks.
 
 ```ts
 // packages/shell/src/art/credit-problems.ts
@@ -1829,7 +1848,7 @@ Re-check the list when a native dependency changes: `Pods/Target Support Files/P
 - Expo: [haptics](https://docs.expo.dev/versions/latest/sdk/haptics/) · [splash screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/) · [font](https://docs.expo.dev/versions/latest/sdk/font/) · [app config (icon)](https://docs.expo.dev/versions/latest/config/app/)
 - Skia: [headless](https://shopify.github.io/react-native-skia/docs/getting-started/headless) · [Atlas](https://shopify.github.io/react-native-skia/docs/shapes/atlas) · [Paragraph](https://shopify.github.io/react-native-skia/docs/text/paragraph) · [Skia LICENSE](https://skia.googlesource.com/skia/+/main/LICENSE)
 - Node: [TypeScript type stripping](https://nodejs.org/api/typescript.html)
-- Fonts: [Vazirmatn](https://github.com/rastikerdar/vazirmatn) · [SIL OFL](https://openfontlicense.org/)
+- Fonts: [Vazirmatn](https://github.com/rastikerdar/vazirmatn) · [Lilita One](https://github.com/google/fonts/tree/main/ofl/lilitaone) · [Rubik](https://github.com/googlefonts/rubik) · [SIL OFL](https://openfontlicense.org/)
 - Vendored native code: [miniaudio](https://github.com/mackron/miniaudio) · [PFFFT](https://github.com/marton78/pffft) · [concurrentqueue](https://github.com/cameron314/concurrentqueue) · [r8brain-free-src](https://github.com/avaneev/r8brain-free-src) · [Hermes LICENSE](https://github.com/facebook/hermes/blob/main/LICENSE)
 
 ## Verified (2026-09-26)

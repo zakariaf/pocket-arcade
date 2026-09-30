@@ -2,6 +2,7 @@
 
 > **What this is.** The engineering handbook for the E07 game framework (working name "the Shell") and every game app built on it. It is the output of the spec's "research the platform" step: [`spec.txt`](../spec.txt) says *what* the Shell and its games do; these docs say *how* they are built with React Native, and every code sample in them was compiled, linted and tested on 2026-09-26.
 > **Who writes the code.** Claude Code builds, tests and releases everything by itself. The owner reviews, play-tests and does the few steps that need a person. That is why most rules here are enforced by machines (lint, types, tests, hooks), not by review.
+> **The look:** the spec's design step chose **Toybox** (one of the three Shell mockups in `design/`, 2026-09-27). [18-design-system-toybox.md](18-design-system-toybox.md) codifies it; its tokens are in `design/toybox/tokens.json`.
 > **How a session works:** [17-claude-code-playbook.md](17-claude-code-playbook.md). **Binding decisions behind the docs:** [99-final-decisions.md](99-final-decisions.md) (2026-09-26, with its section G amendments); the docs restate them with versions and verified code; section G of that file records where verification refined them.
 
 ---
@@ -30,7 +31,7 @@
 5. [03-naming.md](03-naming.md) and [04-code-style-and-limits.md](04-code-style-and-limits.md): names, the complete TypeScript and ESLint configuration (one `eslint.config.mjs`, with the rules other docs own merged in), limits.
 6. [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md): scripts, git hooks, Claude Code hooks, the guardrail. Set these up before the first feature.
 7. [07-testing-and-tdd.md](07-testing-and-tdd.md): the TDD loop, Jest, Stryker and Maestro set-up.
-8. Then by layer, in the build order of FINAL D.41: [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (save first: N10), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (boot order and direction), [05-components-hooks-styling.md](05-components-hooks-styling.md), [08-game-engine.md](08-game-engine.md), [09-sound-haptics-art.md](09-sound-haptics-art.md), [11-ads-admob.md](11-ads-admob.md), [12-in-app-purchase.md](12-in-app-purchase.md), [15-performance-and-accessibility.md](15-performance-and-accessibility.md).
+8. Then by layer, in the build order of FINAL D.41: [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (save first: N10), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (boot order and direction), [05-components-hooks-styling.md](05-components-hooks-styling.md) with [18-design-system-toybox.md](18-design-system-toybox.md) (every token, component and screen layout), [08-game-engine.md](08-game-engine.md), [09-sound-haptics-art.md](09-sound-haptics-art.md), [11-ads-admob.md](11-ads-admob.md), [12-in-app-purchase.md](12-in-app-purchase.md), [15-performance-and-accessibility.md](15-performance-and-accessibility.md).
 9. Before the first simulator build: [14-ios-build-and-release.md](14-ios-build-and-release.md) sections 3.1 to 3.5 and [13-privacy-network-security.md](13-privacy-network-security.md). Before the first upload: the rest of 14.
 
 ### 2b. Claude Code starting a new game (game 2 onwards)
@@ -40,7 +41,7 @@
 3. [02-architecture-and-folders.md](02-architecture-and-folders.md) section 7 (the `GameModule` contract), section 8 (wiring an app) and section 11.3 (add a game).
 4. [08-game-engine.md](08-game-engine.md) sections 3 and 4: classify the game, then build it layer by layer.
 5. [07-testing-and-tdd.md](07-testing-and-tdd.md) sections 3.8.1 to 3.8.4 (rules, goldens, pixels, bots).
-6. [09-sound-haptics-art.md](09-sound-haptics-art.md) sections 5 and 7 (sound bank, icon, palette tokens) and [10-i18n-and-rtl.md](10-i18n-and-rtl.md) section 3.16 (four catalogs).
+6. [09-sound-haptics-art.md](09-sound-haptics-art.md) sections 5 and 7 (sound bank, icon, palette tokens), [18-design-system-toybox.md](18-design-system-toybox.md) sections 3.2 and 9.1 (the game's Toybox paint and its `palette.ts`) and [10-i18n-and-rtl.md](10-i18n-and-rtl.md) section 3.16 (four catalogs).
 7. [11-ads-admob.md](11-ads-admob.md) section 3.11 and [14-ios-build-and-release.md](14-ios-build-and-release.md) section 3.11 for the owner's per-game steps (AdMob units, app record), then 14 section 3.8 to release.
 
 ### 2c. The owner
@@ -52,6 +53,7 @@
 5. [13-privacy-network-security.md](13-privacy-network-security.md) section 3.4: the App Privacy answers and the one decision about Apple's tracking guideline.
 6. [15-performance-and-accessibility.md](15-performance-and-accessibility.md) sections 3.2 and 3.10: how to record a performance report and run the VoiceOver checklist on your phone.
 7. [07-testing-and-tdd.md](07-testing-and-tdd.md) section 3.17: the evidence report you will receive after each piece of work.
+8. [18-design-system-toybox.md](18-design-system-toybox.md) sections 1 and 8 and its open issues: the chosen look (Toybox), its measured contrast, and the design questions left to you.
 
 ---
 
@@ -95,6 +97,7 @@ Only what needs your identity, your money, your judgement or your phone ([14 §3
 | App state | Zustand stores over pure reducers; game runs in a pure `GameSession` reducer | 5.0.15 | [06](06-navigation-state-persistence.md) |
 | Saving | one versioned JSON document in SQLite (WAL, `synchronous = FULL`), valibot validation, tested migrations | `expo-sqlite` 57.0.3, valibot 1.5.0 | [06](06-navigation-state-persistence.md) |
 | UI | function components, React Compiler, StyleSheet + typed theme, logical (start/end) styles | compiler bundled with Expo | [05](05-components-hooks-styling.md) |
+| Design system | Toybox: ink-outlined keys with hard shadows, stickers, per-game paint; Lilita One + Rubik (Vazirmatn for fa/ckb) | `design/toybox.html`, `design/toybox/tokens.json` (2026-09-28) | [18](18-design-system-toybox.md) |
 | Boards | Skia canvas + Reanimated clock + Gesture Handler + in-house kit | Skia 2.6.2, Reanimated 4.5.1, Worklets 0.10.1, RNGH 2.32.0 | [08](08-game-engine.md) |
 | Sound, haptics, art | sounds synthesised in code; Expo Haptics; icons and splash rendered by headless Skia | `react-native-audio-api` 0.13.6, `expo-haptics` 57.0.3 | [09](09-sound-haptics-art.md) |
 | Languages | react-intl with forced FormatJS polyfills, catalog linter, Vazirmatn font, restart for direction | `react-intl` 12.1.3 | [10](10-i18n-and-rtl.md) |
@@ -130,6 +133,7 @@ Only what needs your identity, your money, your judgement or your phone ([14 §3
 | [15-performance-and-accessibility.md](15-performance-and-accessibility.md) | Budgets and how each is measured (frame recorder, cold-start log, save and draw-call tests), performance rules, accessibility rules and tests, the owner's VoiceOver checklist |
 | [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) | Every npm script, `verify` and `check:fast`, lefthook, Claude Code hooks and permissions, `quality-gates.json` and the guardrail, knip, dependency and licence gates, optional CI |
 | [17-claude-code-playbook.md](17-claude-code-playbook.md) | How a Claude Code session works here: session ritual, definition of done, build orders, new-game checklist, stop-and-ask rules, commits, reporting, the `AGENTS.md` template |
+| [18-design-system-toybox.md](18-design-system-toybox.md) | The Toybox design system chosen in the design step: colour tokens per game and theme (with `design/toybox/tokens.json`), type, spacing, radii, strokes, hard shadows, motion, icon paths, every component, the layout of S1–S15, RTL and dark rules, measured contrast, the React Native mapping |
 | [99-final-decisions.md](99-final-decisions.md) | The binding stack decisions and canonical names the docs were written from (sections A–F), plus the section G amendments made during verification |
 
 ---
@@ -148,6 +152,7 @@ These need an answer from the owner; everything else in the docs' *Open issues* 
 | Interpretation of spec 8.8 "never twice in a row after losses" | two consecutive interstitials may not both follow a loss | [11 open issue 3](11-ads-admob.md) |
 | Letter Bugs word lists for Persian and Sorani (licences) | build Letter Bugs late | [08 open issue 6](08-game-engine.md) |
 | Native-speaker reviewer for Persian and Sorani | `release:ios` refuses unreviewed texts unless you record a waiver | [10 §3.16](10-i18n-and-rtl.md) |
+| Toybox details the mockup leaves open: one dark ink for all games or a per-game tint; the hold-to-reset label at 4.43:1 in light | as the mockup's palette data (per-game tint; `dangerFill` unchanged) | [18 open issues 1 and 5](18-design-system-toybox.md) |
 
 ---
 
@@ -173,6 +178,8 @@ Section numbers refer to the linked doc. "Rule n" is a numbered rule in that doc
 | N12 | Every sentence is one translatable message | [10](10-i18n-and-rtl.md) §3.2, §3.6–3.8, §3.14; [04](04-code-style-and-limits.md) §7 (no JSX literals) |
 
 ### 7.2 Screens
+
+The look and layout of every screen (structure, order, spacing, components): [18](18-design-system-toybox.md) section 5.
 
 | Spec | Screen | Implemented in |
 |---|---|---|
@@ -211,7 +218,7 @@ Section numbers refer to the linked doc. "Rule n" is a numbered rule in that doc
 | 8.9 | Premium purchase | [12](12-in-app-purchase.md) (whole doc) |
 | 8.10 | Continue after losing | [06](06-navigation-state-persistence.md) §5; [11](11-ads-admob.md) §3.6 (`perkOffer`); [02](02-architecture-and-folders.md) §7.2 (`continueRun`) |
 | 8.11 | Accessibility | [15](15-performance-and-accessibility.md) §2, §3.8–3.10; [05](05-components-hooks-styling.md) rules 29, 35–40 |
-| 8.12 | Themes and look | [05](05-components-hooks-styling.md) §3.6–3.7; [09](09-sound-haptics-art.md) §7.2 |
+| 8.12 | Themes and look | [18](18-design-system-toybox.md) (Toybox: tokens, per-game paint, type scale); [05](05-components-hooks-styling.md) §3.6–3.7; [09](09-sound-haptics-art.md) §7.2 |
 | 8.13 | Testing hooks (headless rules, bots, seeds, screenshots, airplane-mode run, network audit) | [07](07-testing-and-tdd.md) (whole doc); [08](08-game-engine.md) §5; [13](13-privacy-network-security.md) §3.2 |
 | 8.14 | Errors and stability | [04](04-code-style-and-limits.md) §6.2; [05](05-components-hooks-styling.md) §3.14; [06](06-navigation-state-persistence.md) §6.7 |
 

@@ -139,7 +139,7 @@ Each ADR restates a FINAL-DECISIONS item. Its details (APIs, code patterns) live
 
 #### ADR-14 · Languages: react-intl, FormatJS polyfills, expo-localization, Vazirmatn
 - **Context.** Spec N6, N12 and 7.3: four languages, ICU plurals, Persian and Sorani digits, Arabic-script fonts.
-- **Decision.** `react-intl` 12.1.3, `@formatjs/cli` 6.16.32, and forced polyfills (`intl-getcanonicallocales` 3.2.12, `intl-locale` 5.3.12, `intl-pluralrules` 6.3.15, `intl-numberformat` 9.4.3). Hermes lacks `PluralRules` and `Locale` and ignores numbering systems. Also `expo-localization` 57.0.2, `expo-font` 57.0.4, and the Vazirmatn v33.003 TTFs.
+- **Decision.** `react-intl` 12.1.3, `@formatjs/cli` 6.16.32, and forced polyfills (`intl-getcanonicallocales` 3.2.12, `intl-locale` 5.3.12, `intl-pluralrules` 6.3.15, `intl-numberformat` 9.4.3). Hermes lacks `PluralRules` and `Locale` and ignores numbering systems. Also `expo-localization` 57.0.2, `expo-font` 57.0.4, and the Vazirmatn v33.003 TTFs. The Toybox design system ([18-design-system-toybox.md](18-design-system-toybox.md) section 9.3) adds the Latin UI fonts, committed in each app's `assets/fonts/` and embedded by the same `expo-font` entry: **Lilita One 1.002** (`LilitaOne.ttf`) and **Rubik 2.300** (`Rubik-Regular.ttf`, `Rubik-Bold.ttf`, static cuts of Google Fonts' variable `Rubik[wght].ttf`), all SIL OFL 1.1.
 - **Rejected.** i18next (its silent fallback plural rule on Hermes), Lingui (macro and compile step), Hermes' native Intl.
 - **Consequences.** One polyfill module loads first in the app entry and in the Jest setup. FormatJS ships ESM, so Jest needs a `transformIgnorePatterns` allowlist ([07-testing-and-tdd.md](07-testing-and-tdd.md) section 3.4; [10-i18n-and-rtl.md](10-i18n-and-rtl.md)).
 

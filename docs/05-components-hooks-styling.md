@@ -3,7 +3,7 @@
 > **What this doc decides.** How every React component, custom hook and style in the Shell and in each game app is written. Components are function components with read-only props and no business logic. Effects exist only to talk to systems outside React. React Compiler does the memoization, Zustand is read through narrow selectors, and every colour comes from a typed theme (`makeStyles`). All text goes through `AppText`, layout uses start/end only, and buttons are accessible `Pressable`s of at least 44 pt.
 > Decided here, with measurements: the ~90-tile levels grid is a plain `ScrollView` (neither FlatList nor FlashList). Icons are Skia paths rasterized once and shown as tinted native images (not one Skia canvas per icon, not react-native-svg). The doc also sets the safe-area, window-size, dark-mode, reduce-motion and error-boundary rules.
 > **Binding source:** [99-final-decisions.md](99-final-decisions.md) A.2, A.5, A.7, B.12, B.15, B.18, B.19, D.34–D.36, D.46. This doc does not change them. Problems are listed under [Open issues](#open-issues).
-> **Related docs:** [04-code-style-and-limits.md](04-code-style-and-limits.md) (lint and limits), [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (stores and selectors), [07-testing-and-tdd.md](07-testing-and-tdd.md) (renderWithShell and RNTL), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (t(), direction, fonts), [15-performance-and-accessibility.md](15-performance-and-accessibility.md) (accessibility and performance budgets), [03-naming.md](03-naming.md) (component and testID names). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
+> **Related docs:** [18-design-system-toybox.md](18-design-system-toybox.md) (the Toybox design system: every token value, component, screen layout and the React Native recipes for it), [04-code-style-and-limits.md](04-code-style-and-limits.md) (lint and limits), [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (stores and selectors), [07-testing-and-tdd.md](07-testing-and-tdd.md) (renderWithShell and RNTL), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (t(), direction, fonts), [15-performance-and-accessibility.md](15-performance-and-accessibility.md) (accessibility and performance budgets), [03-naming.md](03-naming.md) (component and testID names). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
 
@@ -97,7 +97,7 @@ Every rule is imperative and testable. **Why** gives the reason in one line. **S
     *Why:* this exact shape keeps three checks working (all verified): `tsc` rejects mistyped style keys, the N11 left/right selector matches `StyleSheet.create`, and `react-native/no-unused-styles` matches the `styles` name.
 24. **Build the 4 themes once at startup** with `createThemeSet(palette)` (2 schemes × 2 colour modes) and pass the set to `ThemeProvider`. Never create a `Theme` during render. Fonts are not part of the theme: they follow the language of the text (doc 10).
     *Why:* stable `Theme` identities are what make the `makeStyles` cache and compiler memoization work.
-25. **Take spacing, radii, touch size, content width and type sizes from `packages/shell/src/theme/tokens.ts`.**
+25. **Take spacing, radii, strokes, elevations, touch size, content width and type sizes from `packages/shell/src/theme/tokens.ts`.** Their values, and every component's measurements, come from the Toybox design system ([doc 18](18-design-system-toybox.md)).
     *Why:* spec 8.12 asks for one type scale and spacing system for all games.
 
 ### Text
@@ -187,8 +187,10 @@ packages/shell/src/
               perf/   (doc 15)
   theme/      theme-types.ts  tokens.ts  theme-set.ts  theme-context.ts  use-theme.ts
               theme-provider.tsx  make-styles.ts  contrast.ts  cvd.ts   (the last two: doc 15)
+              shell-colors.ts   (doc 18)
   ui/         app-text.tsx  primary-button.tsx  icon-button.tsx  tile-button.tsx
               screen-frame.tsx  window-class.ts  use-window-class.ts  use-hold-to-confirm.ts
+              raised-surface.tsx  toybox-styles.ts   (doc 18)
               icons/icon-paths.ts  icons/icon-raster.ts  icons/icon.tsx
   screens/    levels/level-grid.tsx  levels/level-tile.tsx  levels/level-grid-layout.ts
               levels/use-pack-stars.ts  home/premium-entry.tsx
@@ -592,6 +594,8 @@ The per-level game session is a vanilla store created by the game host and hande
 
 The types. A game palette fills every `ColorTokens` field for 2 modes × 2 schemes. Fonts are not in the theme: doc 10 picks them from the language of each text.
 
+The design step chose **Toybox** ([doc 18](18-design-system-toybox.md)). Its shape language needs five fields beyond the original eleven: `sunken`, `pop`, `onPop`, `shadow` and `focus` (doc 18 section 3.1 maps every field to a Toybox paint). Each game's values are in `design/toybox/tokens.json` and its `apps/<game>/src/theme/palette.ts` (doc 18 section 9.1); colours no game repaints (gold, the sticker cut, success, toast, scrim, separators, ad neutrals) are the Shell constants in `shell-colors.ts` (doc 18 section 3.3).
+
 ```ts
 // packages/shell/src/theme/theme-types.ts
 export type ColorScheme = 'light' | 'dark';
@@ -602,12 +606,21 @@ export type ColorMode = 'standard' | 'colorBlind';
 export type ColorTokens = {
   readonly background: string;
   readonly surface: string;
+  /** Pushed-in, disabled and empty fills: tracks, locked tiles, the pressed quiet button (doc 18). */
+  readonly sunken: string;
   readonly text: string;
   readonly textMuted: string;
   readonly primary: string;
   readonly onPrimary: string;
+  /** Second game paint: icon tiles, group tabs, the Premium key (doc 18). */
+  readonly pop: string;
+  readonly onPop: string;
   readonly border: string;
+  /** Hard offset shadow under raised controls; never blurred (doc 18). */
+  readonly shadow: string;
   readonly danger: string;
+  /** Focus ring: 3 pt wide, 2 pt away from the control (doc 18). */
+  readonly focus: string;
   readonly icon: string;
   readonly starOn: string;
   readonly starOff: string;
@@ -630,7 +643,21 @@ import type { FontWeightToken } from '@e07/shell/i18n/fonts.ts';
 
 /** 4-point spacing scale shared by every game (spec 8.12). */
 export const SPACING = { xxs: 2, xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
-export const RADII = { sm: 6, md: 10, lg: 16 } as const;
+/** Toybox layout steps off the 4-point scale: screen gutter and the gap between blocks (doc 18). */
+export const LAYOUT = { screenGutter: 20, blockGap: 14 } as const;
+/** Toybox radii (doc 18): blocky, never pills; 14 is the largest control radius. */
+export const RADII = { xs: 6, sm: 10, md: 14, lg: 22 } as const;
+/** Outline widths (doc 18): separators, tiles and stickers, controls and panels. */
+export const STROKE = { hair: 2, tile: 2.5, bold: 3 } as const;
+/** Hard-shadow offsets in pt; a pressed control sinks by the same amount (doc 18). */
+export const ELEVATION = {
+  knob: 2,
+  tile: 3,
+  iconButton: 4,
+  control: 5,
+  hero: 6,
+  dialog: 8,
+} as const;
 /** Apple HIG default control size: 44 x 44 pt. */
 export const MIN_TOUCH = 44;
 /** Menus never grow wider than this; wider windows centre the column. */
@@ -649,6 +676,8 @@ export const TYPE_SCALE: Readonly<Record<TypeRole, TypeStyle>> = {
   caption: { fontSize: 13, weight: 'regular' },
 };
 ```
+
+Toybox's type scale (display 38, title 30, heading 21, a new `number` role at 30, with Lilita One as the display face and Rubik as the text face) replaces `TYPE_SCALE` together with doc 10's font selection: [doc 18](18-design-system-toybox.md) section 9.2 and its open issue 2.
 
 Four themes, built once:
 
@@ -703,12 +732,17 @@ import type { ColorTokens, Palette } from '@e07/shell/theme/theme-types.ts';
 const LIGHT: ColorTokens = {
   background: '#FFFFFF',
   surface: '#F2F2F7',
+  sunken: '#E5E5EA',
   text: '#1C1C1E',
   textMuted: '#5A5A60',
   primary: '#1F5FBF',
   onPrimary: '#FFFFFF',
+  pop: '#FFCC00',
+  onPop: '#1C1C1E',
   border: '#8E8E93',
+  shadow: '#1C1C1E',
   danger: '#B3261E',
+  focus: '#C8157A',
   icon: '#1C1C1E',
   starOn: '#8A5A00',
   starOff: '#6E6E73',
@@ -716,12 +750,17 @@ const LIGHT: ColorTokens = {
 const DARK: ColorTokens = {
   background: '#000000',
   surface: '#1C1C1E',
+  sunken: '#2C2C2E',
   text: '#F2F2F7',
   textMuted: '#AEAEB2',
   primary: '#6FA8FF',
   onPrimary: '#000000',
+  pop: '#FFD60A',
+  onPop: '#000000',
   border: '#8E8E93',
+  shadow: '#000000',
   danger: '#FF8A80',
+  focus: '#FF8AD8',
   icon: '#F2F2F7',
   starOn: '#FFC94D',
   starOff: '#8E8E93',
@@ -907,6 +946,8 @@ Type scale (points before Dynamic Type; line height = size × 1.3 for Latin and 
 | body | 17 | regular | running text (iOS body size) |
 | label | 17 | bold | button labels |
 | caption | 13 | regular | small print (S12) |
+
+Toybox ([doc 18](18-design-system-toybox.md) section 3.6) sets display 38, title 30 and heading 21 in Lilita One, adds `number` (30), and uses Rubik for body, label and caption; the switch waits for doc 10's font selection (doc 18 open issue 2).
 
 Rich text (a bold number inside a sentence) goes through doc 10's message formatting, not through nested `AppText`.
 
@@ -1652,6 +1693,7 @@ On **2026-09-26** with Expo SDK 57.0.25, React Native 0.86.3, React 19.2.3, Type
 - **Reduce motion.** Reanimated's `useReducedMotion` returns a constant captured at module load (source), and `ReducedMotionConfig` exists and sets the global flag (source).
 - **Store tests on real stores (2026-09-26, `scratchpad/fix-final/repo`).** `premium-entry.test.tsx` (3 tests), `primary-button.test.tsx`, `icon-button.test.tsx`, doc 15's `level-grid.test.tsx` and `palette-checks.test.ts` pass with doc 07's new `renderWithShell` (jest-expo 57.0.5, RNTL 14.0.1); `tsc` for all programs, doc 04's merged ESLint and Prettier pass. The re-render guard failed as expected with an extra `useSettingsStore((state) => state.settings)`.
 - **Unit vs golden.** Importing Skia in the `unit` project fails with "Native Skia Module failed to correctly install JSI Bindings!". The rasterizer ran in the `golden` project.
+- **Toybox additions (2026-09-28).** The five new `ColorTokens` fields, the filled `TEST_PALETTE` and the `LAYOUT`, `RADII`, `STROKE` and `ELEVATION` scales in `tokens.ts` were re-checked in a copy of the lab: `tsc`, doc 04's ESLint, Prettier and the full Jest run pass (details in [doc 18](18-design-system-toybox.md#verified)).
 
 **Re-verify when versions move.** Run `npx expo install --check` in each app. Run `npm view zustand version`, `npm view @shopify/flash-list dist-tags`, `npm view react-native-svg version` and `npm view eslint-plugin-react-hooks version`. Then re-run the lint probe (a bad screen that must produce the errors listed in 3.12) and the compiler check in 3.4. If Expo's pins change (SDK 58: Reanimated 4.7, Skia 2.11.2, RNGH 3.x), repeat the 3.9 benchmark before changing the list or icon decisions.
 
@@ -1666,4 +1708,5 @@ On **2026-09-26** with Expo SDK 57.0.25, React Native 0.86.3, React 19.2.3, Type
 5. **Doc 01's banned list.** Suggest adding `react-native-svg` (native pod plus `fetch`-based `SvgUri`) and `@shopify/flash-list` (not needed) to doc 01 section 3.6, so the package audit matches the import ban here.
 6. **Resolved: other `no-restricted-imports` blocks in doc 04.** The i18n folder, the direction module and the adapters now start from `RUNTIME_PATHS` minus their own exemptions, so they carry `UI_PATHS` too (doc 04 section 3; no file in the handbook tripped it).
 7. **Resolved: store-reading component tests.** Doc 07's `renderWithShell` now builds doc 06's settings store and doc 12's Premium store from a seeded in-memory save, provides them through `StoresProvider` and returns them; `premium-entry.test.tsx` uses it. The progress and stats stores join `ShellStores`, and the helper, when doc 06 writes them. The 44 × 44 pt touch-box assertion in `icon-button.test.tsx` is one of the two style assertions doc 07 rule 26 allows.
-8. **Where the UI palette comes from.** Doc 09 keeps each game's colours in `board-palettes.json` (four flat sets: `light`, `dark`, `colorBlindLight`, `colorBlindDark`, board tokens) and says this doc derives the UI tokens from it. This doc's `Palette` is nested (`standard | colorBlind` → `light | dark` → `ColorTokens`). Until the two are joined by one pure mapping (for example `toUiPalette(boardPalettes)`, contrast-checked by doc 15), each game supplies its `Palette` explicitly.
+8. **Resolved: where the UI palette comes from.** The UI palette is the game's Toybox paint ([doc 18](18-design-system-toybox.md) section 3.2, `design/toybox/tokens.json`), written as `apps/<game>/src/theme/palette.ts` and pinned by doc 18's `toybox-tokens.test.ts`; it is not derived from the board palettes in doc 09's `board-palettes.json`, which stay board-only.
+9. **Toybox follow-ups owned here** (from doc 18's open issues): switch `TYPE_SCALE` to the Toybox sizes and faces together with doc 10; add the `AppText` tones Toybox needs (`onPop`, sticker ink, white on ink, toast); drop `ScreenFrame`'s 16 pt column padding in favour of the Toybox top bar (16) and body (20) insets; rebuild `PrimaryButton`, `IconButton` and `TileButton` on doc 18's `RaisedSurface`.
