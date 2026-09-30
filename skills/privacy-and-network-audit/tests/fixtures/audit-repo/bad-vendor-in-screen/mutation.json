@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/home/home-screen.tsx",
+      "find": "import { useServices } from '@e07/shell/app/services-context.tsx';",
+      "with": "import { useServices } from '@e07/shell/app/services-context.tsx';\nimport { BannerAd } from 'react-native-google-mobile-ads';"
+    }
+  }
+]

@@ -1,0 +1,3 @@
+root-scripts
+script "lint" differs
+npmScripts.lint differs from package.json

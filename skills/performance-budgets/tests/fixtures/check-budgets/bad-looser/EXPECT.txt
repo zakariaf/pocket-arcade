@@ -1,0 +1,2 @@
+[budget-looser]
+perf.hitchMsPerSecondMax is 20

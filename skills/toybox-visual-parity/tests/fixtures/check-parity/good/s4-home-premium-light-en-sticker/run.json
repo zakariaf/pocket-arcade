@@ -1,0 +1,13 @@
+{
+ "frame": "s4-home-premium",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "Real capture of S4 Premium, with the tilted tagline sticker (-2 deg) moved 2 px (0.67 pt) down in the image, inside the 1 pt Maestro rounding. Its text is measured in the text colour inside the rotated line box, so the sticker's paper never counts as ink; the badge (-5 deg) reads the same way.",
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s4-home-premium.png",
+  "layout": "../../reference/lineSiege/light-en/s4-home-premium.layout.json"
+ }
+}

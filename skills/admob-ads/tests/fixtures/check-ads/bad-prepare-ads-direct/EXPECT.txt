@@ -1,0 +1,3 @@
+[consent-moment]
+packages/shell/src/screens/home/use-home-ads.ts:7
+prepareAds() is called outside the consent moment

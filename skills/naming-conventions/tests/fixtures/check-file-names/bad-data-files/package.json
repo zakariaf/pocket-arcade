@@ -1,0 +1,15 @@
+{
+  "name": "demo-games",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "verify": "npm run check:fast",
+    "check:fast": "eslint .",
+    "test:golden": "jest",
+    "build:ios:sim": "node x.ts",
+    "new-game": "node y.ts"
+  }
+}

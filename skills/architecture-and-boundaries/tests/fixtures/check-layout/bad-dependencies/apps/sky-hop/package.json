@@ -1,0 +1,16 @@
+{
+  "name": "@demo/sky-hop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@demo/game-kit": "*",
+    "@demo/shell": "*",
+    "expo": "~57.0.20",
+    "react": "19.2.3",
+    "react-native": "0.86.3"
+  }
+}

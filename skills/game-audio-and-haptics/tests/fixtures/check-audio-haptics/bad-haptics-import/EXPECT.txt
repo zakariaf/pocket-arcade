@@ -1,0 +1,3 @@
+[vendor-import]
+apps/demo-game/src/board/shake.ts:2
+outside the haptics adapter

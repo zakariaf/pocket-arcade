@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/index.ts", "find": "    id: 'tap-flip',\n", "with": "    id: 'tapflip',\n" } }]

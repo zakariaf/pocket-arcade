@@ -1,0 +1,22 @@
+{
+  "name": "@e07/shell",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugins/*": "./plugins/*",
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@e07/game-kit": "*",
+    "zustand": "5.0.15"
+  },
+  "peerDependencies": {
+    "@react-navigation/native": "*",
+    "expo": "*",
+    "expo-haptics": "*",
+    "react": "*",
+    "react-native": "*",
+    "react-native-google-mobile-ads": "*"
+  }
+}

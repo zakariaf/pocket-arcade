@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/testing/tap-flip-testing.ts", "find": "lose: () => ({ ...START(), moves: START().maxMoves }),", "with": "lose: () => START()," } }]

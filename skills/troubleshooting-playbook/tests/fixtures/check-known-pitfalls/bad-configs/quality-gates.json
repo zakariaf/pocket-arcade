@@ -1,0 +1,7 @@
+{
+  "gatedPaths": [
+    "quality-gates.json",
+    "eslint.config.mjs",
+    "**/__snapshots__/*.golden.test.ts.snap"
+  ]
+}

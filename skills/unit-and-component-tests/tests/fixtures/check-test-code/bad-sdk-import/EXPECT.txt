@@ -1,0 +1,1 @@
+admob-ads-adapter.test.ts:1 [vendor-sdk-import] the test imports react-native-google-mobile-ads

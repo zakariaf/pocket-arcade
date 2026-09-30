@@ -1,0 +1,2 @@
+[tracking-outside-google]
+pod AnalyticsKit declares tracking

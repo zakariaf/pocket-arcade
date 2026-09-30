@@ -1,0 +1,2 @@
+[canvas-per-item]
+level-badges.tsx

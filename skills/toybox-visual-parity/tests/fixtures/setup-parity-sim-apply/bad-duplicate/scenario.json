@@ -1,0 +1,18 @@
+{
+ "devices": {
+  "com.apple.CoreSimulator.SimRuntime.iOS-26-5": [
+   {
+    "name": "e07-parity",
+    "udid": "11111111-2222-3333-4444-555555555555",
+    "state": "Booted",
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
+   },
+   {
+    "name": "e07-parity",
+    "udid": "BBBBBBBB-2222-3333-4444-555555555555",
+    "state": "Shutdown",
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
+   }
+  ]
+ }
+}

@@ -1,0 +1,2 @@
+[test-code]
+contains SHELL_TEST_BUILD_ONLY 1 time(s)

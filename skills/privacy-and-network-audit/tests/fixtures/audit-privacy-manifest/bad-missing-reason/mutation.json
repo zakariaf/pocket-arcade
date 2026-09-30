@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/privacy-manifest.ts",
+      "find": "    {\n      NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',\n      NSPrivacyAccessedAPITypeReasons: ['E174.1'],\n    },\n",
+      "with": ""
+    }
+  }
+]

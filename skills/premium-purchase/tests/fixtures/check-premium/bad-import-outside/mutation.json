@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "import {\n  entitlementEvidence,",
+      "with": "import { initConnection } from 'expo-iap';\nimport {\n  entitlementEvidence,"
+    }
+  }
+]

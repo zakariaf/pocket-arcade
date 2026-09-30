@@ -1,0 +1,2 @@
+[extra-ad-units]
+extra.adUnits is present in an ADS_MODE=off build

@@ -1,0 +1,3 @@
+npmrc-exclude
+.npmrc:8
+exclude react-native-audio-api is not inside a dated

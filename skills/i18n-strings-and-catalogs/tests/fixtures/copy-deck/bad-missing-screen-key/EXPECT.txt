@@ -1,0 +1,3 @@
+[deck-key-missing]
+pause.resume-button
+screen S6

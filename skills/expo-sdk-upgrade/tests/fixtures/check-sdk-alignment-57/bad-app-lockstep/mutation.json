@@ -1,0 +1,3 @@
+[
+  { "json": { "file": "apps/beta/package.json", "path": ["dependencies", "expo-system-ui"], "value": "~57.0.3" } }
+]

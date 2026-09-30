@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/result/use-result-actions.ts",
+      "find": "  useEffect(() => {\n    announce();\n  }, [announce]);",
+      "with": "  useEffect(() => {\n    announce();\n    void showInterstitialIfDue(deps, request);\n  }, [announce, deps, request]);"
+    }
+  }
+]

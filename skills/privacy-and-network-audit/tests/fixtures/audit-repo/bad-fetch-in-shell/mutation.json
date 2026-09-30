@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/home/home-screen.tsx",
+      "find": "  return connectivity.isOnline() ? null : null;",
+      "with": "  void fetch('/levels.json');\n  return connectivity.isOnline() ? null : null;"
+    }
+  }
+]

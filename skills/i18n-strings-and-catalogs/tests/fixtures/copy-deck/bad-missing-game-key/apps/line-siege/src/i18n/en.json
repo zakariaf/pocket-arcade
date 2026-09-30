@@ -1,0 +1,21 @@
+{
+  "line-siege.goal": "Stop every monster before it reaches your wall.",
+  "line-siege.how-to-play.step-1": "Pick a block and place it on the grid.",
+  "line-siege.how-to-play.step-2": "Fill a column to fire a beam up its lane.",
+  "line-siege.how-to-play.step-3": "Fill a row to hit every monster at once.",
+  "line-siege.how-to-play.step-4": "The monsters march closer every few blocks.",
+  "line-siege.lose.broke-through": "The monsters broke through",
+  "line-siege.name": "Line Siege",
+  "line-siege.pack-name.1": "First wave",
+  "line-siege.pack-name.2": "Stronger foes",
+  "line-siege.pack-name.3": "Last stand",
+  "line-siege.progress": "Monsters {defeated, number} / {total, number}",
+  "line-siege.stats.beams-fired": "Beams fired",
+  "line-siege.stats.biggest-combo": "Biggest combo",
+  "line-siege.stats.monsters-defeated": "Monsters defeated",
+  "line-siege.tagline": "Clear lines. Fire beams. Hold the wall.",
+  "line-siege.tutorial.step-1": "Tap a block, then tap the grid to place it.",
+  "line-siege.tutorial.step-2": "Fill this column to fire up its lane!",
+  "line-siege.tutorial.step-3": "A full row hits every monster at once.",
+  "line-siege.win-title": "The wall holds!"
+}

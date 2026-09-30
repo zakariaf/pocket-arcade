@@ -1,0 +1,2 @@
+[skill-duplicate]
+buildOrders.extraOrders[0].steps[0] ("Alpha into an existing slice") lists alpha-one twice

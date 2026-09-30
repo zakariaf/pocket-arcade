@@ -1,0 +1,5 @@
+[
+  {
+    "delete": "packages/shell/src/services/connectivity/fake-connectivity.ts"
+  }
+]

@@ -1,0 +1,5 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"]
+}

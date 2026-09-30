@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/tap-flip-describe.ts", "find": "import { renderCells } from '@e07/game-kit/testing/render-cells.ts';", "with": "import { renderCells } from '@e07/game-kit/testing/render-cells.ts';\nimport { BOARD_IDS } from '../board/board-ids.ts';" } }]

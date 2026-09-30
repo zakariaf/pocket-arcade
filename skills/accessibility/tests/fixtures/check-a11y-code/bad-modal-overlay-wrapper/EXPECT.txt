@@ -1,0 +1,2 @@
+[modal-overlay]
+restart-dialog.tsx

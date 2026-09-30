@@ -1,0 +1,5 @@
+[reference-stale]
+references/build.md
+differs from the catalogue
+references/release.md
+is missing

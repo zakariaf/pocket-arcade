@@ -1,0 +1,21 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [], \"why\": \"game-first repo: the game is built before the Shell app\" }\n"
+    }
+  },
+  {
+    "delete": "packages/shell/src/app/create-shell-parts.ts"
+  },
+  {
+    "delete": "packages/shell/src/app/shell-features.tsx"
+  },
+  {
+    "replace": {
+      "file": "apps/tap-flip/game.config.ts",
+      "find": "isContinueAllowed: true,",
+      "with": "isContinueAllowed: false,"
+    }
+  }
+]

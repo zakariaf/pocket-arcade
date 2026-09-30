@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "desc-trigger"
+  ],
+  "sync": true
+}

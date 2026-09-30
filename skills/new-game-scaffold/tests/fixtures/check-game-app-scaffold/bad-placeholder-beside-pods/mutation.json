@@ -1,0 +1,3 @@
+[
+  { "write": { "file": "apps/flock-tilt/src/rules/flock-tilt-types.ts", "content": "// apps/flock-tilt/src/rules/flock-tilt-types.ts\nexport type __GAME_PASCAL__State = { readonly moves: number };\n" } }
+]

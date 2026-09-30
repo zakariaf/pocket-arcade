@@ -1,0 +1,2 @@
+[specs-mismatch]
+groupTab.marginStart is 14, the as-rendered spec is 0 (mockup override: the reference draws the folder tab flush

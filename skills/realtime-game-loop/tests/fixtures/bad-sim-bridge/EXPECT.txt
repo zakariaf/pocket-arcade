@@ -1,0 +1,2 @@
+sim-isolated
+sim calls scheduleOnRN itself

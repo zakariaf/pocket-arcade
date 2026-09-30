@@ -1,0 +1,2 @@
+[jest-tz]
+jest.config.js:1 [jest-tz] does not set process.env.TZ = 'UTC'

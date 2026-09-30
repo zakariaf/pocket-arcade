@@ -1,0 +1,4 @@
+[scale-mismatch]
+STROKE.tile is 2.5, Toybox says 2
+packages/shell/src/theme/tokens.ts:1
+Chrome floors a 2.5 border to 2

@@ -1,0 +1,25 @@
+# packages/shell/e2e/flows/a11y/01-large-text-core-screens.yaml
+# Runs at the largest Dynamic Type size (accessibility-extra-extra-extra-large) in en and fa, on
+# the phone and the iPad: npm run e2e:ios does it in its large-text step (tag a11y, -e LANG=<lang>)
+# and leaves a11y flows out of its flows step. Read every screenshot for clipped or overlapping text.
+appId: ${APP_ID}
+name: Core screens stay usable at 200% text
+tags: [shell, a11y]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=${LANG}&theme=light&seed=42&date=2026-09-26&ads=off&firstRun=0&reduceMotion=1'
+      WAIT_FOR: 'home.screen'
+- assertVisible: { id: 'home.play-button' }
+- scrollUntilVisible: { element: { id: 'home.levels-button' } }
+- takeScreenshot: 'a11y/${LANG}-home'
+- tapOn: { id: 'home.levels-button' }
+- assertVisible: { id: 'levels.level-tile.1' }
+- takeScreenshot: 'a11y/${LANG}-levels'
+- tapOn: { id: 'levels.top-bar.back-button' }
+- tapOn: { id: 'home.settings-button' }
+- scrollUntilVisible: { element: { id: 'settings.reset-progress-row' } }
+- takeScreenshot: 'a11y/${LANG}-settings'

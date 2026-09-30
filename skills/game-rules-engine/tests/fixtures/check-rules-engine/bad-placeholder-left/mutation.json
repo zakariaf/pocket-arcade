@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/outcome.ts", "find": "export function isCleared(", "with": "// __GAME_PASCAL__ scoring\nexport function isCleared(" } }]

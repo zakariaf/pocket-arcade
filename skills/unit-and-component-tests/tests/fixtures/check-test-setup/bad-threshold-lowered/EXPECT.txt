@@ -1,0 +1,3 @@
+[coverage-threshold]
+global coverage threshold is weaker than 90/90/90/85 (lines 80 < 90)
+logic threshold ./apps/*/src/rules/**/*.ts is weaker than 95/95/95/90 (branches 80 < 90)

@@ -1,0 +1,2 @@
+[cvd-separation]
+colorBlindLight protanopia: normal, armoured, fast, block

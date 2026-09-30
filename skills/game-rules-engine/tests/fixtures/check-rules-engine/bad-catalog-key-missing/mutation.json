@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/i18n/de.json", "find": "  \"tap-flip.hud.moves\": \"Züge {moves, number} / {maxMoves, number}\",\n", "with": "" } }]

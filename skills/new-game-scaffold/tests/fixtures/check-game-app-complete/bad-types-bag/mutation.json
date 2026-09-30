@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/src/flock-tilt-types.ts", "find": "  readonly sim: never;\n", "with": "" } }]

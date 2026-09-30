@@ -1,0 +1,13 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 573,
+ "source": "self-test fixture",
+ "note": "The y573 capture with the Dark segment label's glyphs moved 1 px (1/3 pt) lower: 2.35 pt from where the design puts them, past the 2.3 pt limit of Rubik 14 (the other side of the good y573 fixture, 2.02 pt).",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s11-settings.png",
+  "layout": "../reference/lineSiege/light-en/s11-settings.layout.json"
+ }
+}

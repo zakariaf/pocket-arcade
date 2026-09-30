@@ -1,0 +1,2 @@
+[store-flow]
+startPremium subscribes before connecting

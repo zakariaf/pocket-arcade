@@ -1,0 +1,3 @@
+[consent-order]
+prepareAds with consent
+"initialized","preloadInterstitial"

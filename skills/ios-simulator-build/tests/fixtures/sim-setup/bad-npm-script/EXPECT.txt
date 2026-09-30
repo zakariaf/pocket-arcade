@@ -1,0 +1,2 @@
+[npm-script]
+scripts["build:ios:sim"] is "expo run:ios --configuration Release"

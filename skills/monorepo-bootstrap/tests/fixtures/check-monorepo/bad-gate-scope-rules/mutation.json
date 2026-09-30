@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/tooling/src/git/commit-trailer-rules.ts", "find": "const UNGATED_FOLDERS = ['skills/', '.claude/'] as const;", "with": "const UNGATED_FOLDERS = [] as const;" } }]

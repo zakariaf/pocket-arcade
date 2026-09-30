@@ -1,0 +1,2 @@
+[screen-not-reached] s4-home light-en: the root testID home.screen is not on screen
+CAPTURE FAILED (screen-not-reached)

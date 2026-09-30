@@ -1,0 +1,3 @@
+[skia-alloc-per-frame]
+useFrameCallback callback
+board-clock.ts:17

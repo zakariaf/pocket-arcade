@@ -1,0 +1,3 @@
+start-shell.ts
+[cold-start-mark]
+never calls markJsEntry()

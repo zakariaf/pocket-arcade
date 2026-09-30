@@ -1,0 +1,12 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/apps/__GAME_ID__/metro.config.js", "to": "templates/apps/game/metro.config.js" },
+  { "from": "repo-templates/packages/shell/src/app-env.d.ts", "to": "templates/packages/shell/src/app-env.d.ts" },
+  { "from": "repo-templates/packages/shell/src/app/test-only.ts", "to": "templates/packages/shell/src/app/test-only.ts" },
+  { "from": "repo-templates/packages/shell/src/config/app-variant.ts", "to": "templates/packages/shell/src/config/app-variant.ts" },
+  { "from": "repo-templates/packages/shell/src/config/app-variant.test.ts", "to": "templates/packages/shell/src/config/app-variant.test.ts" },
+  { "from": "repo-templates/packages/tooling/src/ios/toolchain.ts", "to": "templates/packages/tooling/src/ios/toolchain.ts" },
+  { "from": "repo-templates/packages/tooling/src/ios/toolchain.test.ts", "to": "templates/packages/tooling/src/ios/toolchain.test.ts" },
+  { "from": "repo-templates/packages/shell/src/app/test-only-api.ts", "to": "templates/packages/shell/src/app/test-only-api.ts" },
+  { "from": "repo-templates/packages/shell/src/app/test-only-entry.ts", "to": "templates/packages/shell/src/app/test-only-entry.ts" }
+]

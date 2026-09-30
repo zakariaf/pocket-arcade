@@ -1,0 +1,2 @@
+hook-bypass
+LEFTHOOK=0

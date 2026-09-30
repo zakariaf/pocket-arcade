@@ -1,0 +1,18 @@
+[
+  {
+    "delete": "packages/shell/src/config/shell-plugins.ts"
+  },
+  {
+    "delete": "packages/shell/src/i18n/catalogs/en.json"
+  },
+  {
+    "json": {
+      "file": "apps/demo-game/package.json",
+      "path": [
+        "dependencies",
+        "expo-iap"
+      ],
+      "value": "^5.8.0"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[plan-failure]
+level 1: no candidate

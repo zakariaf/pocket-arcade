@@ -1,0 +1,2 @@
+gate-weakened
+eslint.ruleSets.logic.max-lines[1].max was raised to 300

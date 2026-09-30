@@ -1,0 +1,2 @@
+[sim-safety]
+creates a simulator named "Test Phone"

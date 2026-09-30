@@ -1,0 +1,2 @@
+[audio-pin]
+apps/demo-game/package.json:8

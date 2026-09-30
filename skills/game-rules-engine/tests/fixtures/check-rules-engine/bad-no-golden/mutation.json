@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/create.test.ts", "find": "GOLDEN_SEED_1_BOARD", "with": "PINNED_BOARD", "all": true } }]

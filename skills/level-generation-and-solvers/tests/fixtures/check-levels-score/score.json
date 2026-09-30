@@ -1,0 +1,3 @@
+[
+  { "replace": { "file": "apps/tap-flip/src/levels/tap-flip-level-plan.ts", "find": "rate: ({ level, par }) => (par >= minParFor(level) ? { kind: 'par', par } : null),", "with": "rate: ({ level, par }) =>\n    par >= minParFor(level) ? { kind: 'score', thresholds: [0, par * 10, par * 12] } : null," } }
+]

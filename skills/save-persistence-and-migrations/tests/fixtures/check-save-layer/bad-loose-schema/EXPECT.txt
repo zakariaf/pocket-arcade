@@ -1,0 +1,3 @@
+[schema-strict]
+uses v.object
+save-sections-v1.ts

@@ -1,0 +1,5 @@
+package  expo-constants ~57.0.19 (Expo-managed; belongs in every app)
+step 2   (cd apps/alpha && npx expo install expo-constants@~57.0.19)
+step 3   (cd apps/beta && npx expo install expo-constants@~57.0.19)
+note     keep the @<spec> in each npx expo install: it writes the versions table's specifier
+which can be a patch published that day; that patch stays a WARN with its due date in check-deps.ts

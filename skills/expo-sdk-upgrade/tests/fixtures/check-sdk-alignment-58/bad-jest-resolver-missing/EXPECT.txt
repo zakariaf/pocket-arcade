@@ -1,0 +1,2 @@
+jest-config
+lacks resolver: 'react-native-reanimated/jest/resolver' for SDK 58

@@ -1,0 +1,2 @@
+[content-rating]
+MaxAdContentRating.PG

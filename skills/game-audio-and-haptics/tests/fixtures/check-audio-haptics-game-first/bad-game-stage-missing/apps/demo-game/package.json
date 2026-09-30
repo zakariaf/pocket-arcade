@@ -1,0 +1,8 @@
+{
+  "name": "@e07/demo-game",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "expo": "~57.0.25"
+  }
+}

@@ -1,0 +1,11 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "shell-services/clock/clock-port.ts", "to": "templates/packages/shell/src/services/clock/clock-port.ts" },
+  { "from": "shell-services/clock/system-clock-adapter.ts", "to": "templates/packages/shell/src/services/clock/system-clock-adapter.ts" },
+  { "from": "shell-services/clock/system-clock-adapter.test.ts", "to": "templates/packages/shell/src/services/clock/system-clock-adapter.test.ts" },
+  { "from": "shell-services/clock/fake-clock.ts", "to": "templates/packages/shell/src/services/clock/fake-clock.ts" },
+  { "from": "shell-services/clock/fake-clock.test.ts", "to": "templates/packages/shell/src/services/clock/fake-clock.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/dates/daily-seed.ts", "to": "templates/packages/game-kit/src/dates/daily-seed.ts" },
+  { "from": "repo-templates/packages/game-kit/src/dates/date-key.test.ts", "to": "templates/packages/game-kit/src/dates/date-key.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/dates/date-key.ts", "to": "templates/packages/game-kit/src/dates/date-key.ts" }
+]

@@ -1,0 +1,1 @@
+[scroll-mismatch] stats.screen: the body is scrolled by 600.0 pt but the capture asked for scrollY 300

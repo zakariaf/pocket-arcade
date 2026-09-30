@@ -1,0 +1,3 @@
+[sim-config]
+jest.config.js:1
+npm test does not ignore

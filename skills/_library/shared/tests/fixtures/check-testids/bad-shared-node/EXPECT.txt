@@ -1,0 +1,3 @@
+[testid-shared-node]
+home.play-button
+home.play-label

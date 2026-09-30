@@ -1,0 +1,2 @@
+[coverage] s11-settings light-en: 1 elements were never fully on screen
+settings.version

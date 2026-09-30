@@ -1,0 +1,2 @@
+[non-text-contrast]
+border on background

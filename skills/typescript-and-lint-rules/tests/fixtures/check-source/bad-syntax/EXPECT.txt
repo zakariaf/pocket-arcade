@@ -1,0 +1,7 @@
+packages/shell/src/stores/theme-mode.ts:2 [no-enum]
+packages/shell/src/stores/theme-mode.ts:7 [no-interface]
+packages/shell/src/stores/theme-mode.ts:11 [no-namespace]
+packages/shell/src/stores/theme-mode.ts:16 [no-parameter-property]
+packages/shell/src/stores/theme-mode.ts:19 [no-explicit-any]
+packages/shell/src/stores/theme-mode.ts:24 [no-non-null-assertion]
+packages/shell/src/stores/theme-mode.ts:27 [no-default-export]

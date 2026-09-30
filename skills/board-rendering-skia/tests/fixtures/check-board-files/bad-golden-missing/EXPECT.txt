@@ -1,0 +1,2 @@
+golden-test
+test/goldens/boards/tap-flip-board.golden.test.ts

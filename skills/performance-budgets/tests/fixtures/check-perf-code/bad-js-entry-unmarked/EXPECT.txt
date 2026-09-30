@@ -1,0 +1,3 @@
+[perf-layer]
+packages/shell/src/app/start-shell.ts
+markJsEntry()

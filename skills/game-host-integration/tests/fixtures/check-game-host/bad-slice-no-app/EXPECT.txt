@@ -1,0 +1,3 @@
+SKIP packages/shell/src/app [host-not-created] no Shell app
+SKIP packages/shell/src/app/create-shell-parts.ts [root-file-missing] no Shell app
+[config-rules]

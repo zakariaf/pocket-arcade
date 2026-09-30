@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/shell-plugins.ts",
+      "find": "'expo-iap'];",
+      "with": "['expo-iap', { iapkitApiKey: 'key' }]];"
+    }
+  }
+]

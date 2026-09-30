@@ -1,0 +1,3 @@
+[music-default]
+packages/shell/src/services/audio/audio-port.ts:1
+keep music off

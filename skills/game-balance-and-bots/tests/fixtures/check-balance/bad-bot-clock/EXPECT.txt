@@ -1,0 +1,3 @@
+[sim-determinism]
+apps/line-siege/src/testing/line-siege-bot.ts:23
+Date.now()

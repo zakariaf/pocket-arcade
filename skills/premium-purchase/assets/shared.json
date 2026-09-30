@@ -1,0 +1,9 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/__mocks__/expo-iap.ts", "to": "templates/__mocks__/expo-iap.ts" },
+  { "from": "repo-templates/packages/tooling/src/asc/asc-client.ts", "to": "templates/packages/tooling/src/asc/asc-client.ts" },
+  { "from": "repo-templates/packages/tooling/src/asc/asc-credentials.ts", "to": "templates/packages/tooling/src/asc/asc-credentials.ts" },
+  { "from": "repo-templates/packages/tooling/src/asc/asc-jwt.ts", "to": "templates/packages/tooling/src/asc/asc-jwt.ts" },
+  { "from": "tooling-deps/src/clock/system-clock.ts", "to": "templates/packages/tooling/src/clock/system-clock.ts" },
+  { "from": "repo-templates/packages/shell/e2e/subflows/debug-setup.yaml", "to": "templates/packages/shell/e2e/subflows/debug-setup.yaml" }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/index.ts",
+      "find": "  stats: TAP_FLIP_STATS,\n",
+      "with": ""
+    }
+  }
+]

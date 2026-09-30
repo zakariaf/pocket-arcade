@@ -1,0 +1,2 @@
+[audio-mock]
+__mocks__/react-native-audio-api.ts:1

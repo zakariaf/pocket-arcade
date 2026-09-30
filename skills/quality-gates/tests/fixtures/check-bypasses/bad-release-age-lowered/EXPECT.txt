@@ -1,0 +1,3 @@
+release-age-lowered
+.npmrc:1
+min-release-age=6 (the policy is 7 days)

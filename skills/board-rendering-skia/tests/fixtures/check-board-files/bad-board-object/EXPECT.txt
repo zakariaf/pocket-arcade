@@ -1,0 +1,2 @@
+board-object
+has no isMirroredInRtl

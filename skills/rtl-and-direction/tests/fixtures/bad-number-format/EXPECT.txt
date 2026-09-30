@@ -1,0 +1,2 @@
+[number-format]
+the locale 'fa'

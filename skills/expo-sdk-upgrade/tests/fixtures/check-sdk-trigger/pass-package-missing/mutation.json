@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "facts.json",
+      "path": [
+        "packageTimes",
+        "@shopify/react-native-skia"
+      ],
+      "value": null
+    }
+  }
+]

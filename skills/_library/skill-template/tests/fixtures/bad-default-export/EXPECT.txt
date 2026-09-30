@@ -1,0 +1,2 @@
+no-default-export
+clamp-value.ts:6

@@ -1,0 +1,3 @@
+[G1 required-game-key]
+apps/line-siege/src/i18n/en.json:1
+missing required game key "line-siege.win-title"

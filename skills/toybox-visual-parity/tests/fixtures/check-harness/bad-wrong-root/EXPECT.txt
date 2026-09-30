@@ -1,0 +1,1 @@
+[harness-root] s9-daily-challenge has root "daily-challenge.screen" but the design frame's root testID is "daily.screen"

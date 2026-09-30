@@ -1,0 +1,8 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "scripts": {
+    "test": "jest --ci",
+    "test:sim": "jest --ci --config jest.sim.config.js"
+  }
+}

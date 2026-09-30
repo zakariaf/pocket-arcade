@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/tooling/network-audit/js-baseline.json",
+      "content": "{\n  \"react-native\": { \"categories\": [\"webSocket\", \"remoteUrl\"], \"reason\": \"RN core: WebSocket module and doc URLs; our code cannot call them (lint layer A)\" }\n}\n"
+    }
+  }
+]

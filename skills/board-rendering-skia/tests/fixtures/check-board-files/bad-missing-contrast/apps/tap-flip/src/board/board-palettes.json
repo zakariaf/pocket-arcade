@@ -1,0 +1,42 @@
+{
+  "light": {
+    "background": "#A5DAF3",
+    "cell": "#D3ECF8",
+    "lit": "#FF6B4A",
+    "edge": "#1D1B3A",
+    "mark": "#1D1B3A",
+    "glow": "#FFD23F",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A"
+  },
+  "dark": {
+    "background": "#1B1943",
+    "cell": "#221F52",
+    "lit": "#FF7D5E",
+    "edge": "#E4E0FF",
+    "mark": "#1B1943",
+    "glow": "#FFD84D",
+    "label": "#F4F2FF",
+    "hint": "#E4E0FF"
+  },
+  "colorBlindLight": {
+    "background": "#A5DAF3",
+    "cell": "#D3ECF8",
+    "lit": "#0072B2",
+    "edge": "#1D1B3A",
+    "mark": "#FFFFFF",
+    "glow": "#E69F00",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A"
+  },
+  "colorBlindDark": {
+    "background": "#1B1943",
+    "cell": "#221F52",
+    "lit": "#56B4E9",
+    "edge": "#E4E0FF",
+    "mark": "#000000",
+    "glow": "#F0E442",
+    "label": "#F4F2FF",
+    "hint": "#E4E0FF"
+  }
+}

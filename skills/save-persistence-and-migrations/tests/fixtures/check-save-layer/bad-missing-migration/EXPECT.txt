@@ -1,0 +1,4 @@
+[migration-chain]
+no migration step v1 -> v2
+[fixture-missing]
+no save-v2.minimal.json

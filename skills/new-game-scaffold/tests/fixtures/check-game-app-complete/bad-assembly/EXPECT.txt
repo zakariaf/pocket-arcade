@@ -1,0 +1,2 @@
+[module-assembly]
+member stats is not assembled

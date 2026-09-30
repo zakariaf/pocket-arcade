@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/demo-game/package.json",
+      "path": [
+        "dependencies",
+        "expo-iap"
+      ],
+      "value": "^5.8.0"
+    }
+  }
+]

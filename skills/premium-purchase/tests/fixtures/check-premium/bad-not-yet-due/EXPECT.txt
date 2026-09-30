@@ -1,0 +1,3 @@
+SKIP packages/shell/src/config/shell-plugins.ts [plugin-entry] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
+SKIP packages/shell/src/i18n/catalogs/en.json [catalog-keys] due at Shell step 6: packages/shell/src/i18n/catalogs/en.json not yet created
+[sdk-pin]

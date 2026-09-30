@@ -1,0 +1,33 @@
+{
+"version":1,
+"frame":"s3-google-s-form",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"mock-only",
+"screens":[
+"S3/google-form"
+],
+"root":null,
+"game":"lineSiege",
+"theme":"light",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s3-google-s-form.png",
+"elements":[],
+"texts":[
+{"text":"Ad privacy","x":20,"y":326.13,"w":138.94,"h":35,"owner":null,"font":"400 30px Lilita One"},
+{"text":"Before the first ad, choose your ad privacy options.","x":20,"y":374.13,"w":350.92,"h":22,"owner":null,"font":"400 18px Rubik"},
+{"text":"Before the first ad, choose your ad privacy options.","x":20,"y":397.88,"w":67.31,"h":22,"owner":null,"font":"400 18px Rubik"},
+{"text":"Ads come from Google. The game itself collects no data.","x":73,"y":453.63,"w":264.36,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Ads come from Google. The game itself collects no data.","x":73,"y":476.06,"w":173.17,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Choose options","x":103.56,"y":734.88,"w":160.88,"h":29,"owner":null,"font":"400 25px Lilita One"},
+{"text":"Google’s form opens next. You can change your choice any time in Settings.","x":20,"y":804.63,"w":353.36,"h":15,"owner":null,"font":"400 13px Rubik"},
+{"text":"Google’s form opens next. You can change your choice any time in Settings.","x":20,"y":822.81,"w":98.66,"h":15,"owner":null,"font":"400 13px Rubik"},
+{"text":"Google’s consent form appears here","x":84,"y":504.73,"w":233.98,"h":25,"owner":null,"font":"700 21px Rubik"},
+{"text":"Google’s consent form appears here","x":132.28,"y":532.03,"w":137.44,"h":25,"owner":null,"font":"700 21px Rubik"},
+{"text":"Its content and design come from Google.","x":91.08,"y":568.33,"w":219.83,"h":17,"owner":null,"font":"400 14px Rubik"},
+{"text":"Its content and design come from Google.","x":176.63,"y":586.8,"w":48.73,"h":17,"owner":null,"font":"400 14px Rubik"}
+]
+}

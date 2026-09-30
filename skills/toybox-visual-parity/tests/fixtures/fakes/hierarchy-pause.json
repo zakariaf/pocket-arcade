@@ -1,0 +1,34 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "LineSiege",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "resource-id": "game.screen",
+      "bounds": "[0,0][402,874]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "resource-id": "pause.dialog",
+      "bounds": "[20,210][382,663]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

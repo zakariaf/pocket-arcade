@@ -1,0 +1,3 @@
+[button-haptics]
+packages/shell/src/ui/toggle-row.tsx:6
+'medium'

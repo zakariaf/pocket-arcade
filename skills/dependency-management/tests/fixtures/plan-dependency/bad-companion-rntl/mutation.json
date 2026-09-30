@@ -1,0 +1,6 @@
+[
+  { "json": { "file": "package.json", "path": ["devDependencies", "@testing-library/react-native"], "value": null } },
+  { "json": { "file": "package.json", "path": ["devDependencies", "test-renderer"], "value": null } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "", "devDependencies", "@testing-library/react-native"], "value": null } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "", "devDependencies", "test-renderer"], "value": null } }
+]

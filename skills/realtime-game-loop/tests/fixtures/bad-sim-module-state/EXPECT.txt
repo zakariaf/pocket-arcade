@@ -1,0 +1,6 @@
+sim-module-state
+demo-arena-sim.ts:20
+edgeLog at module level
+sim-no-alloc
+demo-arena-sim.ts:103
+moveEntity runs every tick and allocates or grows an array (.push()

@@ -1,0 +1,2 @@
+[game-config]
+id is "flock", the folder is apps/flock-tilt

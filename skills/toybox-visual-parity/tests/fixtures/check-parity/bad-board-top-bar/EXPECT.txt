@@ -1,0 +1,2 @@
+[structure] game.screen
+inside its crop-only part game.pause-button

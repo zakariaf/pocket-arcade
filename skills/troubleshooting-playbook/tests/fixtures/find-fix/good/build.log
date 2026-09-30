@@ -1,0 +1,5 @@
+▸ Archiving LineSiege
+/usr/bin/codesign --force --sign 7F3A... LineSiege.app
+LineSiege.app: errSecInternalComponent
+Command CodeSign failed with a nonzero exit code
+** ARCHIVE FAILED **

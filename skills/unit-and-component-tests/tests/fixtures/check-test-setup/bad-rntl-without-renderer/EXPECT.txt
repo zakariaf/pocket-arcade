@@ -1,0 +1,3 @@
+test-dep-missing
+devDependencies lack test-renderer
+It comes with @testing-library/react-native 14.0.1

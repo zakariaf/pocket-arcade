@@ -1,0 +1,55 @@
+{
+ "version": 1,
+ "entries": [
+  {
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "light",
+   "lang": "en",
+   "scrollY": 0,
+   "sheetSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+   "date": "2026-09-28",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "n/a",
+    "feel": "match"
+   },
+   "differences": [
+    {
+     "what": "settings gear 1 pt low",
+     "status": "fixed"
+    },
+    {
+     "what": "stats label madda 0.7 pt narrower (waiver 1)",
+     "status": "waived"
+    }
+   ]
+  },
+  {
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "dark",
+   "lang": "en",
+   "scrollY": 0,
+   "sheetSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+   "date": "2026-09-28",
+   "looked": [],
+   "eyeChecks": {},
+   "differences": [
+    {
+     "what": "dark only",
+     "status": "fixed"
+    }
+   ]
+  }
+ ]
+}

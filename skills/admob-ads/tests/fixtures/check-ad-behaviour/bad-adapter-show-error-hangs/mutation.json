@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "    // A failed presentation arrives only as ERROR (phase 'show'): show() has already resolved and\n    // CLOSED never comes, so without this listener the game would stay suspended forever.\n    ad.addAdEventListener(AdEventType.ERROR, () => {\n      settle('unavailable');\n    });\n",
+      "with": ""
+    }
+  }
+]

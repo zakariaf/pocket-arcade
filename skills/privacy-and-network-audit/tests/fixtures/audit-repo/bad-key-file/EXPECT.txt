@@ -1,0 +1,2 @@
+[secret-file]
+AuthKey_ABC123XYZ9.p8

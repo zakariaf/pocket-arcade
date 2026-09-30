@@ -1,0 +1,4 @@
+[palette-contrast]
+light: textMuted on background
+[palette-one-ink]
+apps/sheep-sort/src/theme/palette.ts

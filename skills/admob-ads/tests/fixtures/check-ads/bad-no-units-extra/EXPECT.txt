@@ -1,0 +1,2 @@
+[extra-ad-units]
+withShell does not write expo.extra.adUnits through adUnitsExtra()

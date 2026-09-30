@@ -1,0 +1,2 @@
+[session-continue]
+a second continue

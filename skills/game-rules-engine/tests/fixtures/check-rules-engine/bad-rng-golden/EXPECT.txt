@@ -1,0 +1,3 @@
+[rng-golden]
+packages/game-kit/src/rng/sfc32.ts
+the golden sequence is 1828152527

@@ -1,0 +1,1 @@
+[harness-gitignore] does not ignore .parity/

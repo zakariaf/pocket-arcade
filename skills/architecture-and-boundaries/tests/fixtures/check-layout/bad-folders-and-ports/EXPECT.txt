@@ -1,0 +1,8 @@
+packages/shell/src/helpers/ [folders] "helpers" is not a Shell folder
+packages/shell/src/root-provider.tsx [folders] a file directly in packages/shell/src
+packages/game-kit/src/utils/ [folders] "utils" is not a game-kit folder
+apps/tile-drop/src/components/ [folders] "components" is not a game folder
+packages/tooling/src/release-all.ts [folders] a tooling script directly in src/
+packages/tooling/src/Release_Tools/ [folders] tooling area "Release_Tools" is not a kebab-case noun
+packages/shell/src/services/haptics/ [port-triple] has an adapter (expo-haptics-adapter.ts) but no port file (haptics-port.ts)
+packages/shell/src/services/haptics/ [port-triple] has an adapter (expo-haptics-adapter.ts) but no fake-<port>.ts

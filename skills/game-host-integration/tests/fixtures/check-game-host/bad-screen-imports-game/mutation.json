@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/home/home-hint.ts",
+      "content": "// packages/shell/src/screens/home/home-hint.ts\nimport { outcome } from '@e07/tap-flip/rules/outcome.ts';\n\nexport const HOME_OUTCOME = outcome;\n"
+    }
+  }
+]

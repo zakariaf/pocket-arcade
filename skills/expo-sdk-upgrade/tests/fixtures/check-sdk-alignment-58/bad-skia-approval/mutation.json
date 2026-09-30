@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "allowScripts",
+        "@shopify/react-native-skia@2.6.2"
+      ],
+      "value": true
+    }
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/plugins/with-app-variant-marker.ts",
+      "find": "import type { ConfigPlugin } from 'expo/config-plugins';",
+      "with": "import type { ConfigPlugin } from 'expo/config-plugins.js';"
+    }
+  }
+]

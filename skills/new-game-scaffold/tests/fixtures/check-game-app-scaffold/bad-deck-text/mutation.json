@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/src/i18n/de.json", "find": "\"Wisch, um das Feld zu kippen.\"", "with": "\"Wische, um das Feld zu neigen.\"" } }]

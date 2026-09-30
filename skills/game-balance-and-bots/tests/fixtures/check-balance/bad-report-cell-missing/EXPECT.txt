@@ -1,0 +1,2 @@
+[report-cell-missing]
+no lookahead d25 cell

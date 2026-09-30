@@ -1,0 +1,4 @@
+# Generated build output is never judged.
+appId: com.example.demo
+---
+- setAirplaneMode: enabled

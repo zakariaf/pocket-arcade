@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "react-dom"
+      ],
+      "value": "19.2.3"
+    }
+  }
+]

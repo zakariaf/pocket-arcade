@@ -1,0 +1,3 @@
+[vendor-import]
+packages/shell/src/screens/home/home-sound.ts:2
+outside the audio adapter

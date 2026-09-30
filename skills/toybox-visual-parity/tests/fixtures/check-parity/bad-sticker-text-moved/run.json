@@ -1,0 +1,13 @@
+{
+ "frame": "s4-home-premium",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "Planted: the real S4 Premium capture with the tagline's text moved 12 px (4 pt) to the right inside its tilted sticker (the sticker stays). Measured in the text colour inside the rotated line box, the text is caught moving past its Lilita One 16 limit (2.1 pt); the sticker's paper never counts as ink.",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s4-home-premium.png",
+  "layout": "../reference/lineSiege/light-en/s4-home-premium.layout.json"
+ }
+}

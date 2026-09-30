@@ -1,0 +1,9 @@
+feat(line-siege): pin the daily level of 2026-09-26
+
+Spec S9 and 8.3: every phone builds the same daily level from the date.
+A data golden pins the level for 2026-09-26; a property checks that the
+same date always gives the same seed.
+
+Gate-Change: new data golden for the daily level of 2026-09-26
+# Lines starting with # are removed by git and by check-commits.mjs.
+# type: feat fix perf refactor test docs build ci chore style revert

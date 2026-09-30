@@ -1,0 +1,2 @@
+[s12-states]
+a duplicated failure is ignored

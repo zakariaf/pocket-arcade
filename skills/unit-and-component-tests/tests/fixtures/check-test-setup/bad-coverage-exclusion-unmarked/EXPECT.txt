@@ -1,0 +1,3 @@
+coverage-device-only
+packages/shell/src/app/shell-config.ts:1
+carries no "// device-only: covered by <check>" marker

@@ -1,0 +1,13 @@
+{
+  "name": "@demo/sky-hop",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@demo/game-kit": "*",
+    "@demo/shell": "*",
+    "expo": "~57.0.25",
+    "expo-sqlite": "~57.0.3",
+    "react": "19.2.3",
+    "react-native": "0.86.3"
+  }
+}

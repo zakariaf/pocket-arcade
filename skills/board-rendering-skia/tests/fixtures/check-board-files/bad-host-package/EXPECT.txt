@@ -1,0 +1,3 @@
+host-import-unresolved
+use-game-lifecycle.test.ts
+imports the package @testing-library/react-native

@@ -1,0 +1,2 @@
+[journal-mode]
+journal_mode is delete, not wal

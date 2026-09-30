@@ -1,0 +1,2 @@
+[config-contract]
+allows a continue but rules.continueRun is none

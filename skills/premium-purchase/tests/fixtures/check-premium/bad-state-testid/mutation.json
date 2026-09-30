@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/premium/premium-state-ids.ts",
+      "find": "  pending: 'premium.state.pending',\n",
+      "with": ""
+    }
+  }
+]

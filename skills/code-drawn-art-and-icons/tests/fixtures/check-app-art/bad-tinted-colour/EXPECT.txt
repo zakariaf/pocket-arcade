@@ -1,0 +1,2 @@
+[art-tinted-gray]
+icon-tinted.png

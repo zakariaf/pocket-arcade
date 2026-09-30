@@ -1,0 +1,21 @@
+# packages/shell/e2e/flows/smoke/01-first-launch.yaml — S1 -> S2 -> S13 (spec 1.2 and S2 rules).
+appId: ${APP_ID}
+name: First launch goes from language choice to the tutorial
+tags: [smoke, shell]
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- assertVisible:
+    id: 'language-choice.screen'
+- assertVisible:
+    id: 'language-choice.language-row.en'
+- tapOn:
+    id: 'language-choice.continue-button'
+- extendedWaitUntil:
+    visible:
+      id: 'tutorial.screen'
+    timeout: 10000
+- assertNotVisible:
+    id: 'tutorial.skip-button'
+- takeScreenshot: first-launch-tutorial

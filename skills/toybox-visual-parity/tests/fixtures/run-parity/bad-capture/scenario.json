@@ -1,0 +1,6 @@
+{
+ "screenshots": [
+  "../../check-parity/reference/lineSiege/light-en/s4-home.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-alert.json"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "devDependencies",
+        "@react-native/jest-preset"
+      ],
+      "value": "0.87.1"
+    }
+  }
+]

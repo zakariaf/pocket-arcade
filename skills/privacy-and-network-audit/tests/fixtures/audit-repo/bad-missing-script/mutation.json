@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "scripts",
+        "audit:network"
+      ],
+      "value": null
+    }
+  }
+]

@@ -1,0 +1,2 @@
+test/goldens/boards/demo-board.golden.test.ts
+[golden-tolerance] sets failureThreshold in the test

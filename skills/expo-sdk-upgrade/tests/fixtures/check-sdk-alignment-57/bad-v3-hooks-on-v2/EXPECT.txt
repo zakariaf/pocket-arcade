@@ -1,0 +1,3 @@
+gesture-api
+packages/shell/src/game-host/use-board-gestures.ts:2
+imports useTapGesture, which Gesture Handler 2 does not have

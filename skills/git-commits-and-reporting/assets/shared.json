@@ -1,0 +1,4 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/tooling/src/git/commit-message-samples.json", "to": "tests/fixtures/check-commits-samples/good/commit-message-samples.json" }
+]

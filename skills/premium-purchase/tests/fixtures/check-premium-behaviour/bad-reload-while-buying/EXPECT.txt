@@ -1,0 +1,2 @@
+[offline-gate]
+shouldReloadStore(purchasing, online=false)

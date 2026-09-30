@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "jest.config.js",
+      "find": "  resolver: 'react-native-reanimated/jest/resolver',\n",
+      "with": ""
+    }
+  }
+]

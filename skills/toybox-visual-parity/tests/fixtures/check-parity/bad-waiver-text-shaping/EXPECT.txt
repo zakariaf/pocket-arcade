@@ -1,0 +1,1 @@
+[waiver-invalid] waiver 1 (s4-home home.stats-button bounds): a platform-text-shaping waiver covers text-ink only

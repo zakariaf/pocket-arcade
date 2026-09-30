@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "const isNoFill = error.reason === 'no-fill'",
+      "with": "const isNoFill = error.code === 'no-fill'"
+    }
+  }
+]

@@ -1,0 +1,7 @@
+apps/tile-drop/src/rules/outcome.ts:2 [rules-pure] imports react-native
+apps/tile-drop/src/rules/outcome.ts:4 [rules-pure] rules/levels import apps/tile-drop/src/board/draw-board.ts
+apps/tile-drop/src/board/draw-board.ts:2 [game-facing] game code imports the Shell module stores/settings-store.ts
+apps/tile-drop/src/levels/level-table.ts:2 [rules-pure] rules/levels import packages/shell/src/i18n/messages.ts
+apps/tile-drop/src/rules/outcome.test.ts:2 [rules-pure] imports react-native
+apps/tile-drop/src/rules/outcome.test.ts:4 [rules-pure] rules/levels import packages/shell/src/stores/settings-store.ts
+apps/tile-drop/src/levels/level-table.test.ts:2 [rules-pure] rules/levels import apps/tile-drop/src/testing/tile-drop-bot.ts

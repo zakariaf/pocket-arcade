@@ -1,0 +1,9 @@
+{
+  "name": "@e07/demo-game",
+  "private": true,
+  "dependencies": {
+    "expo-constants": "~57.0.3",
+    "expo-network": "~57.0.2",
+    "react-native-google-mobile-ads": "17.2.0"
+  }
+}

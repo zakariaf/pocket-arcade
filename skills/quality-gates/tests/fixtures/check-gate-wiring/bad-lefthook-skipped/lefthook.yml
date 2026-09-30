@@ -1,0 +1,47 @@
+# lefthook.yml: git hooks for the monorepo (lefthook 2.x). Owned by the quality-gates skill.
+# Installed by `npm install` through the root "prepare" script. Never bypass with --no-verify.
+assert_lefthook_installed: true
+output:
+  - summary
+  - failure
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: no-secrets
+      glob:
+        - '*.p8'
+        - '*.p12'
+        - '*.mobileprovision'
+        - '*.keystore'
+        - '*.jks'
+        - 'AuthKey_*'
+        - '**/AuthKey_*'
+        - 'ApiKey_*'
+        - '**/ApiKey_*'
+        - '.env*'
+        - '**/.env*'
+      run: echo "Refusing to commit a secret or signing file:" {staged_files} >&2; exit 1
+    - name: format
+      glob: '*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}'
+      run: npx prettier --check {staged_files}
+    - name: lint
+      glob: '*.{ts,tsx,js,mjs,cjs}'
+      run: npx eslint --max-warnings 0 --no-warn-ignored {staged_files}
+    - name: typecheck
+      glob: '*.{ts,tsx,json}'
+      run: npm run -s typecheck
+    - name: test-related
+      glob: '*.{ts,tsx,json}'
+      run: npx jest --ci --bail --findRelatedTests --passWithNoTests {staged_files}
+
+commit-msg:
+  jobs:
+    - name: commit-message
+      run: node packages/tooling/src/git/check-commit-message.ts {1}
+
+pre-push:
+  skip: true
+  jobs:
+    - name: verify
+      run: npm run verify

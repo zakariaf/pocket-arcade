@@ -1,0 +1,2 @@
+ERROR [bad-input] no facts to judge: pass --online (reads npm) or --facts <file>
+RESULT: FAIL (1 problems)

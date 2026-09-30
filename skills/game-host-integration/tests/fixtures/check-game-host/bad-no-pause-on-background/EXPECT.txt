@@ -1,0 +1,2 @@
+[game-screen-wiring]
+does not pause the run when the app goes to the background

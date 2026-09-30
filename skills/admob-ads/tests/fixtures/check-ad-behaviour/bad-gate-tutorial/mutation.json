@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-gate.ts",
+      "find": "input.isPremium || !input.isAdsEnabled || !input.isTutorialDone || !input.isOnline",
+      "with": "input.isPremium || !input.isAdsEnabled || !input.isOnline"
+    }
+  }
+]

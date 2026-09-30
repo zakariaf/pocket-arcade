@@ -1,0 +1,3 @@
+[game-art]
+apps/line-siege/src/art/game-art.ts:14
+GAME_ART.logo is not the game's LOGO_ART

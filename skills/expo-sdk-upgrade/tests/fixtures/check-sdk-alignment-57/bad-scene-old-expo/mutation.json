@@ -1,0 +1,29 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/with-shell.ts",
+      "find": "return ['expo-sqlite',",
+      "with": "return [['expo-build-properties', { ios: { enableSceneSupport: true } }], 'expo-sqlite',"
+    }
+  },
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "expo"
+      ],
+      "value": "~57.0.22"
+    }
+  },
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "expo"
+      ],
+      "value": "~57.0.22"
+    }
+  }
+]

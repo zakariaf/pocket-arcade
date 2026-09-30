@@ -1,0 +1,2 @@
+single-writer
+@react-native-async-storage/async-storage

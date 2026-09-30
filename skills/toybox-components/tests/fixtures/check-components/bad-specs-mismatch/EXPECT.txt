@@ -1,0 +1,1 @@
+[specs-mismatch] button.minHeight is 52, the as-rendered Toybox spec is 54

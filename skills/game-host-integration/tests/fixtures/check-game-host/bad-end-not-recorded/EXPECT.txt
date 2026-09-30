@@ -1,0 +1,2 @@
+[save-before-publish]
+makePersist does not write the run

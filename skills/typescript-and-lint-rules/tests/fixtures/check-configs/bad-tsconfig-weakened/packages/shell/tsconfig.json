@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ],
+    "skipLibCheck": false
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/config/**/*"
+  ]
+}

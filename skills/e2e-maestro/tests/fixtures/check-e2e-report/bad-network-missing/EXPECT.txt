@@ -1,0 +1,1 @@
+reports/e2e/demo/network.txt [network-report] is missing, so the socket sampler did not run

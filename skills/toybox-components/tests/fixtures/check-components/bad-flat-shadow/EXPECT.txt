@@ -1,0 +1,2 @@
+panel.tsx
+[flat-part-shadow] a static hard shadow on a part that lies flat

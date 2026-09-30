@@ -1,0 +1,3 @@
+[ui-feedback]
+packages/shell/src/services/audio/ui-feedback.ts
+never plays its 'lose' feedback

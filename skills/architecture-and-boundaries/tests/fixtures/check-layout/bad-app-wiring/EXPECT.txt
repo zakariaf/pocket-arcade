@@ -1,0 +1,4 @@
+apps/tile-drop/app.config.ts:1 [app-config] is not the one-statement withShell form
+apps/tile-drop/index.ts:1 [app-entry] is not the 3-line startShell entry
+apps/sky-hop/metro.config.js:1 [metro-cache]
+apps/sky-hop/src/board/board-options.ts:2 [game-config-use] imports @demo/sky-hop/game.config.ts

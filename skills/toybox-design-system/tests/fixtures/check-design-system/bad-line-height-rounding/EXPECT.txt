@@ -1,0 +1,4 @@
+[line-height-grid]
+packages/shell/src/i18n/use-localized-text-style.ts:55
+lineHeight uses Math.round
+the line height is not snapped to the device pixel grid

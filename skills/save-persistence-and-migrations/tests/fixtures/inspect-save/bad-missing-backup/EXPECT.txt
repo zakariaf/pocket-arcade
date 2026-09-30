@@ -1,0 +1,2 @@
+[slot-missing]
+the backup slot is missing

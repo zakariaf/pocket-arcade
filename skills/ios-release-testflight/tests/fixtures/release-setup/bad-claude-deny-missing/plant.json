@@ -1,0 +1,3 @@
+{
+  ".claude/settings.json": "{\"permissions\":{\"deny\":[\"Read(~/.appstoreconnect/**)\",\"Read(**/AuthKey_*)\",\"Read(**/*.p12)\",\"Read(**/*.mobileprovision)\"]}}"
+}

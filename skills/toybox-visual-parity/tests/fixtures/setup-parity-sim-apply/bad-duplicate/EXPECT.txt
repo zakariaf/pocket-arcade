@@ -1,0 +1,1 @@
+[sim-duplicate] 2 simulators are named e07-parity

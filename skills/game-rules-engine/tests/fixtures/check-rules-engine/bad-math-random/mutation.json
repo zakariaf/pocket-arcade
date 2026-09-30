@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/create.ts", "find": "const draw = nextInt(rng, size);", "with": "const draw = { value: Math.floor(Math.random() * size), state: rng };" } }]

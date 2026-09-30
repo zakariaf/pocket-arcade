@@ -1,0 +1,20 @@
+# .prettierignore: generated, vendored or binary-adjacent files Prettier must not touch.
+package-lock.json
+**/node_modules/
+**/.expo/
+apps/*/ios/
+apps/*/android/
+apps/*/build/
+apps/*/dist/
+coverage/
+reports/
+dist-audit/
+tools/
+.stryker-tmp/
+**/__snapshots__/
+**/__image_snapshots__/
+apps/*/e2e/baselines/
+# Hand-written engineering handbook at the repo root: Prettier would reflow its tables and snippets.
+/docs
+# The skill library holds templates, reference tables and planted-bug fixtures.
+skills/

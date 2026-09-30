@@ -1,0 +1,3 @@
+[skill-stale]
+names ghost-skill
+nothing was written

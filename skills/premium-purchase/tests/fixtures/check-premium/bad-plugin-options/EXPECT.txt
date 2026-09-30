@@ -1,0 +1,3 @@
+[plugin-options]
+the expo-iap plugin gets an options object
+iapkitApiKey

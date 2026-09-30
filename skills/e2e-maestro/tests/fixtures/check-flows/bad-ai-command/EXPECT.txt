@@ -1,0 +1,1 @@
+01-first-launch.yaml:22 [ai-command] assertNoDefectsWithAI uploads screenshots

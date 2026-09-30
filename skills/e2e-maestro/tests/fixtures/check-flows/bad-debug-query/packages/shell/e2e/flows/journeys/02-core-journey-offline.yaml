@@ -1,0 +1,52 @@
+# packages/shell/e2e/flows/journeys/02-core-journey-offline.yaml — spec 15 item 2, offline via the debug switch
+# (iOS simulators have no airplane mode). Every step asserts by testID, never by translated text.
+appId: ${APP_ID}
+name: Core journey works offline and survives a kill
+tags: [smoke, shell, offline]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=it&theme=sepia&seed=abc&date=26-09-2026&mode=fast&stars=1:5'
+      WAIT_FOR: 'home.screen'
+- assertNotVisible:
+    id: 'home.banner-ad'
+- tapOn:
+    id: 'home.play-button'
+- assertVisible:
+    id: 'game.screen'
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.next-button'
+- tapOn:
+    id: 'result.next-button'
+- assertVisible:
+    id: 'game.screen'
+- killApp
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible:
+      id: 'pause.resume-button'
+    timeout: 15000
+- tapOn:
+    id: 'pause.home-button'
+- tapOn:
+    id: 'home.daily-card'
+- assertVisible:
+    id: 'daily.screen'
+- tapOn:
+    id: 'daily.top-bar.back-button'
+- tapOn:
+    id: 'home.stats-button'
+- assertVisible:
+    id: 'stats.overview-card'
+- tapOn:
+    id: 'stats.top-bar.back-button'
+- runFlow: ../../subflows/assert-no-network.yaml

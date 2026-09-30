@@ -1,0 +1,14 @@
+{
+ "frame": "s10-statistics",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 600,
+ "source": "self-test fixture",
+ "note": "The good tall S10 capture with stats.best-card (partly under the top bar) reported 3 pt to the right.",
+ "app": "../good/tall-s10-statistics-light-en-y600/app.png",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s10-statistics.png",
+  "layout": "../reference/lineSiege/light-en/s10-statistics.layout.json"
+ }
+}

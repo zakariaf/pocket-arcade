@@ -1,0 +1,21 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/ios/toolchain.ts",
+      "find": "'26.6'",
+      "with": "'27.0'"
+    }
+  },
+  {
+    "write": {
+      "file": "packages/shell/src/config/scene-support.ts",
+      "content": "// packages/shell/src/config/scene-support.ts\n// iOS scene life cycle for SDK 57 builds made with Xcode 27: expo-build-properties\n// ios.enableSceneSupport (needs expo 57.0.23 or newer). A no-op from SDK 58 on: delete this file,\n// its test and its call in withShell in the SDK 58 move commit.\nimport type { ExpoConfig } from 'expo/config';\n\ntype PluginEntry = NonNullable<ExpoConfig['plugins']>[number];\ntype Options = Readonly<Record<string, unknown>>;\n\nconst BUILD_PROPERTIES = 'expo-build-properties';\n\nfunction isRecord(value: unknown): value is Options {\n  return typeof value === 'object' && value !== null && !Array.isArray(value);\n}\n\nfunction withScene(options: unknown): Options {\n  const base = isRecord(options) ? options : {};\n  const ios = isRecord(base['ios']) ? base['ios'] : {};\n  return { ...base, ios: { ...ios, enableSceneSupport: true } };\n}\n\nfunction isBuildProperties(entry: PluginEntry): boolean {\n  return entry === BUILD_PROPERTIES || (Array.isArray(entry) && entry[0] === BUILD_PROPERTIES);\n}\n\n/**\n * Turns on ios.enableSceneSupport: merges it into the existing expo-build-properties entry (a second\n * entry would run the plugin twice), or appends one when the list has none.\n */\nexport function withSceneSupport(plugins: readonly PluginEntry[]): PluginEntry[] {\n  if (!plugins.some(isBuildProperties)) {\n    return [...plugins, [BUILD_PROPERTIES, withScene(undefined)]];\n  }\n  return plugins.map((entry) => {\n    if (!isBuildProperties(entry)) {\n      return entry;\n    }\n    const options: unknown = Array.isArray(entry) ? Reflect.get(entry, 1) : undefined;\n    return [BUILD_PROPERTIES, withScene(options)];\n  });\n}\n"
+    }
+  },
+  {
+    "write": {
+      "file": "packages/shell/src/config/scene-support.test.ts",
+      "content": "// packages/shell/src/config/scene-support.test.ts\nimport { withSceneSupport } from './scene-support.ts';\n\nimport type { ExpoConfig } from 'expo/config';\n\ntype PluginEntry = NonNullable<ExpoConfig['plugins']>[number];\n\nconst SCENE = { enableSceneSupport: true };\n\ndescribe('withSceneSupport', () => {\n  it('appends an expo-build-properties entry when the list has none', () => {\n    expect(withSceneSupport(['expo-sqlite'])).toStrictEqual([\n      'expo-sqlite',\n      ['expo-build-properties', { ios: SCENE }],\n    ]);\n  });\n\n  it('merges into the existing entry and keeps its other options', () => {\n    const plugins: PluginEntry[] = [\n      [\n        'expo-build-properties',\n        { ios: { useFrameworks: 'static' }, android: { minSdkVersion: 26 } },\n      ],\n    ];\n    expect(withSceneSupport(plugins)).toStrictEqual([\n      [\n        'expo-build-properties',\n        { ios: { useFrameworks: 'static', ...SCENE }, android: { minSdkVersion: 26 } },\n      ],\n    ]);\n  });\n\n  it('turns a bare expo-build-properties string into an entry with options', () => {\n    expect(withSceneSupport(['expo-build-properties'])).toStrictEqual([\n      ['expo-build-properties', { ios: SCENE }],\n    ]);\n  });\n\n  it('keeps every other plugin as it was', () => {\n    const plugins: PluginEntry[] = [\n      'expo-sqlite',\n      ['expo-font', { fonts: [] }],\n      'expo-build-properties',\n    ];\n    const result = withSceneSupport(plugins);\n    expect(result.slice(0, 2)).toStrictEqual(plugins.slice(0, 2));\n    expect(result).toHaveLength(3);\n  });\n});\n"
+    }
+  }
+]

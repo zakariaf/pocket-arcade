@@ -1,0 +1,2 @@
+[pure-policy]
+packages/shell/src/services/ads/ad-policy.ts

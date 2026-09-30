@@ -1,0 +1,3 @@
+[release-prereqs]
+scripts["verify"] is missing
+scripts["audit:network"] is missing

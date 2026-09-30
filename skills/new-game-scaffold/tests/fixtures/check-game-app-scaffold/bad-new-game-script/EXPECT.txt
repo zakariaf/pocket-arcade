@@ -1,0 +1,3 @@
+[new-game-script]
+packages/tooling/src/scaffold/new-game.ts
+templates/tooling/new-game.ts

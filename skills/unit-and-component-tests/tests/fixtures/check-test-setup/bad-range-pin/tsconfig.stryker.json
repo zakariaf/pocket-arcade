@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest"],
+    "tsBuildInfoFile": "${configDir}/node_modules/.cache/tsc/stryker.tsbuildinfo"
+  },
+  "include": ["apps/*/src/**/*", "packages/game-kit/src/**/*", "packages/shell/src/**/*"],
+  "exclude": ["packages/shell/src/config/**/*"]
+}

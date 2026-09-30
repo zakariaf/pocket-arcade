@@ -1,0 +1,1 @@
+[{ "delete": "apps/tap-flip/src/rules/create.test.ts" }, { "delete": "apps/tap-flip/src/rules/apply-move.test.ts" }, { "delete": "apps/tap-flip/src/rules/outcome.test.ts" }, { "delete": "apps/tap-flip/src/rules/flip-cells.test.ts" }]

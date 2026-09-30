@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/levels/levels-screen.tsx",
+      "find": "testID=\"levels.banner-ad\"",
+      "with": "testID=\"levels.banner\""
+    }
+  }
+]

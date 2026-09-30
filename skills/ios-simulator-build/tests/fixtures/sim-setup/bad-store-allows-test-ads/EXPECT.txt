@@ -1,0 +1,2 @@
+[variant-rules]
+packages/shell/src/config/app-variant.ts

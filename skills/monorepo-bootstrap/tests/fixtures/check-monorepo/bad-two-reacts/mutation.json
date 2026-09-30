@@ -1,0 +1,1 @@
+[{ "json": { "file": "package-lock.json", "path": ["packages", "node_modules/some-tool/node_modules/react"], "value": { "version": "19.3.0" } } }]

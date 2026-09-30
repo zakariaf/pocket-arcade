@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/apply-move.ts", "find": "  return { state: next, events };", "with": "  Reflect.set(state, 'moves', next.moves);\n  return { state: next, events };" } }]

@@ -1,0 +1,2 @@
+stale-approval
+allowScripts approves lefthook@2.1.13 but 2.1.14 is installed

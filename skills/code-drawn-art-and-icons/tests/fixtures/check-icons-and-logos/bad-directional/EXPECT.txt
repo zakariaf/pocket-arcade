@@ -1,0 +1,2 @@
+[icon-directional]
+DIRECTIONAL_ICONS holds the Toybox icons [back, chevron, forward, play, undo]

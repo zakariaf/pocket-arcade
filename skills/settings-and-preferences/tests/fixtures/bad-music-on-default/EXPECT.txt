@@ -1,0 +1,2 @@
+settings-default
+DEFAULT_SETTINGS.musicEnabled is true

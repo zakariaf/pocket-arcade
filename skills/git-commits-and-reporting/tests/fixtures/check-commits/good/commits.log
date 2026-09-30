@@ -1,0 +1,110 @@
+==> commit f7a25d37bf12243db98ed93d6c18466bec227490
+feat(line-siege): clear full columns and fire a beam
+
+Spec 13 (Line Siege) and 8.13: a full column clears and damages the
+first monster in that column. Examples and a determinism property cover it.
+
+==> files
+
+apps/line-siege/src/beam.test.ts
+apps/line-siege/src/beam.ts
+==> commit 44632f9a554d213817b8ee5810441d7169b0df6d
+fix(shell): keep the streak when the clock goes back
+
+Spec S9: days already done stay done if the phone's clock goes
+backwards. A property over shuffled dates covers it.
+
+==> files
+
+packages/shell/src/streak.ts
+==> commit 74ed3ec066421bca75f8850c3ae0aeda37cf0608
+chore(repo): add the lint configuration
+
+The flat config every workspace shares.
+
+Gate-Change: initial quality gates for the new workspaces
+
+==> files
+
+eslint.config.mjs
+==> commit d2df146cbe27a1bab09ab9b4909a4e60071857b0
+fix(game-kit): give 2 stars up to par + 3
+
+The owner widened the two-star band after the play-test.
+
+Spec-Change: spec 8.1 two stars now reach par + 3 (owner decision)
+Co-Authored-By: Claude <noreply@anthropic.com>
+
+==> files
+
+packages/game-kit/src/stars.ts
+==> commit 7391c282ae154e66066db576423c5ad1ac3dc285
+feat(line-siege): keep the best endless score
+
+Spec 8.2 and S4: Endless shows its best score on Home.
+
+==> files
+
+apps/line-siege/src/endless.ts
+==> commit 5a71ad51a71b810747af46dc5e68827d3a9da502
+refactor(game-kit): name the two-star limit
+
+==> files
+
+packages/game-kit/src/stars.ts
+==> commit e03b47076b03f4fcd0c2febdf182d1bd11e3b82c
+Merge branch 'feat/line-siege-endless'
+
+==> files
+==> commit b22d6c8d2f2eb21829587a3d1500d6331c742e17
+chore(line-siege): build 8
+
+Release-Variant: store
+
+==> files
+
+apps/line-siege/game.config.ts
+==> commit 57bd7f352ac5d4f67d6b616d6df8d04570efbd47
+feat(shell): show the statistic cards for overview, levels and the daily
+
+Spec S10: the Statistics screen shows the overview, levels and daily
+cards in that order.
+
+==> files
+
+packages/shell/src/stats-cards.test.ts
+packages/shell/src/stats-cards.ts
+==> commit 3c9e1f0a7b2d4e6f8a1c3e5f7092b4d6e8f0a1c3
+chore(skills): sync the shared lint config into the skills
+
+The library's canonical copy changed; the skills ship it verbatim.
+
+==> files
+
+skills/_library/shared/repo-templates/eslint.config.mjs
+skills/monorepo-bootstrap/templates/repo/eslint.config.mjs
+skills/typescript-and-lint-rules/templates/eslint.config.mjs
+skills/monorepo-bootstrap/templates/repo/packages/shell/tsconfig.json
+==> commit b69263b18b61065c95b7a070287b1d4b1d6e1124
+test(shell): waive the dashed edges of the locked tiles
+
+Spec S8: iOS draws a dashed border with its own dash length and phase,
+so the 17 locked tiles and the locked pack panel differ in structure.
+
+Gate-Change: pre-listed platform waivers for React Native dashed edges
+
+==> files
+
+parity/waivers.json
+==> commit 262829a5023ba4931cd4ea967b952652013e49ec
+test(line-siege): record the pilot's facts for the parity references
+
+Spec S7 and S11: Line Siege has no music and rates levels by score, so
+captures use the no-music and score-line references.
+
+Gate-Change: game facts choose the S6, S7 and S11 reference variants
+
+==> files
+
+apps/line-siege/src/parity-game-facts.test.ts
+parity/game-facts.json

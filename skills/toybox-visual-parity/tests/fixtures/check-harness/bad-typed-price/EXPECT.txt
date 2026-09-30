@@ -1,0 +1,2 @@
+[harness-typed-price] price-like text '€1.99' in the harness
+packages/shell/src/app/parity/parity-purchase.ts:

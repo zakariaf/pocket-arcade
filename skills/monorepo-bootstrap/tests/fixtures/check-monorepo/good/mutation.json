@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [], \"why\": \"Shell build in progress: no Shell app yet\" }\n"
+    }
+  }
+]

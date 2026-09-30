@@ -1,0 +1,11 @@
+[
+  {
+    "json": {
+      "file": "packages/shell/src/i18n/catalogs/de.json",
+      "path": [
+        "premium.buy-button"
+      ],
+      "value": "Kaufen – 1,99 €"
+    }
+  }
+]

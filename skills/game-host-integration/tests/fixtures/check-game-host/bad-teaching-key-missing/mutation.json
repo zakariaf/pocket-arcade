@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/i18n/de.json",
+      "find": "  \"tap-flip.tutorial.step-2\": \"Jetzt tipp in die Mitte!\",\n",
+      "with": ""
+    }
+  }
+]

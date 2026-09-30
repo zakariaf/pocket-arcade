@@ -1,0 +1,2 @@
+[module-assembly]
+identity is not { id: 'tap-flip', nameId: 'tap-flip.name', winTitleId: 'tap-flip.win-title', taglineId: 'tap-flip.tagline' }

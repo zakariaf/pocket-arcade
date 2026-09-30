@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/apply-move.ts", "find": "throw new RangeError(", "with": "throw new Error(" } }]

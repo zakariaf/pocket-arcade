@@ -1,0 +1,2 @@
+[desc-duplicate]
+has the same description as alpha-boards

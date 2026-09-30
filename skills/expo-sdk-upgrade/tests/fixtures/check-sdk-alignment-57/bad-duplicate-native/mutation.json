@@ -1,0 +1,14 @@
+[
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": [
+        "packages",
+        "apps/alpha/node_modules/react-native-reanimated"
+      ],
+      "value": {
+        "version": "4.7.0"
+      }
+    }
+  }
+]

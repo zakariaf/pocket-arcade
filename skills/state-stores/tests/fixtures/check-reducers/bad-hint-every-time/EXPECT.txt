@@ -1,0 +1,2 @@
+[progress-free-hint]
+a second free hint on the same day returns the same state

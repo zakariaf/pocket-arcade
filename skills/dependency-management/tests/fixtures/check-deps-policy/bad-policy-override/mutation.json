@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".npmrc",
+      "find": "min-release-age-exclude[]=expo-*",
+      "with": "min-release-age-exclude[]=expo-*\n\nmin-release-age=1"
+    }
+  }
+]

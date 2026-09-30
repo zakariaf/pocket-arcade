@@ -1,0 +1,3 @@
+[recipe-quality]
+apps/demo-game/src/sounds/sound-bank.ts:28
+lasts 2400 ms (limit 1500 ms)

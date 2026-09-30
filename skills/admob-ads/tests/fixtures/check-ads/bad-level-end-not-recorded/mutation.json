@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "    extendRunEnd: recordAdLevelEnd,\n",
+      "with": ""
+    }
+  }
+]

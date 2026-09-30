@@ -1,0 +1,4 @@
+test(shell): waive the dashed edges of the locked tiles
+
+Spec S8: iOS draws a dashed border with its own dash length and phase,
+so the 17 locked tiles and the locked pack panel differ in structure.

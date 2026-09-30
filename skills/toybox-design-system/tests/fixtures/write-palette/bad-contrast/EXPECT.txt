@@ -1,0 +1,3 @@
+[palette-contrast]
+light: textMuted on background is
+dark: textMuted on surface is

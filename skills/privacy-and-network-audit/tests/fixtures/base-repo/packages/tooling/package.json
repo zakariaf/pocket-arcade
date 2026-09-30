@@ -1,0 +1,6 @@
+{
+  "name": "@e07/tooling",
+  "private": true,
+  "type": "module",
+  "exports": { "./*": "./src/*" }
+}

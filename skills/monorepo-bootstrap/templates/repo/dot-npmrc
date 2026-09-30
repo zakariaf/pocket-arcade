@@ -1,0 +1,8 @@
+# .npmrc (repo root). Written by the monorepo-bootstrap skill; the dependency-management skill owns
+# the policy. Refuse to resolve any version published less than 7 days ago.
+min-release-age=7
+# Refuse to install when node/npm do not satisfy package.json "engines".
+engine-strict=true
+# Never let npm guess ranges: every `npm install <pkg>` writes an exact version.
+save-exact=true
+__RELEASE_AGE_BOOTSTRAP_BLOCK__

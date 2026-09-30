@@ -1,0 +1,1 @@
+[snapshot-unreadable] entry "generateLevel goldens renders the preview 1" holds a component tree

@@ -1,0 +1,2 @@
+[no-xcode-select]
+packages/tooling/src/release/pick-xcode.ts:4

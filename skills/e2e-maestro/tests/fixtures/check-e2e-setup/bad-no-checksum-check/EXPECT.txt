@@ -1,0 +1,1 @@
+[maestro-pin] does not verify the download with shasum -a 256 -c

@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/game-kit/src/levels/star-rating.ts", "find": "export const PAR_SLACK_FOR_TWO_STARS = 2;", "with": "export const PAR_SLACK_FOR_TWO_STARS = 3;" } }]

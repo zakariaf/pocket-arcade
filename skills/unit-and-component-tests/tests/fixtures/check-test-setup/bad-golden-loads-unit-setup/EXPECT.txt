@@ -1,0 +1,2 @@
+[jest-golden-project]
+golden loads <rootDir>/jest.setup.ts, whose inert Skia mock replaces CanvasKit

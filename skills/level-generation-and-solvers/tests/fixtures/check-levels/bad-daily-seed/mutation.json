@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/game-kit/src/dates/daily-seed.ts", "find": "0x01000193", "with": "0x01000197" } }]

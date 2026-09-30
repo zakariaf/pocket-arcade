@@ -1,0 +1,1 @@
+[{ "replace": { "file": ".npmrc", "find": "expires=2026-10-03", "with": "expires=2026-09-20" } }]

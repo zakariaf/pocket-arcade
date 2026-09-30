@@ -1,0 +1,2 @@
+[png-size]
+is 1206x2622, expected 1320x2868

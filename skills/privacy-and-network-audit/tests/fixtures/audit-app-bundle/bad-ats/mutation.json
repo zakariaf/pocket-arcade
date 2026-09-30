@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "DemoGame.app/Info.plist",
+      "find": "\t\t<key>NSAllowsLocalNetworking</key>",
+      "with": "\t\t<key>NSAllowsArbitraryLoads</key>\n\t\t<true/>\n\t\t<key>NSAllowsLocalNetworking</key>"
+    }
+  }
+]

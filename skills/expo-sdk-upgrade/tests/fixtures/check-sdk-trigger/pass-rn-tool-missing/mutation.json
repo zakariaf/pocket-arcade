@@ -1,0 +1,13 @@
+[
+  {
+    "json": {
+      "file": "facts.json",
+      "path": [
+        "packageTimes",
+        "@react-native/jest-preset",
+        "0.88.2"
+      ],
+      "value": null
+    }
+  }
+]

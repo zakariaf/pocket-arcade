@@ -1,0 +1,4 @@
+packages/shell/src/ui/level-label.ts:4 [no-inline-config]
+packages/shell/src/ui/level-label.ts:5 [no-ts-ignore]
+packages/shell/src/ui/level-label.ts:9 [ts-expect-error-reason]
+packages/shell/src/ui/level-label.ts:12 [no-warning-comment]

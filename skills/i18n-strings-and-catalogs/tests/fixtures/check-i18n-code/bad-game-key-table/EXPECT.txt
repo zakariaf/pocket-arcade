@@ -1,0 +1,3 @@
+[game-key-cast]
+keys.ts:4
+gameMessageText

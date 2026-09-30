@@ -1,0 +1,4 @@
+[desc-neighbours]
+ghost-skill
+[related-names]
+Sample Skill

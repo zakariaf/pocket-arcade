@@ -1,0 +1,4 @@
+debug-setup.yaml
+[unknown-testid] id pattern "(?!splash\.)[a-z0-9]+(-[a-z0-9]+)*\.scren" matches no testID of the contract
+shoot-screen.yaml
+[testid-format] id pattern "(home|levels.screen" is not a valid regular expression

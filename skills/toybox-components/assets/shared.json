@@ -1,0 +1,6 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "toybox-tokens.json", "to": "assets/toybox-tokens.json" },
+  { "from": "repo-templates/packages/shell/src/ui/use-hold-to-confirm.ts", "to": "templates/packages/shell/src/ui/use-hold-to-confirm.ts" },
+  { "from": "repo-templates/packages/shell/src/ui/use-hold-to-confirm.test.ts", "to": "templates/packages/shell/src/ui/use-hold-to-confirm.test.ts" }
+]

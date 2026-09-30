@@ -1,0 +1,3 @@
+input-worklet
+packages/shell/src/game-host/pan-intent.ts:1
+no file-level 'worklet'; directive

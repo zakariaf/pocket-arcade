@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/rules/tap-flip-persistence.ts",
+      "find": "savePolicy: { kind: 'after-every-move' }",
+      "with": "savePolicy: { kind: 'save-points', points: ['pause'] }"
+    }
+  }
+]

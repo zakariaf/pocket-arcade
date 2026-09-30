@@ -1,0 +1,2 @@
+intent-exhaustive
+long-press, swipe, drag-end, aim

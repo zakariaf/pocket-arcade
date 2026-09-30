@@ -1,0 +1,3 @@
+[key-read]
+packages/tooling/src/asc/key-fingerprint.ts:7
+reads the App Store Connect key file

@@ -1,0 +1,12 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/game-kit/src/contract/input-intent.ts", "to": "templates/game-kit/contract/input-intent.ts" },
+  { "from": "line-siege/rules/intent-to-move.ts", "to": "examples/line-siege/rules/intent-to-move.ts" },
+  { "from": "line-siege/rules/intent-to-move.test.ts", "to": "examples/line-siege/rules/intent-to-move.test.ts" },
+  { "from": "line-siege/rules/line-siege-types.ts", "to": "examples/line-siege/rules/line-siege-types.ts" },
+  { "from": "line-siege/board/layout-board.ts", "to": "examples/line-siege/board/layout-board.ts" },
+  { "from": "line-siege/board/hit-targets.test.ts", "to": "examples/line-siege/board/hit-targets.test.ts" },
+  { "from": "line-siege/board/drag-lift.test.ts", "to": "examples/line-siege/board/drag-lift.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/classify-swipe.test.ts", "to": "templates/game-kit/geom/classify-swipe.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/classify-swipe.ts", "to": "templates/game-kit/geom/classify-swipe.ts" }
+]

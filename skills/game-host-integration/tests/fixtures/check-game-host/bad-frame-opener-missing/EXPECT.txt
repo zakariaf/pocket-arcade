@@ -1,0 +1,2 @@
+[parity-frame-openers]
+does not open 'result-lose' through showFixtureResult

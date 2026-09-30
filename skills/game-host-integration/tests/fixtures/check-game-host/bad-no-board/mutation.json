@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/game/game-screen.tsx",
+      "find": "  const { BoardHost, status } = controls;\n",
+      "with": "  const { status } = controls;\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/game/game-screen.tsx",
+      "find": "{BoardHost === null ? null : <BoardHost testID=\"game.board-canvas\" />}",
+      "with": "{null}"
+    }
+  }
+]

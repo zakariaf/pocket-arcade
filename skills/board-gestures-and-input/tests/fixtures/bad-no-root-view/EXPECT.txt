@@ -1,0 +1,3 @@
+gesture-root
+packages/shell/src/app
+no <GestureHandlerRootView> wraps the app

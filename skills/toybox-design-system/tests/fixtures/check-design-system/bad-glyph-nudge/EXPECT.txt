@@ -1,0 +1,3 @@
+[no-glyph-nudge]
+packages/shell/src/ui/app-text.tsx:
+translateY moves the text box to nudge its glyphs

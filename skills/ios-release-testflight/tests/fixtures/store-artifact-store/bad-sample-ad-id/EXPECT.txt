@@ -1,0 +1,2 @@
+[ad-app-id]
+expected the game's real AdMob app ID

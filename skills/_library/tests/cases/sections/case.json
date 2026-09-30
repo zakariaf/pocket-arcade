@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "sections"
+  ],
+  "sync": true
+}

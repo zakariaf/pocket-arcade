@@ -1,0 +1,2 @@
+apps/demo/src/board/demo-board.golden.test.ts
+[pixel-golden-place] a pixel golden outside test/goldens/

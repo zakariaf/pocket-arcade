@@ -1,0 +1,3 @@
+[jsx-literal-text]
+home-header.tsx:17
+Welcome back

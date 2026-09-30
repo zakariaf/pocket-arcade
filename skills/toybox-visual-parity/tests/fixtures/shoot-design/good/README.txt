@@ -1,0 +1,1 @@
+No files needed: the good case runs shoot-design.mjs --check on one frame of the committed reference set (assets/reference). A map or frames manifest changed since the render is judged by the re-render (a note), the design or device profile is not (stale-reference).

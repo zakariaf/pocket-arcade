@@ -1,0 +1,2 @@
+[reload-outside-direction]
+expo-updates is imported

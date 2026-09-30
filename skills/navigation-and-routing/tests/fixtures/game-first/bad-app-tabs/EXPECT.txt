@@ -1,0 +1,3 @@
+[one-navigator] createBottomTabNavigator
+apps/line-siege/src/menu.tsx:4
+SKIP packages/shell/src/navigation [route-table] no Shell app (shell-slice.json has "screens": [])

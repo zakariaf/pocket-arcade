@@ -1,0 +1,2 @@
+[name-exists]
+that skill folder already exists

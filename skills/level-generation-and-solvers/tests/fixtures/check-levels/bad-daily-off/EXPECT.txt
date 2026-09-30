@@ -1,0 +1,2 @@
+[daily-mode]
+modes.daily is false

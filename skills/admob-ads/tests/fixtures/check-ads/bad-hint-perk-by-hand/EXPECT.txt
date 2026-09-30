@@ -1,0 +1,2 @@
+[free-hints-config]
+hand-built { kind: 'hint', freeHintsLeft } perk

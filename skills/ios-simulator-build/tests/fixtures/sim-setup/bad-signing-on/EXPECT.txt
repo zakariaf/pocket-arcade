@@ -1,0 +1,2 @@
+[sim-build-args]
+packages/tooling/src/build/sim-build-plan.ts

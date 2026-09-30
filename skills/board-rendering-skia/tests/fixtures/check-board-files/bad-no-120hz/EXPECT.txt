@@ -1,0 +1,2 @@
+plist-120hz
+packages/shell/src/config/with-shell.ts

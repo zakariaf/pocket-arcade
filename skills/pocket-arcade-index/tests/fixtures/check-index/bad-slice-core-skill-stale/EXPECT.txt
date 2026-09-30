@@ -1,0 +1,2 @@
+[skill-stale]
+buildOrders.sliceCore.rows[0] names gamma-three

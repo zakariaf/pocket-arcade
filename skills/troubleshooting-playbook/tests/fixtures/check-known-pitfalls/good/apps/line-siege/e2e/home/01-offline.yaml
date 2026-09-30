@@ -1,0 +1,8 @@
+appId: com.example.linesiege
+tags: [smoke]
+---
+- launchApp
+- tapOn:
+    id: debug.simulate-offline
+- assertVisible:
+    id: home.screen

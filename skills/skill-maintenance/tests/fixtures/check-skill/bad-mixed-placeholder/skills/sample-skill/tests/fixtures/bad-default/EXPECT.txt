@@ -1,0 +1,2 @@
+[no-default-export]
+src/a.ts:1

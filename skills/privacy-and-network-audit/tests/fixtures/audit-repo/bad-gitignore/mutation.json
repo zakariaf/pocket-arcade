@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".gitignore",
+      "find": "*.p8\n",
+      "with": ""
+    }
+  }
+]

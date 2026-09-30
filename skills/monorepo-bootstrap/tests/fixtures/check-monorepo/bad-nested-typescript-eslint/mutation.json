@@ -1,0 +1,4 @@
+[
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/@typescript-eslint/eslint-plugin"], "value": { "version": "8.71.0", "dev": true, "license": "MIT" } } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/typescript-eslint/node_modules/@typescript-eslint/eslint-plugin"], "value": { "version": "8.70.1", "dev": true, "license": "MIT" } } }
+]

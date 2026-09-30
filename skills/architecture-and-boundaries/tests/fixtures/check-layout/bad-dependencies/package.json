@@ -1,0 +1,11 @@
+{
+  "name": "demo-games",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "overrides": {
+    "react": "19.2.3"
+  }
+}

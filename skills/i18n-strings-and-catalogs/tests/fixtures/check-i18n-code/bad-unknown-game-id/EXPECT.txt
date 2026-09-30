@@ -1,0 +1,3 @@
+[unknown-key]
+game message id uses "demo-game.hud.pices-left"
+demo-hud.ts:3

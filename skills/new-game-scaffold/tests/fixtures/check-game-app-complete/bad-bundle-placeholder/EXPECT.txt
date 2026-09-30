@@ -1,0 +1,2 @@
+[game-config]
+is still the scaffold placeholder

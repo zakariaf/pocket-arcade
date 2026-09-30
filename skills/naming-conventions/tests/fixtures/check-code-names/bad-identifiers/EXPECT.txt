@@ -1,0 +1,12 @@
+packages/shell/src/ui/game-tile.tsx:2 [type-name] type IGameTileProps has an I prefix
+packages/shell/src/ui/game-tile.tsx:3 [type-name] type named plain Props
+packages/shell/src/ui/game-tile.tsx:4 [type-name] type levelPack is not PascalCase
+packages/shell/src/ui/game-tile.tsx:5 [constant-name] module constant maxUndoDepth
+packages/shell/src/ui/game-tile.tsx:6 [constant-name] module constant modes
+packages/shell/src/ui/game-tile.tsx:8 [constant-name] module constant pattern
+packages/shell/src/ui/game-tile.tsx:11 [boolean-name] boolean mirrored
+packages/shell/src/ui/game-tile.tsx:12 [boolean-name] boolean loading
+packages/shell/src/ui/game-tile.tsx:13 [handler-name] local handler named onPress
+packages/shell/src/ui/game-tile.tsx:17 [handler-name] on* prop receives "press"
+packages/shell/src/ui/game-tile.tsx:20 [acronym-case] SQLDriver
+packages/shell/src/ui/game-tile.tsx:21 [acronym-case] isRTL

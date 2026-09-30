@@ -1,0 +1,5 @@
+[rule-why]
+sample-skill/SKILL.md:12
+has no **bold statement**
+sample-skill/SKILL.md:13
+has no reason after it

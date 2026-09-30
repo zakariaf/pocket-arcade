@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-transitions.ts",
+      "find": "didJustPurchase: state.didJustPurchase || wasBuying,",
+      "with": "didJustPurchase: true,"
+    }
+  }
+]

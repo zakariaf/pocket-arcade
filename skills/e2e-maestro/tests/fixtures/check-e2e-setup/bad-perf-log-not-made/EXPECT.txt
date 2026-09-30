@@ -1,0 +1,2 @@
+packages/shell/src/app/create-debug-parts.ts [perf-layer] does not create the perf log (TEST_ONLY.createPerfLog(saveDriver))
+packages/shell/src/app/test-only-entry.ts [perf-layer] does not export createPerfLog

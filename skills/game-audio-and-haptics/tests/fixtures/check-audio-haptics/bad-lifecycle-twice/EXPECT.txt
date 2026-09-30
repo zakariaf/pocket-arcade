@@ -1,0 +1,2 @@
+[lifecycle-mount]
+called 2 times

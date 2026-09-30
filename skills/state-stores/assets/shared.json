@@ -1,0 +1,9 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-reducer.ts", "to": "templates/packages/shell/src/stores/settings-reducer.ts" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-reducer.test.ts", "to": "templates/packages/shell/src/stores/settings-reducer.test.ts" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-selectors.ts", "to": "templates/packages/shell/src/stores/settings-selectors.ts" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-selectors.test.ts", "to": "templates/packages/shell/src/stores/settings-selectors.test.ts" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-store.ts", "to": "templates/packages/shell/src/stores/settings-store.ts" },
+  { "from": "repo-templates/packages/shell/src/stores/settings-store.test.ts", "to": "templates/packages/shell/src/stores/settings-store.test.ts" }
+]

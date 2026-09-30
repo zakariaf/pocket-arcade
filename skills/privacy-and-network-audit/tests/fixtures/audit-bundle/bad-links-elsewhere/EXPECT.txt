@@ -1,0 +1,3 @@
+[first-party-network]
+packages/shell/src/screens/settings/links.ts
+(remoteUrl)

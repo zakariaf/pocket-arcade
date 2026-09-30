@@ -1,0 +1,2 @@
+[scene-support]
+packages/shell/src/config/with-shell.ts

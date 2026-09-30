@@ -1,0 +1,13 @@
+{
+  "edge": "edge",
+  "text": [["label", "cell"]],
+  "graphics": [
+    ["mark", "lit"],
+    ["hint", "cell"]
+  ],
+  "shapes": [
+    ["lit", "background"],
+    ["lit", "cell"]
+  ],
+  "distinct": [["lit", "cell"]]
+}

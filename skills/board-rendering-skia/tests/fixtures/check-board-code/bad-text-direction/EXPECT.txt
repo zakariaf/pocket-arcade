@@ -1,0 +1,2 @@
+text-direction
+word-label.ts:5

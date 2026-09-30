@@ -1,0 +1,13 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "allowScripts"
+      ],
+      "value": {
+        "lefthook@2.1.13": true
+      }
+    }
+  }
+]

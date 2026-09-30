@@ -1,0 +1,5 @@
+packages/shell/src/services/save/open-save.ts:5 [import-time-work] module-level code opens a database
+packages/shell/src/services/save/open-save.ts:6 [import-time-work] module-level code creates an adapter
+packages/shell/src/services/audio/audio-context.ts:4 [import-time-work] module-level code creates an AudioContext
+packages/shell/src/stores/progress-store.ts:4 [import-time-work] module-level code creates a global zustand store
+packages/shell/src/i18n/force-rtl.ts:4 [import-time-work] module-level code switches the layout direction

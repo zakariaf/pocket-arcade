@@ -1,0 +1,2 @@
+lockstep
+react-native-google-mobile-ads differs between apps: apps/alpha=17.2.0, apps/beta=17.1.0

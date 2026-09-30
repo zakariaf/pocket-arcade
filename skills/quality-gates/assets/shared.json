@@ -1,0 +1,15 @@
+[
+  {"from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs"},
+  {"from": "tooling-deps/src/deps/", "to": "templates/packages/tooling/src/deps/"},
+  {"from": "tooling-deps/src/audit/", "to": "templates/packages/tooling/src/audit/"},
+  {"from": "tooling-deps/src/clock/", "to": "templates/packages/tooling/src/clock/"},
+  {"from": "repo-templates/knip.json", "to": "templates/knip.json"},
+  {"from": "repo-templates/lefthook.yml", "to": "templates/lefthook.yml"},
+  {"from": "repo-templates/quality-gates.json", "to": "templates/quality-gates.json"},
+  {"from": "repo-templates/dot-gitignore", "to": "templates/gitignore"},
+  {"from": "repo-templates/dot-claude/settings.json", "to": "templates/claude-settings.json"},
+  {"from": "repo-templates/package-scripts.json", "to": "templates/package-scripts.json"},
+  {"from": "repo-templates/packages/tooling/src/hooks/after-edit.ts", "to": "templates/packages/tooling/src/hooks/after-edit.ts"},
+  {"from": "repo-templates/packages/tooling/src/git/", "to": "templates/packages/tooling/src/git/"},
+  {"from": "repo-templates/packages/tooling/src/quality/", "to": "templates/packages/tooling/src/quality/"}
+]

@@ -1,0 +1,2 @@
+[deps-lockstep]
+dependencies differ from apps/line-siege/package.json

@@ -1,0 +1,516 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "design-as-app",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "9:41 AM",
+      "resource-id": "",
+      "bounds": "[55,22][92,42]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "9:41 Levels Pack 1 – First wave 30 levels 28 / 90 stars 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 Pack 2 – Stronger foes Locked Unlocks at 45 stars Collect 17 more stars to unlock Stronger foes. Unlock this one by finishing level 12. Ad 320 × 50",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.screen",
+      "bounds": "[0,0][402,874]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Levels",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.top-bar",
+      "bounds": "[0,62][402,128]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Back",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.top-bar.back-button",
+      "bounds": "[16,69][64,117]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Levels",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.top-bar.title",
+      "bounds": "[76,78][386,108]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Pack 1 – First wave 30 levels 28 / 90 stars 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 Pack 2 – Stronger foes Locked Unlocks at 45 stars Collect 17 more stars to unlock Stronger foes. Unlock this one by finishing level 12. Ad 320 × 50",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.grid",
+      "bounds": "[0,128][402,874]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Pack 1 – First wave 30 levels 28 / 90 stars 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1",
+      "bounds": "[20,134][382,555]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Pack 1 – First wave",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.heading",
+      "bounds": "[20,134][302,157]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "30 levels",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.count",
+      "bounds": "[312,134][382,157]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "28 / 90 stars",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.progress",
+      "bounds": "[20,167][382,189]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "28 / 90 stars",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.progress-label",
+      "bounds": "[52,168][149,188]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.progress-bar",
+      "bounds": "[159,170][382,186]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.1.tiles",
+      "bounds": "[20,205][382,555]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "1",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.1",
+      "bounds": "[20,205][74,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "2",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.2",
+      "bounds": "[82,205][135,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "3",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.3",
+      "bounds": "[143,205][197,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "4",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.4",
+      "bounds": "[205,205][259,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "5",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.5",
+      "bounds": "[267,205][320,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "6",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.6",
+      "bounds": "[328,205][382,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "7",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.7",
+      "bounds": "[20,277][74,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "8",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.8",
+      "bounds": "[82,277][135,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "9",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.9",
+      "bounds": "[143,277][197,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "10",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.10",
+      "bounds": "[205,277][259,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "11",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.11",
+      "bounds": "[267,277][320,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "12",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.12",
+      "bounds": "[328,277][382,339]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "13",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.13",
+      "bounds": "[19,354][75,412]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "14",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.14",
+      "bounds": "[82,352][135,414]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "15",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.15",
+      "bounds": "[143,352][197,414]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "16",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.16",
+      "bounds": "[205,352][259,414]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "17",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.17",
+      "bounds": "[267,352][320,414]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "18",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.18",
+      "bounds": "[328,352][382,414]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "19",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.19",
+      "bounds": "[20,424][74,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "20",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.20",
+      "bounds": "[82,424][135,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "21",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.21",
+      "bounds": "[143,424][197,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "22",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.22",
+      "bounds": "[205,424][259,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "23",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.23",
+      "bounds": "[267,424][320,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "24",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.24",
+      "bounds": "[328,424][382,486]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "25",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.25",
+      "bounds": "[20,496][74,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "26",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.26",
+      "bounds": "[82,496][135,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "27",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.27",
+      "bounds": "[143,496][197,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "28",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.28",
+      "bounds": "[205,496][259,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "29",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.29",
+      "bounds": "[267,496][320,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "30",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.level-tile.30",
+      "bounds": "[328,496][382,558]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Pack 2 – Stronger foes Locked Unlocks at 45 stars Collect 17 more stars to unlock Stronger foes.",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.2",
+      "bounds": "[20,569][382,754]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Pack 2 – Stronger foes",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.2.heading",
+      "bounds": "[87,594][363,617]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Locked",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.2.locked-badge",
+      "bounds": "[38,627][125,661]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Unlocks at 45 stars",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.2.requirement",
+      "bounds": "[39,664][363,687]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Collect 17 more stars to unlock Stronger foes.",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.pack.2.explanation",
+      "bounds": "[39,693][363,737]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Unlock this one by finishing level 12.",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.locked-toast",
+      "bounds": "[20,480][382,524]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Ad 320 × 50",
+      "text": "",
+      "value": "",
+      "resource-id": "levels.banner-ad",
+      "bounds": "[0,774][402,840]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

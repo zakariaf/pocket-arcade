@@ -1,0 +1,12 @@
+{
+ "devices": {
+  "com.apple.CoreSimulator.SimRuntime.iOS-18-6": [
+   {
+    "name": "e07-parity",
+    "udid": "AAAAAAAA-2222-3333-4444-555555555555",
+    "state": "Booted",
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro-Max"
+   }
+  ]
+ }
+}

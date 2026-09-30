@@ -1,0 +1,3 @@
+[wall-clock]
+uses new Date
+daily-summary.ts

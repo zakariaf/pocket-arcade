@@ -1,0 +1,1 @@
+[{ "json": { "file": "apps/line-siege/package.json", "path": ["dependencies", "expo-router"], "value": "~57.0.9" } }]

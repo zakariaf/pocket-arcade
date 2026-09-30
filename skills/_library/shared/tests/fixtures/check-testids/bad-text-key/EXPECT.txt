@@ -1,0 +1,3 @@
+[text-key]
+home.levels-button
+text key "common.statistics" does not match

@@ -1,0 +1,10 @@
+{
+  "name": "fixture-repo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "audit:network": "node packages/tooling/src/audit/audit-network.ts",
+    "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts",
+    "audit:licenses": "node packages/tooling/src/audit/audit-licenses.ts"
+  }
+}

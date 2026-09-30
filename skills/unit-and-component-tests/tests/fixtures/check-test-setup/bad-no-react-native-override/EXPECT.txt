@@ -1,0 +1,2 @@
+[one-react]
+overrides lack "react-native"

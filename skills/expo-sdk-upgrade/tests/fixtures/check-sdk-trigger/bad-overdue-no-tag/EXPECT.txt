@@ -1,0 +1,1 @@
+[upgrade-due] expo "latest" is 59.0.1, past SDK 58, and the facts hold no "sdk-58" dist-tag

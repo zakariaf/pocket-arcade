@@ -1,0 +1,3 @@
+[structure] levels.level-tile.14
+pre-listed platform waiver
+templates/parity/waivers.json

@@ -1,0 +1,764 @@
+{
+  "$comment": "The canonical TypeScript, ESLint and Prettier settings for the Pocket Arcade monorepo (verified 2026-09-26 with TypeScript 6.0.3, ESLint 9.39.5, typescript-eslint 8.70.1). check-configs.mjs compares the app repo against this file. Change it only together with the templates, with a Gate-Change trailer in the app repo commit.",
+  "tsconfigBase": {
+    "file": "tsconfig.base.json",
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+      "strict": true,
+      "noUncheckedIndexedAccess": true,
+      "exactOptionalPropertyTypes": true,
+      "noImplicitOverride": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "erasableSyntaxOnly": true,
+      "allowImportingTsExtensions": true,
+      "verbatimModuleSyntax": true,
+      "isolatedModules": true,
+      "useUnknownInCatchVariables": true,
+      "allowUnreachableCode": false,
+      "allowUnusedLabels": false,
+      "forceConsistentCasingInFileNames": true,
+      "noErrorTruncation": true,
+      "customConditions": [
+        "react-native-strict-api",
+        "react-native"
+      ],
+      "types": []
+    },
+    "notTrue": [
+      "noUnusedLocals",
+      "noUnusedParameters"
+    ]
+  },
+  "workspaceTsconfigs": [
+    {
+      "file": "tsconfig.json",
+      "world": "tests and Node-side config",
+      "extends": "./tsconfig.base.json",
+      "types": [
+        "jest",
+        "node"
+      ],
+      "lib": null,
+      "includeContains": [
+        "jest.setup.ts",
+        "__mocks__/**/*",
+        "test/**/*",
+        "apps/*/app.config.ts",
+        "packages/shell/src/config/**/*",
+        "packages/shell/plugins/**/*"
+      ],
+      "exclude": null
+    },
+    {
+      "file": "packages/game-kit/tsconfig.json",
+      "world": "app (pure)",
+      "extends": "../../tsconfig.base.json",
+      "types": [
+        "jest"
+      ],
+      "lib": [
+        "ESNext"
+      ],
+      "include": [
+        "src/**/*"
+      ],
+      "exclude": null
+    },
+    {
+      "file": "packages/shell/tsconfig.json",
+      "world": "app",
+      "extends": "../../tsconfig.base.json",
+      "types": [
+        "jest"
+      ],
+      "lib": null,
+      "include": [
+        "src/**/*"
+      ],
+      "exclude": [
+        "src/config/**/*"
+      ]
+    },
+    {
+      "file": "packages/tooling/tsconfig.json",
+      "world": "Node",
+      "extends": "../../tsconfig.base.json",
+      "types": [
+        "node",
+        "jest"
+      ],
+      "lib": [
+        "ESNext"
+      ],
+      "include": [
+        "src/**/*"
+      ],
+      "exclude": null
+    },
+    {
+      "file": "apps/*/tsconfig.json",
+      "world": "app",
+      "extends": "../../tsconfig.base.json",
+      "types": [
+        "jest"
+      ],
+      "lib": null,
+      "include": [
+        "index.ts",
+        "game.config.ts",
+        "src/**/*",
+        "../../packages/shell/src/app-env.d.ts",
+        "../../packages/shell/src/navigation/react-navigation.d.ts"
+      ],
+      "exclude": null,
+      "includeWhy": {
+        "../../packages/shell/src/app-env.d.ts": "app programs have no @types/node: this file declares process and EXPO_PUBLIC_APP_VARIANT (without it TS2591 'Cannot find name process')",
+        "../../packages/shell/src/navigation/react-navigation.d.ts": "the route typing is a global augmentation nothing imports: without it RootParamList is empty in the app program and every navigation.navigate(...) in the Shell files the app imports fails with TS2769 (Argument of type '\"Settings\"' is not assignable to parameter of type 'never')"
+      }
+    }
+  ],
+  "rootIncludeForbidden": [
+    "apps/*/src",
+    "apps/*/index.ts",
+    "apps/*/game.config.ts",
+    "packages/game-kit",
+    "packages/shell/src/app",
+    "packages/shell/src/ui",
+    "packages/shell/src/screens",
+    "packages/shell/src/**"
+  ],
+  "eslint": {
+    "file": "eslint.config.mjs",
+    "required": [
+      {
+        "id": "no-inline-config",
+        "pattern": "noInlineConfig:\\s*true",
+        "what": "linterOptions.noInlineConfig: true (inline eslint-disable comments do nothing)"
+      },
+      {
+        "id": "unused-directives",
+        "pattern": "reportUnusedDisableDirectives:\\s*'error'",
+        "what": "linterOptions.reportUnusedDisableDirectives: 'error'"
+      },
+      {
+        "id": "unused-inline-configs",
+        "pattern": "reportUnusedInlineConfigs:\\s*'error'",
+        "what": "linterOptions.reportUnusedInlineConfigs: 'error'"
+      },
+      {
+        "id": "expo-base",
+        "pattern": "from\\s+'eslint-config-expo/flat\\.js'",
+        "what": "the eslint-config-expo/flat.js base"
+      },
+      {
+        "id": "strict-type-checked",
+        "pattern": "tseslint\\.configs\\.strictTypeChecked",
+        "what": "typescript-eslint strictTypeChecked"
+      },
+      {
+        "id": "stylistic-type-checked",
+        "pattern": "tseslint\\.configs\\.stylisticTypeChecked",
+        "what": "typescript-eslint stylisticTypeChecked"
+      },
+      {
+        "id": "project-service",
+        "pattern": "projectService:\\s*true",
+        "what": "parserOptions.projectService: true (type-aware rules)"
+      },
+      {
+        "id": "prettier-last",
+        "pattern": "prettierConfig,?\\s*\\]\\s*\\)\\s*;?\\s*$",
+        "what": "eslint-config-prettier as the LAST entry of defineConfig([...])"
+      },
+      {
+        "id": "type-imports",
+        "pattern": "'@typescript-eslint/consistent-type-imports':\\s*\\[\\s*'error'",
+        "what": "consistent-type-imports: error"
+      },
+      {
+        "id": "type-not-interface",
+        "pattern": "'@typescript-eslint/consistent-type-definitions':\\s*\\[\\s*'error',\\s*'type'\\s*\\]",
+        "what": "consistent-type-definitions: ['error', 'type']"
+      },
+      {
+        "id": "module-boundary-types",
+        "pattern": "'@typescript-eslint/explicit-module-boundary-types':\\s*'error'",
+        "what": "explicit-module-boundary-types: error"
+      },
+      {
+        "id": "exhaustive-switch",
+        "pattern": "'@typescript-eslint/switch-exhaustiveness-check':\\s*\\[\\s*'error'",
+        "what": "switch-exhaustiveness-check: error"
+      },
+      {
+        "id": "floating-promises",
+        "pattern": "'@typescript-eslint/no-floating-promises':\\s*\\[\\s*'error',\\s*\\{\\s*ignoreVoid:\\s*false",
+        "what": "no-floating-promises with ignoreVoid: false"
+      },
+      {
+        "id": "strict-booleans",
+        "pattern": "'@typescript-eslint/strict-boolean-expressions':\\s*\\[\\s*'error'",
+        "what": "strict-boolean-expressions: error"
+      },
+      {
+        "id": "unused-vars",
+        "pattern": "'@typescript-eslint/no-unused-vars':\\s*\\[\\s*'error'",
+        "what": "no-unused-vars: error (ESLint, not tsc, owns unused code)"
+      },
+      {
+        "id": "empty-catch",
+        "pattern": "'no-empty':\\s*\\[\\s*'error',\\s*\\{\\s*allowEmptyCatch:\\s*false",
+        "what": "no-empty with allowEmptyCatch: false"
+      },
+      {
+        "id": "warning-comments",
+        "pattern": "'no-warning-comments':\\s*\\[\\s*'error'",
+        "what": "no-warning-comments: error (no TODO/FIXME/HACK)"
+      },
+      {
+        "id": "commented-code",
+        "pattern": "'sonarjs/no-commented-code':\\s*'error'",
+        "what": "sonarjs/no-commented-code: error"
+      },
+      {
+        "id": "no-default-export",
+        "pattern": "'import/no-default-export':\\s*'error'",
+        "what": "import/no-default-export: error"
+      },
+      {
+        "id": "no-cycle",
+        "pattern": "'import/no-cycle':\\s*\\[\\s*'error'",
+        "what": "import/no-cycle: error"
+      },
+      {
+        "id": "import-order",
+        "pattern": "'import/order':\\s*\\[\\s*'error'",
+        "what": "import/order: error"
+      },
+      {
+        "id": "no-console",
+        "pattern": "'no-console':\\s*\\[\\s*'error',\\s*\\{\\s*allow:\\s*\\[\\s*'warn',\\s*'error'\\s*\\]",
+        "what": "no-console: error (warn and error allowed)"
+      },
+      {
+        "id": "no-enums",
+        "pattern": "selector:\\s*'TSEnumDeclaration'",
+        "what": "the TSEnumDeclaration ban in no-restricted-syntax"
+      },
+      {
+        "id": "import-extension",
+        "pattern": "importExtension:\\s*\\{",
+        "what": "the importExtension selector (explicit .ts/.tsx/.json extensions)"
+      },
+      {
+        "id": "no-parent-import",
+        "pattern": "group:\\s*\\[\\s*'\\.\\./\\*'",
+        "what": "the PARENT_IMPORT pattern ('../*' banned)"
+      },
+      {
+        "id": "async-handler",
+        "pattern": "asyncHandler:\\s*\\{",
+        "what": "the asyncHandler selector (event handlers stay synchronous)"
+      },
+      {
+        "id": "hooks-exhaustive-deps",
+        "pattern": "'react-hooks/exhaustive-deps':\\s*'error'",
+        "what": "react-hooks/exhaustive-deps: error"
+      },
+      {
+        "id": "max-lines",
+        "pattern": "'max-lines':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*250,\\s*skipBlankLines:\\s*true,\\s*skipComments:\\s*true",
+        "what": "max-lines 250 (code lines)"
+      },
+      {
+        "id": "max-lines-per-function",
+        "pattern": "'max-lines-per-function':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*40,",
+        "what": "max-lines-per-function 40 for .ts"
+      },
+      {
+        "id": "max-lines-per-component",
+        "pattern": "'max-lines-per-function':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*80,",
+        "what": "max-lines-per-function 80 for .tsx"
+      },
+      {
+        "id": "complexity",
+        "pattern": "complexity:\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*10,\\s*variant:\\s*'modified'\\s*\\}\\s*\\]",
+        "what": "complexity 10 (variant modified)"
+      },
+      {
+        "id": "cognitive-complexity",
+        "pattern": "'sonarjs/cognitive-complexity':\\s*\\[\\s*'error',\\s*15\\s*\\]",
+        "what": "sonarjs/cognitive-complexity 15"
+      },
+      {
+        "id": "max-depth",
+        "pattern": "'max-depth':\\s*\\[\\s*'error',\\s*3\\s*\\]",
+        "what": "max-depth 3"
+      },
+      {
+        "id": "max-params",
+        "pattern": "'max-params':\\s*\\[\\s*'error',\\s*3\\s*\\]",
+        "what": "max-params 3"
+      },
+      {
+        "id": "max-nested-callbacks",
+        "pattern": "'max-nested-callbacks':\\s*\\[\\s*'error',\\s*3\\s*\\]",
+        "what": "max-nested-callbacks 3"
+      },
+      {
+        "id": "max-classes-per-file",
+        "pattern": "'max-classes-per-file':\\s*\\[\\s*'error',\\s*1\\s*\\]",
+        "what": "max-classes-per-file 1"
+      },
+      {
+        "id": "jsx-max-depth",
+        "pattern": "'react/jsx-max-depth':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*5\\s*\\}\\s*\\]",
+        "what": "react/jsx-max-depth 5"
+      },
+      {
+        "id": "one-component",
+        "pattern": "'react/no-multi-comp':\\s*\\[\\s*'error'",
+        "what": "react/no-multi-comp (one component per file)"
+      },
+      {
+        "id": "duplicate-string",
+        "pattern": "'sonarjs/no-duplicate-string':\\s*\\[\\s*'error',\\s*\\{\\s*threshold:\\s*3\\s*\\}\\s*\\]",
+        "what": "sonarjs/no-duplicate-string threshold 3"
+      },
+      {
+        "id": "network-globals",
+        "pattern": "NETWORK_GLOBALS\\s*=\\s*\\[\\s*'fetch',\\s*'XMLHttpRequest',\\s*'WebSocket',\\s*'EventSource'\\s*\\]",
+        "what": "the N3 network globals list (fetch, XMLHttpRequest, WebSocket, EventSource)"
+      },
+      {
+        "id": "network-globals-used",
+        "pattern": "'no-restricted-globals':\\s*\\[\\s*'error',\\s*\\.\\.\\.NETWORK_GLOBALS,\\s*\\.\\.\\.TEST_GLOBALS\\s*\\]",
+        "what": "the runtime block's no-restricted-globals with NETWORK_GLOBALS (spec N3)"
+      },
+      {
+        "id": "remote-url",
+        "pattern": "remoteUrl:\\s*\\{",
+        "what": "the remoteUrl selector (no http/ws/ftp literals in app code, N3)"
+      },
+      {
+        "id": "math-random",
+        "pattern": "object:\\s*'Math',\\s*property:\\s*'random'",
+        "what": "the Math.random ban in RESTRICTED_PROPERTIES"
+      },
+      {
+        "id": "date-now",
+        "pattern": "object:\\s*'Date',\\s*property:\\s*'now'",
+        "what": "the Date.now ban in RESTRICTED_PROPERTIES"
+      },
+      {
+        "id": "guardrail-message-math-random",
+        "pattern": "object:\\s*'Math',\\s*property:\\s*'random',\\s*message:\\s*'Use the seeded RNG from @e07/game-kit\\.'",
+        "what": "the Math.random entry with its exact message (the quality-gates.json guardrail compares it verbatim)"
+      },
+      {
+        "id": "guardrail-message-date-now",
+        "pattern": "object:\\s*'Date',\\s*property:\\s*'now',\\s*message:\\s*'Inject ClockPort \\(spec S15 set-date\\)\\.'",
+        "what": "the Date.now entry with its exact message 'Inject ClockPort (spec S15 set-date).' (compared verbatim by the guardrail)"
+      },
+      {
+        "id": "guardrail-message-performance-now",
+        "pattern": "object:\\s*'performance',\\s*property:\\s*'now',\\s*message:\\s*'Use the frame timestamp or ClockPort\\.'",
+        "what": "the performance.now entry with its exact message (compared verbatim by the guardrail)"
+      },
+      {
+        "id": "guardrail-message-is-rtl",
+        "pattern": "object:\\s*'I18nManager',\\s*property:\\s*'isRTL',\\s*message:\\s*'Read direction from DirectionContext\\.'",
+        "what": "the I18nManager.isRTL entry with its exact message (compared verbatim by the guardrail)"
+      },
+      {
+        "id": "skills-ignored",
+        "pattern": "'skills/\\*\\*'",
+        "what": "'skills/**' in globalIgnores (skill templates and planted-bug fixtures are not repo code)"
+      },
+      {
+        "id": "claude-ignored",
+        "pattern": "'\\.claude/\\*\\*'",
+        "what": "'.claude/**' in globalIgnores"
+      },
+      {
+        "id": "pre-existing-list",
+        "pattern": "const PRE_EXISTING = \\[[^\\]]*\\];[\\s\\S]*\\.\\.\\.PRE_EXISTING,",
+        "what": "the PRE_EXISTING list spread into globalIgnores (top-level folders that are not monorepo code)"
+      },
+      {
+        "id": "restricted-properties-used",
+        "pattern": "'no-restricted-properties':\\s*\\[\\s*'error',\\s*\\.\\.\\.RESTRICTED_PROPERTIES\\s*\\]",
+        "what": "the runtime block's no-restricted-properties with RESTRICTED_PROPERTIES"
+      },
+      {
+        "id": "new-date",
+        "pattern": "newDate:\\s*\\{",
+        "what": "the newDate selector (no new Date() in app code)"
+      },
+      {
+        "id": "banned-axios",
+        "pattern": "banned\\('axios'",
+        "what": "the axios ban (N3)"
+      },
+      {
+        "id": "banned-netinfo",
+        "pattern": "'@react-native-community/netinfo'",
+        "what": "the @react-native-community/netinfo ban (its probe calls Google)"
+      },
+      {
+        "id": "banned-expo-updates",
+        "pattern": "banned\\('expo-updates'",
+        "what": "the expo-updates ban (no OTA traffic)"
+      },
+      {
+        "id": "banned-webview",
+        "pattern": "banned\\('react-native-webview'",
+        "what": "the react-native-webview ban (N3)"
+      },
+      {
+        "id": "vendor-gma",
+        "pattern": "vendor\\('react-native-google-mobile-ads'",
+        "what": "the AdMob SDK adapter-only ban"
+      },
+      {
+        "id": "vendor-iap",
+        "pattern": "vendor\\('expo-iap'",
+        "what": "the expo-iap adapter-only ban"
+      },
+      {
+        "id": "vendor-sqlite",
+        "pattern": "vendor\\('expo-sqlite'",
+        "what": "the expo-sqlite adapter-only ban"
+      },
+      {
+        "id": "runtime-imports-used",
+        "pattern": "'no-restricted-imports':\\s*RUNTIME_IMPORTS",
+        "what": "the runtime block's no-restricted-imports (RUNTIME_IMPORTS)"
+      },
+      {
+        "id": "node-builtins",
+        "pattern": "group:\\s*\\[\\s*'node:\\*'",
+        "what": "the NODE_BUILTINS pattern (no Node built-ins in app code)"
+      },
+      {
+        "id": "determinism-math",
+        "pattern": "property\\.name!=/\\^\\(sqrt\\|imul\\|floor\\|round\\|abs\\|min\\|max\\|PI\\)\\$/",
+        "what": "the DETERMINISM_SYNTAX Math whitelist"
+      },
+      {
+        "id": "determinism-used",
+        "pattern": "files:\\s*DETERMINISTIC,",
+        "what": "the DETERMINISTIC block (integer-safe math)"
+      },
+      {
+        "id": "pure-used",
+        "pattern": "files:\\s*PURE,",
+        "what": "the PURE block (rules, levels, game-kit import nothing of the framework)"
+      },
+      {
+        "id": "physical-style-keys",
+        "pattern": "physicalStyleKeys:\\s*\\{",
+        "what": "the physicalStyleKeys selector (N11: start/end, never left/right)"
+      },
+      {
+        "id": "jsx-no-literals",
+        "pattern": "'react/jsx-no-literals':\\s*\\[\\s*'error'",
+        "what": "react/jsx-no-literals: error (N12)"
+      },
+      {
+        "id": "testid-format",
+        "pattern": "testIdFormat:\\s*\\{",
+        "what": "the testIdFormat selector"
+      },
+      {
+        "id": "kind-value",
+        "pattern": "kindValue:\\s*\\{",
+        "what": "the kindValue selector"
+      },
+      {
+        "id": "naming-convention",
+        "pattern": "'@typescript-eslint/naming-convention':\\s*\\[\\s*'error'",
+        "what": "@typescript-eslint/naming-convention: error"
+      },
+      {
+        "id": "file-naming",
+        "pattern": "'check-file/filename-naming-convention':\\s*\\[\\s*'error'",
+        "what": "check-file/filename-naming-convention: error"
+      },
+      {
+        "id": "app-zones",
+        "pattern": "'import/no-restricted-paths':\\s*\\[\\s*'error'",
+        "what": "the app zones (import/no-restricted-paths)"
+      },
+      {
+        "id": "hooks-incompatible-library",
+        "pattern": "'react-hooks/incompatible-library':\\s*'error'",
+        "what": "react-hooks/incompatible-library: error"
+      },
+      {
+        "id": "hooks-unsupported-syntax",
+        "pattern": "'react-hooks/unsupported-syntax':\\s*'error'",
+        "what": "react-hooks/unsupported-syntax: error"
+      }
+    ],
+    "limitValues": [
+      {
+        "rule": "max-lines",
+        "pattern": "'max-lines':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*(\\d+)",
+        "allowed": [
+          250,
+          400
+        ]
+      },
+      {
+        "rule": "max-lines-per-function",
+        "pattern": "'max-lines-per-function':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*(\\d+)",
+        "allowed": [
+          40,
+          80
+        ]
+      },
+      {
+        "rule": "complexity",
+        "pattern": "(?<![\\w-])complexity:\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*(\\d+)",
+        "allowed": [
+          10
+        ]
+      },
+      {
+        "rule": "sonarjs/cognitive-complexity",
+        "pattern": "'sonarjs/cognitive-complexity':\\s*\\[\\s*'error',\\s*(\\d+)",
+        "allowed": [
+          15
+        ]
+      },
+      {
+        "rule": "max-depth",
+        "pattern": "'max-depth':\\s*\\[\\s*'error',\\s*(\\d+)",
+        "allowed": [
+          3
+        ]
+      },
+      {
+        "rule": "max-params",
+        "pattern": "'max-params':\\s*\\[\\s*'error',\\s*(\\d+)",
+        "allowed": [
+          3
+        ]
+      },
+      {
+        "rule": "max-nested-callbacks",
+        "pattern": "'max-nested-callbacks':\\s*\\[\\s*'error',\\s*(\\d+)",
+        "allowed": [
+          3,
+          4
+        ]
+      },
+      {
+        "rule": "react/jsx-max-depth",
+        "pattern": "'react/jsx-max-depth':\\s*\\[\\s*'error',\\s*\\{\\s*max:\\s*(\\d+)",
+        "allowed": [
+          5
+        ]
+      },
+      {
+        "rule": "max-classes-per-file",
+        "pattern": "'max-classes-per-file':\\s*\\[\\s*'error',\\s*(\\d+)",
+        "allowed": [
+          1
+        ]
+      }
+    ],
+    "offAllowed": {
+      "max-lines-per-function": 1,
+      "react/no-multi-comp": 1,
+      "import/no-default-export": 3,
+      "no-restricted-globals": 2,
+      "no-restricted-properties": 1,
+      "no-console": 1,
+      "@typescript-eslint/no-require-imports": 2,
+      "@typescript-eslint/no-non-null-assertion": 1,
+      "@typescript-eslint/no-unsafe-assignment": 1,
+      "@typescript-eslint/no-unsafe-call": 1,
+      "@typescript-eslint/no-unsafe-member-access": 1,
+      "@typescript-eslint/no-unsafe-return": 1,
+      "@typescript-eslint/consistent-type-definitions": 1,
+      "@typescript-eslint/naming-convention": 1,
+      "import/no-named-as-default-member": 1,
+      "jest/no-large-snapshots": 1,
+      "react/jsx-no-literals": 1,
+      "sonarjs/no-duplicate-string": 1,
+      "testing-library/no-await-sync-events": 1
+    },
+    "maxOccurrences": [
+      {
+        "id": "disable-type-checked",
+        "pattern": "tseslint\\.configs\\.disableTypeChecked",
+        "max": 1,
+        "what": "tseslint.configs.disableTypeChecked (allowed only for the plain JS config files)"
+      },
+      {
+        "id": "inline-config-on",
+        "pattern": "noInlineConfig:\\s*false",
+        "max": 0,
+        "what": "noInlineConfig: false"
+      },
+      {
+        "id": "linter-options",
+        "pattern": "linterOptions\\s*:",
+        "max": 1,
+        "what": "a linterOptions block"
+      }
+    ],
+    "forbiddenImports": [
+      "eslint-plugin-prettier"
+    ]
+  },
+  "prettier": {
+    "file": ".prettierrc.json",
+    "options": {
+      "printWidth": 100,
+      "singleQuote": true,
+      "trailingComma": "all",
+      "bracketSpacing": true,
+      "arrowParens": "always",
+      "endOfLine": "lf"
+    }
+  },
+  "pins": {
+    "typescript": [
+      "6.0.3"
+    ],
+    "eslint": [
+      "9.39.5"
+    ],
+    "eslint-config-expo": [
+      "57.0.2"
+    ],
+    "typescript-eslint": [
+      "8.70.1"
+    ],
+    "eslint-plugin-sonarjs": [
+      "4.2.1"
+    ],
+    "eslint-plugin-react-native": [
+      "5.0.0"
+    ],
+    "@react-native/eslint-plugin": [
+      "0.86.3"
+    ],
+    "eslint-plugin-check-file": [
+      "3.3.2"
+    ],
+    "eslint-plugin-jest": [
+      "29.16.6"
+    ],
+    "eslint-plugin-testing-library": [
+      "7.16.2"
+    ],
+    "eslint-plugin-formatjs": [
+      "8.1.0"
+    ],
+    "eslint-config-prettier": [
+      "10.1.8"
+    ],
+    "globals": [
+      "17.12.0"
+    ],
+    "prettier": [
+      "3.9.9"
+    ],
+    "@types/node": [
+      "26.4.1"
+    ]
+  },
+  "lintScript": {
+    "requires": [
+      "--max-warnings 0"
+    ],
+    "forbids": [
+      "--rule",
+      "--no-inline-config",
+      "--no-config-lookup",
+      "--no-eslintrc",
+      "--quiet",
+      "--config",
+      " -c "
+    ]
+  },
+  "strayConfigs": [
+    ".eslintrc",
+    ".eslintrc.js",
+    ".eslintrc.cjs",
+    ".eslintrc.json",
+    ".eslintrc.yml",
+    ".eslintrc.yaml",
+    ".eslintignore",
+    ".prettierrc",
+    ".prettierrc.js",
+    ".prettierrc.cjs",
+    ".prettierrc.mjs",
+    ".prettierrc.yml",
+    ".prettierrc.yaml",
+    ".prettierrc.toml",
+    "prettier.config.js",
+    "prettier.config.mjs",
+    "prettier.config.cjs"
+  ],
+  "prettierIgnore": {
+    "file": ".prettierignore",
+    "requiredLines": [
+      "package-lock.json",
+      "**/node_modules/",
+      "**/.expo/",
+      "apps/*/ios/",
+      "apps/*/android/",
+      "apps/*/build/",
+      "apps/*/dist/",
+      "coverage/",
+      "reports/",
+      "dist-audit/",
+      "tools/",
+      ".stryker-tmp/",
+      "**/__snapshots__/",
+      "**/__image_snapshots__/",
+      "apps/*/e2e/baselines/",
+      "skills/",
+      ".claude/"
+    ],
+    "placeholder": "__PRE_EXISTING__"
+  },
+  "monorepoTopLevel": [
+    "apps",
+    "packages",
+    "test",
+    "__mocks__",
+    "skills",
+    "node_modules",
+    "reports",
+    "tools",
+    "coverage",
+    "dist-audit",
+    "parity",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "tsconfig.base.json",
+    "tsconfig.stryker.json",
+    "eslint.config.mjs",
+    "knip.json",
+    "lefthook.yml",
+    "quality-gates.json",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "babel.config.js",
+    "jest.config.js",
+    "jest.setup.ts",
+    "jest.sim.config.js",
+    "stryker.config.json",
+    "shell-slice.json",
+    "EXPECT.txt"
+  ]
+}

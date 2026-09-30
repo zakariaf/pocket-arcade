@@ -1,0 +1,8 @@
+==> commit 668c8bb311a42fa15857010239145b01311e819d
+feat(shell): add the statistics cards for overview, levels, best and daily results
+
+Spec S10: the cards.
+
+==> files
+
+packages/shell/src/bad-header-length.ts

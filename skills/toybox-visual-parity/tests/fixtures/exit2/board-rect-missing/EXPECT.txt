@@ -1,0 +1,2 @@
+has no board rectangle
+probe=board

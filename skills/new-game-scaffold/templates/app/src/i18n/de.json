@@ -1,0 +1,20 @@
+{
+  "__GAME_ID__.board.summary": "{lit, plural, one {# Feld leuchtet} other {# Felder leuchten}}",
+  "__GAME_ID__.continue.more-moves": "Hol dir mehr Züge",
+  "__GAME_ID__.goal": "Schalte alle Lichter aus.",
+  "__GAME_ID__.how-to-play.step-1": "Tipp ein Feld an: Es und seine Nachbarn wechseln.",
+  "__GAME_ID__.how-to-play.step-2": "Ein Tipp in die Mitte löscht ein Plus.",
+  "__GAME_ID__.how-to-play.step-3": "Falsches Feld? Mach es rückgängig.",
+  "__GAME_ID__.hud.moves": "Züge {moves, number} / {maxMoves, number}",
+  "__GAME_ID__.lose.__LOSE_SLUG__": "Keine Züge mehr",
+  "__GAME_ID__.pack-name.1": "Erste Funken",
+  "__GAME_ID__.pack-name.2": "Nachtschicht",
+  "__GAME_ID__.pack-name.3": "Licht aus",
+  "__GAME_ID__.stats.biggest-flip": "Größter Wechsel",
+  "__GAME_ID__.stats.boards-cleared": "Geleerte Bretter",
+  "__GAME_ID__.stats.cells-flipped": "Gewechselte Felder",
+  "__GAME_ID__.tagline": "Tippen. Umdrehen. Licht aus.",
+  "__GAME_ID__.tutorial.step-1": "Tipp auf die Ecke.",
+  "__GAME_ID__.tutorial.step-2": "Jetzt tipp in die Mitte!",
+  "__GAME_ID__.win-title": "Alle Lichter aus!"
+}

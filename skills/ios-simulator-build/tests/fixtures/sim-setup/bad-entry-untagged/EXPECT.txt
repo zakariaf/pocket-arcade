@@ -1,0 +1,3 @@
+test-only-entry.ts:11 [entry-public] export { installNetworkGuard }
+test-only-entry.ts:22 [entry-public] export const TEST_BUILD_SENTINEL
+has no /** @public */ tag

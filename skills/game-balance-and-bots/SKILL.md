@@ -1,0 +1,96 @@
+---
+name: game-balance-and-bots
+description: Tunes game difficulty with headless bots - random/greedy/lookahead players, *.sim.test.ts runs, balance bands, difficulty curves, tuning knobs, the fun-within-seconds kill test. Use when balancing, tuning pacing or adding bots or bot sims. Not for solvers or par (level-generation-and-solvers).
+---
+
+# Game balance and bots
+
+Every Pocket Arcade game is played thousands of times headless by seeded bots before a person plays it. The sims measure the difficulty curve, whether skill matters, how soon the first win moment comes and whether the twist happens; a bands file says what "balanced" means; every balance number lives in one tuning file. This skill builds the harness once, each game's bots, sims and bands, and the check that judges the numbers.
+
+## Rules that must hold
+
+1. **Bots play only through the pure engine contract** (`create`, `listMoves`, `applyMove`, `outcome`), headless in plain Node via `jest.sim.config.js`, never through the UI. Why: the same rules the app runs are measured, in seconds, with no React Native mock.
+2. **Every run is deterministic:** seeds `1…seedsPerCell`, the bot's own seeded RNG, no `Math.random`, `Date`, `performance.now`, retries, skips or focus; the report has no timestamps. Why: a rerun gives identical bytes, so a diff of the report shows exactly what a change did.
+3. **Every run has a hard move cap, and no run may reach it** (`capHits` = 0). Why: a stuck or endless game is a rules bug that a bot finds long before a player does.
+4. **Use the three standard players:** `random` (the baseline), `greedy` (the reasonable player, also the game module's `testing.bot`) and `lookahead` (the upper bound; it sees the seeded future). Skill must matter: random < greedy < lookahead by a clear step. Why: if naive play does as well as smart play, the choices are fake.
+5. **A sim asserts properties of at least 100 seeds per cell, never a single outcome,** and writes `reports/sim/<game-id>.json` before its assertions. Why: one game proves nothing about balance, and a failing run must still leave numbers to read.
+6. **Every balance number lives in `apps/<game-id>/src/rules/<game-id>-tuning.ts`** (real-time games: `src/sim/<game-id>-tuning.ts`, a `'worklet';` module): documented knobs plus a per-difficulty table read through `knobsFor`; the rules contain no other balance numbers. Why: one place to tune, and a diff shows every balance change.
+7. **Difficulty is one scale, whole numbers 0..100, never a table index.** `knobsFor(d)` returns the endless row at 100 (`ENDLESS_DIFFICULTY`, goal 0, never won) and otherwise the row `rowFor(d, rows)` picks, with a `reduce` over the table; the grid samples the lower bound of each row (`[0, 25, 50, 75]`), and an endless mode gets its own `endless` block at 100, never a step of the curve. Why: levels (0..99), the daily (40-50) and the save all use this scale; a 0..3 index makes every level above 3 play the hardest row.
+8. **Balance is a contract in `test/sims/<game-id>/balance-bands.json`:** the bands hold, the difficulty curve moves monotonically by `minStep`, the skill gap holds, the first payoff comes early, the twist happens, and the endless run is never won and stays inside its own bands. Never widen a band, cut seeds, change seeds or tune the bot to go green. Why: bands are the design record; moving them hides the problem instead of fixing the game.
+9. **The fun-within-seconds kill test:** on the easiest level the greedy bot reaches the first payoff within 1-3 moves (seconds for real-time games: `runSimBot` with `payoffStepTicks: 120`) in at least 90 % of runs, and the twist fires at least once per run. If even the lookahead bot cannot, stop and report to the owner. Why: the prototype toys showed that ideas fail here structurally (Snare Snake caught nothing in 13 foreseen moves; Scrap Shove's twist came 0.25 times per game).
+10. **A report counts only for the code it measured:** its fingerprint covers the game's `rules/`, `levels/`, `sim/` and `testing/` folders, the sim file and the `packages/game-kit/src` files they import (the sim's import closure), and game logic imports nothing outside them; rerun `npm run test:sim` after any change there (a game-kit file nothing there imports leaves the report fresh). Why: stale numbers approve code that no longer exists.
+11. **Change the game, not the player:** improve a bot's evaluation only to match reasonable human play, never to reach a band. Why: a bot tuned to the bands measures nothing.
+12. **The owner's play-test is the final judge:** bands stay `"proposed"` until the owner has played and agreed, then become `"approved"`; a release requires approved bands. Why: bots measure pace, not joy.
+
+## Workflow
+
+1. **Pick the job.** First harness setup: step 2. A game's bots and sims: steps 3-8. Retuning: steps 6-8. Judging a new idea early: read [references/fun-and-kill-test.md](references/fun-and-kill-test.md), then steps 3-5 at the easiest difficulty only. Always finish with steps 9-10.
+2. **Harness (once per repo).** Read [references/bots-and-sims.md](references/bots-and-sims.md). Run `node ${CLAUDE_SKILL_DIR}/scripts/check-balance.mjs .`; for every `harness-missing`, `harness-outdated` or `sim-config` line copy the file from `templates/` verbatim (`packages/game-kit/src/testing/*` with tests, `packages/tooling/src/sims/write-sim-report.ts` with its test, `jest.sim.config.js`), add `"test:sim": "jest --ci --config jest.sim.config.js"` to the root `package.json`, and make the unit project of `jest.config.js` ignore `\\.sim\\.test\\.`. They need `packages/game-kit/src/rng/sfc32.ts` and `contract/game-engine.ts` (`game-rules-engine`). Run `npx jest packages/game-kit/src/testing --ci --selectProjects unit` (paths first: `--selectProjects` swallows every following word as a project name and would run the whole suite).
+3. **Tuning file.** Read [references/tuning-playbook.md](references/tuning-playbook.md) first. The template `templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts` (with its test) is the template game's, Tap Flip's, and the game-rules-engine templates already ship it; copy it if the game does not have it yet. Rename the knobs to the game's (document each per-difficulty knob once, on `DifficultyKnobs`), move every balance number of the rules into it (hearts, rates, damage, goals, opening layout counts, points) and read them through `TUNING` and `knobsFor(difficulty)`. Keep the `rowFor` + `reduce` lookup. A game with an endless mode adds the endless row (goal 0) and returns it first for `isEndlessDifficulty(difficulty)`: [examples/line-siege/apps/line-siege/src/rules/line-siege-tuning.ts](examples/line-siege/apps/line-siege/src/rules/line-siege-tuning.ts) is the full model.
+4. **Bot hooks, test-first.** Copy `templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.ts` and its test (Tap Flip's hooks; replace `__GAME_ID__`, `__GAME_PASCAL__` and `__GAME_CAMEL__`, the camelCase id) and rewrite them for the game: `evaluate<Game>` (how a reasonable person values a position), `scoreOf<Game>` (the number the HUD and the result show: `state.score` for a game with points), `tag<Game>Event` (payoff and twist) and the greedy `<game>Bot`, imitating [examples/line-siege/apps/line-siege/src/testing/line-siege-bot.ts](examples/line-siege/apps/line-siege/src/testing/line-siege-bot.ts) and its test, then set `bot: <game>Bot` in the game's testing spec (`<game-id>-testing.ts`, replacing its starter bot). When the levels will be proven by the greedy bot (a witness), put the evaluation in `rules/<game-id>-evaluate.ts` and re-export it from the bot file: `levels/` may not import `testing/`. Keep `outcome` cheap (an early-exit move check). A real-time game instead exports its `SimBotGame` hooks and the `idle`, `wander` and `dodge` command policies, imitating [examples/halo-drift/apps/halo-drift/src/testing/halo-drift-bot.ts](examples/halo-drift/apps/halo-drift/src/testing/halo-drift-bot.ts) and its test.
+5. **Sim and bands.** Copy `templates/test/sims/__GAME_ID__/` to `test/sims/<game-id>/`, replace `__GAME_ID__` and `__GAME_PASCAL__`, point the four engine imports at the game's files, set the grid to the lower bound of each tuning row (`[0, 25, 50, 75]` for four rows; the template's `[0, 34, 67]` are Tap Flip's three), and for a game with an endless mode replace `"endless": null` with its block (policy, difficulty 100, bands on `medianMoves`, `medianScore`, `twistPerRun`; balance-contract.md, "Endless mode"). Run `npx eslint --fix` and `npx prettier --write` on it, then `npx jest test/sims/<game-id> --ci --config jest.sim.config.js` (the path first, as with every jest command). The first run writes the report even if the bands fail. Real-time games play through `runSimBot` instead of `traceBot`: imitate [examples/halo-drift/](examples/halo-drift/test/sims/halo-drift/balance.sim.test.ts) ("Real-time" in bots-and-sims.md).
+6. **Read and tune.** Read [references/balance-contract.md](references/balance-contract.md). Fix what is broken first (cap hits, replay differences, no early payoff, no twist), then tune one knob at a time with the tuning loop and the symptom table in the tuning playbook, rerunning the sim after each change and reading `lossReasons`.
+7. **Write the bands** around the tuned numbers with a margin and a `why` per band, and the story in `notes` in plain words; keep `"status": "proposed"`.
+8. **Kill test verdict.** If the first payoff or the twist cannot be reached after reasonable tuning, stop and tell the owner (fun-and-kill-test.md, "When a game fails"). Do not polish a game that fails it.
+9. **Run the check** (run, fix, rerun until `RESULT: PASS`): `npm run test:sim`, then `node ${CLAUDE_SKILL_DIR}/scripts/check-balance.mjs .` (add `--game <game-id>` for one game). Every `FAIL` line names the file, the rule and the fix.
+10. **Report and hand over.** Put the plain-language "Bots" line per difficulty (numbers from the report) in the evidence report and ask the owner to play the first levels on a phone. When they agree, set `"status": "approved"` and `"approvedOn"`; before a release run the check with `--release`. The balance sims pass before level-generation-and-solvers generates the packs; a tuning change after the packs exist regenerates them in the same commit with a `Gate-Change:` trailer.
+
+## Definition of done
+
+- [ ] The harness files and their unit tests are in place and green; `npm run test:sim` exists and never runs inside `npm test`.
+- [ ] Each game has a documented tuning file on the 0..100 scale (`rowFor` + `reduce`, an endless row only with an endless mode) with its test, bot hooks with tests, `test/sims/<game-id>/balance.sim.test.ts` and `balance-bands.json` with `notes` (grid 0..99, the endless block when the game has one).
+- [ ] `npm run test:sim` passes: no cap hits, identical replays, every band, the curve, the skill gap, the first payoff and the twist; one sim file runs in about 60 s or less.
+- [ ] `reports/sim/<game-id>.json` is fresh (fingerprint matches) and its numbers are in the evidence report in plain words.
+- [ ] For a release: the owner has play-tested, the bands say `"approved"`, and the check passes with `--release`.
+- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-balance.mjs .` prints `RESULT: PASS`
+
+## Anti-patterns
+
+- **Balancing by playing a few games by hand, or by one seed.** Balance is a distribution; run 100+ seeds per cell and read the spread (`p10Moves`, `p90Moves`, `lossReasons`).
+- **Loosening a band, lowering `minStep` or trimming seeds to get green.** Change a knob in the tuning file, or bring the owner a design question.
+- **A smarter bot to rescue a failing curve.** If random ≈ greedy, the game's choices are weak; fix the rules.
+- **Balance numbers scattered through the rules** (`hearts: 3` in `create.ts`, a literal `8` for damage). Move them into the tuning file with a comment.
+- **A sim that needs React Native, a clock or `Math.random`.** The rules must be pure and seeded; fix the rules, not the sim config.
+- **Trusting a report after changing the rules.** The fingerprint makes it stale; rerun `npm run test:sim`.
+- **Tuning the whole difficulty table at once.** Change one knob, rerun, compare the two reports; otherwise nothing is learned.
+- **Difficulty as a table index, or 100 in the greedy grid.** Every level above 3 then plays the hardest row, and the endless run's win rate of 0 becomes a fake last step of the curve; use `rowFor` and the `endless` block.
+- **`table[index] ?? table[0]`.** The fallback can never run, so the copied file fails the per-file branch threshold; pick the row with a `reduce`.
+- **Polishing a game that fails the kill test.** Art and sound cannot fix a first payoff that never comes; stop and ask the owner.
+
+## Files in this skill
+
+| File | What it is | Read/run when |
+|---|---|---|
+| [references/bots-and-sims.md](references/bots-and-sims.md) | The harness, what a bot needs, the three players, bot hooks, payoff and twist tags, the sim file, real-time games, determinism, speed, debugging, reporting | Workflow steps 2, 4 and 5 |
+| [references/balance-contract.md](references/balance-contract.md) | The report fields, the fingerprint, the bands file, setting bands from the first run, owner approval, how the check judges | Workflow steps 6, 7 and 10 |
+| [references/tuning-playbook.md](references/tuning-playbook.md) | The tuning file, knob families, the difficulty curve, the tuning loop, symptoms and what to turn, the Line Siege tuning log | Workflow steps 3 and 6 |
+| [references/fun-and-kill-test.md](references/fun-and-kill-test.md) | Why seconds matter, the kill test, what the toys revealed, openings built for an early payoff, payoff/twist events per game, when to stop | Workflow steps 1 and 8 |
+| `templates/packages/game-kit/src/testing/` | `play-bot` (the shared minimal loop), `trace-bot`, `bot-policies`, `sim-stats`, `balance-bands`, `parse-balance-bands`, `run-sim-bot`, each of the last six with its test | Step 2 (copy verbatim; keep an existing identical `play-bot.ts`) |
+| [templates/packages/tooling/src/sims/write-sim-report.ts](templates/packages/tooling/src/sims/write-sim-report.ts) | `rulesFingerprint` over the sim's import closure (`fingerprintFiles`) and `writeSimReport` (Node side) | Step 2 |
+| [templates/packages/tooling/src/sims/write-sim-report.test.ts](templates/packages/tooling/src/sims/write-sim-report.test.ts) | Its test: an unrelated game-kit file leaves the fingerprint unchanged, an imported one (even through another kit file) changes it | Step 2 |
+| [templates/jest.sim.config.js](templates/jest.sim.config.js) | Plain-Node Jest config for `*.sim.test.ts` (synced from the library; do not edit here) | Step 2 |
+| [templates/test/sims/__GAME_ID__/balance.sim.test.ts](templates/test/sims/__GAME_ID__/balance.sim.test.ts) | A game's sim: plays the grid, writes the report, asserts the bands | Step 5 |
+| [templates/test/sims/__GAME_ID__/balance-bands.json](templates/test/sims/__GAME_ID__/balance-bands.json) | The template game's balance contract (Tap Flip's measured bands on its three rows, `endless: null`) | Steps 5 and 7 |
+| [templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts](templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts) | Tap Flip's tuning (synced from the library, the same file the rules templates ship): `side` documented on `DifficultyKnobs` in three rows picked with `rowFor` and a `reduce`, scalar knobs, `knobsFor`, `pressesFor` | Step 3 |
+| [templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts](templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts) | Its test: every row's band bounds, clamping, the press ramp (100 % branches) | Step 3 |
+| [templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.ts](templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.ts) | Tap Flip's bot hooks: `evaluate` (fewer lit cells, a board one press from dark valued as a person sees it), `scoreOf`, `tag` (payoff: board cleared; twist: a press that flips its neighbours), the greedy bot | Step 4 |
+| [templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.test.ts](templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.test.ts) | Its test | Step 4 |
+| `examples/line-siege/` | Line Siege v1, synced from the library (never edit here): the whole rules folder (with the tuning file, its endless row and `line-siege-evaluate.ts`), the bot hooks and example states (+ tests) under `apps/line-siege/src/`, the sim and bands with an endless block under `test/sims/line-siege/`, and the real report under `reports/sim/` | Steps 3-7, as the model |
+| `examples/halo-drift/` | The real-time model: a reduced Halo Drift fixed-step sim and `'worklet'` tuning file (+ replay tests), `SimBotGame` hooks and the idle/wander/dodge command policies (+ tests), a `runSimBot` sim, bands in ticks and seconds, and its real report | Steps 3-7 for a real-time game |
+| `scripts/check-balance.mjs` | Checks the sim config, harness, sims, bot hooks, tuning file, fingerprint scope and bands, and judges each report (fresh, for this game, complete, no cap hits, bands, curve, skill gap, first payoff, twist); `--release` requires approved bands | Steps 2 and 9 |
+| `scripts/selftest.mjs` | Proves the checker passes the good fixtures and catches every planted bug | After changing the checker, a template or the example |
+| `scripts/lib/balance.mjs` | JavaScript port of the fingerprint and the bands rules | When changing the checker |
+| `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
+| `assets/shared.json` | Declares the shared files this skill copies in (check-lib, the sim Jest config, the Line Siege example) | When adding a shared file |
+| `tests/build-fixtures.mjs` | Rebuilds `tests/fixtures/` from the templates and both examples plus one planted bug per case | After changing a template, an example or the checker |
+| `tests/fixtures/` | Good repos (a turn-based and a real-time game) and planted-bad copies: the normal suite, the `-wrapped` suite (a Prettier-wrapped difficulty table must pass), the `--release` suite and the `-kit-growth` suite (game-kit files the sims never import leave the report fresh) | When adding a rule |
+
+## Related skills
+
+- `game-rules-engine` - the engine contract, events, the determinism policy and the sfc32 PRNG the bots drive.
+- `level-generation-and-solvers` - solvers, par, stars, packs and proving every shipped level winnable.
+- `realtime-game-loop` - the fixed-step sims that `runSimBot` plays headless.
+- `new-game-scaffold` - where a new game's tuning file, bot hooks and sim start.
+- `quality-gates` - `test:sim` inside `verify` and the gated paths.
+- `git-commits-and-reporting` - the plain-language evidence report the bot numbers go into.
+- `game-audio-and-haptics` - sounds and haptics for the payoff moments the sims find.

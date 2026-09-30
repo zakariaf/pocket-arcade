@@ -1,0 +1,2 @@
+golden-test
+renders 2 canvas size(s)

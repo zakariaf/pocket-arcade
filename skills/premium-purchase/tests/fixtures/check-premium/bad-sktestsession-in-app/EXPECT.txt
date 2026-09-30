@@ -1,0 +1,2 @@
+[harness-isolation]
+packages/shell/src/app/storekit-hook.ts

@@ -1,0 +1,6 @@
+appId: com.example.linesiege
+---
+- launchApp
+- setAirplaneMode: enabled
+- assertWithAI:
+    assertion: The home screen shows an offline banner

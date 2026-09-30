@@ -1,0 +1,1 @@
+[daily-golden-dates] pins 2 daily date(s) and no Dec 31 / Jan 1 year boundary

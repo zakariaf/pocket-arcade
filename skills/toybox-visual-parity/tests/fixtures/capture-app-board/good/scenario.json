@@ -1,0 +1,6 @@
+{
+ "screenshots": [
+  "../../fakes/screen-a.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-pause-probe.json"
+}

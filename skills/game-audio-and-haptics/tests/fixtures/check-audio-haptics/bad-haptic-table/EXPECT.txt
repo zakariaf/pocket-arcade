@@ -1,0 +1,3 @@
+[haptic-table]
+packages/shell/src/services/haptics/expo-haptics-adapter.ts:38
+cue 'error'

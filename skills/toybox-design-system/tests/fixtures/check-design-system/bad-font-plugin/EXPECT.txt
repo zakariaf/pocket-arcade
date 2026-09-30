@@ -1,0 +1,1 @@
+shell-plugins.ts:3 [font-plugin] the expo-font entry does not embed LilitaOne.ttf, Rubik-Regular.ttf, Rubik-Bold.ttf

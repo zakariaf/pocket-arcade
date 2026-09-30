@@ -1,0 +1,1 @@
+[sim-status-bar] the status bar is not overridden

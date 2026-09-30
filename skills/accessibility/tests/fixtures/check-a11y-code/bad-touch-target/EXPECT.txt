@@ -1,0 +1,2 @@
+[touch-target]
+styles.box is only 32 pt wide

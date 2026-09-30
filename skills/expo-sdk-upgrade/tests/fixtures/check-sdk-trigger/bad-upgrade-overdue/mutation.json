@@ -1,0 +1,5 @@
+[
+  { "json": { "file": "facts.json", "path": ["distTags", "latest"], "value": "59.0.1" } },
+  { "json": { "file": "facts.json", "path": ["distTags", "sdk-58"], "value": "58.0.2" } },
+  { "json": { "file": "facts.json", "path": ["expoTimes", "59.0.1"], "value": "2027-02-10T10:00:00.000Z" } }
+]

@@ -1,0 +1,3 @@
+probe-contained
+packages/shell/src/game-host/board-layout-probe.tsx:1
+the frame style has no overflow: 'hidden'

@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/home/sync-scores.ts",
+      "content": "// fixture: fetch reached through globalThis, which the lint globals rule cannot see\nexport function syncScores(url: string): Promise<unknown> {\n  return globalThis['fetch'](url);\n}\n"
+    }
+  }
+]

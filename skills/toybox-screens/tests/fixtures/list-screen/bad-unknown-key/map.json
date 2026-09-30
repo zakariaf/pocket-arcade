@@ -1,0 +1,38 @@
+{
+ "version": 1,
+ "screens": [
+  {
+   "id": "S2",
+   "name": "First-run language choice",
+   "route": "LanguageChoice",
+   "presentation": "route",
+   "scopes": [
+    "language-choice"
+   ],
+   "variants": [
+    "normal"
+   ],
+   "frameKeys": {
+    "normal": "s2-language-choice"
+   },
+   "variantKinds": {
+    "normal": "phone"
+   },
+   "elements": [
+    {
+     "testID": "language-choice.screen",
+     "role": "none",
+     "component": "ScreenFrame",
+     "text": null
+    },
+    {
+     "testID": "language-choice.title",
+     "role": "header",
+     "component": "AppText",
+     "text": "language-choice.titel"
+    }
+   ]
+  }
+ ],
+ "notDrawn": []
+}

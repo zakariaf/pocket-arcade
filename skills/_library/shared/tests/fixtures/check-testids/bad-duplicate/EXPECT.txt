@@ -1,0 +1,3 @@
+[testid-duplicate]
+home.levels-button
+duplicate testID in variant "normal"

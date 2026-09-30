@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/audit/network-pods-layer.ts",
+      "find": "  'openiap', ",
+      "with": "  'openiap',\n  'OnsideKit', "
+    }
+  }
+]

@@ -1,0 +1,7 @@
+[workflow-mentions]
+references/extra.md is named only in the Files table
+scripts/check-extra.mjs is named only in the Files table
+[files-when]
+the row for scripts/check-extra.mjs
+[selftest-covers]
+check-extra.mjs is not run by the self-test

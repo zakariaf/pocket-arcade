@@ -1,0 +1,2 @@
+[tolerance-raised]
+raises failureThreshold from 0.001 to 0.01

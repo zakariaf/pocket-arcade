@@ -1,0 +1,2 @@
+measure-text
+draw-centered-text.ts:11

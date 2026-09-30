@@ -1,0 +1,8 @@
+{
+  "Home.Play": "Play",
+  "home.continueLevel": "Continue",
+  "tile-drop.title": "Tile Drop",
+  "home.play-button.continue": "Continue - Level {level}",
+  "stats.best": "Best: {best-score, number}",
+  "stats.first": "First: {0}"
+}

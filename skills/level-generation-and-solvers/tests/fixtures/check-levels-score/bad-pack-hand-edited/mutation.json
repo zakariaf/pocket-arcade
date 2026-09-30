@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/pack-1.json", "find": "\"thresholds\": [0, 20, 24]", "with": "\"thresholds\": [0, 20, 30]" } }]

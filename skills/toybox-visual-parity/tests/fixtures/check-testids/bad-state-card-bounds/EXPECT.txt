@@ -1,0 +1,3 @@
+[element-checks]
+premium.buy-button
+is a state card

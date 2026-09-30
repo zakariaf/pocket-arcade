@@ -1,0 +1,2 @@
+[debug-adapter-import]
+packages/shell/src/screens/home/home-screen.tsx

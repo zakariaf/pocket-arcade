@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/game-kit/src/rng/sfc32.ts", "find": "const WARM_UP_DRAWS = 12;", "with": "const WARM_UP_DRAWS = 11;" } }]

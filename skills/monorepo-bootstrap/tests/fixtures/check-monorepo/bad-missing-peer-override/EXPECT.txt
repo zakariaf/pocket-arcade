@@ -1,0 +1,2 @@
+root-overrides
+overrides.react-native-reanimated is missing; the Shell's "*" peer must be pinned at the exact version the apps install

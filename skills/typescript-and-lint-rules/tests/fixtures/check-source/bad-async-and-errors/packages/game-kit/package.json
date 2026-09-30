@@ -1,0 +1,8 @@
+{
+  "name": "@demo/game-kit",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  }
+}

@@ -1,0 +1,2 @@
+[banner-placement]
+packages/shell/src/screens/result/result-banner.tsx:7

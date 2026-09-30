@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/use-ad-context.ts",
+      "find": "isAllowed: shouldShowBanner(config, context, placement),",
+      "with": "isAllowed: context.isOnline && !context.isPremium && config.isAdsEnabled,"
+    }
+  }
+]

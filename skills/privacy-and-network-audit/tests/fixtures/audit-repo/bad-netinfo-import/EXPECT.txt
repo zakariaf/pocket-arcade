@@ -1,0 +1,2 @@
+[banned-import]
+@react-native-community/netinfo

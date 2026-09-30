@@ -1,0 +1,3 @@
+[store-persist-order]
+publishes (set) before it writes the save
+progress-store.ts

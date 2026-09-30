@@ -1,0 +1,1 @@
+[{ "write": { "file": "apps/tap-flip/src/rules/spark.ts", "content": "// apps/tap-flip/src/rules/spark.ts\nimport { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';\n\nexport function sparkCell(moves: number, size: number): number {\n  return nextInt(seedRng(moves), size).value;\n}\n" } }]

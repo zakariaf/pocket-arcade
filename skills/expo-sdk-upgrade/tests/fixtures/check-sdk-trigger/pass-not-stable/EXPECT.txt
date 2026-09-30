@@ -1,0 +1,2 @@
+wait     [target-stable] SDK 58 is not stable yet: expo "latest" is 57.0.27 (next: 58.0.0-preview.9)
+verdict  no upgrade due: stay on SDK 57; check again at the next session start

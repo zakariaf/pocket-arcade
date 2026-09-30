@@ -1,0 +1,45 @@
+# packages/shell/e2e/screenshots/matrix.yaml — run ONLY by `npm run screenshots:ios` (not under flows/).
+appId: ${APP_ID}
+name: Screenshot matrix
+tags: [screenshots]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=${LANG}&theme=system&seed=42&date=2026-09-26&ads=off&premium=0&offline=0&firstRun=0&reduceMotion=1&stars=demo'
+      WAIT_FOR: 'home.screen'
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: home, ROOT: home.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: levels, ROOT: levels.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: daily, ROOT: daily.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: stats, ROOT: stats.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: settings, ROOT: settings.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: premium, ROOT: premium.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: how-to-play, ROOT: how-to-play.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: game-start, ROOT: game.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: game-middle, ROOT: game.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: result-win, ROOT: result-win.screen }
+- runFlow:
+    file: ../subflows/shoot-screen.yaml
+    env: { SCREEN: result-lose, ROOT: result.screen }

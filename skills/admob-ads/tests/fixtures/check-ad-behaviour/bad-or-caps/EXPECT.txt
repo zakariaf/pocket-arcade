@@ -1,0 +1,2 @@
+[interstitial-rules]
+179 999 ms after the last one

@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        0
+      ],
+      "value": "const ws = new WebSocket(url); fetch(url); // 'https://reactnative.dev'"
+    }
+  }
+]

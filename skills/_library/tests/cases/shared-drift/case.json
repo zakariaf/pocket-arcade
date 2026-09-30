@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "shared-drift"
+  ],
+  "sync": false
+}

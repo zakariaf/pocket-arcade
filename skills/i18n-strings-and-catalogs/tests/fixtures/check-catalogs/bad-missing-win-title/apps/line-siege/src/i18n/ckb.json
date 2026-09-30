@@ -1,0 +1,21 @@
+{
+  "line-siege.goal": "هەموو دێوەکان ڕابگرە پێش ئەوەی بگەنە دیوارەکەت.",
+  "line-siege.how-to-play.step-1": "بلۆکێک هەڵبژێرە و لەسەر تەختەکە دایبنێ.",
+  "line-siege.how-to-play.step-2": "ستوونێک پڕ بکەرەوە بۆ ئەوەی تیشکێک بە ڕێڕەوەکەیدا بنێرێت.",
+  "line-siege.how-to-play.step-3": "ڕیزێک پڕ بکەرەوە بۆ ئەوەی لە یەک کاتدا لە هەموو دێوەکان بدات.",
+  "line-siege.how-to-play.step-4": "دێوەکان هەر چەند بلۆکێک جارێک نزیکتر دەبنەوە.",
+  "line-siege.lose.broke-through": "دێوەکان دیوارەکەیان بەزاند",
+  "line-siege.name": "Line Siege",
+  "line-siege.pack-name.1": "شەپۆلی یەکەم",
+  "line-siege.pack-name.2": "دوژمنی بەهێزتر",
+  "line-siege.pack-name.3": "دوا بەرگری",
+  "line-siege.progress": "دێو {defeated, number} / {total, number}",
+  "line-siege.stats.beams-fired": "تیشکە نێردراوەکان",
+  "line-siege.stats.biggest-combo": "زۆرترین هێڵ لە یەک جووڵەدا",
+  "line-siege.stats.monsters-defeated": "دێوە لەناوبراوەکان",
+  "line-siege.tagline": "هێڵ پڕ بکەرەوە، تیشک بنێرە، دیوار بپارێزە.",
+  "line-siege.tutorial.step-1": "دەست لە بلۆکێک بدە، پاشان لە تەختەکە بۆ دانانی.",
+  "line-siege.tutorial.step-2": "ئەم ستوونە پڕ بکەرەوە بۆ ئەوەی تیشک بە ڕێڕەوەکەیدا بنێرێت!",
+  "line-siege.tutorial.step-3": "ڕیزێکی پڕ لە یەک کاتدا لە هەموو دێوەکان دەدات.",
+  "line-siege.tutorial.step-4": "ئاگادار بە: دێوەکان هەر چەند بلۆکێک جارێک نزیکتر دەبنەوە."
+}

@@ -1,0 +1,3 @@
+peer-override
+overrides.expo-haptics is missing
+pinned at 57.0.3, the version the apps install

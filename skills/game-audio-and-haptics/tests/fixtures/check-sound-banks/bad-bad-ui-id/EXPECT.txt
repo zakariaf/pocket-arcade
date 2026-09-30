@@ -1,0 +1,3 @@
+[sound-id]
+packages/shell/src/services/audio/synth/ui-sounds.ts:6
+is not ui.<kebab>

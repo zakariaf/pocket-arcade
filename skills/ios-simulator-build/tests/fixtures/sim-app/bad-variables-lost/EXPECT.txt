@@ -1,0 +1,2 @@
+[constants-variant]
+extra.adsMode is "off", expected "test"

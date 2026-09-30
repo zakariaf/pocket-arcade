@@ -1,0 +1,2 @@
+props-readonly
+LabelledValueProps.label is not readonly

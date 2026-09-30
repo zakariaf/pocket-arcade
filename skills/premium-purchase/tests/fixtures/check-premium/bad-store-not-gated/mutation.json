@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-purchase-port.ts",
+      "find": "return withConnectivity(createExpoIapPurchaseAdapter(), isOnline);",
+      "with": "return isOnline() ? createExpoIapPurchaseAdapter() : createExpoIapPurchaseAdapter();"
+    }
+  }
+]

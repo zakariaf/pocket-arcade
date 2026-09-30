@@ -1,0 +1,3 @@
+conflict
+.claude/settings.json
+permissions.deny has rules the gates do not list: Bash(rm -rf *)

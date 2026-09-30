@@ -1,0 +1,3 @@
+knip-config
+"ignore" lacks "skills/**"
+knip.ignore differs from knip.json

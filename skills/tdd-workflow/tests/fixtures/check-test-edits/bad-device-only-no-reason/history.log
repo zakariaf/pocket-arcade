@@ -1,0 +1,18 @@
+==> commit 7d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e
+fix(shell): open save.db with the synchronous API
+
+==> diff
+
+diff --git a/packages/shell/src/services/save/expo-sqlite-sql-driver.ts b/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+index 1a2b3c4..5d6e7f8 100644
+--- a/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
++++ b/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+@@ -1,7 +1,7 @@
+ // packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+ // device-only: hard to test
+ import { openDatabaseSync } from 'expo-sqlite';
+ 
+ export function createExpoSqliteSqlDriver(fileName: string) {
+-  const db = openDatabaseSync(fileName, { useNewConnection: true });
++  const db = openDatabaseSync(fileName);
+   return db;

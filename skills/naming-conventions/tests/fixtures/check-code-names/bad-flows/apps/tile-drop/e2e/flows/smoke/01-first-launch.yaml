@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+---
+- tapOn: 'Play'
+- assertVisible: "Level 1"
+- tapOn:
+    text: 'Settings'
+- assertVisible:
+    id: 'HomePlay'

@@ -1,0 +1,2 @@
+[adapter-rewarded]
+closed without EARNED_REWARD

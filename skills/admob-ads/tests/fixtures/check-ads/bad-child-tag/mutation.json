@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "maxAdContentRating: MaxAdContentRating.PG",
+      "with": "maxAdContentRating: MaxAdContentRating.PG, tagForChildDirectedTreatment: false"
+    }
+  }
+]

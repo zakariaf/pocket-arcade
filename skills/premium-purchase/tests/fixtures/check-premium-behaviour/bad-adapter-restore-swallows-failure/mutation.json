@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "    return 'sync-failed'; // never report",
+      "with": "    return 'synced'; // never report"
+    }
+  }
+]

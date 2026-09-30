@@ -1,0 +1,3 @@
+FAIL shell-slice.json:1 [slice-present]
+[route-not-built] route Levels (S8) still points at NotBuiltScreen, but the full Shell needs every screen
+[back-opens-pause] file is missing

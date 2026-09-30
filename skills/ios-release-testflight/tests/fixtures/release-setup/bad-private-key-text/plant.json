@@ -1,0 +1,6 @@
+{
+  ".claude/settings.json": "{\n  \"permissions\": {\n    \"deny\": [\n      \"Read(~/.appstoreconnect/**)\",\n      \"Read(**/*.p8)\",\n      \"Read(**/AuthKey_*)\",\n      \"Read(**/*.p12)\",\n      \"Read(**/*.mobileprovision)\"\n    ]\n  }\n}",
+  "notes/handover.md": {
+    "privateKeyText": true
+  }
+}

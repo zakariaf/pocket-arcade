@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/demo-game/ios/DemoGame/PrivacyInfo.xcprivacy",
+      "find": "\t\t<dict>\n\t\t\t<key>NSPrivacyAccessedAPIType</key>\n\t\t\t<string>NSPrivacyAccessedAPICategoryDiskSpace</string>\n\t\t\t<key>NSPrivacyAccessedAPITypeReasons</key>\n\t\t\t<array>\n\t\t\t\t<string>E174.1</string>\n\t\t\t</array>\n\t\t</dict>\n",
+      "with": ""
+    }
+  }
+]

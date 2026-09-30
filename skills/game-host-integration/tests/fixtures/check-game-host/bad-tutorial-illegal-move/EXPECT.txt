@@ -1,0 +1,2 @@
+[teaching]
+tutorial step 1 expects {"kind":"flip","col":5,"row":0}

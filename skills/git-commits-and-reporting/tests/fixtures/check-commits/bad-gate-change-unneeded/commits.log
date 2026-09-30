@@ -1,0 +1,10 @@
+==> commit f6ded6cf7e55b1aa776e22447b3b42b97ecc8385
+fix(shell): keep the premium row visible
+
+Spec S11: the Premium status row.
+
+Gate-Change: nothing gated changed in this commit
+
+==> files
+
+packages/shell/src/bad-gate-change-unneeded.ts

@@ -1,0 +1,3 @@
+removed-rn-api
+packages/shell/src/ui/status-bar-frame.tsx:5
+StatusBar translucent

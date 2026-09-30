@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/outcome.ts", "find": "(state.maxMoves - state.moves) * TUNING.pointsPerSpareMove", "with": "(state.maxMoves - state.moves) * TUNING.pointsPerSpareMove + 0.5" } }]

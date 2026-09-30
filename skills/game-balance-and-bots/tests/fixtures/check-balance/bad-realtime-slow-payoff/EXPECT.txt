@@ -1,0 +1,3 @@
+[first-payoff]
+test/sims/halo-drift/balance-bands.json:67
+only 0.5 of dodge d0 runs reach the first payoff within 1 moves

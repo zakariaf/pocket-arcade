@@ -1,0 +1,2 @@
+worklet-directive
+apps/demo-arena/src/board/draw-arena.ts:1

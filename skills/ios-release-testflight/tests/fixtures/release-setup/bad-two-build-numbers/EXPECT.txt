@@ -1,0 +1,3 @@
+[game-config]
+apps/line-siege/game.config.ts
+has 2 "buildNumber: <int>," lines

@@ -1,0 +1,2 @@
+[platform]
+DTPlatformName is "iphoneos", expected iphonesimulator

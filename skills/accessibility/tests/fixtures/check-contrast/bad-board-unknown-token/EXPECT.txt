@@ -1,0 +1,2 @@
+[board-pairs]
+"text" pair ["number","boss"] does not name two palette tokens

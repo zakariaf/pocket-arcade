@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/index.ts", "find": "// apps/flock-tilt/index.ts\n", "with": "// apps/__GAME_ID__/index.ts\n" } }]

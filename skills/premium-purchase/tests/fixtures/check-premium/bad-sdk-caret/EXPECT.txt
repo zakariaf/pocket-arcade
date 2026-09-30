@@ -1,0 +1,2 @@
+[sdk-pin]
+apps/demo-game/package.json

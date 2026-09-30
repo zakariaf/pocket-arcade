@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/ads-config.ts",
+      "find": "    delayAppMeasurementInit: true,\n",
+      "with": "    delayAppMeasurementInit: true,\n    userTrackingUsageDescription: 'We show ads',\n"
+    }
+  }
+]

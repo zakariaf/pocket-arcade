@@ -1,0 +1,3 @@
+[screenshot-changed] phone/en-light/home: 1.06% of pixels differ, diff reports/screenshots/diff/phone/en-light/home.png
+[screenshot-changed] phone/en-light/levels: size 1320x2868 became 1290x2796
+[matrix-incomplete] phone/fa-dark has 1 screenshots, other sets have 2

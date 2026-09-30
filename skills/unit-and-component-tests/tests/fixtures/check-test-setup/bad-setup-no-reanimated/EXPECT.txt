@@ -1,0 +1,2 @@
+[jest-setup-content]
+lacks require('react-native-reanimated').setUpTests()

@@ -1,0 +1,2 @@
+npmrc-exclude
+exclude prettier is not inside a dated exclude block

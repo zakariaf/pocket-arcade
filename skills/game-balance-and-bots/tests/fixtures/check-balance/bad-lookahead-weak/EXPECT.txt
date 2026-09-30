@@ -1,0 +1,3 @@
+[skill-gap]
+test/sims/line-siege/balance-bands.json:52
+lookahead does not beat greedy by 0.15 winRate at d25

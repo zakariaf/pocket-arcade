@@ -1,0 +1,2 @@
+[sample-mismatch]
+sample "trailer-placement" gives [gate-change-missing, trailer-placement] but the list says [trailer-placement]

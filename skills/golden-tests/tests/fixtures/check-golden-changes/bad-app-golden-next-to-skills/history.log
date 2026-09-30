@@ -1,0 +1,14 @@
+==> commit 0000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+docs(skills): refresh the board fixtures
+
+Also regenerated one app golden by accident.
+
+==> diff
+
+diff --git a/skills/board-rendering-skia/tests/fixtures/check-board-files/good/test/goldens/boards/__image_snapshots__/demo-grid-phone-portrait-1.png b/skills/board-rendering-skia/tests/fixtures/check-board-files/good/test/goldens/boards/__image_snapshots__/demo-grid-phone-portrait-1.png
+new file mode 100644
+index 0000000..1234567
+Binary files /dev/null and b/skills/board-rendering-skia/tests/fixtures/check-board-files/good/test/goldens/boards/__image_snapshots__/demo-grid-phone-portrait-1.png differ
+diff --git a/test/goldens/boards/__image_snapshots__/line-siege-phone-portrait-1.png b/test/goldens/boards/__image_snapshots__/line-siege-phone-portrait-1.png
+index 7654321..1234567 100644
+Binary files a/test/goldens/boards/__image_snapshots__/line-siege-phone-portrait-1.png and b/test/goldens/boards/__image_snapshots__/line-siege-phone-portrait-1.png differ

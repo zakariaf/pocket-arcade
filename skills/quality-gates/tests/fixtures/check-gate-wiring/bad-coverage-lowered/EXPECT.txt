@@ -1,0 +1,2 @@
+gate-weakened
+jest.coverageThreshold../packages/game-kit/src/.branches was lowered to 80

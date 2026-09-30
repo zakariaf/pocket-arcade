@@ -1,0 +1,1 @@
+[baseline-missing] no baseline PNG starting with demo- in test/goldens/boards/__image_snapshots__/

@@ -1,0 +1,7 @@
+# A skill fixture with planted bugs (text selector, raw openLink, AI command): the in-repo skill
+# library is outside every repo scan, so check-flows stays silent about it.
+appId: com.example.planted
+---
+- openLink: 'e07-demo://debug/setup?offline=1'
+- tapOn: 'Play'
+- assertNoDefectsWithAI

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-policy.ts",
+      "find": "  const elapsed = msSinceLast(history, trigger.nowMs);",
+      "with": "  const elapsed = msSinceLast(history, Date.now());"
+    }
+  }
+]

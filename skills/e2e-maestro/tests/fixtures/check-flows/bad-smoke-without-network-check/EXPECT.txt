@@ -1,0 +1,1 @@
+01-first-launch.yaml:21 [smoke-network] a smoke flow does not end with the no-network assertion

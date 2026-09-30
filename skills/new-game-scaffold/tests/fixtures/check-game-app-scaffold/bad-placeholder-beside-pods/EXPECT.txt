@@ -1,0 +1,2 @@
+apps/flock-tilt/src/rules/flock-tilt-types.ts:2 [placeholder-left] template placeholder __GAME_PASCAL__ was not replaced
+check-game-app: 1 apps checked, 1 problems

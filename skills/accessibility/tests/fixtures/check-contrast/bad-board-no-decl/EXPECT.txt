@@ -1,0 +1,3 @@
+[board-pairs]
+apps/demo-game/src/board/board-contrast.json
+no board-contrast.json beside the board palette

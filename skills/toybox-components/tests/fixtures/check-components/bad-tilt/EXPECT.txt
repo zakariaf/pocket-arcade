@@ -1,0 +1,2 @@
+panel.tsx
+[tilt-outside-printed] a tilted Shell part that is not printed

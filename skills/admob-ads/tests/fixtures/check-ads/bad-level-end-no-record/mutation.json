@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  const history = recordLevelEnd(doc.ads.history, summary.isWon ? 'win' : 'lose');",
+      "with": "  const history = doc.ads.history;"
+    }
+  }
+]

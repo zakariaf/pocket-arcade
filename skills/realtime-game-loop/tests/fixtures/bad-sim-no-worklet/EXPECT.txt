@@ -1,0 +1,2 @@
+worklet-directive
+demo-arena-sim.ts:1

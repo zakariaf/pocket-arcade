@@ -1,0 +1,3 @@
+[reducer-impure]
+imports react-native
+calls Date.now()

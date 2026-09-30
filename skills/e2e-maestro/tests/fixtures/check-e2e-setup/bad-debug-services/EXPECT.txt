@@ -1,0 +1,3 @@
+debug-services.ts:1 [debug-services] premium=0|1 does not write the save before it dispatches debug-premium-set
+debug-consent.ts:1 [debug-services] builds a consent port with createAdmobConsentAdapter
+debug-consent.ts:1 [debug-services] dispatches 'premium-granted' from test-only code

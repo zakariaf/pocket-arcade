@@ -1,0 +1,357 @@
+{
+  "attributes": {},
+  "children": [
+    {
+      "attributes": {
+        "accessibilityText": "",
+        "resource-id": "stats.screen",
+        "bounds": "[0,0][402,874]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Statistics",
+        "resource-id": "stats.top-bar",
+        "bounds": "[0,62][402,128]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Back",
+        "resource-id": "stats.top-bar.back-button",
+        "bounds": "[16,69][64,117]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Statistics",
+        "resource-id": "stats.top-bar.title",
+        "bounds": "[76,78][386,108]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Best Best score Levels 2,310 Daily 1,840 Endless 4,210 Best level score Level 9: 2,310 Longest win streak 9",
+        "resource-id": "stats.best-card",
+        "bounds": "[23,-90][385,243]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Best score Levels 2,310 Daily 1,840 Endless 4,210 Best level score Level 9: 2,310 Longest win streak 9",
+        "resource-id": "stats.best-card.list",
+        "bounds": "[39,-27][363,226]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Endless 4,210",
+        "resource-id": "stats.best-card.endless",
+        "bounds": "[39,91][363,136]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Best level score Level 9: 2,310",
+        "resource-id": "stats.best-card.level-score",
+        "bounds": "[39,136][363,181]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Best level score",
+        "resource-id": "stats.best-card.level-score.label",
+        "bounds": "[39,152][149,172]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Level 9: 2,310",
+        "resource-id": "stats.best-card.level-score.value",
+        "bounds": "[235,147][363,171]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Longest win streak 9",
+        "resource-id": "stats.best-card.win-streak",
+        "bounds": "[39,181][363,226]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Longest win streak",
+        "resource-id": "stats.best-card.win-streak.label",
+        "bounds": "[39,197][171,217]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "9",
+        "resource-id": "stats.best-card.win-streak.value",
+        "bounds": "[351,192][363,216]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Daily challenge 19 Challenges completed 5 days Current streak 12 days Best streak",
+        "resource-id": "stats.daily-card",
+        "bounds": "[20,259][382,403]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Daily challenge",
+        "resource-id": "stats.daily-card.title",
+        "bounds": "[83,281][363,304]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "19 Challenges completed",
+        "resource-id": "stats.daily-card.completed",
+        "bounds": "[39,322][138,386]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "19",
+        "resource-id": "stats.daily-card.completed.value",
+        "bounds": "[39,322][138,347]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Challenges completed",
+        "resource-id": "stats.daily-card.completed.label",
+        "bounds": "[39,349][138,386]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "5 days Current streak",
+        "resource-id": "stats.daily-card.current-streak",
+        "bounds": "[152,322][250,386]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "5 days",
+        "resource-id": "stats.daily-card.current-streak.value",
+        "bounds": "[152,322][250,347]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Current streak",
+        "resource-id": "stats.daily-card.current-streak.label",
+        "bounds": "[152,349][250,367]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "12 days Best streak",
+        "resource-id": "stats.daily-card.best-streak",
+        "bounds": "[264,322][363,386]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "12 days",
+        "resource-id": "stats.daily-card.best-streak.value",
+        "bounds": "[264,322][363,347]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Best streak",
+        "resource-id": "stats.daily-card.best-streak.label",
+        "bounds": "[264,349][363,367]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Last 7 days Games played per day 0 Mon 3 Tue 5 Wed 2 Thu 6 Fri 4 Sat 1 Sun",
+        "resource-id": "stats.week-card",
+        "bounds": "[20,419][382,672]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Last 7 days",
+        "resource-id": "stats.week-card.title",
+        "bounds": "[83,441][363,464]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Games played per day",
+        "resource-id": "stats.week-card.subtitle",
+        "bounds": "[39,482][363,500]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "0 Mon 3 Tue 5 Wed 2 Thu 6 Fri 4 Sat 1 Sun",
+        "resource-id": "stats.week-card.chart",
+        "bounds": "[39,508][363,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Monday: 0 games",
+        "resource-id": "stats.week-bar.1",
+        "bounds": "[39,508][85,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Tuesday: 3 games",
+        "resource-id": "stats.week-bar.2",
+        "bounds": "[85,508][132,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Wednesday: 5 games",
+        "resource-id": "stats.week-bar.3",
+        "bounds": "[132,508][178,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Thursday: 2 games",
+        "resource-id": "stats.week-bar.4",
+        "bounds": "[178,508][224,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Friday: 6 games",
+        "resource-id": "stats.week-bar.5",
+        "bounds": "[224,508][270,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Saturday: 4 games",
+        "resource-id": "stats.week-bar.6",
+        "bounds": "[270,508][317,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Sunday: 1 game",
+        "resource-id": "stats.week-bar.7",
+        "bounds": "[317,508][363,655]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Line Siege stats 1,284 Monsters defeated 3,907 Beams fired ×6 Biggest combo",
+        "resource-id": "stats.game-card",
+        "bounds": "[20,688][382,834]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Line Siege stats",
+        "resource-id": "stats.game-card.title",
+        "bounds": "[85,711][363,734]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "1,284 Monsters defeated",
+        "resource-id": "stats.game-card.monsters-defeated",
+        "bounds": "[39,753][138,817]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "1,284",
+        "resource-id": "stats.game-card.monsters-defeated.value",
+        "bounds": "[39,753][138,778]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "3,907 Beams fired",
+        "resource-id": "stats.game-card.beams-fired",
+        "bounds": "[152,753][250,817]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "3,907",
+        "resource-id": "stats.game-card.beams-fired.value",
+        "bounds": "[152,753][250,778]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "×6 Biggest combo",
+        "resource-id": "stats.game-card.biggest-combo",
+        "bounds": "[264,753][363,817]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "×6",
+        "resource-id": "stats.game-card.biggest-combo.value",
+        "bounds": "[264,753][363,778]"
+      },
+      "children": []
+    },
+    {
+      "attributes": {
+        "accessibilityText": "Ad 320 × 50",
+        "resource-id": "stats.banner-ad",
+        "bounds": "[0,774][402,840]"
+      },
+      "children": []
+    }
+  ]
+}

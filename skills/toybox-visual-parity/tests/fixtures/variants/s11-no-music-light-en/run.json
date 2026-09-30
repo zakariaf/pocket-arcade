@@ -1,0 +1,10 @@
+{
+ "frame": "s11-settings",
+ "variant": "no-music",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "design-as-app",
+ "note": "The no-music variant rendered as the app would show it; with the app's facts (no music) check-parity compares it with s11-settings--no-music and passes."
+}

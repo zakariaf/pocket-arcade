@@ -1,0 +1,2 @@
+[test-dep-range]
+jest is "^29.7.0", not an exact version

@@ -1,0 +1,2 @@
+[adapter-errors]
+listener error deferred-payment

@@ -1,0 +1,9 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "line-siege/levels/", "to": "examples/line-siege/levels/" },
+  { "from": "repo-templates/packages/game-kit/src/dates/daily-seed.ts", "to": "templates/packages/game-kit/src/dates/daily-seed.ts" },
+  { "from": "repo-templates/packages/game-kit/src/dates/date-key.test.ts", "to": "templates/packages/game-kit/src/dates/date-key.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/dates/date-key.ts", "to": "templates/packages/game-kit/src/dates/date-key.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/render-cells.test.ts", "to": "templates/packages/game-kit/src/testing/render-cells.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/render-cells.ts", "to": "templates/packages/game-kit/src/testing/render-cells.ts" }
+]

@@ -1,0 +1,3 @@
+physical-coords
+pan-intent.ts:76
+isMirrored

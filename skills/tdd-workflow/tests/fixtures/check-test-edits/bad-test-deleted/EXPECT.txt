@@ -1,0 +1,2 @@
+test-deleted
+stars-for-moves.test.ts

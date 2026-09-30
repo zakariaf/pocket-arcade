@@ -1,0 +1,2 @@
+[cold-start] median 812 ms of the last 5 launches is over 777.6 ms (baseline 648 ms x 1.2)
+[memory] phys_footprint 171.3 MB after the smoke flow is over 150 MB

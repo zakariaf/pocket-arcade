@@ -1,0 +1,10 @@
+==> commit 3879a2a8509ba53476ed19f0f178b5eb7e6c0c0e
+chore(repo): add the lint configuration
+
+The flat config every workspace shares.
+
+Gate-Change: yes
+
+==> files
+
+eslint.config.mjs

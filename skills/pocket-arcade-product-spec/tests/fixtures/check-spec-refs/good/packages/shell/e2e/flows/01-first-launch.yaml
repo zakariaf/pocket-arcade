@@ -1,0 +1,4 @@
+# S1 -> S2 -> S13 (spec 1.2 and the S2 rules); spec N1-N12 hold throughout.
+appId: com.example.linesiege
+---
+- launchApp

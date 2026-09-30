@@ -1,0 +1,5 @@
+duplicate-native
+react-native-screens is installed as 4.26.2 and 4.28.0
+the apps install 4.26.2 for "~4.26.0"
+Add "react-native-screens": "4.26.2" to the root overrides
+npm's newest on a first install

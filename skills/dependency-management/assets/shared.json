@@ -1,0 +1,5 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "tooling-deps/", "to": "templates/tooling-deps/" },
+  { "from": "expo-sdk-57-module-map.json", "to": "assets/expo-sdk-57-module-map.json" }
+]

@@ -1,0 +1,1 @@
+[bounds] stats.banner-ad: geometry off: dx +0.0 dy +3.5

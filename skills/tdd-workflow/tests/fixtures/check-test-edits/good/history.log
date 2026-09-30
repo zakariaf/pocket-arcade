@@ -1,0 +1,176 @@
+==> commit 5d64fbf0596d851ef2d71727aa65eb455816eadd
+feat(game-kit): give stars for moves against par
+
+Spec 8.1: 3 stars at or under par, 2 at par + 2, 1 for finishing.
+
+==> diff
+
+diff --git a/packages/game-kit/src/levels/stars-for-moves.test.ts b/packages/game-kit/src/levels/stars-for-moves.test.ts
+new file mode 100644
+index 0000000..2d10f9a
+--- /dev/null
++++ b/packages/game-kit/src/levels/stars-for-moves.test.ts
+@@ -0,0 +1,12 @@
++// packages/game-kit/src/levels/stars-for-moves.test.ts
++import { starsForMoves } from './stars-for-moves.ts';
++
++describe('starsForMoves', () => {
++  it('gives 3 stars at par (spec 8.1)', () => {
++    expect(starsForMoves(7, 7)).toBe(3);
++  });
++
++  it('gives 2 stars at par + 2', () => {
++    expect(starsForMoves(9, 7)).toBe(2);
++  });
++});
+diff --git a/packages/game-kit/src/levels/stars-for-moves.ts b/packages/game-kit/src/levels/stars-for-moves.ts
+new file mode 100644
+index 0000000..9c1c7da
+--- /dev/null
++++ b/packages/game-kit/src/levels/stars-for-moves.ts
+@@ -0,0 +1,7 @@
++// packages/game-kit/src/levels/stars-for-moves.ts
++export function starsForMoves(moves: number, par: number): number {
++  if (moves <= par) {
++    return 3;
++  }
++  return moves <= par + 2 ? 2 : 1;
++}
+==> commit 751623b805b34c62db6109d757aae9e1ea6743a4
+refactor(game-kit): name the two-star limit
+
+==> diff
+
+diff --git a/packages/game-kit/src/levels/stars-for-moves.ts b/packages/game-kit/src/levels/stars-for-moves.ts
+index 9c1c7da..179a77f 100644
+--- a/packages/game-kit/src/levels/stars-for-moves.ts
++++ b/packages/game-kit/src/levels/stars-for-moves.ts
+@@ -3,5 +3,6 @@ export function starsForMoves(moves: number, par: number): number {
+   if (moves <= par) {
+     return 3;
+   }
+-  return moves <= par + 2 ? 2 : 1;
++  const twoStarLimit = par + 2;
++  return moves <= twoStarLimit ? 2 : 1;
+ }
+==> commit 2080e157da793d5acacda6636998e291739a5d9c
+test(game-kit): cover the one-star case
+
+==> diff
+
+diff --git a/packages/game-kit/src/levels/stars-for-moves.test.ts b/packages/game-kit/src/levels/stars-for-moves.test.ts
+index 2d10f9a..36373b7 100644
+--- a/packages/game-kit/src/levels/stars-for-moves.test.ts
++++ b/packages/game-kit/src/levels/stars-for-moves.test.ts
+@@ -7,6 +7,12 @@ describe('starsForMoves', () => {
+   });
+ 
+   it('gives 2 stars at par + 2', () => {
+-    expect(starsForMoves(9, 7)).toBe(2);
++    expect(
++      starsForMoves(9, 7),
++    ).toBe(2);
++  });
++
++  it('gives 1 star beyond par + 2', () => {
++    expect(starsForMoves(10, 7)).toBe(1);
+   });
+ });
+==> commit a8268b614ec667815ee0c826e55bd5ca3f874816
+fix(game-kit): give 2 stars up to par + 3
+
+The owner widened the two-star band.
+
+Spec-Change: spec 8.1 two stars now reach par + 3 (owner decision)
+
+==> diff
+
+diff --git a/packages/game-kit/src/levels/stars-for-moves.test.ts b/packages/game-kit/src/levels/stars-for-moves.test.ts
+index 36373b7..70ed515 100644
+--- a/packages/game-kit/src/levels/stars-for-moves.test.ts
++++ b/packages/game-kit/src/levels/stars-for-moves.test.ts
+@@ -6,13 +6,13 @@ describe('starsForMoves', () => {
+     expect(starsForMoves(7, 7)).toBe(3);
+   });
+ 
+-  it('gives 2 stars at par + 2', () => {
++  it('gives 2 stars up to par + 3', () => {
+     expect(
+       starsForMoves(9, 7),
+     ).toBe(2);
+   });
+ 
+   it('gives 1 star beyond par + 2', () => {
+-    expect(starsForMoves(10, 7)).toBe(1);
++    expect(starsForMoves(10, 7)).toBe(2);
+   });
+ });
+diff --git a/packages/game-kit/src/levels/stars-for-moves.ts b/packages/game-kit/src/levels/stars-for-moves.ts
+index 179a77f..131fef9 100644
+--- a/packages/game-kit/src/levels/stars-for-moves.ts
++++ b/packages/game-kit/src/levels/stars-for-moves.ts
+@@ -3,6 +3,6 @@ export function starsForMoves(moves: number, par: number): number {
+   if (moves <= par) {
+     return 3;
+   }
+-  const twoStarLimit = par + 2;
++  const twoStarLimit = par + 3;
+   return moves <= twoStarLimit ? 2 : 1;
+ }
+==> commit 4b1cc3e9cc3d49e2fc4965c315551ee364292bdf
+docs(repo): add notes
+
+==> diff
+
+diff --git a/NOTES.md b/NOTES.md
+new file mode 100644
+index 0000000..17e0f0d
+--- /dev/null
++++ b/NOTES.md
+@@ -0,0 +1 @@
++# Notes
+==> commit 6c0ffee2d7a14b3f9e8a5b1c2d3e4f5a6b7c8d9e
+fix(shell): open save.db with the synchronous API
+
+A thin device wrapper: the simulator kill test covers it (the SQL itself is tested on node:sqlite).
+
+==> diff
+
+diff --git a/packages/shell/src/services/save/expo-sqlite-sql-driver.ts b/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+index 1a2b3c4..5d6e7f8 100644
+--- a/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
++++ b/packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+@@ -1,7 +1,7 @@
+ // packages/shell/src/services/save/expo-sqlite-sql-driver.ts
+ // device-only: covered by the simulator kill test (kill-test.mjs) and every Release simulator run.
+ import { openDatabaseSync } from 'expo-sqlite';
+ 
+ export function createExpoSqliteSqlDriver(fileName: string) {
+-  const db = openDatabaseSync(fileName, { useNewConnection: true });
++  const db = openDatabaseSync(fileName);
+   return db;
+==> commit 8e1f0a2b3c4d5e6f708192a3b4c5d6e7f8091a2b
+docs(skills): add the project skill library
+
+The library's fixtures plant skipped and retried tests on purpose; the repo scan skips skills/.
+
+==> diff
+
+diff --git a/skills/tdd-workflow/tests/fixtures/check-tests/bad-disabled-test/a.test.ts b/skills/tdd-workflow/tests/fixtures/check-tests/bad-disabled-test/a.test.ts
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/skills/tdd-workflow/tests/fixtures/check-tests/bad-disabled-test/a.test.ts
+@@ -0,0 +1,5 @@
++describe('a planted bug', () => {
++  it.skip('stays skipped on purpose', () => {
++    jest.retryTimes(3);
++  });
++});
+diff --git a/.claude/skills/demo/templates/x.test.ts b/.claude/skills/demo/templates/x.test.ts
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/.claude/skills/demo/templates/x.test.ts
+@@ -0,0 +1 @@
++it.only('focuses on purpose', () => {});

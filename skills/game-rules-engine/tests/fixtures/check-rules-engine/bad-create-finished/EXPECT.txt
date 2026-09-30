@@ -1,0 +1,2 @@
+[engine-contract]
+create() starts a game whose outcome is won

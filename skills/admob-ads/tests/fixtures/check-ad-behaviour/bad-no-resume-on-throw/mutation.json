@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/fullscreen-ad.ts",
+      "find": "  try {\n    return await show();\n  } finally {\n    lifecycle.resume('fullscreen-ad');\n  }",
+      "with": "  const result = await show();\n  lifecycle.resume('fullscreen-ad');\n  return result;"
+    }
+  }
+]

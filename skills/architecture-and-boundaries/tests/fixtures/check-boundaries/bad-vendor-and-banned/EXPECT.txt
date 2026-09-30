@@ -1,0 +1,4 @@
+packages/shell/src/screens/premium/premium-screen.tsx:2 [vendor-sdk] imports the vendor SDK expo-iap outside its adapter
+packages/shell/src/screens/premium/premium-screen.tsx:3 [banned-package] imports expo-router
+packages/shell/src/i18n/kv-direction-guard.ts:2 [vendor-sdk] imports the vendor SDK expo-sqlite outside its adapter
+packages/shell/src/i18n/kv-direction-guard.ts:3 [banned-package] imports @react-native-async-storage/async-storage

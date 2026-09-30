@@ -1,0 +1,13 @@
+{
+ "frame": "s4-home",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "app": "../../check-parity/bad-structure/app.png",
+ "reference": {
+  "image": "../../check-parity/reference/lineSiege/light-en/s4-home.png",
+  "layout": "../../check-parity/reference/lineSiege/light-en/s4-home.layout.json"
+ }
+}

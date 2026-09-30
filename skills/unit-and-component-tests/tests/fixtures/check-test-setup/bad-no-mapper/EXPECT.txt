@@ -1,0 +1,3 @@
+[jest-workspace-mapper]
+project "unit" has no moduleNameMapper
+project "golden" has no moduleNameMapper

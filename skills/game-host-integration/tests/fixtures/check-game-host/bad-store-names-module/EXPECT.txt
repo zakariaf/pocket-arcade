@@ -1,0 +1,2 @@
+[screens-type-erased]
+names ShellGameModule outside the game host

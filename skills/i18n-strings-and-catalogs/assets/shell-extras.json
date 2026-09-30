@@ -1,0 +1,43 @@
+{
+  "about": "Shell texts the design copy deck lacks. Each is written into the four Shell catalogs (packages/shell/src/i18n/catalogs/<lang>.json) exactly as here; fa and ckb await a native speaker's review. copy-deck.mjs keys/apply/check --extras reads this file; references/translation-workflow.md shows the same table. The copy deck itself is never edited here.",
+  "retired": {
+    "result.win.moves-count": "Retired by the lead's decision L3 (2026-09-30): a score-rated win prints result.win.score-line (score and best), not a moves count."
+  },
+  "strings": {
+    "game-screen.board.selected.a11y-announcement": {
+      "owner": "game-host-integration (tap-then-tap: a piece was picked)",
+      "en": "Picked. Now tap where it goes.",
+      "de": "Ausgewählt. Tippe jetzt, wohin es soll.",
+      "fa": "انتخاب شد. حالا روی جای آن ضربه بزنید.",
+      "ckb": "هەڵبژێردرا. ئێستا دەست لە شوێنەکەی بدە."
+    },
+    "game-screen.board.unselected.a11y-announcement": {
+      "owner": "game-host-integration (the pick was cleared)",
+      "en": "Selection cleared.",
+      "de": "Auswahl aufgehoben.",
+      "fa": "انتخاب لغو شد.",
+      "ckb": "هەڵبژاردن هەڵوەشایەوە."
+    },
+    "game-screen.hint-button.a11y-label": {
+      "owner": "toybox-screens (S5 top bar: the Hint key's VoiceOver label)",
+      "en": "Hint",
+      "de": "Tipp",
+      "fa": "راهنمایی",
+      "ckb": "ئاماژە"
+    },
+    "game-screen.undo-button.a11y-label": {
+      "owner": "toybox-screens (S5 top bar: the Undo key's VoiceOver label)",
+      "en": "Undo",
+      "de": "Rückgängig",
+      "fa": "واگرد",
+      "ckb": "گەڕانەوە"
+    },
+    "result.win.score-line": {
+      "owner": "toybox-screens (S7 win line of a score-rated level: the score and the level's best after this run)",
+      "en": "Score {score, number} – best {bestScore, number}",
+      "de": "Punkte {score, number} – Rekord {bestScore, number}",
+      "fa": "امتیاز {score, number} – رکورد {bestScore, number}",
+      "ckb": "خاڵ {score, number} – باشترین {bestScore, number}"
+    }
+  }
+}

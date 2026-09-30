@@ -1,0 +1,2 @@
+[report-cell-missing]
+no endless greedy d100 cell in the report

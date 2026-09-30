@@ -1,0 +1,8 @@
+==> commit 303c3c1a518a28803a23eb528dc31d36b5163843
+fix(shell): fixed the streak after midnight
+
+Spec S9: the day changes at local midnight.
+
+==> files
+
+packages/shell/src/bad-subject-mood.ts

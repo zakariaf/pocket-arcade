@@ -1,0 +1,52 @@
+# apps/demo/e2e/flows/smoke/10-level-1.yaml — real touches on the Skia board. Canvas content has
+# no testIDs; with boardLayout=1 the test build renders `game.board-layout`, a Text holding
+# { x, y, layout } (canvas origin in window points plus the game's BoardLayout), and the flow turns a
+# region cell into a tap point: x + region.x + (col + 0.5) * region.cell (see the debug-deep-link
+# reference for mirrored boards).
+appId: ${APP_ID}
+name: Demo level 1 accepts a move, resumes after a kill, then wins
+tags: [smoke, demo]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&level=1&ads=off&firstRun=0&reduceMotion=1&boardLayout=1&screen=game'
+      WAIT_FOR: 'game.board'
+- copyTextFrom:
+    id: 'game.board-layout'
+- evalScript: ${output.board = JSON.parse(maestro.copiedText)}
+- evalScript: ${output.from = output.board.layout.regions.find((region) => region.id === '__FROM_REGION_ID__')}
+- evalScript: ${output.to = output.board.layout.regions.find((region) => region.id === '__TO_REGION_ID__')}
+# Cell centre = canvas origin + region origin + (col + 0.5) * cell (this board does not mirror).
+- evalScript: ${output.fromPoint = Math.round(output.board.x + output.from.x + (__FROM_COL__ + 0.5) * output.from.cell) + ',' + Math.round(output.board.y + output.from.y + (__FROM_ROW__ + 0.5) * output.from.cell)}
+- evalScript: ${output.toPoint = Math.round(output.board.x + output.to.x + (__TO_COL__ + 0.5) * output.to.cell) + ',' + Math.round(output.board.y + output.to.y + (__TO_ROW__ + 0.5) * output.to.cell)}
+- tapOn:
+    point: ${output.fromPoint}
+- tapOn:
+    point: ${output.toPoint}
+- assertVisible:
+    id: 'game.moves-label'
+    text: '.*1.*'
+- killApp
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible:
+      id: 'pause.resume-button'
+    timeout: 15000
+- tapOn:
+    id: 'pause.resume-button'
+- assertVisible:
+    id: 'game.moves-label'
+    text: '.*1.*'
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.stars-3'
+- takeScreenshot: demo-level-1-won
+- runFlow: ../../../../packages/shell/e2e/subflows/assert-no-network.yaml

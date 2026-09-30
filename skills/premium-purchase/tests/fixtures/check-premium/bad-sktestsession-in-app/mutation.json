@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/app/storekit-hook.ts",
+      "content": "// fixture: a StoreKit test hook in app code\nexport const HARNESS_CLASS = 'SKTestSession';\n"
+    }
+  }
+]

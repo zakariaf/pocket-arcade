@@ -1,0 +1,33 @@
+# packages/shell/e2e/flows/rtl/03-language-switch.yaml — S11a: LTR -> RTL needs "Restart to apply".
+appId: ${APP_ID}
+name: Switching to Persian restarts once and keeps progress
+tags: [shell, rtl]
+---
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&date=2026-09-26&ads=off&firstRun=0&reduceMotion=1&stars=1:3'
+      WAIT_FOR: 'home.screen'
+- tapOn:
+    id: 'home.settings-button'
+- tapOn:
+    id: 'settings.language-row'
+- tapOn:
+    id: 'settings-language.language-row.fa'
+- tapOn:
+    id: 'restart-dialog.restart-button'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 20000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.1'
+# The stars are crop-only parts inside the tile button (Maestro lists only the button), so the
+# seeded 3 stars are read from the tile's VoiceOver label ("Level 1: 3 stars", digits per setting).
+- assertVisible:
+    id: 'levels.level-tile.1'
+    text: '.*[3۳٣].*'
+- takeScreenshot: fa-levels-after-restart

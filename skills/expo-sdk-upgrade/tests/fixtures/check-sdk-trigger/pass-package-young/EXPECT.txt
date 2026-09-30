@@ -1,0 +1,2 @@
+wait     [package-age] react-native-reanimated 4.7.0 was published 2026-10-28; it is not 7 days old on 2026-11-02; possible from 2026-11-05
+verdict  no upgrade due: stay on SDK 57; the trigger can hold from 2026-11-05; check again then

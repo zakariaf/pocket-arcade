@@ -1,0 +1,2 @@
+[store-singleton]
+settings-store.ts:2

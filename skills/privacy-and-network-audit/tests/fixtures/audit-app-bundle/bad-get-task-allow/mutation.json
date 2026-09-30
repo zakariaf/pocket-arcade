@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "entitlements.xml",
+      "find": "\t<key>application-identifier</key>",
+      "with": "\t<key>get-task-allow</key>\n\t<true/>\n\t<key>application-identifier</key>"
+    }
+  }
+]

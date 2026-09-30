@@ -1,0 +1,4 @@
+[selector-new-object]
+use-pack-header.ts:8
+use-pack-header.ts:12
+selectPackStars

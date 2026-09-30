@@ -1,0 +1,2 @@
+arena-draw-budget
+draw-call budget 4000 is above the Shell cap of 1000

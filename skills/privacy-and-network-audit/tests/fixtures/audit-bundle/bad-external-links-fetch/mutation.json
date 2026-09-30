@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        8
+      ],
+      "value": "export const PRIVACY_POLICY_URL = 'https://example.com/privacy'; export const ping = () => fetch(PRIVACY_POLICY_URL);"
+    }
+  }
+]

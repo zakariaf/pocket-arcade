@@ -1,0 +1,3 @@
+[daily-golden-changed]
+deletes the daily golden
+generates the frozen daily level for 2027-01-01 1

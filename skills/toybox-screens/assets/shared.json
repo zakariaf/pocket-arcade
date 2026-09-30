@@ -1,0 +1,8 @@
+[
+  {"from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs"},
+  {"from": "screen-testids.json", "to": "assets/screen-testids.json"},
+  {"from": "copy-deck.json", "to": "assets/copy-deck.json"},
+  {"from": "toybox-tokens.json", "to": "assets/toybox-tokens.json"},
+  {"from": "repo-templates/packages/shell/src/screens/game/game-screen.tsx", "to": "templates/packages/shell/src/screens/game/game-screen.tsx"},
+  {"from": "repo-templates/packages/shell/src/screens/game/game-screen-back.test.tsx", "to": "templates/packages/shell/src/screens/game/game-screen-back.test.tsx"}
+]

@@ -1,0 +1,2 @@
+[report-invalid]
+cells[0].winRate is missing or invalid

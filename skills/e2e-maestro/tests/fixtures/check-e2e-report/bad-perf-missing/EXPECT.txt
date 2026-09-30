@@ -1,0 +1,1 @@
+reports/e2e/demo/perf.json [perf-missing] is missing, so the cold-start and memory steps did not run

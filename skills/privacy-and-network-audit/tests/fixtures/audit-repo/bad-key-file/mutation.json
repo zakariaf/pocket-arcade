@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "AuthKey_ABC123XYZ9.p8",
+      "content": "not a real key\n"
+    }
+  }
+]

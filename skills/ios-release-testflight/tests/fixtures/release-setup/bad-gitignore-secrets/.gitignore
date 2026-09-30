@@ -1,0 +1,9 @@
+node_modules/
+apps/*/ios/
+apps/*/build/
+reports/
+ApiKey_*
+*.p12
+*.mobileprovision
+*.xcarchive
+*.ipa

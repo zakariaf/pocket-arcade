@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/game-host.ts",
+      "find": "return createSessionController(controllerDeps, session);",
+      "with": "return createSessionController(controllerDeps, session as unknown as Session<T>);"
+    }
+  }
+]

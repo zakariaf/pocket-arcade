@@ -1,0 +1,22 @@
+{
+ "frame": "s6-pause",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "As s6-pause-board-masked, with the hierarchy Maestro really gives under the modal Pause dialog: only pause.dialog and its parts (the paused Game screen, its top bar and the scrim are not in the accessibility tree). The frame is reached through pause.dialog; the top bar is compared inside the screen root crop.",
+ "board": {
+  "rect": {
+   "x": 16,
+   "y": 128,
+   "w": 370,
+   "h": 700
+  },
+  "source": "probe=board"
+ },
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s6-pause.png",
+  "layout": "../../reference/lineSiege/light-en/s6-pause.layout.json"
+ }
+}

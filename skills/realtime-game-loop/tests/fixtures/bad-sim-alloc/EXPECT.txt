@@ -1,0 +1,3 @@
+sim-no-alloc
+stepDemoArenaSim runs every tick and allocates or grows an array (new Float32Array)
+demo-arena-sim.ts:108

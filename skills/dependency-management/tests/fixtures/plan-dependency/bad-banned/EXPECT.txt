@@ -1,0 +1,2 @@
+banned
+expo-router is banned

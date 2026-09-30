@@ -1,0 +1,517 @@
+{
+  "version": 1,
+  "about": "One entry per design frame key of screen-testids.json: the testID that proves the app reached the frame (root), and the exact app state the design draws (state). capture-app.mjs launches the app with -parity \"frame=<key>&theme=..&lang=..&game=..&date=2026-09-27&animations=off\"; the app's test-only parity harness turns that into this state. Numbers are Line Siege's; the other design games use the values in fixture.games. fixture describes the player as the design draws it; fixtureSave is the same player as save-document sections, which the harness writes (templates/packages/shell/src/app/parity/parity-fixture-save.json is a copy; check-harness.mjs compares them).",
+  "launchDefaults": { "date": "2026-09-27", "animations": "off" },
+  "designFacts": {
+    "about": "The game facts the mockup draws: Music (the S11 Music rows, the S6 Music key) and a moves-rated win line ('7 moves – par 7'). A frame whose design state depends on a game fact has reference variants (frames.<key>.variants) derived from the rendered mockup for the other values; captures pick the reference from the app's facts in parity/game-facts.json (hasMusic: the sound bank has a sound in category music; winLine: 'moves' when levels are rated by moves against par, 'score' when the stars rule is score-based).",
+    "hasMusic": true,
+    "winLine": "moves"
+  },
+  "fixture": {
+    "date": "2026-09-27 (Sunday)",
+    "currentLevel": 12,
+    "score": 1840,
+    "bestEndlessScore": 4210,
+    "dailyStreak": 5,
+    "bestDailyStreak": 12,
+    "movesCount": 7,
+    "par": 7,
+    "priceText": { "en": "€1.99", "de": "1,99 €", "fa": "€۱٫۹۹", "ckb": "€ ۱٫۹۹" },
+    "versionText": "1.0.0 (8)",
+    "emailText": "support@example.com",
+    "levelStars": [3, 3, 2, 3, 1, 3, 3, 2, 3, 2, 3],
+    "packStars": "28 / 90 (31 %)",
+    "weekMarks": ["missed", "done", "done", "done", "done", "done", "today"],
+    "weekGames": [0, 3, 5, 2, 6, 4, 1],
+    "stats": {
+      "gamesPlayed": 58,
+      "wins": 36,
+      "winRate": 0.62,
+      "playTime": "2 h 14 min",
+      "levelsCompleted": 11,
+      "stars": "28 / 270",
+      "threeStarLevels": 7,
+      "bestLevels": 2310,
+      "bestDaily": 1840,
+      "bestEndless": 4210,
+      "bestLevelScore": "level 9: 2,310",
+      "bestWinStreak": 9,
+      "dailyCompleted": 19
+    },
+    "games": {
+      "lineSiege": {
+        "gameStats": ["1,284", "3,907", "×6"],
+        "progressMid": "3 / 10",
+        "progressFull": "10 / 10",
+        "progressMidParams": { "defeated": 3, "total": 10 },
+        "progressFullParams": { "defeated": 10, "total": 10 },
+        "loseReasonId": "line-siege.lose.broke-through"
+      },
+      "flockTilt": {
+        "gameStats": ["612", "2,145", "38"],
+        "progressMid": "2 / 4",
+        "progressFull": "4 / 4",
+        "progressMidParams": { "penned": 2, "total": 4 },
+        "progressFullParams": { "penned": 4, "total": 4 },
+        "loseReasonId": "flock-tilt.lose.wolf-got-sheep"
+      },
+      "scrapShove": {
+        "gameStats": ["947", "1,562", "×4"],
+        "progressMid": "4 / 6",
+        "progressFull": "6 / 6",
+        "progressMidParams": { "wrecked": 4, "total": 6 },
+        "progressFullParams": { "wrecked": 6, "total": 6 },
+        "loseReasonId": "scrap-shove.lose.caught"
+      }
+    }
+  },
+  "fixtureSave": {
+    "about": "The design's demo player in save-document terms (SaveDocV1 sections) on 2026-09-27, the date of every frame. The same JSON as fixtureSave in the toybox-visual-parity frames manifest (check-harness.mjs compares them). parityDoc() writes it for progress 'demo'; 'new-player' keeps empty progress, daily and statistics; 'first-run' also leaves firstRun false. settings.language is null (System) in en renders and the render language otherwise. Volumes are integer percent (0..100), like the save. counters are keyed by the design game id, then by CounterSpec id.",
+    "date": "2026-09-27",
+    "settings": {
+      "language": null,
+      "digits": "automatic",
+      "soundEnabled": true,
+      "soundVolume": 70,
+      "musicEnabled": true,
+      "musicVolume": 40,
+      "vibrationEnabled": true,
+      "theme": "system",
+      "colorBlind": false,
+      "reduceMotion": "system",
+      "hintsDuringPlay": true
+    },
+    "progress": {
+      "levels": {
+        "1": {
+          "stars": 3,
+          "bestScore": 1120,
+          "bestMoves": 7,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-10"
+        },
+        "2": {
+          "stars": 3,
+          "bestScore": 1260,
+          "bestMoves": 7,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-11"
+        },
+        "3": {
+          "stars": 2,
+          "bestScore": 980,
+          "bestMoves": 8,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-12"
+        },
+        "4": {
+          "stars": 3,
+          "bestScore": 1410,
+          "bestMoves": 7,
+          "completions": 2,
+          "firstCompletedOn": "2026-09-13"
+        },
+        "5": {
+          "stars": 1,
+          "bestScore": 870,
+          "bestMoves": 11,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-15"
+        },
+        "6": {
+          "stars": 3,
+          "bestScore": 1530,
+          "bestMoves": 7,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-16"
+        },
+        "7": {
+          "stars": 3,
+          "bestScore": 1650,
+          "bestMoves": 7,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-18"
+        },
+        "8": {
+          "stars": 2,
+          "bestScore": 1190,
+          "bestMoves": 9,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-19"
+        },
+        "9": {
+          "stars": 3,
+          "bestScore": 2310,
+          "bestMoves": 7,
+          "completions": 3,
+          "firstCompletedOn": "2026-09-21"
+        },
+        "10": {
+          "stars": 2,
+          "bestScore": 1380,
+          "bestMoves": 9,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-23"
+        },
+        "11": {
+          "stars": 3,
+          "bestScore": 1720,
+          "bestMoves": 7,
+          "completions": 1,
+          "firstCompletedOn": "2026-09-25"
+        }
+      },
+      "endlessBest": 4210
+    },
+    "run": {
+      "ref": {
+        "kind": "level",
+        "level": 12
+      },
+      "resumeOnLaunch": false
+    },
+    "daily": {
+      "results": {
+        "2026-09-22": {
+          "won": true,
+          "score": 1640,
+          "moves": 9,
+          "playMs": 180000
+        },
+        "2026-09-23": {
+          "won": true,
+          "score": 1510,
+          "moves": 10,
+          "playMs": 210000
+        },
+        "2026-09-24": {
+          "won": true,
+          "score": 1840,
+          "moves": 8,
+          "playMs": 165000
+        },
+        "2026-09-25": {
+          "won": true,
+          "score": 1390,
+          "moves": 11,
+          "playMs": 240000
+        },
+        "2026-09-26": {
+          "won": true,
+          "score": 1720,
+          "moves": 9,
+          "playMs": 190000
+        }
+      },
+      "completed": 19,
+      "streak": {
+        "lastDate": "2026-09-26",
+        "length": 5
+      },
+      "bestStreak": 12
+    },
+    "stats": {
+      "gamesPlayed": 58,
+      "wins": 36,
+      "losses": 22,
+      "playMs": 8040000,
+      "bestScore": {
+        "level": 2310,
+        "daily": 1840,
+        "endless": 4210
+      },
+      "currentWinStreak": 3,
+      "longestWinStreak": 9,
+      "days": {
+        "2026-09-21": {
+          "games": 0,
+          "playMs": 0
+        },
+        "2026-09-22": {
+          "games": 3,
+          "playMs": 360000
+        },
+        "2026-09-23": {
+          "games": 5,
+          "playMs": 600000
+        },
+        "2026-09-24": {
+          "games": 2,
+          "playMs": 240000
+        },
+        "2026-09-25": {
+          "games": 6,
+          "playMs": 720000
+        },
+        "2026-09-26": {
+          "games": 4,
+          "playMs": 480000
+        },
+        "2026-09-27": {
+          "games": 1,
+          "playMs": 120000
+        }
+      }
+    },
+    "counters": {
+      "lineSiege": {
+        "monsters-defeated": 1284,
+        "beams-fired": 3907,
+        "biggest-combo": 6
+      },
+      "flockTilt": {
+        "sheep-penned": 612,
+        "tilts-made": 2145,
+        "solved-at-par": 38
+      },
+      "scrapShove": {
+        "robots-scrapped": 947,
+        "scrap-shoved": 1562,
+        "biggest-crash": 4
+      }
+    },
+    "hints": {
+      "freeDate": null,
+      "freeUsed": 0
+    },
+    "ads": {
+      "history": {
+        "lastInterstitialAtMs": null,
+        "levelsCompletedSinceInterstitial": 0,
+        "didLastInterstitialFollowLoss": false
+      },
+      "consent": {
+        "canRequestAds": true,
+        "isPrivacyOptionsRequired": true
+      }
+    },
+    "premium": {
+      "ownedSinceMs": 1788256800000,
+      "revokedAtMs": 1790499600000
+    },
+    "upsell": {
+      "lastShownOn": null
+    },
+    "store": {
+      "price": 1.99,
+      "currency": "EUR"
+    },
+    "buildNumber": "8",
+    "gameFrame": {
+      "about": "The numbers the Game frames draw (S5, S6, S7): level 12, score 1,840 (a new best, so the level's best after the run is 1,840), 3 stars, 7 moves with par 7 (a moves-rated game; a score-rated one shows the score line instead), the game's progress params at mid (the top bar) and full (the win card), the game's first lose-reason key and the Continue-with-ad offer. parityGameFixture() returns them for the Game frames; debugControls().applyFixtureHud and showFixtureResult show them without writing the save.",
+      "level": 12,
+      "score": 1840,
+      "bestScore": 1840,
+      "isNewBest": true,
+      "stars": 3,
+      "movesCount": 7,
+      "par": 7,
+      "isContinueOffered": true,
+      "games": {
+        "lineSiege": {
+          "progressMid": { "defeated": 3, "total": 10 },
+          "progressFull": { "defeated": 10, "total": 10 },
+          "loseReasonId": "line-siege.lose.broke-through"
+        },
+        "flockTilt": {
+          "progressMid": { "penned": 2, "total": 4 },
+          "progressFull": { "penned": 4, "total": 4 },
+          "loseReasonId": "flock-tilt.lose.wolf-got-sheep"
+        },
+        "scrapShove": {
+          "progressMid": { "wrecked": 4, "total": 6 },
+          "progressFull": { "wrecked": 6, "total": 6 },
+          "loseReasonId": "scrap-shove.lose.caught"
+        }
+      }
+    }
+  },
+  "frames": {
+    "s1-splash": {
+      "root": "splash.screen",
+      "state": "The startup splash held on screen: logo tile 152 (-6 deg, 7 pt ring), game name, tagline, loader blocks at rest. Do not continue to Home."
+    },
+    "s2-language-choice": {
+      "root": "language-choice.screen",
+      "state": "First run. The option of the render language is selected (pushed in, check) and carries the small 'Phone language' sticker (+3 deg): English in en, Deutsch in de, the Persian autonym in fa, the Sorani autonym in ckb. Continue key at the bottom."
+    },
+    "s3-consent-moment": {
+      "root": "consent.screen",
+      "state": "The Shell's consent intro shown before Google's form: gold shield art, title, lead, info note, Continue key, footnote. The plan makes consent required, the player online, the tutorial done and not Premium; the consent moment host shows the intro and holds it while isHeldParityStart(plan) is true (it never asks Google's form)."
+    },
+    "s3-google-s-form": {
+      "root": null,
+      "state": "Mock only: Google's UMP form draws this sheet. Never compared; the reference exists for the look pass.",
+      "notes": "No capture, no check-parity run, not part of sign-off."
+    },
+    "s4-home": {
+      "root": "home.screen",
+      "state": "Not Premium. Level 12 in progress (hero key 'Continue – Level 12'). Today's daily not played; streak 5 days; date Sunday 27 Sep 2026. Games with Endless show the 'Endless – Best 4,210' row button and no tagline sticker; games without Endless show the tagline sticker instead. Premium row button. Banner slot at the bottom as a 320 x 50 placeholder (pixels masked, geometry checked)."
+    },
+    "s4-home-premium": {
+      "root": "home.screen",
+      "state": "Premium owner: Premium badge under the game name, tagline sticker shown, no Premium key, no banner. Otherwise as s4-home."
+    },
+    "s6-pause": {
+      "root": "game.screen",
+      "state": "Game screen at level 12 with the design's numbers in the top bar (debugControls().applyFixtureHud: score 1,840, the progress line at the mid values, Line Siege 'Monsters 3 / 10'); the game's own board is masked (probe=board). Pause dialog open (the Game screen's session controls call pause() once), Sound on, Music off, Vibration on.",
+      "board": { "above": ["pause.dialog"] },
+      "modal": {
+        "reachedBy": "pause.dialog",
+        "hidden": ["game.top-bar", "game.pause-button", "game.mode-label", "game.progress-label", "game.score", "game.undo-button", "game.hint-button", "game.board", "pause.scrim"],
+        "why": "The Pause dialog is modal for VoiceOver (it traps focus), so the accessibility tree Maestro reads holds only the dialog and its parts: the paused Game screen under the scrim is not listed. The frame is proven reached by pause.dialog, the screen root sits at its known full-screen position, and the hidden elements are compared inside the root's crop (crop-only, like parts hidden from VoiceOver)."
+      },
+      "variants": {
+        "no-music": {
+          "when": { "hasMusic": false },
+          "derive": [
+            { "hide": ":scope > .ov > .dlg.pause > .keys3 > .tk:nth-child(2)" },
+            { "style": ":scope > .ov > .dlg.pause > .keys3", "css": { "grid-template-columns": "repeat(2,minmax(0,1fr))" } }
+          ],
+          "reason": "L1",
+          "state": "As the base frame, for a game without music (its sound bank has no sound in category music): the Music key is gone and the Sound and Vibration keys share the row in two equal columns with the 10 pt gap, as the app's usePairLayout lays them out."
+        }
+      }
+    },
+    "s7-result-win": {
+      "root": "result.screen",
+      "state": "Level 12 won with 3 stars, shown in the end state (no pop-in; frozen motion). Score 1,840 with the 'New best!' sticker; progress line at the full values (10 / 10); moves 7 with par 7 (a moves-rated game). Not Premium, so the crown nudge with the price shows. Opened with debugControls().showFixtureResult(parityGameFixture({ isScoreRated }), 'won'), which writes nothing to the save.",
+      "board": { "above": ["result.screen"] },
+      "variants": {
+        "score": {
+          "when": { "winLine": "score" },
+          "derive": [
+            {
+              "text": ":scope > .body.res > .panel.score > .sc-lines > span:nth-child(2)",
+              "key": "result.win.score-line",
+              "values": { "score": 1840, "bestScore": 1840 }
+            }
+          ],
+          "texts": {
+            "result.win.score-line": {
+              "en": "Score {score, number} – best {bestScore, number}",
+              "de": "Punkte {score, number} – Rekord {bestScore, number}",
+              "fa": "امتیاز {score, number} – رکورد {bestScore, number}",
+              "ckb": "خاڵ {score, number} – باشترین {bestScore, number}"
+            }
+          },
+          "reason": "L3",
+          "state": "As the base frame, for a score-rated game (its stars rule is score-based, so resultModelOf passes par null): the moves line becomes the Shell's score line result.win.score-line with the run's score and the level's best after the run ('Score 1,840 – best 1,840'), formatted with the mockup's number formatting (Persian digits in fa)."
+        }
+      }
+    },
+    "s7-result-lose": {
+      "root": "result.screen",
+      "state": "Level 12 lost: tilted logo picture (+17 deg), the game's first lose reason, the Continue-with-ad offer (the parity ads port has a rewarded ad ready), Try again hero key, Levels button. Not Premium. Opened with debugControls().showFixtureResult(parityGameFixture({ isScoreRated }), 'lost').",
+      "board": { "above": ["result.screen"] }
+    },
+    "s8-levels": {
+      "root": "levels.screen",
+      "state": "Pack 1 (30 levels): levels 1-11 completed with stars 3,3,2,3,1,3,3,2,3,2,3; level 12 current with its flag; 13-30 locked; 28 / 90 stars (31 %). Tile 13 was just tapped: focus ring on it and the toast 'Unlock this one by finishing level 12.' Pack 2 locked (45 stars needed, 17 more). Banner placeholder at the bottom."
+    },
+    "s9-daily-challenge": {
+      "root": "daily.screen",
+      "state": "Sunday 27 Sep 2026, today's challenge not played. Current streak 5 days, best 12 days. Week strip Monday to Sunday: missed, done, done, done, done, done, today."
+    },
+    "s10-statistics": {
+      "root": "stats.screen",
+      "state": "The demo statistics in fixture.stats, the last 7 days in fixture.weekGames and the game's own three stats (fixture.games). Tall: capture at scrollY=0 and further scroll positions until every element was checked. Banner placeholder at the end.",
+      "settleMs": 10000
+    },
+    "s10-statistics-empty": {
+      "root": "stats.screen",
+      "state": "A new player: no statistics yet (empty state with picture, title, lead, Play key, local note). Banner placeholder."
+    },
+    "s11-settings": {
+      "root": "settings.screen",
+      "variants": {
+        "no-music": {
+          "when": { "hasMusic": false },
+          "derive": [
+            { "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)" },
+            { "hide": ":scope > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)" }
+          ],
+          "reason": "L1",
+          "state": "As the base frame, for a game without music: the Music switch row and the Music volume row are gone (settings rule: hidden when the game has no music) and the rows below close up; everything under the Sound group moves up by their height. Tall."
+        }
+      },
+      "state": "Language row value 'System (English)' in en (the autonym in other languages); Numbers Automatic; Sound effects on at 70 %, Music on at 40 %, Vibration on; Theme System; Colour-blind off; Reduce motion off (the capture freezes motion through isParityMotionFrozen(), which makes useReduceMotion() return true while the saved setting and this row stay off); Hints on; not Premium, price in the Remove ads row; Ad privacy row shown; footer version 1.0.0 (8). Tall.",
+      "settleMs": 10000
+    },
+    "s11a-language": {
+      "root": "settings-language.screen",
+      "state": "Language setting System in en renders (radio checked on the System row); in other renders the row of the render language is checked. Direction note panel below."
+    },
+    "s11b-about-and-credits": {
+      "root": "about.screen",
+      "state": "Version chip 1.0.0 (8); support text with support@example.com."
+    },
+    "s11c-privacy-policy": {
+      "root": "privacy-policy.screen",
+      "state": "The five policy sections; 'updated' date 27 Sep 2026; e-mail support@example.com. Tall.",
+      "settleMs": 10000
+    },
+    "s11d-licences": {
+      "root": "licences.screen",
+      "state": "Licence rows in the design's order: Fonts (Vazirmatn 33.003 with its description and 'Show licence text', then Lilita One and Rubik), Software, Ads and store, Sounds. Tall.",
+      "settleMs": 10000
+    },
+    "s12-premium": {
+      "root": "premium.screen",
+      "state": "Not Premium; the store price is the fixture price (€1.99 in en)."
+    },
+    "s12-loading-price": {
+      "root": "premium.state.loading",
+      "state": "Premium page while the price loads: busy hero key (blocks at rest), Restore enabled, small print. A state card: compared by text, fill and crop, never by position."
+    },
+    "s12-store-unavailable-offline": {
+      "root": "premium.state.unavailable",
+      "state": "Store unavailable (offline): wifi-off note, disabled hero key with crown cap showing 'Remove ads' without a price, Restore disabled."
+    },
+    "s12-purchase-in-progress": {
+      "root": "premium.state.purchasing",
+      "state": "Purchase in progress: busy hero key, Restore disabled, small print."
+    },
+    "s12-pending-approval": {
+      "root": "premium.state.pending",
+      "state": "Pending approval (Ask to Buy): clock note with the bold pending text, the detail text, Restore enabled."
+    },
+    "s12-success": {
+      "root": "premium.state.success",
+      "state": "Purchase succeeded: confetti (hidden under reduce motion in the app; presence only), title, lead, 'Premium active' sticker (-3 deg) in its end state."
+    },
+    "s12-error": {
+      "root": "premium.state.error",
+      "state": "Purchase failed: error note (danger edge, dangerFill), Try again hero key with a restore cap, Restore."
+    },
+    "s12-already-owned": {
+      "root": "premium.state.owned",
+      "state": "Already Premium: 'Premium active' sticker, lead, Restore purchase as a secondary block button."
+    },
+    "s12-restore-results-toasts": {
+      "root": "premium.restoring-toast",
+      "state": "Restore results: the design stacks all four outcomes (restoring, restored, nothing to restore, failed); the harness shows the same stack for this capture."
+    },
+    "s13-how-to-play": {
+      "root": "how-to-play.screen",
+      "state": "Step 2 of 4: the game's goal, its picture on the stage, the step chip and pager dots (second active), step text 2, Previous and Next, the replay-tutorial nudge."
+    },
+    "s14-reset-all-progress": {
+      "root": "reset-progress-dialog.scrim",
+      "state": "Settings at scroll 0 under the scrim, with the reset-all-progress dialog; the hold button frozen at 46 % filled."
+    },
+    "s14-restart-to-apply": {
+      "root": "restart-dialog.scrim",
+      "state": "The Language page under the scrim, with the restart-to-apply dialog (Later, Restart now)."
+    },
+    "s14-progress-restored": {
+      "root": "save-restored-dialog.scrim",
+      "state": "Home (as s4-home) under the scrim, with the progress-restored dialog (OK)."
+    },
+    "s15-debug-menu": {
+      "root": "debug.screen",
+      "state": "Test-build debug menu: hazard strip, 'Test build' sticker; values: jump to level 12, set date = Sunday 27 Sep, ads always test on, ads never off, Premium off, force locale '<lang> · <dir> · 123', simulate offline off, error log 0. Tall.",
+      "settleMs": 10000
+    }
+  }
+}

@@ -1,0 +1,1 @@
+An app with no screen code: with --all every screen is reported as not built.

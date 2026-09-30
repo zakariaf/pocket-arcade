@@ -1,0 +1,15 @@
+[
+  {
+    "write": {
+      "file": "packages/tooling/src/asc/pasted-key.txt",
+      "content": "-----BEGIN PRIVATE XKEY-----\nMIGT\n-----END PRIVATE XKEY-----\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/tooling/src/asc/pasted-key.txt",
+      "find": "XKEY",
+      "with": "KEY"
+    }
+  }
+]

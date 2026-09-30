@@ -1,0 +1,34 @@
+{
+ "version": 1,
+ "entries": [
+  {
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "light",
+   "lang": "en",
+   "scrollY": 0,
+   "sheetSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "date": "2026-09-28",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "n/a",
+    "feel": "match"
+   },
+   "differences": [
+    {
+     "what": "settings gear 1 pt low",
+     "status": "fixed"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,34 @@
+{
+"version":1,
+"frame":"s12-pending-approval",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"state-card",
+"screens":[
+"S12/pending"
+],
+"root":"premium.state.pending",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":370},
+"image":"s12-pending-approval.png",
+"elements":[
+{"testID":"premium.state.pending","screen":"S12/pending","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"پریمیوم در انتظار تأیید – می‌توانید به بازی ادامه دهید. به‌محض تأیید خرید، پریمیوم خودبه‌خود فعال می‌شود. بازیابی خرید","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.top-bar.title","screen":"S12/pending","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":43.5},"box":{"w":362,"h":44,"rotate":0},"text":"پریمیوم","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 30px/43.5px Vazirmatn"}},
+{"testID":"premium.restore-button","screen":"S12/pending","role":"button","component":"Button","kind":"quiet, restore icon, centred","checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":"enabled","when":null,"count":1,"rect":{"x":137.92,"y":302,"w":126.16,"h":44},"box":{"w":126,"h":44,"rotate":0},"text":"بازیابی خرید","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":"3px solid null","radius":"14px","shadow":null,"outline":null,"font":"400 15px/21.75px Vazirmatn"}},
+{"testID":"premium.pending-note","screen":"S12/pending","role":"none","component":"NotePanel","kind":null,"checks":["fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":79.5,"w":362,"h":85},"box":{"w":362,"h":85,"rotate":0},"text":"در انتظار تأیید – می‌توانید به بازی ادامه دهید.","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.pending-note.icon","screen":"S12/pending","role":"none","component":"Icon","kind":"clock","checks":["crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":341,"y":98.5,"w":22,"h":22},"box":{"w":22,"h":22,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.pending-note.label","screen":"S12/pending","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":39,"y":96.5,"w":290,"h":51},"box":{"w":290,"h":51,"rotate":0},"text":"در انتظار تأیید – می‌توانید به بازی ادامه دهید.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.pending-detail","screen":"S12/pending","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":176.5,"w":362,"h":25.5},"box":{"w":362,"h":26,"rotate":0},"text":"به‌محض تأیید خرید، پریمیوم خودبه‌خود فعال می‌شود.","aria":null,"style":{"fill":null,"color":"#B9B4EA","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}}
+],
+"texts":[
+{"text":"پریمیوم","x":288.09,"y":22,"w":93.91,"h":47,"owner":"premium.top-bar.title","font":"700 30px Vazirmatn"},
+{"text":"در انتظار تأیید – می‌توانید به بازی ادامه دهید.","x":66.84,"y":95.5,"w":262.16,"h":26,"owner":"premium.pending-note.label","font":"700 17px Vazirmatn"},
+{"text":"در انتظار تأیید – می‌توانید به بازی ادامه دهید.","x":288.08,"y":121,"w":40.92,"h":26,"owner":"premium.pending-note.label","font":"700 17px Vazirmatn"},
+{"text":"به‌محض تأیید خرید، پریمیوم خودبه‌خود فعال می‌شود.","x":23.23,"y":175.5,"w":358.77,"h":26,"owner":"premium.pending-detail","font":"400 17px Vazirmatn"},
+{"text":"بازیابی خرید","x":150.92,"y":312.13,"w":70.16,"h":23,"owner":"premium.restore-button","font":"400 15px Vazirmatn"}
+]
+}

@@ -1,0 +1,3 @@
+[select-regions]
+apps/tap-flip/src/rules/tap-flip-engine.ts
+the engine assembly sets no selectRegions

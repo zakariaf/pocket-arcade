@@ -1,0 +1,2 @@
+[dispose-before-reload]
+packages/shell/src/app/language-change.ts:8

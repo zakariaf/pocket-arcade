@@ -1,0 +1,1 @@
+[sim-not-booted] e07-parity is Shutdown

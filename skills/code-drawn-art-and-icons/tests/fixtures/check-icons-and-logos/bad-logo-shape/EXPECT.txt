@@ -1,0 +1,3 @@
+[logo-shape]
+layer 0 has role "q"
+apps/sheep-sort/src/art/logo-art.ts

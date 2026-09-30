@@ -1,0 +1,2 @@
+package.json:1 [pixel-deps] pixel goldens exist but devDependencies lack jest-image-snapshot
+[pixel-deps] @types/jest-image-snapshot is "^6.4.2", not an exact version

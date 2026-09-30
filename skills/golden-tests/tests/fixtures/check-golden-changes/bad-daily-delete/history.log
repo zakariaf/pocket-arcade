@@ -1,0 +1,242 @@
+==> commit 00000001aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+test(demo): add the level goldens
+
+Gate-Change: first data goldens for demo levels and three daily dates, read every board
+
+==> diff
+
+diff --git a/apps/demo/src/levels/generate-level.golden.test.ts b/apps/demo/src/levels/generate-level.golden.test.ts
+new file mode 100644
+index 0000000..7a54db6
+--- /dev/null
++++ b/apps/demo/src/levels/generate-level.golden.test.ts
+@@ -0,0 +1,42 @@
++// apps/line-siege/src/levels/generate-level.golden.test.ts
++// DATA GOLDEN. A diff here means players get different levels. Update only with
++// `npx jest <this file> --selectProjects golden -u` plus a `Gate-Change:` commit trailer.
++import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
++import { renderCells } from '@e07/game-kit/testing/render-cells.ts';
++
++import { generateLevel } from './generate-level.ts';
++
++import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
++
++const LINE_SIEGE_DAILY_SALT = 0x4c53;
++const DAILY_DIFFICULTY = 2;
++
++function describeLevel(seed: number, difficulty: number): string {
++  const level = generateLevel(seed, difficulty);
++  const tray = level.start.tray.map((piece) => JSON.stringify(piece)).join(' ');
++  return [
++    `seed ${String(seed)} difficulty ${String(difficulty)} target ${String(level.targetScore)}`,
++    renderCells(level.start.cells, level.start.cols),
++    `tray ${tray}`,
++  ].join('\n');
++}
++
++describe('generateLevel goldens', () => {
++  it.each([
++    [1, 0],
++    [2, 1],
++    [3, 3],
++  ])('generates the frozen layout for seed %i at difficulty %i', (seed, difficulty) => {
++    expect(describeLevel(seed, difficulty)).toMatchSnapshot();
++  });
++});
++
++describe('daily challenge goldens (hard compatibility contract)', () => {
++  const dates: readonly DateKey[] = ['2026-09-26', '2026-12-31', '2027-01-01'];
++
++  it.each(dates)('generates the frozen daily level for %s', (date) => {
++    expect(
++      describeLevel(dailySeed(date, LINE_SIEGE_DAILY_SALT), DAILY_DIFFICULTY),
++    ).toMatchSnapshot();
++  });
++});
+diff --git a/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios b/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios
+new file mode 100644
+index 0000000..05abb65
+--- /dev/null
++++ b/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios
+@@ -0,0 +1,71 @@
++// Jest Snapshot v1, https://goo.gl/fbAQLP
++
++exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2026-09-26 1`] = `
++"seed 3211492107 difficulty 2 target 70
++......#
++.......
++.#.....
++..#....
++.......
++.#...#.
++.#.....
++tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0]]"
++`;
++
++exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2026-12-31 1`] = `
++"seed 3839511443 difficulty 2 target 70
++.......
++.......
++#......
++##.....
++.......
++.#..#..
++#......
++tray [[0,0]] [[0,0],[0,1]] [[0,0],[1,0]]"
++`;
++
++exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2027-01-01 1`] = `
++"seed 1575445167 difficulty 2 target 70
++.......
++.......
++.#.....
++...#...
++.......
++......#
++.#.....
++tray [[0,0],[0,1],[0,2]] [[0,0],[0,1],[0,2]] [[0,0],[1,0],[0,1]]"
++`;
++
++exports[`generateLevel goldens generates the frozen layout for seed 1 at difficulty 0 1`] = `
++"seed 1 difficulty 0 target 30
++.....
++.....
++.....
++.....
++..##.
++tray [[0,0],[1,0]] [[0,0],[1,0]] [[0,0],[1,0]]"
++`;
++
++exports[`generateLevel goldens generates the frozen layout for seed 2 at difficulty 1 1`] = `
++"seed 2 difficulty 1 target 50
++......
++.#....
++......
++.#....
++.##...
++......
++tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0],[0,1],[0,2]]"
++`;
++
++exports[`generateLevel goldens generates the frozen layout for seed 3 at difficulty 3 1`] = `
++"seed 3 difficulty 3 target 90
++.......#
++......#.
++........
++........
++.....#..
++..#.#...
++..#.....
++...#...#
++tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0],[0,1]]"
++`;
+diff --git a/apps/demo/src/levels/generate-level.ts b/apps/demo/src/levels/generate-level.ts
+new file mode 100644
+index 0000000..ad1d380
+--- /dev/null
++++ b/apps/demo/src/levels/generate-level.ts
+@@ -0,0 +1 @@
++export const x = 1;
+diff --git a/test/goldens/boards/skia-golden.ts b/test/goldens/boards/skia-golden.ts
+new file mode 100644
+index 0000000..aa7b895
+--- /dev/null
++++ b/test/goldens/boards/skia-golden.ts
+@@ -0,0 +1,13 @@
++// test/goldens/boards/skia-golden.ts — the pixel-golden matcher for every board golden (Jest 'golden'
++// project, CanvasKit). Every test/goldens/boards/<game-id>-board.golden.test.ts imports it.
++// A gated file: the 0.1% tolerance changes only with the owner's agreement and a Gate-Change trailer.
++import { join } from 'node:path';
++
++import { configureToMatchImageSnapshot } from 'jest-image-snapshot';
++
++/** 0.1% of pixels may differ (CanvasKit anti-aliasing noise); diffs land in reports/visual/diff. */
++export const toMatchPixelGolden = configureToMatchImageSnapshot({
++  failureThreshold: 0.001,
++  failureThresholdType: 'percent',
++  customDiffDir: join(process.cwd(), 'reports', 'visual', 'diff'),
++});
+==> commit 00000002aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+test(demo): drop stale snapshots
+
+Gate-Change: snapshots will be regenerated later
+
+==> diff
+
+diff --git a/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios b/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios
+deleted file mode 100644
+index 05abb65..0000000
+--- a/apps/demo/src/levels/generate-level.golden.test.ts.snap.ios
++++ /dev/null
+@@ -1,71 +0,0 @@
+-// Jest Snapshot v1, https://goo.gl/fbAQLP
+-
+-exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2026-09-26 1`] = `
+-"seed 3211492107 difficulty 2 target 70
+-......#
+-.......
+-.#.....
+-..#....
+-.......
+-.#...#.
+-.#.....
+-tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0]]"
+-`;
+-
+-exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2026-12-31 1`] = `
+-"seed 3839511443 difficulty 2 target 70
+-.......
+-.......
+-#......
+-##.....
+-.......
+-.#..#..
+-#......
+-tray [[0,0]] [[0,0],[0,1]] [[0,0],[1,0]]"
+-`;
+-
+-exports[`daily challenge goldens (hard compatibility contract) generates the frozen daily level for 2027-01-01 1`] = `
+-"seed 1575445167 difficulty 2 target 70
+-.......
+-.......
+-.#.....
+-...#...
+-.......
+-......#
+-.#.....
+-tray [[0,0],[0,1],[0,2]] [[0,0],[0,1],[0,2]] [[0,0],[1,0],[0,1]]"
+-`;
+-
+-exports[`generateLevel goldens generates the frozen layout for seed 1 at difficulty 0 1`] = `
+-"seed 1 difficulty 0 target 30
+-.....
+-.....
+-.....
+-.....
+-..##.
+-tray [[0,0],[1,0]] [[0,0],[1,0]] [[0,0],[1,0]]"
+-`;
+-
+-exports[`generateLevel goldens generates the frozen layout for seed 2 at difficulty 1 1`] = `
+-"seed 2 difficulty 1 target 50
+-......
+-.#....
+-......
+-.#....
+-.##...
+-......
+-tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0],[0,1],[0,2]]"
+-`;
+-
+-exports[`generateLevel goldens generates the frozen layout for seed 3 at difficulty 3 1`] = `
+-"seed 3 difficulty 3 target 90
+-.......#
+-......#.
+-........
+-........
+-.....#..
+-..#.#...
+-..#.....
+-...#...#
+-tray [[0,0],[1,0]] [[0,0],[1,0],[0,1]] [[0,0],[0,1]]"
+-`;

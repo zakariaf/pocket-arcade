@@ -1,0 +1,9 @@
+// Jest Snapshot v1
+
+exports[`PlayButton renders 1`] = `
+<View
+  accessibilityRole="button"
+>
+  <Text>Play</Text>
+</View>
+`;

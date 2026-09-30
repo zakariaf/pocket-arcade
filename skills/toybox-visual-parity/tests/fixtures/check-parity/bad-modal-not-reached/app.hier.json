@@ -1,0 +1,126 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "design-as-app",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "9:41 AM",
+      "resource-id": "",
+      "bounds": "[55,22][92,42]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Paused",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.title",
+      "bounds": "[41,234][134,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Level 12",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.mode-label",
+      "bounds": "[298,244][361,266]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Resume",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.resume-button",
+      "bounds": "[41,279][361,359]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Restart level",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.restart-button",
+      "bounds": "[41,371][361,425]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "How to play",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.how-to-play-button",
+      "bounds": "[41,437][361,491]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound On Music Off Vibration On",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.toggles",
+      "bounds": "[41,503][361,587]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound On",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.sound-switch",
+      "bounds": "[41,506][141,590]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Music Off",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.music-switch",
+      "bounds": "[151,503][251,587]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Vibration On",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.vibration-switch",
+      "bounds": "[261,506][361,590]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Home",
+      "text": "",
+      "value": "",
+      "resource-id": "pause.home-button",
+      "bounds": "[152,599][250,643]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

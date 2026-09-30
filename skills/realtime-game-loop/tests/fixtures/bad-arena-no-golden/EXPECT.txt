@@ -1,0 +1,3 @@
+arena-golden
+test/goldens/boards/demo-arena-board.golden.test.ts
+the real-time board has no pixel golden

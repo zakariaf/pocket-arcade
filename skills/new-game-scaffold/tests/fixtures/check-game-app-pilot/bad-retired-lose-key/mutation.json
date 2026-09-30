@@ -1,0 +1,3 @@
+[
+  { "write": { "file": "apps/line-siege/src/rules/outcome.ts", "content": "// apps/line-siege/src/rules/outcome.ts\nexport const LOSE_IDS = ['line-siege.lose.broke-through', 'line-siege.lose.board-full', 'line-siege.lose-reason'] as const;\n" } }
+]

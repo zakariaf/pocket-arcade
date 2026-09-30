@@ -1,0 +1,4 @@
+[type-style-mismatch]
+TYPE_STYLES.levelNumber is
+"arabic":1}
+"arabic":1.45}

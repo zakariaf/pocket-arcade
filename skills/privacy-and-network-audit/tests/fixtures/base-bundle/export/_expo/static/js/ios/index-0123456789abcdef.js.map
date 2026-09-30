@@ -1,0 +1,27 @@
+{
+ "version": 3,
+ "sources": [
+  "../../node_modules/react-native/Libraries/WebSocket/WebSocket.js",
+  "../../node_modules/whatwg-fetch/dist/fetch.umd.js",
+  "../../node_modules/expo/src/winter/fetch/fetch.ts",
+  "../../node_modules/@iabtcf/core/lib/mjs/GVL.js",
+  "../../node_modules/react-native-google-mobile-ads/src/TestIds.ts",
+  "../../node_modules/expo-iap/src/utils/kit-api.ts",
+  "../../packages/shell/src/app/create-shell-app.tsx",
+  "../../apps/demo-game/src/rules/apply-move.ts",
+  "../../packages/shell/src/config/external-links.ts"
+ ],
+ "sourcesContent": [
+  "const ws = new WebSocket(url); // see 'https://reactnative.dev/docs/network'",
+  "function polyfill(input) { return fetch(input); } const xhr = new XMLHttpRequest();",
+  "export const f = (u) => fetch(u); const docs = 'https://docs.expo.dev';",
+  "fetch(url); new XMLHttpRequest(); const base = 'https://vendor-list.consensu.org/';",
+  "export const TestIds = { BANNER: 'ca-app-pub-3940256099942544/2934735716' }; // 'https://developers.google.com/admob'",
+  "const KIT = 'https://kit.openiap.dev'; export const kitApi = () => fetch(KIT);",
+  "export function createShellApp() { return null; }",
+  "export const applyMove = (state, move) => ({ ...state, last: move });",
+  "export const PRIVACY_POLICY_URL = 'https://example.com/privacy'; export const STORE_URL = 'https://apps.apple.com/app/id0000000000';"
+ ],
+ "names": [],
+ "mappings": ""
+}

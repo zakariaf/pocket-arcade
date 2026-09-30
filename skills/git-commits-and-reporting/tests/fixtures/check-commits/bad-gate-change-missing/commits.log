@@ -1,0 +1,8 @@
+==> commit e08ed7d8d520b14e1484e026360da17e02e37f99
+chore(repo): relax the lint configuration
+
+Too many errors.
+
+==> files
+
+eslint.config.mjs

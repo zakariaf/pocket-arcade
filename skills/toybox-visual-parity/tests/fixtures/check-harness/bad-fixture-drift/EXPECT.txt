@@ -1,0 +1,1 @@
+[harness-fixture] differs from the frames manifest's fixtureSave at fixtureSave.settings.soundVolume: 0.7 where the manifest has 70

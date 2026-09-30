@@ -1,0 +1,8 @@
+{
+ "screenshots": [
+  "../../fakes/screen-a.png",
+  "../../fakes/screen-a.png",
+  "../../fakes/screen-b.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-home.json"
+}

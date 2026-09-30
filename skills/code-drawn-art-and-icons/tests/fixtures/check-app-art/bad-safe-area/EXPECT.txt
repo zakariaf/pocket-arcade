@@ -1,0 +1,3 @@
+[art-safe-area]
+icon-light.png
+the safe area is 184..839

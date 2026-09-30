@@ -1,0 +1,22 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "expo"
+      ],
+      "value": "~59.0.1"
+    }
+  },
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "expo"
+      ],
+      "value": "~59.0.1"
+    }
+  }
+]

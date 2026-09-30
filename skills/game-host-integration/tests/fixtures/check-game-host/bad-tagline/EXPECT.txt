@@ -1,0 +1,3 @@
+[module-assembly]
+apps/tap-flip/src/index.ts
+taglineId: 'tap-flip.tagline'

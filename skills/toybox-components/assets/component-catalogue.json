@@ -1,0 +1,765 @@
+{
+  "about": "Every Toybox component, the file that holds it (under packages/shell/src/ui/), the design-system section, its accessibility role, how it takes its testID and the parts it derives. inPairCell = screens put the component in a usePairLayout cell, so its layoutStyle must grow, never flex: 1 (the pair-cell-flex rule); owner = the skill that ships the template; check-components.mjs checks the files this skill owns and only the existence of the others.",
+  "prerequisites": [
+    {
+      "file": "packages/shell/src/theme/tokens.ts",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/theme/shell-colors.ts",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/theme/motion.ts",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/theme/make-styles.ts",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/theme/type-styles.ts",
+      "owner": "toybox-design-system",
+      "mustContain": "rowLabelStrong",
+      "why": "ListRow's strong and danger labels use TYPE_STYLES.rowLabelStrong (17 Bold, 1.32 / 1.5)"
+    },
+    {
+      "file": "packages/shell/src/ui/app-text.tsx",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/ui/raised-surface.tsx",
+      "owner": "toybox-design-system",
+      "mustContain": "top: elevation",
+      "why": "a pushed-in key (the chosen segment, a locked level tile) must sit elevation lower by layout, where Maestro and the parity bounds measure it, not by a transform"
+    },
+    {
+      "file": "packages/shell/src/ui/toybox-styles.ts",
+      "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/ui/icons/icon.tsx",
+      "owner": "code-drawn-art-and-icons"
+    },
+    {
+      "file": "packages/shell/src/ui/icons/icon-paths.ts",
+      "owner": "code-drawn-art-and-icons"
+    }
+  ],
+  "support": [
+    {
+      "file": "component-specs.json",
+      "what": "numeric projection of the token file's components block"
+    },
+    {
+      "file": "component-specs.ts",
+      "what": "COMPONENT_SPECS, the typed import of component-specs.json"
+    },
+    {
+      "file": "button-paint.ts",
+      "what": "kindPaint(): fill, content, edge and text tone per button kind"
+    },
+    {
+      "file": "use-hold-to-confirm.ts",
+      "what": "the 2 s hold timer (ReduceMotion.Never)"
+    }
+  ],
+  "components": [
+    {
+      "name": "Button",
+      "file": "button.tsx",
+      "section": "4.1 4.2",
+      "group": "keys",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": []
+    },
+    {
+      "name": "QuietButton",
+      "file": "quiet-button.tsx",
+      "section": "4.1",
+      "group": "keys",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": []
+    },
+    {
+      "name": "RowButton",
+      "file": "row-button.tsx",
+      "section": "4.3",
+      "group": "keys",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".icon",
+        ".label",
+        ".description"
+      ]
+    },
+    {
+      "name": "KeyButton",
+      "file": "key-button.tsx",
+      "section": "4.4",
+      "group": "keys",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "inPairCell": true,
+      "parts": []
+    },
+    {
+      "name": "IconButton",
+      "file": "icon-button.tsx",
+      "section": "4.5",
+      "group": "keys",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": []
+    },
+    {
+      "name": "BusyBlocks",
+      "file": "busy-blocks.tsx",
+      "section": "4.24",
+      "group": "keys",
+      "role": "image (splash only)",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ToggleKey",
+      "file": "toggle-key.tsx",
+      "section": "4.25",
+      "group": "keys",
+      "role": "switch",
+      "testID": "testID",
+      "interactive": true,
+      "inPairCell": true,
+      "parts": [
+        ".icon",
+        ".label",
+        ".state"
+      ]
+    },
+    {
+      "name": "Toggle",
+      "file": "toggle.tsx",
+      "section": "4.6",
+      "group": "inputs",
+      "role": "none (the row is the switch)",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "SegmentedControl",
+      "file": "segmented-control.tsx",
+      "section": "4.7",
+      "group": "inputs",
+      "role": "radiogroup / radio",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        "<segmentTestIDBase>.<value>",
+        ".label",
+        ".preview"
+      ]
+    },
+    {
+      "name": "Slider",
+      "file": "slider.tsx",
+      "section": "4.8",
+      "group": "inputs",
+      "role": "adjustable",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".fill"
+      ]
+    },
+    {
+      "name": "ProgressBar",
+      "file": "progress-bar.tsx",
+      "section": "4.9",
+      "group": "inputs",
+      "role": "progressbar",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "OptionCard",
+      "file": "option-card.tsx",
+      "section": "4.10",
+      "group": "inputs",
+      "role": "radio",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".label",
+        ".radio"
+      ]
+    },
+    {
+      "name": "RadioMark",
+      "file": "radio-mark.tsx",
+      "section": "4.10",
+      "group": "inputs",
+      "role": "none",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "List",
+      "file": "list.tsx",
+      "section": "4.11",
+      "group": "lists",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ListGroup",
+      "file": "list-group.tsx",
+      "section": "4.11",
+      "group": "lists",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".tab",
+        ".list"
+      ]
+    },
+    {
+      "name": "GroupTab",
+      "file": "group-tab.tsx",
+      "section": "4.11",
+      "group": "lists",
+      "role": "header",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ListRow",
+      "file": "list-row.tsx",
+      "section": "4.11",
+      "group": "lists",
+      "role": "button / switch / radio / none",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".icon",
+        ".label",
+        ".description",
+        ".value",
+        ".toggle",
+        ".radio"
+      ]
+    },
+    {
+      "name": "SubRow",
+      "file": "sub-row.tsx",
+      "section": "4.11",
+      "group": "lists",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".label"
+      ]
+    },
+    {
+      "name": "IconTile",
+      "file": "icon-tile.tsx",
+      "section": "4.12",
+      "group": "lists",
+      "role": "none (decorative)",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "Panel",
+      "file": "panel.tsx",
+      "section": "4.13",
+      "group": "surfaces",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "PanelHeader",
+      "file": "panel-header.tsx",
+      "section": "4.13 4.28",
+      "group": "surfaces",
+      "role": "header",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "NotePanel",
+      "file": "note-panel.tsx",
+      "section": "4.13",
+      "group": "surfaces",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".icon",
+        ".label"
+      ]
+    },
+    {
+      "name": "OfferBox",
+      "file": "offer-box.tsx",
+      "section": "4.13",
+      "group": "surfaces",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "Chip",
+      "file": "chip.tsx",
+      "section": "4.21",
+      "group": "surfaces",
+      "role": "text",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "Sticker",
+      "file": "sticker.tsx",
+      "section": "4.20",
+      "group": "surfaces",
+      "role": "text",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ArtTile",
+      "file": "art-tile.tsx",
+      "section": "4.22",
+      "group": "surfaces",
+      "role": "none (decorative)",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "PremiumArt",
+      "file": "premium-art.tsx",
+      "section": "4.22",
+      "group": "surfaces",
+      "role": "none (decorative)",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "Confetti",
+      "file": "confetti.tsx",
+      "section": "4.34",
+      "group": "surfaces",
+      "role": "none (decorative)",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "LevelTile",
+      "file": "level-tile.tsx",
+      "section": "4.14",
+      "group": "levels",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".number",
+        ".stars-<n>",
+        ".flag"
+      ]
+    },
+    {
+      "name": "RatingStar",
+      "file": "rating-star.tsx",
+      "section": "4.15",
+      "group": "levels",
+      "role": "none",
+      "testID": "none",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "RatingStars",
+      "file": "rating-stars.tsx",
+      "section": "4.15",
+      "group": "levels",
+      "role": "image when labelled",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ResultStars",
+      "file": "result-stars.tsx",
+      "section": "4.15",
+      "group": "levels",
+      "role": "image",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "TopBar",
+      "file": "top-bar.tsx",
+      "section": "4.16",
+      "group": "bars",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".back-button",
+        ".title"
+      ]
+    },
+    {
+      "name": "BrandLock",
+      "file": "brand-lock.tsx",
+      "section": "4.16",
+      "group": "bars",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "GameTopBar",
+      "file": "game-top-bar.tsx",
+      "section": "4.16",
+      "group": "bars",
+      "role": "none",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        ".top-bar",
+        ".pause-button",
+        ".mode-label",
+        ".progress-label",
+        ".score",
+        ".undo-button",
+        ".hint-button"
+      ]
+    },
+    {
+      "name": "BannerBand",
+      "file": "banner-band.tsx",
+      "section": "4.17",
+      "group": "bars",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "Scrim",
+      "file": "scrim.tsx",
+      "section": "4.18",
+      "group": "overlays",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "DialogCard",
+      "file": "dialog-card.tsx",
+      "section": "4.18",
+      "group": "overlays",
+      "role": "none (modal)",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        ".card",
+        ".title",
+        ".body"
+      ]
+    },
+    {
+      "name": "DialogButtonRow",
+      "file": "dialog-button-row.tsx",
+      "section": "4.18",
+      "group": "overlays",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "HoldButton",
+      "file": "hold-button.tsx",
+      "section": "4.18",
+      "group": "overlays",
+      "role": "button",
+      "testID": "testID",
+      "interactive": true,
+      "parts": [
+        ".fill"
+      ]
+    },
+    {
+      "name": "Toast",
+      "file": "toast.tsx",
+      "section": "4.19",
+      "group": "overlays",
+      "role": "alert",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "ToastStack",
+      "file": "toast-stack.tsx",
+      "section": "4.19",
+      "group": "overlays",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "CalendarTile",
+      "file": "calendar-tile.tsx",
+      "section": "4.26",
+      "group": "data",
+      "role": "none (decorative)",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".month",
+        ".day"
+      ]
+    },
+    {
+      "name": "WeekMark",
+      "file": "week-mark.tsx",
+      "section": "4.27",
+      "group": "data",
+      "role": "image when labelled",
+      "testID": "optional",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "WeekStrip",
+      "file": "week-strip.tsx",
+      "section": "4.27",
+      "group": "data",
+      "role": "none; marks are images",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        "<dayTestIDBase>.<n>",
+        ".letter",
+        ".mark",
+        ".today-tag"
+      ]
+    },
+    {
+      "name": "WeekLegend",
+      "file": "week-legend.tsx",
+      "section": "4.27",
+      "group": "data",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".done",
+        ".missed"
+      ]
+    },
+    {
+      "name": "StatGrid",
+      "file": "stat-grid.tsx",
+      "section": "4.28",
+      "group": "data",
+      "role": "none",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        "<base>.<id>",
+        ".value",
+        ".label"
+      ]
+    },
+    {
+      "name": "StatList",
+      "file": "stat-list.tsx",
+      "section": "4.28",
+      "group": "data",
+      "role": "none",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        ".list",
+        "<base>.<id>",
+        ".label",
+        ".value"
+      ]
+    },
+    {
+      "name": "ScorePanel",
+      "file": "score-panel.tsx",
+      "section": "4.29",
+      "group": "data",
+      "role": "none",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        ".label",
+        ".value",
+        ".new-best",
+        ".progress-line",
+        ".moves-line",
+        ".score-line"
+      ]
+    },
+    {
+      "name": "WeekBars",
+      "file": "week-bars.tsx",
+      "section": "4.29",
+      "group": "data",
+      "role": "none; bars are images",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        "<barTestIDBase>.<n>",
+        ".value",
+        ".bar",
+        ".day"
+      ]
+    },
+    {
+      "name": "HowToStage",
+      "file": "how-to-stage.tsx",
+      "section": "4.30",
+      "group": "data",
+      "role": "none",
+      "testID": "testID",
+      "interactive": false,
+      "parts": []
+    },
+    {
+      "name": "PagerDots",
+      "file": "pager-dots.tsx",
+      "section": "4.30",
+      "group": "data",
+      "role": "none (decorative)",
+      "testID": "testID",
+      "interactive": false,
+      "parts": [
+        ".<n>"
+      ]
+    },
+    {
+      "name": "EmptyState",
+      "file": "empty-state.tsx",
+      "section": "4.31",
+      "group": "data",
+      "role": "none",
+      "testID": "testIDBase",
+      "interactive": false,
+      "parts": [
+        ".picture",
+        ".title",
+        ".body"
+      ]
+    }
+  ],
+  "elsewhere": [
+    {
+      "name": "AppText",
+      "file": "app-text.tsx",
+      "section": "3.6",
+      "owner": "toybox-design-system"
+    },
+    {
+      "name": "RaisedSurface",
+      "file": "raised-surface.tsx",
+      "section": "3.10",
+      "owner": "toybox-design-system"
+    },
+    {
+      "name": "Icon",
+      "file": "icons/icon.tsx",
+      "section": "3.12",
+      "owner": "code-drawn-art-and-icons"
+    },
+    {
+      "name": "LogoTile",
+      "file": "logo-tile.tsx",
+      "section": "4.23",
+      "owner": "code-drawn-art-and-icons"
+    },
+    {
+      "name": "EmptyStatsPicture",
+      "file": "empty-stats-picture.tsx",
+      "section": "4.31",
+      "owner": "code-drawn-art-and-icons"
+    },
+    {
+      "name": "HazardStrip",
+      "file": "hazard-strip.tsx",
+      "section": "4.33",
+      "owner": "code-drawn-art-and-icons"
+    }
+  ],
+  "mockOnly": [
+    {
+      "name": "Bottom sheet",
+      "section": "4.32",
+      "why": "Google UMP draws the real consent form natively; the Shell never builds this sheet."
+    },
+    {
+      "name": "Board placeholder",
+      "section": "4.35",
+      "why": "The mockup's dimmed board stands in for the real game board in S6."
+    },
+    {
+      "name": "Ad box and Ad chip",
+      "section": "4.17",
+      "why": "Stand-ins for the creative; the real slot holds the anchored adaptive banner."
+    }
+  ],
+  "allowPressable": [
+    "raised-surface.tsx",
+    "quiet-button.tsx",
+    "list-row.tsx"
+  ],
+  "allowTilt": [
+    "picture-path.tsx",
+    "sticker.tsx",
+    "art-tile.tsx",
+    "premium-art.tsx",
+    "confetti.tsx",
+    "calendar-tile.tsx",
+    "week-strip.tsx",
+    "level-tile.tsx",
+    "result-stars.tsx",
+    "logo-tile.tsx",
+    "icons/icon.tsx"
+  ]
+}

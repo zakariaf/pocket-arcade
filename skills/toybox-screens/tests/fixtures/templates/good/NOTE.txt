@@ -1,0 +1,5 @@
+The good case checks the skill's own templates/ tree as an app (check-screens.mjs <templates> <this
+folder> --all). This folder adds the files the templates import from other skills: settings-rows.ts
+(settings-and-preferences, the S11 row testIDs), and stand-ins for the model hooks other skills ship
+with their tests (use-settings-model.ts and use-settings-context.ts from settings-and-preferences,
+use-debug-model.ts from e2e-maestro), so the route files' model-hook rules can pass.

@@ -1,0 +1,105 @@
+---
+name: admob-ads
+description: Builds and checks Pocket Arcade AdMob ads - AdsPort adapters, UMP consent, spec 8.8 ad policy, banner/interstitial/rewarded slots, ADS_MODE test IDs, SKAdNetwork. Use when touching ads, consent, ad IDs or rewarded perks. Not for Premium (premium-purchase) or N3 audits (privacy-and-network-audit).
+---
+
+# AdMob ads and consent
+
+Makes every game show Google AdMob ads that never interrupt play: consent comes first, every "may an ad appear now?" answer comes from pure, tested functions, test builds only ever see Google's test ads, and two scripts prove it on the real code.
+
+## Rules that must hold
+
+1. **Ads never interrupt play (spec N8, 8.8).** No ad during a level, the tutorial or app start; banners only at the bottom of Home, Levels and Statistics; interstitials only after the player taps Next / Replay / Try again on the Result screen; rewarded ads only when the player taps "Watch an ad to ...". *Why:* this is the product's promise; everything else in this skill serves it.
+2. **Every ad decision comes from `ad-policy.ts` / `perk-offer.ts`** (pure, numbers from `game.config.ts`, facts from the Premium store, ConnectivityPort, ConsentPort and the saved `AdHistory`). No ad logic in screens or adapters, no hard-coded caps; the free hints come from `game.config.ts` `hints.freePerDay` through `useHintPerk(today)`. Every finished level is counted in the history in the one run-end update (`extendRunEnd: recordAdLevelEnd` in the composition root). *Why:* only pure rules can be tested one by one, the spec makes the numbers per-game configuration, and a history that never counts a level allows exactly one interstitial ever.
+3. **Consent before any ad request, through the Shell's consent moment, and none at all when ads are off.** Refresh consent info at every launch (not Premium, ads enabled); where Google's form is required show S3 (`ConsentIntroScreen`) first and the form only after Continue: after the tutorial, online, not Premium, over a banner screen, before the first ad. `ConsentMoment` (mounted in `ShellFeatures`) is the only runner of `prepareAds`; call `setRequestConfiguration` + `initialize` and load ads only when `canRequestAds` is true. Build the ConsentPort only with `createConsentPort(adsMode, ...)`, so an `ADS_MODE=off` build never calls UMP. *Why:* Google requires consent (EEA/UK/CH), the spec puts the Shell's S3 moment before Google's form, the SDK may preload at initialisation, and a UMP info update is a network request that would fail the E2E network audit of `off` builds.
+4. **Test builds never see real ads; real IDs reach the runtime only in `store` + `live` builds.** `ADS_MODE` decides: `test` -> Google's sample app ID + `TestIds`, `live` -> the game's IDs via `expo.extra.adUnits`, `off` -> nothing. IDs live only in `apps/<game>/game.config.ts`; app code never types an ad ID. *Why:* spec 8.8; real ads in a test build risk the owner's AdMob account.
+5. **`react-native-google-mobile-ads` is exactly 17.2.0 and is imported only by `admob-ads-adapter.ts`, `admob-consent-adapter.ts` and the test-only `admob-consent-debug-adapter.ts`**, with the classic create/load/show API (no v17 hooks or pools). *Why:* an upgrade then touches three files, and caps stay in pure code.
+6. **The reward is granted only on `RewardedAdEventType.EARNED_REWARD`;** a perk button is hidden when no rewarded ad is loaded. *Why:* spec 8.8 "the reward is given only when the ad completes" and "hidden, not broken".
+7. **Pause the game loop and audio around every fullscreen ad (`runFullscreenAd`), resuming in `finally`, and make every show settle.** The adapter resolves on `CLOSED`, on `ERROR` and on a rejected `show()`: a failed presentation sends `ERROR` (phase `show`) and never `CLOSED`, after `show()` has already resolved. *Why:* iOS does not background the app for these ads, so nothing else pauses the game, and a show that never settles leaves the game suspended and the Next button dead.
+8. **Ads are silent.** Never an error, a spinner or "please connect" for ads; failures go to the ErrorLogPort; branch on `error.phase`, then `error.reason`, never the deprecated `error.code`. The banner slot has zero height until an ad has loaded. *Why:* spec 4.1 and S4 (no empty box).
+9. **General audience, no tracking prompt:** `maxAdContentRating: PG`, no child-directed or under-age tags, no `userTrackingUsageDescription`, no `expo-tracking-transparency`. *Why:* decisions D8 and D4; the console blocks sensitive categories (step A4).
+10. **The SKAdNetwork list is Google's full list of `xxxxxxxxxx.skadnetwork` identifiers, refreshed before every release.** *Why:* the plugin only copies what it gets; Google changes the list.
+11. **Consent reset, debug geography and the Ad Inspector exist only in test builds**, behind the Shell's test-only entry. *Why:* they change consent behaviour for real players.
+12. **The owner does the AdMob console steps (A1-A5); ask and wait, never invent IDs or publish anything yourself.**
+
+## Workflow
+
+1. Read [references/setup-ids-and-modes.md](references/setup-ids-and-modes.md). Install the SDK exactly (`npm install -E react-native-google-mobile-ads@17.2.0` in every app) plus `expo-network` and `expo-constants` via `npx expo install`.
+2. Copy the templates into the repo at the same relative paths (keep an existing `app-variant.ts`; `ads-config.ts` replaces the bootstrap version): `templates/packages/shell/src/config/`, `templates/packages/shell/src/services/{ads,consent,connectivity}/`, `templates/packages/shell/src/ui/ad-banner-slot.tsx` (+ test), `templates/packages/tooling/src/ads/refresh-skadnetwork.ts`, `templates/__mocks__/react-native-google-mobile-ads.ts`. Do not rewrite them from memory.
+3. Check that the Shell's one plugin list, `shellPlugins(game, adsMode)` in `packages/shell/src/config/shell-plugins.ts` (architecture-and-boundaries; `with-shell.ts` spreads it), holds the line `['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)]` (the template already does; add exactly that line if a copy lacks it), where `adsMode = game.ads.isEnabled ? variant.adsMode : 'off'`, and make its `extra` hold `adsMode` plus `...(adUnits === null ? {} : { adUnits })` with `adUnits = adUnitsExtra(adsMode, game.ads.ids)`; fill the `ads` section of every `apps/<game>/game.config.ts` (policy 3 / 180_000 / 2; the owner's IDs or documented-format placeholders). Run `npx expo prebuild --platform ios --clean` after plugin changes.
+4. Read [references/consent-flow.md](references/consent-flow.md). Create the ports once with `createAdsPort(readAdsExtra(), ...)` and `createConsentPort(readAdsExtra().adsMode, ...)`; feed `isAdsEnabled = extra.game.adPolicy.isAdsEnabled && adsMode !== 'off'` into the gate input and the policy config. With the composition root (Shell step 7) copy the consent moment: `templates/packages/shell/src/app/consent-moment.tsx`, `consent-moment-context.tsx` and `use-consent-moment.ts` (+ `consent-moment.test.tsx`; the flow `services/ads/consent-moment-flow.ts` came with step 2), and check that `ShellFeatures` renders `<ConsentMoment isHeld={parts.isConsentMomentHeld} debug={debug.services}>` around the navigator (game-host-integration's template does). It refreshes consent once per launch and runs `prepareAds` (S3 intro, then Google's form) the first time a banner screen is open; never call the gate by hand. It needs toybox-screens' `screens/consent/consent-intro-screen.tsx` (part of the Shell core in every slice). Show the "Ad privacy choices" row only when required.
+5. Read [references/ad-policy.md](references/ad-policy.md) and [references/placements-and-lifecycle.md](references/placements-and-lifecycle.md). Copy `templates/packages/shell/src/app/use-ad-context.ts` (+ test) at Shell step 7, with the composition root (it reads the services context, the debug services and the game extra, which exist from then on): `useAdContext(placement)` gathers the live `AdContext` (Premium store, `useIsOnline()`, the consent moment's live answer, else the saved `save.doc().ads.consent.canRequestAds`, tutorial done, levels won), `useAdPolicyConfig(placement)` the game's numbers (off in `ADS_MODE=off` builds), `useHintPerk(today)` the hint perk with the game's `hints.freePerDay`, and `useBannerSlot('home' | 'levels' | 'stats')` the banner model the screens' model hooks return (it also asks the consent moment for the ad moment while the screen is open); the parity harness of test builds opens a placement through `ForcedAdPlacementsContext`. Put `AdBannerSlot` at the bottom of Home, Levels and Statistics with `isAllowed` from `useBannerSlot('<screen>')` (in the screen's model hook, never built by hand) and the Toybox banner band as `loadedStyle`; call `showInterstitialIfDue` only in the Next / Replay / Try again handlers and save the returned history; render hint and continue buttons from `perkOffer` and run the perk only when `earnRewardedPerk` returns `true`; give `runFullscreenAd` the game lifecycle. [examples/ad-wiring.md](examples/ad-wiring.md) shows each call in place.
+6. Run the Jest suites: `npx jest packages/shell/src/services/ads packages/shell/src/services/consent packages/shell/src/config packages/shell/src/ui/ad-banner-slot.test.tsx packages/shell/src/app/use-ad-context.test.tsx packages/shell/src/app/consent-moment.test.tsx --ci --selectProjects unit --coverage --collectCoverageFrom='packages/shell/src/services/ads/**/*.ts' --coverageThreshold='{}'` (paths first; only `npm run test:coverage` judges the thresholds).
+7. Run `node ${CLAUDE_SKILL_DIR}/scripts/check-ads.mjs .` and `node ${CLAUDE_SKILL_DIR}/scripts/check-ad-behaviour.mjs .`. Fix every `FAIL` line (each names the file, the rule and the fix) and rerun until both print `RESULT: PASS`. Rules whose target a later Shell build step creates print `SKIP` lines until it exists (a pass): `plugin-entry` until `packages/shell/src/config/shell-plugins.ts` (step 8), `level-end-recorded` until `packages/shell/src/app/create-shell-parts.ts` and `consent-moment` until `packages/shell/src/app/shell-features.tsx` (step 7).
+8. Before a release: `node packages/tooling/src/ads/refresh-skadnetwork.ts --check`, the simulator smoke test in [references/console-privacy-troubleshooting.md](references/console-privacy-troubleshooting.md), then hand off for the privacy-manifest and network audits.
+9. Tell the owner, in plain words, which console steps are still open (A1-A4 before the first store build, A5 after the first release) and what each one needs from them.
+
+## Definition of done
+
+- [ ] The SDK is exactly 17.2.0 in every app and imported only by the three adapter files; the root mock exists.
+- [ ] Every template file is in place and its Jest suite passes (ad policy, perk offer, ad history, ad gate, ad moments, ads adapter, ads factory, read-ads-extra, ads config, app variant, consent adapter, consent factory, banner slot).
+- [ ] The plugin gets `admobPluginOptions(...)`; `expo.extra.adUnits` exists only in `store` + `live` builds; no ad ID is typed in app code.
+- [ ] Consent: launch refresh, S3 (`ConsentMoment` in `ShellFeatures`) then Google's form after the tutorial, over a banner screen and before the first ad, nothing initialised or loaded without `canRequestAds`; the S3 parity frame holds the moment without asking Google; the privacy row appears only when required; the ConsentPort comes from `createConsentPort`, so `ADS_MODE=off` never calls UMP.
+- [ ] Every finished level counts in the ad history in the one run-end update (`extendRunEnd: recordAdLevelEnd`), and the free hints follow `hints.freePerDay` (`useHintPerk`).
+- [ ] Banners only on `home.banner-ad`, `levels.banner-ad`, `stats.banner-ad`, each flag computed by `shouldShowBanner` and the loaded slot drawn as the Toybox band; interstitials only from Result-screen handlers; perks only on the player's tap, rewarded only on `EARNED_REWARD`; the game is suspended during fullscreen ads.
+- [ ] Offline, Premium, no consent and `ADS_MODE=off` each show no ad and no message.
+- [ ] `refresh-skadnetwork.ts --check` passes before a release; the owner has done A1-A4 for this game (A5 after release).
+- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-ads.mjs .` and `node ${CLAUDE_SKILL_DIR}/scripts/check-ad-behaviour.mjs .` both print `RESULT: PASS`
+
+## Anti-patterns
+
+- **Calling `showInterstitialIfDue` from a Result-screen effect.** The ad would cover the result. Only the button handlers call it.
+- **"Upgrading" the adapter to `useInterstitialAd`, `useRewardedAd` or ad pools.** Hooks tie ads to component lifetime and pools start preloading (and on Android initialise the SDK) before consent. Keep the classic API.
+- **Initialising the SDK at app start "to be ready".** It may preload ads before consent. `prepareAds` is the only caller of `initialize`.
+- **Typing test unit IDs or the sample publisher ID in code.** Use `TestIds.*` in the adapter and `GOOGLE_SAMPLE_APP_IDS` in `ads-config.ts`.
+- **`npx expo install react-native-google-mobile-ads`.** It writes `^17.2.0`; use `npm install -E`.
+- **A `.skadnetwork`-less SKAdNetwork list, or one edited by hand.** Regenerate with the refresh script.
+- **Hiding an ad failure behind a message, a retry button or a spinner.** Ads are silent; log and move on.
+- **Granting a reward on `CLOSED`,** or showing a "Watch an ad" button with nothing loaded.
+- **Changing one game's caps by editing `ad-policy.ts`.** Change the numbers in that game's `game.config.ts`; they may be raised above the spec floors (3 levels, 180 000 ms, 2 levels), never lowered.
+- **Putting `AdsConsent.reset()` or the Ad Inspector in the consent adapter.** They belong to the test-only debug adapter.
+- **Calling `createAdmobConsentAdapter` directly, or taking `isAdsEnabled` from the game config alone.** An `ADS_MODE=off` build (screenshots, E2E) then asks Google UMP at launch and the runtime network audit fails; use `createConsentPort(adsMode, ...)` and `isAdsEnabled && adsMode !== 'off'`.
+- **Wrapping `AdBannerSlot` in a band that renders nothing until an ad has loaded.** The native banner must be mounted to load; pass the band as `loadedStyle`.
+- **Fixing a failing checker by weakening a Jest test or the fixture.** The behaviour check runs the real modules; fix the module.
+
+## Files in this skill
+
+| File | What it is | Read/run when |
+|---|---|---|
+| [references/setup-ids-and-modes.md](references/setup-ids-and-modes.md) | Versions, install, the APP_VARIANT x ADS_MODE matrix, IDs, plugin options, test IDs, SKAdNetwork refresh, re-verify | Workflow steps 1-3 |
+| [references/consent-flow.md](references/consent-flow.md) | UMP rules, ConsentPort, the consent -> initialize -> preload sequence, the privacy row, test-only tools | Workflow step 4 |
+| [references/ad-policy.md](references/ad-policy.md) | Spec 8.8/8.10 rules, the pure policy, ad history, perk offers, pinned interpretations, tests | Workflow step 5, before changing any ad rule |
+| [references/placements-and-lifecycle.md](references/placements-and-lifecycle.md) | AdsPort and adapter facts, banner slot, Result-screen flow, rewarded perks, pausing, offline table | Workflow step 5 |
+| [references/console-privacy-troubleshooting.md](references/console-privacy-troubleshooting.md) | AdMob console steps A1-A6, privacy facts, simulator smoke test, root mock, error and symptom tables | Workflow steps 8-9, and when an ad misbehaves |
+| [examples/ad-wiring.md](examples/ad-wiring.md) | The whole wiring for the pilot game, call by call | Workflow step 5, as the model |
+| `templates/packages/shell/src/config/` | `ads-config.ts` (+ test), `app-variant.ts` (+ test; both synced from the library, do not edit here), `skadnetwork-ids.ts` (Google's 50 IDs, 2026-09-26) | Workflow steps 2-3 |
+| `templates/packages/shell/src/services/ads/` | Port, AdMob adapter (+ test), fake, factory, read-ads-extra, policy, history, perk offer, gate (with the S3 intro step), the consent moment flow, fullscreen lifecycle, moments, with tests | Workflow step 2 |
+| `templates/packages/shell/src/services/consent/` | ConsentPort, AdMob consent adapter (+ test), consent factory `createConsentPort` (+ test), test-only debug adapter, fake | Workflow step 2 |
+| `templates/packages/shell/src/services/connectivity/` | ConnectivityPort, expo-network adapter, fake | Workflow step 2 |
+| `templates/packages/shell/src/ui/` | `ad-banner-slot.tsx` (collapsed until loaded, `loadedStyle` for the band) and its test | Workflow step 2 |
+| `templates/packages/shell/src/app/` | `use-ad-context.ts` (`useAdContext`, `useAdPolicyConfig`, `useHintPerk`, `useBannerSlot`, `ForcedAdPlacementsContext`) and its test; the consent moment `consent-moment.tsx` (+ test), `consent-moment-context.tsx` and `use-consent-moment.ts`; they import toybox-screens' `use-is-online.ts`, `use-game-extra.ts` and `consent-intro-screen.tsx` | Workflow steps 4 and 5 |
+| `templates/packages/tooling/src/ads/refresh-skadnetwork.ts` | Regenerates or `--check`s the SKAdNetwork list from Google's page | Workflow step 8 |
+| `templates/__mocks__/react-native-google-mobile-ads.ts` | Jest root mock of the SDK surface the adapters use | Workflow step 2 |
+| `assets/admob-facts.json` | Pinned version, adapter import allowlists, banned SDK names, ID patterns, policy floors, banner slots, required files | Read by the checkers; update on an SDK upgrade |
+| `scripts/check-ads.mjs` | Static checks: files, pin, imports, SDK API, consent only through `createConsentPort`, IDs, ATT, plugin entry (due at Shell step 8), `extra.adUnits` only through `adUnitsExtra`, SKAdNetwork, policy floors, banner placement and its `shouldShowBanner` flag, ads in effects, the level end in the ad history and the consent moment (due at step 7), the free hints from the config | Workflow step 7 |
+| `scripts/check-ad-behaviour.mjs` | Runs the repo's own ad modules (type stripping) against the spec 8.8 decision table, and the two adapters, both factories and read-ads-extra against a scripted SDK | Workflow step 7 |
+| `scripts/lib/repo-scan.mjs` | File listing and import parsing helpers for the checkers | Read only to change a checker |
+| `scripts/lib/load-ts.mjs` | Imports repo TypeScript modules with the `@e07/*` workspace aliases and the module stand-ins | Read only to change a checker |
+| `scripts/lib/stubs/` | Scripted Node stand-ins for `react-native-google-mobile-ads` 17.2.0, `react` and `expo-constants` used by the behaviour check (update on an SDK upgrade) | Read only to change a checker |
+| `scripts/lib/assemble-fixtures.mjs` | Builds each self-test case from templates + base repo + `mutation.json` | Read only to add a self-test case |
+| `scripts/selftest.mjs` | Proves both checkers on the clean repo and 63 planted problems (the not-yet-due SKIP lines included) | After changing a checker, a template or a fixture |
+| `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
+| `assets/shared.json` | Declares the shared files copied into this skill | When adding a shared file |
+| `tests/fixtures/` | `base-repo/` plus one `mutation.json` and `EXPECT.txt` per case, per checker | When adding a rule |
+
+## Related skills
+
+- `premium-purchase` - Premium turns ads off; `isPremium` comes from its store.
+- `privacy-and-network-audit` - privacy manifest, App Privacy answers and the network audit after installing the SDK.
+- `architecture-and-boundaries` - ports, adapters and where `withShell` lives.
+- `settings-and-preferences` - the "Ad privacy choices" row in S11.
+- `toybox-visual-parity` - Home, Levels and Statistics parity with the banner slot masked as dynamic pixels.
+- `game-host-integration` - the game lifecycle that `runFullscreenAd` suspends, and the Result-screen flow.
+- `save-persistence-and-migrations` - the save's ads section that stores `AdHistory`.
+- `ios-release-testflight` - the store-artifact gate that checks `GADApplicationIdentifier`.
+- `dependency-management` - pinning and upgrading the SDK.

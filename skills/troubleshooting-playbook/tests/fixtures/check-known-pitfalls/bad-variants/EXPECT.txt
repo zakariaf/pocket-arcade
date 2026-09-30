@@ -1,0 +1,7 @@
+[build-metro-cache-variant]
+[build-config-missing-ts-extension]
+apps/line-siege/app.config.ts:4
+[build-imported-constant-gate]
+packages/shell/src/debug/debug-menu.tsx:3
+[build-reload-during-bundle-eval]
+apps/line-siege/index.ts:6

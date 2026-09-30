@@ -1,0 +1,8 @@
+{
+  "name": "fixture-repo",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "storekit:tier2": "node packages/tooling/src/storekit/storekit-harness.ts"
+  }
+}

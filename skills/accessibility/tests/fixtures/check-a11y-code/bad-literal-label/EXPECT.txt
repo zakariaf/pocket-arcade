@@ -1,0 +1,2 @@
+[literal-a11y-text]
+accessibilityLabel="Settings"

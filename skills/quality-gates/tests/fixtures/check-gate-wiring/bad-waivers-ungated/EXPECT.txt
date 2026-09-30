@@ -1,0 +1,2 @@
+gate-weakened
+lost the entry "parity/waivers.json"

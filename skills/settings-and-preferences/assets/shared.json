@@ -1,0 +1,14 @@
+[
+  {"from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-reducer.ts", "to": "templates/settings-reducer.ts"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-reducer.test.ts", "to": "templates/settings-reducer.test.ts"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-selectors.ts", "to": "templates/settings-selectors.ts"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-selectors.test.ts", "to": "templates/settings-selectors.test.ts"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-store.ts", "to": "templates/settings-store.ts"},
+  {"from": "repo-templates/packages/shell/src/stores/settings-store.test.ts", "to": "templates/settings-store.test.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion.test.ts", "to": "templates/use-reduce-motion.test.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion.ts", "to": "templates/use-reduce-motion.ts"},
+  {"from": "repo-templates/packages/shell/src/theme/theme-provider.tsx", "to": "templates/theme-provider.tsx"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion-setting.ts", "to": "templates/use-reduce-motion-setting.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion-setting.test.ts", "to": "templates/use-reduce-motion-setting.test.ts"}
+]

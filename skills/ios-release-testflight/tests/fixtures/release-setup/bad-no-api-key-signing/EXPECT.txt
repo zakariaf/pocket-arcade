@@ -1,0 +1,2 @@
+[api-key-signing]
+lack -allowProvisioningUpdates

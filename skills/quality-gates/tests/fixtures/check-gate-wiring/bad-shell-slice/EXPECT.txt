@@ -1,0 +1,2 @@
+[shell-slice]
+shell-slice.json names unknown screens: Home

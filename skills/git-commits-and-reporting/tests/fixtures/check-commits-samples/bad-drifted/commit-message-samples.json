@@ -1,0 +1,251 @@
+{
+  "$comment": "Planted drift: this list says a fix body needs no spec line (the old hook), so check-commits must report sample-mismatch.",
+  "scopes": [
+    "line-siege",
+    "shell",
+    "game-kit",
+    "tooling"
+  ],
+  "gatedPaths": [
+    "eslint.config.mjs",
+    "tsconfig.json",
+    "**/tsconfig.json",
+    "jest.config.js",
+    "**/__snapshots__/*.golden.test.ts.snap",
+    ".claude/settings.json"
+  ],
+  "samples": [
+    {
+      "name": "good-feat",
+      "message": "feat(line-siege): fire a beam when a column clears\n\nSpec S5 and 8.3: a cleared column now damages the nearest monster in its lane.",
+      "files": [
+        "apps/line-siege/src/rules/line-siege-engine.ts",
+        "apps/line-siege/src/rules/line-siege-engine.test.ts"
+      ],
+      "rules": []
+    },
+    {
+      "name": "good-fix",
+      "message": "fix(shell): keep the streak when the clock goes back\n\nSpec S9: the daily streak survives a clock change.",
+      "files": [
+        "packages/shell/src/stores/stats-reducer.ts",
+        "packages/shell/src/stores/stats-reducer.test.ts"
+      ],
+      "rules": []
+    },
+    {
+      "name": "good-tooling-feat",
+      "message": "feat(tooling): run verify through one runner\n\nThe runner prints SKIP lines while shell-slice.json exists.",
+      "files": [
+        "packages/tooling/src/quality/run-verify.ts"
+      ],
+      "rules": []
+    },
+    {
+      "name": "good-gate-change",
+      "message": "chore(repo): reorder the lint config blocks\n\nPrettier moved two blocks; no rule changed.\n\nGate-Change: reorder only, every resolved rule is the same",
+      "files": [
+        "eslint.config.mjs"
+      ],
+      "rules": []
+    },
+    {
+      "name": "good-root-tsconfig",
+      "message": "build(repo): include the navigation types in the root program\n\nThe app program needs the route types.\n\nGate-Change: the owner agreed to add react-navigation.d.ts",
+      "files": [
+        "tsconfig.json"
+      ],
+      "rules": []
+    },
+    {
+      "name": "good-unknown-files",
+      "message": "docs(repo): explain the partial Shell\n\nshell-slice.json is described in the README.",
+      "files": null,
+      "rules": []
+    },
+    {
+      "name": "good-merge",
+      "message": "Merge branch 'main' into parity",
+      "files": null,
+      "rules": []
+    },
+    {
+      "name": "good-editor-comments",
+      "message": "chore(shell): tidy the button styles\n\nOnly styles moved.\n# Please enter the commit message for your changes.\n# ------------------------ >8 ------------------------\n# Do not modify or remove the line above.\ndiff --git a/x b/x",
+      "files": [
+        "packages/shell/src/ui/button.tsx"
+      ],
+      "rules": []
+    },
+    {
+      "name": "header-format",
+      "message": "add the beam",
+      "files": null,
+      "rules": [
+        "header-format"
+      ]
+    },
+    {
+      "name": "header-type",
+      "message": "feature(line-siege): add the beam",
+      "files": null,
+      "rules": [
+        "header-type"
+      ]
+    },
+    {
+      "name": "scope-missing",
+      "message": "chore: tidy the repo scripts",
+      "files": null,
+      "rules": [
+        "scope-missing"
+      ]
+    },
+    {
+      "name": "header-scope",
+      "message": "chore(ui): tidy the button styles",
+      "files": null,
+      "rules": [
+        "header-scope"
+      ]
+    },
+    {
+      "name": "header-length",
+      "message": "chore(shell): tidy the button styles of the settings rows and the premium keys",
+      "files": null,
+      "rules": [
+        "header-length"
+      ]
+    },
+    {
+      "name": "subject-case",
+      "message": "chore(shell): Tidy the button styles",
+      "files": null,
+      "rules": [
+        "subject-case"
+      ]
+    },
+    {
+      "name": "subject-period",
+      "message": "chore(shell): tidy the button styles.",
+      "files": null,
+      "rules": [
+        "subject-period"
+      ]
+    },
+    {
+      "name": "subject-mood",
+      "message": "chore(shell): added the button styles",
+      "files": null,
+      "rules": [
+        "subject-mood"
+      ]
+    },
+    {
+      "name": "subject-vague",
+      "message": "chore(shell): cleanup",
+      "files": null,
+      "rules": [
+        "subject-vague"
+      ]
+    },
+    {
+      "name": "blank-line",
+      "message": "chore(shell): tidy the button styles\nThe styles moved.",
+      "files": null,
+      "rules": [
+        "blank-line"
+      ]
+    },
+    {
+      "name": "body-missing",
+      "message": "fix(line-siege): stop the beam at the wall",
+      "files": [
+        "apps/line-siege/src/rules/line-siege-engine.ts",
+        "apps/line-siege/src/rules/line-siege-engine.test.ts"
+      ],
+      "rules": [
+        "body-missing"
+      ]
+    },
+    {
+      "name": "spec-ref-missing-feat",
+      "message": "feat(line-siege): add the shockwave\n\nMonsters take damage when rows clear.",
+      "files": [
+        "apps/line-siege/src/rules/line-siege-engine.ts",
+        "apps/line-siege/src/rules/line-siege-engine.test.ts"
+      ],
+      "rules": [
+        "spec-ref-missing"
+      ]
+    },
+    {
+      "name": "spec-ref-missing-fix",
+      "message": "fix(line-siege): stop the beam at the wall\n\nThe beam went through the wall and hit the hearts.",
+      "files": [
+        "apps/line-siege/src/rules/line-siege-engine.ts",
+        "apps/line-siege/src/rules/line-siege-engine.test.ts"
+      ],
+      "rules": []
+    },
+    {
+      "name": "gate-change-missing",
+      "message": "chore(repo): reorder the lint config blocks\n\nPrettier moved two blocks.",
+      "files": [
+        "eslint.config.mjs"
+      ],
+      "rules": [
+        "gate-change-missing"
+      ]
+    },
+    {
+      "name": "gate-change-unneeded",
+      "message": "chore(shell): tidy the button styles\n\nOnly styles moved.\n\nGate-Change: the lint config changed a lot",
+      "files": [
+        "packages/shell/src/ui/button.tsx"
+      ],
+      "rules": [
+        "gate-change-unneeded"
+      ]
+    },
+    {
+      "name": "trailer-empty",
+      "message": "chore(repo): reorder the lint config blocks\n\nPrettier moved two blocks.\n\nGate-Change: update",
+      "files": [
+        "eslint.config.mjs"
+      ],
+      "rules": [
+        "trailer-empty"
+      ]
+    },
+    {
+      "name": "spec-change-format",
+      "message": "test(line-siege): expect two beams per double clear\n\nThe owner changed the rule.\n\nSpec-Change: the owner changed the beams",
+      "files": [
+        "apps/line-siege/src/rules/line-siege-engine.test.ts"
+      ],
+      "rules": [
+        "spec-change-format"
+      ]
+    },
+    {
+      "name": "trailer-placement",
+      "message": "chore(repo): reorder the lint config blocks\n\nGate-Change: reorder only, no rule changed\n\nPrettier moved two blocks.",
+      "files": [
+        "eslint.config.mjs"
+      ],
+      "rules": [
+        "gate-change-missing",
+        "trailer-placement"
+      ]
+    },
+    {
+      "name": "placeholder-left",
+      "message": "chore(shell): tidy the button styles\n\n__WHY__",
+      "files": null,
+      "rules": [
+        "placeholder-left"
+      ]
+    }
+  ]
+}

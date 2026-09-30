@@ -1,0 +1,2 @@
+[cold-start]
+median cold start 1250 ms

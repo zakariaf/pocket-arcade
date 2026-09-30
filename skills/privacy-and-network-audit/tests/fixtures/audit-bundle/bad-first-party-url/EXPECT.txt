@@ -1,0 +1,3 @@
+[first-party-network]
+apps/demo-game/src/rules/apply-move.ts
+(remoteUrl)

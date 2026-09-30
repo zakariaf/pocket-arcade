@@ -1,0 +1,71 @@
+# Build order: which layer is tested first
+
+Each layer is tested before anything depends on it. Follow these orders for the Shell with the pilot game, and for every later game. The skill named after each step owns the details of that step; this page owns the order.
+
+## Contents
+
+- The layer order
+- The Shell with the pilot game (Line Siege)
+- Every game
+- Per-layer: what the first failing test usually is
+
+## The layer order
+
+```text
+rules (examples + properties)
+  -> level generator (goldens + solver properties)
+    -> save format and migrations
+      -> services with fake ports
+        -> hooks
+          -> screens (component tests)
+            -> end-to-end flows
+              -> screenshot matrix
+```
+
+Why: a screen test that fails because a rule is wrong wastes the slice; a rule that is proven by properties never needs debugging through the UI.
+
+## The Shell with the pilot game (Line Siege)
+
+The same twelve steps as the Shell build order of `pocket-arcade-index`, which also holds each step's exact "done when" commands, the partial Shell core and the order for adding the pilot's play screens to an existing slice.
+
+1. **Bootstrap** the empty repo with its gates; `shell-slice.json` says `"screens": []` (`monorepo-bootstrap`, `quality-gates`, `dependency-management`, `typescript-and-lint-rules`, `new-game-scaffold`).
+2. **game-kit and the contract:** install fast-check first (the kit's property tests import it), then `GameModule` types, `Result`, the seeded random-number generator, dates and the daily seed, geometry, timeline, the witness solver (`game-rules-engine`, `daily-and-statistics`, `level-generation-and-solvers`). The date and seed goldens are unit tests; `npm run test:golden` is due from step 3.
+3. **Line Siege rules** with examples and properties, copied from the canonical example, then its bot and simulations, then its levels and data goldens; the sims pass before the packs are generated (`game-rules-engine`, `game-balance-and-bots`, `level-generation-and-solvers`, `golden-tests`).
+4. **Save format and migrations:** only the save service and what it imports (the save document, SQL on `node:sqlite`, the load plan, the save service, fixtures, the clock and error-log ports); the two boot files wait for step 6 (`save-persistence-and-migrations`).
+5. **Services behind ports with fakes:** clock, error log, connectivity, then audio and haptics, ads and consent, purchase, after their prerequisites (the stores and the store test helpers, the Testing Library pair); rules that wait for a later step print not-yet-due `SKIP` lines (`architecture-and-boundaries`, `game-audio-and-haptics`, `admob-ads`, `premium-purchase`).
+6. **Boot:** Intl polyfills, direction check, hydration at splash with the save's boot files, the stores, the navigator with every route (`i18n-strings-and-catalogs`, `rtl-and-direction`, `state-stores`, `navigation-and-routing`, `save-persistence-and-migrations`).
+7. **Hooks and UI primitives:** theme, the text component, buttons, icons, error boundaries; the composition root with the partial Shell core it imports; the game host, board canvas, gestures and lifecycle; rerun the sims after the board adds game-kit files (`toybox-design-system`, `toybox-components`, `react-components-and-hooks`, `game-host-integration`, `board-rendering-skia`, `board-gestures-and-input`, `accessibility`).
+8. **Before the first simulator build:** the final plugin list, the performance cold-start layer (it needs this native rebuild), the app icon and splash, the audit tooling, then the first Release simulator build (`architecture-and-boundaries`, `performance-budgets`, `code-drawn-art-and-icons`, `privacy-and-network-audit`, `ios-simulator-build`).
+9. **Screens S1 to S15** with their model hooks and component tests, in spec order, each matched to its Toybox design screenshot (`toybox-screens`, `toybox-visual-parity`).
+10. **End-to-end flows, the debug deep link, the network guard, the screenshot matrix**, with cold start and memory measured (`e2e-maestro`, `ios-simulator-build`, `privacy-and-network-audit`).
+11. **Audits and the release pipeline:** network, privacy and licence audits, the performance budgets, the store-artifact gate, then a test build to TestFlight (`privacy-and-network-audit`, `performance-budgets`, `ios-release-testflight`).
+12. **The pilot passes the new-game completeness check**, so game 2 starts from `npm run new-game`, not from memory (`new-game-scaffold`).
+
+Spec section 15 (definition of done for the Shell and pilot, items 15.1-15.8) is the exit test: every item there needs its evidence in the release report.
+
+## Every game
+
+1. **Classify the game** (turn-based, simulate-then-replay or real-time), its input mode and input policy.
+2. **State, moves and events** in `apps/<game-id>/src/rules/<game-id>-types.ts`; then `create`, `listMoves`, `applyMove`, `outcome`, `intentToMove`, test-first with properties.
+3. **Bot and simulations:** winnability, difficulty curve, termination.
+4. **Level generator, solver and par, pack layout, daily difficulty**, with data goldens.
+5. **Persistence:** parse state and moves, the JSON round trip, the save policy (and save points for real-time games).
+6. **Board:** view, timeline, palette tokens, paths, layout, draw, draw-call budget, pixel goldens at three sizes; real-time games also the simulation.
+7. **Teaching, statistics and texts:** tutorial script, 3-5 how-to-play pages, 2-4 counters, all four catalogs with game-id-prefixed keys.
+8. **Art and sounds:** the icon drawing, the art render, the sound bank and its recipe tests, the credits.
+9. **Assemble** `src/index.ts` as the game's module; the contract tests pass.
+10. **The game's own end-to-end flows** (including one real board tap) and the screenshot baselines.
+11. **Release:** once the owner's per-game steps are done, a test build, the owner's play-test, then the store build.
+
+## Per-layer: what the first failing test usually is
+
+| Layer | First test |
+|---|---|
+| Rules | an example for the simplest legal move and its event list, then the determinism property |
+| Level generator | a data golden for one seed, then "every generated level is solvable" as a property |
+| Save and migrations | a migration test from the frozen previous-version fixture |
+| Services | the port's behaviour against its fake, one test per spec rule (every limit at exactly its value) |
+| Hooks | the hook's returned value for one store state |
+| Screens | the screen shows its main element by role and name, then one interaction |
+| End-to-end | a smoke flow that reaches the screen by testID and ends with the no-network check |
+| Screenshot matrix | the screen captured still (fixed seed, date, status bar) in en and fa, light and dark |

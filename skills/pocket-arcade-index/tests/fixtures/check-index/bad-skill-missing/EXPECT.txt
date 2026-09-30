@@ -1,0 +1,3 @@
+[skill-missing]
+gamma-three exists but is in no category
+[skill-uncovered]

@@ -1,0 +1,2 @@
+[pack-config]
+game.config.ts says 25 levels per pack

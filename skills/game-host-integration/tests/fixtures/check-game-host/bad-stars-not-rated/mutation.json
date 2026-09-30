@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/run-summary.ts",
+      "find": "starsFor(rule, run)",
+      "with": "3"
+    }
+  }
+]

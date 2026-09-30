@@ -1,0 +1,2 @@
+[ads-config]
+test: sample app ID

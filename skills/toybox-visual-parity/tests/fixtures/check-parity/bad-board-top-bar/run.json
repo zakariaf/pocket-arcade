@@ -1,0 +1,22 @@
+{
+ "frame": "s6-pause",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "The s6-pause design with a game board of its own painted over the board area (outside the Pause dialog), as a game brings its own board. The board rectangle is what capture-app reads in the probe=board launch.",
+ "board": {
+  "rect": {
+   "x": 16,
+   "y": 128,
+   "w": 370,
+   "h": 700
+  },
+  "source": "probe=board"
+ },
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s6-pause.png",
+  "layout": "../reference/lineSiege/light-en/s6-pause.layout.json"
+ }
+}

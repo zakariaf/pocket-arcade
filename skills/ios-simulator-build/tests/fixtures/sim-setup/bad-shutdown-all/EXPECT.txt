@@ -1,0 +1,3 @@
+[sim-safety]
+packages/tooling/src/ios/cleanup.ts:4
+shuts down, erases or deletes all simulators

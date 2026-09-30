@@ -1,0 +1,3 @@
+[copy-key]
+home.play-button.start
+not in the copy deck

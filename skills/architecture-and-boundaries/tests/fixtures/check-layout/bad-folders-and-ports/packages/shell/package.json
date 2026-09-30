@@ -1,0 +1,19 @@
+{
+  "name": "@demo/shell",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugins/*": "./plugins/*",
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@demo/game-kit": "*"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "expo-sqlite": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

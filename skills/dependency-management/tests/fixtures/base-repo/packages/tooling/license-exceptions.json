@@ -1,0 +1,6 @@
+{
+  "caniuse-lite": {
+    "license": "CC-BY-4.0",
+    "reason": "browser support data, used only by build tools"
+  }
+}

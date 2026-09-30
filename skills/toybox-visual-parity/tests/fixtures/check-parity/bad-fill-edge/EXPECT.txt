@@ -1,0 +1,1 @@
+[fill] home.play-button: fill #FF6F4A but the design is #FF6B4A (max channel difference 4, tolerance 3)

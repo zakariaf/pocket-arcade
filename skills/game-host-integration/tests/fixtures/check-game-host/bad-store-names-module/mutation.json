@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/stores/game-store.ts",
+      "content": "// packages/shell/src/stores/game-store.ts\nimport type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';\n\nexport type GameStore = { readonly game: ShellGameModule<ShellGameTypes> };\n"
+    }
+  }
+]

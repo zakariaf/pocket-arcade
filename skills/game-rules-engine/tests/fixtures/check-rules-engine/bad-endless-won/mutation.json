@@ -1,0 +1,4 @@
+[
+  { "write": { "file": "apps/tap-flip/game.config.ts", "content": "// apps/tap-flip/game.config.ts (fixture excerpt): endless is on, but the rules can be won at 100.\nexport const gameConfig = { id: 'tap-flip', modes: { daily: true, endless: true } };\n" } },
+  { "replace": { "file": "apps/tap-flip/src/rules/create.ts", "find": "const { side, presses } = shapeFor(difficulty);", "with": "const { side, presses } = shapeFor(difficulty >= 100 ? 0 : difficulty);" } }
+]

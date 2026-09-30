@@ -1,0 +1,2 @@
+[scale-x-flip]
+board-area.tsx

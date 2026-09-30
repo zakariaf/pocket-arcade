@@ -1,0 +1,2 @@
+pin-exact
+typescript is "^6.0.3", not an exact version

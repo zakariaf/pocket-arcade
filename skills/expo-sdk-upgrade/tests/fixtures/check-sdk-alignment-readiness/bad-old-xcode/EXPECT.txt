@@ -1,0 +1,2 @@
+xcode
+SDK 58 needs Xcode 26.4 or newer, the builds use 26.2

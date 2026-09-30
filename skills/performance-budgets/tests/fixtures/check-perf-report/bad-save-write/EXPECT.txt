@@ -1,0 +1,2 @@
+[save-write-p95]
+save write p95 6.2 ms

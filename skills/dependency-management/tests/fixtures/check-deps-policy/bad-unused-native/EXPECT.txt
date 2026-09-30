@@ -1,0 +1,2 @@
+unused-dependency
+expo-haptics is a dependency of every app, but no code file

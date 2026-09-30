@@ -1,0 +1,2 @@
+[text-contrast]
+standard.light: textMuted on surface is 2.71:1 < 4.5:1

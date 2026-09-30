@@ -1,0 +1,3 @@
+[smoke-quarantine] a smoke flow is quarantined
+04-restore.yaml:1 [quarantine-note] quarantined since 2026-09-01 (27 days)
+05-buy.yaml:1 [quarantine-note] quarantined without a "# quarantine YYYY-MM-DD: <reason>" comment

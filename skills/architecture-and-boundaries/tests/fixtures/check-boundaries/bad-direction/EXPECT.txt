@@ -1,0 +1,5 @@
+packages/game-kit/src/geom/board-layout.ts:2 [game-kit-pure] imports react
+packages/game-kit/src/geom/board-layout.ts:4 [game-kit-pure] imports packages/shell/src/theme/theme-types.ts
+packages/shell/src/screens/home/home-model.ts:2 [shell-direction] imports the app file apps/tile-drop/src/rules/apply-move.ts
+packages/shell/src/screens/home/home-model.ts:3 [no-tooling-import]
+apps/sky-hop/src/board/draw-board.ts:2 [app-to-app] app sky-hop imports app tile-drop

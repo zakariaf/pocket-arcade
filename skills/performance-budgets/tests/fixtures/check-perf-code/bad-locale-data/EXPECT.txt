@@ -1,0 +1,2 @@
+[intl-locale-data]
+locale data "ar"

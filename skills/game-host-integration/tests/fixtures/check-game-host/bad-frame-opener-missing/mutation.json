@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/use-game-session-controls.ts",
+      "find": "  if (state === 'result-lose') controls.showFixtureResult(fixture, 'lost');\n",
+      "with": ""
+    }
+  }
+]

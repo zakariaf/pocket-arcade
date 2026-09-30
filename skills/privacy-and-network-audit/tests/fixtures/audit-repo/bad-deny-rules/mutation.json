@@ -1,0 +1,13 @@
+[
+  {
+    "json": {
+      "file": ".claude/settings.json",
+      "path": [
+        "permissions",
+        "deny",
+        1
+      ],
+      "value": "Read(./secrets/**)"
+    }
+  }
+]

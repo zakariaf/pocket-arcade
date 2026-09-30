@@ -1,0 +1,3 @@
+.prettierrc.json:1 [prettier-option] printWidth is 120, expected 100
+singleQuote is false, expected true
+prettier.config.js [config-stray]

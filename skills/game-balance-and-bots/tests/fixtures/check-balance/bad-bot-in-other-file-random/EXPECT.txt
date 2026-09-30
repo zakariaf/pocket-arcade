@@ -1,0 +1,3 @@
+[sim-determinism]
+apps/line-siege/src/testing/line-siege-openings.ts:4
+Math.random()

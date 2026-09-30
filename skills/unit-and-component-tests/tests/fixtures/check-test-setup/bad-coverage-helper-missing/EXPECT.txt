@@ -1,0 +1,3 @@
+coverage-device-only
+packages/tooling/src/quality/device-only.ts
+jest.config.js requires this helper but it does not exist

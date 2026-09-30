@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/index.ts", "find": "    taglineId: 'tap-flip.tagline',\n", "with": "" } }]

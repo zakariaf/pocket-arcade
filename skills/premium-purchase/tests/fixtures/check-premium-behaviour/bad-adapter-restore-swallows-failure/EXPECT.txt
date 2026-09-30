@@ -1,0 +1,2 @@
+[adapter-restore]
+restorePurchases throws sync-error

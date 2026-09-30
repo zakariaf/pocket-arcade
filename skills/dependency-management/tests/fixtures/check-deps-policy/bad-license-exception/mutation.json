@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "packages/tooling/license-exceptions.json",
+      "path": [
+        "caniuse-lite",
+        "reason"
+      ],
+      "value": ""
+    }
+  }
+]

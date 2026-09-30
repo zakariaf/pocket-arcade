@@ -1,0 +1,2 @@
+packages/shell/e2e/flows/journeys/02-core-journey-offline.yaml [flow-failed] "Core journey works offline and survives a kill" ERROR: Assertion is false: id: home.screen is visible
+evidence: End-to-end: 3/4 flows pass

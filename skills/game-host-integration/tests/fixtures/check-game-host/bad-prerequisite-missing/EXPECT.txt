@@ -1,0 +1,2 @@
+[prerequisite-missing]
+daily-and-statistics

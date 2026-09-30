@@ -1,0 +1,3 @@
+packages/shell/src/app/test-only.ts:1 [test-only-gate] the gate is not the literal
+packages/shell/src/screens/debug/debug-screen.tsx:2 [test-only-gate] imports packages/shell/src/app/test-only-entry.ts directly
+packages/shell/src/screens/debug/debug-screen.tsx:6 [test-only-gate] require() in app code

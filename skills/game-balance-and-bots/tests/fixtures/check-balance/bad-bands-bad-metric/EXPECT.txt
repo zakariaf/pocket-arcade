@@ -1,0 +1,2 @@
+[bands-invalid]
+bands[0].metric is missing or invalid

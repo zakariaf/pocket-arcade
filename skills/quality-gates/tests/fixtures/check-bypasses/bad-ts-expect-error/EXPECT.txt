@@ -1,0 +1,2 @@
+ts-expect-error-reason
+pick.ts:3

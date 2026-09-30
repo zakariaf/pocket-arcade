@@ -1,0 +1,3 @@
+[element-reach]
+home.game-name
+LogoTile hides itself from VoiceOver

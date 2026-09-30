@@ -1,0 +1,1 @@
+[text-ink] settings.sound-effects-switch.label: text "Sound effects" has no ink in the app where the design has it (text colour #1D1B3A)

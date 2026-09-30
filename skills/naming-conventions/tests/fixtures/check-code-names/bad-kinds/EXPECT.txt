@@ -1,0 +1,3 @@
+apps/tile-drop/src/rules/tile-drop-types.ts:2 [kind-value] kind value 'blockPlaced'
+apps/tile-drop/src/rules/tile-drop-types.ts:3 [kind-value] kind value 'ColumnCleared'
+apps/tile-drop/src/rules/tile-drop-types.ts:4 [kind-value] type value 'SET_THEME'

@@ -1,0 +1,1 @@
+packages/shell/src/app/start-shell.ts [perf-layer] does not call markJsEntry()

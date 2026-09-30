@@ -1,0 +1,2 @@
+[catalog-keys]
+apps/flock-tilt/src/i18n/de.json

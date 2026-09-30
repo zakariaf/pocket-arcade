@@ -1,0 +1,1 @@
+[sim-appearance] appearance is "dark", not "light"

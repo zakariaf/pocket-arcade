@@ -1,0 +1,68 @@
+# Visual parity and screenshots
+
+What goes wrong when comparing built screens with the Toybox design screenshots. Match the text you see in the Symptom column. Status: **verified** = seen and fixed in a real run; **documented** = read in the tool's own source or docs; **open** = not settled, the fix is the current fallback or decision. **owner** = stop and ask the owner, never work around it. Skill = where the full procedure lives.
+
+<!-- Generated from assets/known-failures.json by scripts/check-catalogue.mjs --write. Edit the JSON, not this file. -->
+
+## Contents
+
+- Comparison
+- Design capture
+- Lessons
+- App capture
+- Process
+- References
+
+## Comparison
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-global-diff-gate` | A 1 pt shift, a lighter weight or a wrong string passes a pixel-percentage gate; a colour change is invisible in the heatmap | Global pixelmatch % and SSIM noise floors (0.13-0.51 %, 0.983-0.995) overlap real defects; threshold 0.1 misses #1F5FBF -> #3B6FD0 | Gate per element by testID: geometry ±2 pt, exact strings, fill Δ≤3 per channel, text ink metrics, aligned crop structure; report global numbers only | verified | `toybox-visual-parity` |
+| `parity-full-screen-blobs` | A correct Persian screen fails a full-screen structural diff | Sub-point rounding adds up to a 1 pt drift further down the screen | Compute structural diffs per element after an alignment search (±6 px), blobs ≥1.5 pt | verified | `toybox-visual-parity` |
+| `parity-line-height-offset` | Text sits up to 1.7 pt lower than in the design | RN line-height placement differs from CSS half-leading | Allow ±2 pt on text position; check ink width and height at ±1 pt | verified | `toybox-visual-parity` |
+| `parity-tall-screen-offsets` | A correct tall screen (S10, S11, S15) fails parity at every scroll offset except 0 | The fixed top bar covers scrolled content, and the banner is pinned to the screen bottom while the design draws it at the end of the page | Use the current toybox-visual-parity (frame geometry and scroll plan); run-parity chooses the offsets | verified | `toybox-visual-parity` |
+| `parity-dashed-edge-structure` | check-parity fails [structure] with 1-2 pt blobs at the corners of dashed edges: the locked level tiles and the locked pack panel on Levels (S8), the continue-offer box on Result (S7); a dashed-edge structure difference that no style change removes | React Native on iOS draws borderStyle dashed with its own dash length and phase, and no style sets them, so the dashes never line up with Chrome's | Copy the pre-listed platform waiver for that element (class platform, rule structure, the cause above) from toybox-visual-parity's templates/parity/waivers.json into parity/waivers.json (check-parity's fix text names the entry), in a commit with a Gate-Change: trailer, and name the waivers in the owner report; never redraw the edge in Skia and never widen the tolerance. A structure failure on a solid edge is a real difference | verified | `toybox-visual-parity` |
+| `parity-persian-level-digits-clipped` | Levels (S8) in fa or ckb fails [text-ink] on every level number (ink height 10.0 vs design 14.0): the tops of the Persian digits are cut off on the device | A line height of 1.0 clips Vazirmatn's tall digits on iOS, while Chrome lets them overflow the line box | The levelNumber role's Persian line height is 1.45 in the tokens (and the references were re-rendered with it); copy the current type roles from toybox-design-system and rerun; never waive clipped digits | documented | `toybox-design-system` |
+
+## Design capture
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-fractional-frame` | A design screenshot comes out 1206x2625 instead of 1206x2622 | An element screenshot of an in-flow frame sat on a fractional CSS offset | Pin the frame at (0,0) with position fixed and clip the page screenshot | verified | `toybox-visual-parity` |
+| `parity-runtime-fonts` | Design references change between runs or machines | The design HTML loads Google Fonts at run time; offline it falls back to system fonts | Vendor the exact TTFs the app bundles and load them with @font-face | verified | `toybox-visual-parity` |
+| `parity-design-frame-size` | Every element is 8 pt too low compared with the design | The design frame is 390x844 with a 54 pt status bar; the iPhone 16/17 Pro is 402x874 with a 62 pt safe top | Render the design at the device geometry (402x874, 62 pt status bar) and mask the top safe area | verified | `toybox-visual-parity` |
+
+## Lessons
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-e06-structural-mismatch` | Exact parity impossible although every check was tuned | Different fonts, icon sources and renderers, and palette-quantised references (the earlier project passed 6 of 112) | Same TTFs, same icon paths, same device geometry, lossless references, element-level checks, and a proven human look | documented | `toybox-visual-parity` |
+
+## App capture
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-home-indicator` | The design has a home indicator the screenshot lacks | simctl screenshots include the Dynamic Island but never the home indicator | Hide .hi in the design render; do not mask the bottom | verified | `toybox-visual-parity` |
+| `parity-status-bar-breadcrumb` | The status bar shows "◀ <other app>" in a screenshot | The app was launched while another app was in front | Terminate other apps first and relaunch cleanly | verified | `toybox-visual-parity` |
+| `parity-a11y-real-clock` | maestro hierarchy reports the real time although the status bar is overridden | status_bar override changes only the pixels, not the accessibility tree | Mask the top safe area (62 pt) in element checks | verified | `toybox-visual-parity` |
+| `parity-settle-detection` | A screenshot catches a screen mid-animation | The capture ran before the screen settled | Capture every 300 ms until two in a row are identical (max 5 s); simctl captures are deterministic | verified | `toybox-visual-parity` |
+| `parity-scroll-ignored` | Every scroll offset passes, all showing the top of the screen | The parity harness ignored the requested scrollY | Apply scrollY in the harness; check-parity reports scroll-mismatch beyond 2 pt | verified | `toybox-visual-parity` |
+| `parity-banner-ads-off` | Parity fails on *.banner-ad in an ADS_MODE=off capture | Off mode draws no banner and the slot has zero height until an ad loads | The harness supplies a stand-in 320 x 50 banner that reports itself loaded, inside the band style | verified | `toybox-visual-parity` |
+| `parity-bundle-id` | capture-app cannot find the app by a .test bundle id | Test and store builds share one bundle id; com.example.<game> is the placeholder until the owner approves one | Read the id from the built app with plutil (CFBundleIdentifier) | verified | `toybox-visual-parity` |
+| `parity-scroll-clamped-before-insets` | A tall screen captured at a deep scroll offset stops short (S11 asked for y1170 and y1200, both stuck at 1104.7): scroll-mismatch | The ScrollView's first layout happens before the safe-area insets arrive, so its frame is too tall and iOS clamps the offset to a smaller maximum; when the insets arrive the frame shrinks but the content size does not change, so a scroll made only in onContentSizeChange never runs again | Apply ScreenBody's scrollToY from both onContentSizeChange and onLayout (the current toybox-screens ScreenBody template does) | verified | `toybox-screens` |
+| `parity-capture-unstable-loop` | run-parity prints CAPTURE FAILED (unstable), or capture-app fails [unstable]: the screen never held still for 300 ms (for example S8 with the current level tile's flag bobbing) | A decorative loop keeps running in the parity launch: a component repeats an animation (withRepeat) without honouring useReduceMotion, so the frozen-motion switch of a parity launch (animations=off, isParityMotionFrozen) cannot hold it at rest | Make the loop read useReduceMotion() and rest when it is true: the shared app/use-reduce-motion.ts returns true while TEST_ONLY?.isParityMotionFrozen() is true, which freezes flag bobs, busy blocks, sticker slaps, star pops and confetti without touching the saved Reduce motion setting; never waive it and never raise --settle-ms for it | verified | `toybox-visual-parity` |
+
+## Process
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-unread-sheets` | Automated parity passed but a human found blockers | Machines cannot judge icons, shadows, optical alignment or RTL mirroring; earlier only 4 of 112 sheets were ever read | Read every side-by-side sheet and sign it off; tie the sign-off to the sheet hash | verified | `toybox-visual-parity` |
+| `parity-widened-tolerance` | A screen passes only after a tolerance was raised | Widening a tolerance to pass is falsifying the test | Never widen tolerances or regenerate references to clear a failure; fix the app | verified | `toybox-visual-parity` |
+| `parity-run-timeout` | A whole-screen parity run is cut off by the 2-minute command timeout | One run takes 10 to 20 s, and a screen such as S12 has 36 runs | Run it in the background or frame by frame | documented | `toybox-visual-parity` |
+
+## References
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-music-rows-no-music` | S11 Settings (or S6 Pause) parity fails [missing] on settings.music-switch, settings.music-volume-row or pause.music, with many [bounds] and scroll-mismatch failures below, for a game without music (Line Siege) | The capture was compared with the base reference, which draws the Music rows, while the app correctly hides them when the game's sound bank has no music | Captures pick the reference variant from parity/game-facts.json (hasMusic false selects s11-settings--no-music and s6-pause--no-music); write or correct that file for the app (its parity-game-facts test pins it to the game module), commit it with a Gate-Change: trailer, and rerun; never force hasMusic in the app and never waive missing rows | documented | `toybox-visual-parity` |
+| `parity-score-line-vs-moves` | S7 Result win parity fails [text] on result.score-card.moves-line ("7 moves – par 7" in the design) for a score-rated game such as Line Siege | The base reference shows the moves-against-par line, while a score-rated win shows the score line (result.win.score-line with score and best), because par is null | Set winLine score for the app in parity/game-facts.json so captures use s7-result-win--score (gated path: Gate-Change: trailer); the app keeps result.win.score-line, and moves-rated games keep result.win.moves | documented | `toybox-visual-parity` |

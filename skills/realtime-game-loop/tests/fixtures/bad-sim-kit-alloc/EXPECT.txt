@@ -1,0 +1,3 @@
+sim-no-alloc
+demo-arena-sim.ts:103
+moveEntity runs every tick and calls sub() from the vec2/sweep kit

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/audit/network-js-layer.ts",
+      "find": "const EXTERNAL_LINKS_FILE = 'packages/shell/src/config/external-links.ts';",
+      "with": "const EXTERNAL_LINKS_FILE = \"packages/shell/src/config/external-links.ts\""
+    }
+  }
+]

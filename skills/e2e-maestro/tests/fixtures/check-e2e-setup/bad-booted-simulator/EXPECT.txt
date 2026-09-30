@@ -1,0 +1,1 @@
+capture-screenshots-ios.ts:1 [shared-simulator] targets the "booted" simulator

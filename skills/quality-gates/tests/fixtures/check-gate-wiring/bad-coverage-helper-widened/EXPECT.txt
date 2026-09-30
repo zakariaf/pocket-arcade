@@ -1,0 +1,2 @@
+gate-script-changed
+packages/tooling/src/quality/device-only.ts:1

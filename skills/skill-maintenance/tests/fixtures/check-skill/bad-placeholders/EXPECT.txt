@@ -1,0 +1,9 @@
+[placeholder-left]
+sample-skill/SKILL.md:8
+__FILL_WHAT_THIS_SKILL_MAKES_TRUE__
+sample-skill/references/guide.md:3
+__GAME_NAME__
+sample-skill/scripts/check-sample.mjs:3
+__FILL_RULE_ID__
+[template-markers]
+TODO

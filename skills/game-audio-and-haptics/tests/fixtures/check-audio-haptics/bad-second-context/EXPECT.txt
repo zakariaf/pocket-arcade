@@ -1,0 +1,3 @@
+[audio-context]
+packages/shell/src/screens/home/home-music.ts:3
+outside the adapter

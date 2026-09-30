@@ -1,0 +1,22 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "react-native-reanimated"
+      ],
+      "value": "4.5.0"
+    }
+  },
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "react-native-reanimated"
+      ],
+      "value": "4.5.0"
+    }
+  }
+]

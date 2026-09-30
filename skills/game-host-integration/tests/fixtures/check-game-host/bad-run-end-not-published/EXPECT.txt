@@ -1,0 +1,2 @@
+[run-end-publish]
+createGameHost gets no writeRunEnd that calls updateAndPublish

@@ -1,0 +1,1 @@
+[{ "write": { "file": "apps/flock-tilt/index.ts", "content": "// apps/flock-tilt/index.ts\nimport { registerRootComponent } from 'expo';\n\nfunction ScaffoldPlaceholder(): null {\n  return null;\n}\n\nregisterRootComponent(ScaffoldPlaceholder);\n" } }]

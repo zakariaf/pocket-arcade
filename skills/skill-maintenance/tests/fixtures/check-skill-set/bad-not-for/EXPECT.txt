@@ -1,0 +1,3 @@
+[not-for-unknown]
+ghost-skill
+[not-for-self]

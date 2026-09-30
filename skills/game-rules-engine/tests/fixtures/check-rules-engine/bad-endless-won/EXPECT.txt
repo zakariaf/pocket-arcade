@@ -1,0 +1,2 @@
+[endless-won]
+the endless run (difficulty 100) was won

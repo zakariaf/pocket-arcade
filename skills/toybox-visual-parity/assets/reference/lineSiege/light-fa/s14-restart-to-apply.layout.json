@@ -1,0 +1,48 @@
+{
+"version":1,
+"frame":"s14-restart-to-apply",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S14/restart"
+],
+"root":"restart-dialog.scrim",
+"game":"lineSiege",
+"theme":"light",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s14-restart-to-apply.png",
+"elements":[
+{"testID":"restart-dialog.scrim","screen":"S14/restart","role":"none","component":"Scrim","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"","aria":null,"style":{"fill":"#1D1B3A @0.55","color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"restart-dialog.card","screen":"S14/restart","role":"none","component":"DialogCard","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":260.61,"w":362,"h":352.78},"box":{"w":362,"h":353,"rotate":0},"text":"برای اعمال، راه‌اندازی مجدد لازم است جهت صفحه پس از یک راه‌اندازی مجدد کوتاه عوض می‌شود. پیشرفت شما ذخیره شده است. بعداً راه‌اندازی مجدد","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"22px","shadow":"rgb(29, 27, 58) 0px 8px 0px 0px","outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"restart-dialog.art","screen":"S14/restart","role":"none","component":"ArtTile","kind":"pop, globe","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"restart-dialog.card","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":292.33,"y":282.94,"w":69.33,"h":69.33},"box":{"w":64,"h":64,"rotate":-5},"text":"","aria":null,"style":{"fill":"#FFD23F","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"16px","shadow":"rgb(255, 255, 255) 0px 0px 0px 4px","outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"restart-dialog.title","screen":"S14/restart","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":361.61,"w":316,"h":72.5},"box":{"w":316,"h":73,"rotate":0},"text":"برای اعمال، راه‌اندازی مجدد لازم است","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 25px/36.25px Vazirmatn"}},
+{"testID":"restart-dialog.body","screen":"S14/restart","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":446.11,"w":316,"h":51},"box":{"w":316,"h":51,"rotate":0},"text":"جهت صفحه پس از یک راه‌اندازی مجدد کوتاه عوض می‌شود. پیشرفت شما ذخیره شده است.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"restart-dialog.buttons","screen":"S14/restart","role":"none","component":"View","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":515.11,"w":316,"h":75.28},"box":{"w":316,"h":75,"rotate":0},"text":"بعداً راه‌اندازی مجدد","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"restart-dialog.later-button","screen":"S14/restart","role":"button","component":"Button","kind":"secondary","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":207,"y":515.11,"w":152,"h":75.28},"box":{"w":152,"h":75,"rotate":0},"text":"بعداً","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}},
+{"testID":"restart-dialog.restart-button","screen":"S14/restart","role":"button","component":"Button","kind":"primary, restore icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":515.11,"w":152,"h":75.28},"box":{"w":152,"h":75,"rotate":0},"text":"راه‌اندازی مجدد","aria":null,"style":{"fill":"#FF6B4A","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}}
+],
+"texts":[
+{"text":"زبان","x":282.42,"y":71.42,"w":43.58,"h":43,"owner":null,"font":"700 27px Vazirmatn"},
+{"text":"سیستم (","x":303.83,"y":146,"w":61.17,"h":26,"owner":null,"font":"400 17px Vazirmatn"},
+{"text":"English","x":248.81,"y":146,"w":55.02,"h":26,"owner":null,"font":"400 17px Vazirmatn"},
+{"text":")","x":243,"y":146,"w":5.81,"h":26,"owner":null,"font":"400 17px Vazirmatn"},
+{"text":"زبان گوشی شما را به کار می‌برد.","x":196.52,"y":173.5,"w":168.48,"h":22,"owner":null,"font":"400 14px Vazirmatn"},
+{"text":"English","x":298.55,"y":224.8,"w":66.45,"h":22,"owner":null,"font":"700 18px Rubik"},
+{"text":"Deutsch","x":289.19,"y":284.8,"w":75.81,"h":22,"owner":null,"font":"700 18px Rubik"},
+{"text":"فارسی","x":320.3,"y":342,"w":44.7,"h":28,"owner":null,"font":"700 18px Vazirmatn"},
+{"text":"کوردیی ناوەندی","x":254.55,"y":402,"w":110.45,"h":28,"owner":null,"font":"700 18px Vazirmatn"},
+{"text":"فارسی و سورانی از چیدمان راست به چپ استفاده می‌کنند.","x":46.69,"y":478.5,"w":266.31,"h":26,"owner":null,"font":"400 17px Vazirmatn"},
+{"text":"فارسی و سورانی از چیدمان راست به چپ استفاده می‌کنند.","x":203.13,"y":504,"w":109.88,"h":26,"owner":null,"font":"400 17px Vazirmatn"},
+{"text":"برای اعمال، راه‌اندازی مجدد لازم است","x":154.13,"y":359.61,"w":204.88,"h":39,"owner":"restart-dialog.title","font":"700 25px Vazirmatn"},
+{"text":"برای اعمال، راه‌اندازی مجدد لازم است","x":202.61,"y":395.86,"w":156.39,"h":39,"owner":"restart-dialog.title","font":"700 25px Vazirmatn"},
+{"text":"جهت صفحه پس از یک راه‌اندازی مجدد کوتاه عوض می‌شود. پیشرفت شما ذخیره شده است.","x":63.88,"y":445.11,"w":295.13,"h":26,"owner":"restart-dialog.body","font":"400 17px Vazirmatn"},
+{"text":"جهت صفحه پس از یک راه‌اندازی مجدد کوتاه عوض می‌شود. پیشرفت شما ذخیره شده است.","x":49.3,"y":470.61,"w":309.7,"h":26,"owner":"restart-dialog.body","font":"400 17px Vazirmatn"},
+{"text":"بعداً","x":268.73,"y":539.42,"w":28.53,"h":26,"owner":"restart-dialog.later-button","font":"700 17px Vazirmatn"},
+{"text":"راه‌اندازی مجدد","x":72.44,"y":527.11,"w":59.13,"h":26,"owner":"restart-dialog.restart-button","font":"700 17px Vazirmatn"},
+{"text":"راه‌اندازی مجدد","x":82.73,"y":551.75,"w":38.52,"h":26,"owner":"restart-dialog.restart-button","font":"700 17px Vazirmatn"}
+]
+}

@@ -1,0 +1,14 @@
+# exclude-block expires=2026-10-03 reason=bootstrap of the set verified on 2026-09-26 (dependency-management versions table)
+min-release-age-exclude[]=expo
+min-release-age-exclude[]=expo-*
+min-release-age-exclude[]=@expo/*
+min-release-age-exclude[]=babel-preset-expo
+min-release-age-exclude[]=react-native-audio-api
+min-release-age-exclude[]=react-native-google-mobile-ads
+min-release-age-exclude[]=prettier
+min-release-age-exclude[]=knip
+min-release-age-exclude[]=fast-check
+min-release-age-exclude[]=react-intl
+min-release-age-exclude[]=intl-messageformat
+min-release-age-exclude[]=@formatjs/*
+min-release-age-exclude[]=eslint-plugin-formatjs

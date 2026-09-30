@@ -1,0 +1,8 @@
+[
+  { "json": { "file": "apps/alpha/package.json", "path": ["dependencies", "react-native-screens"], "value": "~4.26.0" } },
+  { "json": { "file": "apps/beta/package.json", "path": ["dependencies", "react-native-screens"], "value": "~4.26.0" } },
+  { "json": { "file": "packages/shell/package.json", "path": ["peerDependencies", "react-native-screens"], "value": "*" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/react-native-screens"], "value": { "version": "4.28.0" } } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/alpha/node_modules/react-native-screens"], "value": { "version": "4.26.2" } } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/beta/node_modules/react-native-screens"], "value": { "version": "4.26.2" } } }
+]

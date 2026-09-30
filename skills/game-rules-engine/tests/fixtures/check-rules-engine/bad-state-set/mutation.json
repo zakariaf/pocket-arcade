@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/tap-flip-types.ts", "find": "  readonly moves: number;\n", "with": "  readonly moves: number;\n  readonly seen: ReadonlySet<number> | Set<number>;\n" } }]

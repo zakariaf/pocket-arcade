@@ -1,0 +1,223 @@
+{
+  "$comment": "The Pocket Arcade monorepo boundaries, read by check-boundaries.mjs and check-layout.mjs. Changing a list here changes the architecture: that is an owner decision and needs the matching change in eslint.config.mjs (Gate-Change trailer).",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packages": [
+    "game-kit",
+    "shell",
+    "tooling"
+  ],
+  "gameFacing": [
+    "game-host/",
+    "art/",
+    "services/audio/audio-port.ts",
+    "services/audio/synth/",
+    "theme/theme-types.ts"
+  ],
+  "appEntryShellImports": [
+    "app/start-shell.ts"
+  ],
+  "gameConfigShellImports": [
+    "config/game-config.ts"
+  ],
+  "appConfigShellImports": [
+    "config/"
+  ],
+  "frameworkPackages": [
+    "react",
+    "react-native",
+    "react-native-*",
+    "@react-native/*",
+    "@react-native-*/*",
+    "expo",
+    "expo-*",
+    "@expo/*",
+    "@shopify/*",
+    "zustand",
+    "@react-navigation/*",
+    "react-intl",
+    "@formatjs/*"
+  ],
+  "vendorSdks": {
+    "react-native-google-mobile-ads": "AdsPort/ConsentPort",
+    "expo-iap": "PurchasePort",
+    "expo-sqlite": "SaveStore/SqlDriver",
+    "react-native-audio-api": "AudioPort",
+    "expo-haptics": "HapticsPort",
+    "expo-network": "ConnectivityPort"
+  },
+  "adapterGlobs": [
+    "packages/shell/src/services/*/*-adapter.ts",
+    "packages/shell/src/services/*/*-save-store.ts",
+    "packages/shell/src/services/*/*-sql-driver.ts"
+  ],
+  "bannedPackages": {
+    "axios": "Spec N3: our code makes no network requests.",
+    "@react-native-community/netinfo": "Its reachability probe calls Google (N3). Use ConnectivityPort (expo-network).",
+    "expo-updates": "No OTA updates (N3). Restart with reloadAppAsync from expo.",
+    "expo-router": "The Shell owns navigation (React Navigation 7 static API).",
+    "expo-audio": "Sound goes through AudioPort (react-native-audio-api).",
+    "expo-file-system": "Persist through SaveStore (expo-sqlite).",
+    "expo-web-browser": "WebViews and browsers are network surfaces (N3).",
+    "react-native-webview": "WebViews are network surfaces (N3).",
+    "@react-native-async-storage/async-storage": "Persist through SaveStore (expo-sqlite).",
+    "react-native-iap": "IAP goes through PurchasePort (expo-iap).",
+    "react-native-purchases": "No purchase server (N2).",
+    "expo-tracking-transparency": "No ATT prompt in v1.",
+    "react-native-restart": "Use reloadAppAsync from expo."
+  },
+  "nodeWorldMarkers": [
+    "expo/config-plugins",
+    "expo/config-plugins.js",
+    "@expo/config-plugins"
+  ],
+  "folders": {
+    "game-kit": [
+      "contract",
+      "rng",
+      "geom",
+      "timeline",
+      "dates",
+      "levels",
+      "testing",
+      "solver"
+    ],
+    "shell": [
+      "app",
+      "navigation",
+      "screens",
+      "ui",
+      "game-host",
+      "art",
+      "services",
+      "stores",
+      "i18n",
+      "theme",
+      "testing",
+      "config"
+    ],
+    "shellFiles": [
+      "app-env.d.ts"
+    ],
+    "app": [
+      "rules",
+      "levels",
+      "board",
+      "sim",
+      "art",
+      "sounds",
+      "theme",
+      "tutorial",
+      "testing",
+      "i18n",
+      "credits"
+    ],
+    "tooling": [
+      "build",
+      "release",
+      "asc",
+      "ios",
+      "e2e",
+      "visual",
+      "audit",
+      "deps",
+      "quality",
+      "i18n",
+      "ads",
+      "storekit",
+      "clock",
+      "git",
+      "hooks",
+      "save",
+      "art",
+      "audio",
+      "scaffold"
+    ]
+  },
+  "ports": [
+    {
+      "type": "AdsPort",
+      "folder": "ads",
+      "port": "ads-port.ts",
+      "adapter": "admob-ads-adapter.ts",
+      "fake": "fake-ads.ts"
+    },
+    {
+      "type": "ConsentPort",
+      "folder": "consent",
+      "port": "consent-port.ts",
+      "adapter": "admob-consent-adapter.ts",
+      "fake": "fake-consent.ts"
+    },
+    {
+      "type": "PurchasePort",
+      "folder": "purchase",
+      "port": "purchase-port.ts",
+      "adapter": "expo-iap-purchase-adapter.ts",
+      "fake": "fake-purchase.ts"
+    },
+    {
+      "type": "SaveStore",
+      "folder": "save",
+      "port": "save-store.ts",
+      "adapter": "sqlite-save-store.ts",
+      "fake": "fake-save-store.ts"
+    },
+    {
+      "type": "SqlDriver",
+      "folder": "save",
+      "port": "sql-driver.ts",
+      "adapter": "expo-sqlite-sql-driver.ts",
+      "fake": null
+    },
+    {
+      "type": "ClockPort",
+      "folder": "clock",
+      "port": "clock-port.ts",
+      "adapter": "system-clock-adapter.ts",
+      "fake": "fake-clock.ts"
+    },
+    {
+      "type": "ConnectivityPort",
+      "folder": "connectivity",
+      "port": "connectivity-port.ts",
+      "adapter": "expo-network-connectivity-adapter.ts",
+      "fake": "fake-connectivity.ts"
+    },
+    {
+      "type": "AudioPort",
+      "folder": "audio",
+      "port": "audio-port.ts",
+      "adapter": "audio-api-audio-adapter.ts",
+      "fake": "fake-audio.ts"
+    },
+    {
+      "type": "HapticsPort",
+      "folder": "haptics",
+      "port": "haptics-port.ts",
+      "adapter": "expo-haptics-adapter.ts",
+      "fake": "fake-haptics.ts"
+    },
+    {
+      "type": "ErrorLogPort",
+      "folder": "error-log",
+      "port": "error-log-port.ts",
+      "adapter": "sqlite-error-log-adapter.ts",
+      "fake": "fake-error-log.ts"
+    }
+  ],
+  "testOnlyFolders": [
+    "packages/shell/src/screens/debug/"
+  ],
+  "nonRouteScreens": [
+    "packages/shell/src/app/crash-screen.tsx",
+    "packages/shell/src/navigation/not-built-screen.tsx"
+  ],
+  "nodeWorldFiles": [
+    "packages/shell/src/config/with-shell.ts",
+    "packages/shell/src/config/shell-plugins.ts",
+    "packages/shell/src/config/privacy-manifest.ts"
+  ]
+}

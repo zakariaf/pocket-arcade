@@ -1,0 +1,13 @@
+# packages/shell/e2e/subflows/shoot-screen.yaml — opens one screen and screenshots it after it settles.
+# SCREEN is a debug-link screen value (it also names the PNG); ROOT is the testID that proves it is
+# shown (a route's <route>.screen; the game states show game.screen or result.screen).
+appId: ${APP_ID}
+---
+- runFlow:
+    file: debug-setup.yaml
+    env:
+      QUERY: 'screen=${SCREEN}'
+      WAIT_FOR: '${ROOT}'
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: ${SCREEN}

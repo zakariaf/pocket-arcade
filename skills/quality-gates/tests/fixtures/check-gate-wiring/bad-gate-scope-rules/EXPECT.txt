@@ -1,0 +1,3 @@
+gate-scope
+packages/tooling/src/git/commit-trailer-rules.ts
+does not exclude skills/ and .claude/

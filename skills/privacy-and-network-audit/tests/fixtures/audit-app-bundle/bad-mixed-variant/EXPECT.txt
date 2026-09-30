@@ -1,0 +1,2 @@
+[extra-ads-mode]
+extra.adsMode is "test", expected "live"

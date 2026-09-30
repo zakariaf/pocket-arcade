@@ -1,0 +1,4 @@
+SKIP packages/shell/src/screens/debug/network-guard.ts [network-guard-missing] due at Shell step 7: packages/shell/src/app/create-shell-app.tsx not yet created
+SKIP packages/shell/src/screens/debug/debug-overrides.ts [debug-persistence] due at Shell step 7: packages/shell/src/app/create-shell-app.tsx not yet created
+SKIP packages/shell/e2e/subflows/debug-setup.yaml [subflow-missing] S15 not in shell-slice.json
+packages/tooling/src/visual/compare-png.ts [runner-file-missing] is missing

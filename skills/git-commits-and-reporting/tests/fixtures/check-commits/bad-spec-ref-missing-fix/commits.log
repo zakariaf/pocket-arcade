@@ -1,0 +1,9 @@
+==> commit 5b1e0c7d2a9f4e3b8c6d1a0f9e8d7c6b5a4f3e2d
+fix(line-siege): stop the beam at the wall
+
+The beam went through the wall and hit the hearts.
+
+==> files
+
+apps/line-siege/src/rules/line-siege-engine.ts
+apps/line-siege/src/rules/line-siege-engine.test.ts

@@ -1,0 +1,22 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sources",
+        9
+      ],
+      "value": "../../node_modules/left-pad/index.js"
+    }
+  },
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        9
+      ],
+      "value": "module.exports = () => fetch('x');"
+    }
+  }
+]

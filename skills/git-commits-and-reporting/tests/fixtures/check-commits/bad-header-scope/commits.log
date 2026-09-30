@@ -1,0 +1,8 @@
+==> commit 2985be3486156692986aa051dcbadcfa70870bb9
+feat(ui): add the settings buttons
+
+Spec S11: every row applies at once.
+
+==> files
+
+packages/shell/src/bad-header-scope.ts

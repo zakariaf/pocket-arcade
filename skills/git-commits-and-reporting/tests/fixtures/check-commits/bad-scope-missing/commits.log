@@ -1,0 +1,8 @@
+==> commit 42e7dd67c8499bd5ff557f1b1d66ae1ab8d668a8
+feat: add endless mode
+
+Spec 8.2: endless runs until the player loses.
+
+==> files
+
+packages/shell/src/bad-scope-missing.ts

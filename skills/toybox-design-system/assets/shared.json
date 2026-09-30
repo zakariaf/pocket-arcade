@@ -1,0 +1,13 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "toybox-tokens.json", "to": "assets/toybox-tokens.json" },
+  { "from": "fonts/", "to": "assets/fonts/" },
+  { "from": "repo-templates/packages/shell/src/app/press-feedback-context.tsx", "to": "templates/packages/shell/src/app/press-feedback-context.tsx" },
+  { "from": "repo-templates/packages/shell/src/app/press-feedback-context.test.tsx", "to": "templates/packages/shell/src/app/press-feedback-context.test.tsx" },
+  { "from": "repo-templates/packages/shell/src/i18n/fonts.ts", "to": "templates/packages/shell/src/i18n/fonts.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/fonts.test.ts", "to": "templates/packages/shell/src/i18n/fonts.test.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/use-localized-text-style.ts", "to": "templates/packages/shell/src/i18n/use-localized-text-style.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/use-localized-text-style.test.tsx", "to": "templates/packages/shell/src/i18n/use-localized-text-style.test.tsx" },
+  { "from": "repo-templates/packages/shell/src/theme/contrast.ts", "to": "templates/packages/shell/src/theme/contrast.ts" },
+  { "from": "repo-templates/packages/shell/src/theme/theme-provider.tsx", "to": "templates/packages/shell/src/theme/theme-provider.tsx" }
+]

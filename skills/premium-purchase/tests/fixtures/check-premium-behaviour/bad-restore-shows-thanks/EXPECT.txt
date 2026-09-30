@@ -1,0 +1,2 @@
+[s12-states]
+a restore after a purchase shows "owned", not the thank-you

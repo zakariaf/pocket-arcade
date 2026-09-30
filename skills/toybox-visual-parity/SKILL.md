@@ -1,0 +1,115 @@
+---
+name: toybox-visual-parity
+description: "Proves a built Pocket Arcade screen matches its Toybox design screenshot (light/dark, en/fa) and drives the fixes: capture, element gates, sheets, sign-off. Use when any screen is built or changed, or for visual parity, design match, screenshot compare. Not for building screens (toybox-screens)."
+---
+
+# Toybox visual parity
+
+Makes the owner's rule true: every built screen is compared with its Toybox design screenshot, in light and dark and in English and Persian, and fixed until it matches. Machines check geometry, text, colour, type and shape per element; Claude checks the rest by looking at side-by-side sheets; `check-signoff.mjs` proves both happened for the current build.
+
+## Rules that must hold
+
+1. **No screen is done until it passes parity in light and dark x en and fa** (plus de and ckb before a release), at every scroll offset `run-parity.mjs` plans for a tall screen. Dark mode and right-to-left are where screens break; one passing variant proves little.
+2. **The committed references are the authority.** Never edit, re-render or replace anything in `assets/reference/`, `assets/design/`, `assets/frames.json` or `assets/device/` to make a screen pass. They change only after the owner (or the lead, for the owner) changes the design on purpose; every such change is an entry in the reference manifest's `referenceChanges` log, never a waiver, and the report names it.
+3. **The game's facts pick the reference; nobody guesses.** `s11-settings`, `s6-pause` and `s7-result-win` have design-derived variants (no music; the score line) chosen from `parity/game-facts.json`, which a test pins to the game module. A missing or mismatched facts file stops every script with exit 2; a missing Music row is never waived.
+4. **Never widen a tolerance, add a mask or skip a gate to get a pass.** Every number is a measured noise floor (text-ink centres per type role), and the self-test pins both sides of it. What the app truly cannot fix gets a waiver: one element, one rule, its class (`platform`, `platform-text-shaping` naming the glyphs, or `design-artefact` quoting the mockup CSS), the reason, the date the owner was told.
+5. **Capture the real app with `capture-app.mjs` on the dedicated e07-parity simulator** (iPhone 16 Pro, iOS 26.5, Release test build, launch arguments straight into the frame). The references are rendered at exactly that device's geometry; any other device, a Debug build, a deep link or a hand-made screenshot compares nothing.
+6. **Machine gates first, then the look.** `check-parity.mjs` must pass, then Claude reads every sheet image and records the seven eye checks in `parity/signoff.json`. The gates have tolerances; icons, drawings, shadow feel, wrapping and mirroring need eyes.
+7. **Fix the app, one gate at a time, in the printed order:** screen reached, scroll, missing, bounds, text, fill, border, text-ink, structure. Read the element's crop before changing code. If the same failure survives three fixes, stop and report it with the sheet.
+8. **testIDs exactly as the shared map says, on the accessible element; bounds only for what Maestro can list.** The gates key everything by testID, and Maestro's hierarchy is the accessibility tree: it never lists the children of an accessible element or a part hidden from VoiceOver. So the map marks those parts crop-only (`parent`, or `a11yHidden` for decorative art the components hide) with `checks: ["crop"]` and a `coveredBy` ancestor whose aligned crop judges their pixels; they are never reported `missing`. The root testID sits on the screen's outer view. Never un-hide a decorative part to make it measurable: VoiceOver comes first.
+9. **The parity harness is the shipped templates, test-only.** Copy `templates/packages/shell/src/app/parity/` and `parity-startup.tsx`; never hand-write the fixture, the ports or the startup (a hand-written fixture kept Premium on across frames). It is reached only through `TEST_ONLY`, so store builds never contain it. Each frame state is opened by the model hook that owns it, motion freezes through the one `isParityMotionFrozen()` switch that `useReduceMotion()` honours, and the Game frames draw the design's numbers (`parityGameFixture()`) with the game's own board masked; `check-harness.mjs` proves all of it is complete, wired and unchanged.
+10. **Pixel identity is never promised.** Anti-aliasing and 1/3 pt rounding always differ; the whole-screen difference is printed for information and never decides anything.
+
+## Workflow
+
+1. **Tooling, once per session.** `ls ${CLAUDE_SKILL_DIR}/scripts/node_modules` must list pngjs, pixelmatch and playwright; if not, `npm ci --prefix ${CLAUDE_SKILL_DIR}/scripts` (exact pins, no browser download: the installed Google Chrome renders). Run `node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs`; anything but `RESULT: PASS` means the tooling is broken, so stop and report. Then `node ${CLAUDE_SKILL_DIR}/scripts/setup-parity-sim.mjs --appearance light` (read [references/simulator-and-capture.md](references/simulator-and-capture.md) if it fails).
+2. **The harness, once per app repo.** Read [references/parity-harness.md](references/parity-harness.md). Copy `templates/packages/shell/src/app/parity/` (with its tests), `templates/packages/shell/src/app/parity-startup.tsx` (+ test) and `templates/parity/` (pre-listed waivers, an empty ledger, the game facts) into the repo, and `templates/apps/__GAME_ID__/src/parity-game-facts.test.ts` into every game app with `PARITY_GAME_FACTS` set to that app's entry of `parity/game-facts.json` (Line Siege: `hasMusic: false`, `winLine: "score"`); make sure `packages/shell/src/app/test-only-entry.ts` and `test-only-api.ts` are this skill's `templates/packages/shell/src/app/` copies (the one shared entry and `TestOnlyApi`, which already export the harness members, each tagged `/** @public */`; ios-simulator-build ships the same bytes); make sure start-shell calls `readParityLaunch()` and passes `parityLaunchFor(...)` to `createShellApp` (the rtl-and-direction template does; the composition root then runs the launch's steps in order); add `.parity/` to `.gitignore`. Run `npx jest packages/shell/src/app/parity packages/shell/src/app/parity-startup.test.tsx apps/<id>/src/parity-game-facts.test.ts --ci --selectProjects unit --coverage --collectCoverageFrom='packages/shell/src/app/parity/**/*.ts' --coverageThreshold='{}'`, then `node ${CLAUDE_SKILL_DIR}/scripts/check-harness.mjs .` until it passes (it also proves every frame state has its opener, the frozen-motion switch, the board probe and the consent hold are wired, the facts are pinned, and `component-specs.json` draws the edge widths the references draw; rules for screens outside `shell-slice.json` print SKIP lines). In a partial Shell the harness is Shell core, because startup reads it: `packages/shell/src/app/parity/` and `parity-startup.tsx` (with their tests) are in every Shell app whatever the slice; only the frame states of screens outside the slice wait.
+3. **Before building or changing a screen,** read its references: `assets/reference/lineSiege/light-en/<frame>.png` and `dark-fa/<frame>.png` (for S6, S7 win and S11 the variant the game's facts pick, for example `s11-settings--no-music.png`), the frame's `state` in `assets/frames.json`, and its testIDs with `node ${CLAUDE_SKILL_DIR}/scripts/check-testids.mjs --list <S4>`. [references/design-reference-set.md](references/design-reference-set.md) lists every frame and variant, its kind (phone, tall, state card) and what is masked.
+4. **Build and install** the Release test build on the parity simulator (the `ios-simulator-build` skill). After a JavaScript-only change the bundle swap in [references/simulator-and-capture.md](references/simulator-and-capture.md) takes seconds.
+5. **Run the machine side:** `node ${CLAUDE_SKILL_DIR}/scripts/run-parity.mjs --screen <S4> --bundle-id <id>` (the id is `CFBundleIdentifier` in the built app's `Info.plist`; test and store builds share it). It captures every frame of the screen in light and dark x en and fa (a tall frame at the scroll offsets that show each element whole once), checks each run and draws its sheets. It prints the reference each frame uses (the facts file picks variants), and a Game-route frame (S5 to S7) first launches once with `probe=board` to read and mask the game's own board. Each run takes about 10 to 20 s (launch, still screen, Maestro dump, check, sheets), so a whole screen (S12: 36 runs) can outlast a 2-minute command timeout: run it in the background or with the longest timeout, and narrow with `--frame`, `--themes`, `--langs` while fixing. One parity simulator serves one session: a second session on the same Mac adds `--name e07-parity-<key> --driver-port <free port>` ([references/simulator-and-capture.md](references/simulator-and-capture.md)).
+6. **On FAIL**, read [references/failure-messages.md](references/failure-messages.md) for the rule, open `crops/<testID>.png` in the run folder, the reference `.layout.json` for the design's exact style, and for a gap or pad inside an element the mockup CSS in `assets/design/toybox.html` (the layout has boxes, not internal gaps). Fix the first failing rule of each run in the app code, rebuild, run step 5 again. [references/what-exact-means.md](references/what-exact-means.md) explains every gate and its numbers.
+7. **On PASS, look.** Follow [references/signoff-and-waivers.md](references/signoff-and-waivers.md): read `sheet.png`, every `zoom-*.png` and every `eye-*.png` of every run, answer the seven eye checks, and fix every visible difference (then step 5 again). A difference the app cannot fix becomes a waiver in `parity/waivers.json` (its class and why), reported to the owner; the known ones (dashed edges, S8 tile 13 mid-press) are pre-listed in `templates/parity/waivers.json`. A commit that changes `parity/waivers.json` or `parity/game-facts.json` carries a `Gate-Change:` trailer.
+8. **Record and prove.** For each run, `node ${CLAUDE_SKILL_DIR}/scripts/check-signoff.mjs --draft <run-dir>` prints the ledger entry (after a rebuild add `--from-ledger` to carry the recorded differences over; the eye checks open again); add it to `parity/signoff.json` with the answers and differences. Then run `check-signoff.mjs --screen <S4>` until it prints `RESULT: PASS`. [examples/worked-loop-s4-home.md](examples/worked-loop-s4-home.md) shows the whole loop; [examples/worked-loop-s8-levels.md](examples/worked-loop-s8-levels.md) adds a frame state, Persian digits and pre-listed waivers.
+9. **Report** per frame: the reference used (base or variant), the variants that pass, what was checked by eye, every waiver with its class and reason, every intended reference change `check-signoff.mjs` printed, open questions (every design artefact is one), and the dark fa `sheet.png`.
+10. **Only when the owner (or the lead) changed the design:** add the entry to `referenceChanges` in `assets/reference/lineSiege/manifest.json` (design-reference-set.md, last section), then `import-design.mjs <new mockup>`, `check-testids.mjs`, `shoot-design.mjs --update-reference` once, `shoot-design.mjs --check`, and say in the report that the references changed. For games or languages outside the committed set, render references with `shoot-design.mjs --out .parity/design` and pass `--reference .parity/design`.
+
+## Definition of done
+
+- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-harness.mjs .` prints `RESULT: PASS` (the harness is the complete templates, wired into the startup, knows every frame, loads the fixture unchanged and stays test-only; every frame state of the slice has its opener; motion freezes, the board probe and the consent hold are wired; `parity/game-facts.json` is pinned by each app's facts test; the component specs draw the reference edge widths).
+- [ ] `run-parity.mjs` passed every frame of the screen in light and dark x en and fa, at every scroll offset it plans for a tall frame, against the reference the game's facts select, with no tolerance, mask or reference changed.
+- [ ] Every sheet image of every run was read; `parity/signoff.json` has an entry for each run's current sheet with all seven eye checks answered and no open difference.
+- [ ] Every waiver names one element, one rule and its class, gives the platform reason (the glyphs for text shaping, the mockup CSS for a design artefact) and the owner-report date, and is in the report with any design question.
+- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-signoff.mjs --screen <S4>` prints `RESULT: PASS`
+
+## Anti-patterns
+
+- **Judging a screen by one whole-screen pixel percentage or SSIM.** Correct builds score 0.13 to 0.51 %, a wrong colour or a 1 pt shift scores the same; only the per-element gates and the look decide.
+- **Regenerating the references, adding a mask or loosening a number after a failure.** That turns the check into a mirror of the app. Fix the app; ask the owner if the design itself seems wrong.
+- **A screenshot from the everyday simulator, a Debug build, a deep link or manual navigation.** Wrong geometry, dev overlays, an "Open in ...?" alert, a state that is almost right; use `capture-app.mjs` (or `run-parity.mjs`).
+- **The testID on the inner Text of a button.** Maestro lists only the Pressable, so the element is `missing`; put it on the accessible element.
+- **Removing `accessibilityElementsHidden` from a logo or icon tile so Maestro lists it.** VoiceOver would then read decoration; the map already judges hidden parts by their cover's crop (`check-testids.mjs --list S4` shows each part's `coveredBy`).
+- **Signing off after reading only `sheet.png`.** Icons, radii and shadows show in the zoom bands and eye pages; the ledger demands every image.
+- **A waiver for "close enough".** A waiver is for what iOS or React Native cannot draw; anything else is a fix.
+- **A parity-only layout.** The harness sets state (data, clock, dialogs, scroll); it never draws something the real screen would not, and never shows a copy of the design.
+- **Fixing several rules at once.** A wrong padding moves everything below it; fix the first failing element from the top, then re-run.
+- **Hand-writing the harness or retyping the fixture.** A session that did so spent seven files, guessed the save mapping, typed a price the premium checker refuses and kept Premium on across frames; copy the templates and call the six startup steps.
+- **Nudging glyphs to pass `text-ink`.** A per-size translate or padding breaks the text boxes that now match to the pixel; the gate already allows each type role its measured CoreText offset. Rule out a type-role mismatch first (the run's `font` in the layout).
+- **Copying the design PNG in as `app.png`.** `check-signoff.mjs` refuses it (`not-a-capture`), and it proves nothing.
+- **Waiving the Music rows, or the moves line, of a game that does not have them.** The references have variants for that; fix `parity/game-facts.json` (its test pins it to the module) and capture again.
+- **Hand-drawing or hand-editing a reference variant.** Variants are derived from the rendered mockup by `shoot-design.mjs` (`frames.json` `derive`); a hand-made one is a mirror of the app.
+- **A parity-only branch to stop a loop.** Every capture freezes motion through `isParityMotionFrozen()`; a loop that still moves ignores `useReduceMotion()`, so route it through the hook.
+
+## Files in this skill
+
+| File | What it is | Read/run when |
+|---|---|---|
+| [references/what-exact-means.md](references/what-exact-means.md) | The gates, their measured tolerances, what only a look proves | Workflow step 6; when a tolerance seems wrong |
+| [references/simulator-and-capture.md](references/simulator-and-capture.md) | Parity device, simulator setup, status bar, launch arguments, screenshots, Maestro hierarchy, bundle swap | Workflow steps 1 and 4; capture problems |
+| [references/design-reference-set.md](references/design-reference-set.md) | How references are rendered, the 32 frames, masks, fixture values, when references may change | Workflow steps 3 and 10 |
+| [references/parity-harness.md](references/parity-harness.md) | The app side: the -parity contract, harness steps, frame plans, testID rules, wiring | Workflow step 2; a frame not reached |
+| [references/signoff-and-waivers.md](references/signoff-and-waivers.md) | Reading the sheets, the ledger and waiver formats, the owner report | Workflow steps 7 to 9 |
+| [references/failure-messages.md](references/failure-messages.md) | Every rule id of every script: meaning, real cause, fix | Any FAIL line |
+| `templates/packages/shell/src/app/parity/` | Harness: plans, request parser and reader, fixture (JSON + loader), parityDoc, session, ads port, purchase port, start state, error view, root contexts; each with its test | Workflow step 2 (copy) |
+| `templates/packages/shell/src/app/parity-startup.tsx` | The Shell's startup side: `readParityLaunch`, `parityLaunchFor` (the composition root's `ShellLaunch`), the held splash and the five steps it bundles | Workflow step 2 (copy, then call) |
+| `templates/packages/shell/src/app/parity-startup.test.tsx` | Its test: normal, error and frame launches, data, ports, first route, root | Workflow step 2 (copy) |
+| `templates/parity/` | For the app repo's `parity/`: waivers.json with the pre-listed waivers (dashed edges, S8 tile 13), an empty signoff.json, game-facts.json (the pilot's facts) | Workflow step 2 (copy) |
+| `templates/apps/__GAME_ID__/src/parity-game-facts.test.ts` | Pins the app's game facts to its module through `hasMusicOf` and `isScoreRatedOf` | Workflow step 2 (copy into every game app) |
+| `templates/packages/shell/src/app/test-only-entry.ts` | The one test-only entry (debug kit and harness exports, each `@public`, plus the sentinel); synced from the library, do not edit here | Workflow step 2 (copy when the repo's copy lacks the harness) |
+| `templates/packages/shell/src/app/test-only-api.ts` | `TestOnlyApi`, the type of `TEST_ONLY` with the debug kit and harness members; synced from the library, do not edit here | Workflow step 2 (copy with the entry) |
+| [examples/worked-loop-s4-home.md](examples/worked-loop-s4-home.md) | The whole loop for S4 Home, with real outputs | First time through the loop |
+| [examples/worked-loop-s8-levels.md](examples/worked-loop-s8-levels.md) | S8 in en and fa: a hook-opened frame state, frozen motion, Persian level numbers, pre-listed waivers | A screen with a frame state or pre-listed waivers |
+| `scripts/run-parity.mjs` | Capture, check and sheet for every frame x theme x language of a screen | Workflow step 5 |
+| `scripts/capture-app.mjs` | One capture: launch into the frame, still screenshot, Maestro bounds, run.json | Called by run-parity; alone to re-capture one run |
+| `scripts/check-parity.mjs` | The per-element gates; writes report.json | Called by run-parity; alone to re-check |
+| `scripts/make-sheet.mjs` | sheet.png, zoom bands, failing-element crops, eye-check pages | Called by run-parity; alone after a re-check |
+| `scripts/check-signoff.mjs` | Definition of done per screen; `--draft` prints a ledger entry | Workflow step 8 |
+| `scripts/check-harness.mjs` | Checks the app's parity harness (complete, wired, fixture unchanged, no typed price), the component edge widths, .gitignore, waiver and ledger files | Workflow step 2 and before sign-off |
+| `scripts/setup-parity-sim.mjs` | Creates, boots and pins the e07-parity simulator; `--check` | Workflow step 1 |
+| `scripts/shoot-design.mjs` | Renders references (`--out`, `--update-reference`) or proves them current (`--check`) | Workflow step 10 |
+| `scripts/import-design.mjs` | Makes or checks the offline design copy from a new mockup | Workflow step 10 |
+| `scripts/check-testids.mjs` | Checks the shared testID map against the design; `--list <S4>` prints a screen's testIDs | Workflow steps 3 and 10 (shared, synced) |
+| `scripts/selftest.mjs` | Proves every script on good and planted-defect fixtures | Workflow step 1; after changing a script |
+| `scripts/lib/` | Gates (with the type-role floors and the board mask), component edge widths, rendering (with variant derives), frames, facts and variants, runs, waivers and pre-listed waivers, the reference-change log, hierarchy parsing, PNG helpers, tool lookup | Never directly |
+| `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
+| `scripts/package.json` | Exact pins: pngjs 7.0.0, pixelmatch 7.2.0, playwright 1.63.0 | Workflow step 1 (`npm ci --prefix`) |
+| `scripts/package-lock.json` | Lockfile for `npm ci` | Never by hand |
+| `scripts/.gitignore` | Keeps `scripts/node_modules/` out of git | Never |
+| `assets/reference/` | The committed reference set: lineSiege x light, dark x en, fa, 32 frames and 3 variants, PNG + layout.json + manifest.json (with the `referenceChanges` log) | Workflow steps 3 and 6 (read) |
+| `assets/design/toybox.html` | Offline copy of the Toybox mockup (local fonts) the references are rendered from | Read by the scripts |
+| `assets/design/fonts/` | The TTFs the app bundles, OFL texts, SOURCES.md (shared, synced) | Read by the design copy |
+| `assets/frames.json` | Per frame: root testID, the app state it draws, settle time, reference variants (`when`, `derive`), the board a Game frame masks; the design's facts; the fixture values, and `fixtureSave` (the same player as save sections, with `gameFrame`) | Workflow steps 2 and 3 |
+| `assets/screen-testids.json` | The shared testID map: every element of every frame (shared, synced) | Workflow step 3 |
+| `assets/device/iphone16pro.json` | Parity device: geometry, safe areas, masks, simulator name, locales, status bar | Read by the scripts |
+| `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |
+| `tests/fixtures/` | Good and planted-defect inputs for every script, fake xcrun and maestro | When changing a script |
+
+## Related skills
+
+- `toybox-screens` - builds the S1 to S15 layouts this skill checks.
+- `toybox-components` - the components whose testIDs and parts the gates measure.
+- `toybox-design-system` - tokens and fonts; a `fill` or `text-ink` failure usually points there.
+- `code-drawn-art-and-icons` - icons and pictures the eye checks look at.
+- `rtl-and-direction` - mirroring rules behind the `direction` eye check.
+- `ios-simulator-build` - the Release test build that is captured.
+- `e2e-maestro` - installing Maestro and Java 17.
+- `architecture-and-boundaries` - the test-only gate the harness hides behind.

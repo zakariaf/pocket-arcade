@@ -1,0 +1,2 @@
+wait     [package-missing] SDK 58 expects @react-native/jest-preset 0.88.2, which npm does not list
+verdict  no upgrade due: stay on SDK 57

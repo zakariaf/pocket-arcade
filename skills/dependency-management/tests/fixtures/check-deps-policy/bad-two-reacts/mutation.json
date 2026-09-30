@@ -1,0 +1,14 @@
+[
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": [
+        "packages",
+        "node_modules/test-renderer/node_modules/react"
+      ],
+      "value": {
+        "version": "19.3.0"
+      }
+    }
+  }
+]

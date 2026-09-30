@@ -1,0 +1,3 @@
+apps/tile-drop/tsconfig.json:1 [tsconfig-world]
+it lacks "../../packages/shell/src/navigation/react-navigation.d.ts"
+TS2769

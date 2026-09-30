@@ -1,0 +1,21 @@
+{
+  "tap-flip.board.summary": "{lit, plural, one {# خانه روشن} other {# خانه روشن}}",
+  "tap-flip.continue.more-moves": "حرکت بیشتر بگیرید",
+  "tap-flip.goal": "همهٔ چراغ‌ها را خاموش کنید.",
+  "tap-flip.how-to-play.step-1": "روی یک خانه بزنید: خودش و همسایه‌هایش برمی‌گردند.",
+  "tap-flip.how-to-play.step-2": "یک ضربه در وسط، علامت به‌علاوه را پاک می‌کند.",
+  "tap-flip.how-to-play.step-3": "خانهٔ اشتباه را زدید؟ برگردانید.",
+  "tap-flip.hud.moves": "حرکت {moves, number} / {maxMoves, number}",
+  "tap-flip.lose.out-of-moves": "حرکتی نمانده",
+  "tap-flip.name": "Tap Flip",
+  "tap-flip.pack-name.1": "نخستین جرقه‌ها",
+  "tap-flip.pack-name.2": "شیفت شب",
+  "tap-flip.pack-name.3": "خاموشی",
+  "tap-flip.stats.biggest-flip": "بزرگ‌ترین چرخش",
+  "tap-flip.stats.boards-cleared": "صفحه‌های پاک‌شده",
+  "tap-flip.stats.cells-flipped": "خانه‌های برگشته",
+  "tap-flip.tagline": "ضربه بزنید، برگردانید، چراغ‌ها را خاموش کنید.",
+  "tap-flip.tutorial.step-1": "روی گوشه بزنید.",
+  "tap-flip.tutorial.step-2": "حالا روی وسط بزنید!",
+  "tap-flip.win-title": "همهٔ چراغ‌ها خاموش شد!"
+}

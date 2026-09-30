@@ -1,0 +1,2 @@
+[jest-golden-project]
+golden testEnvironment is undefined

@@ -1,0 +1,2 @@
+.gitignore:1 [diff-output-ignored] does not list reports/
+[diff-output-ignored] does not list **/__image_snapshots__/__diff_output__/

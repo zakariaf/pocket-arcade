@@ -1,0 +1,7 @@
+packages/shell/package.json:1 [package-name] name "@demo/the-shell" is not @<scope>/shell
+[package-name] workspaces use more than one scope
+apps/tile-drop/game.config.ts:6 [game-id] id 'tiledrop' differs from the folder apps/tile-drop
+apps/tile-drop/game.config.ts:7 [game-id] bundleId 'com.Example.tile_drop'
+apps/tile-drop/game.config.ts:8 [game-id] premium productId 'com.example.tiledrop.pro'
+package.json:1 [npm-script-name] script "checkFast"
+script "test:Golden"

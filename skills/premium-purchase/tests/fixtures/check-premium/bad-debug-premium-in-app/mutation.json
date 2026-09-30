@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/result/unlock-premium.ts",
+      "content": "// fixture: a shipped screen hands out Premium without a purchase\nimport type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';\n\nexport function unlockPremium(dispatch: (action: PremiumAction) => void): void {\n  dispatch({ type: 'debug-premium-set', isPremium: true });\n}\n"
+    }
+  }
+]

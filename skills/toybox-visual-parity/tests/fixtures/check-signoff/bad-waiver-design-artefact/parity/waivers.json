@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s8-levels",
+   "testID": "levels.level-tile.13",
+   "rule": "bounds",
+   "class": "design-artefact",
+   "reason": "Self-test fixture: the mockup draws tile 13 frozen mid-press; the app shows the tapped tile at rest with its focus ring.",
+   "reportedToOwner": "2026-09-30"
+  }
+ ]
+}

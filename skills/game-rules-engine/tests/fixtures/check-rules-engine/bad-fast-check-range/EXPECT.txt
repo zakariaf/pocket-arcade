@@ -1,0 +1,2 @@
+[kit-test-dependency]
+fast-check is "^4.10.2", not an exact version

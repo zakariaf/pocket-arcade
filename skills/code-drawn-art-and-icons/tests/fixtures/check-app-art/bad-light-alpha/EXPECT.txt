@@ -1,0 +1,2 @@
+[art-light-opaque]
+apps/demo-game/assets/generated/icon-light.png

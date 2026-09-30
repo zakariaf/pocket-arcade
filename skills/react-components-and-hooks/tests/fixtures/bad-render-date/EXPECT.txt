@@ -1,0 +1,2 @@
+render-impure
+Date.now() in a component file

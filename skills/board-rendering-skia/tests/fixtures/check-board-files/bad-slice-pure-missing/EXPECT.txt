@@ -1,0 +1,3 @@
+SKIP packages/shell/src/game-host/board-canvas.tsx [host-file-missing] S5 not in shell-slice.json
+packages/shell/src/game-host/paint-board-png.ts [host-file-missing]
+RESULT: FAIL (1 problems)

@@ -1,0 +1,33 @@
+{
+"version":1,
+"frame":"s12-already-owned",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"state-card",
+"screens":[
+"S12/owned"
+],
+"root":"premium.state.owned",
+"game":"lineSiege",
+"theme":"light",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":370},
+"image":"s12-already-owned.png",
+"elements":[
+{"testID":"premium.state.owned","screen":"S12/owned","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"پریمیوم پریمیوم – فعال ممنون که از Line Siege حمایت می‌کنید! بازیابی خرید","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.top-bar.title","screen":"S12/owned","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":43.5},"box":{"w":362,"h":44,"rotate":0},"text":"پریمیوم","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 30px/43.5px Vazirmatn"}},
+{"testID":"premium.restore-button","screen":"S12/owned","role":"button","component":"Button","kind":"secondary block, restore icon","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":292,"w":362,"h":54},"box":{"w":362,"h":54,"rotate":0},"text":"بازیابی خرید","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}},
+{"testID":"premium.active-sticker","screen":"S12/owned","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":232.83,"y":75.64,"w":150.04,"h":44.9},"box":{"w":148,"h":37,"rotate":-3},"text":"پریمیوم – فعال","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"700 16px/23.2px Vazirmatn"}},
+{"testID":"premium.owned-body","screen":"S12/owned","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":128.69,"w":362,"h":27},"box":{"w":362,"h":27,"rotate":0},"text":"ممنون که از Line Siege حمایت می‌کنید!","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/27px Vazirmatn"}}
+],
+"texts":[
+{"text":"پریمیوم","x":288.09,"y":22,"w":93.91,"h":47,"owner":"premium.top-bar.title","font":"700 30px Vazirmatn"},
+{"text":"پریمیوم – فعال","x":244.13,"y":83.57,"w":101.47,"h":30.21,"owner":"premium.active-sticker","font":"700 16px Vazirmatn"},
+{"text":"ممنون که از","x":293.66,"y":127.69,"w":88.34,"h":28,"owner":"premium.owned-body","font":"400 18px Vazirmatn"},
+{"text":"Line Siege","x":211,"y":127.69,"w":82.66,"h":28,"owner":"premium.owned-body","font":"400 18px Vazirmatn"},
+{"text":"حمایت می‌کنید!","x":95.44,"y":127.69,"w":115.56,"h":28,"owner":"premium.owned-body","font":"400 18px Vazirmatn"},
+{"text":"بازیابی خرید","x":143.33,"y":305.67,"w":81.36,"h":26,"owner":"premium.restore-button","font":"700 17px Vazirmatn"}
+]
+}

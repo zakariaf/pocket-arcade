@@ -1,0 +1,3 @@
+[reason-key]
+apps/tap-flip/src/rules/outcome.ts
+is not a tap-flip.* catalog key

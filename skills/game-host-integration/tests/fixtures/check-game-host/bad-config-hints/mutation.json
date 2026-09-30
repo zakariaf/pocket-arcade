@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/game.config.ts",
+      "find": "hints: { freePerDay: 0 },",
+      "with": "hints: { freePerDay: 1 },"
+    }
+  }
+]

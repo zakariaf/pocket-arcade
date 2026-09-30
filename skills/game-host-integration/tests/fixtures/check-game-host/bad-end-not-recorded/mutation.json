@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/session-controller.ts",
+      "find": "    extras.setState({ summary: recordEnd(deps, session), hint: null });",
+      "with": "    extras.setState({ summary: null, hint: null });"
+    }
+  }
+]

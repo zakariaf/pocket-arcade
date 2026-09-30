@@ -1,0 +1,430 @@
+{
+  "button": {
+    "minHeight": 54,
+    "paddingBlock": 10,
+    "paddingInline": 18,
+    "gap": 10,
+    "radius": 14,
+    "border": 3,
+    "elevation": 5,
+    "iconSize": 24
+  },
+  "heroKey": {
+    "minHeight": 80,
+    "paddingBlock": 10,
+    "paddingInline": 18,
+    "paddingStartWithCap": 12,
+    "gap": 10,
+    "radius": 14,
+    "border": 3,
+    "elevation": 6,
+    "capSize": 50,
+    "capRadius": 11,
+    "capBorder": 3,
+    "capIcon": 26
+  },
+  "quietButton": {
+    "minHeight": 44,
+    "paddingBlock": 8,
+    "paddingInline": 10,
+    "underlineThickness": 2,
+    "underlineOffset": 5,
+    "elevation": 0
+  },
+  "rowButton": {
+    "minHeight": 68,
+    "paddingBlock": 10,
+    "paddingInline": 14,
+    "gap": 12,
+    "chevron": 22,
+    "labelGap": 1
+  },
+  "key": {
+    "minHeight": 94,
+    "paddingBlock": 10,
+    "paddingInline": 6,
+    "gap": 6,
+    "icon": 30,
+    "columns": 3,
+    "columnGap": 10
+  },
+  "iconButton": {
+    "size": 48,
+    "sizeSmall": 44,
+    "radius": 12,
+    "radiusSmall": 11,
+    "border": 3,
+    "elevation": 4,
+    "icon": 24
+  },
+  "toggle": {
+    "width": 58,
+    "height": 36,
+    "radius": 10,
+    "border": 3,
+    "knob": 26,
+    "knobRadius": 7,
+    "knobBorder": 2,
+    "knobInset": 2,
+    "knobTravel": 22,
+    "knobElevation": 2,
+    "knobIcon": 15
+  },
+  "segmentedControl": {
+    "minHeight": 48,
+    "gap": 8,
+    "radius": 10,
+    "border": 2,
+    "elevation": 3,
+    "paddingBlock": 5,
+    "paddingInline": 3,
+    "checkIcon": 15,
+    "faceGap": 1,
+    "labelColumnGap": 3
+  },
+  "slider": {
+    "height": 44,
+    "minWidth": 120,
+    "trackTop": 15,
+    "trackHeight": 14,
+    "trackRadius": 5,
+    "trackBorder": 2,
+    "thumb": 30,
+    "thumbTop": 7,
+    "thumbRadius": 9,
+    "thumbBorder": 3,
+    "thumbElevation": 3
+  },
+  "progressBar": {
+    "height": 16,
+    "minWidth": 60,
+    "radius": 6,
+    "border": 2,
+    "fillEdge": 2
+  },
+  "radio": {
+    "size": 32,
+    "radius": 9,
+    "border": 3,
+    "icon": 20
+  },
+  "optionCard": {
+    "minHeight": 66,
+    "paddingBlock": 10,
+    "paddingInline": 14,
+    "gap": 12,
+    "radius": 14,
+    "border": 3,
+    "elevation": 5
+  },
+  "list": {
+    "radius": 14,
+    "border": 3
+  },
+  "row": {
+    "minHeight": 60,
+    "paddingBlock": 10,
+    "paddingInline": 14,
+    "gap": 12,
+    "separator": 2,
+    "labelGap": 2,
+    "chevron": 20,
+    "subRowPaddingStart": 64
+  },
+  "groupTab": {
+    "marginStart": 0,
+    "paddingTop": 4,
+    "paddingBottom": 5,
+    "paddingInline": 12,
+    "border": 2,
+    "radiusTop": 9,
+    "overlap": 0,
+    "gap": 6,
+    "icon": 16
+  },
+  "iconTile": {
+    "size": 38,
+    "radius": 10,
+    "border": 2,
+    "icon": 22,
+    "sizeInStatHeader": 34,
+    "iconInStatHeader": 20
+  },
+  "panel": {
+    "radius": 14,
+    "border": 3,
+    "paddingBlock": 14,
+    "paddingInline": 16,
+    "elevation": 0
+  },
+  "levelTile": {
+    "height": 62,
+    "radius": 10,
+    "border": 2,
+    "borderCurrent": 3,
+    "elevation": 3,
+    "gap": 5,
+    "miniStar": 13,
+    "miniStarGap": 1,
+    "lockIcon": 16,
+    "gridColumns": 6,
+    "rowGap": 10,
+    "columnGap": 8,
+    "flag": {
+      "size": 24,
+      "radius": 7,
+      "border": 2,
+      "ring": 2,
+      "rotate": 8,
+      "top": -11,
+      "end": -9,
+      "icon": 12
+    }
+  },
+  "star": {
+    "mini": 13,
+    "inline": 22,
+    "inSticker": 18,
+    "rating": 34,
+    "ratingGap": 6,
+    "result": 86,
+    "resultMiddle": 102,
+    "resultMiddleLift": 24,
+    "resultRowHeight": 124,
+    "resultGap": 8
+  },
+  "topBar": {
+    "minHeight": 66,
+    "gap": 12
+  },
+  "bannerSlot": {
+    "paddingBlock": 6,
+    "borderDashed": 2,
+    "box": {
+      "width": 320,
+      "height": 50,
+      "radius": 4,
+      "border": 2
+    },
+    "chip": {
+      "inset": 4,
+      "paddingBlock": 2,
+      "paddingInline": 6,
+      "radius": 3
+    }
+  },
+  "dialog": {
+    "radius": 22,
+    "border": 3,
+    "paddingTop": 22,
+    "paddingInline": 20,
+    "paddingBottom": 20,
+    "gap": 12,
+    "elevation": 8,
+    "buttonRowGap": 12,
+    "buttonRowMarginTop": 6,
+    "buttonMinBasis": 120,
+    "pausePaddingTop": 20,
+    "pausePaddingInline": 18,
+    "pausePaddingBottom": 18
+  },
+  "toast": {
+    "paddingBlock": 12,
+    "paddingInline": 14,
+    "radius": 12,
+    "gap": 10,
+    "icon": 20,
+    "stackGap": 10
+  },
+  "sticker": {
+    "paddingBlock": 5,
+    "paddingStart": 9,
+    "paddingEnd": 11,
+    "gap": 6,
+    "radius": 8,
+    "border": 2,
+    "ring": 3.5,
+    "icon": 18,
+    "rotateDefault": -4,
+    "rotateRange": [2, 8],
+    "sm": {
+      "paddingBlock": 3,
+      "paddingStart": 7,
+      "paddingEnd": 9
+    },
+    "xs": {
+      "paddingBlock": 2,
+      "paddingStart": 5,
+      "paddingEnd": 7,
+      "gap": 4,
+      "icon": 14
+    }
+  },
+  "chip": {
+    "paddingBlock": 4,
+    "paddingInline": 12,
+    "gap": 6,
+    "radius": 8,
+    "border": 2
+  },
+  "art": {
+    "size": 64,
+    "radius": 16,
+    "border": 3,
+    "ring": 4,
+    "rotate": -5,
+    "icon": 36
+  },
+  "premiumArt": {
+    "size": 108,
+    "radius": 22,
+    "border": 3,
+    "ring": 5,
+    "rotate": -6,
+    "icon": 64
+  },
+  "logoTile": {
+    "radiusRatio": 0.24,
+    "border": 3,
+    "rotate": -4,
+    "artScale": 0.88,
+    "sizes": {
+      "home": 46,
+      "statsHeader": 36,
+      "about": 92,
+      "lose": 104,
+      "splash": 152
+    },
+    "splash": {
+      "border": 4,
+      "ring": 7,
+      "rotate": -6
+    },
+    "about": {
+      "ring": 5
+    },
+    "lose": {
+      "ring": 6,
+      "rotate": 17,
+      "translateY": 6
+    }
+  },
+  "busy": {
+    "block": 9,
+    "radius": 2,
+    "gap": 5,
+    "hop": 7
+  },
+  "splashLoader": {
+    "block": 14,
+    "radius": 4,
+    "gap": 9,
+    "paddingBottom": 44
+  },
+  "toggleKey": {
+    "minHeight": 84,
+    "paddingBlock": 6,
+    "paddingInline": 4,
+    "gap": 3,
+    "radius": 10,
+    "border": 2,
+    "elevation": 3,
+    "icon": 26,
+    "stateIcon": 13,
+    "columns": 3,
+    "columnGap": 10
+  },
+  "calendarTile": {
+    "width": 88,
+    "radius": 12,
+    "border": 3,
+    "rotate": -3,
+    "monthPadding": [2, 0, 3],
+    "dayPadding": [4, 0, 6]
+  },
+  "weekStrip": {
+    "gap": 4,
+    "dayGap": 6,
+    "mark": 38,
+    "markRadius": 10,
+    "markBorder": 2,
+    "markIcon": 20,
+    "markXs": 22,
+    "markXsRadius": 6,
+    "markXsBorder": 2,
+    "markXsIcon": 13,
+    "tag": {
+      "paddingBlock": 1,
+      "paddingInline": 5,
+      "radius": 5,
+      "border": 1,
+      "rotate": -4
+    }
+  },
+  "barChart": {
+    "plotHeight": 124,
+    "barWidth": 26,
+    "maxBar": 92,
+    "barRadiusTop": 5,
+    "border": 2,
+    "baseline": 3,
+    "valueGap": 4,
+    "dayMarginTop": 6
+  },
+  "statGrid": {
+    "columns": 2,
+    "columnsCompact": 3,
+    "gap": 14,
+    "cellGap": 2
+  },
+  "statList": {
+    "rowPaddingBlock": 9,
+    "separator": 2,
+    "gap": 12
+  },
+  "pagerDots": {
+    "size": 12,
+    "activeWidth": 30,
+    "radius": 3,
+    "border": 2,
+    "gap": 8
+  },
+  "offer": {
+    "border": 3,
+    "radius": 14,
+    "padding": 14,
+    "gap": 10
+  },
+  "sheet": {
+    "top": 250,
+    "radiusTop": 26,
+    "paddingTop": 12,
+    "paddingInline": 18,
+    "paddingBottom": 46,
+    "gap": 14,
+    "grabber": {
+      "width": 44,
+      "height": 5,
+      "radius": 3
+    }
+  },
+  "hazardStrip": {
+    "height": 20,
+    "stripe": 12,
+    "angle": -45,
+    "border": 3
+  },
+  "confetti": {
+    "size": 16,
+    "radius": 4,
+    "border": 2
+  },
+  "emptyIllustration": {
+    "width": 190
+  },
+  "howToStage": {
+    "radius": 16,
+    "border": 3,
+    "padding": 12
+  }
+}

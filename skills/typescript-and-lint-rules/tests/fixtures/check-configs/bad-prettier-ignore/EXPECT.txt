@@ -1,0 +1,5 @@
+.prettierignore:1 [prettier-ignore] .prettierignore lacks "skills/"
+[prettier-ignore] .prettierignore lacks ".claude/"
+[prettier-ignore] .prettierignore still holds the __PRE_EXISTING__ placeholder
+[ignore-pre-existing] the pre-existing folder exports/ is not ignored
+[ignore-pre-existing] the pre-existing file notes.md is not ignored

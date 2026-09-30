@@ -1,0 +1,2 @@
+[privacy-manifest]
+NSPrivacyAccessedAPICategoryDiskSpace E174.1 is not declared

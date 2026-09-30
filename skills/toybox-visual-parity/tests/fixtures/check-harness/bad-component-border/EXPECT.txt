@@ -1,0 +1,3 @@
+[component-border] groupTab.border: the references draw GroupTab edges 2 pt wide
+but component-specs.json has groupTab.border = 2.5
+[component-border] iconTile.border: the references draw IconTile edges 2 pt wide

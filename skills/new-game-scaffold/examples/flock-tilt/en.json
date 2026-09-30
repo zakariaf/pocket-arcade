@@ -1,0 +1,22 @@
+{
+  "flock-tilt.goal": "Get every sheep into the pen.",
+  "flock-tilt.how-to-play.step-1": "Swipe to tilt the field.",
+  "flock-tilt.how-to-play.step-2": "Everything slides until it hits something.",
+  "flock-tilt.how-to-play.step-3": "Get every sheep into the pen.",
+  "flock-tilt.how-to-play.step-4": "Keep the sheep away from the wolf.",
+  "flock-tilt.lose.wolf-got-sheep": "The wolf got a sheep",
+  "flock-tilt.name": "Flock Tilt",
+  "flock-tilt.pack-name.1": "Green meadow",
+  "flock-tilt.pack-name.2": "Rocky hills",
+  "flock-tilt.pack-name.3": "Wolf country",
+  "flock-tilt.progress": "Sheep {penned, number} / {total, number}",
+  "flock-tilt.stats.sheep-penned": "Sheep penned",
+  "flock-tilt.stats.solved-at-par": "Fields solved at par",
+  "flock-tilt.stats.tilts-made": "Tilts made",
+  "flock-tilt.tagline": "Tilt the field. Pen every sheep.",
+  "flock-tilt.tutorial.step-1": "Swipe down to tilt the field.",
+  "flock-tilt.tutorial.step-2": "Every sheep slid at once!",
+  "flock-tilt.tutorial.step-3": "Now tilt again to get them into the pen.",
+  "flock-tilt.tutorial.step-4": "Stuck? Undo is free.",
+  "flock-tilt.win-title": "All sheep home!"
+}

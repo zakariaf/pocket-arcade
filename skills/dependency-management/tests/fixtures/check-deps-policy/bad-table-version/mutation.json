@@ -1,0 +1,4 @@
+[
+  { "json": { "file": "packages/shell/package.json", "path": ["dependencies", "zustand"], "value": "5.0.14" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "packages/shell", "dependencies", "zustand"], "value": "5.0.14" } }
+]

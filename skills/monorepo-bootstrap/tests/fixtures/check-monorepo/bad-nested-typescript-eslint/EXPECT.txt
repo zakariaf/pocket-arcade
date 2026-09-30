@@ -1,0 +1,2 @@
+root-overrides
+@typescript-eslint/eslint-plugin is installed as 8.70.1, 8.71.0 but the root overrides pin 8.70.1

@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "script-lib"
+  ],
+  "sync": true
+}

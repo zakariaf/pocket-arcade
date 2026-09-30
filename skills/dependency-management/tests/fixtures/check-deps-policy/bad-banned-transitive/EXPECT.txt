@@ -1,0 +1,2 @@
+banned
+@react-native-community/netinfo is in the lockfile

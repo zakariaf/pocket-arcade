@@ -1,0 +1,2 @@
+[debug-controls]
+createDebugParts gets no game: host.debugControls()

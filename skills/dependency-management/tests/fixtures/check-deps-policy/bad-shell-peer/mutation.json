@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "packages/shell/package.json",
+      "path": [
+        "peerDependencies",
+        "react-native-google-mobile-ads"
+      ],
+      "value": null
+    }
+  }
+]

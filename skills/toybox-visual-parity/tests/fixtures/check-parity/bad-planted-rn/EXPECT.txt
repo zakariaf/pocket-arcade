@@ -1,0 +1,5 @@
+[fill] probe.continue: fill #FF7A5A but the design is #FF6B4A
+[bounds] probe.panel: geometry off
+[border] probe.block: border differs
+[text-ink] probe.block.label
+[structure] probe.panel: shape differs

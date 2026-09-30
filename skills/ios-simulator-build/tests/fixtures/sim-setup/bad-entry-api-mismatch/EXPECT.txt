@@ -1,0 +1,2 @@
+[entry-api-match] TestOnlyApi.createSimulatedClock has no export of that name
+test-only-entry.ts exports createPerfLog, but TestOnlyApi declares no member

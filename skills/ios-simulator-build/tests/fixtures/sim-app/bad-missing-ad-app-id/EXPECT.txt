@@ -1,0 +1,2 @@
+[ad-app-id]
+GADApplicationIdentifier is "missing"

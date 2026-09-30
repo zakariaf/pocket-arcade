@@ -1,0 +1,55 @@
+// apps/tile-drop/src/rules/sum-values.ts
+/** Sums the first 42 values. */
+export function sumValues(values: readonly number[]): number {
+  let total = 0;
+  total += values[0] ?? 0;
+  total += values[1] ?? 0;
+  total += values[2] ?? 0;
+  total += values[3] ?? 0;
+  total += values[4] ?? 0;
+  total += values[5] ?? 0;
+  total += values[6] ?? 0;
+  total += values[7] ?? 0;
+  total += values[8] ?? 0;
+  total += values[9] ?? 0;
+  total += values[10] ?? 0;
+  total += values[11] ?? 0;
+  total += values[12] ?? 0;
+  total += values[13] ?? 0;
+  total += values[14] ?? 0;
+  total += values[15] ?? 0;
+  total += values[16] ?? 0;
+  total += values[17] ?? 0;
+  total += values[18] ?? 0;
+  total += values[19] ?? 0;
+  total += values[20] ?? 0;
+  total += values[21] ?? 0;
+  total += values[22] ?? 0;
+  total += values[23] ?? 0;
+  total += values[24] ?? 0;
+  total += values[25] ?? 0;
+  total += values[26] ?? 0;
+  total += values[27] ?? 0;
+  total += values[28] ?? 0;
+  total += values[29] ?? 0;
+  total += values[30] ?? 0;
+  total += values[31] ?? 0;
+  total += values[32] ?? 0;
+  total += values[33] ?? 0;
+  total += values[34] ?? 0;
+  total += values[35] ?? 0;
+  total += values[36] ?? 0;
+  total += values[37] ?? 0;
+  total += values[38] ?? 0;
+  total += values[39] ?? 0;
+  total += values[40] ?? 0;
+  total += values[41] ?? 0;
+  return total;
+}
+
+/** Too many parameters. */
+export function place(row: number, column: number, piece: number, rotation: number): number {
+  return row + column + piece + rotation;
+}
+
+export type Mover = (a: number, b: number, c: number, d: number) => void;

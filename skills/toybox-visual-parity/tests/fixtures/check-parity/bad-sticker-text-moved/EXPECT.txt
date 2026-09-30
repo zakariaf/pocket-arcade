@@ -1,0 +1,2 @@
+[text-ink] home.tagline: text "Clear lines. Fire beams. Hold the wall."
+limit 2.1 pt for Lilita One 16

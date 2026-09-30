@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ads-factory.ts",
+      "find": "  const units = extra.adsMode === 'live' ? extra.adUnits : ADMOB_TEST_UNITS;",
+      "with": "  const fallback = 'ca-app-pub-1234567890123456/1111111111';\n  const units = extra.adsMode === 'live' ? extra.adUnits : ADMOB_TEST_UNITS;\n  onAdError(Object.assign(new Error(fallback), { phase: 'load' as const, reason: 'none' }));"
+    }
+  }
+]

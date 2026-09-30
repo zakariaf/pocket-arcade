@@ -1,0 +1,3 @@
+knip-config
+"ignore" lists packages/**
+knip.ignore differs from knip.json

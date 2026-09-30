@@ -1,0 +1,16 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/stryker.config.json", "to": "templates/stryker.config.json" },
+  { "from": "repo-templates/tsconfig.stryker.json", "to": "templates/tsconfig.stryker.json" },
+  { "from": "repo-templates/jest.config.js", "to": "templates/jest.config.js" },
+  { "from": "repo-templates/jest.setup.ts", "to": "templates/jest.setup.ts" },
+  { "from": "repo-templates/jest.sim.config.js", "to": "templates/jest.sim.config.js" },
+  { "from": "repo-templates/babel.config.js", "to": "templates/babel.config.js" },
+  { "from": "repo-templates/packages/tooling/src/quality/device-only.ts", "to": "templates/packages/tooling/src/quality/device-only.ts" },
+  { "from": "repo-templates/packages/tooling/src/quality/device-only.test.ts", "to": "templates/packages/tooling/src/quality/device-only.test.ts" },
+  { "from": "line-siege/rules/apply-move.test.ts", "to": "examples/apply-move.test.ts" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/apply-move.test.ts", "to": "templates/rules.test.ts" },
+  { "from": "repo-templates/__mocks__/expo-iap.ts", "to": "templates/__mocks__/expo-iap.ts" },
+  { "from": "repo-templates/__mocks__/react-native-google-mobile-ads.ts", "to": "templates/__mocks__/react-native-google-mobile-ads.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/play-choices.ts", "to": "templates/packages/game-kit/src/testing/play-choices.ts" }
+]

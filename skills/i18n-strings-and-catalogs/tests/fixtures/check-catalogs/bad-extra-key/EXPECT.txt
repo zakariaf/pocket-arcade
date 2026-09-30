@@ -1,0 +1,2 @@
+[P2 extra-key]
+pause.subtitle: not in en.json

@@ -1,0 +1,2 @@
+[stale-sheet]
+sheet.png is missing or changed

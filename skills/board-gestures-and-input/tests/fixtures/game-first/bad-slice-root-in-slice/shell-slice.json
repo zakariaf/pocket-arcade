@@ -1,0 +1,1 @@
+{ "screens": ["S4", "S5"], "why": "Home and Game slice: the Shell app exists, so its root must wrap gestures" }

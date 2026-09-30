@@ -1,0 +1,2 @@
+worklet-directive
+draw-board.ts:1

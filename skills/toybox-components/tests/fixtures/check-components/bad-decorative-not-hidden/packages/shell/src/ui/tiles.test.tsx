@@ -1,0 +1,186 @@
+// packages/shell/src/ui/tiles.test.tsx
+import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
+
+import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
+
+import { ArtTile } from './art-tile.tsx';
+import { Confetti } from './confetti.tsx';
+import { LevelTile } from './level-tile.tsx';
+import { PremiumArt } from './premium-art.tsx';
+import { RatingStars } from './rating-stars.tsx';
+import { ResultStars } from './result-stars.tsx';
+import { Sticker } from './sticker.tsx';
+
+import type { ViewStyle } from 'react-native';
+
+const COLORS = TEST_PALETTE.standard.light;
+
+type HostNode = { readonly props: { readonly style?: unknown }; readonly parent: HostNode | null };
+
+/** The flattened style of the nearest ancestor of a part that sets a height or minimum height. */
+function boxStyleAbove(testID: string): ViewStyle {
+  let node: HostNode | null = (screen.getByTestId(testID) as unknown as HostNode).parent;
+  while (node !== null) {
+    const style = StyleSheet.flatten(node.props.style as ViewStyle | undefined) ?? {};
+    if (style.minHeight !== undefined || style.height !== undefined) return style;
+    node = node.parent;
+  }
+  return {};
+}
+
+describe('LevelTile', () => {
+  it('names a completed tile and shows its stars part', async () => {
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+    await renderWithShell(
+      <LevelTile
+        numberText="9"
+        state={{ kind: 'completed', stars: 2 }}
+        label="Level 9: 2 stars"
+        onPress={onPress}
+        testID="levels.level-tile.9"
+        width={52}
+        isReducedMotion
+      />,
+    );
+
+    await user.press(screen.getByRole('button', { name: 'Level 9: 2 stars' }));
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('levels.level-tile.9.number')).toHaveStyle({ fontSize: 21 });
+    expect(
+      screen.getByTestId('levels.level-tile.9.stars-2', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+  });
+
+  it('grows with large text: the face has a minimum height, never a fixed one', async () => {
+    await renderWithShell(
+      <LevelTile
+        numberText="9"
+        state={{ kind: 'completed', stars: 2 }}
+        label="Level 9: 2 stars"
+        onPress={jest.fn()}
+        testID="levels.level-tile.9"
+        width={52}
+        isReducedMotion
+      />,
+    );
+
+    const face = boxStyleAbove('levels.level-tile.9.number');
+    expect(face.minHeight).toBe(62);
+    expect(face.height).toBeUndefined();
+  });
+
+  it('gives the current tile its flag and accent number', async () => {
+    await renderWithShell(
+      <LevelTile
+        numberText="12"
+        state={{ kind: 'current' }}
+        label="Level 12: no stars yet"
+        onPress={jest.fn()}
+        testID="levels.level-tile.12"
+        width={52}
+        isReducedMotion
+      />,
+    );
+
+    expect(screen.getByTestId('levels.level-tile.12.flag')).toBeOnTheScreen();
+    expect(screen.getByTestId('levels.level-tile.12.number')).toHaveStyle({
+      color: COLORS.onPrimary,
+    });
+  });
+
+  it('keeps a locked tile pressable so it can explain how to unlock it', async () => {
+    const onPress = jest.fn();
+    const user = userEvent.setup();
+    await renderWithShell(
+      <LevelTile
+        numberText="13"
+        state={{ kind: 'locked' }}
+        label="Level 13, locked"
+        hint="Shows how to unlock this level."
+        onPress={onPress}
+        testID="levels.level-tile.13"
+        width={52}
+        isFocused
+        isReducedMotion={false}
+      />,
+    );
+
+    await user.press(screen.getByRole('button', { name: 'Level 13, locked' }));
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('levels.level-tile.13.number')).toHaveStyle({
+      color: COLORS.textMuted,
+    });
+  });
+});
+
+describe('Stars', () => {
+  it('labels standalone rating stars as one image', async () => {
+    await renderWithShell(<RatingStars count={2} size="rating" label="2 of 3 stars" />);
+
+    expect(screen.getByRole('image', { name: '2 of 3 stars' })).toBeOnTheScreen();
+  });
+
+  it('shows the result stars as one labelled image, even under reduce motion', async () => {
+    await renderWithShell(
+      <ResultStars count={3} label="3 of 3 stars" testID="result.stars-3" isReducedMotion />,
+    );
+
+    expect(screen.getByRole('image', { name: '3 of 3 stars' })).toBeOnTheScreen();
+  });
+});
+
+describe('Stickers and art', () => {
+  it('prints sticker text in toy ink, white on the ink paper', async () => {
+    await renderWithShell(
+      <>
+        <Sticker
+          text="New best!"
+          icon="rating-star"
+          size="sm"
+          tiltDeg={6}
+          testID="result.new-best"
+        />
+        <Sticker
+          text="Locked"
+          icon="lock"
+          paper="ink"
+          size="sm"
+          testID="levels.pack.2.locked-badge"
+        />
+      </>,
+    );
+
+    expect(screen.getByTestId('result.new-best')).toHaveStyle({
+      color: '#1D1B3A',
+      fontFamily: 'LilitaOne',
+    });
+    expect(screen.getByTestId('levels.pack.2.locked-badge')).toHaveStyle({ color: '#FFFFFF' });
+  });
+
+  it('keeps art tiles, Premium art and confetti decorative', async () => {
+    await renderWithShell(
+      <>
+        <ArtTile icon="globe" testID="language-choice.art" />
+        <PremiumArt testID="premium.art" />
+        <Confetti isReducedMotion={false} testID="premium.confetti" />
+      </>,
+    );
+
+    expect(screen.queryByTestId('language-choice.art')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('premium.art', { includeHiddenElements: true })).toBeOnTheScreen();
+    expect(
+      screen.getByTestId('premium.confetti', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+  });
+
+  it('hides confetti entirely under reduce motion', async () => {
+    await renderWithShell(<Confetti isReducedMotion testID="premium.confetti" />);
+
+    expect(
+      screen.queryByTestId('premium.confetti', { includeHiddenElements: true }),
+    ).not.toBeOnTheScreen();
+  });
+});

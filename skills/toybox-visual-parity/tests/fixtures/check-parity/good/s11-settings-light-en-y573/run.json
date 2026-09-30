@@ -1,0 +1,13 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 573,
+ "source": "self-test fixture",
+ "note": "Real capture of S11 at scrollY 573, which the app scrolled by 572.5 pt (a half-point scroll): Maestro floors every bound to whole points, up to 1 pt off. The gate anchors each text run to the pixel-measured edges around it, and Rubik 14 labels (glyphs up to 1.4 pt lower than Chrome on the type probe, 2.0 pt here) stay inside their 2.3 pt role limit. The privacy group tab has no bottom border (it sits on its list's top border), and that side is not compared.",
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s11-settings.png",
+  "layout": "../../reference/lineSiege/light-en/s11-settings.layout.json"
+ }
+}

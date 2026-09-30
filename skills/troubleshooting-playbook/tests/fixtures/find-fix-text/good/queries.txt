@@ -1,0 +1,13 @@
+error: precompiled file '/Users/me/copy/apps/line-siege/build/dd/ModuleCache.noindex/SwiftShims-1.pcm' was compiled with module cache path '/Users/me/old/apps/line-siege/build/dd/ModuleCache.noindex'
+error: missing required module 'SwiftShims'
+An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405): Unable to boot device due to insufficient system resources
+debug link ignored after launchApp clearState
+memory: the app is not running after the smoke flow
+lineSiege/s8-levels/light-en                   CAPTURE FAILED (unstable)
+dashed-edge structure fails
+only one interstitial ever
+FAIL game-balance-and-bots [report-stale] reports/sim/line-siege.json is older than the sources it covers
+FAIL app.png [missing] s11-settings light-en: settings.music-switch: not found in the app
+FAIL app.png [text] s7-result-win light-en: result.score-card.moves-line: text differs
+FAIL app.png [text-ink] s8-levels light-fa: levels.level-tile.12: ink height 10.0 vs design 14.0
+[Parsing Failed at 23:60]

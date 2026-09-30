@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/Premium.storekit",
+      "content": "{ \"products\": [] }\n"
+    }
+  }
+]

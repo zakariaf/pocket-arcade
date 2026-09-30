@@ -1,0 +1,2 @@
+[host-order]
+the stores are created before the game host

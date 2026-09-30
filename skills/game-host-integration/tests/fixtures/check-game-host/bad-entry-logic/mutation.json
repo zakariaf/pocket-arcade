@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/index.ts",
+      "find": "startShell(tapFlipGame);",
+      "with": "console.warn('boot');\nstartShell(tapFlipGame);"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[sim-harness]
+does not assert bandProblems

@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "files-exist"
+  ],
+  "sync": true
+}

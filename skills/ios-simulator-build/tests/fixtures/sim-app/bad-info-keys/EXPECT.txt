@@ -1,0 +1,5 @@
+[encryption-flag]
+[frame-rate]
+[ats]
+[build-number]
+CFBundleVersion is "6", expected 7

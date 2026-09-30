@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/skadnetwork-ids.ts",
+      "find": ".skadnetwork',",
+      "with": "',"
+    }
+  }
+]

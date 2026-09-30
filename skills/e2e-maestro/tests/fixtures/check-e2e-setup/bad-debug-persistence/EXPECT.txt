@@ -1,0 +1,4 @@
+debug-services.ts:1 [debug-persistence] does not read and write debug.overrides
+debug-link-handler.ts:1 [debug-persistence] does not keep debug.pending-screen before the direction restart
+sqlite-kv-debug-store-adapter.ts:1 [debug-persistence] does not use the synchronous expo-sqlite/kv-store calls
+create-debug-parts.ts:1 [debug-persistence] does not give both the debug services and the link handler the test-only key-value store

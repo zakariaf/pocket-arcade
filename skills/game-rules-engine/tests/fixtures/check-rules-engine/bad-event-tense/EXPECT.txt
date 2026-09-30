@@ -1,0 +1,2 @@
+[event-kind]
+event kind 'clear-board' is not a past-tense kebab-case name

@@ -1,0 +1,1 @@
+[{ "write": { "file": "apps/flock-tilt/src/levels/flock-tilt-levels.ts", "content": "// apps/flock-tilt/src/levels/flock-tilt-levels.ts (copied template: the salt was never changed)\nexport const FLOCK_TILT_DAILY_SALT = 0x5446;\nexport const FLOCK_TILT_LEVELS = { daily: { kind: 'daily', difficulty: 40, salt: FLOCK_TILT_DAILY_SALT } };\n" } }]

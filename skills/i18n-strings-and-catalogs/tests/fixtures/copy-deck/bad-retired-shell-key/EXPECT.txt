@@ -1,0 +1,3 @@
+[retired-key]
+result.win.moves-count is a retired Shell key
+result.win.score-line

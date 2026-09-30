@@ -1,0 +1,2 @@
+ts-suppression
+packages/tooling/src/build/build-ios-sim.ts:2

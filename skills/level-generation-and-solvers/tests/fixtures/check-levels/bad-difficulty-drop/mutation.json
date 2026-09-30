@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/pack-3.json", "find": "\"difficulty\": 40,", "with": "\"difficulty\": 10," } }]

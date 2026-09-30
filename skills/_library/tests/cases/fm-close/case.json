@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "fm-close"
+  ],
+  "sync": true
+}

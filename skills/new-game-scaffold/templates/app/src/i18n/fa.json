@@ -1,0 +1,20 @@
+{
+  "__GAME_ID__.board.summary": "{lit, plural, one {# خانه روشن} other {# خانه روشن}}",
+  "__GAME_ID__.continue.more-moves": "حرکت بیشتر بگیرید",
+  "__GAME_ID__.goal": "همهٔ چراغ‌ها را خاموش کنید.",
+  "__GAME_ID__.how-to-play.step-1": "روی یک خانه بزنید: خودش و همسایه‌هایش برمی‌گردند.",
+  "__GAME_ID__.how-to-play.step-2": "یک ضربه در وسط، علامت به‌علاوه را پاک می‌کند.",
+  "__GAME_ID__.how-to-play.step-3": "خانهٔ اشتباه را زدید؟ برگردانید.",
+  "__GAME_ID__.hud.moves": "حرکت {moves, number} / {maxMoves, number}",
+  "__GAME_ID__.lose.__LOSE_SLUG__": "حرکتی نمانده",
+  "__GAME_ID__.pack-name.1": "نخستین جرقه‌ها",
+  "__GAME_ID__.pack-name.2": "شیفت شب",
+  "__GAME_ID__.pack-name.3": "خاموشی",
+  "__GAME_ID__.stats.biggest-flip": "بزرگ‌ترین چرخش",
+  "__GAME_ID__.stats.boards-cleared": "صفحه‌های پاک‌شده",
+  "__GAME_ID__.stats.cells-flipped": "خانه‌های برگشته",
+  "__GAME_ID__.tagline": "ضربه بزنید، برگردانید، چراغ‌ها را خاموش کنید.",
+  "__GAME_ID__.tutorial.step-1": "روی گوشه بزنید.",
+  "__GAME_ID__.tutorial.step-2": "حالا روی وسط بزنید!",
+  "__GAME_ID__.win-title": "همهٔ چراغ‌ها خاموش شد!"
+}

@@ -1,0 +1,55 @@
+{
+  "categories": [
+    {
+      "name": "Start",
+      "why": "Where tasks begin.",
+      "skills": [
+        "route-index"
+      ]
+    },
+    {
+      "name": "Parts",
+      "why": "The two parts.",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task": "Build the alpha part",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ],
+      "note": "Beta checks it."
+    },
+    {
+      "task": "Find the right skill",
+      "skills": [
+        "route-index"
+      ]
+    }
+  ],
+  "buildOrders": {
+    "shell": [
+      {
+        "step": "Alpha first",
+        "skills": [
+          "alpha-one"
+        ],
+        "proof": "`check-alpha.mjs .` (alpha-one) prints RESULT: PASS"
+      }
+    ],
+    "game": [
+      {
+        "step": "Beta next",
+        "skills": [
+          "beta-two"
+        ],
+        "proof": "beta passes"
+      }
+    ]
+  }
+}

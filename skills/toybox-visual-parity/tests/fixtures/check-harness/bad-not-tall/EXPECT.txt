@@ -1,0 +1,1 @@
+[harness-tall] s11-settings is a tall frame in the design but its plan says tall: false

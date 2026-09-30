@@ -1,0 +1,14 @@
+[
+  {
+    "prompt": "make the ghost glow",
+    "expect": "ghost-skill"
+  },
+  {
+    "prompt": "",
+    "expect": "board-painter"
+  },
+  {
+    "prompt": "draw the board",
+    "expect": "board-painter"
+  }
+]

@@ -1,0 +1,2 @@
+eslint-flag
+--max-warnings 20

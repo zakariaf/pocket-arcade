@@ -1,0 +1,2 @@
+[bidi-in-source]
+raw bidi control U+200F

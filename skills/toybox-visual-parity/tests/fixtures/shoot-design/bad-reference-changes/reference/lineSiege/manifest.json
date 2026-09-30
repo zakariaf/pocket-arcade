@@ -1,0 +1,96 @@
+{
+ "version": 1,
+ "game": "lineSiege",
+ "rendered": "2026-09-30",
+ "renderer": {
+  "chrome": "154.0.8037.58",
+  "playwright": "1.63.0",
+  "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
+ },
+ "device": {
+  "name": "iPhone 16 Pro",
+  "points": {
+   "width": 402,
+   "height": 874
+  },
+  "scale": 3,
+  "safeTop": 62
+ },
+ "inputs": {
+  "design": "4283a423f15cc8e5c17e871bb54db9450a6611dd3a93aac3c1f9fbe661a12a2a",
+  "map": "a16554405817718b357b6f803acd0bbf7923dfb2788d66f091f2272b268cac7c",
+  "frames": "b2e1fdf39786dea40e8261f36b458cea9497975a7b4e3b89539f56dae83fe36b",
+  "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
+ },
+ "themes": [
+  "light",
+  "dark"
+ ],
+ "langs": [
+  "en",
+  "fa"
+ ],
+ "frames": [
+  "s1-splash",
+  "s2-language-choice",
+  "s3-consent-moment",
+  "s3-google-s-form",
+  "s4-home",
+  "s4-home-premium",
+  "s6-pause",
+  "s7-result-win",
+  "s7-result-lose",
+  "s8-levels",
+  "s9-daily-challenge",
+  "s10-statistics",
+  "s10-statistics-empty",
+  "s11-settings",
+  "s11a-language",
+  "s11b-about-and-credits",
+  "s11c-privacy-policy",
+  "s11d-licences",
+  "s12-premium",
+  "s12-loading-price",
+  "s12-store-unavailable-offline",
+  "s12-purchase-in-progress",
+  "s12-pending-approval",
+  "s12-success",
+  "s12-error",
+  "s12-already-owned",
+  "s12-restore-results-toasts",
+  "s13-how-to-play",
+  "s14-reset-all-progress",
+  "s14-restart-to-apply",
+  "s14-progress-restored",
+  "s15-debug-menu"
+ ],
+ "variants": [
+  "s6-pause--no-music",
+  "s7-result-win--score",
+  "s11-settings--no-music"
+ ],
+ "files": {
+  "light-en/s12-error.layout.json": {
+   "sha256": "7f18d1679beec1054a6382ea5d36620115a25f5003bb9e7447df8e64b3001738",
+   "bytes": 4738
+  },
+  "light-en/s12-error.png": {
+   "sha256": "6f0646ae7a5abe10fa0314fa248024cf953e725d2c4e517e5666857bf52a3881",
+   "bytes": 54899,
+   "width": 1206,
+   "height": 1110
+  }
+ },
+ "referenceChanges": [
+  {
+   "id": "L9",
+   "date": "30.09.2026",
+   "frames": [
+    "s99-nowhere"
+   ],
+   "variants": [],
+   "what": "A change without a real frame.",
+   "why": "Self-test fixture: a malformed entry of the log of intended reference changes."
+  }
+ ]
+}

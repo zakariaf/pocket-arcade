@@ -1,0 +1,3 @@
+conflict
+package.json
+beyond the allowScripts approvals

@@ -1,0 +1,13 @@
+[deps-netinfo-probe]
+[deps-network-packages]
+expo-updates
+[deps-expo-audio]
+[deps-svg-and-flashlist]
+[deps-eslint-10-crash]
+[deps-typescript-7]
+[deps-jest-30]
+[deps-test-renderer-1-3]
+[deps-expo-install-range]
+expo-iap@^5.8.0
+[state-zod-jit]
+[testing-babel-config-missing]

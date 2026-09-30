@@ -1,0 +1,2 @@
+network-guard.ts:1 [network-guard-missing] nothing installs the network guard
+test-only-entry.ts:1 [network-guard-missing] does not export installNetworkGuard

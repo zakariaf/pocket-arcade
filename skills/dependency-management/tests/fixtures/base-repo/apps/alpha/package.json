@@ -1,0 +1,19 @@
+{
+  "name": "@e07/alpha",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@e07/shell": "*",
+    "@react-navigation/native": "7.4.1",
+    "expo": "~57.0.25",
+    "expo-haptics": "~57.0.3",
+    "expo-system-ui": "~57.0.4",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-google-mobile-ads": "17.2.0"
+  }
+}

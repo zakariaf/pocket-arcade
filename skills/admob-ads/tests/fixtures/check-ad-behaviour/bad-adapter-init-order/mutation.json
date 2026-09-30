@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "  await mobileAds().setRequestConfiguration({ maxAdContentRating: MaxAdContentRating.PG });\n  await mobileAds().initialize();\n",
+      "with": "  await mobileAds().initialize();\n  await mobileAds().setRequestConfiguration({ maxAdContentRating: MaxAdContentRating.PG });\n"
+    }
+  }
+]

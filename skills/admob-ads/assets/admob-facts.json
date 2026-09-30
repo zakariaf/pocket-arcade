@@ -1,0 +1,126 @@
+{
+  "verified": "2026-09-26",
+  "sdk": {
+    "package": "react-native-google-mobile-ads",
+    "version": "17.2.0",
+    "iosPods": { "Google-Mobile-Ads-SDK": "13.6.0", "GoogleUserMessagingPlatform": "3.1.0" }
+  },
+  "adapters": {
+    "packages/shell/src/services/ads/admob-ads-adapter.ts": [
+      "default",
+      "AdEventType",
+      "BannerAd",
+      "BannerAdSize",
+      "InterstitialAd",
+      "MaxAdContentRating",
+      "RewardedAd",
+      "RewardedAdEventType",
+      "TestIds",
+      "AdErrorPayload"
+    ],
+    "packages/shell/src/services/consent/admob-consent-adapter.ts": [
+      "AdsConsent",
+      "AdsConsentDebugGeography",
+      "AdsConsentPrivacyOptionsRequirementStatus",
+      "AdsConsentInfo"
+    ],
+    "packages/shell/src/services/consent/admob-consent-debug-adapter.ts": [
+      "default",
+      "AdsConsent",
+      "AdsConsentUserChoices"
+    ]
+  },
+  "debugAdapter": {
+    "file": "packages/shell/src/services/consent/admob-consent-debug-adapter.ts",
+    "allowedImporters": ["packages/shell/src/app/test-only-entry.ts", "packages/shell/src/screens/debug/"]
+  },
+  "consentFactory": {
+    "file": "packages/shell/src/services/consent/consent-factory.ts",
+    "adapter": "packages/shell/src/services/consent/admob-consent-adapter.ts"
+  },
+  "testOnlyCalls": ["AdsConsent.reset", "AdsConsent.getUserChoices", "openAdInspector"],
+  "bannedSdkNames": [
+    "useAppOpenAd",
+    "useAppOpenAdManager",
+    "useInterstitialAd",
+    "useRewardedAd",
+    "useRewardedInterstitialAd",
+    "useGAMInterstitialAd",
+    "useForeground",
+    "AdPoolProvider",
+    "useAdPool",
+    "usePooledAd",
+    "useMultiFormatAd",
+    "useNativeAd",
+    "AdPools",
+    "AdPoolPresets",
+    "MultiFormatAdRequest",
+    "MultiFormatBannerAdView",
+    "AppOpenAd",
+    "NativeAd",
+    "RewardedInterstitialAd",
+    "GAMBannerAd",
+    "GAMInterstitialAd"
+  ],
+  "bannedRequestOptions": ["tagForChildDirectedTreatment", "tagForUnderAgeOfConsent", "ageRestrictedTreatment", "requestNonPersonalizedAdsOnly"],
+  "samplePublisher": "3940256099942544",
+  "sampleAllowedIn": ["packages/shell/src/config/ads-config.ts"],
+  "idPatterns": { "appId": "^ca-app-pub-\\d{16}~\\d{10}$", "unitId": "^ca-app-pub-\\d{16}/\\d{10}$" },
+  "skadnetwork": {
+    "file": "packages/shell/src/config/skadnetwork-ids.ts",
+    "first": "cstr6suwn9.skadnetwork",
+    "minCount": 40,
+    "idPattern": "^[a-z0-9]{10}\\.skadnetwork$"
+  },
+  "policyMinimums": {
+    "minLevelsCompletedBeforeFirst": 3,
+    "minMsBetweenInterstitials": 180000,
+    "minLevelsCompletedBetween": 2
+  },
+  "bannerSlots": {
+    "packages/shell/src/screens/home/": "home.banner-ad",
+    "packages/shell/src/screens/levels/": "levels.banner-ad",
+    "packages/shell/src/screens/stats/": "stats.banner-ad"
+  },
+  "purePolicyFiles": [
+    "packages/shell/src/services/ads/ad-policy.ts",
+    "packages/shell/src/services/ads/ad-history.ts",
+    "packages/shell/src/services/ads/perk-offer.ts"
+  ],
+  "requiredFiles": [
+    "__mocks__/react-native-google-mobile-ads.ts",
+    "packages/shell/src/config/ads-config.ts",
+    "packages/shell/src/config/ads-config.test.ts",
+    "packages/shell/src/config/app-variant.ts",
+    "packages/shell/src/config/skadnetwork-ids.ts",
+    "packages/shell/src/services/ads/ads-port.ts",
+    "packages/shell/src/services/ads/admob-ads-adapter.ts",
+    "packages/shell/src/services/ads/admob-ads-adapter.test.ts",
+    "packages/shell/src/services/ads/fake-ads.ts",
+    "packages/shell/src/services/ads/ads-factory.ts",
+    "packages/shell/src/services/ads/ads-factory.test.ts",
+    "packages/shell/src/services/ads/read-ads-extra.ts",
+    "packages/shell/src/services/ads/ad-policy.ts",
+    "packages/shell/src/services/ads/ad-policy.test.ts",
+    "packages/shell/src/services/ads/ad-history.ts",
+    "packages/shell/src/services/ads/perk-offer.ts",
+    "packages/shell/src/services/ads/perk-offer.test.ts",
+    "packages/shell/src/services/ads/ad-gate.ts",
+    "packages/shell/src/services/ads/ad-gate.test.ts",
+    "packages/shell/src/services/ads/consent-moment-flow.ts",
+    "packages/shell/src/services/ads/consent-moment-flow.test.ts",
+    "packages/shell/src/services/ads/fullscreen-ad.ts",
+    "packages/shell/src/services/ads/ad-moments.ts",
+    "packages/shell/src/services/ads/ad-moments.test.ts",
+    "packages/shell/src/services/consent/consent-port.ts",
+    "packages/shell/src/services/consent/admob-consent-adapter.ts",
+    "packages/shell/src/services/consent/consent-factory.ts",
+    "packages/shell/src/services/consent/consent-factory.test.ts",
+    "packages/shell/src/services/consent/fake-consent.ts",
+    "packages/shell/src/services/connectivity/connectivity-port.ts",
+    "packages/shell/src/services/connectivity/expo-network-connectivity-adapter.ts",
+    "packages/shell/src/services/connectivity/fake-connectivity.ts",
+    "packages/shell/src/ui/ad-banner-slot.tsx",
+    "packages/tooling/src/ads/refresh-skadnetwork.ts"
+  ]
+}

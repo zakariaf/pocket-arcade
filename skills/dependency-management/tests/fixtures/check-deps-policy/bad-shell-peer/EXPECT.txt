@@ -1,0 +1,2 @@
+shell-peer
+react-native-google-mobile-ads is an app dependency but not a Shell peerDependency

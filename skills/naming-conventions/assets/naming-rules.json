@@ -1,0 +1,24 @@
+{
+  "$comment": "Canonical Pocket Arcade names and name grammars, read by check-file-names.mjs and check-code-names.mjs. The names under canonical are fixed project-wide decisions; never rename them.",
+  "kebabSegment": "^[a-z0-9]+(-[a-z0-9]+)*$",
+  "testId": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)+$",
+  "i18nKey": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){1,4}$",
+  "bundleId": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$",
+  "npmScript": "^[a-z0-9]+(-[a-z0-9]+)*(:[a-z0-9]+(-[a-z0-9]+)*)*$",
+  "envVar": "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$",
+  "testTitle": "^(can|[a-z]+s)\\b",
+  "booleanPrefixes": ["is", "has", "can", "should", "did", "will", "was"],
+  "grabBagNames": ["util", "utils", "helper", "helpers", "misc", "common", "shared", "stuff"],
+  "testSuffixes": ["test", "golden.test", "sim.test", "perf.test"],
+  "languages": ["en", "de", "fa", "ckb"],
+  "canonical": {
+    "ports": ["AdsPort", "PurchasePort", "SaveStore", "SqlDriver", "ClockPort", "ConnectivityPort", "AudioPort", "HapticsPort", "ConsentPort", "ErrorLogPort"],
+    "engineFunctions": ["create", "listMoves", "applyMove", "outcome", "intentToMove", "buildTimeline", "draw", "sampleTimeline", "hitTest", "classifySwipe"],
+    "gameContractType": "GameModule",
+    "npmScripts": ["verify", "check:fast", "format", "format:check", "lint", "typecheck", "test", "test:golden", "test:sim", "test:coverage", "test:mutation", "knip", "audit:network", "audit:privacy", "audit:licenses", "i18n:verify", "e2e:ios", "screenshots:ios", "build:ios:sim", "release:ios", "new-game"],
+    "buildEnv": ["APP_VARIANT", "EXPO_PUBLIC_APP_VARIANT", "ADS_MODE"],
+    "releaseEnv": ["ASC_KEY_ID", "ASC_ISSUER_ID", "APPLE_TEAM_ID"],
+    "shellKeyAreas": ["common", "dialog", "date"]
+  },
+  "toolOwnedFiles": ["package.json", "package-lock.json", "tsconfig.json", "app.config.ts", "game.config.ts", "eslint.config.mjs", "jest.config.js", "jest.sim.config.js", "jest.setup.ts", "babel.config.js", "metro.config.js", "expo-module.config.json", "README.md", "AGENTS.md", "CLAUDE.md"]
+}

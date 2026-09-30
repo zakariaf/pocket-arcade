@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/perk-offer.ts",
+      "find": "  if (!isPerkAvailable(perk)) return 'hidden';\n  if (context.isPremium) return 'free';",
+      "with": "  if (context.isPremium) return 'free';\n  if (!isPerkAvailable(perk)) return 'hidden';"
+    }
+  }
+]

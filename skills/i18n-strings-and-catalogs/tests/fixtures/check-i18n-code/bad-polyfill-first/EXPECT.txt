@@ -1,0 +1,3 @@
+[polyfill-first]
+start-shell.ts
+"expo"

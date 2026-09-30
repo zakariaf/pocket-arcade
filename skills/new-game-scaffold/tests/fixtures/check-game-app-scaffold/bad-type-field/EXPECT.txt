@@ -1,0 +1,2 @@
+[package-json]
+apps have no "type" field

@@ -1,0 +1,2 @@
+[get-task-allow]
+the app is not signed

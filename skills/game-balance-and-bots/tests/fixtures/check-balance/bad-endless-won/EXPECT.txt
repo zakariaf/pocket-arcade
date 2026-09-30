@@ -1,0 +1,3 @@
+[endless-won]
+test/sims/line-siege/balance-bands.json:70
+4 endless greedy d100 runs were won

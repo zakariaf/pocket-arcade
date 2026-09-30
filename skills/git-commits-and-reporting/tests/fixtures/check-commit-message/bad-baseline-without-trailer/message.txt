@@ -1,0 +1,4 @@
+fix(shell): keep the level grid inside the safe area
+
+Spec S8: the grid never runs under the home indicator. New baselines
+show the fixed grid.

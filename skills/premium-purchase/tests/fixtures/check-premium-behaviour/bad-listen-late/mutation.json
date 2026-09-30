@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-store-flow.ts",
+      "find": "  const unsubscribe = deps.port.subscribe((event) => {\n    processPurchaseEvent(deps, event).catch(deps.onError);\n  });\n  await loadStore(deps);",
+      "with": "  await loadStore(deps);\n  const unsubscribe = deps.port.subscribe((event) => {\n    processPurchaseEvent(deps, event).catch(deps.onError);\n  });"
+    }
+  }
+]

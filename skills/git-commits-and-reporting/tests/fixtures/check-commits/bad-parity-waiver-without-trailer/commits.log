@@ -1,0 +1,8 @@
+==> commit 0a05caa7cb98ded5be1c2c4e0d1ceab09770950b
+test(shell): drop the tile 13 press waiver
+
+Spec S8: the mockup no longer draws tile 13 mid-press.
+
+==> files
+
+parity/waivers.json

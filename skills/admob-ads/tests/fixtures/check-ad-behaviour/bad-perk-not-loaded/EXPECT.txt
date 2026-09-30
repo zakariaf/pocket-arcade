@@ -1,0 +1,2 @@
+[perk-rules]
+hint, no free hints, nothing loaded

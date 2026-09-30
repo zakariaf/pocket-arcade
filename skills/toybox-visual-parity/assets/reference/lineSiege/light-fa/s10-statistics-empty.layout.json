@@ -1,0 +1,42 @@
+{
+"version":1,
+"frame":"s10-statistics-empty",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S10/empty"
+],
+"root":"stats.screen",
+"game":"lineSiege",
+"theme":"light",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s10-statistics-empty.png",
+"elements":[
+{"testID":"stats.screen","screen":"S10/empty","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 آمار هنوز آماری نیست یک مرحله بازی کنید تا آمارتان اینجا دیده شود. یک مرحله بازی کنید فقط روی همین گوشی ذخیره می‌شود. تبلیغ ۳۲۰ × ۵۰","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"stats.top-bar","screen":"S10/empty","role":"none","component":"TopBar","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":62,"w":402,"h":66},"box":{"w":402,"h":66,"rotate":0},"text":"آمار","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"stats.top-bar.back-button","screen":"S10/empty","role":"button","component":"IconButton","kind":null,"checks":["bounds","fill","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":true,"state":null,"when":null,"count":1,"rect":{"x":338,"y":69,"w":48,"h":48},"box":{"w":48,"h":48,"rotate":0},"text":"","aria":"بازگشت","style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"12px","shadow":"rgb(29, 27, 58) 0px 4px 0px 0px","outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"stats.top-bar.title","screen":"S10/empty","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":16,"y":73.42,"w":310,"h":39.14},"box":{"w":310,"h":39,"rotate":0},"text":"آمار","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 27px/39.15px Vazirmatn"}},
+{"testID":"stats.empty-state","screen":"S10/empty","role":"none","component":"View","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":134,"w":362,"h":626},"box":{"w":362,"h":626,"rotate":0},"text":"هنوز آماری نیست یک مرحله بازی کنید تا آمارتان اینجا دیده شود. یک مرحله بازی کنید فقط روی همین گوشی ذخیره می‌شود.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"stats.empty-state.picture","screen":"S10/empty","role":"none","component":"Picture","kind":"190 x 150","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"stats.screen","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":192,"y":258.34,"w":190,"h":150},"box":{"w":190,"h":150,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"stats.empty-state.title","screen":"S10/empty","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":173.14,"y":422.34,"w":208.86,"h":43.5},"box":{"w":209,"h":44,"rotate":0},"text":"هنوز آماری نیست","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 30px/43.5px Vazirmatn"}},
+{"testID":"stats.empty-state.body","screen":"S10/empty","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":61.83,"y":479.84,"w":320.17,"h":27},"box":{"w":320,"h":27,"rotate":0},"text":"یک مرحله بازی کنید تا آمارتان اینجا دیده شود.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/27px Vazirmatn"}},
+{"testID":"stats.play-button","screen":"S10/empty","role":"button","component":"Button","kind":"primary hero, play cap","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":520.84,"w":362,"h":80},"box":{"w":362,"h":80,"rotate":0},"text":"یک مرحله بازی کنید","aria":null,"style":{"fill":"#FF6B4A","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 6px 0px 0px","outline":null,"font":"700 25px/36.25px Vazirmatn"}},
+{"testID":"stats.local-note","screen":"S10/empty","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":190.17,"y":614.84,"w":191.83,"h":20.8},"box":{"w":192,"h":21,"rotate":0},"text":"فقط روی همین گوشی ذخیره می‌شود.","aria":null,"style":{"fill":null,"color":"#43406A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 13px/20.8px Vazirmatn"}},
+{"testID":"stats.banner-ad","screen":"S10/empty","role":"none","component":"AdBannerSlot","kind":null,"checks":["bounds"],"mask":true,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":774,"w":402,"h":66},"box":{"w":402,"h":66,"rotate":0},"text":"تبلیغ ۳۲۰ × ۵۰","aria":null,"style":{"fill":"#E6E9ED","color":"#1D1B3A","border":"2px dashed #8D949E","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}}
+],
+"texts":[
+{"text":"آمار","x":287.14,"y":71.42,"w":38.86,"h":43,"owner":"stats.top-bar.title","font":"700 27px Vazirmatn"},
+{"text":"هنوز آماری نیست","x":173.14,"y":420.34,"w":208.86,"h":47,"owner":"stats.empty-state.title","font":"700 30px Vazirmatn"},
+{"text":"یک مرحله بازی کنید تا آمارتان اینجا دیده شود.","x":61.83,"y":478.84,"w":320.17,"h":28,"owner":"stats.empty-state.body","font":"400 18px Vazirmatn"},
+{"text":"یک مرحله بازی کنید","x":112.52,"y":540.72,"w":194.48,"h":39,"owner":"stats.play-button","font":"700 25px Vazirmatn"},
+{"text":"فقط روی همین گوشی ذخیره می‌شود.","x":190.17,"y":614.84,"w":191.83,"h":20,"owner":"stats.local-note","font":"400 13px Vazirmatn"},
+{"text":"تبلیغ","x":326.89,"y":788,"w":22.11,"h":17,"owner":"stats.banner-ad","font":"700 11px Vazirmatn"},
+{"text":"۳۲۰ × ۵۰","x":180.27,"y":800,"w":11.39,"h":14,"owner":"stats.banner-ad","font":"400 12px Rubik"},
+{"text":"۳۲۰ × ۵۰","x":191.66,"y":800,"w":12.59,"h":14,"owner":"stats.banner-ad","font":"400 12px Rubik"},
+{"text":"۳۲۰ × ۵۰","x":204.25,"y":800,"w":17.5,"h":14,"owner":"stats.banner-ad","font":"400 12px Rubik"}
+]
+}

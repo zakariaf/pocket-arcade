@@ -1,0 +1,4 @@
+{
+  "demo-game.hud.pieces-left": "{piecesCount, plural, one {# piece left} other {# pieces left}}",
+  "demo-game.name": "Demo Game"
+}

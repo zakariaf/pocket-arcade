@@ -1,0 +1,2 @@
+[directional-icons]
+"chevron" points along the reading direction

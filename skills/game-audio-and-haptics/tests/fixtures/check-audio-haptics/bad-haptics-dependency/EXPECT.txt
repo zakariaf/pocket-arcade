@@ -1,0 +1,3 @@
+[haptics-dependency]
+apps/demo-game/package.json:1
+does not list expo-haptics

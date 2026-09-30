@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-transitions.ts",
+      "find": "    return { ...state, isPremium: true, didJustPurchase: false, didJustRestore: true, flow };",
+      "with": "    return { ...state, isPremium: true, didJustRestore: true, flow };"
+    }
+  }
+]

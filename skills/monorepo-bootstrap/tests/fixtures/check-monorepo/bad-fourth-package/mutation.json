@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/ui/package.json",
+      "content": "{ \"name\": \"@e07/ui\", \"private\": true }\n"
+    }
+  }
+]

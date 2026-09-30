@@ -1,0 +1,2 @@
+ui-boundary
+ui/ imports @e07/shell/stores/settings-store.ts

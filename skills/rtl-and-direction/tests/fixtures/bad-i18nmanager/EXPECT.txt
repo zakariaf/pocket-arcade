@@ -1,0 +1,2 @@
+[i18nmanager]
+value-row.tsx

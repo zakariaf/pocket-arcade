@@ -1,0 +1,3 @@
+[sim-safety]
+packages/tooling/src/ios/make-parity-sim.sh:3
+creates a simulator named "Parity Phone"

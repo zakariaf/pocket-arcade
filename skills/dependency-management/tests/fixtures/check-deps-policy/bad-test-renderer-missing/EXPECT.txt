@@ -1,0 +1,2 @@
+companion
+@testing-library/react-native 14.0.1 is installed but its companion test-renderer 1.2.0 is not

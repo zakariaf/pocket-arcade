@@ -1,0 +1,2 @@
+[L11 sentence-shape]
+starts/ends with space or joiner

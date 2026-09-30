@@ -1,0 +1,3 @@
+[catalog-keys]
+packages/shell/src/i18n/catalogs/fa.json
+"premium.pending"

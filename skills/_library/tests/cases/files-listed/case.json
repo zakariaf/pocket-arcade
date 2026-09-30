@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "files-listed"
+  ],
+  "sync": true
+}

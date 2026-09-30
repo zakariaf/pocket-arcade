@@ -1,0 +1,2 @@
+[expect-rule-id]
+tests/fixtures/bad-default/EXPECT.txt

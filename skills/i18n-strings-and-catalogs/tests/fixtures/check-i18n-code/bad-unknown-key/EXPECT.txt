@@ -1,0 +1,3 @@
+[unknown-key]
+"home.titel"
+home-header.tsx:17

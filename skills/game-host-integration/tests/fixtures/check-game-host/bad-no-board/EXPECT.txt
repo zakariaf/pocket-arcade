@@ -1,0 +1,2 @@
+[game-screen-wiring]
+does not render the board host

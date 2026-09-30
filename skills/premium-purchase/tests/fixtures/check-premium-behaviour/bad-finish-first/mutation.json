@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "  deps.persistPremium({ isPremium: true }); // 1. the save is written (sync) ...\n  deps.dispatch({ type: 'premium-granted' }); // 2. ads vanish everywhere at once ...\n  await finishQuietly(deps, tx); // 3. ... and only then StoreKit may forget the transaction.",
+      "with": "  await finishQuietly(deps, tx);\n  deps.persistPremium({ isPremium: true });\n  deps.dispatch({ type: 'premium-granted' });"
+    }
+  }
+]

@@ -1,0 +1,3 @@
+missing-testid
+reset-progress-dialog.card
+reset-progress-dialog.title

@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/line-siege/metro.config.js", "find": "config.cacheVersion = `app-variant-${process.env.EXPO_PUBLIC_APP_VARIANT ?? 'test'}`;\n", "with": "" } }]

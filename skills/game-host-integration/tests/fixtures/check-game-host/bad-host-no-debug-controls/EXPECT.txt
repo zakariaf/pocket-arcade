@@ -1,0 +1,2 @@
+[debug-controls]
+the game host has no debugControls()

@@ -1,0 +1,4 @@
+row-dispatch
+no Settings row dispatches 'set-sound'
+toggle-feedback
+SKIP packages/shell/src/screens/settings/language [row-dispatch] S2 and S11a not in shell-slice.json

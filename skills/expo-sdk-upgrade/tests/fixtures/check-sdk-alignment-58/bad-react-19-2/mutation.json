@@ -1,0 +1,22 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "react"
+      ],
+      "value": "19.2.3"
+    }
+  },
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "react"
+      ],
+      "value": "19.2.3"
+    }
+  }
+]

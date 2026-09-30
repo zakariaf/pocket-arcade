@@ -1,0 +1,3 @@
+[testing-examples]
+examples.lose() is playing, expected lost
+apps/tap-flip/src/testing/tap-flip-testing.ts

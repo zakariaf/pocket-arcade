@@ -1,0 +1,14 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 1170,
+ "source": "self-test fixture",
+ "note": "Real capture of S11 at scrollY 1170 (the image is the make-sheet-scrolled fixture's). The app renders the copy deck's about.version with one space; since the mockup fix of 2026-09-30 (the version line has no 6 px flex gap any more) the re-rendered reference draws the same, so settings.version passes bounds and text-ink with no waiver.",
+ "app": "../../../make-sheet-scrolled/good/app.png",
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s11-settings.png",
+  "layout": "../../reference/lineSiege/light-en/s11-settings.layout.json"
+ }
+}

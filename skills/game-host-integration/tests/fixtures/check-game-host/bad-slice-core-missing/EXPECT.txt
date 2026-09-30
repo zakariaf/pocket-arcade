@@ -1,0 +1,2 @@
+[prerequisite-missing]
+packages/shell/src/screens/result/result-model.ts

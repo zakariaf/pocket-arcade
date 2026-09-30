@@ -1,0 +1,2 @@
+[kit-file-missing]
+packages/game-kit/src/contract/game-module.ts

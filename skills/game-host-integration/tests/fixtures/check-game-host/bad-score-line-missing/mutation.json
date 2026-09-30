@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/result-model-of.ts",
+      "find": "    bestScore: summary.levelBestScore ?? summary.score,\n",
+      "with": ""
+    }
+  }
+]

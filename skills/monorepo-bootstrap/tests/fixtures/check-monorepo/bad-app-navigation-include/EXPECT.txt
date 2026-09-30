@@ -1,0 +1,2 @@
+apps/line-siege/tsconfig.json:1 [tsconfig-workspace] include lacks ../../packages/shell/src/navigation/react-navigation.d.ts
+TS2769

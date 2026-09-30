@@ -1,0 +1,2 @@
+[upload-wait]
+the altool upload does not pass --wait

@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "<ConsentMoment isHeld={false} debug={null}>",
+      "with": "<>"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "</ConsentMoment>",
+      "with": "</>"
+    }
+  }
+]

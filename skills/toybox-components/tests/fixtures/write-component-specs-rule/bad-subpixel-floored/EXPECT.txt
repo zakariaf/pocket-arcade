@@ -1,0 +1,2 @@
+[specs-mismatch]
+hairline.border is 0, the as-rendered spec is 0.5

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-policy.ts",
+      "find": "    elapsed >= config.minMsBetweenInterstitials &&",
+      "with": "    elapsed >= config.minMsBetweenInterstitials ||"
+    }
+  }
+]

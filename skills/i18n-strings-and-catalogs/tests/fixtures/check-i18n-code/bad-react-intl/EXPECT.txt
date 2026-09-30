@@ -1,0 +1,2 @@
+[react-intl-import]
+home-header.tsx:2

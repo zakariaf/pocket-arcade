@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/shell/src/game-host/game-host.ts", "find": "  if (saved !== null && resumeSession(game, saved, deps.errorLog) === null) {\n    deps.save.update((doc) => ({ ...doc, run: null }));\n  }\n", "with": "  if (saved !== null) deps.errorLog.record('save', new Error('boot'));\n" } }]

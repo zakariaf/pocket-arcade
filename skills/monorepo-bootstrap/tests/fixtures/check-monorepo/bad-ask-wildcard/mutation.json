@@ -1,0 +1,4 @@
+[
+  { "replace": { "file": ".claude/settings.json", "find": "\"Edit(/apps/**/tsconfig*.json)\"", "with": "\"Edit(**/tsconfig*.json)\"" } },
+  { "replace": { "file": "quality-gates.json", "find": "\"Edit(/apps/**/tsconfig*.json)\"", "with": "\"Edit(**/tsconfig*.json)\"" } }
+]

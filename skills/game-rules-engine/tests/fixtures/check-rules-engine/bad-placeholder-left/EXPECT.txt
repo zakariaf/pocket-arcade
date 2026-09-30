@@ -1,0 +1,2 @@
+[placeholder-left]
+__GAME_PASCAL__

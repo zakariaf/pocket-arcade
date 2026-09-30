@@ -1,0 +1,2 @@
+The good case validates the skill's own shipped assets: list-screen.mjs --all with the default
+map, copy deck and reference images (see scripts/selftest.mjs).

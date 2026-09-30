@@ -1,0 +1,2 @@
+mode-card.tsx:3 [press-outside-raised] RectButton from react-native-gesture-handler
+mode-card.tsx:10 [pressed-opacity] the pressed state fades with opacity

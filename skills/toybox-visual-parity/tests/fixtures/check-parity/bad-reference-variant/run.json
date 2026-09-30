@@ -1,0 +1,9 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "Captured against the base reference, but the app's facts (no music) select s11-settings--no-music."
+}

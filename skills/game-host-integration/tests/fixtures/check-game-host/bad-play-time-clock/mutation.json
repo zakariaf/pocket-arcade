@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/session-controller.ts",
+      "find": "createPlayClock(deps.nowMs)",
+      "with": "createPlayClock(() => 0)"
+    }
+  }
+]

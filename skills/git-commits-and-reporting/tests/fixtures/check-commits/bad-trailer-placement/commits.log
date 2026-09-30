@@ -1,0 +1,10 @@
+==> commit 5d5e524569c7e1aabd8d8cc848503f0f66c33fd8
+test(game-kit): freeze the version 2 save fixture
+
+Gate-Change: new frozen fixture for save version 2
+
+The migration test reads it.
+
+==> files
+
+packages/game-kit/src/fixtures/save-v2.full.json

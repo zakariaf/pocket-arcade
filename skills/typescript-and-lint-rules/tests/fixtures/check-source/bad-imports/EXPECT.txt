@@ -1,0 +1,3 @@
+apps/tile-drop/src/board/draw-board.ts:2 [no-parent-import]
+apps/tile-drop/src/board/draw-board.ts:3 [import-extension] "@demo/game-kit/rng/sfc32" has no file extension
+apps/tile-drop/src/board/draw-board.ts:4 [import-extension] "./to-view" has no file extension

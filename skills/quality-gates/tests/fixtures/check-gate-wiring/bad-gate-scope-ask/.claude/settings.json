@@ -1,0 +1,60 @@
+{
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  },
+  "permissions": {
+    "deny": [
+      "Read(~/.appstoreconnect/**)",
+      "Read(**/*.p8)",
+      "Read(**/AuthKey_*)",
+      "Read(**/*.p12)",
+      "Read(**/*.mobileprovision)",
+      "Bash(git commit *--no-verify*)",
+      "Bash(git commit -n *)",
+      "Bash(git push *--no-verify*)"
+    ],
+    "ask": [
+      "Edit(/eslint.config.mjs)",
+      "Edit(/quality-gates.json)",
+      "Edit(/lefthook.yml)",
+      "Edit(/knip.json)",
+      "Edit(/.prettierrc.json)",
+      "Edit(/.npmrc)",
+      "Edit(/jest.config.js)",
+      "Edit(/jest.sim.config.js)",
+      "Edit(/stryker.config.json)",
+      "Edit(**/tsconfig*.json)",
+      "Edit(/.claude/settings.json)"
+    ],
+    "allow": [
+      "Bash(node */.claude/skills/*/scripts/*)",
+      "Bash(node skills/*/scripts/*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/packages/tooling/src/hooks/after-edit.ts\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$(git rev-parse --show-toplevel)\" && npm run -s check:fast 1>&2 || exit 2",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  },
+  "skillListingBudgetFraction": 0.04
+}

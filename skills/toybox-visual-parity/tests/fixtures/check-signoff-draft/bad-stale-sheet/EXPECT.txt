@@ -1,0 +1,2 @@
+[stale-sheet] run: the sheets were made before the latest check
+copied 2 recorded differences from the entry of 2026-09-28

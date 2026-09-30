@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/home/home-screen.tsx",
+      "find": "animationType=\"fade\"",
+      "with": "animated"
+    }
+  }
+]

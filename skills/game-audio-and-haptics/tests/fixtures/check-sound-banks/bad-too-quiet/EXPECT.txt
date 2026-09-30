@@ -1,0 +1,3 @@
+[recipe-quality]
+sound "flip" peak
+below 0.05

@@ -1,0 +1,3 @@
+catalog-missing-key
+uses "line-siege.lose-reason", missing in en, de, fa, ckb
+check-game-app: 1 apps checked, 1 problems

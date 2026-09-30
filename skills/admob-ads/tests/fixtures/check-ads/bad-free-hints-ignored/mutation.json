@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/game/use-hint-offer.ts",
+      "content": "// packages/shell/src/screens/game/use-hint-offer.ts (planted: the config's freePerDay ignored)\nimport { selectFreeHintsLeft } from '@e07/shell/stores/progress-selectors.ts';\nimport { useProgressStore } from '@e07/shell/stores/progress-store.ts';\n\nexport function useFreeHints(today: string): number {\n  return useProgressStore((state) => selectFreeHintsLeft(state, today));\n}\n"
+    }
+  }
+]

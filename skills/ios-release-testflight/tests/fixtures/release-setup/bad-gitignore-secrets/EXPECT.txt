@@ -1,0 +1,3 @@
+[gitignore-secrets]
+does not ignore *.p8
+does not ignore AuthKey_*

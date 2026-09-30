@@ -1,0 +1,2 @@
+[fullscreen-lifecycle]
+the game resumes even when showing throws

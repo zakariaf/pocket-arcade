@@ -1,0 +1,4 @@
+SKIP packages/shell/src/app [gesture-root] no Shell app
+touch-target-test
+apps/tap-flip/src/board/hit-targets.test.ts
+RESULT: FAIL (1 problems)

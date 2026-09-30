@@ -1,0 +1,2 @@
+[difficulty-curve]
+level 61 difficulty 10

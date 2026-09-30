@@ -1,0 +1,2 @@
+held-back
+eslint@10.0.0 crosses a held-back major

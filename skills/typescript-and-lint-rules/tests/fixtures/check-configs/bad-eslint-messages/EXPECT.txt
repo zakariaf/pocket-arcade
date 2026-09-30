@@ -1,0 +1,2 @@
+eslint.config.mjs [eslint-required] missing the Date.now entry with its exact message 'Inject ClockPort (spec S15 set-date).' (compared verbatim by the guardrail) [guardrail-message-date-now]
+[eslint-required] missing 'skills/**' in globalIgnores

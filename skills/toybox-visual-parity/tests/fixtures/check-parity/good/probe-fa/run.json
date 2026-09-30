@@ -1,0 +1,12 @@
+{
+ "frame": "p1-probe",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "reference": {
+  "image": "../../reference/probe-fa.png",
+  "layout": "../../reference/probe-fa.layout.json"
+ }
+}

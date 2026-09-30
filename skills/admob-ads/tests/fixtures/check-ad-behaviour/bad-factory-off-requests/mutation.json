@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ads-factory.ts",
+      "find": "if (extra.adsMode === 'off') {",
+      "with": "if (extra.adsMode === 'off' && extra.adUnits === null) {"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "__GAME_ID__.board.summary": "{lit, plural, one {# cell lit} other {# cells lit}}",
+  "__GAME_ID__.continue.more-moves": "Get more moves",
+  "__GAME_ID__.goal": "Turn every light off.",
+  "__GAME_ID__.how-to-play.step-1": "Tap a cell: it and its neighbours flip.",
+  "__GAME_ID__.how-to-play.step-2": "A tap in the middle clears a plus.",
+  "__GAME_ID__.how-to-play.step-3": "Tapped the wrong cell? Undo it.",
+  "__GAME_ID__.hud.moves": "Moves {moves, number} / {maxMoves, number}",
+  "__GAME_ID__.lose.__LOSE_SLUG__": "No moves left",
+  "__GAME_ID__.pack-name.1": "First sparks",
+  "__GAME_ID__.pack-name.2": "Night shift",
+  "__GAME_ID__.pack-name.3": "Lights out",
+  "__GAME_ID__.stats.biggest-flip": "Biggest flip",
+  "__GAME_ID__.stats.boards-cleared": "Boards cleared",
+  "__GAME_ID__.stats.cells-flipped": "Cells flipped",
+  "__GAME_ID__.tagline": "Tap. Flip. Lights out.",
+  "__GAME_ID__.tutorial.step-1": "Tap the corner.",
+  "__GAME_ID__.tutorial.step-2": "Now tap the middle!",
+  "__GAME_ID__.win-title": "All lights out!"
+}

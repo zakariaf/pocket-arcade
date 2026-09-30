@@ -1,0 +1,2 @@
+[network-guard-import]
+packages/shell/src/app/start-shell.ts:2

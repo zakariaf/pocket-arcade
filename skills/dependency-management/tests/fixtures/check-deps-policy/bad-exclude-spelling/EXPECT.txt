@@ -1,0 +1,2 @@
+npmrc-exclude
+exclude knip is not inside a dated exclude block

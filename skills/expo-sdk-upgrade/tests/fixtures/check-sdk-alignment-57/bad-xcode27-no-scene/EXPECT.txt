@@ -1,0 +1,3 @@
+scene-support
+packages/tooling/src/ios/toolchain.ts
+Xcode 27.0 with SDK 57 needs expo-build-properties ios.enableSceneSupport: true

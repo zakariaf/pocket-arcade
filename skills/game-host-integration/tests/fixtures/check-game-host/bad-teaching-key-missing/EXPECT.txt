@@ -1,0 +1,3 @@
+[teaching-keys]
+apps/tap-flip/src/i18n/de.json
+tap-flip.tutorial.step-2

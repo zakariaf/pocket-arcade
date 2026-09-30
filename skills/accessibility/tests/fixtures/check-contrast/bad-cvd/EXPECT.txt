@@ -1,0 +1,3 @@
+[cvd-separation]
+protanopia
+0.007

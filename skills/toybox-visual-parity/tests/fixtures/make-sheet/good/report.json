@@ -1,0 +1,357 @@
+{
+ "version": 1,
+ "result": "FAIL",
+ "frame": "s4-home",
+ "kind": "phone",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "boundsSource": "maestro",
+ "createdAt": "2026-09-29T13:48:19.665Z",
+ "tolerances": {
+  "boundsPt": 2,
+  "fillChannelDelta": 3,
+  "borderPt": 0.5,
+  "inkSizePt": 1,
+  "inkCentrePt": 2,
+  "layoutNoisePt": 0.9,
+  "blobThicknessPt": 1.5,
+  "blobMinPixels": 24,
+  "alignSearchPx": 6,
+  "pixelmatchThreshold": 0.1,
+  "textPadPt": 2,
+  "inkPadPt": 2,
+  "inkDistance": 96,
+  "inkSearchPx": 12,
+  "anchorReachPt": [
+   12,
+   36
+  ],
+  "anchorEdgeLuma": 24,
+  "anchorMinEdgePt": 3,
+  "fillInsetPt": 2
+ },
+ "reference": {
+  "image": "../../check-parity/reference/lineSiege/light-en/s4-home.png",
+  "imageSha256": "dee77f6137fcedd6d56e3d3876b3d38b2cbfb6b3b033cd5e9a673ce2fe7d403d",
+  "layoutSha256": "f660336371984af97ed4222d94d64f1778b68b9ca8e1d728620fef391d8396a2"
+ },
+ "app": {
+  "imageSha256": "2678001aa5a22a3c828fbb4e03bb57bbcc6a92ea36cc859eaf474253209ed7b4",
+  "boundsSha256": "c8ce90f4d5101fc0ca325cd3783089ce6d0000b95be03fdca0919a8a7ace7311"
+ },
+ "checked": {
+  "bounds": 17,
+  "text": 9,
+  "fill": 11,
+  "border": 9,
+  "text-ink": 16,
+  "structure": 11
+ },
+ "coverage": [
+  "home.banner-ad",
+  "home.brand-lock",
+  "home.daily-card",
+  "home.daily-card.date",
+  "home.daily-card.play-button",
+  "home.daily-card.streak",
+  "home.daily-card.title",
+  "home.endless-card",
+  "home.game-name",
+  "home.how-to-play-button",
+  "home.levels-button",
+  "home.play-button",
+  "home.premium-button",
+  "home.screen",
+  "home.settings-button",
+  "home.stats-button",
+  "home.top-bar"
+ ],
+ "offscreen": [],
+ "stats": {
+  "scrollShiftPt": 0,
+  "textInk": [
+   {
+    "owner": "home.game-name",
+    "text": "Line Siege",
+    "font": "400 28px Lilita One",
+    "role": "Lilita One 28",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.3
+    }
+   },
+   {
+    "owner": "home.play-button",
+    "text": "Continue – Level 12",
+    "font": "400 25px Lilita One",
+    "role": "Lilita One 25",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0
+    }
+   },
+   {
+    "owner": "home.daily-card.title",
+    "text": "Daily challenge",
+    "font": "400 21px Lilita One",
+    "role": "Lilita One 21",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "Sunday",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.09
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": ", 27",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.09
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "Sep",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.09
+    }
+   },
+   {
+    "owner": "home.daily-card.streak",
+    "text": "5 day streak",
+    "font": "400 14px Lilita One",
+    "role": "Lilita One 14",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.42,
+     "dy": -0.07
+    }
+   },
+   {
+    "owner": "home.daily-card.play-button",
+    "text": "Play today’s challenge",
+    "font": "700 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": -0.47
+    }
+   },
+   {
+    "owner": "home.endless-card.label",
+    "text": "Endless – Best 4,210",
+    "font": "700 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": -0.47
+    }
+   },
+   {
+    "owner": "home.endless-card.description",
+    "text": "Play until you lose, then beat your best",
+    "font": "400 14px Rubik",
+    "role": "Rubik 14",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": -0.47
+    }
+   },
+   {
+    "owner": "home.endless-card.description",
+    "text": "Play until you lose, then beat your best",
+    "font": "400 14px Rubik",
+    "role": "Rubik 14",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": -0.47
+    }
+   },
+   {
+    "owner": "home.levels-button",
+    "text": "Levels",
+    "font": "700 15px Rubik",
+    "role": "Rubik 15",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.16
+    }
+   },
+   {
+    "owner": "home.stats-button",
+    "text": "Statistics",
+    "font": "700 15px Rubik",
+    "role": "Rubik 15",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.16
+    }
+   },
+   {
+    "owner": "home.how-to-play-button",
+    "text": "How to play",
+    "font": "700 15px Rubik",
+    "role": "Rubik 15",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.16
+    }
+   },
+   {
+    "owner": "home.premium-button.label",
+    "text": "Premium",
+    "font": "700 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.16
+    }
+   },
+   {
+    "owner": "home.premium-button.description",
+    "text": "Remove ads",
+    "font": "400 14px Rubik",
+    "role": "Rubik 14",
+    "dx": 0,
+    "dy": 0,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 0.16
+    }
+   }
+  ],
+  "pixelDiffPercent": 0.06
+ },
+ "problems": [
+  {
+   "rule": "structure",
+   "testID": "home.settings-button",
+   "message": "home.settings-button: shape differs: a 2.7 pt thick difference (21.3 x 21.3 pt) at +13.3,+13.3 from the element's top-left (2 blobs; border, radius, hard shadow, icon, picture or spacing)",
+   "fix": "Open crops/<testID>.png from make-sheet.mjs and match the border, radius, hard shadow, icon path or spacing.",
+   "rect": {
+    "x": 338,
+    "y": 69,
+    "w": 48,
+    "h": 48
+   },
+   "blob": {
+    "n": 1459,
+    "thick": 2.6666666666666665,
+    "x": 351.3333333333333,
+    "y": 82.33333333333333,
+    "w": 21.333333333333332,
+    "h": 21.333333333333332
+   },
+   "viewRect": {
+    "x": 338,
+    "y": 69,
+    "w": 48,
+    "h": 48
+   }
+  }
+ ],
+ "waived": [],
+ "notes": [
+  "home.logo: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.screen",
+  "home.daily-card.icon: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.daily-card",
+  "home.endless-card.icon: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.endless-card.label: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.endless-card.description: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.premium-button.icon: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button",
+  "home.premium-button.label: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button",
+  "home.premium-button.description: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button"
+ ]
+}

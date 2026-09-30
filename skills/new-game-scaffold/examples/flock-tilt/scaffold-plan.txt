@@ -1,0 +1,23 @@
+new  apps/flock-tilt/package.json
+new  apps/flock-tilt/tsconfig.json
+new  apps/flock-tilt/metro.config.js
+new  apps/flock-tilt/app.config.ts
+new  apps/flock-tilt/game.config.ts
+new  apps/flock-tilt/index.ts
+new  apps/flock-tilt/.gitignore
+new  apps/flock-tilt/src/i18n/en.json
+new  apps/flock-tilt/src/i18n/de.json
+new  apps/flock-tilt/src/i18n/fa.json
+new  apps/flock-tilt/src/i18n/ckb.json
+new  apps/flock-tilt/assets/fonts/LilitaOne.ttf
+new  apps/flock-tilt/assets/fonts/Rubik-Regular.ttf
+new  apps/flock-tilt/assets/fonts/Rubik-Bold.ttf
+new  apps/flock-tilt/assets/fonts/Vazirmatn-Regular.ttf
+new  apps/flock-tilt/assets/fonts/Vazirmatn-Bold.ttf
+new  apps/flock-tilt/assets/fonts/LilitaOne-OFL.txt
+new  apps/flock-tilt/assets/fonts/Rubik-OFL.txt
+new  apps/flock-tilt/assets/fonts/Vazirmatn-OFL.txt
+would write 19 new files for flock-tilt (daily on, endless off, hints solver, continue once, lose key flock-tilt.lose.wolf-got-sheep, violence NONE, bundle id com.example.flocktilt - a placeholder until the owner approves one, step G1)
+suggested daily salt for flock-tilt: 0x9c3b (fix it forever in src/levels/flock-tilt-levels.ts)
+scaffold-game: 19 planned files checked, 0 problems
+RESULT: PASS

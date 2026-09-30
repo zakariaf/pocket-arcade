@@ -1,0 +1,1 @@
+play-button.test.tsx:1 [render-with-shell] renders with RNTL render() instead of renderWithShell

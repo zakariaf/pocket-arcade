@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/with-shell.ts",
+      "find": "ios: { bundleIdentifier: 'com.example.demogame',",
+      "with": "ios: { infoPlist: { NSAppTransportSecurity: { NSAllowsArbitraryLoads: true } }, bundleIdentifier: 'com.example.demogame',"
+    }
+  }
+]

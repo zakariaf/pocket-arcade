@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-transitions.ts",
+      "find": "  if (state.flow.kind !== 'purchasing') return state;\n  const price = state.flow.price;",
+      "with": "  const price = 'price' in state.flow && state.flow.price !== null ? state.flow.price : '';"
+    }
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/connectivity-gated-purchase.ts",
+      "find": "    connect: () => (isOnline() ? port.connect() : Promise.resolve(false)),\n",
+      "with": ""
+    }
+  }
+]

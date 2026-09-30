@@ -1,0 +1,3 @@
+[api-key-signing]
+packages/tooling/src/release/import-cert.ts:4
+handles a .p12 or imports a certificate

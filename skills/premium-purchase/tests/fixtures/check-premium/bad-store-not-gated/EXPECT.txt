@@ -1,0 +1,3 @@
+[store-offline]
+packages/shell/src/app/create-purchase-port.ts:8
+without withConnectivity()

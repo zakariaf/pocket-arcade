@@ -1,0 +1,7 @@
+==> commit cb1d0ae1ea5d11b0fe4df3de17618083280534ca
+fix(shell): keep the premium row visible
+Spec S11: the Premium status row stays visible.
+
+==> files
+
+packages/shell/src/bad-blank-line.ts

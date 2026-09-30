@@ -1,0 +1,1 @@
+[capture-size] app.png is 1179 x 2556 px, not the parity device's 1206 x 2622

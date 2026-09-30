@@ -1,0 +1,7 @@
+apps/alpha/package.json:1 [expo-spec] expo-haptics is "~57.0.4", not "~57.0.3"
+(cd apps/alpha && npx expo install expo-haptics@~57.0.3)
+apps/beta/package.json:1 [expo-spec]
+(cd apps/beta && npx expo install expo-haptics@~57.0.3)
+a plain npx expo install writes what Expo's online versions list names today, which can be a patch published that day
+WARN with its due date in check-deps.ts
+[table-version] expo-haptics is "~57.0.4" but the versions table pins "~57.0.3"

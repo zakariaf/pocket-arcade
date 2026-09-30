@@ -1,0 +1,3 @@
+[babel-config]
+babel.config.js:1
+lacks the STRYKER_MUTATOR_WORKER branch

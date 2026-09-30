@@ -1,0 +1,3 @@
+[harness-not-wired]
+packages/shell/src/app/use-reduce-motion.ts
+isParityMotionFrozen

@@ -1,0 +1,2 @@
+[palette-shape]
+board set "colorBlindDark" has other tokens than "light"

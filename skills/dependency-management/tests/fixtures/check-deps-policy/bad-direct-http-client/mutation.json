@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "axios"
+      ],
+      "value": "1.7.0"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[jest-projects]
+projects are [unit], not exactly unit and golden

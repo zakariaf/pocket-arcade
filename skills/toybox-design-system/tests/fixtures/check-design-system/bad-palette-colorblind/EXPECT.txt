@@ -1,0 +1,2 @@
+[palette-colorblind]
+colorBlind.light is not the same object as standard.light

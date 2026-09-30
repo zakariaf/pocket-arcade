@@ -1,0 +1,2 @@
+[skill-name]
+frontmatter name "beta-too" does not match the folder

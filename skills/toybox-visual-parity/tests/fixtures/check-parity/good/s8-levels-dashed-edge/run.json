@@ -1,0 +1,13 @@
+{
+ "frame": "s8-levels",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "S8 with locked tile 14's dashed top edge drawn with another dash phase, as React Native on iOS does. The pre-listed platform waiver (the skill's templates/parity/waivers.json) accepts exactly that structure difference.",
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s8-levels.png",
+  "layout": "../../reference/lineSiege/light-en/s8-levels.layout.json"
+ }
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/ui/status-bar-frame.tsx",
+      "content": "// packages/shell/src/ui/status-bar-frame.tsx\nimport { StatusBar } from 'react-native';\n\nexport function StatusBarFrame(): React.JSX.Element {\n  return <StatusBar barStyle=\"dark-content\" translucent />;\n}\n"
+    }
+  }
+]

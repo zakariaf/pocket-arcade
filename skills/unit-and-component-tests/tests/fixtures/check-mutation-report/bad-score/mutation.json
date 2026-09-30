@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "1.0",
+  "thresholds": {
+    "high": 90,
+    "low": 80,
+    "break": 75
+  },
+  "projectRoot": "/repo",
+  "files": {
+    "apps/demo/src/rules/list-moves.ts": {
+      "language": "typescript",
+      "source": "",
+      "mutants": [
+        {
+          "id": "10",
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "score - points",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 30,
+              "column": 3
+            },
+            "end": {
+              "line": 30,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "11",
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "anchor.col - dx",
+          "status": "Survived",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "12",
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 40,
+              "column": 3
+            },
+            "end": {
+              "line": 40,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "13",
+          "mutatorName": "ConditionalExpression",
+          "replacement": "true",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 44,
+              "column": 3
+            },
+            "end": {
+              "line": 44,
+              "column": 20
+            }
+          }
+        }
+      ]
+    },
+    "packages/game-kit/src/timeline/sample.ts": {
+      "language": "typescript",
+      "source": "",
+      "mutants": [
+        {
+          "id": "20",
+          "mutatorName": "ConditionalExpression",
+          "replacement": "true",
+          "status": "NoCoverage",
+          "static": false,
+          "coveredBy": [],
+          "location": {
+            "start": {
+              "line": 17,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "21",
+          "mutatorName": "ConditionalExpression",
+          "replacement": "false",
+          "status": "NoCoverage",
+          "static": false,
+          "coveredBy": [],
+          "location": {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "22",
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+          "status": "NoCoverage",
+          "static": false,
+          "coveredBy": [],
+          "location": {
+            "start": {
+              "line": 19,
+              "column": 3
+            },
+            "end": {
+              "line": 19,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "23",
+          "mutatorName": "StringLiteral",
+          "replacement": "``",
+          "status": "Survived",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 28,
+              "column": 3
+            },
+            "end": {
+              "line": 28,
+              "column": 20
+            }
+          }
+        }
+      ]
+    }
+  },
+  "testFiles": {},
+  "framework": {
+    "name": "StrykerJS",
+    "version": "10.0.0"
+  }
+}

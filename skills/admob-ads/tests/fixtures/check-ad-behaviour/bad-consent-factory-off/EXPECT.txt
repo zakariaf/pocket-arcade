@@ -1,0 +1,2 @@
+[consent-factory]
+ADS_MODE=off never asks Google UMP

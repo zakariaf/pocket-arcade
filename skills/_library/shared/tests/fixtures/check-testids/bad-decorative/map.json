@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "device": {"name": "iPhone 16 Pro", "pointsWidth": 402, "pointsHeight": 874, "scale": 3, "safeTop": 62, "safeBottom": 34},
+  "defaultRender": {"lang": "en", "theme": "light", "game": "lineSiege"},
+  "screens": [
+    {
+      "id": "S4",
+      "name": "Home",
+      "route": "Home",
+      "presentation": "route",
+      "scopes": ["home"],
+      "variants": ["normal"],
+      "frameSelectors": {"normal": "#pa-screens > .pg-group:nth-child(1) > .pg-shelf > .pg-fig:nth-child(1) > .phone > .scr"},
+      "frameKeys": {"normal": "s4-home"},
+      "variantKinds": {"normal": "phone"},
+      "elements": [
+        {"testID": "home.screen", "role": "none", "component": "ScreenFrame", "text": null, "designSelector": ":scope", "checks": ["bounds", "fill"]},
+        {"testID": "home.game-name", "role": "none", "component": "LogoTile", "text": "games.<id>.name", "designSelector": ":scope > .tb > .brand", "checks": ["bounds", "text"]},
+        {"testID": "home.settings-button", "role": "button", "component": "IconButton", "text": null, "a11yLabel": "common.settings", "designSelector": ":scope > .tb > .ibtn", "checks": ["bounds", "fill", "crop"]},
+        {"testID": "home.settings-button.icon", "role": "none", "component": "Icon", "text": null, "designSelector": ":scope > .tb > .ibtn > svg", "checks": ["crop"], "parent": "home.settings-button", "coveredBy": "home.settings-button"},
+        {"testID": "home.play-button", "role": "button", "component": "Button", "text": "home.play-button.continue", "designSelector": ":scope > .body > .btn.xl", "checks": ["bounds", "text", "fill"]},
+        {"testID": "home.endless-card", "role": "button", "component": "RowButton", "text": null, "designSelector": ":scope > .body > .rowbtn", "checks": ["bounds", "fill"], "requires": "endless"},
+        {"testID": "home.endless-card.label", "role": "text", "component": "AppText", "text": "home.endless-card.label", "designSelector": ":scope > .body > .rowbtn > .lb", "checks": ["crop"], "requires": "endless", "parent": "home.endless-card", "coveredBy": "home.endless-card"},
+        {"testID": "home.levels-button", "role": "button", "component": "KeyButton", "text": "common.levels", "designSelector": ":scope > .body > .key:nth-child(3)", "checks": ["bounds", "text", "fill"]},
+        {"testID": "home.stats-button", "role": "button", "component": "KeyButton", "text": "common.statistics", "designSelector": ":scope > .body > .key:nth-child(4)", "checks": ["bounds", "text", "fill"]}
+      ]
+    },
+    {
+      "id": "S12",
+      "name": "Premium",
+      "route": "Premium",
+      "presentation": "route",
+      "scopes": ["premium"],
+      "variants": ["loading"],
+      "frameSelectors": {"loading": "#pa-screens > .pg-group:nth-child(1) > .pg-states > .mini-w:nth-child(1) > .app.mini"},
+      "frameKeys": {"loading": "s12-loading-price"},
+      "variantKinds": {"loading": "state-card"},
+      "elements": [
+        {"testID": "premium.state.loading", "role": "none", "component": "View", "text": null, "designSelector": ":scope", "checks": []},
+        {"testID": "premium.top-bar.title", "role": "header", "component": "AppText", "text": "common.premium", "designSelector": ":scope > .mini-h", "checks": ["text"]},
+        {"testID": "premium.buy-button", "role": "button", "component": "Button", "text": "premium.loading", "designSelector": ":scope > .btn.xl", "checks": ["text", "fill"], "state": "busy"}
+      ]
+    }
+  ],
+  "notDrawn": [
+    {"screen": "S4", "testID": "home.daily-card.done", "text": null, "reason": "Not drawn in this fixture."}
+  ]
+}

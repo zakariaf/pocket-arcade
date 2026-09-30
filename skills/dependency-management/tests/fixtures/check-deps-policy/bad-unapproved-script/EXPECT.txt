@@ -1,0 +1,2 @@
+install-scripts
+unrs-resolver@1.12.2 has an install script

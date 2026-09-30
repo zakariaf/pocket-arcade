@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/outcome.ts", "find": "reasonKey: 'tap-flip.lose.out-of-moves'", "with": "reasonKey: 'out-of-moves'" } }]

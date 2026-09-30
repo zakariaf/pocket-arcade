@@ -1,0 +1,2 @@
+coverage-scope
+collectCoverageFrom leaves out !<rootDir>/packages/shell/src/app/**

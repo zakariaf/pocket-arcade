@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-store-flow.ts",
+      "find": "export async function buyPremium(",
+      "with": "const FALLBACK_PRICE = '€1.99';\n\nexport async function buyPremium("
+    }
+  }
+]

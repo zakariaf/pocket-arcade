@@ -1,0 +1,4 @@
+packages/shell/src/screens/home/home-buttons.tsx:5 [testid-format] testID "HomePlay"
+packages/shell/src/screens/home/home-buttons.tsx:6 [testid-format] testID "home_play"
+packages/shell/src/screens/home/home-buttons.tsx:8 [testid-format] testID template
+packages/shell/src/screens/home/home-buttons.tsx:11 [testid-index]

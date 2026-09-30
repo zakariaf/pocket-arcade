@@ -1,0 +1,2 @@
+[harness-game-facts]
+hasMusic is false, but apps/line-siege/src/sounds has a sound in category music

@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/src/i18n/en.json", "find": "\"flock-tilt.goal\":", "with": "\"flock-tilt.extra\": \"Only in English\",\n  \"flock-tilt.goal\":" } }]

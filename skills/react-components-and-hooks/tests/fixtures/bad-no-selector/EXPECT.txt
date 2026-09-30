@@ -1,0 +1,2 @@
+store-selector
+useSettingsStore() without a selector

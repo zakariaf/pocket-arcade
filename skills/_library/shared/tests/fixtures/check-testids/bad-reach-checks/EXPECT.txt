@@ -1,0 +1,3 @@
+[element-reach]
+home.settings-button.icon
+"bounds" cannot be checked

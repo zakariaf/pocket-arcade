@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/result/result-banner.tsx",
+      "content": "// fixture: a banner on the Result screen\nimport { AdBannerSlot } from '@e07/shell/ui/ad-banner-slot.tsx';\n\nimport type { ReactNode } from 'react';\n\nexport function ResultBanner({ isBannerAllowed }: { readonly isBannerAllowed: boolean }): ReactNode {\n  return <AdBannerSlot renderBanner={() => null} isAllowed={isBannerAllowed} testID=\"result.banner-ad\" />;\n}\n"
+    }
+  }
+]

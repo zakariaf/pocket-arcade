@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "    writeRunEnd: (write) => {\n      updateAndPublish(save, input.stores(), write);\n    },\n",
+      "with": "    writeRunEnd: (write) => {\n      save.update(write.recipe, { refreshBackup: write.refreshBackup });\n    },\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "import { updateAndPublish } from '@e07/shell/stores/update-and-publish.ts';\n",
+      "with": ""
+    }
+  }
+]

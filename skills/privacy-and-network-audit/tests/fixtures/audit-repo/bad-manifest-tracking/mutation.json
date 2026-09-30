@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/privacy-manifest.ts",
+      "find": "NSPrivacyTracking: false,",
+      "with": "NSPrivacyTracking: true,"
+    }
+  }
+]

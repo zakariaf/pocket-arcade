@@ -1,0 +1,2 @@
+[policy-numbers]
+minMsBetweenInterstitials = 60000

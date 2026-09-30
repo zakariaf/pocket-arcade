@@ -1,0 +1,3 @@
+[store-reloads]
+recheckPremium
+shouldReloadStore

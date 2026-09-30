@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  const hydrated = openSave(input, adapters, clocks);\n",
+      "with": ""
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  stores = createShellStores(hydrated.save);\n",
+      "with": "  const hydrated = openSave(input, adapters, clocks);\n  stores = createShellStores(hydrated.save);\n"
+    }
+  }
+]

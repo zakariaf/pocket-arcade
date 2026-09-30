@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/ads-config.ts",
+      "find": "iosAppId: isLive ? ids.ios.appId : GOOGLE_SAMPLE_APP_IDS.ios,",
+      "with": "iosAppId: ids.ios.appId,"
+    }
+  }
+]

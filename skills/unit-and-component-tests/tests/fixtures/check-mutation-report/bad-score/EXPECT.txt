@@ -1,0 +1,2 @@
+[mutation-score] mutation score 37.5% is below the break threshold 75%
+note packages/game-kit/src/timeline/sample.ts:17 1 survived, 3 without coverage

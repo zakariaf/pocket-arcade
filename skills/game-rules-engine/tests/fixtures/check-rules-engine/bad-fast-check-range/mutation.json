@@ -1,0 +1,1 @@
+[{ "replace": { "file": "package.json", "find": "\"fast-check\": \"4.10.2\"", "with": "\"fast-check\": \"^4.10.2\"" } }]

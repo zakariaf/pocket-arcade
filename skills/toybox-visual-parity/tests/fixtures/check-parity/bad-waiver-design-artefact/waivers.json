@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s8-levels",
+   "testID": "levels.level-tile.13",
+   "rule": "bounds",
+   "class": "design-artefact",
+   "reason": "The mockup draws tile 13 mid-press; the app shows it at rest with its focus ring.",
+   "reportedToOwner": "2026-09-30"
+  }
+ ]
+}

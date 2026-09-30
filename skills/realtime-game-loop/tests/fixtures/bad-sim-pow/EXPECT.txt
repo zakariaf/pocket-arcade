@@ -1,0 +1,2 @@
+determinism
+uses ** (Math.pow)

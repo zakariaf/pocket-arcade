@@ -1,0 +1,2 @@
+[sim-config]
+testEnvironment is undefined, not "node"

@@ -1,0 +1,3 @@
+[score-line]
+packages/shell/src/game-host/result-model-of.ts
+no bestScore from summary.levelBestScore

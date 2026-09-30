@@ -1,0 +1,2 @@
+[storekit-artefact]
+Premium.storekit

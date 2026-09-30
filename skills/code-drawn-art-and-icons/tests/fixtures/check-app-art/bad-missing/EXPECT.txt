@@ -1,0 +1,2 @@
+[art-missing]
+apps/demo-game/assets/generated/icon-tinted.png

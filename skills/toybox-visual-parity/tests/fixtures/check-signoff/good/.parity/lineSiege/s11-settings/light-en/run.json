@@ -1,0 +1,18 @@
+{
+ "version": 1,
+ "frame": "s11-settings",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "bundleId": "com.example.linesiege.test",
+ "simulator": {
+  "name": "e07-parity",
+  "udid": "00000000-0000-0000-0000-000000000000",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
+ },
+ "launchArgs": [],
+ "capturedAt": "2026-09-28T12:00:00.000Z",
+ "appSha256": "45629e49e79f888b6f6807f97f6bfe4058fa4318e965ae5e925eddda03e06da0"
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "jest.setup.ts",
+    "__mocks__/**/*",
+    "test/**/*",
+    "apps/*/app.config.ts",
+    "packages/shell/src/config/**/*",
+    "packages/shell/plugins/**/*"
+  ]
+}

@@ -1,0 +1,2 @@
+[ad-app-id]
+not the game's live AdMob app ID

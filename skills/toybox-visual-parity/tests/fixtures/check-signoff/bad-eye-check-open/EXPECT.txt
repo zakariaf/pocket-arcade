@@ -1,0 +1,1 @@
+[eye-check-open] s4-home light-en: .parity/lineSiege/s4-home/light-en: eye check "icons" is "open"

@@ -1,0 +1,3 @@
+[free-hints-config]
+packages/shell/src/screens/game/use-hint-offer.ts:6
+ignores game.config hints.freePerDay

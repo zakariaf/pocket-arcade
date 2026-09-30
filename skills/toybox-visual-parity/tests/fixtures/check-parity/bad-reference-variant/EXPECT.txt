@@ -1,0 +1,3 @@
+[reference-variant]
+captured against s11-settings
+s11-settings--no-music

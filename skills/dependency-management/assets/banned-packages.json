@@ -1,0 +1,90 @@
+{
+  "$comment": "Packages the apps must never contain. scope anywhere: fail when the package is anywhere in package-lock.json; scope direct: fail only as a direct dependency of a workspace (some tools pull HTTP clients in transitively).",
+  "packages": [
+    {
+      "pattern": "^expo-router$",
+      "scope": "anywhere",
+      "reason": "The Shell owns one React Navigation 7 stack; Expo Router (SDK 56+) forbids @react-navigation/* imports in app code."
+    },
+    {
+      "pattern": "^expo-updates$",
+      "scope": "anywhere",
+      "reason": "OTA updates are network traffic (N3); restart with reloadAppAsync from expo and keep updates.enabled false."
+    },
+    {
+      "pattern": "^expo-dev-client$",
+      "scope": "anywhere",
+      "reason": "Ships a network inspector; Release builds are tested without Metro."
+    },
+    {
+      "pattern": "^@react-native-community/netinfo$",
+      "scope": "anywhere",
+      "reason": "Its default reachability probe fetches clients3.google.com from our bundle (N3); use expo-network."
+    },
+    {
+      "pattern": "^expo-audio$",
+      "scope": "anywhere",
+      "reason": "Its plugin adds NSMicrophoneUsageDescription, background audio and record permissions by default; use react-native-audio-api."
+    },
+    {
+      "pattern": "^react-native-purchases(-ui)?$",
+      "scope": "anywhere",
+      "reason": "RevenueCat: every purchase goes through its servers (N2)."
+    },
+    {
+      "pattern": "^react-native-iap$",
+      "scope": "anywhere",
+      "reason": "A second IAP stack (Nitro) with the same core; use expo-iap."
+    },
+    {
+      "pattern": "^(firebase|@react-native-firebase/.+)$",
+      "scope": "anywhere",
+      "reason": "A backend and analytics (N2)."
+    },
+    {
+      "pattern": "^(@sentry/.+|sentry-expo|@bugsnag/.+|@datadog/.+)$",
+      "scope": "anywhere",
+      "reason": "Crash reporting services (N2)."
+    },
+    {
+      "pattern": "^(expo-insights|expo-observe|expo-app-metrics)$",
+      "scope": "anywhere",
+      "reason": "Expo telemetry services (N2)."
+    },
+    {
+      "pattern": "^expo-notifications$",
+      "scope": "anywhere",
+      "reason": "No push notifications."
+    },
+    {
+      "pattern": "^(@amplitude/.+|expo-analytics-amplitude|@segment/.+)$",
+      "scope": "anywhere",
+      "reason": "Analytics (N2)."
+    },
+    {
+      "pattern": "^(react-native-webview|expo-web-browser)$",
+      "scope": "anywhere",
+      "reason": "Web views are a network surface (N3); @expo/dom-webview comes with expo and is allowed installed but banned from imports."
+    },
+    {
+      "pattern": "^expo-tracking-transparency$",
+      "scope": "anywhere",
+      "reason": "No ATT prompt in v1; its plugin writes a tracking string."
+    },
+    {
+      "pattern": "^react-native-restart$",
+      "scope": "anywhere",
+      "reason": "A pre-1.0 native dependency; reloadAppAsync from expo covers restarts."
+    },
+    {
+      "pattern": "^eslint-plugin-react-compiler$",
+      "scope": "anywhere",
+      "reason": "Superseded by eslint-plugin-react-hooks 7."
+    },
+    {
+      "pattern": "^(axios|ky|got|node-fetch|cross-fetch)$",
+      "scope": "direct",
+      "reason": "N3: our app code makes no requests; tooling uses the built-in fetch."
+    }
+  ]
+}

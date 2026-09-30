@@ -1,0 +1,2 @@
+[canvases-per-screen]
+9 Skia canvases

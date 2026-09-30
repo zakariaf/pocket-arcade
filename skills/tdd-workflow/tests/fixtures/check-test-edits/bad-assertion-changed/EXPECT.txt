@@ -1,0 +1,3 @@
+assertion-changed
+stars-for-moves.test.ts:6
+toBe(3)

@@ -1,0 +1,2 @@
+[baseline-new]
+NEW react-native: fetch

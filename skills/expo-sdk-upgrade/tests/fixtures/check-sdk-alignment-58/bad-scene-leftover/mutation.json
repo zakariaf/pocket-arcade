@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/with-shell.ts",
+      "find": "return ['expo-sqlite',",
+      "with": "return [['expo-build-properties', { ios: { enableSceneSupport: true } }], 'expo-sqlite',"
+    }
+  }
+]

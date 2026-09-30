@@ -1,0 +1,34 @@
+{
+  "en": {
+    "__GAME_ID__.continue.more-moves": "Get more moves",
+    "__GAME_ID__.hud.moves": "Moves {moves, number} / {maxMoves, number}",
+    "__GAME_ID__.lose.out-of-moves": "No moves left",
+    "__GAME_ID__.stats.biggest-flip": "Biggest flip",
+    "__GAME_ID__.stats.boards-cleared": "Boards cleared",
+    "__GAME_ID__.stats.cells-flipped": "Cells flipped"
+  },
+  "de": {
+    "__GAME_ID__.continue.more-moves": "Hol dir mehr Züge",
+    "__GAME_ID__.hud.moves": "Züge {moves, number} / {maxMoves, number}",
+    "__GAME_ID__.lose.out-of-moves": "Keine Züge mehr",
+    "__GAME_ID__.stats.biggest-flip": "Größter Wechsel",
+    "__GAME_ID__.stats.boards-cleared": "Geleerte Bretter",
+    "__GAME_ID__.stats.cells-flipped": "Gewechselte Felder"
+  },
+  "fa": {
+    "__GAME_ID__.continue.more-moves": "حرکت بیشتر بگیرید",
+    "__GAME_ID__.hud.moves": "حرکت {moves, number} / {maxMoves, number}",
+    "__GAME_ID__.lose.out-of-moves": "حرکتی نمانده",
+    "__GAME_ID__.stats.biggest-flip": "بزرگ‌ترین چرخش",
+    "__GAME_ID__.stats.boards-cleared": "صفحه‌های پاک‌شده",
+    "__GAME_ID__.stats.cells-flipped": "خانه‌های برگشته"
+  },
+  "ckb": {
+    "__GAME_ID__.continue.more-moves": "جووڵەی زیاتر وەربگرە",
+    "__GAME_ID__.hud.moves": "جووڵە {moves, number} / {maxMoves, number}",
+    "__GAME_ID__.lose.out-of-moves": "هیچ جووڵەیەک نەماوە",
+    "__GAME_ID__.stats.biggest-flip": "گەورەترین گۆڕان",
+    "__GAME_ID__.stats.boards-cleared": "تەختە پاککراوەکان",
+    "__GAME_ID__.stats.cells-flipped": "خانە گۆڕاوەکان"
+  }
+}

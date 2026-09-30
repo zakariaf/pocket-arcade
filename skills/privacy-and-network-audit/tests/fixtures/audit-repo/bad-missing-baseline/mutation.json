@@ -1,0 +1,5 @@
+[
+  {
+    "delete": "packages/tooling/network-audit/native-baseline.json"
+  }
+]

@@ -1,0 +1,2 @@
+SKIP packages/shell/src/app/perf/ [perf-layer] no Shell app
+packages/tooling/src/e2e/write-gallery.ts [runner-file-missing] is missing

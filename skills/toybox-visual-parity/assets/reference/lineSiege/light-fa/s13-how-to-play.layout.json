@@ -1,0 +1,48 @@
+{
+"version":1,
+"frame":"s13-how-to-play",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S13/normal"
+],
+"root":"how-to-play.screen",
+"game":"lineSiege",
+"theme":"light",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s13-how-to-play.png",
+"elements":[
+{"testID":"how-to-play.screen","screen":"S13/normal","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 راهنمای بازی همهٔ هیولاها را پیش از رسیدن به دیوارتان متوقف کنید. گام ۲ از ۴ یک ستون را پر کنید تا در مسیر خودش پرتو شلیک کند. قبلی بعدی آموزش را دوباره بازی کنید","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.top-bar","screen":"S13/normal","role":"none","component":"TopBar","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":62,"w":402,"h":66},"box":{"w":402,"h":66,"rotate":0},"text":"راهنمای بازی","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.top-bar.back-button","screen":"S13/normal","role":"button","component":"IconButton","kind":null,"checks":["bounds","fill","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":true,"state":null,"when":null,"count":1,"rect":{"x":338,"y":69,"w":48,"h":48},"box":{"w":48,"h":48,"rotate":0},"text":"","aria":"بازگشت","style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"12px","shadow":"rgb(29, 27, 58) 0px 4px 0px 0px","outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.top-bar.title","screen":"S13/normal","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":16,"y":73.42,"w":310,"h":39.14},"box":{"w":310,"h":39,"rotate":0},"text":"راهنمای بازی","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 27px/39.15px Vazirmatn"}},
+{"testID":"how-to-play.goal","screen":"S13/normal","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":134,"w":362,"h":51},"box":{"w":362,"h":51,"rotate":0},"text":"همهٔ هیولاها را پیش از رسیدن به دیوارتان متوقف کنید.","aria":null,"style":{"fill":null,"color":"#43406A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.stage","screen":"S13/normal","role":"none","component":"HowToStage","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":199,"w":362,"h":243.72},"box":{"w":362,"h":244,"rotate":0},"text":"","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"16px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.picture","screen":"S13/normal","role":"image","component":"Picture","kind":null,"checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":35,"y":214,"w":332,"h":213.72},"box":{"w":332,"h":213.72,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.pager","screen":"S13/normal","role":"none","component":"View","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":456.72,"w":362,"h":34.5},"box":{"w":362,"h":35,"rotate":0},"text":"گام ۲ از ۴","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.step-chip","screen":"S13/normal","role":"text","component":"Chip","kind":null,"checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":296.16,"y":456.72,"w":85.84,"h":34.5},"box":{"w":86,"h":35,"rotate":0},"text":"گام ۲ از ۴","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":null,"outline":null,"font":"700 15px/22.5px Vazirmatn"}},
+{"testID":"how-to-play.pager-dots","screen":"S13/normal","role":"none","component":"PagerDots","kind":null,"checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"how-to-play.screen","a11yLabel":false,"state":"step 2 of 4","when":null,"count":1,"rect":{"x":20,"y":467.97,"w":90,"h":12},"box":{"w":90,"h":12,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"how-to-play.step-text","screen":"S13/normal","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":505.22,"w":362,"h":60.88},"box":{"w":362,"h":61,"rotate":0},"text":"یک ستون را پر کنید تا در مسیر خودش پرتو شلیک کند.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 21px/30.45px Vazirmatn"}},
+{"testID":"how-to-play.previous-button","screen":"S13/normal","role":"button","component":"Button","kind":"secondary, back icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":207,"y":728,"w":175,"h":54},"box":{"w":175,"h":54,"rotate":0},"text":"قبلی","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}},
+{"testID":"how-to-play.next-button","screen":"S13/normal","role":"button","component":"Button","kind":"primary, forward icon at the end","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":728,"w":175,"h":54},"box":{"w":175,"h":54,"rotate":0},"text":"بعدی","aria":null,"style":{"fill":"#FF6B4A","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}},
+{"testID":"how-to-play.replay-tutorial-button","screen":"S13/normal","role":"button","component":"Button","kind":"quiet, restore icon, centred","checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":100.06,"y":796,"w":201.89,"h":44},"box":{"w":202,"h":44,"rotate":0},"text":"آموزش را دوباره بازی کنید","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":"3px solid null","radius":"14px","shadow":null,"outline":null,"font":"400 15px/21.75px Vazirmatn"}}
+],
+"texts":[
+{"text":"راهنمای بازی","x":188.8,"y":71.42,"w":137.2,"h":43,"owner":"how-to-play.top-bar.title","font":"700 27px Vazirmatn"},
+{"text":"همهٔ هیولاها را پیش از رسیدن به دیوارتان متوقف کنید.","x":54.47,"y":133,"w":327.53,"h":26,"owner":"how-to-play.goal","font":"400 17px Vazirmatn"},
+{"text":"همهٔ هیولاها را پیش از رسیدن به دیوارتان متوقف کنید.","x":348.89,"y":158.5,"w":33.11,"h":26,"owner":"how-to-play.goal","font":"400 17px Vazirmatn"},
+{"text":"گام ۲ از ۴","x":310.16,"y":461.72,"w":8.88,"h":23,"owner":"how-to-play.step-chip","font":"700 15px Vazirmatn"},
+{"text":"گام ۲ از ۴","x":319.03,"y":461.72,"w":16.88,"h":23,"owner":"how-to-play.step-chip","font":"700 15px Vazirmatn"},
+{"text":"گام ۲ از ۴","x":335.91,"y":461.72,"w":8.16,"h":23,"owner":"how-to-play.step-chip","font":"700 15px Vazirmatn"},
+{"text":"گام ۲ از ۴","x":344.06,"y":461.72,"w":23.94,"h":23,"owner":"how-to-play.step-chip","font":"700 15px Vazirmatn"},
+{"text":"یک ستون را پر کنید تا در مسیر خودش پرتو شلیک کند.","x":181.11,"y":503.22,"w":200.89,"h":33,"owner":"how-to-play.step-text","font":"700 21px Vazirmatn"},
+{"text":"یک ستون را پر کنید تا در مسیر خودش پرتو شلیک کند.","x":139.8,"y":533.66,"w":242.2,"h":33,"owner":"how-to-play.step-text","font":"700 21px Vazirmatn"},
+{"text":"قبلی","x":262.28,"y":741.67,"w":30.45,"h":26,"owner":"how-to-play.previous-button","font":"700 17px Vazirmatn"},
+{"text":"بعدی","x":106.3,"y":741.67,"w":36.41,"h":26,"owner":"how-to-play.next-button","font":"700 17px Vazirmatn"},
+{"text":"آموزش را دوباره بازی کنید","x":113.06,"y":806.13,"w":145.89,"h":23,"owner":"how-to-play.replay-tutorial-button","font":"400 15px Vazirmatn"}
+]
+}

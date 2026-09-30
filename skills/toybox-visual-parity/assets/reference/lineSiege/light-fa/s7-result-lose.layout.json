@@ -1,0 +1,42 @@
+{
+"version":1,
+"frame":"s7-result-lose",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S7/lose"
+],
+"root":"result.screen",
+"game":"lineSiege",
+"theme":"light",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s7-result-lose.png",
+"elements":[
+{"testID":"result.screen","screen":"S7/lose","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 مرحلهٔ ۱۲ این بار نشد هیولاها از دیوار رد شدند ادامه – با دیدن تبلیغ هر مرحله فقط یک بار. دوباره تلاش کنید مراحل","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"result.mode-chip","screen":"S7/lose","role":"text","component":"Chip","kind":null,"checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":160.8,"y":72,"w":80.42,"h":34.5},"box":{"w":80,"h":35,"rotate":0},"text":"مرحلهٔ ۱۲","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":null,"outline":null,"font":"700 15px/22.5px Vazirmatn"}},
+{"testID":"result.title","screen":"S7/lose","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":331.08,"w":362,"h":55.09},"box":{"w":362,"h":55,"rotate":0},"text":"این بار نشد","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 38px/55.1px Vazirmatn"}},
+{"testID":"result.logo","screen":"S7/lose","role":"none","component":"LogoTile","kind":"104 lose (+17 deg, 6 pt ring, 6 pt lower)","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"result.screen","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":134.31,"y":201.88,"w":129.86,"h":129.86},"box":{"w":104,"h":104,"rotate":17},"text":"","aria":null,"style":{"fill":"#FF6B4A","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"24.96px","shadow":"rgb(255, 255, 255) 0px 0px 0px 6px","outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"result.reason-card","screen":"S7/lose","role":"none","component":"Panel","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":400.17,"w":362,"h":64.44},"box":{"w":362,"h":64,"rotate":0},"text":"هیولاها از دیوار رد شدند","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"result.reason-card.icon","screen":"S7/lose","role":"none","component":"Icon","kind":"alert 28, danger","checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":335,"y":418.39,"w":28,"h":28},"box":{"w":28,"h":28,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#C4243A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"result.reason-card.label","screen":"S7/lose","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":119.7,"y":417.17,"w":203.3,"h":30.44},"box":{"w":203,"h":30,"rotate":0},"text":"هیولاها از دیوار رد شدند","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 21px/30.45px Vazirmatn"}},
+{"testID":"result.continue-offer","screen":"S7/lose","role":"none","component":"OfferBox","kind":null,"checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":478.61,"w":362,"h":118.8},"box":{"w":362,"h":119,"rotate":0},"text":"ادامه – با دیدن تبلیغ هر مرحله فقط یک بار.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":"3px dashed #1D1B3A","radius":"14px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"result.continue-ad-button","screen":"S7/lose","role":"button","component":"Button","kind":"pop block, ad icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":37,"y":495.61,"w":328,"h":54},"box":{"w":328,"h":54,"rotate":0},"text":"ادامه – با دیدن تبلیغ","aria":null,"style":{"fill":"#FFD23F","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}},
+{"testID":"result.continue-note","screen":"S7/lose","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":37,"y":559.61,"w":328,"h":20.8},"box":{"w":328,"h":21,"rotate":0},"text":"هر مرحله فقط یک بار.","aria":null,"style":{"fill":null,"color":"#43406A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 13px/20.8px Vazirmatn"}},
+{"testID":"result.try-again-button","screen":"S7/lose","role":"button","component":"Button","kind":"primary hero, restore cap","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":692,"w":362,"h":80},"box":{"w":362,"h":80,"rotate":0},"text":"دوباره تلاش کنید","aria":null,"style":{"fill":"#FF6B4A","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 6px 0px 0px","outline":null,"font":"700 25px/36.25px Vazirmatn"}},
+{"testID":"result.levels-button","screen":"S7/lose","role":"button","component":"Button","kind":"secondary block, grid icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":786,"w":362,"h":54},"box":{"w":362,"h":54,"rotate":0},"text":"مراحل","aria":null,"style":{"fill":"#F8FBFF","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"14px","shadow":"rgb(29, 27, 58) 0px 5px 0px 0px","outline":null,"font":"700 17px/24.65px Vazirmatn"}}
+],
+"texts":[
+{"text":"مرحلهٔ ۱۲","x":174.8,"y":77,"w":12.78,"h":23,"owner":"result.mode-chip","font":"700 15px Vazirmatn"},
+{"text":"مرحلهٔ ۱۲","x":187.58,"y":77,"w":39.64,"h":23,"owner":"result.mode-chip","font":"700 15px Vazirmatn"},
+{"text":"این بار نشد","x":116.02,"y":329.08,"w":169.97,"h":59,"owner":"result.title","font":"700 38px Vazirmatn"},
+{"text":"هیولاها از دیوار رد شدند","x":119.7,"y":415.17,"w":203.3,"h":33,"owner":"result.reason-card.label","font":"700 21px Vazirmatn"},
+{"text":"ادامه – با دیدن تبلیغ","x":112.58,"y":509.28,"w":142.84,"h":26,"owner":"result.continue-ad-button","font":"700 17px Vazirmatn"},
+{"text":"هر مرحله فقط یک بار.","x":252.61,"y":559.61,"w":112.39,"h":20,"owner":"result.continue-note","font":"400 13px Vazirmatn"},
+{"text":"دوباره تلاش کنید","x":140.33,"y":711.88,"w":166.67,"h":39,"owner":"result.try-again-button","font":"700 25px Vazirmatn"},
+{"text":"مراحل","x":162.84,"y":799.67,"w":42.33,"h":26,"owner":"result.levels-button","font":"700 17px Vazirmatn"}
+]
+}

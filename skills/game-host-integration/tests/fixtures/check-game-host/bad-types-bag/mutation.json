@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/tap-flip-types.ts",
+      "find": "  readonly view: TapFlipView;\n",
+      "with": ""
+    }
+  }
+]

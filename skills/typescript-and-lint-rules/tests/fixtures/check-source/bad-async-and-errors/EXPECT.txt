@@ -1,0 +1,6 @@
+packages/shell/src/screens/premium/restore-button.tsx:8 [sync-handler]
+packages/shell/src/screens/premium/restore-button.tsx:15 [sync-handler]
+packages/shell/src/services/save/flush-save.ts:4 [no-void-promise]
+packages/shell/src/services/save/flush-save.ts:7 [no-empty-catch]
+packages/shell/src/services/save/flush-save.ts:8 [no-console-log]
+packages/shell/src/services/save/flush-save.ts:9 [throw-error-object]

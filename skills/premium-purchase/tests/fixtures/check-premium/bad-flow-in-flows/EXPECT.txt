@@ -1,0 +1,2 @@
+[harness-isolation]
+packages/shell/e2e/flows/premium/01-buy.yaml

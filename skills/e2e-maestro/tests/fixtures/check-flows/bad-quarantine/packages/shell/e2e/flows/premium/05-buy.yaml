@@ -1,0 +1,13 @@
+appId: ${APP_ID}
+name: Premium purchase shows the thank-you screen
+tags: [shell, quarantine]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&premium=0&firstRun=0&screen=premium'
+      WAIT_FOR: 'premium.screen'
+- tapOn:
+    id: 'premium.restore-button'

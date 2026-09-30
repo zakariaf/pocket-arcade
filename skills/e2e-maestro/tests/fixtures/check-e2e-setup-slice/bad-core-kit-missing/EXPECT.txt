@@ -1,0 +1,4 @@
+SKIP packages/shell/src/screens/debug/use-debug-model.ts [debug-model] S15 not in shell-slice.json
+packages/shell/src/screens/debug/network-guard.ts [network-guard-missing] is missing
+packages/shell/src/app/create-debug-parts.ts [debug-link] is missing
+packages/shell/src/screens/debug/debug-actions.ts [debug-model] is missing

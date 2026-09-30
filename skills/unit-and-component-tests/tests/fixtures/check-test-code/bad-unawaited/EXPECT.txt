@@ -1,0 +1,5 @@
+[rntl-await]
+play-button.test.tsx:11 [rntl-await] renderWithShell(...) is not awaited
+play-button.test.tsx:13 [rntl-await] user.press(...) is not awaited
+play-button.test.tsx:14 [rntl-await] act(...) is not awaited
+play-button.test.tsx:17 [rntl-await] screen.findByText(...) is not awaited

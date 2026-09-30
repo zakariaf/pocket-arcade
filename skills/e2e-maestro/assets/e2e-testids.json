@@ -1,0 +1,8 @@
+{
+  "$comment": "testIDs that exist only for end-to-end runs (test builds), on top of the Toybox screen testID contract in screen-testids.json. check-flows.mjs accepts every id listed here, in screen-testids.json (elements and notDrawn) and in apps/<game-id>/e2e/testids.json. game.board-layout and game.moves-label are drawn only while the debug link set boardLayout=1: send boardLayout=1 in the setup QUERY before a flow reads them.",
+  "testIDs": {
+    "debug.network-attempts": "Debug screen (S15), test builds: the JS network guard's attempt counter, drawn under the fourteen rows (below the fold on a phone: scroll to it). Every smoke flow ends by asserting its text is '0' (subflows/assert-no-network.yaml).",
+    "game.board-layout": "Game screen (S5), test builds with boardLayout=1 only: one small Text whose content is JSON.stringify({ x, y, layout }) (the canvas origin in window points plus the game's BoardLayout), so flows can tap board cells. Drawn by the board host's layout probe (board-rendering-skia: game-host/board-layout-probe.tsx).",
+    "game.moves-label": "Game screen (S5), test builds with boardLayout=1 only: the run's move count as one small Text ('1' after the first move), so a flow can prove a tap made a move and that the move survived a kill. Drawn by the Game screen's moves probe (screens/game/game-moves-probe.tsx, shipped with the S5 Game screen templates); the design draws the game's progress line instead."
+  }
+}

@@ -1,0 +1,13 @@
+[
+  {"from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs"},
+  {"from": "repo-templates/packages/shell/src/app/system-a11y-store.ts", "to": "templates/system-a11y-store.ts"},
+  {"from": "repo-templates/packages/shell/src/app/system-a11y-store.test.ts", "to": "templates/system-a11y-store.test.ts"},
+  {"from": "repo-templates/packages/shell/src/app/motion-config.test.tsx", "to": "templates/motion-config.test.tsx"},
+  {"from": "repo-templates/packages/shell/src/app/motion-config.tsx", "to": "templates/motion-config.tsx"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion.test.ts", "to": "templates/use-reduce-motion.test.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion.ts", "to": "templates/use-reduce-motion.ts"},
+  {"from": "repo-templates/packages/shell/src/ui/use-hold-to-confirm.ts", "to": "templates/use-hold-to-confirm.ts"},
+  {"from": "repo-templates/packages/shell/src/ui/use-hold-to-confirm.test.ts", "to": "templates/use-hold-to-confirm.test.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion-setting.ts", "to": "templates/use-reduce-motion-setting.ts"},
+  {"from": "repo-templates/packages/shell/src/app/use-reduce-motion-setting.test.ts", "to": "templates/use-reduce-motion-setting.test.ts"}
+]

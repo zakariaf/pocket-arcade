@@ -1,0 +1,3 @@
+shared-value-accessor
+board-canvas.tsx:62
+shared value now is accessed with .value

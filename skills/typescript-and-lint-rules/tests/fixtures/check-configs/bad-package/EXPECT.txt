@@ -1,0 +1,6 @@
+package.json:1 [package-pin] eslint is "10.0.0", expected "9.39.5"
+typescript is "^7.0.0"
+globals is not a root devDependency
+[lint-script] script "lint" runs eslint without --max-warnings 0
+script "lint" passes --quiet to eslint
+eslint-config-expo is "~57.0.2", expected "57.0.2"

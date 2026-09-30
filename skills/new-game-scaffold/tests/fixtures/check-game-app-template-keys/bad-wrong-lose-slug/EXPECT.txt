@@ -1,0 +1,2 @@
+catalog-missing-key
+uses "bank-shot.lose.out-of-moves", missing in en, de, fa, ckb

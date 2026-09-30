@@ -1,0 +1,6 @@
+{
+  "common.back": "Back",
+  "home.play-button.continue": "Continue - Level {level, number}",
+  "levels.pack-title": "{packName}",
+  "stats.moves": "{movesCount, plural, one {# move} other {# moves}}"
+}

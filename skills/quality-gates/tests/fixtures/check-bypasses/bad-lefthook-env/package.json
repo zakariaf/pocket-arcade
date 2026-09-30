@@ -1,0 +1,29 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "scripts": {
+    "prepare": "lefthook install",
+    "verify": "npm run -s format:check && npm run -s lint && npm run -s typecheck && npm run -s i18n:verify && npm run -s knip && node packages/tooling/src/quality/check-quality-gates.ts && npm run -s test:coverage && npm run -s test:sim && npm run -s audit:network && npm run -s audit:licenses && node packages/tooling/src/deps/check-deps.ts",
+    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 0 --cache --cache-strategy content --cache-location node_modules/.cache/eslint/ && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
+    "format": "prettier --write . --log-level warn",
+    "format:check": "prettier --check . --log-level warn",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit -p tsconfig.json && for project in packages/* apps/*; do tsc --noEmit -p \"$project\" || exit 1; done",
+    "test": "jest --ci",
+    "test:golden": "jest --ci --selectProjects golden",
+    "test:sim": "jest --ci --config jest.sim.config.js",
+    "test:coverage": "jest --ci --coverage --randomize",
+    "test:mutation": "stryker run",
+    "knip": "APP_VARIANT=test ADS_MODE=off knip",
+    "audit:network": "node packages/tooling/src/audit/audit-network.ts",
+    "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts",
+    "audit:licenses": "node packages/tooling/src/audit/audit-licenses.ts",
+    "i18n:verify": "node packages/tooling/src/i18n/verify-catalogs.ts",
+    "e2e:ios": "node packages/tooling/src/e2e/run-e2e-ios.ts",
+    "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts",
+    "build:ios:sim": "node packages/tooling/src/build/build-ios-sim.ts",
+    "release:ios": "node packages/tooling/src/release/release-ios.ts",
+    "new-game": "node packages/tooling/src/scaffold/new-game.ts",
+    "push:quick": "LEFTHOOK=0 git push"
+  }
+}

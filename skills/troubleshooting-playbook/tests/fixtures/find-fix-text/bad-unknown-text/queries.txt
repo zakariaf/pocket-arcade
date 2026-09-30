@@ -1,0 +1,2 @@
+Unable to boot device due to insufficient system resources
+the quantum flux capacitor is misaligned (code 88)

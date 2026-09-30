@@ -1,0 +1,2 @@
+[art-dark-clear]
+icon-dark.png

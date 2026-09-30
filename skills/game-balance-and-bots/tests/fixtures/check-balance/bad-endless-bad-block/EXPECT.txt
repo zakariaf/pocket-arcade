@@ -1,0 +1,3 @@
+[bands-invalid]
+endless.difficulty must be 100 (ENDLESS_DIFFICULTY)
+endless.bands[0].metric is missing or invalid

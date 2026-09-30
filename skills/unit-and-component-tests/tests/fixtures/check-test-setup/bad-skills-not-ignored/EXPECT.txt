@@ -1,0 +1,4 @@
+[jest-ignored-paths]
+project "unit" does not ignore skills, .claude
+project "golden" does not ignore skills, .claude
+the sim config does not ignore skills, .claude

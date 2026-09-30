@@ -1,0 +1,3 @@
+[
+  { "json": { "file": "package.json", "path": ["overrides", "@typescript-eslint/utils"], "value": null } }
+]

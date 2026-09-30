@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/session-controller.ts",
+      "find": "  return continueStateOf(deps.gameRules.continueRun, deps.isContinueAllowed, session) === 'offered';",
+      "with": "  return session.status === 'lost';"
+    }
+  }
+]

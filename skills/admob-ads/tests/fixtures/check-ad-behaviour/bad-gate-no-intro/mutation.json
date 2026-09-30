@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-gate.ts",
+      "find": "  await deps.showIntro();\n",
+      "with": ""
+    }
+  }
+]

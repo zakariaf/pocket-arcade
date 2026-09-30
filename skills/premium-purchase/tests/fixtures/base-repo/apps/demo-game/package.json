@@ -1,0 +1,7 @@
+{
+  "name": "@e07/demo-game",
+  "private": true,
+  "dependencies": {
+    "expo-iap": "5.8.0"
+  }
+}

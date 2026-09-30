@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "shared-json"
+  ],
+  "sync": false
+}

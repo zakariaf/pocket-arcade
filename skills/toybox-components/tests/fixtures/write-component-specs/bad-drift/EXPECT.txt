@@ -1,0 +1,2 @@
+packages/shell/src/ui/component-specs.json [specs-mismatch] differs from the as-rendered specs
+button.minHeight is 56, the as-rendered spec is 54

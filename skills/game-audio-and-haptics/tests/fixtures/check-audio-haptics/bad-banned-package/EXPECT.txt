@@ -1,0 +1,2 @@
+[banned-audio-package]
+apps/demo-game/package.json:7

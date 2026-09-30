@@ -1,0 +1,3 @@
+[adapter-interstitial]
+presentation fails (ERROR phase show, no CLOSED)
+never settled

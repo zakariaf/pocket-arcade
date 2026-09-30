@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest"]
+  },
+  "include": [
+    "index.ts",
+    "game.config.ts",
+    "src/**/*",
+    "../../packages/shell/src/app-env.d.ts",
+    "../../packages/shell/src/navigation/react-navigation.d.ts"
+  ]
+}

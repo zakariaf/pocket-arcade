@@ -1,0 +1,3 @@
+npmrc-policy
+sets min-release-age=1
+npm keeps the last value of a key

@@ -1,0 +1,3 @@
+02-core-journey-offline.yaml:16 [text-selector] tapOn selects by visible text ("Play")
+[retry-app-assertion] retry: wraps steps
+[text-selector] assertVisible selects by visible text ("Level 1")

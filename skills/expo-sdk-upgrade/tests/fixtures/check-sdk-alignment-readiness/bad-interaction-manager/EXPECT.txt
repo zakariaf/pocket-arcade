@@ -1,0 +1,4 @@
+removed-rn-api
+packages/shell/src/app/defer-work.ts:2
+uses InteractionManager, removed from the React Native of SDK 58
+requestIdleCallback

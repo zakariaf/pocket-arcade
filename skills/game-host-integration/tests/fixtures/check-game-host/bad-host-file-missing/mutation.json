@@ -1,0 +1,5 @@
+[
+  {
+    "delete": "packages/shell/src/game-host/session-controller.ts"
+  }
+]

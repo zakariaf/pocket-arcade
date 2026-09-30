@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/home/use-home-ads.ts",
+      "content": "// packages/shell/src/screens/home/use-home-ads.ts (planted: Google's form without S3)\nimport { prepareAds } from '@e07/shell/services/ads/ad-gate.ts';\n\nimport type { AdGateInput, PrepareAdsDeps } from '@e07/shell/services/ads/ad-gate.ts';\n\nexport function openAdsOnHome(deps: PrepareAdsDeps, input: AdGateInput): void {\n  void prepareAds(deps, input);\n}\n"
+    }
+  }
+]

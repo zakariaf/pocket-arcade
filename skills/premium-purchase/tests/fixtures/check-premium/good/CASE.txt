@@ -1,0 +1,1 @@
+The good case is templates/ + base-repo/ with no mutation.

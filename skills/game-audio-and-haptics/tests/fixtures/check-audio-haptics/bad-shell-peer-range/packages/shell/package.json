@@ -1,0 +1,8 @@
+{
+  "name": "@e07/shell",
+  "private": true,
+  "peerDependencies": {
+    "expo-haptics": "*",
+    "react-native-audio-api": "^0.13.6"
+  }
+}

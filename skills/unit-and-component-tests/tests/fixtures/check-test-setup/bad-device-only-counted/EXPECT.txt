@@ -1,0 +1,3 @@
+coverage-device-only
+packages/shell/src/app/start-shell.ts:1
+is marked device-only but jest.config.js still counts it

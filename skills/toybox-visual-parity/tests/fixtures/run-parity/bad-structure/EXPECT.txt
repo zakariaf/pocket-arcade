@@ -1,0 +1,2 @@
+[structure] s4-home light-en: home.settings-button: shape differs
+s4-home light-en                         FAIL 1

@@ -1,0 +1,1 @@
+[structure] home.settings-button: shape differs

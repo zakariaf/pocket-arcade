@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "games": {
+    "line-siege": {
+      "designGame": "flockTilt",
+      "hasMusic": false,
+      "winLine": "score"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+packages/shell/src/ui/LevelTile.tsx [file-kebab]
+packages/shell/src/screens/HowToPlay/ [folder-kebab]
+apps/tile-drop/src/rules/apply_move.ts [file-kebab]

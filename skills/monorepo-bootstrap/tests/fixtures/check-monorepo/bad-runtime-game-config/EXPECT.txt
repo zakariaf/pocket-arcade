@@ -1,0 +1,2 @@
+runtime-game-config
+apps/line-siege/src/boot/read-config.ts:2

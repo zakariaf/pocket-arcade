@@ -1,0 +1,11 @@
+node_modules/
+apps/*/ios/
+apps/*/android/
+dist-audit/
+*.p8
+AuthKey_*
+ApiKey_*
+*.p12
+*.mobileprovision
+*.xcarchive
+*.ipa

@@ -1,0 +1,2 @@
+[reference-drift] the layout differs from a fresh render
+the map changed since the references were rendered

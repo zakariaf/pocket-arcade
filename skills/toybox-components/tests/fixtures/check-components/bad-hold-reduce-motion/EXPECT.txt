@@ -1,0 +1,2 @@
+use-hold-to-confirm.ts
+[hold-reduce-motion] the hold timer would finish instantly under Reduce motion

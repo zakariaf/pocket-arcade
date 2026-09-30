@@ -1,0 +1,2 @@
+[interstitial-rules]
+first interstitial after 3 completed levels

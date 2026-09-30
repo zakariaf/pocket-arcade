@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/format-store-price.ts",
+      "find": "if (product.price === null) return product.displayPrice;",
+      "with": "return product.displayPrice;"
+    }
+  }
+]

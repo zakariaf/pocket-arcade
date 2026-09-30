@@ -1,0 +1,4 @@
+[line-height-grid]
+snapToGrid(18.2, 3) is 18.2, the 3x pixel grid says 55/3
+snapToGrid(25.5, 3) is 25.5, the 3x pixel grid says 77/3
+the line height is not snapped to the device pixel grid

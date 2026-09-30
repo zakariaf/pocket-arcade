@@ -1,0 +1,2 @@
+[sim-wrong-model] a simulator named e07-parity
+Run with --recreate

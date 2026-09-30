@@ -1,0 +1,4 @@
+[cold-start] cold start: no new cold-start entry within 30 s
+rule perf-layer
+[memory] memory: the app is not running after the smoke flow
+Maestro 2.10 stops the app when a test ends: the memory step relaunches it

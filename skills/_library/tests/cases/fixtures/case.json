@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "fixtures"
+  ],
+  "sync": true
+}

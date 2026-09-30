@@ -1,0 +1,22 @@
+{
+ "frame": "s6-pause",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "The Pause dialog is not on screen either: the frame was not reached.",
+ "board": {
+  "rect": {
+   "x": 16,
+   "y": 128,
+   "w": 370,
+   "h": 700
+  },
+  "source": "probe=board"
+ },
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s6-pause.png",
+  "layout": "../reference/lineSiege/light-en/s6-pause.layout.json"
+ }
+}

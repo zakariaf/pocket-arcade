@@ -1,0 +1,2 @@
+[icon-path-syntax]
+"hash": unexpected character

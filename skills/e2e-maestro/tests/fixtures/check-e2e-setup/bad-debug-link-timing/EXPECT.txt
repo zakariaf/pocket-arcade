@@ -1,0 +1,2 @@
+packages/shell/src/app/create-debug-parts.ts:1 [debug-link] createDebugParts does not start listening to Linking at once
+packages/shell/src/app/debug-link-handler.ts:1 [debug-link] opens screen= at once even when the same link ended the first run

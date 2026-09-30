@@ -1,0 +1,4 @@
+[catalogue-shape]
+version is not 1
+no areas
+no entries

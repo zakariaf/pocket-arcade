@@ -1,0 +1,2 @@
+[palette-shape]
+focus missing or not #RRGGBB

@@ -1,0 +1,2 @@
+command-unknown
+buildOrders.shell[0] runs check-alpha.mjs, which alpha-one does not have in scripts/

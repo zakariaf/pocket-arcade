@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "  if ((await deps.port.restore()) === SYNC_FAILED) return SYNC_FAILED;\n",
+      "with": "  await deps.port.restore();\n"
+    }
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "tap-flip.board.summary": "{lit, plural, one {# Feld leuchtet} other {# Felder leuchten}}",
+  "tap-flip.continue.more-moves": "Hol dir mehr Züge",
+  "tap-flip.goal": "Schalte alle Lichter aus.",
+  "tap-flip.how-to-play.step-1": "Tipp ein Feld an: Es und seine Nachbarn wechseln.",
+  "tap-flip.how-to-play.step-2": "Ein Tipp in die Mitte löscht ein Plus.",
+  "tap-flip.how-to-play.step-3": "Falsches Feld? Mach es rückgängig.",
+  "tap-flip.hud.moves": "Züge {moves, number} / {maxMoves, number}",
+  "tap-flip.lose.out-of-moves": "Keine Züge mehr",
+  "tap-flip.name": "Tap Flip",
+  "tap-flip.pack-name.1": "Erste Funken",
+  "tap-flip.pack-name.2": "Nachtschicht",
+  "tap-flip.pack-name.3": "Licht aus",
+  "tap-flip.stats.biggest-flip": "Größter Wechsel",
+  "tap-flip.stats.boards-cleared": "Geleerte Bretter",
+  "tap-flip.stats.cells-flipped": "Gewechselte Felder",
+  "tap-flip.tagline": "Tippen. Umdrehen. Licht aus.",
+  "tap-flip.tutorial.step-1": "Tipp auf die Ecke.",
+  "tap-flip.tutorial.step-2": "Jetzt tipp in die Mitte!",
+  "tap-flip.win-title": "Alle Lichter aus!"
+}

@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/package.json", "find": "\"expo\": \"~57.0.25\"", "with": "\"expo\": \"~57.1.0\"" } }]

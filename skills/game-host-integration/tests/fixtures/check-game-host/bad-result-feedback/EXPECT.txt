@@ -1,0 +1,3 @@
+[result-feedback]
+packages/shell/src/game-host/session-controller.ts
+does not play the win or lose feedback

@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "packages/shell/package.json",
+      "path": [
+        "dependencies",
+        "left-pad"
+      ],
+      "value": "1.3.0"
+    }
+  }
+]

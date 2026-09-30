@@ -1,0 +1,2 @@
+[sim-content-size] content_size is "extra-large", not "large"
+[sim-increase-contrast]

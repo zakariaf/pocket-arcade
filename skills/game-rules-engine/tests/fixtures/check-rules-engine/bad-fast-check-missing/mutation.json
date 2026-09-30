@@ -1,0 +1,1 @@
+[{ "replace": { "file": "package.json", "find": "\"devDependencies\": {\n    \"fast-check\": \"4.10.2\"\n  }", "with": "\"devDependencies\": {}" } }]

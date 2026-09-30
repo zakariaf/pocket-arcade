@@ -1,0 +1,2 @@
+[decorative-not-hidden]
+icon-tile.tsx

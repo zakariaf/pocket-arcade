@@ -1,0 +1,3 @@
+sdk      apps on Expo SDK 58; target SDK 59; npm latest 58.0.2, next 59.0.0-preview.1
+wait     [target-stable] SDK 59 is not stable yet: expo "latest" is 58.0.2 (next: 59.0.0-preview.1)
+verdict  no upgrade due: stay on SDK 58

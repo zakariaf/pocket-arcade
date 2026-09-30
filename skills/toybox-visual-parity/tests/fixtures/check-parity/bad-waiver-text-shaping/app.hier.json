@@ -1,0 +1,196 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "design-as-app",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "9:41 AM",
+      "resource-id": "",
+      "bounds": "[55,22][92,42]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "9:41 Line Siege Continue – Level 12 Daily challenge Sunday, 27 Sep 5 day streak Play today’s challenge Endless – Best 4,210 Play until you lose, then beat your best. Levels Statistics How to play Premium Remove ads Ad 320 × 50",
+      "text": "",
+      "value": "",
+      "resource-id": "home.screen",
+      "bounds": "[0,0][402,874]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Line Siege",
+      "text": "",
+      "value": "",
+      "resource-id": "home.top-bar",
+      "bounds": "[0,62][402,128]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Line Siege",
+      "text": "",
+      "value": "",
+      "resource-id": "home.brand-lock",
+      "bounds": "[16,70][326,116]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Line Siege",
+      "text": "",
+      "value": "",
+      "resource-id": "home.game-name",
+      "bounds": "[74,78][195,108]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Settings",
+      "text": "",
+      "value": "",
+      "resource-id": "home.settings-button",
+      "bounds": "[338,69][386,117]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Continue – Level 12",
+      "text": "",
+      "value": "",
+      "resource-id": "home.play-button",
+      "bounds": "[20,134][382,214]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Daily challenge Sunday, 27 Sep 5 day streak Play today’s challenge",
+      "text": "",
+      "value": "",
+      "resource-id": "home.daily-card",
+      "bounds": "[20,228][382,377]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Daily challenge",
+      "text": "",
+      "value": "",
+      "resource-id": "home.daily-card.title",
+      "bounds": "[87,245][235,268]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sunday, 27 Sep",
+      "text": "",
+      "value": "",
+      "resource-id": "home.daily-card.date",
+      "bounds": "[87,269][235,292]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "5 day streak",
+      "text": "",
+      "value": "",
+      "resource-id": "home.daily-card.streak",
+      "bounds": "[246,243][366,279]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Play today’s challenge",
+      "text": "",
+      "value": "",
+      "resource-id": "home.daily-card.play-button",
+      "bounds": "[37,304][365,358]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Endless – Best 4,210 Play until you lose, then beat your best.",
+      "text": "",
+      "value": "",
+      "resource-id": "home.endless-card",
+      "bounds": "[20,391][382,475]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Levels",
+      "text": "",
+      "value": "",
+      "resource-id": "home.levels-button",
+      "bounds": "[20,489][134,583]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Statistics",
+      "text": "",
+      "value": "",
+      "resource-id": "home.stats-button",
+      "bounds": "[144,489][258,583]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "How to play",
+      "text": "",
+      "value": "",
+      "resource-id": "home.how-to-play-button",
+      "bounds": "[268,489][382,583]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Premium Remove ads",
+      "text": "",
+      "value": "",
+      "resource-id": "home.premium-button",
+      "bounds": "[20,597][382,665]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Ad 320 × 50",
+      "text": "",
+      "value": "",
+      "resource-id": "home.banner-ad",
+      "bounds": "[0,774][402,840]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

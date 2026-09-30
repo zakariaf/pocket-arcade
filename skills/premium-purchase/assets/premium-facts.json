@@ -1,0 +1,161 @@
+{
+  "verified": "2026-09-26",
+  "sdk": {
+    "package": "expo-iap",
+    "version": "5.8.0",
+    "fallback": "5.6.3"
+  },
+  "adapter": {
+    "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+    "allowedImports": [
+      "ErrorCode",
+      "endConnection",
+      "fetchProducts",
+      "finishTransaction",
+      "getAvailablePurchases",
+      "initConnection",
+      "purchaseErrorListener",
+      "purchaseUpdatedListener",
+      "requestPurchase",
+      "restorePurchases",
+      "Purchase",
+      "PurchaseError",
+      "Product"
+    ],
+    "mustContain": {
+      "onlyIncludeActiveItemsIOS: false": "read Transaction.all (refunds stay visible) with getAvailablePurchases({ onlyIncludeActiveItemsIOS: false })",
+      "isConsumable: false": "finish the non-consumable with finishTransaction({ purchase, isConsumable: false })"
+    }
+  },
+  "bannedApis": [
+    "kitApi",
+    "KitApiError",
+    "verifyPurchaseWithProvider",
+    "verifyPurchase",
+    "useIAP",
+    "andDangerouslyFinishTransactionAutomatically"
+  ],
+  "bannedConfigWords": [
+    "iapkitApiKey",
+    "alternativeBilling",
+    "enableLocalDev",
+    "localPath",
+    "onside",
+    "EXPO_IAP_ONSIDE"
+  ],
+  "debugAction": {
+    "name": "debug-premium-set",
+    "allowedIn": [
+      "packages/shell/src/stores/premium/",
+      "packages/shell/src/app/test-only-entry.ts",
+      "packages/shell/src/screens/debug/"
+    ]
+  },
+  "productIdSuffix": ".premium",
+  "familySharable": false,
+  "storekit": {
+    "template": "packages/tooling/src/storekit/Premium.storekit.template",
+    "entitlements": "packages/tooling/src/storekit/storekit-harness.entitlements",
+    "flowsDir": "packages/shell/e2e/storekit/",
+    "allowedDir": "packages/tooling/src/storekit/"
+  },
+  "catalogDir": "packages/shell/src/i18n/catalogs",
+  "languages": [
+    "en",
+    "de",
+    "fa",
+    "ckb"
+  ],
+  "catalogKeys": [
+    "common.premium",
+    "common.restore-purchase",
+    "premium.active",
+    "premium.benefit.free-perks",
+    "premium.benefit.no-ads",
+    "premium.benefit.support",
+    "premium.buy-button",
+    "premium.error",
+    "premium.loading",
+    "premium.owned.body",
+    "premium.pending",
+    "premium.pending-detail",
+    "premium.purchasing",
+    "premium.restore-empty",
+    "premium.restore-failed",
+    "premium.restore-success",
+    "premium.restoring",
+    "premium.small-print",
+    "premium.store-unavailable",
+    "premium.subtitle",
+    "premium.success.body",
+    "premium.success.title",
+    "premium.try-again",
+    "settings.premium.remove-ads",
+    "settings.premium.remove-ads-no-price",
+    "result.premium-nudge"
+  ],
+  "priceKeys": [
+    "premium.buy-button",
+    "settings.premium.remove-ads",
+    "result.premium-nudge"
+  ],
+  "premiumScreenDir": "packages/shell/src/screens/premium/",
+  "stateTestIds": [
+    "premium.state.loading",
+    "premium.state.unavailable",
+    "premium.state.purchasing",
+    "premium.state.pending",
+    "premium.state.success",
+    "premium.state.error",
+    "premium.state.owned",
+    "premium.buy-button",
+    "premium.restore-button",
+    "premium.try-again-button",
+    "premium.restoring-toast",
+    "premium.restore-success-toast",
+    "premium.restore-empty-toast",
+    "premium.restore-failed-toast"
+  ],
+  "views": [
+    "loading-price",
+    "store-unavailable",
+    "ready",
+    "purchase-in-progress",
+    "pending",
+    "success",
+    "error",
+    "already-owned",
+    "restoring",
+    "restore-empty",
+    "restore-failed"
+  ],
+  "requiredFiles": [
+    "__mocks__/expo-iap.ts",
+    "packages/shell/src/services/purchase/purchase-port.ts",
+    "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+    "packages/shell/src/services/purchase/fake-purchase.ts",
+    "packages/shell/src/services/purchase/connectivity-gated-purchase.ts",
+    "packages/shell/src/services/purchase/connectivity-gated-purchase.test.ts",
+    "packages/shell/src/services/purchase/premium-service.ts",
+    "packages/shell/src/services/purchase/premium-service.test.ts",
+    "packages/shell/src/services/purchase/premium-store-flow.ts",
+    "packages/shell/src/services/purchase/format-store-price.ts",
+    "packages/shell/src/services/purchase/format-store-price.test.ts",
+    "packages/shell/src/stores/premium/premium-state.ts",
+    "packages/shell/src/stores/premium/premium-transitions.ts",
+    "packages/shell/src/stores/premium/premium-reducer.ts",
+    "packages/shell/src/stores/premium/premium-reducer.test.ts",
+    "packages/shell/src/stores/premium/premium-view.ts",
+    "packages/shell/src/stores/premium/premium-notice.ts",
+    "packages/shell/src/stores/premium/premium-notice.test.ts",
+    "packages/shell/src/stores/premium/premium-nudge.ts",
+    "packages/shell/src/stores/premium/premium-nudge.test.ts",
+    "packages/shell/src/stores/premium/entitlement-evidence.ts",
+    "packages/shell/src/stores/premium/entitlement-evidence.test.ts",
+    "packages/shell/src/stores/premium/premium-store.ts"
+  ],
+  "typedPriceAllowedIn": [
+    "packages/shell/src/app/parity/"
+  ],
+  "typedPriceAllowedWhy": "The parity harness (test builds only, reached through TEST_ONLY) stands in for the store with the design's fixture price, compared against the reference screenshots."
+}

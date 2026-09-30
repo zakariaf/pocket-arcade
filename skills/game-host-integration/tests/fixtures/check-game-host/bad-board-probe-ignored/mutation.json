@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/debug-switches.ts",
+      "find": " || TEST_ONLY?.isParityBoardProbeOn() === true",
+      "with": ""
+    }
+  }
+]

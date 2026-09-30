@@ -1,0 +1,11 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [\"S4\", \"S11\"], \"why\": \"Home + Settings slice\" }\n"
+    }
+  },
+  {
+    "delete": "packages/shell/src/screens/first-run/tutorial-screen.tsx"
+  }
+]

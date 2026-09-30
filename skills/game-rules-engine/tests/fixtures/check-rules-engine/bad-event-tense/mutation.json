@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/tap-flip-types.ts", "find": "kind: 'board-cleared'", "with": "kind: 'clear-board'" } }]

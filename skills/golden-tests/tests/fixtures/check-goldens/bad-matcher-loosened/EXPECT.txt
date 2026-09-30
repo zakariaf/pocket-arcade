@@ -1,0 +1,1 @@
+test/goldens/boards/skia-golden.ts:10 [golden-tolerance] tolerance is 0.01 percent, not at most 0.001 percent

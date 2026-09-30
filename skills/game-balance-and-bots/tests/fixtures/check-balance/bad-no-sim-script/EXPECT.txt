@@ -1,0 +1,3 @@
+[sim-config]
+package.json:4
+no "test:sim" script

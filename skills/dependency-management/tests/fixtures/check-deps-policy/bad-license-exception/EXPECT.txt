@@ -1,0 +1,2 @@
+license-exceptions
+caniuse-lite needs an exact "license" and a real "reason"

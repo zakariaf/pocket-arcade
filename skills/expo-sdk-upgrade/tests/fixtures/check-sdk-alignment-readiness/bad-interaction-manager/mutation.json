@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/app/defer-work.ts",
+      "content": "// packages/shell/src/app/defer-work.ts\nimport { InteractionManager } from 'react-native';\n\nexport function deferWork(task: () => void): void {\n  InteractionManager.runAfterInteractions(task);\n}\n"
+    }
+  }
+]

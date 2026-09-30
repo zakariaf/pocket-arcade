@@ -1,0 +1,2 @@
+[iap-server-api]
+kitApi

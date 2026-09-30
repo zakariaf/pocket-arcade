@@ -1,0 +1,2 @@
+[skadnetwork]
+"cstr6suwn9" is not a full SKAdNetwork identifier

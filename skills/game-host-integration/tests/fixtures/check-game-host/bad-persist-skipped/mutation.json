@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/session-controller.ts",
+      "find": "  const persist = makePersist(deps, extras);",
+      "with": "  const persist = (): void => undefined;"
+    }
+  }
+]

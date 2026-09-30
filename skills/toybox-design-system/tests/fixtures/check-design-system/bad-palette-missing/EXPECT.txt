@@ -1,0 +1,2 @@
+[palette-missing]
+app flock-tilt has no Toybox palette

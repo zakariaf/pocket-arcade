@@ -1,0 +1,3 @@
+[pan-mode]
+apps/tap-flip/src/rules/tap-flip-engine.ts:30
+panMode 'tilt' is not one of none, swipe, drag, aim

@@ -1,0 +1,40 @@
+{
+ "version": 1,
+ "result": "FAIL",
+ "frame": "s4-home",
+ "kind": "phone",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "boundsSource": "maestro",
+ "createdAt": "2026-09-28T12:00:00.000Z",
+ "reference": {
+  "image": "reference/lineSiege/light-en/s4-home.png",
+  "imageSha256": "dee77f6137fcedd6d56e3d3876b3d38b2cbfb6b3b033cd5e9a673ce2fe7d403d",
+  "layoutSha256": "db15b6e6b295342bbdb85c0d1de423330b221b1ddfff8b3b90718696e6996617"
+ },
+ "app": {
+  "imageSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+ },
+ "checked": {},
+ "coverage": [],
+ "offscreen": [],
+ "stats": {},
+ "problems": [
+  {
+   "rule": "structure",
+   "testID": "home.settings-button",
+   "message": "home.settings-button: shape differs",
+   "fix": "Match the icon.",
+   "rect": {
+    "x": 338,
+    "y": 69,
+    "w": 48,
+    "h": 48
+   }
+  }
+ ],
+ "waived": [],
+ "notes": []
+}

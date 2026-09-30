@@ -1,0 +1,3 @@
+run-e2e-ios.ts:1 [runner-steps] the flows step does not exclude the a11y flows
+run-e2e-ios.ts:1 [runner-steps] there is no cold-start and memory step (runPerfSteps)
+sim-perf-steps.ts:1 [runner-steps] does not measure memory with footprint

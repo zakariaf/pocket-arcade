@@ -1,0 +1,3 @@
+[continue-from-config]
+packages/shell/src/app/create-shell-parts.ts
+isContinueAllowed: true

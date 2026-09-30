@@ -1,0 +1,1 @@
+packages/shell/src/config/shell-plugins.ts [font-plugin] no expo-font plugin entry embeds the Toybox fonts

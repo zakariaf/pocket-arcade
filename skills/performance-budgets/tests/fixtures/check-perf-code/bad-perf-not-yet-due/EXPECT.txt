@@ -1,0 +1,3 @@
+SKIP packages/shell/src/app/perf [perf-layer] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
+[hermes-engine]
+RESULT: FAIL (1 problems)

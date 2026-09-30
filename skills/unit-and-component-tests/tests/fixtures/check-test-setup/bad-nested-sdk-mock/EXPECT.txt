@@ -1,0 +1,2 @@
+[nested-sdk-mock]
+packages/shell/src/__mocks__/expo-iap.ts

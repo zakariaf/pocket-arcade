@@ -1,0 +1,3 @@
+[host-order]
+packages/shell/src/app/create-shell-parts.ts
+the resume state is not recomputed after createGameHost

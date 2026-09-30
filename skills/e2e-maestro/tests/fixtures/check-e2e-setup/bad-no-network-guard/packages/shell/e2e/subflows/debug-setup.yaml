@@ -1,0 +1,26 @@
+# packages/shell/e2e/subflows/debug-setup.yaml — sub-flow, never run on its own (not under flows/).
+# Applies deterministic state through the test-build-only debug deep link, then waits for WAIT_FOR.
+# First it waits for a screen root (any <scope>.screen but the startup splash, or the Pause and S14
+# dialog roots, which hide the screen under them from Maestro): right after launchApp that is the
+# app's first screen (language-choice.screen, tutorial.screen, home.screen or, in a partial Shell,
+# not-built.screen; pause.dialog when a killed run reopens), so the app's JS is up and listening;
+# mid-flow it is the screen the flow is on. The app queues a link until its navigator is ready, applies the save
+# changes first and opens screen= once a first-run switch has mounted the Main group, so one link
+# per setup is enough. Send action= in a link of its own, once its level is on screen.
+appId: ${APP_ID}
+---
+- extendedWaitUntil:
+    visible:
+      id: '(?!splash\.)[a-z0-9]+(-[a-z0-9]+)*\.(screen|dialog|card)'
+    timeout: 15000
+- openLink: '${APP_SCHEME}://debug/setup?${QUERY}'
+# system-ui: iOS may ask "Open in <app>?" for the link; 'Open' is Apple's button, not app text.
+- runFlow:
+    when:
+      visible: 'Open'
+    commands:
+      - tapOn: 'Open'
+- extendedWaitUntil:
+    visible:
+      id: '${WAIT_FOR}'
+    timeout: 15000

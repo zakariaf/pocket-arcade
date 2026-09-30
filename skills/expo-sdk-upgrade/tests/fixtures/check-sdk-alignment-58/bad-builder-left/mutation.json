@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/game-host/long-press.ts",
+      "content": "// packages/shell/src/game-host/long-press.ts\nimport { Gesture } from 'react-native-gesture-handler';\n\nexport const LONG_PRESS = Gesture.LongPress().minDuration(450);\n"
+    }
+  }
+]

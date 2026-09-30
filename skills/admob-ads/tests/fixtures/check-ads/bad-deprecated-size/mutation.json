@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER",
+      "with": "BannerAdSize.ANCHORED_ADAPTIVE_BANNER"
+    }
+  }
+]

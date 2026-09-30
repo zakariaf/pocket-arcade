@@ -1,0 +1,3 @@
+scene-support
+packages/tooling/src/ios/toolchain.ts
+packages/shell/src/config/scene-support.ts defines it, but nothing calls withSceneSupport

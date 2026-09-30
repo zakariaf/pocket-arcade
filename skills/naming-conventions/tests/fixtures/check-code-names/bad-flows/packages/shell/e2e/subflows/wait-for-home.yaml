@@ -1,0 +1,11 @@
+# packages/shell/e2e/subflows/wait-for-home.yaml
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      visible: 'Play'
+    commands:
+      - tapOn: 'Continue'
+- extendedWaitUntil:
+    visible: 'Level 1'
+    timeout: 5000

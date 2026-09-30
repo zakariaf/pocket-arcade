@@ -1,0 +1,14 @@
+{
+ "frame": "s10-statistics",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 600,
+ "source": "self-test fixture",
+ "note": "Sheets for a scrolled capture of a tall frame: the diff and zoom bands must compare the app with the design window it shows (fixed top bar, scrolled body, pinned banner).",
+ "app": "../../check-parity/good/tall-s10-statistics-light-en-y600/app.png",
+ "reference": {
+  "image": "../../check-parity/reference/lineSiege/light-en/s10-statistics.png",
+  "layout": "../../check-parity/reference/lineSiege/light-en/s10-statistics.layout.json"
+ }
+}

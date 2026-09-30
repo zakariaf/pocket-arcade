@@ -1,0 +1,2 @@
+[e2e-script] script "e2e:ios" is "maestro test packages/shell/e2e/flows"
+[visual-deps] pixelmatch is "^7.2.0", not exactly 7.2.0

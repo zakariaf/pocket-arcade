@@ -1,0 +1,4 @@
+[audio-file-missing]
+packages/shell/src/services/audio/fake-audio.ts
+SKIP packages/shell/src/services/audio/audio-api-audio-adapter.ts [audio-file-missing] no Shell app
+RESULT: FAIL (1 problems)

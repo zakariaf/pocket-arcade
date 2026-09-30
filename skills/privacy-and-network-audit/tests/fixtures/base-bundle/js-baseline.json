@@ -1,0 +1,44 @@
+{
+  "react-native": {
+    "categories": [
+      "webSocket",
+      "remoteUrl"
+    ],
+    "reason": "RN core: WebSocket module and doc URLs; our code cannot call them (lint layer A)"
+  },
+  "whatwg-fetch": {
+    "categories": [
+      "fetch",
+      "xhr"
+    ],
+    "reason": "fetch polyfill installed by RN; unused by our code"
+  },
+  "expo": {
+    "categories": [
+      "fetch",
+      "remoteUrl"
+    ],
+    "reason": "Expo winter fetch polyfill; unused by our code"
+  },
+  "@iabtcf/core": {
+    "categories": [
+      "fetch",
+      "remoteUrl",
+      "xhr"
+    ],
+    "reason": "TCF decoder used by react-native-google-mobile-ads (allowed component N3 a); its GVL download is not called"
+  },
+  "react-native-google-mobile-ads": {
+    "categories": [
+      "remoteUrl"
+    ],
+    "reason": "allowed component (N3 a); documentation links"
+  },
+  "expo-iap": {
+    "categories": [
+      "remoteUrl",
+      "fetch"
+    ],
+    "reason": "kit-api.ts (IAPKit) is bundled through the index re-export but every entry point is banned (lint + audit)"
+  }
+}

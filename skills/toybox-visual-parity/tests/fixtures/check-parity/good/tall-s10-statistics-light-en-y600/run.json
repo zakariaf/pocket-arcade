@@ -1,0 +1,13 @@
+{
+ "frame": "s10-statistics",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 600,
+ "source": "self-test fixture",
+ "note": "Synthetic capture of the tall S10 frame at scroll 600: the design pixels laid out the way the app shows them (top bar fixed, body scrolled under it and clipped above the banner, banner pinned at the bottom), Maestro-like whole-point bounds of the visible elements. It must pass with 0 problems.",
+ "reference": {
+  "image": "../../reference/lineSiege/light-en/s10-statistics.png",
+  "layout": "../../reference/lineSiege/light-en/s10-statistics.layout.json"
+ }
+}

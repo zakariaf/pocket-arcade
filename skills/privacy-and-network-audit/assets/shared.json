@@ -1,0 +1,10 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "tooling-deps/", "to": "templates/tooling-deps/" },
+  { "from": "repo-templates/packages/tooling/src/audit/network-runtime-layer.ts", "to": "templates/packages/tooling/src/audit/network-runtime-layer.ts" },
+  { "from": "repo-templates/packages/tooling/src/audit/network-runtime-layer.test.ts", "to": "templates/packages/tooling/src/audit/network-runtime-layer.test.ts" },
+  { "from": "repo-templates/packages/tooling/src/audit/sample-sockets.ts", "to": "templates/packages/tooling/src/audit/sample-sockets.ts" },
+  { "from": "repo-templates/dot-prettierrc.json", "to": "assets/prettierrc.json" },
+  { "from": "repo-templates/packages/shell/src/screens/debug/network-guard.ts", "to": "templates/packages/shell/src/screens/debug/network-guard.ts" },
+  { "from": "repo-templates/packages/shell/src/screens/debug/network-guard.test.ts", "to": "templates/packages/shell/src/screens/debug/network-guard.test.ts" }
+]

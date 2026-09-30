@@ -1,0 +1,1 @@
+[{ "json": { "file": "stryker.config.json", "path": ["ignorePatterns"], "value": ["apps/*/ios", "apps/*/android", "apps/*/build", "reports", "coverage", "tools", ".claude"] } }]

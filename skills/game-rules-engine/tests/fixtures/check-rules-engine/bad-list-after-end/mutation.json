@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/list-moves.ts", "find": "  if (outcome(state).kind !== 'playing') return [];\n", "with": "" } }]

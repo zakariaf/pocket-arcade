@@ -1,0 +1,2 @@
+[hitch-rate]
+hitch rate 14.2 ms/s

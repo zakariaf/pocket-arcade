@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/src/rules/live.ts",
+      "content": "// fixture: a socket through globalThis\nexport function openLive(url: string): unknown {\n  return new globalThis.WebSocket(url);\n}\n"
+    }
+  }
+]

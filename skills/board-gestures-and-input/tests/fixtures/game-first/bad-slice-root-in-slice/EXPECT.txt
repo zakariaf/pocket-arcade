@@ -1,0 +1,2 @@
+gesture-root
+no <GestureHandlerRootView> wraps the app

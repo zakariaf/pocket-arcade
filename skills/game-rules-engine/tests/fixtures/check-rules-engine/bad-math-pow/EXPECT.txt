@@ -1,0 +1,3 @@
+[determinism]
+apps/tap-flip/src/rules/outcome.ts
+uses Math.pow

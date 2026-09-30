@@ -1,0 +1,1 @@
+typescript-eslint --npm-view tse-view.json --today 2026-09-24

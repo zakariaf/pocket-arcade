@@ -1,0 +1,2 @@
+[harness-parser]
+probe=board

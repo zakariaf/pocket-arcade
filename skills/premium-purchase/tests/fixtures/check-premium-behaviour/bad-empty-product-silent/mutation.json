@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-store-flow.ts",
+      "find": "    if (product === null) {\n      deps.dispatch({ type: 'store-unavailable' });\n      return;\n    }",
+      "with": "    if (product === null) {\n      return;\n    }"
+    }
+  }
+]

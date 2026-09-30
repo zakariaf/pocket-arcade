@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/src/rules/sync.ts",
+      "content": "// fixture\nexport function openSync(url: string): unknown {\n  return new WebSocket(url);\n}\n"
+    }
+  }
+]

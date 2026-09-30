@@ -1,0 +1,3 @@
+logo-tile-mismatch
+LOGO_TILE_VARIANTS.about.ring is 4, Toybox says 5
+logo-tile.tsx:

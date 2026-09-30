@@ -1,0 +1,3 @@
+panel.tsx
+[locked-pack-edge]
+the locked tone paints its own edge colour

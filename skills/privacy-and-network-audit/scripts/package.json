@@ -1,0 +1,11 @@
+{
+  "name": "privacy-and-network-audit-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pinned packages for the privacy-and-network-audit skill scripts (installed with npm ci --prefix <skill>/scripts). Prettier is the version the app repo pins, so templates are checked exactly as format:check sees them.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "prettier": "3.9.9"
+  }
+}

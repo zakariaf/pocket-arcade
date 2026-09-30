@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  const host = hostFor({",
+      "with": "  const early = initialStateFor(launch, hydrated.save);\n  const host = hostFor({"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "initialState: initialStateFor(launch, hydrated.save) }",
+      "with": "initialState: early }"
+    }
+  }
+]

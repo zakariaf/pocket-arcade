@@ -1,0 +1,2 @@
+[env-shadows-cli] env: sets APP_ID
+[env-shadows-cli] env: sets LANG

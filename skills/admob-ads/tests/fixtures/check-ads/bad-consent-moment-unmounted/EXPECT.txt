@@ -1,0 +1,2 @@
+[consent-moment]
+no app file renders <ConsentMoment> around the navigator

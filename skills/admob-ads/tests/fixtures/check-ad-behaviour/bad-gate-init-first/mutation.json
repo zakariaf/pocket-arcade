@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-gate.ts",
+      "find": "  const info = await deps.consent.showFormIfRequired();",
+      "with": "  await deps.ads.initialize();\n  const info = await deps.consent.showFormIfRequired();"
+    }
+  }
+]

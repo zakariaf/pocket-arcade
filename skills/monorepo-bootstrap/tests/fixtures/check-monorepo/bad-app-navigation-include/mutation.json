@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/line-siege/tsconfig.json", "find": ",\n    \"../../packages/shell/src/navigation/react-navigation.d.ts\"", "with": "" } }]

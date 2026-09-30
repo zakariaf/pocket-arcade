@@ -1,0 +1,1 @@
+premium-entry.test.tsx:7 [mocked-store] jest.mock('@e07/shell/stores/premium/premium-store.ts') mocks a store

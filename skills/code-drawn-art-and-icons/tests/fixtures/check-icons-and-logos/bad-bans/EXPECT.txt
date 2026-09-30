@@ -1,0 +1,5 @@
+[no-svg-library]
+[no-emoji]
+[no-image-file]
+packages/shell/src/ui/star-badge.tsx:2
+apps/line-siege/src/art/sheep.png

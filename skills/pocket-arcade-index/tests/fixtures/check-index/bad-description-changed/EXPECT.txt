@@ -1,0 +1,2 @@
+[generated-stale]
+references/skill-table.md

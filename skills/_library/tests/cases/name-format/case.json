@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "name-format"
+  ],
+  "sync": true
+}

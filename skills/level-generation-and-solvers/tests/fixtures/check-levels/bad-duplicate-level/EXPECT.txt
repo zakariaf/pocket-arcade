@@ -1,0 +1,2 @@
+[duplicate-level]
+level 2 repeats level 1

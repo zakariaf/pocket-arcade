@@ -1,0 +1,3 @@
+[config-rules]
+apps/tap-flip/game.config.ts:
+isContinueAllowed: false, but the rules' continueRun is { kind: 'once' }

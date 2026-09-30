@@ -1,0 +1,3 @@
+[band-violated]
+test/sims/line-siege/balance-bands.json:78
+endless greedy d100 medianMoves = 9 is outside 20..80

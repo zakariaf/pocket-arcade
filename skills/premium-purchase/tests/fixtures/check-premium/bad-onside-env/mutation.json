@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "scripts",
+        "prebuild:ios"
+      ],
+      "value": "EXPO_IAP_ONSIDE=1 npx expo prebuild --platform ios"
+    }
+  }
+]

@@ -1,0 +1,47 @@
+{
+"version":1,
+"frame":"s14-restart-to-apply",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S14/restart"
+],
+"root":"restart-dialog.scrim",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s14-restart-to-apply.png",
+"elements":[
+{"testID":"restart-dialog.scrim","screen":"S14/restart","role":"none","component":"Scrim","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"","aria":null,"style":{"fill":"#03020C @0.7","color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"restart-dialog.card","screen":"S14/restart","role":"none","component":"DialogCard","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":289.56,"w":362,"h":294.88},"box":{"w":362,"h":295,"rotate":0},"text":"Restart to apply The layout direction changes after a quick restart. Your progress is saved. Not now Restart now","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"22px","shadow":"rgb(7, 6, 26) 0px 8px 0px 0px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"restart-dialog.art","screen":"S14/restart","role":"none","component":"ArtTile","kind":"pop, globe","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"restart-dialog.card","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":40.33,"y":311.9,"w":69.33,"h":69.33},"box":{"w":64,"h":64,"rotate":-5},"text":"","aria":null,"style":{"fill":"#FFD84D","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"16px","shadow":"rgb(255, 255, 255) 0px 0px 0px 4px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"restart-dialog.title","screen":"S14/restart","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":390.56,"w":316,"h":27.5},"box":{"w":316,"h":28,"rotate":0},"text":"Restart to apply","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 25px/27.5px Lilita One"}},
+{"testID":"restart-dialog.body","screen":"S14/restart","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":430.06,"w":316,"h":44.88},"box":{"w":316,"h":45,"rotate":0},"text":"The layout direction changes after a quick restart. Your progress is saved.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"restart-dialog.buttons","screen":"S14/restart","role":"none","component":"View","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":492.94,"w":316,"h":68.5},"box":{"w":316,"h":69,"rotate":0},"text":"Not now Restart now","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"restart-dialog.later-button","screen":"S14/restart","role":"button","component":"Button","kind":"secondary","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":492.94,"w":152,"h":68.5},"box":{"w":152,"h":69,"rotate":0},"text":"Not now","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
+{"testID":"restart-dialog.restart-button","screen":"S14/restart","role":"button","component":"Button","kind":"primary, restore icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":207,"y":492.94,"w":152,"h":68.5},"box":{"w":152,"h":69,"rotate":0},"text":"Restart now","aria":null,"style":{"fill":"#FF7D5E","color":"#1B1943","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}}
+],
+"texts":[
+{"text":"Language","x":76,"y":77.16,"w":110.22,"h":31,"owner":null,"font":"400 27px Lilita One"},
+{"text":"System (","x":37,"y":148,"w":69.53,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"English","x":106.53,"y":148,"w":58.03,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":")","x":164.56,"y":148,"w":5.77,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Uses your phone’s language.","x":37,"y":171.44,"w":185.23,"h":17,"owner":null,"font":"400 14px Rubik"},
+{"text":"English","x":37,"y":218.92,"w":66.45,"h":22,"owner":null,"font":"700 18px Rubik"},
+{"text":"Deutsch","x":37,"y":278.92,"w":75.81,"h":22,"owner":null,"font":"700 18px Rubik"},
+{"text":"فارسی","x":37,"y":336.13,"w":44.7,"h":28,"owner":null,"font":"700 18px Vazirmatn"},
+{"text":"کوردیی ناوەندی","x":37,"y":396.13,"w":110.45,"h":28,"owner":null,"font":"700 18px Vazirmatn"},
+{"text":"Persian and Sorani use a right-to-left layout.","x":89,"y":474.63,"w":268.19,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Persian and Sorani use a right-to-left layout.","x":89,"y":497.06,"w":84.27,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Restart to apply","x":43,"y":389.56,"w":171.7,"h":29,"owner":"restart-dialog.title","font":"400 25px Lilita One"},
+{"text":"The layout direction changes after a quick restart. Your progress is saved.","x":43,"y":431.06,"w":284.72,"h":20,"owner":"restart-dialog.body","font":"400 17px Rubik"},
+{"text":"The layout direction changes after a quick restart. Your progress is saved.","x":43,"y":453.5,"w":289.48,"h":20,"owner":"restart-dialog.body","font":"400 17px Rubik"},
+{"text":"Not now","x":84.27,"y":516.56,"w":69.45,"h":20,"owner":"restart-dialog.later-button","font":"700 17px Rubik"},
+{"text":"Restart now","x":267.63,"y":505.94,"w":64.73,"h":20,"owner":"restart-dialog.restart-button","font":"700 17px Rubik"},
+{"text":"Restart now","x":282.34,"y":527.19,"w":35.31,"h":20,"owner":"restart-dialog.restart-button","font":"700 17px Rubik"}
+]
+}

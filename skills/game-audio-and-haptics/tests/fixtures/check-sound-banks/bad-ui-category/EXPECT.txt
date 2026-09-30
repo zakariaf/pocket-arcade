@@ -1,0 +1,3 @@
+[bank-category]
+apps/demo-game/src/sounds/sound-bank.ts:13
+category "ui"

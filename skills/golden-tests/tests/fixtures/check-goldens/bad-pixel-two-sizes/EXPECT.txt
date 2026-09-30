@@ -1,0 +1,1 @@
+[pixel-golden-cases] renders 2 canvas size(s) and not the moments [0, 0.5, 1]

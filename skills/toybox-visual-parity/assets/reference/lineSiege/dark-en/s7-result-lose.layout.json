@@ -1,0 +1,41 @@
+{
+"version":1,
+"frame":"s7-result-lose",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S7/lose"
+],
+"root":"result.screen",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s7-result-lose.png",
+"elements":[
+{"testID":"result.screen","screen":"S7/lose","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 Level 12 Not this time The monsters broke through Continue – watch an ad One continue per level. Try again Levels","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.mode-chip","screen":"S7/lose","role":"text","component":"Chip","kind":null,"checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":157.14,"y":72,"w":87.72,"h":31.5},"box":{"w":88,"h":32,"rotate":0},"text":"Level 12","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"2px solid #E4E0FF","radius":"8px","shadow":null,"outline":null,"font":"700 15px/19.5px Rubik"}},
+{"testID":"result.title","screen":"S7/lose","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":338.75,"w":362,"h":41.8},"box":{"w":362,"h":42,"rotate":0},"text":"Not this time","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 38px/41.8px Lilita One"}},
+{"testID":"result.logo","screen":"S7/lose","role":"none","component":"LogoTile","kind":"104 lose (+17 deg, 6 pt ring, 6 pt lower)","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"result.screen","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":134.31,"y":209.56,"w":129.86,"h":129.86},"box":{"w":104,"h":104,"rotate":17},"text":"","aria":null,"style":{"fill":"#FF7D5E","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"24.96px","shadow":"rgb(255, 255, 255) 0px 0px 0px 6px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.reason-card","screen":"S7/lose","role":"none","component":"Panel","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":394.55,"w":362,"h":62},"box":{"w":362,"h":62,"rotate":0},"text":"The monsters broke through","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.reason-card.icon","screen":"S7/lose","role":"none","component":"Icon","kind":"alert 28, danger","checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":39,"y":411.55,"w":28,"h":28},"box":{"w":28,"h":28,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#FF8593","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.reason-card.label","screen":"S7/lose","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":79,"y":414,"w":248.13,"h":23.09},"box":{"w":248,"h":23,"rotate":0},"text":"The monsters broke through","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 21px/23.1px Lilita One"}},
+{"testID":"result.continue-offer","screen":"S7/lose","role":"none","component":"OfferBox","kind":null,"checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":470.55,"w":362,"h":116.19},"box":{"w":362,"h":116,"rotate":0},"text":"Continue – watch an ad One continue per level.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":"3px dashed #E4E0FF","radius":"14px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.continue-ad-button","screen":"S7/lose","role":"button","component":"Button","kind":"pop block, ad icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":37,"y":487.55,"w":328,"h":54},"box":{"w":328,"h":54,"rotate":0},"text":"Continue – watch an ad","aria":null,"style":{"fill":"#FFD84D","color":"#1B1943","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
+{"testID":"result.continue-note","screen":"S7/lose","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":37,"y":551.55,"w":328,"h":18.19},"box":{"w":328,"h":18,"rotate":0},"text":"One continue per level.","aria":null,"style":{"fill":null,"color":"#B9B4EA","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 13px/18.2px Rubik"}},
+{"testID":"result.try-again-button","screen":"S7/lose","role":"button","component":"Button","kind":"primary hero, restore cap","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":692,"w":362,"h":80},"box":{"w":362,"h":80,"rotate":0},"text":"Try again","aria":null,"style":{"fill":"#FF7D5E","color":"#1B1943","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 6px 0px 0px","outline":null,"font":"400 25px/27.5px Lilita One"}},
+{"testID":"result.levels-button","screen":"S7/lose","role":"button","component":"Button","kind":"secondary block, grid icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":786,"w":362,"h":54},"box":{"w":362,"h":54,"rotate":0},"text":"Levels","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}}
+],
+"texts":[
+{"text":"Level 12","x":171.14,"y":78,"w":59.72,"h":18,"owner":"result.mode-chip","font":"700 15px Rubik"},
+{"text":"Not this time","x":98.17,"y":337.75,"w":205.66,"h":43,"owner":"result.title","font":"400 38px Lilita One"},
+{"text":"The monsters broke through","x":79,"y":413,"w":248.13,"h":24,"owner":"result.reason-card.label","font":"400 21px Lilita One"},
+{"text":"Continue – watch an ad","x":119.84,"y":503.92,"w":196.3,"h":20,"owner":"result.continue-ad-button","font":"700 17px Rubik"},
+{"text":"One continue per level.","x":37,"y":552.55,"w":137.7,"h":15,"owner":"result.continue-note","font":"400 13px Rubik"},
+{"text":"Try again","x":95,"y":717.25,"w":99.56,"h":29,"owner":"result.try-again-button","font":"400 25px Lilita One"},
+{"text":"Levels","x":191.02,"y":802.38,"w":53.97,"h":20,"owner":"result.levels-button","font":"700 17px Rubik"}
+]
+}

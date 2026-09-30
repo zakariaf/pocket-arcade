@@ -1,0 +1,3 @@
+hook-bypass
+--no-verify
+package.json

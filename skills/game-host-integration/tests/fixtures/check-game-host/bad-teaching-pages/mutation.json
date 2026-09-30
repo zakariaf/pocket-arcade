@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/tutorial/tap-flip-teaching.ts",
+      "find": "    {\n      titleId: GOAL_ID,\n      bodyId: 'tap-flip.how-to-play.step-3',\n      example: applyMove(PLUS, TAP_CORNER).state,\n      pointer: UNDO_POINTER,\n    },\n",
+      "with": ""
+    }
+  }
+]

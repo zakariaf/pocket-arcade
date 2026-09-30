@@ -1,0 +1,2 @@
+[test-only-code]
+packages/shell/src/app/test-only-entry.ts

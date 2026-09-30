@@ -1,0 +1,2 @@
+[specs-mismatch]
+iconTile.iconStroke is 2, the as-rendered spec is 2.5 (not a CSS border (a ring, stroke or ratio): it keeps the token value 2.5)

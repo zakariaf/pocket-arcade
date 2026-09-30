@@ -1,0 +1,2 @@
+[schema-version]
+payload schemaVersion 1 differs from the row's schema_version 2

@@ -1,0 +1,2 @@
+[structure] home.screen: shape differs
+inside its crop-only part home.logo

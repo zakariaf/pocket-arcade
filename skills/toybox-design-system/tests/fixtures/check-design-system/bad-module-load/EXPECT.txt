@@ -1,0 +1,2 @@
+[theme-module-load]
+packages/shell/src/theme/shell-colors.ts

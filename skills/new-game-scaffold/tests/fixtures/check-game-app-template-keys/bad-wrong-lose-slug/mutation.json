@@ -1,0 +1,3 @@
+[
+  { "replace": { "file": "apps/bank-shot/src/rules/bank-shot-engine.ts", "find": "'bank-shot.lose.caught'", "with": "'bank-shot.lose.out-of-moves'" } }
+]

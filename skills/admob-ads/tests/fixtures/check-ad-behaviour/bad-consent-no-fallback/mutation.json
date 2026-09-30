@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/admob-consent-adapter.ts",
+      "find": "    return toInfo(await AdsConsent.getConsentInfo());",
+      "with": "    return { canRequestAds: false, isPrivacyOptionsRequired: false };"
+    }
+  }
+]

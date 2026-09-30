@@ -1,0 +1,42 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "LineSiege",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "resource-id": "game.screen",
+      "bounds": "[0,0][402,874]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "{\"x\":16,\"y\":128,\"layout\":{\"width\":370,\"height\":700,\"isMirrored\":false,\"regions\":[{\"id\":\"board\",\"x\":13,\"y\":200,\"cell\":43,\"cols\":8,\"rows\":8}]}}",
+      "resource-id": "game.board-layout",
+      "bounds": "[16,128][200,140]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "resource-id": "pause.dialog",
+      "bounds": "[20,210][382,663]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

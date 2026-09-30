@@ -1,0 +1,3 @@
+[physical-style-key]
+value-row.tsx:12
+"right"

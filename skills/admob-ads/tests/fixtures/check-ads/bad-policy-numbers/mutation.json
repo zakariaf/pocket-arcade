@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/demo-game/game.config.ts",
+      "find": "minMsBetweenInterstitials: 180_000",
+      "with": "minMsBetweenInterstitials: 60_000"
+    }
+  }
+]

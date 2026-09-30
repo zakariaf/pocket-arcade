@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/hud-model.ts",
+      "find": "export function hudView(",
+      "with": "export function makeHudView("
+    }
+  }
+]

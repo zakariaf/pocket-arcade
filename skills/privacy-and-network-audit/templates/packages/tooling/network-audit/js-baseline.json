@@ -1,0 +1,50 @@
+{
+  "react-native": {
+    "categories": ["webSocket", "remoteUrl"],
+    "reason": "RN core: WebSocket module and doc URLs; our code cannot call them (lint layer A)"
+  },
+  "whatwg-fetch": {
+    "categories": ["fetch", "xhr"],
+    "reason": "fetch polyfill installed by RN; unused by our code"
+  },
+  "expo": {
+    "categories": ["fetch", "remoteUrl"],
+    "reason": "Expo winter fetch polyfill; unused by our code"
+  },
+  "@iabtcf/core": {
+    "categories": ["fetch", "remoteUrl", "xhr"],
+    "reason": "TCF decoder used by react-native-google-mobile-ads (allowed component N3 a); its GVL download is not called"
+  },
+  "react-native-google-mobile-ads": {
+    "categories": ["remoteUrl"],
+    "reason": "allowed component (N3 a); documentation links"
+  },
+  "expo-iap": {
+    "categories": ["remoteUrl", "fetch"],
+    "reason": "kit-api.ts (IAPKit) is bundled through the index re-export but every entry point is banned (lint + audit)"
+  },
+  "expo-asset": {
+    "categories": ["remoteUrl"],
+    "reason": "AssetSources.js builds Expo CDN URLs (classic-assets.eascdn.net) for assets served by a dev server or updates; Release builds embed every asset and our code passes no remote source (URL literals are lint-banned)"
+  },
+  "react-native-worklets": {
+    "categories": ["remoteUrl"],
+    "reason": "docs.swmansion.com links inside error messages (debug/checkCppVersion.js, memory/serializable.native.js); no request is made"
+  },
+  "react-native-reanimated": {
+    "categories": ["remoteUrl"],
+    "reason": "documentation links inside error and logger messages (common/logger.js, checkCppVersion.js, pluginUtils.js); no request is made"
+  },
+  "react-reconciler": {
+    "categories": ["remoteUrl"],
+    "reason": "react.dev/errors decoder link inside production error messages; no request is made"
+  },
+  "react-native-audio-api": {
+    "categories": ["fetch"],
+    "reason": "AudioDecoder.decodeFromRemoteUrl fetches only when decodeAudioData gets an http(s) URL; our sound banks are synthesised in code and URL literals are lint-banned"
+  },
+  "@expo/devtools": {
+    "categories": ["webSocket"],
+    "reason": "WebSocketWithReconnect.js is the dev-tools plugin client that expo re-exports; it connects only to a running dev server, which Release builds never have, and no Shell code calls it"
+  }
+}

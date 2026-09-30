@@ -1,0 +1,4 @@
+[
+  {"from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs"},
+  {"from": "repo-templates/apps/__GAME_ID__/src/board/board-palettes.ts", "to": "templates/game/board/board-palettes.ts"}
+]

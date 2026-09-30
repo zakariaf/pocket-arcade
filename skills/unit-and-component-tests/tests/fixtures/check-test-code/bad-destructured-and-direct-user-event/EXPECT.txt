@@ -1,0 +1,2 @@
+play-button.test.tsx:10 [destructured-queries]
+play-button.test.tsx:11 [user-event-setup] userEvent.press(...) is called without a setup() instance

@@ -1,0 +1,2 @@
+[debug-screen]
+screens/debug/debug-screen.tsx

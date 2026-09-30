@@ -1,0 +1,2885 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "title": "",
+  "value": "",
+  "text": "",
+  "hintText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]",
+  "enabled": "false",
+  "focused": "false",
+  "selected": "false",
+  "checked": "false"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "Line Siege",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]",
+    "enabled": "true",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,874]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,874]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,874]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[0,0][402,874]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [
+            {
+             "attributes": {
+              "accessibilityText": "",
+              "title": "",
+              "value": "",
+              "text": "",
+              "hintText": "",
+              "resource-id": "",
+              "bounds": "[0,0][402,874]",
+              "enabled": "true",
+              "focused": "false",
+              "selected": "false",
+              "checked": "false"
+             },
+             "children": [
+              {
+               "attributes": {
+                "accessibilityText": "",
+                "title": "",
+                "value": "",
+                "text": "",
+                "hintText": "",
+                "resource-id": "",
+                "bounds": "[0,0][402,874]",
+                "enabled": "true",
+                "focused": "false",
+                "selected": "false",
+                "checked": "false"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "accessibilityText": "",
+                  "title": "",
+                  "value": "",
+                  "text": "",
+                  "hintText": "",
+                  "resource-id": "",
+                  "bounds": "[0,0][402,874]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "selected": "false",
+                  "checked": "false"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "accessibilityText": "",
+                    "title": "",
+                    "value": "",
+                    "text": "",
+                    "hintText": "",
+                    "resource-id": "",
+                    "bounds": "[0,0][402,874]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "selected": "false",
+                    "checked": "false"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "accessibilityText": "",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "",
+                      "bounds": "[0,0][402,874]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "accessibilityText": "",
+                            "title": "",
+                            "value": "",
+                            "text": "",
+                            "hintText": "",
+                            "resource-id": "",
+                            "bounds": "[0,0][402,874]",
+                            "enabled": "true",
+                            "focused": "false",
+                            "selected": "false",
+                            "checked": "false"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "accessibilityText": "",
+                              "title": "",
+                              "value": "",
+                              "text": "",
+                              "hintText": "",
+                              "resource-id": "",
+                              "bounds": "[0,0][402,874]",
+                              "enabled": "true",
+                              "focused": "false",
+                              "selected": "false",
+                              "checked": "false"
+                             },
+                             "children": [
+                              {
+                               "attributes": {
+                                "accessibilityText": "",
+                                "title": "",
+                                "value": "",
+                                "text": "",
+                                "hintText": "",
+                                "resource-id": "",
+                                "bounds": "[0,0][402,874]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "selected": "false",
+                                "checked": "false"
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "accessibilityText": "",
+                                  "title": "",
+                                  "value": "",
+                                  "text": "",
+                                  "hintText": "",
+                                  "resource-id": "settings.screen",
+                                  "bounds": "[0,0][402,874]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "selected": "false",
+                                  "checked": "false"
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "settings.top-bar",
+                                    "bounds": "[0,62][402,128]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "Back",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "settings.top-bar.back-button",
+                                    "bounds": "[16,69][64,117]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "Settings",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "settings.top-bar.title",
+                                    "bounds": "[76,78][386,108]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "Settings",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[76,78][386,108]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "",
+                                    "bounds": "[0,128][402,874]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[0,128][402,874]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "",
+                                        "title": "",
+                                        "value": "",
+                                        "text": "",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[0,-445][402,1501]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[0,-445][402,1501]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.sound",
+                                            "bounds": "[20,-205][382,116]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.sound.list",
+                                            "bounds": "[20,-177][382,116]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.music-volume-row",
+                                              "bounds": "[23,0][379,53]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Volume",
+                                              "title": "",
+                                              "value": "40%",
+                                              "text": "40%",
+                                              "hintText": "",
+                                              "resource-id": "settings.music-volume-slider",
+                                              "bounds": "[147,0][365,43]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Volume",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.music-volume-row.label",
+                                              "bounds": "[87,12][135,30]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Volume",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[87,12][135,30]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Vibration",
+                                              "title": "",
+                                              "value": "1",
+                                              "text": "1",
+                                              "hintText": "",
+                                              "resource-id": "settings.vibration-switch",
+                                              "bounds": "[23,53][379,113]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "true"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.vibration-switch.icon",
+                                                "bounds": "[37,65][75,103]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,73][67,95]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,73][67,95]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Vibration",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.vibration-switch.label",
+                                                "bounds": "[87,73][295,95]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Vibration",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,73][295,95]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.vibration-switch.toggle",
+                                                "bounds": "[307,66][365,102]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[334,71][360,97]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[339,77][354,92]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [
+                                                    {
+                                                     "attributes": {
+                                                      "accessibilityText": "",
+                                                      "title": "",
+                                                      "value": "",
+                                                      "text": "",
+                                                      "hintText": "",
+                                                      "resource-id": "",
+                                                      "bounds": "[339,77][354,92]",
+                                                      "enabled": "true",
+                                                      "focused": "false",
+                                                      "selected": "false",
+                                                      "checked": "false"
+                                                     },
+                                                     "children": [],
+                                                     "enabled": true,
+                                                     "focused": false,
+                                                     "checked": false,
+                                                     "selected": false
+                                                    }
+                                                   ],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": true,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "Display",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.display.tab",
+                                            "bounds": "[20,136][118,164]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.display",
+                                            "bounds": "[20,136][382,541]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.display.list",
+                                            "bounds": "[20,163][382,541]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-row",
+                                              "bounds": "[23,166][379,285]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Theme",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-row.label",
+                                              "bounds": "[87,184][365,207]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Theme",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[87,184][365,207]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Theme",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-control",
+                                              "bounds": "[37,226][365,275]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "System",
+                                              "title": "",
+                                              "value": "radio button",
+                                              "text": "radio button",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-segment.system",
+                                              "bounds": "[37,229][141,278]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "true",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": true
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Light",
+                                              "title": "",
+                                              "value": "radio button",
+                                              "text": "radio button",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-segment.light",
+                                              "bounds": "[149,226][253,275]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Dark",
+                                              "title": "",
+                                              "value": "radio button",
+                                              "text": "radio button",
+                                              "hintText": "",
+                                              "resource-id": "settings.theme-segment.dark",
+                                              "bounds": "[261,226][365,275]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Colour-blind friendly colours, Shapes and symbols, not just colour.",
+                                              "title": "",
+                                              "value": "0",
+                                              "text": "0",
+                                              "hintText": "",
+                                              "resource-id": "settings.colour-blind-switch",
+                                              "bounds": "[23,284][379,390]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.colour-blind-switch.icon",
+                                                "bounds": "[37,319][75,357]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,327][67,349]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,327][67,349]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Colour-blind friendly colours",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.colour-blind-switch.label",
+                                                "bounds": "[87,296][295,341]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Colour-blind friendly colours",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,296][295,341]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Shapes and symbols, not just colour.",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.colour-blind-switch.description",
+                                                "bounds": "[87,343][295,380]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Shapes and symbols, not just colour.",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,343][295,380]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.colour-blind-switch.toggle",
+                                                "bounds": "[307,320][365,356]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[312,325][338,351]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[317,331][332,346]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [
+                                                    {
+                                                     "attributes": {
+                                                      "accessibilityText": "",
+                                                      "title": "",
+                                                      "value": "",
+                                                      "text": "",
+                                                      "hintText": "",
+                                                      "resource-id": "",
+                                                      "bounds": "[317,331][332,346]",
+                                                      "enabled": "true",
+                                                      "focused": "false",
+                                                      "selected": "false",
+                                                      "checked": "false"
+                                                     },
+                                                     "children": [],
+                                                     "enabled": true,
+                                                     "focused": false,
+                                                     "checked": false,
+                                                     "selected": false
+                                                    }
+                                                   ],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Reduce motion, Less shaking, particles and bouncing.",
+                                              "title": "",
+                                              "value": "0",
+                                              "text": "0",
+                                              "hintText": "",
+                                              "resource-id": "settings.reduce-motion-switch",
+                                              "bounds": "[23,390][379,473]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.reduce-motion-switch.icon",
+                                                "bounds": "[37,413][75,451]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,421][67,443]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,421][67,443]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Reduce motion",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.reduce-motion-switch.label",
+                                                "bounds": "[87,402][295,424]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Reduce motion",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,402][295,424]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Less shaking, particles and bouncing.",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.reduce-motion-switch.description",
+                                                "bounds": "[87,426][295,463]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Less shaking, particles and bouncing.",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,426][295,463]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.reduce-motion-switch.toggle",
+                                                "bounds": "[307,414][365,450]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[312,419][338,445]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[317,425][332,440]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [
+                                                    {
+                                                     "attributes": {
+                                                      "accessibilityText": "",
+                                                      "title": "",
+                                                      "value": "",
+                                                      "text": "",
+                                                      "hintText": "",
+                                                      "resource-id": "",
+                                                      "bounds": "[317,425][332,440]",
+                                                      "enabled": "true",
+                                                      "focused": "false",
+                                                      "selected": "false",
+                                                      "checked": "false"
+                                                     },
+                                                     "children": [],
+                                                     "enabled": true,
+                                                     "focused": false,
+                                                     "checked": false,
+                                                     "selected": false
+                                                    }
+                                                   ],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Hints during play, Tutorial tips and gentle nudges.",
+                                              "title": "",
+                                              "value": "1",
+                                              "text": "1",
+                                              "hintText": "",
+                                              "resource-id": "settings.hints-switch",
+                                              "bounds": "[23,473][379,537]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "true"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.hints-switch.icon",
+                                                "bounds": "[37,487][75,525]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,495][67,517]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,495][67,517]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Hints during play",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.hints-switch.label",
+                                                "bounds": "[87,485][295,507]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Hints during play",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,485][295,507]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Tutorial tips and gentle nudges.",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.hints-switch.description",
+                                                "bounds": "[87,509][295,528]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Tutorial tips and gentle nudges.",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,509][295,528]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.hints-switch.toggle",
+                                                "bounds": "[307,488][365,524]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[334,493][360,519]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[339,499][354,514]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [
+                                                    {
+                                                     "attributes": {
+                                                      "accessibilityText": "",
+                                                      "title": "",
+                                                      "value": "",
+                                                      "text": "",
+                                                      "hintText": "",
+                                                      "resource-id": "",
+                                                      "bounds": "[339,499][354,514]",
+                                                      "enabled": "true",
+                                                      "focused": "false",
+                                                      "selected": "false",
+                                                      "checked": "false"
+                                                     },
+                                                     "children": [],
+                                                     "enabled": true,
+                                                     "focused": false,
+                                                     "checked": false,
+                                                     "selected": false
+                                                    }
+                                                   ],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": true,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "Premium",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.premium.tab",
+                                            "bounds": "[20,561][128,588]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.premium",
+                                            "bounds": "[20,561][382,714]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.premium.list",
+                                            "bounds": "[20,588][382,714]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Remove ads – ⁨€1.99⁩",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.remove-ads-row",
+                                              "bounds": "[23,591][379,651]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.remove-ads-row.icon",
+                                                "bounds": "[37,601][75,639]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,609][67,631]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,609][67,631]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Remove ads – ⁨€1.99⁩",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.remove-ads-row.label",
+                                                "bounds": "[87,610][333,631]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Remove ads – ⁨€1.99⁩",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,610][333,631]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Restore purchase",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.restore-purchase-row",
+                                              "bounds": "[23,651][379,711]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.restore-purchase-row.icon",
+                                                "bounds": "[37,663][75,701]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,671][67,693]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,671][67,693]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Restore purchase",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.restore-purchase-row.label",
+                                                "bounds": "[87,671][333,693]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Restore purchase",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,671][333,693]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "Privacy",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.privacy.tab",
+                                            "bounds": "[20,734][118,762]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.privacy",
+                                            "bounds": "[20,734][382,909]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "settings.group.privacy.list",
+                                            "bounds": "[20,762][382,909]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Ad privacy choices, Change how Google may use data for ads.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.ad-privacy-row",
+                                              "bounds": "[23,765][379,846]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.ad-privacy-row.icon",
+                                                "bounds": "[37,786][75,824]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,794][67,816]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,794][67,816]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Ad privacy choices",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.ad-privacy-row.label",
+                                                "bounds": "[87,775][333,797]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Ad privacy choices",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,775][333,797]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Change how Google may use data for ads.",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.ad-privacy-row.description",
+                                                "bounds": "[87,799][333,836]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Change how Google may use data for ads.",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,799][333,836]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "Privacy policy",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "settings.privacy-policy-row",
+                                              "bounds": "[23,846][379,906]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.privacy-policy-row.icon",
+                                                "bounds": "[37,858][75,896]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[45,866][67,888]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [
+                                                  {
+                                                   "attributes": {
+                                                    "accessibilityText": "",
+                                                    "title": "",
+                                                    "value": "",
+                                                    "text": "",
+                                                    "hintText": "",
+                                                    "resource-id": "",
+                                                    "bounds": "[45,866][67,888]",
+                                                    "enabled": "true",
+                                                    "focused": "false",
+                                                    "selected": "false",
+                                                    "checked": "false"
+                                                   },
+                                                   "children": [],
+                                                   "enabled": true,
+                                                   "focused": false,
+                                                   "checked": false,
+                                                   "selected": false
+                                                  }
+                                                 ],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              },
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "Privacy policy",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "settings.privacy-policy-row.label",
+                                                "bounds": "[87,866][333,888]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [
+                                                {
+                                                 "attributes": {
+                                                  "accessibilityText": "Privacy policy",
+                                                  "title": "",
+                                                  "value": "",
+                                                  "text": "",
+                                                  "hintText": "",
+                                                  "resource-id": "",
+                                                  "bounds": "[87,866][333,888]",
+                                                  "enabled": "true",
+                                                  "focused": "false",
+                                                  "selected": "false",
+                                                  "checked": "false"
+                                                 },
+                                                 "children": [],
+                                                 "enabled": true,
+                                                 "focused": false,
+                                                 "checked": false,
+                                                 "selected": false
+                                                }
+                                               ],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, 3 pages",
+                                        "title": "",
+                                        "value": "48%",
+                                        "text": "48%",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[369,156][399,812]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[396,350][399,599]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, 1 page",
+                                        "title": "",
+                                        "value": "0%",
+                                        "text": "0%",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[62,841][340,871]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[65,868][337,871]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, 3 pages",
+                                        "title": "",
+                                        "value": "48%",
+                                        "text": "48%",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[369,156][399,812]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[396,350][399,599]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, 1 page",
+                                        "title": "",
+                                        "value": "0%",
+                                        "text": "0%",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[62,841][340,871]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[65,868][337,871]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              }
+                             ],
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      },
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": true,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  },
+  {
+   "attributes": {
+    "accessibilityText": "",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][0,0]",
+    "enabled": "false",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,54]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,54]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,14][92,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "1:34 PM",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,22][92,42]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[309,14][345,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "Cellular",
+            "title": "",
+            "value": "4 of 4 bars, signal strength",
+            "text": "4 of 4 bars, signal strength",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[288,26][307,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "SSID, 3 of 3 Wi-Fi bars",
+            "text": "SSID, 3 of 3 Wi-Fi bars",
+            "hintText": "",
+            "resource-id": "3 of 3 Wi-Fi bars",
+            "bounds": "[315,26][332,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "100% battery power",
+            "title": "",
+            "value": "Not charging",
+            "text": "Not charging",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[339,26][366,39]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": false,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  }
+ ],
+ "enabled": false,
+ "focused": false,
+ "checked": false,
+ "selected": false
+}

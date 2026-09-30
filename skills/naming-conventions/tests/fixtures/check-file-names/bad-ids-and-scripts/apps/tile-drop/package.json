@@ -1,0 +1,5 @@
+{
+  "name": "@other/tile-drop",
+  "private": true,
+  "main": "index.ts"
+}

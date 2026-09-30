@@ -1,0 +1,3 @@
+[element-cover]
+home.endless-card.label
+Set "coveredBy": "home.endless-card"

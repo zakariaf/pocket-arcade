@@ -1,0 +1,3 @@
+[clock-countdown]
+clock-port.ts:1
+no msUntilNextLocalDay

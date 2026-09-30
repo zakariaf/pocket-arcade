@@ -1,0 +1,51 @@
+{
+"version":1,
+"frame":"s7-result-win",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S7/win"
+],
+"root":"result.screen",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s7-result-win.png",
+"elements":[
+{"testID":"result.screen","screen":"S7/win","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 Level 12 Level complete! The wall holds! Score 1,840 New best! Monsters 10 / 10 7 moves – par 7 Next level Replay Levels Enjoying it? Remove ads for €1.99.","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.mode-chip","screen":"S7/win","role":"text","component":"Chip","kind":null,"checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":157.14,"y":72,"w":87.72,"h":31.5},"box":{"w":88,"h":32,"rotate":0},"text":"Level 12","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"2px solid #E4E0FF","radius":"8px","shadow":null,"outline":null,"font":"700 15px/19.5px Rubik"}},
+{"testID":"result.stars-3","screen":"S7/win","role":"image","component":"ResultStars","kind":"86/102/86, Skia canvas","checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":true,"state":"3 stars (the suffix is the star count)","when":null,"count":1,"rect":{"x":20,"y":117.5,"w":362,"h":124},"box":{"w":362,"h":124,"rotate":0},"text":"","aria":"Stars: 3 / 3","style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.title","screen":"S7/win","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":255.5,"w":362,"h":41.8},"box":{"w":362,"h":42,"rotate":0},"text":"Level complete!","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 38px/41.8px Lilita One"}},
+{"testID":"result.win-sticker","screen":"S7/win","role":"text","component":"Sticker","kind":"acc, -3 deg, slap at 700 ms","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":138.1,"y":306.07,"w":125.79,"h":38.85},"box":{"w":124,"h":32,"rotate":-3},"text":"The wall holds!","aria":null,"style":{"fill":"#FF7D5E","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"400 16px/18.4px Lilita One"}},
+{"testID":"result.score-card","screen":"S7/win","role":"none","component":"ScorePanel","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":355.69,"w":362,"h":152.22},"box":{"w":362,"h":152,"rotate":0},"text":"Score 1,840 New best! Monsters 10 / 10 7 moves – par 7","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"result.score-card.label","screen":"S7/win","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":39,"y":383.47,"w":49.44,"h":22.44},"box":{"w":49,"h":22,"rotate":0},"text":"Score","aria":null,"style":{"fill":null,"color":"#B9B4EA","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 17px/22.44px Rubik"}},
+{"testID":"result.score-card.value","screen":"S7/win","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":100.44,"y":372.69,"w":110.8,"h":44},"box":{"w":111,"h":44,"rotate":0},"text":"1,840","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 44px/44px Lilita One"}},
+{"testID":"result.score-card.new-best","screen":"S7/win","role":"text","component":"Sticker","kind":"gold sm, star, +6 deg, slap at 950 ms","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":259.22,"y":375.4,"w":104.96,"h":38.57},"box":{"w":103,"h":28,"rotate":6},"text":"New best!","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"400 14px/16.1px Lilita One"}},
+{"testID":"result.score-card.progress-line","screen":"S7/win","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":39,"y":442.69,"w":324,"h":21.11},"box":{"w":324,"h":21,"rotate":0},"text":"Monsters 10 / 10","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 16px/21.12px Rubik"}},
+{"testID":"result.score-card.moves-line","screen":"S7/win","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":{"winLine":"moves"},"count":1,"rect":{"x":39,"y":469.8,"w":324,"h":21.11},"box":{"w":324,"h":21,"rotate":0},"text":"7 moves – par 7","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 16px/21.12px Rubik"}},
+{"testID":"result.next-button","screen":"S7/win","role":"button","component":"Button","kind":"primary hero, forward icon at the end","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":634,"w":362,"h":80},"box":{"w":362,"h":80,"rotate":0},"text":"Next level","aria":null,"style":{"fill":"#FF7D5E","color":"#1B1943","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 6px 0px 0px","outline":null,"font":"400 25px/27.5px Lilita One"}},
+{"testID":"result.replay-button","screen":"S7/win","role":"button","component":"Button","kind":"secondary, restore icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":728,"w":175,"h":54},"box":{"w":175,"h":54,"rotate":0},"text":"Replay","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
+{"testID":"result.levels-button","screen":"S7/win","role":"button","component":"Button","kind":"secondary, grid icon","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":207,"y":728,"w":175,"h":54},"box":{"w":175,"h":54,"rotate":0},"text":"Levels","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
+{"testID":"result.premium-button","screen":"S7/win","role":"button","component":"Button","kind":"quiet, crown icon, centred","checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":53.63,"y":796,"w":294.75,"h":44},"box":{"w":295,"h":44,"rotate":0},"text":"Enjoying it? Remove ads for €1.99.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":"3px solid null","radius":"14px","shadow":null,"outline":null,"font":"400 15px/18.75px Rubik"}}
+],
+"texts":[
+{"text":"Level 12","x":171.14,"y":78,"w":59.72,"h":18,"owner":"result.mode-chip","font":"700 15px Rubik"},
+{"text":"Level complete!","x":76.22,"y":254.5,"w":249.55,"h":43,"owner":"result.title","font":"400 38px Lilita One"},
+{"text":"The wall holds!","x":149.4,"y":312.74,"w":101.12,"h":24.22,"owner":"result.win-sticker","font":"400 16px Lilita One"},
+{"text":"Score","x":39,"y":384.47,"w":49.44,"h":20,"owner":"result.score-card.label","font":"700 17px Rubik"},
+{"text":"1,840","x":100.44,"y":368.69,"w":110.8,"h":51,"owner":"result.score-card.value","font":"400 44px Lilita One"},
+{"text":"New best!","x":292.68,"y":384.77,"w":59.95,"h":22.04,"owner":"result.score-card.new-best","font":"400 14px Lilita One"},
+{"text":"Monsters 10 / 10","x":67,"y":443.69,"w":122.67,"h":19,"owner":"result.score-card.progress-line","font":"400 16px Rubik"},
+{"text":"7 moves – par 7","x":67,"y":470.8,"w":114.16,"h":19,"owner":"result.score-card.moves-line","font":"400 16px Rubik"},
+{"text":"Next level","x":130.44,"y":659.25,"w":107.11,"h":29,"owner":"result.next-button","font":"400 25px Lilita One"},
+{"text":"Replay","x":95.89,"y":744.38,"w":57.22,"h":20,"owner":"result.replay-button","font":"700 17px Rubik"},
+{"text":"Levels","x":284.52,"y":744.38,"w":53.97,"h":20,"owner":"result.levels-button","font":"700 17px Rubik"},
+{"text":"Enjoying it? Remove ads for","x":96.63,"y":808.63,"w":196.48,"h":18,"owner":"result.premium-button","font":"400 15px Rubik"},
+{"text":"€1.99","x":293.11,"y":808.63,"w":38.48,"h":18,"owner":"result.premium-button","font":"400 15px Rubik"},
+{"text":".","x":331.59,"y":808.63,"w":3.78,"h":18,"owner":"result.premium-button","font":"400 15px Rubik"}
+]
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": [
+        "packages",
+        "node_modules/some-lib/node_modules/@react-native-community/netinfo"
+      ],
+      "value": {
+        "version": "11.4.1"
+      }
+    }
+  }
+]

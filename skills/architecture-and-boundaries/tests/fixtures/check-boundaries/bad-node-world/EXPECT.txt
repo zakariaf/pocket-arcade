@@ -1,0 +1,4 @@
+packages/shell/src/app/create-shell-app.tsx:2 [node-builtin] imports the Node built-in "node:path"
+packages/shell/src/app/create-shell-app.tsx:4 [node-world-import] imports packages/shell/src/config/with-shell.ts, which needs Node
+apps/tile-drop/src/board/board-config.ts:2 [game-facing] game code imports the Shell module config/game-config.ts
+packages/shell/src/screens/settings/plugin-list.ts:2 [node-world-import] imports packages/shell/src/config/shell-plugins.ts, which needs Node (packages/shell/src/config/shell-plugins.ts (the config composer))

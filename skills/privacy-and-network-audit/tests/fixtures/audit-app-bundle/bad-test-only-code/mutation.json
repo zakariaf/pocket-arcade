@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "DemoGame.app/main.jsbundle",
+      "content": "var s=\"SHELL_TEST_BUILD_ONLY\";\n"
+    }
+  }
+]

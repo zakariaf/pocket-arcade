@@ -1,0 +1,2 @@
+[shell-colors-mismatch]
+SHELL_COLORS.light is

@@ -1,0 +1,5 @@
+apps/tile-drop/src/rules/apply-move.spec.ts [test-file]
+apps/tile-drop/src/rules/__tests__/outcome.test.ts [test-file]
+apps/tile-drop/src/rules/apply-move.unit.test.ts [test-file] test suffix ".unit.test"
+packages/shell/src/services/ads/ads.mock.ts [fake-file]
+packages/shell/src/services/ads/mock-purchase.ts [fake-file]

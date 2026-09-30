@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/shell-plugins.ts",
+      "find": "['react-native-google-mobile-ads', admobPluginOptions(adsMode, ids, SKADNETWORK_IDS)]",
+      "with": "['react-native-google-mobile-ads', { iosAppId: ids.ios.appId, skAdNetworkItems: SKADNETWORK_IDS }]"
+    }
+  }
+]

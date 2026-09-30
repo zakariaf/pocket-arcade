@@ -1,0 +1,3 @@
+npmrc-policy
+.npmrc:8
+sets min-release-age=0

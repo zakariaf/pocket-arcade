@@ -1,0 +1,9 @@
+{
+  "name": "@demo/shell",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugins/*": "./plugins/*",
+    "./*": "./src/*"
+  }
+}

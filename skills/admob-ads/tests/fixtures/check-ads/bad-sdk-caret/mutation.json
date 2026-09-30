@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/demo-game/package.json",
+      "path": [
+        "dependencies",
+        "react-native-google-mobile-ads"
+      ],
+      "value": "^17.2.0"
+    }
+  }
+]

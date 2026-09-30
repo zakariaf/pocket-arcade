@@ -1,0 +1,20 @@
+{
+  "__GAME_ID__.board.summary": "{lit, plural, one {# خانە ڕووناکە} other {# خانە ڕووناکن}}",
+  "__GAME_ID__.continue.more-moves": "جووڵەی زیاتر وەربگرە",
+  "__GAME_ID__.goal": "هەموو گڵۆپەکان بکوژێنەوە.",
+  "__GAME_ID__.how-to-play.step-1": "دەست لە خانەیەک بدە: خۆی و دراوسێکانی دەگۆڕێن.",
+  "__GAME_ID__.how-to-play.step-2": "دەستلێدانێک لە ناوەڕاست نیشانەی کۆ دەسڕێتەوە.",
+  "__GAME_ID__.how-to-play.step-3": "خانەی هەڵە؟ بیگەڕێنەوە.",
+  "__GAME_ID__.hud.moves": "جووڵە {moves, number} / {maxMoves, number}",
+  "__GAME_ID__.lose.__LOSE_SLUG__": "هیچ جووڵەیەک نەماوە",
+  "__GAME_ID__.pack-name.1": "یەکەم پریشکەکان",
+  "__GAME_ID__.pack-name.2": "نۆرەی شەو",
+  "__GAME_ID__.pack-name.3": "کوژانەوە",
+  "__GAME_ID__.stats.biggest-flip": "گەورەترین گۆڕان",
+  "__GAME_ID__.stats.boards-cleared": "تەختە پاککراوەکان",
+  "__GAME_ID__.stats.cells-flipped": "خانە گۆڕاوەکان",
+  "__GAME_ID__.tagline": "لێبدە، وەریبگێڕە، گڵۆپەکان بکوژێنەوە.",
+  "__GAME_ID__.tutorial.step-1": "دەست لە گۆشەکە بدە.",
+  "__GAME_ID__.tutorial.step-2": "ئێستا دەست لە ناوەڕاست بدە!",
+  "__GAME_ID__.win-title": "هەموو گڵۆپەکان کوژانەوە!"
+}

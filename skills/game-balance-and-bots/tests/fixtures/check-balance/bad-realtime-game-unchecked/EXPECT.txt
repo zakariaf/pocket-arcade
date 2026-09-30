@@ -1,0 +1,5 @@
+[sim-missing]
+halo-lite has no bot simulation
+[bot-missing]
+apps/halo-lite/src/testing/halo-lite-bot.ts
+[tuning-missing]

@@ -1,0 +1,2 @@
+[sentinel]
+packages/shell/src/app/test-only-entry.ts

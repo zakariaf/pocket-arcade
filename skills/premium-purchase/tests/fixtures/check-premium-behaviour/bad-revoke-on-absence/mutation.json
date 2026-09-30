@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-transitions.ts",
+      "find": "  if (evidence === 'revoked') return { ...state, isPremium: false, didJustPurchase: false };\n  return state;",
+      "with": "  return { ...state, isPremium: evidence === 'owned', didJustPurchase: false };"
+    }
+  }
+]

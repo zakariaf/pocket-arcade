@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/tap-flip-levels.ts", "find": "solver: TAP_FLIP_SOLVER,", "with": "solver: null," } }]

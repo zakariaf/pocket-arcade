@@ -1,0 +1,3 @@
+[literal-prop-text]
+Alert.alert() is given literal text
+reset.ts:4

@@ -1,0 +1,95 @@
+{
+  "gameId": "line-siege",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.6,
+      "max": 0.9,
+      "why": "A reasonable player wins most first levels (0.73 measured), but not every one."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.08,
+      "max": 0.35,
+      "why": "The hardest level row is hard (0.14 measured), yet still winnable."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.3,
+      "why": "Random placement mostly loses (0.22 measured): choosing where to clear must matter from the first level."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 15,
+      "max": 60,
+      "why": "A level lasts a couple of minutes (median 20 placements), never seconds."
+    }
+  ],
+  "curve": {
+    "policy": "greedy",
+    "metric": "winRate",
+    "direction": "down",
+    "minStep": 0.1
+  },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": {
+    "policy": "greedy",
+    "difficulty": 0,
+    "withinMoves": 3,
+    "minShare": 0.9
+  },
+  "twist": {
+    "policy": "greedy",
+    "difficulty": 25,
+    "minPerRun": 1
+  },
+  "endless": {
+    "policy": "greedy",
+    "difficulty": 100,
+    "bands": [
+      {
+        "metric": "medianMoves",
+        "min": 20,
+        "max": 80,
+        "why": "An endless run outlasts a level (median 26 placements measured) and still ends."
+      },
+      {
+        "metric": "medianScore",
+        "min": 120,
+        "max": 300,
+        "why": "A reasonable endless run scores more than a level (median 185 measured)."
+      },
+      {
+        "metric": "twistPerRun",
+        "min": 1.5,
+        "max": 10,
+        "why": "Endless runs are where aimed beams matter most (2.35 beam hits per run measured)."
+      }
+    ]
+  },
+  "notes": "First run (4 level rows on the 0..100 scale sampled at their lower bounds 0/25/50/75, 100 seeds): greedy won 0.73/0.56/0.39/0.04, a cliff at the last row. Changed one knob: the last row's march 3 -> 4 placements; greedy now wins 0.73/0.56/0.39/0.14, a drop of at least 0.17 per row. Random wins 0.22 of the easiest level and mostly loses by filling the board; the lookahead bot wins every level-2 run. The first placement always fires a beam that defeats a monster (prepared opening). The endless run (difficulty 100) is its own block, never a step of the curve: runs last a median 26 placements, score a median 185 and end about half by a full board. Checked the brief's 'march every placement' with 6-row lanes: greedy won 0.16/0/0/0, so marches stay a per-row knob until the owner decides."
+}

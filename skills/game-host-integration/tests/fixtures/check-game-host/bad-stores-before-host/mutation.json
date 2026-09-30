@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  stores = createShellStores(hydrated.save);\n",
+      "with": ""
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "  const host = hostFor({",
+      "with": "  stores = createShellStores(hydrated.save);\n  const host = hostFor({"
+    }
+  }
+]

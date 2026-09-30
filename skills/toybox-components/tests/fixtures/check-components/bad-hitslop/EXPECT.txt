@@ -1,0 +1,1 @@
+[no-hitslop] hitSlop stretches the target invisibly

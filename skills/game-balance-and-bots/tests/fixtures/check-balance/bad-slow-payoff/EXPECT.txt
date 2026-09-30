@@ -1,0 +1,3 @@
+[first-payoff]
+test/sims/line-siege/balance-bands.json:59
+only 0.4 of greedy d0 runs reach the first payoff within 3 moves

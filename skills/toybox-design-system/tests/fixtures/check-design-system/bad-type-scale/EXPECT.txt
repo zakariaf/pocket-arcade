@@ -1,0 +1,2 @@
+[type-scale-mismatch]
+TYPE_SCALE.heading is

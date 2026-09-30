@@ -1,0 +1,6 @@
+apps/line-siege/src/i18n/en.json:
+[deck-text] line-siege.how-to-play.step-4 is "After each block you place, the monsters march one row closer.", but the copy deck says "The monsters march closer every few blocks."
+apps/line-siege/src/i18n/de.json:
+[deck-text] line-siege.tutorial.step-4 is "Achtung: Nach jedem Block rücken die Monster näher.", but the copy deck says "Achtung: Alle paar Blöcke rücken die Monster näher."
+Copy the canonical Line Siege catalogs again
+check-game-app: 1 apps checked, 2 problems

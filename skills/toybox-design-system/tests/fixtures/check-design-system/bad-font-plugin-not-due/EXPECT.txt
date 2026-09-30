@@ -1,0 +1,3 @@
+SKIP packages/shell/src/config/shell-plugins.ts [font-plugin] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
+[font-files] no licence text for Rubik
+1 problems, 1 skipped

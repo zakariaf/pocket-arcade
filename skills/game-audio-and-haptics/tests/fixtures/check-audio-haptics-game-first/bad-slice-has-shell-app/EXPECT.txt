@@ -1,0 +1,5 @@
+[audio-file-missing]
+packages/shell/src/services/audio/audio-api-audio-adapter.ts
+[lifecycle-mount]
+SKIP packages/shell/src/config/shell-plugins.ts [audio-plugin] due at Shell step 8
+[audio-pin]

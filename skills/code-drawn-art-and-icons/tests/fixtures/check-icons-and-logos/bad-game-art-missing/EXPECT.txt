@@ -1,0 +1,3 @@
+[game-art]
+apps/line-siege/src/art/game-art.ts
+game line-siege is assembled but has no GAME_ART

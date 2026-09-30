@@ -1,0 +1,4 @@
+package.json:
+[update-in-automation] "jest --selectProjects golden -u" updates goldens automatically
+[update-in-automation] "jest --ci --update-snapshot" updates goldens automatically
+lefthook.yml:4 [update-in-automation]

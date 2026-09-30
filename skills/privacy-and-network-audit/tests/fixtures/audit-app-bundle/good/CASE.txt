@@ -1,0 +1,1 @@
+The good case is base-app/ (store + live) with no mutation.

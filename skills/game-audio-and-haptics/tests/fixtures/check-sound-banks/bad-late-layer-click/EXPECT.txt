@@ -1,0 +1,3 @@
+[recipe-quality]
+apps/demo-game/src/sounds/sound-bank.ts:28
+sound "clear" voice 1: a layer that starts later needs attackMs

@@ -1,0 +1,2 @@
+reset-keeps-settings
+resetAllProgress replaces settings

@@ -1,0 +1,2 @@
+[save-policy]
+a turn-based game (realtime: null) must save after every move

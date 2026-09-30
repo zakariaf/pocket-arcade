@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+- launchApp
+- tapOn: 'Open' # system dialog of the deep link
+- tapOn:
+    id: 'language-choice.continue-button'
+- assertVisible:
+    id: 'game.moves-label'
+    text: '.*1.*'
+- assertVisible:
+    id: 'levels.level-tile.12'

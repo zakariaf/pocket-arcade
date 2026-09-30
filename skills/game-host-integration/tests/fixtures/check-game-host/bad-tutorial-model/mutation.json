@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
+      "find": "dispatch({ type: 'finish-tutorial' });",
+      "with": "dispatch({ type: 'set-language', language: null });"
+    }
+  }
+]

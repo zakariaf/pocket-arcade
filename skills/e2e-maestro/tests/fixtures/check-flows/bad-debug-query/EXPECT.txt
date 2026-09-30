@@ -1,0 +1,6 @@
+[debug-query] lang=it is not one of en, de, fa, ckb
+[debug-query] theme=sepia is not one of system, light, dark
+[debug-query] seed=abc is not an integer
+[debug-query] date=26-09-2026 is not a YYYY-MM-DD date
+[debug-query] unknown debug parameter "mode"
+[debug-query] stars=1:5 is not demo

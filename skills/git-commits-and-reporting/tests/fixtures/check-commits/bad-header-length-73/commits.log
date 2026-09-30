@@ -1,0 +1,10 @@
+==> commit ad38d100fce19376497aa73402f53c0a174f73e7
+feat(shell): show the statistics cards for overview, levels and the daily
+
+Spec S10: the Statistics screen shows the overview, levels and daily
+cards in that order.
+
+==> files
+
+packages/shell/src/stats-cards.test.ts
+packages/shell/src/stats-cards.ts

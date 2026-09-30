@@ -1,0 +1,12 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s4-home",
+   "testID": "home.*",
+   "rule": "bounds",
+   "reason": "Everything on Home is a little off on iOS.",
+   "reportedToOwner": "2026-09-28"
+  }
+ ]
+}

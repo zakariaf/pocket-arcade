@@ -1,0 +1,1 @@
+[harness-launch-arg] reads the launch argument "parityFrame", but capture-app.mjs passes -parity

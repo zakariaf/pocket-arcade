@@ -1,0 +1,1 @@
+ad-slot.test.tsx:3 [render-with-shell] renders with RNTL render() instead of renderWithShell

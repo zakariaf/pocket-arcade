@@ -1,0 +1,3 @@
+[curve]
+test/sims/line-siege/balance-bands.json:46
+from d25 to d50

@@ -1,0 +1,9 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "scripts": {
+    "build:ios:sim": "node packages/tooling/src/build/build-ios-sim.ts",
+    "release:ios": "node packages/tooling/src/release/release-ios.ts",
+    "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts"
+  }
+}

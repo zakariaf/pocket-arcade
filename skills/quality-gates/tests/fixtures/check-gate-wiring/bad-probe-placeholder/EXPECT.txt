@@ -1,0 +1,2 @@
+gate-weakened
+still holds the __GAME_ID__ placeholder

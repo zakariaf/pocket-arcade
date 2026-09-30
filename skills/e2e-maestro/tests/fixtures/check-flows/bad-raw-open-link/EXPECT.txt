@@ -1,0 +1,1 @@
+01-first-launch.yaml:9 [raw-open-link] opens a link directly

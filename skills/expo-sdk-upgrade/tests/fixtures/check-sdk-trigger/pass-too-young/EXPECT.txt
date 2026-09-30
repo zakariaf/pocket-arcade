@@ -1,0 +1,3 @@
+wait     [target-age] expo 58.0.2 was published 2026-10-30; it is not 7 days old on 2026-11-02
+possible from 2026-11-07
+verdict  no upgrade due: stay on SDK 57; the trigger can hold from 2026-11-07; check again then

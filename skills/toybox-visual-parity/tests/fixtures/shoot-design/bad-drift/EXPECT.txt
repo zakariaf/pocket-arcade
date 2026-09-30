@@ -1,0 +1,2 @@
+[reference-drift] 900 pixels differ from a fresh render
+[reference-drift] the layout differs from a fresh render

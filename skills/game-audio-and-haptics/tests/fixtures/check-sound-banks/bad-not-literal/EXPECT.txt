@@ -1,0 +1,3 @@
+[recipe-literal]
+apps/demo-game/src/sounds/sound-bank.ts:25
+"FLIP_GAIN" is not literal data

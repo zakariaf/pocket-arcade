@@ -1,0 +1,2 @@
+[no-xcode-select]
+packages/tooling/src/ios/switch-xcode.ts:4

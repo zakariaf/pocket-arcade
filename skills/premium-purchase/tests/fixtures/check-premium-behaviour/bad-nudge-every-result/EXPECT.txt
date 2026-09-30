@@ -1,0 +1,2 @@
+[result-nudge]
+already shown today

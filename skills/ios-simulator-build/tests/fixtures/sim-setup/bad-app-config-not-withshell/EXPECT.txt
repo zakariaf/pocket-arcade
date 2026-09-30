@@ -1,0 +1,2 @@
+[app-config]
+apps/line-siege/app.config.ts

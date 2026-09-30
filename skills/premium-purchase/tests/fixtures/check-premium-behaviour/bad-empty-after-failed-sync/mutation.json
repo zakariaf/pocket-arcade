@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-transitions.ts",
+      "find": "if (evidence === 'sync-failed') return { ...state, flow: { kind: 'restore-failed', price } };",
+      "with": "if (evidence === 'sync-failed') return { ...state, flow: { kind: 'restore-empty', price } };"
+    }
+  }
+]

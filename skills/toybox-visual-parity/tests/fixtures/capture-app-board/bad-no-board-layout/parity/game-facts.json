@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "games": {
+    "line-siege": {
+      "designGame": "lineSiege",
+      "hasMusic": false,
+      "winLine": "score"
+    }
+  }
+}

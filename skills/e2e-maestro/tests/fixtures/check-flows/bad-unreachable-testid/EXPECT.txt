@@ -1,0 +1,4 @@
+01-first-launch.yaml:12 [unreachable-testid] id "language-choice.language-row.en.label" is crop-only
+a part inside language-choice.language-row.en
+11-combo.yaml
+"levels.level-tile.12.stars-1" is crop-only (a part inside levels.level-tile.12)

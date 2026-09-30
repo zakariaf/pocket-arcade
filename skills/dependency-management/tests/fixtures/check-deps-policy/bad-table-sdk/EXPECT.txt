@@ -1,0 +1,2 @@
+table-sdk
+the apps are on Expo SDK 58 but the versions table is for SDK 57

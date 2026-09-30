@@ -1,0 +1,356 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "design-as-app",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "9:41 AM",
+      "resource-id": "",
+      "bounds": "[55,22][92,42]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "9:41 Settings Language Language System (English) Numbers Automatic 123 Latin 123 Local 123 Sound and feel Sound effects Volume Vibration Display Theme System Light Dark Colour-blind friendly colours Shapes and symbols, not just colour. Reduce motion Less shaking, particles and bouncing. Hints during play Tutorial tips and gentle nudges. Premium Remove ads – €1.99 Restore purchase Privacy Ad privacy choices Change how Google may use data for ads. Privacy policy Data Reset statistics Reset all progress Deletes levels, stars, daily results and statistics. About About and credits Licences Rate this game Contact support Changes apply right away. Version 1.0.0 (8)",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.screen",
+      "bounds": "[0,0][402,1960]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Settings",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.top-bar",
+      "bounds": "[0,62][402,128]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Back",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.top-bar.back-button",
+      "bounds": "[16,69][64,117]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Settings",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.top-bar.title",
+      "bounds": "[76,78][386,108]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Language Language System (English) Numbers Automatic 123 Latin 123 Local 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.language",
+      "bounds": "[20,134][382,348]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Language",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.language.tab",
+      "bounds": "[20,134][131,162]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Language System (English) Numbers Automatic 123 Latin 123 Local 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.language.list",
+      "bounds": "[20,162][382,348]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Language System (English)",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.language-row",
+      "bounds": "[23,165][379,225]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Numbers Automatic 123 Latin 123 Local 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-row",
+      "bounds": "[23,225][379,345]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Numbers",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-row.label",
+      "bounds": "[87,244][365,267]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Automatic 123 Latin 123 Local 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-control",
+      "bounds": "[37,287][365,335]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Automatic 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-segment.automatic",
+      "bounds": "[37,290][141,338]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Latin 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-segment.latin",
+      "bounds": "[149,287][253,335]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Local 123",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.numbers-segment.local",
+      "bounds": "[261,287][365,335]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound and feel Sound effects Volume Vibration",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.sound",
+      "bounds": "[20,368][382,575]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound and feel",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.sound.tab",
+      "bounds": "[20,368][165,395]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound effects Volume Vibration",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.sound.list",
+      "bounds": "[20,395][382,575]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Sound effects",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.sound-effects-switch",
+      "bounds": "[23,398][379,458]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Volume",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.sound-volume-row",
+      "bounds": "[23,458][379,512]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Volume",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.sound-volume-row.label",
+      "bounds": "[87,471][136,489]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.sound-volume-slider",
+      "bounds": "[148,458][365,502]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Vibration",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.vibration-switch",
+      "bounds": "[23,512][379,572]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Display Theme System Light Dark Colour-blind friendly colours Shapes and symbols, not just colour. Reduce motion Less shaking, particles and bouncing. Hints during play Tutorial tips and gentle nudges.",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.display",
+      "bounds": "[20,595][382,999]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Display",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.display.tab",
+      "bounds": "[20,595][118,623]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Theme System Light Dark Colour-blind friendly colours Shapes and symbols, not just colour. Reduce motion Less shaking, particles and bouncing. Hints during play Tutorial tips and gentle nudges.",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.group.display.list",
+      "bounds": "[20,623][382,999]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Theme System Light Dark",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-row",
+      "bounds": "[23,626][379,744]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Theme",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-row.label",
+      "bounds": "[87,643][365,666]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "System Light Dark",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-control",
+      "bounds": "[37,686][365,734]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "System",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-segment.system",
+      "bounds": "[37,689][141,737]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Light",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-segment.light",
+      "bounds": "[149,686][253,734]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Dark",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.theme-segment.dark",
+      "bounds": "[261,686][365,734]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Colour-blind friendly colours Shapes and symbols, not just colour.",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.colour-blind-switch",
+      "bounds": "[23,744][379,849]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Reduce motion Less shaking, particles and bouncing.",
+      "text": "",
+      "value": "",
+      "resource-id": "settings.reduce-motion-switch",
+      "bounds": "[23,849][379,932]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

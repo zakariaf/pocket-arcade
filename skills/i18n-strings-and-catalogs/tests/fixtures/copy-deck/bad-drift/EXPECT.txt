@@ -1,0 +1,3 @@
+[deck-drift]
+pause.title
+de.json

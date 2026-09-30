@@ -1,0 +1,2 @@
+[parity-board-probe]
+packages/shell/src/app/debug-switches.ts

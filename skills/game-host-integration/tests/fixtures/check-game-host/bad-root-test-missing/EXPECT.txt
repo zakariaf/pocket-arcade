@@ -1,0 +1,2 @@
+[root-file-missing]
+packages/shell/src/app/shell-app.test.tsx

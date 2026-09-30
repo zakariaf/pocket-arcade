@@ -1,0 +1,2 @@
+[product-id]
+apps/demo-game/game.config.ts

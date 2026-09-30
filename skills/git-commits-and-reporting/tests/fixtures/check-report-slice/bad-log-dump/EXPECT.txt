@@ -1,0 +1,5 @@
+outcome-first
+technical-detail-early
+evidence-line
+checks-missing
+section-missing

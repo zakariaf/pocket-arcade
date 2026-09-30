@@ -1,0 +1,2 @@
+capture-screenshots-ios.ts:1 [screenshot-tolerance] MAX_DIFF_RATIO is 0.01, not at most 0.002
+compare-png.ts:1 [screenshot-tolerance] the pixelmatch threshold is 0.3, not at most 0.1

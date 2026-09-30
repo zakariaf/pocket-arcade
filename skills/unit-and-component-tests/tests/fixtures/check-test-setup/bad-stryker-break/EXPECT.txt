@@ -1,0 +1,2 @@
+[stryker-config]
+thresholds.break is 60 (must be at least 75)

@@ -1,0 +1,3 @@
+[fingerprint-scope]
+apps/line-siege/src/testing/line-siege-view-bot.ts:3
+imports ../board/cells.ts

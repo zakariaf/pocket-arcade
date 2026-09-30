@@ -1,0 +1,1 @@
+reports/e2e/demo/network.txt:1 [network-sockets] the app opened a non-loopback socket

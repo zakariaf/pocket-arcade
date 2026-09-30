@@ -1,0 +1,4 @@
+[
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/expo-haptics"], "value": { "version": "57.0.9", "license": "MIT" } } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/alpha/node_modules/expo-haptics"], "value": { "version": "57.0.3", "license": "MIT" } } }
+]

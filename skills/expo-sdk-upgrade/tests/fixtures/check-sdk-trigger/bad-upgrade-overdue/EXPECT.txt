@@ -1,0 +1,3 @@
+sdk      apps on Expo SDK 57; target SDK 58 (expo 58.0.2, dist-tag sdk-58); npm latest 59.0.1
+[upgrade-due] SDK 58 (expo 58.0.2) meets the trigger and every app is still on SDK 57
+plan 2   (cd apps/alpha && npx expo install expo@~58.0.2 && npx expo install --fix)

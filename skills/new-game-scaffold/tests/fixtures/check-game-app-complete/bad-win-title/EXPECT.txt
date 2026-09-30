@@ -1,0 +1,3 @@
+[module-assembly]
+apps/flock-tilt/src/index.ts
+identity.winTitleId is not 'flock-tilt.win-title'

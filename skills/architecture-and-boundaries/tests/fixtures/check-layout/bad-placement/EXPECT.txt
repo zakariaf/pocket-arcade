@@ -1,0 +1,6 @@
+apps/tile-drop/src/tutorial/tutorial-screen.tsx [placement] a screen outside packages/shell/src/screens/
+packages/shell/src/ui/ads-adapter.ts [placement] a port, adapter or fake outside packages/shell/src/services/<port>/
+packages/shell/src/screens/home/home-store.ts [placement] a store outside packages/shell/src/stores/
+packages/shell/src/ui/badge-reducer.ts [placement] a reducer outside stores/ or game-host/
+packages/shell/src/app/with-fonts.ts [placement] a config plugin outside packages/shell/plugins/
+packages/shell/src/services/save/save-file.test.ts [placement] a test that needs Node APIs inside an app program

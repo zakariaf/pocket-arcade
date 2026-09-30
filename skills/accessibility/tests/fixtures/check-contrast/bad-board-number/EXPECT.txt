@@ -1,0 +1,3 @@
+[text-contrast]
+apps/demo-game/src/board/board-palettes.json
+light: number on normal is

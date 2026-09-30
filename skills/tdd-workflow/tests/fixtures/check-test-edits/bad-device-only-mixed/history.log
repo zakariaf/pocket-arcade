@@ -1,0 +1,23 @@
+==> commit 8e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f
+feat(shell): record the write time of every save
+
+==> diff
+
+diff --git a/packages/shell/src/services/clock/system-clock-adapter.ts b/packages/shell/src/services/clock/system-clock-adapter.ts
+index 1a2b3c4..5d6e7f8 100644
+--- a/packages/shell/src/services/clock/system-clock-adapter.ts
++++ b/packages/shell/src/services/clock/system-clock-adapter.ts
+@@ -1,4 +1,4 @@
+ // packages/shell/src/services/clock/system-clock-adapter.ts
+ // device-only: covered by the simulator kill test and every Release simulator run.
+-export const readNow = (): number => Date.now();
++export const readNowMs = (): number => Date.now();
+ 
+diff --git a/packages/shell/src/services/save/save-service.ts b/packages/shell/src/services/save/save-service.ts
+index 2b3c4d5..6e7f8a9 100644
+--- a/packages/shell/src/services/save/save-service.ts
++++ b/packages/shell/src/services/save/save-service.ts
+@@ -40,3 +40,4 @@ export function createSaveService(deps: SaveServiceDeps): SaveService {
+     writeCount += 1;
++    const writtenAtMs = deps.clock.nowMs();
+     const meta = { appVersion: deps.appVersion, writeCount };

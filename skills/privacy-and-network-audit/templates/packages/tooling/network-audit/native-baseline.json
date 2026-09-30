@@ -1,0 +1,38 @@
+{
+  "react-native": {
+    "categories": ["urlSession", "webSocket"],
+    "reason": "capability present, unused; our use of it is lint-banned"
+  },
+  "expo": {
+    "categories": ["urlSession", "webSocket"],
+    "reason": "capability present, unused; our use of it is lint-banned"
+  },
+  "expo-modules-core": {
+    "categories": ["urlSession", "webSocket"],
+    "reason": "capability present, unused; our use of it is lint-banned"
+  },
+  "expo-modules-jsi": {
+    "categories": ["urlSession"],
+    "reason": "capability present, unused; our use of it is lint-banned"
+  },
+  "expo-asset": {
+    "categories": ["urlSession"],
+    "reason": "remote asset download path, unused (assets are bundled); lint bans remote URLs"
+  },
+  "expo-file-system": {
+    "categories": ["urlSession"],
+    "reason": "transitive Expo dependency; its download API is lint-banned"
+  },
+  "@expo/dom-webview": {
+    "categories": ["webView"],
+    "reason": "DOM components runtime, unused; web views are lint-banned"
+  },
+  "@expo/log-box": {
+    "categories": ["webView", "urlSession"],
+    "reason": "development error overlay, inactive in Release builds"
+  },
+  "expo-constants": {
+    "categories": ["webView"],
+    "reason": "reads the user agent through a web view class, no network use"
+  }
+}

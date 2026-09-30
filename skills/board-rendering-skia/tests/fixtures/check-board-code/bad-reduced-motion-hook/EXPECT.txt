@@ -1,0 +1,2 @@
+reduced-motion-source
+game-board-host.tsx:50

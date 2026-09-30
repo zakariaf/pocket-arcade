@@ -1,0 +1,2 @@
+setting-effect
+reads hintsDuringPlay

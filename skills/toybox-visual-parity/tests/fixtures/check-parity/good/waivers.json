@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s4-home",
+   "testID": "home.levels-button",
+   "rule": "text",
+   "reason": "Self-test fixture: proves that one recorded waiver turns exactly this text problem into a note.",
+   "reportedToOwner": "2026-09-28"
+  },
+  {
+   "frame": "s4-home",
+   "testID": "home.stats-button",
+   "rule": "text-ink",
+   "class": "platform-text-shaping",
+   "glyphs": "آ",
+   "langs": [
+    "fa"
+   ],
+   "reason": "Self-test fixture: shows the class validates; CoreText draws the madda of U+0622 narrower than Chrome's HarfBuzz with the same Vazirmatn-Bold.ttf.",
+   "reportedToOwner": "2026-09-29"
+  },
+  {
+   "frame": "s8-levels",
+   "testID": "levels.level-tile.14",
+   "rule": "structure",
+   "class": "platform",
+   "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
+   "reportedToOwner": "2026-09-30"
+  }
+ ]
+}

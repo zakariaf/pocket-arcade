@@ -1,0 +1,2 @@
+[adapter-transactions]
+Transaction.all with refunds, pending and unknown

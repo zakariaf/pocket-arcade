@@ -1,0 +1,22 @@
+{
+  "line-siege.goal": "Halte jedes Monster auf, bevor es deine Mauer erreicht.",
+  "line-siege.how-to-play.step-1": "Wähl einen Block und setz ihn aufs Feld.",
+  "line-siege.how-to-play.step-2": "Füll eine Spalte, um einen Strahl durch ihre Bahn zu feuern.",
+  "line-siege.how-to-play.step-3": "Füll eine Reihe, um alle Monster auf einmal zu treffen.",
+  "line-siege.how-to-play.step-4": "Alle paar Blöcke rücken die Monster näher.",
+  "line-siege.lose.broke-through": "Die Monster sind durchgebrochen",
+  "line-siege.name": "Line Siege",
+  "line-siege.pack-name.1": "Erste Welle",
+  "line-siege.pack-name.2": "Stärkere Gegner",
+  "line-siege.pack-name.3": "Letztes Gefecht",
+  "line-siege.progress": "Monster {defeated, number} / {total, number}",
+  "line-siege.stats.beams-fired": "Abgefeuerte Strahlen",
+  "line-siege.stats.biggest-combo": "Größte Kombo",
+  "line-siege.stats.monsters-defeated": "Besiegte Monster",
+  "line-siege.tagline": "Reihen räumen. Strahlen feuern. Mauer halten.",
+  "line-siege.tutorial.step-1": "Tipp auf einen Block und dann aufs Feld, um ihn zu setzen.",
+  "line-siege.tutorial.step-2": "Füll diese Spalte und feuere durch ihre Bahn!",
+  "line-siege.tutorial.step-3": "Eine volle Reihe trifft alle Monster auf einmal.",
+  "line-siege.tutorial.step-4": "Achtung: Alle paar Blöcke rücken die Monster näher.",
+  "line-siege.win-title": "Die Mauer hält!"
+}

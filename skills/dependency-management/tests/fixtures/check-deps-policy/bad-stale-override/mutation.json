@@ -1,0 +1,3 @@
+[
+  { "json": { "file": "package.json", "path": ["overrides", "lodash"], "value": "4.17.21" } }
+]

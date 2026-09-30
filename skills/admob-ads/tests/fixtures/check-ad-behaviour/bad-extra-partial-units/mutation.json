@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/read-ads-extra.ts",
+      "find": "return ['banner', 'interstitial', 'rewarded'].every(",
+      "with": "return ['banner'].every("
+    }
+  }
+]

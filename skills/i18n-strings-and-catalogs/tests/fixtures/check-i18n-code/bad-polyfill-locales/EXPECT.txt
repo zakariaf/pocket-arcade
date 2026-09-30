@@ -1,0 +1,2 @@
+[polyfill-locales]
+unexpected @formatjs/intl-pluralrules/locale-data/ar.js

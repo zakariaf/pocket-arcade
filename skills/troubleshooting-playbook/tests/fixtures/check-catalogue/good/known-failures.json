@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "areas": {
+    "build": {
+      "title": "Build",
+      "file": "references/build.md",
+      "intro": "Build failures."
+    },
+    "release": {
+      "title": "Release",
+      "file": "references/release.md",
+      "intro": "Release failures."
+    }
+  },
+  "entries": [
+    {
+      "id": "build-metro-cache-variant",
+      "area": "build",
+      "topic": "Variants",
+      "symptom": "A store build contains SHELL_TEST_BUILD_ONLY",
+      "cause": "Metro does not key its cache on EXPO_PUBLIC_* values",
+      "fix": "Key config.cacheVersion on EXPO_PUBLIC_APP_VARIANT",
+      "match": [
+        "SHELL_TEST_BUILD_ONLY"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "ios-simulator-build"
+    },
+    {
+      "id": "release-keychain-locked",
+      "area": "release",
+      "topic": "Signing",
+      "symptom": "errSecInternalComponent from codesign",
+      "cause": "The login keychain is locked",
+      "fix": "Stop: the owner unlocks the keychain",
+      "match": [
+        "errSecInternalComponent"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "ios-release-testflight"
+    }
+  ]
+}

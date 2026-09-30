@@ -1,0 +1,594 @@
+{
+ "version": 1,
+ "frame": "p1-probe",
+ "kind": "phone",
+ "screens": [
+  "P1/normal"
+ ],
+ "root": "probe.screen",
+ "game": "lineSiege",
+ "theme": "light",
+ "lang": "en",
+ "device": "iPhone 16 Pro",
+ "scale": 3,
+ "size": {
+  "w": 402,
+  "h": 874
+ },
+ "image": "design.png",
+ "elements": [
+  {
+   "testID": "probe.screen",
+   "screen": "P1/normal",
+   "role": "none",
+   "component": "View",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "fill"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 402,
+    "h": 874
+   },
+   "box": {
+    "w": 402,
+    "h": 874,
+    "rotate": 0
+   },
+   "text": "",
+   "aria": null,
+   "style": {
+    "fill": "#A5DAF3",
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 16px/normal Times"
+   }
+  },
+  {
+   "testID": "probe.title",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 20,
+    "y": 68,
+    "w": 362,
+    "h": 30.8
+   },
+   "box": {
+    "w": 362,
+    "h": 31,
+    "rotate": 0
+   },
+   "text": "Line Siege",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 28px/30.8px Lilita One"
+   }
+  },
+  {
+   "testID": "probe.continue",
+   "screen": "P1/normal",
+   "role": "none",
+   "component": "View",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "fill"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 20,
+    "y": 112.8,
+    "w": 362,
+    "h": 80
+   },
+   "box": {
+    "w": 362,
+    "h": 80,
+    "rotate": 0
+   },
+   "text": "",
+   "aria": null,
+   "style": {
+    "fill": "#FF6B4A",
+    "color": "#1D1B3A",
+    "border": "3px solid #1D1B3A",
+    "radius": "14px",
+    "shadow": "rgb(29, 27, 58) 0px 6px 0px 0px",
+    "font": "400 16px/normal Times"
+   }
+  },
+  {
+   "testID": "probe.continue.label",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 100.86,
+    "y": 139.05,
+    "w": 200.28,
+    "h": 27.5
+   },
+   "box": {
+    "w": 200,
+    "h": 28,
+    "rotate": 0
+   },
+   "text": "Continue – Level 12",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 25px/27.5px Lilita One"
+   }
+  },
+  {
+   "testID": "probe.panel",
+   "screen": "P1/normal",
+   "role": "none",
+   "component": "View",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "fill"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 20,
+    "y": 206.8,
+    "w": 362,
+    "h": 108.78
+   },
+   "box": {
+    "w": 362,
+    "h": 109,
+    "rotate": 0
+   },
+   "text": "",
+   "aria": null,
+   "style": {
+    "fill": "#F8FBFF",
+    "color": "#1D1B3A",
+    "border": "3px solid #1D1B3A",
+    "radius": "14px",
+    "shadow": null,
+    "font": "400 16px/normal Times"
+   }
+  },
+  {
+   "testID": "probe.panel.title",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 39,
+    "y": 223.8,
+    "w": 324,
+    "h": 23.09
+   },
+   "box": {
+    "w": 324,
+    "h": 23,
+    "rotate": 0
+   },
+   "text": "Daily challenge",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 21px/23.1px Lilita One"
+   }
+  },
+  {
+   "testID": "probe.panel.sub",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 39,
+    "y": 250.89,
+    "w": 324,
+    "h": 22.44
+   },
+   "box": {
+    "w": 324,
+    "h": 22,
+    "rotate": 0
+   },
+   "text": "Sunday, 27 Sep",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#43406A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 17px/22.44px Rubik"
+   }
+  },
+  {
+   "testID": "probe.panel.bold",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 39,
+    "y": 277.33,
+    "w": 324,
+    "h": 21.25
+   },
+   "box": {
+    "w": 324,
+    "h": 21,
+    "rotate": 0
+   },
+   "text": "Endless – Best 4,210",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "700 17px/21.25px Rubik"
+   }
+  },
+  {
+   "testID": "probe.fa",
+   "screen": "P1/normal",
+   "role": "none",
+   "component": "View",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "fill"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 20,
+    "y": 329.58,
+    "w": 362,
+    "h": 120.5
+   },
+   "box": {
+    "w": 362,
+    "h": 121,
+    "rotate": 0
+   },
+   "text": "",
+   "aria": null,
+   "style": {
+    "fill": "#F8FBFF",
+    "color": "#1D1B3A",
+    "border": "3px solid #1D1B3A",
+    "radius": "14px",
+    "shadow": null,
+    "font": "400 16px/normal Times"
+   }
+  },
+  {
+   "testID": "probe.fa.title",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 39,
+    "y": 346.58,
+    "w": 324,
+    "h": 31.5
+   },
+   "box": {
+    "w": 324,
+    "h": 32,
+    "rotate": 0
+   },
+   "text": "ادامه – مرحلهٔ ۱۲",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "700 21px/31.5px Vazirmatn"
+   }
+  },
+  {
+   "testID": "probe.fa.body",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 39,
+    "y": 382.08,
+    "w": 324,
+    "h": 51
+   },
+   "box": {
+    "w": 324,
+    "h": 51,
+    "rotate": 0
+   },
+   "text": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردتان را بشکنید.",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#43406A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "400 17px/25.5px Vazirmatn"
+   }
+  },
+  {
+   "testID": "probe.block",
+   "screen": "P1/normal",
+   "role": "none",
+   "component": "View",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "fill"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 20,
+    "y": 464.08,
+    "w": 362,
+    "h": 54
+   },
+   "box": {
+    "w": 362,
+    "h": 54,
+    "rotate": 0
+   },
+   "text": "",
+   "aria": null,
+   "style": {
+    "fill": "#F8FBFF",
+    "color": "#1D1B3A",
+    "border": "3px solid #1D1B3A",
+    "radius": "14px",
+    "shadow": "rgb(29, 27, 58) 0px 5px 0px 0px",
+    "font": "400 16px/normal Times"
+   }
+  },
+  {
+   "testID": "probe.block.label",
+   "screen": "P1/normal",
+   "role": "text",
+   "component": "Text",
+   "kind": null,
+   "checks": [
+    "bounds",
+    "text"
+   ],
+   "mask": false,
+   "parent": null,
+   "a11yLabel": false,
+   "state": null,
+   "count": 1,
+   "rect": {
+    "x": 107.11,
+    "y": 480.45,
+    "w": 187.77,
+    "h": 21.25
+   },
+   "box": {
+    "w": 188,
+    "h": 21,
+    "rotate": 0
+   },
+   "text": "Play today’s challenge",
+   "aria": null,
+   "style": {
+    "fill": null,
+    "color": "#1D1B3A",
+    "border": null,
+    "radius": "0px",
+    "shadow": null,
+    "font": "700 17px/21.25px Rubik"
+   }
+  }
+ ],
+ "texts": [
+  {
+   "text": "Line Siege",
+   "x": 20,
+   "y": 67,
+   "w": 118.31,
+   "h": 32,
+   "owner": "probe.title",
+   "font": "400 28px Lilita One"
+  },
+  {
+   "text": "Continue – Level 12",
+   "x": 100.86,
+   "y": 138.05,
+   "w": 200.28,
+   "h": 29,
+   "owner": "probe.continue.label",
+   "font": "400 25px Lilita One"
+  },
+  {
+   "text": "Daily challenge",
+   "x": 39,
+   "y": 222.8,
+   "w": 135,
+   "h": 24,
+   "owner": "probe.panel.title",
+   "font": "400 21px Lilita One"
+  },
+  {
+   "text": "Sunday, 27 Sep",
+   "x": 39,
+   "y": 251.89,
+   "w": 120.33,
+   "h": 20,
+   "owner": "probe.panel.sub",
+   "font": "400 17px Rubik"
+  },
+  {
+   "text": "Endless – Best 4,210",
+   "x": 114.28,
+   "y": 277.33,
+   "w": 173.44,
+   "h": 20,
+   "owner": "probe.panel.bold",
+   "font": "700 17px Rubik"
+  },
+  {
+   "text": "ادامه – مرحلهٔ ۱۲",
+   "x": 221.31,
+   "y": 345.58,
+   "w": 17.91,
+   "h": 33,
+   "owner": "probe.fa.title",
+   "font": "700 21px Vazirmatn"
+  },
+  {
+   "text": "ادامه – مرحلهٔ ۱۲",
+   "x": 239.22,
+   "y": 345.58,
+   "w": 123.78,
+   "h": 33,
+   "owner": "probe.fa.title",
+   "font": "700 21px Vazirmatn"
+  },
+  {
+   "text": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردتان را بشکنید.",
+   "x": 82.02,
+   "y": 381.08,
+   "w": 280.98,
+   "h": 26,
+   "owner": "probe.fa.body",
+   "font": "400 17px Vazirmatn"
+  },
+  {
+   "text": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردتان را بشکنید.",
+   "x": 309.39,
+   "y": 406.58,
+   "w": 53.61,
+   "h": 26,
+   "owner": "probe.fa.body",
+   "font": "400 17px Vazirmatn"
+  },
+  {
+   "text": "Play today’s challenge",
+   "x": 107.11,
+   "y": 480.45,
+   "w": 187.77,
+   "h": 20,
+   "owner": "probe.block.label",
+   "font": "700 17px Rubik"
+  }
+ ]
+}

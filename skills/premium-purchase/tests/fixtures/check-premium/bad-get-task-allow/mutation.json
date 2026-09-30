@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/demo-game.entitlements",
+      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\"><dict><key>get-task-allow</key><true/></dict></plist>\n"
+    }
+  }
+]

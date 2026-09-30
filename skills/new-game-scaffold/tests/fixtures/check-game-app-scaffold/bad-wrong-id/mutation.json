@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "id: 'flock-tilt',", "with": "id: 'flock'," } }]

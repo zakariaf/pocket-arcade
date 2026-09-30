@@ -1,0 +1,1 @@
+quality-gates.json:1 [gated-path-missing] gatedPaths lacks **/__image_snapshots__/**

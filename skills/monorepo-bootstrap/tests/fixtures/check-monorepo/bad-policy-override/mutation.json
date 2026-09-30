@@ -1,0 +1,1 @@
+[{ "replace": { "file": ".npmrc", "find": "save-exact=true\n", "with": "save-exact=true\nmin-release-age=0\n" } }]

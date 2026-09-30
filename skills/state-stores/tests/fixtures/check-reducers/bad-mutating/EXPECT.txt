@@ -1,0 +1,2 @@
+[reducer-mutates]
+the input state is never changed

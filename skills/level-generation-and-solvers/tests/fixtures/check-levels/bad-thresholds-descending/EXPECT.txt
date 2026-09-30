@@ -1,0 +1,3 @@
+[pack-json]
+score thresholds [30,20,10] are not three ascending whole numbers
+apps/tap-flip/src/levels/pack-3.json

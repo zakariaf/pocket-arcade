@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/consent-factory.ts",
+      "find": "  if (adsMode === 'off') {\n    return createFakeConsent({ afterRefresh: NO_ADS, afterForm: NO_ADS, calls: [] });\n  }\n",
+      "with": ""
+    }
+  }
+]

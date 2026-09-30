@@ -1,0 +1,3 @@
+[file-audio]
+apps/demo-game/src/board/load-sound.ts:3
+decodeAudioData

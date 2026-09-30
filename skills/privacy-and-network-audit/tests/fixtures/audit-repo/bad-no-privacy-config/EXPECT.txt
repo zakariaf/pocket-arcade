@@ -1,0 +1,2 @@
+[privacy-manifest]
+ios.privacyManifests is not set

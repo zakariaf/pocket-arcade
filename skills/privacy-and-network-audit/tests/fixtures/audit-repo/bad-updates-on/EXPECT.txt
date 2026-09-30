@@ -1,0 +1,2 @@
+[config-updates]
+no updates: { enabled: false }

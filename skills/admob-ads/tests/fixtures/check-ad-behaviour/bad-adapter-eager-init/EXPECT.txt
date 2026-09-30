@@ -1,0 +1,2 @@
+[adapter-init]
+creating the adapter touches the SDK

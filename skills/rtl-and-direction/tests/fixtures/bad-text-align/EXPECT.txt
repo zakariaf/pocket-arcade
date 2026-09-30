@@ -1,0 +1,2 @@
+[text-align-literal]
+value-row.tsx:11

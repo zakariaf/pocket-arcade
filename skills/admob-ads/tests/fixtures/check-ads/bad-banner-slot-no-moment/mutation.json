@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/use-ad-context.ts",
+      "find": "  const requestAdMoment = useOptionalConsentMoment()?.requestAdMoment;\n",
+      "with": ""
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/use-ad-context.ts",
+      "find": "  useEffect(() => requestAdMoment?.(), [requestAdMoment]);\n",
+      "with": ""
+    }
+  }
+]

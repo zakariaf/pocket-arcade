@@ -1,0 +1,3 @@
+[
+  { "write": { "file": "apps/flock-tilt/src/rules/flock-tilt-engine.ts", "content": "// apps/flock-tilt/src/rules/flock-tilt-engine.ts\nexport const FLOCK_TILT_HUD = { id: 'flock-tilt.hud.moves' } as const;\nexport const FLOCK_TILT_LOSE = { id: 'flock-tilt.lose.wolf-got-sheep' } as const;\n" } }
+]

@@ -1,0 +1,2 @@
+[level-end-recorded]
+extendRunEnd: recordAdLevelEnd does not call recordLevelEnd

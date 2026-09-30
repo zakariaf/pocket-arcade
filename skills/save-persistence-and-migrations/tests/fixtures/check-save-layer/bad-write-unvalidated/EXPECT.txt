@@ -1,0 +1,2 @@
+[validate-before-write]
+the document is not validated before it is written

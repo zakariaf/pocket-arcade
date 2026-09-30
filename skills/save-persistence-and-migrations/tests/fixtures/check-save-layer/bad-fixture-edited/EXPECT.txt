@@ -1,0 +1,2 @@
+[fixture-frozen]
+save-v1.full.json changed

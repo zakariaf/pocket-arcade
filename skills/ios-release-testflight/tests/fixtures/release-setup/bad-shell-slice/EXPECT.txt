@@ -1,0 +1,4 @@
+shell-slice.json [shell-complete] exists, so this is a partial Shell (Home + Settings parity slice); not built: S1, S2, S3, S5
+packages/shell/src/navigation/root-stack.tsx:12 [shell-complete] route Levels still points at NotBuiltScreen
+packages/shell/src/navigation/root-stack.tsx:13 [shell-complete] a route still points at NotBuiltScreen
+A slice never ships

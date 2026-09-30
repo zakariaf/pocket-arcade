@@ -1,0 +1,2 @@
+[dynamic-key]
+month-label.ts:4

@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/services/purchase/verify.ts",
+      "content": "// fixture\nexport const verify = (kitApi: () => void): void => {\n  kitApi();\n};\n"
+    }
+  }
+]

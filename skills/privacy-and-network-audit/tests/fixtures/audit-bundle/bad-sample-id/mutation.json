@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        6
+      ],
+      "value": "export const UNIT = 'ca-app-pub-3940256099942544/4411468910';"
+    }
+  }
+]

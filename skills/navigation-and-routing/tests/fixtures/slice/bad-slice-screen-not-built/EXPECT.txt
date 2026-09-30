@@ -1,0 +1,4 @@
+[route-not-built] route Settings (S11) still points at NotBuiltScreen, but S11 is in shell-slice.json
+root-stack.tsx:39
+SKIP packages/shell/src/navigation/root-stack.tsx [route-not-built] S8 not in shell-slice.json
+SKIP packages/shell/src/screens/game/game-screen.tsx [back-opens-pause] S5 not in shell-slice.json

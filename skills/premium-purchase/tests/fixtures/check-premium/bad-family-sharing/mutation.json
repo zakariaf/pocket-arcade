@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/asc/premium-iap-payloads.ts",
+      "find": "familySharable: false",
+      "with": "familySharable: true"
+    }
+  }
+]

@@ -1,0 +1,1 @@
+[{ "write": { "file": "package.json", "content": "{\n  \"name\": \"e07-games\",\n  \"private\": true,\n  \"workspaces\": [\"apps/*\", \"packages/*\"],\n  \"scripts\": { \"new-game\": \"node packages/tooling/src/scaffold/new-game.ts\" }\n}\n" } }]

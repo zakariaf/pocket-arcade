@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/app-variant.ts",
+      "find": "  store: ['off', 'live'],",
+      "with": "  store: ['off', 'test', 'live'],"
+    }
+  }
+]

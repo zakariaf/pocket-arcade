@@ -1,0 +1,3 @@
+[harness-game-facts]
+parity/game-facts.json
+does not exist

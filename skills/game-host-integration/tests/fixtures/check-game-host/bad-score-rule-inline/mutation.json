@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/run-summary.ts",
+      "find": "rule === null || isScoreRule(rule) ? null : rule.par",
+      "with": "rule?.kind === 'par' ? rule.par : null"
+    }
+  }
+]

@@ -1,0 +1,9 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A frame with reference variants and no parity/game-facts.json: the reference is never guessed."
+}

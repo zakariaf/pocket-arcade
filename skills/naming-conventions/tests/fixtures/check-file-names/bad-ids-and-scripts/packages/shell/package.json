@@ -1,0 +1,5 @@
+{
+  "name": "@demo/the-shell",
+  "private": true,
+  "type": "module"
+}

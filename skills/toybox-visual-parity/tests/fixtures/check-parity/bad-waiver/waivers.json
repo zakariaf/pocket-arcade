@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s4-home",
+   "testID": "home.play-button",
+   "rule": "fill",
+   "tolerance": 16,
+   "reason": "The button looks close enough to the design colour.",
+   "reportedToOwner": "2026-09-28"
+  }
+ ]
+}

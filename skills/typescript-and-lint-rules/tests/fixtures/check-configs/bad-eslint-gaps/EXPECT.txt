@@ -1,0 +1,6 @@
+eslint.config.mjs [eslint-required] missing the runtime block's no-restricted-globals with NETWORK_GLOBALS (spec N3) [network-globals-used]
+[eslint-required] missing the axios ban (N3) [banned-axios]
+[eslint-rule-off] @typescript-eslint/no-explicit-any is switched off 1 times; the canonical config does it 0 times
+[eslint-rule-off] no-restricted-syntax is switched off 1 times
+[eslint-weakened] tseslint.configs.disableTypeChecked (allowed only for the plain JS config files) appears 2 times
+[ignore-pre-existing] the pre-existing folder research/ is not in PRE_EXISTING, so ESLint would lint it

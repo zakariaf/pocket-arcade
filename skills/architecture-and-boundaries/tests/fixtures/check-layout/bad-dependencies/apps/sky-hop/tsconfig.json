@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "jest"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "game.config.ts",
+    "src/**/*",
+    "../../packages/shell/src/app-env.d.ts"
+  ]
+}

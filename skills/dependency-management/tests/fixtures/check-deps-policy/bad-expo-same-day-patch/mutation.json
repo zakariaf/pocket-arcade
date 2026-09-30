@@ -1,0 +1,6 @@
+[
+  { "json": { "file": "apps/alpha/package.json", "path": ["dependencies", "expo-haptics"], "value": "~57.0.4" } },
+  { "json": { "file": "apps/beta/package.json", "path": ["dependencies", "expo-haptics"], "value": "~57.0.4" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/alpha", "dependencies", "expo-haptics"], "value": "~57.0.4" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/beta", "dependencies", "expo-haptics"], "value": "~57.0.4" } }
+]

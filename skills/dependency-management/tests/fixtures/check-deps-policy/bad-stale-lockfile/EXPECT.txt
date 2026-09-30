@@ -1,0 +1,2 @@
+lockfile-sync
+dependencies of the root differ from its package.json

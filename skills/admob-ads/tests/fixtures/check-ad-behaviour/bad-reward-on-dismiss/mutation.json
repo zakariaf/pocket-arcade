@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-moments.ts",
+      "find": "return result === 'rewarded';",
+      "with": "return result !== 'unavailable';"
+    }
+  }
+]

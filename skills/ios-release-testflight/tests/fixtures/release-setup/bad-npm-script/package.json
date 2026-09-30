@@ -1,0 +1,11 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "scripts": {
+    "build:ios:sim": "node packages/tooling/src/build/build-ios-sim.ts",
+    "release:ios": "eas build --platform ios",
+    "verify": "npm run -s check:fast && npm run -s test:coverage",
+    "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts",
+    "audit:network": "node packages/tooling/src/audit/audit-network.ts"
+  }
+}

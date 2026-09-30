@@ -1,0 +1,3 @@
+[host-deps]
+packages/shell/src/app/create-shell-parts.ts
+createBoardHost is not createGameBoardHost

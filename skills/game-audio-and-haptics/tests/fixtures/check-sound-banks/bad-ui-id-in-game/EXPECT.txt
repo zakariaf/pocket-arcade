@@ -1,0 +1,3 @@
+[sound-id]
+apps/demo-game/src/sounds/sound-bank.ts:13
+ui. is the Shell namespace

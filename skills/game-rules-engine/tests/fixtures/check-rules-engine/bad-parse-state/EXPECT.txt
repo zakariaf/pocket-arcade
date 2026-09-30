@@ -1,0 +1,2 @@
+[persistence-roundtrip]
+parseState does not return a saved state unchanged

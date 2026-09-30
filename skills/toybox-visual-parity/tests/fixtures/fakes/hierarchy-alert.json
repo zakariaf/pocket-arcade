@@ -1,0 +1,33 @@
+{
+ "attributes": {
+  "resource-id": "",
+  "bounds": "[0,0][0,0]"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "Open in “Line Siege”?",
+    "resource-id": "",
+    "bounds": "[60,380][342,500]"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "Cancel",
+      "resource-id": "",
+      "bounds": "[60,456][201,500]"
+     },
+     "children": []
+    },
+    {
+     "attributes": {
+      "accessibilityText": "Open",
+      "resource-id": "",
+      "bounds": "[201,456][342,500]"
+     },
+     "children": []
+    }
+   ]
+  }
+ ]
+}

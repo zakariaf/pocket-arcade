@@ -1,0 +1,13 @@
+{
+ "frame": "s11-settings",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "The scroll-0 capture with the Sound effects label drawn in a muted grey instead of the ink colour: text ink is measured by the design's text colour, so the label has no ink in it.",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s11-settings.png",
+  "layout": "../reference/lineSiege/light-en/s11-settings.layout.json"
+ }
+}

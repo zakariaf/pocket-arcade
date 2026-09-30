@@ -1,0 +1,2 @@
+[test-only-import]
+packages/shell/src/screens/home/home-model.ts:2

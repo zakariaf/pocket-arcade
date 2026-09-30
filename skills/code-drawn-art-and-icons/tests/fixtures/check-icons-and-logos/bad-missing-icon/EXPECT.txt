@@ -1,0 +1,2 @@
+[icon-set]
+icon "crown" is missing

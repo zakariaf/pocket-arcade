@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/with-shell.ts",
+      "find": "{ iosAppId: 'from admobPluginOptions' }",
+      "with": "{ iosAppId: 'from admobPluginOptions', userTrackingUsageDescription: 'Ads' }"
+    }
+  }
+]

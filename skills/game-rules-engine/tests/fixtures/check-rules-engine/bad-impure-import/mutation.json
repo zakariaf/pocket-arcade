@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/apply-move.ts", "find": "import { flipCells, neighbourhood } from './flip-cells.ts';", "with": "import { Platform } from 'react-native';\n\nimport { flipCells, neighbourhood } from './flip-cells.ts';\n\nexport const OS = Platform.OS;" } }]

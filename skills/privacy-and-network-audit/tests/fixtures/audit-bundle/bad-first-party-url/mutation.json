@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        7
+      ],
+      "value": "export const LEVELS = 'https://example.com/levels.json';"
+    }
+  }
+]

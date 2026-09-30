@@ -1,0 +1,66 @@
+{
+  "categories": [
+    {
+      "name": "Start",
+      "why": "Where tasks begin.",
+      "skills": [
+        "route-index"
+      ]
+    },
+    {
+      "name": "Parts",
+      "why": "The two parts.",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task": "Build the alpha part",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ],
+      "note": "Beta checks it."
+    },
+    {
+      "task": "Find the right skill",
+      "skills": [
+        "route-index"
+      ]
+    }
+  ],
+  "buildOrders": {
+    "commands": "Run each check from the repo root.",
+    "shell": [
+      {
+        "step": "Alpha first",
+        "skills": [
+          "alpha-one"
+        ],
+        "proof": "`check-alpha.mjs .` (alpha-one) prints RESULT: PASS"
+      }
+    ],
+    "slice": "A partial build lists its parts in slice.json.",
+    "verifyGreen": {
+      "intro": "Which verify step is expected red before which step.",
+      "rows": [
+        {
+          "gate": "lint",
+          "greenFrom": "step 1"
+        }
+      ]
+    },
+    "game": [
+      {
+        "step": "Beta next",
+        "skills": [
+          "beta-two"
+        ],
+        "proof": "beta passes"
+      }
+    ]
+  }
+}

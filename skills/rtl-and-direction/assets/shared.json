@@ -1,0 +1,12 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/shell/e2e/flows/rtl/03-language-switch.yaml", "to": "templates/e2e/03-language-switch.yaml" },
+  { "from": "repo-templates/packages/shell/src/i18n/fonts.ts", "to": "templates/shell-i18n/fonts.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/fonts.test.ts", "to": "templates/shell-i18n/fonts.test.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/use-localized-text-style.ts", "to": "templates/shell-i18n/use-localized-text-style.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/use-localized-text-style.test.tsx", "to": "templates/shell-i18n/use-localized-text-style.test.tsx" },
+  { "from": "repo-templates/packages/shell/src/i18n/bidi.ts", "to": "templates/shell-i18n/bidi.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/digits.ts", "to": "templates/shell-i18n/digits.ts" },
+  { "from": "repo-templates/packages/shell/src/i18n/language-context.tsx", "to": "templates/shell-i18n/language-context.tsx" },
+  { "from": "repo-templates/packages/shell/src/i18n/languages.ts", "to": "templates/shell-i18n/languages.ts" }
+]

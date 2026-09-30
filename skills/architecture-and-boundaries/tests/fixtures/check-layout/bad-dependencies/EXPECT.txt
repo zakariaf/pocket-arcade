@@ -1,0 +1,3 @@
+package.json:1 [one-react] overrides.react-native is undefined
+apps/sky-hop/package.json:1 [native-deps] lacks the Shell peer dependency expo-sqlite
+package.json:1 [native-deps] expo has different versions across apps

@@ -1,0 +1,2 @@
+[constants]
+extra.appVariant is "test", expected "store"

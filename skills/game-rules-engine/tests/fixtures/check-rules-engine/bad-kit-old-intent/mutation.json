@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/game-kit/src/contract/input-intent.ts", "find": "  | { readonly kind: 'tap'; readonly target: BoardTarget; readonly selected: BoardTarget | null }", "with": "  | { readonly kind: 'tap'; readonly target: BoardTarget }" } }]

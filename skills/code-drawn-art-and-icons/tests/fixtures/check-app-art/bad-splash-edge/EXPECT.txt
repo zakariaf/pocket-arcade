@@ -1,0 +1,2 @@
+[art-safe-area]
+splash-logo-dark.png

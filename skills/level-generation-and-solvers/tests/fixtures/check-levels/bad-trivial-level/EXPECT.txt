@@ -1,0 +1,2 @@
+[trivial-level]
+level 47 is won in 1 move

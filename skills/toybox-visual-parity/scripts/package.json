@@ -1,0 +1,13 @@
+{
+  "name": "toybox-visual-parity-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pinned packages for the toybox-visual-parity skill scripts (installed with npm ci --prefix <skill>/scripts).",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "pixelmatch": "7.2.0",
+    "playwright": "1.63.0",
+    "pngjs": "7.0.0"
+  }
+}

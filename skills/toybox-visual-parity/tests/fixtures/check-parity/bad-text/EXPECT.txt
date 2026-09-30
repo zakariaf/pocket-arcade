@@ -1,0 +1,1 @@
+[text] home.play-button: text "Continue – Level 13" but the design says "Continue – Level 12"

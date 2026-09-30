@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/tap-flip-level-plan.ts", "find": "maxTries: 50,", "with": "maxTries: 0," } }]

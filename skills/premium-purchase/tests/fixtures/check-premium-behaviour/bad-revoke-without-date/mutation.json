@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "deps.persistPremium({ isPremium: false, revokedAtMs });",
+      "with": "deps.persistPremium({ isPremium: false, revokedAtMs: 0 });"
+    }
+  }
+]

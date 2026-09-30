@@ -1,0 +1,3 @@
+[entry]
+apps/flock-tilt/index.ts:1
+is not exactly the 3-line entry

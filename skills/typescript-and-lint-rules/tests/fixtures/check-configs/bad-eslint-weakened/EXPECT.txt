@@ -1,0 +1,5 @@
+eslint.config.mjs [eslint-required] missing linterOptions.noInlineConfig: true
+[eslint-limit-changed] max-lines is 300
+[eslint-warn] a rule uses the "warn" severity
+[eslint-rule-off] complexity is switched off 1 times
+[eslint-forbidden-import] imports eslint-plugin-prettier

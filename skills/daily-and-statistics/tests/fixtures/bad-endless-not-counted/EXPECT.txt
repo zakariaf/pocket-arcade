@@ -1,0 +1,2 @@
+[run-end-record]
+an endless run is a game

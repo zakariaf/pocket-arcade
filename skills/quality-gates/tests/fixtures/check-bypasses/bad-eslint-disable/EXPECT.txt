@@ -1,0 +1,2 @@
+inline-lint-override
+pick.ts:2

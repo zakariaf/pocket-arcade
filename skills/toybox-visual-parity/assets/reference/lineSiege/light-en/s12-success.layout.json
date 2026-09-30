@@ -1,0 +1,30 @@
+{
+"version":1,
+"frame":"s12-success",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"state-card",
+"screens":[
+"S12/success"
+],
+"root":"premium.state.success",
+"game":"lineSiege",
+"theme":"light",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":370},
+"image":"s12-success.png",
+"elements":[
+{"testID":"premium.state.success","screen":"S12/success","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"Thank you! Premium is active. Ads are gone for good. Premium – active","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"premium.confetti","screen":"S12/success","role":"none","component":"Confetti","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":70},"box":{"w":362,"h":70,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"premium.success-title","screen":"S12/success","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":106,"w":362,"h":41.8},"box":{"w":362,"h":42,"rotate":0},"text":"Thank you!","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 38px/41.8px Lilita One"}},
+{"testID":"premium.success-body","screen":"S12/success","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":159.8,"w":362,"h":23.75},"box":{"w":362,"h":24,"rotate":0},"text":"Premium is active. Ads are gone for good.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/23.76px Rubik"}},
+{"testID":"premium.active-sticker","screen":"S12/success","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":19.27,"y":191.27,"w":165.94,"h":40.95},"box":{"w":164,"h":32,"rotate":-3},"text":"Premium – active","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"400 16px/18.4px Lilita One"}}
+],
+"texts":[
+{"text":"Thank you!","x":20,"y":105,"w":177.5,"h":43,"owner":"premium.success-title","font":"400 38px Lilita One"},
+{"text":"Premium is active. Ads are gone for good.","x":20,"y":159.8,"w":345.36,"h":22,"owner":"premium.success-body","font":"400 18px Rubik"},
+{"text":"Premium – active","x":54.53,"y":197.94,"w":117.3,"h":25.07,"owner":"premium.active-sticker","font":"400 16px Lilita One"}
+]
+}

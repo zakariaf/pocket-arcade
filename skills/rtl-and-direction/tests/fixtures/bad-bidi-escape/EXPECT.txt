@@ -1,0 +1,2 @@
+[bidi-in-source]
+pack-label.ts:2

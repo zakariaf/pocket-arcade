@@ -1,0 +1,2 @@
+[mic-string]
+packages/shell/src/config/audio-config.ts:21

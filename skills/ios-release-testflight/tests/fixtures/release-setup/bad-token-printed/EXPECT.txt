@@ -1,0 +1,2 @@
+[token-printed]
+packages/tooling/src/asc/debug-token.ts:3

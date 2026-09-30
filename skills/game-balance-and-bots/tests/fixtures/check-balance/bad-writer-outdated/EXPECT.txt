@@ -1,0 +1,3 @@
+[harness-outdated]
+packages/tooling/src/sims/write-sim-report.ts:1
+no fingerprintFiles export

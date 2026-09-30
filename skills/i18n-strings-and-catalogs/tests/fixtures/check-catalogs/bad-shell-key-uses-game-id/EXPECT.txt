@@ -1,0 +1,2 @@
+[L1b key-namespace]
+"line-siege." is reserved

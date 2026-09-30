@@ -1,0 +1,2 @@
+[screens-type-erased]
+imports the game app @e07/tap-flip/rules/outcome.ts

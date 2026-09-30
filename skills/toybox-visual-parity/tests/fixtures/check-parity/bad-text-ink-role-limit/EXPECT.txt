@@ -1,0 +1,2 @@
+[text-ink] settings.theme-segment.dark.label: text "Dark"
+limit 2.3 pt for Rubik 14

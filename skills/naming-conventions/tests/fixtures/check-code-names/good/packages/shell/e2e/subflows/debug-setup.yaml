@@ -1,0 +1,13 @@
+# packages/shell/e2e/subflows/debug-setup.yaml
+appId: ${APP_ID}
+---
+- openLink: '${APP_SCHEME}://debug/setup?${QUERY}'
+- runFlow:
+    when:
+      visible: 'Open'
+    commands:
+      - tapOn: 'Open'
+- extendedWaitUntil:
+    visible:
+      id: '${WAIT_FOR}'
+    timeout: 15000

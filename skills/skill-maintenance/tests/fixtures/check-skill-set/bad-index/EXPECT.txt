@@ -1,0 +1,2 @@
+[index-coverage]
+the index never names delta-music

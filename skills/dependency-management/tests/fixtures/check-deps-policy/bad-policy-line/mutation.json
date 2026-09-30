@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".npmrc",
+      "find": "save-exact=true\n",
+      "with": ""
+    }
+  }
+]

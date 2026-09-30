@@ -1,0 +1,3 @@
+[haptic-safety]
+packages/shell/src/services/haptics/expo-haptics-adapter.ts:1
+.catch(() => undefined)

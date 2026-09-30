@@ -1,0 +1,3 @@
+claude-settings
+the Stop hook must run npm run -s check:fast
+claudeSettings.hooks differs

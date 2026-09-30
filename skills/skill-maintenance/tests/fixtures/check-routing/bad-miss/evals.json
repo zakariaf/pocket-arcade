@@ -1,0 +1,6 @@
+[
+  {
+    "prompt": "add a pop sound and a vibration when the game is saved",
+    "expect": "save-keeper"
+  }
+]

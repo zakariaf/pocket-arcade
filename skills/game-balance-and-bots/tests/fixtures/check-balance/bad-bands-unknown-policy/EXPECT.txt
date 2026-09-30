@@ -1,0 +1,2 @@
+[bands-invalid]
+curve names policy expert, which the grid does not run

@@ -1,0 +1,1 @@
+apps/demo/src/levels/generate-level.golden.test.ts:30 [snapshot-missing] has no snapshot file next to it

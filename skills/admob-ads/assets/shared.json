@@ -1,0 +1,6 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/shell/src/config/app-variant.ts", "to": "templates/packages/shell/src/config/app-variant.ts" },
+  { "from": "repo-templates/packages/shell/src/config/app-variant.test.ts", "to": "templates/packages/shell/src/config/app-variant.test.ts" },
+  { "from": "repo-templates/__mocks__/react-native-google-mobile-ads.ts", "to": "templates/__mocks__/react-native-google-mobile-ads.ts" }
+]

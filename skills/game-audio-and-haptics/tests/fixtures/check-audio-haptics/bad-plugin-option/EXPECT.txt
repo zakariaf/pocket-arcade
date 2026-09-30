@@ -1,0 +1,3 @@
+[audio-plugin]
+packages/shell/src/config/audio-config.ts:14
+disableFFmpeg

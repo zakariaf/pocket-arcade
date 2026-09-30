@@ -1,0 +1,2 @@
+[state-not-json]
+apps/tap-flip/src/rules/tap-flip-types.ts

@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "devDependencies",
+        "typescript"
+      ],
+      "value": "^6.0.3"
+    }
+  }
+]

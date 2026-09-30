@@ -1,0 +1,121 @@
+{
+  "verified": "2026-09-26",
+  "allowedComponents": {
+    "react-native-google-mobile-ads": "AdMob ads + UMP consent (spec N3 a); pods Google-Mobile-Ads-SDK 13.6.0, GoogleUserMessagingPlatform 3.1.0; JS dependency @iabtcf/core",
+    "expo-iap": "store purchases (spec N3 b); pod openiap 3.6.0 -> StoreKit 2"
+  },
+  "vendorSdks": ["react-native-google-mobile-ads", "expo-iap", "expo-network"],
+  "adapterGlob": "^packages/shell/src/services/[^/]+/[^/]+-(adapter|save-store|sql-driver)\\.ts$",
+  "vendorPodAllowlist": ["Google-Mobile-Ads-SDK", "GoogleUserMessagingPlatform", "openiap"],
+  "trackingAllowedPods": ["Google-Mobile-Ads-SDK", "GoogleUserMessagingPlatform"],
+  "externalLinksFile": "packages/shell/src/config/external-links.ts",
+  "networkGuard": {
+    "file": "packages/shell/src/screens/debug/network-guard.ts",
+    "allowedImporters": ["packages/shell/src/app/test-only-entry.ts", "packages/shell/src/screens/debug/"]
+  },
+  "bannedImports": {
+    "axios": "Spec N3: no HTTP client.",
+    "ky": "Spec N3: no HTTP client.",
+    "got": "Spec N3: no HTTP client.",
+    "node-fetch": "Spec N3: no HTTP client.",
+    "cross-fetch": "Spec N3: no HTTP client.",
+    "@react-native-community/netinfo": "Its reachability probe fetches Google; use ConnectivityPort (expo-network).",
+    "expo-updates": "No OTA updates (N3).",
+    "expo-dev-client": "Ships a network inspector.",
+    "expo-web-browser": "Browsers are network surfaces (N3).",
+    "react-native-webview": "Web views are network surfaces (N3).",
+    "expo-file-system": "Persist through SaveStore; its download API is a network path.",
+    "react-native-purchases": "RevenueCat server (N2).",
+    "react-native-iap": "Second IAP stack; use expo-iap through PurchasePort.",
+    "expo-tracking-transparency": "Decision D4: no ATT prompt in v1.",
+    "expo-notifications": "Spec 14: no push notifications.",
+    "firebase": "Spec N2: no backend or analytics.",
+    "sentry-expo": "Spec N2: no crash reporting service."
+  },
+  "bannedImportPrefixes": {
+    "@react-native-firebase/": "Spec N2: no backend or analytics.",
+    "@sentry/": "Spec N2: no crash reporting service.",
+    "@bugsnag/": "Spec N2: no crash reporting service.",
+    "@datadog/": "Spec N2: no telemetry.",
+    "@amplitude/": "Spec N2: no analytics.",
+    "@segment/": "Spec N2: no analytics."
+  },
+  "bannedPackages": [
+    { "pattern": "^expo-updates$", "scope": "anywhere", "reason": "OTA updates are network traffic." },
+    { "pattern": "^expo-dev-client$", "scope": "anywhere", "reason": "Ships a network inspector." },
+    { "pattern": "^@react-native-community/netinfo$", "scope": "anywhere", "reason": "Probes Google over HTTP." },
+    { "pattern": "^react-native-purchases(-ui)?$", "scope": "anywhere", "reason": "RevenueCat server." },
+    { "pattern": "^react-native-iap$", "scope": "anywhere", "reason": "Second IAP stack; use expo-iap." },
+    { "pattern": "^(firebase|@react-native-firebase/.+)$", "scope": "anywhere", "reason": "Spec N2/N3: backend and analytics." },
+    { "pattern": "^(@sentry/.+|sentry-expo|@bugsnag/.+|@datadog/.+)$", "scope": "anywhere", "reason": "Spec N2: crash reporting / telemetry." },
+    { "pattern": "^(expo-insights|expo-observe|expo-app-metrics)$", "scope": "anywhere", "reason": "Spec N2: Expo telemetry." },
+    { "pattern": "^expo-notifications$", "scope": "anywhere", "reason": "Spec 14: no push notifications." },
+    { "pattern": "^(@amplitude/.+|expo-analytics-amplitude|@segment/.+|mixpanel-react-native|react-native-appsflyer|react-native-branch|react-native-adjust|react-native-onesignal|react-native-fbsdk-next)$", "scope": "anywhere", "reason": "Spec N2: analytics, attribution, push or Facebook SDK." },
+    { "pattern": "^(react-native-webview|expo-web-browser)$", "scope": "anywhere", "reason": "Web views are a network surface." },
+    { "pattern": "^expo-tracking-transparency$", "scope": "anywhere", "reason": "Decision D4: no ATT prompt in v1." },
+    { "pattern": "^(axios|ky|got|node-fetch|cross-fetch)$", "scope": "direct", "reason": "Spec N3: no HTTP client." }
+  ],
+  "bannedPodFamilies": [
+    { "pattern": "^(Firebase|GoogleAppMeasurement)", "family": "Firebase / Google Analytics (N2)" },
+    { "pattern": "^(Sentry|Bugsnag|Crashlytics)", "family": "crash reporting (N2)" },
+    { "pattern": "^(Adjust|AppsFlyerFramework|Branch|Amplitude|Mixpanel|Segment)", "family": "attribution / analytics (N2)" },
+    { "pattern": "^(RevenueCat|PurchasesHybridCommon)", "family": "purchase server (N2)" },
+    { "pattern": "^OneSignal", "family": "push (spec 14)" },
+    { "pattern": "^OnsideKit", "family": "alternative billing from expo-iap Onside switches (N2/N3)" },
+    { "pattern": "^(FBSDK|FBAudienceNetwork)", "family": "Facebook (N2/N3)" },
+    { "pattern": "^GoogleMobileAdsMediation", "family": "ad mediation (another ad network's SDK; needs an owner decision)" }
+  ],
+  "iapServerApis": ["kitApi", "KitApiError", "verifyPurchaseWithProvider", "verifyPurchase", "useIAP"],
+  "requiredReasons": {
+    "NSPrivacyAccessedAPICategoryUserDefaults": ["CA92.1"],
+    "NSPrivacyAccessedAPICategoryFileTimestamp": ["C617.1"],
+    "NSPrivacyAccessedAPICategorySystemBootTime": ["35F9.1"],
+    "NSPrivacyAccessedAPICategoryDiskSpace": ["E174.1"]
+  },
+  "privacyManifestFile": "packages/shell/src/config/privacy-manifest.ts",
+  "gitignorePatterns": ["*.p8", "AuthKey_*", "ApiKey_*", "*.p12", "*.mobileprovision", "*.xcarchive", "*.ipa"],
+  "secretFilePattern": "(\\.p8|\\.p12|\\.mobileprovision)$|(^|/)(AuthKey|ApiKey)_[^/]*$",
+  "denyRules": ["Read(~/.appstoreconnect/**)", "Read(**/*.p8)", "Read(**/AuthKey_*)", "Read(**/*.p12)", "Read(**/*.mobileprovision)"],
+  "npmScripts": {
+    "audit:network": "node packages/tooling/src/audit/audit-network.ts",
+    "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts",
+    "audit:licenses": "node packages/tooling/src/audit/audit-licenses.ts"
+  },
+  "requiredFiles": [
+    "packages/tooling/src/audit/audit-network.ts",
+    "packages/tooling/src/audit/bundle-modules.ts",
+    "packages/tooling/src/audit/network-baseline.ts",
+    "packages/tooling/src/audit/network-js-layer.ts",
+    "packages/tooling/src/audit/network-native-layer.ts",
+    "packages/tooling/src/audit/network-pods-layer.ts",
+    "packages/tooling/src/audit/network-config-layer.ts",
+    "packages/tooling/src/audit/network-runtime-layer.ts",
+    "packages/tooling/src/audit/sample-sockets.ts",
+    "packages/tooling/src/audit/release-bundle-checks.ts",
+    "packages/tooling/src/audit/audit-privacy.ts",
+    "packages/tooling/src/audit/privacy-manifest.ts",
+    "packages/tooling/src/audit/audit-licenses.ts",
+    "packages/tooling/src/deps/banned-packages.ts",
+    "packages/tooling/network-audit/js-baseline.json",
+    "packages/tooling/network-audit/native-baseline.json",
+    "packages/shell/src/config/privacy-manifest.ts",
+    "packages/shell/src/screens/debug/network-guard.ts"
+  ],
+  "jsPatterns": {
+    "fetch": "\\bfetch\\(",
+    "xhr": "new XMLHttpRequest\\b",
+    "webSocket": "new WebSocket\\(",
+    "eventSource": "new EventSource\\(",
+    "beacon": "\\bsendBeacon\\(",
+    "remoteUrl": "['\"`]https?://(?!localhost|127\\.0\\.0\\.1)[^'\"`\\s]+"
+  },
+  "release": {
+    "sentinel": "SHELL_TEST_BUILD_ONLY",
+    "samplePublisher": "3940256099942544",
+    "sampleAppId": "ca-app-pub-3940256099942544~1458002511",
+    "sampleAllowedPackage": "react-native-google-mobile-ads",
+    "storekitTest": "StoreKitTest|SKTestSession",
+    "debugScreens": "/screens/debug/",
+    "liveAppId": "^ca-app-pub-\\d{16}~\\d{10}$"
+  }
+}

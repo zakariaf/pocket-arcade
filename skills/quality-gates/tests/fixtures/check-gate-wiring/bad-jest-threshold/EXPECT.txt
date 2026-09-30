@@ -1,0 +1,2 @@
+jest-thresholds
+global lines threshold is 80

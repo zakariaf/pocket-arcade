@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "overrides",
+        "react"
+      ],
+      "value": "19.3.0"
+    }
+  }
+]

@@ -1,0 +1,3 @@
+[expo-localization-rtl]
+app.config.ts:2
+supportsRTL

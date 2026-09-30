@@ -1,0 +1,3 @@
+[config-rules]
+apps/tap-flip/game.config.ts:
+hints.freePerDay is 1, but the rules have no hints

@@ -1,0 +1,2 @@
+[engine-contract]
+applyMove changed its input state

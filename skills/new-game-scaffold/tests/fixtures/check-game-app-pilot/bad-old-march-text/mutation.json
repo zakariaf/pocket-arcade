@@ -1,0 +1,4 @@
+[
+  { "replace": { "file": "apps/line-siege/src/i18n/en.json", "find": "\"The monsters march closer every few blocks.\"", "with": "\"After each block you place, the monsters march one row closer.\"" } },
+  { "replace": { "file": "apps/line-siege/src/i18n/de.json", "find": "\"Achtung: Alle paar Blöcke rücken die Monster näher.\"", "with": "\"Achtung: Nach jedem Block rücken die Monster näher.\"" } }
+]

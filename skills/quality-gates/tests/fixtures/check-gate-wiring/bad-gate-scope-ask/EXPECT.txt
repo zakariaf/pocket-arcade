@@ -1,0 +1,3 @@
+gate-scope
+.claude/settings.json
+permissions.ask has Edit(**/tsconfig*.json)

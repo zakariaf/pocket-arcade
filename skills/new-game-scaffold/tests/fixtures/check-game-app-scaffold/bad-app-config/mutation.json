@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/app.config.ts", "find": "export default withShell(gameConfig, process.env);", "with": "export default { ...withShell(gameConfig, process.env), name: 'Flock' };" } }]

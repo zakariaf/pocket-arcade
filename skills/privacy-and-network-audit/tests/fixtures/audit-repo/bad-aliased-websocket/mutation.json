@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/services/sync/live-socket.ts",
+      "content": "// fixture: the global aliased, so no `new WebSocket(` appears\nconst Socket = WebSocket;\n\nexport function openLive(url: string): unknown {\n  return new Socket(url);\n}\n"
+    }
+  }
+]

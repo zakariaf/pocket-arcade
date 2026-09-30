@@ -1,0 +1,3 @@
+packages/shell/src/stores/progress-model.ts:1 [import-cycle] import cycle: packages/shell/src/stores/progress-model.ts -> packages/shell/src/stores/stats-model.ts -> packages/shell/src/stores/progress-model.ts
+packages/shell/src/ui/level-badge.tsx:2 [parent-import]
+packages/shell/src/ui/level-badge.tsx:3 [unresolved-import] "@demo/shell/ui/missing-file.tsx" resolves to no file

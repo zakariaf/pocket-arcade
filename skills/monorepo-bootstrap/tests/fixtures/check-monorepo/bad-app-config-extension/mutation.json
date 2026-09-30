@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/line-siege/app.config.ts", "find": "from './game.config.ts'", "with": "from './game.config'" } }]

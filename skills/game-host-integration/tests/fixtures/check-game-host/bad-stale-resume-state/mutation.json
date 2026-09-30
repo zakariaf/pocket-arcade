@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "return launch.initialState?.() ?? resumeState(save.doc());",
+      "with": "return launch.initialState?.();"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[audit-wiring]
+VENDOR_POD_ALLOWLIST

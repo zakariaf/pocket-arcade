@@ -1,0 +1,21 @@
+{
+  "tap-flip.board.summary": "{lit, plural, one {# خانە ڕووناکە} other {# خانە ڕووناکن}}",
+  "tap-flip.continue.more-moves": "جووڵەی زیاتر وەربگرە",
+  "tap-flip.goal": "هەموو گڵۆپەکان بکوژێنەوە.",
+  "tap-flip.how-to-play.step-1": "دەست لە خانەیەک بدە: خۆی و دراوسێکانی دەگۆڕێن.",
+  "tap-flip.how-to-play.step-2": "دەستلێدانێک لە ناوەڕاست نیشانەی کۆ دەسڕێتەوە.",
+  "tap-flip.how-to-play.step-3": "خانەی هەڵە؟ بیگەڕێنەوە.",
+  "tap-flip.hud.moves": "جووڵە {moves, number} / {maxMoves, number}",
+  "tap-flip.lose.out-of-moves": "هیچ جووڵەیەک نەماوە",
+  "tap-flip.name": "Tap Flip",
+  "tap-flip.pack-name.1": "یەکەم پریشکەکان",
+  "tap-flip.pack-name.2": "نۆرەی شەو",
+  "tap-flip.pack-name.3": "کوژانەوە",
+  "tap-flip.stats.biggest-flip": "گەورەترین گۆڕان",
+  "tap-flip.stats.boards-cleared": "تەختە پاککراوەکان",
+  "tap-flip.stats.cells-flipped": "خانە گۆڕاوەکان",
+  "tap-flip.tagline": "لێبدە، وەریبگێڕە، گڵۆپەکان بکوژێنەوە.",
+  "tap-flip.tutorial.step-1": "دەست لە گۆشەکە بدە.",
+  "tap-flip.tutorial.step-2": "ئێستا دەست لە ناوەڕاست بدە!",
+  "tap-flip.win-title": "هەموو گڵۆپەکان کوژانەوە!"
+}

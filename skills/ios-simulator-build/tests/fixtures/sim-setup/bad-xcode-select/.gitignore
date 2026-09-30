@@ -1,0 +1,8 @@
+node_modules/
+apps/*/ios/
+apps/*/android/
+apps/*/build/
+apps/*/.expo/
+reports/
+tools/
+*.p8

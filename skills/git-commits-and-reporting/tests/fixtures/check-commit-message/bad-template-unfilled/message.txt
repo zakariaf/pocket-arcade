@@ -1,0 +1,14 @@
+__TYPE__(__SCOPE__): __IMPERATIVE_SUBJECT__
+
+__WHY_THE_CHANGE_WAS_MADE__ (spec __SPEC_IDS__).
+__WHAT_THE_TESTS_COVER__
+
+Gate-Change: __WHY_THE_GATED_FILE_CHANGED__
+Spec-Change: spec __SECTION__ __WHAT_THE_SPEC_CHANGE_WAS__
+# Lines starting with # are removed by git and by check-commits.mjs.
+# type: feat fix perf refactor test docs build ci chore style revert
+# scope: a folder under apps/ or packages/, or repo, deps, docs, ci
+# header: at most 72 characters, imperative, lowercase start, no trailing period
+# Keep Gate-Change only when a gated path changed (quality-gates.json gatedPaths).
+# Keep Spec-Change only when a test expectation changed because the spec changed.
+# Keep any Co-Authored-By line the session instructions ask for, in the same last paragraph.

@@ -1,0 +1,2 @@
+[screen-not-reached] home.screen
+a system alert or another app may be in front

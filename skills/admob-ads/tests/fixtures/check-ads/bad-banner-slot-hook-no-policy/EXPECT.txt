@@ -1,0 +1,3 @@
+[banner-placement]
+packages/shell/src/screens/levels/levels-screen.tsx
+no runtime code asks shouldShowBanner(config, context, 'levels')

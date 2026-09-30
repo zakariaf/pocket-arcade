@@ -1,0 +1,2 @@
+packages/shell/e2e/flows/05-lost.yaml:1 [flow-location]
+apps/demo/e2e/flows/smoke/deep/12-deep.yaml:1 [flow-location]

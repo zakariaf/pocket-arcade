@@ -1,0 +1,1 @@
+[maestro-pin] pins Maestro 2.11.0, which this skill has not verified

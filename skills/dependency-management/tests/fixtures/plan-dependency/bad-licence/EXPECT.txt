@@ -1,0 +1,2 @@
+licence
+valibot is licensed GPL-3.0-only

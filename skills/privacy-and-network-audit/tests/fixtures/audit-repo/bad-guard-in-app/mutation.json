@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/app/start-shell.ts",
+      "content": "// fixture\nimport { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';\n\ninstallNetworkGuard(globalThis, () => undefined);\n"
+    }
+  }
+]

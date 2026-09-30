@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/tap-flip-persistence.ts", "find": "{ cols, rows, cells, moves, maxMoves }", "with": "{ cols, rows, cells, moves, maxMoves: maxMoves + 1 }" } }]

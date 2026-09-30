@@ -1,0 +1,25 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [\"S4\", \"S11\", \"S12\"], \"why\": \"Home + Settings + Premium slice\" }\n"
+    }
+  },
+  {
+    "delete": "packages/shell/src/screens/game"
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "<GameHostProvider host={host}>",
+      "with": "<>"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "</GameHostProvider>",
+      "with": "</>"
+    }
+  }
+]

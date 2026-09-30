@@ -1,0 +1,3 @@
+[
+  { "json": { "file": "facts.json", "path": ["distTags", "latest"], "value": "59.0.1" } }
+]

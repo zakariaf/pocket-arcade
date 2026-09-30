@@ -1,0 +1,6 @@
+[testid-on-inner-text]
+packages/shell/src/ui/chip.tsx:42
+packages/shell/src/ui/group-tab.tsx:54
+packages/shell/src/ui/sticker.tsx:142
+the testID sits on the text inside the View that draws the box and has none
+the testID sits on the text inside the Animated.View that draws the box

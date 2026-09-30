@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/game.config.ts", "find": "levelsPerPack: 30", "with": "levelsPerPack: 25" } }]

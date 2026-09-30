@@ -1,0 +1,32 @@
+{
+"version":1,
+"frame":"s12-restore-results-toasts",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"state-card",
+"screens":[
+"S12/restore"
+],
+"root":"premium.restoring-toast",
+"game":"lineSiege",
+"theme":"light",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":370},
+"image":"s12-restore-results-toasts.png",
+"elements":[
+{"testID":"premium.restoring-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"busy blocks","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":69,"w":362,"h":44.25},"box":{"w":362,"h":44,"rotate":0},"text":"Restoring…","aria":null,"style":{"fill":"#1D1B3A","color":"#F8FBFF","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/20.25px Rubik"}},
+{"testID":"premium.restore-success-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"check","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":123.25,"w":362,"h":44.25},"box":{"w":362,"h":44,"rotate":0},"text":"Purchase restored. Premium is active.","aria":null,"style":{"fill":"#1D1B3A","color":"#F8FBFF","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/20.25px Rubik"}},
+{"testID":"premium.restore-empty-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"info","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":177.5,"w":362,"h":44.25},"box":{"w":362,"h":44,"rotate":0},"text":"No earlier purchase was found.","aria":null,"style":{"fill":"#1D1B3A","color":"#F8FBFF","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/20.25px Rubik"}},
+{"testID":"premium.restore-failed-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"alert","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":231.75,"w":362,"h":64.5},"box":{"w":362,"h":65,"rotate":0},"text":"Couldn’t restore right now. Please try again later.","aria":null,"style":{"fill":"#1D1B3A","color":"#F8FBFF","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/20.25px Rubik"}}
+],
+"texts":[
+{"text":"Restore purchase","x":20,"y":23,"w":220.5,"h":35,"owner":null,"font":"400 30px Lilita One"},
+{"text":"Restoring…","x":81,"y":82,"w":76.88,"h":18,"owner":"premium.restoring-toast","font":"400 15px Rubik"},
+{"text":"Purchase restored. Premium is active.","x":64,"y":136.25,"w":263.83,"h":18,"owner":"premium.restore-success-toast","font":"400 15px Rubik"},
+{"text":"No earlier purchase was found.","x":64,"y":190.5,"w":214.58,"h":18,"owner":"premium.restore-empty-toast","font":"400 15px Rubik"},
+{"text":"Couldn’t restore right now. Please try again later.","x":64,"y":244.75,"w":299.42,"h":18,"owner":"premium.restore-failed-toast","font":"400 15px Rubik"},
+{"text":"Couldn’t restore right now. Please try again later.","x":64,"y":265,"w":34.8,"h":18,"owner":"premium.restore-failed-toast","font":"400 15px Rubik"}
+]
+}

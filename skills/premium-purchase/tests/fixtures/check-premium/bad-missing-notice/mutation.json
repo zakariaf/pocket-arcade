@@ -1,0 +1,5 @@
+[
+  {
+    "delete": "packages/shell/src/stores/premium/premium-notice.ts"
+  }
+]

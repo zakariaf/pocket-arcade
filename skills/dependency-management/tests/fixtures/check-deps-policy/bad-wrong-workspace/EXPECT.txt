@@ -1,0 +1,2 @@
+wrong-workspace
+zustand belongs in packages/shell, not in apps/alpha

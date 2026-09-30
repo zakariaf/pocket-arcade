@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/demo-game/package.json",
+      "path": [
+        "dependencies",
+        "expo-updates"
+      ],
+      "value": "~57.0.5"
+    }
+  }
+]

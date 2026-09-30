@@ -1,0 +1,3 @@
+[harness-opener]
+"pause-open"
+packages/shell/src/game-host/use-game-session-controls.ts

@@ -1,0 +1,33 @@
+{
+"version":1,
+"frame":"s12-store-unavailable-offline",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"state-card",
+"screens":[
+"S12/unavailable"
+],
+"root":"premium.state.unavailable",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"fa",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":370},
+"image":"s12-store-unavailable-offline.png",
+"elements":[
+{"testID":"premium.state.unavailable","screen":"S12/unavailable","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"پریمیوم برای خرید یا بازیابی، به اینترنت وصل شوید. حذف تبلیغات بازیابی خرید","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.top-bar.title","screen":"S12/unavailable","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":43.5},"box":{"w":362,"h":44,"rotate":0},"text":"پریمیوم","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 30px/43.5px Vazirmatn"}},
+{"testID":"premium.buy-button","screen":"S12/unavailable","role":"button","component":"Button","kind":"primary hero, crown cap","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":"disabled","when":null,"count":1,"rect":{"x":20,"y":216,"w":362,"h":80},"box":{"w":362,"h":80,"rotate":0},"text":"حذف تبلیغات","aria":null,"style":{"fill":"#221F52","color":"#B9B4EA","border":"3px dashed #B9B4EA","radius":"14px","shadow":null,"outline":null,"font":"700 25px/36.25px Vazirmatn"}},
+{"testID":"premium.restore-button","screen":"S12/unavailable","role":"button","component":"Button","kind":"quiet, restore icon, centred","checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":"disabled","when":null,"count":1,"rect":{"x":137.92,"y":302,"w":126.16,"h":44},"box":{"w":126,"h":44,"rotate":0},"text":"بازیابی خرید","aria":null,"style":{"fill":null,"color":"#B9B4EA","border":"3px dashed null","radius":"14px","shadow":null,"outline":null,"font":"400 15px/21.75px Vazirmatn"}},
+{"testID":"premium.unavailable-note","screen":"S12/unavailable","role":"none","component":"NotePanel","kind":null,"checks":["fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":79.5,"w":362,"h":59.5},"box":{"w":362,"h":60,"rotate":0},"text":"برای خرید یا بازیابی، به اینترنت وصل شوید.","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.unavailable-note.icon","screen":"S12/unavailable","role":"none","component":"Icon","kind":"wifi-off","checks":["crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":341,"y":98.5,"w":22,"h":22},"box":{"w":22,"h":22,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.unavailable-note.label","screen":"S12/unavailable","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":47.36,"y":96.5,"w":281.64,"h":25.5},"box":{"w":282,"h":26,"rotate":0},"text":"برای خرید یا بازیابی، به اینترنت وصل شوید.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}}
+],
+"texts":[
+{"text":"پریمیوم","x":288.09,"y":22,"w":93.91,"h":47,"owner":"premium.top-bar.title","font":"700 30px Vazirmatn"},
+{"text":"برای خرید یا بازیابی، به اینترنت وصل شوید.","x":47.36,"y":95.5,"w":281.64,"h":26,"owner":"premium.unavailable-note.label","font":"400 17px Vazirmatn"},
+{"text":"حذف تبلیغات","x":170.84,"y":235.88,"w":136.16,"h":39,"owner":"premium.buy-button","font":"700 25px Vazirmatn"},
+{"text":"بازیابی خرید","x":150.92,"y":312.13,"w":70.16,"h":23,"owner":"premium.restore-button","font":"400 15px Vazirmatn"}
+]
+}

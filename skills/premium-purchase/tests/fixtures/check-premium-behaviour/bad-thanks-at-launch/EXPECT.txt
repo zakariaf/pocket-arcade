@@ -1,0 +1,2 @@
+[s12-states]
+a purchase delivered at launch shows no thank-you

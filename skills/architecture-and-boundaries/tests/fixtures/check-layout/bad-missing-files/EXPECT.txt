@@ -1,0 +1,2 @@
+apps/sky-hop/src/index.ts [app-files] src/index.ts is missing
+apps/sky-hop/metro.config.js [app-files] metro.config.js is missing

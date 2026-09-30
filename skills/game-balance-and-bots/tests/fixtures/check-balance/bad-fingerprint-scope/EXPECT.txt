@@ -1,0 +1,3 @@
+[fingerprint-scope]
+apps/line-siege/src/rules/bonus.ts:2
+imports @e07/line-siege/words/bonus-table.ts

@@ -1,0 +1,30 @@
+{
+"version":1,
+"frame":"s1-splash",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S1/normal"
+],
+"root":"splash.screen",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s1-splash.png",
+"elements":[
+{"testID":"splash.screen","screen":"S1/normal","role":"none","component":"ScreenFrame","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"9:41 Line Siege Clear lines. Fire beams. Hold the wall.","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"splash.logo","screen":"S1/normal","role":"none","component":"LogoTile","kind":"152 splash (4 pt edge, 7 pt ring, -6 deg)","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"splash.screen","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":117.47,"y":265.47,"w":167.06,"h":167.06},"box":{"w":152,"h":152,"rotate":-6},"text":"","aria":null,"style":{"fill":"#FF7D5E","color":"#F4F2FF","border":"4px solid #E4E0FF","radius":"36.48px","shadow":"rgb(255, 255, 255) 0px 0px 0px 7px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"splash.game-name","screen":"S1/normal","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":92.88,"y":455,"w":216.25,"h":52.5},"box":{"w":216,"h":53,"rotate":0},"text":"Line Siege","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 50px/66px Rubik"}},
+{"testID":"splash.tagline","screen":"S1/normal","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":56,"y":529.5,"w":290,"h":47.5},"box":{"w":290,"h":48,"rotate":0},"text":"Clear lines. Fire beams. Hold the wall.","aria":null,"style":{"fill":null,"color":"#B9B4EA","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/23.76px Rubik"}},
+{"testID":"splash.loader","screen":"S1/normal","role":"image","component":"BusyBlocks","kind":"splash loader","checks":["bounds","crop"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":true,"state":null,"when":null,"count":1,"rect":{"x":171,"y":782,"w":60,"h":58},"box":{"w":60,"h":58,"rotate":0},"text":"","aria":"Loading Line Siege…","style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}}
+],
+"texts":[
+{"text":"Line Siege","x":92.88,"y":452,"w":216.25,"h":57,"owner":"splash.game-name","font":"400 50px Lilita One"},
+{"text":"Clear lines. Fire beams. Hold the wall.","x":67.84,"y":529.5,"w":266.31,"h":22,"owner":"splash.tagline","font":"400 18px Rubik"},
+{"text":"Clear lines. Fire beams. Hold the wall.","x":182.3,"y":553.25,"w":37.39,"h":22,"owner":"splash.tagline","font":"400 18px Rubik"}
+]
+}

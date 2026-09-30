@@ -1,0 +1,2 @@
+sim-no-alloc
+moveEntity runs every tick and allocates

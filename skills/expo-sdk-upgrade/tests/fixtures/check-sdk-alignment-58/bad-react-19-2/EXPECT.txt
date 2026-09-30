@@ -1,0 +1,4 @@
+module-map
+react is "19.2.3"
+core-pins
+SDK 58 ships React 19.3

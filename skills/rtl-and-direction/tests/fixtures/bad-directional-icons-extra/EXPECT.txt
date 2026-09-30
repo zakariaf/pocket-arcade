@@ -1,0 +1,2 @@
+[directional-icons]
+"play" is in DIRECTIONAL_ICONS

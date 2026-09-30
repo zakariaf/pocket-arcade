@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+name: Reuses a whole flow as a step
+tags: [shell]
+---
+- launchApp:
+    clearState: true
+- runFlow: ../smoke/01-first-launch.yaml

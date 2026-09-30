@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "  } catch {\n    return 'sync-failed'; // never report \"nothing to restore\" after a failed sync\n  }",
+      "with": "  } catch (error) {\n    if (Reflect.get(error as object, 'code') === 'sync-error') return 'sync-failed';\n    throw error;\n  }"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[fullscreen-lifecycle]
+an unavailable interstitial keeps the history

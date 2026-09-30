@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "react-native-google-mobile-ads"
+      ],
+      "value": "17.1.0"
+    }
+  }
+]

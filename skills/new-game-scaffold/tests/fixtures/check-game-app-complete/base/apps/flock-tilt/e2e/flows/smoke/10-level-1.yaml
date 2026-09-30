@@ -1,0 +1,4 @@
+# apps/flock-tilt/e2e/flows/smoke/10-level-1.yaml (self-test fixture)
+appId: com.pocketarcade.flocktilt
+---
+- launchApp

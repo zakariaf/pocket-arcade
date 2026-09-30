@@ -1,0 +1,1 @@
+[capture-size] the screenshot is 1179 x 2556, not 1206 x 2622

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/home/home-screen.tsx",
+      "find": "import { AdBannerSlot } from '@e07/shell/ui/ad-banner-slot.tsx';",
+      "with": "import { AdBannerSlot } from '@e07/shell/ui/ad-banner-slot.tsx';\nimport { createAdmobConsentDebugAdapter } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';"
+    }
+  }
+]

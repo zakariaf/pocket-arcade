@@ -1,0 +1,2 @@
+[audio-file-missing]
+packages/shell/src/services/haptics/should-pulse.test.ts

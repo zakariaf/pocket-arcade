@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "desc-person"
+  ],
+  "sync": true
+}

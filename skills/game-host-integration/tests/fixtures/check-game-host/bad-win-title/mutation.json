@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/index.ts", "find": "    winTitleId: 'tap-flip.win-title',\n", "with": "" } }]

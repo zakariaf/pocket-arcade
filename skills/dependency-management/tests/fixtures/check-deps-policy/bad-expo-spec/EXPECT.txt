@@ -1,0 +1,3 @@
+expo-spec
+expo-haptics is "57.0.3", not "~57.0.3", the specifier of this SDK's module map
+(cd apps/alpha && npx expo install expo-haptics@~57.0.3)

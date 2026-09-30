@@ -1,0 +1,2 @@
+[allow-unknown] --allow 999 matches no mutant in the report
+(accepted as equivalent with --allow)

@@ -1,0 +1,4 @@
+apps/tile-drop/src/levels/level-table.ts:1 [max-lines] 257 code lines; the limit is 250
+apps/tile-drop/src/rules/sum-values.ts:3 [max-lines-per-function] function sumValues has 46 code lines; the limit is 40
+apps/tile-drop/src/rules/sum-values.ts:51 [max-params] place takes 4 parameters
+apps/tile-drop/src/rules/sum-values.ts:55 [max-params] (anonymous) takes 4 parameters

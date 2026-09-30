@@ -1,0 +1,26 @@
+{
+  "light": {
+    "background": "#f4f1ea",
+    "player": "#2f6fd6",
+    "enemy": "#c2362f",
+    "effect": "#ffb000"
+  },
+  "dark": {
+    "background": "#14161c",
+    "player": "#4f86e8",
+    "enemy": "#e0564e",
+    "effect": "#ffc94d"
+  },
+  "colorBlindLight": {
+    "background": "#f4f1ea",
+    "player": "#0072b2",
+    "enemy": "#d55e00",
+    "effect": "#e69f00"
+  },
+  "colorBlindDark": {
+    "background": "#14161c",
+    "player": "#56b4e9",
+    "enemy": "#e69f00",
+    "effect": "#f0e442"
+  }
+}

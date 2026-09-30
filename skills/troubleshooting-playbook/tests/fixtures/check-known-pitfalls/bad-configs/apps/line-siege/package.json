@@ -1,0 +1,12 @@
+{
+  "name": "@e07/line-siege",
+  "private": true,
+  "dependencies": {
+    "expo": "~57.0.25",
+    "expo-network": "~57.0.2",
+    "react-native-google-mobile-ads": "17.2.0",
+    "expo-iap": "5.8.0",
+    "react-native-audio-api": "0.13.6",
+    "valibot": "1.5.0"
+  }
+}

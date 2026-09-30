@@ -1,0 +1,13 @@
+{
+  "name": "demo-games",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "checkFast": "eslint .",
+    "test:Golden": "jest",
+    "lint": "eslint ."
+  }
+}

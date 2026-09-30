@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {\n",
+      "with": "export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {\n  void mobileAds().initialize(); // planted: initialise before consent\n"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[ad-app-id]
+ADS_MODE=test builds carry Google's sample app ID

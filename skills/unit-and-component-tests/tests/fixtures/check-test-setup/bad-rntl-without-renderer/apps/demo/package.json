@@ -1,0 +1,11 @@
+{
+  "name": "@e07/demo",
+  "private": true,
+  "dependencies": {
+    "expo": "57.0.25",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-google-mobile-ads": "17.2.0",
+    "expo-iap": "5.8.0"
+  }
+}

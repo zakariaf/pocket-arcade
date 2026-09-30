@@ -1,0 +1,2 @@
+gate-script-changed
+packages/tooling/src/quality/verify-plan.ts:1

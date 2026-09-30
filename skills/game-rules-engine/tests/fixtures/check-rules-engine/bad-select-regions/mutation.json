@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/rules/tap-flip-engine.ts", "find": "  selectRegions: [],\n", "with": "" } }]

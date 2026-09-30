@@ -1,0 +1,2 @@
+apps/line-siege/src/i18n/fa.json [app-files] is missing
+apps/line-siege/assets/fonts/Vazirmatn-Bold.ttf [app-files] is missing

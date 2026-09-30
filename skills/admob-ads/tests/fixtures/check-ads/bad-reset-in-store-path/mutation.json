@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/admob-consent-adapter.ts",
+      "find": "  const geography = options.debugGeography;",
+      "with": "  AdsConsent.reset();\n  const geography = options.debugGeography;"
+    }
+  }
+]

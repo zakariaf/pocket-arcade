@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/game/use-hint-offer.ts",
+      "content": "// packages/shell/src/screens/game/use-hint-offer.ts (planted: a hand-built hint perk)\nimport { perkOffer } from '@e07/shell/services/ads/perk-offer.ts';\n\nimport type { PerkOffer, PerkRequest } from '@e07/shell/services/ads/perk-offer.ts';\n\nexport function hintOfferOf(request: PerkRequest): PerkOffer {\n  return perkOffer({ kind: 'hint', freeHintsLeft: 1 }, request);\n}\n"
+    }
+  }
+]

@@ -1,0 +1,1 @@
+use-display-settings.test.tsx:7 [render-hook-wrapper] renderHook(...) has no wrapper

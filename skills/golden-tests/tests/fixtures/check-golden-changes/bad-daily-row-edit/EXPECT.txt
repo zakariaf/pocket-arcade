@@ -1,0 +1,2 @@
+[daily-golden-changed]
+generates the frozen daily level for 2026-09-26 1

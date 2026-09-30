@@ -1,0 +1,28 @@
+{
+ "version": 1,
+ "game": "lineSiege",
+ "referenceChanges": [
+  {
+   "id": "L5",
+   "date": "2026-09-30",
+   "frames": [
+    "s11-settings"
+   ],
+   "variants": [
+    "s11-settings--no-music"
+   ],
+   "what": "Self-test fixture: the S11 footer's version line lost the mockup's 6 px flex gap.",
+   "why": "Self-test fixture: a deliberate design change the lead approved, recorded as an intended reference change."
+  },
+  {
+   "id": "X1",
+   "date": "2026-09-30",
+   "frames": [
+    "s9-daily-challenge"
+   ],
+   "variants": [],
+   "what": "Self-test fixture: a change of a frame this sign-off does not cover.",
+   "why": "Self-test fixture: check-signoff lists only the entries of the frames it signs off."
+  }
+ ]
+}

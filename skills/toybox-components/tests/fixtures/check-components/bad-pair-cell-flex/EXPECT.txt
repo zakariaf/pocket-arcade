@@ -1,0 +1,3 @@
+toggle-key.tsx
+[pair-cell-flex]
+ToggleKey's layoutStyle has a zero flex basis (flex: 1)

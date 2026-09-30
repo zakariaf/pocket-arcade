@@ -1,0 +1,3 @@
+[consent-factory]
+packages/shell/src/app/create-ad-services.ts:4
+createAdmobConsentAdapter() is called directly

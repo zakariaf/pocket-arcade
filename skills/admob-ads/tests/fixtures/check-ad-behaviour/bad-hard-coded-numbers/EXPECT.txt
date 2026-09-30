@@ -1,0 +1,2 @@
+[interstitial-rules]
+config 60 000 ms / 1 level after the last one

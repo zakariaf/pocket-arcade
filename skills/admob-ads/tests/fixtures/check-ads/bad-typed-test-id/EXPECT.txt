@@ -1,0 +1,2 @@
+[sample-id]
+packages/shell/src/services/ads/fake-ads.ts

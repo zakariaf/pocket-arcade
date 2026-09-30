@@ -1,0 +1,8 @@
+[no-blur-shadow]
+[no-pill]
+[no-font-weight]
+[no-raw-font-size]
+[no-color-literal]
+[no-gradient]
+[no-letter-spacing]
+packages/shell/src/ui/fancy-card.tsx:12

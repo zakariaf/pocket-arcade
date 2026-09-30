@@ -1,0 +1,3 @@
+[sources-recorded]
+sample-skill/examples/worked.md
+has no recorded sources

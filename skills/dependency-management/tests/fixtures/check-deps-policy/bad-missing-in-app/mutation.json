@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/beta/package.json",
+      "path": [
+        "dependencies",
+        "expo-haptics"
+      ],
+      "value": null
+    }
+  }
+]

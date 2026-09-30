@@ -1,0 +1,14 @@
+{
+  "name": "fixture",
+  "private": true,
+  "scripts": {
+    "e2e:ios": "node packages/tooling/src/e2e/run-e2e-ios.ts",
+    "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts",
+    "e2e:cloud": "tools/maestro/bin/maestro cloud apps/demo/build packages/shell/e2e/flows"
+  },
+  "devDependencies": {
+    "@types/pngjs": "6.0.5",
+    "pixelmatch": "7.2.0",
+    "pngjs": "7.0.0"
+  }
+}

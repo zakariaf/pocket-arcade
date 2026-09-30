@@ -1,0 +1,2 @@
+[skill-stale]
+names delta-four, which does not exist

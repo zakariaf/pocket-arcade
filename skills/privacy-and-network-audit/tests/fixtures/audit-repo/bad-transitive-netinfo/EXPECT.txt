@@ -1,0 +1,3 @@
+[banned-package]
+package-lock.json
+@react-native-community/netinfo is installed

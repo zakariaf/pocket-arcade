@@ -1,0 +1,1 @@
+[border] settings.group.privacy.tab: border differs: left 1.0 pt

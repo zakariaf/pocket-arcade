@@ -1,0 +1,1 @@
+expo-iap-purchase-adapter.test.ts:5 [require-mock-without-mock] jest.requireMock('expo-iap') without jest.mock('expo-iap')

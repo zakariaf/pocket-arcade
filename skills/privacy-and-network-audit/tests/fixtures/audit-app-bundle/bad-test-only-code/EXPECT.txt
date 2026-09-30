@@ -1,0 +1,2 @@
+[test-only-code]
+contains SHELL_TEST_BUILD_ONLY

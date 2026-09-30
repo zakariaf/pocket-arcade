@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/ios/toolchain.ts",
+      "find": "'26.6'",
+      "with": "'26.2'"
+    }
+  }
+]

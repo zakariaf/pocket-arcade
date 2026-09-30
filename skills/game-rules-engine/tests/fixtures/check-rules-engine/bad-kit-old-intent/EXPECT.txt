@@ -1,0 +1,3 @@
+[kit-member-missing]
+packages/game-kit/src/contract/input-intent.ts
+is an older copy: it never names selected

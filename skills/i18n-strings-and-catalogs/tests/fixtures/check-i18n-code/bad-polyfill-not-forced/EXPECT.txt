@@ -1,0 +1,2 @@
+[polyfill-locales]
+missing @formatjs/intl-pluralrules/polyfill-force.js

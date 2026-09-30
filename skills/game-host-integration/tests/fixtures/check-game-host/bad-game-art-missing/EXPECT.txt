@@ -1,0 +1,3 @@
+[prerequisite-missing]
+packages/shell/src/art/game-art.ts
+built by the code-drawn-art-and-icons skill

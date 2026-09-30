@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "packages/tooling/network-audit/js-baseline.json",
+      "path": [
+        "whatwg-fetch",
+        "reason"
+      ],
+      "value": ""
+    }
+  }
+]

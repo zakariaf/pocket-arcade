@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/tap-flip-level-plan.ts", "find": "return 2 + Math.floor((level - 1) / LEVELS_PER_PACK);", "with": "return 2 + Math.floor(Math.random() * 2);" } }]

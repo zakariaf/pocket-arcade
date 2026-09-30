@@ -1,0 +1,6 @@
+host-file-missing
+packages/shell/src/game-host/board-types.ts
+board-file-missing
+apps/tap-flip/src/board/draw-*.ts
+golden-test
+jest-golden-project

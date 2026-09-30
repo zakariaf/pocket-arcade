@@ -1,0 +1,2 @@
+[test-only-api]
+packages/shell/src/services/consent/admob-consent-adapter.ts

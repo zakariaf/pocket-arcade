@@ -1,0 +1,4 @@
+test(line-siege): record the pilot's facts for the parity references
+
+Spec S7 and S11: Line Siege has no music and rates levels by score, so
+captures use the no-music and score-line references.

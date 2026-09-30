@@ -1,0 +1,2 @@
+gate-change-missing
+changes 1 golden file(s) without a Gate-Change trailer: test/goldens/boards/__image_snapshots__/line-siege-phone-portrait-1.png (modified)

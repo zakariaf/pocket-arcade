@@ -1,0 +1,3 @@
+[
+  { "write": { "file": "shell-slice.json", "content": "{ \"screens\": [\"S4\", \"S11\"], \"why\": \"Home and Settings parity slice\" }\n" } }
+]

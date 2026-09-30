@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-notice.ts",
+      "find": "return state.didJustRestore ? 'restore-success' : null;",
+      "with": "return null;"
+    }
+  }
+]

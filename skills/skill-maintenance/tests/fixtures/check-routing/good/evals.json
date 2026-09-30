@@ -1,0 +1,14 @@
+[
+  {
+    "prompt": "animate the tiles sliding on the board with particles",
+    "expect": "board-painter"
+  },
+  {
+    "prompt": "add a pop sound and a short vibration when a piece lands",
+    "expect": "sound-maker"
+  },
+  {
+    "prompt": "progress must survive a kill; add a migration for the new field",
+    "expect": "save-keeper"
+  }
+]

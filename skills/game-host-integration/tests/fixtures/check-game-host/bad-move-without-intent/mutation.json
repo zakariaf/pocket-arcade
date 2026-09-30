@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/session-controller.ts",
+      "find": "if (move !== null && isAccepted(parts.deps, move, session.moveCount)) {\n        dispatch({ type: 'apply-move', move });\n      }",
+      "with": "dispatch({ type: 'apply-move', move: move ?? command.intent });"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+[harness-leak] imports the parity harness (@e07/shell/app/parity/read-parity-request.ts) directly
+packages/shell/src/screens/home/home-screen.tsx:2

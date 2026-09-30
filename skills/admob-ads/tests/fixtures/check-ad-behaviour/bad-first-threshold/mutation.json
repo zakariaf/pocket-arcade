@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-policy.ts",
+      "find": "context.levelsCompletedTotal < config.minLevelsCompletedBeforeFirst",
+      "with": "context.levelsCompletedTotal <= config.minLevelsCompletedBeforeFirst"
+    }
+  }
+]

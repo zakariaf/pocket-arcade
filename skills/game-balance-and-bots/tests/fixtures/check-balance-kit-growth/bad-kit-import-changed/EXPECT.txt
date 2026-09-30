@@ -1,0 +1,3 @@
+[report-stale]
+reports/sim/line-siege.json:3
+the game-kit files they import

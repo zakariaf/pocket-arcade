@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/tap-flip/src/levels/tap-flip-solver.test.ts", "find": "import fc from 'fast-check';", "with": "import fc from 'fast-check';\nimport { TAP_FLIP_TESTING } from '@e07/tap-flip/testing/tap-flip-testing.ts';" } }]

@@ -1,0 +1,2 @@
+shell-slice.json [shell-slice]
+a slice never ships

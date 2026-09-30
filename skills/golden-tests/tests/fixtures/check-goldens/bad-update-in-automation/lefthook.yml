@@ -1,0 +1,4 @@
+pre-commit:
+  jobs:
+    - name: goldens
+      run: npx jest --ci=false --selectProjects golden

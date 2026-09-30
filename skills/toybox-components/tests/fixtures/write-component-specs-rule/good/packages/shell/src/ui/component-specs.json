@@ -1,0 +1,46 @@
+{
+  "chip": {
+    "radius": 8,
+    "border": 2
+  },
+  "iconTile": {
+    "size": 38,
+    "border": 2,
+    "iconStroke": 2.5
+  },
+  "sticker": {
+    "border": 2,
+    "ring": 3.5,
+    "rotateRange": [2, 8]
+  },
+  "weekStrip": {
+    "tag": {
+      "border": 1
+    },
+    "markXsBorder": 2
+  },
+  "hairline": {
+    "border": 0.5
+  },
+  "progressBar": {
+    "border": 2,
+    "fillEdge": 2
+  },
+  "groupTab": {
+    "marginStart": 0,
+    "overlap": 0,
+    "border": 2
+  },
+  "segmentedControl": {
+    "border": 2,
+    "faceGap": 1,
+    "labelColumnGap": 3
+  },
+  "logoTile": {
+    "radiusRatio": 0.24,
+    "splash": {
+      "border": 4,
+      "ring": 7
+    }
+  }
+}

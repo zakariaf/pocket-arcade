@@ -1,0 +1,11 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/jest.sim.config.js", "to": "templates/jest.sim.config.js" },
+  { "from": "line-siege/rules/", "to": "examples/line-siege/apps/line-siege/src/rules/" },
+  { "from": "line-siege/testing/", "to": "examples/line-siege/apps/line-siege/src/testing/" },
+  { "from": "line-siege/test/sims/", "to": "examples/line-siege/test/sims/line-siege/" },
+  { "from": "line-siege/reports/sim/", "to": "examples/line-siege/reports/sim/" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts", "to": "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts", "to": "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/play-bot.ts", "to": "templates/packages/game-kit/src/testing/play-bot.ts" }
+]

@@ -1,0 +1,3 @@
+no-memo-apis
+imports useMemo
+home-list.tsx

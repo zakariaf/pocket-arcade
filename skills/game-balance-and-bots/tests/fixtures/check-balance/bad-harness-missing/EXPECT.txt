@@ -1,0 +1,2 @@
+[harness-missing]
+packages/game-kit/src/testing/trace-bot.ts

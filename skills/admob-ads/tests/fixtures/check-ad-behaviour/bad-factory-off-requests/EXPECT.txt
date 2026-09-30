@@ -1,0 +1,2 @@
+[ads-factory]
+ADS_MODE=off requests nothing and shows nothing

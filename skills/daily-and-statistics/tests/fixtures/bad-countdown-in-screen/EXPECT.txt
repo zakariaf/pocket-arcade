@@ -1,0 +1,3 @@
+[day-maths-in-ui]
+daily-next-in.ts:7
+computes the time to midnight in a screen

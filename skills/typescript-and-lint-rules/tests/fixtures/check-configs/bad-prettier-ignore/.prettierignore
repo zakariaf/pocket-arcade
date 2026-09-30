@@ -1,0 +1,19 @@
+# .prettierignore: generated, vendored or binary-adjacent files Prettier must not touch.
+package-lock.json
+**/node_modules/
+**/.expo/
+apps/*/ios/
+apps/*/android/
+apps/*/build/
+apps/*/dist/
+coverage/
+reports/
+dist-audit/
+tools/
+.stryker-tmp/
+**/__snapshots__/
+**/__image_snapshots__/
+apps/*/e2e/baselines/
+# Skills are hand-written knowledge with their own checks; .claude/ holds settings and skill links.
+# Folders and files that existed before the monorepo (knowledge, design exports, notes).
+__PRE_EXISTING__

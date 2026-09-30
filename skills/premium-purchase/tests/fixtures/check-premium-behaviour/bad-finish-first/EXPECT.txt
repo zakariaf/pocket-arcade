@@ -1,0 +1,2 @@
+[service-order]
+a purchase: persist -> grant -> finish

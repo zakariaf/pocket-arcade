@@ -1,0 +1,6 @@
+{
+ "screenshots": [
+  "../../check-parity/bad-structure/app.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-home.json"
+}

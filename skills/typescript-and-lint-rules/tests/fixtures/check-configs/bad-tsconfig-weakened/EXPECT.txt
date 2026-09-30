@@ -1,0 +1,7 @@
+tsconfig.base.json:1 [tsconfig-base-option] compilerOptions.strict is false
+compilerOptions.noUncheckedIndexedAccess is undefined
+compilerOptions.noUnusedLocals is true
+packages/shell/tsconfig.json:1 [tsconfig-workspace] sets compilerOptions.skipLibCheck
+[tsconfig-world] compilerOptions.types is ["jest","node"], expected ["jest"]
+apps/tile-drop/tsconfig.json:1 [tsconfig-expo-env]
+include "packages/shell/src/ui/**/*" pulls app code into the Node/test program

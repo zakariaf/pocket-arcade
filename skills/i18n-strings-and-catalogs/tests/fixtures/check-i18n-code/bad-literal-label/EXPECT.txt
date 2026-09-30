@@ -1,0 +1,3 @@
+[literal-prop-text]
+home-header.tsx:18
+label="Settings"

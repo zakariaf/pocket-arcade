@@ -1,0 +1,2 @@
+code-without-test
+stars-for-moves.ts

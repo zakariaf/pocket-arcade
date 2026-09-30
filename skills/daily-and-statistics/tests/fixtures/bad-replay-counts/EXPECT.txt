@@ -1,0 +1,2 @@
+[daily-first-attempt]
+a replay returns the same object

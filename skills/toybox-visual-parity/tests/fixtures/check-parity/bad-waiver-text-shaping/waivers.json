@@ -1,0 +1,14 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s4-home",
+   "testID": "home.stats-button",
+   "rule": "bounds",
+   "class": "platform-text-shaping",
+   "glyphs": "\u0622",
+   "reason": "CoreText draws the madda of the alef narrower than Chrome's HarfBuzz.",
+   "reportedToOwner": "2026-09-29"
+  }
+ ]
+}

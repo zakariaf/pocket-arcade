@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/app/create-ad-services.ts",
+      "content": "// fixture: the consent adapter built directly, so ADS_MODE=off builds still ask Google UMP\nimport { createAdmobConsentAdapter } from '@e07/shell/services/consent/admob-consent-adapter.ts';\n\nexport const consent = createAdmobConsentAdapter({ onError: () => undefined });\n"
+    }
+  }
+]

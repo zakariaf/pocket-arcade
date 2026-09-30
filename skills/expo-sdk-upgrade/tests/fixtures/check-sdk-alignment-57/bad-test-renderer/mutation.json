@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "devDependencies",
+        "test-renderer"
+      ],
+      "value": "1.3.0"
+    }
+  }
+]

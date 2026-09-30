@@ -1,0 +1,3 @@
+[sim-harness]
+test/sims/line-siege/balance.sim.test.ts:1
+does not write reports/sim

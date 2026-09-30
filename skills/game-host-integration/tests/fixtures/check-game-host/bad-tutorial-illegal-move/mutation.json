@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/tap-flip/src/tutorial/tap-flip-teaching.ts",
+      "find": "expect: { kind: 'move', move: TAP_CORNER },",
+      "with": "expect: { kind: 'move', move: { kind: 'flip', col: 5, row: 0 } },"
+    }
+  }
+]

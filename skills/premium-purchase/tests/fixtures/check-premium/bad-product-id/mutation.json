@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/demo-game/game.config.ts",
+      "find": "productId: 'com.example.demogame.premium'",
+      "with": "productId: 'com.example.demogame.pro'"
+    }
+  }
+]

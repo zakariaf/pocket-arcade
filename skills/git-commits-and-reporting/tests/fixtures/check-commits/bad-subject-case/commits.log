@@ -1,0 +1,8 @@
+==> commit df91abef84108fa8ee1f19ae8d444c31070dc831
+fix(shell): Keep the streak after midnight
+
+Spec S9: the day changes at local midnight.
+
+==> files
+
+packages/shell/src/bad-subject-case.ts

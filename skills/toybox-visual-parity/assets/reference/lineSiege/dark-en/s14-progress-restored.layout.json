@@ -1,0 +1,51 @@
+{
+"version":1,
+"frame":"s14-progress-restored",
+"variant":null,
+"facts":{"hasMusic":true,"winLine":"moves"},
+"kind":"phone",
+"screens":[
+"S14/save-restored"
+],
+"root":"save-restored-dialog.scrim",
+"game":"lineSiege",
+"theme":"dark",
+"lang":"en",
+"device":"iPhone 16 Pro",
+"scale":3,
+"size":{"w":402,"h":874},
+"image":"s14-progress-restored.png",
+"elements":[
+{"testID":"save-restored-dialog.scrim","screen":"S14/save-restored","role":"none","component":"Scrim","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":874},"box":{"w":402,"h":874,"rotate":0},"text":"","aria":null,"style":{"fill":"#03020C @0.7","color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"save-restored-dialog.card","screen":"S14/save-restored","role":"none","component":"DialogCard","kind":null,"checks":["bounds","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":296.81,"w":362,"h":280.38},"box":{"w":362,"h":280,"rotate":0},"text":"Progress restored Your progress couldn’t be loaded. A backup copy was restored. OK","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"22px","shadow":"rgb(7, 6, 26) 0px 8px 0px 0px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"save-restored-dialog.art","screen":"S14/save-restored","role":"none","component":"ArtTile","kind":"gold, restore","checks":["crop"],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":"save-restored-dialog.card","a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":40.33,"y":319.15,"w":69.33,"h":69.33},"box":{"w":64,"h":64,"rotate":-5},"text":"","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"3px solid #1D1B3A","radius":"16px","shadow":"rgb(255, 255, 255) 0px 0px 0px 4px","outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"save-restored-dialog.title","screen":"S14/save-restored","role":"header","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":397.81,"w":316,"h":27.5},"box":{"w":316,"h":28,"rotate":0},"text":"Progress restored","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 25px/27.5px Lilita One"}},
+{"testID":"save-restored-dialog.body","screen":"S14/save-restored","role":"text","component":"AppText","kind":null,"checks":["bounds","text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":437.31,"w":316,"h":44.88},"box":{"w":316,"h":45,"rotate":0},"text":"Your progress couldn’t be loaded. A backup copy was restored.","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"save-restored-dialog.buttons","screen":"S14/save-restored","role":"none","component":"View","kind":null,"checks":["bounds"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":500.19,"w":316,"h":54},"box":{"w":316,"h":54,"rotate":0},"text":"OK","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"save-restored-dialog.ok-button","screen":"S14/save-restored","role":"button","component":"Button","kind":"primary","checks":["bounds","text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":43,"y":500.19,"w":316,"h":54},"box":{"w":316,"h":54,"rotate":0},"text":"OK","aria":null,"style":{"fill":"#FF7D5E","color":"#1B1943","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}}
+],
+"texts":[
+{"text":"Line Siege","x":74,"y":76.3,"w":121.11,"h":32,"owner":null,"font":"400 28px Lilita One"},
+{"text":"Continue – Level 12","x":95,"y":159.25,"w":200.28,"h":29,"owner":null,"font":"400 25px Lilita One"},
+{"text":"Daily challenge","x":87,"y":244,"w":135,"h":24,"owner":null,"font":"400 21px Lilita One"},
+{"text":"Sunday","x":87,"y":270.09,"w":59.81,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":", 27","x":146.81,"y":270.09,"w":31.27,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"Sep","x":178.08,"y":270.09,"w":30.23,"h":20,"owner":null,"font":"400 17px Rubik"},
+{"text":"5 day streak","x":279.76,"y":251.17,"w":74.69,"h":21.11,"owner":null,"font":"400 14px Lilita One"},
+{"text":"Play today’s challenge","x":124.11,"y":319.91,"w":187.77,"h":20,"owner":null,"font":"700 17px Rubik"},
+{"text":"Endless – Best 4,210","x":87,"y":403.53,"w":173.44,"h":20,"owner":null,"font":"700 17px Rubik"},
+{"text":"Play until you lose, then beat your best.","x":87,"y":425.78,"w":218.34,"h":17,"owner":null,"font":"400 14px Rubik"},
+{"text":"Play until you lose, then beat your best.","x":87,"y":443.97,"w":32.31,"h":17,"owner":null,"font":"400 14px Rubik"},
+{"text":"Levels","x":53.19,"y":545.16,"w":47.63,"h":18,"owner":null,"font":"700 15px Rubik"},
+{"text":"Statistics","x":164.13,"y":545.16,"w":73.75,"h":18,"owner":null,"font":"700 15px Rubik"},
+{"text":"How to play","x":282.03,"y":545.16,"w":85.94,"h":18,"owner":null,"font":"700 15px Rubik"},
+{"text":"Premium","x":87,"y":610.94,"w":76.16,"h":20,"owner":null,"font":"700 17px Rubik"},
+{"text":"Remove ads","x":87,"y":633.19,"w":79.11,"h":17,"owner":null,"font":"400 14px Rubik"},
+{"text":"Ad","x":53,"y":790,"w":14.77,"h":13,"owner":null,"font":"700 11px Rubik"},
+{"text":"320 × 50","x":176.39,"y":800,"w":49.22,"h":14,"owner":null,"font":"400 12px Rubik"},
+{"text":"Progress restored","x":43,"y":396.81,"w":190.63,"h":29,"owner":"save-restored-dialog.title","font":"400 25px Lilita One"},
+{"text":"Your progress couldn’t be loaded. A backup copy was restored.","x":43,"y":438.31,"w":277.3,"h":20,"owner":"save-restored-dialog.body","font":"400 17px Rubik"},
+{"text":"Your progress couldn’t be loaded. A backup copy was restored.","x":43,"y":460.75,"w":210.5,"h":20,"owner":"save-restored-dialog.body","font":"400 17px Rubik"},
+{"text":"OK","x":189.31,"y":516.56,"w":23.38,"h":20,"owner":"save-restored-dialog.ok-button","font":"700 17px Rubik"}
+]
+}

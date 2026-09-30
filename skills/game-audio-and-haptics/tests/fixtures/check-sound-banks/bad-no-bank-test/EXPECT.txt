@@ -1,0 +1,2 @@
+[bank-test]
+apps/demo-game/src/sounds/sound-bank.test.ts:1

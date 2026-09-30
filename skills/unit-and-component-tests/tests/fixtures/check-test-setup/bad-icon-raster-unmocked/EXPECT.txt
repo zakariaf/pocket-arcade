@@ -1,0 +1,1 @@
+jest.setup.ts:1 [icon-raster-mock] icon-raster.ts exists but is not mocked

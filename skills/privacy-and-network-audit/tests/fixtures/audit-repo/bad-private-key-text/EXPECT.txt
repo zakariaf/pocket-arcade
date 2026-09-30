@@ -1,0 +1,2 @@
+[private-key]
+packages/tooling/src/asc/pasted-key.txt:1

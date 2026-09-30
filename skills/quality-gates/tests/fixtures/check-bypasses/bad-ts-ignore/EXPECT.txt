@@ -1,0 +1,2 @@
+ts-suppression
+pick.ts:3

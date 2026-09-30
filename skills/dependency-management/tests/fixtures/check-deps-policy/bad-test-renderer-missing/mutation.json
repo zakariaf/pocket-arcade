@@ -1,0 +1,5 @@
+[
+  { "json": { "file": "package.json", "path": ["devDependencies", "test-renderer"], "value": null } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "", "devDependencies", "test-renderer"], "value": null } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/test-renderer"], "value": { "version": "1.3.0", "dev": true, "license": "MIT" } } }
+]

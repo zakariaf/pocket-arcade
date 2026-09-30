@@ -1,0 +1,2 @@
+[gitignore]
+does not ignore apps/*/ios/

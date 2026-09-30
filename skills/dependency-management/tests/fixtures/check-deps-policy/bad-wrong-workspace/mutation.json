@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "apps/alpha/package.json",
+      "path": [
+        "dependencies",
+        "zustand"
+      ],
+      "value": "5.0.15"
+    }
+  }
+]

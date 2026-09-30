@@ -1,0 +1,7 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts", "to": "templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts" },
+  { "from": "repo-templates/test/goldens/boards/skia-golden.ts", "to": "templates/test/goldens/boards/skia-golden.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/render-cells.test.ts", "to": "templates/packages/game-kit/src/testing/render-cells.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/render-cells.ts", "to": "templates/packages/game-kit/src/testing/render-cells.ts" }
+]

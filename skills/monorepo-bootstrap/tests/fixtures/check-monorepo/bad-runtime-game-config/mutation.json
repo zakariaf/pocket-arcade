@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/line-siege/src/boot/read-config.ts",
+      "content": "// apps/line-siege/src/boot/read-config.ts\nimport { gameConfig } from '../../game.config.ts';\n\nexport const id = gameConfig.id;\n"
+    }
+  }
+]

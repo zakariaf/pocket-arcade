@@ -1,0 +1,2 @@
+[palette-mismatch]
+light.primary is "#FF6B40", the Toybox paint is "#FF6B4A"

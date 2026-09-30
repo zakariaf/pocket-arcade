@@ -1,0 +1,3 @@
+matrix.yaml:
+[unknown-testid] runFlow ../subflows/shoot-screen.yaml with SCREEN=result-win, ROOT=result-win.screen makes shoot-screen.yaml use id "result-win.screen"
+[debug-query] theme=home.screen is not one of system, light, dark

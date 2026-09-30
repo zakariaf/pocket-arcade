@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/stats/use-stats-model.ts",
+      "find": "isAllowed: shouldShowBanner(config, context, 'stats')",
+      "with": "isAllowed: context.isOnline && !context.isPremium"
+    }
+  }
+]

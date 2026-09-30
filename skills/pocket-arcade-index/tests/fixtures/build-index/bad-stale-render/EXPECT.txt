@@ -1,0 +1,3 @@
+[generated-stale]
+references/skill-table.md
+differs from a fresh render

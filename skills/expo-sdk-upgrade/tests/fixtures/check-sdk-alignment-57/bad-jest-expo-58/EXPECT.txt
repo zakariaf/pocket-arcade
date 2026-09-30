@@ -1,0 +1,2 @@
+sdk-tooling
+jest-expo is 58.0.3 but this SDK expects ~57.0.5

@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "<GameHostProvider host={host}>",
+      "with": "<>"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/shell-features.tsx",
+      "find": "</GameHostProvider>",
+      "with": "</>"
+    }
+  }
+]

@@ -1,0 +1,1 @@
+@testing-library/react-native --npm-view rntl-view.json --today 2026-09-28

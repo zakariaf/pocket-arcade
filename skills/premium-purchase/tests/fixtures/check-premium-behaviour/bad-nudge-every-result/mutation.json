@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/premium-nudge.ts",
+      "find": "  return input.lastShownOn === input.today ? null : input.priceText;",
+      "with": "  return input.priceText;"
+    }
+  }
+]

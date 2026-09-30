@@ -1,0 +1,3 @@
+[element-parent]
+home.settings-button.icon
+Set "parent": "home.settings-button"

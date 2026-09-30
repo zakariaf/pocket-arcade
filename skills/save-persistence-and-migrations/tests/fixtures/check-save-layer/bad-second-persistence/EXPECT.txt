@@ -1,0 +1,2 @@
+[second-persistence]
+@react-native-async-storage/async-storage

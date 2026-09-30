@@ -1,0 +1,2 @@
+[config-contract]
+levels.endless is none, game.config.ts modes.endless is true

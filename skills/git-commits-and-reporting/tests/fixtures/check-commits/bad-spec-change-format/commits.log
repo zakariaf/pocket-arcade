@@ -1,0 +1,10 @@
+==> commit 1cd16ce63b5ca62f63f76aea3586108ae8bf52bd
+fix(shell): show two stars at par
+
+The expectation was off.
+
+Spec-Change: the test was wrong
+
+==> files
+
+packages/shell/src/bad-spec-change-format.ts

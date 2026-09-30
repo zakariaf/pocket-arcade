@@ -1,0 +1,9 @@
+==> commit 5b1d9e2f4a6c8e0b2d4f6a8c0e2b4d6f8a0c2e4b
+chore(skills): allow the new checker in the settings
+
+The new skill script needs no prompt.
+
+==> files
+
+skills/quality-gates/SKILL.md
+.claude/settings.json

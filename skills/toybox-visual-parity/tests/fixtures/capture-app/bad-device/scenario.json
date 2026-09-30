@@ -1,0 +1,6 @@
+{
+ "screenshots": [
+  "../../fakes/screen-iphone16.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-home.json"
+}

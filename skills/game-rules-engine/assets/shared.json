@@ -1,0 +1,16 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/game-kit/src/contract/input-intent.ts", "to": "templates/packages/game-kit/src/contract/input-intent.ts" },
+  { "from": "line-siege/rules/", "to": "examples/line-siege/rules/" },
+  { "from": "line-siege/i18n/", "to": "examples/line-siege/i18n/" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts", "to": "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.ts" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts", "to": "templates/apps/__GAME_ID__/src/rules/__GAME_ID__-tuning.test.ts" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/rules/apply-move.test.ts", "to": "templates/apps/__GAME_ID__/src/rules/apply-move.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/board-layout.test.ts", "to": "templates/packages/game-kit/src/geom/board-layout.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/board-layout.ts", "to": "templates/packages/game-kit/src/geom/board-layout.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/classify-swipe.test.ts", "to": "templates/packages/game-kit/src/geom/classify-swipe.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/classify-swipe.ts", "to": "templates/packages/game-kit/src/geom/classify-swipe.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/play-bot.ts", "to": "templates/packages/game-kit/src/testing/play-bot.ts" },
+  { "from": "repo-templates/packages/game-kit/src/testing/play-choices.ts", "to": "templates/packages/game-kit/src/testing/play-choices.ts" },
+  { "from": "repo-templates/packages/game-kit/src/timeline/track.ts", "to": "templates/packages/game-kit/src/timeline/track.ts" }
+]

@@ -1,0 +1,8 @@
+apps/tile-drop/e2e/flows/smoke/first-launch.yaml [flow-file]
+apps/tile-drop/src/i18n/english.json [catalog-file]
+apps/tile-drop/src/levels/level-one.json [level-file]
+packages/shell/plugins/storekit-plugin.ts [plugin-file]
+packages/shell/src/services/save/fixtures/v1.json [save-fixture-file]
+apps/tile-drop/e2e/flows/smoke/02-level-1.yaml [flow-file] game flow "02-level-1.yaml" is numbered below 10
+apps/tile-drop/e2e/flows/11-no-area.yaml [flow-file] flow "11-no-area.yaml" is not inside an area folder
+packages/shell/e2e/subflows/01_Debug.yaml [flow-file] sub-flow "01_Debug.yaml" is not <name>.yaml in kebab-case

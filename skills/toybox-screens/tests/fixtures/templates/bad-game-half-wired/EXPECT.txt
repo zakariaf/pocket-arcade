@@ -1,0 +1,3 @@
+game-screen-wiring
+S5 never calls perkOffer()
+S5 never calls showInterstitialIfDue()

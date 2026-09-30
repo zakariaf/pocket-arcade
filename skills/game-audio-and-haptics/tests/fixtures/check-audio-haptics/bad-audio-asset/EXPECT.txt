@@ -1,0 +1,3 @@
+[file-audio]
+apps/demo-game/assets/sounds/boom.mp3
+ships an audio file

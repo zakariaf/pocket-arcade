@@ -1,0 +1,62 @@
+[
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500000000,
+  "data": {
+   "nativeMs": 1360,
+   "jsMs": 40,
+   "totalMs": 1400
+  }
+ },
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500001000,
+  "data": {
+   "nativeMs": 560,
+   "jsMs": 40,
+   "totalMs": 600
+  }
+ },
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500002000,
+  "data": {
+   "nativeMs": 570,
+   "jsMs": 40,
+   "totalMs": 610
+  }
+ },
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500003000,
+  "data": {
+   "nativeMs": 550,
+   "jsMs": 40,
+   "totalMs": 590
+  }
+ },
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500004000,
+  "data": {
+   "nativeMs": 580,
+   "jsMs": 40,
+   "totalMs": 620
+  }
+ },
+ {
+  "kind": "cold-start",
+  "label": "home",
+  "atEpochMs": 1790500005000,
+  "data": {
+   "nativeMs": 565,
+   "jsMs": 40,
+   "totalMs": 605
+  }
+ }
+]

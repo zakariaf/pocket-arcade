@@ -1,0 +1,5 @@
+packages/shell/src/app/read-variant.ts:4 [env-var] app code reads APP_VARIANT, which Expo does not inline
+packages/shell/src/app/read-variant.ts:4 [env-var] app code reads EXPO_PUBLIC_APP_VARIANT with bracket access
+packages/tooling/src/build/read-mode.ts:4 [env-var] env variable adsMode is not UPPER_SNAKE_CASE
+packages/shell/src/app/read-variant.test.ts:3 [test-title] title "should return the variant"
+packages/shell/src/app/read-variant.test.ts:7 [test-title] test() instead of it()

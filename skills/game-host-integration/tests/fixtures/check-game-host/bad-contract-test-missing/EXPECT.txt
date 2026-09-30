@@ -1,0 +1,2 @@
+[assembly-file-missing]
+contract.test.ts

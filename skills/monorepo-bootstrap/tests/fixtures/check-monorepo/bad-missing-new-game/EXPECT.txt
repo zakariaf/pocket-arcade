@@ -1,0 +1,2 @@
+tooling-files
+packages/tooling/src/scaffold/new-game.ts

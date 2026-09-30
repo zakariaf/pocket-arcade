@@ -1,0 +1,20 @@
+{
+  "light": {
+    "ground": "#A5DAF3",
+    "surface": "#F8FBFF",
+    "sunken": "lightblue",
+    "accent": "#FF6B4A",
+    "pop": "#FFD23F"
+  },
+  "dark": {
+    "ground": "#1B1943",
+    "surface": "#2B2862",
+    "sunken": "#221F52",
+    "ink": "#F4F2FF",
+    "inkSoft": "#B9B4EA",
+    "outline": "#E4E0FF",
+    "shadow": "#07061A",
+    "accent": "#FF7D5E",
+    "pop": "#FFD84D"
+  }
+}

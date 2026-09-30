@@ -1,0 +1,2 @@
+[variant-matrix]
+APP_VARIANT=store with ADS_MODE=test

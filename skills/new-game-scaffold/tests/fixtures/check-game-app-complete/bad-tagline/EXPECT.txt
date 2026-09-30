@@ -1,0 +1,3 @@
+[module-assembly]
+apps/flock-tilt/src/index.ts
+identity.taglineId is not 'flock-tilt.tagline'

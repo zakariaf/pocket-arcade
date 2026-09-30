@@ -1,0 +1,2 @@
+[property-tests]
+no fast-check property test

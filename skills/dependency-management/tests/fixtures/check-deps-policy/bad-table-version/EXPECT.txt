@@ -1,0 +1,2 @@
+table-version
+zustand is "5.0.14" but the versions table pins "5.0.15"

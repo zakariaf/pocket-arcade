@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/demo-game/ios/Podfile.lock",
+      "find": "    - openiap\n",
+      "with": "    - openiap\n    - OnsideKit\n"
+    }
+  }
+]

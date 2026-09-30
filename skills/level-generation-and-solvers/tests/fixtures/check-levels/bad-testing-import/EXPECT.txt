@@ -1,0 +1,4 @@
+[pure-import]
+apps/tap-flip/src/levels/tap-flip-solver.test.ts
+imports @e07/tap-flip/testing/tap-flip-testing.ts
+not testing/

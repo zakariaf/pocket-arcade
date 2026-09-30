@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "name": "iPhone 16 Pro",
+  "simulatorName": "e07-parity",
+  "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+  "runtimeVersion": "26.5",
+  "points": { "width": 402, "height": 874 },
+  "scale": 3,
+  "pixels": { "width": 1206, "height": 2622 },
+  "safeArea": { "top": 62, "bottom": 34 },
+  "statusBarHeight": 54,
+  "dynamicIsland": { "x": 138.3, "y": 14, "width": 125.3, "height": 36.7 },
+  "masks": [
+    {
+      "name": "status-bar",
+      "x": 0,
+      "y": 0,
+      "width": 402,
+      "height": 62,
+      "why": "The OS status bar and Dynamic Island replace the design's drawn ones (different island geometry, the real clock in the accessibility tree, possible breadcrumb)."
+    },
+    {
+      "name": "home-indicator",
+      "x": 120,
+      "y": 850,
+      "width": 162,
+      "height": 24,
+      "why": "simctl screenshots leave the home indicator out and the design render hides it; the mask keeps a capture that does include it from failing. Content never sits here (the body keeps a 34 pt bottom inset)."
+    }
+  ],
+  "systemLocale": "en_US",
+  "languages": {
+    "en": { "appleLanguages": "(en)", "appleLocale": "en_US" },
+    "de": { "appleLanguages": "(de)", "appleLocale": "de_DE" },
+    "fa": { "appleLanguages": "(fa)", "appleLocale": "fa_IR" },
+    "ckb": { "appleLanguages": "(ckb)", "appleLocale": "ckb_IQ" }
+  },
+  "statusBarOverride": {
+    "time": "9:41",
+    "dataNetwork": "wifi",
+    "wifiMode": "active",
+    "wifiBars": "3",
+    "cellularMode": "active",
+    "cellularBars": "4",
+    "operatorName": "",
+    "batteryState": "discharging",
+    "batteryLevel": "100"
+  },
+  "contentSize": "large",
+  "screenshot": { "format": "png", "colorSpace": "sRGB", "alpha": true, "homeIndicatorDrawn": false },
+  "measured": "2026-09-28, macOS 27.0, Xcode 26.6, iOS 26.5 (23F77): UIKit probe safeAreaInsets top 62 / bottom 34, status bar 54; simctl screenshot 1206 x 2622 RGBA sRGB in about 0.16 s, identical across captures and reboots; the Dynamic Island is drawn, the home indicator is not."
+}

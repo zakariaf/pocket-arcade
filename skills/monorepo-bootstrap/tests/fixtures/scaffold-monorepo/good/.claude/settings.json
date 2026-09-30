@@ -1,0 +1,6 @@
+{
+  "skillListingBudgetFraction": 0.04,
+  "permissions": {
+    "allow": ["Bash(node skills/*/scripts/*)"]
+  }
+}

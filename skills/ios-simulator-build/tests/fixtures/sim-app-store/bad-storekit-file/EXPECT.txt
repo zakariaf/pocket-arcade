@@ -1,0 +1,2 @@
+[store-test-artefacts]
+LineSiege.app/Premium.storekit

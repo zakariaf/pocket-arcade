@@ -1,0 +1,2 @@
+[unsafe-cast]
+game-host.ts

@@ -1,0 +1,2 @@
+duplicate-native
+react-native-reanimated is installed as 4.5.1 and 4.7.0

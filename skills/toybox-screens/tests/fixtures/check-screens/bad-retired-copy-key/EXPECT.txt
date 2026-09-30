@@ -1,0 +1,3 @@
+retired-copy-key
+result-win-view.tsx:9
+result.win.score-line

@@ -1,0 +1,2 @@
+[view-stats]
+challenges completed comes from daily.completed

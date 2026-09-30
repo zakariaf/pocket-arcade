@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-store-flow.ts",
+      "find": "  return isOnline ? flow === 'unavailable' : QUIET_FLOWS.has(flow);",
+      "with": "  return isOnline ? flow === 'unavailable' : flow !== 'unavailable';"
+    }
+  }
+]

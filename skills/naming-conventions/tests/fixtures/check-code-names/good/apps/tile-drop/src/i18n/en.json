@@ -1,0 +1,4 @@
+{
+  "tile-drop.name": "Tile Drop",
+  "tile-drop.lose.overflow": "The stack overflowed at {heightText}."
+}

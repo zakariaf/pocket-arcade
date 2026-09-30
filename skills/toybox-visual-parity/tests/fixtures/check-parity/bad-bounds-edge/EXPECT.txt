@@ -1,0 +1,1 @@
+[bounds] home.settings-button: geometry off: dx +3.0

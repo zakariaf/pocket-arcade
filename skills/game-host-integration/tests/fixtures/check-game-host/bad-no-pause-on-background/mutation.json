@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/screens/game/game-screen.tsx",
+      "find": "  usePauseOnBackground(status, controls.pause);\n",
+      "with": ""
+    }
+  }
+]

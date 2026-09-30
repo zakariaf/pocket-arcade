@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "__mocks__/react-native-google-mobile-ads.ts",
+      "find": "  LARGE_ANCHORED_ADAPTIVE_BANNER: 'LARGE_ANCHORED_ADAPTIVE_BANNER',\n",
+      "with": ""
+    }
+  }
+]

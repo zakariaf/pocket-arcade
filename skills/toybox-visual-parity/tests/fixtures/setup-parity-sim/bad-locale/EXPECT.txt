@@ -1,0 +1,2 @@
+[sim-locale] AppleLocale is "en_US@rg=dezzzz", not en_US
+24-hour time

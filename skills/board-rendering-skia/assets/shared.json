@@ -1,0 +1,15 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/shell/src/app/use-is-app-active.ts", "to": "templates/shell/app/use-is-app-active.ts" },
+  { "from": "repo-templates/packages/shell/src/app/use-is-app-active.test.ts", "to": "templates/shell/app/use-is-app-active.test.ts" },
+  { "from": "line-siege/board/", "to": "examples/line-siege/board/" },
+  { "from": "line-siege/rules/line-siege-types.ts", "to": "examples/line-siege/rules/line-siege-types.ts" },
+  { "from": "line-siege/rules/line-siege-tuning.ts", "to": "examples/line-siege/rules/line-siege-tuning.ts" },
+  { "from": "line-siege/rules/pieces.ts", "to": "examples/line-siege/rules/pieces.ts" },
+  { "from": "repo-templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts", "to": "templates/test/goldens/boards/__GAME_ID__-board.golden.test.ts" },
+  { "from": "repo-templates/test/goldens/boards/skia-golden.ts", "to": "templates/test/goldens/boards/skia-golden.ts" },
+  { "from": "repo-templates/apps/__GAME_ID__/src/board/board-palettes.ts", "to": "templates/game/board/board-palettes.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/board-layout.test.ts", "to": "templates/game-kit/geom/board-layout.test.ts" },
+  { "from": "repo-templates/packages/game-kit/src/geom/board-layout.ts", "to": "templates/game-kit/geom/board-layout.ts" },
+  { "from": "repo-templates/packages/game-kit/src/timeline/track.ts", "to": "templates/game-kit/timeline/track.ts" }
+]

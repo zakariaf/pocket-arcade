@@ -1,0 +1,11 @@
+packages/shell/src/i18n/catalogs/en.json [i18n-key] key 'Home.Play' breaks the grammar
+key 'home.continueLevel' breaks the grammar
+Shell key 'tile-drop.title' starts with a game id
+'home.play-button.continue' has a plain {level}
+'stats.best' has placeholder {best-score}
+'stats.first' has placeholder {0}
+apps/tile-drop/src/i18n/en.json [i18n-key] game key 'lose.overflow' does not start with 'tile-drop.'
+packages/shell/src/screens/daily/month-label.ts:4 [i18n-key-built]
+packages/shell/src/screens/daily/month-label.ts:4 [i18n-key] key 'HomePlay' breaks the grammar
+the Shell uses the game key 'tile-drop.name'
+apps/tile-drop/src/i18n/tile-drop-keys.ts:4 [i18n-key] game key 'other-game.win' does not start with 'tile-drop.'

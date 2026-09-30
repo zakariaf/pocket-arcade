@@ -1,0 +1,3 @@
+knip-ignores
+workspaces["."].ignoreDependencies adds "expo-sqlite"
+ignoreBinaries adds "xcrun"

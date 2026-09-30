@@ -1,0 +1,7 @@
+{
+  "graphics": [
+    ["player", "background"],
+    ["enemy", "background"]
+  ],
+  "distinct": [["player", "enemy"]]
+}

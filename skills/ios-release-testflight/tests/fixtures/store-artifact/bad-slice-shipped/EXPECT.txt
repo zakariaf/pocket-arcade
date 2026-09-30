@@ -1,0 +1,3 @@
+shell-slice.json [shell-complete] exists, so this is a partial Shell (Home + Settings parity slice)
+packages/shell/src/navigation/root-stack.tsx:8 [shell-complete] route Levels still points at NotBuiltScreen
+main.jsbundle [shell-complete] contains the NotBuiltScreen placeholder (not-built.screen)

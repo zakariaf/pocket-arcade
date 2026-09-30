@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/simulator.ts:1 [openurl-prompt] opens a URL with simctl openurl

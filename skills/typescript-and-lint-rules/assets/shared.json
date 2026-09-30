@@ -1,0 +1,16 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/eslint.config.mjs", "to": "templates/eslint.config.mjs" },
+  { "from": "repo-templates/dot-prettierignore", "to": "templates/.prettierignore" },
+  { "from": "repo-templates/dot-prettierrc.json", "to": "templates/.prettierrc.json" },
+  { "from": "repo-templates/tsconfig.base.json", "to": "templates/tsconfig.base.json" },
+  { "from": "repo-templates/tsconfig.json", "to": "templates/tsconfig.root.json" },
+  { "from": "repo-templates/packages/game-kit/tsconfig.json", "to": "templates/tsconfig.game-kit.json" },
+  { "from": "repo-templates/packages/shell/tsconfig.json", "to": "templates/tsconfig.shell.json" },
+  { "from": "repo-templates/packages/tooling/tsconfig.json", "to": "templates/tsconfig.tooling.json" },
+  { "from": "repo-templates/apps/__GAME_ID__/tsconfig.json", "to": "templates/tsconfig.app.json" },
+  { "from": "repo-templates/packages/shell/src/app-env.d.ts", "to": "templates/app-env.d.ts" },
+  { "from": "repo-templates/packages/game-kit/src/contract/result.ts", "to": "templates/result.ts" },
+  { "from": "scripts/lib/source-scan.mjs", "to": "scripts/lib/source-scan.mjs" },
+  { "from": "scripts/lib/workspaces.mjs", "to": "scripts/lib/workspaces.mjs" }
+]

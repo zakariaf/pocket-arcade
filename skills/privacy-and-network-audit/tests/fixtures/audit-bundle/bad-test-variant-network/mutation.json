@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "export/_expo/static/js/ios/index-0123456789abcdef.js.map",
+      "path": [
+        "sourcesContent",
+        6
+      ],
+      "value": "export const t = 'SHELL_TEST_BUILD_ONLY'; fetch('x');"
+    }
+  }
+]

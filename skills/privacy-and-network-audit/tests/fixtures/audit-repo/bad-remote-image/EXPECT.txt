@@ -1,0 +1,2 @@
+[remote-url]
+https://cdn.example.com/logo.png

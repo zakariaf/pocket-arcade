@@ -1,0 +1,2 @@
+[session-paused]
+move while paused

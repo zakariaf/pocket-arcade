@@ -1,0 +1,32 @@
+[
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "appVariant"
+      ],
+      "value": "test"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adsMode"
+      ],
+      "value": "test"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adUnits"
+      ],
+      "value": null
+    }
+  }
+]

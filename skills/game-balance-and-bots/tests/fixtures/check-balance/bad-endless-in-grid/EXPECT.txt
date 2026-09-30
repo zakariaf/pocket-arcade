@@ -1,0 +1,2 @@
+[bands-invalid]
+grid.greedy must list level difficulties 0..99 (the endless run has its own block)

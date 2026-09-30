@@ -1,0 +1,1 @@
+[{ "json": { "file": "knip.json", "path": ["ignore"], "value": ["skills/**", "packages/**"] } }]

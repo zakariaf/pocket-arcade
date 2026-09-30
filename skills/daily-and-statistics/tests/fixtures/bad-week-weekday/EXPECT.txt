@@ -1,0 +1,2 @@
+[view-daily]
+ISO weekdays for the letter and name keys

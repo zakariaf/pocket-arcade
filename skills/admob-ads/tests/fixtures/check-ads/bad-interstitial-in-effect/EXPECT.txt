@@ -1,0 +1,2 @@
+[ad-in-effect]
+packages/shell/src/screens/result/use-result-actions.ts

@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/src/rules/ping.ts",
+      "content": "// fixture: fetch taken off globalThis and called later\nconst send = globalThis.fetch;\n\nexport function ping(): Promise<unknown> {\n  return send('/status');\n}\n"
+    }
+  }
+]

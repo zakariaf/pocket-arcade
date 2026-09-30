@@ -1,0 +1,2 @@
+[shallow-v4]
+use-score.ts:9

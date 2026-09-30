@@ -1,0 +1,2 @@
+[specs-mismatch]
+groupTab.border is 2.5, the as-rendered spec is 2 (a CSS border: the token's 2.5 renders as 2 (Chrome floors borders of 1 px or more))

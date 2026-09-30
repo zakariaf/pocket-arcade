@@ -1,0 +1,3 @@
+[store-created-twice]
+calls createSettingsStore outside create-shell-stores.ts
+create-shell-app.tsx:7

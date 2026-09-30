@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/storekit/Premium.storekit.template",
+      "find": "\"type\" : \"NonConsumable\"",
+      "with": "\"type\" : \"Consumable\""
+    }
+  }
+]

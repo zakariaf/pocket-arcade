@@ -1,0 +1,2 @@
+canvas-a11y
+example-picture.tsx:15

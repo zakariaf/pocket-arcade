@@ -1,0 +1,4 @@
+[kit-test-dependency]
+package.json:1
+has no fast-check devDependency
+npm install -D -E fast-check@4.10.2

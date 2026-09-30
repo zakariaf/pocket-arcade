@@ -1,0 +1,18 @@
+[
+  {
+    "delete": "packages/shell/src/config/shell-plugins.ts"
+  },
+  {
+    "delete": "packages/shell/src/app/create-shell-parts.ts"
+  },
+  {
+    "delete": "packages/shell/src/app/shell-features.tsx"
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "const isNoFill = error.reason === 'no-fill'",
+      "with": "const isNoFill = error.code === 'no-fill'"
+    }
+  }
+]

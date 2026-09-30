@@ -1,0 +1,3 @@
+[eslint-required] missing eslint-config-prettier as the LAST entry
+.eslintrc.json [config-stray]
+packages/shell/eslint.config.mjs [config-stray] a workspace has its own ESLint config

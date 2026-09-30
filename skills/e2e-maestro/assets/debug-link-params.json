@@ -1,0 +1,20 @@
+{
+  "$comment": "The test-build debug deep link <scheme>://debug/setup?<param>=<value>&... Every parameter is optional; an unknown parameter or value is refused (logged, and S15 opens) instead of being ignored. The parser packages/shell/src/screens/debug/debug-link.ts has exactly these parameters (check-e2e-setup rule debug-link). Kinds: a list of allowed values, or integer, date (YYYY-MM-DD), stars (demo or <level>:<stars>,...).",
+  "params": {
+    "lang": { "values": ["en", "de", "fa", "ckb"], "effect": "forced app language (direction follows; fa and ckb are right-to-left)" },
+    "digits": { "values": ["auto", "latin", "local"], "effect": "digit setting" },
+    "theme": { "values": ["system", "light", "dark"], "effect": "theme setting (system for the screenshot matrix: the simulator appearance decides)" },
+    "seed": { "kind": "integer", "effect": "level seed override (0..4294967295), kept by debugServices.setSeed" },
+    "level": { "kind": "integer", "effect": "makes this the next level (1 to the last level): earlier levels won, this and later ones cleared, the saved run dropped" },
+    "date": { "kind": "date", "effect": "fake clock date for daily challenges and streaks (S15 set date)" },
+    "ads": { "values": ["off", "test"], "effect": "S15 never ads / always test ads; only matters in an ADS_MODE=test build (E2E and screenshots use ADS_MODE=off builds, which never start the SDK)" },
+    "premium": { "values": ["0", "1"], "effect": "Premium on or off without a purchase (S15): debugServices.setPremium writes the save, then dispatches debug-premium-set" },
+    "offline": { "values": ["0", "1"], "effect": "simulate offline (S15): debugServices.setOffline flips SimulatedConnectivity, which tells every ConnectivityPort subscriber (ads, store, S12)" },
+    "firstRun": { "values": ["0", "1"], "effect": "1 = first-launch state (S2 next); 0 = language chosen, tutorial done. When it switches the navigator's group, screen= opens on the next navigation state (one link is enough); action= then needs a second link" },
+    "reduceMotion": { "values": ["0", "1"], "effect": "reduce motion setting" },
+    "stars": { "kind": "stars", "effect": "progress fixtures: demo (levels 1-11 won, the screenshot fixture) or <level>:<stars>,... with stars 0-3 (0 clears the level)" },
+    "screen": { "values": ["home", "levels", "daily", "stats", "settings", "premium", "how-to-play", "debug", "game", "game-start", "game-middle", "result-win", "result-lose"], "effect": "opens a route (kebab-case) or one of the game's example states" },
+    "action": { "values": ["win-level", "lose-level"], "effect": "ends the level on screen with that outcome: the game host swaps the run's state for testing.examples.win() or lose() and runs its one run-end path (stars, statistics, ad history saved before Result shows). Send it in a link of its own once the level is on screen; without an active run it is an error" },
+    "boardLayout": { "values": ["0", "1"], "effect": "1 renders game.board-layout; off by default so screenshots never show it" }
+  }
+}

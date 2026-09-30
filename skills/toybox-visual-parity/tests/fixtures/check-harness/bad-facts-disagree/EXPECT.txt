@@ -1,0 +1,3 @@
+[harness-game-facts]
+games.line-siege disagrees with PARITY_GAME_FACTS
+hasMusic (true vs false)

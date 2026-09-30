@@ -1,0 +1,2 @@
+packages/shell/src/theme/type-styles.ts [prerequisite-missing] an older version: it lacks rowLabelStrong
+Update it from toybox-design-system's template first

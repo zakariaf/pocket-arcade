@@ -1,0 +1,2 @@
+[font-scaling]
+maxFontSizeMultiplier={1.3}

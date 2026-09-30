@@ -1,0 +1,3 @@
+[level-end-recorded]
+packages/shell/src/app/create-shell-parts.ts
+createGameHost gets no extendRunEnd

@@ -1,0 +1,1 @@
+[{ "write": { "file": "apps/tap-flip/src/index.ts", "content": "// apps/tap-flip/src/index.ts\nexport const ASSEMBLED = true;\n" } }, { "delete": "apps/tap-flip/src/rules/tap-flip-stats.ts" }, { "delete": "apps/tap-flip/src/rules/tap-flip-stats.test.ts" }]

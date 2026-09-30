@@ -1,0 +1,38 @@
+{
+  "light": {
+    "background": "#f4f1ea",
+    "cell": "#e2ddd1",
+    "filled": "#2f6fd6",
+    "piece": "#c2362f",
+    "label": "#ffffff",
+    "effect": "#ffb000",
+    "ghost": "#2f6fd680"
+  },
+  "dark": {
+    "background": "#14161c",
+    "cell": "#272b37",
+    "filled": "#4f86e8",
+    "piece": "#e0564e",
+    "label": "#ffffff",
+    "effect": "#ffc94d",
+    "ghost": "#4f86e880"
+  },
+  "colorBlindLight": {
+    "background": "#f4f1ea",
+    "cell": "#e2ddd1",
+    "filled": "#0072b2",
+    "piece": "#d55e00",
+    "label": "#ffffff",
+    "effect": "#e69f00",
+    "ghost": "#0072b280"
+  },
+  "colorBlindDark": {
+    "background": "#14161c",
+    "cell": "#272b37",
+    "filled": "#56b4e9",
+    "piece": "#e69f00",
+    "label": "#000000",
+    "effect": "#f0e442",
+    "ghost": "#56b4e980"
+  }
+}

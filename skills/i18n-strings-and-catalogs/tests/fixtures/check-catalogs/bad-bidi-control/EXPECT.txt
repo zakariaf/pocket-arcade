@@ -1,0 +1,2 @@
+[L8 bidi-controls]
+fa.json

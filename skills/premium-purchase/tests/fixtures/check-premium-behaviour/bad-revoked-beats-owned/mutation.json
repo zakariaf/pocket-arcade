@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/stores/premium/entitlement-evidence.ts",
+      "find": "  if (premium.some((tx) => tx.state === 'purchased' && tx.revocationDateMs === null))\n    return 'owned';\n  if (premium.some((tx) => tx.revocationDateMs !== null)) return 'revoked';",
+      "with": "  if (premium.some((tx) => tx.revocationDateMs !== null)) return 'revoked';\n  if (premium.some((tx) => tx.state === 'purchased' && tx.revocationDateMs === null))\n    return 'owned';"
+    }
+  }
+]

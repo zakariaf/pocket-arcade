@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/game-kit/src/rng/sfc32.ts", "find": "'worklet';\n", "with": "" } }]

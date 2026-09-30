@@ -1,0 +1,10 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "repo-templates/packages/shell/src/app/press-feedback-context.tsx", "to": "templates/packages/shell/src/app/press-feedback-context.tsx" },
+  { "from": "repo-templates/packages/shell/src/app/press-feedback-context.test.tsx", "to": "templates/packages/shell/src/app/press-feedback-context.test.tsx" },
+  { "from": "repo-templates/packages/shell/src/app/use-is-app-active.ts", "to": "templates/packages/shell/src/app/use-is-app-active.ts" },
+  { "from": "repo-templates/packages/shell/src/app/use-is-app-active.test.ts", "to": "templates/packages/shell/src/app/use-is-app-active.test.ts" },
+  { "from": "line-siege/sounds/", "to": "examples/line-siege/sounds/" },
+  { "from": "line-siege/board/build-timeline.ts", "to": "examples/line-siege/board/build-timeline.ts" },
+  { "from": "line-siege/board/monster-tracks.ts", "to": "examples/line-siege/board/monster-tracks.ts" }
+]

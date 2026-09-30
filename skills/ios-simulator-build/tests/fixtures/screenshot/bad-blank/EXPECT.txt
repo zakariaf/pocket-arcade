@@ -1,0 +1,7 @@
+[blank-screen]
+smoke-store-live.png
+is white
+smoke-test-off.png
+is black
+smoke-test-test.png
+React Navigation's default background

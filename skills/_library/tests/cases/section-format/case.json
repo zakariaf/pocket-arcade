@@ -1,0 +1,7 @@
+{
+  "expect": "fail",
+  "rules": [
+    "section-format"
+  ],
+  "sync": true
+}

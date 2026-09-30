@@ -1,0 +1,67 @@
+# .github/workflows/verify.yml: optional CI. Local `npm run verify` stays the gate.
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LEFTHOOK: '0'
+  EXPO_NO_TELEMETRY: '1'
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: reports
+          path: reports/
+          if-no-files-found: ignore
+
+  ios-e2e:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: static
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      MAESTRO_CLI_NO_ANALYTICS: 'true'
+      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true'
+      MAESTRO_DISABLE_UPDATE_CHECK: 'true'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: echo "JAVA_HOME=$JAVA_HOME_17_arm64" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: bash packages/tooling/scripts/install-maestro.sh
+      - run: npm run build:ios:sim -- --app line-siege
+      - run: npm run e2e:ios -- --app line-siege
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: e2e
+          path: reports/e2e/
+          if-no-files-found: ignore

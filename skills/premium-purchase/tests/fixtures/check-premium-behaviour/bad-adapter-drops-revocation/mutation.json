@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "revocationDateMs: revoked ?? null,",
+      "with": "revocationDateMs: null,"
+    }
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "json": {
+      "file": "package.json",
+      "path": [
+        "devDependencies",
+        "prettier"
+      ],
+      "value": "3.9.9"
+    }
+  }
+]

@@ -1,0 +1,3 @@
+[test-artefacts]
+Premium.storekit
+StoreKitHarness.xctest

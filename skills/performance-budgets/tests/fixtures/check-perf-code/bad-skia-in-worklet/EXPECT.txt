@@ -1,0 +1,3 @@
+[skia-alloc-per-frame]
+draw-board.ts
+'worklet' function

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "games": {
+    "__GAME_ID__": {
+      "designGame": "lineSiege",
+      "hasMusic": false,
+      "winLine": "score"
+    }
+  }
+}

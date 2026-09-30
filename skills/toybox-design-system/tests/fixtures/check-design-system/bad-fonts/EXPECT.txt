@@ -1,0 +1,5 @@
+[font-files]
+apps/line-siege/assets/fonts/Rubik-Bold.ttf
+Toybox font file is missing
+font file differs from the Toybox font
+no licence text for Vazirmatn

@@ -1,0 +1,24 @@
+# packages/shell/e2e/flows/smoke/01-first-launch.yaml
+# Naming illustration: a Shell journey is e2e/flows/<area>/<nn>-<name>.yaml with nn 01-09 (a game's
+# own flows live in apps/<game-id>/e2e/flows/ and start at 10); every step selects by testID, so the
+# flow runs unchanged in en, de, fa and ckb. The e2e-maestro skill owns the real flows.
+appId: ${APP_ID}
+name: First launch goes from language choice to the tutorial
+tags: [smoke, shell]
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- assertVisible:
+    id: 'language-choice.screen'
+- tapOn:
+    id: 'language-choice.language-row.en'
+- tapOn:
+    id: 'language-choice.continue-button'
+- extendedWaitUntil:
+    visible:
+      id: 'tutorial.screen'
+    timeout: 10000
+- assertNotVisible:
+    id: 'tutorial.skip-button'
+- runFlow: ../../subflows/assert-no-network.yaml
