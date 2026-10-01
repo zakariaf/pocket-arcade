@@ -61,8 +61,8 @@ Everything that decides language, direction, digits and text is a pure function 
     *Why:* FINAL 32. Verified coverage of every Sorani letter (ڕ ڵ ۆ ێ ە ڤ). A too-small line height clips marks.
 20. **`npm run i18n:verify` must pass before every commit that touches a catalog.** It runs `formatjs verify --source-locale en --missing-keys --extra-keys --structural-equality` and the catalog linter for the Shell and every game.
     *Why:* spec 7.4, "a missing text fails the build" (FINAL 28).
-21. **Claude writes all four languages; a native speaker reads fa and ckb before each release.** The reviewed state is recorded per key; `release:ios` refuses unreviewed fa/ckb keys.
-    *Why:* spec 7.4. Machine-written Sorani especially can sound unnatural.
+21. **Claude writes all four languages; the owner reads fa and ckb personally, and that review is never a release gate.** The reviewed state is recorded per key; every report and `release:ios` list the fa/ckb texts still waiting as an owner step (not blocking), and nothing waits for them.
+    *Why:* spec 7.4. Machine-written Sorani especially can sound unnatural, so the owner reads it; the owner also ruled that the review never holds back a build or a release (FINAL H.6 and H.20, L14).
 
 ---
 
@@ -270,7 +270,7 @@ The saved value is `settings.language` in the save document, `null` meaning "Sys
 
 The `expo-localization` plugin entry lives in docs/02's `shellPlugins` (section 9.1, the one plugin list): `['expo-localization', { supportedLocales: { ios: LOCALES, android: LOCALES } }]` with `LOCALES = ['en', 'de', 'fa', 'ckb']`, and nothing else. Never add `supportsRTL` or `forcesRTL`: the Shell owns direction (rule 10).
 
-`supportedLocales` writes `CFBundleLocalizations` (and Android's `locales_config`), so the per-app language setting in iOS Settings lists the four languages. Localized home-screen names go through `expo.locales` (one `InfoPlist.strings` per language), which `withShell` writes from `GameConfig.appName` (docs/02 section 9.1). The same files carry `NSUserTrackingUsageDescription`, the sentence in Apple's "Allow tracking?" prompt (FINAL H.1): its four texts are the copy-deck key `consent.tracking.usage-description`, kept in the Shell catalogs like every other deck string and copied into `packages/shell/src/config/tracking-usage.ts` for `app.config.ts`; a unit test keeps the two equal. The fa and ckb drafts go to the owner's own review (FINAL H.6) like every other text.
+`supportedLocales` writes `CFBundleLocalizations` (and Android's `locales_config`), so the per-app language setting in iOS Settings lists the four languages. Localized home-screen names go through `expo.locales` (one `InfoPlist.strings` per language), which `withShell` writes from `GameConfig.appName` (docs/02 section 9.1). The same files carry `NSUserTrackingUsageDescription`, the sentence in Apple's "Allow tracking?" prompt (FINAL H.1): its four texts are the copy-deck key `consent.tracking.usage-description`, kept in the Shell catalogs like every other deck string; `shell-plugins.ts` reads them from the four catalogs (JSON imports) as `TRACKING_USAGE_DESCRIPTIONS`, so there is no second copy (FINAL H.20, L14). It is a system dialog text: plain, with no ICU argument or brace, because nothing formats ICU in `Info.plist`. The fa and ckb drafts go to the owner's own review (FINAL H.6) like every other text.
 
 ### 3.5 Digits and number formatting
 
@@ -1318,8 +1318,8 @@ The screenshot matrix (4 languages × light/dark × phone/tablet, plus 200% text
 
 1. **Claude writes English first**, as full sentences with named placeholders, then German (informal "du", D7), Persian and Sorani (friendly, neutral tone). Reuse terms from `packages/shell/src/i18n/glossary.json` (term → en/de/fa/ckb: Level, Star, Pack, Daily challenge, Streak, Premium, Hint, Continue, Undo). Add a term there before using it in a second message.
 2. Run `npm run i18n:verify`, then the screenshot matrix for fa and ckb.
-3. **Native-speaker review before each release** (spec 7.4, human step G7/R3 in `docs/14-ios-build-and-release.md`). `packages/tooling/src/i18n/review-sheet.ts` (to be written with the first release; the spec is this paragraph) writes `reports/i18n/review-<lang>.csv` with key, English, current text, and the screenshot file that shows it, for every fa/ckb key whose text changed since the last review. The owner sends it and pastes back corrections; Claude applies them.
-4. **Recording the review.** `packages/shell/src/i18n/review-state.json` stores, per language and key, the SHA-256 of the reviewed text and the review date. `review-sheet.ts --release` exits 1 when any fa/ckb message differs from its reviewed hash; `release:ios` runs it for store builds. If the owner decides to ship without review, the waiver is recorded in the same file with `"reviewer": "waived-by-owner"` and the commit carries a `Gate-Change:` trailer.
+3. **The owner's native review, never a gate** (spec 7.4, owner steps G7 and R3 in `docs/14-ios-build-and-release.md`; FINAL H.6 and H.20, L14). `packages/tooling/src/i18n/review-sheet.ts` writes `reports/i18n/review-<lang>.csv` (key, English, current text, and where it shows) for every fa/ckb text that differs from its reviewed hash, prints the count, and always exits 0 (2 only for bad input). Every report lists the waiting texts under "Owner steps (not blocking)". The owner reads them and sends corrections; Claude applies them.
+4. **Recording the review.** `packages/shell/src/i18n/review-state.json` stores, per language and key, the SHA-256 of the reviewed text and the review date. After the owner's answers are applied, `review-sheet.ts --mark-reviewed <fa|ckb> --date YYYY-MM-DD [--key <key>]...` records the current texts as reviewed. `release:ios` runs the sheet, prints "Owner step R3 (not blocking)" with the CSV paths and goes on; there is no gate to pass and no waiver to record.
 5. Machine-written Sorani is the highest risk; prefer short, plain sentences. CLDR data (months, weekdays) is copied, never translated by hand.
 
 Language list (S2, S11a): the rows are, in this order, **System** (translated: `settings.language.system` = "System ({languageName})", where `languageName` is the autonym of the language the resolver would pick), then `English`, `Deutsch`, `فارسی`, `کوردیی ناوەندی` from `LANGUAGE_AUTONYMS`. Each autonym row renders with `AppText language={code}` so Persian and Sorani use Vazirmatn even in an English UI. Autonyms never go through `t()` and never appear in catalogs; a unit test pins their exact values.
@@ -1342,7 +1342,7 @@ The consent form (UMP), Apple's tracking prompt and the StoreKit purchase sheet 
 - [ ] Boards are wrapped in `direction: 'ltr'` unless the game opts in; directional icons flip, clocks do not.
 - [ ] Vazirmatn Regular/Bold are embedded with `OFL.txt`, listed in S11d, and the font test page is in the screenshot matrix.
 - [ ] Screenshots in fa and ckb (light/dark, phone/tablet, 200% text) show no clipping, no left-aligned RTL text and no wrongly mirrored board.
-- [ ] fa/ckb texts changed since the last release were reviewed by a native speaker, or the waiver is recorded.
+- [ ] fa/ckb texts waiting for the owner's review are listed in the report as an owner step (not blocking), with the review CSVs written; nothing waits for them.
 
 ---
 

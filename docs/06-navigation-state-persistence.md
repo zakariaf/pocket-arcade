@@ -86,7 +86,7 @@ This doc owns the navigator, the stores' shape and pattern, the `GameSession` re
 | S1 Splash | none | | | native splash (docs/09 art) while `startShell` hydrates synchronously |
 | S2 First-run language | `LanguageChoice` | FirstRun | none | shown until a language is chosen |
 | S13 Tutorial level | `Tutorial` | FirstRun | none | the Game screen body in tutorial mode; `gestureEnabled: false`. "Play the tutorial again" (S13 How to play) opens `Game` with `{ start: 'new', ref: { kind: 'tutorial' } }`, because FirstRun is gone after the first run |
-| S3 Ad consent | none | | | the Shell's intro, then Google's UMP form and, on iOS, Apple's ATT prompt, presented through `ConsentPort` (docs/11, FINAL H.1) |
+| S3 Ad consent | none | | | where Google's consent is required, the Shell's intro, then Google's UMP form; then, on iOS, Apple's ATT prompt while not determined (on its own, without the intro, when it is the only step due); presented through `ConsentPort` (docs/11, FINAL H.1 and H.16) |
 | S4 Home | `Home` | Main | none | root of the main app |
 | S5 Game | `Game` | Main | `GameParams` | `gestureEnabled: false`, `usePreventRemove` |
 | S6 Pause | none | | | overlay inside Game |

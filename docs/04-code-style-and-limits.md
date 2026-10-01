@@ -47,8 +47,8 @@ The stack (binding, FINAL A.3 and D.34-D.37): TypeScript ~6.0.3 with a strict `t
     *Why:* Hermes uses the platform libm and Jest runs V8, so transcendental results differ across devices (FINAL B.14).
 17. **Inject dependencies; never reach for them.** Ports come from `ServicesProvider` (React Context) or are passed to factories; pure functions receive values (`nowMs`, `seed`), not services. No module-level singletons that touch native code, except inside an adapter (FINAL B.20's AudioContext).
     *Why:* every test swaps real adapters for `fake-<port>.ts` without module mocking. *Source:* FINAL A.5.
-18. **Only the adapter file for a port imports its vendor SDK** (`react-native-google-mobile-ads`, `expo-iap`, `expo-sqlite`, `react-native-audio-api`, `expo-haptics`, `expo-network`).
-    *Enforced by:* `no-restricted-imports` with the `ADAPTERS` exemption block.
+18. **Only the adapter file for a port imports its vendor SDK** (`react-native-google-mobile-ads`, `expo-iap`, `expo-sqlite`, `react-native-audio-api`, `expo-haptics`, `expo-network`). Apple's App Tracking Transparency module `expo-tracking-transparency` is imported by exactly one file, `packages/shell/src/services/consent/admob-consent-adapter.ts` (FINAL H.1, H.20).
+    *Enforced by:* `no-restricted-imports` with the `ADAPTERS` exemption block, and for `expo-tracking-transparency` the file-exact `ATT_ADAPTER` block (`restrictedImports({ ..., allow: [ATT_IMPORT] })`); every other file, the other adapters included, keeps the ban.
 19. **Import with explicit file extensions and never with `../`:** same folder or below `./x.ts`, `./asc/x.ts`; any other folder through the package name `@e07/<package>/<path-under-src>.ts(x)`.
     *Why:* Node type stripping (tooling, `app.config.ts`) requires extensions; with `"exports": { "./*": "./src/*" }` an extensionless package import does not even resolve in `tsc` (verified). *Enforced by:* `no-restricted-syntax` (`importExtension`), `no-restricted-imports` (`PARENT_IMPORT`).
 20. **Respect the dependency direction** game-kit ← shell ← apps; tooling may import anything, nothing imports tooling.
@@ -281,7 +281,7 @@ Blocks, in order (later blocks override earlier ones for the files they match):
 | 4 | `**/*.{ts,tsx}` | exports, import order and cycles, banned packages, `../` ban, file names |
 | 5 | `RUNTIME` | N3 network, clock and randomness, RTL styles, i18n, vendor SDKs, UI primitives and memo (docs/05), store hooks need a selector, RN rules |
 | 5 (shell), 5-zones, 5-i18n / 5a / 5b | shell, app sources, `.tsx` sources, `PURE`, `DETERMINISTIC` | dependency direction, app zones on resolved paths (docs/02), FormatJS JSX text and props (only the Shell i18n folder imports `react-intl`), purity, integer-safe math |
-| 5c | named files | the only exemptions: sims and the spatial hash, adapters (the purchase adapter still may not import expo-iap's server APIs, docs/12), clock adapter, direction module, raw `Pressable` in `ui/` and raw `Image` in `Icon` (docs/05), the perf clock files (docs/15), `AppText`, the test-only loader, external links |
+| 5c | named files | the only exemptions: sims and the spatial hash, adapters (the purchase adapter still may not import expo-iap's server APIs, docs/12), the ATT adapter (`admob-consent-adapter.ts`, the one importer of `expo-tracking-transparency`, FINAL H.1), clock adapter, direction module, raw `Pressable` in `ui/` and raw `Image` in `Icon` (docs/05), the perf clock files (docs/15), `AppText`, the test-only loader, external links |
 | 6 | `NODE_CODE` | Node APIs, network and console allowed in tooling and config; the wall clock only in `packages/tooling/src/clock/system-clock.ts`; default exports in `app.config.ts` and config plugins |
 | 7 | `TESTS` | Jest, Testing Library, relaxed limits, `.d.ts` merging, mocks (default export and PascalCase names, docs/07) |
 | 8 | JS config files | Node globals, no type information |
@@ -352,6 +352,8 @@ const ADAPTERS = [
   'packages/shell/src/services/*/*-sql-driver.ts',
 ];
 const CLOCK_ADAPTERS = ['packages/shell/src/services/clock/*-adapter.ts'];
+/** The one file that asks for App Tracking Transparency (ConsentPort.requestTracking; FINAL H.1). */
+const ATT_ADAPTER = ['packages/shell/src/services/consent/admob-consent-adapter.ts'];
 const DIRECTION_MODULE = ['packages/shell/src/i18n/direction.ts'];
 const APP_TEXT = ['packages/shell/src/ui/app-text.tsx'];
 
@@ -413,7 +415,6 @@ const vendor = (name, port) => ({
 });
 const VENDOR_SDK_PATHS = [
   vendor('react-native-google-mobile-ads', 'AdsPort/ConsentPort'),
-  vendor('expo-tracking-transparency', 'ConsentPort'), // Apple's ATT prompt (FINAL H.1)
   vendor('expo-iap', 'PurchasePort'),
   vendor('expo-sqlite', 'SaveStore/SqlDriver'),
   vendor('react-native-audio-api', 'AudioPort'),
@@ -421,6 +422,13 @@ const VENDOR_SDK_PATHS = [
   vendor('expo-network', 'ConnectivityPort'),
 ];
 const banned = (name, message) => ({ name, message });
+// FINAL H.1 (owner O1): the app asks for App Tracking Transparency before any ad request that could
+// use the IDFA, and only the consent adapter does (every other file, other adapters included, keeps
+// this ban; the ATT_ADAPTER block lifts it for that one file).
+const ATT_IMPORT = banned(
+  'expo-tracking-transparency',
+  'Only packages/shell/src/services/consent/admob-consent-adapter.ts asks for tracking (ConsentPort).',
+);
 const BANNED_PACKAGE_PATHS = [
   banned('axios', N3),
   banned(
@@ -436,6 +444,7 @@ const BANNED_PACKAGE_PATHS = [
   banned('@react-native-async-storage/async-storage', 'Persist through SaveStore (FINAL A.6).'),
   banned('react-native-iap', 'IAP goes through PurchasePort (expo-iap, FINAL C.25).'),
   banned('react-native-purchases', 'No purchase server (N2).'),
+  ATT_IMPORT,
   banned('react-native-restart', 'Use reloadAppAsync from expo (FINAL C.31).'),
   {
     name: 'react-native',
@@ -499,10 +508,11 @@ const PURE_IMPORTS = {
     'Rules, levels and game-kit are pure TypeScript: import only @e07/game-kit/* and siblings.',
 };
 
-const restrictedImports = ({ paths = [], patterns = [] }) => [
+// `allow` lifts a banned package for one file-exact block (the ATT adapter); nothing else does.
+const restrictedImports = ({ paths = [], patterns = [], allow = [] }) => [
   'error',
   {
-    paths: [...BANNED_PACKAGE_PATHS, ...paths],
+    paths: [...without(BANNED_PACKAGE_PATHS, ...allow), ...paths],
     patterns: [PARENT_IMPORT, ...patterns],
   },
 ];
@@ -1046,6 +1056,18 @@ export default defineConfig([
       }),
     },
   },
+  // FINAL H.1: the consent adapter alone imports expo-tracking-transparency (the ADAPTERS block above
+  // keeps the ban for every other adapter).
+  {
+    files: ATT_ADAPTER,
+    rules: {
+      'no-restricted-imports': restrictedImports({
+        paths: without(RUNTIME_PATHS, ...VENDOR_SDK_PATHS),
+        patterns: [NODE_BUILTINS, SHELL_BOUNDARY],
+        allow: [ATT_IMPORT],
+      }),
+    },
+  },
   {
     files: CLOCK_ADAPTERS,
     rules: {
@@ -1533,7 +1555,8 @@ export async function withTimeout<TValue>(
 | `axios`, `@react-native-community/netinfo`, `react-native-webview`, `expo-web-browser`, `expo-updates` | network surfaces (NetInfo's probe calls Google) | `no-restricted-imports` |
 | `expo-router` | the Shell owns navigation (FINAL A.4) | `no-restricted-imports` |
 | `expo-audio`, `expo-file-system`, `@react-native-async-storage/async-storage`, `react-native-iap`, `react-native-purchases`, `react-native-restart` | replaced by a decided port or banned by the spec | `no-restricted-imports` |
-| Vendor SDK import outside its adapter (`expo-tracking-transparency` only in the ConsentPort adapter, FINAL H.1) | one adapter per port (FINAL C) | `no-restricted-imports` + `ADAPTERS` block |
+| Vendor SDK import outside its adapter | one adapter per port (FINAL C) | `no-restricted-imports` + `ADAPTERS` block |
+| `expo-tracking-transparency` anywhere but `packages/shell/src/services/consent/admob-consent-adapter.ts` | Apple's ATT prompt is asked in one place (FINAL H.1, H.20) | `no-restricted-imports` (`ATT_IMPORT` in `BANNED_PACKAGE_PATHS`) + the file-exact `ATT_ADAPTER` block with `allow: [ATT_IMPORT]` |
 | `Math.random`, `Date.now`, `performance.now`, `new Date()` | determinism, testable time (spec S15 set-date) | `no-restricted-properties`, `no-restricted-syntax` |
 | `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `.toLocaleString()`, `.toLocaleDateString()`, `.toLocaleTimeString()` | Hermes applies the Persian calendar and ignores the digits setting (FINAL C.29); numbers go through `t()` or docs/10's `createNumberFormatter` | `no-restricted-syntax` `intlDate`, `toLocaleCall` |
 | `Math.sin/cos/tan/atan2/exp/log/pow`, `**` in deterministic folders | libm differences across devices (FINAL B.14) | `no-restricted-syntax` `DETERMINISM_SYNTAX` |

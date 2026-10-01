@@ -56,7 +56,7 @@ Three facts drive the design (all verified on 2026-09-26):
     *Why:* FINAL 9 (ASC REST only where altool lacks a feature); Family Sharing cannot be turned off once on. **Source:** [Family Sharing for in-app purchases](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/turn-on-family-sharing-for-in-app-purchases).
 18. **Never push Premium with pop-ups.** The only entry points are the Home button (hidden once owned), the Settings row, and at most one line on the Result screen per day.
     *Why:* spec S12 Rules.
-19. **Family Sharing stays off everywhere a Premium product is described:** `"familyShareable" : false` in every StoreKit configuration, `familySharable: false` in the API body (a constant, not an option), and "leave Family Sharing off" in the App Store Connect steps. `storeKitConfigProblems` (section 3.8) fails a StoreKit configuration whose product is shareable, is not NON_CONSUMABLE or is not priced 1.99; the harness and a unit test on the committed template run it.
+19. **Family Sharing stays off everywhere a Premium product is described:** `"familyShareable" : false` in every StoreKit configuration, `familySharable: false` in the API body (a constant, not an option), and "leave Family Sharing off" in the App Store Connect steps. The premium-purchase skill's checker `check-premium` (section 3.8) fails a StoreKit configuration whose product is shareable (rule `family-sharing`), is not the one NON_CONSUMABLE product `<bundleId>.premium` (`storekit-config`) or is not priced 1.99 (`price-target`), on the committed template, on every generated `apps/<id>/ios/*.storekit` and on the App Store Connect payloads (FINAL H.20, L14).
     *Why:* the owner's decision O3 (FINAL H.3); once Family Sharing is on for a product, Apple cannot turn it off. **Source:** [Family Sharing for in-app purchases](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/turn-on-family-sharing-for-in-app-purchases).
 
 ---
@@ -1014,33 +1014,7 @@ Files (all in `packages/tooling/src/storekit/`):
 }
 ```
 
-The checker that rule 19 names (added 2026-09-30 for FINAL H.2 and H.3; not yet compiled or run). `storekit-config-checks.test.ts` runs it on the committed template, so `npm run verify` fails a shareable or mispriced template, and the harness runs it again before it writes `Premium.storekit`:
-
-```ts
-// packages/tooling/src/storekit/storekit-config-checks.ts
-// Rule 19: every Premium product in a StoreKit configuration is a non-shareable NonConsumable at
-// 1.99 (FINAL H.2 price, H.3 no Family Sharing). Returns one line per problem; [] means OK.
-type StoreKitProduct = {
-  readonly productID?: string;
-  readonly type?: string;
-  readonly displayPrice?: string;
-  readonly familyShareable?: boolean;
-};
-
-export function storeKitConfigProblems(json: string): string[] {
-  const config = JSON.parse(json) as { readonly products?: readonly StoreKitProduct[] };
-  const products = config.products ?? [];
-  if (products.length === 0) return ['StoreKit configuration has no product'];
-  return products.flatMap((product) => {
-    const id = product.productID ?? '(no productID)';
-    return [
-      ...(product.familyShareable === false ? [] : [`${id}: familyShareable must be false`]),
-      ...(product.type === 'NonConsumable' ? [] : [`${id}: type must be NonConsumable`]),
-      ...(product.displayPrice === '1.99' ? [] : [`${id}: displayPrice must be 1.99`]),
-    ];
-  });
-}
-```
+Rule 19's checks (FINAL H.2 and H.3) live in the premium-purchase skill's checker `check-premium`, not in a repo file (corrected on 2026-10-01, FINAL H.20, L14; an earlier draft here proposed a separate repo checker in `packages/tooling/src/storekit/` with a unit test, which was never built). Its rules: `storekit-config` (valid JSON with exactly one NonConsumable product, `<bundleId>.premium` once generated), `family-sharing` (`"familyShareable" : false` in the template and in every generated `apps/<id>/ios/*.storekit`, and `familySharable: false` in the App Store Connect payloads) and `price-target` (`"displayPrice" : "1.99"` and the product script's `TARGET_EUR`, owner decision O2). The harness copies the checked template into `Premium.storekit` unchanged apart from the product ID, so it runs no check of its own. Verified on 2026-10-01: on the round-4 game clean-room repo (Line Siege, `io.applander.linesiege`) the three rules report nothing.
 
 `storekit-harness.entitlements` (copied to `ios/<App>/`, referenced by the app's **Debug** configuration only):
 
@@ -1159,20 +1133,30 @@ puts "StoreKitHarness added to #{project_path}"
 
 `PRODUCT_NAME = $(TARGET_NAME)` is required: without it the build fails with "Multiple commands produce …/PlugIns/.xctest" (verified).
 
-`storekit-harness.ts` is the Tier-2 runner. It prebuilds and builds the harness, starts Metro, and then, for each scenario in order, arms the store and runs one Maestro flow. It is a CLI of its own because docs/07's `e2e:ios` runner neither arms the store nor builds Debug:
+`storekit-harness.ts` is the Tier-2 runner. It prebuilds and builds the harness, starts Metro, and then, for each scenario in order, arms the store and runs one Maestro flow. The file below is the one the Shell ships (corrected to it on 2026-10-01, FINAL H.20, L14): it takes `--device <udid>`, gives Metro and every Maestro run a port of their own, and builds each Maestro call with `maestroGlobalArgs()` (docs/07), so no call can reach another session's simulator. It is a CLI of its own because docs/07's `e2e:ios` runner neither arms the store nor builds Debug:
 
 ```ts
 // packages/tooling/src/storekit/storekit-harness.ts
-// Tier-2 purchase tests on a throwaway simulator (docs/12, section 3.8). Test variant only.
-// Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --udid <udid>
-// Prebuilds a harness project, builds it (Debug), starts Metro, then per scenario arms the
-// simulator's StoreKit test store and runs one flow from packages/shell/e2e/storekit/.
+// Tier-2 Premium purchase tests on a throwaway simulator of your own. Test variant only.
+// Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --device <udid>
+//          [--driver-port <n>] [--metro-port <n>]
+// Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro, then
+// per scenario arms the simulator's StoreKit test store and runs one flow from
+// packages/shell/e2e/storekit/. Every Maestro call names the simulator and its own XCTest driver
+// port (maestro-args.ts: a free port for each flow unless --driver-port is given), so no call can
+// reach another session's simulator. Release-day
+// order: the E2E evidence run, then this harness, then `xcrun simctl delete <udid>`, then
+// `npx expo prebuild --clean` before any Release or store build (they share apps/<id>/ios).
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { availableParallelism, loadavg } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import { storeKitConfigProblems } from './storekit-config-checks.ts';
+import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
+import { busyNote } from '@e07/tooling/storekit/busy-note.ts';
+
+import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
 
 const HERE = import.meta.dirname;
 const ROOT = process.cwd();
@@ -1196,6 +1180,8 @@ const SCENARIOS: readonly (readonly [string | null, string])[] = [
 type Harness = {
   readonly appDir: string;
   readonly udid: string;
+  /** This run's Metro port, built into the Debug app (RCT_METRO_PORT) and passed to expo start. */
+  readonly metroPort: number;
   readonly scheme: string; // Xcode scheme = app target name
   readonly bundleId: string;
   readonly urlScheme: string; // for the debug deep link
@@ -1223,7 +1209,7 @@ function urlSchemeOf(ios: string, scheme: string): string {
 }
 
 // Fresh CNG project (test variant) + harness files + target. Never used for shipped builds.
-function prepareHarness(appDir: string, udid: string): Harness {
+function prepareHarness(appDir: string, udid: string, metroPort: number): Harness {
   run('npx', ['expo', 'prebuild', '--platform', 'ios', '--clean'], appDir);
   const ios = join(appDir, 'ios');
   const scheme = readdirSync(ios)
@@ -1236,8 +1222,6 @@ function prepareHarness(appDir: string, udid: string): Harness {
     join(ios, 'Premium.storekit'),
     template.replace('__PRODUCT_ID__', `${bundleId}.premium`),
   );
-  const problems = storeKitConfigProblems(template); // rule 19 (FINAL H.2, H.3)
-  if (problems.length > 0) throw new Error(problems.join('\n'));
   mkdirSync(join(ios, 'StoreKitHarness'), { recursive: true });
   copyFileSync(join(HERE, 'ArmTests.swift'), join(ios, 'StoreKitHarness', 'ArmTests.swift'));
   copyFileSync(
@@ -1245,14 +1229,19 @@ function prepareHarness(appDir: string, udid: string): Harness {
     join(ios, scheme, 'storekit-harness.entitlements'),
   );
   run('ruby', [join(HERE, 'add-harness.rb'), ios, scheme, bundleId], appDir);
-  return { appDir, udid, scheme, bundleId, urlScheme: urlSchemeOf(ios, scheme) };
+  return { appDir, udid, metroPort, scheme, bundleId, urlScheme: urlSchemeOf(ios, scheme) };
 }
 
 function xcodebuild(h: Harness, action: readonly string[]): void {
   const common = ['-workspace', `${h.scheme}.xcworkspace`, '-scheme', h.scheme];
   const target = ['-configuration', 'Debug', '-destination', `id=${h.udid}`];
   const derived = ['-derivedDataPath', '../build/storekit'];
-  run('xcodebuild', [...action, ...common, ...target, ...derived], join(h.appDir, 'ios'));
+  // A Debug app loads its JS from Metro on RCT_METRO_PORT (8081 unless set): this run's own port.
+  execFileSync('xcodebuild', [...action, ...common, ...target, ...derived], {
+    cwd: join(h.appDir, 'ios'),
+    env: { ...TEST_ENV, RCT_METRO_PORT: String(h.metroPort) },
+    stdio: 'inherit',
+  });
 }
 
 // testArmDefault | testArmAskToBuy | testArmFail | testApproveAll | testRefundAll
@@ -1261,11 +1250,11 @@ function arm(h: Harness, test: string): void {
 }
 
 // Debug builds load JS from Metro (localhost only; tooling may use fetch).
-async function startMetro(appDir: string): Promise<() => void> {
+async function startMetro(appDir: string, port: number): Promise<() => void> {
   const env = { ...TEST_ENV, CI: '1', EXPO_NO_TELEMETRY: '1' };
-  const metro = spawn('npx', ['expo', 'start', '--port', '8081'], { cwd: appDir, env });
+  const metro = spawn('npx', ['expo', 'start', '--port', String(port)], { cwd: appDir, env });
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const status = await fetch('http://localhost:8081/status').then(
+    const status = await fetch(`http://localhost:${String(port)}/status`).then(
       async (response) => response.text(),
       () => '',
     );
@@ -1273,42 +1262,61 @@ async function startMetro(appDir: string): Promise<() => void> {
     await sleep(1000);
   }
   metro.kill();
-  throw new Error('Metro did not start on port 8081');
+  throw new Error(`Metro did not start on port ${String(port)}`);
 }
 
-function runFlow(h: Harness, flow: string): boolean {
-  const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro'); // docs/07 install
+// Before the run and after a failed one: is the Mac too busy for StoreKit's test store?
+function busyNoteNow(): string | null {
+  const [load = 0] = loadavg();
+  return busyNote(load, availableParallelism());
+}
+
+// One Maestro run: the global --device and its own driver port (a free one for each flow, or the
+// port a session passes with --driver-port).
+async function runFlow(h: Harness, givenPort: string | undefined, flow: string): Promise<boolean> {
+  const target: MaestroTarget = { udid: h.udid, driverPort: await driverPortFor(givenPort) };
+  const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro'); // the pinned Maestro install
   const file = join(ROOT, 'packages', 'shell', 'e2e', 'storekit', flow);
   const vars = ['-e', `APP_ID=${h.bundleId}`, '-e', `APP_SCHEME=${h.urlScheme}`];
   const env = {
-    ...process.env, // JAVA_HOME must point at Java 17 (docs/07)
+    ...process.env, // JAVA_HOME must point at Java 17 (Maestro 2.10)
     MAESTRO_CLI_NO_ANALYTICS: 'true',
     MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
     MAESTRO_DISABLE_UPDATE_CHECK: 'true',
   };
-  return (
-    spawnSync(maestro, ['test', file, '--udid', h.udid, ...vars], { stdio: 'inherit', env })
-      .status === 0
-  );
+  const command = ['test', file, ...vars];
+  console.error(maestroRunLine(target, command));
+  const args = [...maestroGlobalArgs(target), ...command];
+  return spawnSync(maestro, args, { stdio: 'inherit', env }).status === 0;
 }
 
 async function main(argv: readonly string[]): Promise<number> {
-  const valueOf = (flag: string): string | undefined => argv[argv.indexOf(flag) + 1];
-  const game = argv.includes('--app') ? valueOf('--app') : undefined;
-  const udid = argv.includes('--udid') ? valueOf('--udid') : undefined;
+  const valueOf = (flag: string): string | undefined =>
+    argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : undefined;
+  const game = valueOf('--app');
+  const udid = valueOf('--device');
   if (game === undefined || udid === undefined) {
-    throw new Error('usage: storekit-harness.ts --app <game-id> --udid <udid>');
+    throw new Error('usage: storekit-harness.ts --app <game-id> --device <udid>');
   }
-  const h = prepareHarness(join(ROOT, 'apps', game), udid);
+  // Refuse a non-UDID or a bad --driver-port before anything is built; each flow then gets its own
+  // driver port (runFlow).
+  const givenPort = valueOf('--driver-port');
+  maestroGlobalArgs({ udid, driverPort: await driverPortFor(givenPort) });
+  const metroPort = await driverPortFor(valueOf('--metro-port')); // any free port serves Metro too
+  const busy = busyNoteNow();
+  if (busy !== null) console.error(busy);
+  const h = prepareHarness(join(ROOT, 'apps', game), udid, metroPort);
   xcodebuild(h, ['build-for-testing', '-sdk', 'iphonesimulator']);
-  const stopMetro = await startMetro(h.appDir);
+  const stopMetro = await startMetro(h.appDir, metroPort);
   let failures = 0;
   for (const [test, flow] of SCENARIOS) {
     if (test !== null) arm(h, test);
-    if (!runFlow(h, flow)) failures += 1;
+    if (!(await runFlow(h, givenPort, flow))) failures += 1;
   }
   stopMetro();
   console.error(`storekit: ${String(failures)} of ${String(SCENARIOS.length)} scenario(s) failed`);
+  const busyAtEnd = failures > 0 ? busyNoteNow() : null;
+  if (busyAtEnd !== null) console.error(busyAtEnd);
   return failures === 0 ? 0 : 1;
 }
 
@@ -1629,7 +1637,7 @@ The schemas above were read from Apple's API reference JSON on 2026-09-26 (`InAp
 
 - [ ] `expo-iap` is 5.8.0 (or a newer version that passed section 3.1's re-verification), plugin entry `'expo-iap'` with no options, imported only by the adapter.
 - [ ] No banned API or plugin option anywhere (ESLint + `audit:network`).
-- [ ] Product ID is `<bundleId>.premium` with an `io.applander.*` bundle ID, NON_CONSUMABLE, €1.99, `familySharable: false`; `storeKitConfigProblems` passes on the StoreKit template.
+- [ ] Product ID is `<bundleId>.premium` with an `io.applander.*` bundle ID, NON_CONSUMABLE, €1.99, `familySharable: false`; `check-premium` passes its `storekit-config`, `family-sharing` and `price-target` rules on the StoreKit template and every generated configuration.
 - [ ] `startPremium` subscribes before connecting; an empty product list shows "store unavailable".
 - [ ] A purchase saves Premium, updates ads at once, then finishes the transaction (Tier-1 test green).
 - [ ] Pending shows "Waiting for approval"; an approval later turns Premium on without a tap.
@@ -1694,5 +1702,5 @@ On 2026-09-26 (macOS, Node 26.4.0, Xcode 26.6 / iOS 26.5 simulator, Expo SDK 57.
 4. **`sync-error` on a cancelled Apple Account prompt** is taken from the source; in the simulator a cancelled simulated sign-in alert still let `restorePurchases` resolve. Tier 1 covers the mapping; Tier 3 is the real check.
 5. **Resolved: `persistPremium` contract.** It takes `{ isPremium: true }` or `{ isPremium: false, revokedAtMs }` (a `PremiumChange`), because docs/06's `keepPremiumUnlessRevoked` ignores a revoke without a date; docs/06 sections 4.1 and 6.8 use the same shapes.
 6. **Resolved: fake factory name.** docs/03 names the fake `createFakePurchase` (`fake-purchase.ts`); this doc and docs/07 section 3.8.6 use it.
-7. **The Tier-2 runner and its seven flows are unrun as a whole.** Each step was verified by hand (section 3.8). The first run of `storekit-harness.ts` on the pilot app confirms Metro readiness and the flow order.
+7. **Resolved (2026-09-30, re-run 2026-10-01): the Tier-2 runner and its seven flows ran as a whole** on Line Siege (`io.applander.linesiege.premium`), each time on a fresh throwaway `e07-…-storekit` simulator (iOS 26.5, Xcode 26.6) named in every call. The first runs found two bugs, both fixed: the test build's network guard blocked the Debug build's own Metro (5 of 7 failed), and a refund was not revoked when the launch re-check ran before the first network state (1 of 7 failed). The third run printed `storekit: 0 of 7 scenario(s) failed` (exit 0), and so did a run from an independent build after the switch to `--device` on 2026-10-01. Each time the simulator was deleted and `npx expo prebuild --platform ios --clean` removed the harness afterwards. Round 5 (2026-10-01) made the runner give each flow its own Maestro driver port, wait 60 s for the relaunch re-check (StoreKit took 28 s once) and print a busy note when the Mac's load average is above twice its cores (5 of 7 flows timed out at a load near 600 on 12 cores with a correct app); on a fresh simulator it printed `storekit: 0 of 7 scenario(s) failed` again (the runner above is the premium-purchase skill's current file).
 8. **Two gaps in `premium-reducer.test.ts` (Stryker, docs/07 open issue 11).** No example dispatches `connect-started` (NoCoverage at `premium-reducer.ts:22`), and replacing `state.flow.kind === 'loading'` (line 27) with `true` survives. Add one example for each when the reducer is implemented.

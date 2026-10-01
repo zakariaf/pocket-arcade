@@ -81,7 +81,7 @@ Only what needs your identity, your money, your judgement or your phone ([14 §3
 
 - **Once:** keep the Apple Developer Program active and accept its agreements, including the Paid Apps agreement with tax and banking; declare EU trader status; create a *team* App Store Connect API key with the Admin role and save it where the docs say; install and license Xcode (about once a year); install TestFlight on your iPhone; create the AdMob account; approve Claude Code's permission prompts; now and then unlock the Mac's keychain if signing asks for it.
 - **Per game:** approve the app name (the bundle ID is always `io.applander.<game id without hyphens>`, for example `io.applander.linesiege`); create the app record in App Store Connect (Apple offers no API for it); fill in the App Privacy questionnaire (Device ID used for tracking); check the Premium product (€1.99, Family Sharing left off); create the game's AdMob app and three ad units and publish its consent message; play-test on TestFlight yourself, including a sandbox purchase and restore; read the Persian and Sorani texts yourself as the native reviewer; listen to the sound previews; approve the store listing. Claude lists these steps in its reports and keeps working while they are open.
-- **Per release:** play the TestFlight build and say "ship" or "don't ship"; a 15-minute VoiceOver check; a native-speaker read of changed Persian and Sorani texts; accept any new Apple agreement; submit for review (or tell Claude "submit"); answer App Review.
+- **Per release:** play the TestFlight build and say "ship" or "don't ship"; a 15-minute VoiceOver check; a native-speaker read of changed Persian and Sorani texts (listed in the report, never a gate); accept any new Apple agreement; submit for review (or tell Claude "submit"); answer App Review.
 - **Later:** the Google Play developer account when Android starts.
 
 ---
@@ -157,7 +157,14 @@ These need an answer from the owner; everything else in the docs' *Open issues* 
 - **No Family Sharing for Premium** ([12 §3.7](12-in-app-purchase.md)).
 - **App IDs** `io.applander.<game id without hyphens>` for every game, on iOS and Android ([03](03-naming.md), [14 §3.8](14-ios-build-and-release.md)).
 - **Standard contrast.** Every text meets 4.5:1 in every state; the light `dangerFill` becomes `#FFDCDF`, so the hold-to-reset label reaches 4.52:1 ([18 §8](18-design-system-toybox.md)).
-- **Your own steps:** the native review of the Persian and Sorani texts (`release:ios` still refuses unreviewed texts in a store build), the Line Siege play-test and listening to the sound previews. Claude drafts, lists them in its reports and never waits for them.
+- **Your own steps:** the native review of the Persian and Sorani texts (never a release gate: `release:ios` lists the texts still waiting as your step and goes on; corrected on 2026-10-01, L14), the Line Siege play-test and listening to the sound previews. Claude drafts, lists them in its reports and never waits for them.
+
+**Decided on 2026-10-01** (the lead's L10 to L14 in [99-final-decisions.md](99-final-decisions.md) section H):
+
+- **The S3 intro comes only before Google's form.** When only Apple's tracking prompt is due, the prompt appears on its own with the app's usage text ([11 §3.5](11-ads-admob.md)).
+- **Never strand a finished run.** With no continue possible (ads off, offline, no rewarded ad, no Premium), the result shows at once: the endless result with the score and "New best", or the lose result. A continue offer whose ad is still loading shows its loading state, so "hidden" always means unavailable. Tests and an E2E flow prove it.
+- **The S15 Debug menu keeps design parity** like every other screen, and its texts stay English in all four languages.
+- **Where the docs and the skills disagree on code detail, the skills win** and the docs are corrected: the `ConsentPort` method `requestTracking` with `'restricted'` in `TrackingStatus` ([11 §3.5](11-ads-admob.md)), the tracking texts read from the Shell catalogs ([02 §9.1](02-architecture-and-folders.md)), and `check-game-app --stage complete` failing on every owner placeholder (AdMob IDs, privacy host, support address) until you supply them. The fa and ckb review is your step, listed in reports, and never a release gate.
 
 ---
 
@@ -190,7 +197,7 @@ The look and layout of every screen (structure, order, spacing, components): [18
 |---|---|---|
 | S1 | Splash | [06](06-navigation-state-persistence.md) §7 (hydration); [10](10-i18n-and-rtl.md) §3.10 (direction check); [09](09-sound-haptics-art.md) §3 (splash art); [15](15-performance-and-accessibility.md) §3.3 (cold start) |
 | S2 | First-run language choice | [06](06-navigation-state-persistence.md) §3.1, §3.6; [10](10-i18n-and-rtl.md) §3.4, §3.10, §3.16 |
-| S3 | Ad consent and tracking (intro, Google's form, Apple's ATT prompt) | [11](11-ads-admob.md) rule 21, §3.5 |
+| S3 | Ad consent and tracking (intro and Google's form where required, then Apple's ATT prompt) | [11](11-ads-admob.md) rule 21, §3.5 |
 | S4 | Home | [06](06-navigation-state-persistence.md) §3.1; [11](11-ads-admob.md) §3.7 (banner); [05](05-components-hooks-styling.md) §3.5 (Premium entry) |
 | S5 | Game screen | [06](06-navigation-state-persistence.md) §3.5, §5; [08](08-game-engine.md) §2; [15](15-performance-and-accessibility.md) rule 29 (spoken board summary) |
 | S6 | Pause menu | [06](06-navigation-state-persistence.md) §3.5, §5.2 |

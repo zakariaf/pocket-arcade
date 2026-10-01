@@ -1,8 +1,8 @@
 E07 GAME FRAMEWORK - SPECIFICATION
 Working name: "the Shell" (the real name is decided in step 2)
-Version: draft 2, 2026-09-30 (the owner's and the lead's decisions of
-2026-09-30 are recorded here; the full list is section H of
-docs/99-final-decisions.md)
+Version: draft 3, 2026-10-01 (the owner's and the lead's decisions of
+2026-09-30 and the lead's decisions of 2026-10-01 are recorded here; the
+full list is section H of docs/99-final-decisions.md)
 Status: product spec only. It describes WHAT the framework and its games do,
 screen by screen and feature by feature. It does not choose libraries or
 write code. The app will be built with React Native, and the React Native
@@ -234,10 +234,11 @@ section is how the spec resolves it.
      advertising ID (IDFA) for tracking. So on iPhone the Shell asks
      Apple's "Allow tracking?" system prompt before any ad request that
      could use the advertising ID, in this order:
-       a. the Shell's own short consent intro (S3);
-       b. Google's consent message, only where it is required (point 2);
-       c. Apple's tracking prompt, only while the player has not answered
-          it yet.
+       a. only where Google's consent message is required (point 2): the
+          Shell's own short consent intro (S3), then Google's message;
+       b. Apple's tracking prompt, only while the player has not answered
+          it yet. When it is the only step due, it appears on its own,
+          with our sentence explaining it (decided 2026-10-01).
      If the player declines, or tracking is restricted on the phone, ads
      are still shown, just without the advertising ID (not personalised
      by it; lower revenue). The prompt's sentence is ours, in all four
@@ -332,7 +333,9 @@ S3  AD CONSENT AND TRACKING (only where needed)
   Shows    In this order, each step only when it applies:
            1. The Shell's own short intro ("Ad privacy"), so the player
               knows why a question follows. It appears only when step 2
-              or step 3 follows.
+              follows (its note says Google's form opens next). When
+              only step 3 is due, Apple's prompt appears on its own, with
+              our sentence explaining it (decided 2026-10-01).
            2. Google's consent message, only in regions where it is
               required. Its content comes from Google.
            3. On iPhone, Apple's "Allow tracking?" system prompt, only
@@ -462,7 +465,20 @@ S7  RESULT SCREEN
                for Premium. Only for games that allow continuing
                (section 8.10).
 
+  END OF AN ENDLESS RUN
+    Shows    - The run's score, and "New best!" when it is one.
+             - Before it, the run's one optional "Continue", only when
+               one can be offered (section 8.10).
+
   Rules
+    - A finished run is never stranded (decided 2026-10-01). When a run
+      ends and no continue can be offered (ads off, offline, no rewarded
+      ad available, no Premium), this screen appears at once: the endless
+      result (the score, and "New best!" when it is one) or the lose
+      result.
+    - While a rewarded ad is still loading, the Continue offer shows a
+      loading state instead of disappearing. A hidden offer always means
+      that no continue is possible.
     - Stars and statistics are saved BEFORE this screen appears.
     - A full-screen ad, if one is due (section 8.8), appears AFTER the
       player taps Next / Replay / Try again. Never before they have seen
@@ -671,6 +687,12 @@ S15  DEBUG MENU (test builds only; never in store builds)
   - Simulate offline.
   - Export and import the save as text (testing only).
 
+  Rules (decided 2026-10-01)
+  - It matches its design like every other screen; being a test-only
+    screen is no exemption from the screenshot comparison.
+  - Its texts stay in English in all four languages, like every other
+    debug text. No player ever sees it.
+
 
 ======================================================================
 7. LANGUAGES, RIGHT-TO-LEFT AND NUMBERS
@@ -727,11 +749,13 @@ S15  DEBUG MENU (test builds only; never in store builds)
       German uses informal "du" (normal for games; open decision D7).
       Persian and Sorani use a friendly, neutral tone.
   - Claude Code writes all four languages. Persian and Sorani texts
-    should be read once by a native speaker before each release.
-    Machine-written Sorani especially can sound unnatural. You do this
-    review yourself (decided 2026-09-30): Claude Code drafts the texts,
-    lists the review as your step in its reports, and never waits for
-    it.
+    should be read by a native speaker. Machine-written Sorani
+    especially can sound unnatural. You do this review yourself
+    (decided 2026-09-30): Claude Code drafts the texts, lists the
+    texts awaiting your review in its reports, and never waits for it.
+    The review never holds back a release (decided 2026-10-01).
+  - The one exception to "all four languages" is the test-only debug
+    menu (S15): its texts stay English everywhere.
   - Game module texts (title, tutorial, how-to-play, piece and enemy
     names, result reasons, stats labels) are required in all four
     languages. A missing text fails the build.
@@ -869,9 +893,11 @@ S15  DEBUG MENU (test builds only; never in store builds)
                   to..." label:
                     - get a hint (when out of free hints);
                     - continue once after losing (games that allow it).
-                  The reward is given only when the ad completes. If no
-                  ad is available (offline), the button is hidden, not
-                  broken.
+                  The reward is given only when the ad completes. While
+                  the ad is still loading, the button shows a loading
+                  state. If no ad can be had (offline, none available),
+                  the button is hidden, not broken: hidden always means
+                  unavailable (decided 2026-10-01).
 
   General rules
     - All frequency numbers are configuration values per game, not
@@ -922,6 +948,8 @@ S15  DEBUG MENU (test builds only; never in store builds)
     monsters are pushed back one row, or the last move is undone.
   - Cost: a rewarded ad, or free with Premium. Offline and not Premium:
     no continue.
+  - When no continue can be offered, the result appears at once (S7);
+    a finished run never waits for an offer that cannot come.
 
 8.11 Accessibility
 
@@ -987,7 +1015,8 @@ S15  DEBUG MENU (test builds only; never in store builds)
   settings / languages
   Banner / interstitial     shown per rules            not shown, no message
   ads
-  Rewarded ad buttons       shown                      hidden
+  Rewarded ad buttons       shown (loading until the   hidden (a run that ends
+                            ad is ready)               goes straight to S7)
   Buy Premium               works                      "Connect to buy"
   Restore Premium           works                      "Connect to restore"
   Premium already owned     works                      works
@@ -1075,7 +1104,12 @@ else is needed to become a full app.
   - Ad rules: frequency numbers (8.8), ads on/off master switch (4.3).
   - Modes on/off, packs and level counts, free hints per day, continue
     allowed.
-  - Privacy policy link and support email (for the stores and About).
+  - Privacy policy link and support email (for the stores and About),
+    from the owner. The scaffold's placeholders (example.com and
+    support@example.com) can never be released either.
+  - A game counts as complete only when every owner value is in: the
+    completeness check fails on each placeholder (ad ids, privacy link,
+    support email) until you supply the real one (decided 2026-10-01).
   - Age rating answers, target audience.
 
 
@@ -1192,7 +1226,8 @@ own design pass before it is built.
 
   1. Every screen in section 6 exists and works in en, de, fa, ckb.
      Screenshots in LTR and RTL, light and dark, phone and tablet show
-     nothing cut off, overlapping or wrongly mirrored.
+     nothing cut off, overlapping or wrongly mirrored. Every screen,
+     the test-only debug menu (S15) included, matches its design.
   2. A full airplane-mode run passes: first launch -> tutorial -> 10
      levels -> daily -> stats -> settings -> all language switches.
   3. The network audit passes: only the ads and store components can go
@@ -1205,6 +1240,10 @@ own design pass before it is built.
        - On iPhone, Apple's tracking prompt appears after the consent
          step and before the first ad request, and declining it still
          shows ads.
+       - No finished run is stranded: tests cover every case where no
+         continue can be offered, and an automatic run proves that an
+         endless loss in a build with ads off and without Premium shows
+         the endless result.
   5. Premium: buy, cancel, pending, error, restore and offline states
      all tested with the stores' test tools. Premium works offline after
      purchase.
@@ -1257,6 +1296,19 @@ The defaults are used unless you say otherwise.
     their controls are left out when it has none (S5, S6, S11);
     score-rated wins show a score line instead of moves against par
     (S7).
+
+  Decided by the lead on 2026-10-01:
+  - The consent intro appears only before Google's consent message;
+    when only Apple's tracking prompt is due, it appears on its own
+    (4.2 point 3, S3).
+  - A finished run is never stranded: with no continue possible, the
+    result appears at once; a continue offer still loading shows a
+    loading state (S7, 8.8, 8.10).
+  - The debug menu (S15) matches its design like every other screen,
+    and its texts stay English in all four languages (S15, 7.4).
+  - The Persian and Sorani review never holds back a release (7.4).
+    A game is complete only once the owner's ad ids, privacy link and
+    support email replace the placeholders (section 11).
 
 
 ======================================================================

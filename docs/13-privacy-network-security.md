@@ -940,10 +940,10 @@ The complete list, with who checks what:
 | StoreKit test artefacts absent | store | binary | no `*.storekit`, no `*.xctest` in the IPA; `codesign -d --entitlements - --xml` has no `get-task-allow` (`docs/14` step 7) |
 | StoreKit test code absent | store | JS | no `StoreKitTest` / `SKTestSession` strings in shipped modules (the harness is Swift in a test bundle; this guards against a JS shim) |
 | No OTA / ATS exceptions / banned plugin options; ATT text in every language | store | config | layer E (`trackingProblems`) |
-| App ID `io.applander.*`, no `com.example.*` or other placeholder, no scaffold placeholder AdMob ID | store | config + binary | `docs/14` preflight and step 7 (FINAL H.4) |
+| App ID `io.applander.*`, no `com.example.*` or other placeholder, no scaffold placeholder AdMob ID, privacy host or support address (`example.com`, `support@example.com`) | store | config + binary | `docs/14` preflight and step 7 (FINAL H.4, H.20) |
 | Privacy manifest complete | all | native | `audit:privacy` |
 | SKAdNetwork list current | store | config | `refresh-skadnetwork.ts --check` (`docs/11`) |
-| i18n reviewed | store | catalogs | `review-sheet.ts --release` (`docs/10`) |
+| fa/ckb review listed (owner step R3, never a gate; FINAL H.20) | store | catalogs | `review-sheet.ts` writes the review CSVs and prints the count; the release goes on (`docs/10`) |
 
 ---
 

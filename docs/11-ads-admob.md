@@ -1,7 +1,7 @@
 # 11 · Ads (AdMob) and consent
 
 > **What this doc decides.** How the Shell shows Google AdMob ads without ever interrupting play (spec N8, 8.8, S3, S4, S7): the `react-native-google-mobile-ads` 17.2.0 setup through its config plugin, the SKAdNetwork list and its refresh script, test IDs and `ADS_MODE`, the `AdsPort` / `ConsentPort` interfaces with their AdMob adapters, the consent sequence (Google UMP, then Apple's App Tracking Transparency prompt), the pure `adPolicy` for spec 8.8, the banner / interstitial / rewarded integration with game-loop pausing, offline behaviour, the privacy notes (App Privacy and guideline 5.1.2), the AdMob-console human steps, and troubleshooting by `error.reason` / `error.phase`.
-> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 19, 23, 24, 27 and D4/D8, as amended by section H (O1 tracking, O4 IDs). Build variants and the store-artifact gate are owned by `docs/14-ios-build-and-release.md`. Problems found while writing are listed under [Open issues](#open-issues).
+> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 19, 23, 24, 27 and D4/D8, as amended by section H (O1 tracking, O4 IDs, L10 the S3 intro only before Google's form, L14 the Shell's consent code). Build variants and the store-artifact gate are owned by `docs/14-ios-build-and-release.md`. Problems found while writing are listed under [Open issues](#open-issues).
 > **Related docs:** [02-architecture-and-folders.md](02-architecture-and-folders.md) (port signatures and withShell), [13-privacy-network-security.md](13-privacy-network-security.md) (privacy manifest and 5.1.2), [14-ios-build-and-release.md](14-ios-build-and-release.md) (variants and human steps), [07-testing-and-tdd.md](07-testing-and-tdd.md) (root mock and E2E), [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (the ads section of the save). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
@@ -42,7 +42,7 @@ Ads are one of only two network-capable components the app may contain (spec N3)
     *Why:* spec 8.8 and S4 ("no empty box").
 11. **Interstitials appear only after the player taps Next / Replay / Try again on the Result screen**, never before the result is visible, and only when `shouldShowInterstitial` is true (not Premium, online, consent handled, tutorial done, at least 3 levels completed in total, at least 3 minutes and 2 completed levels since the last one, never two in a row after losses; numbers from game config).
     *Why:* spec 8.8 and S7.
-12. **Rewarded ads are always the player's choice** ("Watch an ad to …"), shown only when `perkOffer` returns `watch-ad`, and the reward is granted only on `RewardedAdEventType.EARNED_REWARD`. Without a loaded ad the button is hidden.
+12. **Rewarded ads are always the player's choice** ("Watch an ad to …"), shown only when `perkOffer` returns `watch-ad`, and the reward is granted only on `RewardedAdEventType.EARNED_REWARD`. While the rewarded ad loads, a continue shows its offer in its loading state (`perkOffer` returns `'loading'`, the screen draws the same offer busy; hints never return `'loading'`); `'hidden'` always means no ad can be served (ads off, offline, a load error, no consent), and then a lost run that no continue can rescue ends at once with its result (lead decision L11, never strand a finished run).
     *Why:* spec 8.8 REWARDED and 8.10.
 13. **Suspend the game loop and audio before any fullscreen ad and resume after it closes** (`runFullscreenAd`).
     *Why:* FINAL 19; iOS does not background the app for these ads.
@@ -60,7 +60,7 @@ Ads are one of only two network-capable components the app may contain (spec N3)
     *Why:* Google changes the list; the plugin only adds IDs it is given. **Source:** [AdMob iOS quick start](https://developers.google.com/admob/ios/quick-start).
 20. **Never ship `AdsConsent.reset()`, a debug geography or the Ad Inspector in a store build.** They are reachable only through the test-only entry (`docs/14`, `TEST_ONLY`).
     *Why:* they change consent behaviour for real users.
-21. **On iOS, ask Apple's App Tracking Transparency (ATT) permission before any ad request that could use the IDFA.** Inside `prepareAds`, after Google's form and only when `canRequestAds` is true, call `consent.requestTrackingIfNotDetermined()` and wait for it before `ads.initialize()`. It shows the system prompt only while the status is `not-determined`. Declined, restricted or unavailable change nothing else: ads load without the IDFA. Install `expo-tracking-transparency` with `npx expo install expo-tracking-transparency@~57.0.2` in every app; its plugin option `userTrackingPermission` writes the base `NSUserTrackingUsageDescription`, and `withShell` localises it for en, de, fa and ckb through `expo.locales` from the copy-deck key `consent.tracking.usage-description` (docs/02 section 9.1). `ADS_MODE=off` builds never reach it, because their ConsentPort never runs `prepareAds`.
+21. **On iOS, ask Apple's App Tracking Transparency (ATT) permission before any ad request that could use the IDFA.** Inside `prepareAds`, after Google's form (or with no intro and no form when consent is not required or was given before, FINAL H.16) and only when `canRequestAds` is true, call `consent.requestTracking()` and wait for it before `ads.initialize()`. It shows the system prompt only while the status is `not-determined`, once the app is active. Declined, restricted or unavailable change nothing else: ads load without the IDFA. Install `expo-tracking-transparency` with `npx expo install expo-tracking-transparency@~57.0.2` in every app; its plugin option `userTrackingPermission` writes the base `NSUserTrackingUsageDescription`, and `withShell` localises it for en, de, fa and ckb through `expo.locales` from the copy-deck key `consent.tracking.usage-description`, read straight from the four Shell catalogs (`TRACKING_USAGE_DESCRIPTIONS`, docs/02 section 9.1). `ADS_MODE=off` builds never reach it, because their ConsentPort never runs `prepareAds`.
     *Why:* App Review guideline 5.1.2(i) and the owner's decision O1 (FINAL H.1). Google: "We recommend waiting for the completion callback prior to loading ads so that if the user grants the App Tracking Transparency permission, the Google Mobile Ads SDK can use the IDFA in ad requests." Apple: the app crashes if it uses ATT without `NSUserTrackingUsageDescription`, and the prompt appears only while the status is `notDetermined`, never while tracking is restricted or the app is not active. **Source:** [AdMob iOS 14+](https://developers.google.com/admob/ios/ios14), [requestTrackingAuthorization(completionHandler:)](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/requesttrackingauthorization(completionhandler:)), [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information-property-list/nsusertrackingusagedescription).
 
 ---
@@ -116,7 +116,7 @@ ads: {
 },
 ```
 
-The values above are the new-game scaffold's placeholders in the documented format (publisher `1234567890123456`). They look valid, so `assertLiveIds` rejects them by name (FINAL H.4), and so do `check-game-app --stage complete` and the release gates. Until the owner supplies real IDs, only `APP_VARIANT=test` (and `store` + `ADS_MODE=off`) can build: `assertLiveIds` throws for anything else.
+The values above are the new-game scaffold's placeholders in the documented format (publisher `1234567890123456`). They look valid, so `assertLiveIds` rejects them by name (FINAL H.4), and so do `check-game-app --stage complete` and the release gates: a game is not complete until the owner supplies the real IDs (step A2, owner step G5 in `docs/14`). The complete stage fails the same way on the scaffold's other owner placeholders, the privacy host `example.com` and the support address `support@example.com` (owner step G3; FINAL H.20, L14). Until the owner supplies real IDs, only `APP_VARIANT=test` (and `store` + `ADS_MODE=off`) can build: `assertLiveIds` throws for anything else.
 
 ```ts
 // packages/shell/src/config/ads-config.ts
@@ -304,6 +304,13 @@ export type AdUnitIds = {
 };
 export type FullscreenResult = 'shown' | 'unavailable';
 export type RewardResult = 'rewarded' | 'dismissed' | 'unavailable';
+/**
+ * Where the rewarded ad stands (L11): 'loading' from the start of a preload until LOADED or a load
+ * error; 'ready' after LOADED; 'unavailable' after a load error until the next preload starts, after
+ * the loaded ad was shown, with ads off and before initialize. So a hidden offer always means the
+ * ad cannot come, never that it is still on its way.
+ */
+export type RewardedStatus = 'loading' | 'ready' | 'unavailable';
 export type BannerSlotProps = {
   readonly onLoaded: () => void; // the slot collapses until this fires (no empty box)
   readonly onFailed: () => void; // failed loads are silent (spec 8.8)
@@ -315,9 +322,10 @@ export type AdsPort = {
   readonly initialize: () => Promise<void>;
   readonly preloadInterstitial: () => void;
   readonly preloadRewarded: () => void;
-  readonly isRewardedLoaded: () => boolean;
-  // Notifies when rewarded availability changes, so "Watch an ad" buttons appear/disappear.
-  readonly subscribeRewardedLoaded: (listener: (isLoaded: boolean) => void) => () => void;
+  readonly rewardedStatus: () => RewardedStatus;
+  // Notifies when rewardedStatus() changes (useSyncExternalStore's subscribe), so the "Watch an ad"
+  // offer shows its loading state, turns ready, or goes away.
+  readonly subscribeRewardedStatus: (listener: () => void) => () => void;
   // Resolve when the ad CLOSED (or immediately with 'unavailable'). Never reject.
   readonly showInterstitial: () => Promise<FullscreenResult>;
   readonly showRewarded: () => Promise<RewardResult>;
@@ -342,7 +350,13 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 
-import type { AdsPort, AdUnitIds, FullscreenResult, RewardResult } from './ads-port.ts';
+import type {
+  AdsPort,
+  AdUnitIds,
+  FullscreenResult,
+  RewardedStatus,
+  RewardResult,
+} from './ads-port.ts';
 import type { AdErrorPayload } from 'react-native-google-mobile-ads';
 
 export type AdFailure = Error & AdErrorPayload;
@@ -359,7 +373,10 @@ export const ADMOB_TEST_UNITS: AdUnitIds = {
 };
 
 type Cell<T> = { readonly get: () => T; readonly set: (value: T) => void };
-type Loaded = { readonly notify: (isLoaded: boolean) => void };
+/** The rewarded status with its listeners (AdsPort.subscribeRewardedStatus). */
+type StatusCell = Cell<RewardedStatus> & {
+  readonly subscribe: (listener: () => void) => () => void;
+};
 
 function cell<T>(initial: T): Cell<T> {
   let value = initial;
@@ -377,40 +394,57 @@ function showInterstitial(slot: Cell<InterstitialAd | null>): Promise<Fullscreen
   if (ad?.loaded !== true) return Promise.resolve('unavailable');
   slot.set(null);
   return new Promise((resolve) => {
-    ad.addAdEventListener(AdEventType.CLOSED, () => {
+    const settle = (result: FullscreenResult): void => {
       ad.destroy();
-      resolve('shown');
+      resolve(result);
+    };
+    ad.addAdEventListener(AdEventType.CLOSED, () => {
+      settle('shown');
+    });
+    // A failed presentation arrives only as ERROR (phase 'show'): show() has already resolved and
+    // CLOSED never comes, so without this listener the game would stay suspended forever.
+    ad.addAdEventListener(AdEventType.ERROR, () => {
+      settle('unavailable');
     });
     ad.show().catch(() => {
-      ad.destroy();
-      resolve('unavailable'); // not loaded / already showing / platform declined
+      settle('unavailable'); // not loaded / already showing / platform declined
     });
   });
 }
 
-function showRewarded(slot: Cell<RewardedAd | null>, loaded: Loaded): Promise<RewardResult> {
+function showRewarded(slot: Cell<RewardedAd | null>, status: StatusCell): Promise<RewardResult> {
   const ad = slot.get();
   if (ad?.loaded !== true) return Promise.resolve('unavailable');
   slot.set(null);
-  loaded.notify(false);
+  status.set('unavailable'); // shown once; ad-moments starts the next preload after it closes
   const earned = cell(false);
   return new Promise((resolve) => {
+    const settle = (result: RewardResult): void => {
+      ad.destroy();
+      resolve(result);
+    };
     ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
       earned.set(true); // grant ONLY on this event, never on CLOSED alone
     });
     ad.addAdEventListener(AdEventType.CLOSED, () => {
-      ad.destroy();
-      resolve(earned.get() ? 'rewarded' : 'dismissed');
+      settle(earned.get() ? 'rewarded' : 'dismissed');
+    });
+    // Failed presentation: ERROR (phase 'show') and no CLOSED; see showInterstitial.
+    ad.addAdEventListener(AdEventType.ERROR, () => {
+      settle(earned.get() ? 'rewarded' : 'unavailable');
     });
     ad.show().catch(() => {
-      ad.destroy();
-      resolve('unavailable');
+      settle('unavailable');
     });
   });
 }
 
-function preloadInterstitial(slot: Cell<InterstitialAd | null>, options: AdmobAdsOptions): void {
-  if (slot.get() !== null) return;
+type Loading = { readonly options: AdmobAdsOptions; readonly isInitialized: Cell<boolean> };
+
+// Ads load only after initialize (which follows consent): an earlier preload starts nothing.
+function preloadInterstitial(slot: Cell<InterstitialAd | null>, loading: Loading): void {
+  const { options } = loading;
+  if (!loading.isInitialized.get() || slot.get() !== null) return;
   const ad = InterstitialAd.createForAdRequest(options.units.interstitial);
   slot.set(ad);
   ad.addAdEventListener(AdEventType.ERROR, (error) => {
@@ -421,22 +455,25 @@ function preloadInterstitial(slot: Cell<InterstitialAd | null>, options: AdmobAd
   ad.load();
 }
 
+// 'loading' from here until LOADED ('ready') or a load error ('unavailable' until the next preload).
 function preloadRewarded(
   slot: Cell<RewardedAd | null>,
-  options: AdmobAdsOptions,
-  loaded: Loaded,
+  loading: Loading,
+  status: StatusCell,
 ): void {
-  if (slot.get() !== null) return;
+  const { options } = loading;
+  if (!loading.isInitialized.get() || slot.get() !== null) return;
   const ad = RewardedAd.createForAdRequest(options.units.rewarded);
   slot.set(ad);
+  status.set('loading');
   ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
-    loaded.notify(true);
+    status.set('ready');
   });
   ad.addAdEventListener(AdEventType.ERROR, (error) => {
     reportAdError(error, options);
     ad.destroy();
     slot.set(null);
-    loaded.notify(false);
+    status.set('unavailable');
   });
   ad.load();
 }
@@ -449,17 +486,24 @@ async function initializeOnce(isInitialized: Cell<boolean>): Promise<void> {
   isInitialized.set(true);
 }
 
-function createLoadedListeners(): Loaded & Pick<AdsPort, 'subscribeRewardedLoaded'> {
-  const listeners = new Set<(isLoaded: boolean) => void>();
+/** 'unavailable' until the first preload after initialize; listeners hear every change. */
+function createStatusCell(): StatusCell {
+  let status: RewardedStatus = 'unavailable';
+  const listeners = new Set<() => void>();
   return {
-    notify: (isLoaded) => {
+    get: () => status,
+    set: (next) => {
+      if (next === status) return;
+      status = next;
       listeners.forEach((listener) => {
-        listener(isLoaded);
+        listener();
       });
     },
-    subscribeRewardedLoaded: (listener) => {
+    subscribe: (listener) => {
       listeners.add(listener);
-      return () => listeners.delete(listener);
+      return () => {
+        listeners.delete(listener);
+      };
     },
   };
 }
@@ -468,19 +512,20 @@ export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {
   const interstitial = cell<InterstitialAd | null>(null);
   const rewarded = cell<RewardedAd | null>(null);
   const isInitialized = cell(false);
-  const loaded = createLoadedListeners();
+  const loading = { options, isInitialized };
+  const status = createStatusCell();
   return {
     initialize: () => initializeOnce(isInitialized),
     preloadInterstitial: () => {
-      preloadInterstitial(interstitial, options);
+      preloadInterstitial(interstitial, loading);
     },
     preloadRewarded: () => {
-      preloadRewarded(rewarded, options, loaded);
+      preloadRewarded(rewarded, loading, status);
     },
-    isRewardedLoaded: () => rewarded.get()?.loaded === true,
-    subscribeRewardedLoaded: loaded.subscribeRewardedLoaded,
+    rewardedStatus: status.get,
+    subscribeRewardedStatus: status.subscribe,
     showInterstitial: () => showInterstitial(interstitial),
-    showRewarded: () => showRewarded(rewarded, loaded),
+    showRewarded: () => showRewarded(rewarded, status),
     renderBanner: ({ onLoaded, onFailed }) =>
       createElement(BannerAd, {
         unitId: options.units.banner,
@@ -501,20 +546,48 @@ Notes on the adapter:
 ```ts
 // packages/shell/src/services/ads/fake-ads.ts
 // Used by Jest, by ADS_MODE=off builds (screenshots, E2E) and by the debug "never show ads".
-import type { AdsPort, FullscreenResult, RewardResult } from './ads-port.ts';
+import type { AdsPort, FullscreenResult, RewardedStatus, RewardResult } from './ads-port.ts';
 
 export type FakeAdsScript = {
-  isRewardedLoaded: boolean;
+  /** What rewardedStatus() answers first; setRewardedStatus changes it and tells subscribers. */
+  readonly rewardedStatus: RewardedStatus;
   interstitialResult: FullscreenResult;
   rewardResult: RewardResult;
   readonly calls: string[];
 };
 
-export function createFakeAds(script: FakeAdsScript): AdsPort {
+/** The scripted port, plus the one way a test moves the rewarded status (loading -> ready...). */
+export type FakeAds = AdsPort & { readonly setRewardedStatus: (status: RewardedStatus) => void };
+
+type StatusCell = Pick<FakeAds, 'rewardedStatus' | 'subscribeRewardedStatus' | 'setRewardedStatus'>;
+
+/** The scripted status and its subscribers (useSyncExternalStore). */
+function statusCell(initial: RewardedStatus): StatusCell {
+  const listeners = new Set<() => void>();
+  let status = initial;
+  return {
+    rewardedStatus: () => status,
+    subscribeRewardedStatus: (listener) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    setRewardedStatus: (next) => {
+      status = next;
+      listeners.forEach((listener) => {
+        listener();
+      });
+    },
+  };
+}
+
+export function createFakeAds(script: FakeAdsScript): FakeAds {
   const record = (name: string): void => {
     script.calls.push(name);
   };
   return {
+    ...statusCell(script.rewardedStatus),
     initialize: () => {
       record('initialize');
       return Promise.resolve();
@@ -525,8 +598,6 @@ export function createFakeAds(script: FakeAdsScript): AdsPort {
     preloadRewarded: () => {
       record('preloadRewarded');
     },
-    isRewardedLoaded: () => script.isRewardedLoaded,
-    subscribeRewardedLoaded: () => () => undefined,
     showInterstitial: () => {
       record('showInterstitial');
       return Promise.resolve(script.interstitialResult);
@@ -542,7 +613,7 @@ export function createFakeAds(script: FakeAdsScript): AdsPort {
 
 ```ts
 // packages/shell/src/services/ads/ads-factory.ts
-// Chooses the AdsPort implementation from expo.extra (written by withShell, docs/14).
+// Chooses the AdsPort implementation from expo.extra (written by withShell at build time).
 import { ADMOB_TEST_UNITS, createAdmobAdsAdapter } from './admob-ads-adapter.ts';
 import { createFakeAds } from './fake-ads.ts';
 
@@ -556,9 +627,10 @@ export type AdsExtra = {
 
 export function createAdsPort(extra: AdsExtra, onAdError: (error: AdFailure) => void): AdsPort {
   if (extra.adsMode === 'off') {
-    // Spec 4.3 / screenshots / E2E: every slot stays empty, nothing is ever requested.
+    // Spec 4.3 / screenshots / E2E: every slot stays empty, nothing is ever requested, and the
+    // rewarded status stays 'unavailable' (a lost run with no Premium ends at once, L11).
     return createFakeAds({
-      isRewardedLoaded: false,
+      rewardedStatus: 'unavailable',
       interstitialResult: 'unavailable',
       rewardResult: 'unavailable',
       calls: [],
@@ -581,9 +653,13 @@ export type ConsentInfo = {
   readonly isPrivacyOptionsRequired: boolean; // show the "Ad privacy choices" row (S11)
 };
 
-// Apple's App Tracking Transparency answer (FINAL H.1). 'denied' also covers "restricted"
-// (expo-tracking-transparency reports both as denied); 'unavailable' = not iOS.
-export type TrackingStatus = 'not-determined' | 'authorized' | 'denied' | 'unavailable';
+/**
+ * Apple's App Tracking Transparency answer (guideline 5.1.2(i)). Only 'authorized' lets Google's
+ * SDK read the IDFA; every other status still serves ads, without it. 'unavailable': not iOS, ads
+ * off, or the status could not be read.
+ */
+export type TrackingStatus =
+  'authorized' | 'denied' | 'restricted' | 'not-determined' | 'unavailable';
 
 export type ConsentPort = {
   // Every launch (not Premium, ads enabled). Offline: returns the last session's answer.
@@ -592,24 +668,27 @@ export type ConsentPort = {
   readonly showFormIfRequired: () => Promise<ConsentInfo>;
   // Settings > Ad privacy choices.
   readonly showPrivacyOptions: () => Promise<ConsentInfo>;
-  // Reads Apple's answer without asking (decides whether the S3 intro has anything to explain).
-  readonly getTrackingStatus: () => Promise<TrackingStatus>;
-  // S3, after Google's form: Apple's system prompt, only while 'not-determined'. Never rejects.
-  readonly requestTrackingIfNotDetermined: () => Promise<TrackingStatus>;
+  // After Google's form, before the first ad request: the system ATT prompt, only while the status
+  // is not-determined and the app is active; otherwise the status. Never rejects.
+  readonly requestTracking: () => Promise<TrackingStatus>;
 };
 ```
 
+The port, the adapter, the fake and `ad-gate.ts` below follow the Shell's code (corrected to it on 2026-10-01, FINAL H.20, L14): the method is `requestTracking`, and `'restricted'` stays in `TrackingStatus` for other adapters and tests even though the Expo module reports it as `'denied'`.
+
 ```ts
 // packages/shell/src/services/consent/admob-consent-adapter.ts
-// Google UMP through react-native-google-mobile-ads, and Apple's ATT prompt through
-// expo-tracking-transparency (FINAL H.1). The form content comes from the AdMob console
-// (published GDPR/TCF message); the Shell only decides WHEN each step appears (spec S3).
+// Google UMP through react-native-google-mobile-ads. The form content comes from the AdMob
+// console (published GDPR/TCF message); the Shell only decides WHEN it appears (spec S3).
+// Apple's App Tracking Transparency prompt (guideline 5.1.2(i)) comes through expo-tracking-
+// transparency; this file is its only importer. No IDFA explainer message is published in the
+// AdMob console (step A3): UMP would then run its own ATT flow next to this one.
 import {
   getTrackingPermissionsAsync,
   PermissionStatus,
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import {
   AdsConsent,
   AdsConsentDebugGeography,
@@ -620,18 +699,37 @@ import type { ConsentInfo, ConsentPort, TrackingStatus } from './consent-port.ts
 import type { PermissionResponse } from 'expo-tracking-transparency';
 import type { AdsConsentInfo } from 'react-native-google-mobile-ads';
 
-export type DebugGeography = 'eea' | 'regulated-us-state' | 'other';
+/** The consent geography a test build asks UMP to assume (the debug link's geo=eea|other). */
+export type DebugGeography = 'eea' | 'other';
 export type AdmobConsentOptions = {
-  // Test variant only (debug menu, via TEST_ONLY). The store variant passes nothing.
+  /**
+   * Test builds only, and only through debugServices.setConsentGeography (e2e-maestro: the debug
+   * link's geo=): UMP answers as for a player in the EEA (S3, then Google's form) or elsewhere
+   * (Apple's prompt alone), on any network. Store builds never pass it (check-ads rule
+   * debug-geography-test-only).
+   */
   readonly debugGeography?: DebugGeography;
+  /** Test builds only: UMP test devices (a simulator is one already; a phone needs its id). */
+  readonly testDeviceIdentifiers?: readonly string[];
   readonly onError: (error: unknown) => void;
 };
 
 const GEOGRAPHY = {
   eea: AdsConsentDebugGeography.EEA,
-  'regulated-us-state': AdsConsentDebugGeography.REGULATED_US_STATE,
   other: AdsConsentDebugGeography.OTHER,
 } as const;
+
+/** requestInfoUpdate's debug settings: none in a store build. */
+function debugSettings(options: AdmobConsentOptions): {
+  readonly debugGeography?: number;
+  readonly testDeviceIdentifiers?: string[];
+} {
+  const { debugGeography: geography, testDeviceIdentifiers: devices } = options;
+  return {
+    ...(geography === undefined ? {} : { debugGeography: GEOGRAPHY[geography] }),
+    ...(devices === undefined ? {} : { testDeviceIdentifiers: [...devices] }),
+  };
+}
 
 function toInfo(info: AdsConsentInfo): ConsentInfo {
   return {
@@ -654,31 +752,43 @@ async function withCachedFallback(
   }
 }
 
-function toTracking(response: PermissionResponse): TrackingStatus {
+// expo-tracking-transparency 57.0.2 reports ATTrackingManager's .restricted as 'denied', exactly
+// like a declined prompt (TrackingTransparencyPermissionRequester.swift), so this adapter never
+// returns 'restricted'; both mean ads without the IDFA.
+function toTrackingStatus(response: PermissionResponse): TrackingStatus {
   if (response.status === PermissionStatus.GRANTED) return 'authorized';
-  return response.status === PermissionStatus.DENIED ? 'denied' : 'not-determined';
+  if (response.status === PermissionStatus.DENIED) return 'denied';
+  return 'not-determined';
 }
 
-// Apple shows the prompt only while the status is notDetermined (and the app is active); a
-// failure never blocks ads, so it reads as 'denied' (ads then load without the IDFA).
-async function trackingStatus(
-  shouldAsk: boolean,
-  onError: (error: unknown) => void,
-): Promise<TrackingStatus> {
+// Apple shows the prompt only while the app is active; asked in any other state it answers at
+// once without asking, so the request waits for the app to come back.
+function whenActive(): Promise<void> {
+  if (AppState.currentState === 'active') return Promise.resolve();
+  return new Promise((resolve) => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+      subscription.remove();
+      resolve();
+    });
+  });
+}
+
+async function requestTracking(onError: (error: unknown) => void): Promise<TrackingStatus> {
   if (Platform.OS !== 'ios') return 'unavailable';
   try {
-    const current = toTracking(await getTrackingPermissionsAsync());
-    if (!shouldAsk || current !== 'not-determined') return current;
-    return toTracking(await requestTrackingPermissionsAsync());
+    const current = toTrackingStatus(await getTrackingPermissionsAsync());
+    if (current !== 'not-determined') return current; // asked before: Apple never asks twice
+    await whenActive();
+    return toTrackingStatus(await requestTrackingPermissionsAsync());
   } catch (error) {
     onError(error);
-    return 'denied';
+    return 'unavailable'; // ads still load, without the IDFA
   }
 }
 
 export function createAdmobConsentAdapter(options: AdmobConsentOptions): ConsentPort {
-  const geography = options.debugGeography;
-  const requestOptions = geography === undefined ? {} : { debugGeography: GEOGRAPHY[geography] };
+  const requestOptions = debugSettings(options);
   return {
     refresh: () =>
       withCachedFallback(() => AdsConsent.requestInfoUpdate(requestOptions), options.onError),
@@ -686,19 +796,24 @@ export function createAdmobConsentAdapter(options: AdmobConsentOptions): Consent
       withCachedFallback(() => AdsConsent.loadAndShowConsentFormIfRequired(), options.onError),
     showPrivacyOptions: () =>
       withCachedFallback(() => AdsConsent.showPrivacyOptionsForm(), options.onError),
-    getTrackingStatus: () => trackingStatus(false, options.onError),
-    requestTrackingIfNotDetermined: () => trackingStatus(true, options.onError),
+    requestTracking: () => requestTracking(options.onError),
   };
 }
 ```
 
-`expo-tracking-transparency` 57.0.2 (read in its tarball on 2026-09-30): `requestTrackingPermissionsAsync` calls `ATTrackingManager.requestTrackingAuthorization`; the module maps `authorized` to `granted`, `denied` and `restricted` to `denied`, and `notDetermined` to `undetermined`; on Android it always answers `granted` without a prompt (the adapter returns `'unavailable'` there first). Its native `getPermissions` calls `RCTFatal` when `NSUserTrackingUsageDescription` is missing, so a build without the plugin entry crashes on the first status read (section 3.12). The fake (`fake-consent.ts`) holds a scripted `TrackingStatus` and records every `requestTrackingIfNotDetermined` call, so the gate's order is tested without the module.
+`expo-tracking-transparency` 57.0.2 (read in its tarball on 2026-09-30): `requestTrackingPermissionsAsync` calls `ATTrackingManager.requestTrackingAuthorization`; the module maps `authorized` to `granted`, `denied` and `restricted` to `denied` (with `canAskAgain` false), and `notDetermined` to `undetermined`; on Android it always answers `granted` without a prompt (the adapter returns `'unavailable'` there first). Its native `getPermissions` calls `RCTFatal` when `NSUserTrackingUsageDescription` is missing, so a build without the plugin entry crashes on the first status read (section 3.12). The fake (`fake-consent.ts`, `createFakeConsent({ afterRefresh, afterForm, tracking?, trackingAnswer?, calls })`) records every call in order (`'requestTracking'` included), answers a scripted status (default `'unavailable'`, as with ads off), shows its "prompt" only while the status is `'not-determined'` (then the answer, default `'denied'`, sticks) and counts the prompts (`trackingPrompts()`), so the gate's order is tested without the module.
 
 The sequence, as code (pure orchestration over the two ports, tested with fakes):
 
 ```ts
 // packages/shell/src/services/ads/ad-gate.ts
-// Orchestrates consent -> tracking (iOS) -> initialize -> preload (FINAL 23 and H.1, spec S3).
+// Orchestrates consent -> tracking -> initialize -> preload (spec S3: consent before the first ad
+// request). Where Google's form is required, the Shell's own consent moment (S3, ConsentIntroScreen)
+// comes first: showIntro resolves when the player taps Continue, and only then Google's form opens.
+// Once ads may be requested, Apple's App Tracking Transparency prompt comes next (guideline
+// 5.1.2(i); the port asks only while the answer is not-determined), so every ad request follows
+// the ATT answer. Whatever the answer, ads initialize and serve; without 'authorized' Google's SDK
+// sends no IDFA.
 import type { AdsPort } from './ads-port.ts';
 import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
 
@@ -707,6 +822,9 @@ export type AdGateDeps = {
   readonly consent: ConsentPort;
   readonly onConsent: (info: ConsentInfo) => void; // stores canRequestAds + privacy-row flag
 };
+
+/** prepareAds also needs the consent moment: it shows S3 and resolves on Continue. */
+export type PrepareAdsDeps = AdGateDeps & { readonly showIntro: () => Promise<void> };
 
 export type AdGateInput = {
   readonly isPremium: boolean;
@@ -721,15 +839,25 @@ export async function refreshConsentAtLaunch(deps: AdGateDeps, input: AdGateInpu
   deps.onConsent(await deps.consent.refresh());
 }
 
+// S3 where consent is required: the Shell's moment, then Google's form.
+async function consentThroughIntro(deps: PrepareAdsDeps): Promise<ConsentInfo> {
+  await deps.showIntro();
+  const info = await deps.consent.showFormIfRequired();
+  deps.onConsent(info);
+  return info;
+}
+
 // 2. Before the first ad is ever requested (Home after the tutorial, or any later ad moment).
-export async function prepareAds(deps: AdGateDeps, input: AdGateInput): Promise<boolean> {
+export async function prepareAds(deps: PrepareAdsDeps, input: AdGateInput): Promise<boolean> {
   if (input.isPremium || !input.isAdsEnabled || !input.isTutorialDone || !input.isOnline) {
     return false; // S3: skipped offline/Premium; retried the next time an ad is about to load
   }
-  const info = await deps.consent.showFormIfRequired();
-  deps.onConsent(info);
-  if (!info.canRequestAds) return false; // no ad request, so no tracking prompt either
-  await deps.consent.requestTrackingIfNotDetermined(); // any answer: ads load; IDFA only if allowed
+  const known = await deps.consent.refresh();
+  deps.onConsent(known);
+  // Consent given before, or not required in this region: no intro and no form.
+  const info = known.canRequestAds ? known : await consentThroughIntro(deps);
+  if (!info.canRequestAds) return false;
+  await deps.consent.requestTracking(); // after Google's form, before the SDK can request an ad
   await deps.ads.initialize();
   deps.ads.preloadInterstitial();
   deps.ads.preloadRewarded();
@@ -742,16 +870,16 @@ When the Shell calls them:
 | Moment | Call | Result used for |
 |---|---|---|
 | App start, after the splash has rendered (never awaited by it) | `refreshConsentAtLaunch` | `canRequestAds`, the Settings privacy row |
-| Home becomes visible and `prepareAds` has not succeeded in this session | `prepareAds` | shows S3 if required (first time: right after the tutorial), then Apple's tracking prompt while not determined (iOS), then initialises and preloads |
+| Home becomes visible and `prepareAds` has not succeeded in this session | `prepareAds` | where Google's consent is required, shows S3's intro and then Google's form (first time: right after the tutorial); then Apple's tracking prompt while not determined (iOS, on its own when it is the only step due); then initialises and preloads |
 | Connectivity changes to online while `prepareAds` has not succeeded | `prepareAds` | the deferred S3 of spec section 9 |
 | Premium becomes true | none | ads stop at once through `adPolicy`; the SDK stays initialised but idle |
 | Settings → Ad privacy choices | `consent.showPrivacyOptions()` then `onConsent` | may turn ads off (`canRequestAds` false); Apple's tracking answer is changed only in iOS Settings → Privacy & Security → Tracking |
 
-**The S3 intro and the tracking step.** The Shell's consent moment (S3) puts its own intro screen in front of these system steps. The intro appears when Google's form is required or `getTrackingStatus()` is `'not-determined'`, and never otherwise; after Continue the order is fixed: Google's form where required, then Apple's prompt while not determined, then `initialize`. The prompt text comes from the copy-deck key `consent.tracking.usage-description` (Info.plist, all four languages); the prompt's language follows the device or the iOS per-app language, like the UMP form (docs/10). In France, Germany, Italy, Poland and Romania iOS shows a full-page sheet instead of an alert; an optional `NSUserTrackingMarkdownUsageDescription` could style it and is not set. A player who dismisses the sheet without deciding stays `not-determined` and is asked again the next time `prepareAds` runs (a later session). `ADS_MODE=off` builds (E2E, screenshots) build a ConsentPort that never runs the moment, so they never show the prompt; parity captures of `s3-consent-moment` hold the moment, so they never reach it either.
+**The S3 intro and the tracking step (FINAL H.16, L10).** The Shell's consent moment (S3) puts its own intro screen in front of Google's form, and only there: the intro appears when `prepareAds`'s own `refresh()` says consent is still needed (`canRequestAds` false, so Google's form follows), and never otherwise, so its footnote "Google's form opens next" is always true. After Continue the order is fixed: Google's form, then Apple's prompt while not determined, then `initialize`. When consent is not required in the region or was given before, there is no intro: Apple's system prompt appears on its own (while not determined), explained by the app's usage text. The prompt text comes from the copy-deck key `consent.tracking.usage-description`, which `shell-plugins.ts` reads from the four Shell catalogs (Info.plist, all four languages; docs/02 section 9.1); the prompt's language follows the device or the iOS per-app language, like the UMP form (docs/10). In France, Germany, Italy, Poland and Romania iOS shows a full-page sheet instead of an alert; an optional `NSUserTrackingMarkdownUsageDescription` could style it and is not set. A player who dismisses the sheet without deciding stays `not-determined` and is asked again the next time `prepareAds` runs (a later session). If the app is not active when the request comes, the adapter waits for it to become active, because Apple answers at once without asking otherwise. `ADS_MODE=off` builds (E2E, screenshots) build a ConsentPort that never runs the moment, so they never show the prompt; parity captures of `s3-consent-moment` hold the moment, so they never reach it either.
 
 Verified on the iOS 26.5 simulator with Google's sample app ID: after `AdsConsent.reset()`, `requestInfoUpdate({ debugGeography: EEA })` returned `{status: 'REQUIRED', privacyOptionsRequirementStatus: 'REQUIRED', canRequestAds: false, isConsentFormAvailable: true}`, and `loadAndShowConsentFormIfRequired()` showed the "Publisher Test Ads" TCF form (Consent / Do not consent / Manage options). No test-device hash was needed on the simulator. The real form appears only after the owner publishes a GDPR message in the AdMob console (human step A3).
 
-Test variant only: the debug menu sets `debugGeography` (EEA / regulated US state / other), can call `AdsConsent.reset()`, and shows `AdsConsent.getUserChoices()` (decoded TCF choices). Those calls live behind `docs/14`'s `TEST_ONLY` gate (`packages/shell/src/app/test-only.ts`), never in the adapter's store path.
+Test variant only: the debug link's `geo=eea` or `geo=other` (sent in the first setup link after a fresh install) calls `debugServices.setConsentGeography`, which resets UMP (`AdsConsent.reset()`) and passes `{ debugGeography, testDeviceIdentifiers }` (`DebugGeography = 'eea' | 'other'`) to the next consent request; the debug menu shows `AdsConsent.getUserChoices()` (decoded TCF choices). Those calls live behind `docs/14`'s `TEST_ONLY` gate (`packages/shell/src/app/test-only.ts`), never in the adapter's store path.
 
 Do not set `requestNonPersonalizedAdsOnly` by hand: the SDK reads the TCF string that UMP writes.
 
@@ -870,12 +998,23 @@ export function recordInterstitialShown(shown: {
 import { canServeAds } from './ad-policy.ts';
 
 import type { AdContext, AdPolicyConfig } from './ad-policy.ts';
+import type { RewardedStatus } from './ads-port.ts';
 
-// How a hint or a continue is offered (spec 8.5, 8.8 REWARDED, 8.10, D2).
-export type PerkOffer = 'free' | 'watch-ad' | 'hidden';
+/**
+ * How a hint or a continue is offered (spec 8.5, 8.8 REWARDED, 8.10, D2, L11). 'loading' is the
+ * continue's offer while its rewarded ad is still loading (S7 draws the ad key busy); 'hidden'
+ * always means the perk cannot be had, so a lost run whose continue is hidden ends at once (L11).
+ */
+export type PerkOffer = 'free' | 'watch-ad' | 'loading' | 'hidden';
+
+/**
+ * freeHintsLeft: selectFreeHintsLeft(progress, today, extra.hints.freePerDay), as useHintPerk
+ * (app/use-ad-context.ts) reads it; a game whose config gives 0 free hints never offers a free one.
+ */
+export type HintPerk = { readonly kind: 'hint'; readonly freeHintsLeft: number };
 
 export type Perk =
-  | { readonly kind: 'hint'; readonly freeHintsLeft: number }
+  | HintPerk
   | {
       readonly kind: 'continue';
       readonly isAllowedByGame: boolean;
@@ -885,22 +1024,26 @@ export type Perk =
 export type PerkRequest = {
   readonly config: AdPolicyConfig;
   readonly context: AdContext;
-  readonly isRewardedLoaded: boolean;
+  /** AdsPort.rewardedStatus(), read through subscribeRewardedStatus. */
+  readonly rewardedStatus: RewardedStatus;
 };
 
 function isPerkAvailable(perk: Perk): boolean {
   return perk.kind === 'hint' || (perk.isAllowedByGame && !perk.isUsedThisLevel);
 }
 
-export function perkOffer(
-  perk: Perk,
-  { config, context, isRewardedLoaded }: PerkRequest,
-): PerkOffer {
+/** A rewarded ad's offer: ready offers it, loading waits (continues only), anything else hides. */
+function adOffer(perk: Perk, status: RewardedStatus): PerkOffer {
+  if (status === 'ready') return 'watch-ad';
+  return status === 'loading' && perk.kind === 'continue' ? 'loading' : 'hidden';
+}
+
+export function perkOffer(perk: Perk, { config, context, rewardedStatus }: PerkRequest): PerkOffer {
   if (!isPerkAvailable(perk)) return 'hidden';
   if (context.isPremium) return 'free';
   if (perk.kind === 'hint' && perk.freeHintsLeft > 0) return 'free';
-  // Offline, no consent or nothing loaded: hide the button, never show a broken one.
-  return canServeAds(config, context) && isRewardedLoaded ? 'watch-ad' : 'hidden';
+  // Offline, no consent or no ad that can come: hide the offer, never show a broken one.
+  return canServeAds(config, context) ? adOffer(perk, rewardedStatus) : 'hidden';
 }
 ```
 
@@ -1136,7 +1279,7 @@ The Result-screen flow (S7), step by step:
 4. `lifecycle.suspend` stops frame callbacks and suspends the `AudioContext` through `AudioPort`; `resume` restarts them with a clamped `dt` (docs/08 owns the loop and `useGameLifecycle`). Real-time games stay paused after an ad and show the Pause overlay, as after backgrounding.
 
 Rewarded perks:
-- The hint and continue buttons render from `perkOffer(perk, { config, context, isRewardedLoaded })`. `isRewardedLoaded` comes from `ads.subscribeRewardedLoaded` (so the button appears when an ad finishes loading and disappears when it is used). `'free'` runs the perk directly; `'watch-ad'` shows "Watch an ad to get a hint" and calls `earnRewardedPerk`; the perk runs only if it returns `true`. A dismissed ad changes nothing and says nothing.
+- The hint and continue buttons render from `perkOffer(perk, { config, context, rewardedStatus })`. `rewardedStatus` is `ads.rewardedStatus()` (`'loading'` from the start of a preload until LOADED or a load error, `'ready'` after LOADED, `'unavailable'` after a load error until the next preload, with ads off, and before `initialize`), re-read whenever `ads.subscribeRewardedStatus` fires, so a continue shows its offer busy while the ad loads and its key once the ad is ready. The game host's `LoseResult.continueOffer` is `'ad' | 'ad-loading' | 'premium' | null`; `isLossStranded(view, continueOffer)` (`game-host/run-end-policy.ts`) is true for a lost run whose continue is offered, whose summary is null and whose offer is `'hidden'`, and the Game screen's model then sends `{ type: 'finish' }` once, so the run end is recorded and the result shows at once (L11). `'free'` runs the perk directly; `'watch-ad'` shows "Watch an ad to get a hint" and calls `earnRewardedPerk`; the perk runs only if it returns `true`. A dismissed ad changes nothing and says nothing.
 - A hint during play pauses the level before the ad (the lifecycle does it) and returns to the same state.
 - Rewarded reward amount/type in the AdMob console are ignored by the Shell (one ad = one hint or one continue).
 
@@ -1198,7 +1341,7 @@ export function createExpoNetworkConnectivityAdapter(): ConnectivityPort {
 | Situation | Banner | Interstitial | Rewarded button | Consent |
 |---|---|---|---|---|
 | Online, consent handled, not Premium | shown when loaded | per `adPolicy` | shown when loaded | refreshed at launch |
-| Offline | slot collapsed, no message | never | hidden | refresh fails → cached `canRequestAds`; form deferred |
+| Offline | slot collapsed, no message | never | hidden (a lost run's result shows at once, L11) | refresh fails → cached `canRequestAds`; form deferred |
 | Premium | never | never | perks free | not requested |
 | `canRequestAds` false | never | never | hidden (perks need an ad) | privacy row lets the player change it |
 | `ADS_MODE=off` / `isEnabled: false` | never | never | hidden (hints: free allowance only) | never requested |
@@ -1228,7 +1371,7 @@ Numbered for reference from `docs/14` (step O9/G5):
 
 - **A1. Account (once).** Create the AdMob account with the owner's Google account; complete the payments and tax profile. Add the developer website (the same domain as the privacy policy).
 - **A2. Per game: app and ad units.** Apps → Add app → iOS → "not published yet" (link to the store listing later). Create three ad units: **Banner** (adaptive), **Interstitial**, **Rewarded** (reward: amount 1, type `perk`; server-side verification off). Give the app ID and the three unit IDs to the agent, who writes them into `game.config.ts`.
-- **A3. Privacy & messaging.** Create and **publish** the "European regulations" (GDPR/TCF) message for the app, with the privacy-policy URL and languages English and German (Persian/Sorani are not needed for the EEA). Optionally create the "US state regulations" message. Do **not** create the "IDFA explainer" message: the Shell's S3 intro gives the context and the app asks for ATT itself right after Google's form (rule 21); with an explainer published, UMP would present ATT inside its own flow as well. Without a published GDPR message, real users see no form and `canRequestAds` stays false in the EEA.
+- **A3. Privacy & messaging.** Create and **publish** the "European regulations" (GDPR/TCF) message for the app, with the privacy-policy URL and languages English and German (Persian/Sorani are not needed for the EEA). Optionally create the "US state regulations" message. Do **not** create the "IDFA explainer" message: the Shell's S3 intro gives the context before Google's form, the app's own usage text explains Apple's prompt, and the app asks for ATT itself right after Google's form, or on its own when no form is due (rule 21); with an explainer published, UMP would present ATT inside its own flow as well. Without a published GDPR message, real users see no form and `canRequestAds` stays false in the EEA.
 - **A4. Blocking controls.** Block sensitive categories that conflict with spec 8.8 (at least gambling and betting; also dating, alcohol, get-rich-quick). Set the maximum ad content rating to **PG**, matching the code. Review the "Ad review center" after launch.
 - **A5. After the first release.** Link the AdMob app to the App Store listing. Publish `app-ads.txt` at the root of the developer website with the line AdMob shows under Apps → app-ads.txt (format `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`). AdMob finds the site through the App Store listing's **Marketing URL** and can take up to 24 hours to verify. That field can only be edited with a new app version, so the store-pages step must fill it for the **first** version. **Source:** [AdMob app-ads.txt](https://support.google.com/admob/answer/9363762).
 - **A6. Physical-device testing with live IDs** is never needed: test builds always use test units.
@@ -1253,7 +1396,7 @@ Common problems:
 |---|---|---|
 | Crash at launch mentioning `GADApplicationIdentifier` | plugin missing or no `iosAppId` | `withShell` always passes an app ID; `npx expo prebuild --clean` |
 | Crash on the first ads moment: "This app is missing 'NSUserTrackingUsageDescription' so tracking transparency will fail" (`RCTFatal`) | the `expo-tracking-transparency` plugin entry is missing from `shellPlugins`, or `ios/` predates it | add the entry (docs/02 section 9.1); `npx expo prebuild --platform ios --clean` |
-| Apple's tracking prompt never appears | the status is no longer `not-determined` (answered before, tracking restricted, or "Allow Apps to Request to Track" off in iOS Settings), the app was not active, or the build is `ADS_MODE=off` | expected; to see it again on a simulator, delete the app (the answer is kept per install) or erase the simulator; check `getTrackingStatus()` in the debug menu |
+| Apple's tracking prompt never appears | the status is no longer `not-determined` (answered before, tracking restricted, or "Allow Apps to Request to Track" off in iOS Settings), Maestro's `launchApp` granted every permission (the status reads authorized), or the build is `ADS_MODE=off` | expected; to see it again on a simulator, delete and reinstall the app (the answer is kept per install) or erase the simulator, and launch with `xcrun simctl launch` or `launchApp: { permissions: { all: unset } }`. A request made while the app is not active waits for it to become active |
 | Tracking prompt shown twice, or a Google explainer before it | an "IDFA explainer" message is published in AdMob (A3) | unpublish it; the app asks for ATT itself |
 | Ads load but are never personalised on iOS | the player declined tracking or it is restricted | expected (rule 21); ads carry no IDFA |
 | `TurboModuleRegistry.getEnforcing(...): 'RNGoogleMobileAdsModule' could not be found` in Jest | a test imported the real library | the root mock `__mocks__/react-native-google-mobile-ads.ts` must exist (section 3.14) |
@@ -1271,10 +1414,10 @@ docs/04's `eslint.config.mjs` already enforces rule 3; do not add copies. `VENDO
 
 ### 3.14 Testing
 
-- **Unit (Jest):** `ad-policy.test.ts`, `perk-offer.test.ts`, `ad-gate.test.ts` (order form → tracking → initialize → preload; no initialize without consent; no tracking prompt when `canRequestAds` is false; `initialize` still runs after `'denied'`; no form or prompt during the tutorial, for Premium or offline; launch refresh shows neither), `admob-consent-adapter.test.ts` (the ATT mapping: granted → `'authorized'`, denied → `'denied'`, undetermined → asks once; no request when already answered; an error → `'denied'` and `onError`; `'unavailable'` off iOS), `ad-moments.test.ts` (suspend → show → resume → preload; history recorded; perk only when earned), `ads-factory.test.ts` (off never shows; live without units throws), `ads-config.test.ts` (sample IDs in test/off, live IDs in live, sample or malformed IDs rejected, iOS-only games accepted). All pass (section Verified).
+- **Unit (Jest):** `ad-policy.test.ts`, `perk-offer.test.ts`, `ad-gate.test.ts` (order refresh → intro → form → tracking → initialize → preload where consent is required; no intro and no form when the refresh already allows ads, so tracking comes on its own; no initialize without consent; no tracking prompt when `canRequestAds` is false; `initialize` still runs after `'denied'`; no form or prompt during the tutorial, for Premium or offline; launch refresh shows neither), `admob-consent-adapter.test.ts` (the ATT mapping: granted → `'authorized'`, denied (also restricted) → `'denied'`, undetermined → asks once, after the app is active; no request when already answered; an error → `'unavailable'` and `onError`; `'unavailable'` off iOS), `ad-moments.test.ts` (suspend → show → resume → preload; history recorded; perk only when earned), `ads-factory.test.ts` (off never shows; live without units throws), `ads-config.test.ts` (sample IDs in test/off, live IDs in live, sample or malformed IDs rejected, iOS-only games accepted). All pass (section Verified).
 - **Root mocks:** docs/07 section 3.6 owns `__mocks__/react-native-google-mobile-ads.ts` and `__mocks__/expo-tracking-transparency.ts`. Jest applies them to every test without a `jest.mock` call, and they keep imports of the two adapters safe; Shell tests use `fake-ads.ts` and `fake-consent.ts` (with a scripted `TrackingStatus`). The mock's `BannerAdSize` lists `LARGE_ANCHORED_ADAPTIVE_BANNER` next to `ANCHORED_ADAPTIVE_BANNER`, because the adapter uses the large size (without it a banner test would pass `undefined` as the size).
 - **Mutation:** Stryker on `ad-policy.ts` left two survivors (docs/07 section 3.8.6); the two boundary cases above ("exactly 3 completed levels", "the same millisecond as the last one") kill them, and the file passed Jest, docs/04's ESLint and Prettier with them in the integration pass on 2026-09-26.
-- **Simulator smoke (test variant, `ADS_MODE=test`, one per SDK upgrade and before each release):** fresh simulator; debug menu → consent geography EEA → reset; finish the tutorial; the "Publisher Test Ads" form appears before any ad; consent; Apple's tracking prompt (a full-page sheet in France, Germany, Italy, Poland and Romania) appears next and before the banner: choose "Ask App Not to Track"; Home shows the "Test mode" banner; win 3 levels; tap Next → a test interstitial; the game music is suspended during it; a rewarded hint grants exactly one hint. Screenshot each step. Then "Simulate offline": the banner slot collapses, no interstitial, the rewarded button disappears, no message appears.
+- **Simulator smoke (test variant, `ADS_MODE=test`, one per SDK upgrade and before each release):** six Maestro flows (`packages/shell/e2e/ads-smoke/01` to `06`, tag `ads-smoke`), run by hand, each after a fresh install started with `xcrun simctl launch` (Maestro's `launchApp` grants the ATT answer), never by `e2e:ios`, with no `ads=` in a setup link: (1) `geo=eea`: S3, Google's form, Apple's tracking prompt declined, the "Test mode" banner on Home; (2) a relaunch without prompts; (3) Next with a test interstitial; (4) the rewarded continue, which asserts that the board redraws (`game.board-frame` settled for the continue's seq); (5) offline: the banner slot collapses, no interstitial, the continue offer hidden and the result shown at once; (6) on its own fresh install, `geo=other`: no GDPR form, then Apple's prompt with the app's usage text (a test build runs on Google's sample AdMob app, whose IDFA explainer shows before the prompt; the owner's app shows Apple's prompt alone).
 - **Screenshots and E2E** run with `ADS_MODE=off`, so images are deterministic, the runtime network audit sees no ad traffic (`docs/13`, layer F), and neither Google's form nor Apple's tracking prompt ever appears.
 
 ---
@@ -1284,7 +1427,7 @@ docs/04's `eslint.config.mjs` already enforces rule 3; do not add copies. `VENDO
 - [ ] `react-native-google-mobile-ads` is exactly 17.2.0 (or a newer version that passed section 3.1's re-verification) and appears only in the two adapters and the root mock.
 - [ ] The plugin receives an app ID in every variant, `delayAppMeasurementInit: true`, the committed SKAdNetwork list, and no `userTrackingUsageDescription`.
 - [ ] `expo-tracking-transparency` is `~57.0.2` (the SDK 57 map), its plugin entry carries the en `userTrackingPermission`, `expo.locales` carries `NSUserTrackingUsageDescription` in de, fa and ckb, and only `admob-consent-adapter.ts` imports it.
-- [ ] On iOS, Apple's tracking prompt appears after Google's form and before `initialize`, only while not determined; a declined answer still shows ads; `ADS_MODE=off` builds never show it.
+- [ ] On iOS, Apple's tracking prompt appears after Google's form (or on its own, with no S3 intro, when no form is due) and before `initialize`, only while not determined; the S3 intro appears only before Google's form; a declined answer still shows ads; `ADS_MODE=off` builds never show it.
 - [ ] Live builds hold no scaffold placeholder (`1234567890123456`) or sample AdMob ID (`assertLiveIds`).
 - [ ] `refresh-skadnetwork.ts --check` passes; `SKADNETWORK_IDS` has 50 IDs (or whatever Google lists today).
 - [ ] Store builds: `extra.adsMode` is `live` (or `off`), `extra.adUnits` holds valid IDs, `GADApplicationIdentifier` is the game's; test builds: sample app ID and no `adUnits` key (`withShell` omits it; `null` in `extra` arrives as `{}`, docs/02 rule 10).
@@ -1292,7 +1435,7 @@ docs/04's `eslint.config.mjs` already enforces rule 3; do not add copies. `VENDO
 - [ ] "Ad privacy choices" row visible only when required, and it works.
 - [ ] Banners only on Home, Levels, Statistics; collapsed until loaded; never over controls.
 - [ ] Interstitials only after Next/Replay/Try again; `AdHistory` saved; Premium/offline/consent/tutorial/count/time/loss rules pass their tests.
-- [ ] Rewarded perks only on the player's tap; reward only on `EARNED_REWARD`; button hidden when nothing is loaded.
+- [ ] Rewarded perks only on the player's tap; reward only on `EARNED_REWARD`; a continue's offer busy while its ad loads, hidden only when no ad can be served, and then the lost run's result shown at once (L11).
 - [ ] The game loop and audio are suspended during fullscreen ads.
 - [ ] No ad-related message ever reaches the player; errors go to `ErrorLogPort`.
 - [ ] `npm run audit:privacy` passes with the GMA/UMP reasons declared.
@@ -1337,7 +1480,7 @@ On 2026-09-26 (macOS, Node 26.4.0, npm 11.17.0, Xcode 26.6, iOS 26.5 simulator, 
 - **Services spike (same day, Release build):** pods resolved to Google-Mobile-Ads-SDK 13.6.0 and GoogleUserMessagingPlatform 3.1.0; a test adaptive banner rendered with the "Test mode" label; the EEA debug-geography consent flow behaved as in section 3.5.
 - **Pod privacy manifests** (GMA 13.6.0, UMP 3.1.0) read with `plutil` through the aggregation script (`docs/13`).
 - **Bundle facts** (`expo export` of a Release JS bundle that imports the library): `3940256099942544` appears in `react-native-google-mobile-ads/src/TestIds.ts` and `src/types/RequestOptions.ts`, so every bundle contains it; the release checks attribute it by module (`docs/13`, `docs/14`).
-- **2026-09-30 (O1, reading only):** Google's ATT guidance and Apple's `requestTrackingAuthorization(completionHandler:)`, `NSUserTrackingUsageDescription`, `NSPrivacyTracking` and `NSPrivacyTrackingDomains` pages re-read; `expo-tracking-transparency` 57.0.2 tarball read (`src/TrackingTransparency.ts`, the Swift permission requester, the plugin); the GMA 13.6.0 xcframework's `PrivacyInfo.xcprivacy` read with `plutil`. The ATT code in sections 3.5 and 3.14 has **not** been compiled, run in Jest or run on a simulator yet.
+- **2026-09-30 (O1, reading only):** Google's ATT guidance and Apple's `requestTrackingAuthorization(completionHandler:)`, `NSUserTrackingUsageDescription`, `NSPrivacyTracking` and `NSPrivacyTrackingDomains` pages re-read; `expo-tracking-transparency` 57.0.2 tarball read (`src/TrackingTransparency.ts`, the Swift permission requester, the plugin); the GMA 13.6.0 xcframework's `PrivacyInfo.xcprivacy` read with `plutil`. The ATT code first written here was not compiled or run. **2026-10-01 (FINAL H.20, L14):** sections 3.5 and 3.14 now follow the Shell's own consent code (port, adapter, fake and `ad-gate.ts`), which passed Jest and `npm run verify` in the round-4 integration repo, and whose order was seen on the iOS 26.5 simulator on 2026-09-30 (`ADS_MODE=test`, debug geography EEA, fresh install launched with `xcrun simctl launch`): S3, Google's test form, then Apple's prompt with the en text; after "Ask App Not to Track" the test banner loaded; a relaunch showed neither.
 - **Not verified:** `LARGE_ANCHORED_ADAPTIVE_BANNER` rendering and loading inside a zero-height container; the interstitial and rewarded test ads end to end in the Shell (the adapter was type-checked, not run on a device); consent-form language for in-app fa/ckb; Android.
 
 **Re-verify** (versions age): `npm view react-native-google-mobile-ads version`, the SDK versions in its `package.json` `sdkVersions`, `node packages/tooling/src/ads/refresh-skadnetwork.ts --check`, `npm run audit:privacy`, the Jest suites above, and the simulator smoke in section 3.14.
@@ -1351,4 +1494,4 @@ On 2026-09-26 (macOS, Node 26.4.0, npm 11.17.0, Xcode 26.6, iOS 26.5 simulator, 
 3. **Interpretation of spec 8.8.** "Completed levels" = levels won; "never twice in a row after losses" = two consecutive interstitials may not both follow a loss. If the owner meant "no interstitial after two consecutive lost levels", only `shouldShowInterstitial` and its test change.
 4. **Resolved (2026-09-30): 5.1.2 vs D4.** The owner chose Apple's rules (O1, FINAL H.1): the app asks for ATT, and the App Privacy answers declare Device ID as used for tracking (section 3.10, `docs/13` section 3.4).
 5. **Resolved: docs/07's root mock lists `BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER`** (section 3.14).
-6. **The S3 intro's footnote names only Google's form.** The copy-deck text `consent.intro.footnote` says "Google's form opens next", but outside the EEA an iPhone player may get only Apple's tracking prompt after the intro. The copy deck is a design input (not edited here); its owner should word the footnote for both steps, or pick a second footnote key when only the tracking prompt follows.
+6. **Resolved (2026-10-01, FINAL H.16, L10): the S3 intro's footnote names only Google's form.** The copy-deck text `consent.intro.footnote` says "Google's form opens next". The intro now appears only before Google's form, so the footnote is always true; when only Apple's tracking prompt is due, the prompt appears on its own, explained by `consent.tracking.usage-description`. The copy deck needs no second footnote.

@@ -386,8 +386,8 @@ Jest applies a file in `<rootDir>/__mocks__/` automatically to the node module o
 
 ```ts
 // __mocks__/react-native-google-mobile-ads.ts — applied automatically to every Jest project (root
-// manual mock for a node module). Only the two AdMob adapters import the library (docs/11); a test
-// that asserts on it calls jest.mock() + jest.requireMock() (section 3.6). Mirrors 17.2.0's surface.
+// manual mock for a node module). Only the two AdMob adapters import the library; a test
+// that asserts on it calls jest.mock() + jest.requireMock(). Mirrors the 17.2.0 surface the adapters use.
 type ConsentInfo = {
   status: 'UNKNOWN' | 'REQUIRED' | 'NOT_REQUIRED' | 'OBTAINED';
   canRequestAds: boolean;
@@ -429,6 +429,7 @@ export const AdsConsent = {
   loadAndShowConsentFormIfRequired: jest.fn(() => Promise.resolve(CONSENT_OBTAINED)),
   showPrivacyOptionsForm: jest.fn(() => Promise.resolve(CONSENT_OBTAINED)),
   getConsentInfo: jest.fn(() => Promise.resolve(CONSENT_OBTAINED)),
+  getUserChoices: jest.fn(() => Promise.resolve({})),
   reset: jest.fn(),
 };
 
@@ -486,29 +487,46 @@ export function BannerAd(): null {
 }
 ```
 
-A fourth root mock covers Apple's App Tracking Transparency module, which only docs/11's consent adapter imports (FINAL H.1). Its native module does not exist in Jest, and the adapter test needs to script each answer. Added 2026-09-30; not yet run:
+A fourth root mock covers Apple's App Tracking Transparency module, which only docs/11's consent adapter imports (FINAL H.1). jest-expo 57 mocks only its native module, whose functions answer `undefined`, so the package's own JS would crash on `response.status`; the adapter test also needs to script each answer. This is the Shell's file as the skills ship it (corrected to it on 2026-10-01, FINAL H.20, L14). Verified: `admob-consent-adapter.test.ts` runs against it (asks once while not determined, waits until the app is active, `'unavailable'` when the read fails and off iOS), and the consent tests pass in the round-4 game clean-room repo (3 suites, 17 tests, re-run on 2026-10-01):
 
 ```ts
-// __mocks__/expo-tracking-transparency.ts — root manual mock for expo-tracking-transparency 57.0.2.
-// The default answer is "not asked yet"; a test scripts others with mockResolvedValueOnce.
+// __mocks__/expo-tracking-transparency.ts — root manual mock (automatic in every Jest project).
+// jest-expo 57 mocks only the native module ExpoTrackingTransparency, whose functions answer
+// undefined, so the package's own JS would crash on response.status. Only
+// admob-consent-adapter.ts imports the package; its test scripts the answers through
+// jest.mock('expo-tracking-transparency') + jest.requireMock('expo-tracking-transparency').
+// The defaults: nothing asked yet ('undetermined'), and the player declines when asked.
+type Status = 'granted' | 'denied' | 'undetermined';
+type Response = {
+  readonly status: Status;
+  readonly granted: boolean;
+  readonly canAskAgain: boolean;
+  readonly expires: 'never';
+};
+
+// The package's enum values (expo's PermissionStatus).
 export const PermissionStatus = {
   GRANTED: 'granted',
   UNDETERMINED: 'undetermined',
   DENIED: 'denied',
 } as const;
 
-const UNDETERMINED = {
-  status: PermissionStatus.UNDETERMINED,
-  granted: false,
-  canAskAgain: true,
-  expires: 'never',
-};
+function response(status: Status): Response {
+  return {
+    status,
+    granted: status === 'granted',
+    canAskAgain: status === 'undetermined',
+    expires: 'never',
+  };
+}
 
-export const getTrackingPermissionsAsync = jest.fn(() => Promise.resolve(UNDETERMINED));
-export const requestTrackingPermissionsAsync = jest.fn(() => Promise.resolve(UNDETERMINED));
+export const getTrackingPermissionsAsync = jest.fn(() => Promise.resolve(response('undetermined')));
+export const requestTrackingPermissionsAsync = jest.fn(() => Promise.resolve(response('denied')));
+export const getAdvertisingId = jest.fn((): string | null => null);
+export const isAvailable = jest.fn(() => true);
 ```
 
-Shell tests never touch it: `fake-consent.ts` holds a scripted `TrackingStatus` and records every `requestTrackingIfNotDetermined` call, so `ad-gate.test.ts` proves the order form → tracking → initialize with fakes (docs/11 section 3.14).
+Shell tests never touch it: `fake-consent.ts` (`createFakeConsent`) holds a scripted `TrackingStatus`, records every call in order (`'requestTracking'` included), shows its "prompt" only while the status is `'not-determined'` and counts the prompts (`trackingPrompts()`), so `ad-gate.test.ts` proves the order intro → form → tracking → initialize, and tracking on its own when no form is due, with fakes (docs/11 section 3.14; FINAL H.16 and H.20).
 
 ```ts
 // __mocks__/expo-iap.ts — root manual mock (automatic in every Jest project). expo-iap 5.8.0 ships no
@@ -584,11 +602,18 @@ describe('createAdmobConsentAdapter', () => {
     expect(AdsConsent.getConsentInfo).toHaveBeenCalledTimes(1);
   });
 
-  it('passes a debug geography only when the debug menu sets one', async () => {
+  it('passes the debug geography and test devices only when a test build sets them (geo=)', async () => {
     await createAdmobConsentAdapter({ onError: jest.fn() }).refresh();
     await createAdmobConsentAdapter({ debugGeography: 'eea', onError: jest.fn() }).refresh();
+    const devices = ['2077ef9a63d2b398840261c8221a0c9b'];
+    const other = { debugGeography: 'other', testDeviceIdentifiers: devices } as const;
+    await createAdmobConsentAdapter({ ...other, onError: jest.fn() }).refresh();
 
-    expect(AdsConsent.requestInfoUpdate.mock.calls).toStrictEqual([[{}], [{ debugGeography: 1 }]]);
+    expect(AdsConsent.requestInfoUpdate.mock.calls).toStrictEqual([
+      [{}],
+      [{ debugGeography: 1 }],
+      [{ debugGeography: 4, testDeviceIdentifiers: devices }],
+    ]);
   });
 });
 ```

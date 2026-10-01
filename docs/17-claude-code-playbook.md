@@ -114,7 +114,7 @@ Spec section 15 (definition of done for the Shell and pilot) is the exit test: e
 **Before code (owner and agent together):**
 - [ ] The owner picked the game (spec section 13, decision D1 for the pilot) and approved its design notes: modes, pack layout, star rule (par or score), difficulty bands for the sims.
 - [ ] The owner approved the app name (G1); the bundle ID is `io.applander.<game-id without hyphens>` and the Premium product ID `<bundle ID>.premium` (FINAL H.4).
-- [ ] `npm run new-game -- --app <game-id>` created `apps/<game-id>/` (docs/02 section 11.3); `game.config.ts` is filled, with placeholder AdMob IDs until the owner supplies real ones (the completeness check and the release gates reject the placeholders and any `com.example.*` ID by name); `npx expo config --json` passes for `test/test`, `test/off` and `store/off`.
+- [ ] `npm run new-game -- --app <game-id>` created `apps/<game-id>/` (docs/02 section 11.3); `game.config.ts` is filled, with placeholder AdMob IDs and placeholder links (`example.com`, `support@example.com`) until the owner supplies real ones (owner steps G5 and G3; `check-game-app --stage complete` and the release gates reject every one of these placeholders and any `com.example.*` ID by name, so the complete stage fails until then; FINAL H.20, L14); `npx expo config --json` passes for `test/test`, `test/off` and `store/off`.
 
 **Build (section 3.2), then:**
 - [ ] Contract tests pass (docs/02 section 7.5); coverage of `apps/<game-id>/src/rules` at 95/95/95/90; Stryker on the rules at or above 75% with survivors explained.

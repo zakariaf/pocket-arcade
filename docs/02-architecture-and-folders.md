@@ -346,7 +346,7 @@ All paths are under `packages/shell/src/`. Adapter factories are `create` + the 
 ### 6.2 Signatures
 
 ```ts
-// packages/shell/src/services/ads/ads-port.ts (docs/11)
+// packages/shell/src/services/ads/ads-port.ts
 import type { ReactNode } from 'react';
 
 export type AdUnitIds = {
@@ -356,6 +356,13 @@ export type AdUnitIds = {
 };
 export type FullscreenResult = 'shown' | 'unavailable';
 export type RewardResult = 'rewarded' | 'dismissed' | 'unavailable';
+/**
+ * Where the rewarded ad stands (L11): 'loading' from the start of a preload until LOADED or a load
+ * error; 'ready' after LOADED; 'unavailable' after a load error until the next preload starts, after
+ * the loaded ad was shown, with ads off and before initialize. So a hidden offer always means the
+ * ad cannot come, never that it is still on its way.
+ */
+export type RewardedStatus = 'loading' | 'ready' | 'unavailable';
 export type BannerSlotProps = {
   readonly onLoaded: () => void; // the slot collapses until this fires (no empty box)
   readonly onFailed: () => void; // failed loads are silent (spec 8.8)
@@ -367,9 +374,10 @@ export type AdsPort = {
   readonly initialize: () => Promise<void>;
   readonly preloadInterstitial: () => void;
   readonly preloadRewarded: () => void;
-  readonly isRewardedLoaded: () => boolean;
-  // Notifies when rewarded availability changes, so "Watch an ad" buttons appear/disappear.
-  readonly subscribeRewardedLoaded: (listener: (isLoaded: boolean) => void) => () => void;
+  readonly rewardedStatus: () => RewardedStatus;
+  // Notifies when rewardedStatus() changes (useSyncExternalStore's subscribe), so the "Watch an ad"
+  // offer shows its loading state, turns ready, or goes away.
+  readonly subscribeRewardedStatus: (listener: () => void) => () => void;
   // Resolve when the ad CLOSED (or immediately with 'unavailable'). Never reject.
   readonly showInterstitial: () => Promise<FullscreenResult>;
   readonly showRewarded: () => Promise<RewardResult>;
@@ -378,14 +386,19 @@ export type AdsPort = {
 ```
 
 ```ts
-// packages/shell/src/services/consent/consent-port.ts (docs/11)
+// packages/shell/src/services/consent/consent-port.ts
 export type ConsentInfo = {
   readonly canRequestAds: boolean;
   readonly isPrivacyOptionsRequired: boolean; // show the "Ad privacy choices" row (S11)
 };
 
-// Apple's App Tracking Transparency answer (FINAL H.1); 'denied' includes "restricted".
-export type TrackingStatus = 'not-determined' | 'authorized' | 'denied' | 'unavailable';
+/**
+ * Apple's App Tracking Transparency answer (guideline 5.1.2(i)). Only 'authorized' lets Google's
+ * SDK read the IDFA; every other status still serves ads, without it. 'unavailable': not iOS, ads
+ * off, or the status could not be read.
+ */
+export type TrackingStatus =
+  'authorized' | 'denied' | 'restricted' | 'not-determined' | 'unavailable';
 
 export type ConsentPort = {
   // Every launch (not Premium, ads enabled). Offline: returns the last session's answer.
@@ -394,10 +407,9 @@ export type ConsentPort = {
   readonly showFormIfRequired: () => Promise<ConsentInfo>;
   // Settings > Ad privacy choices.
   readonly showPrivacyOptions: () => Promise<ConsentInfo>;
-  // iOS ATT, read without asking (decides whether the S3 intro is needed).
-  readonly getTrackingStatus: () => Promise<TrackingStatus>;
-  // S3, after Google's form: Apple's prompt only while 'not-determined'. Never rejects.
-  readonly requestTrackingIfNotDetermined: () => Promise<TrackingStatus>;
+  // After Google's form, before the first ad request: the system ATT prompt, only while the status
+  // is not-determined and the app is active; otherwise the status. Never rejects.
+  readonly requestTracking: () => Promise<TrackingStatus>;
 };
 ```
 
@@ -1190,7 +1202,7 @@ export const gameConfig: GameConfig = {
 };
 ```
 
-The AdMob IDs above are the new-game scaffold's placeholders in the documented format (docs/11). `check-game-app --stage complete`, `assertLiveIds` and the release gates reject them by name (publisher `1234567890123456`), and they reject any app ID outside `io.applander.*`, such as `com.example.*` (FINAL H.4, docs/14 section 3.8). `ageRating` uses App Store Connect's `ageRatingDeclarations` attribute names; on 2026-09-26 the API listed `advertising` (boolean, `true` for every game with ads) and the level values `NONE`, `INFREQUENT_OR_MILD`, `FREQUENT_OR_INTENSE`, `INFREQUENT`, `FREQUENT`; the store step picks the answers. The display names in `fa` and `ckb` are machine-written and need the native-speaker review (spec 7.4).
+The AdMob IDs above are the new-game scaffold's placeholders in the documented format (docs/11). `check-game-app --stage complete`, `assertLiveIds` and the release gates reject them by name (publisher `1234567890123456`), and they reject any app ID outside `io.applander.*`, such as `com.example.*` (FINAL H.4, docs/14 section 3.8). The `links` above are placeholders too: `check-game-app --stage complete` and the store gates also reject the privacy host `example.com` and the support address `support@example.com` by name. So the complete stage fails on every owner placeholder until the owner supplies the real value: the AdMob IDs in owner step G5, the privacy host and support address in G3 (FINAL H.20, L14). `ageRating` uses App Store Connect's `ageRatingDeclarations` attribute names; on 2026-09-26 the API listed `advertising` (boolean, `true` for every game with ads) and the level values `NONE`, `INFREQUENT_OR_MILD`, `FREQUENT_OR_INTENSE`, `INFREQUENT`, `FREQUENT`; the store step picks the answers. The display names in `fa` and `ckb` are machine-written and need the native-speaker review (spec 7.4).
 
 ```ts
 // packages/shell/src/config/game-config.ts
@@ -1341,7 +1353,7 @@ Owned by docs/14 (complete file there): it keys Metro's transform cache on `EXPO
 
 ### 9.1 What `withShell` does
 
-`withShell(gameConfig, env)` turns one game's config and the build environment into the complete Expo config. It runs in Node (type stripping), so every file it reaches uses relative `.ts` imports, erasable syntax and no React Native.
+`withShell(gameConfig, env)` turns one game's config and the build environment into the complete Expo config. It runs in Node (type stripping), so every file it reaches uses relative `.ts` imports (JSON only with `with { type: 'json' }`, as `shell-plugins.ts` reads the Shell catalogs; docs/09 section 7.2 verified the attribute in Node 26), erasable syntax and no React Native.
 
 ```ts
 // packages/shell/src/config/with-shell.ts
@@ -1351,8 +1363,7 @@ import { adUnitsExtra } from './ads-config.ts';
 import { resolveBuildVariant } from './app-variant.ts';
 import { toGameExtra } from './game-extra.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
-import { shellPlugins } from './shell-plugins.ts';
-import { TRACKING_USAGE } from './tracking-usage.ts';
+import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
 
 import type { BuildEnv } from './app-variant.ts';
 import type { GameConfig, LanguageCode } from './game-config.ts';
@@ -1368,7 +1379,7 @@ function localizedNames(game: GameConfig): NonNullable<ExpoConfig['locales']> {
       {
         ios: {
           CFBundleDisplayName: game.appName[lang],
-          NSUserTrackingUsageDescription: TRACKING_USAGE[lang], // Apple's ATT prompt (FINAL H.1)
+          NSUserTrackingUsageDescription: TRACKING_USAGE_DESCRIPTIONS[lang], // Apple's ATT prompt
         },
         android: { app_name: game.appName[lang] },
       },
@@ -1446,18 +1457,34 @@ Field by field:
 
 ```ts
 // packages/shell/src/config/shell-plugins.ts
+import ckb from '@e07/shell/i18n/catalogs/ckb.json' with { type: 'json' };
+import de from '@e07/shell/i18n/catalogs/de.json' with { type: 'json' };
+import en from '@e07/shell/i18n/catalogs/en.json' with { type: 'json' };
+import fa from '@e07/shell/i18n/catalogs/fa.json' with { type: 'json' };
+
 import { admobPluginOptions } from './ads-config.ts';
 import { SKADNETWORK_IDS } from './skadnetwork-ids.ts';
-import { TRACKING_USAGE } from './tracking-usage.ts';
 
 import type { AdsMode } from './app-variant.ts';
-import type { GameConfig } from './game-config.ts';
+import type { GameConfig, LanguageCode } from './game-config.ts';
 import type { ExpoConfig } from 'expo/config';
 
 type PluginEntry = NonNullable<ExpoConfig['plugins']>[number];
 
 const LOCALES = ['en', 'de', 'fa', 'ckb'];
 const VAZIRMATN = './assets/fonts/Vazirmatn';
+const TRACKING_KEY = 'consent.tracking.usage-description';
+
+/**
+ * Apple's App Tracking Transparency prompt text (NSUserTrackingUsageDescription) in each app
+ * language, from the Shell catalogs: the plugin gets the en text, withShell's locales all four.
+ */
+export const TRACKING_USAGE_DESCRIPTIONS: Readonly<Record<LanguageCode, string>> = {
+  en: en[TRACKING_KEY],
+  de: de[TRACKING_KEY],
+  fa: fa[TRACKING_KEY],
+  ckb: ckb[TRACKING_KEY],
+};
 
 /** Every native module the Shell links, with the options FINAL-DECISIONS fixes. */
 export function shellPlugins(game: GameConfig, adsMode: AdsMode): PluginEntry[] {
@@ -1468,7 +1495,7 @@ export function shellPlugins(game: GameConfig, adsMode: AdsMode): PluginEntry[] 
     'expo-iap',
     ['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)],
     // Apple's ATT prompt (FINAL H.1): the one writer of NSUserTrackingUsageDescription (base text).
-    ['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE.en }],
+    ['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }],
     [
       'react-native-audio-api',
       {
@@ -1485,7 +1512,7 @@ export function shellPlugins(game: GameConfig, adsMode: AdsMode): PluginEntry[] 
 
 - Paths in plugin options are relative to the app folder (Expo's project root). The Vazirmatn files live in each app's `assets/fonts/` (docs/10 owns them; the new-game scaffold copies them), which is also where the board goldens and art scripts load them from (docs/07, docs/08, docs/09).
 - `expo-localization` gets only `supportedLocales`, never `supportsRTL`/`forcesRTL` (FINAL C.30).
-- `expo-tracking-transparency` is in every variant, so every build carries `NSUserTrackingUsageDescription` (the module crashes on a status read without it); only an `ADS_MODE=test|live` build ever asks (docs/11 rule 21). `packages/shell/src/config/tracking-usage.ts` holds the four texts of the copy-deck key `consent.tracking.usage-description` as a plain `Record<LanguageCode, string>`, because `app.config.ts` runs under Node type stripping without JSON imports; its test asserts that each text equals the Shell catalog's `consent.tracking.usage-description` (docs/10), so the two never drift. Not yet compiled or run (added 2026-09-30).
+- `expo-tracking-transparency` is in every variant, so every build carries `NSUserTrackingUsageDescription` (the module crashes on a status read without it); only an `ADS_MODE=test|live` build ever asks (docs/11 rule 21). `shell-plugins.ts` reads the four texts of the copy-deck key `consent.tracking.usage-description` straight from the Shell catalogs (JSON imports with `with { type: 'json' }`) and exports them as `TRACKING_USAGE_DESCRIPTIONS`: the plugin gets the en text, `withShell`'s locales all four, so there is no second copy to drift (docs/10; FINAL H.20, L14: the catalogs are the only place the tracking texts live). Seen working on 2026-09-30 in a Release simulator build of Line Siege: `NSUserTrackingUsageDescription` was in `Info.plist` and in the en, de, fa and ckb `InfoPlist.strings`.
 - docs/09 adds the splash and icon plugin entries and docs/01 the Xcode-27 scene-support entry; they append to this list rather than creating a second one.
 
 ### 9.2 Runtime configuration: `extra.game`
@@ -1684,7 +1711,7 @@ The variant matrix, `app-variant.ts` (`resolveBuildVariant`), `test-only.ts` and
 
 ### 11.3 Add a game
 
-1. `npm run new-game -- --app <game-id>` scaffolds `apps/<game-id>/` from Line Siege's skeleton: `package.json` (`@e07/<game-id>`, the shared dependency set), `tsconfig.json`, `metro.config.js`, `app.config.ts`, `index.ts`, a `game.config.ts` whose app ID is already `io.applander.<game-id without hyphens>` with the Premium product ID `<app id>.premium` (FINAL H.4) and whose AdMob IDs are placeholders, `assets/fonts/` (Vazirmatn and `OFL.txt`), and empty `src/` folders. The bundle id also matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`. The completeness check and the release gates reject `com.example.*` and the placeholder AdMob IDs by name until the owner's real IDs replace them.
+1. `npm run new-game -- --app <game-id>` scaffolds `apps/<game-id>/` from Line Siege's skeleton: `package.json` (`@e07/<game-id>`, the shared dependency set), `tsconfig.json`, `metro.config.js`, `app.config.ts`, `index.ts`, a `game.config.ts` whose app ID is already `io.applander.<game-id without hyphens>` with the Premium product ID `<app id>.premium` (FINAL H.4) and whose AdMob IDs and `links` (privacy host `example.com`, support address `support@example.com`) are placeholders, `assets/fonts/` (Vazirmatn and `OFL.txt`), and empty `src/` folders. The bundle id also matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`. The completeness check (`--stage complete`) and the release gates reject `com.example.*`, the placeholder AdMob IDs and the placeholder links by name until the owner's real values replace them (owner steps G5 and G3; FINAL H.20, L14).
 2. Fill `game.config.ts`; `npx expo config --json` must pass.
 3. Write the game test-first in this order (FINAL D.41): rules (examples + properties), level generator (goldens + solver properties), persistence (`parseState`, `parseMove`, round trip), board (view, layout, draw goldens), timeline, tutorial, stats counters, texts.
 4. Declare the `ShellGameTypes` bag and assemble `src/index.ts`; the contract tests (section 7.5) must pass.
