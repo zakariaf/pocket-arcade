@@ -351,8 +351,8 @@ Titles: `describe('applyMove')` (the exported name, exactly) → optional `descr
 | App workspace | `@e07/<game-id>` | `@e07/line-siege` |
 | Game id / app folder / Expo `slug` / commit scope | kebab-case, stable forever | `line-siege` |
 | Display name (`expo.name`) | the game's real name; prebuild derives the Xcode scheme from it without spaces | `Line Siege` → `LineSiege.xcworkspace` |
-| Bundle id | `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`, same on iOS and Android (FINAL A.9) | `com.example.linesiege` |
-| Premium product id | `<bundle id>.premium` | `com.example.linesiege.premium` |
+| Bundle id (iOS) and package (Android) | `io.applander.<game id without hyphens>`, all lowercase, the same on both platforms (FINAL H.4); it also matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` (FINAL A.9). The release gates reject `com.example.*` and other placeholders | `io.applander.linesiege` |
+| Premium product id | `<bundle id>.premium` | `io.applander.linesiege.premium` |
 
 Cross-folder imports use the package name plus the path under `src/` and the file extension (`@e07/shell/ui/app-text.tsx`); details in docs/04.
 

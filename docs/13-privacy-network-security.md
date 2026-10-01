@@ -1,7 +1,7 @@
 # 13 · Privacy, network security and the release audit
 
 > **What this doc decides.** How the promise "our own code makes no network requests" (spec N3) is enforced in six automated layers, with the script behind each one; how the iOS privacy manifest is aggregated from every pod and what feeds the App Store "App Privacy" answers; how the App Store Connect `.p8` key is handled; the supply-chain guards and the banned-SDK list; the runtime network guard; and the release audit that proves a store build carries no debug code, no Google test ad IDs and no StoreKit test artefacts.
-> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 10, 24, 27, 43 and 44 (plus 9, 23, 25, 26). Other owners: ESLint config `docs/04`, versions and the banned npm list `docs/01`, scripts/hooks/licence audit `docs/16`, build variants and the store-artifact gate `docs/14`. Problems found while writing are listed under [Open issues](#open-issues).
+> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 10, 24, 27, 43 and 44 (plus 9, 23, 25, 26), as amended by section H (O1 tracking, O4 IDs). Other owners: ESLint config `docs/04`, versions and the banned npm list `docs/01`, scripts/hooks/licence audit `docs/16`, build variants and the store-artifact gate `docs/14`. Problems found while writing are listed under [Open issues](#open-issues).
 > **Related docs:** [01-stack-and-versions.md](01-stack-and-versions.md) (banned packages), [04-code-style-and-limits.md](04-code-style-and-limits.md) (layer A lint), [07-testing-and-tdd.md](07-testing-and-tdd.md) (the E2E runner (layer F)), [11-ads-admob.md](11-ads-admob.md) (AdMob privacy), [12-in-app-purchase.md](12-in-app-purchase.md) (expo-iap bans), [14-ios-build-and-release.md](14-ios-build-and-release.md) (the store-artifact gate), [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) (licence audit and gated paths). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
@@ -14,6 +14,8 @@ The spec allows exactly two network-capable components in a game app (N3):
 |---|---|---|---|
 | (a) AdMob ads + consent | `react-native-google-mobile-ads` 17.2.0 | pods `Google-Mobile-Ads-SDK` 13.6.0, `GoogleUserMessagingPlatform` 3.1.0; JS dependency `@iabtcf/core` | spec 4.1: ads are downloaded from Google |
 | (b) Store purchases | `expo-iap` 5.8.0 | pod `openiap` 3.6.0 → StoreKit 2 (system daemon) | spec 4.1: the purchase is confirmed by Apple |
+
+`expo-tracking-transparency` (Apple's App Tracking Transparency prompt, FINAL H.1) is not a network component: its JS and Swift make no request (read in the 57.0.2 tarball), so it is not on this list and N3 is unchanged.
 
 Everything else — React Native, Expo, Skia, SQLite, audio — contains network-capable code that we never call. "Never call" is not provable by reading once; it is kept true by six layers that run on every `npm run verify`, every release and the E2E smoke run:
 
@@ -43,14 +45,14 @@ Developer tooling (`packages/tooling`, Expo CLI, npm, `expo-doctor`) may use the
 5. **Only three vendor pods may come from the CocoaPods trunk: `Google-Mobile-Ads-SDK`, `GoogleUserMessagingPlatform`, `openiap`.** Everything else must be built from `node_modules`.
    *Why:* a binary SDK bypasses layers A–C; the trunk list in `Podfile.lock` is exact (verified).
 6. **Only Google's pods may declare `NSPrivacyTracking` or tracking domains.** `npm run audit:privacy` fails otherwise.
-   *Why:* N2 (no analytics, no crash reporting) and D4.
-7. **Keep `expo.updates.enabled: false`, never install `expo-updates` or `expo-dev-client`, never allow `NSAllowsArbitraryLoads`, never give `expo-iap` plugin options or set `ios.onside.enabled`, never pass `userTrackingUsageDescription`.**
-   *Why:* OTA updates and dev clients are network components; `iapkitApiKey` and the Onside switches add servers (docs/12 rule 3); D4 = no ATT (FINAL 23, 25, 44).
+   *Why:* N2 (no analytics, no crash reporting). Asking for ATT (FINAL H.1) does not change this: Google's SDK is what tracks, and it declares that in its own manifest.
+7. **Keep `expo.updates.enabled: false`, never install `expo-updates` or `expo-dev-client`, never allow `NSAllowsArbitraryLoads`, never give `expo-iap` plugin options or set `ios.onside.enabled`, never pass GMA's `userTrackingUsageDescription`. Always configure `expo-tracking-transparency`'s plugin with the en `userTrackingPermission`, and the translated `NSUserTrackingUsageDescription` in `expo.locales` for de, fa and ckb.**
+   *Why:* OTA updates and dev clients are network components; `iapkitApiKey` and the Onside switches add servers (docs/12 rule 3; FINAL 23, 25, 44). `NSUserTrackingUsageDescription` has one writer, and the app crashes when it uses ATT without the key (FINAL H.1, docs/11 rule 21).
 8. **Ban `@react-native-community/netinfo`; online detection is `expo-network` behind `ConnectivityPort`.**
    *Why:* NetInfo's default reachability probe fetches `clients3.google.com` from our JS bundle; `expo-network` uses `NWPathMonitor` with no HTTP probe (FINAL 27, verified in its iOS source).
-9. **Declare every required-reason API that any pod declares in `ios.privacyManifests` (through `withShell`), with `NSPrivacyTracking: false`.** `npm run audit:privacy` runs after every prebuild and fails on a gap.
-   *Why:* Apple does not reliably read the manifests of static CocoaPods, so the app manifest must aggregate them (FINAL 24). **Source:** [Expo privacy manifests](https://docs.expo.dev/guides/apple-privacy/).
-10. **The App Privacy answers in App Store Connect must match the aggregated SDK manifests** (the data list in section 3.4). Our own code collects nothing.
+9. **Declare every required-reason API that any pod declares in `ios.privacyManifests` (through `withShell`), with `NSPrivacyTracking: false` and no `NSPrivacyTrackingDomains`.** `npm run audit:privacy` runs after every prebuild and fails on a gap or on tracking declared in the app's own manifest.
+   *Why:* Apple does not reliably read the manifests of static CocoaPods, so the app manifest must aggregate them (FINAL 24). The tracking keys describe our own code, which neither tracks nor contacts any domain; the tracking Device ID is declared in GMA's own manifest; and iOS fails requests to listed tracking domains for players who have not allowed tracking, so listing Google's ad domains would stop ads for everyone who declines ATT (FINAL H.1). **Source:** [Expo privacy manifests](https://docs.expo.dev/guides/apple-privacy/), [NSPrivacyTracking](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking), [NSPrivacyTrackingDomains](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains).
+10. **The App Privacy answers in App Store Connect must match the aggregated SDK manifests** (the data list in section 3.4), with Device ID declared as linked and used for tracking by the third-party ads SDK. Our own code collects nothing.
     *Why:* Apple builds a privacy report from the manifests; Google makes the developer responsible for the match. **Source:** [Google data disclosure](https://developers.google.com/admob/ios/privacy/data-disclosure).
 11. **Never open, print, copy, move, commit or log the `.p8` key, and never print a JWT made from it.** Only `packages/tooling/src/asc/asc-credentials.ts` reads it, into memory; tools get `ASC_KEY_ID`, `ASC_ISSUER_ID`, `APPLE_TEAM_ID`.
     *Why:* FINAL 10; env-var names fixed by `docs/14`. A leaked team key can publish apps.
@@ -109,7 +111,7 @@ packages/tooling/network-audit/native-baseline.json  (Gate-Change path)
 `docs/04` owns `eslint.config.mjs`; the N3 entries it must keep (all verified to fire on a deliberately bad file):
 - `no-restricted-globals`: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`.
 - `no-restricted-syntax`: `Literal[value=/^(https?|wss?|ftp):\/\//i]` and `TemplateElement[value.raw=/^(https?|wss?|ftp):\/\//i]`, exempt only in `packages/shell/src/config/external-links.ts`.
-- `no-restricted-imports`: `axios`, `@react-native-community/netinfo`, `expo-updates`, `expo-web-browser`, `react-native-webview`, `expo-file-system`, `react-native-purchases`, `react-native-iap`, `expo-tracking-transparency`, the vendor SDKs outside their adapters, and `expo-iap`'s `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, `verifyPurchase`, `useIAP` everywhere (`docs/12`).
+- `no-restricted-imports`: `axios`, `@react-native-community/netinfo`, `expo-updates`, `expo-web-browser`, `react-native-webview`, `expo-file-system`, `react-native-purchases`, `react-native-iap`, the vendor SDKs outside their adapters (`expo-tracking-transparency` counts as one: only the ConsentPort adapter may import it, FINAL H.1), and `expo-iap`'s `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, `verifyPurchase`, `useIAP` everywhere (`docs/12`).
 - The N3 rules apply to `apps/*/src` and `packages/{shell,game-kit}/src`, not to `packages/tooling` (the tooling block turns `no-restricted-globals` and the URL selectors off: the SKAdNetwork refresh and the App Store Connect client legitimately use `fetch`).
 
 Lint sees only our code. Everything below looks at what actually ships.
@@ -357,6 +359,7 @@ export type PluginEntry = string | readonly [string, unknown];
 export type ExpoConfigLike = {
   readonly updates?: { readonly enabled?: boolean };
   readonly plugins?: readonly PluginEntry[];
+  readonly locales?: Readonly<Record<string, unknown>>;
   readonly ios?: {
     readonly infoPlist?: Record<string, unknown>;
     readonly onside?: { readonly enabled?: boolean };
@@ -379,15 +382,33 @@ function expoIapProblems(config: ExpoConfigLike): string[] {
   return problems;
 }
 
-function admobProblems(config: ExpoConfigLike): string[] {
-  const options = pluginOptions(config, 'react-native-google-mobile-ads');
-  const hasAtt =
-    typeof options === 'object' && options !== null && 'userTrackingUsageDescription' in options;
-  return hasAtt ? ['GMA userTrackingUsageDescription is set but D4 = no ATT in v1'] : [];
+const optionOf = (options: unknown, key: string): unknown =>
+  typeof options === 'object' && options !== null ? Reflect.get(options, key) : undefined;
+const isText = (value: unknown): boolean => typeof value === 'string' && value.trim() !== '';
+
+// FINAL H.1 (ATT): expo-tracking-transparency's plugin is the one writer of
+// NSUserTrackingUsageDescription (GMA's option stays unset), and every language carries the text.
+function trackingProblems(config: ExpoConfigLike): string[] {
+  const gma = pluginOptions(config, 'react-native-google-mobile-ads');
+  const att = pluginOptions(config, 'expo-tracking-transparency');
+  const problems: string[] = [];
+  if (optionOf(gma, 'userTrackingUsageDescription') !== undefined) {
+    problems.push('GMA userTrackingUsageDescription is set; expo-tracking-transparency writes it');
+  }
+  if (!isText(optionOf(att, 'userTrackingPermission'))) {
+    problems.push('expo-tracking-transparency plugin needs userTrackingPermission (FINAL H.1)');
+  }
+  for (const lang of ['de', 'fa', 'ckb']) {
+    const ios = optionOf(config.locales?.[lang], 'ios');
+    if (!isText(optionOf(ios, 'NSUserTrackingUsageDescription'))) {
+      problems.push(`locales.${lang} lacks NSUserTrackingUsageDescription (FINAL H.1)`);
+    }
+  }
+  return problems;
 }
 
 export function configProblems(config: ExpoConfigLike): string[] {
-  const problems = [...expoIapProblems(config), ...admobProblems(config)];
+  const problems = [...expoIapProblems(config), ...trackingProblems(config)];
   if (config.updates?.enabled !== false) problems.push('expo.updates.enabled must be false');
   const ats: unknown = config.ios?.infoPlist?.['NSAppTransportSecurity'];
   if (
@@ -629,6 +650,8 @@ setInterval(() => {
 // Aggregated required-reason APIs of every pod (checked by `npm run audit:privacy`, which
 // fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here).
 export const PRIVACY_MANIFESTS = {
+  // Our code neither tracks nor contacts a domain; GMA's own manifest declares its tracking
+  // Device ID. No NSPrivacyTrackingDomains: iOS would block them when ATT is declined (FINAL H.1).
   NSPrivacyTracking: false,
   NSPrivacyAccessedAPITypes: [
     {
@@ -712,7 +735,8 @@ export function missingReasons(
 // `npm run audit:privacy [-- --app <game-id>]` after `npx expo prebuild --platform ios --clean`
 // (prebuild runs pod install). Without --app: every app that has ios/Pods. Fails when app.config
 // lacks a reason a pod declares, when a pod other than Google's declares tracking, or when no
-// app is prebuilt. Also prints the App Privacy questionnaire input.
+// app is prebuilt, or when the app's own manifest declares tracking (FINAL H.1). Also prints the
+// App Privacy questionnaire input.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -750,6 +774,14 @@ function trackingViolations(paths: readonly string[]): string[] {
     });
 }
 
+// The app's own manifest describes our code, which neither tracks nor contacts a domain; tracking
+// domains listed here would also make iOS fail those requests for players who declined ATT.
+function appTrackingProblems(manifest: PrivacyManifest): string[] {
+  const domains = manifest.NSPrivacyTrackingDomains ?? [];
+  const isTracking = manifest.NSPrivacyTracking === true || domains.length > 0;
+  return isTracking ? ['app manifest declares tracking; only the GMA pod may (FINAL H.1)'] : [];
+}
+
 // Input for the App Store Connect "App Privacy" questionnaire (a human step).
 function collectedData(paths: readonly string[]): string[] {
   return paths.flatMap((path) =>
@@ -764,9 +796,11 @@ function collectedData(paths: readonly string[]): string[] {
 function auditApp(appDir: string): number {
   const paths = podManifests(appDir);
   const required = mergeReasons(paths.map(readManifest));
-  const declared = mergeReasons([appManifest(appDir)]);
+  const ownManifest = appManifest(appDir);
+  const declared = mergeReasons([ownManifest]);
   const problems = [
     ...missingReasons(required, declared).map((gap) => `app.config lacks ${gap}`),
+    ...appTrackingProblems(ownManifest),
     ...trackingViolations(paths).map((path) => `tracking declared outside the AdMob pods: ${path}`),
   ];
   for (const [category, reasons] of required)
@@ -797,7 +831,7 @@ The App Privacy questionnaire is filled in by the owner in App Store Connect (hu
 
 | Data type | Pod | Linked to user | Used for tracking | Purposes (Google's disclosure page) |
 |---|---|---|---|---|
-| Device ID | Google-Mobile-Ads-SDK 13.6.0 | yes | **yes** | Third-party advertising, analytics |
+| Device ID | Google-Mobile-Ads-SDK 13.6.0 | yes | **yes** (the third-party ads SDK; the app asks for ATT) | Third-party advertising, analytics |
 | Coarse location | GMA; UMP 3.1.0 | yes (GMA), no (UMP) | no | Third-party advertising, analytics |
 | Advertising data | GMA | yes | no | Third-party advertising, analytics |
 | Product interaction | GMA; UMP | yes (GMA), no (UMP) | no | Third-party advertising, analytics |
@@ -807,15 +841,14 @@ The App Privacy questionnaire is filled in by the owner in App Store Connect (hu
 
 Our own code collects nothing: no account, no analytics, no crash reporting, no server (N2). Saves, settings, the consent string that UMP stores, and Premium stay on the phone.
 
-**The 5.1.2 decision (owner, store step).** Guideline 5.1.2(i): "You must receive explicit permission from users via the App Tracking Transparency APIs to track their activity." The GMA manifest marks Device ID as used for tracking, while D4 says no ATT prompt in v1. Without ATT the advertising identifier is all zeros; ads still serve. Options:
+**The 5.1.2 decision (made by the owner on 2026-09-30: follow Apple's rules, O1, FINAL H.1).** Guideline 5.1.2(i): "You must receive explicit permission from users via the App Tracking Transparency APIs to track their activity." The GMA manifest marks Device ID as used for tracking, so on iOS the app asks for ATT before the first ad request (after Google's form where required; docs/11 rule 21), and the App Privacy answers are:
 
-| Option | App Privacy answer for Device ID | Binary | Risk |
-|---|---|---|---|
-| **1 (default for the first submission)** | as the manifest says: linked, **used for tracking** | no ATT (D4) | review may reject under 5.1.2(i) and ask for ATT |
-| 2 | used for tracking | flip D4: publish the AdMob "IDFA explainer" message and add `userTrackingUsageDescription` (localised) | one more system prompt; most consistent |
-| 3 | not used for tracking | no ATT | contradicts the SDK manifest Google tells developers to reconcile |
+| Data type | App Privacy answer |
+|---|---|
+| Device ID | collected by the third-party ads SDK; **linked to the user; used for tracking**; third-party advertising, analytics |
+| Every other row of the table above | as the table says; not used for tracking |
 
-Option 1 keeps the answers consistent with the binary; if App Review objects, option 2 is the planned fallback (a config and console change, no code change in the Shell). Option 3 is not used. This choice is recorded by the owner in the store-pages step and then in this section.
+A declined or restricted ATT answer leaves the advertising identifier all zeros and ads still serve, so the answers do not depend on the player's choice. The earlier options (declare tracking without asking; declare no tracking) are retired: the first risked a 5.1.2(i) rejection, the second contradicted the SDK manifest. The ATT prompt is Apple's system dialog with our translated `NSUserTrackingUsageDescription`; the app's own privacy manifest keeps `NSPrivacyTracking: false` with no tracking domains (rule 9).
 
 Other privacy items: the privacy-policy URL (both stores and AdMob require it; the offline copy is S11c), and the `app-ads.txt` file (`docs/11` section 3.11).
 
@@ -906,7 +939,8 @@ The complete list, with who checks what:
 | Real ad IDs absent | test | config + binary | the FINAL 23 unit test `ads-config.test.ts` (docs/11): for `test`/`off`, `admobPluginOptions` returns Google's sample app ID and `adUnitsExtra` returns `null`; app code never imports `game.config.ts` (docs/02). Step 7 of `docs/14` checks that `GADApplicationIdentifier` is the sample ID in test builds |
 | StoreKit test artefacts absent | store | binary | no `*.storekit`, no `*.xctest` in the IPA; `codesign -d --entitlements - --xml` has no `get-task-allow` (`docs/14` step 7) |
 | StoreKit test code absent | store | JS | no `StoreKitTest` / `SKTestSession` strings in shipped modules (the harness is Swift in a test bundle; this guards against a JS shim) |
-| No OTA / ATS exceptions / banned plugin options | store | config | layer E |
+| No OTA / ATS exceptions / banned plugin options; ATT text in every language | store | config | layer E (`trackingProblems`) |
+| App ID `io.applander.*`, no `com.example.*` or other placeholder, no scaffold placeholder AdMob ID | store | config + binary | `docs/14` preflight and step 7 (FINAL H.4) |
 | Privacy manifest complete | all | native | `audit:privacy` |
 | SKAdNetwork list current | store | config | `refresh-skadnetwork.ts --check` (`docs/11`) |
 | i18n reviewed | store | catalogs | `review-sheet.ts --release` (`docs/10`) |
@@ -917,7 +951,7 @@ The complete list, with who checks what:
 
 - [ ] `npm run lint` clean with the N3 rules of `docs/04` (layer A).
 - [ ] `npm run audit:network` passes for every app: no first-party hits, no new JS or native finding without a reasoned baseline entry, trunk pods exactly `Google-Mobile-Ads-SDK`, `GoogleUserMessagingPlatform`, `openiap`, no config problem, no banned package.
-- [ ] `npm run audit:privacy` passes after the latest prebuild; the App Privacy answers match its "collected" output and the 5.1.2 option chosen by the owner.
+- [ ] `npm run audit:privacy` passes after the latest prebuild; the App Privacy answers match its "collected" output, with Device ID used for tracking (section 3.4, FINAL H.1).
 - [ ] `npm run audit:licenses` passes.
 - [ ] The E2E smoke flow shows "network attempts: 0" and the socket sampler found no non-loopback connection (Release, test variant, `ADS_MODE=off`).
 - [ ] Store build: release audit green (sentinel absent, sample IDs only in the AdMob library, live `GADApplicationIdentifier`, no `.storekit`/`.xctest`/`get-task-allow`).
@@ -932,7 +966,10 @@ The complete list, with who checks what:
 - Expo privacy manifests: https://docs.expo.dev/guides/apple-privacy/
 - Apple privacy manifest files: https://developer.apple.com/documentation/bundleresources/privacy-manifest-files
 - Apple required-reason APIs: https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api
+- NSPrivacyTracking: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking
 - NSPrivacyTrackingDomains: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains
+- App Tracking Transparency, `requestTrackingAuthorization(completionHandler:)`: https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/requesttrackingauthorization(completionhandler:)
+- AdMob and ATT: https://developers.google.com/admob/ios/ios14
 - App Review Guidelines (5.1.1, 5.1.2): https://developer.apple.com/app-store/review/guidelines/
 - App privacy details on the App Store: https://developer.apple.com/app-store/app-privacy-details/
 - Google Mobile Ads iOS data disclosure: https://developers.google.com/admob/ios/privacy/data-disclosure
@@ -959,6 +996,8 @@ On 2026-09-26 (macOS, Node 26.4.0, npm 11.17.0, CocoaPods 1.15.2, Xcode 26.6, Ex
 - **Claude Code** permission semantics read in the current permissions documentation.
 - **Not verified:** layer F end to end in this session (the `lsof` approach was verified by the quality research on a booted simulator; the parser is unit-tested); the App Privacy questionnaire itself (web UI, human); the pilot app's own baselines (generated on its first `audit:network` run).
 
+On 2026-09-30 (FINAL H.1, reading only): Apple's `NSPrivacyTracking`, `NSPrivacyTrackingDomains` and ATT pages re-read; the GMA 13.6.0 xcframework's `PrivacyInfo.xcprivacy` read with `plutil` (Device ID linked and tracking; no `NSPrivacyTracking` key; no tracking domains); `expo-tracking-transparency` 57.0.2's JS and Swift read (no network code). `trackingProblems` and `appTrackingProblems` are new and have not been compiled or run yet.
+
 **Re-verify** (the SDKs change): after any change to `react-native-google-mobile-ads`, `expo-iap`, Expo SDK or a native dependency, run `npx expo prebuild --platform ios --clean`, `npm run audit:privacy -- --app <game-id>`, `npm run audit:network`, and review every `NEW`/`STALE` line; check `npm view <pkg> version` against `docs/01`.
 
 ---
@@ -966,7 +1005,7 @@ On 2026-09-26 (macOS, Node 26.4.0, npm 11.17.0, CocoaPods 1.15.2, Xcode 26.6, Ex
 ## Open issues
 
 1. **Baselines are per repo, findings per app.** `js-baseline.json` and `native-baseline.json` are shared by all games; a package that only one game uses still needs its entry. If games diverge a lot, split the baselines per app (`network-audit/<game-id>/`).
-2. **5.1.2 vs D4** is an owner decision in the store step; section 3.4 gives the default and the fallback.
+2. **Resolved (2026-09-30): 5.1.2 vs D4.** The owner chose Apple's rules (O1, FINAL H.1); section 3.4 records the answers.
 3. **App Privacy via API.** The questionnaire is believed to be web-only; if the App Store Connect API gains it, a script can fill it from `audit:privacy`'s output.
 4. **Resolved: docs/07's `run-e2e-ios.ts` starts the layer F sampler.** It spawns `sample-sockets.ts` before `maestro test`, kills it afterwards, and fails on a non-empty `network.txt`.
 5. **Resolved: `ErrorSource` has a `'network'` value** (docs/04 section 6.2, with `'boot'` and `'i18n'`); the test-only guard logs blocked attempts with it.

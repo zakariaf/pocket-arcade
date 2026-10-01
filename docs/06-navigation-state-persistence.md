@@ -86,7 +86,7 @@ This doc owns the navigator, the stores' shape and pattern, the `GameSession` re
 | S1 Splash | none | | | native splash (docs/09 art) while `startShell` hydrates synchronously |
 | S2 First-run language | `LanguageChoice` | FirstRun | none | shown until a language is chosen |
 | S13 Tutorial level | `Tutorial` | FirstRun | none | the Game screen body in tutorial mode; `gestureEnabled: false`. "Play the tutorial again" (S13 How to play) opens `Game` with `{ start: 'new', ref: { kind: 'tutorial' } }`, because FirstRun is gone after the first run |
-| S3 Ad consent | none | | | Google's UMP form, presented by `ConsentPort` (docs/11) |
+| S3 Ad consent | none | | | the Shell's intro, then Google's UMP form and, on iOS, Apple's ATT prompt, presented through `ConsentPort` (docs/11, FINAL H.1) |
 | S4 Home | `Home` | Main | none | root of the main app |
 | S5 Game | `Game` | Main | `GameParams` | `gestureEnabled: false`, `usePreventRemove` |
 | S6 Pause | none | | | overlay inside Game |
@@ -2266,10 +2266,10 @@ xcrun simctl install "$UDID" apps/line-siege/build/dd/Build/Products/Release-iph
 
 # 2. boot-time kills: kill -9 at growing delays while startup writes run
 for i in $(seq 1 12); do
-  PID=$(xcrun simctl launch "$UDID" com.example.linesiege | awk '{print $2}')
+  PID=$(xcrun simctl launch "$UDID" io.applander.linesiege | awk '{print $2}')
   sleep "$(printf '0.%02d' $((i * 8)))"; kill -9 "$PID"   # 0.08 s, 0.16 s … 0.96 s
 done
-node packages/tooling/src/save/inspect-save.ts "$UDID" com.example.linesiege line-siege
+node packages/tooling/src/save/inspect-save.ts "$UDID" io.applander.linesiege line-siege
 
 # 3. mid-level kills: a Maestro flow (docs/07) plays N moves via the debug hooks, then
 #    `xcrun simctl terminate` (FINAL A.6) or `kill -9`; relaunch; the flow asserts the

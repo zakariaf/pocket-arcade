@@ -170,7 +170,7 @@ These never change with the game. In code they live in `SHELL_COLORS[scheme]` (s
 | `success` | `#17804A` | `#7EE3A6` | check marks in the score panel, "done" confirmations |
 | `warning` | `#8A5A00` | `#FFC95C` | reserved (no mock screen uses it yet) |
 | `danger` | `#C4243A` | `#FF8593` | destructive text, outline and icons; `ColorTokens.danger` |
-| `dangerFill` | `#FFD9DD` | `#4A1F3A` | tint behind destructive icons, the hold-to-confirm fill, the Premium error panel |
+| `dangerFill` | `#FFDCDF` (owner decision O5, 2026-09-30; the mockup drew `#FFD9DD` before) | `#4A1F3A` | tint behind destructive icons, the hold-to-confirm fill, the Premium error panel |
 | `focus` | `#C8157A` | `#FF8AD8` | focus ring and the tapped-locked-tile highlight; `ColorTokens.focus` |
 | `star` | `#FFC928` | `#FFD23F` | filled stars; `ColorTokens.starOn` (dark differs from gold) |
 | `gold` | `#FFC928` | `#FFC928` | sticker paper, flags, the "Today" tag, gold icon tiles, Premium art, confetti |
@@ -232,8 +232,8 @@ Fixed in both schemes: **toy ink `#1D1B3A`** and **white `#FFFFFF`** for everyth
 | `heroKeyLabel` | 25 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.45 |  |
 | `dialogTitle` | 25 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.45 |  |
 | `groupTab` | 15 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.45 | colour onPop |
-| `levelNumber` | 21 | display (Lilita One / Vazirmatn Bold) | 1 / 1 |  |
-| `scoreValue` | 44 | display (Lilita One / Vazirmatn Bold) | 1 / 1 |  |
+| `levelNumber` | 21 | display (Lilita One / Vazirmatn Bold) | 1 / 1.45 | Arabic 1.45 since lead decision L2 (FINAL H.8): at 1.0 Persian digits clipped on iOS |
+| `scoreValue` | 44 | display (Lilita One / Vazirmatn Bold) | 1 / 1.45 | Arabic 1.45 since lead decision L9 (FINAL H.15), as for `levelNumber` |
 | `statValueCompact` | 23 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.1 | no wrap |
 | `statListValue` | 22 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.1 | align end |
 | `streakValue` | 28 | display (Lilita One / Vazirmatn Bold) | 1.1 / 1.45 |  |
@@ -561,7 +561,7 @@ Quiet button: *Measurements* (`components.quietButton`): minHeight 44 · padding
 
 **Grid:** 6 columns, row gap 10, column gap 8, packs as sections (doc 05 section 3.9); on the 350 pt body a tile is about 51.7 × 62.
 
-**Tile anatomy:** 62 tall, radius 10, 2.5 pt `outline` edge, `surface`, elevation 3, content stacked and centred, gap 5: number (`levelNumber` 21 display, line height 1) + mini stars (3 × 13 pt, gap 1).
+**Tile anatomy:** 62 tall, radius 10, 2.5 pt `outline` edge, `surface`, elevation 3, content stacked and centred, gap 5: number (`levelNumber` 21 display, line height 1; 1.45 in fa/ckb, L2) + mini stars (3 × 13 pt, gap 1).
 
 *Measurements* (`components.levelTile`): height 62 · radius 10 · border 2.5 · borderCurrent 3 · elevation 3 · gap 5 · miniStar 13 · miniStarGap 1 · lockIcon 16 · gridColumns 6 · rowGap 10 · columnGap 8 · flag.size 24 · flag.radius 7 · flag.border 2 · flag.ring 2.5 · flag.rotate 8 · flag.top -11 · flag.end -9 · flag.icon 12.
 
@@ -708,7 +708,7 @@ Quiet button: *Measurements* (`components.quietButton`): minHeight 44 · padding
 
 ### 4.29 Score panel and bar chart
 
-**Score panel** (S7 win): a panel; first row (wrap, gap 6 × 12, centred): "Score" (`scoreLabel` 17 Bold `inkSoft`) · value (`scoreValue` 44 display, line height 1) · the "New best!" sticker pushed to the end. Then lines (gap 6, 12 top margin and padding over a 2 pt `line` rule, 16 text): a 20 pt `success` check + the game's full progress line, and the moves line (`result.win.moves`).
+**Score panel** (S7 win): a panel; first row (wrap, gap 6 × 12, centred): "Score" (`scoreLabel` 17 Bold `inkSoft`) · value (`scoreValue` 44 display, line height 1; 1.45 in fa/ckb, L9) · the "New best!" sticker pushed to the end. Then lines (gap 6, 12 top margin and padding over a 2 pt `line` rule, 16 text): a 20 pt `success` check + the game's full progress line, and the moves line (`result.win.moves`).
 
 **Bar chart** (S10 last 7 days): seven equal columns; each a 124 pt plot area bottom-aligned on a 3 pt `outline` baseline (gap 4): value (`barValue` 13 Bold `ink`) over a bar 26 wide, height = value / max × 92, `accent`, 2.5 pt `outline` edge on top and sides, top radius 5; the day letter (`barDay` 13 Bold `inkSoft`) 6 below. Zero days show only the value. Runs right to left in fa/ckb; each column has `stats.week.bar.a11y-label`.
 
@@ -971,7 +971,8 @@ Doc 10 owns direction, digits and bidi; these are the Toybox parts.
 | Text on pop (onPop) (4.5:1) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 |
 | Danger text on surface (4.5:1) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 |
 | Danger text on ground (4.5:1) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 |
-| Danger label on dangerFill (hold) (4.5:1) | **4.43** | 5.83 | **4.43** | 5.83 | **4.43** | 5.83 |
+| Danger label on dangerFill (hold) (4.5:1) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
+| Body text on dangerFill (Premium error panel) (4.5:1) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 |
 | Success icon on surface (3:1) | 4.79 | 8.48 | 4.79 | 7.17 | 4.92 | 8.02 |
 | Toast text on toast (4.5:1) | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 |
 | Ad text on ad band (4.5:1) | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 |
@@ -1002,7 +1003,7 @@ What the numbers mean:
 - **In dark, the star's chalk edge nearly matches the star fill (1.1–1.2:1)**; the fill itself stands 7.8–9.2:1 off the surface, and hollow stars are a different shape.
 - **Dark hard shadows are faint (1.2–1.3:1 against the ground)**; they are depth cues, not boundaries (section 7).
 - **Danger text on the light ground fails (3.8–4.3:1):** Toybox never puts danger text on the ground; it is always on a surface (4.8–5.7:1). Rule: danger text only on `surface`.
-- **The danger label during hold-to-confirm** sits on `dangerFill` at **4.43:1** in light (just under 4.5 for 17 pt Bold). See open issue 5.
+- **The danger label during hold-to-confirm** sits on `dangerFill` at 4.52:1 in light and 5.83:1 in dark, so it passes 4.5:1 at every moment of the hold (the label is over `surface` at 5.53–5.68:1 before the fill reaches it). The light `dangerFill` is `#FFDCDF` since the owner's decision O5 (2026-09-30, FINAL H.5: every text meets 4.5:1 in every state); the earlier `#FFD9DD` gave 4.43:1. Every other pair on `dangerFill` passes too: danger icons 4.52:1 (need 3), the error panel's ink text 12.27–13.03:1 and `inkSoft` 6.96–7.78:1. No contrast check keeps an exception for this pair.
 - **Focus** is ≥ 3.6:1 against every ground and ≥ 4.4:1 against the sunken locked tile.
 
 **Doc 15's automated pairs.** Doc 15's `checkPaletteContrast` expects `primary` vs `background` ≥ 3, `starOn` vs `surface` ≥ 3 and `danger` vs `background` ≥ 4.5. A Toybox palette fails exactly those three in light (measured in `toybox-tokens.test.ts`, section 9.8). Doc 15 should check `border` vs `background` and `border` vs `primary` (≥ 3) and `danger` vs `surface` (≥ 4.5) for Toybox instead (open issue 4).
@@ -1110,7 +1111,7 @@ export const SHELL_COLORS: Readonly<Record<ColorScheme, ShellColors>> = {
   light: {
     success: '#17804A',
     warning: '#8A5A00',
-    dangerFill: '#FFD9DD',
+    dangerFill: '#FFDCDF', // O5 (FINAL H.5): danger label 4.52:1 during the hold (was #FFD9DD)
     gold: '#FFC928',
     cut: '#FFFFFF',
     toyInk: '#1D1B3A',
@@ -1699,7 +1700,7 @@ On **2026-09-28** (macOS 27.0, Node 26.4.0):
 2. **Type scale and fonts in doc 05 / doc 10.** `TYPE_SCALE` still has doc 05's 34 / 28 / 20 sizes and no `number` role, and doc 10's `LATIN_SCRIPT` still uses the platform font. The switch (section 9.2 and the table in 9.3) needs doc 10's `fonts.ts` and `useLocalizedTextStyle` to take a `face` and per-role line heights, and one expectation in doc 10's `t.test.tsx` to change (30 → 32). Until then, display roles render in the platform font at doc 05's old sizes.
 3. **`AppText` tones.** Toybox needs `onPop`, sticker ink, white-on-ink and toast text colours; doc 05's `TextTone` has only default, muted, onPrimary and danger.
 4. **Doc 15's contrast pairs.** `checkPaletteContrast` requires `primary`/`background` ≥ 3, `starOn`/`surface` ≥ 3 and `danger`/`background` ≥ 4.5, which every light Toybox palette fails by design (section 8). Proposal for doc 15: check `border`/`background` and `border`/`primary` ≥ 3 and `danger`/`surface` ≥ 4.5 instead.
-5. **Hold-to-confirm label contrast.** During the hold, the 17 pt Bold `danger` label sits on `dangerFill` at 4.43:1 in light (needs 4.5). Options for the owner: a lighter light `dangerFill` (`#FFDFE2` gives 4.62:1; not in the mockup), or accept it as a transient state.
+5. **Resolved (2026-09-30): hold-to-confirm label contrast.** The owner chose the standard (O5, FINAL H.5): the light `dangerFill` is `#FFDCDF` (4.52:1 for the 17 pt Bold `danger` label; section 8). The design step set it in `design/toybox/tokens.json` and `design/toybox.html`; the references are re-rendered and the change is recorded as an intended reference change, not a waiver.
 6. **Screen gutters.** Doc 05's `ScreenFrame` pads its column by 16; Toybox pads the top bar by 16 and the body by 20. `ScreenFrame` should drop its padding and let the top bar and body apply theirs.
 7. **Icon data size.** The one-path-per-icon contract costs 126 KB of path strings; storing the layers and stroking them at raster time would need about 10 KB and change doc 05's `rasterize()`. Kept as is for now.
 8. **Unverified on device:** `boxShadow` crispness and cost with many tiles, `outline` around rotated or dashed views, and the spring feel. Check in the first simulator build; the fallback for a shadow is the `RaisedSurface` shadow View.

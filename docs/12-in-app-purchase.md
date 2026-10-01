@@ -1,7 +1,7 @@
 # 12 · In-app purchase: Premium
 
-> **What this doc decides.** How each game sells its one non-consumable "Premium" (spec N7, S12, 8.9, D2, D3) with no server: `expo-iap` 5.8.0 behind `PurchasePort`, the banned server features, the Premium reducer mapped to every S12 state, and the rules for persistence, revocation (explicit evidence only), restore (`sync-error`), pending (Ask to Buy) and an empty product list. It gives the three test tiers, including the verified hosted-XCTest StoreKit harness with its files and commands, the App Store Connect API script that creates the product, the price rule (€1.90 → an Apple price point) and the human steps.
-> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 25 and 26 (plus 6, 9, 10, F). Build variants, signing and the store-artifact gate are in `docs/14-ios-build-and-release.md`. Problems found while writing are listed under [Open issues](#open-issues).
+> **What this doc decides.** How each game sells its one non-consumable "Premium" (spec N7, S12, 8.9, D2, D3) with no server: `expo-iap` 5.8.0 behind `PurchasePort`, the banned server features, the Premium reducer mapped to every S12 state, and the rules for persistence, revocation (explicit evidence only), restore (`sync-error`), pending (Ask to Buy) and an empty product list. It gives the three test tiers, including the verified hosted-XCTest StoreKit harness with its files and commands, the App Store Connect API script that creates the product, the price (€1.99, an App Store price point), Family Sharing (off) and the human steps.
+> **Binding source:** [99-final-decisions.md](99-final-decisions.md) items 25 and 26 (plus 6, 9, 10, F), and section H items 2 to 4 (price €1.99, no Family Sharing, `io.applander.*` IDs). Build variants, signing and the store-artifact gate are in `docs/14-ios-build-and-release.md`. Problems found while writing are listed under [Open issues](#open-issues).
 > **Related docs:** [06-navigation-state-persistence.md](06-navigation-state-persistence.md) (the premium save section), [13-privacy-network-security.md](13-privacy-network-security.md) (audit layers D and E), [14-ios-build-and-release.md](14-ios-build-and-release.md) (ASC client and human steps), [07-testing-and-tdd.md](07-testing-and-tdd.md) (fakes and flush helper), [02-architecture-and-folders.md](02-architecture-and-folders.md) (PurchasePort). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
@@ -26,7 +26,7 @@ Three facts drive the design (all verified on 2026-09-26):
    *Why:* FINAL F (ports and vendor-named adapters); upgrades touch one file.
 3. **Never use `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, `verifyPurchase` (either branch) or `useIAP`. Never give the plugin any option (`iapkitApiKey`, `module: 'onside'`, `modules.onside`, `ios.alternativeBilling`, `enableLocalDev`, `localPath`, …), never set `expo.ios.onside.enabled`, and never set the environment variable `EXPO_IAP_ONSIDE=1`.**
    *Why:* `kitApi`/`verifyPurchaseWithProvider` call IAPKit (`https://kit.openiap.dev`), and the Google branch of `verifyPurchase` needs a server token. Each of the three Onside switches adds the OnsideKit pod from the CocoaPods trunk (N2/N3; read in the 5.8.0 plugin's `resolveModuleSelection` and `ExpoIap.podspec`). `useIAP` hides connection and finishing logic the Shell must own. Enforced by ESLint and by `audit:network` layers D and E (`docs/13`).
-4. **One product per game: `<bundleId>.premium`, type NON_CONSUMABLE.** The product ID never changes and is never reused.
+4. **One product per game: `<bundleId>.premium`, type NON_CONSUMABLE** (Line Siege: `io.applander.linesiege.premium`; bundle IDs are `io.applander.<game id without hyphens>`, FINAL H.4). The product ID never changes and is never reused.
    *Why:* spec N7; Apple does not allow reusing a product ID in the same app. **Source:** [In-App Purchase information](https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-information).
 5. **Subscribe to purchase events before connecting, then `initConnection` → `fetchProducts`.** An empty product list means "store unavailable", never an error dialog.
    *Why:* StoreKit replays transactions right after connecting; `Product.products` returns `[]` instead of throwing when it cannot resolve products (seen in the spike).
@@ -52,10 +52,12 @@ Three facts drive the design (all verified on 2026-09-26):
     *Why:* spec 15.5 and FINAL 26.
 16. **The StoreKit harness exists only in harness builds:** a fresh test-variant prebuild on a throwaway simulator. `get-task-allow` is added for the **Debug** configuration only. Store and TestFlight builds never contain the harness target, `Premium.storekit` or `get-task-allow`; `docs/14`'s store-artifact gate checks it.
     *Why:* FINAL 26; `get-task-allow` must never ship.
-17. **Create the product with the App Store Connect API script (section 3.10)** using `docs/14`'s JWT client, `familySharable: false` unless the owner decides otherwise. The price is the Apple price point for €1.90 if it exists; otherwise the owner picks (D3).
+17. **Create the product with the App Store Connect API script (section 3.10)** using `docs/14`'s JWT client, always with `familySharable: false` (the owner decided: no Family Sharing, FINAL H.3). The price is the App Store price point €1.99 in the base territory Germany (FINAL H.2, spec D3).
     *Why:* FINAL 9 (ASC REST only where altool lacks a feature); Family Sharing cannot be turned off once on. **Source:** [Family Sharing for in-app purchases](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/turn-on-family-sharing-for-in-app-purchases).
 18. **Never push Premium with pop-ups.** The only entry points are the Home button (hidden once owned), the Settings row, and at most one line on the Result screen per day.
     *Why:* spec S12 Rules.
+19. **Family Sharing stays off everywhere a Premium product is described:** `"familyShareable" : false` in every StoreKit configuration, `familySharable: false` in the API body (a constant, not an option), and "leave Family Sharing off" in the App Store Connect steps. `storeKitConfigProblems` (section 3.8) fails a StoreKit configuration whose product is shareable, is not NON_CONSUMABLE or is not priced 1.99; the harness and a unit test on the committed template run it.
+    *Why:* the owner's decision O3 (FINAL H.3); once Family Sharing is on for a product, Apple cannot turn it off. **Source:** [Family Sharing for in-app purchases](https://developer.apple.com/help/app-store-connect/configure-in-app-purchase-settings/turn-on-family-sharing-for-in-app-purchases).
 
 ---
 
@@ -729,7 +731,7 @@ Wiring and timing:
 - `startPremium` runs once after the splash (never blocking it). Offline, it ends in `store-unavailable` quickly; the cached `isPremium` from the save already controls ads.
 - When `ConnectivityPort` reports online and the flow is `unavailable`, call `loadStore(deps)` again. On `AppState` → `active`, call `recheckPremium(deps)` if online.
 - `persistPremium({ isPremium: true })` writes docs/06's `premium` section (`owned: true`, `revokedAtMs: null`) in a synchronous SQLite transaction; `{ isPremium: false, revokedAtMs }` writes `owned: false` with the date, which docs/06's `keepPremiumUnlessRevoked` guard requires (a revoke without a date is ignored). "Reset all progress" never touches that section; a save restored from backup keeps it; device backup (D5) carries it to a new phone, where the launch re-check or Restore confirms it.
-- A revoked purchase (a refund, or a Family Sharing removal if the owner ever enables sharing) turns ads back on at the next re-check. The harness showed that after a refund the relaunched app got **no** listener update, but `Transaction.all` carried `revocationDateIOS`; the launch re-check is therefore the path that catches refunds.
+- A revoked purchase (a refund; Family Sharing stays off, FINAL H.3, so no family removal can occur) turns ads back on at the next re-check. The harness showed that after a refund the relaunched app got **no** listener update, but `Transaction.all` carried `revocationDateIOS`; the launch re-check is therefore the path that catches refunds.
 - The Premium page never shows a store error text from Apple; only the catalog messages in section 3.4.
 
 ### 3.6 Price display
@@ -758,8 +760,8 @@ With the forced Intl polyfills (`docs/10`) and the StoreKit value `1.98999999999
 
 ### 3.7 Pricing and Family Sharing
 
-- **Price (D3).** Target €1.90 in the base territory Germany (`DEU`); Apple equalises other territories. Apple sells at fixed price points: if €1.90 is a point for the product, the script uses it; if not, the script stops and lists the nearest points (for example €1.89 and €1.99), and the owner chooses (`--price 1.99` reruns it). The spec's example is €1.99. The price can be changed later in App Store Connect without an app update.
-- **Family Sharing:** off by default (`familySharable: false`). Turning it on is an owner decision and cannot be undone for that product. If it is ever on, a family member's access can be revoked, which the evidence rule handles like a refund.
+- **Price (D3, decided 2026-09-30: €1.99, FINAL H.2).** €1.99 in the base territory Germany (`DEU`), an App Store price point; Apple equalises other territories. The script looks the point up and uses it; if the product somehow has no exact €1.99 point, it stops and lists the nearest points instead of guessing. The app never shows this number itself: it shows the store's localised `displayPrice` (rule 13). The price can be changed later in App Store Connect without an app update.
+- **Family Sharing: off (decided 2026-09-30, FINAL H.3).** `familySharable: false` is fixed in the API body, `"familyShareable" : false` in the StoreKit configuration, and the web-UI steps say to leave it off (rule 19). Apple cannot turn it off again once it is on. The evidence rule would still handle a family revocation like a refund, but with sharing off none can occur.
 - The Settings row reads "Remove ads – {priceText}" with the store price, or "Premium – active".
 
 ### 3.8 Testing tiers
@@ -903,7 +905,7 @@ import type { PremiumChange } from './premium-service.ts';
 import type { StoreTransaction } from './purchase-port.ts';
 import type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';
 
-const ID = 'com.example.linesiege.premium';
+const ID = 'io.applander.linesiege.premium';
 const BOUGHT: StoreTransaction = {
   productId: ID,
   transactionId: 't1',
@@ -1009,6 +1011,34 @@ Files (all in `packages/tooling/src/storekit/`):
   "settings" : { "_failTransactionsEnabled" : false, "_locale" : "en_US", "_storefront" : "DEU", "_storeKitErrors" : [ ] },
   "subscriptionGroups" : [ ],
   "version" : { "major" : 2, "minor" : 0 }
+}
+```
+
+The checker that rule 19 names (added 2026-09-30 for FINAL H.2 and H.3; not yet compiled or run). `storekit-config-checks.test.ts` runs it on the committed template, so `npm run verify` fails a shareable or mispriced template, and the harness runs it again before it writes `Premium.storekit`:
+
+```ts
+// packages/tooling/src/storekit/storekit-config-checks.ts
+// Rule 19: every Premium product in a StoreKit configuration is a non-shareable NonConsumable at
+// 1.99 (FINAL H.2 price, H.3 no Family Sharing). Returns one line per problem; [] means OK.
+type StoreKitProduct = {
+  readonly productID?: string;
+  readonly type?: string;
+  readonly displayPrice?: string;
+  readonly familyShareable?: boolean;
+};
+
+export function storeKitConfigProblems(json: string): string[] {
+  const config = JSON.parse(json) as { readonly products?: readonly StoreKitProduct[] };
+  const products = config.products ?? [];
+  if (products.length === 0) return ['StoreKit configuration has no product'];
+  return products.flatMap((product) => {
+    const id = product.productID ?? '(no productID)';
+    return [
+      ...(product.familyShareable === false ? [] : [`${id}: familyShareable must be false`]),
+      ...(product.type === 'NonConsumable' ? [] : [`${id}: type must be NonConsumable`]),
+      ...(product.displayPrice === '1.99' ? [] : [`${id}: displayPrice must be 1.99`]),
+    ];
+  });
 }
 ```
 
@@ -1142,6 +1172,8 @@ import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } fro
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
+import { storeKitConfigProblems } from './storekit-config-checks.ts';
+
 const HERE = import.meta.dirname;
 const ROOT = process.cwd();
 const TEST_ENV = {
@@ -1204,6 +1236,8 @@ function prepareHarness(appDir: string, udid: string): Harness {
     join(ios, 'Premium.storekit'),
     template.replace('__PRODUCT_ID__', `${bundleId}.premium`),
   );
+  const problems = storeKitConfigProblems(template); // rule 19 (FINAL H.2, H.3)
+  if (problems.length > 0) throw new Error(problems.join('\n'));
   mkdirSync(join(ios, 'StoreKitHarness'), { recursive: true });
   copyFileSync(join(HERE, 'ArmTests.swift'), join(ios, 'StoreKitHarness', 'ArmTests.swift'));
   copyFileSync(
@@ -1377,7 +1411,7 @@ export function createIapBody(appId: string, productId: string): unknown {
         name: 'Premium', // reference name, max 64 chars, never shown to players
         productId, // letters, digits, '.', '-', '_'; max 100; never reusable in this app
         inAppPurchaseType: 'NON_CONSUMABLE',
-        familySharable: false, // default off; Apple: once on, it cannot be turned off
+        familySharable: false, // always off (FINAL H.3); Apple: once on, it cannot be turned off
         reviewNote: 'Removes all ads. Restore purchase is on the Premium page and in Settings.',
       },
       relationships: { app: rel('apps', appId) },
@@ -1404,8 +1438,8 @@ export function localizationBody(iapId: string, index: number): unknown {
   };
 }
 
-// Spec D3: about EUR 1.90 at the nearest Apple price point. Returns the points closest first;
-// the caller uses an exact match, or asks the owner (D3) when there is none.
+// Spec D3: EUR 1.99, an App Store price point (FINAL H.2). Returns the points closest first;
+// the caller uses the exact match and stops (never guesses) when there is none.
 export function closestPricePoints(points: readonly PricePoint[], target: number): PricePoint[] {
   return [...points].sort(
     (a, b) => Math.abs(a.customerPrice - target) - Math.abs(b.customerPrice - target),
@@ -1497,7 +1531,7 @@ type Resource = { readonly id: string; readonly attributes?: Record<string, unkn
 type Call = (request: AscRequest) => Promise<unknown>;
 
 const BASE_TERRITORY = 'DEU';
-const TARGET_EUR = 1.9; // spec D3: about EUR 1.90
+const TARGET_EUR = 1.99; // spec D3: EUR 1.99, an App Store price point (FINAL H.2)
 
 function dataOf(json: unknown): Resource[] {
   const data: unknown = typeof json === 'object' && json !== null ? Reflect.get(json, 'data') : [];
@@ -1541,7 +1575,7 @@ async function choosePricePoint(call: Call, iapId: string, wanted: number): Prom
     .slice(0, 3)
     .map((p) => String(p.customerPrice))
     .join(', ');
-  throw new Error(`EUR ${String(wanted)} is not a price point. Ask the owner (D3): ${options}`);
+  throw new Error(`EUR ${String(wanted)} is not a price point here. Nearest: ${options}`);
 }
 
 async function main(bundleId: string, priceEur: number, nowEpochSeconds: number): Promise<void> {
@@ -1584,7 +1618,7 @@ The schemas above were read from Apple's API reference JSON on 2026-09-26 (`InAp
 
 - **O1 (once, `docs/14`)**: Paid Apps Agreement, tax and banking in App Store Connect. Without it, the product cannot be sold or reliably tested in TestFlight.
 - **G2 (per game, `docs/14`)**: create the app record (no API).
-- **P1 (per game, part of G4 in `docs/14`)**: decide Family Sharing (default: off, irreversible once on) and confirm the price point when €1.90 is not one (D3). The agent then runs `create-premium-iap.ts` (or the owner creates the product in the web UI: Monetization → In-App Purchases → + → Non-Consumable, reference name "Premium", product ID `<bundleId>.premium`).
+- **P1 (per game, part of G4 in `docs/14`)**: nothing to decide any more: the price is €1.99 and Family Sharing stays off (FINAL H.2, H.3). The agent runs `create-premium-iap.ts`, or the owner creates the product in the web UI: Monetization → In-App Purchases → + → Non-Consumable, reference name "Premium", product ID `<bundleId>.premium` (for example `io.applander.linesiege.premium`), price €1.99 in Germany, and **leave Family Sharing off**.
 - **R5 (first release)**: on the version page, add Premium under "In-App Purchases and Subscriptions" before submitting.
 - **G6 (per game)**: the Tier-3 TestFlight purchase test (buy, cancel, reinstall + restore).
 - **Later, Android**: a Play Console managed product with the same ID, license testers, and an internal test track (billing only works for Play-installed builds).
@@ -1595,7 +1629,7 @@ The schemas above were read from Apple's API reference JSON on 2026-09-26 (`InAp
 
 - [ ] `expo-iap` is 5.8.0 (or a newer version that passed section 3.1's re-verification), plugin entry `'expo-iap'` with no options, imported only by the adapter.
 - [ ] No banned API or plugin option anywhere (ESLint + `audit:network`).
-- [ ] Product ID is `<bundleId>.premium`, NON_CONSUMABLE, `familySharable` as decided by the owner.
+- [ ] Product ID is `<bundleId>.premium` with an `io.applander.*` bundle ID, NON_CONSUMABLE, €1.99, `familySharable: false`; `storeKitConfigProblems` passes on the StoreKit template.
 - [ ] `startPremium` subscribes before connecting; an empty product list shows "store unavailable".
 - [ ] A purchase saves Premium, updates ads at once, then finishes the transaction (Tier-1 test green).
 - [ ] Pending shows "Waiting for approval"; an approval later turns Premium on without a tap.
@@ -1656,7 +1690,7 @@ On 2026-09-26 (macOS, Node 26.4.0, Xcode 26.6 / iOS 26.5 simulator, Expo SDK 57.
 
 1. **"Config plugin adds the harness" (FINAL 26) is implemented as a post-prebuild step.** The verified mechanism is the `xcodeproj` Ruby gem run by `storekit-harness.ts` right after a fresh test-variant prebuild, not an Expo config plugin inside every prebuild. This keeps the harness out of every other build by construction (Debug-only entitlement unchanged). Porting it into a `withXcodeProject` + `withDangerousMod` plugin is possible later but unverified.
 2. **Refunds are not pushed to a running app in the test store.** After `refundTransaction`, the relaunched RN app got no update event; only the launch re-check (`Transaction.all`) saw the revocation. Real App Store behaviour may differ; the design handles both paths.
-3. **Price point for €1.90.** Whether Apple offers exactly €1.90 for this product was not checked (no API key). The script refuses to guess and asks the owner (D3); the spec's example is €1.99.
+3. **Resolved (2026-09-30): the price.** The owner chose €1.99, an App Store price point (FINAL H.2). The script's exact-match lookup has not run against the live API yet (no API key); it stops rather than guess if the point is missing.
 4. **`sync-error` on a cancelled Apple Account prompt** is taken from the source; in the simulator a cancelled simulated sign-in alert still let `restorePurchases` resolve. Tier 1 covers the mapping; Tier 3 is the real check.
 5. **Resolved: `persistPremium` contract.** It takes `{ isPremium: true }` or `{ isPremium: false, revokedAtMs }` (a `PremiumChange`), because docs/06's `keepPremiumUnlessRevoked` ignores a revoke without a date; docs/06 sections 4.1 and 6.8 use the same shapes.
 6. **Resolved: fake factory name.** docs/03 names the fake `createFakePurchase` (`fake-purchase.ts`); this doc and docs/07 section 3.8.6 use it.

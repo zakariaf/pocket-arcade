@@ -1,7 +1,7 @@
 # 14 · iOS build and release
 
 > **What this doc decides.** How Claude Code turns `apps/<game>` into a Release simulator build and a TestFlight/App Store upload on this Mac, using only Apple's command-line tools. There is no Xcode GUI, EAS or fastlane. It fixes the build variants (`APP_VARIANT`, `ADS_MODE`), the version and build-number policy, and signing with the team App Store Connect API key. It gives the exact prebuild, `xcodebuild` and `altool` commands, the ExportOptions files, the small JWT script for App Store Connect REST, and the honest list of human steps. It ends with a failure playbook, the release checklist, and what "Android later" needs.
-> **Binding source:** [99-final-decisions.md](99-final-decisions.md) A.9, A.10, C.23–C.26, E and F. Problems found while writing are under [Open issues](#open-issues).
+> **Binding source:** [99-final-decisions.md](99-final-decisions.md) A.9, A.10, C.23–C.26, E and F, and section H (O1 tracking, O2 price, O3 Family Sharing, O4 app IDs, O6 owner steps). Problems found while writing are under [Open issues](#open-issues).
 > **Related docs:** [01-stack-and-versions.md](01-stack-and-versions.md) (toolchain versions), [02-architecture-and-folders.md](02-architecture-and-folders.md) (withShell and the app files), [04-code-style-and-limits.md](04-code-style-and-limits.md) (app-env.d.ts and lint exemptions), [10-i18n-and-rtl.md](10-i18n-and-rtl.md) (the fa/ckb review gate), [11-ads-admob.md](11-ads-admob.md) (ad IDs per variant), [12-in-app-purchase.md](12-in-app-purchase.md) (Premium product), [13-privacy-network-security.md](13-privacy-network-security.md) (release audit), [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) (verify before release). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
@@ -282,7 +282,7 @@ docs/02 section 9.1 owns `withShell` and has the complete file. These of its fie
 
 | Field or check | Value |
 |---|---|
-| bundle ID check | throws unless `bundleId` matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` (FINAL A.9) |
+| bundle ID check | throws unless `bundleId` matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` (FINAL A.9); the `io.applander.*` rule is checked by the preflight and step 7 below (FINAL H.4) |
 | `resolveBuildVariant(env)` | throws on an unknown value, a mismatch between `APP_VARIANT` and `EXPO_PUBLIC_APP_VARIANT`, or a forbidden pair (the matrix above) |
 | `version`, `ios.buildNumber`, `android.versionCode` | from `game.config.ts` (section 3.6) |
 | `ios.deploymentTarget` | `'16.4'` (the built-in key; `expo-build-properties`' `ios.deploymentTarget` has been deprecated since SDK 56) |
@@ -440,6 +440,7 @@ ALTOOL_AUTH=(--api-key "$ASC_KEY_ID" --api-issuer "$ASC_ISSUER_ID")   # altool f
 - `xcodebuild -version` prints Xcode 26.6. `ASC_KEY_ID`, `ASC_ISSUER_ID` and `APPLE_TEAM_ID` are set. `test -f "$KEY_PATH"` succeeds and `stat -f %Sp "$KEY_PATH"` is `-rw-------`, without reading the file.
 - The keychain check from section 3.7 passes.
 - The app record exists: `node packages/tooling/src/asc/print-app-record.ts <bundleId>` prints `{"id","name"}`. Exit 2 means there is no record, which is human step G2. Keep the `id` (the numeric Apple ID) as `APPLE_APP_ID`; `BUNDLE_ID`, `VERSION` and (after step 2) `BUILD_NUMBER` come from `game.config.ts`.
+- Both variants: `BUNDLE_ID` is exactly `io.applander.<game id without hyphens>` (for `line-siege`: `io.applander.linesiege`) and the Premium product ID is `${BUNDLE_ID}.premium` (FINAL H.4). The check names and rejects `com.example.*` and any other placeholder prefix. Store variant with `ADS_MODE=live`: no AdMob ID in `game.config.ts` contains the scaffold's placeholder publisher `1234567890123456` (for example `ca-app-pub-1234567890123456~1234567890`) or Google's sample publisher `3940256099942544` (`assertLiveIds`, docs/11).
 - Store variant only: the `version` in `game.config.ts` is higher than the last release tag `<slug>/vX.Y.Z` (build tags contain `+` and do not count), and the fa/ckb review gate of docs/10 (`review-sheet.ts --release`) passes.
 
 **Step 2: build number**
@@ -529,12 +530,14 @@ rm -rf build/ipa-check && mkdir -p build/ipa-check && unzip -q "$IPA" -d build/i
 APPDIR=$(ls -d build/ipa-check/Payload/*.app)
 ```
 
-**Step 7: store-artifact gate.** All checks run for store builds. Test builds run the version, `extra` and `get-task-allow` checks only.
+**Step 7: store-artifact gate.** All checks run for store builds. Test builds run the bundle ID, version, `extra` and `get-task-allow` checks only.
 ```sh
+plutil -extract CFBundleIdentifier raw "$APPDIR/Info.plist"             # == io.applander.<game id without hyphens>; never com.example.* (FINAL H.4)
+plutil -extract NSUserTrackingUsageDescription raw "$APPDIR/Info.plist" # non-empty (ATT text, FINAL H.1); de/fa/ckb in *.lproj/InfoPlist.strings
 plutil -extract CFBundleVersion raw "$APPDIR/Info.plist"                # == new buildNumber
 plutil -extract CFBundleShortVersionString raw "$APPDIR/Info.plist"     # == version
 plutil -extract ITSAppUsesNonExemptEncryption raw "$APPDIR/Info.plist"  # false
-plutil -extract GADApplicationIdentifier raw "$APPDIR/Info.plist"       # live: matches ^ca-app-pub-\d{16}~\d{10}$ and != ca-app-pub-3940256099942544~1458002511; off/test: the sample ID
+plutil -extract GADApplicationIdentifier raw "$APPDIR/Info.plist"       # live: matches ^ca-app-pub-\d{16}~\d{10}$, != ca-app-pub-3940256099942544~1458002511 and not the scaffold placeholder ca-app-pub-1234567890123456~1234567890; off/test: the sample ID
 plutil -extract extra.appVariant raw "$APPDIR/EXConstants.bundle/app.config"   # == $APP_VARIANT (plutil reads this JSON file)
 plutil -extract extra.adsMode raw "$APPDIR/EXConstants.bundle/app.config"      # == $ADS_MODE
 grep -a -c 'SHELL_TEST_BUILD_ONLY' "$APPDIR/main.jsbundle"              # store: 0 (Hermes bytecode keeps ASCII strings; verified)
@@ -824,13 +827,13 @@ Error handling follows Apple's advice to **prefix-match** `code` ([Parsing the e
 - **O10.** *Later:* the Google Play developer account (section 3.14).
 
 **Per game**
-- **G1.** Approve the app name and the bundle ID proposed by the agent. The bundle ID must match `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` and the name must be unique on the App Store.
+- **G1.** Approve the app name. The bundle ID is fixed by rule, not proposed: `io.applander.<game id without hyphens>` (Line Siege: `io.applander.linesiege`), the same on iOS and Android (FINAL H.4). The name must be unique on the App Store.
 - **G2.** Create the **app record** in App Store Connect (My Apps → + → New App: iOS, name, primary language, the bundle ID, SKU = the game slug). The public API has no create endpoint for apps (the Apps resource offers list, read and modify only). About 2 minutes.
-- **G3.** Fill in the **App Privacy** questionnaire (web; the API is believed not to cover it). Decide it together with D4: GMA's manifest declares DeviceID with tracking=true while the app never shows ATT (a guideline 5.1.2 risk; docs/11 section 3.10 and docs/13 section 3.4 lay out the options).
-- **G4.** Check the **Premium** in-app purchase the agent created through the API, or create it in the web UI. The first IAP must be submitted together with an app version.
+- **G3.** Fill in the **App Privacy** questionnaire (web; the API is believed not to cover it) from `npm run audit:privacy`'s "collected" output: Device ID is **linked and used for tracking** by the third-party ads SDK, and the app asks for it through Apple's ATT prompt (FINAL H.1; docs/13 section 3.4 has every answer).
+- **G4.** Check the **Premium** in-app purchase the agent created through the API, or create it in the web UI: product ID `<bundle ID>.premium`, Non-Consumable, €1.99 (FINAL H.2), **Family Sharing left off** (FINAL H.3; it cannot be turned off once on). The first IAP must be submitted together with an app version.
 - **G5.** AdMob: create the app and 3 ad units, and give the IDs to the agent. After release, link the AdMob app to the store listing and publish `app-ads.txt` (docs/11 section 3.11, steps A2 and A5).
-- **G6.** Play-test on TestFlight, including the Tier-3 purchase test: buy, cancel, restore after reinstall. The sandbox does not charge.
-- **G7.** Have a native speaker read the Persian and Sorani texts.
+- **G6.** Play-test on TestFlight, including the Tier-3 purchase test: buy, cancel, restore after reinstall. The sandbox does not charge. The owner does this personally (FINAL H.6); the agent lists it in its reports and never waits for it.
+- **G7.** Read the Persian and Sorani texts as a native reviewer; the owner does this personally (FINAL H.6), including the ATT prompt text (`consent.tracking.usage-description`). The agent keeps drafting texts and never waits for the review.
 - **G8.** Approve the store listing (texts, screenshots, age rating answers). This belongs to the store-pages step of the spec's pipeline (step 8), which this handbook does not cover yet.
 
 **Per release**
@@ -851,6 +854,8 @@ Error handling follows Apple's advice to **prefix-match** `code` ([Parsing the e
 | `print-app-record.ts` exits 2, or the upload says no app record / cannot determine the Apple ID for the bundle ID | App record missing | **Stop.** Human step G2, then rerun |
 | `ITMS-90683: Missing purpose string in Info.plist` naming `NSMicrophoneUsageDescription` | `react-native-audio-api` references record-permission APIs (expected risk, FINAL B.20) | Add a neutral `NSMicrophoneUsageDescription` through the `react-native-audio-api` plugin option `iosMicrophonePermission` (docs/09 rule 11; an `ios.infoPlist` entry is equivalent, use one of the two), translated in all four languages through `expo.locales` (docs/10 owns the texts). The app never asks, so users never see it. Rebuild with a **new** build number |
 | Emails or processing errors `ITMS-91053` (Missing API declaration), `ITMS-91061` (missing privacy manifest for a listed SDK) or `ITMS-91056` (invalid manifest) | Aggregated required-reason APIs are incomplete | Run `npm run audit:privacy`, add the missing category and reason to `ios.privacyManifests`, prebuild, rebuild with a new build number. Ask the owner to paste Apple's email text; the agent cannot read email |
+| Preflight or step 7 names a bundle ID outside `io.applander.*` (for example `com.example.linesiege`) or a placeholder AdMob ID (`ca-app-pub-1234567890123456~…`) | `game.config.ts` still holds a scaffold or placeholder value | Set the bundle ID to `io.applander.<game id without hyphens>` and the product ID to `<bundle ID>.premium` (FINAL H.4). For AdMob IDs, **stop** and ask the owner for the real ones (docs/11 step A2). Never weaken the check |
+| App Review cites guideline 5.1.2 or App Tracking Transparency | The tracking prompt did not appear before ads, or the App Privacy answers disagree with it | Check on a simulator that the prompt follows Google's form in an `ADS_MODE=test` build (docs/11 section 3.14) and that G3 declares Device ID as used for tracking (docs/13 section 3.4); **stop** and send the owner the reviewer's text |
 | `ITMS-90189: Redundant Binary Upload` | Build number reused | Never reuse. Bump (section 3.6) and rebuild. If the earlier upload really succeeded, check `--build-status` first |
 | `ITMS-90062` (version must be higher than the previously approved version) | `version` not raised after an approval | Raise `version` in `game.config.ts` and rebuild |
 | `NOT_AUTHORIZED` (401) from altool or REST | Wrong key or issuer ID, revoked key, or clock skew (`iat` in the future) | Check that the env IDs match the file name (without reading it) and that the Mac clock is on network time. If the key was revoked, the owner creates a new one (O3) |
@@ -871,7 +876,7 @@ Before `npm run release:ios -- --variant store`:
 - [ ] `npm run verify` is green (includes `audit:network`, `audit:licenses`, `i18n:verify`, coverage, and `npx expo install --check` / `expo-doctor` for every app).
 - [ ] `npm run e2e:ios` and `npm run screenshots:ios` are green on a test-variant simulator build of **this** commit, and the screenshot diffs have been reviewed.
 - [ ] The `version` in `game.config.ts` is correct and higher than the last approved version.
-- [ ] `game.config.ts` holds the real AdMob app and unit IDs and the Premium product ID (the unit test "production IDs never contain 3940256099942544" passes).
+- [ ] `game.config.ts` holds the `io.applander.*` bundle ID, the real AdMob app and unit IDs (no scaffold placeholder `1234567890123456`) and the Premium product ID `<bundle ID>.premium` (the unit test "production IDs never contain 3940256099942544" passes).
 - [ ] The SKAdNetwork list was refreshed from Google's page (docs/11 section 3.3).
 - [ ] The Paid Apps Agreement and the other agreements are current. The app record exists. The Premium IAP exists (first release: it is attached to the version).
 - [ ] The owner play-tested the latest **test** build of this commit (R1), including the purchase test on the first release of a game.
@@ -886,7 +891,7 @@ After the upload:
 ### 3.14 Android later
 
 **Already prepared now:**
-- `android.package` equals the bundle ID, which is valid on both platforms thanks to the pattern check in `withShell`, and `android.versionCode` equals `buildNumber` (verified in `npx expo config`).
+- `android.package` equals the bundle ID (`io.applander.<game id without hyphens>`, FINAL H.4), which is valid on both platforms thanks to the pattern check in `withShell`, and `android.versionCode` equals `buildNumber` (verified in `npx expo config`).
 - `android/` is only ever generated by prebuild. It is gitignored.
 - Safe-area insets are used everywhere (edge-to-edge). Hardware Back is handled by React Navigation (`usePreventRemove` on Game). No React Native 0.87-removed APIs are used.
 - Java 17 is present (Android Studio JBR 17.0.11). SDK 57 targets Android 7+, with compileSdk and targetSdk 36. SDK 58 moves compileSdk to 37 (AGP 9).
@@ -990,3 +995,4 @@ Before calling any change to the build or release tooling "done":
 8. **FINAL A.9 "APP_VARIANT → EXPO_PUBLIC_APP_VARIANT" cannot happen inside `app.config.ts`.** Metro runs later, in the Xcode build phase, with its own environment. The scripts therefore export both variables (plus `ADS_MODE`) for the whole run, and `resolveBuildVariant` throws when they differ.
 9. **Resolved: docs/04's `app-env.d.ts` has the `process` declaration**, and every app tsconfig includes the file (docs/04 section 2.2).
 10. **No ready signal for store-variant simulator builds.** App code cannot write to the unified log (docs/04 bans `console`), and docs/15's perf log exists only in test builds. `build:ios:sim --variant store` therefore has nothing to wait for before its screenshot. Options: poll the accessibility tree with Maestro (`extendedWaitUntil` on `home.screen`), or accept a bounded wait for that one variant. Decide when the script is written.
+11. **New checks of 2026-09-30 are unrun.** The preflight's `io.applander.*` and placeholder-ID check (FINAL H.4) and step 7's `CFBundleIdentifier` and `NSUserTrackingUsageDescription` lines (FINAL H.1) are written from the decisions and Apple's key names; they run for the first time in the pilot's next `release:ios`.

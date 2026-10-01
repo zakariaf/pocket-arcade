@@ -81,7 +81,7 @@ Most tests live in levels 1-3. A typical game ships with a few hundred level-1/2
 **End-to-end and screenshots**
 
 29. **Install Maestro only with `packages/tooling/scripts/install-maestro.sh`** (pinned GitHub zip, SHA-256 checked) and run it with `MAESTRO_CLI_NO_ANALYTICS=true`, `MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED=true`, `MAESTRO_DISABLE_UPDATE_CHECK=true`, Java 17 (FINAL D.40).
-30. **Run flows only against a Release simulator build of the `test` variant with `ADS_MODE=off`** (docs/14 section 3.5), on a dedicated simulator created by name (never another agent's simulator), and select elements by `id:` only. End every `smoke` flow with `subflows/assert-no-network.yaml`; the runner also fails on any non-loopback socket (docs/13 layer F).
+30. **Run flows only against a Release simulator build of the `test` variant with `ADS_MODE=off`** (docs/14 section 3.5; such a build never shows Google's consent form or Apple's tracking prompt, docs/11 rule 21), on a dedicated simulator created by name (never another agent's simulator), and select elements by `id:` only. End every `smoke` flow with `subflows/assert-no-network.yaml`; the runner also fails on any non-loopback socket (docs/13 layer F).
 31. **Set up state only through the debug deep link** (section 3.12), never by tapping through menus. *Why:* setup through the UI is slow and flaky, and couples every flow to every screen.
 32. **Never give a flow an `env:` block for a variable the runner passes with `-e`.** *Why:* in Maestro 2.10.0 the flow's `env:` value wins over `-e` (verified).
 33. **Keep sub-flows outside `flows/`** (`e2e/subflows/`). *Why:* Maestro runs only top-level files of a folder and the runner lists `flows/<area>/*.yaml` explicitly; a sub-flow in `flows/` would run on its own and fail.
@@ -142,6 +142,7 @@ When Expo moves to Jest 30 or a new Reanimated/Worklets line (SDK 58 is still a 
 <repo>/
   babel.config.js  jest.config.js  jest.sim.config.js  jest.setup.ts  stryker.config.json  tsconfig.stryker.json
   __mocks__/react-native-google-mobile-ads.ts  __mocks__/expo-iap.ts        # root manual mocks (vendor SDKs only)
+  __mocks__/expo-tracking-transparency.ts                                  # Apple's ATT prompt (FINAL H.1)
   __mocks__/react-native-audio-api.ts                                      # owned by docs/09 section 4.6
   test/
     integration/<area>/<name>.test.ts       # cross-module and Node-API tests (save/: docs/06's node:sqlite tests)
@@ -484,6 +485,30 @@ export function BannerAd(): null {
   return null;
 }
 ```
+
+A fourth root mock covers Apple's App Tracking Transparency module, which only docs/11's consent adapter imports (FINAL H.1). Its native module does not exist in Jest, and the adapter test needs to script each answer. Added 2026-09-30; not yet run:
+
+```ts
+// __mocks__/expo-tracking-transparency.ts — root manual mock for expo-tracking-transparency 57.0.2.
+// The default answer is "not asked yet"; a test scripts others with mockResolvedValueOnce.
+export const PermissionStatus = {
+  GRANTED: 'granted',
+  UNDETERMINED: 'undetermined',
+  DENIED: 'denied',
+} as const;
+
+const UNDETERMINED = {
+  status: PermissionStatus.UNDETERMINED,
+  granted: false,
+  canAskAgain: true,
+  expires: 'never',
+};
+
+export const getTrackingPermissionsAsync = jest.fn(() => Promise.resolve(UNDETERMINED));
+export const requestTrackingPermissionsAsync = jest.fn(() => Promise.resolve(UNDETERMINED));
+```
+
+Shell tests never touch it: `fake-consent.ts` holds a scripted `TrackingStatus` and records every `requestTrackingIfNotDetermined` call, so `ad-gate.test.ts` proves the order form → tracking → initialize with fakes (docs/11 section 3.14).
 
 ```ts
 // __mocks__/expo-iap.ts — root manual mock (automatic in every Jest project). expo-iap 5.8.0 ships no

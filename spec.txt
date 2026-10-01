@@ -1,6 +1,8 @@
 E07 GAME FRAMEWORK - SPECIFICATION
 Working name: "the Shell" (the real name is decided in step 2)
-Version: draft 1, 2026-09-26
+Version: draft 2, 2026-09-30 (the owner's and the lead's decisions of
+2026-09-30 are recorded here; the full list is section H of
+docs/99-final-decisions.md)
 Status: product spec only. It describes WHAT the framework and its games do,
 screen by screen and feature by feature. It does not choose libraries or
 write code. The app will be built with React Native, and the React Native
@@ -129,6 +131,9 @@ N3. OUR OWN CODE MAKES NO NETWORK REQUESTS.
     components contains exactly those two, and anything else fails the
     build. See section 4 for why this exception exists and what it means
     for the privacy promise.
+    Apple's "Allow tracking?" prompt (section 4.2, point 3) is a system
+    dialog that makes no request of its own, so it adds nothing to this
+    list.
 
 N4. ONE GAME = ONE APP.
     Each game has its own name, icon, store listing, ad IDs and purchase.
@@ -146,9 +151,10 @@ N6. FOUR LANGUAGES FROM DAY ONE, BOTH DIRECTIONS.
     is designed and checked in both directions.
 
 N7. ONE PURCHASE.
-    A single one-time purchase, "Premium", at about EUR 1.90. It removes all
-    ads forever (section 8.9). No subscriptions, no coins, no consumables,
-    no second product.
+    A single one-time purchase, "Premium", at EUR 1.99 (an App Store price
+    point; decision D3). It removes all ads forever (section 8.9). No
+    subscriptions, no coins, no consumables, no second product. Premium
+    is not shared through Apple's Family Sharing.
 
 N8. ADS NEVER INTERRUPT PLAY.
     - No ad during a level, during the tutorial, or on app start.
@@ -206,9 +212,10 @@ section is how the spec resolves it.
      Apple's "App Privacy" details and Google Play's "Data safety" form
      must declare what the ads component collects. That usually includes
      device identifiers, approximate location from the network, and ad
-     interaction data. So we cannot claim "collects no data". We CAN claim
-     no accounts, no personal data collected by us, and fully playable
-     offline.
+     interaction data. The device ID is declared as "used for tracking"
+     by the third-party ads component (see point 3). So we cannot claim
+     "collects no data". We CAN claim no accounts, no personal data
+     collected by us, and fully playable offline.
      (Exact wording is confirmed in the store-pages step.)
 
   2. CONSENT IN EUROPE.
@@ -219,11 +226,23 @@ section is how the spec resolves it.
      in Settings.
      (Confirm the exact requirements in the platform step.)
 
-  3. iPHONE TRACKING PERMISSION.
-     Personalised ads on iPhone need Apple's "Allow tracking?" system
-     prompt. Without it, ads are still shown, just not personalised (lower
-     revenue). Default in this spec: do NOT ask in v1. It is simpler and
-     more private, and can be switched on later (open decision D4).
+  3. iPHONE TRACKING PERMISSION (decided 2026-09-30: follow Apple's
+     rules, decision D4).
+     Apple's App Review guideline 5.1.2(i) requires Apple's "App Tracking
+     Transparency" permission before an app, or an ads component inside
+     it, tracks the player. The ads component can use the iPhone's
+     advertising ID (IDFA) for tracking. So on iPhone the Shell asks
+     Apple's "Allow tracking?" system prompt before any ad request that
+     could use the advertising ID, in this order:
+       a. the Shell's own short consent intro (S3);
+       b. Google's consent message, only where it is required (point 2);
+       c. Apple's tracking prompt, only while the player has not answered
+          it yet.
+     If the player declines, or tracking is restricted on the phone, ads
+     are still shown, just without the advertising ID (not personalised
+     by it; lower revenue). The prompt's sentence is ours, in all four
+     languages; the dialog is Apple's. The player can change the answer
+     later in the phone's Settings (Privacy & Security > Tracking).
 
   4. A PRIVACY POLICY WEB PAGE.
      Both stores require a privacy-policy link, and ads make one mandatory
@@ -247,8 +266,8 @@ section is how the spec resolves it.
   S1 Splash
   S2 First-run language choice          (first launch only)
   --> S13 Tutorial level                (first launch only)
-  S3 Ad consent                         (only where legally required;
-                                         before the first ad)
+  S3 Ad consent and tracking            (only where needed; before the
+                                         first ad request)
   S4 Home
      |-- S5  Game screen
      |     |-- S6 Pause menu
@@ -306,20 +325,38 @@ S2  FIRST-RUN LANGUAGE CHOICE (first launch only)
              (S13), not to Home.
 
 ----------------------------------------------------------------------
-S3  AD CONSENT (only where required)
+S3  AD CONSENT AND TRACKING (only where needed)
 ----------------------------------------------------------------------
-  Purpose  The legal consent step for ads (section 4.2).
-  Shows    Google's consent message. Its content comes from Google, but
-           the Shell decides WHEN it appears.
+  Purpose  The legal permission steps for ads (section 4.2, points 2
+           and 3).
+  Shows    In this order, each step only when it applies:
+           1. The Shell's own short intro ("Ad privacy"), so the player
+              knows why a question follows. It appears only when step 2
+              or step 3 follows.
+           2. Google's consent message, only in regions where it is
+              required. Its content comes from Google.
+           3. On iPhone, Apple's "Allow tracking?" system prompt, only
+              while the player has not answered it yet. Its sentence is
+              ours (in all four languages); the dialog is Apple's.
+           The Shell decides WHEN this happens.
   Rules    - Never shown before the player has finished the tutorial
              level: the first minute of the game is play, not paperwork.
-           - Shown before the first ad is ever requested.
-           - Only in regions where it is required. Everyone else never
-             sees it.
+           - Shown before the first ad is ever requested. No ad request
+             that could use the advertising ID happens before Apple's
+             prompt has been answered.
+           - Google's step only in regions where it is required. Everyone
+             else never sees it.
+           - Declining tracking, or tracking being restricted on the
+             phone, never blocks ads: they are shown without the
+             advertising ID.
            - Offline or Premium: skipped. It is shown later only if an ad
              is ever about to load.
+           - Builds with ads switched off (automatic tests, screenshots)
+             never show any of it.
            - Settings has a permanent "Ad privacy choices" row that
-             reopens it.
+             reopens Google's step where it applies. Apple's answer is
+             changed in the phone's own Settings (Privacy & Security >
+             Tracking), not in the game.
 
 ----------------------------------------------------------------------
 S4  HOME
@@ -334,7 +371,10 @@ S4  HOME
         "Play - Level 13" otherwise (the next unfinished level).
     - Daily challenge card: today's date (in the chosen language and
       digits), "Play today's challenge" or "Done - come back tomorrow",
-      and the current daily streak.
+      and the current daily streak. Tapping the card opens the Daily
+      challenge screen (S9); the card's own Play key starts today's run
+      directly. The two are separate buttons, also for screen readers.
+      When today is done, the card still opens S9.
     - Row of buttons: Levels | Statistics | How to play.
     - Premium button with a small crown. Hidden once Premium is owned;
       replaced by a small "Premium" badge on the logo.
@@ -369,7 +409,8 @@ S5  GAME SCREEN
         * Undo button, if the game supports undo.
         * Hint button, if the game supports hints. Free for Premium;
           otherwise a rewarded ad or a small daily free allowance
-          (section 8.10).
+          (section 8.10). A game without hints (for example Line Siege)
+          has no hint button at all.
     - Board area (the game's): the game draws its board and handles its
       input here.
     - Bottom area (the game's, optional): for example Line Siege's tray of
@@ -390,7 +431,11 @@ S6  PAUSE MENU (overlay on the game)
 ----------------------------------------------------------------------
   Shows    Resume (big) | Restart level | How to play | Sound on/off |
            Music on/off | Vibration on/off | Home
-  Rules    - "Restart level" asks for confirmation only if progress would
+  Rules    - "Music on/off" appears only for games that have music. A game
+             without music (for example Line Siege) has no Music key, and
+             the remaining keys close up. Likewise a game without hints
+             has no hint entry here.
+           - "Restart level" asks for confirmation only if progress would
              be lost beyond a few moves.
            - "Home" keeps the level saved, so Continue on Home resumes it.
            - No ads here.
@@ -401,7 +446,10 @@ S7  RESULT SCREEN
   WIN
     Shows    - "Level complete!" with 1-3 stars filling in one by one.
              - Score, and "New best!" when it is one.
-             - The goal line, for example "7 moves - par 7".
+             - The goal line. Levels rated by moves show the moves
+               against par, for example "7 moves - par 7". Levels rated by
+               score (for example Line Siege) show the score against the
+               level's best, for example "Score 1,840 - best 1,840".
              - Buttons: NEXT LEVEL (big) | Replay | Levels.
              - In Daily mode: today's result, streak and "Come back
                tomorrow".
@@ -505,13 +553,14 @@ S11  SETTINGS
     - Hints during play: on/off (tutorial tips and nudges).
 
   PREMIUM
-    - Status row: "Premium - active", or "Remove ads - EUR 1.90" (price
+    - Status row: "Premium - active", or "Remove ads - EUR 1.99" (price
       from the store), which opens S12.
     - Restore purchase.
 
   PRIVACY
-    - Ad privacy choices: reopens the consent step (S3). Shown only where
-      consent applies.
+    - Ad privacy choices: reopens Google's consent step (S3). Shown only
+      where that consent applies. Apple's tracking answer is changed in
+      the phone's own Settings, not here.
     - Privacy policy: the offline text (S11c).
 
   DATA
@@ -550,7 +599,7 @@ S12  PREMIUM (THE PURCHASE PAGE)
         * Hints and continues without watching ads.
         * Support the developer of this game.
     - Price, exactly as the store reports it, in the player's currency,
-      for example "EUR 1,90", "€1.90" or "۱٫۹۰ یورو". Never typed into
+      for example "EUR 1,99", "€1.99" or "۱٫۹۹ یورو". Never typed into
       the code.
     - One big BUY button.
     - Restore purchase (link).
@@ -577,9 +626,12 @@ S12  PREMIUM (THE PURCHASE PAGE)
   Rules
     - Each game has its own Premium, because each game is a separate app.
       Buying Premium in one game does not unlock another.
+    - Premium is not shared through Apple's Family Sharing: each Apple
+      account buys it for itself (decided 2026-09-30).
     - Premium is never pushed with pop-ups. The only reminders are the
       Home button, the Settings row, and one friendly line on the result
-      screen at most once per day ("Enjoying it? Remove ads for EUR 1.90").
+      screen at most once per day ("Enjoying it? Remove ads for EUR 1.99",
+      with the price text from the store).
 
 ----------------------------------------------------------------------
 S13  HOW TO PLAY / TUTORIAL
@@ -676,7 +728,10 @@ S15  DEBUG MENU (test builds only; never in store builds)
       Persian and Sorani use a friendly, neutral tone.
   - Claude Code writes all four languages. Persian and Sorani texts
     should be read once by a native speaker before each release.
-    Machine-written Sorani especially can sound unnatural.
+    Machine-written Sorani especially can sound unnatural. You do this
+    review yourself (decided 2026-09-30): Claude Code drafts the texts,
+    lists the review as your step in its reports, and never waits for
+    it.
   - Game module texts (title, tutorial, how-to-play, piece and enemy
     names, result reasons, stats labels) are required in all four
     languages. A missing text fails the build.
@@ -763,6 +818,9 @@ S15  DEBUG MENU (test builds only; never in store builds)
     good move, and the Shell highlights it. Hint budget: 1 free hint per
     day, then a rewarded ad per hint, or unlimited with Premium
     (open decision D2).
+  - Every game states whether it has hints at all. A game without hints
+    (for example Line Siege) shows no hint key on the Game screen and no
+    hint entry in the Pause menu.
 
 8.6 Saving
 
@@ -822,6 +880,10 @@ S15  DEBUG MENU (test builds only; never in store builds)
       impossible.
     - Development and test builds use only Google's test ads, never real
       ones. Real ad IDs go in the game's configuration.
+    - On iPhone, Apple's tracking permission is asked before the first ad
+      request that could use the advertising ID (S3, section 4.2). If the
+      player declines, or tracking is restricted, ads still load, without
+      that ID.
     - Ads are loaded in the background at quiet moments. Play never waits
       for an ad. A failed load is silent.
     - Premium removes banners and interstitials immediately and turns
@@ -835,11 +897,14 @@ S15  DEBUG MENU (test builds only; never in store builds)
 
 8.9 Premium purchase
 
-  - One non-consumable product per game ("Premium", about EUR 1.90).
+  - One non-consumable product per game ("Premium", EUR 1.99).
   - Prices are set in the App Store and Google Play consoles, not in the
-    app. Apple uses fixed price points. If EUR 1.90 is not one of them,
-    use the nearest (for example EUR 1.99). Google allows any price
-    (open decision D3).
+    app. EUR 1.99 is one of Apple's fixed price points, so the App Store
+    uses exactly that, and Google Play uses the same price (decision D3,
+    decided 2026-09-30). The app always shows the price the store
+    reports, in the player's currency, and never types it into the code.
+  - Family Sharing stays off for Premium (decided 2026-09-30). Once
+    Apple's switch is on for a product it cannot be turned off again.
   - After a purchase, the Shell stores "Premium = yes" on the phone. From
     then on Premium works offline forever, without asking the store
     again.
@@ -862,8 +927,10 @@ S15  DEBUG MENU (test builds only; never in store builds)
 
   - Text grows with the phone's text-size setting up to 200%, and
     layouts reflow rather than cut off.
-  - Colour contrast meets normal readability guidelines in light and
-    dark themes.
+  - Colour contrast meets the standard guideline (WCAG AA) in light and
+    dark themes: every text reaches at least 4.5:1 against what is behind
+    it, in every state, including a button label while a "hold to
+    confirm" fill grows under it (decided 2026-09-30).
   - Nothing important is shown by colour alone (colour-blind option
     adds shapes and symbols).
   - Screen readers can read and use every menu, button and setting. Game
@@ -925,6 +992,7 @@ S15  DEBUG MENU (test builds only; never in store builds)
   Restore Premium           works                      "Connect to restore"
   Premium already owned     works                      works
   Consent step              shown where required       deferred until online
+  Tracking prompt (iPhone)  asked before the first ad  deferred until online
   Rate / contact            opens store / email app    OS handles it
 
 
@@ -951,6 +1019,9 @@ else is needed to become a full app.
     - Score and the goal/progress line for the top bar.
     - Whether undo, hints and continue are supported, and how continue
       works.
+    - The facts the Shell reads to draw its own screens: whether the game
+      has music, whether it has hints, and whether its levels are rated
+      by moves against par or by score (S5, S6, S7, S11).
 
   LEVELS
     - Level generator: seed + difficulty -> level.
@@ -989,10 +1060,18 @@ else is needed to become a full app.
 11. PER-GAME CONFIGURATION (ONE FILE PER GAME)
 ======================================================================
 
-  - App name per language, store id / bundle id, version.
-  - Premium product id; price note (the price itself is set in the stores).
+  - App name per language, App Store id, version.
+  - App id, the same on iOS (bundle id) and Android (package name):
+    always io.applander.<game id without hyphens>, all lowercase, for
+    example io.applander.linesiege for Line Siege (decided 2026-09-30).
+    Placeholder ids (com.example..., the scaffold's sample values) can
+    never be released.
+  - Premium product id: the app id plus ".premium", for example
+    io.applander.linesiege.premium; price note (the price itself is set
+    in the stores).
   - AdMob app id and ad unit ids per platform (banner, interstitial,
-    rewarded). Test ids in development.
+    rewarded), from the owner. Test ids in development. The scaffold's
+    placeholder ids can never be released.
   - Ad rules: frequency numbers (8.8), ads on/off master switch (4.3).
   - Modes on/off, packs and level counts, free hints per day, continue
     allowed.
@@ -1123,6 +1202,9 @@ own design pass before it is built.
        - The frequency rules pass their tests.
        - Premium removes them instantly.
        - Consent appears before the first ad in a simulated EU region.
+       - On iPhone, Apple's tracking prompt appears after the consent
+         step and before the first ad request, and declining it still
+         shows ads.
   5. Premium: buy, cancel, pending, error, restore and offline states
      all tested with the stores' test tools. Premium works offline after
      purchase.
@@ -1148,10 +1230,10 @@ The defaults are used unless you say otherwise.
   D1  Pilot game. Default: Line Siege.
   D2  What Premium includes. Default: removes all ads, and hints and
       continues become free. Levels are never sold.
-  D3  Exact price. Default: EUR 1.90 where the store allows; otherwise
-      the nearest price point (for example EUR 1.99 on Apple).
-  D4  Ask iPhone players for tracking permission (more ad revenue, one
-      extra system prompt)? Default: no, not in v1.
+  D3  Exact price. DECIDED 2026-09-30: EUR 1.99, an App Store price
+      point, in both stores. The app always shows the store's price.
+  D4  Ask iPhone players for tracking permission? DECIDED 2026-09-30:
+      yes, following Apple's rules (section 4.2 point 3, S3).
   D5  Allow the phone's own device backup to include the save (progress
       follows players to a new phone)? Default: yes.
   D6  Framework and app names. Default: decided in step 2 ("Name it").
@@ -1160,6 +1242,21 @@ The defaults are used unless you say otherwise.
       for children.
   D9  Level count per game in v1. Default: 3 packs x 30 levels, plus
       Daily; Endless where it fits.
+
+  Also decided on 2026-09-30:
+  - No Family Sharing for Premium (S12, 8.9).
+  - App ids: io.applander.<game id without hyphens> on iOS and Android
+    (section 11).
+  - Contrast: every text meets the standard 4.5:1 in every state (8.11).
+  - Owner steps you do personally: the native review of the Persian and
+    Sorani texts, the Line Siege play-test, and listening to the sound
+    previews. Claude Code drafts the texts, lists these steps in its
+    reports and never waits for them.
+  - Lead decisions that change what players see: the Home daily card
+    opens S9 (S4); a game states whether it has music and hints, and
+    their controls are left out when it has none (S5, S6, S11);
+    score-rated wins show a score line instead of moves against par
+    (S7).
 
 
 ======================================================================
@@ -1174,7 +1271,7 @@ The defaults are used unless you say otherwise.
   "Settings"                               -> S11
   "Levels"                                 -> S8, 8.1
   "Google AdMob"                           -> 8.8, section 4
-  "Purchase section, about EUR 1.90"       -> S12, 8.9, D3
+  "Purchase section, EUR 1.99"             -> S12, 8.9, D3
   "Multi-language, LTR and RTL: English, German, Persian, Kurdish
    Sorani"                                 -> N6, S2, section 7
   "Offline, no user account, no internet requests"

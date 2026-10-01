@@ -413,6 +413,7 @@ const vendor = (name, port) => ({
 });
 const VENDOR_SDK_PATHS = [
   vendor('react-native-google-mobile-ads', 'AdsPort/ConsentPort'),
+  vendor('expo-tracking-transparency', 'ConsentPort'), // Apple's ATT prompt (FINAL H.1)
   vendor('expo-iap', 'PurchasePort'),
   vendor('expo-sqlite', 'SaveStore/SqlDriver'),
   vendor('react-native-audio-api', 'AudioPort'),
@@ -435,7 +436,6 @@ const BANNED_PACKAGE_PATHS = [
   banned('@react-native-async-storage/async-storage', 'Persist through SaveStore (FINAL A.6).'),
   banned('react-native-iap', 'IAP goes through PurchasePort (expo-iap, FINAL C.25).'),
   banned('react-native-purchases', 'No purchase server (N2).'),
-  banned('expo-tracking-transparency', 'No ATT prompt in v1 (spec D4).'),
   banned('react-native-restart', 'Use reloadAppAsync from expo (FINAL C.31).'),
   {
     name: 'react-native',
@@ -1532,8 +1532,8 @@ export async function withTimeout<TValue>(
 | `http(s)://`, `ws(s)://`, `ftp://` literals in app code (except `external-links.ts`) | N3: remote images, fonts and downloads make requests without `fetch` | `no-restricted-syntax` `remoteUrl*` |
 | `axios`, `@react-native-community/netinfo`, `react-native-webview`, `expo-web-browser`, `expo-updates` | network surfaces (NetInfo's probe calls Google) | `no-restricted-imports` |
 | `expo-router` | the Shell owns navigation (FINAL A.4) | `no-restricted-imports` |
-| `expo-audio`, `expo-file-system`, `@react-native-async-storage/async-storage`, `react-native-iap`, `react-native-purchases`, `expo-tracking-transparency`, `react-native-restart` | replaced by a decided port or banned by the spec | `no-restricted-imports` |
-| Vendor SDK import outside its adapter | one adapter per port (FINAL C) | `no-restricted-imports` + `ADAPTERS` block |
+| `expo-audio`, `expo-file-system`, `@react-native-async-storage/async-storage`, `react-native-iap`, `react-native-purchases`, `react-native-restart` | replaced by a decided port or banned by the spec | `no-restricted-imports` |
+| Vendor SDK import outside its adapter (`expo-tracking-transparency` only in the ConsentPort adapter, FINAL H.1) | one adapter per port (FINAL C) | `no-restricted-imports` + `ADAPTERS` block |
 | `Math.random`, `Date.now`, `performance.now`, `new Date()` | determinism, testable time (spec S15 set-date) | `no-restricted-properties`, `no-restricted-syntax` |
 | `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `.toLocaleString()`, `.toLocaleDateString()`, `.toLocaleTimeString()` | Hermes applies the Persian calendar and ignores the digits setting (FINAL C.29); numbers go through `t()` or docs/10's `createNumberFormatter` | `no-restricted-syntax` `intlDate`, `toLocaleCall` |
 | `Math.sin/cos/tan/atan2/exp/log/pow`, `**` in deterministic folders | libm differences across devices (FINAL B.14) | `no-restricted-syntax` `DETERMINISM_SYNTAX` |

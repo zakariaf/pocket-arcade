@@ -113,8 +113,8 @@ Spec section 15 (definition of done for the Shell and pilot) is the exit test: e
 
 **Before code (owner and agent together):**
 - [ ] The owner picked the game (spec section 13, decision D1 for the pilot) and approved its design notes: modes, pack layout, star rule (par or score), difficulty bands for the sims.
-- [ ] The owner approved the app name and bundle ID (G1); the ID matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`.
-- [ ] `npm run new-game -- --app <game-id>` created `apps/<game-id>/` (docs/02 section 11.3); `game.config.ts` is filled, with placeholder AdMob IDs until the owner supplies real ones; `npx expo config --json` passes for `test/test`, `test/off` and `store/off`.
+- [ ] The owner approved the app name (G1); the bundle ID is `io.applander.<game-id without hyphens>` and the Premium product ID `<bundle ID>.premium` (FINAL H.4).
+- [ ] `npm run new-game -- --app <game-id>` created `apps/<game-id>/` (docs/02 section 11.3); `game.config.ts` is filled, with placeholder AdMob IDs until the owner supplies real ones (the completeness check and the release gates reject the placeholders and any `com.example.*` ID by name); `npx expo config --json` passes for `test/test`, `test/off` and `store/off`.
 
 **Build (section 3.2), then:**
 - [ ] Contract tests pass (docs/02 section 7.5); coverage of `apps/<game-id>/src/rules` at 95/95/95/90; Stryker on the rules at or above 75% with survivors explained.
@@ -125,8 +125,8 @@ Spec section 15 (definition of done for the Shell and pilot) is the exit test: e
 - [ ] `npm run audit:network` and, after a prebuild, `npm run audit:privacy` pass.
 
 **Owner's per-game steps (ask for them in one message, section 7):**
-- [ ] G2 app record in App Store Connect; G3 App Privacy questionnaire (docs/13 section 3.4); G4 and P1 Premium price point and Family Sharing, then `create-premium-iap.ts` (docs/12 section 3.10); G5 and A2 to A4 AdMob app, 3 units, consent message, blocking controls (docs/11 section 3.11); real IDs written into `game.config.ts`.
-- [ ] `npm run release:ios -- --app <game-id> --variant test`; G6 the owner's TestFlight play-test with the Tier-3 purchase test; G7 native-speaker review; then the store build and R1 to R6 (docs/14 section 3.11).
+- [ ] G2 app record in App Store Connect; G3 App Privacy questionnaire, Device ID used for tracking (docs/13 section 3.4); G4 and P1 check Premium (€1.99, Family Sharing left off) after `create-premium-iap.ts` (docs/12 section 3.10); G5 and A2 to A4 AdMob app, 3 units, consent message, blocking controls (docs/11 section 3.11); real IDs written into `game.config.ts`.
+- [ ] `npm run release:ios -- --app <game-id> --variant test`; G6 the owner's TestFlight play-test with the Tier-3 purchase test; G7 the owner's own review of the fa and ckb texts; the owner's listening check of the sound previews; then the store build and R1 to R6 (docs/14 section 3.11). These owner steps are listed in the report and never block the agent's work (FINAL H.6).
 
 ---
 

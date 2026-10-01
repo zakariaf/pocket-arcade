@@ -1,7 +1,7 @@
 # 01 · Stack and versions
 
 > **What this doc decides.** The technology stack of the Shell and every game app (Expo SDK 57 on React Native 0.86.3, no game engine, no server, no EAS), recorded as short ADRs. It also sets the exact version of every dependency and how that version is pinned and installed, the rules for upgrading (SDK cadence, the SDK 58 trigger, Xcode 27), the dependency-freshness policy (`min-release-age=7`), and the list of banned packages.
-> **Binding source:** [99-final-decisions.md](99-final-decisions.md) (2026-09-26). This doc restates those decisions with versions and procedures and does not change them. The problems found while writing it are listed under [Open issues](#open-issues).
+> **Binding source:** [99-final-decisions.md](99-final-decisions.md) (2026-09-26, with section H of 2026-09-30). This doc restates those decisions with versions and procedures and does not change them. The problems found while writing it are listed under [Open issues](#open-issues).
 > **Related docs:** [02-architecture-and-folders.md](02-architecture-and-folders.md) (workspace layout), [04-code-style-and-limits.md](04-code-style-and-limits.md) (lint and TypeScript config), [13-privacy-network-security.md](13-privacy-network-security.md) (banned packages in the network audit), [14-ios-build-and-release.md](14-ios-build-and-release.md) (Xcode, signing and release), [16-quality-gates-hooks-ci.md](16-quality-gates-hooks-ci.md) (the dependency gate in verify). Start at [00-README.md](00-README.md); how a session works is [17-claude-code-playbook.md](17-claude-code-playbook.md).
 
 ---
@@ -119,11 +119,11 @@ Each ADR restates a FINAL-DECISIONS item. Its details (APIs, code patterns) live
 - **Rejected.** `expo-audio`, whose plugin adds `NSMicrophoneUsageDescription` and background audio by default (see the banned list).
 - **Consequences.** Watch the first TestFlight upload for ITMS-90683 (microphone purpose string). The playbook is in doc 14.
 
-#### ADR-11 · Ads: react-native-google-mobile-ads 17 with Google UMP; no ATT
-- **Context.** Spec 8.8 and section 4: AdMob with Google's consent message, and no server of ours.
-- **Decision.** `react-native-google-mobile-ads` **17.2.0 exact** (iOS pods Google-Mobile-Ads-SDK 13.6.0 and GoogleUserMessagingPlatform 3.1.0). The rollback target is 16.5.0. It is configured only through its config plugin, and only `admob-ads-adapter.ts` imports it.
-- **Rejected.** Firebase-based setups (a backend), and asking for tracking (ATT) in v1 (decision D4).
-- **Consequences.** 17.2.0 was 1 day old on 2026-09-26. It is installed under the dated bootstrap exclude (section 3.4).
+#### ADR-11 · Ads: react-native-google-mobile-ads 17 with Google UMP and Apple's ATT prompt
+- **Context.** Spec 8.8 and section 4: AdMob with Google's consent message, and no server of ours. The owner chose to follow Apple's tracking rules (guideline 5.1.2(i), FINAL H.1, 2026-09-30).
+- **Decision.** `react-native-google-mobile-ads` **17.2.0 exact** (iOS pods Google-Mobile-Ads-SDK 13.6.0 and GoogleUserMessagingPlatform 3.1.0). The rollback target is 16.5.0. It is configured only through its config plugin, and only the two AdMob adapters import it (docs/11). App Tracking Transparency: `expo-tracking-transparency` **`~57.0.2`** (Expo's SDK 57 spec), imported only by `admob-consent-adapter.ts`; on iOS it asks after Google's form and before the first ad request.
+- **Rejected.** Firebase-based setups (a backend); ads that could use the IDFA without asking for ATT (the old "no ATT in v1" default of D4, reversed by the owner); AdMob's "IDFA explainer" message (UMP would run ATT inside its own flow, docs/11 section 3.11).
+- **Consequences.** 17.2.0 was 1 day old on 2026-09-26. It is installed under the dated bootstrap exclude (section 3.4). `expo-tracking-transparency` 57.0.2 was published on 2026-09-11, so it needs no exclude. One more system prompt on iPhone; ads still load when the player declines.
 
 #### ADR-12 · Purchases: expo-iap (StoreKit 2), no server
 - **Context.** Spec N7 and 8.9: one non-consumable Premium, checked on the phone with the store's own tools.
@@ -190,6 +190,7 @@ Every version below was checked on **2026-09-26** with `npm view` and the Expo v
 | `expo-haptics` | 57.0.3 | `~57.0.3` (expo) | expo | `HapticsPort` adapter |
 | `expo-network` | 57.0.2 | `~57.0.2` (expo) | expo | `ConnectivityPort`, no HTTP probe |
 | `expo-store-review` | 57.0.3 | `~57.0.3` (expo) | expo | "Rate this game" (OS component) |
+| `expo-tracking-transparency` | 57.0.2 | `~57.0.2` (expo) | expo | Apple's ATT prompt inside the ConsentPort adapter (FINAL H.1). npm `sdk-57` = `latest` = 57.0.2, published 2026-09-11 (checked 2026-09-30); MIT; its plugin option `userTrackingPermission` writes `NSUserTrackingUsageDescription` (and the Android `AD_ID` permission) |
 | `@shopify/react-native-skia` | 2.6.2 | `2.6.2` (expo) | expo | Expo pin. npm `latest` 2.13.0 is not for SDK 57 |
 | `react-native-reanimated` | 4.5.1 | `4.5.1` (expo) | expo | Expo pin (4.7.0 is SDK 58) |
 | `react-native-worklets` | 0.10.1 | `0.10.1` (expo) | expo | Pre-1.0, Expo pins it exactly |
@@ -464,7 +465,6 @@ Append `SCENE_SUPPORT_PLUGIN` to the `plugins` array that `withShell` returns. I
 | `expo-notifications` | No push notifications (spec 14) |
 | `@amplitude/*`, `expo-analytics-amplitude`, `@segment/*` | Analytics (N2) |
 | `react-native-webview`, `expo-web-browser` | Web views are a network surface. `@expo/dom-webview` is a dependency of `expo` itself, so it is allowed installed but banned from imports |
-| `expo-tracking-transparency` | Decision D4: no ATT prompt in v1. Its plugin writes a tracking string |
 | `react-native-restart` | A pre-1.0 native dependency. `reloadAppAsync` covers restarts |
 | `eslint-plugin-react-compiler` | Superseded by `eslint-plugin-react-hooks` 7 (still 19.1.0-rc.2) |
 | `axios`, `ky`, `got`, `node-fetch`, `cross-fetch` (direct) | N3: our app code makes no requests. Tooling uses Node's built-in `fetch` |
@@ -526,11 +526,6 @@ export const BANNED_PACKAGES: readonly BannedRule[] = [
     reason: 'Web views are a network surface.',
   },
   {
-    pattern: /^expo-tracking-transparency$/,
-    scope: 'anywhere',
-    reason: 'Decision D4: no ATT prompt in v1.',
-  },
-  {
     pattern: /^react-native-restart$/,
     scope: 'anywhere',
     reason: 'reloadAppAsync from expo covers restarts.',
@@ -589,7 +584,7 @@ export function findBannedPackages(inventory: PackageInventory): readonly Banned
 }
 ```
 
-Also banned, but as **options** rather than packages (docs 11, 12, 13 and 16 enforce these): the `expo-iap` exports `kitApi`, `KitApiError` and `verifyPurchaseWithProvider`, the `expo-iap` plugin options `iapkitApiKey` and `modules.onside`, the GMA plugin option `userTrackingUsageDescription` (while D4 stands), and the Maestro commands `assertWithAI`, `assertNoDefectsWithAI` and `extractTextWithAI` (they upload screenshots to an LLM service).
+Also banned, but as **options** rather than packages (docs 11, 12, 13 and 16 enforce these): the `expo-iap` exports `kitApi`, `KitApiError` and `verifyPurchaseWithProvider`, the `expo-iap` plugin options `iapkitApiKey` and `modules.onside`, the GMA plugin option `userTrackingUsageDescription` (`expo-tracking-transparency`'s plugin is the one writer of `NSUserTrackingUsageDescription`, FINAL H.1), and the Maestro commands `assertWithAI`, `assertNoDefectsWithAI` and `extractTextWithAI` (they upload screenshots to an LLM service).
 
 ### 3.7 Re-verifying versions (they will age)
 

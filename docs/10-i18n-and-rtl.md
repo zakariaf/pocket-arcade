@@ -270,7 +270,7 @@ The saved value is `settings.language` in the save document, `null` meaning "Sys
 
 The `expo-localization` plugin entry lives in docs/02's `shellPlugins` (section 9.1, the one plugin list): `['expo-localization', { supportedLocales: { ios: LOCALES, android: LOCALES } }]` with `LOCALES = ['en', 'de', 'fa', 'ckb']`, and nothing else. Never add `supportsRTL` or `forcesRTL`: the Shell owns direction (rule 10).
 
-`supportedLocales` writes `CFBundleLocalizations` (and Android's `locales_config`), so the per-app language setting in iOS Settings lists the four languages. Localized home-screen names go through `expo.locales` (one `InfoPlist.strings` per language), which `withShell` writes from `GameConfig.appName` (docs/02 section 9.1).
+`supportedLocales` writes `CFBundleLocalizations` (and Android's `locales_config`), so the per-app language setting in iOS Settings lists the four languages. Localized home-screen names go through `expo.locales` (one `InfoPlist.strings` per language), which `withShell` writes from `GameConfig.appName` (docs/02 section 9.1). The same files carry `NSUserTrackingUsageDescription`, the sentence in Apple's "Allow tracking?" prompt (FINAL H.1): its four texts are the copy-deck key `consent.tracking.usage-description`, kept in the Shell catalogs like every other deck string and copied into `packages/shell/src/config/tracking-usage.ts` for `app.config.ts`; a unit test keeps the two equal. The fa and ckb drafts go to the owner's own review (FINAL H.6) like every other text.
 
 ### 3.5 Digits and number formatting
 
@@ -1324,7 +1324,7 @@ The screenshot matrix (4 languages × light/dark × phone/tablet, plus 200% text
 
 Language list (S2, S11a): the rows are, in this order, **System** (translated: `settings.language.system` = "System ({languageName})", where `languageName` is the autonym of the language the resolver would pick), then `English`, `Deutsch`, `فارسی`, `کوردیی ناوەندی` from `LANGUAGE_AUTONYMS`. Each autonym row renders with `AppText language={code}` so Persian and Sorani use Vazirmatn even in an English UI. Autonyms never go through `t()` and never appear in catalogs; a unit test pins their exact values.
 
-The consent form (UMP) and the StoreKit purchase sheet follow the device or iOS per-app language, not the in-app choice (believed; not verified for fa/ckb). The per-app language list in iOS Settings shows our four languages because of `supportedLocales`.
+The consent form (UMP), Apple's tracking prompt and the StoreKit purchase sheet follow the device or iOS per-app language, not the in-app choice (believed; not verified for fa/ckb). The tracking prompt shows our `NSUserTrackingUsageDescription` from the matching `InfoPlist.strings`. The per-app language list in iOS Settings shows our four languages because of `supportedLocales`.
 
 ---
 
@@ -1392,6 +1392,6 @@ On 2026-09-26, on macOS with Node 26.4.0 (ICU 78.3, CLDR 48), npm 11.17.0, Xcode
 ## Open issues
 
 1. **Resolved (integration pass, 2026-09-26):** docs/06 now imports this doc's `createSqliteKvDirectionGuardAdapter` and points to section 3.10 for `start-shell.ts` instead of copying it; docs/02's `index.ts` has the blank line `import/order` needs; docs/02 rule 16 allows pure in-memory marks such as docs/15's `markJsEntry()` at import time; `ErrorSource` has `'boot'` and `'i18n'` (docs/04).
-2. **Language of the system sheets (UMP consent form, StoreKit purchase sheet).** Google's consent form and Apple's purchase sheet follow the device language, so a Persian player on an English phone sees them in English. Nothing in our control fixes this in v1; it is noted for the owner.
+2. **Language of the system sheets (UMP consent form, Apple's tracking prompt, StoreKit purchase sheet).** Google's consent form and Apple's purchase sheet follow the device language (the tracking prompt's own sentence comes from our `InfoPlist.strings` in that language), so a Persian player on an English phone sees them in English. Nothing in our control fixes this in v1; it is noted for the owner.
 3. **Numbers row for en/de.** Spec S11 lists the Numbers row unconditionally; for en/de all three options produce Latin digits. The row stays (spec), with live previews so the effect is visible. If the owner prefers, it can be hidden for en/de without code changes elsewhere.
 4. **CLDR spelling of Sorani December** (`کانونی یەکەم` vs `کانوونی یەکەم`) is inconsistent in CLDR 48; the catalog uses the second form pending the native-speaker review.

@@ -50,7 +50,7 @@
 2. [01-stack-and-versions.md](01-stack-and-versions.md) section 3.8 and [08-game-engine.md](08-game-engine.md) "For the owner, in plain words": why there is no game engine.
 3. [14-ios-build-and-release.md](14-ios-build-and-release.md) section 3.11: the complete list of human steps, and section 3.12: what the agent will stop and ask about.
 4. [11-ads-admob.md](11-ads-admob.md) section 3.11 (AdMob console steps) and [12-in-app-purchase.md](12-in-app-purchase.md) section 3.11 (Premium product steps).
-5. [13-privacy-network-security.md](13-privacy-network-security.md) section 3.4: the App Privacy answers and the one decision about Apple's tracking guideline.
+5. [13-privacy-network-security.md](13-privacy-network-security.md) section 3.4: the App Privacy answers, which follow your decision to use Apple's tracking prompt (99-final-decisions section H).
 6. [15-performance-and-accessibility.md](15-performance-and-accessibility.md) sections 3.2 and 3.10: how to record a performance report and run the VoiceOver checklist on your phone.
 7. [07-testing-and-tdd.md](07-testing-and-tdd.md) section 3.17: the evidence report you will receive after each piece of work.
 8. [18-design-system-toybox.md](18-design-system-toybox.md) sections 1 and 8 and its open issues: the chosen look (Toybox), its measured contrast, and the design questions left to you.
@@ -80,7 +80,7 @@ Everything runs on this Mac from the command line; nothing needs a person at the
 Only what needs your identity, your money, your judgement or your phone ([14 §3.11](14-ios-build-and-release.md) has the complete list with IDs):
 
 - **Once:** keep the Apple Developer Program active and accept its agreements, including the Paid Apps agreement with tax and banking; declare EU trader status; create a *team* App Store Connect API key with the Admin role and save it where the docs say; install and license Xcode (about once a year); install TestFlight on your iPhone; create the AdMob account; approve Claude Code's permission prompts; now and then unlock the Mac's keychain if signing asks for it.
-- **Per game:** approve the app name and bundle ID; create the app record in App Store Connect (Apple offers no API for it); fill in the App Privacy questionnaire; decide the Premium price point and Family Sharing; create the game's AdMob app and three ad units and publish its consent message; play-test on TestFlight, including a sandbox purchase and restore; have a native speaker read the Persian and Sorani texts; approve the store listing.
+- **Per game:** approve the app name (the bundle ID is always `io.applander.<game id without hyphens>`, for example `io.applander.linesiege`); create the app record in App Store Connect (Apple offers no API for it); fill in the App Privacy questionnaire (Device ID used for tracking); check the Premium product (€1.99, Family Sharing left off); create the game's AdMob app and three ad units and publish its consent message; play-test on TestFlight yourself, including a sandbox purchase and restore; read the Persian and Sorani texts yourself as the native reviewer; listen to the sound previews; approve the store listing. Claude lists these steps in its reports and keeps working while they are open.
 - **Per release:** play the TestFlight build and say "ship" or "don't ship"; a 15-minute VoiceOver check; a native-speaker read of changed Persian and Sorani texts; accept any new Apple agreement; submit for review (or tell Claude "submit"); answer App Review.
 - **Later:** the Google Play developer account when Android starts.
 
@@ -101,7 +101,7 @@ Only what needs your identity, your money, your judgement or your phone ([14 §3
 | Boards | Skia canvas + Reanimated clock + Gesture Handler + in-house kit | Skia 2.6.2, Reanimated 4.5.1, Worklets 0.10.1, RNGH 2.32.0 | [08](08-game-engine.md) |
 | Sound, haptics, art | sounds synthesised in code; Expo Haptics; icons and splash rendered by headless Skia | `react-native-audio-api` 0.13.6, `expo-haptics` 57.0.3 | [09](09-sound-haptics-art.md) |
 | Languages | react-intl with forced FormatJS polyfills, catalog linter, Vazirmatn font, restart for direction | `react-intl` 12.1.3 | [10](10-i18n-and-rtl.md) |
-| Ads | Google AdMob with UMP consent, pure frequency policy, no tracking prompt in v1 | `react-native-google-mobile-ads` 17.2.0 | [11](11-ads-admob.md) |
+| Ads | Google AdMob with UMP consent, then Apple's tracking prompt (ATT) on iPhone before the first ad request; pure frequency policy | `react-native-google-mobile-ads` 17.2.0, `expo-tracking-transparency` ~57.0.2 | [11](11-ads-admob.md) |
 | Purchase | one non-consumable Premium through StoreKit 2, no server | `expo-iap` 5.8.0 | [12](12-in-app-purchase.md) |
 | Offline and privacy | `expo-network` (no HTTP probe), six-layer network audit, aggregated privacy manifest | `expo-network` 57.0.2 | [13](13-privacy-network-security.md) |
 | Tests | Jest projects `unit` + `golden`, RNTL, fast-check, Stryker, Maestro | Jest 29.7.0, jest-expo 57.0.5, RNTL 14.0.1, Maestro 2.10.0 | [07](07-testing-and-tdd.md) |
@@ -144,15 +144,20 @@ These need an answer from the owner; everything else in the docs' *Open issues* 
 
 | Decision | Default until you decide | Where |
 |---|---|---|
-| Apple guideline 5.1.2: declare "Data used to track you" for AdMob's device ID while showing no tracking prompt (D4) | declare it as the SDK's manifest says, no prompt; add the prompt only if App Review objects | [13 §3.4](13-privacy-network-security.md), [11 §3.10](11-ads-admob.md) |
-| Premium price when €1.90 is not an Apple price point (D3) | the script stops and asks; the spec's example is €1.99 | [12 §3.7](12-in-app-purchase.md) |
-| Family Sharing for Premium (irreversible once on) | off | [12 §3.7](12-in-app-purchase.md) |
 | Keep the Expo Claude Code plugin from the template | kept, with `AGENTS.md` forbidding EAS and OTA updates | [16 open issue 4](16-quality-gates-hooks-ci.md) |
 | Spec gaps found while designing the save: text when both save slots are damaged; whether "Reset statistics" also zeroes the level and daily cards; whether a lost daily attempt counts for the streak | the defaults written in [06 open issues 4 to 6](06-navigation-state-persistence.md) | [06](06-navigation-state-persistence.md) |
 | Interpretation of spec 8.8 "never twice in a row after losses" | two consecutive interstitials may not both follow a loss | [11 open issue 3](11-ads-admob.md) |
 | Letter Bugs word lists for Persian and Sorani (licences) | build Letter Bugs late | [08 open issue 6](08-game-engine.md) |
-| Native-speaker reviewer for Persian and Sorani | `release:ios` refuses unreviewed texts unless you record a waiver | [10 §3.16](10-i18n-and-rtl.md) |
-| Toybox details the mockup leaves open: one dark ink for all games or a per-game tint; the hold-to-reset label at 4.43:1 in light | as the mockup's palette data (per-game tint; `dangerFill` unchanged) | [18 open issues 1 and 5](18-design-system-toybox.md) |
+| Toybox detail the mockup leaves open: one dark ink for all games or a per-game tint | as the mockup's palette data (per-game tint) | [18 open issue 1](18-design-system-toybox.md) |
+
+**Decided on 2026-09-30** ([99-final-decisions.md](99-final-decisions.md) section H, which overrides older text anywhere in the docs):
+
+- **Apple's tracking rules.** On iPhone the app asks Apple's "Allow tracking?" prompt after Google's consent form and before the first ad request; declining still shows ads. The App Privacy answers declare Device ID as used for tracking by the ads SDK ([11 §3.5 and §3.10](11-ads-admob.md), [13 §3.4](13-privacy-network-security.md)).
+- **Premium price €1.99**, an App Store price point; the app always shows the store's price ([12 §3.7](12-in-app-purchase.md)).
+- **No Family Sharing for Premium** ([12 §3.7](12-in-app-purchase.md)).
+- **App IDs** `io.applander.<game id without hyphens>` for every game, on iOS and Android ([03](03-naming.md), [14 §3.8](14-ios-build-and-release.md)).
+- **Standard contrast.** Every text meets 4.5:1 in every state; the light `dangerFill` becomes `#FFDCDF`, so the hold-to-reset label reaches 4.52:1 ([18 §8](18-design-system-toybox.md)).
+- **Your own steps:** the native review of the Persian and Sorani texts (`release:ios` still refuses unreviewed texts in a store build), the Line Siege play-test and listening to the sound previews. Claude drafts, lists them in its reports and never waits for them.
 
 ---
 
@@ -185,7 +190,7 @@ The look and layout of every screen (structure, order, spacing, components): [18
 |---|---|---|
 | S1 | Splash | [06](06-navigation-state-persistence.md) §7 (hydration); [10](10-i18n-and-rtl.md) §3.10 (direction check); [09](09-sound-haptics-art.md) §3 (splash art); [15](15-performance-and-accessibility.md) §3.3 (cold start) |
 | S2 | First-run language choice | [06](06-navigation-state-persistence.md) §3.1, §3.6; [10](10-i18n-and-rtl.md) §3.4, §3.10, §3.16 |
-| S3 | Ad consent | [11](11-ads-admob.md) §3.5 |
+| S3 | Ad consent and tracking (intro, Google's form, Apple's ATT prompt) | [11](11-ads-admob.md) rule 21, §3.5 |
 | S4 | Home | [06](06-navigation-state-persistence.md) §3.1; [11](11-ads-admob.md) §3.7 (banner); [05](05-components-hooks-styling.md) §3.5 (Premium entry) |
 | S5 | Game screen | [06](06-navigation-state-persistence.md) §3.5, §5; [08](08-game-engine.md) §2; [15](15-performance-and-accessibility.md) rule 29 (spoken board summary) |
 | S6 | Pause menu | [06](06-navigation-state-persistence.md) §3.5, §5.2 |
@@ -227,6 +232,7 @@ The look and layout of every screen (structure, order, spacing, components): [18
 | Spec | Topic | Answer and place |
 |---|---|---|
 | 4.2 (2) | "Confirm the exact consent requirements in the platform step" | Google UMP: refresh every launch, form after the tutorial and before the first ad, privacy row only where required: [11](11-ads-admob.md) §3.5 |
+| 4.2 (3), D4 | iPhone tracking permission (decided 2026-09-30: follow Apple's rules) | after Google's form, Apple's ATT prompt while not determined, then the first ad request; declined still shows ads: [11](11-ads-admob.md) rule 21, §3.5, §3.10; [13](13-privacy-network-security.md) §3.4 |
 | S11 | "Which case applies [live mirroring or restart] is found out in the platform step" | a direction change needs one restart (`forceRTL` + `reloadAppAsync`): [10](10-i18n-and-rtl.md) §3.10 |
 | 1.2, 12 | "How the copy back works technically is decided in the platform step" | no copying: one monorepo, every game app consumes the same Shell package: [01](01-stack-and-versions.md) ADR-08, [02](02-architecture-and-folders.md) §1 |
 | 10 | The game contract | [02](02-architecture-and-folders.md) §7 |
