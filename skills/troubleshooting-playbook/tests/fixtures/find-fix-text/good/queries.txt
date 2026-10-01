@@ -41,3 +41,36 @@ hierarchy shows another screen or language
 hierarchy from another simulator: the dump has no marker of this launch
 release:ios refuses a store build: fa/ckb messages differ from their reviewed hash
 Tracking prompt shown twice, or a Google explainer before it
+the board stays on the continue's first frame after a rewarded continue: the tray is empty, the hearts are outlines
+[structure] s15-debug-menu dark-en: debug.list: shape differs: a 12.0 pt thick difference (52.0 x 30.3 pt) at +290.0,+325.7 from the element's top-left, inside its crop-only part debug.ads-always-test-switch.toggle
+FAIL .parity/lineSiege/s15-debug-menu/light-fa/app.png [bounds] s15-debug-menu light-fa: debug.top-bar.badge: geometry off: dx -0.9 dy -12.3 dw +0.7 dh -0.4 pt
+FAIL .parity/lineSiege/s15-debug-menu/light-fa/app.png [text-ink] s15-debug-menu light-fa: debug.jump-to-level-row.value: text "۱۲": ink width 4.0 vs design 10.7 pt
+ERROR [bad-input] Unknown option '--tooling'
+check-signoff --draft writes "date": "2026-09-30" into the ledger one day early
+Element not found: Text matching regex: Open
+Google consent form (UMP) never appears in the test build, debug geography EEA
+the ATT alert appears while Google's consent form is still drawn behind it
+Error: usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] ...
+Error: Cannot find module '/repo/packages/tooling/src/release/release-ios.ts'
+FAIL reports/evidence.md:1 [outcome-first] first line is 255 characters, the limit is 240
+an endless run lost with ads off and no Premium never shows the endless result or New best
+error TS2307: Cannot find module '@e07/shell/app/connect-audio-settings.ts' or its corresponding type declarations.
+error TS2307: Cannot find module '@e07/shell/testing/render-with-shell.tsx' or its corresponding type declarations.
+Jest: "global" coverage threshold for functions (90%) not met: 89.8%
+FAIL packages/shell/src/testing/render-with-shell.tsx [render-with-shell-missing] 1 component test file(s) exist (packages/shell/src/stores/progress-store.test.tsx) but the renderWithShell helper does not
+FAIL packages/shell/src/app/shell-app.test.tsx [root-file-missing] the composition root file is missing
+FAIL packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] the Shell never plays its 'toggle' feedback (ui.toggle)
+FAIL reports/sim/line-siege.json:3 [report-stale] the report was made from other rules, bots or harness than the current code
+test/goldens/boards/skia-golden.ts(3,36): error TS7016: Could not find a declaration file for module 'jest-image-snapshot'.
+FAIL 604bd52:packages/shell/src/game-host/draw-centered-text.ts:39 [disabled-test-added] adds "/** The shape the text must fit (a monster, a small cell): the text is"
+FAIL 8fdc503:5 [gate-change-unneeded] a Gate-Change trailer but no gated file (perf-baselines/cold-start-sim-line-siege.json)
+FAIL packages/shell/src/i18n/catalogs/fa.json [debug-english] debug.perf.title is translated
+SKIP package.json [script-target] npm run i18n:verify: due at Shell step 6: packages/tooling/src/i18n/verify-catalogs.ts not yet created
+OWNER STEPS PENDING: G3, G5
+Our app wants to stay free for you
+FAIL reports/e2e/line-siege/save-benchmark.json [save-benchmark] the save benchmark made an unrecorded number of writes, not 300
+storekit: the Mac is busy (load average 612 on 12 cores); StoreKit's test store answers slowly, so a flow may time out with a correct app
+e2e:ios: network: the app opened non-loopback sockets (spec N3)
+Assertion is false: ".*save p95 [0-9].*", id: debug.perf-summary is visible
+Assertion is false: id: result.endless-title is visible
+Exception in thread "main" UnknownFailure(errorResponse=Request for viewHierarchy failed, code: 500, body: )

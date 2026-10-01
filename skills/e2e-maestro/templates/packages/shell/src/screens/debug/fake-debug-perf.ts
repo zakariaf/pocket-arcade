@@ -1,6 +1,12 @@
 // packages/shell/src/screens/debug/fake-debug-perf.ts
 // Jest only: S15's Performance actions in memory. The switch keeps its state, the save benchmark
-// appends one save-benchmark entry to the given perf log, and every call is listed in calls.
+// appends one save-benchmark entry (with the 300 writes the real benchmark records) to the given
+// perf log, and every call is listed in calls. The frame recorder's shared values start empty and
+// stopped, as the real recorder's do.
+import { makeMutable } from 'react-native-reanimated';
+
+import { createFrameHistogram } from '@e07/shell/app/perf/frame-histogram.ts';
+
 import type { DebugPerfActions } from './debug-perf.ts';
 import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
 
@@ -29,8 +35,9 @@ export function createFakeDebugPerf(perfLog: PerfLog | null = null): FakeDebugPe
         kind: 'save-benchmark',
         label: 'save-write',
         atEpochMs: 0,
-        data: { p50: 0.2, p95: 0.4, max: 0.9 },
+        data: { p50: 0.2, p95: 0.4, max: 0.9, writes: 300 },
       });
     },
+    frames: { histogram: makeMutable(createFrameHistogram()), isRecording: makeMutable(false) },
   };
 }

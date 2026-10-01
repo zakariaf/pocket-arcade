@@ -1,1 +1,2 @@
-[ad-app-id] extra.adUnits.interstitial is a placeholder AdMob unit id (ca-app-pub-1234567890123456/2222222222)
+[owner-placeholder] extra.adUnits.interstitial is the placeholder AdMob interstitial unit ca-app-pub-1234567890123456/2222222222 (owner step G5)
+OWNER STEPS PENDING: G5

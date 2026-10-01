@@ -1,0 +1,2 @@
+SKIP package.json [script-target] npm run audit:network: due at Shell step 8: packages/tooling/src/audit/audit-network.ts not yet created (privacy-and-network-audit copies it)
+RESULT: PASS

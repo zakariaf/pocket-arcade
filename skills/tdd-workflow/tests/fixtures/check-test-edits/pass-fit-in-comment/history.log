@@ -1,0 +1,39 @@
+==> commit 604bd52a7c1e0f4b9d2e6a3c5b8f7d1e0a9c4b21
+feat(shell): center board text in its shape
+
+Spec 7.2: a monster's health number sits in the middle of the monster.
+
+==> diff
+
+diff --git a/packages/shell/src/game-host/draw-centered-text.test.ts b/packages/shell/src/game-host/draw-centered-text.test.ts
+new file mode 100644
+index 0000000..1a2b3c4
+--- /dev/null
++++ b/packages/shell/src/game-host/draw-centered-text.test.ts
+@@ -0,0 +1,8 @@
++// packages/shell/src/game-host/draw-centered-text.test.ts
++import { centerOf } from './draw-centered-text.ts';
++
++describe('centerOf', () => {
++  it('returns the middle of the box the text must fit (a monster)', () => {
++    expect(centerOf({ x: 0, y: 0, width: 10, height: 4 })).toStrictEqual({ x: 5, y: 2 });
++  });
++});
+diff --git a/packages/shell/src/game-host/draw-centered-text.ts b/packages/shell/src/game-host/draw-centered-text.ts
+new file mode 100644
+index 0000000..5d6e7f8
+--- /dev/null
++++ b/packages/shell/src/game-host/draw-centered-text.ts
+@@ -0,0 +1,12 @@
++// packages/shell/src/game-host/draw-centered-text.ts
++export type Box = { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
++
++/**
++ * The point a label is centered on.
++ * The shape the text must fit (a monster, a tile or a tray slot) is its box;
++ * xit (an old name) is not a call here either.
++ */
++export function centerOf(box: Box): { x: number; y: number } {
++  const note = 'fit (only in a string)';
++  return { x: box.x + box.width / 2 + note.length * 0, y: box.y + box.height / 2 };
++}

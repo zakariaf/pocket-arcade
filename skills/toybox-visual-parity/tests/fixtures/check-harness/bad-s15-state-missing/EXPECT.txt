@@ -1,0 +1,3 @@
+[harness-frame-state]
+s15-debug-menu has state none, but the design frame draws 'debug-ads-always-test'
+packages/shell/src/app/parity/parity-plans.ts

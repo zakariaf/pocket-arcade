@@ -110,10 +110,12 @@ const handleNextPress = (): void => {
 ## 5. Hint and continue
 
 ```ts
-const offer = perkOffer({ kind: 'continue', isAllowedByGame, isUsedThisLevel }, { config: adConfig, context: adContext, isRewardedLoaded });
+const rewardedStatus = useSyncExternalStore(ads.subscribeRewardedStatus, ads.rewardedStatus);
+const offer = perkOffer({ kind: 'continue', isAllowedByGame, isUsedThisLevel }, { config: adConfig, context: adContext, rewardedStatus });
 // 'free'     -> continue now
 // 'watch-ad' -> button "Continue – watch an ad" (result.lose.continue-ad)
-// 'hidden'   -> no button at all
+// 'loading'  -> the same button, busy and not pressable, until the ad is ready (L11)
+// 'hidden'   -> no button at all, and the lost run ends at once (L11)
 
 async function continueWithAd(): Promise<void> {
   if (await earnRewardedPerk({ ads, lifecycle: gameLifecycle })) grantContinue();
@@ -124,7 +126,7 @@ const handleWatchAdPress = (): void => {
 };
 ```
 
-`isRewardedLoaded` comes from `ads.subscribeRewardedLoaded` so the button appears and disappears on its own.
+`rewardedStatus` follows the ad on its own: `'loading'` draws the continue offer busy (`'ad-loading'` in the result model), `'ready'` makes it pressable, and an offer that is `'hidden'` ends the lost run at once (L11: the Game screen model sends `finish` when `isLossStranded`), so the player always sees a result.
 
 ## 6. Settings row
 

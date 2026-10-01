@@ -100,7 +100,7 @@ Filled: the star path filled `starOn` plus its 1.8 edge in `border` (2.2 on 13 p
 
 ## The S15 hazard strip
 
-A 20 pt band under the status bar (test builds only): gold and toy-ink stripes at -45 degrees, 12 pt each, with 3 pt toy-ink rules top and bottom. Drawn once by Skia as parallelograms (`hazardStripeOps()`, `HazardStrip`), never as a gradient. It is the only repeating fill in Toybox.
+A 20 pt band under the status bar (test builds only): gold and toy-ink stripes at -45 degrees, 12 pt each, with 3 pt toy-ink rules top and bottom. Drawn once by Skia as parallelograms (`hazardStripeOps()`, `HazardStrip`), never as a gradient. It is the only repeating fill in Toybox. The stripes' phase is the design's: its CSS (`repeating-linear-gradient(-45deg, gold 0 12px, ink 12px 24px)` with 3 px block borders) centres the gradient on the band, which starts a gold stripe at the band's bottom-right corner, so `firstStripeStart(width)` lays the stripes from the right edge leftwards (period 2 x 12 x sqrt 2 = 33.9 pt). On the 402 pt parity phone the first full stripe's bottom edge spans 11.7-28.7 pt; laid from the left edge (round 4) every stripe sat 8.3 pt off and S15 failed `structure` on `debug.hazard-strip`.
 
 ## How-to-play pictures
 

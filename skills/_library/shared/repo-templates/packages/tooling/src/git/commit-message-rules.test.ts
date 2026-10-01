@@ -6,6 +6,7 @@ import {
   type CommitCheckInput,
 } from './commit-message-rules.ts';
 import SAMPLES from './commit-message-samples.json';
+import { DIRECTED_SWAP_TRAILERS } from './commit-trailer-rules.ts';
 
 // Paths inside the skill library, built from parts: the library's own checks read a literal
 // skills-folder path as a reference to another skill.
@@ -39,6 +40,20 @@ describe('checkCommitMessage', () => {
   it('covers every rule id with a sample', () => {
     const covered = new Set(SAMPLES.samples.flatMap((sample) => sample.rules));
     expect(covered.size).toBe(18);
+  });
+
+  it('accepts a directed swap trailer only letter for letter', () => {
+    const swap = (reason: string): readonly string[] =>
+      rulesOf({
+        message: `build(shell): swap in the final with-shell composer\n\nWhy.\n\nSpec-Change: ${reason}`,
+        files: null,
+        gatedPatterns: [],
+        workspaceScopes: SAMPLES.scopes,
+      });
+    expect(DIRECTED_SWAP_TRAILERS.map(swap)).toStrictEqual([[]]);
+    expect(swap('with-shell final composer, phase 0 replaced')).toStrictEqual([
+      'spec-change-format',
+    ]);
   });
 
   it('needs no trailer when only skill files match a wildcard gate', () => {

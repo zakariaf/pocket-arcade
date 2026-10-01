@@ -175,6 +175,26 @@ export function missingGameKeys(namespace: Namespace, keys: readonly string[]): 
     .map((key) => `missing required game key "${key}" (the Shell reads it through the identity)`);
 }
 
+/**
+ * Rule debug-english (lead decision L13): the S15 debug menu is a test-only screen, so every
+ * debug.* text in de, fa and ckb equals its en text. Digits and dates inside debug values are
+ * formatted per language by code, never through the catalog.
+ */
+export function debugEnglishProblems(
+  en: Readonly<Record<string, string>>,
+  catalog: Readonly<Record<string, string>>,
+  language: Language,
+): string[] {
+  if (language === 'en') return [];
+  return Object.keys(en)
+    .filter((key) => key.startsWith(DEBUG_PREFIX) && Object.hasOwn(catalog, key))
+    .filter((key) => catalog[key] !== en[key])
+    .map(
+      (key) =>
+        `${key}: debug-english: the debug menu (S15) stays English in every language; write the en text`,
+    );
+}
+
 export function lintMessage(ctx: MessageContext): string[] {
   const parsed = parseMessage(ctx.message);
   const base = [...checkKey(ctx), ...checkSentence(ctx)];

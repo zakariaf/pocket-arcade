@@ -19,17 +19,19 @@ How text gets from a catalog to the screen at runtime, and why each piece is sha
 
 Verified on 2026-09-26 (Expo SDK 57, React Native 0.86.3, Hermes).
 
-| Package | Version | Where | How |
-|---|---|---|---|
-| `react-intl` | 12.1.3 exact | Shell runtime | `npm install -E` (not in the Expo map) |
-| `@formatjs/intl-getcanonicallocales` | 3.2.12 exact | Shell runtime | npm, exact |
-| `@formatjs/intl-locale` | 5.3.12 exact | Shell runtime | npm, exact |
-| `@formatjs/intl-pluralrules` | 6.3.15 exact | Shell runtime | npm, exact |
-| `@formatjs/intl-numberformat` | 9.4.3 exact | Shell runtime | npm, exact |
-| `expo-localization` | ~57.0.2 | app | `npx expo install expo-localization` |
-| `@formatjs/cli` | 6.16.32 exact | root dev | npm, exact (for `formatjs verify`) |
-| `@formatjs/icu-messageformat-parser` | 3.5.20 exact | `@e07/tooling` dev | npm, exact (the project linter imports it) |
-| `eslint-plugin-formatjs` | 8.1.0 exact | root dev | npm, exact |
+Each package is installed in the Shell build step that brings its first importer, so no step leaves an installed package unused (dependency-management's `check-deps-policy` fails `unused-dependency` otherwise):
+
+| Package | Version | Where | How | Shell step |
+|---|---|---|---|---|
+| `@formatjs/intl-getcanonicallocales` | 3.2.12 exact | Shell runtime | npm, exact | 1 (the bootstrap's manifest, with `intl-polyfills.ts` and the Jest `setupFiles` line) |
+| `@formatjs/intl-locale` | 5.3.12 exact | Shell runtime | npm, exact | 1 |
+| `@formatjs/intl-pluralrules` | 6.3.15 exact | Shell runtime | npm, exact | 1 |
+| `@formatjs/intl-numberformat` | 9.4.3 exact | Shell runtime | npm, exact | 1 |
+| `eslint-plugin-formatjs` | 8.1.0 exact | root dev | npm, exact | 1 (the bootstrap's lint config) |
+| `react-intl` | 12.1.3 exact | Shell runtime | `npm install -E` (not in the Expo map) | 6, the i18n step (`create-t.ts` and the i18n tests) |
+| `@formatjs/cli` | 6.16.32 exact | root dev | npm, exact (for `formatjs verify`) | 6 (`npm run i18n:verify`) |
+| `@formatjs/icu-messageformat-parser` | 3.5.20 exact | `@e07/tooling` dev | npm, exact (the project linter imports it) | 6 (`packages/tooling/src/i18n/`) |
+| `expo-localization` | ~57.0.2 | the app, with the Shell peer | `npx expo install expo-localization` in the app | 7, with its first importer, the composition root's `app/device-adapters.ts` (then `start-shell.ts` and the language screens); nothing at step 6 imports it |
 
 Re-verify before relying on a number: `npm view react-intl version`, `npm view @formatjs/intl-pluralrules version` (and the other polyfills), `npx expo install --check` in each app.
 
@@ -63,6 +65,16 @@ packages/tooling/src/i18n/verify-catalogs.ts catalog-lint.ts catalog-lint-rules.
 ```
 
 `react-intl` is imported only inside `packages/shell/src/i18n/` (an ESLint `no-restricted-imports` entry enforces it). Everything else uses `useT()` / `<T>`.
+
+The folder fills in three Shell build steps, because a template and its test land in the same step and a test that needs a later file waits for it:
+
+| Shell step | Files |
+|---|---|
+| 1 (bootstrap) | `intl-polyfills.ts`, `intl-status.ts` with its test, and the Jest `setupFiles` line |
+| 6 (the i18n step) | the four catalogs (`copy-deck.mjs apply`), `languages.ts`, `resolve-language.ts`, `digits.ts`, `bidi.ts`, `messages.ts`, `create-t.ts`, `format-date.ts`, `game-message-text.ts` with their tests, and all of `packages/tooling/src/i18n/` (the linter, `verify-catalogs.ts`, the review sheet) |
+| 7 (the boot and the composition root) | `t.tsx` with `t.test.tsx` (it renders through `renderWithShell` and the Toybox text), `i18n-provider.tsx`, `t-bridge.tsx`, `t-context.ts` and `language-context.tsx` (no test of their own: the step-7 component tests cover them, and nothing at step 6 imports them), and `test/integration/i18n/start-shell-imports.test.ts` (it reads `start-shell.ts`) |
+
+Copying the step-7 files at step 6 leaves functions no step-6 test calls, so `npm run test:coverage` falls under its function threshold. `check-i18n-code.mjs` follows the same split: before `start-shell.ts` exists its `polyfill-first` and `i18n-runtime` rules print a not-yet-due SKIP line each, and from step 7 on `i18n-runtime` fails on any of the step-7 files that is missing.
 
 ## Language resolution and expo-localization
 

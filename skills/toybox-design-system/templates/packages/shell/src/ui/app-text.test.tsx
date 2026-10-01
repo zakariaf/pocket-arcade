@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react-native';
 import { PixelRatio, StyleSheet } from 'react-native';
 
 import { FSI, PDI } from '@e07/shell/i18n/bidi.ts';
+import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
@@ -35,6 +36,26 @@ describe('AppText', () => {
       fontSize: 21,
       lineHeight: 91 / 3, // 21 x 1.45 = 30.45 on the pixel grid
       writingDirection: 'rtl',
+    });
+  });
+
+  it('lays a whole English label left to right in an RTL layout, aligned to its start (L13)', async () => {
+    // S15's labels stay English in fa: still Vazirmatn, but an LTR paragraph, so a wrapped line's
+    // trailing space never pushes the first line off the row's start (4.4 pt in the fa capture).
+    await renderWithShell(
+      <AppText
+        text="Force language, direction and digits"
+        variant="rowLabel"
+        textDirection="ltr"
+        testID="debug.force-locale-row.label"
+      />,
+      { language: 'fa' },
+    );
+
+    expect(screen.getByTestId('debug.force-locale-row.label')).toHaveStyle({
+      fontFamily: 'Vazirmatn-Regular',
+      writingDirection: 'ltr',
+      textAlign: TEXT_ALIGN.start, // 'left': React Native swaps it to the right in an RTL layout
     });
   });
 

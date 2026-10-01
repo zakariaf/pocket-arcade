@@ -1,0 +1,22 @@
+# packages/shell/e2e/ads-smoke/02-relaunch.yaml — step 2, after step 1 on the same install:
+#   xcrun simctl terminate <udid> <bundle id>; xcrun simctl launch <udid> <bundle id>
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/02-relaunch.yaml
+# The answers are kept: no S3, no form, no tracking prompt, and the banner loads again.
+appId: ${APP_ID}
+name: Ads smoke 2 - a relaunch asks nothing again and the banner loads
+tags: [ads-smoke]
+---
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 30000
+- assertNotVisible:
+    id: 'consent.continue-button'
+# system-ui: Apple's tracking alert must not come back.
+- assertNotVisible: 'Ask App Not to Track'
+- extendedWaitUntil:
+    visible:
+      id: 'home.banner-ad'
+    timeout: 60000
+- assertNotVisible:
+    id: 'consent.continue-button'

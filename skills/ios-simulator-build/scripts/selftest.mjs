@@ -4,18 +4,22 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { runSelftest } from './check-lib.mjs';
-import { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
+import { ownerPlaceholderProblem, ownerStepsPendingLine, PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
-// The ship gates refuse these scaffold placeholders by name (owner decision O4): the pinned list.
-const PINNED = {
-  bundleIdPrefix: 'com.example.',
-  admobAppId: 'ca-app-pub-1234567890123456~1234567890',
-  admobUnits: ['ca-app-pub-1234567890123456/1111111111', 'ca-app-pub-1234567890123456/2222222222', 'ca-app-pub-1234567890123456/3333333333'],
-  privacyHost: 'example.com',
-  supportEmail: 'support@example.com',
-};
-if (JSON.stringify(PLACEHOLDERS) !== JSON.stringify(PINNED)) {
-  console.log('FAIL scripts/lib/ship-placeholders.mjs [placeholders-pin] PLACEHOLDERS is not the pinned list Fix: Restore the list in _library/shared/scripts/lib/ship-placeholders.mjs (a change needs the owner) and sync.');
+// The ship gates refuse these scaffold placeholders by name, each with the owner step that replaces it
+// (owner decision O4, lead decision L14): the pinned list, and the one OWNER STEPS PENDING line.
+const PINNED = [
+  { field: 'bundleId / premium.productId', value: 'com.example.*', name: 'the placeholder bundle id (com.example.*)', ownerStep: null, step: 'the fixed id io.applander.<game id without hyphens> (owner decision O4)' },
+  { field: 'ads.ids.ios.appId', value: 'ca-app-pub-1234567890123456~1234567890', name: 'the placeholder AdMob app id', ownerStep: 'G5', step: "the owner's AdMob app id (owner step G5)" },
+  { field: 'ads.ids.ios.units.banner', value: 'ca-app-pub-1234567890123456/1111111111', name: 'the placeholder AdMob banner unit', ownerStep: 'G5', step: "the owner's banner unit id (owner step G5)" },
+  { field: 'ads.ids.ios.units.interstitial', value: 'ca-app-pub-1234567890123456/2222222222', name: 'the placeholder AdMob interstitial unit', ownerStep: 'G5', step: "the owner's interstitial unit id (owner step G5)" },
+  { field: 'ads.ids.ios.units.rewarded', value: 'ca-app-pub-1234567890123456/3333333333', name: 'the placeholder AdMob rewarded unit', ownerStep: 'G5', step: "the owner's rewarded unit id (owner step G5)" },
+  { field: 'links.privacyPolicy.host', value: 'example.com', name: 'the placeholder privacy-policy host', ownerStep: 'G3', step: "the owner's privacy-policy host (owner step G3)" },
+  { field: 'links.supportEmail', value: 'support@example.com', name: 'the placeholder support address', ownerStep: 'G3', step: "the owner's support address (owner step G3)" },
+];
+const pendingLine = ownerStepsPendingLine(PLACEHOLDERS.filter((entry) => entry.ownerStep !== null).map((entry) => ownerPlaceholderProblem({ entry, file: 'game.config.ts' })));
+if (JSON.stringify(PLACEHOLDERS) !== JSON.stringify(PINNED) || pendingLine !== 'OWNER STEPS PENDING: G3, G5') {
+  console.log('FAIL scripts/lib/ship-placeholders.mjs [placeholders-pin] PLACEHOLDERS or the OWNER STEPS PENDING line is not the pinned one Fix: Restore the list in _library/shared/scripts/lib/ship-placeholders.mjs (a change needs the owner) and sync.');
   console.log('RESULT: FAIL (1 problems)');
   process.exit(1);
 }

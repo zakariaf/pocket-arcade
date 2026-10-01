@@ -1,0 +1,3 @@
+SKIP package.json [script-target] npm run release:ios: due at Shell step 11: packages/tooling/src/release/release-ios.ts not yet created (ios-release-testflight copies it)
+SKIP package.json [script-target] npm run e2e:ios: due at Shell step 10: packages/tooling/src/e2e/run-e2e-ios.ts not yet created (e2e-maestro copies it)
+SKIP package.json [script-target] npm run screenshots:ios: due at Shell step 10: packages/tooling/src/e2e/capture-screenshots-ios.ts not yet created (e2e-maestro copies it)

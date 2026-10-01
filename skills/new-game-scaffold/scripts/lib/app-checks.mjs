@@ -5,7 +5,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { lineOf, readShellSlice, readText, REPO_SCAN_IGNORES, walk } from '../check-lib.mjs';
-import { DECK_LOSE_SLUGS, deckEntries } from './app-files.mjs';
+import { DECK_LOSE_SLUGS, deckEntries, OWNER_PLACEHOLDER_RULE, ownerPlaceholderProblem } from './app-files.mjs';
 import { BUNDLE_PREFIX, bundleIdFor, existingApps, FONT_FILES, idForms, LANGUAGES, placeholdersIn, premiumIdFor } from './app-plan.mjs';
 import { errorText } from './app-modules.mjs';
 import { code } from './ts-scan.mjs';
@@ -258,17 +258,26 @@ export function gameConfigProblems(config, id, stage) {
   need(typeof config.links?.supportEmail === 'string' && config.links.supportEmail.includes('@'), 'links.supportEmail is not an e-mail address', 'Use the support address the owner gives.');
   need(['general', 'children'].includes(config.store?.audience), 'store.audience must be general or children', 'Default: general (decision D8).');
   need(config.ads?.isEnabled !== undefined && isCount(config.ads?.policy?.minMsBetweenInterstitials, 0), 'ads.isEnabled and ads.policy are required', 'Keep the scaffold ad policy (3 levels first, 3 minutes and 2 levels between interstitials).');
-  if (stage === 'complete') for (const [field, value] of ownerFields(config)) for (const entry of placeholdersIn(value)) need(false, `${field} is still the scaffold placeholder ${entry.value}`, `Replace it with ${entry.step}; a finished app and every store build carry the owner's real value (the ship gates reject the same list).`, 'owner-placeholder', field);
+  if (stage === 'complete') {
+    for (const [field, value] of ownerFields(config)) {
+      for (const entry of placeholdersIn(value).filter((item) => item.ownerStep !== null)) {
+        const { message, fix } = ownerPlaceholderProblem({ entry, where: field });
+        need(false, message, fix, OWNER_PLACEHOLDER_RULE, field);
+      }
+    }
+  }
   return problems;
 }
 
-/** The game.config.ts values an owner step replaces: [field, value]. AdMob ids only while ads are on. */
+/**
+ * The game.config.ts values an owner step replaces: [field, value]. The AdMob ids (owner step G5)
+ * only while ads are on, then the privacy-policy host and the support address (owner step G3). The
+ * pre-O4 com.example.* ids are no owner step: the bundle-id and premium-id rules report them.
+ */
 function ownerFields(config) {
   const units = config.ads?.ids?.ios?.units ?? {};
   const android = config.ads?.ids?.android ?? null;
   return [
-    ['bundleId', config.bundleId],
-    ['premium.productId', config.premium?.productId],
     ...(config.ads?.isEnabled === false ? [] : [
       ['ads.ids.ios.appId', config.ads?.ids?.ios?.appId],
       ...Object.entries(units).map(([slot, value]) => [`ads.ids.ios.units.${slot}`, value]),

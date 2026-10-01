@@ -10,7 +10,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
-import { REPO_SCAN_IGNORES, createReporter, fail, maskComments, parseArgs, requireDir, run, walk } from './check-lib.mjs';
+import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, maskComments, parseArgs, requireDir, run, walk } from './check-lib.mjs';
 
 const SPEC = {
   name: 'check-test-setup',
@@ -68,7 +68,10 @@ const SPEC = {
     '                            __mocks__/<sdk>.ts is missing',
     '  nested-sdk-mock           a vendor SDK mock sits in a __mocks__ folder Jest does not apply to node modules',
     '  render-with-shell-missing component tests exist but packages/shell/src/testing/render-with-shell.tsx does not',
-    '                            (a test marked "// no-shell-context: <why>" needs no Shell and does not count)',
+    '                            (a test marked "// no-shell-context: <why>" needs no Shell and does not count).',
+    '                            Not yet due before Shell step 7: render-with-shell.tsx imports the theme and the',
+    '                            providers, so it lands with the composition root and start-shell.ts; until',
+    '                            packages/shell/src/app/start-shell.ts exists the rule prints a SKIP line',
     '',
     'Fixes name the template to copy from this skill (templates/<same path>).',
   ].join('\n'),
@@ -474,7 +477,16 @@ const needsNoShell = (source) => {
 
 function checkHelpers(root, report) {
   const componentTests = walk(root, { include: ['*.test.tsx'], ignore: IGNORE }).filter((rel) => /^(apps|packages)\//.test(rel) && !needsNoShell(readFileSync(join(root, rel), 'utf8')));
-  if (componentTests.length > 0 && !existsSync(join(root, 'packages', 'shell', 'src', 'testing', 'render-with-shell.tsx'))) report.problem({ file: 'packages/shell/src/testing/render-with-shell.tsx', line: 0, rule: 'render-with-shell-missing', message: `${componentTests.length} component test file(s) exist (${componentTests[0]}) but the renderWithShell helper does not`, fix: 'Copy templates/packages/shell/src/testing/render-with-shell.tsx (and its test) into place.' });
+  if (componentTests.length === 0 || existsSync(join(root, 'packages', 'shell', 'src', 'testing', 'render-with-shell.tsx'))) return;
+  // renderWithShell imports the theme, the i18n providers and the test palette: it lands at Shell step 7
+  // with the composition root (start-shell.ts), so earlier component tests (state-stores' progress store at
+  // step 5) wait for it.
+  const notDue = dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (notDue) {
+    report.skip({ file: 'packages/shell/src/testing/render-with-shell.tsx', rule: 'render-with-shell-missing', message: `${notDue} (renderWithShell lands with it; ${componentTests.length} component test file(s) wait)` });
+    return;
+  }
+  report.problem({ file: 'packages/shell/src/testing/render-with-shell.tsx', line: 0, rule: 'render-with-shell-missing', message: `${componentTests.length} component test file(s) exist (${componentTests[0]}) but the renderWithShell helper does not`, fix: 'Copy templates/packages/shell/src/testing/render-with-shell.tsx (and its test) into place; it is due from Shell step 7, where start-shell.ts lands.' });
 }
 
 run(async () => {

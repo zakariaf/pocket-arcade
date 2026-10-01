@@ -1,1 +1,2 @@
-EXConstants.bundle/app.config [extra-ad-units] extra.adUnits.rewarded is a placeholder AdMob unit id (ca-app-pub-1234567890123456/3333333333)
+EXConstants.bundle/app.config [owner-placeholder] extra.adUnits.rewarded is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5)
+OWNER STEPS PENDING: G5

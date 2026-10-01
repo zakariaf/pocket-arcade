@@ -59,7 +59,7 @@ One React Navigation 7 static native stack. Route names are PascalCase; params a
 | S1 Splash | none | | | native splash while the Shell hydrates synchronously |
 | S2 First-run language | `LanguageChoice` | FirstRun | none | shown until a language is chosen (`if: useNeedsLanguageChoice`) |
 | S13 Tutorial level | `Tutorial` | FirstRun | none | the Game screen body in tutorial mode; `gestureEnabled: false`. "Play the tutorial again" (S13 How to play) opens `Game` with `{ start: 'new', ref: { kind: 'tutorial' } }`, because FirstRun is gone after the first run |
-| S3 Ad consent | none | | | Google's UMP form, presented by the consent port |
+| S3 Ad consent | none | | | where Google's consent is required, the Shell's intro, then Google's UMP form; then, on iOS, Apple's tracking prompt while not answered (on its own, without the intro, when it is the only step due; lead decision L10); presented through the consent port |
 | S4 Home | `Home` | Main | none | root of the main app: the first Main screen |
 | S5 Game | `Game` | Main | `GameParams` | `gestureEnabled: false`, `usePreventRemove` |
 | S6 Pause | none | | | overlay inside Game |

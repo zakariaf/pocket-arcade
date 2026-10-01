@@ -50,19 +50,23 @@ Spec 8.10, continue after losing: games may allow one continue per level or run;
 - `recordInterstitialShown({ nowMs, outcome })`: only when the interstitial was actually shown; resets the counter and remembers whether it followed a loss.
 - The history lives in the save document's ads section and is written after every level end and every shown interstitial, so killing the app does not reset the caps. (The save document itself belongs to the save-persistence work; this skill only defines the three fields.)
 
-## perk-offer.ts: free, watch-ad or hidden
+## perk-offer.ts: free, watch-ad, loading or hidden
 
-`perkOffer(perk, { config, context, isRewardedLoaded })` returns how a hint or a continue is offered:
+`perkOffer(perk, { config, context, rewardedStatus })` returns how a hint or a continue is offered (`PerkOffer = 'free' | 'watch-ad' | 'loading' | 'hidden'`; `rewardedStatus` is the AdsPort's `'loading' | 'ready' | 'unavailable'`):
 
 | Situation | Result |
 |---|---|
 | Continue not allowed by the game, or already used this level | `hidden` |
 | Premium (online or offline) | `free` |
 | Hint with free hints left today | `free` |
-| Ads may be served and a rewarded ad is loaded | `watch-ad` |
-| Anything else (offline, no consent, ads off, nothing loaded) | `hidden` (never a broken button) |
+| Ads may be served (`canServeAds`) and the rewarded ad is ready | `watch-ad` |
+| A continue, ads may be served and the rewarded ad is still loading | `loading` (shown busy; L11) |
+| A hint whose ad is still loading | `hidden` (hints never wait) |
+| Anything else (offline, no consent, ads off, no rewarded ad that can come) | `hidden` (never a broken button) |
 
-`free` runs the perk directly. `watch-ad` shows "Watch an ad to ..." and calls `earnRewardedPerk`; the perk runs only when that returns `true`. A dismissed ad changes nothing and says nothing.
+`free` runs the perk directly. `watch-ad` shows "Watch an ad to ..." and calls `earnRewardedPerk`; the perk runs only when that returns `true`. `loading` is the same continue offer drawn busy and not pressable; it becomes `watch-ad` when the ad loads, or `hidden` when its load fails. A dismissed ad changes nothing and says nothing.
+
+**Never strand a finished run (lead decision L11, 2026-10-01).** So `hidden` always means unavailable, never "still loading". When a run is lost and its continue is `hidden` (ads off, offline, no rewarded ad, no Premium), nobody can rescue it: the Game screen model finishes it at once (game-host-integration's `isLossStranded`), the run end is recorded, and the result shows: the endless result with its score and New best, or the lose result without the offer. This amends round 3 and 4's "a loss the player may still rescue is kept until they decide": a loss is kept only while its offer is `free`, `watch-ad` or `loading`.
 
 ## Interpretations the tests pin
 
@@ -77,6 +81,6 @@ Spec 8.10, continue after losing: games may allow one continue per level or run;
 
 The two boundary cases ("exactly 3 completed levels" and "the same millisecond as the last one") exist because a mutation run (Stryker) left two survivors without them. Keep them.
 
-`perk-offer.test.ts`: watch-ad only when loaded and servable; free for Premium and for the daily free hint; a forbidden or used continue is hidden even for Premium. The free hint count is the game's own: `useHintPerk(today)` (`app/use-ad-context.ts`) builds `{ kind: 'hint', freeHintsLeft: selectFreeHintsLeft(progress, today, extra.hints.freePerDay) }`, so a game whose `game.config.ts` gives `hints.freePerDay: 0` (no solver hints, Line Siege) never offers a free hint (`use-ad-context.test.tsx`); `check-ads.mjs` fails `free-hints-config` for a `selectFreeHintsLeft` call without the config's count or a hand-built hint perk. `ad-history.test.ts`: wins count, losses do not, a shown interstitial resets the counters.
+`perk-offer.test.ts` (one table): Premium free; ready watch-ad; a continue whose ad loads `loading`; unavailable hidden; offline hidden (ready or loading); no consent hidden; a hint never `loading`; free for the daily free hint; a forbidden or used continue hidden even for Premium. `check-ad-behaviour.mjs` rule `perk-rules` runs a continue-offer case for each row (the round-4 `perkOffer`, which hid a continue while its ad loaded, fails `bad-perk-hidden-while-loading`). The free hint count is the game's own: `useHintPerk(today)` (`app/use-ad-context.ts`) builds `{ kind: 'hint', freeHintsLeft: selectFreeHintsLeft(progress, today, extra.hints.freePerDay) }`, so a game whose `game.config.ts` gives `hints.freePerDay: 0` (no solver hints, Line Siege) never offers a free hint (`use-ad-context.test.tsx`); `check-ads.mjs` fails `free-hints-config` for a `selectFreeHintsLeft` call without the config's count or a hand-built hint perk. `ad-history.test.ts`: wins count, losses do not, a shown interstitial resets the counters.
 
 The skill's `check-ad-behaviour.mjs` runs the same decision table against the repo's real `ad-policy.ts`, `ad-history.ts`, `perk-offer.ts`, `ad-gate.ts` and `ad-moments.ts` (through Node type stripping), so a weakened test cannot hide a broken rule.

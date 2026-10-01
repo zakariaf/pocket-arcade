@@ -1,0 +1,1 @@
+apps/demo/game.config.ts [mode-flows] modes.endless is true, but the endless flow of apps/demo/e2e/flows/ sets premium=1, so it never shows that a player without Premium sees the endless result

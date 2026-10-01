@@ -1,2 +1,3 @@
 use-debug-model.ts:1 [debug-model] does not give S15 the network guard's counter
 debug-actions.ts:1 [debug-model] goes around the debug services (setSimulatedToday)
+use-debug-model.ts:1 [debug-model] does not read S15's outside state

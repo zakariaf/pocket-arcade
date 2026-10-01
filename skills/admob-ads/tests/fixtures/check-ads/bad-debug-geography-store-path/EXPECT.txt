@@ -1,0 +1,3 @@
+[debug-geography-test-only]
+packages/shell/src/services/consent/consent-factory.ts:26
+debugGeography is set outside test-only code

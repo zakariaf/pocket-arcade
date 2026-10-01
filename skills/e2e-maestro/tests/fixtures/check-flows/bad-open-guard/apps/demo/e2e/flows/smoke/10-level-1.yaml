@@ -1,0 +1,83 @@
+# apps/demo/e2e/flows/smoke/10-level-1.yaml — level 1 on the real board, then a win:
+# 1. one real move by taps (Canvas content has no testIDs: with boardLayout=1 the test build renders
+#    game.board-layout, a Text holding { x, y, layout }, and game.moves-label, the move count), so a
+#    region cell becomes a tap point: x + region.x + (col + 0.5) * region.cell (this board does not
+#    mirror; the debug-deep-link reference shows the mirrored formula);
+# 2. a kill and relaunch: the run resumes on Pause with the move kept;
+# 3. action=win-level: GameHost.debugControls().playTo('won') swaps the run's state for the game's
+#    testing.examples.win() and ends it through the host's one run-end path, as a real win does
+#    (stars, statistics and ad history saved before Result shows).
+# The taps and the star count come from the game itself:
+#   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/e2e/print-level-line.ts --app demo --level 1
+# prints the first move's taps (a tap-then-tap game selects in tray first; a one-tap
+# game deletes the FROM taps) and the stars the example win earns on level 1 (1), which
+# apps/demo/e2e/testids.json lists as result.stars-1.
+appId: ${APP_ID}
+name: Demo level 1 accepts a move, resumes after a kill, then wins
+tags: [smoke, demo]
+---
+- launchApp:
+    clearState: true
+# One link: the save changes first (first run done), then the Game screen once Home's group is up.
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&level=1&ads=off&firstRun=0&reduceMotion=1&boardLayout=1&screen=game'
+      WAIT_FOR: 'game.board-layout'
+- copyTextFrom:
+    id: 'game.board-layout'
+- evalScript: ${output.board = JSON.parse(maestro.copiedText)}
+- evalScript: ${output.from = output.board.layout.regions.find((region) => region.id === 'tray')}
+- evalScript: ${output.to = output.board.layout.regions.find((region) => region.id === 'board')}
+# No ': ' inside an evalScript (YAML would read a mapping): use arithmetic such as Number(cond).
+- evalScript: ${output.fromPoint = Math.round(output.board.x + output.from.x + (1 + 0.5) * output.from.cell) + ',' + Math.round(output.board.y + output.from.y + (0 + 0.5) * output.from.cell)}
+- evalScript: ${output.toPoint = Math.round(output.board.x + output.to.x + (7 + 0.5) * output.to.cell) + ',' + Math.round(output.board.y + output.to.y + (4 + 0.5) * output.to.cell)}
+- tapOn:
+    point: ${output.fromPoint}
+- tapOn:
+    point: ${output.toPoint}
+- assertVisible:
+    id: 'game.moves-label'
+    text: '1'
+- killApp
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible:
+      id: 'pause.resume-button'
+    timeout: 15000
+- tapOn:
+    id: 'pause.resume-button'
+- assertVisible:
+    id: 'game.moves-label'
+    text: '1'
+# The rest of the level: the game host plays it to a win (never tap a whole line by hand here).
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.stars-1'
+- takeScreenshot: demo-level-1-won
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.1'
+# The count, then a space ("Level 1: 1 star"), so the level's own number never matches it.
+- assertVisible:
+    id: 'levels.level-tile.1'
+    text: '.*[^0-9]1 .*'
+- tapOn:
+    id: 'levels.level-tile.2'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- assertNotVisible:
+    id: 'levels.locked-toast'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*2.*'
+- runFlow: ../../../../../packages/shell/e2e/subflows/assert-no-network.yaml

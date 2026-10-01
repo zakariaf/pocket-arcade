@@ -13,9 +13,10 @@ export type AdsExtra = {
 
 export function createAdsPort(extra: AdsExtra, onAdError: (error: AdFailure) => void): AdsPort {
   if (extra.adsMode === 'off') {
-    // Spec 4.3 / screenshots / E2E: every slot stays empty, nothing is ever requested.
+    // Spec 4.3 / screenshots / E2E: every slot stays empty, nothing is ever requested, and the
+    // rewarded status stays 'unavailable' (a lost run with no Premium ends at once, L11).
     return createFakeAds({
-      isRewardedLoaded: false,
+      rewardedStatus: 'unavailable',
       interstitialResult: 'unavailable',
       rewardResult: 'unavailable',
       calls: [],

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/storekit/storekit-harness.ts",
+      "find": "  const target: MaestroTarget = { udid: h.udid, driverPort: await driverPortFor(givenPort) };\n",
+      "with": "  const target: MaestroTarget = { udid: h.udid, driverPort: Number(givenPort ?? '61234') };\n"
+    }
+  }
+]

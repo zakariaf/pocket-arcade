@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
-import { REPO_SCAN_IGNORES, UsageError, createReporter, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
+import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, UsageError, createReporter, dueSkipReason, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { findCalls, findClosing, findImports, findJsxTags, jsxAttributes, maskCode } from './lib/source-scan.mjs';
 
 const SPEC = {
@@ -31,7 +31,8 @@ const SPEC = {
     '  expo-localization-rtl   supportsRTL / forcesRTL in an app or Shell config',
     '  text-import             Text imported from react-native outside ui/app-text.tsx',
     '  number-format           Intl.NumberFormat with a literal, undefined or missing locale (use localeTagFor)',
-    '  bidi-in-source          raw or escaped bidi controls / ALM outside i18n/bidi.ts',
+    '  bidi-in-source          raw or escaped bidi controls / ALM outside i18n/bidi.ts (also an LRE/LRM put around a',
+    '                          whole English label in an RTL row: that label takes textDirection="ltr" instead)',
     '  font-weight-with-family fontFamily and fontWeight in the same style object',
     '  nav-direction           navigation direction taken from the language instead of the layout',
     '  directional-icons       DIRECTIONAL_ICONS must be exactly the directional icons that exist',
@@ -45,6 +46,10 @@ const SPEC = {
     '                          <DirectionProvider direction={directionOf(language)}>, so its Persian text is',
     '                          written left to right (the S1 tagline\'s full stop stood at the right end)',
     '  vazirmatn-files         every app ships assets/fonts/Vazirmatn-Regular.ttf and -Bold.ttf',
+    '  direction-files         from Shell step 7 (start-shell.ts exists) the Shell has i18n/direction-context.tsx and',
+    '                          game-host/board-direction-view.tsx with its test; they land at step 7, not step 6,',
+    '                          because the test renders through renderWithShell (the theme of step 7); before step 7',
+    '                          the rule prints SKIP "due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created"',
     '',
     'Test files (*.test.ts[x]) may assert styles and mock modules; only the structural rules apply to them.',
   ].join('\n'),
@@ -63,10 +68,22 @@ const ICON_FILE = 'packages/shell/src/ui/icons/icon.tsx';
 const APP_TEXT_FILE = 'packages/shell/src/ui/app-text.tsx';
 const BIDI_FILE = 'packages/shell/src/i18n/bidi.ts';
 const COLD_START_FILE = 'packages/shell/src/app/perf/cold-start.ts';
+/**
+ * The direction files whose tests need the Shell wrapper (renderWithShell, which needs the theme):
+ * copied at Shell step 7 with start-shell.ts, never at step 6 (tsc and the coverage gate fail there).
+ */
+const STEP7_DIRECTION_FILES = [
+  'packages/shell/src/i18n/direction-context.tsx',
+  'packages/shell/src/game-host/board-direction-view.tsx',
+  'packages/shell/src/game-host/board-direction-view.test.tsx',
+];
 /** Roots registered outside the navigator: they set the direction of their own language. */
 const OUTSIDE_ROOTS = ['packages/shell/src/app/create-startup-splash.tsx'];
 const BIDI_ESCAPE = new RegExp(`${String.fromCharCode(92)}${String.fromCharCode(92)}u(061[cC]|200[eEfF]|202[a-eA-E]|206[6-9])`);
 const BIDI_RAW = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/;
+/** The case of a whole LTR text in an RTL row (S15's English labels in fa, L13): a direction, not controls. */
+const LTR_TEXT_FIX =
+  "A whole English text in an RTL row (S15's debug labels in fa and ckb) is laid as an LTR paragraph aligned to the row's start: AppText textDirection=\"ltr\" (ListRow labelDirection=\"ltr\"), which useLocalizedTextStyle turns into writingDirection 'ltr' (references/digits-bidi-and-fonts.md, \"An LTR text in an RTL row\").";
 
 function isTest(rel) {
   return /\.test\.tsx?$/.test(rel) || rel.includes('__mocks__/');
@@ -191,7 +208,7 @@ run(async () => {
     code(/flexDirection\s*:\s*['"]row-reverse['"]/g, (m) => problem(m.index, 'row-reverse', 'row-reverse fakes RTL and double-flips under an RTL layout', "Use flexDirection: 'row'; React Native mirrors it in fa/ckb."));
     if (rel !== DIRECTION_FILE) code(/\bI18nManager\b/g, (m) => problem(m.index, 'i18nmanager', 'I18nManager is read outside the direction module', 'Use useDirection() in components and readLayoutDirection() at the root; only direction.ts touches I18nManager.'));
     if (rel !== ICON_FILE && !test) code(/scaleX\s*:\s*-\s*1\b/g, (m) => problem(m.index, 'scale-x-flip', 'scaleX: -1 mirrors by transform', 'Directional icons flip inside Icon (DIRECTIONAL_ICONS); a mirrored board flips in its BoardLayout mapping (x -> width - x).'));
-    if (rel !== TEXT_STYLE_FILE && !test) code(/\bwritingDirection\s*:/g, (m) => problem(m.index, 'writing-direction', 'writingDirection is set by hand', 'Render text with AppText (or T); useLocalizedTextStyle sets writingDirection from the layout direction.'));
+    if (rel !== TEXT_STYLE_FILE && !test) code(/\bwritingDirection\s*:/g, (m) => problem(m.index, 'writing-direction', 'writingDirection is set by hand', 'Render text with AppText (or T); useLocalizedTextStyle sets writingDirection from the layout direction, or from AppText textDirection for a whole text written the other way (S15\'s English labels in an RTL layout: textDirection="ltr").'));
     if (rel !== DIRECTION_FILE && !test) code(/\breloadAppAsync\b/g, (m) => problem(m.index, 'reload-outside-direction', 'reloadAppAsync is called outside the direction module', 'Call restartForDirection(direction, guard) from a mounted component; it records the guard before reloading.'));
     for (const imp of findImports(source, masked)) {
       if (imp.from === 'expo-updates') problem(imp.index, 'reload-outside-direction', 'expo-updates is imported', 'expo-updates is banned (no network); reload with reloadAppAsync from expo via restartForDirection.');
@@ -216,9 +233,9 @@ run(async () => {
     }
     if (rel !== BIDI_FILE && !test) {
       const raw = BIDI_RAW.exec(source);
-      if (raw) problem(raw.index, 'bidi-in-source', `raw bidi control U+${raw[0].codePointAt(0).toString(16).toUpperCase().padStart(4, '0')} in source`, 'Remove it; t() isolates *Name/*Text values, and isolate() from i18n/bidi.ts wraps other free text.');
+      if (raw) problem(raw.index, 'bidi-in-source', `raw bidi control U+${raw[0].codePointAt(0).toString(16).toUpperCase().padStart(4, '0')} in source`, `Remove it; t() isolates *Name/*Text values, and isolate() from i18n/bidi.ts wraps other free text. ${LTR_TEXT_FIX}`);
       const escaped = BIDI_ESCAPE.exec(source);
-      if (escaped) problem(escaped.index, 'bidi-in-source', `bidi control escape ${escaped[0]} in source`, 'Import FSI/PDI or isolate() from @e07/shell/i18n/bidi.ts instead of writing controls by hand.');
+      if (escaped) problem(escaped.index, 'bidi-in-source', `bidi control escape ${escaped[0]} in source`, `Import FSI/PDI or isolate() from @e07/shell/i18n/bidi.ts instead of writing controls by hand. ${LTR_TEXT_FIX}`);
     }
 
     if (rel.endsWith('.tsx')) {
@@ -255,6 +272,7 @@ run(async () => {
   if (boardCanvasAt && !hasBoardWrapper) {
     report.problem({ file: shown(boardCanvasAt.rel), line: lineOf(readFileSync(join(root, boardCanvasAt.rel), 'utf8'), boardCanvasAt.index), rule: 'board-ltr', message: 'a BoardCanvas is rendered but no BoardDirectionView (or direction: \'ltr\' wrapper in game-host/) keeps boards left-to-right', fix: 'Wrap the board area in BoardDirectionView with the game\'s isMirroredInRtl (templates/shell-game-host/).' });
   }
+  checkDirectionFiles(report, root, shown);
   for (const id of appIds) {
     if (!existsSync(join(root, 'apps', id, 'app.config.ts'))) continue;
     for (const font of ['Vazirmatn-Regular.ttf', 'Vazirmatn-Bold.ttf']) {
@@ -265,6 +283,22 @@ run(async () => {
   }
   return report.finish({ checked: files.length, unit: 'files' });
 });
+
+/**
+ * direction-files: the Shell wrapper's direction pieces arrive at Shell step 7 (with start-shell.ts);
+ * until then the rule is not yet due and prints a SKIP line.
+ */
+function checkDirectionFiles(report, root, shown) {
+  const reason = dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (reason !== null) {
+    report.skip({ file: shown(STEP7_DIRECTION_FILES[1]), rule: 'direction-files', message: reason });
+    return;
+  }
+  for (const file of STEP7_DIRECTION_FILES) {
+    if (existsSync(join(root, file))) continue;
+    report.problem({ file: shown(file), line: 1, rule: 'direction-files', message: `${file} is missing although Shell step 7 has started (start-shell.ts exists)`, fix: 'Copy it from the skill (templates/shell-i18n/direction-context.tsx, templates/shell-game-host/) in the step-7 commit, each file with its test: the test renders through renderWithShell.' });
+  }
+}
 
 /**
  * The cold-start clock's JS entry mark (performance-budgets' app/perf/ JS half, Shell step 7): inside

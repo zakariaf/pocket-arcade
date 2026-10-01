@@ -42,7 +42,7 @@ function setup(
     calls,
   });
   const ads = createFakeAds({
-    isRewardedLoaded: false,
+    rewardedStatus: 'unavailable',
     interstitialResult: 'unavailable',
     rewardResult: 'unavailable',
     calls,
@@ -201,7 +201,7 @@ describe('consent moment flow', () => {
     };
     const flowWithError = createConsentMomentFlow({
       ads: createFakeAds({
-        isRewardedLoaded: false,
+        rewardedStatus: 'unavailable',
         interstitialResult: 'unavailable',
         rewardResult: 'unavailable',
         calls: [],

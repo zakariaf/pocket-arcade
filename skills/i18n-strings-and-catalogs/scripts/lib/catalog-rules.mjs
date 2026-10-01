@@ -40,6 +40,7 @@ export const RULES = {
   P2: ['extra-key', 'Delete the key, or add it to en.json first: English is the source catalog.'],
   P3: ['placeholder-parity', 'Use exactly the same placeholders with the same types as en.json (same names; number stays number, plural stays plural).'],
   P4: ['exact-plural-parity', 'Give every language the same =N branches as en.json (fa counts 0 as "one", so =0 must exist everywhere or nowhere).'],
+  P5: ['debug-english', 'Copy the en text into this language: every debug.* text (the S15 debug menu, debug.perf.* included) stays English in de, fa and ckb, because S15 is a test-only screen (lead decision L13). Digits and dates inside debug values follow the language through the formatters, never through the catalog.'],
   F1: ['catalog-file', 'Every catalog folder needs en.json, de.json, fa.json and ckb.json: flat JSON objects of key -> ICU string.'],
   G1: ['required-game-key', 'Add <game-id>.name, <game-id>.win-title and <game-id>.tagline to all four catalogs (copy-deck.mjs apply --game <game-id>): the Shell reads them through GameIdentity.nameId, winTitleId and taglineId.'],
 };
@@ -129,6 +130,21 @@ export function tryParse(message) {
 
 function describeVars(vars) {
   return [...vars].map(([name, kinds]) => `${name}:${[...kinds].join('|')}`).sort().join(', ') || '(none)';
+}
+
+/** True for a key of the S15 debug menu, whose texts stay English in every language (L13). */
+export function isDebugKey(key) {
+  return key.startsWith(DEBUG_PREFIX);
+}
+
+/**
+ * Rule P5 debug-english: a debug.* text in de, fa or ckb must equal its en text exactly. S15 is a
+ * test-only screen, so its labels stay English everywhere; numbers and dates inside its values are
+ * formatted per language by code. Returns null or one { id, message } problem.
+ */
+export function debugEnglishProblem(key, sourceMessage, message, language) {
+  if (!isDebugKey(key) || language === SOURCE_LANGUAGE || message === sourceMessage) return null;
+  return { id: 'P5', message: `the debug menu (S15) stays English in every language, but ${language} says ${JSON.stringify(message)} where en says ${JSON.stringify(sourceMessage)}` };
 }
 
 /** Parity of one key between the source message and a translation: [{ id, message }]. */

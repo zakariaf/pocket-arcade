@@ -11,6 +11,9 @@ Failures of the gates themselves, lefthook, Claude Code hooks and commit rules. 
 - Hooks
 - Guardrail
 - Claude Code settings
+- Reports
+- Test history
+- Commit rules
 
 ## Commits
 
@@ -46,7 +49,8 @@ Failures of the gates themselves, lefthook, Claude Code hooks and commit rules. 
 | `gates-guardrail-drift` | check-quality-gates reports "max-params[1]: expected 3, got 5" | A limit in eslint.config.mjs was raised | Restore the limit; limits change only with the owner and a Gate-Change trailer | verified | `quality-gates` |
 | `gates-art-check-missing` | Stale generated icons are not caught by verify | render-art.ts --check is not wired into the verify script yet | Add node packages/tooling/src/art/render-art.ts --app <id> --check for every app with the npmScripts entry in quality-gates.json (Gate-Change) | open | `code-drawn-art-and-icons` |
 | `gates-guardrail-message-reworded` | check-quality-gates fails: a no-restricted-properties message (Date.now) differs from the recorded one | The guardrail compares the restricted-property messages word for word; a reworded ESLint template breaks every npm run verify | Never reword RESTRICTED_PROPERTIES messages; copy eslint.config.mjs from typescript-and-lint-rules byte for byte | verified | `typescript-and-lint-rules` |
-| `gates-wiring-pending-targets` | check-gate-wiring fails script-target-missing for packages/tooling/src/i18n/verify-catalogs.ts and packages/tooling/src/audit/audit-network.ts on a fresh skeleton | Later skills build those two gate scripts (i18n-strings-and-catalogs, privacy-and-network-audit) | Run build step 1's command in full: check-gate-wiring.mjs . --pending packages/tooling/src/i18n/verify-catalogs.ts --pending packages/tooling/src/audit/audit-network.ts; drop each flag once its file exists | verified | `quality-gates` |
+| `gates-wiring-pending-targets` | check-gate-wiring prints SKIP package.json [script-target] npm run <script>: due at Shell step <n>: <target> not yet created on a fresh skeleton (round 4: it failed script-target-missing for packages/tooling/src/i18n/verify-catalogs.ts and packages/tooling/src/audit/audit-network.ts) | Later Shell steps copy those script targets: i18n:verify (step 6), audit:network, audit:privacy and build:ios:sim (step 8), e2e:ios and screenshots:ios (step 10), release:ios (step 11) | Nothing to fix before the step: the not-yet-due SKIP lines count as a pass and each one disappears at its step (Shell step 1 names all seven). A missing target of a step-1 script (verify, audit:licenses, new-game) is a problem at once. The old --pending flags are still accepted (they turn a SKIP line into a note) | verified | `quality-gates` |
+| `gates-release-script-missing` | npm run release:ios fails with Cannot find module '<repo>/packages/tooling/src/release/release-ios.ts', or check-gate-wiring prints SKIP package.json [script-target] npm run release:ios: due at Shell step 11: packages/tooling/src/release/release-ios.ts not yet created | The bootstrap writes the canonical release:ios script at Shell step 1, but its target arrives only with ios-release-testflight's templates; round 4's step 11 never said to copy them, and check-gate-wiring did not look at script targets | At Shell step 11 copy ios-release-testflight's templates first (its workflow step 2: templates/packages/tooling/config/, src/release/ and src/asc/, as the step-11 manifest lists), then run the step's checks; check-gate-wiring's script-target rule then prints no SKIP line. Before step 11 the SKIP line is expected | verified | `ios-release-testflight` |
 
 ## Claude Code settings
 
@@ -54,3 +58,21 @@ Failures of the gates themselves, lefthook, Claude Code hooks and commit rules. 
 |---|---|---|---|---|---|
 | `gates-settings-overwrite` | Skill permissions or the Expo plugin entry vanished from .claude/settings.json | The file was replaced instead of merged | Merge keys; the edit asks the owner | verified | `quality-gates` |
 | `gates-untrusted-workspace` | Project allow rules are ignored: "Dropped 2 project-scoped permissions.allow entries - workspace not yet trusted" | Claude Code drops project allow rules until the workspace is trusted | The owner accepts the trust dialog in the project folder once | verified, owner | `skill-maintenance` |
+
+## Reports
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `gates-report-outcome-limits` | [outcome-first] first line is 255 characters, the limit is 240 (round 4 printed only: the message starts with "Line Siege can now be played end to end: ...") | The outcome line has three limits: at most 240 characters, at most 2 sentences, and it ends in . or !; round 4's message named none of them | Shorten the first line to one plain sentence within the limits (split the rest into the next lines); check-report now prints one line per broken limit with its numbers ("3 sentences, at most 2", "does not end in . or !") | verified | `git-commits-and-reporting` |
+
+## Test history
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `gates-test-edits-directed-history` | [disabled-test-added] adds "/** The shape the text must fit (a monster, a small cell): the text is" (check-test-edits over a history that followed the skills; also code-without-test for a GENERATED file and assertion-changed for the step-8 with-shell swap) | Round 4's check-test-edits read prose in comments as a focused test (fit (), counted generated files and types-only modules as untested code, and the with-shell swap commit carried no Spec-Change trailer | The round-5 check-test-edits reads only code (comments and strings blanked; call forms of fit, fdescribe, xit, xtest, xdescribe and .only/.skip/.failing/.todo), exempts files whose first 3 lines say GENERATED by <tool path> and types-only modules from code-without-test, and the step-8 swap is committed with Spec-Change: with-shell final composer (phase 0 placeholder replaced). A history committed before these fixes keeps its lines: name them in the report, never rewrite history | verified | `tdd-workflow` |
+
+## Commit rules
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `gates-perf-baseline-gated` | [gate-change-unneeded] a Gate-Change trailer but no gated file (the commit of perf-baselines/cold-start-sim-line-siege.json that e2e:ios asked for) | e2e-maestro's runner and rule 12 said to commit the cold-start baseline with a Gate-Change trailer, but round 4's quality-gates.json did not list perf-baselines/** as a gated path | perf-baselines/** is a gated path (the baseline sets the next runs' cold-start limit): commit it with Gate-Change: <why the baseline changed>; a baseline commit without the trailer fails gate-change-missing | verified | `quality-gates` |

@@ -1,0 +1,3 @@
+[loss-finished]
+packages/shell/src/screens/game/use-game-screen-model.ts
+no isLossStranded call

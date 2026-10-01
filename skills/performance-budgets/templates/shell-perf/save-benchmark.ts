@@ -21,6 +21,8 @@ export type SaveBenchmarkResult = {
   readonly p50: number;
   readonly p95: number;
   readonly max: number;
+  /** How many writes were timed (BENCHMARK_WRITES; check-e2e-report needs exactly that). */
+  readonly writes: number;
 };
 
 function percentile(sortedMs: readonly number[], p: number): number {
@@ -28,7 +30,7 @@ function percentile(sortedMs: readonly number[], p: number): number {
   return sortedMs[index] ?? Number.NaN;
 }
 
-/** Pure: p50, p95 and max of the measured write times, rounded to 0.01 ms. */
+/** Pure: p50, p95 and max of the measured write times, rounded to 0.01 ms, and their count. */
 export function summarizeWriteTimes(samplesMs: readonly number[]): SaveBenchmarkResult {
   const sorted = [...samplesMs].sort((a, b) => a - b);
   const round = (ms: number): number => Math.round(ms * 100) / 100;
@@ -36,6 +38,7 @@ export function summarizeWriteTimes(samplesMs: readonly number[]): SaveBenchmark
     p50: round(percentile(sorted, 50)),
     p95: round(percentile(sorted, 95)),
     max: round(sorted.at(-1) ?? Number.NaN),
+    writes: sorted.length,
   };
 }
 
@@ -55,7 +58,10 @@ export function deviceNow(): number {
   return performance.now();
 }
 
-/** The perf-log entry the debug menu appends after a run. */
+/**
+ * The perf-log entry the debug menu appends after a run: { kind: 'save-benchmark', label:
+ * 'save-write', data: { p50, p95, max, writes } }; e2e:ios keeps it in save-benchmark.json.
+ */
 export function saveBenchmarkEntry(result: SaveBenchmarkResult, atEpochMs: number): PerfEntry {
   return { kind: 'save-benchmark', label: 'save-write', atEpochMs, data: { ...result } };
 }

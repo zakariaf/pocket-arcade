@@ -9,3 +9,6 @@ appId: ${APP_ID}
 - extendedWaitUntil:
     visible: 'Level 1'
     timeout: 5000
+# Tap the alert first (a plain comment is no system-ui reason).
+- tapOn:
+    text: 'Allow'

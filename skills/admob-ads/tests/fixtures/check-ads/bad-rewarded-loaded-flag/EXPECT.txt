@@ -1,0 +1,3 @@
+[rewarded-status]
+AdsPort has no rewardedStatus member
+uses isRewardedLoaded, the round-4 loaded flag

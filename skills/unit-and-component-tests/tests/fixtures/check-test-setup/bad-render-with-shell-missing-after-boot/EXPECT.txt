@@ -1,0 +1,3 @@
+[render-with-shell-missing]
+1 component test file(s) exist (packages/shell/src/ui/play-button.test.tsx)
+it is due from Shell step 7

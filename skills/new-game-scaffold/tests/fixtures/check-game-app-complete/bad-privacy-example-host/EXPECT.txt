@@ -1,4 +1,5 @@
 [owner-placeholder]
-links.privacyPolicy.host is still the scaffold placeholder example.com
-links.supportEmail is still the scaffold placeholder support@example.com
-step G3
+links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3)
+links.supportEmail is the placeholder support address support@example.com (owner step G3)
+OWNER STEPS PENDING: G3
+RESULT: FAIL (2 problems)

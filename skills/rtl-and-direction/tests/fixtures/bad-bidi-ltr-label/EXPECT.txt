@@ -1,0 +1,3 @@
+[bidi-in-source]
+debug-label.ts:3
+textDirection="ltr"

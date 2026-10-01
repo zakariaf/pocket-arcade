@@ -51,7 +51,7 @@ function applyMutation(dir, ops, label) {
  */
 export function assembleSuite({ templates, baseRepo, suiteDir, prefix = 'skill-fixtures-' }) {
   const tmp = makeTempDir(prefix);
-  for (const name of readdirSync(suiteDir).filter((entry) => entry === 'good' || entry.startsWith('bad-'))) {
+  for (const name of readdirSync(suiteDir).filter((entry) => entry === 'good' || entry.startsWith('bad-') || entry.startsWith('pass-'))) {
     const source = join(suiteDir, name);
     const target = join(tmp, name);
     if (templates) cpSync(templates, target, { recursive: true });

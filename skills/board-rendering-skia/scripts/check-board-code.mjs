@@ -31,6 +31,10 @@ const SPEC = {
     '  pixel-flip             boards never pixel-flip (scaleX -1); mirror positions in BoardLayout',
     '  canvas-a11y            a board <Canvas> with a <Picture> has accessibilityRole="image" and accessibilityLabel (on the Canvas or on the element around it)',
     '  lifecycle              a component that runs useBoardClock also calls useGameLifecycle',
+    '  clock-runnable         use-board-clock.ts routes push, stop, resume and every done message through board-clock-state',
+    '                         (pushScene, stopClock, resumeClock, finishRun), never switches the frame callback with a literal',
+    '                         setActive(true|false) and never reads the scene shared value on JS (a stale read stopped the',
+    '                         continue scene after a rewarded ad, 2026-10-01)',
     '  recorder-per-canvas    Skia.PictureRecorder() is created per canvas (useState), never at module scope',
     '  interpolate-color      board colours use Skia interpolateColors, not Reanimated interpolateColor',
     '  reduced-motion-source  board code never calls useReducedMotion() (read once at app start); the Shell passes motion to buildTimeline',
@@ -49,7 +53,7 @@ const SCOPE = [
 const WORKLET_REQUIRED = [
   /^packages\/game-kit\/src\/timeline\/[^/]+\.ts$/,
   /^packages\/game-kit\/src\/geom\/board-layout\.ts$/,
-  /^packages\/shell\/src\/game-host\/(board-scene|run-board-frame|record-board|describe-error|draw-centered-text)\.ts$/,
+  /^packages\/shell\/src\/game-host\/(board-scene|board-clock-state|run-board-frame|record-board|describe-error|draw-centered-text)\.ts$/,
   /^apps\/[^/]+\/src\/board\/(draw|layout)[^/]*\.ts$/,
 ];
 const ALLOWED_WORKLET_PACKAGES = new Set(['react-native-worklets']);
@@ -175,6 +179,34 @@ function checkComponents(ctx) {
   }
 }
 
+const CLOCK_HOOK = 'packages/shell/src/game-host/use-board-clock.ts';
+const CLOCK_DECISIONS = ['pushScene', 'stopClock', 'resumeClock', 'finishRun'];
+
+/**
+ * The board clock's JS side keeps its own record (board-clock-state) and asks it for every switch:
+ * a scene pushed while the board is not runnable waits, every resume runs at least one frame, and a
+ * done message names its run, so a stale one cannot stop a newer scene.
+ */
+function checkClockRunnable(ctx) {
+  const { rel, source, code, report } = ctx;
+  if (rel !== CLOCK_HOOK) return;
+  const imported = new Set(
+    [...source.matchAll(/import\s*\{([^}]*)\}\s*from\s*['"]\.\/board-clock-state\.ts['"]/g)].flatMap((m) =>
+      m[1].split(',').map((name) => name.trim().replace(/^type\s+/, '')),
+    ),
+  );
+  const missing = CLOCK_DECISIONS.filter((name) => !imported.has(name));
+  if (missing.length > 0) {
+    report.problem({ file: rel, line: 1, rule: 'clock-runnable', message: `the clock hook does not route its decisions through board-clock-state (missing ${missing.join(', ')})`, fix: "Import pushScene, stopClock, resumeClock and finishRun from './board-clock-state.ts' and apply each step's setActive (the template's apply(step))." });
+  }
+  for (const match of code.matchAll(/\.setActive\(\s*(true|false)\s*\)/g)) {
+    report.problem({ file: rel, line: lineOf(code, match.index), rule: 'clock-runnable', message: `switches the frame callback with a literal setActive(${match[1]}) instead of a board-clock-state step`, fix: 'Call apply(pushScene(...)), apply(stopClock(...)), apply(resumeClock(...)) or apply(finishRun(...)); apply sets the run, then setActive(step.setActive).' });
+  }
+  for (const match of code.matchAll(/\bscene\s*\.\s*get\s*\(/g)) {
+    report.problem({ file: rel, line: lineOf(code, match.index), rule: 'clock-runnable', message: 'reads the scene shared value on the JS thread (until the UI applies a push, the read returns the old scene, so a stale done stopped the new one)', fix: "Keep the last push in the clock driver's ClockControl (board-clock-state) and let finishRun compare the done message's run with control.run." });
+  }
+}
+
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const root = requireDir(positionals[0] ?? '.', 'app repo root');
@@ -191,6 +223,7 @@ run(async () => {
     checkDraw(ctx);
     checkPatterns(ctx);
     checkComponents(ctx);
+    checkClockRunnable(ctx);
   }
   return report.finish({ checked: files.length, unit: 'board source files' });
 });

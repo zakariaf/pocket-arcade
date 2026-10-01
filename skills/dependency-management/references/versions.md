@@ -88,7 +88,8 @@ Pure JavaScript libraries only the Shell imports are ordinary dependencies of `p
 | `@testing-library/react-native` | 14.0.1 | npm install -D (root) | async API |
 | `test-renderer` | 1.2.0 | npm install -D (root) | the React 19.2 line; 1.3.0 targets React 19.3 (SDK 58) |
 | `fast-check` | 4.10.2 | npm install -D (root) | property tests |
-| `jest-image-snapshot` / `@types/jest-image-snapshot` | 6.5.2 / 6.4.2 | npm install -D (root) | board pixel goldens |
+| `jest-image-snapshot` | 6.5.2 | npm install -D (root), with its companion `@types/jest-image-snapshot` | board pixel goldens |
+| `@types/jest-image-snapshot` | 6.4.2 | npm install -D (root) | types for jest-image-snapshot, which ships none |
 | `pixelmatch` / `pngjs` / `@types/pngjs` | 7.2.0 / 7.0.0 / 6.0.5 | npm install -D (root) | headless-Skia diff script (pixelmatch 7 is ESM only) |
 | `@stryker-mutator/core`, `/jest-runner`, `/typescript-checker` | 10.0.0 | npm install -D (root) | mutation testing |
 | `eslint` | 9.39.5 | npm install -D (root) | ESLint 10 breaks eslint-plugin-react inside eslint-config-expo 57 (ESLint 9 is EOL since 2026-08-06; dev-only) |
@@ -116,6 +117,7 @@ Some pins hold only when a second package is pinned with them, because npm would
 | Row | Companion | How | Why |
 |---|---|---|---|
 | `@testing-library/react-native` 14.0.1 | `test-renderer` 1.2.0 | installed in the same command (`npm install -D test-renderer@1.2.0 @testing-library/react-native@14.0.1`) | a `^1.0.0` peer: installed alone, npm picked 1.3.0, the React 19.3 (SDK 58) line (seen 2026-09-29) |
+| `jest-image-snapshot` 6.5.2 | `@types/jest-image-snapshot` 6.4.2 | installed in the same command (`npm install -D @types/jest-image-snapshot@6.4.2 jest-image-snapshot@6.5.2`) | the package ships no types: installed alone, `npm run typecheck` fails `TS7016: Could not find a declaration file for module 'jest-image-snapshot'` in `test/goldens/boards/skia-golden.ts` (seen 2026-09-30) |
 | `@react-navigation/native-stack` 7.19.2 | `@react-navigation/native` 7.4.1, `react-native-screens` 4.26.2, `react-native-safe-area-context` 5.7.0 | installed together (the two native ones with `npx expo install` in every app) | `>= 4.0.0` peers: alone, npm picks the newest release, not the SDK 57 one |
 | `react-native-reanimated` 4.5.1 | `react-native-worklets` 0.10.1 | installed together | a 0.10.x peer that Expo pins exactly |
 | `jest-expo` 57.0.5 | `@react-native/jest-preset` 0.86.3 | installed together | a `^0.86.3` peer that must equal the React Native version |

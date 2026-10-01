@@ -1,0 +1,5 @@
+[continue-offer-loading]
+packages/shell/src/screens/result/continue-offer.tsx
+packages/shell/src/screens/result/result-model.ts
+LoseResult.continueOffer has no 'ad-loading'
+the continue offer never draws 'ad-loading' busy

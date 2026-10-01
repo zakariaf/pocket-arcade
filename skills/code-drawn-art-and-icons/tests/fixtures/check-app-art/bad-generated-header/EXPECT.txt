@@ -1,0 +1,2 @@
+[generated-header]
+packages/shell/src/config/splash-grounds.ts

@@ -1,0 +1,2 @@
+[step-import-closure]
+packages/shell/src/core/core.ts (step 1, alpha-one) imports the npm package zustand, which is not installed by then: step 2 installs it

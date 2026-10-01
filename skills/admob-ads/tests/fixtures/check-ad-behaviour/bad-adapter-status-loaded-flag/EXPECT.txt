@@ -1,0 +1,2 @@
+[adapter-rewarded-status]
+loading, ready, then unavailable once shown

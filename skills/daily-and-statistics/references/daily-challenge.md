@@ -17,6 +17,7 @@ One special level per day, the same for every player in the world with no server
 - The Home daily card and the daily result
 - Formatting dates and numbers
 - Open owner decisions
+- When each file lands
 
 ## Product rules
 
@@ -212,3 +213,17 @@ The week strip is the one numbered series of the screen: its columns are numbere
 - A lost first attempt counts as the day played (default). If the owner wants only wins to count for streaks, change the run-end caller (`applyRunEnd`), not the model, and ask first.
 - The design does not draw S9 after today's game; the layout above is the chosen default.
 - Settled: Home reaches S9 through the daily card's body, and its Play key plays today's run (the lead's decision L7, 2026-09-30).
+
+## When each file lands
+
+In a Shell built step by step each file lands at the first step whose code imports it, with its test, so `tsc`, `check:fast` and `test:coverage` stay green after every step. Paths are under `packages/`.
+
+| Step | Files (each with its test where it has one) | Why then |
+|---|---|---|
+| Shell step 2 (the game kit) | `game-kit/src/dates/date-key.ts`, `game-kit/src/dates/daily-seed.ts` | pure calendar and seed code the levels and the save use |
+| Shell step 4 (the save layer) | `shell/src/services/clock/` (the port, its system adapter and fake) | the save service and the stores read the clock |
+| Shell step 7, with the composition root, whatever the slice | `shell/src/stores/run-end.ts`, `shell/src/stores/daily-model.ts`, `shell/src/stores/stats-model.ts` | game-host-integration's session controller records every run end through `applyRunEnd` |
+| The first screen that brings it (Shell step 9) | `shell/src/app/use-today.ts` and the whole `shell/src/screens/daily/` set (`daily-summary.ts`, `use-daily-summary.ts`, `use-next-day-countdown.ts`) with S4 Home; `shell/src/screens/stats/stats-summary.ts`, `use-stats-summary.ts` with S10 (a slice or another order: with the first screen that imports each, S5, S9 or S10 for `use-today.ts`) | borrowed by the screens: toybox-screens' screen table lists them (Borrows) and its `check-screens.mjs . --screen <id>` names a missing one with this skill as the owner (`borrowed-file`) |
+
+`use-today.ts` has no test of its own; the summary hooks' tests and the screens' model tests cover it.
+

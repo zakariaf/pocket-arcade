@@ -41,17 +41,17 @@ The owner decided on 2026-09-30 (O4) that every game uses the Applander domain f
 
 ## Placeholders the scaffold writes
 
-These stay until the owner's step replaces them. `check-game-app.mjs --stage complete` rejects each one by name (rule `owner-placeholder`, the shared `PLACEHOLDERS` list), and the ship gates reject the same values, so a store build can never carry them:
+These stay until the owner's step replaces them. `check-game-app.mjs --stage complete` rejects each owner placeholder by name (rule `owner-placeholder`: the field, the placeholder and its owner step), and the ship gates reject the same values from the same list (`PLACEHOLDERS` in `scripts/lib/ship-placeholders.mjs`, which `app-files.mjs` re-exports), so a store build can never carry them:
 
 | Placeholder | Field | Replaced at |
 |---|---|---|
-| `com.example.*` (the old scaffold ids) | `bundleId`, `premium.productId` | never written any more; the fixed `io.applander` id |
+| `com.example.*` (the old scaffold ids) | `bundleId`, `premium.productId` | never written any more; no owner step: the `bundle-id` and `premium-id` rules name the fixed `io.applander` id |
 | `ca-app-pub-1234567890123456~1234567890` | `ads.ids.ios.appId` | G5 |
 | `ca-app-pub-1234567890123456/1111111111`, `/2222222222`, `/3333333333` | `ads.ids.ios.units` banner, interstitial, rewarded | G5 |
 | `example.com` (path `/<id>/privacy`) | `links.privacyPolicy.host` | G3 |
 | `support@example.com` | `links.supportEmail` | G3 |
 
-The AdMob placeholders are never used in test builds (`ADS_MODE=test` picks Google's test ids); a live build needs the real ones. So until G3 and G5 are done, the complete stage fails on exactly these lines, by design, and the report lists them as open owner steps.
+The AdMob placeholders are never used in test builds (`ADS_MODE=test` picks Google's test ids); a live build needs the real ones. So until G3 and G5 are done, the complete stage fails on exactly these six `owner-placeholder` lines, then prints `OWNER STEPS PENDING: G3, G5` right before `RESULT: FAIL (6 problems)`, by design (lead decision L14); the report lists G3 and G5 as open owner steps, never as a passed gate.
 
 ## Identifiers inside the game
 

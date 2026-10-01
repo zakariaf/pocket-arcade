@@ -12,6 +12,8 @@ Compiler and lint errors seen with the strict TypeScript 6 setup and the one ESL
 - Components
 - Imports
 - Tests
+- Build order
+- Types
 
 ## TypeScript
 
@@ -90,3 +92,15 @@ Compiler and lint errors seen with the strict TypeScript 6 setup and the one ESL
 |---|---|---|---|---|---|
 | `lint-test-title-verb` | it should match /^(can\|[a-z]+s)\b/u  jest/valid-title | Test titles start with a third-person verb or 'can' (the canonical ESLint config) | Write it('returns …'), it('swallows …') or it('can …'), not it('return …') or it('never throws') | verified | `unit-and-component-tests` |
 | `lint-prefer-to-be-pinned` | Use toBe when expecting primitive literals (jest/prefer-to-be) in a filled logic.test.ts | The pinned example returns a number, string or boolean literal, and toStrictEqual is rejected for those | Fill the template's __EQUALITY_MATCHER__ with toBe for a primitive and toStrictEqual for an object or array | verified | `tdd-workflow` |
+
+## Build order
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `lint-step7-missing-core-files` | error TS2307: Cannot find module '@e07/shell/app/connect-audio-settings.ts' or its corresponding type declarations. (81 of these at Shell step 7) | Round 4's Shell step 7 named neither the files the composition root imports from settings-and-preferences, daily-and-statistics, toybox-screens and unit-and-component-tests nor those skills, so each file showed up only as a tsc error | Copy exactly Shell step 7's manifest in pocket-arcade-index's build orders ("What each Shell step copies, installs and generates"), with every skill it names loaded; check-index.mjs proves each step import-closed (rule step-import-closure). A TS2307 after following the manifest means the manifest is wrong: report it, never fetch files by following tsc errors | verified | `pocket-arcade-index` |
+
+## Types
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `lint-jest-image-snapshot-types` | error TS7016: Could not find a declaration file for module 'jest-image-snapshot'. (test/goldens/boards/skia-golden.ts) | jest-image-snapshot was installed without its companion @types/jest-image-snapshot; the plan printed only the package | Install both in one command: plan-dependency.mjs jest-image-snapshot (dependency-management) prints the companion @types/jest-image-snapshot; Shell step 7's manifest installs the pair | verified | `dependency-management` |

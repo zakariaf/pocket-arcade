@@ -242,6 +242,15 @@
       "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
       "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. A pre-listed design-artefact waiver of the parity skill; the design fix is the owner's.",
       "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Its three two-line Vazirmatn texts (title 25/36.25, body 17/25.5, key label 17/24.65) snap each line box to the 1/3-pt device pixel grid on iOS, so the centred card measures 353.33 pt tall against Chrome's 352 pt (1.33 pt taller, 2 px at each edge) while every text, the art and the keys match their bounds and ink. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
     }
   ]
 }

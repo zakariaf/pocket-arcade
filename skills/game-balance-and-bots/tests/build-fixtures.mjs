@@ -380,4 +380,34 @@ const growth = buildSuite('check-balance-kit-growth', 'proposed', {
 }, () => {}, (dir) => {
   for (const [rel, text] of Object.entries(KIT_GROWTH)) write(dir, rel, text);
 });
-console.log(`built fixtures: check-balance good + ${main} bad, check-balance-wrapped good + ${wrapped} bad, check-balance-release good + ${release} pass/bad, check-balance-kit-growth good + ${growth} bad`);
+// R4S-G09: the build order runs the sims first and generates the level packs after them
+// (generate-levels.ts writes apps/<id>/src/levels/pack-*.json). The packs are outputs of the rules,
+// so writing them leaves the report fresh; any other change to rules/ or levels/ still makes it stale.
+const LEVEL_PLAN = `apps/${GAME}/src/levels/${GAME}-level-plan.ts`;
+const PACKS = {
+  [`apps/${GAME}/src/levels/pack-1.json`]: '{\n  "pack": 1,\n  "levels": [{ "seed": 101, "difficulty": 0, "par": 12 }]\n}\n',
+  [`apps/${GAME}/src/levels/pack-2.json`]: '{\n  "pack": 2,\n  "levels": [{ "seed": 202, "difficulty": 45, "par": 18 }]\n}\n',
+};
+const writePacks = (dir) => {
+  for (const [rel, text] of Object.entries(PACKS)) write(dir, rel, text);
+};
+const packs = buildSuite('check-balance-packs', 'proposed', {
+  'pass-packs-after-sims': (dir) => {
+    writePacks(dir);
+    return { keep: true, expect: ['check-balance: 17 harness files and games checked, 0 problems'] };
+  },
+  'rules-changed-after-report': (dir) => {
+    writePacks(dir);
+    replace(dir, TUNING, 'beamDamage: 8,', 'beamDamage: 9,');
+    return { keep: true, expect: ['[report-stale]', `${REPORT}:${lineOf(dir, REPORT, '"rulesFingerprint"')}`, 'not the generated pack-*.json'] };
+  },
+  'level-plan-changed-after-report': (dir) => {
+    writePacks(dir);
+    replace(dir, LEVEL_PLAN, 'rows: 4', 'rows: 5');
+    return { keep: true, expect: ['[report-stale]', `${REPORT}:${lineOf(dir, REPORT, '"rulesFingerprint"')}`] };
+  },
+}, (dir) => {
+  // The level plan is a sim input like the rules: it is in the fingerprint before the packs exist.
+  write(dir, LEVEL_PLAN, `// ${LEVEL_PLAN}\n/** The level table's rows (a fixture stand-in for the real plan). */\nexport const LINE_SIEGE_LEVEL_PLAN = { rows: 4 } as const;\n`);
+});
+console.log(`built fixtures: check-balance good + ${main} bad, check-balance-wrapped good + ${wrapped} bad, check-balance-release good + ${release} pass/bad, check-balance-kit-growth good + ${growth} bad, check-balance-packs good + ${packs} pass/bad`);

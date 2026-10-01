@@ -35,7 +35,11 @@ const SPEC = {
     '                        MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED and MAESTRO_DISABLE_UPDATE_CHECK set to true',
     '  runner-file-missing   a runner, simulator, gallery, comparator or socket-sampler file is missing',
     '  runner-no-sampler     run-e2e-ios.ts does not run the socket sampler or does not fail on network.txt',
-    '  runner-steps          run-e2e-ios.ts lacks a step: flows without a11y (quarantine,a11y), cold start and memory',
+    "  sampler-own-simulators the sampler watches every copy of the app on the Mac, not only the run's own",
+    "                        simulators (sample-sockets.ts <App> <report> <udid>..., appPids(appName, udids)):",
+    "                        another session's ADS_MODE=test copy then fills network.txt with Google sockets",
+    '  runner-steps          run-e2e-ios.ts lacks a step: flows without a11y (quarantine,a11y) with S15\'s save benchmark',
+    '                        kept right after them (recordSaveBenchmark: save-benchmark.json), cold start and memory',
     '                        (runPerfSteps: judgeColdStart, footprint, judgeMemory) or large text (a11y flows at',
     '                        accessibility-extra-extra-extra-large in en and fa)',
     '  shared-simulator      the tooling uses "booted" or another agent\'s simulator instead of a named, dedicated one',
@@ -45,7 +49,8 @@ const SPEC = {
     '                        session\'s simulator or XCTest driver can answer the run',
     '  e2e-ads-off           run-e2e-ios.ts does not refuse a build that is not the test variant with ADS_MODE=off',
     '                        (requireAdsOffTestBuild): only with ads off does no consent form or tracking prompt cover a',
-    '                        screen and no ad SDK open a socket',
+    '                        screen and no ad SDK open a socket; or it runs admob-ads\' hand-run ads smoke flows',
+    '                        (packages/shell/e2e/ads-smoke/, ADS_MODE=test builds only: check-flows checks them)',
     '  feedback-evidence     sim-perf-steps.ts does not write feedback.json from the perf log after the smoke flows',
     '                        (feedbackEvidenceOf), or feedback-evidence.ts is missing',
     '  openurl-prompt        the tooling opens a debug link with simctl openurl: iOS answers with an "Open in <app>?"',
@@ -73,7 +78,8 @@ const SPEC = {
     '                        is missing, debug-services.ts does not read and write debug.overrides, the handler does not',
     '                        keep debug.pending-screen before the restart, or createDebugParts does not pass the store',
     '  debug-model           S15\'s model hook (use-debug-model.ts with debug-actions, debug-tools, debug-sheets) is',
-    '                        missing, or reaches the debug state other than through useDebugServices() and useDebugLinks()',
+    '                        missing, reaches the debug state other than through useDebugServices() and useDebugLinks(),',
+    '                        or reads it without readDebugState(..., version) (a React Compiler build keeps stale values)',
     '  subflow-missing       debug-setup, assert-no-network or shoot-screen sub-flow, or the matrix flow, is missing',
     '  perf-layer            the perf layer the evidence run measures is missing, in two halves. JS half (Shell step 7,',
     '                        with the composition root, due once packages/shell/src/app/start-shell.ts exists):',
@@ -166,10 +172,16 @@ function checkRunner(root, report) {
     if (!/'--time'\s*,\s*'9:41'|--time 9:41/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not pin the status bar to 9:41', fix: 'Restore the simctl status_bar override (time 9:41, full bars, battery 100%).' });
     if (!/content_size/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not set the text size', fix: 'Restore simctl ui <udid> content_size <size> (large by default, the 200% pass uses accessibility-extra-extra-extra-large).' });
   }
+  const sampler = 'packages/tooling/src/audit/sample-sockets.ts';
+  if (exists(root, sampler) && !/\bappPids\s*\(\s*[^,()]+,\s*[^,()]+\)/.test(maskComments(read(root, sampler)))) {
+    report.problem({ file: sampler, line: 1, rule: 'sampler-own-simulators', message: "samples every copy of the app on this Mac (appPids without the run's simulator UDIDs)", fix: "Restore sample-sockets.ts from the template: <AppName> <report> <udid>..., appPids(appName, udids)." });
+  }
   const runner = 'packages/tooling/src/e2e/run-e2e-ios.ts';
   if (exists(root, runner)) {
     const code = maskComments(read(root, runner));
     if (!/sample-sockets/.test(code) || !/network\.txt/.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-no-sampler', message: 'does not run the socket sampler around maestro test or does not check network.txt', fix: 'Restore runWithSocketSampler from the template: any non-loopback socket of the app fails the run (spec N3).' });
+    // Each sampler names its simulator: [SOCKET_SAMPLER, <app name>, <report>, <udid>].
+    if (/SOCKET_SAMPLER|sample-sockets/.test(code) && !/\[\s*SOCKET_SAMPLER\s*,[^\],]+,[^\],]+,[^\],]+\]/.test(code)) report.problem({ file: runner, line: 1, rule: 'sampler-own-simulators', message: "spawns the socket sampler without a simulator's UDID, so it samples every copy of the app on this Mac (another session's ads-on build included)", fix: "Restore socketSamplers() from the template: one sampler per simulator of the run, spawned as [SOCKET_SAMPLER, app.name, network, udid]." });
     if (!/exclude-tags['"]?\s*,\s*['"]quarantine/.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-no-sampler', message: 'does not pass --exclude-tags quarantine', fix: 'Restore the maestro test arguments from the template.' });
     const steps = [
       [/['"]quarantine,a11y['"]/, 'the flows step does not exclude the a11y flows (they need LANG and 200 % text)'],
@@ -177,8 +189,10 @@ function checkRunner(root, report) {
       [/accessibility-extra-extra-extra-large/, 'there is no large-text step at accessibility-extra-extra-extra-large'],
       [/['"]--include-tags['"]\s*,\s*['"]a11y['"]/, 'the large-text step does not run the a11y-tagged flows'],
       [/LANG=\$\{/, 'the large-text step does not pass LANG to the a11y flows'],
+      [/\brecordSaveBenchmark\s*\(/, "the flows step does not keep S15's save benchmark (recordSaveBenchmark right after the flows writes save-benchmark.json)"],
     ];
     for (const [pattern, message] of steps) if (!pattern.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-steps', message, fix: "Restore run-e2e-ios.ts from this skill's template: flows, cold start, memory and large text run in one evidence run (--flows-only is for iterating)." });
+    if (/ads-smoke/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the packages/shell/e2e/ads-smoke/ flows, which need an ADS_MODE=test build and a launch by xcrun simctl launch', fix: "Run only packages/shell/e2e/flows/*/*.yaml and apps/<game-id>/e2e/flows/*/*.yaml (this skill's template); admob-ads' ads smoke flows are run by hand (references/flows.md, \"The ads smoke flows\")." });
     if (!/\brequireAdsOffTestBuild\s*\(/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the flows on whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off', fix: "Restore startRun from this skill's template: requireAdsOffTestBuild(appPath, game) before the simulator is prepared (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket)." });
   }
   if (exists(root, simulator)) {
@@ -333,6 +347,7 @@ function checkModel(root, report) {
   const model = codeOf(root, MODEL);
   if (!exists(root, MODEL)) return;
   if (!(/\buseDebugServices\s*\(/.test(model) && /\buseDebugLinks\s*\(/.test(model))) problem(MODEL, 'does not reach the debug state through useDebugServices() and useDebugLinks()', "Restore the template: the switches call the debug services, the tools the link handler's apply().");
+  if (!/\breadDebugState\s*\([^;]*\bversion\b/.test(model)) problem(MODEL, "does not read S15's outside state (debug flags, simulated day, error and perf logs) through readDebugState(..., version), so the React Compiler of an app build keeps showing the old switches and counts after a change (no subscription tells it)", 'Restore the template: const state = readDebugState({ services, errorLog, clock }, isPremium, version), version being the useReducer refresh counter, and read every switch and count from state.');
   if (!/\bnetworkAttempts\s*:\s*(?!string\b)\S/.test(model)) problem(MODEL, "does not give S15 the network guard's counter (networkAttempts, shown as debug.network-attempts)", 'Restore networkAttempts: String(networkAttemptsOf(errorLog.entries())) from the template.');
   for (const rel of [MODEL, ACTIONS]) {
     const around = /\bcreateDebugServices\s*\(|\bcreateDebugLinkHandler\s*\(|\bsetSimulated(?:Offline|Today)\s*\(|['"]debug-premium-set['"]/.exec(codeOf(root, rel));

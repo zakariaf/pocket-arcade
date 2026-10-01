@@ -27,7 +27,7 @@ jest.mock(
 );
 
 const ADS = createFakeAds({
-  isRewardedLoaded: false,
+  rewardedStatus: 'unavailable',
   interstitialResult: 'unavailable',
   rewardResult: 'unavailable',
   calls: [],

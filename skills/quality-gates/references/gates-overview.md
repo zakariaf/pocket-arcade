@@ -99,8 +99,8 @@ Some verify steps depend on files that later build steps create. Before the step
 | `knip`: files, dependencies, unlisted, binaries | Shell step 1 | never expected red: the template already ignores the macOS tools started by name and the root mocks' native libraries |
 | `knip`: exports and types | Shell step 10 | exports that only a later layer uses; skipped with the `SKIP shell-slice.json [knip-exports]` line while `shell-slice.json` exists |
 | `test:sim` | Shell step 3 | "No tests found" until the pilot's `*.sim.test.ts` exist; the `SKIP jest.sim.config.js [test-sim]` line while `shell-slice.json` exists |
-| `i18n:verify` | Shell step 6 | `packages/tooling/src/i18n/verify-catalogs.ts` arrives with i18n-strings-and-catalogs; until then `check-gate-wiring.mjs` names it with `--pending` |
-| `audit:network`, `audit:licenses` | Shell step 8 | `packages/tooling/src/audit/audit-network.ts` and the licence audit's bundle export arrive with the audit tooling, which lands before the first simulator build; until then `check-gate-wiring.mjs` names the network audit with `--pending` |
+| `i18n:verify` | Shell step 6 | `packages/tooling/src/i18n/verify-catalogs.ts` arrives with i18n-strings-and-catalogs; until then `check-gate-wiring.mjs` prints its not-yet-due `script-target` SKIP line |
+| `audit:network`, `audit:licenses` | Shell step 8 | `packages/tooling/src/audit/audit-network.ts` and the licence audit's bundle export arrive with the audit tooling, which lands before the first simulator build; until then `check-gate-wiring.mjs` prints the network audit's not-yet-due `script-target` SKIP line |
 
 Never make a step green early with `--passWithNoTests`, an ignore entry or a stub file: the table is the plan, and the report names each expected-red step with its reason.
 

@@ -1,0 +1,1 @@
+storekit: the Mac is busy (load average 612 on 12 cores); StoreKit's test store answers slowly, so a flow may time out with a correct app

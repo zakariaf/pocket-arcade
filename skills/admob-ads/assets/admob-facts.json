@@ -44,6 +44,27 @@
     "file": "packages/shell/src/services/consent/consent-factory.ts",
     "adapter": "packages/shell/src/services/consent/admob-consent-adapter.ts"
   },
+  "debugGeography": {
+    "why": "R4G-G09: UMP's debugGeography and testDeviceIdentifiers exist only for test builds (the debug link's geo=eea|other through debugServices.setConsentGeography); verified against react-native-google-mobile-ads 17.2.0 (AdsConsentInfoOptions, AdsConsentDebugGeography EEA = 1, OTHER = 4, AdsConsent.reset()).",
+    "adapter": "packages/shell/src/services/consent/admob-consent-adapter.ts",
+    "allowedIn": [
+      "packages/shell/src/screens/debug/"
+    ]
+  },
+  "rewardedStatus": {
+    "why": "L11 (D64, 2026-10-01): a hidden continue always means no ad can come; a loading one is shown busy.",
+    "port": "packages/shell/src/services/ads/ads-port.ts",
+    "adapter": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+    "statusType": "RewardedStatus = 'loading' | 'ready' | 'unavailable'",
+    "members": [
+      "rewardedStatus",
+      "subscribeRewardedStatus"
+    ],
+    "retired": [
+      "isRewardedLoaded",
+      "subscribeRewardedLoaded"
+    ]
+  },
   "tracking": {
     "decidedBy": "owner decision O1, 2026-09-30 (Apple guideline 5.1.2(i))",
     "package": "expo-tracking-transparency",

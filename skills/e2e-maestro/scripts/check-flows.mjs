@@ -26,8 +26,10 @@ const SPEC = {
   },
   positionals: { min: 0, max: 1 },
   details: [
-    'Files: packages/shell/e2e/{flows/<area>/,subflows/,screenshots/,storekit/} and apps/<game-id>/e2e/{flows/<area>/,subflows/}.',
+    'Files: packages/shell/e2e/{flows/<area>/,subflows/,screenshots/,storekit/,ads-smoke/} and apps/<game-id>/e2e/{flows/<area>/,subflows/}.',
     'storekit/ holds the premium-purchase Tier 2 flows (tag storekit, no clearState: they keep the test transactions).',
+    'ads-smoke/ holds admob-ads\' hand-run ads smoke test on an ADS_MODE=test build (tag ads-smoke): never run by e2e:ios,',
+    '  no launchApp (the app is started with xcrun simctl launch: Maestro\'s launchApp grants the tracking answer).',
     '',
     'Rules:',
     '  flow-location        a YAML file outside flows/<area>/, subflows/, screenshots/ or the Shell\'s storekit/ (Maestro would not run it, or would run it alone)',
@@ -39,6 +41,9 @@ const SPEC = {
     '  ai-command           assertWithAI, assertNoDefectsWithAI or extractTextWithAI (uploads screenshots)',
     '  text-selector        a selector by visible text, not id (allowed only under a "# system-ui: <why>" comment)',
     '  retry-app-assertion  retry: around app steps (allowed only under a "# system-ui: <why>" comment)',
+    '  open-alert-guard     a guard (when: visible:) or a tap that matches any "Open" text: Maestro\'s text match ignores',
+    '                       case, so it also matches the AdMob test banner\'s "OPEN" button. Guard on Apple\'s alert title',
+    '                       (visible: \'Open in .*\\?\') and tap { text: \'Open\', below: \'Open in .*\\?\', optional: true }',
     '  first-step-launch    the first step of a flow or the matrix is not launchApp with clearState: true',
     '  raw-open-link        openLink in a flow; state is set only through subflows/debug-setup.yaml',
     '  debug-query          a debug-setup QUERY with an unknown parameter or value',
@@ -55,7 +60,9 @@ const SPEC = {
     '                       flow that taps daily.play-button and sends action=win-level (journeys/11-daily.yaml),',
     '                       isContinueAllowed a flow that sends action=lose-level and taps result.continue-premium-button',
     '                       (journeys/12-continue-premium.yaml; E2E builds run with ads off), modes.endless a flow that',
-    '                       taps home.endless-card and sends action=lose-level (journeys/13-endless.yaml). With',
+    '                       taps home.endless-card and sends action=lose-level without Premium (never premium=1) and',
+    '                       asserts result.continue-offer is not visible: the endless result shows at once (lead decision',
+    '                       L11, never strand a finished run; journeys/13-endless.yaml). With',
     '                       shell-slice.json a mode whose screen (S9 for daily, S7 for the others) is outside the slice is',
     '                       a SKIP line',
     '  progress-after-win   a game smoke flow wins a level (action=win-level) but never shows the stars reaching',
@@ -66,6 +73,13 @@ const SPEC = {
     '  smoke-network        a smoke flow does not end with runFlow .../subflows/assert-no-network.yaml',
     '  smoke-quarantine     a smoke flow is quarantined (smoke flows block the release instead)',
     '  quarantine-note      a quarantined flow without "# quarantine YYYY-MM-DD: <reason>", or older than 7 days',
+    '  ads-smoke-launch     an ads-smoke flow calls launchApp: Maestro grants the App Tracking Transparency answer, so',
+    '                       Apple\'s prompt never shows; start the fresh install with xcrun simctl launch <udid> <bundle id>',
+    '  ads-smoke-geo        an ads-smoke flow\'s first debug-setup QUERY sets no geo=eea|other, so whether Google\'s form',
+    '                       shows depends on the Mac\'s network location',
+    '  ads-smoke-testid     an ads-smoke flow has no id: step (only system UI and text), so it proves nothing about the app',
+    '  run-command-device   a Maestro command line (test, hierarchy, record) in a flow\'s comments does not name --device <udid> and',
+    '                       --driver-host-port <port> before the command (another session\'s simulator could answer)',
     '  maestro-syntax       (--syntax) maestro check-syntax rejects the file',
     '  flows-missing        no flow exists although the whole Shell is built (no shell-slice.json): the end-to-end',
     '                       step is due. With shell-slice.json (a partial Shell) no flows is a SKIP line, not a problem',
@@ -80,7 +94,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSETS = join(HERE, '..', 'assets');
 const SELECTOR_COMMANDS = new Set(['tapOn', 'doubleTapOn', 'longPressOn', 'assertVisible', 'assertNotVisible', 'copyTextFrom', 'scrollUntilVisible']);
 const CLI_VARS = new Set(['APP_ID', 'APP_SCHEME', 'LANG', 'THEME']);
-const BASE_TAGS = new Set(['smoke', 'shell', 'rtl', 'offline', 'a11y', 'quarantine', 'screenshots', 'daily', 'endless', 'premium']);
+const BASE_TAGS = new Set(['smoke', 'shell', 'rtl', 'offline', 'a11y', 'quarantine', 'screenshots', 'daily', 'endless', 'premium', 'ads-smoke']);
 const TESTID = /^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+(-[a-z0-9]+)*)+$/;
 const FLOW_NAME = /^(\d{2})-[a-z0-9]+(-[a-z0-9]+)*\.ya?ml$/;
 const SYSTEM_UI = /^system-ui:\s*\S.{5,}/;
@@ -171,6 +185,9 @@ function classify(rel) {
   // The premium-purchase skill's Tier 2 StoreKit flows: run only by its harness on an armed build,
   // never by e2e:ios, and never with clearState (that would delete the test transactions).
   if (parts[0] === 'storekit' && parts.length === 2 && game === null) return { kind: 'storekit', workspace, game };
+  // admob-ads' ads smoke test: run by hand on an ADS_MODE=test build after a fresh install started
+  // with xcrun simctl launch (Maestro's launchApp grants the tracking answer), never by e2e:ios.
+  if (parts[0] === 'ads-smoke' && parts.length === 2 && game === null) return { kind: 'ads-smoke', workspace, game, name: parts[1] };
   return { kind: 'misplaced', workspace, game, parts };
 }
 
@@ -314,6 +331,78 @@ function checkSelectors(rel, parsed, report) {
   });
 }
 
+/**
+ * admob-ads' ads smoke flows (packages/shell/e2e/ads-smoke/): hand-run on an ADS_MODE=test build,
+ * started by xcrun simctl launch, the consent geography fixed by the setup link, and at least one
+ * testID step so the run proves something about the app.
+ */
+function checkAdsSmoke(rel, parsed, report) {
+  const ids = [];
+  const queries = [];
+  const launch = (line) => report.problem({ file: rel, line, rule: 'ads-smoke-launch', message: 'calls launchApp, which grants the App Tracking Transparency answer, so Apple\'s prompt never shows', fix: 'Start the fresh install with xcrun simctl launch <udid> <bundle id> before the flow (admob-ads\' smoke test), and relaunch the same way between flows.' });
+  const steps = Array.isArray(parsed.steps) ? parsed.steps : [];
+  steps.forEach((step, index) => {
+    if (step === 'launchApp') launch(steps.lines?.[index] ?? 0);
+  });
+  visitMaps(parsed.steps, (key, value, parentKey, owner) => {
+    if (key === 'launchApp') launch(owner.lines?.[key] ?? 0);
+    if (key === 'commands' && Array.isArray(value)) value.forEach((step, index) => step === 'launchApp' && launch(value.lines?.[index] ?? 0));
+    if (key === 'id' && typeof value === 'string') ids.push(value);
+  });
+  for (const target of runFlowTargets(parsed)) {
+    if (/debug-setup\.ya?ml$/.test(target.file) && typeof target.env?.QUERY === 'string') queries.push(target);
+  }
+  if (queries.length > 0 && !/(^|&)geo=(eea|other)(&|$)/.test(queries[0].env.QUERY)) report.problem({ file: rel, line: queries[0].line, rule: 'ads-smoke-geo', message: `the first setup link (${queries[0].env.QUERY}) sets no consent geography`, fix: "Put geo=eea (Google's form, then Apple's prompt) or geo=other (Apple's prompt alone) in the flow's first debug-setup QUERY." });
+  if (ids.length === 0) report.problem({ file: rel, line: 1, rule: 'ads-smoke-testid', message: 'has no id: step, so it proves nothing about the app (only system UI and text)', fix: 'Wait for and assert the app\'s testIDs around the system UI (home.screen, result.continue-ad-button, game.board-frame ...).' });
+}
+
+/** A Maestro command line in a flow's comments (how to run it by hand) names its device and port. */
+function checkRunCommands(rel, comments, report) {
+  for (const comment of comments) {
+    const match = /\bmaestro\b(.*?)\s(test|hierarchy|record|start-device)\b/.exec(comment.text);
+    if (!match) continue;
+    const globals = match[1];
+    if (/--device\s+\S+/.test(globals) && /--driver-host-port\s+\S+/.test(globals)) continue;
+    report.problem({ file: rel, line: comment.line, rule: 'run-command-device', message: `the command "${comment.text.trim().slice(0, 80)}" does not name --device <udid> and --driver-host-port <port> before ${match[2]}`, fix: 'Write maestro --device <udid> --driver-host-port <port> test ...: the run must name this session\'s simulator and a driver port of its own.' });
+  }
+}
+
+/** The AdMob test banner's call-to-action text: any guard or tap that matches it is not Apple's alert. */
+const BANNER_OPEN = 'OPEN';
+
+/** True when a Maestro text selector (a regular expression over the whole text, any case) matches `text`. */
+function textMatches(selector, text) {
+  try {
+    return new RegExp(`^(?:${selector})$`, 'is').test(text);
+  } catch {
+    return selector.toLowerCase() === text.toLowerCase();
+  }
+}
+
+/** The text of a scalar or { text } selector without an id or a point, else null. */
+function selectorText(value) {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object' && !Array.isArray(value) && typeof value.text === 'string' && value.id === undefined && value.point === undefined) return value.text;
+  return null;
+}
+
+/**
+ * iOS asks "Open in “<app name>”?" for a debug link. A guard or a tap on a bare 'Open' also matches
+ * the AdMob test banner's "OPEN" button (Maestro ignores case): in an ADS_MODE=test build the guard
+ * fires on Home without any alert and the tap fails once the app has moved on (round 4).
+ */
+function checkOpenAlertGuard(rel, parsed, report) {
+  const fix = "Guard on Apple's alert title, when: { visible: 'Open in .*\\?' }, and tap { text: 'Open', below: 'Open in .*\\?', optional: true }, as packages/shell/e2e/subflows/debug-setup.yaml does.";
+  visitMaps(parsed.steps, (key, value, parentKey, owner) => {
+    const line = owner.lines?.[key] ?? 0;
+    const text = selectorText(value);
+    if (text === null || !textMatches(text, BANNER_OPEN)) return;
+    if (parentKey === 'when' && (key === 'visible' || key === 'notVisible')) report.problem({ file: rel, line, rule: 'open-alert-guard', message: `a runFlow guard on ${key} '${text}' also matches the AdMob test banner's "OPEN" button (Maestro's text match ignores case), not only Apple's "Open in …?" alert`, fix });
+    const isScoped = value && typeof value === 'object' && value.below !== undefined;
+    if (key === 'tapOn' && !isScoped) report.problem({ file: rel, line, rule: 'open-alert-guard', message: `tapOn '${text}' taps whatever "Open" is on screen first, the AdMob test banner's "OPEN" button included`, fix });
+  });
+}
+
 function checkAiCommands(rel, text, report) {
   text.split('\n').forEach((line, index) => {
     const match = /^\s*-\s*(assertWithAI|assertNoDefectsWithAI|extractTextWithAI)\b/.exec(line);
@@ -381,7 +470,7 @@ function checkHeader(rel, info, parsed, gameIds, report) {
   const env = header.env && typeof header.env === 'object' ? Object.keys(header.env) : [];
   for (const name of env.filter((key) => CLI_VARS.has(key))) report.problem({ file: rel, line: line('env'), rule: 'env-shadows-cli', message: `env: sets ${name}, which the runner passes with -e`, fix: `Remove ${name} from env:; in Maestro 2.10 the flow's env: value wins over -e, so every run would use the flow's value.` });
   if (info.kind === 'subflow') return;
-  if (info.kind === 'flow' && (typeof header.name !== 'string' || header.name.trim() === '')) report.problem({ file: rel, line: 1, rule: 'flow-header', message: 'has no name:', fix: 'Add name: <what the journey proves, in a sentence> (it becomes the JUnit test name).' });
+  if ((info.kind === 'flow' || info.kind === 'ads-smoke') && (typeof header.name !== 'string' || header.name.trim() === '')) report.problem({ file: rel, line: 1, rule: 'flow-header', message: 'has no name:', fix: 'Add name: <what the journey proves, in a sentence> (it becomes the JUnit test name).' });
   const tags = Array.isArray(header.tags) ? header.tags.map(String) : [];
   if (tags.length === 0) {
     report.problem({ file: rel, line: 1, rule: 'flow-header', message: 'has no tags:', fix: info.game ? `Add tags: [smoke, ${info.game}] (or without smoke).` : 'Add tags: [smoke, shell] (or [shell, rtl], ...).' });
@@ -389,6 +478,7 @@ function checkHeader(rel, info, parsed, gameIds, report) {
   }
   for (const tag of tags) if (!BASE_TAGS.has(tag) && !gameIds.has(tag) && !(info.kind === 'storekit' && tag === 'storekit')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: `unknown tag "${tag}"`, fix: 'Use smoke, shell, rtl, offline, a11y, quarantine, screenshots, daily, endless, premium or a game id.' });
   if (info.kind === 'flow' && info.game === null && !tags.includes('shell')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: 'a Shell flow without the shell tag', fix: 'Add shell to tags.' });
+  if (info.kind === 'ads-smoke' && !tags.includes('ads-smoke')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: 'an ads smoke flow without the ads-smoke tag', fix: 'Add ads-smoke to tags (admob-ads runs these by hand on an ADS_MODE=test build; e2e:ios never does).' });
   if (info.kind === 'flow' && info.game !== null && !tags.includes(info.game)) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: `a ${info.game} flow without the ${info.game} tag`, fix: `Add ${info.game} to tags.` });
   return tags;
 }
@@ -407,11 +497,11 @@ function checkQuarantine(rel, tags, parsed, today, report) {
 
 function checkSteps(rel, info, parsed, tags, params, report) {
   const steps = Array.isArray(parsed.steps) ? parsed.steps : [];
-  if (info.kind !== 'subflow' && info.kind !== 'storekit') {
+  if (info.kind !== 'subflow' && info.kind !== 'storekit' && info.kind !== 'ads-smoke') {
     const first = commandOf(steps[0]);
     if (first.name !== 'launchApp' || first.arg?.clearState !== true) report.problem({ file: rel, line: steps.lines?.[0] ?? 1, rule: 'first-step-launch', message: `starts with ${first.name || 'nothing'} instead of launchApp with clearState: true`, fix: 'Begin with - launchApp: { clearState: true } so every run starts from the same state.' });
   }
-  if (info.kind === 'flow') {
+  if (info.kind === 'flow' || info.kind === 'ads-smoke') {
     visitMaps(steps, (key, value, parentKey, owner) => {
       if (key === 'openLink') report.problem({ file: rel, line: owner.lines?.[key] ?? 0, rule: 'raw-open-link', message: 'opens a link directly', fix: 'Set state through runFlow: { file: <...>/subflows/debug-setup.yaml, env: { QUERY, WAIT_FOR } }.' });
     });
@@ -451,8 +541,32 @@ function gameModes(root, game) {
 const MODE_FLOWS = [
   { key: 'daily', screen: 'S9', template: 'journeys/11-daily.yaml', what: 'plays today\'s daily (tap daily.play-button, then action=win-level)', found: (events) => tapped(events, 'daily.play-button') && hasQuery(events, /(^|&)action=win-level(&|$)/) },
   { key: 'continues', screen: 'S7', template: 'journeys/12-continue-premium.yaml', what: 'continues after a loss (action=lose-level, then tap result.continue-premium-button; E2E builds run with ads off)', found: (events) => hasQuery(events, /(^|&)action=lose-level(&|$)/) && tapped(events, 'result.continue-premium-button') },
-  { key: 'endless', screen: 'S7', template: 'journeys/13-endless.yaml', what: 'plays an endless run to its end (tap home.endless-card, then action=lose-level)', found: (events) => tapped(events, 'home.endless-card') && hasQuery(events, /(^|&)action=lose-level(&|$)/) },
+  {
+    key: 'endless',
+    screen: 'S7',
+    template: 'journeys/13-endless.yaml',
+    what: 'plays an endless run to its end without Premium and sees the endless result at once (tap home.endless-card, then action=lose-level with premium=0, then assertNotVisible result.continue-offer)',
+    found: (events) => isEndlessRun(events) && endlessProblem(events) === null,
+    why: (events) => (isEndlessRun(events) ? endlessProblem(events) : null),
+  },
 ];
+
+/** An endless journey: Home's endless card, then a loss. */
+function isEndlessRun(events) {
+  return tapped(events, 'home.endless-card') && hasQuery(events, /(^|&)action=lose-level(&|$)/);
+}
+
+/**
+ * Lead decision L11, never strand a finished run: an ads-off player without Premium who loses an
+ * endless run sees the endless result at once. A flow that buys its way there with premium=1 (the
+ * Premium continue) proves nothing about that player, and one that never asserts the offer is absent
+ * would also pass with a stranded loss whose result never comes.
+ */
+function endlessProblem(events) {
+  if (hasQuery(events, /(^|&)premium=1(&|$)/)) return 'sets premium=1, so it never shows that a player without Premium sees the endless result (the Premium continue has its own flow)';
+  const assertsNoOffer = events.some((event) => event.kind === 'assertNotVisible' && event.id === 'result.continue-offer');
+  return assertsNoOffer ? null : 'never asserts that the continue offer is absent (assertNotVisible result.continue-offer), so a stranded loss would pass';
+}
 
 /** Each mode the game has needs a flow that plays it (spec: the daily, continue and endless journeys). */
 function checkModeFlows(root, flowsByGame, slice, report) {
@@ -468,7 +582,10 @@ function checkModeFlows(root, flowsByGame, slice, report) {
       }
       if (flows.some((events) => mode.found(events))) continue;
       const flag = mode.key === 'continues' ? 'isContinueAllowed' : `modes.${mode.key}`;
-      report.problem({ file: modes.rel, line: 0, rule: 'mode-flows', message: `${flag} is true, but no flow of apps/${game}/e2e/flows/ ${mode.what}`, fix: `Copy this skill's templates/apps/__GAME_ID__/e2e/flows/${mode.template} to apps/${game}/e2e/flows/${mode.template} and fill __GAME_ID__ and __GAME_NAME__ (references/flows.md, "A game's mode flows").` });
+      const why = flows.map((events) => mode.why?.(events) ?? null).find((reason) => reason !== null);
+      const fix = `Copy this skill's templates/apps/__GAME_ID__/e2e/flows/${mode.template} to apps/${game}/e2e/flows/${mode.template} and fill __GAME_ID__ and __GAME_NAME__ (references/flows.md, "A game's mode flows").`;
+      if (why !== undefined) report.problem({ file: modes.rel, line: 0, rule: 'mode-flows', message: `${flag} is true, but the endless flow of apps/${game}/e2e/flows/ ${why}`, fix });
+      else report.problem({ file: modes.rel, line: 0, rule: 'mode-flows', message: `${flag} is true, but no flow of apps/${game}/e2e/flows/ ${mode.what}`, fix });
     }
   }
 }
@@ -543,16 +660,16 @@ run(async () => {
     const info = classify(rel);
     if (info === null) continue;
     if (info.kind === 'misplaced') {
-      report.problem({ file: rel, line: 1, rule: 'flow-location', message: 'is not in flows/<area>/, subflows/, screenshots/ or (Shell only) storekit/', fix: 'Move it: journeys to <workspace>/e2e/flows/<area>/<nn>-<name>.yaml, shared steps to packages/shell/e2e/subflows/, the matrix to packages/shell/e2e/screenshots/, Tier 2 StoreKit flows to packages/shell/e2e/storekit/.' });
+      report.problem({ file: rel, line: 1, rule: 'flow-location', message: 'is not in flows/<area>/, subflows/, screenshots/ or (Shell only) storekit/ or ads-smoke/', fix: 'Move it: journeys to <workspace>/e2e/flows/<area>/<nn>-<name>.yaml, shared steps to packages/shell/e2e/subflows/, the matrix to packages/shell/e2e/screenshots/, Tier 2 StoreKit flows to packages/shell/e2e/storekit/, the hand-run ads smoke flows to packages/shell/e2e/ads-smoke/.' });
       continue;
     }
     // A partial Shell: a flow that reaches a screen outside the slice cannot run yet (Shell step 10).
-    const sliceReason = info.kind === 'flow' || info.kind === 'screenshots' ? sliceReasonOf({ root, known, parse: parseCached }, rel, slice) : null;
+    const sliceReason = info.kind === 'flow' || info.kind === 'screenshots' || info.kind === 'ads-smoke' ? sliceReasonOf({ root, known, parse: parseCached }, rel, slice) : null;
     if (sliceReason !== null) {
       report.skip({ file: rel, rule: 'slice', message: sliceReason });
       continue;
     }
-    if (info.kind === 'flow') {
+    if (info.kind === 'flow' || info.kind === 'ads-smoke') {
       const name = FLOW_NAME.exec(info.name);
       if (!name) report.problem({ file: rel, line: 1, rule: 'flow-name', message: `"${info.name}" is not <nn>-<kebab-name>.yaml`, fix: 'Rename it, for example 02-core-journey-offline.yaml (two digits, then kebab-case).' });
       else if (info.game !== null && Number(name[1]) < 10) report.problem({ file: rel, line: 1, rule: 'flow-name', message: `a game flow numbered ${name[1]}`, fix: 'Game flows start at 10 (Shell flows own 01-09), so the combined run keeps a stable order.' });
@@ -568,6 +685,9 @@ run(async () => {
     checkQuarantine(rel, tags, parsed, today, report);
     checkSteps(rel, info, parsed, tags, params, report);
     checkSelectors(rel, parsed, report);
+    checkOpenAlertGuard(rel, parsed, report);
+    checkRunCommands(rel, parsed.comments, report);
+    if (info.kind === 'ads-smoke') checkAdsSmoke(rel, parsed, report);
     checkIds(rel, parsed, known, report);
     checkWinStars(rel, info, parsed, known, report);
     checkProgressAfterWin(rel, info, parsed, tags, report);

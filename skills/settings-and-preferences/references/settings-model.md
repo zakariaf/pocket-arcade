@@ -13,6 +13,7 @@ Every S11 setting: what the player sees, what is saved, which action changes it,
 - Language and the direction restart
 - Resets, Premium, privacy and links
 - Changing or adding a setting
+- When each file lands
 
 ## Product rules (S11 and related spec)
 
@@ -194,3 +195,17 @@ Never read the reduce-motion switch with Reanimated's `useReducedMotion()`: it i
 3. Add the action to the reducer (one test per action) and a selector.
 4. Add the row id and testID to `settings-rows.ts` (and the design contract if it is new UI), its handler, and its effect.
 5. Update `FIELDS` / `ACTIONS` in `scripts/check-settings.mjs`, then run it and the self-test.
+
+## When each file lands
+
+In a Shell built step by step a file lands at the first step whose code imports it, together with its test, so `tsc`, `check:fast` and `test:coverage` stay green after every step. Paths are under `packages/shell/src/`.
+
+| Step | Files (each with its test where it has one) | Why then |
+|---|---|---|
+| Shell step 5 (state-stores) | `stores/settings-reducer.ts`, `stores/settings-selectors.ts`, `stores/settings-store.ts` | the services and stores step; shared copies, the same bytes as state-stores ships |
+| Shell step 7, with the composition root, whatever the slice | `app/connect-audio-settings.ts`, `app/create-shell-haptics.ts`, `app/localized-root.tsx`, `config/external-links.ts`; and, if not yet copied by toybox-design-system and react-components-and-hooks, the shared `theme/theme-provider.tsx`, `app/use-reduce-motion.ts`, `app/use-reduce-motion-setting.ts` | game-host-integration's `create-shell-parts.ts` and `shell-app.tsx` import them (the audio glue, the haptics port, the localized root, the external links) |
+| The first screen that imports it (Shell step 9) | `screens/settings/settings-preference-actions.ts` with S5 (the Game screen draws the S6 Pause overlay, so S5, S6 and S7 land together); `screens/settings/settings-resets.ts` and `screens/settings/use-settings-resets.ts` with S10 Statistics (its reset); `screens/settings/language/language-change.ts` with S11a | borrowed by screens built before S11; toybox-screens' screen table lists them in its Borrows column, and its `check-screens.mjs . --screen <id>` names a missing one with this skill as its owner (`borrowed-file`) |
+| S11 | `screens/settings/settings-rows.ts`, `use-settings-model.ts`, `use-settings-context.ts`, `game-host/use-hints-during-play.ts` | the S11 screen and its model |
+
+A file without a test of its own (`use-settings-resets.ts`) is covered by the tests of the screen that brings it.
+

@@ -10,6 +10,7 @@
   { "from": "repo-templates/apps/__GAME_ID__/index.placeholder.ts", "to": "templates/app/index.ts" },
   { "from": "repo-templates/apps/__GAME_ID__/dot-gitignore", "to": "templates/app/dot-gitignore" },
   { "from": "app-scaffold/app-files.mjs", "to": "scripts/lib/app-files.mjs" },
+  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
   { "from": "repo-templates/packages/tooling/src/scaffold/new-game.ts", "to": "templates/tooling/new-game.ts" },
   { "from": "line-siege/i18n/", "to": "assets/line-siege-i18n/" }
 ]

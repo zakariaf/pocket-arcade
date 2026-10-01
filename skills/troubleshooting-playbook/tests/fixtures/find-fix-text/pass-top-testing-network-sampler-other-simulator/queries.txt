@@ -1,0 +1,1 @@
+e2e:ios: network: the app opened non-loopback sockets (spec N3)

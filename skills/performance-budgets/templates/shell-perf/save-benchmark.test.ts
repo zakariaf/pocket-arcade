@@ -24,9 +24,9 @@ describe('save benchmark', () => {
     expect(BENCHMARK_DB_FILE).not.toBe('save.db');
   });
 
-  it('summarizes p50, p95 and max of the write times', () => {
+  it('summarizes p50, p95 and max of the write times, and how many writes were timed', () => {
     const samples = Array.from({ length: 100 }, (_, i) => (i + 1) / 10);
-    expect(summarizeWriteTimes(samples)).toStrictEqual({ p50: 5, p95: 9.5, max: 10 });
+    expect(summarizeWriteTimes(samples)).toStrictEqual({ p50: 5, p95: 9.5, max: 10, writes: 100 });
   });
 
   it('times only the writes after the warm-up, on the store it is given', () => {
@@ -47,7 +47,13 @@ describe('save benchmark', () => {
     };
     const result = runSaveBenchmark({ store, record: RECORD, now });
     expect(writes).toBe(BENCHMARK_WRITES + 20);
-    expect(result).toStrictEqual({ p50: 0.5, p95: 0.5, max: 0.5 });
-    expect(saveBenchmarkEntry(result, 1)).toMatchObject({ kind: 'save-benchmark', data: result });
+    expect(result).toStrictEqual({ p50: 0.5, p95: 0.5, max: 0.5, writes: BENCHMARK_WRITES });
+    // check-e2e-report (rule save-benchmark) reads data.writes and data.p95 from this entry.
+    expect(saveBenchmarkEntry(result, 1)).toStrictEqual({
+      kind: 'save-benchmark',
+      label: 'save-write',
+      atEpochMs: 1,
+      data: { p50: 0.5, p95: 0.5, max: 0.5, writes: 300 },
+    });
   });
 });

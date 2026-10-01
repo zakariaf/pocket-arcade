@@ -1,0 +1,2 @@
+[root-import-late]
+packages/shell/src/app/crash-screen.tsx arrives at Shell step 9, after the root (step 7) imports it

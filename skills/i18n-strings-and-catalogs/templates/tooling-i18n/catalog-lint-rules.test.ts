@@ -1,5 +1,5 @@
 // packages/tooling/src/i18n/catalog-lint-rules.test.ts
-import { lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
+import { debugEnglishProblems, lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
 
 import type { Language, Namespace } from './catalog-lint-rules.ts';
 
@@ -39,6 +39,23 @@ describe('lintMessage', () => {
   it('keeps game ids out of Shell keys and bad key shapes out of every catalog', () => {
     expect(lint('Hello', 'en', 'line-siege.name').join('\n')).toContain('reserved');
     expect(lint('Hello', 'en', 'Home.Title').join('\n')).toContain('2-5 dot-separated');
+  });
+});
+
+describe('debugEnglishProblems', () => {
+  const EN = { 'debug.title': 'Debug menu', 'home.title': 'Home' };
+
+  it('accepts the English debug menu in every language and leaves other keys alone', () => {
+    const fa = { 'debug.title': 'Debug menu', 'home.title': 'خانه' };
+    expect(debugEnglishProblems(EN, fa, 'fa')).toStrictEqual([]);
+    expect(debugEnglishProblems(EN, EN, 'en')).toStrictEqual([]);
+  });
+
+  it('rejects a translated debug text (L13: S15 stays English)', () => {
+    const de = { 'debug.title': 'Debug-Menü', 'home.title': 'Start' };
+    expect(debugEnglishProblems(EN, de, 'de')).toStrictEqual([
+      'debug.title: debug-english: the debug menu (S15) stays English in every language; write the en text',
+    ]);
   });
 });
 

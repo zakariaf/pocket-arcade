@@ -46,7 +46,7 @@ function seasonedSave() {
 
 async function resultActions({ level = 1, isContinuePaid = false } = {}) {
   const script: FakeAdsScript = {
-    isRewardedLoaded: false,
+    rewardedStatus: 'unavailable',
     interstitialResult: 'shown',
     rewardResult: 'unavailable',
     calls: [],

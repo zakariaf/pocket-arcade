@@ -6,7 +6,9 @@
 // - premium=0|1 writes the save's premium section first, then dispatches 'debug-premium-set'
 //   (never StoreKit, never 'premium-granted', never a direct store write);
 // - a consent port for a debug geography comes from createConsentPort, so an ADS_MODE=off build
-//   still never calls Google's UMP;
+//   still never calls Google's UMP; geo=eea|other (setConsentGeography) resets Google's UMP answer
+//   (ads on only) and keeps the geography, and consentFor(port) gives the composition root a
+//   consent port that asks UMP with it from the next consent moment on;
 // - date=YYYY-MM-DD sets the SimulatedClock the whole app was built with (today() only);
 // - boardLayout=0|1 is kept here, and the board host factory asks isBoardLayoutOn() when it draws
 //   (the composition root passes it as createGameBoardHost's isLayoutProbeOn);
@@ -20,7 +22,12 @@ import { createConsentPort } from '@e07/shell/services/consent/consent-factory.t
 
 import { decodeDebugOverrides, encodeDebugOverrides } from './debug-overrides.ts';
 
-import type { DebugAdsOverride, DebugOverrides, DebugStore } from './debug-overrides.ts';
+import type {
+  DebugAdsOverride,
+  DebugConsentGeography,
+  DebugOverrides,
+  DebugStore,
+} from './debug-overrides.ts';
 import type { DebugPerfActions } from './debug-perf.ts';
 import type { SimulatedClock } from './simulated-clock.ts';
 import type { SimulatedConnectivity } from './simulated-connectivity.ts';
@@ -39,6 +46,11 @@ export type DebugServiceDeps = {
   readonly clock: SimulatedClock;
   /** The test-only key-value store (TEST_ONLY.createSqliteKvDebugStoreAdapter()). */
   readonly store: DebugStore;
+  /**
+   * admob-ads' resetConsent (TEST_ONLY.createAdmobConsentDebugAdapter()): Google's UMP answer starts
+   * over. null in an ADS_MODE=off build, which never calls UMP.
+   */
+  readonly resetConsent: (() => void) | null;
   /** TEST_ONLY.createPerfLog(save driver): the cold-start and frame entries e2e:ios reads back. */
   readonly perfLog: PerfLog;
   /** TEST_ONLY.createDebugPerfActions over that perf log: S15's Performance section. */
@@ -62,6 +74,17 @@ export type DebugServices = {
   readonly setDate: (today: DateKey | null) => void;
   readonly setPremium: (isPremium: boolean) => void;
   readonly createConsent: (geography: DebugGeography) => ConsentPort;
+  /**
+   * geo=eea|other: resets Google's UMP answer (ads on only) and keeps the geography, so the next
+   * consent moment asks UMP with it (the EEA form on any network). Kept across a reload.
+   */
+  readonly setConsentGeography: (geography: DebugConsentGeography) => void;
+  readonly consentGeography: () => DebugConsentGeography | null;
+  /**
+   * The composition root's consent port (create-shell-parts' ad services): every call goes to the
+   * debug geography's port while one is set, else to `base`, decided at call time.
+   */
+  readonly consentFor: (base: ConsentPort) => ConsentPort;
   /** boardLayout=0|1: the board renders game.board-layout for flows while it is on (off at first). */
   readonly setBoardLayout: (isOn: boolean) => void;
   readonly isBoardLayoutOn: () => boolean;
@@ -111,9 +134,42 @@ function premiumAction(deps: DebugServiceDeps): (isPremium: boolean) => void {
   };
 }
 
+type ConsentParts = Pick<
+  DebugServices,
+  'createConsent' | 'setConsentGeography' | 'consentGeography' | 'consentFor'
+>;
+
+/** The debug geography's consent port, made once per geography, or null without one. */
+function consentParts(deps: DebugServiceDeps, overrides: Overrides): ConsentParts {
+  const createConsent = (geography: DebugGeography): ConsentPort =>
+    createConsentPort(deps.adsMode, { debugGeography: geography, onError: deps.onError });
+  let made: { readonly geography: DebugGeography; readonly port: ConsentPort } | null = null;
+  const current = (base: ConsentPort): ConsentPort => {
+    const geography = overrides.current().consentGeography;
+    if (geography === null) return base;
+    if (made?.geography !== geography) made = { geography, port: createConsent(geography) };
+    return made.port;
+  };
+  return {
+    createConsent,
+    setConsentGeography: (geography) => {
+      deps.resetConsent?.();
+      overrides.change({ consentGeography: geography });
+    },
+    consentGeography: () => overrides.current().consentGeography,
+    consentFor: (base) => ({
+      refresh: () => current(base).refresh(),
+      showFormIfRequired: () => current(base).showFormIfRequired(),
+      showPrivacyOptions: () => current(base).showPrivacyOptions(),
+      requestTracking: () => current(base).requestTracking(),
+    }),
+  };
+}
+
 export function createDebugServices(deps: DebugServiceDeps): DebugServices {
   const overrides = restoreOverrides(deps);
   return {
+    ...consentParts(deps, overrides),
     setOffline: (isOffline) => {
       deps.connectivity.setSimulatedOffline(isOffline);
       overrides.change({ isOffline });
@@ -124,8 +180,6 @@ export function createDebugServices(deps: DebugServiceDeps): DebugServices {
       overrides.change({ date: today });
     },
     setPremium: premiumAction(deps),
-    createConsent: (geography) =>
-      createConsentPort(deps.adsMode, { debugGeography: geography, onError: deps.onError }),
     setBoardLayout: (isOn) => {
       overrides.change({ isBoardLayoutOn: isOn });
     },

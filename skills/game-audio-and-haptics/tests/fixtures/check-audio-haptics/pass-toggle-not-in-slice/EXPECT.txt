@@ -1,0 +1,2 @@
+SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] S11 not in shell-slice.json (nor S6): the toggle feedback (ui.toggle) is played by S11's settings actions and S6's pause model
+RESULT: PASS

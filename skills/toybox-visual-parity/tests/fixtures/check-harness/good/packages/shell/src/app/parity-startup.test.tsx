@@ -5,7 +5,11 @@ import { createElement, use } from 'react';
 import { View } from 'react-native';
 
 import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
-import { endParitySession, parityFrameState } from '@e07/shell/app/parity/parity-session.ts';
+import {
+  endParitySession,
+  parityFrameState,
+  startParitySession,
+} from '@e07/shell/app/parity/parity-session.ts';
 import { ForcedAdPlacementsContext } from '@e07/shell/app/use-ad-context.ts';
 import { createTestSave } from '@e07/shell/testing/create-test-save.ts';
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
@@ -23,6 +27,7 @@ import {
 } from './parity-startup.tsx';
 
 import type { ParityRequest } from '@e07/shell/app/parity/parity-request.ts';
+import type { DebugStore, DebugStoreKey } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { ReactNode } from 'react';
 
@@ -43,6 +48,20 @@ function fakeClock(): SimulatedClock {
     msUntilNextLocalDay: () => 1,
     setSimulatedToday: jest.fn(),
     simulatedToday: () => null,
+  };
+}
+
+/** The test build's debug flags, as an earlier launch left them (the S15 frame's ads override). */
+function savedDebugFlags(): DebugStore {
+  const values = new Map<DebugStoreKey, string>([
+    ['debug.overrides', '{"ads":"always-test","isOffline":true}'],
+  ]);
+  return {
+    get: (key) => values.get(key) ?? null,
+    set: (key, value) => {
+      if (value === null) values.delete(key);
+      else values.set(key, value);
+    },
   };
 }
 
@@ -83,21 +102,33 @@ describe('applyParityData', () => {
   it('writes the frame player through the save service and moves today to the frame date', () => {
     const { save } = createTestSave();
     const simulatedClock = fakeClock();
+    const debugStore = savedDebugFlags();
 
-    applyParityData({ parity: REQUEST, game: TALLY_GAME, save, simulatedClock });
+    applyParityData({ parity: REQUEST, game: TALLY_GAME, save, simulatedClock, debugStore });
 
     expect(save.doc().progress.endlessBest).toBe(4210);
     expect(save.doc().settings.language).toBe('fa');
     expect(simulatedClock.setSimulatedToday).toHaveBeenCalledWith('2026-09-27');
   });
 
+  it('starts the frame with no saved debug flag, so nothing an earlier launch saved carries over', () => {
+    const { save } = createTestSave();
+    const debugStore = savedDebugFlags();
+
+    applyParityData({ parity: REQUEST, game: TALLY_GAME, save, simulatedClock: null, debugStore });
+
+    expect(debugStore.get('debug.overrides')).toBeNull();
+  });
+
   it('changes nothing on a normal launch', () => {
     const { save } = createTestSave();
     const before = save.doc();
+    const debugStore = savedDebugFlags();
 
-    applyParityData({ parity: null, game: TALLY_GAME, save, simulatedClock: null });
+    applyParityData({ parity: null, game: TALLY_GAME, save, simulatedClock: null, debugStore });
 
     expect(save.doc()).toBe(before);
+    expect(debugStore.get('debug.overrides')).toBe('{"ads":"always-test","isOffline":true}');
   });
 });
 
@@ -117,7 +148,7 @@ describe('the parity ports and the first route', () => {
       price: 1.99,
       currency: 'EUR',
     });
-    expect(parityAdsPort(REQUEST)?.isRewardedLoaded()).toBe(true);
+    expect(parityAdsPort(REQUEST)?.rewardedStatus()).toBe('ready');
     expect(initialStateFor(REQUEST, undefined)).toStrictEqual({
       index: 1,
       routes: [{ name: 'Home' }, { name: 'Levels' }],
@@ -135,14 +166,15 @@ describe('withParityRoot', () => {
 
     expect(screen.getByTestId('parity.probe')).toHaveProp(
       'accessibilityLabel',
-      'home,levels,stats',
+      'home,levels,stats,result',
     );
   });
 });
 
 describe('parityLaunchFor', () => {
   it('gives the composition root the frame data, ports, route and root wrapper', async () => {
-    const launch = parityLaunchFor({ request: REQUEST, game: TALLY_GAME });
+    const debugStore = savedDebugFlags();
+    const launch = parityLaunchFor({ request: REQUEST, game: TALLY_GAME, debugStore });
     const { save } = createTestSave();
     const simulatedClock = fakeClock();
 
@@ -150,10 +182,11 @@ describe('parityLaunchFor', () => {
 
     expect(save.doc().progress.endlessBest).toBe(4210);
     expect(simulatedClock.setSimulatedToday).toHaveBeenCalledWith('2026-09-27');
+    expect(debugStore.get('debug.overrides')).toBeNull();
     await expect(launch.purchasePort?.('premium').fetchProduct('premium')).resolves.toMatchObject({
       price: 1.99,
     });
-    expect(launch.adsPort?.().isRewardedLoaded()).toBe(true);
+    expect(launch.adsPort?.().rewardedStatus()).toBe('ready');
     expect(launch.initialState?.()).toStrictEqual({
       index: 1,
       routes: [{ name: 'Home' }, { name: 'Levels' }],
@@ -161,7 +194,7 @@ describe('parityLaunchFor', () => {
     await render(createElement(launch.wrapRoot?.(PlacementsProbe) ?? PlacementsProbe));
     expect(screen.getByTestId('parity.probe')).toHaveProp(
       'accessibilityLabel',
-      'home,levels,stats',
+      'home,levels,stats,result',
     );
   });
 
@@ -170,6 +203,27 @@ describe('parityLaunchFor', () => {
     expect(
       isHeldParitySplash({ ...REQUEST, frame: 's1-splash', plan: PARITY_PLANS['s1-splash'] }),
     ).toBe(true);
+  });
+
+  it('starts a fresh run of the frame level for the board probe, so no Pause hides the probe', () => {
+    const pause: ParityRequest = { ...REQUEST, frame: 's6-pause', plan: PARITY_PLANS['s6-pause'] };
+    startParitySession({ ...pause, probe: 'board' });
+
+    expect(
+      parityLaunchFor({ request: { ...pause, probe: 'board' }, game: TALLY_GAME }).initialState?.(),
+    ).toStrictEqual({
+      index: 1,
+      routes: [
+        { name: 'Home' },
+        { name: 'Game', params: { start: 'new', ref: { kind: 'level', level: 12 } } },
+      ],
+    });
+    expect(initialStateFor({ ...pause, probe: 'board' }, undefined)).toMatchObject({ index: 1 });
+    expect(parityLaunchFor({ request: pause, game: TALLY_GAME }).initialState?.()).toStrictEqual({
+      index: 1,
+      routes: [{ name: 'Home' }, { name: 'Game', params: { start: 'resume' } }],
+    });
+    endParitySession();
   });
 
   it('hands the consent moment host the S3 hold, and only for the S3 frame', () => {

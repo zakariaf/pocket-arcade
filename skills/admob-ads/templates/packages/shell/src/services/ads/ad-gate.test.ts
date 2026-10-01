@@ -29,7 +29,7 @@ function setup(
   const seen: ConsentInfo[] = [];
   const consent = createFakeConsent({ afterRefresh, afterForm, tracking, calls });
   const ads = createFakeAds({
-    isRewardedLoaded: false,
+    rewardedStatus: 'unavailable',
     interstitialResult: 'unavailable',
     rewardResult: 'unavailable',
     calls,

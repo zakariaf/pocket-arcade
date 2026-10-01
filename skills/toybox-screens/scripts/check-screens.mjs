@@ -7,7 +7,7 @@
 // Run from the app repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-screens.mjs . [--screen S4] [--all]
 
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, normalize, resolve } from 'node:path';
 
 import {
   SHELL_DUE_TARGETS,
@@ -23,6 +23,7 @@ import {
 } from './check-lib.mjs';
 import {
   BANNER_SCREENS,
+  BORROWS,
   COMPONENT_IDS,
   DEFAULT_DECK,
   DEFAULT_MAP,
@@ -92,8 +93,9 @@ const SPEC = {
     '  model-hook-missing   a route file imports ./use-<name>.ts, which does not exist',
     '  model-hook-test      a model hook the route file imports has no use-<name>.test.ts(x) next to it',
     '  extra-key-catalog    a screen uses a Shell text the copy deck lacks (result.win.score-line, the undo',
-    '                       and hint labels) and a Shell catalog (packages/shell/src/i18n/catalogs/<lang>.json)',
-    '                       lacks it or differs',
+    '                       and hint labels, S15\'s debug.perf.* texts) and a Shell catalog',
+    '                       (packages/shell/src/i18n/catalogs/<lang>.json) lacks it or differs; a debug.* text is',
+    '                       English in all four catalogs (L13), so a translated one fails',
     '  retired-copy-key     a screen still uses a retired key (result.win.moves-count: the score line replaced it)',
     '  game-screen-wiring   S5 (screens/game/) never calls topBarPropsOf, resultModelOf, perkOffer or',
     '                       showInterstitialIfDue: the Game screen is only half assembled',
@@ -108,6 +110,16 @@ const SPEC = {
     '                       rating star, icon \'rating-star-hollow\'',
     '  debug-perf-rows      S15: a Performance row the map lists for S15 (debug.perf-*) is set nowhere in',
     '                       screens/debug/ (the switch, Share report, Run save benchmark, the summary)',
+    '  continue-offer-loading S7: the continue offer does not draw \'ad-loading\' (LoseResult.continueOffer lacks it,',
+    '                       or the view that sets result.continue-ad-button never draws it busy with isBusy): while',
+    '                       the rewarded ad loads the offer would vanish, and hidden must mean unavailable (L11)',
+    '  loss-finished        S5: the Game screen model never sends { type: \'finish\' } for a lost run nobody can',
+    '                       rescue (isLossStranded(view, continueOffer)), or sends it outside an effect: with ads',
+    '                       off, offline or no ad, the player sees neither the offer nor the result (L11)',
+    '  borrowed-file        the screen imports a file the step-7 Shell core does not bring (from outside its folder,',
+    '                       or another skill\'s file inside it: S6 settings-preference-actions.ts, S2',
+    '                       use-direction-restart.ts, ...) and that file, or its test, is missing; the message names the',
+    '                       file and its owner skill (it lands with its test in the commit of the first screen that imports it)',
     '',
     'Partial Shell: with shell-slice.json at the repo root ({ "screens": ["S4", "S11"], "why": "..." }),',
     'every rule of a screen outside the slice prints "SKIP <folder> [screen] <S-id> not in shell-slice.json"',
@@ -539,6 +551,117 @@ function checkDebugPerfRows(screen, code, report) {
   }
 }
 
+const RESULT_MODEL = `${SCREEN_PATHS.S7[0]}result-model.ts`;
+const L11_OFFER_FIX =
+  "Copy screens/result/result-model.ts and continue-offer.tsx with result-overlay.test.tsx from the skill's templates: " +
+  "LoseResult.continueOffer is 'ad' | 'ad-loading' | 'premium' | null, and ContinueOffer draws 'ad-loading' as the same " +
+  'offer with the ad key isBusy (label kept, hopping blocks for the icon, pushed in, not pressable, testID ' +
+  "result.continue-ad-button, no new copy; references/s07-result.md, 'The continue offer and L11').";
+
+/** L11: S7 draws the continue offer while its rewarded ad loads (busy), so hidden means unavailable. */
+function checkContinueOfferLoading(screen, code, report) {
+  if (screen.id !== 'S7') return;
+  const sources = code.files.filter((file) => !isTestFile(file.rel));
+  const model = sources.find((file) => file.rel === RESULT_MODEL);
+  if (model !== undefined && !/\bcontinueOffer\s*:[^;]*'ad-loading'/.test(model.source ?? '')) {
+    report.problem({ file: model.rel, rule: 'continue-offer-loading', message: "LoseResult.continueOffer has no 'ad-loading': a continue whose rewarded ad is still loading cannot be drawn, so the offer vanishes (L11)", fix: L11_OFFER_FIX });
+  }
+  const view = sources.find((file) => /['"]result\.continue-ad-button['"]/.test(file.source ?? ''));
+  if (view === undefined) return;
+  const source = view.source ?? '';
+  if (/'ad-loading'/.test(source) && /\bisBusy\s*=/.test(source)) return;
+  report.problem({ file: view.rel, rule: 'continue-offer-loading', message: "the continue offer never draws 'ad-loading' busy: while the rewarded ad loads the player sees no offer, and a hidden offer no longer means unavailable (L11)", fix: L11_OFFER_FIX });
+}
+
+/** The text of every use(Layout)Effect(...) call in a comment-masked source. */
+function effectBodies(source) {
+  const bodies = [];
+  for (const match of source.matchAll(/\buse(?:Layout)?Effect\s*\(/g)) {
+    let depth = 0;
+    for (let i = match.index + match[0].length - 1; i < source.length; i += 1) {
+      if (source[i] === '(') depth += 1;
+      else if (source[i] === ')') depth -= 1;
+      if (depth === 0) {
+        bodies.push(source.slice(match.index, i + 1));
+        break;
+      }
+    }
+  }
+  return bodies;
+}
+
+const L11_FINISH_FIX =
+  "Copy screens/game/use-game-screen-model.ts with its test from the skill's templates: useFinishStrandedLoss sends " +
+  "{ type: 'finish' } from a layout effect once per eventSeq while isLossStranded(view, perks.continueOffer) " +
+  "(game-host/run-end-policy.ts) is true, so the run end is recorded and the recorded Result shows: the endless result " +
+  "with score and New best, or the lose result without the offer (references/s05-game.md, 'A loss nobody can rescue').";
+
+/** L11: S5 finishes a lost run whose continue offer is hidden, from an effect, once per eventSeq. */
+function checkLossFinished(screen, code, report) {
+  if (screen.id !== 'S5') return;
+  const sources = code.files.filter((file) => !isTestFile(file.rel) && file.rel.startsWith(SCREEN_PATHS.S5[0]));
+  if (sources.length === 0) return;
+  const model = sources.find((file) => /\bisLossStranded\s*\(/.test(file.source ?? ''));
+  if (model === undefined) {
+    report.problem({ file: `${SCREEN_PATHS.S5[0]}use-game-screen-model.ts`, rule: 'loss-finished', message: 'the Game screen never finishes a lost run nobody can rescue (no isLossStranded call): with ads off, offline or no rewarded ad and no Premium, neither the offer nor the result shows (L11)', fix: L11_FINISH_FIX });
+    return;
+  }
+  const effects = effectBodies(model.source ?? '');
+  if (effects.some((body) => /\btype\s*:\s*'finish'/.test(body))) return;
+  report.problem({ file: model.rel, rule: 'loss-finished', message: "isLossStranded is read, but no effect sends { type: 'finish' }: the stranded loss is never recorded, or it is sent during render (L11)", fix: L11_FINISH_FIX });
+}
+
+const IMPORT_SPEC = /(?:\bfrom\s+|\bimport\s*\(\s*|\bjest\.(?:mock|requireActual)(?:<[^>]*>)?\(\s*)'([^']+)'/g;
+
+/** The repo paths a file imports (@e07/shell/... and relative imports; packages are ignored). */
+function importTargets(rel, source) {
+  const targets = [];
+  for (const match of source.matchAll(IMPORT_SPEC)) {
+    const spec = match[1];
+    if (spec.startsWith('@e07/shell/')) targets.push(`packages/shell/src/${spec.slice('@e07/shell/'.length)}`);
+    else if (spec.startsWith('./') || spec.startsWith('../')) targets.push(toPosix(normalize(join(dirname(rel), spec))));
+  }
+  return targets;
+}
+
+/**
+ * borrowed-file: the files the screen imports beyond the step-7 Shell core (BORROWS) exist with
+ * their tests. Follows the screen's own files and every borrowed file it reaches.
+ */
+function checkBorrowed(roots, screen, code, report) {
+  const borrowed = new Map((BORROWS[screen.id] ?? []).map((entry) => [entry.file, entry]));
+  if (borrowed.size === 0) return;
+  const exists = (rel) => roots.some((root) => existsSync(join(root, rel)));
+  const read = (rel) => {
+    const abs = [...roots].reverse().map((root) => join(root, rel)).find((each) => existsSync(each));
+    return abs === undefined ? null : readFileSync(abs, 'utf8');
+  };
+  const seen = new Set();
+  const reported = new Set();
+  const stack = code.files.map((file) => file.rel);
+  while (stack.length > 0) {
+    const rel = stack.pop();
+    if (seen.has(rel)) continue;
+    seen.add(rel);
+    const source = read(rel);
+    if (source === null) continue;
+    for (const target of importTargets(rel, source)) {
+      const entry = borrowed.get(target);
+      if (entry === undefined || reported.has(target)) continue;
+      const fix = `Copy ${entry.file}${entry.test === null ? '' : ` with its test ${entry.test}`} from the templates of ${entry.owner} in this screen's commit: a borrowed file lands with the first screen that imports it (references/screen-frame-and-rules.md, "The screens and where they live", Borrows).`;
+      if (!exists(target)) {
+        reported.add(target);
+        report.problem({ file: rel, rule: 'borrowed-file', message: `${screen.id} imports ${target} (${entry.owner}), which is missing`, fix });
+      } else if (entry.test !== null && !exists(entry.test)) {
+        reported.add(target);
+        report.problem({ file: target, rule: 'borrowed-file', message: `${screen.id} borrows ${target} (${entry.owner}) without its test ${entry.test}`, fix });
+      } else {
+        stack.push(target);
+      }
+    }
+  }
+}
+
 /** Shell texts the deck lacks must be in all four Shell catalogs, exactly (when the repo has them). */
 function checkExtraKeys(roots, code, report) {
   const used = new Set(code.tKeys.map((entry) => entry.key).filter((key) => key in SHELL_EXTRA_KEYS));
@@ -552,7 +675,11 @@ function checkExtraKeys(roots, code, report) {
     const catalog = existsSync(abs) ? JSON.parse(readFileSync(abs, 'utf8')) : {};
     for (const key of used) {
       if (catalog[key] === SHELL_EXTRA_KEYS[key][lang]) continue;
-      report.problem({ file, rule: 'extra-key-catalog', message: `${key} is ${key in catalog ? 'different' : 'missing'} in the ${lang} Shell catalog`, fix: `Write "${key}": ${JSON.stringify(SHELL_EXTRA_KEYS[key][lang])} into ${file} (keys sorted; the deck lacks this text, so copy-deck.mjs never writes it unless it runs with --extras; the fa and ckb drafts go on the owner's review list, never waited for).` });
+      const isDebug = key.startsWith('debug.');
+      const why = isDebug
+        ? 'debug texts stay English in every language (lead decision L13: S15 is test-only), so this is the English text, never a translation, and it is not on the review list'
+        : "the fa and ckb drafts go on the owner's review list, never waited for";
+      report.problem({ file, rule: 'extra-key-catalog', message: `${key} is ${key in catalog ? 'different' : 'missing'} in the ${lang} Shell catalog${isDebug && key in catalog ? ' (a debug text must stay English, L13)' : ''}`, fix: `Write "${key}": ${JSON.stringify(SHELL_EXTRA_KEYS[key][lang])} into ${file} (keys sorted; the deck lacks this text, so copy-deck.mjs never writes it unless it runs with --extras; ${why}).` });
     }
   }
 }
@@ -600,6 +727,9 @@ run(async () => {
     checkSplashHeld(roots, screen, report);
     checkRateRow(screen, code, report);
     checkDebugPerfRows(screen, code, report);
+    checkContinueOfferLoading(screen, code, report);
+    checkLossFinished(screen, code, report);
+    checkBorrowed(roots, screen, code, report);
     checkExtraKeys(roots, code, report);
   }
   if (checked === 0 && report.count === 0 && slice === null) fail('no screen code found under packages/shell/src', 'Run from the app repo root (node check-screens.mjs .), after building at least one screen.');

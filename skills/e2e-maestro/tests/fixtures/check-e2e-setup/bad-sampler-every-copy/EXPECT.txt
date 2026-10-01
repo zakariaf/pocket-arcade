@@ -1,0 +1,2 @@
+packages/tooling/src/audit/sample-sockets.ts:1 [sampler-own-simulators] samples every copy of the app on this Mac
+packages/tooling/src/e2e/run-e2e-ios.ts:1 [sampler-own-simulators] spawns the socket sampler without a simulator's UDID

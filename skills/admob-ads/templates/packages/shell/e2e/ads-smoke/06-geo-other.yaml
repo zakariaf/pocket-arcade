@@ -1,0 +1,46 @@
+# packages/shell/e2e/ads-smoke/06-geo-other.yaml — outside the EEA (geo=other). Start from a new
+# fresh install with the tracking answer reset, launched by simctl:
+#   xcrun simctl uninstall <udid> <bundle id>; xcrun simctl install <udid> <app>
+#   xcrun simctl privacy <udid> reset all <bundle id>; xcrun simctl launch <udid> <bundle id>
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/06-geo-other.yaml
+# geo=other: UMP answers as outside the EEA, so Google's GDPR form ("Consent") never opens. An
+# ADS_MODE=test build runs on Google's sample AdMob app, whose console publishes an IDFA explainer
+# for that region ("Our app wants to stay free for you", recorded 2026-10-01 on iOS 26.5): UMP
+# reports a message is due, so S3 opens before it (L10: the intro shows only before a Google form),
+# then Google's explainer, then Apple's prompt with the app's own usage text. The owner's own app
+# publishes no IDFA explainer (step A3), so there Apple's prompt shows alone (L10); that path is
+# proven by check-ad-behaviour ("prepareAds where consent is not required"), not by a test build.
+# No ads= in the link: ads=test is S15's "Always show test ads", which drops the pacing rules.
+appId: ${APP_ID}
+name: Ads smoke 6 - outside the EEA there is no GDPR form, and Apple's prompt carries the app's text
+tags: [ads-smoke]
+---
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=other&lang=en&theme=light&firstRun=0&reduceMotion=1&screen=home'
+      WAIT_FOR: 'consent.continue-button'
+- tapOn:
+    id: 'consent.continue-button'
+# system-ui: Google's IDFA explainer from the sample app's console (its button, not app text).
+- extendedWaitUntil:
+    visible: 'Continue'
+    timeout: 30000
+# system-ui: Google's GDPR form button must not exist outside the EEA.
+- assertNotVisible: 'Consent'
+# system-ui: the explainer's button.
+- tapOn: 'Continue'
+# system-ui: Apple's tracking alert (it may open over Google's explainer, as over the GDPR form).
+- extendedWaitUntil:
+    visible: 'Ask App Not to Track'
+    timeout: 30000
+# system-ui: the alert's message is the app's usage text (consent.tracking.usage-description, en).
+- assertVisible: '.*Google uses this to show you ads.*'
+# system-ui: Apple's tracking alert button (declining still serves ads, without the IDFA).
+- tapOn: 'Ask App Not to Track'
+- extendedWaitUntil:
+    visible:
+      id: 'home.banner-ad'
+    timeout: 60000
+- assertNotVisible:
+    id: 'consent.continue-button'

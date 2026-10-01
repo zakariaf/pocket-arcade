@@ -20,18 +20,37 @@ import type { ConsentInfo, ConsentPort, TrackingStatus } from './consent-port.ts
 import type { PermissionResponse } from 'expo-tracking-transparency';
 import type { AdsConsentInfo } from 'react-native-google-mobile-ads';
 
-export type DebugGeography = 'eea' | 'regulated-us-state' | 'other';
+/** The consent geography a test build asks UMP to assume (the debug link's geo=eea|other). */
+export type DebugGeography = 'eea' | 'other';
 export type AdmobConsentOptions = {
-  // Test variant only (debug menu, via TEST_ONLY). The store variant passes nothing.
+  /**
+   * Test builds only, and only through debugServices.setConsentGeography (e2e-maestro: the debug
+   * link's geo=): UMP answers as for a player in the EEA (S3, then Google's form) or elsewhere
+   * (Apple's prompt alone), on any network. Store builds never pass it (check-ads rule
+   * debug-geography-test-only).
+   */
   readonly debugGeography?: DebugGeography;
+  /** Test builds only: UMP test devices (a simulator is one already; a phone needs its id). */
+  readonly testDeviceIdentifiers?: readonly string[];
   readonly onError: (error: unknown) => void;
 };
 
 const GEOGRAPHY = {
   eea: AdsConsentDebugGeography.EEA,
-  'regulated-us-state': AdsConsentDebugGeography.REGULATED_US_STATE,
   other: AdsConsentDebugGeography.OTHER,
 } as const;
+
+/** requestInfoUpdate's debug settings: none in a store build. */
+function debugSettings(options: AdmobConsentOptions): {
+  readonly debugGeography?: number;
+  readonly testDeviceIdentifiers?: string[];
+} {
+  const { debugGeography: geography, testDeviceIdentifiers: devices } = options;
+  return {
+    ...(geography === undefined ? {} : { debugGeography: GEOGRAPHY[geography] }),
+    ...(devices === undefined ? {} : { testDeviceIdentifiers: [...devices] }),
+  };
+}
 
 function toInfo(info: AdsConsentInfo): ConsentInfo {
   return {
@@ -90,8 +109,7 @@ async function requestTracking(onError: (error: unknown) => void): Promise<Track
 }
 
 export function createAdmobConsentAdapter(options: AdmobConsentOptions): ConsentPort {
-  const geography = options.debugGeography;
-  const requestOptions = geography === undefined ? {} : { debugGeography: GEOGRAPHY[geography] };
+  const requestOptions = debugSettings(options);
   return {
     refresh: () =>
       withCachedFallback(() => AdsConsent.requestInfoUpdate(requestOptions), options.onError),

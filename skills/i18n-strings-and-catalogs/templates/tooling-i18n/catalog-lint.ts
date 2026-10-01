@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
+import { debugEnglishProblems, lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
 
 import type { Language, Namespace } from './catalog-lint-rules.ts';
 
@@ -25,9 +25,13 @@ function sortProblem(dir: string, language: Language, keys: readonly string[]): 
 
 export function lintDirectory(dir: string, namespace: Namespace): string[] {
   const report: string[] = [];
+  const en = readCatalog(dir, 'en');
   for (const language of LANGUAGES) {
     const catalog = readCatalog(dir, language);
     report.push(...sortProblem(dir, language, Object.keys(catalog)));
+    for (const problem of debugEnglishProblems(en, catalog, language)) {
+      report.push(`${dir}/${language}.json  ${problem}`);
+    }
     for (const problem of missingGameKeys(namespace, Object.keys(catalog))) {
       report.push(`${dir}/${language}.json: ${problem}`);
     }

@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { COMPONENT_SPECS } from '@e07/shell/ui/component-specs.ts';
 
 import { ResultOverlay } from './result-overlay.tsx';
 
@@ -196,6 +197,40 @@ describe('ResultOverlay', () => {
 
     expect(LOSE.actions.onContinue).toHaveBeenCalledTimes(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws the ad continue busy while the rewarded ad loads, never hidden (L11)', async () => {
+    const user = userEvent.setup();
+    const model: LoseResult = { ...LOSE, continueOffer: 'ad-loading', actions: actions() };
+    const view = await renderWithShell(<ResultOverlay model={model} />);
+
+    expect(screen.getByTestId('result.continue-offer')).toBeOnTheScreen();
+    expect(screen.getByTestId('result.continue-note')).toBeOnTheScreen();
+    // The same key and label, pushed in and busy: VoiceOver hears it, a press does nothing.
+    const key = screen.getByRole('button', { name: 'Continue – watch an ad' });
+    expect(key.props['testID']).toBe('result.continue-ad-button');
+    expect(key).toBeBusy();
+    expect(key).toBeDisabled();
+    await user.press(key);
+    expect(model.actions.onContinue).not.toHaveBeenCalled();
+    // The three hopping blocks stand where the ad icon was.
+    const busy = COMPONENT_SPECS.busy;
+    const isBlock = (node: { readonly props: Record<string, unknown> }): boolean => {
+      const style = StyleSheet.flatten(node.props['style'] as never) as
+        { width?: unknown; height?: unknown } | undefined;
+      return style?.width === busy.block && style.height === busy.block;
+    };
+    expect(key.queryAll((node) => node.type === 'Image')).toHaveLength(0);
+    expect(key.queryAll(isBlock)).toHaveLength(3);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+
+    // Ready: the same key takes presses and shows the ad icon again.
+    await view.rerender(<ResultOverlay model={{ ...model, continueOffer: 'ad' }} />);
+    const ready = screen.getByRole('button', { name: 'Continue – watch an ad' });
+    expect(ready).not.toBeBusy();
+    expect(ready.queryAll((node) => node.type === 'Image')).toHaveLength(1);
+    await user.press(ready);
+    expect(model.actions.onContinue).toHaveBeenCalledTimes(1);
   });
 
   it('offers the free continue to Premium owners and nothing once it is used', async () => {

@@ -113,6 +113,12 @@ describe('markReviewed', () => {
       markReviewed(EMPTY, FA, { language: 'fa', date: '2026-10-02', keys: ['home.nothing'] }),
     ).toThrow('home.nothing is not in the fa catalogs');
   });
+
+  it('refuses a debug menu text, which stays English and is never reviewed (L13)', () => {
+    expect(() =>
+      markReviewed(EMPTY, FA, { language: 'fa', date: '2026-10-02', keys: ['debug.title'] }),
+    ).toThrow('debug.title is a debug menu text: it stays English (L13)');
+  });
 });
 
 describe('runReviewSheet', () => {
@@ -148,8 +154,10 @@ describe('runReviewSheet', () => {
     expect(runReviewSheet(root, ['--release'])).toBe(0);
     expect(read('reports/i18n/review-fa.csv')).toContain('"line-siege.name","Line Siege"');
     expect(read('reports/i18n/review-ckb.csv').split('\n')).toHaveLength(5);
+    expect(read('reports/i18n/review-fa.csv')).not.toContain('debug.');
+    // The count leaves the English debug menu out too: 3 reviewable texts, not 4 keys.
     expect(output).toContain(
-      "review-sheet: fa: 3 of 4 texts wait for the owner's review -> reports/i18n/review-fa.csv",
+      "review-sheet: fa: 3 of 3 texts wait for the owner's review -> reports/i18n/review-fa.csv",
     );
     expect(output.at(-1)).toMatch(/^OWNER STEP \(not blocking\): the owner reads 6 fa and ckb/);
   });

@@ -64,11 +64,27 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-game-app.mjs . --app <game-id>        # -
 npm run verify
 ```
 
-`--stage complete` fails until every module part exists (each failure names the skill that builds it), `src/index.ts` assembles all eleven members with `identity.winTitleId` `'<game-id>.win-title'` and `identity.taglineId` `'<game-id>.tagline'`, the engine declares a valid `panMode`, `index.ts` is the 3-line entry, every `<game-id>.*` key the code uses is in all four catalogs, `game.config.ts` agrees with the levels and the continue rule, the bundle id and Premium id are the fixed `io.applander` ids, no scaffold placeholder is left (rule `owner-placeholder`: the AdMob app and unit ids until G5, `example.com` and `support@example.com` until G3), the game's `parity/game-facts.json` entry agrees with `game.config.ts` (rule `parity-game-facts`), the board goldens, bot sims, E2E flows and the parity pin test exist, and the repo has no `shell-slice.json` (a partial Shell never ships; the rule `shell-slice`). While G3 or G5 is open, the only failures left are the `owner-placeholder` lines, by design; list them as open owner steps. Then:
+`--stage complete` fails until every module part exists (each failure names the skill that builds it), `src/index.ts` assembles all eleven members with `identity.winTitleId` `'<game-id>.win-title'` and `identity.taglineId` `'<game-id>.tagline'`, the engine declares a valid `panMode`, `index.ts` is the 3-line entry, every `<game-id>.*` key the code uses is in all four catalogs, `game.config.ts` agrees with the levels and the continue rule, the bundle id and Premium id are the fixed `io.applander` ids, no scaffold placeholder is left (rule `owner-placeholder`: the AdMob app and unit ids until G5, `example.com` and `support@example.com` until G3), the game's `parity/game-facts.json` entry agrees with `game.config.ts` (rule `parity-game-facts`), the board goldens, bot sims, E2E flows and the parity pin test exist, and the repo has no `shell-slice.json` (a partial Shell never ships; the rule `shell-slice`).
+
+**Before the owner's steps G3 and G5 (lead decision L14).** The complete stage fails on every owner placeholder until the owner supplies it, and no option changes that. A game that is otherwise finished ends with exactly these lines, and nothing else (the Line Siege pilot, recorded on 2026-10-01; each `Fix:` text is shortened here):
+
+```text
+FAIL apps/line-siege/game.config.ts:42 [owner-placeholder] ads.ids.ios.appId is the placeholder AdMob app id ca-app-pub-1234567890123456~1234567890 (owner step G5) Fix: Waits for ...
+FAIL apps/line-siege/game.config.ts:44 [owner-placeholder] ads.ids.ios.units.banner is the placeholder AdMob banner unit ca-app-pub-1234567890123456/1111111111 (owner step G5) Fix: ...
+FAIL apps/line-siege/game.config.ts:45 [owner-placeholder] ads.ids.ios.units.interstitial is the placeholder AdMob interstitial unit ca-app-pub-1234567890123456/2222222222 (owner step G5) Fix: ...
+FAIL apps/line-siege/game.config.ts:46 [owner-placeholder] ads.ids.ios.units.rewarded is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5) Fix: ...
+FAIL apps/line-siege/game.config.ts:57 [owner-placeholder] links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3) Fix: ...
+FAIL apps/line-siege/game.config.ts:58 [owner-placeholder] links.supportEmail is the placeholder support address support@example.com (owner step G3) Fix: ...
+check-game-app: 1 apps checked, 6 problems
+OWNER STEPS PENDING: G3, G5
+RESULT: FAIL (6 problems)
+```
+
+The `OWNER STEPS PENDING` line lists only the steps still open (`G3` alone once the AdMob ids are in, or for a game with ads off). Report these lines as open owner steps, never as a pass; any other FAIL line is a real problem to fix first. The ship gates (check-release-setup, check-store-artifact, audit-app-bundle, the release pipeline's store gate, check-sim-app `--variant store`) refuse the same list and end the same way. A game handed over before G3 and G5 closes with a slice report (`--kind slice`) that lists G3 and G5 under "Owner steps (not blocking)". Then:
 
 - [ ] Contract tests pass; coverage of `apps/<game-id>/src/rules` is at least 95/95/95/90; Stryker on the rules at least 75 % with survivors explained.
 - [ ] Sims show a winnable game and a difficulty curve inside the approved bands; every shipped level is proven solvable (spec 15 item 7).
-- [ ] `npm run i18n:verify` passes; the fa and ckb texts are marked for the native-speaker review.
+- [ ] `npm run i18n:verify` passes; the fa and ckb texts waiting for the owner's own review are listed in the report under "Owner steps (not blocking)" (the review is never a gate).
 - [ ] The icons were looked at in 1024 and 256 px.
 - [ ] The game's E2E flows and the Shell's flows pass with this game; screenshot baselines created with `--update`, every PNG opened, committed with `Gate-Change:`.
 - [ ] `npm run audit:network` and, after a prebuild, `npm run audit:privacy` pass.
@@ -81,9 +97,9 @@ Ask for them in one message, each with the step id, the one action, and the defa
 |---|---|---|
 | G1 | Approves the app name (the bundle id is fixed: `io.applander.<game id without hyphens>`) | the Latin name in all four languages |
 | G2 | Creates the App Store Connect app record with the fixed bundle id (iOS, the name, primary language, SKU = the game id; about 2 minutes, no API for it) | `appStoreId: null` |
-| G3 | Answers the App Privacy questionnaire and gives the privacy link (policy host and path, support address) | `example.com` and `support@example.com`; `--stage complete` fails on them (`owner-placeholder`) and nothing ships |
+| G3 | Answers the App Privacy questionnaire and gives the privacy link (policy host and path, support address) | `example.com` and `support@example.com`; `--stage complete` fails on them (`owner-placeholder`, `OWNER STEPS PENDING: G3`) and nothing ships |
 | G4 / P1 | Nothing to decide: Premium is the EUR 1.99 App Store price point with Family Sharing off, as for every game (owner decisions O2 and O3); the agent creates the product `<bundle id>.premium` and the owner checks it | purchases untestable |
-| G5, A2-A4 | AdMob app, three ad units, consent message, blocking controls; real IDs go into `game.config.ts`; after release, link the AdMob app to the store listing and publish `app-ads.txt` | the documented placeholder IDs; test builds use Google's test IDs anyway; `--stage complete` and the ship gates fail on them (`owner-placeholder`) |
+| G5, A2-A4 | AdMob app, three ad units, consent message, blocking controls; real IDs go into `game.config.ts`; after release, link the AdMob app to the store listing and publish `app-ads.txt` | the documented placeholder IDs; test builds use Google's test IDs anyway; `--stage complete` and the ship gates fail on them (`owner-placeholder`, `OWNER STEPS PENDING: G5`) |
 | G6 | TestFlight play-test, including the purchase test (the owner does it personally; it never blocks a gate) | listed under "Owner steps (not blocking)" in every report |
 | G7 | Native-speaker review of fa and ckb (the owner does it personally; it never blocks a gate) | the drafted texts ship; listed under "Owner steps (not blocking)" |
 | G8 | Approves the store listing: texts, screenshots, age-rating answers (`game.config.ts` `store`) | no store submission |

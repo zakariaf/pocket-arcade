@@ -1,0 +1,2 @@
+the app's tree may not be attached): reading it again in 2 s
+RESULT: PASS

@@ -24,7 +24,11 @@ const SPEC = {
     '  payloads), price-target (TARGET_EUR and every StoreKit displayPrice are the owner\'s 1.99, and the old spec target',
     '  is gone from the Premium files),',
     '  harness-maestro (the StoreKit harness builds every Maestro call with maestroGlobalArgs: the global --device <udid>',
-    '  and its own --driver-host-port, never the per-command --udid).',
+    '  and its own --driver-host-port, never the per-command --udid; the function that spawns Maestro picks a driver port',
+    '  for each run with driverPortFor or freeDriverPort),',
+    '  harness-relaunch-wait (each wait for a premium.* state in a relaunch flow, 02-refund-relaunch.yaml and',
+    '  04-approval-relaunch.yaml, allows at least 60000 ms: StoreKit answers the launch re-check only after its',
+    '  transaction sync, measured at 28 s).',
     'Facts (version, allowlists, keys, test IDs) come from assets/premium-facts.json; typed-price skips',
     'i18n/, testing/ and typedPriceAllowedIn (the parity harness\'s fixture store, test builds only).',
     'Not yet due (SKIP lines, a pass): plugin-entry until packages/shell/src/config/shell-plugins.ts exists',
@@ -267,7 +271,8 @@ function checkStoreKitConfigs(root, template, report) {
  * The StoreKit harness shares the Mac with other sessions: every Maestro call names its simulator
  * with the global --device <udid> and its own driver port (maestroGlobalArgs from the repo's
  * packages/tooling/src/e2e/maestro-args.ts), never the per-command --udid, which leaves the XCTest
- * driver port shared with whichever simulator already listens there.
+ * driver port shared with whichever simulator already listens there; and each Maestro run (one per
+ * flow) picks its own driver port.
  */
 function checkHarnessMaestro(root, report) {
   const rel = 'packages/tooling/src/storekit/storekit-harness.ts';
@@ -276,6 +281,39 @@ function checkHarnessMaestro(root, report) {
   const fix = 'Build the Maestro arguments with maestroGlobalArgs({ udid, driverPort }) from packages/tooling/src/e2e/maestro-args.ts before the command (copy the harness template again).';
   if (!/\bmaestroGlobalArgs\s*\(/.test(text)) report.problem({ file: rel, line: 1, rule: 'harness-maestro', message: 'runs Maestro without maestroGlobalArgs (the global --device <udid> and its own --driver-host-port)', fix });
   for (const match of text.matchAll(/['"`]--udid['"`]/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'harness-maestro', message: "passes Maestro's per-command --udid, so the run shares the XCTest driver port with other sessions", fix });
+  // Each Maestro run gets its own driver port: the function that spawns Maestro picks it
+  // (driverPortFor(givenPort) or freeDriverPort()) for every flow, unless a session passes --driver-port.
+  for (const spawn of text.matchAll(/\bspawn(?:Sync)?\s*\(\s*maestro\b/g)) {
+    const before = text.slice(0, spawn.index);
+    const starts = [...before.matchAll(/\bfunction\s+\w+\s*\(/g)];
+    const start = starts.at(-1)?.index ?? 0;
+    if (/\b(?:driverPortFor|freeDriverPort)\s*\(/.test(text.slice(start, spawn.index))) continue;
+    report.problem({ file: rel, line: lineAt(text, start), rule: 'harness-maestro', message: 'every flow reuses one driver port: the function that spawns Maestro does not pick its own port for each run', fix: 'Inside the function that runs one flow, build the target with { udid, driverPort: await driverPortFor(givenPort) } (a free port for each run unless --driver-port is given); copy the harness template again.' });
+  }
+}
+
+/**
+ * A relaunch flow (02-refund-relaunch, 04-approval-relaunch) waits for the launch re-check
+ * (Transaction.all), which StoreKit answers only after storekitd has synced its transaction cache:
+ * 28 s after testRefundAll on 2026-10-01, so a 15 s wait failed a correct app. Every wait for a
+ * premium.* state there allows FACTS.storekit.relaunchWaitMs.
+ */
+function checkRelaunchWaits(root, report) {
+  const { flowsDir, relaunchFlows, relaunchWaitMs } = FACTS.storekit;
+  for (const name of relaunchFlows) {
+    const rel = `${flowsDir}${name}`;
+    if (!existsSync(join(root, rel))) continue;
+    const text = readRepoText(root, rel);
+    for (const item of text.matchAll(/^- extendedWaitUntil:[^\n]*\n((?:[ \t]+[^\n]*\n?)*)/gm)) {
+      const body = item[1];
+      const id = /\bid:\s*['"]?([\w.-]+)['"]?/.exec(body)?.[1];
+      if (id === undefined || !id.startsWith('premium.')) continue;
+      const timeout = /\btimeout:\s*(\d+)/.exec(body);
+      if (timeout !== null && Number(timeout[1]) >= relaunchWaitMs) continue;
+      const at = timeout === null ? item.index : item.index + item[0].indexOf(timeout[0]);
+      report.problem({ file: rel, line: lineAt(text, at), rule: 'harness-relaunch-wait', message: `waits ${timeout?.[1] ?? 'the default'} ms for ${id} after a relaunch, but StoreKit answers the launch re-check only after its transaction sync (28 s measured)`, fix: `timeout: ${String(relaunchWaitMs)} on this extendedWaitUntil (copy the flow template again); never shorten it to make a run faster.` });
+    }
+  }
 }
 
 /** The product spec's old "about EUR 1.9-0" target, in either decimal notation. */
@@ -326,5 +364,6 @@ run(async () => {
   checkHarness(root, report);
   checkPriceTarget(root, report);
   checkHarnessMaestro(root, report);
+  checkRelaunchWaits(root, report);
   return report.finish({ checked: files.length, unit: 'files' });
 });

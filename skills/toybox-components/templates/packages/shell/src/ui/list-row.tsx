@@ -14,7 +14,7 @@ import { RadioMark } from './radio-mark.tsx';
 import { Toggle } from './toggle.tsx';
 
 import type { IconTileIcon, IconTilePaint } from './icon-tile.tsx';
-import type { Language } from '@e07/shell/i18n/languages.ts';
+import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type { TypeVariant } from '@e07/shell/theme/type-styles.ts';
 import type { ReactNode } from 'react';
 import type {
@@ -61,6 +61,11 @@ export type ListRowProps = {
   readonly below?: ReactNode;
   /** Autonym rows use their own script. */
   readonly labelLanguage?: Language;
+  /**
+   * The label's own direction when it is not the layout's: S15's English labels in an RTL layout
+   * are 'ltr' (L13), laid left to right and still aligned to the row's start.
+   */
+  readonly labelDirection?: Direction;
   readonly hint?: string;
 };
 
@@ -122,6 +127,21 @@ function labelVariantOf(props: ListRowProps): TypeVariant {
   return props.isDanger === true || props.isStrong === true ? 'rowLabelStrong' : 'rowLabel';
 }
 
+function rowLabel(props: ListRowProps): ReactNode {
+  return (
+    <AppText
+      text={props.label}
+      // Strong and danger labels are the row label in Bold (17, line height 1.32 / 1.5),
+      // not the button label role (1.25), which made each line 1.2 pt short of the design.
+      variant={labelVariantOf(props)}
+      tone={props.isDanger === true ? 'danger' : 'default'}
+      testID={`${props.testID}.label`}
+      {...(props.labelLanguage === undefined ? {} : { language: props.labelLanguage })}
+      {...(props.labelDirection === undefined ? {} : { textDirection: props.labelDirection })}
+    />
+  );
+}
+
 function rowContent(props: ListRowProps, styles: Styles, color: string): ReactNode {
   const isDanger = props.isDanger === true;
   const tilePaint = isDanger ? 'danger' : (props.iconPaint ?? 'pop');
@@ -131,15 +151,7 @@ function rowContent(props: ListRowProps, styles: Styles, color: string): ReactNo
         <IconTile icon={props.icon} paint={tilePaint} testID={`${props.testID}.icon`} />
       )}
       <View style={[styles.text, props.textExtra === undefined ? null : styles.textColumn]}>
-        <AppText
-          text={props.label}
-          // Strong and danger labels are the row label in Bold (17, line height 1.32 / 1.5),
-          // not the button label role (1.25), which made each line 1.2 pt short of the design.
-          variant={labelVariantOf(props)}
-          tone={isDanger ? 'danger' : 'default'}
-          testID={`${props.testID}.label`}
-          {...(props.labelLanguage === undefined ? {} : { language: props.labelLanguage })}
-        />
+        {rowLabel(props)}
         {props.description === undefined ? null : (
           <AppText
             text={props.description}

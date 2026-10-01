@@ -10,7 +10,7 @@
 - The consent moment (S3)
 - When the Shell calls what
 - The "Ad privacy choices" row
-- Test-only consent tools
+- Test-only consent tools (the debug geography)
 - Verified behaviour
 - Tests
 
@@ -30,10 +30,12 @@ The form's content comes from Google (the GDPR/TCF message the owner publishes i
 
 The owner decided on 2026-09-30 to follow Apple's rules (App Review guideline 5.1.2(i), App Tracking Transparency). This replaces the earlier product decision "no ATT prompt in v1" everywhere. Google's ads SDK may use the IDFA (the advertising identifier) for ads, and that counts as tracking, so on iOS the app asks Apple's system prompt before any ad request that could use it:
 
-1. the Shell's S3 consent moment, where Google's form is required;
+1. the Shell's S3 consent moment, **only where Google's form is required** (lead decision L10, keeping D43);
 2. Google's UMP form, where required;
-3. Apple's ATT prompt, only while the status is not-determined (`ConsentPort.requestTracking()`), after the form has closed and while the app is active;
+3. Apple's ATT prompt, only while the status is not-determined (`ConsentPort.requestTracking()`), after the form has closed and while the app is active. **Where no Google form is due, Apple's system prompt appears on its own, with the app's usage text (L10)**: no S3 intro, no form;
 4. then `ads.initialize()` and the preloads. So every ad request follows the ATT answer.
+
+L10's proof is `check-ad-behaviour.mjs`'s case "prepareAds where consent is not required (no intro, no form, ATT still first)" and `ad-gate.test.ts` (no intro and no form where consent is not required, ATT still first). On a simulator only the owner's own app shows that path: an `ADS_MODE=test` build runs on Google's sample AdMob app, whose console publishes an IDFA explainer outside the EEA, so with `geo=other` UMP reports a message is due and the test build shows S3, Google's explainer, then Apple's prompt (ads-smoke flow 6, recorded 2026-10-01).
 
 When the player declines, when the device restricts tracking (parental controls, a managed device, or "Allow Apps to Request to Track" switched off), or when the status cannot be read, ads still initialize and serve, without the IDFA: Google's SDK sends no IDFA in the ad request. The app never withholds a feature, a reward or Premium for the answer and never asks twice: Apple shows the prompt once per install (in the EU it may be asked again only a year after an answer), and guideline 5.1.2(i) forbids gating anything on it.
 
@@ -94,12 +96,12 @@ export type TrackingStatus = 'authorized' | 'denied' | 'restricted' | 'not-deter
 
 ## Which ConsentPort a build gets (ADS_MODE=off never calls UMP or ATT)
 
-`consent-factory.ts` mirrors the ads factory: `createConsentPort(readAdsExtra().adsMode, { onError, debugGeography? })` returns
+`consent-factory.ts` mirrors the ads factory: `createConsentPort(readAdsExtra().adsMode, { onError, debugGeography?, testDeviceIdentifiers? })` returns
 
 - `off`: a consent port that never touches the SDK and always answers `{ canRequestAds: false, isPrivacyOptionsRequired: false }` (no ads, no privacy row), and whose `requestTracking()` answers `'unavailable'` without asking Apple;
 - `test` / `live`: `createAdmobConsentAdapter(options)`.
 
-Why: `AdsConsent.requestInfoUpdate` asks Google's servers from the app process. `ADS_MODE=off` builds are the ones used for screenshots, E2E and the runtime network audit, which fails on any non-loopback socket of the app, and a game with `ads.isEnabled: false` must never show Google's form. Nothing else may call `createAdmobConsentAdapter` (`check-ads.mjs` rule `consent-factory`); the test-only debug menu also goes through `createConsentPort`, passing `debugGeography`.
+Why: `AdsConsent.requestInfoUpdate` asks Google's servers from the app process. `ADS_MODE=off` builds are the ones used for screenshots, E2E and the runtime network audit, which fails on any non-loopback socket of the app, and a game with `ads.isEnabled: false` must never show Google's form. Nothing else may call `createAdmobConsentAdapter` (`check-ads.mjs` rule `consent-factory`); the test-only debug services also go through `createConsentPort`, passing `debugGeography` (below). The composition root passes only `{ onError }`, wrapped in a test build by `debug.services?.consentFor(consent) ?? consent`.
 
 The gate and the policy get the same answer: `isAdsEnabled` is `extra.game.adPolicy.isAdsEnabled && adsMode !== 'off'` (the game's master switch and the build's mode), and it is `false` while the test build's debug "Never show ads" switch is on.
 
@@ -142,19 +144,22 @@ Never call the form or the ATT prompt on app start, during a level, or from a `u
 - Its handler calls `consent.showPrivacyOptions()` and passes the result to `onConsent`, which may turn ads off (`canRequestAds: false`): banners, interstitials and rewarded buttons then disappear through the ad policy.
 - Test ID `settings.ad-privacy-row` (with `.icon`, `.label`, `.description` children, as in the Toybox screen map). Copy keys: `settings.ad-privacy.label` ("Ad privacy choices"), `settings.ad-privacy.description`. The optional pre-form explainer uses `consent.intro.*`. The row's look belongs to the S11 screen work; this skill owns only when it is visible and what its handler calls.
 
-## Test-only consent tools
+## Test-only consent tools (the debug geography)
 
-Only in test builds, reachable only through the Shell's test-only entry (`packages/shell/src/app/test-only.ts`), never in the adapter's store path:
+Only in test builds, reachable only through the Shell's test-only entry (`packages/shell/src/app/test-only.ts`), never on a store build's path.
 
-- Debug geography: the debug menu calls `debugServices.createConsent(geography)` (`'eea' | 'regulated-us-state' | 'other'`; e2e-maestro's `packages/shell/src/screens/debug/debug-services.ts`), which passes `debugGeography` in the options of `createConsentPort` (the store variant passes nothing).
-- `AdsConsent.reset()` to start over, and `AdsConsent.getUserChoices()` to show the decoded TCF choices. Apple's ATT answer has no reset from code: delete the app (a fresh install asks again) or change it in Settings > Privacy & Security > Tracking.
-- `mobileAds().openAdInspector()` to diagnose a missing ad.
+**Debug geography (R4G-G09).** `createAdmobConsentAdapter` takes the test-build options `{ debugGeography: 'eea' | 'other', testDeviceIdentifiers }` and passes them to `AdsConsent.requestInfoUpdate({ debugGeography, testDeviceIdentifiers })` (react-native-google-mobile-ads 17.2.0: `AdsConsentInfoOptions`, `AdsConsentDebugGeography.EEA` = 1 and `OTHER` = 4, passed straight to UMP's `UMPDebugSettings`; a simulator is a test device already, a phone needs its hashed id in `testDeviceIdentifiers`). The only way to set them is `debugServices.setConsentGeography(geo)` (e2e-maestro), which the debug link's `geo=eea|other` calls: it resets Google's answer (`AdsConsent.reset()`, through the debug adapter's `resetConsent`; ads on only), keeps the geography in the test-only store (kept across a reload), and `consentFor(port)` routes every consent call to a port built with `createConsentPort(adsMode, { debugGeography, onError })` from then on, so the next `prepareAds` asks UMP as if the player were in the EEA (S3, then Google's form, on any network) or elsewhere. Send `geo=` in the first setup link after a fresh install (ads-smoke flows 1 and 6). S15 has no geography row: its design has fourteen rows. `check-ads.mjs` rule `debug-geography-test-only` fails `debugGeography`, `testDeviceIdentifiers` or `AdsConsentDebugGeography` anywhere but the adapter, tests and `packages/shell/src/screens/debug/`.
 
-These change consent behaviour for real users, so none of them may ship in a store build (the checker fails on them outside test-only files).
+The other tools, in `admob-consent-debug-adapter.ts` (the test-only entry exports `createAdmobConsentDebugAdapter`; `test-only-api.ts` may name its `ConsentDebugTools` type, which the compiler erases):
+
+- `resetConsent()` (`AdsConsent.reset()`) to start over, and `readUserChoices()` (`AdsConsent.getUserChoices()`) to show the decoded TCF choices. Apple's ATT answer has no reset from code: delete the app (a fresh install asks again) or change it in Settings > Privacy & Security > Tracking.
+- `openAdInspector()` (`mobileAds().openAdInspector()`) to diagnose a missing ad.
+
+These change consent behaviour for real users, so none of them may ship in a store build (`check-ads.mjs` rules `test-only-api`, `debug-adapter-import` and `debug-geography-test-only`).
 
 ## Verified behaviour
 
-**ATT on the simulator (2026-09-30, iOS 26.5, Line Siege `ADS_MODE=test` Release build, debug geography EEA):** the order S3 -> Google's form ("Consent") -> Apple's prompt -> a test banner on Levels, and a declined prompt still loads the banner; the record and screenshots are in console-privacy-troubleshooting.md, "Simulator smoke test". Maestro's `launchApp` grants every permission by default, the ATT answer included (`kTCCServiceUserTracking` allowed, so the status reads authorized and no prompt appears): the ATT smoke test launches with `xcrun simctl launch <udid> <bundleId>` or `launchApp: { permissions: { all: unset } }`.
+**ATT on the simulator (2026-10-01, iOS 26.5, Line Siege `ADS_MODE=test` Release build, ads-smoke flows):** with `geo=eea` the order S3 -> Google's form ("Consent") -> Apple's prompt -> a test banner on Home, and a declined prompt still loads the banner; with `geo=other` Google's GDPR form never opens (UMP's `IABTCF_gdprApplies` = 0) and Apple's prompt carries the app's usage text, after Google's sample IDFA explainer (above). The record is in console-privacy-troubleshooting.md, "Simulator smoke test". Maestro's `launchApp` grants every permission by default, the ATT answer included (`kTCCServiceUserTracking` allowed, so the status reads authorized and no prompt appears): the ATT smoke test launches with `xcrun simctl launch <udid> <bundleId>` or `launchApp: { permissions: { all: unset } }`.
 
 On the iOS 26.5 simulator with Google's sample app ID (2026-09-26): after `AdsConsent.reset()`, `requestInfoUpdate({ debugGeography: EEA })` returned `{ status: 'REQUIRED', privacyOptionsRequirementStatus: 'REQUIRED', canRequestAds: false, isConsentFormAvailable: true }`, and `loadAndShowConsentFormIfRequired()` showed the "Publisher Test Ads" TCF form (Consent / Do not consent / Manage options). No test-device hash was needed on the simulator. The real form appears only after the owner publishes a GDPR message in the AdMob console (step A3); without it `canRequestAds` stays false in the EEA.
 
@@ -162,7 +167,7 @@ On the iOS 26.5 simulator with Google's sample app ID (2026-09-26): after `AdsCo
 
 - `ad-gate.test.ts`: refresh -> intro -> form -> ATT -> initialize -> preload in that order; no intro and no form where consent is not required (ATT still first); declined, restricted and unavailable tracking still initialize, and Apple is asked once; no ATT and no initialize without consent; no intro, form or ATT during the tutorial, for Premium, offline or with ads off; the launch refresh shows no form.
 - `consent-moment-flow.test.ts` and `consent-moment.test.tsx`: the consent moment (above).
-- `admob-consent-adapter.test.ts`: the privacy row flag, the offline fallback to `getConsentInfo`, and that a debug geography is passed only when set; `requestTracking` asks once while not-determined, never again after an answer (granted gives authorized, denied or restricted gives denied), waits until the app is active, resolves `'unavailable'` (logged) when the read fails, and never touches the module off iOS. It reads the root mocks with `jest.mock(...)` + `jest.requireMock(...)`; React Native's Jest setup makes `AppState.currentState` a function, so the test defines the state it needs and puts the mock back.
+- `admob-consent-adapter.test.ts`: the privacy row flag, the offline fallback to `getConsentInfo`, and that the debug geography and test devices are passed only when a test build sets them (`{}`, `{ debugGeography: 1 }`, `{ debugGeography: 4, testDeviceIdentifiers }`); `requestTracking` asks once while not-determined, never again after an answer (granted gives authorized, denied or restricted gives denied), waits until the app is active, resolves `'unavailable'` (logged) when the read fails, and never touches the module off iOS. It reads the root mocks with `jest.mock(...)` + `jest.requireMock(...)`; React Native's Jest setup makes `AppState.currentState` a function, so the test defines the state it needs and puts the mock back.
 - `consent-factory.test.ts`: `ADS_MODE=off` never calls `requestInfoUpdate`, the form or the tracking module; `test` and `live` use the adapter.
 - `admob-consent-debug-adapter.test.ts`: the S15 tools reset consent only when asked (never the ATT answer), read the decoded choices, and open the Ad Inspector (root mock, `jest.requireMock`).
 - `check-ad-behaviour.mjs` runs the same order against the repo's real gate, flow, adapter and factory with scripted stand-ins (rules `consent-order`, `consent-moment-flow`, `tracking-adapter`, `consent-factory`); `check-ads.mjs` rules `att-adapter-only`, `att-order` and `att-plugin` check the sources statically.

@@ -59,13 +59,15 @@ Percentiles use the lower-interpolation rule (`sorted[floor(p/100 × (n-1))]`), 
 
 `rulesFingerprint(gameId)` is a sha256 over every source file that can change a bot result, sorted by repo-relative path, each hashed as `"<path>\n<bytes>\n"` (`fingerprintFiles(gameId)` lists them):
 
-- `apps/<id>/src/rules/**`, `levels/**`, `sim/**`, `testing/**`
+- `apps/<id>/src/rules/**`, `levels/**` (except the generated `levels/pack-*.json`), `sim/**`, `testing/**`
 - `test/sims/<id>/**`
 - the files of `packages/game-kit/src` that those files import, followed through game-kit's own imports (a source scan of every `from '...'` and `import '...'` specifier: `@e07/game-kit/<path>` and relative paths inside game-kit). That is the sim's import closure: the PRNG, the bot harness, the contracts, and the geom, timeline and fixed-step code the rules and sims actually use.
 
 Game-kit files nothing in the closure imports do not count. The board and gesture steps of a build add game-kit files the sims never reach (`timeline/sample.ts`, `timeline/particles.ts`, `geom/stick-command.ts`), and the report stays fresh; once a rules or sim file imports one of them, it joins the fingerprint.
 
-`.ts`, `.tsx` and `.json` files count; unit tests (`*.test.ts`) and snapshots do not; sim files (`*.sim.test.ts`) do, because they choose seeds and policies; `balance-bands.json` does not, so changing a band or approving it never makes the report stale. `check-balance.mjs` recomputes the fingerprint with an independent JavaScript port and fails with `report-stale` when it differs: the numbers describe code that no longer exists. Rerun `npm run test:sim`.
+`.ts`, `.tsx` and `.json` files count; unit tests (`*.test.ts`) and snapshots do not; sim files (`*.sim.test.ts`) do, because they choose seeds and policies; `balance-bands.json` does not, so changing a band or approving it never makes the report stale.
+
+The level packs `apps/<id>/src/levels/pack-*.json` do not count either. They are outputs, not inputs: level-generation-and-solvers' `generate-levels.ts` writes them from the rules and the level plan, and the bots never read them. The build order runs the sims first and generates the packs after them, so the report the sims wrote stays fresh when the packs appear, and `check-balance.mjs` still passes with no sim rerun. Everything else in `levels/` (the plan, the solver, `describe`, the table file) still counts, so a change there, or in `rules/`, after the packs were generated makes the report stale as before (fixtures `pass-packs-after-sims`, `bad-rules-changed-after-report` and `bad-level-plan-changed-after-report`). A tuning change regenerates the packs and reruns the sims in the same commit. `check-balance.mjs` recomputes the fingerprint with an independent JavaScript port and fails with `report-stale` when it differs: the numbers describe code that no longer exists. Rerun `npm run test:sim`.
 
 The fingerprint only protects what it covers, so game logic must not reach outside it: a value import from a file in those four app folders to anywhere else in the app (`../board/`, `@e07/<id>/words/`) or to the Shell fails `fingerprint-scope`. Keep word lists, tables and generators under `rules/` or `levels/`. Type-only imports are fine (they cannot change a number), and so is the one import of the engine assembly `rules/<id>-engine.ts` from `board/build-timeline.ts`: bots never animate, so the timeline decides no result.
 

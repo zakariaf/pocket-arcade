@@ -1,1 +1,2 @@
-Info.plist [ad-app-id] GADApplicationIdentifier is the placeholder AdMob app id (ca-app-pub-1234567890123456~1234567890)
+Info.plist [owner-placeholder] Info.plist GADApplicationIdentifier is the placeholder AdMob app id ca-app-pub-1234567890123456~1234567890 (owner step G5)
+OWNER STEPS PENDING: G5

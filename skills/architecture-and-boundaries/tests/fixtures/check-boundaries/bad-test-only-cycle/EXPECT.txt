@@ -1,0 +1,4 @@
+[import-cycle] import cycle through the test-only gate
+packages/shell/src/screens/debug/use-debug-model.ts -> packages/shell/src/app/use-parity-opener.ts -> packages/shell/src/app/test-only.ts -> packages/shell/src/app/test-only-entry.ts
+never app/test-only.ts or a helper that imports it
+RESULT: FAIL (1 problems)

@@ -3,6 +3,8 @@
 // The good repos are the skill's own templates laid out as an app repo (so the templates are proven to
 // pass), plus small stubs for the files other skills own. Every bad-* fixture is a copy of good with ONE
 // planted bug; its EXPECT.txt names the rule and the exact file:line, computed from the planted text.
+// Every pass-* fixture is a copy of good shaped into a passing repo state; its EXPECT.txt holds the lines
+// (a SKIP line) the passing run must print.
 // Run after changing a template or a checker: node tests/build-fixtures.mjs && node scripts/selftest.mjs
 
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -412,6 +414,29 @@ const AUDIO_CASES = {
     replace(dir, '__mocks__/react-native-audio-api.ts', '  observeAudioInterruptions: jest.fn(),\n', '');
     return ['[audio-mock]', '__mocks__/react-native-audio-api.ts:1'];
   },
+  // Shell step 9 with S11 in the slice: its settings actions must play the toggle feedback.
+  'toggle-missing': (dir) => {
+    write(dir, 'shell-slice.json', TOGGLE_SLICE_WITH_S11);
+    rmSync(join(dir, 'packages/shell/src/screens'), { recursive: true }); // the settings toggle handler is S11's
+    return ['[ui-feedback]', 'packages/shell/src/services/audio/ui-feedback.ts', "never plays its 'toggle' feedback", 'RESULT: FAIL (1 problems)'];
+  },
+};
+
+// A partial Shell after step 7 ("screens": ["S1"]); S11 and S6 arrive at step 9.
+const TOGGLE_SLICE_STEP_7 = '{ "screens": ["S1"], "why": "Shell step 7: the boot and the startup splash; S6 and S11 come at step 9" }\n';
+const TOGGLE_SLICE_WITH_S11 = '{ "screens": ["S1", "S11"], "why": "Shell step 9: Settings is built" }\n';
+
+/** Each passing case: shape the good repo, return the lines its passing run must print. */
+const AUDIO_PASS_CASES = {
+  // Shell step 7: no toggle call site yet, and neither S11 nor S6 is in the slice; tap, win and lose are played.
+  'toggle-not-in-slice': (dir) => {
+    write(dir, 'shell-slice.json', TOGGLE_SLICE_STEP_7);
+    rmSync(join(dir, 'packages/shell/src/screens'), { recursive: true }); // the settings toggle handler is S11's
+    return [
+      "SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] S11 not in shell-slice.json (nor S6): the toggle feedback (ui.toggle) is played by S11's settings actions and S6's pause model",
+      'RESULT: PASS',
+    ];
+  },
 };
 
 const BANK_CASES = {
@@ -481,18 +506,20 @@ const BANK_CASES = {
   },
 };
 
-function buildSuite(name, buildGood, cases) {
+function buildSuite(name, buildGood, cases, passCases = {}) {
   const root = join(FIXTURES, name);
   rmSync(root, { recursive: true, force: true });
   const good = join(root, 'good');
   buildGood(good);
-  for (const [caseName, plant] of Object.entries(cases)) {
-    const dir = join(root, `bad-${caseName}`);
-    cpSync(good, dir, { recursive: true });
-    const expect = plant(dir);
-    writeFileSync(join(dir, 'EXPECT.txt'), `${expect.join('\n')}\n`);
+  for (const [kind, table] of [['bad', cases], ['pass', passCases]]) {
+    for (const [caseName, plant] of Object.entries(table)) {
+      const dir = join(root, `${kind}-${caseName}`);
+      cpSync(good, dir, { recursive: true });
+      const expect = plant(dir);
+      writeFileSync(join(dir, 'EXPECT.txt'), `${expect.join('\n')}\n`);
+    }
   }
-  return Object.keys(cases).length;
+  return Object.keys(cases).length + Object.keys(passCases).length;
 }
 
 /**
@@ -551,7 +578,7 @@ const GAME_FIRST_CASES = {
 };
 
 if (!existsSync(TEMPLATES)) throw new Error('templates/ not found next to tests/');
-const audio = buildSuite('check-audio-haptics', buildAudioGood, AUDIO_CASES);
+const audio = buildSuite('check-audio-haptics', buildAudioGood, AUDIO_CASES, AUDIO_PASS_CASES);
 const gameFirst = buildSuite('check-audio-haptics-game-first', buildGameFirstGood, GAME_FIRST_CASES);
 const banks = buildSuite('check-sound-banks', buildBanksGood, BANK_CASES);
-console.log(`built fixtures: check-audio-haptics good + ${audio} bad, check-audio-haptics-game-first good + ${gameFirst} bad, check-sound-banks good + ${banks} bad`);
+console.log(`built fixtures: check-audio-haptics good + ${audio} bad or pass, check-audio-haptics-game-first good + ${gameFirst} bad, check-sound-banks good + ${banks} bad`);

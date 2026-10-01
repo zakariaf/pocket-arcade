@@ -9,6 +9,7 @@ import { join, resolve } from 'node:path';
 
 import { createReporter, fail, lineOf, parseArgs, requireDir, requireFile, run } from './check-lib.mjs';
 import { DEFAULT_SKILLS_ROOT, SKILL_DIR, buildSteps, isSkillName, namedSkills, readIndexData, readSkills, renderAll } from './lib/index-model.mjs';
+import { basePositions, checkOrder, companionReader, hasManifests, indexTemplates } from './lib/step-closure.mjs';
 
 const SPEC = {
   name: 'check-index',
@@ -37,6 +38,13 @@ const SPEC = {
     '  generated-missing  a generated file, or the quick-table markers in SKILL.md, is missing',
     '  generated-stale    a generated part differs from a fresh render (run build-index.mjs --write)',
     '  related-unknown    the Related skills section of SKILL.md names a skill that does not exist',
+    '  step-import-closure  (orders with copies) a file a step copies imports a file that a later step copies or',
+    '                     no step copies, imports an npm package no earlier step installs, or arrives without its',
+    '                     test (its sibling <name>.test.ts(x) is copied at another step, or no test copied by then',
+    '                     reaches its runtime code, so test:coverage drops); each copied file is found by the',
+    '                     repo path on line 1 of a template in its skill\'s templates/ or examples/',
+    '  step-manifest      a copy names no template, a skill that does not exist or that the step does not load,',
+    '                     or an install lacks a companion that dependency-management\'s plan lists',
     '  command-unknown    a step or "done when" command names a <name>.mjs script that the skill in brackets',
     '                     after it (or, without brackets, any skill of that step) does not have (the Shell and',
     '                     game orders and every extra order)',
@@ -121,6 +129,32 @@ function checkCommands(root, data, skills, report) {
   }
 }
 
+/**
+ * The build-order contract (step-import-closure): plays the Shell order, and every extra order with
+ * copies on top of the Shell steps it starts from, and reports each closure gap once.
+ */
+function checkClosure(root, data, skills, report) {
+  const orders = [{ title: 'Shell', steps: data.buildOrders.shell, base: [] }];
+  for (const order of data.buildOrders.extraOrders ?? []) {
+    if (!hasManifests(order.steps)) continue;
+    orders.push({ title: order.title, steps: order.steps, base: order.base ? basePositions(data.buildOrders.shell, order.base.through) : [] });
+  }
+  if (!orders.some((order) => hasManifests(order.steps))) return 0;
+  const templates = indexTemplates(root, skills.map((skill) => skill.folder));
+  const companionsOf = companionReader(root);
+  let checked = 0;
+  for (const order of orders) {
+    if (!hasManifests(order.steps)) continue;
+    const { problems, positions } = checkOrder({ title: order.title, steps: order.steps, base: order.base, templates, companionsOf });
+    checked += [...positions.values()].filter((entry) => !entry.position.inherited).length;
+    for (const problem of problems) {
+      report.problem({ file: 'assets/index.json', rule: problem.kind === 'manifest' ? 'step-manifest' : 'step-import-closure', message: `${order.title} order, ${problem.message}`, fix: `${problem.fix} Then run build-index.mjs --write.` });
+    }
+  }
+  report.note(`step-import-closure: ${checked} copied files followed through ${orders.length} order${orders.length === 1 ? '' : 's'}`);
+  return checked;
+}
+
 function checkRelated(indexDir, skills, report) {
   const path = join(indexDir, 'SKILL.md');
   if (!existsSync(path)) return;
@@ -179,6 +213,7 @@ run(async () => {
     checkCoverage(loaded.data, skills, minTasks, report);
     checkGenerated(indexDir, loaded.data, skills, report);
     checkCommands(root, loaded.data, skills, report);
+    checkClosure(root, loaded.data, skills, report);
     report.note(`index: ${skills.length} skills, ${loaded.data.categories.length} categories, ${loaded.data.tasks.length} task rows, ${buildSteps(loaded.data).length} build steps`);
   }
   checkRelated(indexDir, skills, report);

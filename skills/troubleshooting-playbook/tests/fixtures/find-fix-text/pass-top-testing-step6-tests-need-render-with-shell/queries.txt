@@ -1,0 +1,1 @@
+error TS2307: Cannot find module '@e07/shell/testing/render-with-shell.tsx' or its corresponding type declarations.

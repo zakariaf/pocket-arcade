@@ -1,0 +1,4 @@
+packages/shell/e2e/ads-smoke/01-consent-eea.yaml:1 [ads-smoke-testid] has no id: step
+packages/shell/e2e/ads-smoke/01-consent-eea.yaml:8 [ads-smoke-launch]
+[ads-smoke-geo] the first setup link (lang=en&firstRun=0&screen=home) sets no consent geography
+packages/shell/e2e/ads-smoke/01-consent-eea.yaml:3 [run-command-device]

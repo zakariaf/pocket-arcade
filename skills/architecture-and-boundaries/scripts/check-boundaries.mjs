@@ -44,7 +44,9 @@ const SPEC = {
     '                     that is not the literal process.env.EXPO_PUBLIC_APP_VARIANT === \'store\' comparison',
     '  parent-import      an import from "../"',
     '  unresolved-import  a workspace import that points to no file',
-    '  import-cycle       files that import each other in a loop (type-only imports are ignored)',
+    '  import-cycle       files that import each other in a loop (type-only imports are ignored); a loop through',
+    '                     the test-only gate (app/test-only.ts -> test-only-entry.ts) means code the entry reaches',
+    '                     imports the gate again, through a helper such as use-parity-opener.ts',
     '',
     'Example: node check-boundaries.mjs .            (from the app repo root)',
   ].join('\n'),
@@ -143,6 +145,23 @@ function importProblems(graph, rel, entry) {
   return out;
 }
 
+const GATE_FILE = 'packages/shell/src/app/test-only.ts';
+const ENTRY_FILE = 'packages/shell/src/app/test-only-entry.ts';
+// Code the test-only entry reaches (the debug screen and its model, the parity harness, the perf
+// tools) is itself test-only and is never in a store bundle, so it reads a test-only member from
+// that member's own file; reading it through the gate (or a helper that imports the gate) closes a
+// loop the gate's require() starts.
+const GATE_CYCLE_FIX =
+  'Code that test-only-entry.ts reaches is test-only itself: import the member it needs straight from its own file ' +
+  '(parityFrameState from app/parity/parity-session.ts, then open the state once on mount), never app/test-only.ts ' +
+  'or a helper that imports it (use-parity-opener.ts, use-reduce-motion.ts; use-reduce-motion-setting.ts exists for this). ' +
+  'Screens outside the entry keep using the gate.';
+
+/** True when the loop runs through the gate's require() of the test-only entry. */
+function passesTestOnlyGate(loop) {
+  return loop.some((rel, index) => rel === GATE_FILE && loop[index + 1] === ENTRY_FILE);
+}
+
 function checkTestOnly(graph, report) {
   for (const node of graph.nodes.values()) {
     const zone = zoneOf(node.rel);
@@ -172,7 +191,12 @@ run(async () => {
   }
   checkTestOnly(graph, report);
   for (const cycle of findCycles(graph)) {
-    report.problem({ file: cycle[0], line: 1, rule: 'import-cycle', message: `import cycle: ${[...cycle, cycle[0]].join(' -> ')}`, fix: 'Break the loop: move the shared piece (usually a type) down into its own file that both import.' });
+    const loop = [...cycle, cycle[0]];
+    if (passesTestOnlyGate(loop)) {
+      report.problem({ file: cycle[0], line: 1, rule: 'import-cycle', message: `import cycle through the test-only gate: ${loop.join(' -> ')}`, fix: GATE_CYCLE_FIX });
+      continue;
+    }
+    report.problem({ file: cycle[0], line: 1, rule: 'import-cycle', message: `import cycle: ${loop.join(' -> ')}`, fix: 'Break the loop: move the shared piece (usually a type) down into its own file that both import.' });
   }
   return report.finish({ checked: graph.files.length, unit: 'TypeScript files' });
 });

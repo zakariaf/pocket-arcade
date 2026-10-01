@@ -78,11 +78,19 @@ export function shownOnOf(key: string, gameIds: readonly string[]): string {
   return SHOWN_ON[area] ?? 'Shell text';
 }
 
+/**
+ * A text the owner reads. The S15 debug menu (debug.*) stays English in every language (lead
+ * decision L13), so it is never on a sheet, in a count or in the review state.
+ */
+export function isReviewable(key: string): boolean {
+  return !key.startsWith('debug.');
+}
+
 /** Every text of one language that differs from its reviewed hash. debug.* stays English (S15). */
 export function pendingRows({ catalogs, language, state, gameIds }: ReviewInput): ReviewRow[] {
   const catalog = catalogs[language];
   return Object.keys(catalog)
-    .filter((key) => !key.startsWith('debug.'))
+    .filter(isReviewable)
     .filter((key) => state[language][key]?.sha256 !== sha256Of(catalog[key] ?? ''))
     .sort()
     .map((key) => ({
@@ -114,11 +122,10 @@ export function markReviewed(
     readonly keys: readonly string[];
   },
 ): ReviewState {
-  const keys =
-    mark.keys.length > 0
-      ? mark.keys
-      : Object.keys(catalog).filter((key) => !key.startsWith('debug.'));
+  const keys = mark.keys.length > 0 ? mark.keys : Object.keys(catalog).filter(isReviewable);
   const entries = keys.map((key): [string, ReviewedText] => {
+    if (!isReviewable(key))
+      throw new Error(`review-sheet: ${key} is a debug menu text: it stays English (L13)`);
     const text = catalog[key];
     if (text === undefined)
       throw new Error(`review-sheet: ${key} is not in the ${mark.language} catalogs`);
@@ -168,8 +175,9 @@ function writeSheets(root: string): number {
     const file = `${REPORT_DIR}/review-${language}.csv`;
     writeFileSync(join(root, file), csvOf(rows));
     pending += rows.length;
+    const reviewable = Object.keys(catalogs[language]).filter(isReviewable).length;
     console.log(
-      `review-sheet: ${language}: ${String(rows.length)} of ${String(Object.keys(catalogs[language]).length)} texts wait for the owner's review -> ${file}`,
+      `review-sheet: ${language}: ${String(rows.length)} of ${String(reviewable)} texts wait for the owner's review -> ${file}`,
     );
   }
   console.log(

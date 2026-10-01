@@ -13,6 +13,8 @@ Where flows live, how they are named and tagged, how they select elements and se
 - A game's flows and board taps
 - The level-1 flow: one move, a kill, a win, then the stars in Levels
 - A game's mode flows: daily, continue, endless
+- The continue offer and the endless result (lead decision L11)
+- The ads smoke flows (admob-ads, ADS_MODE=test)
 - Taps and stars from the game: print-level-line
 - Ending smoke flows: no network
 - Waiting without sleeping
@@ -27,6 +29,7 @@ packages/shell/e2e/
   subflows/                          shared steps, never run on their own
   screenshots/matrix.yaml            run only by npm run screenshots:ios
   storekit/<nn>-<name>.yaml          premium-purchase Tier 2 flows, run only by its StoreKit harness
+  ads-smoke/<nn>-<name>.yaml         admob-ads' ads smoke test, run by hand on an ADS_MODE=test build
 apps/<game-id>/e2e/
   flows/<area>/<nn>-<name>.yaml      the game's own flows (nn 10 and up)
   testids.json                       the game's own extra testIDs ({ "testIDs": { "<id>": "why" } } or a list),
@@ -64,13 +67,20 @@ tags: [smoke, shell, offline]
 - Text-only selectors are allowed only for OS-owned UI, with a comment above that says so:
 
   ```yaml
-  # system-ui: iOS may ask "Open in <app>?" for the link; 'Open' is Apple's button, not app text.
+  # system-ui: iOS asks "Open in “<app name>”?" for the link; the title and 'Open' are Apple's, not app text.
   - runFlow:
       when:
-        visible: 'Open'
+        visible: 'Open in .*\?'
       commands:
-        - tapOn: 'Open'
+        - waitForAnimationToEnd
+        # system-ui: Apple's Open button, the nearest one below the alert title (never the banner's).
+        - tapOn:
+            text: 'Open'
+            below: 'Open in .*\?'
+            optional: true
   ```
+
+- **Guard on Apple's alert, never on a bare `'Open'`** (`check-flows` rule `open-alert-guard`). Maestro's text match ignores case, so `visible: 'Open'` also matches the AdMob test banner's "OPEN" button: in an `ADS_MODE=test` build the guard fired on Home with no alert up, and the tap then failed with "Element not found: Text matching regex: Open" once the link had moved the app to Game (round 4, the ads smoke test). The E2E suite never saw it because it runs with ads off. Match the alert title `'Open in .*\?'` and tap `Open` below it with `optional: true`.
 
 ## Setting up state: the debug-setup sub-flow
 
@@ -86,30 +96,31 @@ State is set only through the test build's debug deep link, never by tapping thr
       WAIT_FOR: 'home.screen'
 ```
 
-`debug-setup.yaml` first waits for a screen root (any `<scope>.screen` but the startup splash, or the roots of the Pause dialog and the S14 dialog cards, which hide the screen under them from Maestro), then opens `${APP_SCHEME}://debug/setup?${QUERY}`, accepts the iOS "Open" prompt when it appears, and waits up to 15 s for the id in `WAIT_FOR`. The parameters and their values are in `debug-deep-link.md`; `check-flows.mjs` rejects an unknown parameter or value. It also follows each `runFlow` into the sub-flows it reaches and checks the ids and queries they build from the values passed in (`${SCREEN}.screen` with `SCREEN: game-start` would be `game-start.screen`, an id no screen renders).
+`debug-setup.yaml` first waits for a screen root (any `<scope>.screen` but the startup splash, or the roots of the Pause dialog and the S14 dialog cards, which hide the screen under them from Maestro), then opens `${APP_SCHEME}://debug/setup?${QUERY}`, accepts Apple's "Open in “<app name>”?" alert when it appears (guarded on the alert title, so an ad banner's "OPEN" never triggers it), and waits up to 15 s for the id in `WAIT_FOR`. The parameters and their values are in `debug-deep-link.md`; `check-flows.mjs` rejects an unknown parameter or value. It also follows each `runFlow` into the sub-flows it reaches and checks the ids and queries they build from the values passed in (`${SCREEN}.screen` with `SCREEN: game-start` would be `game-start.screen`, an id no screen renders).
 
 One link per setup is enough, also right after `launchApp: { clearState: true }`:
 
 - **The first screen first.** Right after the launch the wait sees the app's first screen (`language-choice.screen`, `tutorial.screen`, `home.screen`, or `not-built.screen` in a partial Shell; `pause.dialog` when a killed run reopens), so the app's JavaScript is running. The app also listens for links from its first moment (`createDebugParts`) and keeps a link that arrives before its navigator is ready until it is; a link sent while nothing listened would be lost (round 2: every query failed after `clearState`).
 - **Save changes, then the screen.** The app writes the link's save changes first. When `firstRun=0` ends a first run (or `firstRun=1` starts one) the navigator changes group, and the app opens `screen=` on the next navigation state, once the new group is mounted: `firstRun=0&level=1&screen=game` opens Game in one link.
-- **`action=` in a link of its own**, once its run is on screen: `action=win-level` / `lose-level` ends the active run, whatever its kind (a level, today's daily or an endless run), through the game host (`GameHost.debugControls().playTo`), which swaps the run's state for the game's example win or loss and runs the one run-end path (stars, the daily result and streak, the endless best, statistics and ad history saved before Result shows). A loss that still has its continue shows the lose screen with the offer and is recorded only when the continue is used or declined. Without a run on screen the link is an error (logged; S15 opens). `firstRun` and `action` in one link, or `action` after a direction reload, are refused: send two links.
+- **`action=` in a link of its own**, once its run is on screen: `action=win-level` / `lose-level` ends the active run, whatever its kind (a level, today's daily or an endless run), through the game host (`GameHost.debugControls().playTo`), which swaps the run's state for the game's example win or loss and runs the one run-end path (stars, the daily result and streak, the endless best, statistics and ad history saved before Result shows). A loss the player can still rescue (Premium, or a rewarded ad that is ready or loading) shows the lose screen with the offer and is recorded only when the continue is used or declined; a loss nothing can rescue (the offer is hidden: ads off, offline, no ad, no Premium) is recorded at once and its result shows (lead decision L11). Without a run on screen the link is an error (logged; S15 opens). `firstRun` and `action` in one link, or `action` after a direction reload, are refused: send two links.
 - **`boardLayout=1` before reading the board probes.** `game.board-layout` and `game.moves-label` exist only while it is on; put it in the setup `QUERY`.
 
 ## The shared sub-flows
 
 | Sub-flow | Does | Env |
 |---|---|---|
-| `debug-setup.yaml` | waits for a screen or dialog root, applies a debug query (accepting iOS's "Open in <app>?" prompt), waits for an id (a shared file, synced from the library; do not edit here). Tools open debug links through it too, never with `simctl openurl`, whose prompt nobody accepts | `QUERY`, `WAIT_FOR` |
+| `debug-setup.yaml` | waits for a screen or dialog root, applies a debug query (accepting Apple's "Open in “<app name>”?" alert, guarded on its title), waits for an id (a shared file, synced from the library; do not edit here). Tools open debug links through it too, never with `simctl openurl`, whose prompt nobody accepts | `QUERY`, `WAIT_FOR` |
 | `assert-no-network.yaml` | opens the debug screen, scrolls down to `debug.network-attempts` (drawn under S15's fourteen rows, below the fold on a phone) and asserts it shows `0` | none |
 | `shoot-screen.yaml` | opens one screen (`screen=${SCREEN}`), waits for the id in `ROOT`, waits for animations to end, takes a screenshot named `${SCREEN}` | `SCREEN`, `ROOT` (`home.screen`; the game states `game-start` and `game-middle` show `game.screen`, `result-win` and `result-lose` show `result.screen`) |
 
 ## The Shell's flows
 
-Templates in `templates/packages/shell/e2e/flows/` (all pass `maestro check-syntax`). Copy them at Shell step 10, once every screen they reach is built: in a partial Shell (`shell-slice.json`) a flow that reaches a screen outside the slice cannot run, and `check-flows` prints `SKIP <flow> [slice] <S-id> not in shell-slice.json` for it instead of checking it (flow 01 reaches S2 and the tutorial, 02 reaches S9 and S10, 03 reaches S8 and S11a).
+Templates in `templates/packages/shell/e2e/flows/` (all pass `maestro check-syntax`). Copy them at Shell step 10, once every screen they reach is built: in a partial Shell (`shell-slice.json`) a flow that reaches a screen outside the slice cannot run, and `check-flows` prints `SKIP <flow> [slice] <S-id> not in shell-slice.json` for it instead of checking it (flow 01 reaches S2 and the tutorial, 02 reaches S9 and S10, 03 reaches S8 and S11a, 04 reaches S15).
 
 - `smoke/01-first-launch.yaml`: S1 → S2 → the tutorial. Clears state and keychain, picks English, continues, waits for `tutorial.screen`, asserts the skip button is not offered on the first tutorial, screenshots, asserts no network.
 - `journeys/02-core-journey-offline.yaml` (spec 15 item 2, offline via `offline=1`): Home without a banner ad → Play → win through `action=win-level` → Next → `killApp` and relaunch → the Pause overlay offers Resume (the save survived process death, spec 15 item 6) → Home → Daily → Stats → back, then no network. Home's daily card has two accessible parts (lead decision L7): the card body `home.daily-card` opens S9 Daily challenge (also once today is done), and the Play key `home.daily-card.play-button`, a separate button above it, starts today's run. The journey taps `home.daily-card` and waits for `daily.screen`; the title, date, streak and icon are crop-only parts covered by the card (select the card, never them).
 - `rtl/03-language-switch.yaml` (S11a): Settings → Language → Persian → "Restart to apply" → Home again after the reload → the seeded 3-star level 1 still shows 3 stars, screenshot in Persian.
+- `smoke/04-debug-performance.yaml` (S15, test builds): `screen=debug`, scroll to and tap `debug.perf-benchmark-row` ("Run save benchmark": the largest realistic save written 300 times into a scratch database, never the player's `save.db`), then wait until `debug.perf-summary` shows `save p95 <n> ms`, then no network. It is the last flow of the runner's flows step (the Shell's flows sort after the game's, `smoke/04` last), so the runner reads the perf log right after it and keeps the entry in `reports/e2e/<game-id>/save-benchmark.json`; `check-e2e-report` rule `save-benchmark` needs 300 writes and a p95 under `quality-gates.json` `perf.saveWriteP95MsMax` (5 ms). It is a smoke flow, so it never quarantines.
 
 ## A game's flows and board taps
 
@@ -156,11 +167,30 @@ Since the Levels steps, the flow reaches S8: in a partial Shell without S8 in `s
 |---|---|---|
 | `modes.daily` | `11-daily.yaml` | `date=2026-09-26&firstRun=0&screen=daily`, tap `daily.play-button` (S9's own key), `action=win-level`, the daily result (`result.daily-title`, `result.streak-sticker`, `result.come-back-note`), then a kill and `date=2026-09-27&screen=daily`: `daily.current-streak-card.value` reads 1 ("1 day": `text: '[^0-9]*1[^0-9]*'`) and today is not done (`daily.play-button` shown, `daily.replay-button` not) |
 | `isContinueAllowed` | `12-continue-premium.yaml` | `premium=1&level=1&firstRun=0&screen=game`, `action=lose-level`, the Premium owner's `result.continue-premium-button` (no `result.continue-ad-button`), then `game.screen` shows level 1 playing again |
-| `modes.endless` | `13-endless.yaml` | `seed=42&premium=1&firstRun=0&screen=home`, tap `home.endless-card`, `action=lose-level`; the first loss offers the one continue, which the Premium key takes, and a second `action=lose-level` ends the run: `result.endless-title` and `result.score-card.new-best`, then `result.home-button` and Home's `home.endless-card` label carries a best above 0 (`text: '.*[1-9].*'`); a game without a continue deletes the continue steps and `premium=1` |
+| `modes.endless` | `13-endless.yaml` | `seed=42&premium=0&ads=off&firstRun=0&screen=home`, tap `home.endless-card`, `action=lose-level`; at once `result.endless-title` and `result.score-card.new-best`, and no `result.continue-offer` (nor either continue key); then `result.home-button` and Home's `home.endless-card` label carries a best above 0 (`text: '.*[1-9].*'`). `check-flows` fails an endless flow that sets `premium=1` or never asserts the offer is absent (it would pass with a stranded loss) |
 
-E2E builds run with ads off, so the rewarded continue (`result.continue-ad-button`, "Watch an ad to continue") never shows in these flows: admob-ads' simulator smoke test in an `ADS_MODE=test` build covers it (lose level 1, watch the test ad, the run resumes after the reward). For the same reason no E2E flow ever meets Google's consent form or Apple's tracking prompt.
+E2E builds run with ads off, so the rewarded continue (`result.continue-ad-button`, "Watch an ad to continue") never shows in these flows: admob-ads' ads smoke flows in an `ADS_MODE=test` build cover it (lose level 1, watch the test ad, the run resumes after the reward and the board animates). For the same reason no E2E flow ever meets Google's consent form or Apple's tracking prompt.
 
-Verified on the simulator (Line Siege, iOS 26.5): all three flows passed. An endless loss that still has its continue shows the lose screen ("Not this time", Try again, Levels) with the offer, not the endless result: the host records the run only once the continue is used or declined, which is why the endless flow takes the Premium continue first.
+Verified on the simulator (Line Siege, iOS 26.5, 2026-10-01): the round-4 templates strand this run. The new `13-endless.yaml` failed there with "Assertion is false: id: result.endless-title is visible": the screen showed the level lose layout ("Not this time", "The monsters broke through", Try again, Levels) with no offer, no endless result and no New best, because the host waited for a continue that an ads-off player without Premium can never take.
+
+## The continue offer and the endless result (lead decision L11)
+
+Never strand a finished run. The Result screen's continue offer (`PerkOffer`, admob-ads) is one of four states, and `hidden` always means unavailable:
+
+| Offer | When | The Result screen |
+|---|---|---|
+| `free` | Premium, the run's one continue unused | the Premium continue key `result.continue-premium-button` |
+| `watch-ad` | ads may serve and a rewarded ad is ready | `result.continue-ad-button` ("Watch an ad to continue") |
+| `loading` | ads may serve and a rewarded ad is still loading | the same key in its busy state (label kept, three hopping blocks, not pressable, `accessibilityState.busy`) |
+| `hidden` | ads off, offline, no rewarded ad, no Premium, or the continue was used | no offer: the run end is recorded at once (statistics, streak, endless best, ad history) and the result shows: the endless result with its score and New best, or the lose result |
+
+The same happens when a shown offer becomes hidden (offline, a load error) and when a pending lost run is reopened from Home. In flows: `12-continue-premium.yaml` keeps the Premium continue (`premium=1`), `13-endless.yaml` proves the ads-off player without Premium sees the endless result at once. The rewarded and loading states need ads on: admob-ads' ads smoke flows.
+
+## The ads smoke flows (admob-ads, ADS_MODE=test)
+
+`packages/shell/e2e/ads-smoke/<nn>-<name>.yaml` holds admob-ads' smoke test of the ads-on build: S3, Google's form and Apple's prompt in order (`geo=eea`), Apple's prompt alone (`geo=other`), the banner, the rewarded continue with its board assertion (`game.board-frame`, test builds with `boardLayout=1`). They run by hand on an `ADS_MODE=test` build, never through `e2e:ios` (whose `requireAdsOffTestBuild` refuses ads-on builds, and whose flow list never includes `ads-smoke/`; `check-e2e-setup` rule `e2e-ads-off`). Start each from a fresh install with `xcrun simctl launch <udid> <bundle id>`: Maestro's `launchApp` grants the App Tracking Transparency answer, so Apple's prompt would never show. Reset the tracking answer too (`xcrun simctl privacy <udid> reset all <bundle id>`): it survives `simctl uninstall`, and without the reset Apple's prompt did not show after a reinstall (verified 2026-10-01: the `geo=eea` run after a `geo=other` run went from Google's form straight to Home). What Google shows comes from the AdMob account: Google's sample app id (every `ADS_MODE=test` build) has an IDFA explainer message, so outside the EEA (`geo=other`, `IABTCF_gdprApplies` 0) S3 and Google's "Our app wants to stay free for you" message (one `Continue` button) came before Apple's prompt, and in the EEA (`geo=eea`, `IABTCF_gdprApplies` 1) S3 came before Google's consent form (`Consent`) (verified 2026-10-01 on the Line Siege pilot). The owner's account publishes no IDFA explainer (ios-release-testflight's owner step G5), so a live build outside the EEA shows Apple's prompt alone. Run each with `tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> <flow>` on this session's own `e07-*` simulator.
+
+`check-flows` checks them like every flow (header, names, ids, debug queries, `open-alert-guard`, `--syntax`) plus: no `launchApp` (`ads-smoke-launch`), the first setup link sets `geo=eea` or `geo=other` (`ads-smoke-geo`: otherwise Google's form depends on the Mac's network location), at least one `id:` step (`ads-smoke-testid`), the `ads-smoke` tag, and a run command written in a comment names `--device` and `--driver-host-port` before `test` (`run-command-device`). The no-network rule does not apply: ads open sockets on purpose.
 
 ## Taps and stars from the game: print-level-line
 

@@ -3,7 +3,8 @@
 // reports/e2e/<game-id>/junit.xml passed, every smoke flow of the Shell and the game ran, the socket
 // sampler's network.txt exists and is empty, the simulator cold start and memory are within budget
 // (perf.json), the app asked for the win sound and the success haptic during the game's smoke flows
-// (feedback.json, read from the perf log), the a11y flows passed at 200 % text in en and fa on the
+// (feedback.json, read from the perf log), S15's save benchmark ran on the simulator within budget
+// (save-benchmark.json, read from the perf log after the flows), the a11y flows passed at 200 % text in en and fa on the
 // phone and the iPad, and (with
 // --screenshots) no screenshot differs from its baseline and every device/language/theme set is
 // complete. Prints the evidence lines for the report.
@@ -41,6 +42,10 @@ const SPEC = {
     '                       smoke flows asked for no win sound (a sound id "win" or ending in ".win", the Shell\'s ui.win)',
     '                       or no success haptic: the win feedback is not wired to the ports (test builds record each',
     '                       cue in the perf log; how they sound and feel is the owner\'s device check)',
+    '  save-benchmark       save-benchmark.json (the perf log read right after the flows step) holds no save-benchmark',
+    '                       entry (the Shell\'s smoke flow 04-debug-performance taps S15\'s Run save benchmark), its run',
+    '                       made other than 300 writes, or its p95 is not under quality-gates.json perf.saveWriteP95MsMax',
+    '                       (5 ms, performance-budgets)',
     '  large-text-missing   a11y flows exist but large-text/<phone|tablet>-<en|fa>/junit.xml is missing',
     '  large-text-failed    an a11y flow failed at 200 % text',
     '  screenshot-changed   (--screenshots) a screenshot differs from its baseline, changed size or has no baseline',
@@ -141,6 +146,37 @@ function checkPerf(root, out, game, report) {
   else if (typeof memory.physFootprintMb === 'number') report.note(`evidence: Memory (simulator): phys_footprint ${memory.physFootprintMb} MB after the smoke flow and a relaunch (budget ${memory.limitMb} MB)`);
 }
 
+const BENCHMARK_WRITES = 300;
+
+/** quality-gates.json perf.saveWriteP95MsMax (performance-budgets), else 5 ms. */
+function saveBudgetMs(root) {
+  const gates = existsSync(join(root, 'quality-gates.json')) ? readJson(join(root, 'quality-gates.json')) : null;
+  const budget = gates?.perf?.saveWriteP95MsMax;
+  return typeof budget === 'number' ? budget : 5;
+}
+
+/** S15's save benchmark on the simulator: the entry the Shell's 04-debug-performance flow left. */
+function checkSaveBenchmark(root, out, game, report) {
+  if (!existsSync(join(out, 'perf.json'))) return; // perf-missing already says the evidence steps did not run
+  const file = join(out, 'save-benchmark.json');
+  const rel = file.slice(root.length + 1);
+  const evidence = existsSync(file) ? readJson(file) : null;
+  const flowFix = "Copy this skill's templates/packages/shell/e2e/flows/smoke/04-debug-performance.yaml (it taps debug.perf-benchmark-row, the last flow of the flows step) and run the evidence run without a tag filter: npm run e2e:ios -- --app " + game + '.';
+  if (evidence === null || !Object.hasOwn(evidence, 'entry')) {
+    report.problem({ file: rel, line: 0, rule: 'save-benchmark', message: existsSync(file) ? 'is not { flows, entry } JSON' : 'is missing, so the runner never read the perf log after the flows step', fix: "Restore run-e2e-ios.ts from this skill's template (recordSaveBenchmark right after the flows), then rerun." });
+    return;
+  }
+  if (evidence.entry === null) {
+    report.problem({ file: rel, line: 0, rule: 'save-benchmark', message: "the flows ran no save benchmark: the perf log holds no save-benchmark entry after the flows step (S15's Run save benchmark never ran on the simulator)", fix: flowFix });
+    return;
+  }
+  const data = evidence.entry.data ?? {};
+  const budget = saveBudgetMs(root);
+  if (data.writes !== BENCHMARK_WRITES) report.problem({ file: rel, line: 0, rule: 'save-benchmark', message: `the save benchmark made ${typeof data.writes === 'number' ? data.writes : 'an unrecorded number of'} writes, not ${BENCHMARK_WRITES}`, fix: "performance-budgets' saveBenchmarkEntry records data.writes = BENCHMARK_WRITES (300); rebuild the test variant and rerun." });
+  if (typeof data.p95 !== 'number' || !(data.p95 < budget)) report.problem({ file: rel, line: 0, rule: 'save-benchmark', message: `save write p95 ${typeof data.p95 === 'number' ? `${data.p95} ms` : 'is missing and'} is not under the ${budget} ms budget`, fix: 'Find what made the save write slow (the document size, a write per frame, a missing transaction or WAL; the save-persistence-and-migrations and performance-budgets skills), then rerun.' });
+  if (data.writes === BENCHMARK_WRITES && typeof data.p95 === 'number' && data.p95 < budget) report.note(`evidence: Save benchmark (simulator, S15): ${BENCHMARK_WRITES} writes, p95 ${data.p95} ms (budget under ${budget} ms), p50 ${data.p50} ms, max ${data.max} ms (reports/e2e/${game}/save-benchmark.json)`);
+}
+
 /** The win feedback: the Shell's win sound (ui.win) and the success haptic, asked for on the simulator. */
 function checkFeedback(root, out, game, report) {
   const perfFile = join(out, 'perf.json');
@@ -228,6 +264,7 @@ run(async () => {
   checkNetwork(root, out, options.app, report);
   checkPerf(root, out, options.app, report);
   checkFeedback(root, out, options.app, report);
+  checkSaveBenchmark(root, out, options.app, report);
   checked += checkLargeText(root, out, options.app, report);
   if (options.screenshots) checked += checkScreenshots(root, options.reports, report);
   return report.finish({ checked: Math.max(checked, 1), unit: 'flows and screenshots' });

@@ -77,7 +77,7 @@ describe('createDebugPerfActions (S15 Performance, test builds)', () => {
     const { actions, entries, scratch, opened } = setup();
     const result = actions.runSaveBenchmark();
     expect(opened).toStrictEqual([BENCHMARK_DB_FILE]);
-    expect(result).toStrictEqual({ p50: 0.5, p95: 0.5, max: 0.5 });
+    expect(result).toStrictEqual({ p50: 0.5, p95: 0.5, max: 0.5, writes: BENCHMARK_WRITES });
     expect(scratch.store.slots.get('current')?.payload.length).toBeGreaterThan(10_000);
     expect(scratch.closed).toBe(true);
     expect(entries).toStrictEqual([
@@ -85,7 +85,7 @@ describe('createDebugPerfActions (S15 Performance, test builds)', () => {
         kind: 'save-benchmark',
         label: 'save-write',
         atEpochMs: 1_790_000_000_000,
-        data: { p50: 0.5, p95: 0.5, max: 0.5 },
+        data: { p50: 0.5, p95: 0.5, max: 0.5, writes: BENCHMARK_WRITES },
       },
     ]);
     expect(BENCHMARK_WRITES).toBe(300);
@@ -100,6 +100,7 @@ describe('createDebugPerfActions (S15 Performance, test builds)', () => {
     await actions.share();
     expect(device.share).toHaveBeenCalledWith(expect.anything(), HEADER);
     expect(actions.summary()).toStrictEqual({
+      'board-clock': 0,
       frames: 0,
       'cold-start': 1,
       'save-benchmark': 0,

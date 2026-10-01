@@ -1,0 +1,1 @@
+FAIL .parity/lineSiege/s15-debug-menu/light-fa/app.png [bounds] s15-debug-menu light-fa: debug.top-bar.badge: geometry off: dx -0.9 dy -12.3 dw +0.7 dh -0.4 pt

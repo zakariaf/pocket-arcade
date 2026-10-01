@@ -70,6 +70,7 @@ function startRun(adapter: AdapterModule = { createSqliteKvDebugStoreAdapter }):
     connectivity: createSimulatedConnectivity(createFakeConnectivity(true)),
     clock,
     store: adapter.createSqliteKvDebugStoreAdapter(),
+    resetConsent: null,
     perfLog: { append: jest.fn(), entries: () => [] },
     perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),

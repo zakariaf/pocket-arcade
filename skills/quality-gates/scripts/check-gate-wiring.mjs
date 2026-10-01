@@ -9,7 +9,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createReporter, fail, parseArgs, readShellSlice, requireDir, run } from './check-lib.mjs';
+import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, parseArgs, readShellSlice, requireDir, run } from './check-lib.mjs';
 import { findWeaker } from './lib/not-weaker.mjs';
 
 const SPEC = {
@@ -17,14 +17,19 @@ const SPEC = {
   summary: 'Checks that every quality gate is present, wired into the hooks, and no weaker than the baseline in this skill\'s templates.',
   usage: '[options] [repo-root]',
   options: {
-    pending: { type: 'string', multiple: true, value: 'path', help: 'A gate script another skill has not built yet (reported as a note, not a failure)' },
+    pending: { type: 'string', multiple: true, value: 'path', help: 'A script target another skill has not built yet (a note instead of its not-yet-due SKIP line; still accepted, no longer needed)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line before the RESULT line' },
   },
   positionals: { min: 0, max: 1 },
   details: [
     'Rules:',
     '  gate-file-missing       a gate file or a tooling file this skill ships is missing',
-    '  script-target-missing   a gate script (verify, hooks) runs a file that does not exist',
+    '  script-target           a canonical npm script runs a file that does not exist. A target a later Shell',
+    '                          build step creates prints a not-yet-due SKIP instead (dueSkipReason): i18n:verify',
+    '                          (step 6), audit:network, audit:privacy and build:ios:sim (step 8), e2e:ios and',
+    '                          screenshots:ios (step 10, SHELL_DUE_TARGETS.e2e), release:ios (step 11,',
+    '                          SHELL_DUE_TARGETS.release); every other target (verify, audit:licenses, new-game)',
+    '                          exists from Shell step 1 and is a problem when missing',
     '  npm-script              a canonical npm script is missing or differs from the baseline',
     '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry',
     '  claude-settings         .claude/settings.json lost a deny/ask rule, a hook, or allows a bypass',
@@ -41,10 +46,10 @@ const SPEC = {
     '  knip-ignores            knip.json adds an ignoreBinaries, ignoreDependencies or other ignore entry the',
     '                          baseline does not have (each baseline entry has a documented reason)',
     '',
-    'The repo root is the optional positional argument (default "."). A fresh skeleton passes only with',
-    'the two gate scripts later skills build named as pending:',
-    '  node check-gate-wiring.mjs . --pending packages/tooling/src/i18n/verify-catalogs.ts \\',
-    '    --pending packages/tooling/src/audit/audit-network.ts',
+    'The repo root is the optional positional argument (default "."). A fresh skeleton (Shell step 1) passes',
+    'with seven script-target SKIP lines, one per target a later step builds; each disappears at its step:',
+    '  node check-gate-wiring.mjs .',
+    '--pending <path> is still accepted: it turns that target\'s SKIP line into a note.',
     '',
     'The baseline quality-gates.json names the pilot app __GAME_ID__; the repo\'s own gate-probe app stands in.',
     'The baseline is this skill\'s templates/ (package-scripts.json, quality-gates.json, claude-settings.json, lefthook.yml).',
@@ -72,11 +77,21 @@ const SHIPPED = [
   'packages/tooling/src/audit/license-policy.ts',
 ];
 const GATE_FILES = ['package.json', 'lefthook.yml', 'quality-gates.json', '.claude/settings.json', '.npmrc', 'eslint.config.mjs', 'knip.json', '.prettierrc.json', 'jest.config.js', 'tsconfig.base.json'];
-// Gate scripts built by other skills: the path and who builds it.
-const OTHER_TARGETS = {
-  'packages/tooling/src/i18n/verify-catalogs.ts': 'the i18n-strings-and-catalogs skill',
-  'packages/tooling/src/audit/audit-network.ts': 'the privacy-and-network-audit skill',
-};
+/**
+ * Script targets a later Shell build step creates, with that step and the skill that builds it: the
+ * script-target rule SKIPs them through dueSkipReason while they are missing. Every other target of a
+ * canonical script is written at Shell step 1 and must exist.
+ */
+const DUE_SCRIPT_TARGETS = [
+  { target: { file: 'packages/tooling/src/i18n/verify-catalogs.ts', step: 6 }, owner: 'i18n-strings-and-catalogs' },
+  { target: { file: 'packages/tooling/src/audit/audit-network.ts', step: 8 }, owner: 'privacy-and-network-audit' },
+  { target: { file: 'packages/tooling/src/audit/audit-privacy.ts', step: 8 }, owner: 'privacy-and-network-audit' },
+  { target: { file: 'packages/tooling/src/build/build-ios-sim.ts', step: 8 }, owner: 'ios-simulator-build' },
+  { target: SHELL_DUE_TARGETS.e2e, owner: 'e2e-maestro' },
+  { target: { file: 'packages/tooling/src/e2e/capture-screenshots-ios.ts', step: SHELL_DUE_TARGETS.e2e.step }, owner: 'e2e-maestro' },
+  { target: SHELL_DUE_TARGETS.release, owner: 'ios-release-testflight' },
+];
+const NODE_TARGET = /^node\s+(\S+\.(?:ts|mjs|js))(?:\s|$)/;
 const LINTER_OPTIONS = [/noInlineConfig:\s*true/, /reportUnusedDisableDirectives:\s*'error'/, /reportUnusedInlineConfigs:\s*'error'/];
 
 const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
@@ -99,6 +114,31 @@ function checkScripts(root, report) {
     if (actual === undefined) report.problem({ file: 'package.json', line: 1, rule: 'npm-script', message: `script "${name}" is missing`, fix: `Add "${name}": ${JSON.stringify(command)}.` });
     else if (actual !== command) report.problem({ file: 'package.json', line: 1, rule: 'npm-script', message: `script "${name}" is ${JSON.stringify(actual)}`, fix: `Restore it to ${JSON.stringify(command)} (the guardrail compares it byte for byte).` });
   }
+}
+
+/**
+ * script-target: every canonical script that runs `node <file>` names a file that exists. A target a
+ * later Shell build step creates prints a not-yet-due SKIP while it is missing (or a note with
+ * --pending); any other missing target is a problem, because the bootstrap writes it at step 1.
+ */
+function checkScriptTargets(root, pending, report) {
+  const baseline = readJson(join(TEMPLATES, 'package-scripts.json'));
+  let checked = 0;
+  for (const [name, command] of Object.entries(baseline)) {
+    const rel = NODE_TARGET.exec(command)?.[1];
+    if (rel === undefined) continue;
+    checked += 1;
+    if (existsSync(join(root, rel))) continue;
+    const due = DUE_SCRIPT_TARGETS.find((item) => item.target.file === rel);
+    if (due && pending.has(rel)) {
+      report.note(`note: ${rel} is pending (${due.owner} builds it at Shell step ${due.target.step}); npm run ${name} fails until it exists`);
+      continue;
+    }
+    const reason = due ? dueSkipReason(root, due.target) : null;
+    if (reason) report.skip({ file: 'package.json', rule: 'script-target', message: `npm run ${name}: ${reason} (${due.owner} copies it)` });
+    else report.problem({ file: 'package.json', line: 1, rule: 'script-target', message: `npm run ${name} runs ${rel}, which does not exist`, fix: `Copy ${rel} from the skill that ships it (the bootstrap writes it at Shell step 1); a script must never point at a missing file.` });
+  }
+  return checked;
 }
 
 // The template names the pilot app __GAME_ID__ (the eslint probe apps/__GAME_ID__/src/rules/gate-probe.ts).
@@ -259,13 +299,10 @@ run(async () => {
     if (existsSync(join(root, rel))) present.add(rel);
     else report.problem({ file: rel, line: 0, rule: 'gate-file-missing', message: 'is missing', fix: `Copy it from this skill's templates/ (${rel.startsWith('packages/') ? rel : 'see the Files table'}).` });
   }
-  for (const [rel, owner] of Object.entries(OTHER_TARGETS)) {
-    checked += 1;
-    if (existsSync(join(root, rel))) continue;
-    if (pending.has(rel)) report.note(`note: ${rel} is pending (${owner} builds it); npm run verify fails until it exists`);
-    else report.problem({ file: rel, line: 0, rule: 'script-target-missing', message: `is run by npm run verify but does not exist (${owner} builds it)`, fix: `Build it with ${owner}, or pass --pending ${rel} while it is being built.` });
+  if (present.has('package.json')) {
+    checkScripts(root, report);
+    checked += checkScriptTargets(root, pending, report);
   }
-  if (present.has('package.json')) checkScripts(root, report);
   if (present.has('quality-gates.json')) checkQualityGates(root, report);
   if (present.has('.claude/settings.json')) checkSettings(root, report);
   if (present.has('lefthook.yml')) checkLefthook(root, report);

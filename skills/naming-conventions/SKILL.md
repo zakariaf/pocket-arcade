@@ -58,7 +58,7 @@ One naming scheme for everything in the Pocket Arcade monorepo, so every name is
 - **Building keys or testIDs from strings.** `` t(`date.month-short.${month}`) `` and `` testID={`row-${index}`} `` hide names from the tools; use a typed table of literal keys and a stable data key.
 - **Imperative events or past-tense moves.** `{ kind: 'clear-column' }` as an event reads as a command; events say what happened (`'column-cleared'`).
 - **Renaming a saved `kind` "for consistency".** Old saves and replays still hold the old value; migrate them or keep the name.
-- **Selecting by text in a flow.** `tapOn: 'Play'` fails in German, Persian and Kurdish; select by id. Only an OS dialog without a testID may use text: the `runFlow: { when: { visible: 'Open' }, commands: [tapOn: 'Open'] }` guard, or a line marked `# system dialog`.
+- **Selecting by text in a flow.** `tapOn: 'Play'` fails in German, Persian and Kurdish; select by id. Only OS-owned UI without a testID may use text: under a `# system-ui: <why>` comment (on the line or up to 6 lines above; e2e-maestro's `check-flows` reads the same comment), such as the debug-setup guard on Apple's `Open in ...?` link alert, the `runFlow: { when: { visible: 'Open' }, commands: [tapOn: 'Open'] }` guard, or a line marked `# system dialog`.
 - **Silencing the naming rule instead of renaming.** Inline disables are switched off; the rename is always the fix.
 
 ## Files in this skill

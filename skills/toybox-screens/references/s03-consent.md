@@ -21,7 +21,7 @@ S3 is the Shell's own screen right before Google's consent form; Google draws th
 - Offline or Premium: skipped; shown later only if an ad is about to load.
 - Settings has a permanent "Ad privacy choices" row that reopens the form.
 - Not a route: the consent flow (admob-ads) shows this screen full screen, then calls the consent port.
-- Apple's tracking rules (App Store guideline 5.1.2(i), App Tracking Transparency; the owner's decision of 2026-09-30): on iOS the app asks the system tracking question before any ad request that could use the device's advertising identifier. The order is this intro, then Google's form where it is required, then Apple's system prompt while the player has not answered it yet. Where Google's form is not required, this intro is skipped and Apple's prompt comes alone (its footnote says Google's form opens next). Declining (or a phone where tracking is restricted) changes nothing on screen: ads still show, without the identifier.
+- Apple's tracking rules (App Store guideline 5.1.2(i), App Tracking Transparency; the owner's decision of 2026-09-30): on iOS the app asks the system tracking question before any ad request that could use the device's advertising identifier. The order: where Google's form is required, this intro (its footnote says Google's form opens next), then Google's form; then, on iOS, Apple's system prompt while the player has not answered it yet. When Apple's prompt is the only step due, it appears on its own with the app's usage text, and this intro is not shown (lead decision L10). Declining (or a phone where tracking is restricted) changes nothing on screen: ads still show, without the identifier.
 
 ## Layout, top to bottom
 

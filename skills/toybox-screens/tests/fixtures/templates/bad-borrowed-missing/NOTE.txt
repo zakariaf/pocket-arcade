@@ -1,0 +1,2 @@
+S6 Pause built from the templates alone: settings-preference-actions.ts (settings-and-preferences),
+which use-pause-model.ts imports, was never copied. check-screens --screen S6 must name it and its owner.

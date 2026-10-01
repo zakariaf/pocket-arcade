@@ -493,6 +493,7 @@
     "**/*.golden.test.ts.snap.ios",
     "**/__image_snapshots__/**",
     "apps/*/e2e/baselines/**",
+    "perf-baselines/**",
     "parity/waivers.json",
     "parity/game-facts.json",
     "packages/tooling/src/quality/verify-plan.ts",

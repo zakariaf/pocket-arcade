@@ -1,0 +1,1 @@
+--app Payload/LineSiege.app --variant store --ads off --version 1.0.0 --build 8 --unsigned

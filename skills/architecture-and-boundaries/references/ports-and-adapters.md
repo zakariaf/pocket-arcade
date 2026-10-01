@@ -50,6 +50,12 @@ export type BannerSlotProps = {
   readonly onLoaded: () => void; // the slot collapses until this fires (no empty box)
   readonly onFailed: () => void; // failed loads are silent (spec 8.8)
 };
+/**
+ * The rewarded ad: 'loading' from the start of a preload until LOADED or a load error, 'ready'
+ * after LOADED, 'unavailable' after a load error (until the next preload starts), after the
+ * loaded ad was shown, with ads off, and before initialize.
+ */
+export type RewardedStatus = 'loading' | 'ready' | 'unavailable';
 
 /** The Shell's view of an ad SDK. Only admob-ads-adapter.ts touches the real SDK. */
 export type AdsPort = {
@@ -57,15 +63,18 @@ export type AdsPort = {
   readonly initialize: () => Promise<void>;
   readonly preloadInterstitial: () => void;
   readonly preloadRewarded: () => void;
-  readonly isRewardedLoaded: () => boolean;
-  /** Notifies when rewarded availability changes, so "Watch an ad" buttons appear/disappear. */
-  readonly subscribeRewardedLoaded: (listener: (isLoaded: boolean) => void) => () => void;
+  /** Where the rewarded ad is right now; "Watch an ad" offers read it. */
+  readonly rewardedStatus: () => RewardedStatus;
+  /** Notifies on every status change (read rewardedStatus() in the listener); returns unsubscribe. */
+  readonly subscribeRewardedStatus: (listener: () => void) => () => void;
   /** Resolve when the ad CLOSED (or immediately with 'unavailable'). Never reject. */
   readonly showInterstitial: () => Promise<FullscreenResult>;
   readonly showRewarded: () => Promise<RewardResult>;
   readonly renderBanner: (props: BannerSlotProps) => ReactNode;
 };
 ```
+
+The status has three values, not a loaded yes/no, because "still loading" and "no ad" need different answers. A perk offer (`PerkOffer = 'free' | 'watch-ad' | 'loading' | 'hidden'`) reads the status: a continue the game allows and the player has not used is `'free'` for Premium, `'watch-ad'` when ads can be served and the status is `'ready'`, `'loading'` when ads can be served and the status is `'loading'` (the offer is drawn busy, never hidden), and `'hidden'` otherwise; hints never return `'loading'`. So `'hidden'` always means unavailable, and a lost run whose continue is hidden goes straight to its result (game-host-integration's `isLossStranded`). admob-ads owns the behaviour, the adapter, the fake and the root mock.
 
 ```ts
 // packages/shell/src/services/consent/consent-port.ts

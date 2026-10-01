@@ -1,0 +1,2 @@
+SKIP packages/shell/src/navigation/route-guards.ts [route-guards-files] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created
+SKIP packages/shell/src/navigation [route-table] no Shell app

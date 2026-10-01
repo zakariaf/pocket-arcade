@@ -14,12 +14,33 @@ appId: ${APP_ID}
       id: '(?!splash\.)[a-z0-9]+(-[a-z0-9]+)*\.(screen|dialog|card)'
     timeout: 15000
 - openLink: '${APP_SCHEME}://debug/setup?${QUERY}'
-# system-ui: iOS may ask "Open in <app>?" for the link; 'Open' is Apple's button, not app text.
+# A fresh simulator asks once per app, and a tap while the alert is still sliding in is lost:
+# wait for it to settle, then tap once more if it is still there. Both guards match Apple's alert
+# title "Open in “<app name>”?", never a bare 'Open': Maestro's text match ignores case, so 'Open'
+# also matches the AdMob test banner's "OPEN" button on Home in an ADS_MODE=test build, and the tap
+# then fails once the link has moved the app on (round 4, the ads smoke test).
+# system-ui: iOS asks "Open in “<app name>”?" for the link; the title and 'Open' are Apple's, not app text.
 - runFlow:
     when:
-      visible: 'Open'
+      visible: 'Open in .*\?'
     commands:
-      - tapOn: 'Open'
+      - waitForAnimationToEnd
+      # system-ui: Apple's Open button, the nearest one below the alert title (never the banner's).
+      - tapOn:
+          text: 'Open'
+          below: 'Open in .*\?'
+          optional: true
+# system-ui: the same Apple alert, when the first tap came before it settled.
+- runFlow:
+    when:
+      visible: 'Open in .*\?'
+    commands:
+      - waitForAnimationToEnd
+      # system-ui: Apple's Open button, below the alert title.
+      - tapOn:
+          text: 'Open'
+          below: 'Open in .*\?'
+          optional: true
 - extendedWaitUntil:
     visible:
       id: '${WAIT_FOR}'

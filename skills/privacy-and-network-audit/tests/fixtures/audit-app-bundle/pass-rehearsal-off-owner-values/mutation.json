@@ -1,0 +1,35 @@
+[
+  {
+    "replace": {
+      "file": "DemoGame.app/Info.plist",
+      "find": "ca-app-pub-7310520968431056~5190264813",
+      "with": "ca-app-pub-3940256099942544~1458002511"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adsMode"
+      ],
+      "value": "off"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adUnits"
+      ],
+      "value": null
+    }
+  },
+  {
+    "write": {
+      "file": "apps/demo-game/game.config.ts",
+      "content": "// apps/demo-game/game.config.ts (excerpt): the scaffold's values before owner steps G3 and G5\nexport const gameConfig = {\n  id: 'demo-game',\n  bundleId: 'io.applander.demogame',\n  version: '1.0.0',\n  buildNumber: 7,\n  ads: {\n    ids: {\n      ios: {\n        appId: 'ca-app-pub-7310520968431056~5190264813',\n        units: {\n          banner: 'ca-app-pub-7310520968431056/4417703951',\n          interstitial: 'ca-app-pub-7310520968431056/8165377272',\n          rewarded: 'ca-app-pub-7310520968431056/2913050594',\n        },\n      },\n    },\n  },\n  links: {\n    privacyPolicy: { host: 'games.applander.io', path: '/demo-game/privacy' },\n    supportEmail: 'support@applander.io',\n  },\n};\n"
+    }
+  }
+]

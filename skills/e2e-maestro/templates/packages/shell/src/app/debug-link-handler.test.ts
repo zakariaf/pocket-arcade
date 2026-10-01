@@ -59,6 +59,7 @@ function startRun(options: RunOptions = {}): Run & { readonly store: FakeDebugSt
     connectivity: createSimulatedConnectivity(createFakeConnectivity(true)),
     clock,
     store,
+    resetConsent: null,
     perfLog: { append: jest.fn(), entries: () => [] },
     perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),
@@ -146,6 +147,14 @@ describe('createDebugLinkHandler', () => {
     expect([run.services.isOffline(), run.services.isBoardLayoutOn()]).toStrictEqual([true, true]);
     expect(run.doc().settings.theme).toBe('light');
     expect(run.routes).toStrictEqual([{ name: 'Home' }]);
+  });
+
+  it('sets the consent geography of the next consent moment (geo=eea|other), no save write', () => {
+    const run = startRun();
+    expect(run.handler.handleUrl(`${LINK}?geo=eea&screen=home`)).toStrictEqual({ kind: 'applied' });
+    expect(run.services.consentGeography()).toBe('eea');
+    expect(run.handler.handleUrl(`${LINK}?geo=other`)).toStrictEqual({ kind: 'applied' });
+    expect([run.services.consentGeography(), run.doc()]).toStrictEqual(['other', PLAYED]);
   });
 
   it('opens screen= after the group switch when one link ends the first run', () => {

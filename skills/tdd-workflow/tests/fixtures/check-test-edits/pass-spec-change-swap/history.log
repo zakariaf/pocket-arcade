@@ -1,0 +1,36 @@
+==> commit efd3f4d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2
+feat(shell): add the final withShell and the plugin list
+
+Spec 11.2: one plugin list builds every app; the phase-0 composer that the
+bootstrap wrote only for the probe game is replaced as the build order says.
+
+Spec-Change: with-shell final composer (phase 0 placeholder replaced)
+
+==> diff
+
+diff --git a/packages/shell/src/config/with-shell.test.ts b/packages/shell/src/config/with-shell.test.ts
+index 1111111..2222222 100644
+--- a/packages/shell/src/config/with-shell.test.ts
++++ b/packages/shell/src/config/with-shell.test.ts
+@@ -98,12 +98,12 @@ describe('withShell', () => {
+   it('names the app after the game', () => {
+     const config = withShell(PROBE);
+-    expect(config.name).toBe('Probe Game');
+-    expect(config.slug).toBe('probe-game');
+-    expect(config.ios?.bundleIdentifier).toBe('io.applander.probegame');
+-    expect(config.plugins).toStrictEqual([]);
++    expect(config.name).toBe('Line Siege');
++    expect(config.slug).toBe('line-siege');
++    expect(config.ios?.bundleIdentifier).toBe('io.applander.linesiege');
++    expect(config.plugins).toStrictEqual(SHELL_PLUGINS);
+   });
+ });
+diff --git a/packages/shell/src/config/with-shell.ts b/packages/shell/src/config/with-shell.ts
+index 3333333..4444444 100644
+--- a/packages/shell/src/config/with-shell.ts
++++ b/packages/shell/src/config/with-shell.ts
+@@ -10,3 +10,4 @@ export function withShell(game: GameConfig): ExpoConfig {
+-  return { name: game.name, slug: game.id, plugins: [] };
++  const plugins = [...SHELL_PLUGINS];
++  return { name: game.name, slug: game.id, plugins };
+ }

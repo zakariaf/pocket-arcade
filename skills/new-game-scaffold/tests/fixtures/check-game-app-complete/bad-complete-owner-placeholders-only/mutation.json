@@ -1,0 +1,8 @@
+[
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "appId: 'ca-app-pub-7777777777777777~7777777777'", "with": "appId: 'ca-app-pub-1234567890123456~1234567890'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "banner: 'ca-app-pub-7777777777777777/4444444444'", "with": "banner: 'ca-app-pub-1234567890123456/1111111111'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "interstitial: 'ca-app-pub-7777777777777777/5555555555'", "with": "interstitial: 'ca-app-pub-1234567890123456/2222222222'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "rewarded: 'ca-app-pub-7777777777777777/6666666666'", "with": "rewarded: 'ca-app-pub-1234567890123456/3333333333'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "host: 'games.test'", "with": "host: 'example.com'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "supportEmail: 'support@games.test'", "with": "supportEmail: 'support@example.com'" } }
+]

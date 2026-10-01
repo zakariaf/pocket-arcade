@@ -4,16 +4,19 @@
 //          [--driver-port <n>] [--metro-port <n>]
 // Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro, then
 // per scenario arms the simulator's StoreKit test store and runs one flow from
-// packages/shell/e2e/storekit/. Every Maestro call names the simulator and this run's own XCTest
-// driver port (maestro-args.ts), so no call can reach another session's simulator. Release-day
+// packages/shell/e2e/storekit/. Every Maestro call names the simulator and its own XCTest driver
+// port (maestro-args.ts: a free port for each flow unless --driver-port is given), so no call can
+// reach another session's simulator. Release-day
 // order: the E2E evidence run, then this harness, then `xcrun simctl delete <udid>`, then
 // `npx expo prebuild --clean` before any Release or store build (they share apps/<id>/ios).
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { availableParallelism, loadavg } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
+import { busyNote } from '@e07/tooling/storekit/busy-note.ts';
 
 import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
 
@@ -124,7 +127,16 @@ async function startMetro(appDir: string, port: number): Promise<() => void> {
   throw new Error(`Metro did not start on port ${String(port)}`);
 }
 
-function runFlow(h: Harness, target: MaestroTarget, flow: string): boolean {
+// Before the run and after a failed one: is the Mac too busy for StoreKit's test store?
+function busyNoteNow(): string | null {
+  const [load = 0] = loadavg();
+  return busyNote(load, availableParallelism());
+}
+
+// One Maestro run: the global --device and its own driver port (a free one for each flow, or the
+// port a session passes with --driver-port).
+async function runFlow(h: Harness, givenPort: string | undefined, flow: string): Promise<boolean> {
+  const target: MaestroTarget = { udid: h.udid, driverPort: await driverPortFor(givenPort) };
   const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro'); // the pinned Maestro install
   const file = join(ROOT, 'packages', 'shell', 'e2e', 'storekit', flow);
   const vars = ['-e', `APP_ID=${h.bundleId}`, '-e', `APP_SCHEME=${h.urlScheme}`];
@@ -148,20 +160,25 @@ async function main(argv: readonly string[]): Promise<number> {
   if (game === undefined || udid === undefined) {
     throw new Error('usage: storekit-harness.ts --app <game-id> --device <udid>');
   }
-  // The global --device and this run's own driver port (a free one unless --driver-port is given).
-  const target: MaestroTarget = { udid, driverPort: await driverPortFor(valueOf('--driver-port')) };
-  maestroGlobalArgs(target); // refuses a non-UDID before anything is built
+  // Refuse a non-UDID or a bad --driver-port before anything is built; each flow then gets its own
+  // driver port (runFlow).
+  const givenPort = valueOf('--driver-port');
+  maestroGlobalArgs({ udid, driverPort: await driverPortFor(givenPort) });
   const metroPort = await driverPortFor(valueOf('--metro-port')); // any free port serves Metro too
+  const busy = busyNoteNow();
+  if (busy !== null) console.error(busy);
   const h = prepareHarness(join(ROOT, 'apps', game), udid, metroPort);
   xcodebuild(h, ['build-for-testing', '-sdk', 'iphonesimulator']);
   const stopMetro = await startMetro(h.appDir, metroPort);
   let failures = 0;
   for (const [test, flow] of SCENARIOS) {
     if (test !== null) arm(h, test);
-    if (!runFlow(h, target, flow)) failures += 1;
+    if (!(await runFlow(h, givenPort, flow))) failures += 1;
   }
   stopMetro();
   console.error(`storekit: ${String(failures)} of ${String(SCENARIOS.length)} scenario(s) failed`);
+  const busyAtEnd = failures > 0 ? busyNoteNow() : null;
+  if (busyAtEnd !== null) console.error(busyAtEnd);
   return failures === 0 ? 0 : 1;
 }
 

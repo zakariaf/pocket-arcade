@@ -33,6 +33,17 @@ describe('parseDebugLink', () => {
     });
   });
 
+  it('reads the consent geography of the ads smoke test (geo=eea|other)', () => {
+    expect(parseDebugLink(`${LINK}?geo=eea&firstRun=0&screen=home`)).toStrictEqual({
+      kind: 'request',
+      request: { geo: 'eea', firstRun: false, screen: 'home' },
+    });
+    expect(parseDebugLink(`${LINK}?geo=other`)).toStrictEqual({
+      kind: 'request',
+      request: { geo: 'other' },
+    });
+  });
+
   it('reads the screenshot star fixture and a link without a query', () => {
     expect(parseDebugLink(`${LINK}?stars=demo`)).toStrictEqual({
       kind: 'request',
@@ -50,6 +61,7 @@ describe('parseDebugLink', () => {
 
   it.each([
     ['lang=it', 'debug parameter lang="it" is not allowed'],
+    ['geo=us', 'debug parameter geo="us" is not allowed'],
     ['colour=red', 'unknown debug parameter "colour"'],
     ['offline=1&offline=0', 'debug parameter "offline" is repeated'],
     ['date=2026-02-30', 'debug parameter date="2026-02-30" is not allowed'],

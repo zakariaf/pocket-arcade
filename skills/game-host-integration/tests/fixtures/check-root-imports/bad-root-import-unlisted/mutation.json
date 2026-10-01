@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "templates/packages/shell/src/app/create-shell-parts.ts",
+      "find": "import { connectAudioSettings } from '@e07/shell/app/connect-audio-settings.ts';",
+      "with": "import { connectAudioSettings } from '@e07/shell/app/connect-audio-settings.ts';\nimport { applyRunEnd } from '@e07/shell/stores/run-end.ts';"
+    }
+  }
+]

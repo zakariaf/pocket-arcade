@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/e2e/storekit/02-refund-relaunch.yaml",
+      "find": "      id: 'premium.buy-button'\n    timeout: 60000\n",
+      "with": "      id: 'premium.buy-button'\n    timeout: 15000\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/e2e/storekit/04-approval-relaunch.yaml",
+      "find": "      id: 'premium.state.owned'\n    timeout: 60000\n",
+      "with": "      id: 'premium.state.owned'\n"
+    }
+  }
+]

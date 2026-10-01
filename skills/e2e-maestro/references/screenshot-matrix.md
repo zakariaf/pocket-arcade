@@ -29,11 +29,15 @@ An animating screen differed by 1.08% between two captures one second apart (ver
 
 ## Running it
 
-`npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--app-path <.app>] [--driver-port <n>]`
+`npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--sim <purpose>] [--app-path <.app>] [--driver-port <n>]`
+
+`--help` prints every option; a bad command line exits 2 with the usage line (`screenshots-cli.ts`, with its test). `--sim <purpose>` captures on this session's own simulators, `e07-<purpose>` (phone) and `e07-<purpose>-tablet` (iPad), instead of the shared `e07-shots-phone` and `e07-shots-tablet`, which another session may be using: a session always passes it.
 
 `templates/packages/tooling/src/e2e/capture-screenshots-ios.ts` first runs `install-maestro.sh` (idempotent, checksum-verified), then, for each device: ensure and prepare its simulator; for light then dark: set the appearance; for each language: run `maestro --device <udid> --driver-host-port <port> test matrix.yaml` (through `runMaestro`: the device's UDID and a free driver port of this capture, or the session's `--driver-port`) with `-e APP_ID -e APP_SCHEME -e LANG -e THEME` into `reports/screenshots/raw/<device>/<lang>-<theme>/`, then compare each PNG with its baseline through `compare-png.ts` (pixelmatch, threshold 0.1 per pixel, `MAX_DIFF_RATIO = 0.002` of pixels). It writes `reports/screenshots/summary.json` and `index.html`, prints `<n> screenshots, <m> changed; gallery: reports/screenshots/index.html`, and exits 1 when anything changed. A capture flow that fails stops the run; its Maestro log is under `reports/screenshots/raw/<device>/<lang>-<theme>/`.
 
 `comparePng` returns `match`, `mismatch` (with the diff PNG path), `size-changed` or `missing-baseline`.
+
+**Verified on 2026-10-01** on the Line Siege pilot (the round-4 Shell with the round-5 templates, an `ADS_MODE=off` test build, Xcode 26.6, iOS 26.5), on the session's own simulators through `--sim r5-e2e-native`: the first run, `npm run screenshots:ios -- --app line-siege --update --sim <purpose>`, captured all 176 PNGs in 16 sets (phone and tablet, en, de, fa and ckb, light and dark) in 38 minutes and wrote them as baselines; each set was read as a contact sheet before the commit (fa and ckb right to left, the board left to right, nothing clipped). The next run without `--update` printed `176 screenshots, 0 changed` (every row `match`, 35 minutes), so the capture is still and repeatable, and `check-e2e-report.mjs . --app line-siege --screenshots` printed `Screenshots: 176 captured in 16 sets, 0 changed` with `RESULT: PASS`. In every set the Premium screen showed its note "Connect to the internet to buy or restore." without a price: the simulator build got no product from the store (the price only comes from the store), and that capture is stable from run to run. Plan for about 40 minutes per full run; while iterating narrow it with `--devices` and `--langs`.
 
 ## Baselines
 

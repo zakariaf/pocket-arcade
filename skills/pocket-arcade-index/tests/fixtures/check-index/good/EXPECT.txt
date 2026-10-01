@@ -1,0 +1,2 @@
+step-import-closure: 6 copied files followed through 1 order
+RESULT: PASS

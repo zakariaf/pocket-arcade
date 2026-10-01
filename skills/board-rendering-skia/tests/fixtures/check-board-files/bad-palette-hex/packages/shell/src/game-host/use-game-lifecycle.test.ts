@@ -23,6 +23,9 @@ async function setup() {
     onResume: () => {
       calls.push('resume');
     },
+    onFlags: (facts) => {
+      calls.push(`flags ${JSON.stringify(facts)}`);
+    },
   });
   const view = await renderHook(
     (flags: Flags) => {
@@ -40,7 +43,7 @@ describe('useGameLifecycle', () => {
 
   it('runs the board while the app is active, the screen focused and no ad showing', async () => {
     const { calls } = await setup();
-    expect(calls).toStrictEqual(['resume']);
+    expect(calls.filter((call) => !call.startsWith('flags'))).toStrictEqual(['resume']);
   });
 
   it('pauses for a full-screen ad and resumes after it', async () => {
@@ -49,7 +52,11 @@ describe('useGameLifecycle', () => {
     await rerender({ isFocused: true, isFullscreenAdShowing: true });
     await rerender({ isFocused: true, isFullscreenAdShowing: false });
 
-    expect(calls).toStrictEqual(['resume', 'pause', 'resume']);
+    expect(calls.filter((call) => !call.startsWith('flags'))).toStrictEqual([
+      'resume',
+      'pause',
+      'resume',
+    ]);
   });
 
   it('pauses when the screen loses focus', async () => {
@@ -57,6 +64,19 @@ describe('useGameLifecycle', () => {
 
     await rerender({ isFocused: false, isFullscreenAdShowing: false });
 
-    expect(calls).toStrictEqual(['resume', 'pause']);
+    expect(calls.filter((call) => !call.startsWith('flags'))).toStrictEqual(['resume', 'pause']);
+  });
+
+  it('reports the three facts before each decision, for the board-clock trace', async () => {
+    const { calls, rerender } = await setup();
+
+    await rerender({ isFocused: true, isFullscreenAdShowing: true });
+
+    expect(calls).toStrictEqual([
+      'flags {"isAppActive":true,"isFocused":true,"isAdShowing":false}',
+      'resume',
+      'flags {"isAppActive":true,"isFocused":true,"isAdShowing":true}',
+      'pause',
+    ]);
   });
 });

@@ -1,1 +1,2 @@
-EXConstants.bundle/app.config [links] extra.game.links holds the placeholder privacy-policy host example.com
+EXConstants.bundle/app.config [owner-placeholder] extra.game.links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3)
+OWNER STEPS PENDING: G3

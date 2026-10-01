@@ -9,7 +9,7 @@ import { join, relative } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { plistGet, readPlist } from './lib/plist.mjs';
-import { bundleIdProblem, placeholderName } from './lib/ship-placeholders.mjs';
+import { bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
@@ -42,8 +42,13 @@ const SPEC = {
     '  min-ios             MinimumOSVersion is 16.4',
     '  test-code           main.jsbundle contains SHELL_TEST_BUILD_ONLY in test builds and never in store builds',
     '  constants-variant   EXConstants.bundle/app.config extra.appVariant / extra.adsMode match --variant / --ads',
-    '  ad-app-id           GADApplicationIdentifier: Google sample ID for off/test, a real ID for live (never the',
-    '                      scaffold placeholder ca-app-pub-1234567890123456~1234567890: owner step G5)',
+    '  ad-app-id           GADApplicationIdentifier: Google sample ID for off/test, a real ID for live',
+    '  owner-placeholder   a scaffold value the owner replaces, by field: the AdMob app id',
+    '                      ca-app-pub-1234567890123456~1234567890 and (live) units /1111111111, /2222222222,',
+    '                      /3333333333 (owner step G5); in store builds the links example.com and support@example.com',
+    "                      (owner step G3). The line before RESULT is then 'OWNER STEPS PENDING: G3, G5' (the steps still",
+    '                      pending) and the result stays FAIL: until the owner supplies them these are the only expected',
+    '                      FAIL lines of a store build',
     '  bundle-id           store builds (and any build with --game): CFBundleIdentifier is io.applander.<game id without',
     '                      hyphens>, never com.example.* (owner decision O4)',
     '  att-string          every build: Info.plist has NSUserTrackingUsageDescription and en, de, fa and ckb.lproj/',
@@ -108,15 +113,33 @@ function checkConstants({ where, options, report }) {
   for (const [key, want] of [['appVariant', options.variant], ['adsMode', options.ads]]) {
     if (extra[key] !== want) report.problem({ file: `${where}/EXConstants.bundle/app.config`, rule: 'constants-variant', message: `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, fix: 'The variables changed between prebuild and xcodebuild: export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole run and rebuild.' });
   }
+  checkOwnerPlaceholders(extra, { where, options, report });
+}
+
+/** The scaffold values the owner replaces (G5: AdMob units; G3 in store builds: the links), by field. */
+function checkOwnerPlaceholders(extra, { where, options, report }) {
+  const file = `${where}/EXConstants.bundle/app.config`;
+  const units = typeof extra.adUnits === 'object' && extra.adUnits !== null ? Object.entries(extra.adUnits) : [];
+  const links = options.variant === 'store' ? (extra.game?.links ?? {}) : {};
+  const values = [
+    ...units.map(([slot, unit]) => [`extra.adUnits.${slot}`, unit]),
+    ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host],
+    ['extra.game.links.supportEmail', links.supportEmail],
+  ];
+  for (const [field, value] of values) {
+    const placeholder = ownerPlaceholderOf(value);
+    if (placeholder !== null) report.problem(ownerPlaceholderProblem({ entry: placeholder, where: field, file }));
+  }
 }
 
 function checkInfoKeys({ info, where, options, report }) {
   const file = `${where}/Info.plist`;
   const appId = info.GADApplicationIdentifier;
-  if (options.ads === 'live') {
-    const placeholder = placeholderName(appId);
-    if (placeholder !== null) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is ${placeholder} (${appId}), expected the game's real AdMob app ID`, fix: 'The owner creates the AdMob app and its units (owner step G5); put the real ids in game.config.ts ads.ids.ios and build again.' });
-    else if (typeof appId !== 'string' || !LIVE_APP_ID.test(appId) || appId === SAMPLE_APP_ID) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected the game's real AdMob app ID`, fix: "Put the real ID in game.config.ts ads.ids.ios.appId (owner step G5) and build with ADS_MODE=live." });
+  const placeholder = ownerPlaceholderOf(appId);
+  if (placeholder !== null) {
+    report.problem(ownerPlaceholderProblem({ entry: placeholder, where: 'Info.plist GADApplicationIdentifier', file }));
+  } else if (options.ads === 'live') {
+    if (typeof appId !== 'string' || !LIVE_APP_ID.test(appId) || appId === SAMPLE_APP_ID) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected the game's real AdMob app ID`, fix: "Put the real ID in game.config.ts ads.ids.ios.appId (owner step G5) and build with ADS_MODE=live." });
   } else if (appId !== SAMPLE_APP_ID) {
     report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected Google's sample ID ${SAMPLE_APP_ID}`, fix: 'Non-live builds use the sample app ID (a missing ID crashes at launch); check withShell and ADS_MODE, then prebuild again.' });
   }
@@ -159,5 +182,5 @@ run(async () => {
   checkBundleId(context);
   checkTrackingText(context);
   checkStoreArtefacts(context);
-  return report.finish({ checked: 1, unit: `app (${options.variant}/${options.ads})` });
+  return finishWithOwnerSteps(report, { checked: 1, unit: `app (${options.variant}/${options.ads})` });
 });

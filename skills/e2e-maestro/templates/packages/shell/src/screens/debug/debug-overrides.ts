@@ -1,6 +1,7 @@
 // packages/shell/src/screens/debug/debug-overrides.ts
 // Test builds only. The debug state that lives outside the save document: the simulated day, the
-// simulated outage, the board layout probe, the ads override and the level seed override. A
+// simulated outage, the board layout probe, the ads override, the level seed override and the
+// consent geography of the ads smoke test (geo=eea|other). A
 // direction reload (lang=fa from English, Force language) and a killed app restart the JS
 // runtime, which would silently drop them, so debug-services.ts keeps them in the test-only
 // key-value store and re-applies them when the composition root creates the services at startup.
@@ -11,12 +12,19 @@ import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 /** S15 "Always show test ads" / "Never show ads" (debug link ads=test / ads=off). */
 export type DebugAdsOverride = 'always-test' | 'never';
 
+/**
+ * geo=eea|other: the consent geography Google's UMP is asked with in an ADS_MODE=test build (the
+ * EEA form on any network; 'other' leaves Apple's tracking prompt alone). null: the network's own.
+ */
+export type DebugConsentGeography = 'eea' | 'other';
+
 export type DebugOverrides = {
   readonly date: DateKey | null;
   readonly isOffline: boolean;
   readonly isBoardLayoutOn: boolean;
   readonly ads: DebugAdsOverride | null;
   readonly seed: number | null;
+  readonly consentGeography: DebugConsentGeography | null;
 };
 
 export const NO_DEBUG_OVERRIDES: DebugOverrides = {
@@ -25,6 +33,7 @@ export const NO_DEBUG_OVERRIDES: DebugOverrides = {
   isBoardLayoutOn: false,
   ads: null,
   seed: null,
+  consentGeography: null,
 };
 
 /** The two keys of the test-only key-value store. */
@@ -71,6 +80,10 @@ export function decodeDebugOverrides(raw: string | null): DebugOverrides {
     isBoardLayoutOn: data['isBoardLayoutOn'] === true,
     ads: data['ads'] === 'always-test' || data['ads'] === 'never' ? data['ads'] : null,
     seed: isSeed(data['seed']) ? data['seed'] : null,
+    consentGeography:
+      data['consentGeography'] === 'eea' || data['consentGeography'] === 'other'
+        ? data['consentGeography']
+        : null,
   };
 }
 

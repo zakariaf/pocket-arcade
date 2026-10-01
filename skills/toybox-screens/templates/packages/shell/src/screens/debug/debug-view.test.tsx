@@ -1,6 +1,8 @@
 // packages/shell/src/screens/debug/debug-view.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
+import { PixelRatio } from 'react-native';
 
+import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
@@ -47,7 +49,63 @@ function modelWith(
   };
 }
 
+/** The fa model: English labels (L13), the values in the language's digits (D65). */
+const FA_VALUES: DebugModel['values'] = {
+  level: '۱۲',
+  date: 'یکشنبه، ۲۷ سپتامبر',
+  locale: 'fa · rtl · ۱۲۳',
+  errors: '۰',
+};
+
 describe('DebugView', () => {
+  it('lays the hazard strip first, then the bar with the Test build badge centred in it', async () => {
+    await renderWithShell(<DebugView model={modelWith()} />);
+
+    const strip = screen.getByTestId('debug.hazard-strip', { includeHiddenElements: true });
+    const bar = screen.getByTestId('debug.top-bar');
+    const frame = strip.parent;
+    expect(frame?.children.indexOf(strip)).toBeLessThan(frame?.children.indexOf(bar) ?? -1);
+    // A Sticker aligns itself to the top of a row; the design centres the badge in the bar
+    // (y 94.6 of a bar at 82-148), so it never rides up over the strip (it sat at y 81).
+    const badge = screen.getByTestId('debug.top-bar.badge');
+    // allow-style-assertion: the badge's wrapper is the fix for the badge drawn 13.6 pt high.
+    expect(badge.parent).toHaveStyle({ alignSelf: 'center' });
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it.each([
+    ['en', 'Rubik-Regular', 67 / 3],
+    ['fa', 'Vazirmatn-Regular', 77 / 3],
+  ] as const)(
+    'keeps the labels English and flush with the row start in %s (L13)',
+    async (language, fontFamily, lineHeight) => {
+      jest.spyOn(PixelRatio, 'get').mockReturnValue(3);
+      const model = { ...modelWith(), ...(language === 'fa' ? { values: FA_VALUES } : {}) };
+      await renderWithShell(<DebugView model={model} />, { language });
+
+      const label = screen.getByTestId('debug.force-locale-row.label');
+      expect(label).toHaveTextContent('Force language, direction and digits');
+      // An LTR paragraph aligned to the start (React Native swaps 'left' to the right in RTL),
+      // in the language's font and line height, as the design draws English in an RTL row.
+      // allow-style-assertion: the LTR label at the row start is S15's L13 layout contract.
+      expect(label).toHaveStyle({
+        fontFamily,
+        lineHeight,
+        writingDirection: 'ltr',
+        textAlign: TEXT_ALIGN.start,
+      });
+      for (const row of DEBUG_ROWS) {
+        // allow-style-assertion: every S15 label is an LTR paragraph (L13), even in fa.
+        expect(screen.getByTestId(`${row.testID}.label`)).toHaveStyle({ writingDirection: 'ltr' });
+      }
+      expect(screen.getByTestId('debug.jump-to-level-row.value')).toHaveTextContent(
+        model.values.level,
+      );
+      expect(screen.getByTestId('debug.top-bar.title')).toHaveTextContent('Debug menu');
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    },
+  );
+
   it('draws the S15 strip, badge and all fourteen rows', async () => {
     await renderWithShell(<DebugView model={modelWith()} />);
 

@@ -9,6 +9,8 @@
   "common.score": "امتیاز",
   "common.try-again": "دوباره تلاش کنید",
   "daily.streak.count": "{daysCount, plural, =0 {هنوز زنجیره‌ای ندارید} one {# روز پیاپی} other {# روز پیاپی}}",
+  "debug.perf.summary": "Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}",
+  "debug.title": "Debug menu",
   "game-screen.board.selected.a11y-announcement": "انتخاب شد. حالا روی جای آن ضربه بزنید.",
   "game-screen.board.unselected.a11y-announcement": "انتخاب لغو شد.",
   "game-screen.hint-button.a11y-label": "راهنمایی",

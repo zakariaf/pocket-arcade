@@ -1,0 +1,1 @@
+--map ../good/map.json --design ../good/design.html --tooling .

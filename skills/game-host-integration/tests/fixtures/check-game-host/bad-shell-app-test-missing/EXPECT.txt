@@ -1,0 +1,1 @@
+FAIL packages/shell/src/app/shell-app.test.tsx [root-file-missing] composition root file is missing

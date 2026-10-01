@@ -1,0 +1,1 @@
+Jest: "global" coverage threshold for functions (90%) not met: 89.8%

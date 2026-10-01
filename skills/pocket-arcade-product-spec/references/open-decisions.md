@@ -7,7 +7,7 @@ The owner decides these. Until the owner says otherwise, use the default and say
 - Spec decisions D1-D9
 - Decisions found while planning the platform
 - Owner decisions of 2026-09-30
-- Lead decisions of 2026-09-30
+- Lead decisions of 2026-09-30 and 2026-10-01
 - Spec gaps with working defaults
 
 ## Spec decisions D1-D9
@@ -58,7 +58,7 @@ Default: 3 packs x 30 levels, plus Daily; Endless where it fits.
 | Keep the Expo Claude Code plugin from the app template | kept, with the agent instructions forbidding EAS and over-the-air updates |
 | Interpretation of spec 8.8 "never twice in a row after losses" | two consecutive interstitials may not both follow a loss |
 | Letter Bugs word lists for Persian and Sorani (licences) | build Letter Bugs late |
-| Native-speaker reviewer for Persian and Sorani | Decided (owner, O6): the owner reads the fa and ckb texts personally. Claude writes all four languages, lists the texts waiting for the owner in every report under "Owner steps (not blocking)", and nothing waits for the review (no release gate, no waiver) |
+| Native-speaker reviewer for Persian and Sorani | Decided (owner, O6; lead, L14): the owner reads the fa and ckb texts personally. Claude writes all four languages, lists the texts waiting for the owner in every report under "Owner steps (not blocking)", and nothing waits for the review (no release gate, no waiver). The debug menu's English texts are never on the list (L13) |
 | Toybox details the mockup leaves open: one dark ink for all games or a per-game tint | as the mockup's palette data (a per-game tint) |
 | Toybox detail: the hold-to-reset label at 4.43:1 contrast in light mode | Decided (owner, O5): every text meets WCAG 4.5:1 in every state, the hold-to-confirm label included while its danger fill grows; the light theme's `dangerFill` becomes `#FFDCDF` (danger text on it 4.52:1), with no contrast exception anywhere |
 
@@ -75,9 +75,9 @@ The owner answered these directly; they are settled, not defaults, and they over
 | O5 | Standard contrast everywhere | Every text meets 4.5:1 in every state; light `dangerFill` `#FFDCDF` |
 | O6 | The owner's personal steps never block | The native review of fa and ckb texts, the Line Siege play-test and listening to the sound previews are done by the owner personally. Claude drafts the texts, renders the previews and lists all three in every slice or release report under "Owner steps (not blocking)"; no gate waits for them |
 
-## Lead decisions of 2026-09-30
+## Lead decisions of 2026-09-30 and 2026-10-01
 
-The lead decided these while proving the pilot (Line Siege) against the Toybox design; they are settled, not defaults. The spec's own wording in the other references stays as written; each screen entry names the decision it follows.
+The lead decided these while proving the pilot (Line Siege) against the Toybox design (L1-L9, 2026-09-30) and while closing the last open questions of the platform (L10-L14, 2026-10-01; spec draft 3 records them); they are settled, not defaults. The spec's own wording in the other references stays as written; each screen entry names the decision it follows.
 
 | Id | Screens | Decision |
 |---|---|---|
@@ -88,17 +88,21 @@ The lead decided these while proving the pilot (Line Siege) against the Toybox d
 | L7 | Home (S4), Daily challenge (S9) | Tapping the daily card on Home opens the Daily challenge screen (S9); the card's Play key starts today's challenge. When today is done, the card still opens S9. Nothing changes in the design's pixels, and no new text is added. |
 | L8 | Game screen (S5), Pause menu (S6) | A game without solver hints (its rules say `hints: none`; Line Siege) has the game fact "has hints" false: its top bar shows no Hint key, and the Pause menu shows no hint entry. Parity uses the design's no-hints variants, chosen from the game's facts like L1's no-music variants. |
 | L9 | Result screen (S7) | The big score number (the level, daily and endless results) in Persian and Sorani gets the same taller line as the level numbers (L2), so the digits are not clipped. |
+| L10 | Ad consent and tracking (S3) | The Shell's consent intro appears only right before Google's consent form, so its footnote ("Google's form opens next", `consent.intro.footnote`) is always true. When only Apple's tracking prompt is due (Google's consent is not required in the region or was given before, and the player has not answered Apple yet), Apple's system prompt appears on its own, explained by our sentence `consent.tracking.usage-description`. The order: the intro and Google's form where consent is required, then Apple's prompt while unanswered, then the first ad request; never with ads off, for Premium, offline, before the tutorial, during a level or in the held parity frame. This was a spec gap; draft 3 of the spec now says the same. |
+| L11 | Result screen (S7), Ads (spec 8.8), Continue (spec 8.10) | A finished run is never stranded. When a run ends and no continue can be offered (ads off, offline, no rewarded ad available, no Premium), the result shows at once: for an endless run the endless result with the score and "New best!" when it is one, otherwise the lose result. While a rewarded ad is still loading, the continue offer shows a loading state (the same key, busy, not pressable) instead of disappearing, so a hidden offer always means no continue is possible. Statistics, streak and best are recorded before the result shows, also when a shown offer becomes unavailable or a pending lost run is reopened from Home. |
+| L12 | Debug menu (S15) | S15 matches its Toybox design like every other screen (light and dark, en and fa); being a test-only screen is no exemption from the screenshot comparison. |
+| L13 | Debug menu (S15), Writing and texts (spec 7.4) | Every debug-menu text (`debug.*`, the Performance section included) stays English in all four languages, like every other debug text: S15 is test-only and compiled out of store builds, so no player sees it. Numbers and dates inside its values still follow the language's digits. The fa and ckb review never lists them. |
+| L14 | Who does what, per-game configuration (spec 11), shipping | Where the handbook and the skills disagree on code detail, the skills win. A game is complete only when every owner value replaces the scaffold's placeholders: the completeness check (`check-game-app --stage complete`) and every ship gate fail on each one (the four AdMob ids, owner step G5; the privacy-policy host `example.com` and the support address `support@example.com`, owner step G3) and end with `OWNER STEPS PENDING: G3, G5` until the owner supplies them. That failure is by design. The owner's fa and ckb review is an owner step that reports list, never a release gate. |
 
 The lead also fixed two design details that change no product rule: the Persian and Sorani level-tile numbers get a taller line (L2, so the digits are not clipped) and the About footer's "Version" label sits next to its number like every other label and value (L5).
 
 ## Spec gaps with working defaults
 
-Found while designing the save; each needs an owner answer eventually. Until then, build the default and name the gap in the report.
+Found while designing the save; each needs an owner answer eventually. Until then, build the default and name the gap in the report. (The former gap "should S3's intro also show when only Apple's tracking prompt follows?" is decided: no, lead decision L10.)
 
 | Gap | Working default |
 |---|---|
 | Both save copies (current and backup) are damaged; S14 only defines "a backup copy was restored" | show "Your progress couldn't be loaded." and start fresh; the bad copies are quarantined, never deleted (the text needs its own catalog key in all four languages) |
 | Does "Reset statistics" also zero the Levels and Daily cards on S10? | no: levels completed, stars and daily streaks are derived from progress and daily results, so only "Reset all progress" clears them |
 | Does a lost daily attempt count for the streak? | yes: the first finished attempt of the day counts, win or lose |
-| Should S3's intro also show when only Apple's tracking prompt follows (outside the regions where Google's form is required)? Spec draft 2 says yes; the platform decision says no | no: the intro shows only before Google's form, because its footnote (`consent.intro.footnote`) says Google's form opens next; Apple's prompt then follows on its own, with our sentence in it. Showing it before Apple's prompt alone needs a footnote text that fits both cases and a status read on the consent port |
 | A database written by a newer app version (only a downgrade, such as an older TestFlight build, can cause it) | never crash (spec 8.14): open it read-only, play in memory, and show the S14 "please update" dialog |

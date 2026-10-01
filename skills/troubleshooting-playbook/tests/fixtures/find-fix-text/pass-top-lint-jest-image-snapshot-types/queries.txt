@@ -1,0 +1,1 @@
+test/goldens/boards/skia-golden.ts(3,36): error TS7016: Could not find a declaration file for module 'jest-image-snapshot'.

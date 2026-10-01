@@ -1,2 +1,0 @@
-[render-with-shell-missing]
-1 component test file(s) exist (packages/shell/src/ui/play-button.test.tsx)

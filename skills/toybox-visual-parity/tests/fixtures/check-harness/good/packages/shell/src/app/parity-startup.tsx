@@ -10,6 +10,7 @@ import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import type { ShellLaunch } from '@e07/shell/app/create-shell-app.tsx';
 import type { ParityParseResult, ParityRequest } from '@e07/shell/app/parity/parity-request.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
+import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { AdsPort } from '@e07/shell/services/ads/ads-port.ts';
 import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
@@ -43,12 +44,17 @@ type ParityDataInput<T extends ShellGameTypes> = {
   readonly game: ShellGameModule<T>;
   readonly save: SaveService;
   readonly simulatedClock: SimulatedClock | null;
+  /** The test build's saved debug flags; TEST_ONLY.createSqliteKvDebugStoreAdapter() unless given. */
+  readonly debugStore?: DebugStore | undefined;
 };
 
 /**
- * Right after hydrateSave and before the game host and the stores exist: the frame's player data
- * written through the save service (so Premium is revoked with a date when needed), and today()
- * moved to the frame's date.
+ * Right after hydrateSave and before the game host, the stores and the debug services exist: the
+ * frame's player data written through the save service (so Premium is revoked with a date when
+ * needed), today() moved to the frame's date, and no saved debug flag left. The debug services
+ * restore their flags (offline, the ads override, a seed, a consent geography) from that store
+ * when they are made, so without this a frame would inherit what an earlier launch saved: the S15
+ * frame's "Always show test ads", or a debug link's offline switch on every S12 card.
  */
 export function applyParityData<T extends ShellGameTypes>(input: ParityDataInput<T>): void {
   const { parity: request, game, save } = input;
@@ -56,6 +62,7 @@ export function applyParityData<T extends ShellGameTypes>(input: ParityDataInput
   if (request === null || api === null) return;
   save.update((doc) => api.parityDoc({ base: doc, game, request }));
   input.simulatedClock?.setSimulatedToday(request.date);
+  (input.debugStore ?? api.createSqliteKvDebugStoreAdapter()).set('debug.overrides', null);
 }
 
 /** The store port of a parity launch (fixture product, the S12 state's behaviour); null normally. */
@@ -123,6 +130,8 @@ export function withParityRoot(parity: ParityRequest | null, Root: ComponentType
 type ParityLaunchInput<T extends ShellGameTypes> = {
   readonly request: ParityRequest;
   readonly game: ShellGameModule<T>;
+  /** Tests pass a fake; the app uses the test build's own debug store. */
+  readonly debugStore?: DebugStore | undefined;
 };
 
 /**
@@ -144,18 +153,19 @@ export function isHeldParityConsent(request: ParityRequest): boolean {
 
 /**
  * The composition root's ShellLaunch for a parity frame (start-shell passes it to createShellApp):
- * the frame's player data and date after hydrateSave, the fixture store and stand-in ads ports, the
- * frame's route stack and the harness contexts around the root. A store build gets no launch.
+ * the frame's player data and date after hydrateSave (with no saved debug flag left), the fixture
+ * store and stand-in ads ports, the frame's route stack and the harness contexts around the root.
+ * A store build gets no launch.
  */
 export function parityLaunchFor<T extends ShellGameTypes>(
   input: ParityLaunchInput<T>,
 ): ParityShellLaunch {
-  const { request, game } = input;
+  const { request, game, debugStore } = input;
   const api = TEST_ONLY;
   if (api === null) return {};
   return {
     prepareSave: (save, simulatedClock) => {
-      applyParityData({ parity: request, game, save, simulatedClock });
+      applyParityData({ parity: request, game, save, simulatedClock, debugStore });
     },
     purchasePort: (productId) => api.createParityPurchase({ productId, plan: request.plan }),
     adsPort: () => api.createParityAds(),

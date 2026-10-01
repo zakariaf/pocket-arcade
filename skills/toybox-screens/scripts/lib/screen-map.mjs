@@ -67,6 +67,77 @@ export const MODEL_HOOK_ROUTES = {
   S15: [`${SHELL}/screens/debug/debug-screen.tsx`, `${SHELL}/screens/debug/font-test-screen.tsx`],
 };
 
+/** One borrowed file: its path under packages/shell/src, its owner skill and its test (null: none). */
+const borrow = (file, owner, test = null) => ({ file: `${SHELL}/${file}`, owner, test: test === null ? null : `${SHELL}/${test}` });
+const PARITY_OPENER = borrow('app/use-parity-opener.ts', 'toybox-screens', 'app/use-parity-opener.test.tsx');
+const DIRECTION_RESTART = borrow('app/use-direction-restart.ts', 'toybox-screens', 'app/use-direction-restart.test.tsx');
+const PAIR_LAYOUT = borrow('ui/use-pair-layout.ts', 'toybox-screens');
+const TODAY = borrow('app/use-today.ts', 'daily-and-statistics');
+const DAILY_SUMMARY = [
+  borrow('screens/daily/daily-summary.ts', 'daily-and-statistics', 'screens/daily/daily-summary.test.ts'),
+  borrow('screens/daily/use-daily-summary.ts', 'daily-and-statistics', 'screens/daily/use-daily-summary.test.tsx'),
+];
+const PREFERENCE_ACTIONS = borrow('screens/settings/settings-preference-actions.ts', 'settings-and-preferences', 'screens/settings/settings-preference-actions.test.ts');
+const RESETS = [
+  borrow('screens/settings/settings-resets.ts', 'settings-and-preferences', 'screens/settings/settings-resets.test.ts'),
+  borrow('screens/settings/use-settings-resets.ts', 'settings-and-preferences'),
+];
+
+/**
+ * Files a screen's code imports that the Shell core of step 7 does not bring: from outside the
+ * screen's folder, or from another skill inside it. Each lands, with its test when it has one, in
+ * the commit of the first screen that imports it, whatever the build order or the slice (Shell
+ * step 9: S2 brings use-direction-restart.ts; a slice that starts with S11a brings it there). The
+ * test helpers (testing/create-host-wrapper.tsx, test-game-extra.ts) are Shell core of step 7.
+ * check-screens follows the screen's imports (through borrowed files too) and fails borrowed-file
+ * for an imported entry that is missing, or whose test is. references/screen-frame-and-rules.md,
+ * "The screens and where they live", prints the same lists.
+ */
+export const BORROWS = {
+  S2: [DIRECTION_RESTART, borrow('i18n/create-language-t.ts', 'toybox-screens', 'i18n/create-language-t.test.ts')],
+  S4: [PARITY_OPENER, PAIR_LAYOUT, TODAY, ...DAILY_SUMMARY],
+  // game-screen.tsx draws S6 Pause and S7 Result: S5, S6 and S7 land together.
+  S5: [
+    borrow('screens/pause/pause-overlay.tsx', 'toybox-screens'),
+    borrow('screens/result/result-overlay.tsx', 'toybox-screens', 'screens/result/result-overlay.test.tsx'),
+    PREFERENCE_ACTIONS,
+    PAIR_LAYOUT,
+    TODAY,
+  ],
+  S6: [PREFERENCE_ACTIONS, PAIR_LAYOUT],
+  S9: [
+    TODAY,
+    PAIR_LAYOUT,
+    ...DAILY_SUMMARY,
+    borrow('screens/daily/use-next-day-countdown.ts', 'daily-and-statistics', 'screens/daily/use-next-day-countdown.test.tsx'),
+  ],
+  S10: [
+    TODAY,
+    borrow('screens/home/use-level-play.ts', 'toybox-screens'),
+    ...RESETS,
+    borrow('screens/stats/stats-summary.ts', 'daily-and-statistics', 'screens/stats/stats-summary.test.ts'),
+    borrow('screens/stats/use-stats-summary.ts', 'daily-and-statistics', 'screens/stats/use-stats-summary.test.tsx'),
+  ],
+  S11: [
+    PARITY_OPENER,
+    borrow('screens/settings/settings-rows.ts', 'settings-and-preferences', 'screens/settings/settings-rows.test.ts'),
+    PREFERENCE_ACTIONS,
+    borrow('screens/settings/use-settings-model.ts', 'settings-and-preferences', 'screens/settings/use-settings-model.test.tsx'),
+    borrow('screens/settings/use-settings-context.ts', 'settings-and-preferences', 'screens/settings/use-settings-context.test.tsx'),
+    ...RESETS,
+  ],
+  S11a: [
+    DIRECTION_RESTART,
+    PARITY_OPENER,
+    borrow('screens/settings/language/language-change.ts', 'settings-and-preferences', 'screens/settings/language/language-change.test.ts'),
+  ],
+  S11b: [
+    borrow('screens/settings/settings-extras.ts', 'toybox-screens'),
+    borrow('screens/settings/use-settings-links.ts', 'toybox-screens', 'screens/settings/use-settings-links.test.tsx'),
+  ],
+  S15: [borrow('screens/debug/use-debug-model.ts', 'e2e-maestro', 'screens/debug/use-debug-model.test.tsx')],
+};
+
 /**
  * S5 is the assembled Game screen: these calls prove the pieces game-host-integration and admob-ads
  * ship are wired in its folder (a screen that only renders BoardHost passes every other rule).

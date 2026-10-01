@@ -1,0 +1,1 @@
+the board stays on the continue's first frame after a rewarded continue: the tray is empty, the hearts are outlines

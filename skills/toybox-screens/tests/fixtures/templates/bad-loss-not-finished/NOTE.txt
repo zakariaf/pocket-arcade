@@ -1,0 +1,3 @@
+The round-4 Game screen model laid over the templates: it never sends { type: 'finish' } for a lost
+run whose continue offer is hidden, so an ads-off, offline or no-ad player without Premium saw
+neither the offer nor the endless result. check-screens --screen S5 must fail loss-finished (L11).

@@ -2,13 +2,16 @@
 // Model-hook tests: renderWithShell's providers plus the one GameHost the app provides, built by
 // the real createGameHost from the tally test game (game-host-integration), with its texts in the
 // game catalogs. A hook that reads useGameHost() and gameMessageText therefore renders as it does
-// in the app. The Shell clock is TEST_CLOCK (2026-09-26) unless the test passes services.clock.
-// Pass `host` for what a test changes (hasMusic, credits, how-to-play pages).
+// in the app; a run end is saved and then published to the section stores (updateAndPublish, as
+// the composition root does), so S7's endless best and streak read the new values. The Shell clock
+// is TEST_CLOCK (2026-09-26) unless the test passes services.clock. Pass `host` for what a test
+// changes (hasMusic, credits, how-to-play pages).
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createGameHost } from '@e07/shell/game-host/game-host.ts';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
+import { updateAndPublish } from '@e07/shell/stores/update-and-publish.ts';
 import { createTestSave, TEST_CLOCK } from '@e07/shell/testing/create-test-save.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
@@ -18,6 +21,7 @@ import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { Catalog } from '@e07/shell/i18n/messages.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
+import type { SectionStores } from '@e07/shell/stores/update-and-publish.ts';
 import type {
   RenderWithShellOptions,
   ShellWrapper,
@@ -67,15 +71,16 @@ function failOnMissingMessage(error: Error): never {
   throw error;
 }
 
-function hostDepsFor(save: SaveService, clock: ClockPort): GameHostDeps {
+function hostDepsFor(save: SaveService, clock: ClockPort, stores: SectionStores): GameHostDeps {
   return {
     save,
     clock,
     errorLog: { record: () => undefined, entries: () => [] },
     isContinueAllowed: true,
     createBoardHost: () => () => null,
+    // Persist first, publish second, as the composition root writes every run end.
     writeRunEnd: (write) => {
-      save.update(write.recipe, { refreshBackup: write.refreshBackup });
+      updateAndPublish(save, stores, write);
     },
     feedback: { audio: createFakeAudio(), haptics: createFakeHaptics() },
   };
@@ -87,7 +92,7 @@ export function createHostWrapper(options: HostWrapperOptions = {}): HostWrapper
   const save = options.services?.save ?? createTestSave(clock).save;
   const shell = createShellWrapper({ ...options, services: { clock, ...options.services, save } });
   const host: GameHost = {
-    ...createGameHost(TALLY_GAME, hostDepsFor(save, clock)),
+    ...createGameHost(TALLY_GAME, hostDepsFor(save, clock, shell.stores)),
     ...options.host,
   };
   const language = options.language ?? 'en';

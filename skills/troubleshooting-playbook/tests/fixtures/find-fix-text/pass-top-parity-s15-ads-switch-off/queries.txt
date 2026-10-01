@@ -1,0 +1,1 @@
+[structure] s15-debug-menu dark-en: debug.list: shape differs: a 12.0 pt thick difference (52.0 x 30.3 pt) at +290.0,+325.7 from the element's top-left, inside its crop-only part debug.ads-always-test-switch.toggle

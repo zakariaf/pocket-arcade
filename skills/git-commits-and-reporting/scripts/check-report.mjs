@@ -4,7 +4,8 @@
 // the Checks with numbers from reports/, what changed for players, at most five things to look at,
 // an honest "not verified" list, and the owner's own checks listed as "Owner steps (not blocking)" (the
 // fa and ckb review, the play-test, listening to the sound previews: listed, never waited for). A release
-// report never cites a keyless rehearsal as evidence. Requests (a stop-and-ask message): one plain sentence first,
+// report never cites a keyless rehearsal or an owner-placeholder FAIL (the ship gates' result until the owner
+// supplies G3 and G5) as evidence. Requests (a stop-and-ask message): one plain sentence first,
 // exactly one request with the default that applies until the owner answers. No placeholders left.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-report.mjs report.md [--kind slice|release|request]
 
@@ -23,7 +24,9 @@ const SPEC = {
   positionals: { min: 1, max: 1 },
   details: [
     'Rules:',
-    '  outcome-first          the first line is not one plain sentence about what changed for players',
+    '  outcome-first          the first line is not one plain sentence about what changed for players: one problem',
+    '                         line per failed limit: at most 240 characters, at most 2 sentences, ends in . or !,',
+    '                         and it is a sentence (not a heading, list item, code fence or the Evidence line)',
     '  technical-detail-early a code fence, command, file path or stack trace before the Evidence line',
     '  too-many-requests      more than one request (a "Please ..." line or a question) to the owner',
     '  request-missing        a request message (--kind request) asks for nothing ("Please ..." line)',
@@ -46,8 +49,15 @@ const SPEC = {
     '                         name the fa and ckb review, the play-test and listening to the sound previews (each line says',
     '                         what is pending, or "none pending"), says "none pending" for fa and ckb although texts',
     '                         changed, or calls an owner step blocking (these are listed and never waited for)',
-    '  rehearsal-not-evidence a release report cites a keyless rehearsal (a REHEARSAL result, check-store-artifact',
+    '  rehearsal-not-evidence a slice or release report cites a keyless rehearsal (a REHEARSAL result, check-store-artifact',
     '                         --unsigned) outside "Not tested or not verified" and "Details": a rehearsal is not a release gate',
+    '  owner-placeholder-not-evidence  a slice or release report cites an owner-placeholder FAIL (the owner-placeholder',
+    '                         rule, "OWNER STEPS PENDING: G3, G5") outside "Not tested or not verified", "Details" and',
+    '                         "Owner steps (not blocking)": until the owner supplies the privacy host and support',
+    '                         address (G3) and the AdMob ids (G5) the ship gates end FAIL by design, which proves nothing.',
+    '                         A pilot handed over before then ends with a slice report: the rehearsal under "Not tested or',
+    '                         not verified", G3 and G5 under "Owner steps (not blocking)"; the release report follows the',
+    '                         first upload',
     '',
     'The three change sections are optional: add each one when the work changed a design reference, a parity',
     'waiver or a player-visible text, and its rule applies to every line in it. "Owner steps (not blocking)" is',
@@ -74,6 +84,8 @@ const OWNER_CHECKS = [
 const NONE_PENDING = /\b(none|nothing|no \w+(?: \w+)?) pending\b/i;
 const BLOCKING_WORDS = /\b(blocks|blocked|blocking|waits? (?:for|on)|waiting (?:for|on)|before (?:a|the|any|each) release|gates?)\b/i;
 const NOT_BLOCKING = /\bnot blocking\b|\bnever (?:waited for|waits|blocks|a gate)\b|\bno gate\b/gi;
+/** The owner's account steps G3 (privacy host, support address) and G5 (AdMob ids): a line may say which ship gates wait for them. */
+const ACCOUNT_STEP = /\bG[35]\b/;
 const REHEARSAL = /\bREHEARSAL\b|--unsigned\b|\brehearsal\b/i;
 const FRAME_KEY = /\bs\d{1,2}[a-d]?-[a-z0-9]+(?:-[a-z0-9]+)*(?:--[a-z0-9-]+)?\b/;
 const CHANGE_ID = /\bchanges?\s+(?:[A-Z]{1,4}-?\d+[a-z]?)(?:\s*(?:,|and)\s*[A-Z]{1,4}-?\d+[a-z]?)*\b/;
@@ -110,21 +122,52 @@ function checkOwnerSteps(parts, add) {
   const textsChanged = (parts.get('Texts changed in all four languages')?.items.length ?? 0) > 0;
   for (const item of block.items) {
     if (textsChanged && OWNER_CHECKS[0].test(item.text) && NONE_PENDING.test(item.text)) add(item.line, 'owner-steps-listed', `"${item.text.slice(0, 60)}" says no fa and ckb texts are pending, but texts changed in all four languages`, 'Name the changed texts whose fa and ckb drafts wait for the owner\'s review.');
-    if (BLOCKING_WORDS.test(item.text.replace(NOT_BLOCKING, ''))) add(item.line, 'owner-steps-listed', `"${item.text.slice(0, 60)}" calls an owner step blocking`, 'Owner steps are listed, never waited for: say what the owner can do and when it helps, not what waits for it.');
+    if (!ACCOUNT_STEP.test(item.text) && BLOCKING_WORDS.test(item.text.replace(NOT_BLOCKING, ''))) add(item.line, 'owner-steps-listed', `"${item.text.slice(0, 60)}" calls an owner step blocking`, 'Owner steps are listed, never waited for: say what the owner can do and when it helps, not what waits for it.');
   }
 }
 
 /** A keyless rehearsal (check-store-artifact --unsigned, REHEARSAL) is never release evidence. */
 function checkRehearsal(lines, parts, add) {
-  const exempt = ['Not tested or not verified', 'Details'].map((name) => parts.get(name)).filter(Boolean);
-  const exemptRanges = exempt.map((part) => {
-    const next = [...parts.values()].filter((other) => other.line > part.line).map((other) => other.line).sort((a, b) => a - b)[0] ?? lines.length + 1;
-    return [part.line, next - 1];
-  });
+  const exemptRanges = sectionRanges(lines, parts, ['Not tested or not verified', 'Details']);
   lines.forEach((text, index) => {
     const line = index + 1;
     if (!REHEARSAL.test(text) || exemptRanges.some(([from, to]) => line >= from && line <= to)) return;
     add(line, 'rehearsal-not-evidence', `"${text.trim().slice(0, 60)}" cites a keyless rehearsal as release evidence`, 'A rehearsal (check-store-artifact --unsigned prints "REHEARSAL: not a release gate") proves only the archive\'s contents: cite the signed archive\'s check-store-artifact run, and mention the rehearsal under "Not tested or not verified" at most.');
+  });
+}
+
+/** The outcome line's limits (owner-updates.md rule 1). */
+const OUTCOME_LIMITS = { chars: 240, sentences: 2 };
+
+/** One plain reason per limit the first line breaks, with the numbers. */
+function outcomeProblems(first) {
+  const problems = [];
+  if (/^(Evidence:|#|-|\*|```|Checks|Details|Please)/.test(first)) problems.push('the first line is a heading, list item, code fence, Evidence line or request, not a sentence about the outcome');
+  if (first.length > OUTCOME_LIMITS.chars) problems.push(`first line is ${first.length} characters, the limit is ${OUTCOME_LIMITS.chars}`);
+  const sentences = first.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean);
+  if (sentences.length > OUTCOME_LIMITS.sentences) problems.push(`${sentences.length} sentences, at most ${OUTCOME_LIMITS.sentences}`);
+  if (!/[.!]$/.test(first)) problems.push('does not end in . or !');
+  return problems;
+}
+
+/**
+ * Lines that cite something which is not evidence: a keyless rehearsal (rehearsal-not-evidence) or an
+ * owner-placeholder FAIL (owner-placeholder-not-evidence). They may appear only in the named sections.
+ */
+const OWNER_PLACEHOLDER = /\bowner-placeholder\b|\bOWNER STEPS PENDING\b/i;
+function sectionRanges(lines, parts, names) {
+  return names.map((name) => parts.get(name)).filter(Boolean).map((part) => {
+    const next = [...parts.values()].filter((other) => other.line > part.line).map((other) => other.line).sort((a, b) => a - b)[0] ?? lines.length + 1;
+    return [part.line, next - 1];
+  });
+}
+
+function checkOwnerPlaceholders(lines, parts, add) {
+  const allowed = sectionRanges(lines, parts, ['Not tested or not verified', 'Details', OWNER_STEPS]);
+  lines.forEach((text, index) => {
+    const line = index + 1;
+    if (!OWNER_PLACEHOLDER.test(text) || allowed.some(([from, to]) => line >= from && line <= to)) return;
+    add(line, 'owner-placeholder-not-evidence', `"${text.trim().slice(0, 60)}" cites an owner-placeholder result as evidence`, 'Until the owner supplies the privacy-policy host and support address (G3) and the AdMob ids (G5), check-game-app --stage complete, check-release-setup, check-store-artifact, audit-app-bundle, store-gate.ts and check-sim-app --variant store end FAIL with owner-placeholder lines and "OWNER STEPS PENDING: G3, G5" by design. List that result under "Not tested or not verified" and G3 and G5 under "Owner steps (not blocking)"; hand a keyless pilot over with a slice report, and write the release report after the first upload.');
   });
 }
 
@@ -167,10 +210,9 @@ run(async () => {
   const firstIndex = lines.findIndex((line) => line.trim() !== '');
   if (firstIndex === -1) throw new UsageError(`nothing to check: ${shown} is empty`, 'Write the report first (templates/evidence-slice.md).');
   const first = lines[firstIndex].trim();
-  const sentences = first.split(/(?<=[.!])\s+(?=[A-Z])/).filter(Boolean);
-  if (/^(Evidence:|#|-|\*|```|Checks|Details|Please)/.test(first) || !/[.!]$/.test(first) || sentences.length > 2 || first.length > 240) {
-    const fix = isRequest ? 'Start with one plain sentence saying what is blocked or what happened ("The release of Flock Tilt stopped at the upload and I have not retried it.").' : 'Start with one plain sentence, in players\' words, saying what now works ("Line Siege now saves after every move: ...").';
-    add(firstIndex + 1, 'outcome-first', `the message starts with "${first.slice(0, 60)}"`, fix);
+  for (const failed of outcomeProblems(first)) {
+    const fix = isRequest ? `Start with one plain sentence (at most ${OUTCOME_LIMITS.chars} characters, at most ${OUTCOME_LIMITS.sentences} sentences, ending in . or !) saying what is blocked or what happened ("The release of Flock Tilt stopped at the upload and I have not retried it.").` : `Start with one plain sentence in players' words (at most ${OUTCOME_LIMITS.chars} characters, at most ${OUTCOME_LIMITS.sentences} sentences, ending in . or !) saying what now works ("Line Siege now saves after every move."); the rest goes into the next lines.`;
+    add(firstIndex + 1, 'outcome-first', `${failed}: "${first.slice(0, 60)}${first.length > 60 ? '...' : ''}"`, fix);
   }
   const head = isRequest ? [] : lines.slice(0, evidenceIndex === -1 ? Math.min(lines.length, 6) : evidenceIndex);
   head.forEach((text, index) => {
@@ -219,7 +261,8 @@ run(async () => {
   }
   checkChangeSections(parts, add);
   checkOwnerSteps(parts, add);
-  if (kind === 'release') checkRehearsal(lines, parts, add);
+  checkRehearsal(lines, parts, add);
+  checkOwnerPlaceholders(lines, parts, add);
   const look = parts.get('Please look at');
   if (look && look.items.length > 5) add(look.line, 'look-at-limit', `"Please look at" lists ${look.items.length} things`, 'Point at no more than five things, the most important first.');
   checkPlaceholders(lines, add);

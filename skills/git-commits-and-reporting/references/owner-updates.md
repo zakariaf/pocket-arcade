@@ -15,7 +15,7 @@ The owner reads plain English, not logs, and never reads code. Every finished sl
 
 ## The eight rules
 
-1. **Lead with the outcome in one sentence, in players' words:** "Line Siege now saves after every move: killing the app reopens the same board, paused."
+1. **Lead with the outcome in one sentence, in players' words:** "Line Siege now saves after every move: killing the app reopens the same board, paused." The first line has three limits, and `check-report` names each one it breaks with the numbers: at most 240 characters ("first line is 255 characters, the limit is 240"), at most 2 sentences ("3 sentences, at most 2"), and it ends in `.` or `!` ("does not end in . or !"). It is a sentence, never a heading, list item, code fence, the Evidence line or a request. A longer outcome is split: the first sentence says what now works, the next lines give the rest.
 2. **Name things the way the spec does:** screens by name and ID (Home, S4), features by section (daily challenge, 8.3).
 3. **Numbers come from `reports/`**, never from memory; name the file on the line.
 4. **At most one request per message**, answerable in a word, with the default that applies until then: "Please create the App Store Connect app record for Flock Tilt (step G2, about 2 minutes). Until then I keep working on the board."
@@ -85,6 +85,10 @@ For a release, also open the screenshot gallery for the owner (`open reports/scr
 
 **A keyless rehearsal is not release evidence.** Without the owner's signing key, a store archive built with `CODE_SIGNING_ALLOWED=NO` may be checked with `check-store-artifact --unsigned`, which prints `REHEARSAL: not a release gate`. Mention such a run only under "Not tested or not verified" (or Details); a Checks line or any other line that cites it fails rule `rehearsal-not-evidence`.
 
+**Neither is an owner-placeholder FAIL.** Until the owner supplies the privacy-policy host and support address (step G3) and the real AdMob app id and units (step G5), every ship gate (`check-game-app --stage complete`, `check-release-setup`, `check-store-artifact` with or without `--unsigned`, `audit-app-bundle` with or without `--unsigned`, the release pipeline's `store-gate.ts` and `check-sim-app --variant store`) ends with `owner-placeholder` lines, then `OWNER STEPS PENDING: G3, G5`, then `RESULT: FAIL`, by design. That result proves nothing about the release: a line outside "Not tested or not verified", "Details" and "Owner steps (not blocking)" that cites it fails rule `owner-placeholder-not-evidence`.
+
+**A pilot handed over before the owner's key and ids ends with a slice report** (`check-report.mjs <report> --kind slice`), never a release report: the keyless rehearsal and the owner-placeholder results go under "Not tested or not verified", and G3 and G5 get one line each under "Owner steps (not blocking)" (they may say which gates wait for them: "G3: the privacy-policy host and support address; until then the ship gates end with OWNER STEPS PENDING: G3, G5"). The release report, with its Mutation and Screenshots lines, follows the first real upload.
+
 For a slice, put the red run's assertion lines (Expected / Received) under Details: they are the evidence that the test came first.
 
 ## UI changes: the design screenshots
@@ -105,13 +109,13 @@ Three kinds of change are deliberate but easy for the owner to miss, so each get
 
 **Parity waivers changed.** A waiver in `parity/waivers.json` changes what the parity gate accepts, so the file is a gated path: the commit that adds, removes or edits a waiver carries `Gate-Change: <which frames, which class, why>` and the report repeats it. One line per waiver group: the screen and elements, the class (`platform` for an iOS drawing difference such as React Native's dashed edges, `platform-text-shaping` for a glyph difference, `design-artefact` for a mistake in the design picture such as a tile drawn mid-press), the rule, the cause in plain words and `(Gate-Change trailer in <sha>)`. A retired waiver gets a line too. The owner finds all of them with `git log --grep Gate-Change`. Rule `waiver-trailer`. The same trailer rule covers `parity/game-facts.json`, the file that picks a game's reference variants.
 
-**Texts changed in all four languages.** A player-visible text that changed (a copy-deck text such as a tutorial step, or a new Shell text the deck lacks, such as the score line of a score-rated win) is reported once per text, not per language: where it shows, the new English text, that de, fa and ckb changed with it, and that the fa and ckb drafts go to the owner's review (R3). Name those texts on the fa and ckb line of "Owner steps (not blocking)" (never "none pending" while texts changed); the review never blocks the work or a release. Rules `copy-review` and `owner-steps-listed`.
+**Texts changed in all four languages.** A player-visible text that changed (a copy-deck text such as a tutorial step, or a new Shell text the deck lacks, such as the score line of a score-rated win) is reported once per text, not per language: where it shows, the new English text, that de, fa and ckb changed with it, and that the fa and ckb drafts go to the owner's review (R3). Name those texts on the fa and ckb line of "Owner steps (not blocking)" (never "none pending" while texts changed); the review never blocks the work or a release. Debug texts (every `debug.*` key, the S15 Debug menu of test builds) stay English in all four languages (lead decision L13), so they never appear on that line or in the review sheet's counts. Rules `copy-review` and `owner-steps-listed`.
 
 ## Where each number comes from
 
 | Line | Source file |
 |---|---|
-| Tests | the Jest summary of `npm run test:coverage` (passed/total, per project, the printed random seed) |
+| Tests | passed/total and the random seed from the Jest summary of `npm run test:coverage`. That summary is one combined line for both projects, so take the golden count from `npx jest --ci --selectProjects golden` (its "Tests: <n> passed" line) and write unit = total minus golden (round 4: 2274/2274 pass, golden 65, so unit 2209) |
 | Coverage | `reports/coverage/coverage-summary.json` |
 | Mutation | `reports/stryker/mutation.json` and `mutation.html` |
 | Bots | `reports/sim/<game-id>.json` |

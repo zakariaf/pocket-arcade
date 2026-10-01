@@ -59,6 +59,7 @@ const HOST_FILES = [
   ['packages/shell/src/app/use-is-app-active.test.ts', 'pure'],
   ...[
     'board-types.ts', 'board-kit.ts', 'board-kit.test.ts', 'board-scene.ts', 'board-scene.test.ts', 'describe-error.ts', 'describe-error.test.ts',
+    'board-clock-state.ts', 'board-clock-state.test.ts', 'board-clock-traces.test.ts',
     'run-board-frame.ts', 'run-board-frame.test.ts', 'use-board-clock.ts', 'record-board.ts', 'record-board.test.ts', 'draw-centered-text.ts',
     'draw-centered-text.test.ts', 'present-move.ts', 'present-move.test.ts', 'cue-scheduler.ts', 'cue-scheduler.test.ts', 'paint-board-png.ts',
     'use-game-lifecycle.ts', 'use-game-lifecycle.test.ts',

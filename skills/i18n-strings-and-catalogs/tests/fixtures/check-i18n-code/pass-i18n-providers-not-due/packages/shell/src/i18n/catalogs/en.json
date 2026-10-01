@@ -1,0 +1,10 @@
+{
+  "common.settings": "Settings",
+  "date.day-month": "{day, number} {monthName}",
+  "date.month-short.1": "Jan",
+  "date.month-short.2": "Feb",
+  "game-screen.mode.daily": "Daily – {dateText}",
+  "game-screen.mode.level": "Level {level, number}",
+  "home.play-button.play": "Play",
+  "home.title": "Home"
+}

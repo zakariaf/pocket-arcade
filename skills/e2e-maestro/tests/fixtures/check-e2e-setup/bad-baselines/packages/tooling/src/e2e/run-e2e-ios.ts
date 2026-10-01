@@ -1,5 +1,6 @@
 // packages/tooling/src/e2e/run-e2e-ios.ts —
-// `npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--flows-only] [--write-perf-baseline] [maestro test options]`
+// `npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--app-path <App.app>] [--flows-only] [--write-perf-baseline] [--include-tags <tags>]`
+// (--help prints every option; a bad command line prints the usage line and exits 2, e2e-cli.ts)
 // --sim runs the phone steps on this session's own simulator e07-<purpose> (default e07-e2e-phone)
 // and the iPad steps on e07-<purpose>-tablet (default e07-e2e-tablet). Every Maestro run names its
 // simulator's UDID and a driver port of its own (a free one per run, or --driver-port for the whole
@@ -7,21 +8,24 @@
 // Needs a Release simulator build of the test variant with ADS_MODE=off and refuses any other
 // (requireAdsOffTestBuild): with ads off ConsentPort asks neither Google's form nor Apple's tracking
 // prompt, so no system prompt covers a screen and no ad SDK opens a socket. While the layer-F
-// socket sampler watches the app's sockets, on dedicated simulators it runs:
-// 1. flows: every Shell and game flow (a11y-tagged flows wait for step 4);
+// socket sampler watches the app's sockets on this run's own simulators (one sampler per simulator:
+// other sessions run the same app on theirs), on those dedicated simulators it runs:
+// 1. flows: every Shell and game flow (a11y-tagged flows wait for step 4), the game's first and the
+//    Shell's smoke/04-debug-performance last, whose S15 save benchmark is kept in save-benchmark.json;
 // 2. cold start: 6 launches into Home, the median of the last 5 against the committed
 //    perf-baselines/cold-start-sim-<game-id>.json x coldStartSimRegressionFactor (sim-perf-steps.ts);
 // 3. memory: the game's smoke flows again, the feedback the level asked for (feedback.json: the
 //    win sound and the success haptic from the perf log), then the app's phys_footprint;
 // 4. large text: the a11y-tagged flows at 200 % text in en and fa, on the phone and the iPad.
-// Writes reports/e2e/<game-id>/{junit.xml, network.txt, perf.json, feedback.json, memory/, large-text/<device>-<lang>/}
+// Writes reports/e2e/<game-id>/{junit.xml, network.txt, save-benchmark.json, perf.json, feedback.json, memory/, large-text/<device>-<lang>/}
 // and reports/perf/sim-perf-log.json. --flows-only (while iterating) runs step 1 only; it is never
 // the evidence run.
-import { execFileSync, spawn } from 'node:child_process';
+import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
 import { globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
+import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
+import { recordSaveBenchmark, runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
   appEnv,
   e2eSimulatorName,
@@ -38,6 +42,8 @@ import {
   type AppInfo,
   type MaestroDevice,
 } from '@e07/tooling/e2e/simulator.ts';
+
+import type { E2eOptions } from '@e07/tooling/e2e/e2e-cli.ts';
 
 const SOCKET_SAMPLER = join('packages', 'tooling', 'src', 'audit', 'sample-sockets.ts');
 const PHONE = { key: 'phone', name: 'e07-e2e-phone', model: 'iPhone 17 Pro Max' } as const;
@@ -63,36 +69,21 @@ type E2eRun = {
   readonly udid: string;
   readonly app: AppInfo;
   readonly out: string;
+  /** Starts the socket sampler on one more simulator of this run (the iPad of step 4). */
+  readonly watchSockets: (udid: string) => void;
 };
 
-function parseCli(argv: readonly string[]): Cli {
-  const rest = [...argv];
-  const take = (flag: string): string | undefined => {
-    const index = rest.indexOf(flag);
-    return index === -1 ? undefined : rest.splice(index, 2)[1];
-  };
-  const has = (flag: string): boolean => {
-    const index = rest.indexOf(flag);
-    if (index !== -1) rest.splice(index, 1);
-    return index !== -1;
-  };
-  const game = take('--app');
-  if (game === undefined) {
-    throw new Error(
-      'usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--flows-only] [--write-perf-baseline] [maestro test options]',
-    );
-  }
-  const sim = take('--sim');
-  const port = take('--driver-port');
+/** The runner's options with this session's simulator names (--sim). */
+function cliOf(options: E2eOptions): Cli {
   return {
-    game,
-    phone: e2eSimulatorName(sim, PHONE.name),
-    tablet: e2eTabletName(sim, TABLET.name),
-    appPath: take('--app-path'),
-    driverPort: port === undefined ? undefined : Number(port),
-    isFlowsOnly: has('--flows-only'),
-    isWritingBaseline: has('--write-perf-baseline'),
-    rest,
+    game: options.game,
+    phone: e2eSimulatorName(options.sim, PHONE.name),
+    tablet: e2eTabletName(options.sim, TABLET.name),
+    appPath: options.appPath,
+    driverPort: options.driverPort,
+    isFlowsOnly: options.isFlowsOnly,
+    isWritingBaseline: options.isWritingBaseline,
+    rest: [...options.maestroArgs],
   };
 }
 
@@ -118,11 +109,13 @@ async function runFlows({ cli, udid, app, out }: E2eRun): Promise<string[]> {
     ...appEnv(app),
     ...cli.rest,
   ]);
+  // The Shell's smoke/04-debug-performance ran last (S15's save benchmark): keep its entry now.
+  recordSaveBenchmark({ udid, app, out }, flows);
   return status === 0 ? [] : [`flows: maestro test exited ${String(status)}, see ${out}`];
 }
 
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
-async function runLargeText({ cli, udid, app, out }: E2eRun): Promise<string[]> {
+async function runLargeText({ cli, udid, app, out, watchSockets }: E2eRun): Promise<string[]> {
   const flows = [
     ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
     ...globSync(`apps/${cli.game}/e2e/flows/a11y/*.yaml`),
@@ -137,6 +130,7 @@ async function runLargeText({ cli, udid, app, out }: E2eRun): Promise<string[]> 
     if (device.key === 'tablet') {
       // The socket sampler follows one running copy of the app: stop the phone's first.
       terminateApp(udid, app);
+      watchSockets(target);
       prepareSimulator(target, app, LARGE_TEXT);
       setAppearance(target, 'light');
     }
@@ -159,7 +153,7 @@ async function runLargeText({ cli, udid, app, out }: E2eRun): Promise<string[]> 
 }
 
 /** Installs Maestro, prepares the phone simulator and empties reports/e2e/<game-id>/. */
-function startRun(cli: Cli): E2eRun {
+function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
   execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
     stdio: 'ignore',
   });
@@ -177,15 +171,46 @@ function startRun(cli: Cli): E2eRun {
   return { cli, udid, app, out };
 }
 
+/**
+ * Layer F: one socket sampler per simulator of this run, each naming its UDID
+ * (sample-sockets.ts <App> <report> <udid>), all writing to the same network.txt.
+ */
+function socketSamplers(
+  appName: string,
+  network: string,
+): { readonly watch: (udid: string) => void; readonly stop: () => void } {
+  const samplers: ChildProcess[] = [];
+  return {
+    watch: (udid) => {
+      const args = [SOCKET_SAMPLER, appName, network, udid];
+      samplers.push(spawn(process.execPath, args, { stdio: 'inherit' }));
+    },
+    stop: () => {
+      for (const sampler of samplers) sampler.kill();
+    },
+  };
+}
+
 async function main(): Promise<number> {
-  const run = startRun(parseCli(process.argv.slice(2)));
-  const { cli, udid, app, out } = run;
-  // An empty network.txt is the evidence that the sampler ran through every step and saw nothing.
+  const parsed = parseE2eCli(process.argv.slice(2));
+  if (parsed.kind === 'help') {
+    console.log(E2E_USAGE);
+    return 0;
+  }
+  if (parsed.kind === 'error') {
+    console.error(
+      `e2e:ios: ${parsed.message}\n${E2E_USAGE.split('\n')[0] ?? ''}\n(--help lists every option)`,
+    );
+    return 2;
+  }
+  const started = startRun(cliOf(parsed.options));
+  const { cli, udid, app, out } = started;
+  // An empty network.txt is the evidence that the samplers ran through every step and saw nothing.
   const network = join(out, 'network.txt');
   writeFileSync(network, '');
-  const sampler = spawn(process.execPath, [SOCKET_SAMPLER, app.name, network], {
-    stdio: 'inherit',
-  });
+  const sockets = socketSamplers(app.name, network);
+  sockets.watch(udid);
+  const run: E2eRun = { ...started, watchSockets: sockets.watch };
   const failures: string[] = [];
   try {
     failures.push(...(await runFlows(run)));
@@ -196,7 +221,7 @@ async function main(): Promise<number> {
       failures.push(...(await runLargeText(run)));
     }
   } finally {
-    sampler.kill();
+    sockets.stop();
   }
   if (readFileSync(network, 'utf8').trim() !== '') {
     failures.push(`network: the app opened non-loopback sockets (spec N3), see ${network}`);

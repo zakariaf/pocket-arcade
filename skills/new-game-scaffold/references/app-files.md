@@ -70,7 +70,7 @@ Spec section 11: one file per game holds every per-game value. It is read by `ap
 | Field | Scaffold value | Rule |
 |---|---|---|
 | `id` | the game id | equals the folder, `identity.id` and the save document's `gameId` |
-| `appName` | `{ en, de, fa, ckb }`, `LATIN_NAME` where equal | game names are Latin in every language by default; fa/ckb names need the native-speaker review |
+| `appName` | `{ en, de, fa, ckb }`, `LATIN_NAME` where equal | game names are Latin in every language by default; the owner reads fa/ckb names personally (an owner step that never blocks) |
 | `bundleId` | `io.applander.<game id without hyphens>` (`bundleIdFor(id)`) | fixed by the owner's decision O4, all lowercase, the same on iOS and Android; `check-game-app.mjs` rule `bundle-id` at every stage, and `withShell` throws on anything else |
 | `appStoreId` | `null` | the numeric Apple ID once the record exists (G2) |
 | `version`, `buildNumber` | `'1.0.0'`, `1` | only the release pipeline bumps `buildNumber` |

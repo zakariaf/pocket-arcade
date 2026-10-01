@@ -17,11 +17,13 @@ What each template file does, how screens use navigation, how to test it, and th
 
 ## Files and where they go
 
+Every file lands at Shell step 7 with the composition root, each with its test, except `route-params.ts` (plain types, Shell step 6). A file lands at step 6 only if it and its test need nothing from step 7, and these tests render through `renderWithShell`, which needs the Toybox theme of step 7.
+
 | Template | App path | Job |
 |---|---|---|
 | `root-stack.tsx` | `packages/shell/src/navigation/root-stack.tsx` | the one navigator: groups, screens, options |
-| `route-guards.ts` | `packages/shell/src/navigation/route-guards.ts` | the groups' `if` hooks (read the settings store) |
-| `route-params.ts` | `packages/shell/src/navigation/route-params.ts` | `GameParams`, the only params type |
+| `route-guards.ts` (+ `route-guards.test.tsx`, Shell step 7) | `packages/shell/src/navigation/route-guards.ts` | the groups' `if` hooks (read the settings store) |
+| `route-params.ts` (Shell step 6) | `packages/shell/src/navigation/route-params.ts` | `GameParams`, the only params type |
 | `react-navigation.d.ts` | `packages/shell/src/navigation/react-navigation.d.ts` | registers the static param list globally |
 | `navigation-root.tsx` (+ test) | `packages/shell/src/navigation/navigation-root.tsx` | the container: direction, theme, initial state, reduce-motion fade |
 | `not-built-screen.tsx` (+ test) | `packages/shell/src/navigation/not-built-screen.tsx` | the stand-in for routes whose screen is outside `shell-slice.json` (partial Shell only) |
@@ -30,7 +32,7 @@ What each template file does, how screens use navigation, how to test it, and th
 | `font-test-route.tsx` (+ test) | `packages/shell/src/navigation/font-test-route.tsx` | S15's font test page behind `TEST_ONLY` (`TEST_ONLY.FontTestScreen`) |
 | `game-screen.tsx` | `packages/shell/src/screens/game/game-screen.tsx` | S5, the assembled Game screen (a shared copy, byte-identical to toybox-screens' template): session, Back opens Pause, Pause and Result overlays, the screen model |
 | `game-screen-back.test.tsx` | `packages/shell/src/screens/game/game-screen-back.test.tsx` | Back behaviour in a real static stack (shared copy, same bytes as toybox-screens') |
-| `route-guards.test.tsx` | `packages/shell/src/navigation/route-guards.test.tsx` | first-run flow: language → tutorial → Home |
+| `route-guards.test.tsx` | `packages/shell/src/navigation/route-guards.test.tsx` | first-run flow: language → tutorial → Home (lands with `route-guards.ts` at Shell step 7) |
 
 Imports use the package name with the file extension (`@e07/shell/navigation/root-stack.tsx`); same-folder imports are `./file.ts`; `../` is banned.
 
@@ -97,6 +99,7 @@ Debug: { if: useIsTestBuild, screens: { Debug: NotBuiltScreen, FontTest: NotBuil
 - **Keep the params types.** The static API reads each route's params from its screen's props, so a bare `NotBuiltScreen` on `Game` would turn its params into `undefined` and every `navigate('Game', { start, ref })` stops compiling. `NotBuiltScreen` is generic over the params: `NotBuiltScreen<GameParams>` (an instantiation expression; `GameParams` from `route-params.ts`) for Game, plain `NotBuiltScreen` for the routes without params.
 - **Model hooks navigate normally.** Home's Levels key still calls `navigate('Levels')` and lands on the stand-in, which shows the route name (from existing `common.*` keys only; no new copy) and a Back button. Never write no-op handlers for unbuilt routes: they hide the route from tests and have to be found and replaced later.
 - **The first launch still reaches Home.** When S2 is outside the slice, `LanguageChoice` points at `NotBuiltScreen`: on a FirstRun route it has no Back, and its Next button dispatches the same action the real screen does (`set-language` with `null` = System), so the groups' `if` hooks move on. **`Tutorial` always points at `TutorialScreen`**, slice or not: the tutorial route is part of the Shell core (game-host-integration ships `screens/first-run/tutorial-screen.tsx` with its model hook), the composition root's first-launch test waits for `tutorial.screen`, and a first launch reaches Home through its last step (`finish-tutorial`). check-navigation fails `route-not-built` for a Tutorial stand-in whatever the slice says.
+- **When the files land in a Shell built step by step.** `route-params.ts` at Shell step 6; `route-guards.ts` with its test and the rest of the navigator at step 7, together with the composition root (`check-navigation` rule `route-guards-files` prints `SKIP packages/shell/src/navigation/route-guards.ts [route-guards-files] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created` until then, and from step 7 fails while either file is missing).
 - **The Debug group follows S15.** While S15 is outside the slice, `Debug` and `FontTest` point at `NotBuiltScreen` and the test-only pair leaves out `DebugScreen` and `FontTestScreen`; when S15 joins, they render `DebugRoute` and `FontTestRoute` (each through `TEST_ONLY`).
 - **Only the slice's screens are copied**, each with its model hook, view and tests (toybox-screens). Screens outside the slice have no route or view files; the Shell core (the S14 dialogs, S5's top bar and layout, S7's result model, the debug kit, the parity harness, the perf layer and the Tutorial route) is copied whatever the slice, because the composition root and the startup import it.
 - **Checking.** `node ${CLAUDE_SKILL_DIR}/scripts/check-navigation.mjs .` reads `shell-slice.json`: rules tied to a screen outside the slice print `SKIP <file> [<rule>] <S-id> not in shell-slice.json` (not a problem); everything inside the slice is strict, and a slice screen still routed to `NotBuiltScreen` fails `route-not-built`. Without the file, any `NotBuiltScreen` route fails.

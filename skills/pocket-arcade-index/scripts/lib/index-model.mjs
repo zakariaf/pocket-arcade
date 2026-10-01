@@ -76,13 +76,43 @@ export function readIndexData(indexDir) {
   const isList = (value) => Array.isArray(value) && value.every((item) => typeof item === 'string');
   const categoriesOk = Array.isArray(data.categories) && data.categories.every((c) => typeof c?.name === 'string' && typeof c?.why === 'string' && isList(c?.skills));
   const tasksOk = Array.isArray(data.tasks) && data.tasks.every((t) => typeof t?.task === 'string' && isList(t?.skills) && (t.note === undefined || typeof t.note === 'string'));
-  const stepsOk = (steps) => Array.isArray(steps) && steps.every((s) => typeof s?.step === 'string' && isList(s?.skills) && typeof s?.proof === 'string');
+  const stepsOk = (steps) => Array.isArray(steps) && steps.every((s) => typeof s?.step === 'string' && isList(s?.skills) && typeof s?.proof === 'string' && manifestError(s) === null);
   if (!categoriesOk) return { error: `${DATA_FILE}: categories must be a list of { name, why, skills: [names] }` };
   if (!tasksOk) return { error: `${DATA_FILE}: tasks must be a list of { task, skills: [names], note? }` };
+  for (const kind of ['shell', 'game']) {
+    const bad = (data.buildOrders?.[kind] ?? []).map((step, index) => ({ index, error: manifestError(step) })).find((item) => item.error !== null);
+    if (bad) return { error: `${DATA_FILE}: buildOrders.${kind}[${bad.index}]: ${bad.error}` };
+  }
   if (!stepsOk(data.buildOrders?.shell) || !stepsOk(data.buildOrders?.game)) return { error: `${DATA_FILE}: buildOrders.shell and buildOrders.game must be lists of { step, skills: [names], proof }` };
   const sectionError = buildOrderSectionsError(data.buildOrders) ?? extraSectionsError(data.buildOrders, isList, stepsOk);
   if (sectionError) return { error: `${DATA_FILE}: ${sectionError}` };
   return { data };
+}
+
+/**
+ * A step's optional manifest (the build-order contract):
+ *   copies:    [{ skill, paths: [repo paths or globs, tests included], exclude?: [globs], swap?: true,
+ *                importsLater?: [globs (or npm names) of imports that are stand-ins until a later step copies them],
+ *                deferredTests?: [{ test, why }] (a test that a later step of the order copies, named and explained) }]
+ *   installs:  [{ package, companions?: [packages], where?: text }]   (plan-dependency.mjs, dependency-management)
+ *   generates: [{ tool, paths: [repo paths or globs] }]                  (files a tool writes at this step)
+ *   screens:   [{ screen, copies, installs?, generates? }]                (Shell step 9: one entry per screen, in spec order)
+ */
+export function manifestError(step) {
+  const text = (value) => typeof value === 'string' && value.trim() !== '';
+  const texts = (value) => Array.isArray(value) && value.length > 0 && value.every(text);
+  const optionalTexts = (value) => value === undefined || (Array.isArray(value) && value.every(text));
+  const deferredOk = (value) => value === undefined || (Array.isArray(value) && value.every((item) => text(item?.test) && text(item?.why)));
+  const copyOk = (copy) => text(copy?.skill) && texts(copy?.paths) && optionalTexts(copy?.exclude) && optionalTexts(copy?.importsLater) && deferredOk(copy?.deferredTests) && (copy.swap === undefined || typeof copy.swap === 'boolean') && (copy.note === undefined || text(copy.note));
+  const installOk = (install) => text(install?.package) && optionalTexts(install?.companions) && (install.where === undefined || text(install.where));
+  const generateOk = (gen) => text(gen?.tool) && texts(gen?.paths);
+  const listOk = (value, ok) => value === undefined || (Array.isArray(value) && value.every(ok));
+  if (!listOk(step?.copies, copyOk)) return 'copies must be a list of { skill, paths: [repo paths or globs], exclude?, importsLater?, deferredTests?: [{ test, why }], swap?, note? }';
+  if (!listOk(step?.installs, installOk)) return 'installs must be a list of { package, companions?: [names], where? }';
+  if (!listOk(step?.generates, generateOk)) return 'generates must be a list of { tool, paths: [repo paths or globs] }';
+  const screenOk = (screen) => text(screen?.screen) && listOk(screen?.copies, copyOk) && listOk(screen?.installs, installOk) && listOk(screen?.generates, generateOk);
+  if (!listOk(step?.screens, screenOk)) return 'screens must be a list of { screen, copies, installs?, generates? }';
+  return null;
 }
 
 /** The optional prose sections of buildOrders: commands, slice (strings) and verifyGreen ({ intro, rows }). */
@@ -115,8 +145,9 @@ function extraSectionsError(buildOrders, isList, stepsOk) {
   }
   const extra = buildOrders.extraOrders;
   if (extra !== undefined) {
-    const orderOk = (order) => text(order?.title) && text(order?.intro) && stepsOk(order?.steps) && order.steps.length > 0 && order.steps.every((step) => isList(step.skills));
-    if (!Array.isArray(extra) || !extra.every(orderOk)) return 'buildOrders.extraOrders must be a list of { title, intro, steps: [{ step, skills: [names], proof }] }';
+    const baseOk = (base) => base === undefined || (base?.order === 'shell' && Number.isInteger(base?.through) && base.through >= 1);
+    const orderOk = (order) => text(order?.title) && text(order?.intro) && baseOk(order?.base) && stepsOk(order?.steps) && order.steps.length > 0 && order.steps.every((step) => isList(step.skills));
+    if (!Array.isArray(extra) || !extra.every(orderOk)) return 'buildOrders.extraOrders must be a list of { title, intro, base?: { order: "shell", through: <step> }, steps: [{ step, skills: [names], proof, copies?, installs?, generates? }] }';
   }
   return null;
 }
@@ -179,8 +210,58 @@ function sliceCoreTable(core) {
 }
 
 function extraOrderSections(orders) {
-  return orders.flatMap((order) => ['', `## ${order.title}`, '', order.intro, '', ...stepTable(order.steps)]);
+  return orders.flatMap((order) => {
+    const hasCopies = order.steps.some((step) => manifestLines(step).length);
+    const base = order.base ? ` It starts from a repo that has passed Shell steps 1 to ${order.base.through}.` : '';
+    return ['', `## ${order.title}`, '', order.intro, '', ...stepTable(order.steps),
+      ...(hasCopies ? ['', `What each step of this order copies and installs (the same contract as the Shell steps).${base}`, ...order.steps.flatMap((step, index) => (manifestLines(step).length ? ['', `Step ${index + 1}:`, '', ...manifestLines(step)] : []))] : [])];
+  });
 }
+
+const MANIFEST_HEADING = 'What each Shell step copies, installs and generates';
+
+/** Repo paths as inline code; a glob takes every matching template of that skill, tests included. */
+const pathList = (paths) => paths.map(code).join(', ');
+
+function copyLine(copy) {
+  const parts = [`- Copy from ${code(copy.skill)}: ${pathList(copy.paths)}`];
+  if (copy.exclude?.length) parts.push(` (not ${pathList(copy.exclude)})`);
+  if (copy.swap) parts.push(', replacing the earlier copy of the same path');
+  if (copy.importsLater?.length) parts.push(`; stand-ins until a later step brings ${pathList(copy.importsLater)}`);
+  if (copy.note) parts.push(`. ${copy.note[0].toUpperCase()}${copy.note.slice(1).replace(/\.$/, '')}`);
+  const lines = [`${parts.join('')}.`];
+  for (const deferred of copy.deferredTests ?? []) lines.push(`  - Its test ${code(deferred.test)} comes later: ${deferred.why.replace(/\.$/, '')}.`);
+  return lines;
+}
+
+function manifestLines(entry) {
+  const lines = [];
+  for (const copy of entry.copies ?? []) lines.push(...copyLine(copy));
+  for (const install of entry.installs ?? []) {
+    const companions = install.companions?.length ? ` with its companion${install.companions.length > 1 ? 's' : ''} ${pathList(install.companions)}` : '';
+    lines.push(`- Install ${code(install.package)}${companions}${install.where ? ` (${install.where})` : ''}: run \`plan-dependency.mjs ${install.package}\` (dependency-management) and its printed commands.`);
+  }
+  for (const gen of entry.generates ?? []) lines.push(`- Generated by ${gen.tool}: ${pathList(gen.paths)}.`);
+  return lines;
+}
+
+/** The per-step manifests of an order (copies, installs, generates; Shell step 9 screen by screen). */
+function manifestSection(steps, intro) {
+  const lines = [intro];
+  steps.forEach((step, index) => {
+    const own = manifestLines(step);
+    if (own.length === 0 && !(step.screens ?? []).length) return;
+    lines.push('', `### Step ${index + 1}`, '', ...(own.length ? own : ['- Nothing to copy before the screens below.']));
+    for (const screen of step.screens ?? []) {
+      const parts = manifestLines(screen);
+      lines.push(`- **${screen.screen}**${parts.length ? '' : ': nothing new to copy (its files arrived with an earlier step or screen); route it, then match it to its design'}`);
+      for (const part of parts) lines.push(`  ${part}`);
+    }
+  });
+  return lines;
+}
+
+const MANIFEST_INTRO = 'The build-order contract: at each step, copy exactly these templates (tests included), install exactly these packages, and run the named tool for the generated files. A path is the repo path written on line 1 of a template (or its path under `templates/`) in the named skill\'s `templates/` or `examples/`; a glob takes every such template of that skill, tests included, that no earlier step copied. In a path, `__GAME_ID__` stands for the pilot (`line-siege`): it takes a new game\'s template, which the pilot uses when Line Siege has no file of its own. Every import of a copied file resolves to a file copied (or generated) at that step or earlier, every npm package it imports is installed by then, and every file brings its test in the same step, so `tsc`, `check:fast` and `test:coverage` stay green after every step: `check-index.mjs` (pocket-arcade-index, rule `step-import-closure`) proves it on the library. When a copy fails to compile, the manifest is wrong: report it, never fetch files by following tsc errors.';
 
 function verifyGreenTable(green) {
   return [green.intro, '', '| verify step | Green from | Before that |', '|---|---|---|',
@@ -189,13 +270,15 @@ function verifyGreenTable(green) {
 
 export function renderBuildOrders(data) {
   const { commands, slice, sliceCore, extraOrders = [], verifyGreen } = data.buildOrders;
-  const contents = [...(commands ? [COMMANDS_HEADING] : []), 'The Shell with the pilot game', ...(slice ? [SLICE_HEADING] : []), ...(sliceCore ? [CORE_HEADING] : []), ...extraOrders.map((order) => order.title), ...(verifyGreen ? [GREEN_HEADING] : []), 'Every new game'];
+  const shellManifest = data.buildOrders.shell.some((step) => manifestLines(step).length || (step.screens ?? []).length);
+  const contents = [...(commands ? [COMMANDS_HEADING] : []), 'The Shell with the pilot game', ...(shellManifest ? [MANIFEST_HEADING] : []), ...(slice ? [SLICE_HEADING] : []), ...(sliceCore ? [CORE_HEADING] : []), ...extraOrders.map((order) => order.title), ...(verifyGreen ? [GREEN_HEADING] : []), 'Every new game'];
   const lines = ['# Build orders', '', GENERATED_NOTE, '', '## Contents', '', ...contents.map((heading) => `- ${heading}`), '',
     'Each layer is tested before anything depends on it: rules, then level generator, then save format, then services with fakes, then hooks, then screens, then end-to-end flows, then the screenshot matrix. A step starts only when the step before it passes its "done when" check. Every step is test-first (tdd-workflow) and ends in a commit and a short report (git-commits-and-reporting).',
     ...(commands ? ['', `## ${COMMANDS_HEADING}`, '', commands] : []),
     '', '## The Shell with the pilot game', '',
     'The Shell is built once, together with the pilot game (Line Siege unless the owner decided otherwise), because a framework cannot be judged without a real game inside it. Spec section 15 (items 15.1 to 15.8) is the exit test: every item needs its evidence in the release report.', '',
     ...stepTable(data.buildOrders.shell),
+    ...(shellManifest ? ['', `## ${MANIFEST_HEADING}`, '', ...manifestSection(data.buildOrders.shell, MANIFEST_INTRO)] : []),
     ...(slice ? ['', `## ${SLICE_HEADING}`, '', slice] : []),
     ...(sliceCore ? ['', `## ${CORE_HEADING}`, '', ...sliceCoreTable(sliceCore)] : []),
     ...extraOrderSections(extraOrders),

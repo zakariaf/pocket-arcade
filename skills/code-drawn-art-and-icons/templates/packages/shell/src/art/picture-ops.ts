@@ -64,6 +64,20 @@ export function emptyStatsOps(
 /** Hazard strip (S15 test builds): 20 pt band, -45 degree stripes 12 pt wide, 3 pt ink rules. */
 export const HAZARD = { height: 20, stripe: 12, rule: 3 } as const;
 
+/**
+ * The left edge, along the band's bottom, of the first gold stripe. The design's CSS
+ * (`repeating-linear-gradient(-45deg, gold 0 12px, ink 12px 24px)` inside 3 pt rules) centres the
+ * gradient on the band, so a gold stripe starts at its bottom-right corner and the stripes run
+ * leftwards from there: the phase follows the width (on the 402 pt parity phone the first full
+ * stripe's bottom edge spans 11.7-28.7 pt). Laid from the left edge they sat 8.3 pt off (S15).
+ */
+function firstStripeStart(width: number): number {
+  const inner = HAZARD.height - HAZARD.rule * 2;
+  const run = HAZARD.stripe * Math.SQRT2;
+  const period = run * 2;
+  return width - run - Math.ceil((width - run + inner) / period) * period;
+}
+
 /** Gold stripes over a toy-ink band, as parallelograms across `width` (the only repeating fill). */
 export function hazardStripeOps(
   width: number,
@@ -77,7 +91,7 @@ export function hazardStripeOps(
     ...fill(paints.toyInk),
   };
   const stripes: string[] = [];
-  for (let x = -inner; x < width; x += run * 2) {
+  for (let x = firstStripeStart(width); x < width; x += run * 2) {
     const top = HAZARD.rule;
     const bottom = HAZARD.rule + inner;
     stripes.push(

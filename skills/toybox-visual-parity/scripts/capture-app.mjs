@@ -224,25 +224,36 @@ run(async () => {
   if (!options['no-hierarchy'] && !maestro) fail('Maestro is not installed', 'Install Maestro 2.10 (see the e2e-maestro skill), or set $MAESTRO_BIN; Java 17 must be available.');
   // A dump belongs to this launch only when it holds the launch's nonce marker: without it, the
   // XCUITest driver that answered serves another simulator (round 3: another session's Settings).
-  const dumpHierarchy = (nonce) => {
-    let r = maestro(...maestroArgs(target, 'hierarchy', '--no-reinstall-driver'));
-    if (r.status !== 0) r = maestro(...maestroArgs(target, 'hierarchy'));
-    let json;
-    try {
-      json = JSON.parse(r.stdout.slice(r.stdout.indexOf('{')));
-    } catch {
-      cleanTmp();
-      return fail(`maestro hierarchy did not print JSON (exit ${r.status}): ${(r.stderr || r.stdout).trim().split('\n').slice(-1)[0]}`, maestro.javaHome ? 'Run the same command by hand to see the error.' : 'Maestro needs Java 17: set JAVA_HOME.');
-    }
-    if (!parseMaestroHierarchy(json).elements.has(launchMarker(nonce))) {
+  // XCUITest can also answer once with only the status bar, before the app's accessibility tree is
+  // attached (round 5: one dump in 160 held nothing but "3 of 3 Wi-Fi bars"), so a dump without the
+  // marker is read again after a short wait; only MARKER_DUMPS dumps in a row without it stop the
+  // capture. Another simulator's driver never shows this launch's marker, so the guard still holds.
+  const MARKER_DUMPS = 3;
+  const dumpHierarchy = async (nonce) => {
+    for (let dump = 1; ; dump += 1) {
+      let r = maestro(...maestroArgs(target, 'hierarchy', '--no-reinstall-driver'));
+      if (r.status !== 0) r = maestro(...maestroArgs(target, 'hierarchy'));
+      let json;
+      try {
+        json = JSON.parse(r.stdout.slice(r.stdout.indexOf('{')));
+      } catch {
+        cleanTmp();
+        return fail(`maestro hierarchy did not print JSON (exit ${r.status}): ${(r.stderr || r.stdout).trim().split('\n').slice(-1)[0]}`, maestro.javaHome ? 'Run the same command by hand to see the error.' : 'Maestro needs Java 17: set JAVA_HOME.');
+      }
+      const parsed = parseMaestroHierarchy(json);
+      if (parsed.elements.has(launchMarker(nonce))) return json;
+      if (dump < MARKER_DUMPS) {
+        step(`the dump has no ${launchMarker(nonce)} yet (${parsed.elements.size} elements; the app's tree may not be attached): reading it again in 2 s`);
+        await sleep(2000);
+        continue;
+      }
       cleanTmp();
       writeFileSync(join(outDir, 'rejected.hier.json'), `${JSON.stringify(json, null, 1)}\n`);
       return fail(
-        `hierarchy from another simulator: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}); it was kept as rejected.hier.json`,
+        `hierarchy from another simulator: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}), in ${MARKER_DUMPS} dumps in a row; the last was kept as rejected.hier.json`,
         'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or a modal root lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
       );
     }
-    return json;
   };
 
   // 3b. A Game-route frame (S5, S6, S7) masks the board the game draws: each game brings its own
@@ -263,7 +274,7 @@ run(async () => {
       const probeSettled = await settle(null);
       if (!probeSettled.stable) return unstable(probeSettled.previous);
       step('maestro hierarchy of the board probe');
-      const probed = parseMaestroHierarchy(dumpHierarchy(probeLaunch.nonce));
+      const probed = parseMaestroHierarchy(await dumpHierarchy(probeLaunch.nonce));
       const text = probed.elements.get('game.board-layout')?.label ?? null;
       let parsed = null;
       try {
@@ -302,7 +313,7 @@ run(async () => {
     let accepted = false;
     for (let attempt = 1; attempt <= 3 && !accepted; attempt += 1) {
       step(`maestro hierarchy, attempt ${attempt} (about 11 s; 20 s the first time)`);
-      hierarchy = dumpHierarchy(nonce);
+      hierarchy = await dumpHierarchy(nonce);
       const after = shot(tmp('after'));
       if (sameScreen(after, stable)) {
         accepted = true;

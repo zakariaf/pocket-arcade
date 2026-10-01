@@ -19,7 +19,8 @@ const SPEC = {
   positionals: { min: 0, max: 1 },
   details: [
     'Rules: required-file, sdk-pin, sdk-import, sdk-api, deprecated-banner-size, error-code-branch,',
-    '  reward-on-earned, content-rating, test-only-api, debug-adapter-import, consent-factory, sample-id, hard-coded-id,',
+    '  reward-on-earned, content-rating, test-only-api, debug-adapter-import, debug-geography-test-only, consent-factory,',
+    '  rewarded-status, sample-id, hard-coded-id,',
     '  att-adapter-only, att-order, att-plugin, plugin-entry, extra-ad-units, skadnetwork, game-config-ids,',
     '  policy-numbers, banner-placement, ad-in-effect, pure-policy, root-mock, level-end-recorded, consent-moment,',
     '  free-hints-config.',
@@ -80,6 +81,8 @@ function checkImports(root, files, sources, report) {
     if (rel === debug.file || isTestFile(rel)) continue;
     for (const imp of parseImports(sources.get(rel))) {
       if (!imp.specifier.endsWith(`${debugBase}.ts`) && !imp.specifier.endsWith(debugBase)) continue;
+      // `import type { ConsentDebugTools }` (test-only-api.ts) is erased by the compiler: no code reaches a bundle.
+      if (imp.isType) continue;
       if (!debug.allowedImporters.some((allowed) => rel === allowed || (allowed.endsWith('/') && rel.startsWith(allowed)))) {
         report.problem({ file: rel, line: imp.line, rule: 'debug-adapter-import', message: 'imports the consent debug adapter outside test-only code', fix: 'Import it only from packages/shell/src/app/test-only-entry.ts (compiled out of store builds).' });
       }
@@ -127,6 +130,47 @@ function checkSourceRules(files, sources, report) {
       for (const match of raw.matchAll(/ca-app-pub-\d{16}[~/]\d{10}/g)) {
         if (!match[0].includes(FACTS.samplePublisher)) add(match.index, 'hard-coded-id', `AdMob ID ${match[0]} in app code`, 'Real IDs live only in apps/<game>/game.config.ts and reach the runtime through expo.extra.adUnits.');
       }
+    }
+  }
+}
+
+// R4G-G09: UMP's debug geography (and its test devices) makes any network answer as the EEA or as
+// elsewhere. Only test-build code may set it: S15's debug services build their own consent port with
+// it (the debug link's geo=eea|other, compiled out of store builds with the test-only entry), and the
+// adapter reads it. Anywhere else it would reach a store build's consent moment.
+function checkDebugGeography(files, sources, report) {
+  const { adapter, allowedIn } = FACTS.debugGeography;
+  const isAllowed = (rel) => rel === adapter || isTestFile(rel) || allowedIn.some((allowed) => rel === allowed || (allowed.endsWith('/') && rel.startsWith(allowed)));
+  for (const rel of files.filter((file) => !isAllowed(file))) {
+    const text = maskComments(sources.get(rel));
+    for (const match of text.matchAll(/\b(debugGeography|testDeviceIdentifiers)\s*:|\b(AdsConsentDebugGeography)\b/g)) {
+      report.problem({ file: rel, line: lineAt(text, match.index), rule: 'debug-geography-test-only', message: `${match[1] ?? match[2]} is set outside test-only code, so a store build could ask UMP with a debug geography`, fix: "Pass only { onError } to createConsentPort on the store path. A test build sets the geography through debugServices.setConsentGeography (the debug link's geo=eea|other), whose services build their own port with createConsentPort(adsMode, { debugGeography, onError })." });
+    }
+  }
+}
+
+// L11 (D64): the AdsPort reports where the rewarded ad stands ('loading' | 'ready' | 'unavailable'),
+// never a loaded flag. With a flag, "not loaded" meant both "still loading" and "cannot come", so a
+// lost run could neither show its offer's loading state nor end at once (a stranded finished run).
+function checkRewardedStatus(root, files, sources, report) {
+  const { port, adapter, statusType, members, retired } = FACTS.rewardedStatus;
+  const portText = existsSync(join(root, port)) ? maskComments(readRepoText(root, port)) : null;
+  if (portText !== null) {
+    if (!portText.includes(statusType)) report.problem({ file: port, rule: 'rewarded-status', message: `does not export ${statusType}`, fix: "Restore ads-port.ts from the template: export type RewardedStatus = 'loading' | 'ready' | 'unavailable' (L11)." });
+    for (const member of members.filter((name) => !new RegExp(`\\b${name}\\s*:`).test(portText))) {
+      report.problem({ file: port, rule: 'rewarded-status', message: `AdsPort has no ${member} member`, fix: 'Restore ads-port.ts from the template: rewardedStatus(): RewardedStatus and subscribeRewardedStatus(listener) (L11, D64).' });
+    }
+  }
+  const adapterText = existsSync(join(root, adapter)) ? maskComments(readRepoText(root, adapter)) : null;
+  if (adapterText !== null) {
+    for (const member of members.filter((name) => !new RegExp(`\\b${name}\\s*:`).test(adapterText))) {
+      report.problem({ file: adapter, rule: 'rewarded-status', message: `the adapter does not report ${member}`, fix: "Restore admob-ads-adapter.ts from the template: a status cell set to 'loading' by a preload, 'ready' on LOADED, 'unavailable' on a load error, once shown and before initialize." });
+    }
+  }
+  for (const rel of files) {
+    const text = maskComments(sources.get(rel));
+    for (const match of text.matchAll(new RegExp(`\\b(${retired.join('|')})\\b`, 'g'))) {
+      report.problem({ file: rel, line: lineAt(text, match.index), rule: 'rewarded-status', message: `uses ${match[1]}, the round-4 loaded flag (it hides a continue that is still loading)`, fix: "Use AdsPort.rewardedStatus() and subscribeRewardedStatus(); perkOffer gives a continue 'loading' while its ad loads and 'hidden' only when no ad can come (L11)." });
     }
   }
 }
@@ -552,6 +596,8 @@ run(async () => {
   checkPins(root, report);
   checkImports(root, unique, sources, report);
   checkConsentFactory(unique, sources, report);
+  checkDebugGeography(unique, sources, report);
+  checkRewardedStatus(root, unique, sources, report);
   checkTrackingImports(unique, sources, report);
   checkTrackingOrder(root, report);
   const withConfig = [...new Set([...unique, ...configFiles(root)])];

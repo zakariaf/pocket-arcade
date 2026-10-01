@@ -14,6 +14,7 @@ const SET: DebugOverrides = {
   isBoardLayoutOn: true,
   ads: 'never',
   seed: 42,
+  consentGeography: 'eea',
 };
 
 describe('debug overrides in the test-only key-value store', () => {
@@ -28,12 +29,19 @@ describe('debug overrides in the test-only key-value store', () => {
   it('drops a damaged record, and each bad field on its own', () => {
     expect(decodeDebugOverrides('{not json')).toStrictEqual(NO_DEBUG_OVERRIDES);
     expect(decodeDebugOverrides('[]')).toStrictEqual(NO_DEBUG_OVERRIDES);
-    const partlyBad = JSON.stringify({ ...SET, date: '2026-13-45', ads: 'sometimes', seed: -1 });
+    const partlyBad = JSON.stringify({
+      ...SET,
+      date: '2026-13-45',
+      ads: 'sometimes',
+      seed: -1,
+      consentGeography: 'mars',
+    });
     expect(decodeDebugOverrides(partlyBad)).toStrictEqual({
       ...SET,
       date: null,
       ads: null,
       seed: null,
+      consentGeography: null,
     });
   });
 

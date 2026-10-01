@@ -2,7 +2,8 @@
 // app) and the new-game scaffold write into apps/<game-id>/: the game.config.ts settings, the
 // placeholder entry, the catalogs and the font list. The skill library keeps the canonical copy and
 // syncs it into both skills' scripts/lib/, so the two generators write identical bytes. Not an entry
-// point: no side effects on import, node: built-ins only.
+// point: no side effects on import, node: built-ins only, plus ship-placeholders.mjs, the shared
+// placeholder list the library syncs into the same scripts/lib/ folder (both skills declare it).
 
 /** The four UI languages, in catalog order. */
 export const LANGUAGES = Object.freeze(['en', 'de', 'fa', 'ckb']);
@@ -36,19 +37,23 @@ export function premiumIdFor(gameId) {
 }
 
 /**
- * The scaffold's placeholder values (and the older com.example ids) that must never reach a finished
- * app or a store build. `field` names the game.config.ts field, `step` the owner step that replaces
- * the value. check-game-app --stage complete (new-game-scaffold) rejects each one by name.
+ * The scaffold placeholders a finished app and every ship gate refuse by name (owner decision O4,
+ * lead decision L14): one list, kept in ship-placeholders.mjs and re-exported here, never copied.
+ * Each entry is { field, value, name, ownerStep, step, matches }: ownerStep is G5 for the AdMob app
+ * id and its three units, G3 for the privacy-policy host and the support address, and null for the
+ * pre-O4 com.example.* ids (not an owner step: the bundle-id and premium-id rules name the fixed
+ * id). check-game-app --stage complete (new-game-scaffold) reports each owner placeholder under
+ * owner-placeholder with ownerPlaceholderProblem and prints "OWNER STEPS PENDING: G3, G5" before its
+ * RESULT line (finishWithOwnerSteps); the result stays FAIL until the owner supplies the values.
  */
-export const PLACEHOLDERS = Object.freeze([
-  Object.freeze({ value: 'com.example.*', field: 'bundleId / premium.productId', step: `the fixed id ${BUNDLE_PREFIX}<game id> (owner decision O4)`, matches: (text) => /^com\.example\./.test(text) }),
-  Object.freeze({ value: 'ca-app-pub-1234567890123456~1234567890', field: 'ads.ids.ios.appId', step: 'the owner\'s AdMob app id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456~1234567890' }),
-  Object.freeze({ value: 'ca-app-pub-1234567890123456/1111111111', field: 'ads.ids.ios.units.banner', step: 'the owner\'s banner unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/1111111111' }),
-  Object.freeze({ value: 'ca-app-pub-1234567890123456/2222222222', field: 'ads.ids.ios.units.interstitial', step: 'the owner\'s interstitial unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/2222222222' }),
-  Object.freeze({ value: 'ca-app-pub-1234567890123456/3333333333', field: 'ads.ids.ios.units.rewarded', step: 'the owner\'s rewarded unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/3333333333' }),
-  Object.freeze({ value: 'example.com', field: 'links.privacyPolicy.host', step: 'the owner\'s privacy policy host (the privacy link, owner step G3 with the App Privacy answers)', matches: (text) => text === 'example.com' }),
-  Object.freeze({ value: 'support@example.com', field: 'links.supportEmail', step: 'the owner\'s support address (the privacy link\'s contact, owner step G3)', matches: (text) => text === 'support@example.com' }),
-]);
+export {
+  finishWithOwnerSteps,
+  OWNER_PLACEHOLDER_RULE,
+  ownerPlaceholderProblem,
+  ownerStepsPendingLine,
+  PLACEHOLDERS,
+  placeholdersIn,
+} from './ship-placeholders.mjs';
 
 /**
  * The generators have no --bundle-id option any more (the id is fixed). An old command line may still
@@ -67,10 +72,6 @@ export function withoutBundleIdOption(argv, defaultApp) {
   return { argv: [...argv.slice(0, at), ...argv.slice(at + (inline ? 1 : 2))] };
 }
 
-/** Every placeholder a string holds, as PLACEHOLDERS entries. */
-export function placeholdersIn(text) {
-  return PLACEHOLDERS.filter((entry) => typeof text === 'string' && entry.matches(text));
-}
 export const RESERVED_IDS = Object.freeze(new Set(['game-kit', 'shell', 'tooling', 'app', 'apps', 'packages', 'test']));
 
 /** hints.freePerDay per hint design: no hint, or a solver's next move (spec 8.5: one free per day). */

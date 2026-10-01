@@ -20,15 +20,20 @@ const KIT_ALIAS = '@e07/game-kit/';
 /** Every quoted specifier after `from` or `import` (static, side-effect and dynamic imports). */
 const SPECIFIER = /\b(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
 
-/** The game's logic folders and the sim folder; game-kit counts only as far as they import it. */
+/** The game's logic folders (levels/ without its generated pack-*.json) and the sim folder; game-kit counts only as far as they import it. */
 export function fingerprintFolders(gameId) {
   return [...GAME_LOGIC_FOLDERS.map((folder) => `apps/${gameId}/src/${folder}`), `test/sims/${gameId}`];
 }
 
+/** The level packs generate-levels.ts writes from the rules after the sims: outputs, not inputs. */
+export const GENERATED_PACK = /\/src\/levels\/pack-[^/]*\.json$/;
+
+/** Sources count; unit tests, snapshots, the bands and the generated packs do not (sim tests do). */
 function isFingerprinted(path) {
   if (path.endsWith('.sim.test.ts')) return true;
   if (/\.test\.tsx?$/.test(path) || path.includes('.snap')) return false;
-  return /\.(ts|tsx|json)$/.test(path) && !path.endsWith('balance-bands.json');
+  if (path.endsWith('balance-bands.json') || GENERATED_PACK.test(path)) return false;
+  return /\.(ts|tsx|json)$/.test(path);
 }
 
 const isFile = (root, path) => existsSync(join(root, path)) && statSync(join(root, path)).isFile();

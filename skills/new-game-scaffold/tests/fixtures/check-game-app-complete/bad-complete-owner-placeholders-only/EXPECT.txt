@@ -1,0 +1,9 @@
+[owner-placeholder] ads.ids.ios.appId is the placeholder AdMob app id ca-app-pub-1234567890123456~1234567890 (owner step G5)
+[owner-placeholder] ads.ids.ios.units.banner is the placeholder AdMob banner unit ca-app-pub-1234567890123456/1111111111 (owner step G5)
+[owner-placeholder] ads.ids.ios.units.interstitial is the placeholder AdMob interstitial unit ca-app-pub-1234567890123456/2222222222 (owner step G5)
+[owner-placeholder] ads.ids.ios.units.rewarded is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5)
+[owner-placeholder] links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3)
+[owner-placeholder] links.supportEmail is the placeholder support address support@example.com (owner step G3)
+check-game-app: 1 apps checked, 6 problems
+OWNER STEPS PENDING: G3, G5
+RESULT: FAIL (6 problems)

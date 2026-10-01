@@ -1,5 +1,10 @@
 // packages/tooling/src/audit/network-runtime-layer.test.ts
-import { appProcessPattern, nonLoopbackConnections, pidsOf } from './network-runtime-layer.ts';
+import {
+  appProcessPattern,
+  appProcessPatterns,
+  nonLoopbackConnections,
+  pidsOf,
+} from './network-runtime-layer.ts';
 
 const HEADER = 'COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME';
 
@@ -49,5 +54,24 @@ describe('appProcessPattern', () => {
     const pattern = appProcessPattern('LineSiege', 'U1');
     expect(matches(pattern, `${bundle}/io.applander.linesiege-1.app/LineSiege`)).toBe(true);
     expect(matches(pattern, `${bundle.replace('U1', 'U2')}/LineSiege.app/LineSiege`)).toBe(false);
+  });
+});
+
+describe('appProcessPatterns', () => {
+  const copyOn = (udid: string): string =>
+    `~/Library/Developer/CoreSimulator/Devices/${udid}/data/Containers/Bundle/Application/A/LineSiege.app/LineSiege`;
+  const found = (patterns: readonly string[], command: string): boolean =>
+    patterns.some((pattern) => new RegExp(pattern).test(command));
+
+  it("watches only this run's simulators: another session's copy (an ads-on build) is not ours", () => {
+    const patterns = appProcessPatterns('LineSiege', ['PHONE-1', 'TABLET-2']);
+    expect([found(patterns, copyOn('PHONE-1')), found(patterns, copyOn('TABLET-2'))]).toStrictEqual(
+      [true, true],
+    );
+    expect(found(patterns, copyOn('OTHER-SESSION-3'))).toBe(false);
+  });
+
+  it('needs at least one simulator', () => {
+    expect(() => appProcessPatterns('LineSiege', [])).toThrow(/udid/);
   });
 });

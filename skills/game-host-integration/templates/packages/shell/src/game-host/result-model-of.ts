@@ -37,10 +37,14 @@ export type ResultInput = {
   readonly extras: ResultExtras;
 };
 
-/** perkOffer says 'free' for a continue only to Premium owners. */
+/**
+ * perkOffer says 'free' for a continue only to Premium owners; 'loading' is the ad key in its busy
+ * state while the rewarded ad loads (L11: a hidden offer means nobody can continue).
+ */
 const CONTINUE_OFFER: Readonly<Record<PerkOffer, LoseResult['continueOffer']>> = {
   free: 'premium',
   'watch-ad': 'ad',
+  loading: 'ad-loading',
   hidden: null,
 };
 
@@ -96,8 +100,10 @@ function recordedResult(input: ResultInput, base: Base, summary: RunSummary): Re
 
 /**
  * What S7 shows, built after the run-end save (spec S7): null while the run is live and for the
- * tutorial. A loss that still has its continue shows the lose screen with the offer; the record
- * follows when the player declines (finish) or continues.
+ * tutorial. A loss the player can still rescue (the offer is free, watch-ad or loading) shows the
+ * lose screen with the offer; the record follows when the player declines (finish) or continues.
+ * A loss nobody can rescue is never left pending (L11): isLossStranded (run-end-policy.ts) makes
+ * the Game screen model send finish, so its Result is the recorded one.
  */
 export function resultModelOf(input: ResultInput): ResultModel | null {
   const { view } = input;

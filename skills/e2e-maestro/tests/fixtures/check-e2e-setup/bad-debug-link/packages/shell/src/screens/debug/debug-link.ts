@@ -7,6 +7,7 @@ import { isLanguage } from '@e07/shell/i18n/languages.ts';
 
 import { isDateKey } from './debug-overrides.ts';
 
+import type { DebugConsentGeography } from './debug-overrides.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 import type { DigitStyle } from '@e07/shell/i18n/digits.ts';
 import type { Language } from '@e07/shell/i18n/languages.ts';
@@ -47,6 +48,8 @@ export type DebugLinkRequest = {
   readonly screen?: DebugScreen;
   readonly action?: 'win-level' | 'lose-level';
   readonly boardLayout?: boolean;
+  /** Test builds with ads on (the ads smoke test): the consent geography Google's UMP is asked with. */
+  readonly geo?: DebugConsentGeography;
 };
 
 export type DebugLinkParse =
@@ -108,6 +111,7 @@ const READERS: Readonly<Record<string, Reader>> = {
   stars: readStars,
   screen: oneOf(DEBUG_SCREENS, (screen) => ({ screen })),
   action: oneOf(['win-level', 'lose-level'], (action) => ({ action })),
+  geo: oneOf(['eea', 'other'], (geo) => ({ geo })),
 };
 
 const LINK = /^[a-z][a-z0-9+.-]*:\/\/debug\/setup\/?(?:\?(.*))?$/i;

@@ -52,9 +52,10 @@ All in `packages/tooling/src/storekit/` (templates in this skill):
 | `storekit-harness.entitlements` | `get-task-allow = true`, referenced by the app's Debug configuration only |
 | `ArmTests.swift` | hosted tests: `testArmDefault`, `testArmAskToBuy`, `testArmFail`, `testApproveAll`, `testRefundAll` |
 | `add-harness.rb` | adds the `StoreKitHarness` unit-test target to a freshly prebuilt project with the `xcodeproj` gem that ships with CocoaPods (idempotent; `PRODUCT_NAME = $(TARGET_NAME)` avoids the Xcode error `Multiple commands produce .../PlugIns/.xctest`; Debug-only entitlement) |
-| `storekit-harness.ts` | the runner: fresh test-variant prebuild, harness files + target, Debug `build-for-testing` against this run's own Metro port (`RCT_METRO_PORT`), Metro on that port, then per scenario: arm, run one Maestro flow with the global `--device <udid>` and this run's own driver port (`maestroGlobalArgs` from `packages/tooling/src/e2e/maestro-args.ts`, e2e-maestro's shared helper) |
+| `busy-note.ts` (+ `busy-note.test.ts`) | the note the runner prints before the run and after a failed one when the 1-minute load average is above twice the cores: StoreKit's test store then answers slowly, so a timed-out flow may not be an app bug |
+| `storekit-harness.ts` | the runner: fresh test-variant prebuild, harness files + target, Debug `build-for-testing` against this run's own Metro port (`RCT_METRO_PORT`), Metro on that port, then per scenario: arm, run one Maestro flow with the global `--device <udid>` and its own driver port, a free one for each flow (`maestroGlobalArgs` and `driverPortFor` from `packages/tooling/src/e2e/maestro-args.ts`, e2e-maestro's shared helper) |
 
-The flows live in `packages/shell/e2e/storekit/` (outside `e2e/flows/`, so the normal E2E run never runs them against an unarmed build) and use the shared `../subflows/debug-setup.yaml` (the test-build debug deep link `<scheme>://debug/setup?<query>`; the Shell keeps one copy of it, shared with the E2E flows: it first waits for the app's first screen root, because right after `launchApp` the app's JS may not be listening to links yet, and the app queues a link until its navigator is ready). Harness builds use `ADS_MODE=off`, so the flows check Premium states, not banners.
+The flows live in `packages/shell/e2e/storekit/` (outside `e2e/flows/`, so the normal E2E run never runs them against an unarmed build) and use the shared `../subflows/debug-setup.yaml` (the test-build debug deep link `<scheme>://debug/setup?<query>`; the Shell keeps one copy of it, shared with the E2E flows: it first waits for the app's first screen root, because right after `launchApp` the app's JS may not be listening to links yet, and the app queues a link until its navigator is ready; its guards tap only Apple's "Open in ...?" alert, never a bare 'Open', which in an `ADS_MODE=test` build also matches the AdMob test banner's "OPEN" button). Harness builds use `ADS_MODE=off`, so the flows check Premium states, not banners.
 
 ## Tier 2 scenarios and flows
 
@@ -63,9 +64,9 @@ In the runner's order (refund needs the purchase, approval needs the pending one
 | Flow | Arm | Deep-link query and UI steps | Expected |
 |---|---|---|---|
 | `01-buy.yaml` | `testArmDefault` | `firstRun=0&premium=0&screen=premium`, tap `premium.buy-button` | `premium.state.success` |
-| `02-refund-relaunch.yaml` | `testRefundAll` | relaunch, `screen=premium` | `premium.buy-button` (Premium off after the launch re-check) |
+| `02-refund-relaunch.yaml` | `testRefundAll` | relaunch, `screen=premium` | `premium.buy-button` (Premium off after the launch re-check; waits up to 60 s) |
 | `03-ask-to-buy.yaml` | `testArmAskToBuy` | `premium=0&screen=premium`, tap `premium.buy-button` | `premium.state.pending` |
-| `04-approval-relaunch.yaml` | `testApproveAll` | relaunch, `screen=premium` | `premium.state.owned`, without any tap |
+| `04-approval-relaunch.yaml` | `testApproveAll` | relaunch, `screen=premium` | `premium.state.owned`, without any tap (waits up to 60 s) |
 | `05-restore.yaml` | `testArmDefault` | `premium=0&screen=premium`, buy, `premium=0` again, tap `premium.restore-button` | `premium.state.owned` |
 | `06-failure.yaml` | `testArmFail` | `premium=0&screen=premium`, tap `premium.buy-button` | `premium.state.error` |
 | `07-store-unavailable.yaml` | none | `premium=0&offline=1&screen=premium` | `premium.state.unavailable` |
@@ -73,6 +74,8 @@ In the runner's order (refund needs the purchase, approval needs the pending one
 Flow 07 works only because the port is wrapped in `withConnectivity` and the debug switch notifies ConnectivityPort subscribers: the armed StoreKit test store itself is always reachable, so without the gate the page would show a price.
 
 The relaunch flows start with `- launchApp` (Maestro stops the app first) and pass only `screen=premium`, so the cached Premium from the previous flow is what the re-check must change. Never use `launchApp: { clearState: true }` here: uninstalling cleared the test transactions, and `clearState` may reinstall.
+
+The relaunch flows wait 60 s for their state, not 15 s: the launch re-check reads `Transaction.all`, and after an arm step that changed the test store (`testRefundAll`, `testApproveAll`) StoreKit answers it only once storekitd has synced its transaction cache ("Transaction cache is stale", then a sync). On 2026-10-01 that sync took 28 s after `testRefundAll`, and the 15 s wait of flow 02 ended 2.6 s before the revocation arrived, with a correct app. `check-premium.mjs` rule `harness-relaunch-wait` holds every `premium.*` wait in the two relaunch flows at 60000 ms or more; Premium stays on while the re-check waits, as rule 2 requires, so the long wait never hides a wrong state.
 
 Status: first real runs of `storekit-harness.ts`, 2026-09-30 (Xcode 26.6, iOS 26.5 simulator `e07-r4-host-storekit`, a fresh one per run, its UDID named in every call; Line Siege, `io.applander.linesiege`, product `io.applander.linesiege.premium`; the runner's own free ports, in run 3 Maestro driver port 54878 and Metro 54879):
 
@@ -84,6 +87,22 @@ Status: first real runs of `storekit-harness.ts`, 2026-09-30 (Xcode 26.6, iOS 26
 
 Afterwards the simulator was deleted and `npx expo prebuild --platform ios --clean` regenerated `ios/` without the harness target and the `.storekit` file (Release-day order, steps 3 and 4).
 
+After the switch from the per-command `--udid` to the global `--device` (with `maestroGlobalArgs`), an independent build of the Shell and Line Siege, made only from these skills, ran the harness once more:
+
+| Date | Command | Simulator | Ports | Result |
+|---|---|---|---|---|
+| 2026-10-01 | `node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --device <udid>` | a fresh `e07-<purpose>-storekit` (iOS 26.5, Xcode 26.6), deleted afterwards | the runner's own free driver port, then one port for the whole run (64567 for all seven flows) | `storekit: 0 of 7 scenario(s) failed`, exit 0 |
+
+That runner still picked one driver port per harness run. Every Maestro run now picks its own (a free port for each flow, `check-premium.mjs` rule `harness-maestro`), as every other repo tool does.
+
+With its own driver port for each flow, the 60 s relaunch wait and the shared debug-setup sub-flow whose guards tap only Apple's "Open in ...?" alert, the harness ran again on 2026-10-01 on the Line Siege pilot with the full Shell (iOS 26.5, Xcode 26.6; each run on a fresh `e07-<purpose>-storekit` simulator, its UDID named in every call):
+
+| Run | 1-minute load (12 cores) | Result | Cause and fix |
+|---|---|---|---|
+| a | not measured | 1 of 7 failed (`02-refund-relaunch`: `premium.buy-button` not visible) | The 15 s wait ended 2.6 s before the revocation: StoreKit answered the launch re-check only after a 28 s transaction sync. Fixed: 60 s waits in both relaunch flows (`harness-relaunch-wait`, fixture `bad-harness-relaunch-wait`). |
+| b | 450 to 630 (other builds on the Mac) | 5 of 7 failed (flows 02 to 06 timed out on their state) | Not the app: the overloaded Mac made StoreKit's test store answer slowly. The runner now prints the busy note (`busy-note.ts`) before the run and after a failed one; rerun on a fresh simulator once the load is below twice the cores. |
+| c | 8 at the start (up to about 220 during its own build) | `storekit: 0 of 7 scenario(s) failed`, exit 0 | All seven flows passed, each on its own driver port (64379, 64905, 49171, 50045, 51060, 52109, 52974), Metro on 63906. Then `xcrun simctl delete <udid>` and `npx expo prebuild --platform ios --clean` (no `StoreKitHarness` target and no `.storekit` file left). |
+
 ## Running Tier 2 by hand
 
 ```sh
@@ -93,7 +112,7 @@ node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --device
 xcrun simctl delete "$UDID"                              # the test store persists per simulator
 ```
 
-The runner picks a free Maestro driver port and a free Metro port itself (listening on port 0); `--driver-port <n>` and `--metro-port <n>` pass fixed ones. Every Maestro call is `maestro --device <udid> --driver-host-port <port> test <flow>`: a per-command `--udid` alone and the default driver port 7001 let a call reach whichever simulator's XCTest driver already listens there (in round 3 a hierarchy call answered from another session's simulator), and the default Metro port 8081 would load another session's bundle.
+The runner picks a free Maestro driver port for every flow and one free Metro port for the run (listening on port 0); `--driver-port <n>` passes one fixed driver port for every flow and `--metro-port <n>` a fixed Metro port. It refuses a non-UDID `--device` or a bad port before it builds anything. Every Maestro call is `maestro --device <udid> --driver-host-port <port> test <flow>`, and its log line names both (`maestro: device <udid>, driver port <port>: test <flow>`): a per-command `--udid` alone and the default driver port 7001 let a call reach whichever simulator's XCTest driver already listens there (in round 3 a hierarchy call answered from another session's simulator), and the default Metro port 8081 would load another session's bundle.
 
 The equivalent steps, as run on 2026-09-26:
 
@@ -130,6 +149,7 @@ E2E, the harness and the store build share `apps/<game>/ios`, and the harness le
 - `failTransactionsEnabled = false` alone did not leave fail mode; `testArmDefault` calls `resetToDefaultState()` for that.
 - `failTransactionsEnabled` is deprecated since iOS 17 ("Use simulatedError(forAPI:)"); Xcode warns but it still worked on iOS 26.5. If it stops working, `testArmFail` becomes `try await s.setSimulatedError(.generic(.unknown), forAPI: .purchase)` (not verified).
 - Once, after a reinstall, the simulated "Sign in with Apple Account ... [Environment: Xcode]" alert appeared during a StoreKit call; Maestro `tapOn: "OK"` (or `"Cancel"`) dismisses it.
+- A relaunch flow that fails with `Assertion is false: id: premium.buy-button is visible` (flow 02) or `premium.state.owned` (flow 04) while the screen shows the previous Premium state usually waited too little, not a wrong app: StoreKit answers the launch re-check only after its transaction sync (28 s once). Read the simulator log for `TransactionQuery(kind: all` and the next `Finished iterating transaction batches` in the app's process; the gap is the sync. Keep the 60 s wait (`harness-relaunch-wait`) and rerun on a fresh simulator; only a state that is still wrong after 60 s is an app bug.
 - Maestro 2.10 has `--include-tags`/`--exclude-tags`, not `--tags`; `JAVA_HOME` must point at Java 17.
 - The harness app is a Debug test build, so the test build's JS network guard (e2e-maestro's `screens/debug/network-guard.ts`) runs in it too. It must let a Debug build reach its own Metro on loopback (the bundle and the HMR websocket on `localhost:<metro port>`): on 2026-09-30 a guard that blocked every websocket threw "N3: websocket to http://localhost:<port>/hot blocked" from `HMRClient.setup`, LogBox covered the app, and 5 of 7 flows failed. Loopback is not network traffic (the runtime `lsof` audit allows it too), and Release E2E builds have `__DEV__` false, so they still block everything.
 

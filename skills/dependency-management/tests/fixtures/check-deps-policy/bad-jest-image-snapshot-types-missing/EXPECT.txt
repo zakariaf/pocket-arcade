@@ -1,0 +1,2 @@
+companion
+jest-image-snapshot 6.5.2 is installed but its companion @types/jest-image-snapshot 6.4.2 is not

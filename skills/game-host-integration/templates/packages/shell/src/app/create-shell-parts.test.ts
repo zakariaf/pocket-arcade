@@ -200,7 +200,7 @@ describe('createShellParts', () => {
       calls,
     });
     const ads = createFakeAds({
-      isRewardedLoaded: false,
+      rewardedStatus: 'unavailable',
       interstitialResult: 'unavailable',
       rewardResult: 'unavailable',
       calls: [],

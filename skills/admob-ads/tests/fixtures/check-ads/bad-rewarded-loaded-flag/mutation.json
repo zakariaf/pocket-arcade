@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ads-port.ts",
+      "find": "  readonly rewardedStatus: () => RewardedStatus;",
+      "with": "  readonly isRewardedLoaded: () => boolean;"
+    }
+  }
+]

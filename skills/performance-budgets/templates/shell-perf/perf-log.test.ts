@@ -58,6 +58,18 @@ describe('createPerfLog', () => {
     expect(log.entries()).toStrictEqual([win, pulse]);
   });
 
+  it('keeps the newest 400 board-clock trace entries beside the evidence, never instead of it', () => {
+    const log = createPerfLog(createRowDriver());
+    log.append(entry(1));
+    for (let index = 1; index <= 405; index += 1) {
+      log.append({ kind: 'board-clock', label: 'frame', atEpochMs: index, data: { seq: index } });
+    }
+    const kept = log.entries();
+    expect(kept.filter((item) => item.kind === 'board-clock')).toHaveLength(400);
+    expect(kept[0]).toStrictEqual(entry(1));
+    expect(kept[1]?.atEpochMs).toBe(6);
+  });
+
   it('keeps only the newest 200 entries', () => {
     const log = createPerfLog(createRowDriver());
     for (let index = 1; index <= 205; index += 1) log.append(entry(index));

@@ -5,6 +5,7 @@ Coverage proves code ran; mutation testing proves the tests would notice if it w
 ## Contents
 
 - Coverage thresholds
+- Coverage at every build step
 - How Jest applies the keys
 - Files Jest cannot run: the device-only marker
 - Which template files still need a test or the marker
@@ -27,6 +28,10 @@ Coverage proves code ran; mutation testing proves the tests would notice if it w
 | `./apps/*/src/rules/**/*.ts` | 95 | 95 | 95 | 90 |
 
 `npm run test:coverage` (`jest --ci --coverage --randomize`) runs both projects and fails below these numbers; `verify` includes it. The thresholds are gated values: lowering one is never a fix.
+
+## Coverage at every build step
+
+`npm run test:coverage` is never expected red, at any Shell build step, because every step of the build order brings its files' tests (pocket-arcade-index's manifests, proved by `check-index.mjs` rule `step-import-closure`). The thresholds are global percentages, so a step that copies runtime files whose covering tests arrive later lowers them in between: in round 4 the step-6 i18n providers and contexts, `board-direction-view.tsx`, `direction-context.tsx` and `route-guards.ts` waited for tests that render through `renderWithShell` (step 7), and coverage after step 6 fell to 89.8 % functions. The rule that prevents it: a template and its test land in the same step, and when the test needs a file of a later step (renderWithShell, the theme, `start-shell.ts`), both wait for that step. The only named exception is `app/shell-app.test.tsx` (it renders Settings and Home, so it joins with S11), and `create-shell-app.test.tsx` covers `shell-app.tsx` until then. A red `test:coverage` after a step therefore means the manifest is wrong or a file was copied early: move the file to its test's step, never lower a threshold.
 
 ## How Jest applies the keys
 

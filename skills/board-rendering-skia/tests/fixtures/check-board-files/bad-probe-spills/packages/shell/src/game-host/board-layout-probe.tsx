@@ -9,6 +9,11 @@
 // region.cell; a parity capture reads it once to mask the board of S5, S6 and S7, which have no
 // board reference. The frame clips and the text wraps inside it, so the probe never draws over
 // the Shell chrome that parity compares.
+// Given the clock's scene and now, it also publishes `game.board-frame` = {"seq":<n>,"settled":<b>}:
+// the seq of the scene the picture shows and whether the picture was recorded at that scene's end
+// (boardFrameOf, read on the UI thread from the same values the picture is recorded from). A flow
+// waits for settled true after a move, a continue or a full-screen ad; a board whose clock stopped
+// early keeps settled false (the frozen board after a rewarded continue, 2026-10-01).
 import { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useAnimatedReaction } from 'react-native-reanimated';
@@ -16,6 +21,10 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 
+import { boardFrameOf, boardFrameText } from './board-clock-state.ts';
+
+import type { BoardFrame } from './board-clock-state.ts';
+import type { BoardScene } from './board-scene.ts';
 import type { BoardLayout } from '@e07/game-kit/geom/board-layout.ts';
 import type { ReactNode } from 'react';
 import type { HostInstance } from 'react-native';
@@ -31,7 +40,31 @@ export type BoardLayoutProbeProps = {
   readonly children: ReactNode;
   /** How the frame's window position is read; Jest passes a stand-in (no native views there). */
   readonly measureOrigin?: MeasureOrigin;
+  /** The clock's scene and now: also publish game.board-frame. */
+  readonly clock?: {
+    readonly scene: { readonly get: () => Pick<BoardScene<unknown>, 'seq' | 'startAt' | 'endMs'> };
+    readonly now: { readonly get: () => number };
+  };
 };
+
+const NO_SCENE = { seq: -1, startAt: 0, endMs: 0 };
+
+/** game.board-frame: changes when the seq or settled changes, never per frame. */
+function useBoardFrame(clock: BoardLayoutProbeProps['clock']): BoardFrame | null {
+  const [frame, setFrame] = useState<BoardFrame | null>(null);
+  const isOn = clock !== undefined;
+  useAnimatedReaction(
+    () =>
+      clock === undefined
+        ? boardFrameOf(NO_SCENE, 0)
+        : boardFrameOf(clock.scene.get(), clock.now.get()),
+    (next, previous) => {
+      if (!isOn || (previous?.seq === next.seq && previous.settled === next.settled)) return;
+      scheduleOnRN(setFrame, next);
+    },
+  );
+  return frame;
+}
 
 const measureInWindow: MeasureOrigin = (view, done) => {
   view.measureInWindow((x, y) => {
@@ -46,6 +79,7 @@ export function boardLayoutText(origin: BoardOrigin, layout: BoardLayout): strin
 
 export function BoardLayoutProbe(props: BoardLayoutProbeProps): ReactNode {
   const { layout, children, measureOrigin = measureInWindow } = props;
+  const boardFrame = useBoardFrame(props.clock);
   const frame = useRef<HostInstance>(null);
   const [origin, setOrigin] = useState<BoardOrigin | null>(null);
   const [current, setCurrent] = useState<BoardLayout | null>(null);
@@ -70,6 +104,13 @@ export function BoardLayoutProbe(props: BoardLayoutProbeProps): ReactNode {
             variant="caption"
             testID="game.board-layout"
           />
+          {boardFrame === null ? null : (
+            <AppText
+              text={boardFrameText(boardFrame)}
+              variant="caption"
+              testID="game.board-frame"
+            />
+          )}
         </View>
       ) : null}
     </View>

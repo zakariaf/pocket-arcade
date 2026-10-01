@@ -1,0 +1,2 @@
+[route-guards-files]
+packages/shell/src/navigation/route-guards.test.tsx:1

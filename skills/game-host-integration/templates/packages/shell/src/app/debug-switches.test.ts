@@ -1,12 +1,15 @@
 // packages/shell/src/app/debug-switches.test.ts
 import { createNavigationContainerRef, StackActions } from '@react-navigation/native';
 
+import { createFrameHistogram } from '@e07/shell/app/perf/frame-histogram.ts';
+import { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
 
 import { debugFeedbackOf, debugSwitchesOf } from './debug-switches.ts';
 
 import type { DebugParts } from './create-debug-parts.ts';
+import type { FrameHistogram } from '@e07/shell/app/perf/frame-histogram.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { ParamListBase } from '@react-navigation/native';
 
@@ -15,6 +18,23 @@ const mockProbe = { isOn: false };
 jest.mock('@e07/shell/app/test-only.ts', () => ({
   TEST_ONLY: { isParityBoardProbeOn: () => mockProbe.isOn },
 }));
+
+const NOW = (): number => 1_000;
+
+/** The one perf_log row in memory, as the save database's driver holds it. */
+function memoryPerfLog() {
+  let payload: string | undefined;
+  return createPerfLog({
+    exec: () => undefined,
+    run: (_sql, params) => {
+      payload = String(params[0]);
+    },
+    get: () => (payload === undefined ? null : { payload }),
+    transaction: (work) => {
+      work();
+    },
+  });
+}
 
 function partsWith(services: Partial<DebugServices> | null): DebugParts {
   return {
@@ -31,20 +51,57 @@ describe('debugSwitchesOf', () => {
   });
 
   it('keeps every switch off before the debug parts exist and in a store build', () => {
-    const early = debugSwitchesOf(() => null);
-    expect([early.isLayoutProbeOn(), early.seedOverride()]).toStrictEqual([false, null]);
-    const store = debugSwitchesOf(() => partsWith(null));
-    expect([store.isLayoutProbeOn(), store.seedOverride()]).toStrictEqual([false, null]);
+    const early = debugSwitchesOf(() => null, NOW);
+    expect([early.board.isLayoutProbeOn(), early.seedOverride()]).toStrictEqual([false, null]);
+    const store = debugSwitchesOf(() => partsWith(null), NOW);
+    expect([store.board.isLayoutProbeOn(), store.seedOverride()]).toStrictEqual([false, null]);
   });
 
   it('turns the board-layout probe on for boardLayout=1 and for a parity probe=board launch', () => {
     const services = { isBoardLayoutOn: () => true, seedOverride: () => 42 };
-    const linked = debugSwitchesOf(() => partsWith(services));
-    expect([linked.isLayoutProbeOn(), linked.seedOverride()]).toStrictEqual([true, 42]);
-    const plain = debugSwitchesOf(() => partsWith({ isBoardLayoutOn: () => false }));
-    expect(plain.isLayoutProbeOn()).toBe(false);
+    const linked = debugSwitchesOf(() => partsWith(services), NOW);
+    expect([linked.board.isLayoutProbeOn(), linked.seedOverride()]).toStrictEqual([true, 42]);
+    const plain = debugSwitchesOf(() => partsWith({ isBoardLayoutOn: () => false }), NOW);
+    expect(plain.board.isLayoutProbeOn()).toBe(false);
     mockProbe.isOn = true;
-    expect(plain.isLayoutProbeOn()).toBe(true);
+    expect(plain.board.isLayoutProbeOn()).toBe(true);
+  });
+
+  it('traces the board clock into the perf log only while boardLayout=1 is on', () => {
+    expect(debugSwitchesOf(() => null, NOW).board.traceClock()).toBeUndefined();
+    expect(debugSwitchesOf(() => partsWith(null), NOW).board.traceClock()).toBeUndefined();
+    const perfLog = memoryPerfLog();
+    const off = { isBoardLayoutOn: () => false, perfLog };
+    expect(debugSwitchesOf(() => partsWith(off), NOW).board.traceClock()).toBeUndefined();
+    const on = { isBoardLayoutOn: () => true, perfLog };
+    const data = {
+      ...{ run: 2, seq: 5, startAt: null, elapsedMs: null, endMs: 420 },
+      ...{ isAppActive: true, isFocused: true, isAdShowing: false },
+    };
+    const linked = partsWith(on);
+    const switches = debugSwitchesOf(() => linked, NOW);
+    expect(switches.board.traceClock()).toBe(switches.board.traceClock());
+    switches.board.traceClock()?.('push', data);
+    expect(perfLog.entries()).toStrictEqual([
+      { kind: 'board-clock', label: 'push', atEpochMs: 1_000, data },
+    ]);
+  });
+
+  it("feeds S15's frame recorder from the board's frame callback, in a test build only", () => {
+    const recorded: FrameHistogram[] = [];
+    const frames = {
+      histogram: { get: createFrameHistogram, set: (next: FrameHistogram) => recorded.push(next) },
+      isRecording: { get: () => true },
+    };
+    const perf = { frames } as unknown as DebugServices['perf'];
+    const parts = partsWith({ perf });
+    const switches = debugSwitchesOf(() => parts, NOW);
+    const frameTime = switches.board.frameTime();
+    expect(frameTime).toBeDefined();
+    expect(switches.board.frameTime()).toBe(frameTime); // one function: the frame callback keeps its identity
+    frameTime?.(16.7);
+    expect(recorded.map((histogram) => histogram.frames)).toStrictEqual([1]);
+    expect(debugSwitchesOf(() => partsWith(null), NOW).board.frameTime()).toBeUndefined();
   });
 
   it('pushes a new Game screen for the debug controls', () => {
@@ -53,7 +110,7 @@ describe('debugSwitchesOf', () => {
       .spyOn(parts.navigationRef, 'dispatch')
       .mockImplementation(() => undefined);
     const params = { start: 'new', ref: { kind: 'level', level: 1 } } as const;
-    debugSwitchesOf(() => parts).openGame(params);
+    debugSwitchesOf(() => parts, NOW).openGame(params);
     expect(dispatch).toHaveBeenCalledWith(StackActions.push('Game', params));
   });
 });

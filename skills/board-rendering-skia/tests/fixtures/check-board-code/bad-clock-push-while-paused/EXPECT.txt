@@ -1,0 +1,3 @@
+use-board-clock.ts:1 [clock-runnable]
+use-board-clock.ts:33 [clock-runnable] reads the scene shared value on the JS thread
+use-board-clock.ts:51 [clock-runnable] switches the frame callback with a literal setActive(true)

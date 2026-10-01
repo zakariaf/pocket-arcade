@@ -1,0 +1,3 @@
+[borrowed-file]
+packages/shell/src/screens/pause/use-pause-model.ts
+S6 imports packages/shell/src/screens/settings/settings-preference-actions.ts (settings-and-preferences), which is missing

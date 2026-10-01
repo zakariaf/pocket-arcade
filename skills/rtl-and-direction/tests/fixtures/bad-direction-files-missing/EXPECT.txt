@@ -1,0 +1,2 @@
+[direction-files]
+packages/shell/src/game-host/board-direction-view.test.tsx:1

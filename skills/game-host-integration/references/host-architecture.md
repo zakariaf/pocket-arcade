@@ -16,6 +16,7 @@ How a game module reaches the Shell: the typed binding, the one generic seam, th
 - Test builds: debug controls, parity frames and the board probe
 - The Tutorial route
 - The Game screen: S5, S6 and S7
+- Never strand a finished run (L11)
 - Texts the host adds
 - Settled points
 
@@ -76,6 +77,7 @@ This skill's files, each with a test unless marked device-only:
 | `game-host/session-view.ts` | `SessionView`, `SessionCommand`, `SessionHandle`, `continueStateOf` |
 | `game-host/play-clock.ts` | Play time between commands, only while playing, clamped per step |
 | `game-host/run-summary.ts` | `summarizeRun` (what S7 shows) and `runEndOf` (what the run-end write records) |
+| `game-host/run-end-policy.ts` | `isLossStranded(view, continueOffer)`: a lost run that waits for a continue nobody can give (L11), which the Game screen model finishes at once; `stranded-loss.test.ts` proves the run end on the tally game |
 | `game-host/measure-counters.ts` | The game's statistics counters, measured by replaying the kept move line |
 | `game-host/hud-model.ts` | The top bar as data: mode, goal line ("Moves / Par" or the game's line), score |
 | `game-host/top-bar-model.ts` | `GameTopBarProps` for the Toybox top bar; mode and goal texts (S5) |
@@ -257,7 +259,7 @@ Boot order (all synchronous, under the native splash), as `createShellParts` run
 7. Premium's dependencies: `createPremiumDeps(...)` with the store port gated where it is created (`withConnectivity(createExpoIapPurchaseAdapter(), isOnline)`, the wrapped port's `isOnline`).
 8. The test-only debug parts, before anything reaches the network: `adapters.createDebugParts({ network, clocks, premiumDeps, stores, audio, haptics, errorLog, save, saveDriver, extra, game: host.debugControls() })` is e2e-maestro's `createDebugParts` on a device (it installs the JS network guard first, then the perf log with S15's Performance actions, the feedback recorders around the app's `audio` and `haptics` ports (`parts.feedback`), the debug services over the test-only key-value store, the debug link handler and the navigator ref; services, links and feedback are `null` in store builds). The in-memory adapters return a store build's parts (`storeBuildDebugParts()`); a test that needs the real ones passes `createTestAdapters({ createDebugParts })` and mocks the two key-value adapters, as `shell-navigator.test.tsx` does. The game host reads three debug switches through closures over these parts (`debug-switches.ts`), all off in store builds: `isLayoutProbeOn` (the board's `game.board-layout` probe after the debug link's `boardLayout=1`, and in a parity capture's `probe=board` launch: `TEST_ONLY?.isParityBoardProbeOn()`, so the capture can mask the board rectangle the game reports), `seedOverride` (an endless run starts from the debug link's `seed=`) and `openGame` (the debug controls push the Game route: `navigationRef.dispatch(StackActions.push('Game', params))`, a new Game screen even when one is open). `game: host.debugControls()` gives the debug link its `playTo` (`action=win-level|lose-level`) and `openExample` (`screen=game-start|game-middle|result-win|result-lose`); see "Test builds: debug controls, parity frames and the board probe".
 9. Premium starts: `startPremium(deps)` (never awaited), then **`connectPremiumReloads(connectivity, stores, deps)`**: `startPremium` runs before expo-network reports its first state, so a connectivity change calls `shouldReloadStore(flow, isOnline)` and then `loadStore`, followed by `recheckPremium` when the change is to online (the launch re-check ran offline, where absence is not evidence, so a refund would wait for the next foreground), and AppState `'active'` while online calls `recheckPremium`. Without it Settings never shows a price after an offline start.
-10. `Services`: the ads and consent ports (`createAdsPort(config.ads, recordAdError)`, `createConsentPort(adsMode, { onError })`; the consent port carries Apple's tracking prompt, `requestTracking()`, which the consent moment asks after Google's form and which an `ADS_MODE=off` build never asks), audio, clock, connectivity, error log, haptics, the gated purchase port, the save.
+10. `Services`: the ads and consent ports (`createAdsPort(config.ads, recordAdError)`, `createConsentPort(adsMode, { onError })`; the consent port carries Apple's tracking prompt, `requestTracking()`, which the consent moment asks after Google's form (or on its own when only Apple's prompt is due, L10) and which an `ADS_MODE=off` build never asks; a test build passes it through `debug.services?.consentFor(consent) ?? consent`, so the debug link's `geo=eea|other` makes Google's UMP answer as in the EEA or elsewhere from the next consent moment on, while a store build only ever passes `{ onError }`), audio, clock, connectivity, error log, haptics, the gated purchase port, the save.
 11. **The resume state after the host:** `initialStateFor(launch, save)` is the launch's own route or `resumeState(save.doc())`, so a run the host dropped is never resumed.
 
 `ShellLaunch` is how a test build changes a launch without the composition root importing test code, so the root compiles and is tested before any harness exists. A normal launch passes nothing. The parity harness (toybox-visual-parity) plugs in through it: its startup reads the request (`readParityLaunch()`, through `TEST_ONLY`) and passes `createShellApp({ game, language, directionPlan, launch })` with its functions as the members:
@@ -275,24 +277,37 @@ Boot order (all synchronous, under the native splash), as `createShellParts` run
 
 The provider order in `ShellApp` matters: `ServicesProvider` → `StoresProvider` → `LocalizedRoot` (i18n, reads the settings store) → `DirectionProvider` → `ShellProviders` (gesture root, safe area, theme, motion config, the error boundary whose fallback is the S14 `CrashScreen`) → `ShellFeatures` (`GameHostProvider` → `PremiumScreenDepsProvider` → `PressFeedbackProvider` → admob-ads' `ConsentMoment`, which provides the ad hooks their consent moment and draws S3 over the app while it asks) → `ShellNavigator` (`DebugServicesProvider` with the debug services and links → `DialogProvider` → the themed `NavigationRoot` with `navigationRef={debug.navigationRef}` and `onReady`, which starts the debug link handler: `links.start(Linking)`, stopped again if the navigator unmounts). `ShellApp` mounts `useCheckpointOnBackground(save)` and `useAudioLifecycle(...)` exactly once. The crash screen's "Back to Home" resets the boundary and restarts the navigator at Home, never inside the run. `shell-app.test.tsx` renders Settings, the tutorial and the crash path through these real providers, which is what catches a provider the root forgets (a screen test through `renderWithShell` cannot).
 
-Where each import of the root comes from:
+Where each import of the root comes from. Every `@e07/` file that a template in `templates/packages/shell/src/app/` (the root files and their tests) imports, with the skill that owns it and the Shell step at which pocket-arcade-index's step manifest copies it. All of them are in the repo by the end of Shell step 7, when the root lands, so the root type-checks the moment it is copied (a missing row is how a builder ends up chasing `TS2307` errors). `node ${CLAUDE_SKILL_DIR}/scripts/check-root-imports.mjs` proves the table lists every import (this skill's self-test runs it):
 
-| Import | Skill |
-|---|---|
-| `hydrate-save.ts` (`hydrateSave`, `resumeState`), `use-checkpoint-on-background.ts`, the SQLite save store, driver and error log | save-persistence-and-migrations |
-| `create-shell-stores.ts`, `update-and-publish.ts`, `stores-context.tsx` | state-stores |
-| `connect-audio-settings.ts`, `create-shell-haptics.ts`, `localized-root.tsx` | settings-and-preferences |
-| `compose-sound-bank.ts`, `audio-api-audio-adapter.ts`, `use-audio-lifecycle.ts`, `ui-feedback.ts`, `press-feedback-context.tsx` | game-audio-and-haptics |
-| `ads-factory.ts`, `read-ads-extra.ts`, `consent-factory.ts` (the ConsentPort with `requestTracking`, Apple's ATT prompt), `ad-history.ts` (`recordLevelEnd`), `consent-moment.tsx`, the connectivity port, adapter and fake | admob-ads |
-| `premium-store-flow.ts`, `premium-service.ts`, `connectivity-gated-purchase.ts`, `format-store-price.ts`, the expo-iap adapter and fake | premium-purchase |
-| `create-debug-parts.ts` (`createDebugParts`, `DebugParts`), `simulated-clock.ts`, `simulated-connectivity.ts`, `debug-services-context.tsx` | e2e-maestro |
-| `crash-screen.tsx`, `dialog-context.tsx`, `premium-screen-deps-context.tsx` | toybox-screens |
-| `shell-providers.tsx` | react-components-and-hooks |
-| `services-context.tsx`, `read-game-extra.ts`, `test-only.ts`, the clock adapter | architecture-and-boundaries |
-| `navigation-root.tsx` (with its `navigationRef` and `onReady` props), `navigation-theme.ts` | navigation-and-routing |
-| `theme-set.ts`, `use-theme.ts` | toybox-design-system |
-| `direction.ts`, `direction-plan.ts`, `direction-context.tsx` | rtl-and-direction |
-| `digits.ts`, `resolve-language.ts`, `languages.ts` | i18n-strings-and-catalogs |
+| Shell step | Owner skill | Files (under `packages/shell/src/`) |
+|---|---|---|
+| 1 | monorepo-bootstrap | `config/game-extra.ts` |
+| 4 | save-persistence-and-migrations | `services/clock/clock-port.ts`, `services/clock/system-clock-adapter.ts`, `services/error-log/error-log-port.ts`, `services/error-log/fake-error-log.ts`, `services/error-log/sqlite-error-log-adapter.ts`, `services/save/expo-sqlite-sql-driver.ts`, `services/save/load-plan.ts`, `services/save/save-db-schema.ts`, `services/save/save-service.ts`, `services/save/save-store.ts`, `services/save/schema/save-doc.ts`, `services/save/sql-driver.ts`, `services/save/sqlite-save-store.ts` |
+| 5 | admob-ads | `services/ads/ad-history.ts`, `services/ads/ads-factory.ts`, `services/ads/ads-port.ts`, `services/ads/fake-ads.ts`, `services/ads/read-ads-extra.ts`, `services/connectivity/connectivity-port.ts`, `services/connectivity/expo-network-connectivity-adapter.ts`, `services/connectivity/fake-connectivity.ts`, `services/consent/consent-factory.ts` |
+| 5 | game-audio-and-haptics | `services/audio/audio-api-audio-adapter.ts`, `services/audio/audio-port.ts`, `services/audio/compose-sound-bank.ts`, `services/audio/fake-audio.ts`, `services/audio/ui-feedback.ts`, `services/audio/use-audio-lifecycle.ts`, `services/haptics/fake-haptics.ts`, `services/haptics/haptics-port.ts` |
+| 5 | premium-purchase | `services/purchase/connectivity-gated-purchase.ts`, `services/purchase/expo-iap-purchase-adapter.ts`, `services/purchase/fake-purchase.ts`, `services/purchase/format-store-price.ts`, `services/purchase/premium-service.ts`, `services/purchase/premium-store-flow.ts`, `services/purchase/purchase-port.ts`, `stores/premium/premium-state.ts` |
+| 5 | state-stores | `app/stores-context.tsx`, `stores/create-shell-stores.ts`, `stores/settings-selectors.ts`, `stores/update-and-publish.ts`, `testing/create-test-save.ts` |
+| 5 | unit-and-component-tests | `testing/flush-microtasks.ts` |
+| 6 | architecture-and-boundaries | `app/test-only.ts` |
+| 6 | i18n-strings-and-catalogs | `i18n/digits.ts`, `i18n/game-message-text.ts`, `i18n/languages.ts`, `i18n/messages.ts`, `i18n/resolve-language.ts` |
+| 6 | navigation-and-routing | `navigation/route-params.ts` |
+| 6 | rtl-and-direction | `i18n/direction-plan.ts`, `i18n/direction.ts` |
+| 7 | admob-ads | `app/consent-moment.tsx` |
+| 7 | architecture-and-boundaries | `app/read-game-extra.ts`, `app/services-context.tsx` |
+| 7 | board-rendering-skia | `game-host/game-board-host.tsx` |
+| 7 | e2e-maestro | `app/create-debug-parts.ts`, `app/debug-services-context.tsx`, `screens/debug/debug-services.ts`, `screens/debug/fake-debug-store.ts`, `screens/debug/simulated-clock.ts`, `screens/debug/simulated-connectivity.ts` |
+| 7 | game-host-integration | `app/connect-premium-reloads.ts`, `app/create-premium-deps.ts`, `app/create-shell-parts.ts`, `app/debug-switches.ts`, `app/device-adapters.ts`, `app/load-outcome-opener.tsx`, `app/shell-app.tsx`, `app/shell-features.tsx`, `app/shell-navigator.tsx`, `game-host/create-example-picture.tsx`, `game-host/create-game-board-host.tsx`, `game-host/game-host-context.tsx`, `game-host/game-host.ts`, `game-host/run-summary.ts`, `game-host/shell-game-module.ts`, `game-host/use-is-fullscreen-ad-showing.ts`, `testing/create-test-adapters.ts`, `testing/tally-game.ts` |
+| 7 | i18n-strings-and-catalogs | `i18n/t-context.ts` |
+| 7 | navigation-and-routing | `navigation/navigation-root.tsx`, `navigation/navigation-theme.ts` |
+| 7 | performance-budgets | `app/perf/frame-histogram.ts`, `app/perf/perf-log.ts`, `app/perf/use-frame-recorder.ts` |
+| 7 | react-components-and-hooks | `app/shell-providers.tsx` |
+| 7 | rtl-and-direction | `i18n/direction-context.tsx` |
+| 7 | save-persistence-and-migrations | `app/hydrate-save.ts`, `app/use-checkpoint-on-background.ts` |
+| 7 | settings-and-preferences | `app/connect-audio-settings.ts`, `app/create-shell-haptics.ts`, `app/localized-root.tsx`, `config/external-links.ts` |
+| 7 | toybox-components | `ui/button.tsx` |
+| 7 | toybox-design-system | `app/press-feedback-context.tsx`, `theme/theme-set.ts`, `theme/use-theme.ts`, `ui/app-text.tsx` |
+| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `screens/dialogs/dialog-request.ts` |
+| 7 | unit-and-component-tests | `testing/render-with-shell.tsx` |
 
 In a partial Shell (`shell-slice.json`) the root is the same, and so is the **Shell core** it imports, whatever the slice: screens outside the slice have no route or view files, but these files are always there, because the composition root and startup import them (D36):
 
@@ -384,9 +399,29 @@ The Game screen's view side ships in toybox-screens: `screens/game/game-screen.t
 
 Game texts: the module hands over plain message ids (hud goal, lose reason, counter labels, pack names), while the Shell's `t()` takes only branded keys. The one bridge is the i18n skill's `gameMessageText(t, message)` in `packages/shell/src/i18n/game-message-text.ts`; build `RunText` as `{ t, formatNumber, gameText: (message) => gameMessageText(t, message) }`. Never cast or call `asGameKey` in a screen.
 
-Paying for perks: the ads layer's `perkOffer(useHintPerk(today), ...)` gives `'free' | 'watch-ad' | 'hidden'` (`useHintPerk` counts the free hints left with `selectFreeHintsLeft(progress, today, extra.hints.freePerDay)`, so a game whose `game.config.ts` gives 0 free hints never offers one). Free for a non-Premium player means the daily allowance: dispatch the progress store's `use-free-hint`, then send the hint. `'watch-ad'`: `earnRewardedPerk(...)` and send the hint only when it returns true. Premium: send it. A hidden offer hides the button (spec 8.8: offline, no ad, not Premium).
+Paying for perks: the ads layer's `perkOffer(useHintPerk(today), ...)` gives `'free' | 'watch-ad' | 'hidden'` for a hint (a continue can also be `'loading'`, next section) (`useHintPerk` counts the free hints left with `selectFreeHintsLeft(progress, today, extra.hints.freePerDay)`, so a game whose `game.config.ts` gives 0 free hints never offers one). Free for a non-Premium player means the daily allowance: dispatch the progress store's `use-free-hint`, then send the hint. `'watch-ad'`: `earnRewardedPerk(...)` and send the hint only when it returns true. Premium: send it. A hidden offer hides the button (spec 8.8: offline, no ad, not Premium).
 
 The full-screen interstitial after Next / Replay / Try again runs inside `runFullscreenAd(host.lifecycle, show)` (admob-ads), never before the player has seen the result.
+
+## Never strand a finished run (L11)
+
+A run that has ended must show its result at once unless the player can still rescue it. The continue offer is `PerkOffer` from admob-ads' `perk-offer.ts`, read with the AdsPort's `rewardedStatus()` (`'loading' | 'ready' | 'unavailable'`, through `subscribeRewardedStatus`): `'free'` (Premium), `'watch-ad'` (ads servable, the rewarded ad ready), `'loading'` (ads servable, the ad still loading) or `'hidden'` (anything else). `resultModelOf` maps them to `LoseResult.continueOffer` `'premium' | 'ad' | 'ad-loading' | null` (`CONTINUE_OFFER`), and S7 draws `'ad-loading'` as the same offer with the ad key busy. So `'hidden'` always means unavailable.
+
+`game-host/run-end-policy.ts`:
+
+```ts
+export function isLossStranded(view: SessionView, continueOffer: PerkOffer): boolean {
+  return (
+    view.ref.kind !== 'tutorial' &&
+    view.status === 'lost' &&
+    view.continueState === 'offered' &&
+    view.summary === null &&
+    continueOffer === 'hidden'
+  );
+}
+```
+
+toybox-screens' `use-game-screen-model.ts` sends `{ type: 'finish' }` once per `eventSeq` while it is true: the loss is recorded in the one run-end update (statistics, streak, endless best, ad history, through `extendRunEnd`) and the recorded Result shows: the endless result with its score and "New best!", or the lose result without an offer. This covers a run that ends with ads off, offline or without a rewarded ad, an offer that turns hidden while S7 shows (offline, a load error), and a pending lost run reopened from Home. `check-game-host.mjs` rule `loss-not-stranded` checks the three parts (the policy file, the `loading: 'ad-loading'` mapping, the screen model's finish; the last is a SKIP line while S5 is outside `shell-slice.json`); fixture `bad-loss-stranded` holds the round-4 files.
 
 ## Texts the host adds
 

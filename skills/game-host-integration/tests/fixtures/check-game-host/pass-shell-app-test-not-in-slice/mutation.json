@@ -1,0 +1,11 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [\"S2\", \"S3\", \"S5\", \"S6\", \"S7\", \"S13\", \"S14\"], \"why\": \"Shell step 7: the composition root lands; S4 and S11 come at step 9\" }\n"
+    }
+  },
+  {
+    "delete": "packages/shell/src/app/shell-app.test.tsx"
+  }
+]

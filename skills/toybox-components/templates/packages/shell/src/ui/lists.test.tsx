@@ -3,6 +3,7 @@ import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 import { PixelRatio } from 'react-native';
 
 import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx';
+import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
@@ -125,6 +126,35 @@ describe('ListGroup and ListRow', () => {
     expect(screen.getByTestId('settings.remove-ads-row.label')).toHaveStyle({
       fontFamily: 'Vazirmatn-Bold',
       lineHeight: 77 / 3, // 17 x 1.5
+    });
+  });
+
+  it('lays an English label left to right in a Persian row when it says so (S15, L13)', async () => {
+    await renderWithShell(
+      <List testID="debug.list">
+        <ListRow
+          label="Force language, direction and digits"
+          labelDirection="ltr"
+          value="fa · rtl · ۱۲۳"
+          end="chevron"
+          onPress={jest.fn()}
+          testID="debug.force-locale-row"
+          isFirst
+          isReducedMotion={false}
+        />
+      </List>,
+      { language: 'fa' },
+    );
+
+    // Still the row label of a Persian layout (Vazirmatn 17, line height 1.5), aligned to its start.
+    expect(screen.getByTestId('debug.force-locale-row.label')).toHaveStyle({
+      fontFamily: 'Vazirmatn-Regular',
+      lineHeight: 77 / 3,
+      writingDirection: 'ltr',
+      textAlign: TEXT_ALIGN.start,
+    });
+    expect(screen.getByTestId('debug.force-locale-row.value')).toHaveStyle({
+      writingDirection: 'rtl',
     });
   });
 

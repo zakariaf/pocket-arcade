@@ -1,0 +1,2 @@
+extra-key-catalog
+debug.perf.heading is different in the fa Shell catalog (a debug text must stay English, L13)

@@ -1,0 +1,5 @@
+[owner-placeholder] links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3)
+[owner-placeholder] links.supportEmail is the placeholder support address support@example.com (owner step G3)
+check-game-app: 1 apps checked, 2 problems
+OWNER STEPS PENDING: G3
+RESULT: FAIL (2 problems)

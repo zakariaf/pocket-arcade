@@ -1,9 +1,11 @@
 // packages/shell/src/config/with-shell.ts
 // The config composer: game.config.ts + build env in, complete ExpoConfig out. Runs in Node
 // (type stripping): relative imports with .ts extensions, erasable syntax, no RN imports.
-// Phase 0 (monorepo-bootstrap): no ios.privacyManifests and no native-module plugin list yet. At the
-// Shell's native step architecture-and-boundaries' final with-shell.ts and shell-plugins.ts replace
-// this file and its test; every native setting still comes only from this file and config plugins.
+// Phase 0 (monorepo-bootstrap, Shell step 1): no ios.privacyManifests and no native-module plugin
+// list yet. At Shell step 8 (before the first simulator build) architecture-and-boundaries' final
+// with-shell.ts and shell-plugins.ts replace this file and its test, in one commit with the trailer
+// "Spec-Change: with-shell final composer (phase 0 placeholder replaced)". Every native setting
+// still comes only from this file and config plugins.
 import { adUnitsExtra } from './ads-config.ts';
 import { resolveBuildVariant } from './app-variant.ts';
 import { toGameExtra } from './game-extra.ts';

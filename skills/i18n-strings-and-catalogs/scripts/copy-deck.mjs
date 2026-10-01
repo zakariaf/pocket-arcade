@@ -11,7 +11,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, parseArgs, run, toPosix } from './check-lib.mjs';
-import { LANGUAGES, lineOfKey } from './lib/catalog-rules.mjs';
+import { debugEnglishProblem, isDebugKey, LANGUAGES, lineOfKey, SOURCE_LANGUAGE } from './lib/catalog-rules.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_DECK = join(HERE, '..', 'assets', 'copy-deck.json');
@@ -55,6 +55,10 @@ const SPEC = {
     '         which the build copies into Info.plist) is plain text in every language: no {argument}, plural',
     '         or brace (system-text-plain); once packages/shell/src/config/shell-plugins.ts exists (Shell step 8)',
     '         every deck system text is in all four Shell catalogs (system-text-missing; SKIP before that step)',
+    '         The debug menu (S15, test builds only) stays English in every language (lead decision L13):',
+    '         every debug.* text in the deck, in assets/shell-extras.json and in the Shell catalogs equals',
+    '         its en text in de, fa and ckb (debug-english). Digits and dates inside debug values follow',
+    '         the language through the formatters, never through the catalog.',
     '',
     'Game texts map to game catalog keys like this (id = the game id, for example line-siege):',
     '  name -> id.name   tagline -> id.tagline   goal -> id.goal   progress -> id.progress',
@@ -196,6 +200,38 @@ function checkSystemTexts(root, sDir, deck, report, shown) {
   }
 }
 
+/**
+ * L13: the S15 debug menu stays English in every language. Every debug.* text of the deck and of
+ * assets/shell-extras.json (the sources), and of the Shell catalogs, equals its en text in de, fa
+ * and ckb (rule debug-english).
+ */
+function checkDebugTexts({ deck, deckFile, extrasFile, extras, sDir }, report, shown) {
+  const FIX = 'Write the en text in de, fa and ckb: the debug menu (S15) is a test-only screen and stays English in every language (lead decision L13); numbers and dates inside its values are formatted per language by code. Change the source (the deck or assets/shell-extras.json) first, then apply.';
+  const sources = [
+    { file: deckFile, rows: Object.entries(deck.strings) },
+    { file: extrasFile, rows: extras.map((entry) => [entry.key, entry.texts]) },
+  ];
+  for (const { file, rows } of sources) {
+    const text = readFileSync(file, 'utf8');
+    for (const [key, texts] of rows) {
+      for (const lang of LANGUAGES) {
+        const problem = debugEnglishProblem(key, texts[SOURCE_LANGUAGE], texts[lang], lang);
+        if (problem) report.problem({ file: shown(file), line: lineOfKey(text, key), rule: 'debug-english', message: `${key}: ${problem.message}`, fix: FIX });
+      }
+    }
+  }
+  const en = readCatalog(join(sDir, `${SOURCE_LANGUAGE}.json`)).data;
+  for (const lang of LANGUAGES) {
+    const file = join(sDir, `${lang}.json`);
+    const catalog = readCatalog(file);
+    for (const key of Object.keys(en).filter(isDebugKey)) {
+      if (!Object.hasOwn(catalog.data, key)) continue;
+      const problem = debugEnglishProblem(key, en[key], catalog.data[key], lang);
+      if (problem) report.problem({ file: shown(file), line: lineOfKey(catalog.text, key), rule: 'debug-english', message: `${key}: ${problem.message}`, fix: FIX });
+    }
+  }
+}
+
 function readCatalog(file) {
   if (!existsSync(file)) return { exists: false, data: {}, text: '' };
   const text = readFileSync(file, 'utf8');
@@ -239,7 +275,8 @@ run(async () => {
   if (!['keys', 'apply', 'check'].includes(command)) {
     fail(command === undefined ? 'no command given' : `unknown command "${command}"`, 'Run: node copy-deck.mjs keys|apply|check --help');
   }
-  const deck = loadDeck(options.deck ? resolve(options.deck) : DEFAULT_DECK);
+  const deckFile = options.deck ? resolve(options.deck) : DEFAULT_DECK;
+  const deck = loadDeck(deckFile);
   const hasSelection = options.screen.length + options.prefix.length + options.key.length > 0 || options.all || options.extras || options.game;
   const report = createReporter({ name: `copy-deck ${command}`, json: options.json });
   const shown = (file) => toPosix(relative(process.cwd(), file)) || file;
@@ -340,6 +377,7 @@ run(async () => {
     const extraTexts = new Map(extras.filter((e) => Object.hasOwn(en, e.key) || selected.has(e.key)).map((e) => [e.key, e.texts]));
     compare(sDir, extraTexts, new Map(extras.filter((e) => selected.has(e.key)).map((e) => [e.key, e.source])), EXTRA_RULES);
     checkSystemTexts(root, sDir, deck, report, shown);
+    checkDebugTexts({ deck, deckFile, extrasFile: EXTRAS_FILE, extras, sDir }, report, shown);
     for (const lang of LANGUAGES) {
       const file = join(sDir, `${lang}.json`);
       const catalog = readCatalog(file);

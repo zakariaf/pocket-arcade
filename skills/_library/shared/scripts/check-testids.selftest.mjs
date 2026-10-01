@@ -4,18 +4,20 @@
 // duplicate, missing parent, wrong requires, bounds on a state card, two testIDs on one node, wrong
 // scope, and the reach policy: bounds on a crop-only part, a wrong coveredBy, a decorative component
 // left reachable, a reachable element inside a hidden one) must fail with the lines in its EXPECT.txt.
+// Two error-* cases point the tooling folder at an empty folder (--tooling, and its alias
+// --playwright): each must stop with exit 2 and both install forms.
 //
-//   node check-testids.selftest.mjs          (Playwright found as check-testids.mjs finds it,
-//                                             e.g. PLAYWRIGHT_DIR=<folder with node_modules/playwright>)
+//   node check-testids.selftest.mjs          (Playwright from the tooling folder, as check-testids.mjs
+//                                             loads it: PARITY_TOOLING_DIR=<folder with node_modules/
+//                                             playwright>, or its alias PLAYWRIGHT_DIR)
 //
-// When PLAYWRIGHT_DIR is not set and playwright does not resolve from here, the self-test borrows
-// the pinned install of a skill that syncs check-testids.mjs (its scripts/node_modules/playwright,
+// When neither variable is set and this folder has no node_modules/playwright, the self-test
+// borrows the pinned install of a skill that syncs check-testids.mjs (its scripts/node_modules,
 // made by npm ci --prefix <skill>/scripts). None installed: it stops with exit 2 and says so.
 //
 // A skill that syncs check-testids.mjs adds the same suite to its own scripts/selftest.mjs.
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,14 +25,8 @@ import { fail, run, runSelftest } from './check-lib.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
-function playwrightResolves(base) {
-  try {
-    createRequire(join(base, 'package.json')).resolve('playwright');
-    return true;
-  } catch {
-    return false;
-  }
-}
+const hasPlaywright = (dir) => existsSync(join(dir, 'node_modules', 'playwright', 'package.json'));
+const isSet = (name) => (process.env[name] ?? '').trim() !== '';
 
 /** A skill folder that syncs check-testids.mjs and has its pinned playwright installed. */
 function findSkillPlaywright() {
@@ -46,20 +42,20 @@ function findSkillPlaywright() {
     }
     if (!Array.isArray(entries) || !entries.some((entry) => entry?.from === 'scripts/check-testids.mjs')) continue;
     const scripts = join(skillsRoot, name, 'scripts');
-    if (existsSync(join(scripts, 'node_modules', 'playwright', 'package.json'))) return scripts;
+    if (hasPlaywright(scripts)) return scripts;
   }
   return null;
 }
 
-const needsPlaywright = !process.env.PLAYWRIGHT_DIR && !playwrightResolves(HERE) && !playwrightResolves(process.cwd());
+const needsPlaywright = !isSet('PARITY_TOOLING_DIR') && !isSet('PLAYWRIGHT_DIR') && !hasPlaywright(HERE);
 const borrowed = needsPlaywright ? findSkillPlaywright() : null;
-if (borrowed) process.env.PLAYWRIGHT_DIR = borrowed;
+if (borrowed) process.env.PARITY_TOOLING_DIR = borrowed;
 if (needsPlaywright && !borrowed && !process.argv.includes('--help')) {
   // Exit 2 with the RESULT line (run() prints ERROR [bad-input] ... and RESULT: FAIL).
   await run(async () =>
     fail(
       'Playwright is not installed for the check-testids self-test',
-      'Install it in the skill that syncs check-testids.mjs (npm ci --prefix <skill>/scripts), or set PLAYWRIGHT_DIR.',
+      'Install it in the skill that syncs check-testids.mjs (npm ci --prefix <skill>/scripts), or set PARITY_TOOLING_DIR (or PLAYWRIGHT_DIR) to a folder whose node_modules holds playwright 1.63.0.',
     ),
   );
   process.exit(process.exitCode ?? 2);

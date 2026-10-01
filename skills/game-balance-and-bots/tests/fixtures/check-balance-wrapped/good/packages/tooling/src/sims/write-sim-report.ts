@@ -14,8 +14,9 @@ const SPECIFIER = /\b(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
 
 /**
  * The folders whose every source can change a bot result: the game's logic and bots and the sim
- * file. game-kit counts only as far as they import it (fingerprintFiles), so a later build step
- * that adds board or gesture files to game-kit leaves the report fresh.
+ * file (levels/ without its generated pack-*.json). game-kit counts only as far as they import it
+ * (fingerprintFiles), so a later build step that adds board or gesture files to game-kit leaves
+ * the report fresh.
  */
 export function fingerprintFolders(gameId: string): readonly string[] {
   return [
@@ -27,11 +28,18 @@ export function fingerprintFolders(gameId: string): readonly string[] {
   ];
 }
 
-/** Source files count; unit tests and snapshots do not (sim tests do: they choose the seeds). */
+/** The level packs generate-levels.ts writes from the rules after the sims: outputs, not inputs. */
+const GENERATED_PACK = /\/src\/levels\/pack-[^/]*\.json$/;
+
+/**
+ * Source files count; unit tests and snapshots do not (sim tests do: they choose the seeds), and
+ * neither do the bands or the generated packs, so writing the packs after the sims keeps it fresh.
+ */
 function isFingerprinted(path: string): boolean {
   if (path.endsWith('.sim.test.ts')) return true;
   if (/\.test\.tsx?$/.test(path) || path.includes('.snap')) return false;
-  return /\.(ts|tsx|json)$/.test(path) && !path.endsWith('balance-bands.json');
+  if (path.endsWith('balance-bands.json') || GENERATED_PACK.test(path)) return false;
+  return /\.(ts|tsx|json)$/.test(path);
 }
 
 function isFile(root: string, path: string): boolean {

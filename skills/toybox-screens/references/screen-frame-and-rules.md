@@ -21,29 +21,31 @@ Everything a Pocket Arcade screen shares: where each screen's code lives, the To
 
 ## The screens and where they live
 
-| Spec | Screen | How it shows | Code (app repo) | Reference |
-|---|---|---|---|---|
-| S1 | Splash | native splash; `StartupSplash` during a direction restart | `packages/shell/src/app/startup-splash.tsx` | [s01-splash.md](s01-splash.md) |
-| S2 | First-run language choice | route `LanguageChoice` (FirstRun) | `packages/shell/src/screens/first-run/` | [s02-language-choice.md](s02-language-choice.md) |
-| S3 | Consent moment | full screen before Google's form, not a route | `packages/shell/src/screens/consent/` | [s03-consent.md](s03-consent.md) |
-| S4 | Home | route `Home` | `packages/shell/src/screens/home/` | [s04-home.md](s04-home.md) |
-| S5 | Game (the assembled screen: session, top bar, board slot, Pause and Result overlays, paid perks, result keys) | route `Game` | `packages/shell/src/screens/game/` and `packages/shell/src/game-host/game-top-bar.tsx` (the host's props drawn with the Toybox `GameTopBar`) | [s05-game.md](s05-game.md) |
-| S6 | Pause | overlay inside Game | `packages/shell/src/screens/pause/` | [s06-pause.md](s06-pause.md) |
-| S7 | Result | overlay inside Game | `packages/shell/src/screens/result/` | [s07-result.md](s07-result.md) |
-| S8 | Levels | route `Levels` | `packages/shell/src/screens/levels/` | [s08-levels.md](s08-levels.md) |
-| S9 | Daily challenge | route `Daily` | `packages/shell/src/screens/daily/` | [s09-daily.md](s09-daily.md) |
-| S10 | Statistics | route `Stats` | `packages/shell/src/screens/stats/` | [s10-statistics.md](s10-statistics.md) |
-| S11 | Settings | route `Settings` | `packages/shell/src/screens/settings/` (files, not subfolders) | [s11-settings.md](s11-settings.md) |
-| S11a | Language | route `SettingsLanguage` | `packages/shell/src/screens/settings/language/` | [s11a-language.md](s11a-language.md) |
-| S11b | About and credits | route `About` | `packages/shell/src/screens/settings/about/` | [s11b-about.md](s11b-about.md) |
-| S11c | Privacy policy | route `PrivacyPolicy` | `packages/shell/src/screens/settings/privacy/` | [s11c-privacy-policy.md](s11c-privacy-policy.md) |
-| S11d | Licences | route `Licences` | `packages/shell/src/screens/settings/licences/` | [s11d-licences.md](s11d-licences.md) |
-| S12 | Premium | route `Premium` | `packages/shell/src/screens/premium/` | [s12-premium.md](s12-premium.md) |
-| S13 | How to play | route `HowToPlay` | `packages/shell/src/screens/how-to-play/` | [s13-how-to-play.md](s13-how-to-play.md) |
-| S14 | Dialogs | the dialog host above the navigator | `packages/shell/src/screens/dialogs/` and `packages/shell/src/app/crash-screen.tsx` | [s14-dialogs.md](s14-dialogs.md) |
-| S15 | Debug menu | route `Debug`, test builds only | `packages/shell/src/screens/debug/` | [s15-debug.md](s15-debug.md) |
+| Spec | Screen | How it shows | Code (app repo) | Reference | Borrows (under `packages/shell/src/`; owner skill) |
+|---|---|---|---|---|---|
+| S1 | Splash | native splash; `StartupSplash` during a direction restart | `packages/shell/src/app/startup-splash.tsx` | [s01-splash.md](s01-splash.md) | — (Shell core, step 7) |
+| S2 | First-run language choice | route `LanguageChoice` (FirstRun) | `packages/shell/src/screens/first-run/` | [s02-language-choice.md](s02-language-choice.md) | `app/use-direction-restart.ts` (+ test), `i18n/create-language-t.ts` (+ test): toybox-screens |
+| S3 | Consent moment | full screen before Google's form, not a route | `packages/shell/src/screens/consent/` | [s03-consent.md](s03-consent.md) | — (Shell core, step 7) |
+| S4 | Home | route `Home` | `packages/shell/src/screens/home/` | [s04-home.md](s04-home.md) | `app/use-parity-opener.ts` (+ test), `ui/use-pair-layout.ts`: toybox-screens; `app/use-today.ts`, `screens/daily/daily-summary.ts` (+ test), `screens/daily/use-daily-summary.ts` (+ test): daily-and-statistics |
+| S5 | Game (the assembled screen: session, top bar, board slot, Pause and Result overlays, paid perks, result keys) | route `Game` | `packages/shell/src/screens/game/` and `packages/shell/src/game-host/game-top-bar.tsx` (the host's props drawn with the Toybox `GameTopBar`) | [s05-game.md](s05-game.md) | S6 `screens/pause/` and S7 `screens/result/` (the Game screen draws both overlays, so S5, S6 and S7 land together), `ui/use-pair-layout.ts`: toybox-screens; `screens/settings/settings-preference-actions.ts` (+ test): settings-and-preferences; `app/use-today.ts`: daily-and-statistics |
+| S6 | Pause | overlay inside Game | `packages/shell/src/screens/pause/` | [s06-pause.md](s06-pause.md) | `ui/use-pair-layout.ts`: toybox-screens; `screens/settings/settings-preference-actions.ts` (+ test): settings-and-preferences |
+| S7 | Result | overlay inside Game | `packages/shell/src/screens/result/` | [s07-result.md](s07-result.md) | — |
+| S8 | Levels | route `Levels` | `packages/shell/src/screens/levels/` | [s08-levels.md](s08-levels.md) | — |
+| S9 | Daily challenge | route `Daily` | `packages/shell/src/screens/daily/` | [s09-daily.md](s09-daily.md) | `ui/use-pair-layout.ts`: toybox-screens; `app/use-today.ts`, and in its folder `daily-summary.ts` (+ test), `use-daily-summary.ts` (+ test), `use-next-day-countdown.ts` (+ test): daily-and-statistics |
+| S10 | Statistics | route `Stats` | `packages/shell/src/screens/stats/` | [s10-statistics.md](s10-statistics.md) | `screens/home/use-level-play.ts`: toybox-screens; `screens/settings/settings-resets.ts` (+ test), `screens/settings/use-settings-resets.ts`: settings-and-preferences; `app/use-today.ts`, and in its folder `stats-summary.ts` (+ test), `use-stats-summary.ts` (+ test): daily-and-statistics |
+| S11 | Settings | route `Settings` | `packages/shell/src/screens/settings/` (files, not subfolders) | [s11-settings.md](s11-settings.md) | `app/use-parity-opener.ts` (+ test): toybox-screens; in its folder `settings-rows.ts`, `settings-preference-actions.ts`, `use-settings-model.ts`, `use-settings-context.ts`, `settings-resets.ts` (each + test) and `use-settings-resets.ts`: settings-and-preferences |
+| S11a | Language | route `SettingsLanguage` | `packages/shell/src/screens/settings/language/` | [s11a-language.md](s11a-language.md) | `app/use-direction-restart.ts` (+ test), `app/use-parity-opener.ts` (+ test): toybox-screens; in its folder `language-change.ts` (+ test): settings-and-preferences |
+| S11b | About and credits | route `About` | `packages/shell/src/screens/settings/about/` | [s11b-about.md](s11b-about.md) | S11's `screens/settings/settings-extras.ts` and `use-settings-links.ts` (+ test): toybox-screens |
+| S11c | Privacy policy | route `PrivacyPolicy` | `packages/shell/src/screens/settings/privacy/` | [s11c-privacy-policy.md](s11c-privacy-policy.md) | — |
+| S11d | Licences | route `Licences` | `packages/shell/src/screens/settings/licences/` | [s11d-licences.md](s11d-licences.md) | — |
+| S12 | Premium | route `Premium` | `packages/shell/src/screens/premium/` | [s12-premium.md](s12-premium.md) | — |
+| S13 | How to play | route `HowToPlay` | `packages/shell/src/screens/how-to-play/` | [s13-how-to-play.md](s13-how-to-play.md) | — |
+| S14 | Dialogs | the dialog host above the navigator | `packages/shell/src/screens/dialogs/` and `packages/shell/src/app/crash-screen.tsx` | [s14-dialogs.md](s14-dialogs.md) | — (Shell core, step 7) |
+| S15 | Debug menu | route `Debug`, test builds only | `packages/shell/src/screens/debug/` | [s15-debug.md](s15-debug.md) | in its folder `use-debug-model.ts` (+ test): e2e-maestro |
 
 `check-screens.mjs` uses exactly these folders. Folder chosen here, not by the design (Chosen): S3 in `screens/consent/`, S14 dialogs in `screens/dialogs/`.
+
+**Borrows.** The last column lists the files a screen's code imports that the step-7 Shell core does not bring: from outside its folder, or another skill's file inside it. Each lands, with its test when it has one ("+ test"), in the commit of the first screen that brings it. In the Shell order (pocket-arcade-index's manifest): S2 brings `use-direction-restart.ts`, `create-language-t.ts` and `use-parity-opener.ts` (first imported by S4, S11 and S11a; it has its own test, so it may come early); S4 brings `ui/use-pair-layout.ts`, daily-and-statistics' `app/use-today.ts` and its `screens/daily/` helpers (`daily-summary.ts`, `use-daily-summary.ts`, `use-next-day-countdown.ts`, each with its test); S5 (with S6 and S7) brings `settings-preference-actions.ts`; S10 brings the two reset files and its `screens/stats/` summaries. A slice or another order brings each file with the first screen that imports it (a slice that starts with S11a brings `use-direction-restart.ts` there). The test helpers `testing/create-host-wrapper.tsx` and `testing/test-game-extra.ts` (each with its test) are Shell core and land at step 7. Copy each borrowed file from its owner skill's templates (each owner's workflow says the same). `check-screens.mjs . --screen <id>` follows the screen's imports and fails `borrowed-file` for a missing borrowed file, or one without its test, naming the file and its owner skill. Files without a test of their own (`use-pair-layout.ts`, `use-today.ts`, `use-settings-resets.ts`, `settings-extras.ts`, `use-level-play.ts`, the Pause overlay) are covered by the tests of the screen that brings them.
 
 ## The common frame
 
@@ -156,15 +158,26 @@ Every press already sounds: the press hosts (`RaisedSurface`, `QuietButton`, `Li
 
 A repo may build only some screens (a parity slice, a game-first repo). It says so in `shell-slice.json` at the repo root, for example `{ "screens": ["S4", "S11", "S12"], "why": "Home + Settings parity slice" }` (ids S1-S15 and S11a-S11d; `[]` means no Shell app). Screens outside the slice have no route or view files: only the slice's screens are copied, each with its model hook, view and tests; the navigator keeps every route and points the others at `NotBuiltScreen` (navigation-and-routing), so the model hooks navigate normally.
 
-Every Shell app still has the **Shell core**, whatever the slice, because the composition root and the startup import it (without it a slice of S1, S4, S8 and S11 left 34 modules unresolved). This skill's part of the core, copied with the first screen:
+Every Shell app still has the **Shell core**, whatever the slice, because the composition root and the startup import it (without it a slice of S1, S4, S8 and S11 left 34 modules unresolved, and a step-7 build that missed it showed 81 `tsc` errors). This skill's part of the core lands at **Shell step 7** with the composition root (or before the first screen of a slice built on purpose), each file with its test where it has one; a file without a test of its own is covered by the step-7 tests named here:
 
-| Core file (this skill) | Screen it belongs to | Why every Shell app needs it |
+| Core file (this skill, under `packages/shell/src/`) | Screen it belongs to | Why every Shell app needs it at step 7 |
 |---|---|---|
-| `screens/dialogs/dialog-host.tsx`, `dialog-request.ts`, the six dialogs and `dialog-frame.tsx`; `app/dialog-context.tsx` | S14 | the composition root's `shell-navigator.tsx` wraps the navigator in `DialogProvider` |
+| `app/create-startup-splash.tsx` (+ test), `app/startup-splash.tsx` (+ test), `app/game-startup-splash.tsx` | S1 | `start-shell.ts` registers the restart root and shows the splash while the save hydrates (`create-startup-splash.test.tsx` covers the game splash) |
+| `screens/consent/consent-intro-screen.tsx` (+ test) | S3 | admob-ads' consent moment (`app/consent-moment.tsx`, in ShellFeatures) shows it before Google's form |
+| `screens/dialogs/dialog-host.tsx` (+ `dialog-host.test.tsx`), `dialog-request.ts`, `dialog-frame.tsx` and the six dialogs (+ `dialogs.test.tsx`); `app/dialog-context.tsx` (+ test) | S14 | the composition root's `shell-navigator.tsx` wraps the navigator in `DialogProvider` |
+| `app/crash-screen.tsx` (+ test) | S14 | `shell-app.tsx`'s error boundary draws it |
+| `app/premium-screen-deps-context.tsx` | S12 | `shell-features.tsx` provides it (`shell-features.test.tsx` covers it) |
 | `game-host/game-top-bar.tsx` (+ test) | S5 | game-host-integration's `top-bar-model.ts` imports its props types |
 | `screens/game/game-layout.tsx` (+ test) | S5 | `game-top-bar.test.tsx` renders the top bar inside it |
 | `screens/result/result-model.ts` | S7 | game-host-integration's `resultModelOf` returns it |
 | `screens/debug/debug-rows.ts` | S15 | e2e-maestro's `debug-actions.ts` (the debug kit every test build has) imports its action types |
+| `app/use-is-online.ts` (+ test), `app/use-game-extra.ts` (+ test) | every screen | admob-ads' `app/use-ad-context.ts` and `app/use-consent-moment.ts` read connectivity and the game's config |
+| `app/read-version-text.ts` (+ test) | S11, S11b | self-contained with its own test, so it lands with the core and About and Settings find it |
+| `ui/screen-body.tsx` (+ test) | every screen | the consent intro and the parity harness's root draw the common body |
+| `testing/test-game-extra.ts` (+ test) | (tests) | the step-7 tests of `use-ad-context`, `use-game-extra`, `read-version-text`, `shell-features`, `consent-moment` and `load-outcome-opener` mock `expo-constants` with it |
+| `testing/create-host-wrapper.tsx` (+ test) | (tests) | every model-hook test renders through it (the Shell providers, the game catalogs and the real tally host); it needs the i18n provider and the game host of step 7, and its own test covers it |
+
+Everything else this skill ships lands with its screen at Shell step 9, together with the screen's Borrows (the table at the top). `ui/use-pair-layout.ts` is not core: no step-7 file imports it, so it arrives with the first of S4, S6 and S9 (copied at step 7 it would be code that only step-9 tests reach, and the coverage gate drops between the two steps).
 
 The rest of the core belongs to other skills: the Tutorial route's screen (game-host-integration's `screens/first-run/tutorial-*`, always routed to `TutorialScreen`), the e2e debug kit without `use-debug-model` and the S15 view (e2e-maestro), the parity harness (toybox-visual-parity) and `app/perf/` (performance-budgets). While S15 is outside the slice the test-only pair leaves out `DebugScreen` and `FontTestScreen`, and the Debug and FontTest routes point at `NotBuiltScreen`. `check-screens.mjs .` prints `SKIP <folder> [screen] <S-id> not in shell-slice.json` for every screen outside the slice (not a problem) and checks the slice's screens strictly: each must be built (`screen-not-built` otherwise), and `--all` means every slice screen. Add a screen's id in the commit that builds it; a slice never ships (navigation-and-routing's `--complete` and the release checks fail while the file exists).
 

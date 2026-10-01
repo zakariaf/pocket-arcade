@@ -7,12 +7,13 @@
 //     with exactly the rule named in its case.json (run on a synced temporary copy).
 //  3. The validator's library-layout rule, the device-explicit detector, the skill template, and the
 //     frontmatter parser.
-//  4. sync-shared, link-skills (link and copy modes), record-sources + check-staleness, selftest-all.
+//  4. sync-shared, link-skills (link and copy modes), record-sources + check-staleness (and the sources.json
+//     lock: concurrent writers, a stale lock, a held lock), selftest-all.
 //  5. The shared files: fonts match fonts/SOURCES.md, JSON copies parse, settings.proposed.json.
 
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, readlinkSync, rmSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -153,6 +154,13 @@ test('check-lib: dueSkipReason and SHELL_DUE_TARGETS', () => {
     // start-shell.ts lands at Shell step 7 with the composition root (it imports createShellApp and the
     // startup splash), together with the two save boot files, the splash and the JS half of app/perf/.
     assert.deepEqual(SHELL_DUE_TARGETS.boot, { file: 'packages/shell/src/app/start-shell.ts', step: 7 });
+    // The script targets of check-gate-wiring's script-target rule: the E2E runner (step 10) and the
+    // release pipeline (step 11), so e2e:ios and release:ios SKIP until their step and are strict after it.
+    assert.deepEqual(SHELL_DUE_TARGETS.e2e, { file: 'packages/tooling/src/e2e/run-e2e-ios.ts', step: 10 });
+    assert.deepEqual(SHELL_DUE_TARGETS.release, { file: 'packages/tooling/src/release/release-ios.ts', step: 11 });
+    assert.deepEqual(Object.keys(SHELL_DUE_TARGETS).sort(), ['boot', 'catalogs', 'e2e', 'plugins', 'release']);
+    assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.e2e), 'due at Shell step 10: packages/tooling/src/e2e/run-e2e-ios.ts not yet created');
+    assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.release), 'due at Shell step 11: packages/tooling/src/release/release-ios.ts not yet created');
     // Missing: the rule is not yet due, with the step and the file in the reason.
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.plugins), 'due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created');
     assert.equal(dueSkipReason(dir, { file: './packages/shell/src/app/start-shell.ts', step: 6 }), 'due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created');
@@ -758,6 +766,66 @@ test('record-sources + check-staleness: records hashes and reports changed or mi
     for (const args of [['alpha', 'references/nope.md', 'source-a.md'], ['alpha', 'references/tokens.md', 'no-such-source.md'], ['ghost', 'x.md', 'source-a.md'], ['alpha', 'references/tokens.md']]) {
       assert.equal(node(record, ['--root', repo, '--sources', sources, ...args], tmp).status, 2, `record ${args.join(' ')} should exit 2`);
     }
+  } finally {
+    removeTempDir(tmp);
+  }
+});
+
+/** Runs a library tool without blocking, so several can overlap. */
+function nodeAsync(script, args, cwd, env = {}) {
+  return new Promise((resolvePromise) => {
+    const child = spawn(process.execPath, [script, ...args], { cwd, env: { ...process.env, ...env } });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    child.on('close', (status) => resolvePromise({ status, stdout, output: `${stdout}${stderr}` }));
+  });
+}
+
+test('record-sources: the sources.json lock keeps concurrent writers, breaks a stale lock and times out on a held one', async () => {
+  const tmp = makeTempDir('selftest-sources-lock-');
+  try {
+    const repo = join(tmp, 'repo');
+    for (const skill of ['alpha', 'beta', 'gamma']) {
+      write(join(repo, 'skills', skill, 'SKILL.md'), `---\nname: ${skill}\n---\n`);
+      write(join(repo, 'skills', skill, 'references', 'notes.md'), '# Notes\n');
+    }
+    write(join(repo, 'source-a.md'), 'A');
+    const sources = join(tmp, 'sources.json');
+    const lock = `${sources}.lock`;
+    const record = join(LIB, 'record-sources.mjs');
+    // 1. Two writers at once, each holding the lock for 400 ms after its re-read: both entries survive,
+    //    because the second one re-reads the file under the lock after the first one wrote it.
+    const [first, second] = await Promise.all(['alpha', 'beta'].map((skill) => nodeAsync(record, ['--root', repo, '--sources', sources, skill, 'references/notes.md', 'source-a.md'], tmp, { SOURCES_LOCK_HOLD_MS: '400' })));
+    assert.equal(first.status, 0, first.output);
+    assert.equal(second.status, 0, second.output);
+    const both = JSON.parse(readFileSync(sources, 'utf8'));
+    assert.deepEqual(Object.keys(both.skills).sort(), ['alpha', 'beta']);
+    assert.ok(!existsSync(lock), 'the lock is released after the write');
+    assert.deepEqual(readdirSync(tmp).filter((name) => name.startsWith('sources.json.')), [], 'no temporary or lock file is left behind');
+    // 2. A lock older than 10 minutes (a crashed writer) is broken with a WARN line, and the write goes ahead.
+    write(lock, `${JSON.stringify({ token: 'old', pid: 999999, holder: 'record-sources ghost', since: '2026-01-01T00:00:00.000Z' })}\n`);
+    const old = (Date.now() - 11 * 60 * 1000) / 1000;
+    utimesSync(lock, old, old);
+    const broke = node(record, ['--root', repo, '--sources', sources, 'gamma', 'references/notes.md', 'source-a.md'], tmp);
+    assert.equal(broke.status, 0, broke.output);
+    assert.match(broke.stdout, /WARN sources\.json\.lock held by record-sources ghost \(pid 999999\).*older than 10 minutes; broke it/);
+    assert.deepEqual(Object.keys(JSON.parse(readFileSync(sources, 'utf8')).skills).sort(), ['alpha', 'beta', 'gamma']);
+    assert.ok(!existsSync(lock));
+    // 3. A fresh lock held by another writer is waited for, then the run stops with exit 2 and names the holder;
+    //    sources.json is unchanged and the other writer's lock is left alone.
+    write(lock, `${JSON.stringify({ token: 'live', pid: 4242, holder: 'record-sources other', since: new Date().toISOString() })}\n`);
+    const before = readFileSync(sources, 'utf8');
+    const held = node(record, ['--root', repo, '--sources', sources, '--lock-wait', '1', 'alpha', 'references/notes.md', 'source-a.md'], tmp);
+    assert.equal(held.status, 2, held.output);
+    assert.match(held.output, /sources\.json\.lock is held by record-sources other \(pid 4242\)/);
+    assert.match(held.output, /RESULT: FAIL/);
+    assert.equal(readFileSync(sources, 'utf8'), before);
+    assert.ok(existsSync(lock), 'a fresh lock of another writer is never removed');
+    // 4. Released: the same write goes through.
+    rmSync(lock);
+    assert.equal(node(record, ['--root', repo, '--sources', sources, '--lock-wait', '1', '--append', 'alpha', 'references/notes.md', 'source-a.md'], tmp).status, 0);
   } finally {
     removeTempDir(tmp);
   }

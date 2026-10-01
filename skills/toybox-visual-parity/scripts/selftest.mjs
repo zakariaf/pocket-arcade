@@ -49,15 +49,67 @@
 //   check-signoff     prints the intended reference changes of the frames it signs off
 //   templates         every JSON template is Prettier-shaped (2 spaces, trailing newline), and the
 //                     pre-listed waivers of templates/parity/waivers.json are valid
+//
+// Added 2026-10-01:
+//   selftest          takes the tooling folder like every script: --tooling <dir> or
+//                     PARITY_TOOLING_DIR, parsed before any case runs and handed to every suite
+//                     (through the variable, which each script reads); an empty folder stops at once
+//                     with exit 2 and both install forms, in either form
+//   check-signoff     --draft dates an entry with the local calendar day (01:17 in Berlin on
+//                     1 October is 2026-10-01, not the UTC day), and --date YYYY-MM-DD sets it
+//   check-harness     S15's frame state (debug-ads-always-test): its opener, its plan, and the SKIP
+//                     while S15 is outside shell-slice.json; harness-debug-flags: a parity launch
+//                     clears the saved debug flags before the debug services restore them
+//
+//   node selftest.mjs [--tooling <repo>/.parity/tooling]
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { runSelftest } from './check-lib.mjs';
+import { fail, parseArgs, run, runSelftest, toPosix } from './check-lib.mjs';
+import { TOOLING_ENV, TOOLING_OPTION, TOOLING_REPO_DIR, installFix, toolingDirOf } from './lib/deps.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
+
+// The packages every image and render check needs, by the pins of scripts/package.json.
+const PINNED = [['pngjs', 'pngjs 7.0.0'], ['pixelmatch', 'pixelmatch 7.2.0'], ['playwright', 'playwright 1.63.0']];
+
+const SPEC = {
+  name: 'selftest',
+  summary:
+    'Proves every toybox-visual-parity script on its fixtures (good, pass-*, bad-*, error-* and the extra cases ' +
+    'below), with the pinned packages from the tooling folder: --tooling <dir>, else $PARITY_TOOLING_DIR, else the ' +
+    "skill's own scripts folder. The folder is checked before any case runs and handed to every script.",
+  usage: '[--tooling <dir>]',
+  options: { tooling: TOOLING_OPTION },
+  positionals: { min: 0, max: 0 },
+  details: [
+    'Examples:',
+    '  node selftest.mjs                                  (packages in the skill: npm ci --prefix <skill>/scripts)',
+    `  node selftest.mjs --tooling <repo>/${TOOLING_REPO_DIR}   (packages in the app repo)`,
+    `  ${TOOLING_ENV}=<repo>/${TOOLING_REPO_DIR} node selftest.mjs`,
+  ].join('\n'),
+};
+
+// Arguments first: an unknown option stops before any case runs, and the tooling folder is checked
+// once (a missing package is exit 2 with both install forms, not one failure per case). Then every
+// suite gets the folder through PARITY_TOOLING_DIR, which each script reads (runSelftest parses
+// process.argv itself, so the parsed arguments are taken off it).
+let toolingDir = null;
+await run(async () => {
+  const { options } = parseArgs(process.argv.slice(2), SPEC);
+  const dir = toolingDirOf(options);
+  for (const [name, what] of PINNED) {
+    if (!existsSync(join(dir, 'node_modules', name, 'package.json'))) fail(`${what} is not installed in ${toPosix(dir)}/node_modules`, installFix());
+  }
+  toolingDir = dir;
+});
+if (toolingDir === null) process.exit(process.exitCode ?? 2);
+process.env[TOOLING_ENV] = toolingDir;
+process.argv.splice(2);
+console.log(`ok   tooling folder ${toPosix(toolingDir)} (pngjs, pixelmatch and playwright installed; every suite uses it)`);
 const FIXTURES = join(HERE, '..', 'tests', 'fixtures');
 const FAKES = join(FIXTURES, 'fakes');
 // Scripts that write (captures, sheets) write into throwaway folders, made on first use and
@@ -187,11 +239,29 @@ function prettierJson(value, indent = 0, prefix = 0) {
   const { readWaivers } = await import('./lib/runs.mjs');
   const pre = readWaivers(join(templates, 'parity', 'waivers.json'));
   if (pre.problems.length || pre.waivers.length === 0) {
-    console.log(`FAIL templates/parity/waivers.json [prelisted] ${pre.problems.map((p) => p.message).join('; ') || 'no pre-listed waivers'} Fix: Keep the pre-listed dashed-edge and tile-13 waivers valid.`);
+    console.log(`FAIL templates/parity/waivers.json [prelisted] ${pre.problems.map((p) => p.message).join('; ') || 'no pre-listed waivers'} Fix: Keep the pre-listed waivers (dashed edges, tile 13, the S11b chip, the fa restart card) valid.`);
     console.log('RESULT: FAIL (1 problems)');
     process.exit(1);
   }
   console.log(`ok   ${walkJson(templates).length} JSON templates are Prettier-shaped; ${pre.waivers.length} pre-listed waivers are valid`);
+}
+
+// The check-harness good fixture holds the harness exactly as the templates ship it (packages/shell/src/
+// app/parity/, parity-startup.tsx, parity-launch-marker.tsx), so a template change that check-harness
+// would refuse (a frame's state, a plan, an export) fails here, not in an app repo.
+{
+  const { readdirSync } = await import('node:fs');
+  const good = join(FIXTURES, 'check-harness', 'good');
+  const templates = join(HERE, '..', 'templates');
+  const harness = ['packages/shell/src/app/parity-startup.tsx', 'packages/shell/src/app/parity-launch-marker.tsx',
+    ...readdirSync(join(templates, 'packages/shell/src/app/parity')).filter((f) => !/\.test\.tsx?$/.test(f)).map((f) => `packages/shell/src/app/parity/${f}`)];
+  const differ = harness.filter((rel) => !existsSync(join(good, rel)) || readFileSync(join(good, rel), 'utf8') !== readFileSync(join(templates, rel), 'utf8'));
+  if (differ.length) {
+    for (const rel of differ) console.log(`FAIL tests/fixtures/check-harness/good/${rel} [harness-fixture-copy] differs from templates/${rel} Fix: Copy the template into the good fixture (and the bad fixtures that hold it), then rerun: check-harness must pass the harness as shipped.`);
+    console.log(`RESULT: FAIL (${differ.length} problems)`);
+    process.exit(1);
+  }
+  console.log(`ok   the check-harness good fixture holds the ${harness.length} harness files exactly as the templates ship them`);
 }
 
 // Checks whose answer is an exit code of 2 or a line in a passing run (runSelftest's bad-* fixtures
@@ -237,6 +307,57 @@ function prettierJson(value, indent = 0, prefix = 0) {
     process.exit(1);
   }
   console.log('ok   capture-app probes the board (probe=board), composes s6-pause--no-music--no-hints from the facts, and records the UDID, driver port and both launch nonces');
+}
+
+// The self-test itself takes the tooling folder both ways: --tooling <dir> and PARITY_TOOLING_DIR.
+// An empty folder makes each form stop before its first case with exit 2, naming that folder and
+// both install forms (so the folder reached the check, and nothing ran on missing packages).
+{
+  const empty = resolve(mkdtempSync(join(tmpdir(), 'toybox-visual-parity-empty-tooling-')));
+  const env = { ...process.env };
+  delete env[TOOLING_ENV];
+  const forms = [
+    { name: '--tooling <dir>', args: ['--tooling', empty], env },
+    { name: `${TOOLING_ENV}=<dir>`, args: [], env: { ...env, [TOOLING_ENV]: empty } },
+  ];
+  for (const form of forms) {
+    const r = spawnSync(process.execPath, [join(HERE, 'selftest.mjs'), ...form.args], { env: form.env, encoding: 'utf8' });
+    const out = `${r.stdout}${r.stderr}`;
+    const want = [`pngjs 7.0.0 is not installed in ${toPosix(empty)}/node_modules`, 'npm ci --prefix', `pass --tooling <repo>/${TOOLING_REPO_DIR} (or set ${TOOLING_ENV}=<repo>/${TOOLING_REPO_DIR})`];
+    const missing = want.filter((line) => !out.includes(line));
+    if (r.status !== 2 || missing.length || /Unknown option|ok {3}type-role/.test(out)) {
+      console.log(`FAIL scripts/selftest.mjs [selftest-tooling] ${form.name} on an empty folder: exit ${r.status} (want 2)${missing.length ? `, missing ${missing.map((m) => `"${m}"`).join(', ')}` : ''}${/Unknown option/.test(out) ? ', the option was refused' : ''}${/ok {3}type-role/.test(out) ? ', cases ran before the tooling check' : ''} Fix: Parse --tooling before any case, check the folder once, and hand it to every suite.`);
+      console.log('RESULT: FAIL (1 problems)');
+      process.exit(1);
+    }
+    console.log(`ok   selftest.mjs takes the tooling folder as ${form.name}: an empty one stops before any case (exit 2, both install forms)`);
+  }
+  rmSync(empty, { recursive: true, force: true });
+}
+
+// --draft dates an entry with the local calendar day, the product's "today": at 01:17 in Berlin on
+// 1 October (23:17 UTC on 30 September) the entry says 2026-10-01; --date sets the day; a day that
+// does not exist stops with exit 2. The clock is pinned with tests/fixtures/fakes/fake-clock.mjs.
+{
+  const dir = join(FIXTURES, 'check-signoff-draft', 'good');
+  const clock = ['--import', pathToFileURL(join(FAKES, 'fake-clock.mjs')).href];
+  const at = { FAKE_NOW: '2026-09-30T23:17:00Z' };
+  const dated = [
+    { name: 'the local day at 01:17 in Berlin on 1 October', env: { TZ: 'Europe/Berlin', ...at }, args: [], exit: 0, line: '"date": "2026-10-01"' },
+    { name: 'the same moment on a Mac set to UTC', env: { TZ: 'UTC', ...at }, args: [], exit: 0, line: '"date": "2026-09-30"' },
+    { name: '--date sets the day', env: { TZ: 'Europe/Berlin', ...at }, args: ['--date', '2026-09-29'], exit: 0, line: '"date": "2026-09-29"' },
+    { name: '--date with a day that does not exist', env: { TZ: 'Europe/Berlin', ...at }, args: ['--date', '2026-02-30'], exit: 2, line: '--date 2026-02-30 is not a calendar day written YYYY-MM-DD' },
+  ];
+  for (const c of dated) {
+    const r = spawnSync(process.execPath, [...clock, join(HERE, 'check-signoff.mjs'), '--draft', join(dir, 'run'), '--ledger', join(dir, 'signoff.json'), ...c.args], { cwd: dir, encoding: 'utf8', env: { ...process.env, ...c.env } });
+    const out = `${r.stdout}${r.stderr}`;
+    if (r.status !== c.exit || !out.includes(c.line)) {
+      console.log(`FAIL tests/fixtures/check-signoff-draft/good [draft-date] ${c.name}: exit ${r.status} (want ${c.exit})${out.includes(c.line) ? '' : `, missing "${c.line}"`} Fix: Date a draft with the local calendar day (getFullYear/getMonth/getDate), never toISOString(); --date YYYY-MM-DD overrides it.`);
+      console.log('RESULT: FAIL (1 problems)');
+      process.exit(1);
+    }
+    console.log(`ok   check-signoff.mjs --draft: ${c.name} (${c.line})`);
+  }
 }
 
 await runSelftest(import.meta.url, [

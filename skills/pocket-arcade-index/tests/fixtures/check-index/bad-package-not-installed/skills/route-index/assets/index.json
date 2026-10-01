@@ -1,0 +1,121 @@
+{
+  "categories": [
+    {
+      "name": "Start",
+      "why": "Where tasks begin.",
+      "skills": [
+        "route-index"
+      ]
+    },
+    {
+      "name": "Parts",
+      "why": "The two parts.",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task": "Build the alpha part",
+      "skills": [
+        "alpha-one",
+        "beta-two"
+      ],
+      "note": "Beta checks it."
+    },
+    {
+      "task": "Find the right skill",
+      "skills": [
+        "route-index"
+      ]
+    }
+  ],
+  "buildOrders": {
+    "commands": "Run each check from the repo root.",
+    "shell": [
+      {
+        "step": "Alpha first",
+        "skills": [
+          "alpha-one"
+        ],
+        "proof": "`check-alpha.mjs .` (alpha-one) prints RESULT: PASS",
+        "copies": [
+          {
+            "skill": "alpha-one",
+            "paths": [
+              "packages/shell/src/core/**"
+            ]
+          }
+        ]
+      },
+      {
+        "step": "Beta on top of alpha",
+        "skills": [
+          "beta-two"
+        ],
+        "proof": "the beta tests pass",
+        "copies": [
+          {
+            "skill": "beta-two",
+            "paths": [
+              "packages/shell/src/feature/**"
+            ]
+          }
+        ],
+        "installs": [
+          {
+            "package": "zustand",
+            "where": "packages/shell"
+          }
+        ]
+      }
+    ],
+    "slice": "A partial build lists its parts in slice.json.",
+    "sliceCore": {
+      "intro": "Every partial build keeps these files.",
+      "rows": [
+        {
+          "files": "src/core.ts",
+          "part": "the core the root imports",
+          "skill": "alpha-one"
+        }
+      ]
+    },
+    "extraOrders": [
+      {
+        "title": "Alpha into an existing slice",
+        "intro": "When a slice lacks the alpha part.",
+        "steps": [
+          {
+            "step": "Add alpha to slice.json",
+            "skills": [
+              "alpha-one"
+            ],
+            "proof": "`check-alpha.mjs . --part extra` (alpha-one) prints RESULT: PASS"
+          }
+        ]
+      }
+    ],
+    "verifyGreen": {
+      "intro": "Which verify step is expected red before which step.",
+      "rows": [
+        {
+          "gate": "lint",
+          "greenFrom": "step 1",
+          "before": "never expected red"
+        }
+      ]
+    },
+    "game": [
+      {
+        "step": "Beta next",
+        "skills": [
+          "beta-two"
+        ],
+        "proof": "beta passes"
+      }
+    ]
+  }
+}

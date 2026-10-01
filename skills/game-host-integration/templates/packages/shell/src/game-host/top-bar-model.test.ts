@@ -65,7 +65,10 @@ function hintOfferWith(freeHintsLeft: number): TopBarInput['hintOffer'] {
     isTutorialDone: true,
     levelsCompletedTotal: 4,
   };
-  return perkOffer({ kind: 'hint', freeHintsLeft }, { config, context, isRewardedLoaded: false });
+  return perkOffer(
+    { kind: 'hint', freeHintsLeft },
+    { config, context, rewardedStatus: 'unavailable' },
+  );
 }
 
 describe('topBarPropsOf', () => {

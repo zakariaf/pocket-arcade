@@ -3,7 +3,9 @@
 // guard, the test-only key-value store, the perf log (cold start, in the save database) with S15's
 // Performance actions, the feedback recorders (every Shell sound and pulse also lands in the perf
 // log, which e2e:ios reads back as feedback.json), the debug services (S15 switches and the debug
-// link), the debug link handler and the navigator ref it navigates with. All of it comes through
+// link, with geo=eea|other: the composition root asks for its consent port through
+// parts.services?.consentFor(port) ?? port), the debug link handler and the navigator ref it
+// navigates with. All of it comes through
 // the test-only entry, so a store build (TEST_ONLY === null) gets services, links and feedback null
 // and none of that code. The handler listens to Linking from here on and queues links until the
 // navigator is ready: the navigator gets navigationRef as its ref and calls links?.start(Linking)
@@ -86,17 +88,21 @@ function createServices(build: TestBuild, input: DebugPartsInput): DebugServices
   // Home's useColdStartMark, the frame recorder and the feedback recorders write here; e2e:ios
   // reads it back (cold start, feedback.json) and S15's Performance section shows and shares it.
   const perfLog = build.api.createPerfLog(input.saveDriver);
+  const { adsMode } = readAdsExtra();
   return build.api.createDebugServices({
     connectivity: build.connectivity,
     clock: build.clock,
     // The flags a direction reload or a kill interrupted come back here, before the first render.
     store: build.api.createSqliteKvDebugStoreAdapter(),
+    // geo=eea|other starts Google's answer over; an ADS_MODE=off build never calls UMP.
+    resetConsent:
+      adsMode === 'off' ? null : build.api.createAdmobConsentDebugAdapter().resetConsent,
     perfLog,
     perf: build.api.createDebugPerfActions({ perfLog, nowMs: build.clock.nowMs }),
     persistPremium: input.premiumDeps.persistPremium,
     dispatchPremium: input.premiumDeps.dispatch,
     nowMs: build.clock.nowMs,
-    adsMode: readAdsExtra().adsMode,
+    adsMode,
     onError: (error) => {
       input.errorLog.record('ads', error); // consent errors are ad errors
     },

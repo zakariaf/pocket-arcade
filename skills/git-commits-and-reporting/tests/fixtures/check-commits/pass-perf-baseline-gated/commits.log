@@ -1,0 +1,11 @@
+==> commit 8fdc503a1e0f7b5d4c2a9e8b6f3d1c0a7e5b4f32
+test(tooling): record the line siege simulator cold-start baseline
+
+The first evidence run sets the simulator cold-start median that later
+runs must stay within (times 1.2).
+
+Gate-Change: the cold-start baseline sets the simulator limit
+
+==> files
+
+perf-baselines/cold-start-sim-line-siege.json

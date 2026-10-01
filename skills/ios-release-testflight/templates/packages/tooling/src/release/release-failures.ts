@@ -17,6 +17,15 @@ type Rule = FailureVerdict & { readonly pattern: RegExp };
 
 const RULES: readonly Rule[] = [
   {
+    // The store gate's owner placeholders (lead decision L14): expected until G3 and G5 are done.
+    id: 'owner-placeholder',
+    pattern: /OWNER STEPS PENDING: G\d+(?:, G\d+)*/,
+    isStop: true,
+    ownerStep: 'G3/G5',
+    action:
+      'Supply the owner steps the OWNER STEPS PENDING line names: G3, the privacy-policy host and the support address (with the App Privacy answers), and G5, the AdMob app id and its three unit ids. Until then this stop is the expected result and nothing is uploaded; the agent never types a stand-in value.',
+  },
+  {
     id: 'xcode-license',
     pattern: /You have not agreed to the Xcode license|xcodebuild -license/i,
     isStop: true,

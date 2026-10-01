@@ -65,17 +65,23 @@ Flows select by `id:` only, so they run unchanged in all four languages (`maestr
 
 - Maestro treats the value as a regular expression; a `.` matches itself, so `home.play-button` works unescaped.
 - A shorthand `tapOn: 'Play'`, `assertVisible: 'Play'`, `visible: 'Play'` or a `text:` selector without an `id:` is a text selector and fails.
-- The one exception is an OS dialog that has no testID (the iOS "Open" prompt of a deep link). The verified sub-flow taps it only when it shows, and the checker accepts exactly this guard (the text under `when: visible:` equals the text tapped under `commands:`):
+- The one exception is OS-owned UI that has no testID (Apple's "Open in ...?" prompt of a deep link, Apple's tracking alert, Google's test ads). It sits under a `# system-ui: <why>` comment on the line or up to 6 lines above (the comment e2e-maestro's `check-flows` reads too). The verified sub-flow (`packages/shell/e2e/subflows/debug-setup.yaml`) taps the link prompt only when it shows, and only Apple's button below the alert title, because the AdMob test banner's "OPEN" button also matches a bare `Open`:
 
   ```yaml
+  # system-ui: iOS asks "Open in <app name>?" for the link; the title and 'Open' are Apple's, not app text.
   - runFlow:
       when:
-        visible: 'Open'
+        visible: 'Open in .*\?'
       commands:
-        - tapOn: 'Open'
+        - waitForAnimationToEnd
+        # system-ui: Apple's Open button, the nearest one below the alert title (never the banner's).
+        - tapOn:
+            text: 'Open'
+            below: 'Open in .*\?'
+            optional: true
   ```
 
-  Any other OS-dialog line carries the marker comment: `- tapOn: 'Allow' # system dialog`.
+  The checker also still accepts the older guard whose `when: visible:` text equals the text tapped under `commands:` (`visible: 'Open'` with `tapOn: 'Open'`), and any other OS-dialog line marked with the comment `- tapOn: 'Allow' # system dialog`; prefer the `# system-ui:` form.
 - An `id:` value must be a valid testID (unless it is a deliberate regex or an `${ENV}` value such as `'${WAIT_FOR}'`).
 
 ## i18n keys

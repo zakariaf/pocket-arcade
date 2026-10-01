@@ -122,7 +122,7 @@ The product asks for a sound on every button tap, win and loss, and a short puls
 
 The context lives in `packages/shell/src/app/press-feedback-context.tsx`, not in `services/audio/`: the Pressable hosts live in `ui/`, which never imports `services/` (ESLint's ui boundary), and this file imports only React. The hosts and `ShellApp` both import it from `@e07/shell/app/press-feedback-context.tsx`, so there is exactly one context. The toybox-design-system skill ships the same file byte for byte; whichever skill runs first copies it.
 
-Never call `audio.play('ui.tap')` from individual screens: one forgotten handler is a silent button. `check-audio-haptics.mjs` fails (`ui-feedback`) until every kind is played somewhere in the Shell and some Shell component calls `usePressFeedback()`. Games never use these; their sounds come from timeline cues.
+Never call `audio.play('ui.tap')` from individual screens: one forgotten handler is a silent button. `check-audio-haptics.mjs` fails (`ui-feedback`) until every kind is played somewhere in the Shell and some Shell component calls `usePressFeedback()`. The rule waits for the boot (`start-shell.ts`, Shell step 7); from then on `tap`, `win` and `lose` are strict, while the `toggle` part prints a slice SKIP (`S11 not in shell-slice.json (nor S6): ...`) until Settings (S11) or Pause (S6), whose handlers play it, is in `shell-slice.json` (Shell step 9). Games never use these; their sounds come from timeline cues.
 
 ## Lifecycle: suspend, resume, interruptions, dispose
 

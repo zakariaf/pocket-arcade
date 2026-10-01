@@ -11,8 +11,10 @@ import { basename, join, relative, resolve } from 'node:path';
 
 import {
   REPO_SCAN_IGNORES,
+  SHELL_DUE_TARGETS,
   SHELL_SLICE_FILE,
   createReporter,
+  dueSkipReason,
   lineOf,
   maskComments,
   parseArgs,
@@ -68,6 +70,10 @@ const SPEC = {
     '                             or the full Shell); Tutorial, part of every Shell app, never may',
     '  home-daily-edge            S4 Home (screens/home/, once built) never navigates to Daily (the daily card body',
     '                             opens S9, lead decision L7) or never starts the daily run (the card\'s Play key)',
+    '  route-guards-files         from Shell step 7 (start-shell.ts exists, or --complete) navigation/route-guards.ts',
+    '                             lands with its test route-guards.test.tsx, which renders through renderWithShell (the',
+    '                             theme of step 7); before step 7 the rule prints SKIP "due at Shell step 7:',
+    '                             packages/shell/src/app/start-shell.ts not yet created"',
     '  slice-present              --complete: shell-slice.json still exists (a slice never ships)',
   ].join('\n'),
 };
@@ -361,6 +367,22 @@ function locate(arg) {
 
 const shownPath = (abs) => toPosix(relative(process.cwd(), abs)) || '.';
 
+/** The first-run guards and their test: both land at Shell step 7, with the composition root. */
+const STEP7_GUARD_FILES = ['packages/shell/src/navigation/route-guards.ts', 'packages/shell/src/navigation/route-guards.test.tsx'];
+
+function checkGuardFiles(ctx, root) {
+  if (root === null) return;
+  const reason = ctx.isComplete ? null : dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (reason !== null) {
+    ctx.report.skip({ file: shownPath(join(root, STEP7_GUARD_FILES[0])), rule: 'route-guards-files', message: reason });
+    return;
+  }
+  for (const file of STEP7_GUARD_FILES) {
+    if (existsSync(join(root, file))) continue;
+    ctx.report.problem({ file: shownPath(join(root, file)), line: 1, rule: 'route-guards-files', message: `${file} is missing although Shell step 7 has started (start-shell.ts exists)`, fix: 'Copy route-guards.ts and route-guards.test.tsx from the skill\'s templates in the step-7 commit, together: the test renders through renderWithShell, which needs the theme of step 7.' });
+  }
+}
+
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const { root, src } = locate(positionals[0] ?? '.');
@@ -370,6 +392,7 @@ run(async () => {
   if (ctx.isComplete && slice !== null) {
     report.problem({ file: shownPath(join(root, SHELL_SLICE_FILE)), line: 1, rule: 'slice-present', message: `the Shell is declared partial (${slice.why}); a slice never ships`, fix: `Build the remaining screens, point every route at its real screen, then delete ${SHELL_SLICE_FILE}.` });
   }
+  checkGuardFiles(ctx, root);
   const noShellApp = ctx.isComplete ? null : sliceSkipReason(slice, null);
   if (src === null && noShellApp === null) requireDir(join(root, 'packages', 'shell', 'src'), 'Shell source folder (packages/shell/src)');
   if (src !== null) checkSourceTree(ctx, src, shownPath(src));

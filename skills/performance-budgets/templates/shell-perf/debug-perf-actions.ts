@@ -50,7 +50,13 @@ export type DebugPerfActions = {
 
 /** The game id the benchmark document carries (a scratch file, never a player's save). */
 const BENCHMARK_GAME_ID = 'perf-benchmark';
-const EMPTY_SUMMARY: PerfSummary = { frames: 0, 'cold-start': 0, 'save-benchmark': 0, feedback: 0 };
+const EMPTY_SUMMARY: PerfSummary = {
+  frames: 0,
+  'cold-start': 0,
+  'save-benchmark': 0,
+  feedback: 0,
+  'board-clock': 0,
+};
 
 function summaryOf(entries: readonly PerfEntry[]): PerfSummary {
   return entries.reduce<PerfSummary>(

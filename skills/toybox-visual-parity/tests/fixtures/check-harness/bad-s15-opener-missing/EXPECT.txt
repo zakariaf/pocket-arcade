@@ -1,0 +1,3 @@
+[harness-opener]
+"debug-ads-always-test"
+packages/shell/src/screens/debug/use-debug-model.ts

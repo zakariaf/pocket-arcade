@@ -10,6 +10,7 @@ Failures with the save file, SQLite, stores, the navigator and the direction rel
 - Navigation
 - Stats
 - Daily
+- Build order
 
 ## Save file
 
@@ -50,3 +51,9 @@ Failures with the save file, SQLite, stores, the navigator and the direction rel
 | `state-week-numbered-by-weekday` | E2E or parity cannot find daily.week-day.7 or stats.week-bar.7 for today | The strip was numbered by ISO weekday instead of position | Number by position (1 = six days ago, 7 = today); the weekday only picks the letter and name | verified | `daily-and-statistics` |
 | `state-summary-view-name-clash` | Two daily-view (or stats-view) files in one folder; imports pick the wrong one | The pure summary was named daily-view.ts next to the DailyView component daily-view.tsx | The pure summaries are daily-summary.ts and stats-summary.ts (useDailySummary, useStatsSummary) | verified | `daily-and-statistics` |
 | `state-daily-salt-shared` | Two games' daily levels follow the same seed sequence | A game copied the template's daily salt 0x5446 | Use the FNV-1a salt the scaffold prints for the game id; check-levels reports daily-salt-shared | verified | `level-generation-and-solvers` |
+
+## Build order
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `state-shell-app-test-at-step-7` | [root-file-missing] packages/shell/src/app/shell-app.test.tsx at Shell step 7 (copied anyway, 2 of its 3 tests time out after 5 s waiting for Settings and Home) | The test renders Settings (S11) and Home (S4) through the real providers, and both are NotBuiltScreen stand-ins until step 9 | It is the one deferred test of the Shell order: the step-7 manifest names it, and it joins with S11 at step 9; until then create-shell-app.test.tsx covers shell-app.tsx and check-game-host prints a slice SKIP for it (S11 not in shell-slice.json) | documented | `game-host-integration` |

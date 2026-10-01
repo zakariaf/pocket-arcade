@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "references/host-architecture.md",
+      "find": "| 7 | toybox-screens | `app/crash-screen.tsx`",
+      "with": "| 9 | toybox-screens | `app/crash-screen.tsx`"
+    }
+  }
+]

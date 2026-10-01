@@ -45,6 +45,7 @@
   { "from": "repo-templates/apps/__GAME_ID__/index.placeholder.ts", "to": "templates/repo/apps/__APP_ID__/index.ts" },
   { "from": "repo-templates/apps/__GAME_ID__/dot-gitignore", "to": "templates/repo/apps/__APP_ID__/dot-gitignore" },
   { "from": "app-scaffold/app-files.mjs", "to": "scripts/lib/app-files.mjs" },
+  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
   { "from": "fonts/", "to": "assets/fonts/" },
   { "from": "repo-templates/package-scripts.json", "to": "templates/package-scripts.json" },
   { "from": "repo-templates/packages/tooling/src/git/commit-trailer-rules.ts", "to": "templates/repo/packages/tooling/src/git/commit-trailer-rules.ts" },

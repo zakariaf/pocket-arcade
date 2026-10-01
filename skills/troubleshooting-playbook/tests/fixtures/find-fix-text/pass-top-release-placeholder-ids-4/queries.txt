@@ -1,0 +1,1 @@
+FAIL apps/line-siege/build/LineSiege.xcarchive/Products/Applications/LineSiege.app/EXConstants.bundle/app.config [links] extra.game.links holds the placeholder privacy-policy host example.com

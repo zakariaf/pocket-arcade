@@ -48,7 +48,8 @@ export type ParityState =
   | 'premium-restore-toasts'
   | 'reset-progress-dialog-held'
   | 'restart-dialog'
-  | 'save-restored-dialog';
+  | 'save-restored-dialog'
+  | 'debug-ads-always-test';
 
 export type ParityPlan = {
   /** The testID that proves the frame is on screen. */
@@ -146,7 +147,12 @@ export const PARITY_PLANS = {
   's14-progress-restored': plan('save-restored-dialog.scrim', 'Home', {
     state: 'save-restored-dialog',
   }),
-  's15-debug-menu': plan('debug.screen', 'Debug', { tall: true }),
+  // Test builds only, and still a design frame (L12): S15 draws "Always show test ads" on, which the
+  // debug menu's model hook opens through that switch's own handler (debug ads override always-test).
+  's15-debug-menu': plan('debug.screen', 'Debug', {
+    state: 'debug-ads-always-test',
+    tall: true,
+  }),
 } as const satisfies Readonly<Record<string, ParityPlan>>;
 
 export type ParityFrameKey = keyof typeof PARITY_PLANS;

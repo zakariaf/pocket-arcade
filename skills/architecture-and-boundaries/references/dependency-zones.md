@@ -96,7 +96,7 @@ Only the adapter file of a port imports its vendor SDK: `packages/shell/src/serv
 | `react-native-audio-api` | `AudioPort` |
 | `expo-haptics` | `HapticsPort` |
 | `expo-network` | `ConnectivityPort` |
-| `expo-tracking-transparency` | `ConsentPort`, and only in `admob-consent-adapter.ts` (`vendorSdkFiles` in `architecture-rules.json`; owner decision O1) |
+| `expo-tracking-transparency` | `ConsentPort`, and only in exactly `packages/shell/src/services/consent/admob-consent-adapter.ts` (`vendorSdkFiles` in `architecture-rules.json`; owner decision O1). In ESLint it is not a `vendor(...)` entry: `ATT_IMPORT` sits in the banned list, and the file-exact `ATT_ADAPTER` block lifts it for that one file with `allow: [ATT_IMPORT]`, so every other file, the other adapters included, keeps the ban |
 
 ESLint's `paths` ban matches the bare module name only, so `import Storage from 'expo-sqlite/kv-store'` in a non-adapter file passes lint (seen in a verification workspace); `check-boundaries.mjs` compares package names and reports the subpath too. Put such code behind a port and an adapter: the key-value store has exactly two adapters, the direction guard's `services/save/sqlite-kv-direction-guard-adapter.ts` and the test-only debug store `services/save/sqlite-kv-debug-store-adapter.ts` (reached only through `TEST_ONLY`).
 

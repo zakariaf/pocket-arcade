@@ -34,6 +34,20 @@ describe('classifyReleaseFailure', () => {
     expect(classifyReleaseFailure(output)).toMatchObject({ id, isStop: false, ownerStep: null });
   });
 
+  it('stops on the owner placeholders and quotes the steps still pending (G3, G5)', () => {
+    const log = [
+      'store-artifact gate failed for apps/line-siege/build/export/LineSiege.ipa:',
+      '- [owner-placeholder] extra.game.links.supportEmail is the placeholder support address support@example.com (owner step G3)',
+      'OWNER STEPS PENDING: G3, G5',
+    ].join('\n');
+    expect(classifyReleaseFailure(log)).toMatchObject({
+      id: 'owner-placeholder',
+      isStop: true,
+      ownerStep: 'G3/G5',
+      line: 'OWNER STEPS PENDING: G3, G5',
+    });
+  });
+
   it('returns null for an unknown failure', () => {
     expect(classifyReleaseFailure('Segmentation fault')).toBeNull();
   });

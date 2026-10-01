@@ -69,6 +69,24 @@ describe('useLocalizedTextStyle', () => {
     });
   });
 
+  it('lays a whole English text in an RTL layout left to right, still aligned to the start (L13)', async () => {
+    // S15's labels stay English in fa: Vazirmatn and its line height as the design draws them, an
+    // LTR paragraph so a wrapped line's trailing space does not push the line off the row's start.
+    const style = await styleIn('fa', { ...ROW_LABEL, textDirection: 'ltr' });
+
+    expect(style).toStrictEqual({
+      fontFamily: 'Vazirmatn-Regular',
+      fontSize: 17,
+      lineHeight: 77 / 3,
+      writingDirection: 'ltr',
+      textAlign: TEXT_ALIGN.start,
+    });
+    expect(await styleIn('en', { ...ROW_LABEL, textDirection: 'ltr' })).toMatchObject({
+      writingDirection: 'ltr',
+      textAlign: TEXT_ALIGN.start,
+    });
+  });
+
   it('tracks the game name in Latin script only', async () => {
     const brand: LocalizedTextOptions = {
       fontSize: 28,

@@ -6,6 +6,8 @@ import { ActionSheetIOS } from 'react-native';
 
 import { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 import { DebugServicesProvider } from '@e07/shell/app/debug-services-context.tsx';
+import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
+import { endParitySession, startParitySession } from '@e07/shell/app/parity/parity-session.ts';
 import { stripIsolates, isolate } from '@e07/shell/i18n/bidi.ts';
 import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
 import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-connectivity.ts';
@@ -19,10 +21,11 @@ import { createFakeDebugPerf } from './fake-debug-perf.ts';
 import { createFakeDebugStore } from './fake-debug-store.ts';
 import { createSimulatedClock } from './simulated-clock.ts';
 import { createSimulatedConnectivity } from './simulated-connectivity.ts';
-import { useDebugModel } from './use-debug-model.ts';
+import { readDebugState, useDebugModel } from './use-debug-model.ts';
 
 import type { DebugRoute } from '@e07/shell/app/debug-link-routes.ts';
 import type { PerfEntry } from '@e07/shell/app/perf/perf-log.ts';
+import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { FakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import type { ReactNode } from 'react';
 
@@ -47,13 +50,18 @@ function answerSheets(...answers: number[]): void {
   });
 }
 
-async function setup() {
+type SetupOptions = { readonly language?: Language };
+
+async function setup(options: SetupOptions = {}) {
   const clock = createSimulatedClock(
     createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' }),
   );
   const errorLog: FakeErrorLog = createFakeErrorLog();
   const { save } = createTestSave(clock);
-  const shell = createShellWrapper({ services: { clock, errorLog, save } });
+  const shell = createShellWrapper({
+    language: options.language ?? 'en',
+    services: { clock, errorLog, save },
+  });
   const entries: PerfEntry[] = [
     { kind: 'cold-start', label: 'home', atEpochMs: 1, data: { totalMs: 1_049 } },
   ];
@@ -63,6 +71,7 @@ async function setup() {
     connectivity: createSimulatedConnectivity(createFakeConnectivity(true)),
     clock,
     store: createFakeDebugStore(),
+    resetConsent: null,
     perfLog,
     perf,
     persistPremium: jest.fn(),
@@ -102,7 +111,7 @@ async function setup() {
     </shell.wrapper>
   );
   const { result } = await renderHook(() => useDebugModel(), { wrapper });
-  return { result, routes, errorLog, save, perf };
+  return { result, routes, errorLog, save, perf, debug, links };
 }
 
 describe('useDebugModel', () => {
@@ -263,5 +272,76 @@ describe('useDebugModel: the Performance section', () => {
       await Promise.resolve();
     });
     expect(errorLog.recorded.map((entry) => entry.source)).toStrictEqual(['boot']);
+  });
+});
+
+describe('useDebugModel: the language of the numbers', () => {
+  it("draws S15's numbers in Persian digits in fa, as the design does; the labels stay English", async () => {
+    const { result, links } = await setup({ language: 'fa' });
+
+    await act(() => {
+      links.handleUrl('e07-line-siege://debug/setup?stars=demo');
+      result.current.onToggle('offline');
+    });
+
+    expect([result.current.values.level, result.current.values.errors]).toStrictEqual(['۱۲', '۰']);
+    // Machine-read by every smoke flow (assert '0'); the design draws no counter.
+    expect(result.current.networkAttempts).toBe('0');
+  });
+});
+
+describe('useDebugModel: the S15 parity frame (L12)', () => {
+  afterEach(() => {
+    endParitySession();
+  });
+
+  it("turns 'Always show test ads' on once, through its own switch, in the s15-debug-menu frame", async () => {
+    startParitySession({
+      frame: 's15-debug-menu',
+      plan: PARITY_PLANS['s15-debug-menu'],
+      theme: 'light',
+      lang: 'en',
+      game: 'lineSiege',
+      date: '2026-09-27',
+      scrollY: 0,
+    });
+    const { result, debug } = await setup();
+
+    expect(result.current.switches['ads-always-test']).toBe(true);
+    expect(debug.adsOverride()).toBe('always-test');
+  });
+
+  it('changes nothing on a normal launch', async () => {
+    const { result, debug } = await setup();
+
+    expect([result.current.switches['ads-always-test'], debug.adsOverride()]).toStrictEqual([
+      false,
+      null,
+    ]);
+  });
+});
+
+describe('readDebugState', () => {
+  it('reads the flags, the simulated day and both logs again for every version', async () => {
+    const { debug, errorLog } = await setup();
+    const sources = {
+      services: debug,
+      errorLog,
+      clock: { nowMs: () => 0, today: () => '2026-09-26', msUntilNextLocalDay: () => 1 },
+    } as const;
+    const first = readDebugState(sources, false, 0);
+    const perfBefore = first.perfEntries.length;
+
+    debug.setOffline(true);
+    errorLog.record('ads', new Error('no fill'));
+    debug.perf.runSaveBenchmark();
+    const next = readDebugState(sources, false, 1);
+
+    expect([first.switches.offline, first.errorEntries.length]).toStrictEqual([false, 0]);
+    expect([
+      next.switches.offline,
+      next.errorEntries.length,
+      next.perfEntries.length,
+    ]).toStrictEqual([true, 1, perfBefore + 1]);
   });
 });

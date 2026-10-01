@@ -1,0 +1,3 @@
+[step-manifest]
+step 2 copies from alpha-one, which the step does not load
+step 2 copies packages/shell/src/nothing/** from alpha-one, which has no template with that repo path

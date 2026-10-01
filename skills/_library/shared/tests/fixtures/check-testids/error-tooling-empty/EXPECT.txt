@@ -1,0 +1,4 @@
+playwright 1.63.0 is not installed in
+Install the pinned packages into the skill: npm ci --prefix
+pass --tooling <repo>/.parity/tooling (or set PARITY_TOOLING_DIR=<repo>/.parity/tooling)
+(--playwright <dir> and PLAYWRIGHT_DIR are accepted as the same.)

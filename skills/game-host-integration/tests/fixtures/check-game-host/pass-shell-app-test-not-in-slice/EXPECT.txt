@@ -1,0 +1,2 @@
+SKIP packages/shell/src/app/shell-app.test.tsx [root-file-missing] S11 not in shell-slice.json
+RESULT: PASS

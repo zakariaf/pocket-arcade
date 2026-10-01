@@ -3,3 +3,8 @@ folder> --all). This folder adds the files the templates import from other skill
 (settings-and-preferences, the S11 row testIDs), and stand-ins for the model hooks other skills ship
 with their tests (use-settings-model.ts and use-settings-context.ts from settings-and-preferences,
 use-debug-model.ts from e2e-maestro), so the route files' model-hook rules can pass.
+It also holds stand-ins for the files the screens borrow from other skills (check-screens rule
+borrowed-file, the BORROWS table in scripts/lib/screen-map.mjs), each with its test where the real
+file has one: app/use-today.ts and the daily and stats summaries (daily-and-statistics), and
+settings-preference-actions.ts, settings-resets.ts, use-settings-resets.ts, settings-rows.test.ts and
+language/language-change.ts (settings-and-preferences).

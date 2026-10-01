@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/perk-offer.ts",
+      "find": "  return canServeAds(config, context) ? adOffer(perk, rewardedStatus) : 'hidden';",
+      "with": "  // Round 4: hidden unless the rewarded ad is already loaded, so 'hidden' also meant 'still loading'.\n  return canServeAds(config, context) && rewardedStatus === 'ready' ? 'watch-ad' : 'hidden';"
+    }
+  }
+]

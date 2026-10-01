@@ -1,0 +1,1 @@
+[script-target] npm run new-game runs packages/tooling/src/scaffold/new-game.ts, which does not exist

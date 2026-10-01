@@ -8,7 +8,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { DEFAULT_SKILLS_ROOT, LIB_DIR } from './lib/library.mjs';
-import { readSources, writeSources } from './lib/sources.mjs';
+import { localDay, readSources, updateSourcesLocked } from './lib/sources.mjs';
 import { findProjectRefs } from './validate-skills.mjs';
 import { UsageError, createReporter, parseArgs, run, sha256 } from './shared/scripts/check-lib.mjs';
 
@@ -58,6 +58,7 @@ async function main() {
   const sourcesPath = join(LIB_DIR, 'sources.json');
   const sources = readSources(sourcesPath);
   let changed = false;
+  const recorded = {};
   for (const item of IMPORTS) {
     const sourcePath = join(root, item.source);
     if (!existsSync(sourcePath)) throw new UsageError(`source ${item.source} not found under ${root}`, 'Pass --root <repo root>.');
@@ -91,13 +92,17 @@ async function main() {
       const previous = sources.skills._library[item.dest];
       const hash = sha256(readFileSync(sourcePath));
       if (!previous || previous.sources.length !== 1 || previous.sources[0].sha256 !== hash || previous.sources[0].path !== item.source) {
-        sources.skills._library[item.dest] = { recorded: new Date().toISOString().slice(0, 10), sources: [{ path: item.source, sha256: hash }] };
+        recorded[item.dest] = { recorded: localDay(), sources: [{ path: item.source, sha256: hash }] };
         changed = true;
       }
     }
   }
-  if (changed && !options.check) {
-    writeSources(sourcesPath, sources);
+  if (changed && !options.check && Object.keys(recorded).length > 0) {
+    // Locked like record-sources: re-read under sources.json.lock and change only the _library entries.
+    updateSourcesLocked(sourcesPath, (data) => {
+      data.skills._library ??= {};
+      Object.assign(data.skills._library, recorded);
+    }, { holder: 'refresh-shared' });
     console.log('Recorded the sources in sources.json. Next: node skills/_library/sync-shared.mjs');
   }
   return report.finish({ checked: IMPORTS.length, unit: 'shared files' });

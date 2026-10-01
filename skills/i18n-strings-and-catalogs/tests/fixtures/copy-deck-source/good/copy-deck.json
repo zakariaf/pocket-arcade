@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "about": "Fixture deck: a minimal copy deck for the debug-english source check.",
+    "screens": {
+      "S15": {
+        "title": "Debug menu (test builds)",
+        "keys": [
+          "debug.title",
+          "debug.set-date"
+        ]
+      }
+    }
+  },
+  "games": {},
+  "strings": {
+    "debug.set-date": {
+      "en": "Set date",
+      "de": "Set date",
+      "fa": "Set date",
+      "ckb": "Set date"
+    },
+    "debug.title": {
+      "en": "Debug menu",
+      "de": "Debug menu",
+      "fa": "Debug menu",
+      "ckb": "Debug menu"
+    }
+  }
+}

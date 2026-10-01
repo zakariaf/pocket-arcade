@@ -1,0 +1,3 @@
+[root-import-unlisted]
+templates/packages/shell/src/app/create-shell-parts.ts
+imports packages/shell/src/stores/run-end.ts, which the root import table does not list

@@ -7,6 +7,7 @@ S7 Result shows how a run ended, drawn over the finished board inside the Game s
 - What the product requires
 - Layout, top to bottom
 - States and variants
+- The continue offer and L11
 - Data the model supplies
 - Templates
 - testIDs
@@ -48,7 +49,23 @@ Chip and Sticker align themselves to the start (`alignSelf: 'flex-start'`), whic
 - **Daily result** (Chosen, not drawn): the win layout without stars: chip (daily mode line), "Daily challenge done!" (`result.daily-title`), the gold streak sticker with a chain (`result.streak-sticker`), the score panel, "Come back tomorrow for a new one." (`result.come-back-note`), grow, hero key with a `home` cap (`result.home-button`).
 - **Endless result** (Chosen): chip "Endless", "Run over" (`result.endless-title`), score panel with the "Best 4,210" line, grow, hero Try again (`restore` cap), secondary block Home.
 - **Continue for Premium owners** (Chosen): the same pop button with a `play` icon, "Continue – free with Premium" (`result.continue-premium-button`).
-- After the continue is used (or for games without continues): no offer box.
+- **Continue while the rewarded ad loads** (Chosen, lead decision L11): the drawn offer box, the same pop key with the same label and testID (`result.continue-ad-button`), busy: the three hopping blocks stand where the `ad` icon was, the key is pushed in, VoiceOver hears it busy, a press does nothing. No new copy. It turns into the ready key when the ad has loaded.
+- After the continue is used (or for games without continues, or when no continue can come): no offer box.
+
+## The continue offer and L11
+
+Lead decision L11, never strand a finished run: when a run ends and no continue can be offered, the result shows at once. So the offer has exactly four states, and "hidden" always means unavailable, never "not loaded yet":
+
+| `LoseResult.continueOffer` | When (from admob-ads' `perkOffer` through game-host-integration's `resultModelOf`) | S7 draws |
+|---|---|---|
+| `'ad'` | ads can be served (ads on, online, consent allows them, no Premium) and the rewarded status is `'ready'` | the offer box with the pop key, `ad` icon, pressable |
+| `'ad-loading'` | ads can be served and the rewarded status is `'loading'` | the same offer box and key, busy (above); not pressable |
+| `'premium'` | a Premium owner, continue not used yet | the offer box with the `play` key "Continue – free with Premium" |
+| `null` | the game allows no continue, it is used, or nobody can give it (ads off, offline, no consent, a load error, no Premium) | no offer box |
+
+A lost run whose offer is hidden is never left waiting: the Game screen's model (`use-game-screen-model.ts`, references/s05-game.md, "A loss nobody can rescue") sends `{ type: 'finish' }` once per eventSeq while `isLossStranded(view, continueOffer)` is true. The run end is recorded first (statistics, streak, endless best, ad history), and S7 then shows the recorded result: the endless result with the score and New best for an endless run, the daily result for today's run, or the lose result without the offer for a level. The same happens when a shown offer becomes hidden (the player goes offline, the ad fails to load) and when a pending lost run is reopened from Home. A loss is kept open for a decision only while the offer is `'ad'`, `'ad-loading'` or `'premium'`; Try again, Levels and Home record it then (`finish`).
+
+Tests: `result-overlay.test.tsx` draws `'ad-loading'` busy (accessibility state busy and disabled, no press, three blocks and no icon) and then ready; `use-game-screen-model.test.tsx` covers an ads-off build without Premium (finish sent once, the endless result with New best at once), loading then ready (no finish), loading then unavailable (finish, the lose result without the offer, counted once) and Premium (no finish); `use-perk-payment.test.tsx` covers the status cases. `check-screens` fails `continue-offer-loading` when the model type or the view lacks `'ad-loading'`, and `loss-finished` when the Game screen never finishes a stranded loss from an effect. The device proof is the E2E flow `13-endless` (ads off, no Premium: the endless result at once) and the ads smoke flows on an ADS_MODE=test build.
 
 ## Data the model supplies
 
@@ -150,4 +167,5 @@ Open the image before building and compare the finished screen with it (toybox-v
 - Saving stars after the screen appears (they are saved first).
 - "12 moves" or "par" on a score-rated win: it prints the score line.
 - Centring a Chip or a Sticker with `alignItems` (it aligns itself to the start), or a body that ends at the safe area (the last key's shadow is clipped).
-- The parity frames `result-win` and `result-lose` are opened by the Game screen's session-controls hook (`debugControls().showFixtureResult(fixture)`, game-host-integration), never by the result views.
+- The parity frames `result-win` and `result-lose` are opened by the Game screen's session-controls hook (`debugControls().showFixtureResult(fixture)`, game-host-integration), never by the result views. The parity ads port reports a rewarded ad ready, so the lose frame keeps its "Continue – watch an ad" offer.
+- Hiding the continue offer while its rewarded ad loads, or leaving a lost run with a hidden offer on screen without recording it: the player saw neither the offer nor the endless result (L11). Draw `'ad-loading'` busy and let the Game screen model finish a stranded loss.

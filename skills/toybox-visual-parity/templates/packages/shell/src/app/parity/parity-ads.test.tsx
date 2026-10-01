@@ -23,9 +23,22 @@ describe('createParityAds', () => {
     const ads = createParityAds();
 
     await expect(ads.initialize()).resolves.toBeUndefined();
-    expect(ads.isRewardedLoaded()).toBe(true);
+    expect(ads.rewardedStatus()).toBe('ready');
     await expect(ads.showInterstitial()).resolves.toBe('unavailable');
     await expect(ads.showRewarded()).resolves.toBe('unavailable');
+  });
+
+  it("keeps the rewarded status 'ready' through a preload, so the offer never shows its loading state", () => {
+    const ads = createParityAds();
+    const listener = jest.fn();
+
+    const unsubscribe = ads.subscribeRewardedStatus(listener);
+    ads.preloadRewarded();
+    ads.preloadInterstitial();
+    unsubscribe();
+
+    expect(ads.rewardedStatus()).toBe('ready');
+    expect(listener).not.toHaveBeenCalled();
   });
 });
 

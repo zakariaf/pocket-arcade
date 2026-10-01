@@ -50,7 +50,7 @@ export PARITY_TOOLING_DIR="$PWD/.parity/tooling"     # or pass --tooling .parity
 
 - each session makes its own simulator (`--name e07-parity-<key>`) and passes `--name` to every script;
 - every Maestro call names the simulator's UDID and this run's own driver port before the command: `maestro --device <udid> --driver-host-port <port> hierarchy` (built by `maestroArgs()` in `scripts/lib/tools.mjs`, the same rule as the repo's `maestroGlobalArgs()`); the port is `--driver-port` (or `PARITY_MAESTRO_PORT`) when a session passes one, else a free port picked by listening on port 0, once per `run-parity.mjs` run;
-- every launch carries a nonce that the parity root shows as `parity.launch.<nonce>`; a dump without it is refused with exit 2, "hierarchy from another simulator" (parity-harness.md, "The launch nonce");
+- every launch carries a nonce that the parity root shows as `parity.launch.<nonce>`; a dump without it is read again (up to three dumps, 2 s apart, for the rare dump taken before the app's tree is attached) and then refused with exit 2, "hierarchy from another simulator" (parity-harness.md, "The launch nonce");
 - every `simctl` call names the UDID, never `booted` or `all`.
 
 ```sh

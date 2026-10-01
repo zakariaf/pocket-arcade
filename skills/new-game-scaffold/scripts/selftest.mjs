@@ -9,7 +9,10 @@
 //     Siege catalogs) and a game outside the copy deck (template keys, lose slug), each with a bug.
 //   check-game-app.mjs --stage complete: passes that app plus check-game-app-complete/base (stubs
 //     for every module part and the evidence files) and fails each check-game-app-complete/bad-*.
-//   PLACEHOLDERS (the scaffold placeholders --stage complete rejects by name) equals the pinned list.
+//   PLACEHOLDERS (the scaffold placeholders --stage complete rejects by name) is the one shared list
+//     of ship-placeholders.mjs (re-exported by app-files.mjs, never a copy) and equals the pinned
+//     values, fields and owner steps; check-game-app-complete/bad-complete-owner-placeholders-only
+//     pins the six owner-placeholder lines and "OWNER STEPS PENDING: G3, G5" before the RESULT line.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs
 
 import { spawnSync } from 'node:child_process';
@@ -19,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createReporter, makeTempDir, runSelftest } from './check-lib.mjs';
 import { PLACEHOLDERS } from './lib/app-plan.mjs';
+import { PLACEHOLDERS as SHIP_PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 import { assembleFixtures } from './lib/assemble-fixtures.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -78,27 +82,31 @@ function copied(name) {
 
 /**
  * check-game-app --stage complete rejects exactly these scaffold placeholders by name (owner decision
- * O4; the ship gates keep the same list). Dropping or changing one fails the self-test.
+ * O4, lead decision L14), each with its game.config.ts field and its owner step (G5: the AdMob ids;
+ * G3: the privacy host and support address; null: the pre-O4 com.example.* ids, which the bundle-id
+ * and premium-id rules report). The ship gates pin the same list. Dropping or changing one fails.
  */
 const PINNED_PLACEHOLDERS = [
-  'com.example.*',
-  'ca-app-pub-1234567890123456~1234567890',
-  'ca-app-pub-1234567890123456/1111111111',
-  'ca-app-pub-1234567890123456/2222222222',
-  'ca-app-pub-1234567890123456/3333333333',
-  'example.com',
-  'support@example.com',
+  ['com.example.*', 'bundleId / premium.productId', null],
+  ['ca-app-pub-1234567890123456~1234567890', 'ads.ids.ios.appId', 'G5'],
+  ['ca-app-pub-1234567890123456/1111111111', 'ads.ids.ios.units.banner', 'G5'],
+  ['ca-app-pub-1234567890123456/2222222222', 'ads.ids.ios.units.interstitial', 'G5'],
+  ['ca-app-pub-1234567890123456/3333333333', 'ads.ids.ios.units.rewarded', 'G5'],
+  ['example.com', 'links.privacyPolicy.host', 'G3'],
+  ['support@example.com', 'links.supportEmail', 'G3'],
 ];
 
-/** True (and prints the problem) when PLACEHOLDERS is not the pinned list. */
+/** True (and prints the problem) when PLACEHOLDERS is not the one shared list or not the pinned one. */
 function placeholdersDrifted() {
-  const values = PLACEHOLDERS.map((entry) => entry.value);
-  if (JSON.stringify(values) === JSON.stringify(PINNED_PLACEHOLDERS)) {
-    console.log(`ok   PLACEHOLDERS pinned (${values.length} values)`);
+  const entries = PLACEHOLDERS.map((entry) => [entry.value, entry.field, entry.ownerStep]);
+  const isShared = PLACEHOLDERS === SHIP_PLACEHOLDERS;
+  if (isShared && JSON.stringify(entries) === JSON.stringify(PINNED_PLACEHOLDERS)) {
+    console.log(`ok   PLACEHOLDERS is ship-placeholders.mjs' list, pinned (${entries.length} values with fields and owner steps)`);
     return false;
   }
   const report = createReporter({ name: 'selftest' });
-  report.problem({ file: 'scripts/lib/app-files.mjs', rule: 'placeholders-pinned', message: `PLACEHOLDERS is ${JSON.stringify(values)}, not the pinned ${JSON.stringify(PINNED_PLACEHOLDERS)}`, fix: 'Keep every scaffold placeholder in the shared list (it is synced from the library); change the pin only with the owner decision that changes the list.' });
+  if (!isShared) report.problem({ file: 'scripts/lib/app-files.mjs', rule: 'placeholders-shared', message: 'PLACEHOLDERS is not the list ship-placeholders.mjs exports (a second copy can drift from the ship gates)', fix: 'Re-export PLACEHOLDERS from ./ship-placeholders.mjs in the library\'s app-scaffold/app-files.mjs, then run sync-shared.' });
+  else report.problem({ file: 'scripts/lib/ship-placeholders.mjs', rule: 'placeholders-pinned', message: `PLACEHOLDERS is ${JSON.stringify(entries)}, not the pinned ${JSON.stringify(PINNED_PLACEHOLDERS)}`, fix: 'Keep every scaffold placeholder, its field and its owner step in the shared list (it is synced from the library); change the pin only with the owner decision that changes the list.' });
   process.exitCode = report.finish({ checked: 1, unit: 'lists' });
   return true;
 }

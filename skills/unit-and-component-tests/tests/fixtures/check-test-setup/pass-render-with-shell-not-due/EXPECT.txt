@@ -1,0 +1,2 @@
+SKIP packages/shell/src/testing/render-with-shell.tsx [render-with-shell-missing] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created
+RESULT: PASS

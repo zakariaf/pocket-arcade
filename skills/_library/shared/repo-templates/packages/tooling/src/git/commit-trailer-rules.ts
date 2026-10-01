@@ -1,7 +1,8 @@
 // packages/tooling/src/git/commit-trailer-rules.ts
 // The trailer half of the commit-message rules (see commit-message-rules.ts): trailers sit in the
 // last paragraph, Gate-Change and Spec-Change give a real reason, Spec-Change names a spec
-// section, and Gate-Change appears exactly when a changed file matches gatedPaths.
+// section (or is a directed swap's exact trailer), and Gate-Change appears exactly when a changed
+// file matches gatedPaths.
 import path from 'node:path';
 
 export type CommitProblem = {
@@ -27,7 +28,8 @@ const FIXES: Readonly<Record<string, string>> = {
   'spec-ref-missing': 'Name the spec lines the change serves: "Spec S9 and 8.3: ...".',
   'trailer-placement': 'Move every trailer into one final paragraph after a blank line.',
   'trailer-empty': 'Say why in a few words (at least 10 characters).',
-  'spec-change-format': 'Write "Spec-Change: spec <section or ID> <what changed>".',
+  'spec-change-format':
+    'Write "Spec-Change: spec <section or ID> <what changed>" (a directed swap: its exact trailer).',
   'gate-change-missing': 'Add a final paragraph "Gate-Change: <why the gate had to change>".',
   'gate-change-unneeded': 'Remove the trailer; the owner finds gate changes by it.',
   'placeholder-left': 'Replace every __PLACEHOLDER__ of the template with real text.',
@@ -49,6 +51,18 @@ const MOVABLE_TRAILER = /^(Gate-Change|Spec-Change|Co-Authored-By):/iu;
 export const SPEC_ID =
   /\b(?:spec(?:'s)?\s+(?:sections?\s+)?\d{1,2}(?:\.\d{1,2})?|S\d{1,2}[a-d]?|N\d{1,2}|D\d)\b/iu;
 const MIN_REASON_LENGTH = 10;
+
+/**
+ * Spec-Change reasons of the directed swaps the build order names letter for letter. Such a swap
+ * replaces a phase-0 file and its test on purpose (the test's assertions change) and serves no spec
+ * section of its own, so this exact reason needs no spec id; any other wording still does.
+ */
+export const DIRECTED_SWAP_TRAILERS: readonly string[] = [
+  'with-shell final composer (phase 0 placeholder replaced)',
+];
+
+const isDirectedSwap = (entry: Entry): boolean =>
+  DIRECTED_SWAP_TRAILERS.includes(entry.text.replace(/^[^:]+:\s*/u, '').trim());
 
 // Folders that hold the skill library and Claude Code's own files, not the app. A pattern reaches
 // into them only when it starts with the folder itself (".claude/settings.json" stays gated); a
@@ -96,6 +110,7 @@ function reasonProblems(trailers: readonly Entry[]): readonly CommitProblem[] {
     .filter((entry) => entry.text.replace(/^[^:]+:\s*/u, '').trim().length < MIN_REASON_LENGTH)
     .map((entry) => problem('trailer-empty', entry.line, `"${entry.text}" gives no real reason`));
   const unanchored = named(trailers, 'Spec-Change')
+    .filter((entry) => !isDirectedSwap(entry))
     .filter((entry) => !SPEC_ID.test(entry.text) && !/\bspec\s+\d/iu.test(entry.text))
     .map((entry) =>
       problem('spec-change-format', entry.line, `"${entry.text}" names no spec section`),

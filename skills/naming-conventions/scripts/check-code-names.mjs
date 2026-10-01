@@ -39,7 +39,8 @@ const SPEC = {
     '                      local handler is named onX (onX is for callback props)',
     '  constant-name       module-level fixed data (a literal, a regex, an as-const table) is not UPPER_CASE',
     '  acronym-case        an identifier spells an acronym in capitals (SQLDriver, isRTL); write SqlDriver, isRtl',
-    '  maestro-selector    a Maestro step selects by text instead of id, or an id is not a valid testID',
+    '  maestro-selector    a Maestro step selects by text instead of id (OS-owned UI only under a "# system-ui: <why>"',
+    '                      comment or on a "# system dialog" line), or an id is not a valid testID',
     '',
     'Scans apps/, packages/ (tooling only for boolean, type and acronym names), test/ and root .ts files; catalogs in',
     'packages/shell/src/i18n/catalogs/ and apps/<id>/src/i18n/; flows in any e2e/flows/ folder.',
@@ -304,15 +305,26 @@ function isDialogGuard(lines, i, text) {
   return false;
 }
 
+// "# system-ui: <why>" (e2e-maestro's check-flows uses the same comment): OS-owned UI with no testID,
+// such as Apple's "Open in ...?" link alert or Google's test ad, on that line or up to 6 lines above.
+const SYSTEM_UI = /#\s*system-ui:\s*\S.{5,}/;
+
+function underSystemUi(lines, i) {
+  for (let j = i; j >= 0 && j >= i - 6; j -= 1) if (SYSTEM_UI.test(lines[j])) return true;
+  return false;
+}
+
 function checkFlow(rel, root, report) {
   const lines = readFileSync(join(root, rel), 'utf8').split('\n');
   lines.forEach((line, i) => {
     const at = { file: rel, line: i + 1, rule: 'maestro-selector' };
     // A system dialog (the iOS "Open" prompt of a deep link) has no testID: it is allowed on a line marked
-    // "# system dialog", or inside the runFlow guard that taps it only when it is visible.
+    // "# system dialog", under a "# system-ui: <why>" comment, or inside the runFlow guard that taps it
+    // only when it is visible.
+    const isSystemUi = underSystemUi(lines, i);
     const shorthand = /^\s*-?\s*(tapOn|doubleTapOn|longPressOn|assertVisible|assertNotVisible|scrollUntilVisible|visible|notVisible):\s*(['"]?)([^'"#\s{][^'"#]*)\2\s*(#.*)?$/.exec(line);
-    if (shorthand && !/system dialog/i.test(shorthand[4] ?? '') && !isDialogGuard(lines, i, shorthand[3].trim())) {
-      report.problem({ ...at, message: `${shorthand[1]} selects by text "${shorthand[3].trim()}"`, fix: `Select by id: ${shorthand[1]}: { id: '<screen>.<element>' }; flows must run unchanged in four languages (an OS dialog without a testID: mark the line "# system dialog").` });
+    if (shorthand && !isSystemUi && !/system dialog/i.test(shorthand[4] ?? '') && !isDialogGuard(lines, i, shorthand[3].trim())) {
+      report.problem({ ...at, message: `${shorthand[1]} selects by text "${shorthand[3].trim()}"`, fix: `Select by id: ${shorthand[1]}: { id: '<screen>.<element>' }; flows must run unchanged in four languages (OS-owned UI without a testID: a "# system-ui: <why>" comment above it, or mark the line "# system dialog").` });
     }
     const id = /^\s*-?\s*id:\s*(['"]?)([^'"#]+)\1\s*$/.exec(line);
     if (id && !/[*+?[\]()\\|^$]/.test(id[2]) && !id[2].includes('${') && !TEST_ID.test(id[2].trim())) {
@@ -323,7 +335,7 @@ function checkFlow(rel, root, report) {
       let hasId = false;
       for (let j = i - 1; j >= 0 && yamlIndent(lines[j]) >= own && lines[j].trim() !== ''; j -= 1) if (yamlIndent(lines[j]) === own && /^\s*-?\s*id:/.test(lines[j])) hasId = true;
       for (let j = i + 1; j < lines.length && yamlIndent(lines[j]) >= own && lines[j].trim() !== ''; j += 1) if (yamlIndent(lines[j]) === own && /^\s*id:/.test(lines[j])) hasId = true;
-      if (!hasId) report.problem({ ...at, message: 'selector by text without an id', fix: 'Select by id; a text matcher may only narrow an id selector (id + text).' });
+      if (!hasId && !isSystemUi) report.problem({ ...at, message: 'selector by text without an id', fix: 'Select by id; a text matcher may only narrow an id selector (id + text). OS-owned UI without a testID goes under a "# system-ui: <why>" comment.' });
     }
   });
 }

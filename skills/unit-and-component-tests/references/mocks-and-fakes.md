@@ -55,10 +55,11 @@ A fake is `fake-<port>.ts` beside the port: a real, small implementation of the 
 
 ```ts
 // packages/shell/src/services/ads/fake-ads.ts
-import type { AdsPort, FullscreenResult, RewardResult } from './ads-port.ts';
+import type { AdsPort, FullscreenResult, RewardedStatus, RewardResult } from './ads-port.ts';
 
 export type FakeAdsScript = {
-  isRewardedLoaded: boolean;
+  /** 'loading' from a preload's start until LOADED or a load error, 'ready' after LOADED, 'unavailable' otherwise. */
+  rewardedStatus: RewardedStatus;
   interstitialResult: FullscreenResult;
   rewardResult: RewardResult;
   readonly calls: string[];
@@ -82,7 +83,7 @@ export function createFakeAds(script: FakeAdsScript): AdsPort {
 }
 ```
 
-The script object is mutable on purpose: the test changes `script.product` or `script.restoreResult` between steps, and an event fake exposes `emit(event)` to push listener events (`createFakePurchase` does both).
+The script object is mutable on purpose: the test changes `script.product` or `script.restoreResult` between steps, and an event fake exposes `emit(event)` to push listener events (`createFakePurchase` does both). The ads fake reports the rewarded ad through `rewardedStatus()` and `subscribeRewardedStatus(listener)` (they replaced `isRewardedLoaded` and `subscribeRewardedLoaded`): a test that walks a continue offer sets `script.rewardedStatus` to `'loading'`, then `'ready'` (or `'unavailable'` for offline or a load error) and notifies the listeners, because the offer is `'loading'` while the ad loads and `'hidden'` only when no continue can be offered, which ends the run at once (a lost endless run then shows its result with the score and New best).
 
 ## Testing services over fakes
 

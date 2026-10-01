@@ -38,14 +38,32 @@ export function appProcessPattern(appName: string, udid?: string): string {
   return `${device}\\.app/${executable}( |$)`;
 }
 
-// The simulator app is a macOS process: find it by its bundle path. Every running copy counts
-// (the phone and the iPad simulator can both run it), so none of them escapes the sampler.
-export function appPids(appName: string): string[] {
-  try {
-    return pidsOf(execFileSync('pgrep', ['-f', appProcessPattern(appName)], { encoding: 'utf8' }));
-  } catch {
-    return []; // not running
+/**
+ * One pattern per simulator of this run (its phone and its iPad). Other sessions run the same app on
+ * their own simulators, an ADS_MODE=test build among them whose Google sockets are legitimate there:
+ * a pattern without a udid would count them as ours (seen 2026-10-01: an ads smoke test on another
+ * session's simulator filled this run's network.txt). So the sampler always names its simulators.
+ */
+export function appProcessPatterns(appName: string, udids: readonly string[]): string[] {
+  if (udids.length === 0)
+    throw new Error('appProcessPatterns needs the udid of every simulator of the run');
+  return udids.map((udid) => appProcessPattern(appName, udid));
+}
+
+// The simulator app is a macOS process: find it by its bundle path on each of this run's
+// simulators. Every copy there counts (the phone and the iPad can both run it).
+export function appPids(appName: string, udids: readonly string[]): string[] {
+  const pids = new Set<string>();
+  for (const pattern of appProcessPatterns(appName, udids)) {
+    try {
+      for (const pid of pidsOf(execFileSync('pgrep', ['-f', pattern], { encoding: 'utf8' }))) {
+        pids.add(pid);
+      }
+    } catch {
+      // pgrep exits 1 when nothing matches: the app is not running there
+    }
   }
+  return [...pids];
 }
 
 export function sampleSockets(pid: string): string[] {

@@ -1,6 +1,8 @@
 // packages/shell/src/config/with-shell.test.ts
-// Phase 0 (monorepo-bootstrap): replaced with architecture-and-boundaries' final with-shell.test.ts
-// together with the composer.
+// Phase 0 (monorepo-bootstrap, Shell step 1): at Shell step 8 architecture-and-boundaries' final
+// with-shell.test.ts replaces it together with the composer, in one commit with the trailer
+// "Spec-Change: with-shell final composer (phase 0 placeholder replaced)" (the final test changes
+// the probe game's assertions, so the commit names the spec change).
 import { withShell } from './with-shell.ts';
 
 import type { GameConfig } from './game-config.ts';

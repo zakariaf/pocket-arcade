@@ -42,7 +42,8 @@ const SPEC = {
     'Report rules (reports/sim/<id>.json, written by npm run test:sim):',
     '  report-missing       the report exists',
     '  report-invalid       the report has the expected shape, is for this game and matches the bands\' seeds and move cap',
-    '  report-stale         the report was made from the current code (fingerprint: the game\'s logic folders, the sim and the game-kit files they import)',
+    '  report-stale         the report was made from the current code (fingerprint: the game\'s logic folders, the sim and the game-kit files they import;',
+    '                       the generated levels/pack-*.json do not count, so writing the packs after the sims keeps the report fresh)',
     '  report-cell-missing  every grid cell (policy x difficulty) and the endless cell are in the report',
     '  cap-hit              no run hit maxMoves (no stuck or endless games)',
     '  band-violated        every band holds',
@@ -361,7 +362,7 @@ function checkReport(root, game, contract, report) {
   if (shape.length > 0) return;
   if (value.gameId !== game) report.problem({ file: rel, line: lineAt(text, '"gameId"'), rule: 'report-invalid', message: `the report is for "${value.gameId}", not ${game}`, fix: 'The sim must write reports/sim/<its own game id>.json: fix GAME_ID in the sim file and rerun npm run test:sim.' });
   const fingerprint = rulesFingerprint(root, game);
-  if (value.rulesFingerprint !== fingerprint) report.problem({ file: rel, line: lineAt(text, '"rulesFingerprint"'), rule: 'report-stale', message: 'the report was made from other rules, bots or harness than the current code', fix: 'Rerun npm run test:sim after every change to the game\'s rules, levels, sim or testing folders, the game-kit files they import, or the sim file.' });
+  if (value.rulesFingerprint !== fingerprint) report.problem({ file: rel, line: lineAt(text, '"rulesFingerprint"'), rule: 'report-stale', message: 'the report was made from other rules, bots or harness than the current code', fix: 'Rerun npm run test:sim after every change to the game\'s rules, levels (not the generated pack-*.json), sim or testing folders, the game-kit files they import, or the sim file.' });
   if (contract === null) return;
   const { bands } = contract;
   if (value.seedsPerCell < Math.max(bands.seedsPerCell, MIN_SEEDS) || value.maxMoves !== bands.maxMoves) report.problem({ file: rel, line: lineAt(text, '"seedsPerCell"'), rule: 'report-invalid', message: `report ran ${value.seedsPerCell} seeds with maxMoves ${value.maxMoves}; the bands ask for ${bands.seedsPerCell} and ${bands.maxMoves}`, fix: 'Rerun npm run test:sim with the current bands file.' });

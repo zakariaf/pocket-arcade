@@ -1,0 +1,2 @@
+[perk-rules]
+continue, ad loading (shown in its loading state)

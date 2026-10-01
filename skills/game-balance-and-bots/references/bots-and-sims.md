@@ -27,7 +27,7 @@ How a Pocket Arcade game is played thousands of times headless, and how those ru
 | `packages/game-kit/src/testing/balance-bands.ts` | `SimReport`, `BalanceBands`, `bandProblems(report, bands)` |
 | `packages/game-kit/src/testing/parse-balance-bands.ts` | `parseBands(json)`: validates `balance-bands.json` and returns it typed |
 | `packages/game-kit/src/testing/run-sim-bot.ts` | `runSimBot()`: the same trace for a real-time sim driven by integer commands |
-| `packages/tooling/src/sims/write-sim-report.ts` | `rulesFingerprint(gameId)` (the game's logic folders, the sim and the game-kit files they import: `fingerprintFiles(gameId)`) and `writeSimReport(report)` (Node APIs, so it lives in tooling), with its test |
+| `packages/tooling/src/sims/write-sim-report.ts` | `rulesFingerprint(gameId)` (the game's logic folders without the generated `levels/pack-*.json`, the sim and the game-kit files they import: `fingerprintFiles(gameId)`) and `writeSimReport(report)` (Node APIs, so it lives in tooling), with its test |
 | `jest.sim.config.js` (repo root) | Plain-Node Jest config for `*.sim.test.ts`; `npm run test:sim` runs it |
 | `test/sims/<game-id>/balance.sim.test.ts` | One game's sim: plays the grid, writes `reports/sim/<game-id>.json`, asserts the bands |
 | `test/sims/<game-id>/balance-bands.json` | The game's balance contract (see balance-contract.md) |

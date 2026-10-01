@@ -3,7 +3,9 @@
 // (type stripping): relative imports with .ts extensions, erasable syntax, no RN imports.
 // Every native setting comes only from this file and config plugins. This full version replaces the
 // bootstrap's phase-0 composer once every native module is installed (architecture-and-boundaries):
-// it adds the privacy manifest, the one plugin list (shell-plugins.ts) and the game's art.
+// it adds the privacy manifest, the one plugin list (shell-plugins.ts) and the game's art. The swap
+// (this file and with-shell.test.ts, Shell step 8) is committed with the trailer line
+// Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 // The app ids are the owner's decision O4 (2026-09-30): io.applander.<game id without hyphens>
 // for the iOS bundle and the Android package, and <bundle id>.premium for Premium.
 import { adUnitsExtra } from './ads-config.ts';

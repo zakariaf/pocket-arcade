@@ -82,6 +82,8 @@ export type ShellLaunch = {
   readonly isConsentMomentHeld?: () => boolean;
 };
 
+type AppConfig = { readonly game: GameExtra; readonly ads: AdsExtra; readonly appVersion: string };
+
 /** What the device (device-adapters.ts) or a test provides: every native module lives here. */
 export type ShellAdapters = {
   /** createSqliteSaveStore(driver) over save.db. */
@@ -110,11 +112,7 @@ export type ShellAdapters = {
   /** The S13 pictures (createExamplePicture() on a device: Skia); tests draw nothing. */
   readonly createExamplePicture?: ExamplePictureFactory;
   /** readGameExtra(), readAdsExtra() and readAppVersion(): expo.extra as withShell wrote it. */
-  readonly config: {
-    readonly game: GameExtra;
-    readonly ads: AdsExtra;
-    readonly appVersion: string;
-  };
+  readonly config: AppConfig;
 };
 
 export type CreateShellAppInput<T extends ShellGameTypes> = {
@@ -192,7 +190,7 @@ function recordAdLevelEnd(doc: SaveDoc, summary: RunSummary): SaveDoc {
 function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
   const { adapters, haptics, save, clocks } = input.core;
   const { audio, errorLog, createExamplePicture } = adapters;
-  const { isLayoutProbeOn, seedOverride, openGame } = input;
+  const { board, seedOverride, openGame } = input;
   const pictures = createExamplePicture === undefined ? {} : { createExamplePicture };
   return createGameHost(input.game, {
     ...pictures,
@@ -202,7 +200,7 @@ function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
     isContinueAllowed: adapters.config.game.isContinueAllowed,
     seedOverride,
     openGame,
-    createBoardHost: createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn }),
+    createBoardHost: createGameBoardHost({ audio, haptics, errorLog, ...board }),
     feedback: input.feedback,
     extendRunEnd: recordAdLevelEnd,
     writeRunEnd: (write) => {
@@ -211,18 +209,23 @@ function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
   });
 }
 
-/** The ads and consent ports; consent also asks Apple's ATT, never with ADS_MODE=off (E2E). */
-function adServicesFor(core: Core, launch: ShellLaunch): Pick<Services, 'ads' | 'consent'> {
+/**
+ * The ads and consent ports; consent also asks Apple's ATT, never with ADS_MODE=off (E2E). In a test
+ * build the debug link's geo=eea|other asks Google's UMP with that geography from then on.
+ */
+function adServicesFor(core: Core, launch: ShellLaunch, debug: DebugParts): AdServices {
   const { config, errorLog } = core.adapters;
   const recordAdError = (error: unknown): void => {
     errorLog.record('ads', error);
   };
+  const consent = createConsentPort(config.ads.adsMode, { onError: recordAdError });
   return {
     ads: launch.adsPort?.() ?? createAdsPort(config.ads, recordAdError),
-    consent: createConsentPort(config.ads.adsMode, { onError: recordAdError }),
+    consent: debug.services?.consentFor(consent) ?? consent,
   };
 }
 
+type AdServices = Pick<Services, 'ads' | 'consent'>;
 type Online = { readonly stores: ShellStores; readonly network: Network };
 
 /** premium-purchase's dependencies, once: the gated store port, the save write, the price text. */
@@ -277,7 +280,7 @@ function finishParts(core: Core, launch: ShellLaunch, made: Made): Rest {
   });
   startPremiumParts(premiumDeps, { stores, network });
   const services: Services = {
-    ...adServicesFor(core, launch),
+    ...adServicesFor(core, launch, debug),
     audio: adapters.audio,
     clock: clocks.clock,
     connectivity: network.connectivity,
@@ -320,7 +323,7 @@ export function createShellParts<T extends ShellGameTypes>(
     game: input.game,
     core,
     stores: getStores,
-    ...debugSwitchesOf(() => debug),
+    ...debugSwitchesOf(() => debug, clocks.clock.nowMs),
     feedback: debugFeedbackOf(() => debug, { audio: adapters.audio, haptics }),
   });
   stores = createShellStores(hydrated.save);

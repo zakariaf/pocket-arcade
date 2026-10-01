@@ -179,8 +179,10 @@ export function applyWaivers(problems, waivers, info) {
 //                    phase, and no style sets them: the dashed edges of the locked level tiles, the
 //                    locked pack panel, the S7 offer box, the S9 missed and today marks and legend
 //                    swatch, and the disabled S12 Buy key differ from Chrome's along the edge only;
-//                    and iOS draws the edges of a rotated view without antialiasing (the S9 calendar
-//                    month in dark fa).
+//                    iOS draws the edges of a rotated view without antialiasing (the S9 calendar
+//                    month in dark fa); and iOS snaps each line box of a multi-line text to the
+//                    device pixel grid, so the S14 restart card in fa (three two-line Vazirmatn
+//                    texts) comes out 353.33 pt tall against Chrome's 352 (structure).
 //   design-artefact  the S8 mockup draws tile 13 mid-press (.lt.is-pressed), a squash no app can
 //                    hold after the finger lifts (bounds and structure); the S11b version chip's
 //                    .chip{gap:6px} splits "Version" and the version into two flex items (en).

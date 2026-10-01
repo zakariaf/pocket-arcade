@@ -15,6 +15,7 @@
     "stars": { "kind": "stars", "effect": "progress fixtures: demo (levels 1-11 won, the screenshot fixture) or <level>:<stars>,... with stars 0-3 (0 clears the level)" },
     "screen": { "values": ["home", "levels", "daily", "stats", "settings", "premium", "how-to-play", "debug", "game", "game-start", "game-middle", "result-win", "result-lose"], "effect": "opens a route (kebab-case) or one of the game's example states" },
     "action": { "values": ["win-level", "lose-level"], "effect": "ends the level on screen with that outcome: the game host swaps the run's state for testing.examples.win() or lose() and runs its one run-end path (stars, statistics, ad history saved before Result shows). Send it in a link of its own once the level is on screen; without an active run it is an error" },
-    "boardLayout": { "values": ["0", "1"], "effect": "1 renders game.board-layout; off by default so screenshots never show it" }
+    "boardLayout": { "values": ["0", "1"], "effect": "1 renders game.board-layout; off by default so screenshots never show it" },
+    "geo": { "values": ["eea", "other"], "effect": "consent geography of the next consent moment (admob-ads' ads smoke test on an ADS_MODE=test build): debugServices.setConsentGeography resets Google's UMP answer (ads on only) and rebuilds the consent port with debugGeography; eea shows Google's form on any network, other only Apple's tracking prompt. Kept across a reload. An ADS_MODE=off build never calls UMP" }
   }
 }

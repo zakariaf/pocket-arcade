@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
-import { storeGateProblems } from '@e07/tooling/release/store-gate.ts';
+import { ownerStepsPendingLine, storeGateProblems } from '@e07/tooling/release/store-gate.ts';
 
 import type { ReleaseOptions } from '@e07/tooling/release/release-options.ts';
 import type { Preflight } from '@e07/tooling/release/release-preflight.ts';
@@ -180,8 +180,10 @@ export function runStoreGate(input: GateInput): void {
     game: input.options.game,
   });
   if (problems.length > 0) {
+    // Owner placeholders (G3, G5) end the release here by design until the owner supplies them.
+    const pending = ownerStepsPendingLine(problems);
     throw new Error(
-      `store-artifact gate failed for ${input.built.ipa}:\n- ${problems.join('\n- ')}`,
+      `store-artifact gate failed for ${input.built.ipa}:\n- ${problems.join('\n- ')}${pending === null ? '' : `\n${pending}`}`,
     );
   }
   console.log('release:ios: store-artifact gate passed');

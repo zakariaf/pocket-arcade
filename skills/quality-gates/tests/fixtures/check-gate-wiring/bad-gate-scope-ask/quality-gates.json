@@ -491,6 +491,7 @@
     "**/*.golden.test.ts.snap.ios",
     "**/__image_snapshots__/**",
     "apps/*/e2e/baselines/**",
+    "perf-baselines/**",
     "**/fixtures/save-v*.json",
     "parity/waivers.json",
     "parity/game-facts.json",

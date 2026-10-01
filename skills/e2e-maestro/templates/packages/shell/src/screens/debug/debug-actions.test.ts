@@ -74,6 +74,7 @@ function setup(options: Options = {}): Setup {
     connectivity: createSimulatedConnectivity(createFakeConnectivity(true)),
     clock,
     store: createFakeDebugStore(),
+    resetConsent: null,
     perfLog: { append: jest.fn(), entries: () => [] },
     perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),

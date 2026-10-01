@@ -1,4 +1,5 @@
 // packages/shell/src/app/test-only-entry.ts
+// device-only: covered by check-sim-setup entry-api-match and the E2E debug-link flows
 // Loaded ONLY through test-only.ts; a store bundle must not contain this module.
 // Every export is reached through `require` in test-only.ts (TEST_ONLY.<name>), which knip cannot
 // follow, so each one is tagged @public (knip's includeEntryExports would report it otherwise).
@@ -63,6 +64,8 @@ export { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 export { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 /** @public */
 export { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+/** @public */
+export { createAdmobConsentDebugAdapter } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
 /** @public */
 export { createSqliteKvDebugStoreAdapter } from '@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts';
 

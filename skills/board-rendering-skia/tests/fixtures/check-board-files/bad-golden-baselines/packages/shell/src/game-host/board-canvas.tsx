@@ -95,7 +95,9 @@ export function BoardCanvas<TState, TView, TToken extends string>(
     </GestureDetector>
   );
   return props.isLayoutProbeOn === true ? (
-    <BoardLayoutProbe layout={layout}>{canvas}</BoardLayoutProbe>
+    <BoardLayoutProbe layout={layout} clock={clock}>
+      {canvas}
+    </BoardLayoutProbe>
   ) : (
     canvas
   );

@@ -63,4 +63,21 @@ describe('createHostWrapper', () => {
     expect(result.current.hasMusic).toBe(true);
     expect(result.current.nameId).toBe('tally.name');
   });
+
+  it('saves a run end and publishes it to the stores, as the composition root does', () => {
+    const shell = createHostWrapper();
+    const opened = shell.host.openSession({ start: 'new', ref: { kind: 'endless' } });
+    if (opened === null) throw new Error('no endless run');
+    // Tally endless: 2 + 2 + 2 + 2 + 1 + 2 = 11 goes past the target 10.
+    for (const col of [1, 1, 1, 1, 0, 1]) {
+      const target = { regionId: 'board', col, row: 0 };
+      opened.handle.send({ type: 'intent', intent: { kind: 'tap', target, selected: null } });
+    }
+    opened.handle.send({ type: 'finish' });
+
+    const best = shell.save.doc().progress.endlessBest;
+    expect(best).toBeGreaterThan(0);
+    expect(shell.stores.progress.getState().progress.endlessBest).toBe(best);
+    expect(shell.stores.stats.getState().stats.gamesPlayed).toBe(1);
+  });
 });

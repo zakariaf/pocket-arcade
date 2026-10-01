@@ -1,0 +1,1 @@
+a store/off rehearsal (--unsigned) needs --game <game-id>

@@ -1,0 +1,2 @@
+companion @types/jest-image-snapshot 6.4.2 (install)
+npm install -D @types/jest-image-snapshot@6.4.2 jest-image-snapshot@6.5.2

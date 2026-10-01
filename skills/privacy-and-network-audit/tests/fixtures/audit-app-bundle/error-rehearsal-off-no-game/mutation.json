@@ -1,0 +1,29 @@
+[
+  {
+    "replace": {
+      "file": "DemoGame.app/Info.plist",
+      "find": "ca-app-pub-7310520968431056~5190264813",
+      "with": "ca-app-pub-3940256099942544~1458002511"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adsMode"
+      ],
+      "value": "off"
+    }
+  },
+  {
+    "json": {
+      "file": "DemoGame.app/EXConstants.bundle/app.config",
+      "path": [
+        "extra",
+        "adUnits"
+      ],
+      "value": null
+    }
+  }
+]

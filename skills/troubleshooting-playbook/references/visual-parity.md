@@ -12,6 +12,10 @@ What goes wrong when comparing built screens with the Toybox design screenshots.
 - App capture
 - Process
 - References
+- Frame states
+- Layout
+- Digits
+- Sign-off ledger
 
 ## Comparison
 
@@ -76,3 +80,27 @@ What goes wrong when comparing built screens with the Toybox design screenshots.
 |---|---|---|---|---|---|
 | `parity-music-rows-no-music` | S11 Settings (or S6 Pause) parity fails [missing] on settings.music-switch, settings.music-volume-row or pause.music, with many [bounds] and scroll-mismatch failures below, for a game without music (Line Siege) | The capture was compared with the base reference, which draws the Music rows, while the app correctly hides them when the game's sound bank has no music | Captures pick the reference variant from parity/game-facts.json (hasMusic false selects s11-settings--no-music and s6-pause--no-music); write or correct that file for the app (its parity-game-facts test pins it to the game module), commit it with a Gate-Change: trailer, and rerun; never force hasMusic in the app and never waive missing rows | documented | `toybox-visual-parity` |
 | `parity-score-line-vs-moves` | S7 Result win parity fails [text] on result.score-card.moves-line ("7 moves – par 7" in the design) for a score-rated game such as Line Siege | The base reference shows the moves-against-par line, while a score-rated win shows the score line (result.win.score-line with score and best), because par is null | Set winLine score for the app in parity/game-facts.json so captures use s7-result-win--score (gated path: Gate-Change: trailer); the app keeps result.win.score-line, and moves-rated games keep result.win.moves | documented | `toybox-visual-parity` |
+
+## Frame states
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-s15-ads-switch-off` | [structure] s15-debug-menu dark-en: debug.list: shape differs: a 12.0 pt thick difference (52.0 x 30.3 pt) at +290.0,+325.7 from the element's top-left, inside its crop-only part debug.ads-always-test-switch.toggle | The s15-debug-menu frame state says "ads always test on", but nothing opened it: the capture showed the "Always show test ads" switch off, and check-harness passed because its harness-opener rule did not know the state | The debug-ads-always-test parity opener: e2e-maestro's use-debug-model.ts reads parityFrameState() === 'debug-ads-always-test' from app/parity/parity-session.ts and opens it once on mount through the switch's own handler (debug ads override always-test; never useParityOpener, which reads the gate and closes an import loop through the test-only entry), parity-plans gives the state to s15-debug-menu, and check-harness's harness-opener rule knows it (SKIP while S15 is outside shell-slice.json). Every other value of the state string comes from the fixture save and is checked on the capture | documented | `toybox-visual-parity` |
+
+## Layout
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-s15-badge-high` | [bounds] debug.top-bar.badge: geometry off: dx -0.9 dy -12.3 dw +0.7 dh -0.4 pt (design 14.9,93.3 108.3 x 39.4; app 14,81 109 x 39; tolerance +-2 pt) | The S15 "Test build" badge sat 12 to 14 pt higher than the design in every variant: S15 was never captured, so its layout was never compared (the debug menu is test-only but still matched to its design, lead decision L12) | Build S15 to its design like every other screen (toybox-screens' S15 layout), then sign it off: check-screens.mjs . --screen S15 and check-signoff.mjs --screen S15 in light and dark times en and fa at its planned scroll offsets (Shell step 9 names both) | documented | `toybox-screens` |
+
+## Digits
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-s15-persian-digits` | [text-ink] s15-debug-menu light-fa: debug.jump-to-level-row.value: text "۱۲": ink width 4.0 vs design 10.7 pt (size, weight, family, letter-spacing or wrapping) | S15's labels stay English in every language (lead decision L13) but its numbers and dates follow the language's digits as the design draws them; the debug model built its values with String(n) and the wrong font run, so the Persian digits were drawn at the wrong size | use-debug-model.ts formats every number and date with the language's formatters (never String(n)), and S15's value text uses the type role the design uses; then recapture s15-debug-menu in fa (light and dark) | documented | `e2e-maestro` |
+
+## Sign-off ledger
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `parity-signoff-date-utc` | check-signoff --draft writes "date": "2026-09-30" into every parity/signoff.json entry at 01:17 local time on 2026-10-01 (the sign-off is recorded one day early) | The draft took the UTC calendar day; the waivers' reportedToOwner dates and the reports use the local day, the same rule the product uses for "today" | check-signoff --draft writes the local calendar day (round 5), and --date YYYY-MM-DD overrides it; with an older check-signoff, correct the drafted date to the local day before committing the ledger (check-signoff does not judge the date) | verified | `toybox-visual-parity` |

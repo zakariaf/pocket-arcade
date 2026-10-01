@@ -132,6 +132,11 @@ describe('resultModelOf', () => {
     expect(offline).toMatchObject({ continueOffer: null });
   });
 
+  it('shows the ad offer in its loading state while the rewarded ad loads (L11)', () => {
+    const loading = resultModelOf(input(LOST_VIEW, { continueOffer: 'loading' }));
+    expect(loading).toMatchObject({ kind: 'lose', continueOffer: 'ad-loading' });
+  });
+
   it('shows a recorded loss without a continue', () => {
     const summary = {
       ...WON,

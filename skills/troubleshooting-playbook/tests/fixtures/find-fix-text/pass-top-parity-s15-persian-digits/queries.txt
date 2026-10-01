@@ -1,0 +1,1 @@
+FAIL .parity/lineSiege/s15-debug-menu/light-fa/app.png [text-ink] s15-debug-menu light-fa: debug.jump-to-level-row.value: text "۱۲": ink width 4.0 vs design 10.7 pt

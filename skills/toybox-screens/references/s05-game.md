@@ -8,6 +8,7 @@ S5 is the game itself: the Shell draws the frame, the top bar and the Pause and 
 - Layout, top to bottom
 - States and variants
 - How the screen is assembled
+- A loss nobody can rescue (L11)
 - Data the model supplies
 - Shell texts the copy deck lacks
 - Templates
@@ -47,17 +48,27 @@ The route file `screens/game/game-screen.tsx` (one shared copy, synced from the 
 |---|---|---|
 | Session | game-host-integration's `useGameSessionControls(route.params)` | opens the run (new or resumed), gives `status`, `view`, `BoardHost`, `send`, `pause`, `resume`, `startRun`, `leaveToHome`; its hook also opens the parity frames `pause-open`, `result-win` and `result-lose` |
 | Back | `usePreventRemove` + `usePauseOnBackground` | Back while playing opens Pause, Back in Pause resumes; only Pause's Home leaves (`isLeavingRef` + `popTo('Home')`); the app going to the background pauses |
-| Model | `use-game-screen-model.ts` | the top bar from `topBarPropsOf` (labels from the two Shell keys below) and S7's model from `resultModelOf` once the run end is saved |
+| Model | `use-game-screen-model.ts` | the top bar from `topBarPropsOf` (labels from the two Shell keys below) and S7's model from `resultModelOf` once the run end is saved; a lost run nobody can rescue is finished at once (`useFinishStrandedLoss`, below) |
 | Words | `use-run-text.ts` | the same `RunText` Pause uses: `t()`, numbers in the chosen digits, the game's messages through `gameMessageText` |
-| Paying | `use-perk-payment.ts` | `perkOffer` for the hint and the continue (free, watch an ad, hidden); a free hint for a non-Premium player spends the game's allowance (`game.config.ts` `hints.freePerDay`, read with `useGameExtra()`: 1 with solver hints, 0 without), a watched ad counts only when the reward was earned; the host is sent `hint` or `continue` only after the payment resolved true |
+| Paying | `use-perk-payment.ts` | `perkOffer` for the hint and the continue (free, watch an ad, loading, hidden) from the rewarded status (`useSyncExternalStore(ads.subscribeRewardedStatus, ads.rewardedStatus)`; only a continue can be `loading`); a free hint for a non-Premium player spends the game's allowance (`game.config.ts` `hints.freePerDay`, read with `useGameExtra()`: 1 with solver hints, 0 without), a watched ad counts only when the reward was earned; the host is sent `hint` or `continue` only after the payment resolved true |
 | Result keys | `use-result-actions.ts` | Next level, Replay and Try again start the next run in the same screen after `showInterstitialIfDue` (never before the player saw the result), saving the returned ad history; Levels and Home record a declined loss (`finish`) and `popTo`; Continue pays first; the Premium nudge opens S12 |
 | Result extras | `use-result-extras.ts` | the daily streak after this run (`currentDailyStreak`), the endless best, and the once-a-day Premium nudge price (`premiumNudgePrice`); the day is recorded (`record-upsell-shown`) when the player leaves a result that showed it |
 | Probe | `game-moves-probe.tsx` | `game.moves-label` (above) |
 | Frame | `game-layout.tsx` | the layout above |
 
-Every file has its own test (`use-game-screen-model.test.tsx` drives the tally test game through the real host: top bar, hint paid and sent, win shown only after its stars are saved, Next level in the same screen, the Premium continue, a declined loss recorded). `game-screen-back.test.tsx` runs the route in a real static native stack with the session, the model and the layout stubbed, and proves the four Back rules.
+Every file has its own test (`use-game-screen-model.test.tsx` drives the tally test game through the real host: top bar, hint paid and sent, win shown only after its stars are saved, Next level in the same screen, the Premium continue, a declined loss recorded, and the L11 cases below). `game-screen-back.test.tsx` runs the route in a real static native stack with the session, the model and the layout stubbed, and proves the four Back rules.
 
 check-screens treats `game-screen.tsx` as S5's route (`route-model-hook`: it calls `useGameScreenModel`, whose file needs its test), and its `game-screen-wiring` rule fails an S5 folder that never calls `topBarPropsOf`, `resultModelOf`, `perkOffer` or `showInterstitialIfDue`: a screen that only renders the board host passes every other rule and plays a level with no top bar, no paid hints and no ads.
+
+## A loss nobody can rescue (L11)
+
+Lead decision L11, never strand a finished run. When a run is lost and no continue can be offered (ads off, offline, no consent, no rewarded ad that can come, no Premium), the continue offer is `'hidden'` and nobody can rescue the run, so it must not wait for a decision the player cannot make. `useFinishStrandedLoss` in `use-game-screen-model.ts` sends `{ type: 'finish' }` once per eventSeq while game-host-integration's `isLossStranded(view, perks.continueOffer)` (`game-host/run-end-policy.ts`) is true: a lost run whose `continueState` is `'offered'`, whose `summary` is null and whose offer is `'hidden'`. The session records the run end (statistics, streak, endless best, ad history) and the view gets its summary, so `resultModelOf` builds the recorded Result: the endless result with the score and New best, the daily result, or the lose result without the offer. The same happens when a shown offer turns hidden (offline, a load error) and when a pending lost run is reopened from Home (`start: 'resume'`).
+
+- It runs in a layout effect, so the recorded Result replaces the pending one before the frame is drawn; the guard is the view the finish was sent for (a new run or a new eventSeq is always a new view), so a re-render or a status change never records the run twice.
+- `'loading'` keeps the offer (S7 draws the ad key busy) and sends nothing; `'watch-ad'` and `'free'` wait for the player.
+- Never send `finish` during render, and never hide S7 while the finish is on its way.
+
+Tests (`use-game-screen-model.test.tsx`, with the tally host and the fake ads port, whose `setRewardedStatus` moves the status): an ads-off build without Premium sends one finish and shows the endless result with New best at once; loading then ready sends nothing; loading then unavailable sends one finish and shows the lose result without the offer, counted once; Premium sends nothing. The host wrapper writes each run end through `updateAndPublish`, as the composition root does, so the endless best on S7 is the saved one. `check-screens` rule `loss-finished` fails an S5 folder that never calls `isLossStranded` or never sends the finish from an effect. On a device, e2e-maestro's flow `13-endless` proves it (ads off, Premium off: the endless result at once).
 
 ## Data the model supplies
 
@@ -131,4 +142,5 @@ Open the image before building and compare the finished screen with it (toybox-v
 - A hint key decided by view state or by the perk offer alone: only `hasHints` decides whether the key exists (check-screens `hint-key-fact`); the offer only decides whether it is free, paid or hidden for now.
 - Hard-coding "Level 12": the host formats the mode line with `game-screen.mode.*` and the chosen digits.
 - Hiding a tool when it is only unavailable for a moment: disable it.
+- A lost run left waiting while its continue offer is hidden (ads off, offline, no ad, no Premium): the player saw neither the offer nor the endless result. The model finishes it (`useFinishStrandedLoss`, L11; check-screens `loss-finished`).
 - Rewriting the screen's pieces in another folder: check-screens reads `screens/game/` and `game-host/game-top-bar.tsx`, and its `game-screen-wiring` rule looks for the four calls there.

@@ -7,7 +7,9 @@
 // take DebugPerfDeps. createDebugParts builds them once over the debug services' perf log, so
 // use-debug-model reads services.perf and never imports test-only.ts (that would close an import
 // loop through the test-only entry). perfSummaryOf is the section's value, read from the log itself.
+import type { FrameHistogram } from '@e07/shell/app/perf/frame-histogram.ts';
 import type { PerfEntry, PerfLog } from '@e07/shell/app/perf/perf-log.ts';
+import type { SharedValue } from 'react-native-reanimated';
 
 export type DebugPerfDeps = {
   /** DebugServices' perf log (TEST_ONLY.createPerfLog over the save database). */
@@ -25,6 +27,14 @@ export type DebugPerfActions = {
   readonly share: () => Promise<void>;
   /** "Run save benchmark": 300 writes into perf-bench.db, then one save-benchmark entry. */
   readonly runSaveBenchmark: () => void;
+  /**
+   * The recorder's shared values: game-host-integration's debug switches hand the board's frame
+   * callback sampleFrame(frames.histogram, frames.isRecording, dt) while "Record frame times" is on.
+   */
+  readonly frames: {
+    readonly histogram: SharedValue<FrameHistogram>;
+    readonly isRecording: SharedValue<boolean>;
+  };
 };
 
 export type DebugPerfSummary = {

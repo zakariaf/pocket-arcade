@@ -19,6 +19,8 @@ import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { readWaivers } from './lib/runs.mjs';
 
 const PARITY_DIR = 'packages/shell/src/app/parity';
+// Test-only code that the test-only entry reaches (architecture-and-boundaries' testOnlyFolders).
+const TEST_ONLY_FOLDERS = ['packages/shell/src/screens/debug/'];
 const STARTUP = 'packages/shell/src/app/parity-startup.tsx';
 /** Where the held S1 splash is registered (rtl-and-direction's start-shell template). */
 const HELD_SPLASH_FILE = 'packages/shell/src/app/start-shell.ts';
@@ -66,7 +68,8 @@ const SESSION_EXPORTS = ['startParitySession', 'parityBuildNumber', 'parityFrame
  * Who opens each frame state: the model hook that owns the state applies parityFrameState() once on
  * mount, through the handler a player's tap would use. The opener is found as
  * `parityFrameState() === '<state>'` in that hook file or a use-*.ts helper next to it. The screen
- * is the one whose slice membership decides whether the opener is due.
+ * is the one whose slice membership decides whether the opener is due; `fails` says what a capture
+ * without the opener shows when its root is still reached (a switch in the wrong position).
  */
 const OPENERS = {
   'pause-open': { screen: 'S6', file: 'packages/shell/src/game-host/use-game-session-controls.ts', how: 'pause() once, after debugControls().applyFixtureHud(parityGameFixture())' },
@@ -82,9 +85,36 @@ const OPENERS = {
   'reset-progress-dialog-held': { screen: 'S11', file: 'packages/shell/src/screens/settings/use-settings-model.ts', how: 'the reset dialog with useHoldToConfirm frozenProgress 0.46' },
   'restart-dialog': { screen: 'S11a', file: 'packages/shell/src/screens/settings/language/use-settings-language-model.ts', how: 'the restart dialog' },
   'save-restored-dialog': { screen: 'S4', file: 'packages/shell/src/screens/home/use-home-model.ts', how: 'the progress-restored dialog' },
+  // S15 is test-only and still a design frame (L12): its frame draws "Always show test ads" on.
+  'debug-ads-always-test': { screen: 'S15', file: 'packages/shell/src/screens/debug/use-debug-model.ts', how: "parityFrameState() === 'debug-ads-always-test', read from app/parity/parity-session.ts (S15 is reached through the test-only entry, so never useParityOpener, which would close an import loop through the gate), turning the 'Always show test ads' switch on once on mount through its own handler (debug ads override 'always-test')", fails: 'the capture draws the switch off and fails structure on debug.ads-always-test-switch.toggle' },
 };
 /** States the parity store port produces on its own (no opener). */
 const PORT_STATES = ['premium-loading-price', 'premium-store-unavailable', 'premium-already-owned'];
+
+/**
+ * The state each design frame draws on top of its start screen (every other frame: none). A plan
+ * without it can never match its reference (S15 drawn with "Always show test ads" off), however
+ * complete the openers are, so the plan's state is compared with this table (rule harness-frame-state).
+ */
+const FRAME_STATES = {
+  's6-pause': 'pause-open',
+  's7-result-win': 'result-win',
+  's7-result-lose': 'result-lose',
+  's8-levels': 'levels-locked-tile-tapped',
+  's12-loading-price': 'premium-loading-price',
+  's12-store-unavailable-offline': 'premium-store-unavailable',
+  's12-purchase-in-progress': 'premium-purchasing',
+  's12-pending-approval': 'premium-pending-approval',
+  's12-success': 'premium-success',
+  's12-error': 'premium-error',
+  's12-already-owned': 'premium-already-owned',
+  's12-restore-results-toasts': 'premium-restore-toasts',
+  's13-how-to-play': 'how-to-play-step-2',
+  's14-reset-all-progress': 'reset-progress-dialog-held',
+  's14-restart-to-apply': 'restart-dialog',
+  's14-progress-restored': 'save-restored-dialog',
+  's15-debug-menu': 'debug-ads-always-test',
+};
 
 /** Wiring outside the harness: file, the call it must make, the screens that need it. */
 const WIRING = [
@@ -147,14 +177,15 @@ const SPEC = {
   ].join('\n'),
 };
 
-/** { key: { root, tall, line } } from parity-plans.ts ('<key>': plan('<root>', '<Start>', { ... tall: true })). */
+/** { key: { root, tall, state, line } } from parity-plans.ts ('<key>': plan('<root>', '<Start>', { ... tall: true })). */
 function readPlans(text) {
   const plans = new Map();
   const clean = maskComments(text);
   const re = /'([a-z0-9-]+)':\s*plan\(\s*'([^']+)'\s*,\s*'(\w+)'\s*(?:,\s*\{([^}]*)\})?\s*\)/g;
   for (const m of clean.matchAll(re)) {
     const line = clean.slice(0, m.index).split('\n').length;
-    plans.set(m[1], { root: m[2], start: m[3], tall: /\btall:\s*true\b/.test(m[4] ?? ''), line, count: (plans.get(m[1])?.count ?? 0) + 1 });
+    const state = /\bstate:\s*'([a-z0-9-]+)'/.exec(m[4] ?? '')?.[1] ?? null;
+    plans.set(m[1], { root: m[2], start: m[3], tall: /\btall:\s*true\b/.test(m[4] ?? ''), state, line, count: (plans.get(m[1])?.count ?? 0) + 1 });
   }
   return plans;
 }
@@ -324,6 +355,10 @@ run(async () => {
       if (plan.root !== frame.root) problem(FILES.plans, plan.line, 'harness-root', `${frame.key} has root "${plan.root}" but the design frame's root testID is "${frame.root}"`, `Use '${frame.root}': capture-app waits for it and check-parity proves the screen with it.`);
       const tall = frame.kind === 'phone-tall';
       if (plan.tall !== tall) problem(FILES.plans, plan.line, 'harness-tall', `${frame.key} is ${tall ? '' : 'not '}a tall frame in the design but its plan says tall: ${plan.tall}`, tall ? 'Add { tall: true }: the frame is captured at several scroll offsets.' : 'Remove tall: true.');
+      const state = FRAME_STATES[frame.key] ?? null;
+      if (plan.state !== state) {
+        problem(FILES.plans, plan.line, 'harness-frame-state', `${frame.key} has state ${plan.state ? `'${plan.state}'` : 'none'}, but the design frame draws ${state ? `'${state}'` : 'no state'}, so its capture can never match the reference`, state ? `Copy the template parity-plans.ts again: '${frame.key}' plans { state: '${state}' }, which the hook that owns it opens once on mount.` : `Remove the state: the frame draws its start screen as it is.`);
+      }
     }
     const known = new Set(wanted.map((f) => f.key));
     for (const [key, plan] of plans) {
@@ -402,8 +437,12 @@ run(async () => {
       if (/\bwithParityRoot\s*\(/.test(clean)) wired.add('withParityRoot');
       for (const name of Object.keys(LAUNCH_MEMBERS)) if (new RegExp(`\\.${name}\\s*\\?\\.\\s*\\(`).test(clean)) wired.add(`launch.${name}`);
     }
-    // Tests never ship, so they may import the harness directly.
-    if (isTest(rel)) continue;
+    // Tests never ship, so they may import the harness directly. Neither does the test-only debug
+    // module (S15): it is reached only through the test-only entry, so it reads a harness member
+    // straight from its file (through TEST_ONLY it would close an import loop through the gate's
+    // require(), check-boundaries' import-cycle), and the store-artifact gate proves the folder is
+    // absent from store bundles.
+    if (isTest(rel) || TEST_ONLY_FOLDERS.some((folder) => rel.startsWith(folder))) continue;
     for (const imp of importsOf(source)) {
       if (imp.typeOnly || !/(^|\/)app\/parity\/|^\.\/parity\/|^\.\.\/parity\//.test(imp.spec)) continue;
       problem(rel, imp.line, 'harness-leak', `imports the parity harness (${imp.spec}) directly`, 'Reach it only as TEST_ONLY?.readParityRequest(); a direct import puts test-only code into store builds.');
@@ -425,6 +464,13 @@ run(async () => {
       const skip = LAUNCH_MEMBER_SCREENS[name] ? skipFor(LAUNCH_MEMBER_SCREENS[name]) : null;
       if (skip) report.skip({ file: STARTUP, rule: 'harness-not-wired', message: `launch.${name}: ${skip}` });
       else problem(STARTUP, 0, 'harness-not-wired', `nothing in the Shell calls launch.${name}?.()`, `The composition root (game-host-integration's create-shell-parts.ts) calls it ${where}; copy that template again.`);
+    }
+    // Every capture starts with no saved debug flag. The debug services restore theirs (offline,
+    // the ads override, a seed, a consent geography) when they are made, after prepareSave, so a
+    // startup that keeps them lets a frame inherit what an earlier launch saved: the S15 frame's
+    // "Always show test ads", a debug link's offline switch on the S12 cards.
+    if (!/\.set\(\s*'debug\.overrides'\s*,\s*null\s*\)/.test(maskComments(texts.startup))) {
+      problem(STARTUP, 0, 'harness-debug-flags', 'applyParityData does not clear the saved debug flags (debug.overrides), so a capture inherits what an earlier launch saved (the S15 frame leaves "Always show test ads" on, a debug link can leave offline on)', "Copy the template parity-startup.tsx again: applyParityData sets 'debug.overrides' to null (TEST_ONLY.createSqliteKvDebugStoreAdapter()) before the debug services read it.");
     }
   }
 
@@ -504,7 +550,7 @@ run(async () => {
         return /\b(parityFrameState|useParityOpener)\s*\(/.test(clean) && clean.includes(`'${state}'`);
       });
       if (!opens) {
-        problem(opener.file, 0, 'harness-opener', `${read(opener.file) === null ? 'does not exist, so nothing opens' : 'does not open'} the frame state "${state}" (nothing in it or a use-*.ts helper next to it reads parityFrameState() or useParityOpener() and names '${state}'), so its frame fails screen-not-reached`,
+        problem(opener.file, 0, 'harness-opener', `${read(opener.file) === null ? 'does not exist, so nothing opens' : 'does not open'} the frame state "${state}" (nothing in it or a use-*.ts helper next to it reads parityFrameState() or useParityOpener() and names '${state}'), so ${opener.fails ?? 'its frame fails screen-not-reached'}`,
           `Apply it once on mount in the model hook that owns the state: ${opener.how}, through the handler a player's tap would use (parity-harness.md, "Frame states and who opens them").`);
       }
     }

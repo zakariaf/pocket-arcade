@@ -14,7 +14,7 @@ import { join, resolve } from 'node:path';
 
 import { createReporter, parseArgs, readShellSlice, requireDir, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
-import { checkConfigRules, checkGameAssembly, checkHostFiles, checkHostWiring, checkRootFiles, checkShellWiring, checkTeaching, checkTypeErasure } from './lib/host-checks.mjs';
+import { checkConfigRules, checkGameAssembly, checkHostFiles, checkHostWiring, checkLossNotStranded, checkRootFiles, checkShellWiring, checkTeaching, checkTypeErasure } from './lib/host-checks.mjs';
 
 const SPEC = {
   name: 'check-game-host',
@@ -32,13 +32,17 @@ const SPEC = {
     '  continue-once, play-time, stars-from-table, saved-run-validated, unsafe-cast, screens-type-erased,',
     '  host-not-created, host-order, continue-from-config, run-end-publish, host-deps, host-not-provided,',
     '  game-screen-wiring, debug-controls, debug-run-end, game-facts, score-line, parity-frame-openers,',
-    '  parity-board-probe, feedback-recorded (test builds play the Shell feedback through the debug parts\' recorders)',
+    '  parity-board-probe, feedback-recorded (test builds play the Shell feedback through the debug parts\' recorders),',
+    '  loss-not-stranded (L11: run-end-policy.ts, the loading offer in resultModelOf, and the Game screen model\'s',
+    '  finish for a lost run nobody can continue)',
     'Rules (game): assembly-file-missing, module-assembly, types-bag, entry, contract-test, save-policy,',
     '  config-rules, teaching, teaching-keys',
     '',
-    'Partial Shell (shell-slice.json at the root): the Game screen wiring (S5) prints a SKIP line while S5',
-    'is outside the slice. The Shell core is checked in every slice: the host with its S5 top bar and S7',
-    'result model, the composition root and the Tutorial route (D36). With "screens": [] the composition',
+    'Partial Shell (shell-slice.json at the root): the Game screen wiring (S5) and the Game screen model\'s',
+    'finish (loss-not-stranded) print SKIP lines while S5 is outside the slice; shell-app.test.tsx (root-file-missing)',
+    'is a SKIP line while S11 or S4 is outside it (it renders both, so it joins with S11 at Shell step 9).',
+    'The Shell core is checked in every slice: the host with its S5 top bar and S7 result model, the',
+    'composition root and the Tutorial route (D36). With "screens": [] the composition',
     'root and Tutorial rules skip too. SKIP lines count as a pass.',
     '',
     'Example: node check-game-host.mjs . --game flock-tilt',
@@ -67,6 +71,7 @@ run(async () => {
     checkHostWiring(repo, report);
     checkTypeErasure(repo, report);
     checkShellWiring(repo, report);
+    checkLossNotStranded(repo, report);
   }
   const modules = games.length > 0 ? enableAppImports(root) : null;
   for (const id of games) {

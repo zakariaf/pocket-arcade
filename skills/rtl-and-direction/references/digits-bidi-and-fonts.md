@@ -6,6 +6,7 @@
 - Numbers outside messages
 - The Numbers setting
 - Bidi isolation
+- An LTR text in an RTL row
 - Vazirmatn
 - Line heights and letter-spacing
 - The font test page
@@ -60,6 +61,16 @@ Settings has a "Numbers" row: Automatic / Latin / Local. Each option shows a liv
 - **No bidi controls anywhere else:** not in catalogs (U+202A–U+202E, U+2066–U+2069), not in source code (raw or as `\u` escapes, except in `bidi.ts`), and never the Arabic Letter Mark U+061C, which Vazirmatn lacks, or LRM/RLM (U+200E/U+200F) as a layout fix.
 - Game names stay Latin in every language (brand names), in the Latin display face, isolated LTR inside RTL text.
 - Tests compare with `FSI`/`PDI` in the expected string, or strip them with `stripIsolates()`.
+
+## An LTR text in an RTL row
+
+Isolation is for free text *inside* a sentence. A whole text written left to right in an RTL layout is a different case: S15's debug labels stay English in fa and ckb (lead decision L13), so each is an English paragraph in an RTL row. The design draws it in the language's font and line height (Vazirmatn 17 at 1.5), aligned to the row's start (the right), every wrapped line flush with that edge.
+
+- **Lay it as an LTR paragraph aligned to the layout's start:** `AppText textDirection="ltr"` (a `ListRow` passes `labelDirection="ltr"` to its label). `useLocalizedTextStyle({ ..., textDirection: 'ltr' })` then sets `writingDirection: 'ltr'` and keeps `textAlign` at the start token (`'left'`, which React Native swaps to the right in an RTL layout). The font, line height and digits stay the language's.
+- **Why:** laid right to left, iOS kept the trailing space of the wrapped first line inside the line, so "Force language, direction and digits" drew its first line 4.4 pt off the row's start in every fa capture (round 4, text-ink 4.4-4.5 pt against the 2 pt limit). Laid left to right and aligned to the same edge, iOS leaves that space out of the alignment as Chrome does: verified on 2026-10-01 on the parity simulator (iPhone 16 Pro, iOS 26.5), where the S15 fa capture no longer reports the label.
+- **Never bidi controls for this:** no LRE/PDF, LRM or LRI around the label (`check-rtl` rule `bidi-in-source` fails them and names `textDirection`), and never a hand-written `writingDirection` style (`writing-direction`).
+- Values in the same row keep the layout's direction and the language's digits; an LTR value inside an RTL row (the forced-locale value "fa · rtl · ۱۲۳") is isolated with `isolate()` as above.
+- Tests: `use-localized-text-style.test.tsx` pins the style in fa with `textDirection: 'ltr'`; AppText's and ListRow's tests pin the label's `writingDirection` and start alignment in an RTL layout.
 
 ## Vazirmatn
 

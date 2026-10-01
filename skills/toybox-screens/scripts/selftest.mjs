@@ -18,6 +18,9 @@ const OVER_TEMPLATES = {
   'bad-splash-ignores-freeze': ['--screen', 'S1'],
   'bad-rate-outline-star': ['--screen', 'S11'],
   'bad-debug-perf-row-missing': ['--screen', 'S15'],
+  'bad-borrowed-missing': ['--screen', 'S6'],
+  'bad-continue-offer-hidden-while-loading': ['--screen', 'S7'],
+  'bad-loss-not-finished': ['--screen', 'S5'],
 };
 
 await runSelftest(import.meta.url, [

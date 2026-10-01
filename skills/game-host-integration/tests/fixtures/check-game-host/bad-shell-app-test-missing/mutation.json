@@ -1,0 +1,11 @@
+[
+  {
+    "write": {
+      "file": "shell-slice.json",
+      "content": "{ \"screens\": [\"S2\", \"S3\", \"S4\", \"S5\", \"S6\", \"S7\", \"S11\", \"S13\", \"S14\"], \"why\": \"S4 and S11 are built\" }\n"
+    }
+  },
+  {
+    "delete": "packages/shell/src/app/shell-app.test.tsx"
+  }
+]

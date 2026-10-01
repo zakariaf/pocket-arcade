@@ -1,0 +1,1 @@
+SKIP packages/shell/src/game-host/board-direction-view.tsx [direction-files] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created

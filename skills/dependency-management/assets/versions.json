@@ -383,7 +383,15 @@
       "spec": "6.5.2",
       "install": "npm",
       "where": "root",
-      "why": "board pixel goldens"
+      "why": "board pixel goldens",
+      "companions": [
+        {
+          "package": "@types/jest-image-snapshot",
+          "version": "6.4.2",
+          "via": "install",
+          "why": "the package ships no types: without them npm run typecheck fails TS7016 in test/goldens/boards/skia-golden.ts"
+        }
+      ]
     },
     "@types/jest-image-snapshot": {
       "version": "6.4.2",

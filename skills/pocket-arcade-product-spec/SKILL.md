@@ -38,7 +38,7 @@ Non-negotiables (full text: `references/non-negotiables.md`):
 | N11 | No layout code says left or right: start and end only (boards decide for themselves) |
 | N12 | Every sentence is one translatable message with placeholders and plural forms |
 
-Settled on 2026-09-30 (full text: `references/open-decisions.md`), overriding any older default:
+Settled on 2026-09-30 and 2026-10-01 (full text: `references/open-decisions.md`), overriding any older default:
 
 | Id | Decision |
 |---|---|
@@ -49,6 +49,10 @@ Settled on 2026-09-30 (full text: `references/open-decisions.md`), overriding an
 | O5 | Every text meets 4.5:1 in every state (light `dangerFill` `#FFDCDF`) |
 | O6 | The owner's fa/ckb review, the Line Siege play-test and listening to the sound previews are the owner's personal steps: listed under "Owner steps (not blocking)", never waited for |
 | L7-L9 | Home's daily card opens S9 and its Play key plays (L7); no Hint key without solver hints (L8); Persian score line height 1.45 (L9) |
+| L10 | (2026-10-01) S3's intro shows only before Google's form; when only Apple's prompt is due, it appears on its own with our sentence |
+| L11 | (2026-10-01) Never strand a finished run: no continue possible means the result at once (endless result or lose result); an offer whose ad is still loading shows a loading state, so hidden means unavailable |
+| L12-L13 | (2026-10-01) S15 keeps design parity like every screen (L12), and its texts stay English in all four languages (L13) |
+| L14 | (2026-10-01) The skills win over the handbook on code detail; the completeness check and every ship gate fail on each owner placeholder (AdMob ids G5, privacy host and support address G3) until the owner supplies it; the fa/ckb review is an owner step, never a release gate |
 
 Screens: S1 Splash, S2 First-run language choice, S3 Ad consent and tracking, S4 Home, S5 Game screen, S6 Pause menu, S7 Result screen, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings (S11a Language, S11b About and credits, S11c Privacy policy, S11d Licences), S12 Premium, S13 How to play / Tutorial, S14 Dialogs, S15 Debug menu (test builds only).
 
@@ -63,14 +67,14 @@ Where each ID lives:
 | 10, 11, 12 and the code names | `references/game-contract.md` |
 | 13 and the 26 game ids | `references/game-catalogue.md` |
 | `line-siege-rules` (the pilot's complete v1 rules and numbers) | `references/line-siege-rules.md` |
-| 16, D1-D9, platform decisions, the owner's decisions O1-O6 and the lead's decisions L1-L9 of 2026-09-30, spec gaps | `references/open-decisions.md` |
+| 16, D1-D9, platform decisions, the owner's decisions O1-O6 and the lead's decisions L1-L9 of 2026-09-30 and L10-L14 of 2026-10-01, spec gaps | `references/open-decisions.md` |
 
 ## Workflow
 
 1. **Find the spec lines the task serves.** Use the table above to pick the reference and read the section, or print it straight away: `node ${CLAUDE_SKILL_DIR}/scripts/spec-lookup.mjs S9 8.3` (`--list` shows every ID and title).
 2. **Read the non-negotiables the task touches** in `references/non-negotiables.md` (any network, layout, text, save, ad or purchase work touches at least one). Plan so none bends.
 3. **For a game task**, read the game's entry in `references/game-catalogue.md` (pitch, loop, twist, controls, v1 content cap, known risks) and the contract in `references/game-contract.md`. For Line Siege also read [references/line-siege-rules.md](references/line-siege-rules.md) (`spec-lookup.mjs line-siege-rules`): every rule and number of v1, each a default until the owner's play-test, and the owner questions still open. Keep v1 content to the stated cap; Claude tends to over-deliver scope.
-4. **Check `references/open-decisions.md`** for a decision or spec gap in the way. Use its default and name it in the report. Its "Owner decisions of 2026-09-30" (O1-O6) and "Lead decisions of 2026-09-30" (L1-L9) are settled: follow them (each screen entry in `references/screens.md` names the one it follows, for example S3's tracking order and S4's daily card).
+4. **Check `references/open-decisions.md`** for a decision or spec gap in the way. Use its default and name it in the report. Its "Owner decisions of 2026-09-30" (O1-O6) and "Lead decisions of 2026-09-30 and 2026-10-01" (L1-L14) are settled: follow them (each screen entry in `references/screens.md` names the one it follows, for example S3's tracking order (L10), S4's daily card (L7), S7's never-stranded run end (L11) and S15's parity and English texts (L12, L13)).
 5. **If the spec is silent or contradicts itself** on anything a player would see, stop and ask (rule 4) with the quoted lines and a default.
 6. **Write the spec IDs into the work:** the first failing test's title or comment quotes the rule (`// spec S9: the first completion of the day counts`), the commit body names the IDs, the report names screens as "Home (S4)".
 7. **Run the checks** from the repo root: `node ${CLAUDE_SKILL_DIR}/scripts/check-spec-refs.mjs .`. Fix every `FAIL` line (wrong ID, wrong screen name, unknown app folder) and rerun until it prints `RESULT: PASS`.
@@ -105,7 +109,7 @@ Where each ID lives:
 | [references/game-contract.md](references/game-contract.md) | What a game provides (spec 10), its configuration (11), making the next game (12), and product terms mapped to code names | Starting or wiring a game |
 | [references/game-catalogue.md](references/game-catalogue.md) | The 26 games with ids, pitch, loop, twist, controls, v1 content, risks and the research lessons | Picking, designing or building a game |
 | [references/line-siege-rules.md](references/line-siege-rules.md) | Line Siege v1 rules: board, lanes, tray, pieces, placement order, monsters, win and lose order, score, difficulty rows, levels, daily, endless, continue, cues, measured balance, owner questions | Any Line Siege task (rules, balance, levels, board, copy) |
-| [references/open-decisions.md](references/open-decisions.md) | D1-D9, the platform decisions and spec gaps, each with its default; the owner's settled decisions of 2026-09-30 (O1 tracking prompt, O2 EUR 1.99, O3 no Family Sharing, O4 `io.applander` ids, O5 contrast, O6 owner steps never block) and the lead's (L1 no-music S11/S6, L3 score line on S7, L4 Line Siege teaching text, L6 S5-S7 parity without a board reference, L7 Home's daily card opens S9, L8 no Hint key without hints, L9 Persian score line height) | Workflow step 4, and whenever a choice seems to belong to the owner |
+| [references/open-decisions.md](references/open-decisions.md) | D1-D9, the platform decisions and spec gaps, each with its default; the owner's settled decisions of 2026-09-30 (O1 tracking prompt, O2 EUR 1.99, O3 no Family Sharing, O4 `io.applander` ids, O5 contrast, O6 owner steps never block) and the lead's (L1 no-music S11/S6, L3 score line on S7, L4 Line Siege teaching text, L6 S5-S7 parity without a board reference, L7 Home's daily card opens S9, L8 no Hint key without hints, L9 Persian score line height; and of 2026-10-01: L10 S3 intro only before Google's form, L11 never strand a finished run, L12 S15 parity, L13 English debug texts, L14 skills win on code detail, owner placeholders fail the completeness and ship gates, the fa/ckb review is never a gate) | Workflow step 4, and whenever a choice seems to belong to the owner |
 | `scripts/spec-lookup.mjs` | Prints the exact spec entry for IDs (`S9 8.3 N3 D4 line-siege line-siege-rules`), `--list` for all; fails on unknown IDs | Workflow step 1, whenever a spec line is quoted |
 | `scripts/check-spec-refs.mjs` | Checks every spec citation in the repo, screen name/ID pairs and app folder names | Workflow step 7 and the definition of done |
 | `scripts/lib/spec-ids.mjs` | Reads the spec entries from the reference headings (shared by both scripts) | Never by hand |

@@ -10,7 +10,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 import { useBalancedWrap } from './use-balanced-wrap.ts';
 
 import type { BalancedWrap } from './use-balanced-wrap.ts';
-import type { Language } from '@e07/shell/i18n/languages.ts';
+import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
   LocalizedTextOptions,
   TextAlignToken,
@@ -38,6 +38,11 @@ export type AppTextProps = {
   readonly align?: TextAlignToken;
   /** Only for text in another language than the UI (the language list). */
   readonly language?: Language;
+  /**
+   * A whole text written in the other direction than the layout ('ltr' for S15's English labels in
+   * fa and ckb, L13): laid left to right, still aligned to the layout's start (useLocalizedTextStyle).
+   */
+  readonly textDirection?: Direction;
   readonly numberOfLines?: number;
   readonly isHeader?: boolean;
   readonly testID?: string;
@@ -82,6 +87,7 @@ function localizedOptions(style: TypeStyle, props: AppTextProps): LocalizedTextO
     align: props.align ?? 'start',
     ...(style.letterSpacingEm === undefined ? {} : { letterSpacingEm: style.letterSpacingEm }),
     ...(props.language === undefined ? {} : { language: props.language }),
+    ...(props.textDirection === undefined ? {} : { textDirection: props.textDirection }),
   };
 }
 

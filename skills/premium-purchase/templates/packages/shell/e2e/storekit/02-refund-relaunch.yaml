@@ -10,7 +10,9 @@ tags: [storekit]
     env:
       QUERY: 'screen=premium'
       WAIT_FOR: 'premium.screen'
+# The launch re-check (Transaction.all) is answered only after storekitd has synced its transaction
+# cache: 28 s after the arm step once (2026-10-01, iOS 26.5), so this wait allows 60 s.
 - extendedWaitUntil:
     visible:
       id: 'premium.buy-button'
-    timeout: 15000
+    timeout: 60000

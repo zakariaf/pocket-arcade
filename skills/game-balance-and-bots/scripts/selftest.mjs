@@ -11,4 +11,6 @@ await runSelftest(import.meta.url, [
   { script: 'check-balance.mjs', fixtures: '../tests/fixtures/check-balance-wrapped', args: (dir) => [dir] },
   { script: 'check-balance.mjs', fixtures: '../tests/fixtures/check-balance-release', args: (dir) => [dir, '--release'] },
   { script: 'check-balance.mjs', fixtures: '../tests/fixtures/check-balance-kit-growth', args: (dir) => [dir] },
+  // The level packs generated after the sims leave the report fresh; a rules or plan change does not.
+  { script: 'check-balance.mjs', fixtures: '../tests/fixtures/check-balance-packs', args: (dir) => [dir] },
 ]);

@@ -1,0 +1,17 @@
+[
+  { "delete": "packages/shell/src/game-host/run-end-policy.ts" },
+  { "delete": "packages/shell/src/game-host/run-end-policy.test.ts" },
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/result-model-of.ts",
+      "find": "  loading: 'ad-loading',\n",
+      "with": ""
+    }
+  },
+  {
+    "write": {
+      "file": "packages/shell/src/screens/game/use-game-screen-model.ts",
+      "content": "// packages/shell/src/screens/game/use-game-screen-model.ts (fixture: round 4, a lost run waits for a continue nobody can give)\nexport function useGameScreenModel(): null {\n  return null;\n}\n"
+    }
+  }
+]

@@ -1,0 +1,3 @@
+packages/shell/e2e/storekit/02-refund-relaunch.yaml:18 [harness-relaunch-wait] waits 15000 ms for premium.buy-button after a relaunch
+packages/shell/e2e/storekit/04-approval-relaunch.yaml:15 [harness-relaunch-wait] waits the default ms for premium.state.owned after a relaunch
+RESULT: FAIL (2 problems)

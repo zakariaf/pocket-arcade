@@ -10,9 +10,10 @@ Everything about the text itself: where catalogs live, how keys are named, how p
 - Numbers and plurals (CLDR categories, verified outputs)
 - Free text and bidi isolation (and nested isolates)
 - System dialog texts
+- The debug menu stays English (L13)
 - Dates and month names
 - Writing rules for translators
-- The catalog rules (L1-L12, P1-P4, F1, G1)
+- The catalog rules (L1-L12, P1-P5, F1, G1)
 - What FormatJS verify does and does not catch
 
 ## Catalog files
@@ -109,8 +110,17 @@ Some Shell texts are shown by iOS itself, not by the app: the purpose strings of
 
 - **Key:** `<area>.<topic>.usage-description`, under the screen area that leads to the dialog (`consent`, S3). The last segment marks it as a system dialog text for the checkers.
 - **Plain text only:** no `{argument}`, plural, select or brace in any language (`copy-deck.mjs check` rule `system-text-plain`). Nothing formats it as ICU on the way to the dialog, so a placeholder would show as braces; iOS already names the app in the dialog title. One or two whole sentences, the same rules as any other text (L7-L11: no literal digits, Persian punctuation in fa/ckb, typographic apostrophes).
-- **How it reaches the dialog:** `copy-deck.mjs apply --all` writes it into the four Shell catalogs like every deck text. The Shell's config composer `withShell` (`packages/shell/src/config/with-shell.ts`) writes the four texts as `locales.<lang>.ios.NSUserTrackingUsageDescription` next to `CFBundleDisplayName` (one `InfoPlist.strings` per language, Expo's documented way to localise `Info.plist` strings), and `shell-plugins.ts` passes the English text to the `expo-tracking-transparency` plugin as `userTrackingPermission`, the base value. The texts that reach `Info.plist` are exactly the catalogs' texts: if the config reads them from a TypeScript table (for example `packages/shell/src/config/tracking-usage.ts`, because `app.config.ts` runs under Node's type stripping without JSON imports), a unit test keeps that table equal to the four catalogs. iOS shows the text in the language of the phone (or of the app's language in iOS Settings), not the in-app choice. Once `shell-plugins.ts` exists (Shell step 8), `copy-deck.mjs check` requires every deck system text in all four catalogs (`system-text-missing`; a SKIP line before that step).
+- **How it reaches the dialog:** `copy-deck.mjs apply --all` writes it into the four Shell catalogs like every deck text. The Shell's config composer `withShell` (`packages/shell/src/config/with-shell.ts`) writes the four texts as `locales.<lang>.ios.NSUserTrackingUsageDescription` next to `CFBundleDisplayName` (one `InfoPlist.strings` per language, Expo's documented way to localise `Info.plist` strings), and `shell-plugins.ts` passes the English text to the `expo-tracking-transparency` plugin as `userTrackingPermission`, the base value. The texts that reach `Info.plist` are exactly the catalogs' texts, because the config reads them from the catalogs themselves: `shell-plugins.ts` imports the four Shell catalogs as JSON (`import en from '@e07/shell/i18n/catalogs/en.json' with { type: 'json' }`, which Node's type stripping loads) and exports `TRACKING_USAGE_DESCRIPTIONS`, a `Record<LanguageCode, string>` of the key's four texts; there is no second copy in a TypeScript table (no `tracking-usage.ts`; lead decision L14). iOS shows the text in the language of the phone (or of the app's language in iOS Settings), not the in-app choice. Once `shell-plugins.ts` exists (Shell step 8), `copy-deck.mjs check` requires every deck system text in all four catalogs (`system-text-missing`; a SKIP line before that step).
 - **Review:** its fa and ckb drafts are on the owner's review list like every new text (owner decision O6; not blocking).
+
+## The debug menu stays English (L13)
+
+The S15 debug menu exists only in test builds and no player ever sees it, so its texts stay English in all four languages, like every debug text (lead decision L13, 2026-10-01). This covers every `debug.*` key: the deck's S15 rows, its badge and title (`debug.title`, `debug.badge`, `debug.set-date` ...), and the Shell texts the deck lacks for its Performance section (`debug.perf.heading`, `debug.perf.record`, `debug.perf.share`, `debug.perf.benchmark`, `debug.perf.summary` in `assets/shell-extras.json`).
+
+- **The text:** in de, fa and ckb each `debug.*` text is byte-for-byte the en text, in the copy deck, in `assets/shell-extras.json` and in the four Shell catalogs. Never draft a fa or ckb translation of a debug text; the rule fails it.
+- **The numbers and dates inside:** still follow the language. A plural such as `debug.perf.summary` ("Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}") prints `#` with the language's digits through `t()`, and the S15 model formats its values (the jump-to level, the set date, the error count) with the language's formatters (`createNumberFormatter`, `formatDayMonth`), never `String(n)`. So an fa build shows English labels with Persian digits, exactly as the design draws S15.
+- **Placement in fa and ckb:** the screen still lays out right to left; only the words are English. The Persian letter and punctuation rules (L9, L10) skip `debug.*` keys, since their text is English.
+- **Checked by:** `check-catalogs.mjs` rule `P5 debug-english` (a `debug.*` text in de, fa or ckb that differs from en), `copy-deck.mjs check` rule `debug-english` (the same on the deck, the extras table and the Shell catalogs) and the project linter's `debug-english` line (`npm run i18n:verify`). The fa/ckb review sheet (`review-sheet.ts`) leaves `debug.*` keys out of the CSVs and out of its counts, and `--mark-reviewed` refuses one, so the owner's review list never contains them.
 
 ## Dates and month names
 
@@ -133,7 +143,7 @@ node -e "const f=new Intl.DateTimeFormat(process.argv[1],{day:'numeric',month:'s
 - No literal digits anywhere (`Level 12` is `Level {level, number}`).
 - Persian and Sorani use Persian punctuation `،` `؛` `؟`, Persian ی (U+06CC) and ک (U+06A9), never Arabic ي (U+064A) or ك (U+0643).
 - One whole sentence per key: no leading or trailing spaces or joiners (`, ; : + & / – -`), no double spaces, English starts with a capital. Never glue two keys together.
-- The S15 debug menu is English in all four languages on purpose (test builds only), so the Persian letter and punctuation rules skip `debug.*` keys.
+- The S15 debug menu is English in all four languages on purpose (test builds only, lead decision L13): copy the en text into de, fa and ckb (rule P5), so the Persian letter and punctuation rules skip `debug.*` keys.
 
 ## The catalog rules
 
@@ -158,6 +168,7 @@ node -e "const f=new Intl.DateTimeFormat(process.argv[1],{day:'numeric',month:'s
 | P2 | No key that en lacks | de, fa, ckb | `<key>: not in en.json` |
 | P3 | Same placeholders with the same types as en | de, fa, ckb | `placeholders differ from en: …` |
 | P4 | Same `=N` branches as en | de, fa, ckb | `plural {n} has exact branches […] but en has […]` |
+| P5 | `debug-english`: every `debug.*` text equals its en text (S15 stays English, L13) | de, fa, ckb | `debug.title: the debug menu (S15) stays English in every language, but fa says "…" where en says "Debug menu"` |
 | F1 | Four files, each a flat object of strings | all | `ckb.json is missing` |
 | G1 | A game catalog holds `<game-id>.name`, `<game-id>.win-title` and `<game-id>.tagline`, the three keys the Shell reads through `GameIdentity.nameId`, `winTitleId` and `taglineId` (S1, S4, S7, S10, S11b) | game catalogs | `missing required game key "line-siege.win-title" (the Shell reads it through the identity)` |
 

@@ -1,0 +1,2 @@
+[generated-header]
+packages/shell/src/ui/icons/icon-paths.ts:1

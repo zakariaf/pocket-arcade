@@ -9,7 +9,8 @@
     "**/__snapshots__/*.golden.test.ts.snap",
     ".claude/settings.json",
     "parity/waivers.json",
-    "parity/game-facts.json"
+    "parity/game-facts.json",
+    "perf-baselines/**"
   ],
   "samples": [
     {
@@ -178,6 +179,22 @@
       "rules": ["spec-change-format"]
     },
     {
+      "name": "good-with-shell-swap",
+      "message": "build(shell): swap in the final with-shell composer\n\nThe phase-0 placeholder and its test give way to the final composer and\nthe one plugin list before the first simulator build.\n\nSpec-Change: with-shell final composer (phase 0 placeholder replaced)",
+      "files": [
+        "packages/shell/src/config/with-shell.ts",
+        "packages/shell/src/config/with-shell.test.ts",
+        "packages/shell/src/config/shell-plugins.ts"
+      ],
+      "rules": []
+    },
+    {
+      "name": "spec-change-near-swap",
+      "message": "build(shell): swap in the final with-shell composer\n\nThe phase-0 placeholder and its test give way to the final composer.\n\nSpec-Change: with-shell final composer",
+      "files": ["packages/shell/src/config/with-shell.ts"],
+      "rules": ["spec-change-format"]
+    },
+    {
       "name": "trailer-placement",
       "message": "chore(repo): reorder the lint config blocks\n\nGate-Change: reorder only, no rule changed\n\nPrettier moved two blocks.",
       "files": ["eslint.config.mjs"],
@@ -223,6 +240,18 @@
       "name": "game-facts-has-hints-without-trailer",
       "message": "test(line-siege): record that the pilot has no hints for parity\n\nSpec S5 and S6: Pause captures use the no-hints reference.",
       "files": ["parity/game-facts.json"],
+      "rules": ["gate-change-missing"]
+    },
+    {
+      "name": "good-perf-baseline",
+      "message": "test(tooling): record the line siege simulator cold-start baseline\n\nThe first evidence run sets the simulator cold-start median that later\nruns must stay within (times 1.2).\n\nGate-Change: the cold-start baseline sets the simulator limit",
+      "files": ["perf-baselines/cold-start-sim-line-siege.json"],
+      "rules": []
+    },
+    {
+      "name": "perf-baseline-without-trailer",
+      "message": "test(tooling): record the line siege simulator cold-start baseline\n\nThe first evidence run sets the simulator cold-start median.",
+      "files": ["perf-baselines/cold-start-sim-line-siege.json"],
       "rules": ["gate-change-missing"]
     }
   ]

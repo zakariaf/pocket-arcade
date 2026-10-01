@@ -21,6 +21,8 @@ type View = { readonly scoreText: string };
 const mockLog: string[] = [];
 const mockCanvasProps: { highlight?: BoardHighlight; accessibilityLabel?: string }[] = [];
 const mockApp = { isActive: true };
+/** The trace sink the host handed the clock (test builds with boardLayout=1). */
+const mockClockOptions: { trace?: ((label: string, sample: object) => void) | null } = {};
 
 jest.mock('./board-canvas.tsx', () => {
   const recordProps = (props: { highlight: BoardHighlight; accessibilityLabel: string }): null => {
@@ -30,17 +32,27 @@ jest.mock('./board-canvas.tsx', () => {
   return { BoardCanvas: recordProps };
 });
 jest.mock('./use-board-clock.ts', () => ({
-  useBoardClock: () => ({
-    push: (scene: BoardScene<View>) => {
-      mockLog.push(`push ${String(scene.seq)} ${scene.view.scoreText}`);
-    },
-    stop: () => {
-      mockLog.push('stop');
-    },
-    resume: () => {
-      mockLog.push('resume');
-    },
-  }),
+  useBoardClock: (
+    _initial: unknown,
+    _onError: unknown,
+    options: { trace: ((label: string, sample: object) => void) | null },
+  ) => {
+    mockClockOptions.trace = options.trace;
+    return {
+      push: (scene: BoardScene<View>) => {
+        mockLog.push(`push ${String(scene.seq)} ${scene.view.scoreText}`);
+      },
+      stop: () => {
+        mockLog.push('stop');
+      },
+      resume: () => {
+        mockLog.push('resume');
+      },
+      trace: (label: string) => {
+        mockLog.push(`trace ${label}`);
+      },
+    };
+  },
 }));
 jest.mock('@e07/shell/app/use-is-app-active.ts', () => ({
   useIsAppActive: () => mockApp.isActive,
@@ -121,6 +133,7 @@ describe('GameBoardHost', () => {
       'cancel',
       'push 1 1',
       'play place',
+      'trace runnable',
       'audio-resume',
       'resume',
       'cancel',
@@ -143,6 +156,21 @@ describe('GameBoardHost', () => {
     const view = await render(<GameBoardHost {...props(first)} />);
     mockLog.length = 0;
     await view.rerender(<GameBoardHost {...props(first, { isFullscreenAdShowing: true })} />);
-    expect(mockLog).toStrictEqual(['stop', 'cancel', 'suspend']);
+    expect(mockLog).toStrictEqual(['trace runnable', 'stop', 'cancel', 'suspend']);
+  });
+
+  it('traces the clock with the lifecycle facts only when a trace is given', async () => {
+    const first = { seq: 1, state: { score: 1 }, events: [] };
+    await render(<GameBoardHost {...props(first)} />);
+    expect(mockClockOptions.trace).toBeNull();
+    const traced: unknown[] = [];
+    const traceClock = (label: string, data: object): void => {
+      traced.push([label, data]);
+    };
+    await render(<GameBoardHost {...props(first, { traceClock, isFullscreenAdShowing: true })} />);
+    mockClockOptions.trace?.('push', { seq: 1 });
+    expect(traced).toStrictEqual([
+      ['push', { seq: 1, isAppActive: true, isFocused: true, isAdShowing: true }],
+    ]);
   });
 });

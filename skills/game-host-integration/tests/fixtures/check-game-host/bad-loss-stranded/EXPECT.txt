@@ -1,0 +1,3 @@
+FAIL packages/shell/src/game-host/run-end-policy.ts [loss-not-stranded] missing: nothing ends a lost run that nobody can continue
+FAIL packages/shell/src/game-host/result-model-of.ts:1 [loss-not-stranded] resultModelOf does not map the continue offer 'loading' to 'ad-loading'
+FAIL packages/shell/src/screens/game/use-game-screen-model.ts:1 [loss-not-stranded] the Game screen model never sends { type: 'finish' } for a stranded loss

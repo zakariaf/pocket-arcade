@@ -15,6 +15,7 @@ Why a skill does not load, trigger or run, and other Claude Code behaviours that
 - Scripts
 - Validation
 - Session
+- Pinned packages
 
 ## Loading
 
@@ -87,3 +88,9 @@ Why a skill does not load, trigger or run, and other Claude Code behaviours that
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
 | `skills-bash-every-call-exits-1` | Every Bash call exits 1 with no output, even true or exit 0, in the foreground and in the background (Read and Write still work) | The Claude Code session's shell tool broke after hours of long runs (most likely exhausted processes or descriptors); nothing in the repo or the skills causes it | Stop at once and reply with exactly what is done and what is left. Never build a workaround such as a job queue or a file-watcher runner; the session needs a restart. Prevent it: shut down your own simulators and stop your own Metro, Maestro drivers, log streams and monitors as soon as you are done with them | verified, owner | `troubleshooting-playbook` |
+
+## Pinned packages
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `skills-parity-selftest-tooling-option` | ERROR [bad-input] Unknown option '--tooling' (the toybox-visual-parity self-test, after every case ran) | The parity scripts take --tooling <dir> (or PARITY_TOOLING_DIR) for the folder that holds their pinned packages, but the round-4 selftest.mjs did not accept the option, so the step that says "pass --tooling to every script" failed there | The round-5 parity self-test reads its options first and passes --tooling to every suite (PARITY_TOOLING_DIR works the same; the shared check-testids accepts --tooling, PARITY_TOOLING_DIR, and the aliases --playwright and PLAYWRIGHT_DIR): node <parity skill>/scripts/selftest.mjs --tooling <repo>/.parity/tooling | verified | `toybox-visual-parity` |

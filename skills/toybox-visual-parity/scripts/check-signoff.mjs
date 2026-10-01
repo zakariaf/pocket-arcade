@@ -24,7 +24,7 @@ const SPEC = {
     'for exactly that sheet with every eye check answered and no open difference. --themes and --langs narrowing is for ' +
     'iteration only: a narrowed run prints "narrowed: not a sign-off" and exits 1. --draft <run-dir> prints a ledger ' +
     'entry to fill in.',
-  usage: '(--frame <key>... | --screen <S4>... | --all) [options] | --draft <run-dir> [--from-ledger]',
+  usage: '(--frame <key>... | --screen <S4>... | --all) [options] | --draft <run-dir> [--from-ledger] [--date YYYY-MM-DD]',
   options: {
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) to sign off (s4-home, s4-home-premium, ...)' },
     screen: { type: 'string', multiple: true, value: 'id', help: 'Screen id(s): every frame of the screen (S4 = s4-home + s4-home-premium)' },
@@ -38,6 +38,7 @@ const SPEC = {
     reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
     draft: { type: 'string', value: 'run-dir', help: 'Print a ledger entry skeleton for this run (after make-sheet.mjs) and exit' },
     'from-ledger': { type: 'boolean', help: 'With --draft: copy the recorded differences of the previous entry for the same frame and variant (eye checks stay open)' },
+    date: { type: 'string', value: 'YYYY-MM-DD', help: "With --draft: the entry's date (default: today's local calendar day, the product's own 'today' rule, never the UTC day)" },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     facts: { type: 'string', value: 'file', help: "The app's game facts: the reference variant each frame must use", default: FACTS_FILE },
@@ -57,12 +58,30 @@ const SPEC = {
     '  node check-signoff.mjs --draft .parity/lineSiege/s4-home/dark-fa',
     '  node check-signoff.mjs --draft .parity/lineSiege/s4-home/dark-fa --from-ledger   (after a rebuild: keep the differences)',
     '',
+    'A draft is dated with the local calendar day of the Mac (at 01:17 in Berlin on 1 October it is 2026-10-01, not',
+    "the UTC day 2026-09-30), the same day the waivers' reportedToOwner and the reports use; --date YYYY-MM-DD sets it.",
+    '',
     'Waivers are listed per frame with their class (platform, platform-text-shaping, design-artefact); every one of them',
     'goes into the report to the owner. So are the intended reference changes (the reference manifest\'s',
     'referenceChanges) of every frame signed off, and the reference each frame used: a frame with variants uses the one',
     "the app's game facts (parity/game-facts.json) select.",
   ].join('\n'),
 };
+
+/** The local calendar day of a moment as YYYY-MM-DD (the product's "today": local time, never UTC). */
+function localDay(moment = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${moment.getFullYear()}-${pad(moment.getMonth() + 1)}-${pad(moment.getDate())}`;
+}
+
+/** --date: a real calendar day written YYYY-MM-DD, else exit 2. */
+function draftDate(value) {
+  if (value === undefined) return localDay();
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  const day = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+  if (!day || localDay(day) !== value) fail(`--date ${value} is not a calendar day written YYYY-MM-DD`, 'Pass the day of the look, for example --date 2026-10-01, or leave --date out for today (local time).');
+  return value;
+}
 
 function readLedger(path) {
   if (!existsSync(path)) return { entries: [], problems: [] };
@@ -82,6 +101,7 @@ function readLedger(path) {
  * open, because the new sheet has to be looked at again.
  */
 function draftEntry(options, show) {
+  const date = draftDate(options.date);
   const dir = resolve(options.draft);
   const r = readRun(dir);
   const report = createReporter({ name: 'check-signoff' });
@@ -102,7 +122,7 @@ function draftEntry(options, show) {
     lang: r.info.lang,
     scrollY: r.info.scrollY,
     sheetSha256: sheets.files?.['sheet.png'],
-    date: new Date().toISOString().slice(0, 10),
+    date,
     looked: Object.keys(sheets.files ?? {}).filter((f) => !f.startsWith('crops/')),
     eyeChecks: Object.fromEntries(EYE_CHECKS.map((k) => [k, 'open'])),
     differences: [],
@@ -130,6 +150,7 @@ run(async () => {
   const { options } = parseArgs(process.argv.slice(2), SPEC);
   const show = (p) => relative(process.cwd(), p) || '.';
   if (options.draft) return draftEntry(options, show);
+  if (options.date !== undefined) fail('--date belongs to --draft', 'Use it as: node check-signoff.mjs --draft <run-dir> --date YYYY-MM-DD');
   const { frames } = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });
   let keys = listOption(options.frame, []);
   for (const id of listOption(options.screen, [])) {

@@ -1,0 +1,1 @@
+FAIL packages/shell/src/i18n/catalogs/fa.json [debug-english] debug.perf.title is translated

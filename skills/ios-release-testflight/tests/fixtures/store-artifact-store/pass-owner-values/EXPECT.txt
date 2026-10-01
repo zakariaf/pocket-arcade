@@ -1,0 +1,2 @@
+REHEARSAL: not a release gate
+check-store-artifact: 1 store build checked, 0 problems, 1 skipped

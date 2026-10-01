@@ -45,7 +45,8 @@ Notes:
 - Names or numbers inside a right-to-left sentence are isolated at display time, so they never jump to the wrong side.
 - Punctuation lives in the translation: Persian and Sorani use ، ؛ ؟.
 - Tone: German uses informal "du" (normal for games; decision D7). Persian and Sorani use a friendly, neutral tone.
-- Claude Code writes all four languages. Persian and Sorani texts should be read once by a native speaker before each release. Machine-written Sorani especially can sound unnatural. The owner does this review personally (decided 2026-09-30, owner decision O6): Claude Code drafts the texts, lists the review as the owner's step in its reports ("Owner steps (not blocking)"), and never waits for it.
+- Claude Code writes all four languages. Persian and Sorani texts should be read by a native speaker. Machine-written Sorani especially can sound unnatural. The owner does this review personally (decided 2026-09-30, owner decision O6): Claude Code drafts the texts, lists the texts awaiting the owner's review in its reports ("Owner steps (not blocking)"), and never waits for it. The review never holds back a release (decided 2026-10-01, lead decision L14).
+- The one exception to "all four languages" is the test-only debug menu (S15): its texts stay English everywhere (decided 2026-10-01, lead decision L13).
 - Game module texts (title, tutorial, how-to-play, piece and enemy names, result reasons, stats labels) are required in all four languages. A missing text fails the build.
 
 ### 7.5 · What mirrors in right-to-left
@@ -138,7 +139,7 @@ Formats and where they appear:
 - REWARDED: always the player's choice, with a clear "Watch an ad to..." label:
   - get a hint (when out of free hints);
   - continue once after losing (games that allow it).
-  - The reward is given only when the ad completes. If no ad is available (offline), the button is hidden, not broken.
+  - The reward is given only when the ad completes. While the ad is still loading, the button shows a loading state. If no ad can be had (offline, none available), the button is hidden, not broken: hidden always means unavailable (decided 2026-10-01, lead decision L11).
 
 General rules:
 
@@ -165,6 +166,7 @@ General rules:
 
 - Games may allow one continue per level or run: for example the monsters are pushed back one row, or the last move is undone.
 - Cost: a rewarded ad, or free with Premium. Offline and not Premium: no continue.
+- When no continue can be offered, the result appears at once (S7); a finished run never waits for an offer that cannot come (decided 2026-10-01, lead decision L11).
 
 ### 8.11 · Accessibility
 

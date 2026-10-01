@@ -38,7 +38,9 @@ describe('__GAME_ID__ palette', () => {
     'keeps the named board pieces apart for protan, deutan and tritan players (%s)',
     (set) => {
       const failures = boardContrast.distinct.flatMap((names) =>
-        checkCategoricalColors(colorsOf(set, names)).map((failure) => `${names.join(', ')}: ${failure}`),
+        checkCategoricalColors(colorsOf(set, names)).map(
+          (failure) => `${names.join(', ')}: ${failure}`,
+        ),
       );
       expect(failures).toStrictEqual([]);
     },

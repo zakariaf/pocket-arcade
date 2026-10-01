@@ -1,0 +1,1 @@
+FAIL 604bd52:packages/shell/src/game-host/draw-centered-text.ts:39 [disabled-test-added] adds "/** The shape the text must fit (a monster, a small cell): the text is"

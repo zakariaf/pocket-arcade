@@ -16,6 +16,7 @@ import type { FakeDebugStore } from './fake-debug-store.ts';
 import type { SimulatedClock } from './simulated-clock.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 import type { ConsentAdsMode } from '@e07/shell/services/consent/consent-factory.ts';
+import type { ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
 import type { PremiumChange } from '@e07/shell/services/purchase/premium-service.ts';
 import type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';
 
@@ -23,7 +24,7 @@ jest.mock('react-native-google-mobile-ads');
 
 type MockedSdk = {
   readonly AdsConsent: { readonly requestInfoUpdate: jest.Mock<Promise<unknown>> };
-  readonly AdsConsentDebugGeography: { readonly EEA: number };
+  readonly AdsConsentDebugGeography: { readonly EEA: number; readonly OTHER: number };
 };
 
 const sdk = jest.requireMock<MockedSdk>('react-native-google-mobile-ads');
@@ -35,6 +36,8 @@ const PERF = createFakeDebugPerf(PERF_LOG);
 
 type Setup = {
   readonly services: DebugServices;
+  /** admob-ads' resetConsent (Google's UMP answer), null in an ADS_MODE=off build. */
+  readonly resetConsent: jest.Mock | null;
   readonly clock: SimulatedClock;
   readonly store: FakeDebugStore;
   readonly calls: (PremiumChange | PremiumAction)[];
@@ -55,10 +58,12 @@ function setup(
   const calls: (PremiumChange | PremiumAction)[] = [];
   const clock = createSimulatedClock(createFakeClock({ nowMs: NOW_MS, today: '2026-09-28' }));
   clock.setSimulatedToday(earlierToday);
+  const resetConsent = adsMode === 'off' ? null : jest.fn();
   const services = createDebugServices({
     connectivity,
     clock,
     store,
+    resetConsent,
     perfLog: PERF_LOG,
     perf: PERF,
     persistPremium: (change) => {
@@ -71,7 +76,7 @@ function setup(
     adsMode,
     onError: jest.fn(),
   });
-  return { services, clock, store, calls, heard };
+  return { services, resetConsent, clock, store, calls, heard };
 }
 
 describe('createDebugServices', () => {
@@ -161,6 +166,7 @@ describe('createDebugServices', () => {
         isBoardLayoutOn: true,
         ads: 'always-test',
         seed: 7,
+        consentGeography: null,
       });
     });
 
@@ -219,6 +225,81 @@ describe('createDebugServices', () => {
       const { services } = setup('off');
 
       await expect(services.createConsent('eea').refresh()).resolves.toStrictEqual({
+        canRequestAds: false,
+        isPrivacyOptionsRequired: false,
+      });
+      expect(sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('when geo=eea|other is applied (the ads smoke test)', () => {
+    /** The composition root's own consent port: here a fake that records what was asked. */
+    function basePort(): ConsentPort & { readonly asked: string[] } {
+      const asked: string[] = [];
+      const info = { canRequestAds: true, isPrivacyOptionsRequired: false };
+      return {
+        asked,
+        refresh: () => {
+          asked.push('refresh');
+          return Promise.resolve(info);
+        },
+        showFormIfRequired: () => Promise.resolve(info),
+        showPrivacyOptions: () => Promise.resolve(info),
+        requestTracking: () => Promise.resolve('not-determined'),
+      };
+    }
+
+    it("follows the app's own consent port until a geography is set", async () => {
+      const { services } = setup('test');
+      const base = basePort();
+
+      await services.consentFor(base).refresh();
+
+      expect([base.asked, services.consentGeography()]).toStrictEqual([['refresh'], null]);
+      expect(sdk.AdsConsent.requestInfoUpdate).not.toHaveBeenCalled();
+    });
+
+    it("resets Google's answer, then asks UMP for that geography at the next consent moment", async () => {
+      const { services, resetConsent } = setup('test');
+      const base = basePort();
+      const consent = services.consentFor(base);
+
+      services.setConsentGeography('eea');
+      await consent.refresh();
+
+      expect(resetConsent).toHaveBeenCalledTimes(1);
+      expect(sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledWith({
+        debugGeography: sdk.AdsConsentDebugGeography.EEA,
+      });
+      expect(base.asked).toStrictEqual([]);
+      services.setConsentGeography('other');
+      await consent.refresh();
+      expect(sdk.AdsConsent.requestInfoUpdate).toHaveBeenLastCalledWith({
+        debugGeography: sdk.AdsConsentDebugGeography.OTHER,
+      });
+      expect(resetConsent).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps the geography across a reload without resetting Google again', async () => {
+      const first = setup('test');
+      first.services.setConsentGeography('eea');
+
+      const reloaded = setup('test', first.store);
+      await reloaded.services.consentFor(basePort()).refresh();
+
+      expect(reloaded.services.consentGeography()).toBe('eea');
+      expect(reloaded.resetConsent).not.toHaveBeenCalled();
+      expect(sdk.AdsConsent.requestInfoUpdate).toHaveBeenCalledWith({
+        debugGeography: sdk.AdsConsentDebugGeography.EEA,
+      });
+    });
+
+    it('skips UMP in an ADS_MODE=off build: no reset, and the ads-off answer', async () => {
+      const { services } = setup('off');
+
+      services.setConsentGeography('eea');
+
+      await expect(services.consentFor(basePort()).refresh()).resolves.toStrictEqual({
         canRequestAds: false,
         isPrivacyOptionsRequired: false,
       });

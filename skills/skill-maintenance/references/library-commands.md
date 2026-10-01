@@ -53,7 +53,7 @@ Each takes skill names to limit the run (`node skills/_library/validate-skills.m
 
 - Runs the library's self-test, each shared `*.selftest.mjs`, and every skill's `scripts/selftest.mjs` from the repo root, then prints a table.
 - A skill without scripts is skipped; a skill with scripts and no `selftest.mjs` fails. Default time limit 600 seconds per self-test.
-- The shared `check-testids` self-test renders the design in Chrome through Playwright: it uses `PLAYWRIGHT_DIR` when set, otherwise the pinned install of a skill that syncs `check-testids.mjs` (installed with `npm ci --prefix` on that skill's `scripts/`); with neither it stops with exit 2 and says so.
+- The shared `check-testids` self-test renders the design in Chrome through Playwright: it uses `PARITY_TOOLING_DIR` (or its alias `PLAYWRIGHT_DIR`) when set, otherwise the pinned install of a skill that syncs `check-testids.mjs` (installed with `npm ci --prefix` on that skill's `scripts/`); with neither it stops with exit 2 and says so.
 
 ## link-skills
 
@@ -66,9 +66,11 @@ Each takes skill names to limit the run (`node skills/_library/validate-skills.m
 
 ## record-sources and sources.json
 
-`node skills/_library/record-sources.mjs <skill> <skill-file> <source-file>... [--append]`
+`node skills/_library/record-sources.mjs <skill> <skill-file> <source-file>... [--append] [--lock-wait <seconds>]`
 
 - Records that a skill file was copied from the given project files, with each source's sha256 now. It replaces that file's earlier list unless `--append` is given. `<skill>` may be `_library` for the shared folder.
+- Safe while other sessions write too. The write takes the exclusive lock `sources.json.lock` next to the file, re-reads `sources.json` under it, changes only this skill file's entry (entries other sessions recorded in the meantime stay) and replaces the file atomically (a temporary file, then a rename). `refresh-shared.mjs` writes its `_library` entries the same way.
+- A lock held by another writer is waited for up to `--lock-wait` seconds (default 60); then the run stops with exit 2 and names the holder (`sources.json.lock is held by record-sources <skill>/<file> (pid <n>) since <time>`). Rerun when that writer is done. A lock older than 10 minutes is left over from a crashed writer: the next writer breaks it and prints a `WARN ... broke it` line. Never delete a fresh lock by hand.
 - Sources must be files inside the repo (a handbook chapter, the spec, a design file). Research notes outside the repo cannot be recorded; name the closest project source, or leave the file untracked and say so in your report.
 - Example: `node skills/_library/record-sources.mjs toybox-design-system references/tokens.md <handbook-chapter-path> <token-file-path>`, with the project paths relative to the repo root. They are arguments to the tool only; a skill file never names them.
 
@@ -88,7 +90,7 @@ Each takes skill names to limit the run (`node skills/_library/validate-skills.m
 }
 ```
 
-Record after every copy from the project, one command per skill file (templates and examples too when they came from project text). `sources.json` is shared by every builder: run record commands one at a time, never in parallel with another session's.
+Record after every copy from the project, one command per skill file (templates and examples too when they came from project text). `sources.json` is shared by every builder, and the lock makes parallel sessions safe: each owner re-records its own skill files right after reviewing the changed sources, then shows `node skills/_library/check-staleness.mjs <its skills>` passing, rather than leaving stale entries for someone else to re-record unread.
 
 ## check-staleness
 
@@ -116,12 +118,12 @@ The shared folder holds one canonical copy of what several skills need: `scripts
 | `tooling-deps/` | The dependency gate, the one tooling wall clock (`todayIso`, `nowEpochSeconds`, with the test that keeps knip green before the App Store Connect client lands) and the licence audit tooling | monorepo-bootstrap, dependency-management, quality-gates, privacy-and-network-audit; the clock also into premium-purchase and ios-release-testflight |
 | `shell-services/` | The `ClockPort` and `ErrorLogPort` files (port, adapter, fake, tests) | save-persistence-and-migrations, architecture-and-boundaries, daily-and-statistics |
 | `line-siege/` | Line Siege v1, the canonical worked example: rules, testing, levels, sims and report, i18n, tutorial, board and sounds | the game skills' `examples/line-siege/` folders (rules, balance, levels, board, input, audio, host, naming, unit tests) and the bootstrap's pilot catalogs |
-| `app-scaffold/app-files.mjs` | The one renderer of the per-app files, with the fixed `io.applander.<game id>` ids (`bundleIdFor`, `premiumIdFor`), the scaffold `PLACEHOLDERS` and `withoutBundleIdOption` | monorepo-bootstrap, new-game-scaffold |
+| `app-scaffold/app-files.mjs` | The one renderer of the per-app files, with the fixed `io.applander.<game id>` ids (`bundleIdFor`, `premiumIdFor`) and `withoutBundleIdOption`; it keeps no placeholder list of its own but re-exports `PLACEHOLDERS`, `ownerStepsPendingLine` and `finishWithOwnerSteps` from `scripts/lib/ship-placeholders.mjs` for `check-game-app --stage complete` | monorepo-bootstrap, new-game-scaffold |
 | `scripts/lib/source-scan.mjs`, `scripts/lib/workspaces.mjs` | The lexer and workspace reader of the code checkers | typescript-and-lint-rules, naming-conventions, architecture-and-boundaries |
 | `expo-sdk-57-module-map.json` | Expo SDK 57's `bundledNativeModules.json` | dependency-management, expo-sdk-upgrade |
 | `screen-testids.json` with `scripts/check-testids.mjs` | The screen testID map (each part's testID, parity checks, `coveredBy`; `when` marks a part only some games draw, keyed by a game fact such as `hasMusic`, `hasHints` or `winLine`; `surface: true` marks an accessible card layer such as `home.daily-card`) and its checker | toybox-screens, toybox-visual-parity, e2e-maestro |
 | `scripts/lib/maestro-spawns.mjs` | The `maestro-device` rule helper: every Maestro spawn in repo tooling names `--device <udid>` and its own `--driver-host-port` before the command (the repo's `maestroGlobalArgs()` in `packages/tooling/src/e2e/maestro-args.ts`, itself a shared repo template) | e2e-maestro, ios-simulator-build |
-| `scripts/lib/ship-placeholders.mjs`, `scripts/lib/tracking-text.mjs` | The ship gates' one `PLACEHOLDERS` list (`com.example.*`, the AdMob placeholder app and units, `example.com`, `support@example.com`) with the `io.applander.<game>` id rule, and the App Tracking Transparency text check (`NSUserTrackingUsageDescription` in `Info.plist` and each language's `InfoPlist.strings`) | ios-release-testflight, privacy-and-network-audit, ios-simulator-build |
+| `scripts/lib/ship-placeholders.mjs`, `scripts/lib/tracking-text.mjs` | The ship gates' one `PLACEHOLDERS` list (`com.example.*` with no owner step, the AdMob placeholder app and units for owner step G5, `example.com` and `support@example.com` for owner step G3) with the `owner-placeholder` result (`ownerStepsPendingLine` prints `OWNER STEPS PENDING: G3, G5` before a RESULT that stays FAIL), the `io.applander.<game>` id rule, and the App Tracking Transparency text check (`NSUserTrackingUsageDescription` in `Info.plist` and each language's `InfoPlist.strings`) | ios-release-testflight, privacy-and-network-audit, ios-simulator-build; `ship-placeholders.mjs` also into new-game-scaffold and monorepo-bootstrap next to `app-files.mjs` |
 
 Every shared file has one owner, the package of the first skill the library README names for it: only that owner edits the canonical copy, and it runs sync-shared for its own skills (another skill is synced by its owner, or by the owner of a changed file when that file is the skill's only difference). The rule: when a second skill needs a file another skill already ships at the same repo path (or the same data), move the file into the shared folder instead of copying it, declare it in both skills' `assets/shared.json` (the destination names may differ, for example `templates/.prettierignore` and `templates/repo/dot-prettierignore`), and run sync-shared. From then on change only the canonical copy; a template placeholder such as `__GAME_ID__` must be one every consuming skill's generator or instructions fill. Before editing a shared file that other skills also sync, check which skills declare it (`grep -l '"<shared path>"' skills/*/assets/shared.json`) and rerun their self-tests: the edit reaches all of them at once.
 

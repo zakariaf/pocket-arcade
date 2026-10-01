@@ -1,0 +1,1 @@
+error TS2307: Cannot find module '@e07/shell/app/connect-audio-settings.ts' or its corresponding type declarations.

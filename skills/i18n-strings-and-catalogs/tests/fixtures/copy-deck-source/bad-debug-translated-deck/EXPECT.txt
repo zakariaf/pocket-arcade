@@ -1,0 +1,4 @@
+[debug-english]
+debug.set-date
+copy-deck.json:16
+de says "Datum setzen"

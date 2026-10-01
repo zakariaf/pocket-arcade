@@ -1,0 +1,5 @@
+[
+  { "json": { "file": "package.json", "path": ["devDependencies", "jest-image-snapshot"], "value": "6.5.2" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "", "devDependencies", "jest-image-snapshot"], "value": "6.5.2" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "node_modules/jest-image-snapshot"], "value": { "version": "6.5.2", "dev": true, "license": "Apache-2.0" } } }
+]

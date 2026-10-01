@@ -34,9 +34,9 @@ const SPEC = {
   },
   positionals: { min: 0, max: 1 },
   details: [
-    'Rules: module-load, interstitial-rules, banner-rules, perk-rules, ad-history, consent-order,',
+    'Rules: module-load, interstitial-rules, banner-rules, perk-rules (the L11 continue offer: loading is shown, hidden ends the run), ad-history, consent-order,',
     '  consent-moment-flow, fullscreen-lifecycle, ads-config, variant-matrix, adapter-init,',
-    '  adapter-interstitial, adapter-rewarded, adapter-banner, ads-factory, read-ads-extra,',
+    '  adapter-interstitial, adapter-rewarded, adapter-rewarded-status, adapter-banner, ads-factory, read-ads-extra,',
     '  consent-adapter, tracking-adapter, consent-factory.',
     'The SDK, expo-tracking-transparency, react-native, react and expo-constants are replaced by the',
     'scripted stand-ins in lib/stubs/.',
@@ -78,8 +78,8 @@ function fakeAds(calls, { interstitialResult = 'shown', rewardResult = 'rewarded
     initialize: async () => { calls.push('initialize'); await new Promise((resolve) => setTimeout(resolve, 0)); calls.push('initialized'); },
     preloadInterstitial: () => { calls.push('preloadInterstitial'); },
     preloadRewarded: () => { calls.push('preloadRewarded'); },
-    isRewardedLoaded: () => true,
-    subscribeRewardedLoaded: () => () => undefined,
+    rewardedStatus: () => 'ready',
+    subscribeRewardedStatus: () => () => undefined,
     showInterstitial: async () => { calls.push('showInterstitial'); if (failShow) throw new Error('show failed'); return interstitialResult; },
     showRewarded: async () => { calls.push('showRewarded'); return rewardResult; },
     renderBanner: () => null,
@@ -115,6 +115,13 @@ function freshAdapter(adapterModule, units = UNITS) {
   const errors = [];
   const port = adapterModule.createAdmobAdsAdapter({ units, onAdError: (error) => errors.push(`${error.phase}:${error.reason}`) });
   return { port, errors };
+}
+/** An adapter after initialize (ads load only after it), with the SDK trace cleared. */
+async function readyAdapter(adapterModule, units = UNITS) {
+  const fresh = freshAdapter(adapterModule, units);
+  await fresh.port.initialize();
+  sdkStub.reset();
+  return fresh;
 }
 const lastAd = (kind) => sdkStub.ads().filter((ad) => ad.kind === kind).at(-1);
 
@@ -197,22 +204,28 @@ run(async () => {
   }
 
   if (perk) {
-    const offer = (p, context, isRewardedLoaded) => perk.perkOffer(p, { config: CONFIG, context, isRewardedLoaded });
+    const offer = (p, context, rewardedStatus) => perk.perkOffer(p, { config: CONFIG, context, rewardedStatus });
     const hint0 = { kind: 'hint', freeHintsLeft: 0 };
     const hint1 = { kind: 'hint', freeHintsLeft: 1 };
     const cont = { kind: 'continue', isAllowedByGame: true, isUsedThisLevel: false };
-    const fix = 'Restore perkOffer from the template: hidden when unavailable, free for Premium or free hints, watch-ad only when servable and loaded.';
+    const fix = "Restore perkOffer from the template (L11): hidden when unavailable, free for Premium or free hints, watch-ad when servable and the rewarded ad is ready, 'loading' for a continue whose ad is still loading (hints never), hidden otherwise.";
     const cases = [
-      ['hint, no free hints, ad loaded', hint0, READY, true, 'watch-ad'],
-      ['hint, no free hints, nothing loaded', hint0, READY, false, 'hidden'],
-      ['hint with a free hint left', hint1, READY, false, 'free'],
-      ['continue offline, not Premium', cont, { ...READY, isOnline: false }, true, 'hidden'],
-      ['continue without consent', cont, { ...READY, canRequestAds: false }, true, 'hidden'],
-      ['continue for Premium offline', cont, { ...READY, isPremium: true, isOnline: false }, false, 'free'],
-      ['continue already used, even for Premium', { ...cont, isUsedThisLevel: true }, { ...READY, isPremium: true }, true, 'hidden'],
-      ['continue the game forbids', { ...cont, isAllowedByGame: false }, READY, true, 'hidden'],
+      ['hint, no free hints, ad ready', hint0, READY, 'ready', 'watch-ad'],
+      ['hint, no free hints, ad loading (hints never wait)', hint0, READY, 'loading', 'hidden'],
+      ['hint, no free hints, nothing can come', hint0, READY, 'unavailable', 'hidden'],
+      ['hint with a free hint left', hint1, READY, 'unavailable', 'free'],
+      ['continue for Premium offline', cont, { ...READY, isPremium: true, isOnline: false }, 'unavailable', 'free'],
+      ['continue, ad ready', cont, READY, 'ready', 'watch-ad'],
+      ['continue, ad loading (shown in its loading state)', cont, READY, 'loading', 'loading'],
+      ['continue, nothing can come (the run ends at once)', cont, READY, 'unavailable', 'hidden'],
+      ['continue offline, ad ready', cont, { ...READY, isOnline: false }, 'ready', 'hidden'],
+      ['continue offline, ad loading', cont, { ...READY, isOnline: false }, 'loading', 'hidden'],
+      ['continue without consent, ad ready', cont, { ...READY, canRequestAds: false }, 'ready', 'hidden'],
+      ['continue without consent, ad loading', cont, { ...READY, canRequestAds: false }, 'loading', 'hidden'],
+      ['continue already used, even for Premium', { ...cont, isUsedThisLevel: true }, { ...READY, isPremium: true }, 'ready', 'hidden'],
+      ['continue the game forbids', { ...cont, isAllowedByGame: false }, READY, 'loading', 'hidden'],
     ];
-    for (const [label, p, context, loaded, want] of cases) await expect('perk-rules', FILES.perk, label, () => offer(p, context, loaded), want, fix);
+    for (const [label, p, context, status, want] of cases) await expect('perk-rules', FILES.perk, label, () => offer(p, context, status), want, fix);
   }
 
   if (gate) {
@@ -342,24 +355,24 @@ run(async () => {
 
     const fsFix = 'Restore showInterstitial from the template: unavailable unless loaded; settle on CLOSED, on ERROR (a failed presentation sends no CLOSED) and on a rejected show(); destroy the ad.';
     await expect('adapter-interstitial', file, 'show before anything loaded', async () => {
-      const { port } = freshAdapter(adapter);
+      const { port } = await readyAdapter(adapter);
       port.preloadInterstitial();
       return { result: await settled(port.showInterstitial()), shows: sdkStub.calls().filter((c) => c.endsWith('.show')).length };
     }, { result: 'unavailable', shows: 0 }, fsFix);
-    await expect('adapter-interstitial', file, 'preload uses the interstitial unit, once', () => {
-      const { port } = freshAdapter(adapter);
+    await expect('adapter-interstitial', file, 'preload uses the interstitial unit, once', async () => {
+      const { port } = await readyAdapter(adapter);
       port.preloadInterstitial();
       port.preloadInterstitial();
       return sdkStub.calls();
     }, [`interstitial.create:${UNITS.interstitial}`, `interstitial.load:${UNITS.interstitial}`], fsFix);
-    await expect('adapter-interstitial', file, 'shown, then closed', async () => showWith(freshAdapter(adapter).port, 'interstitial', [['closed']]), { result: 'shown', destroyed: true }, fsFix);
+    await expect('adapter-interstitial', file, 'shown, then closed', async () => showWith((await readyAdapter(adapter)).port, 'interstitial', [['closed']]), { result: 'shown', destroyed: true }, fsFix);
     await expect('adapter-interstitial', file, 'presentation fails (ERROR phase show, no CLOSED)', async () => {
-      const { port, errors } = freshAdapter(adapter);
+      const { port, errors } = await readyAdapter(adapter);
       const outcome = await showWith(port, 'interstitial', [['error', { phase: 'show', reason: 'internal-error' }]]);
       return { ...outcome, errors };
     }, { result: 'unavailable', destroyed: true, errors: ['show:internal-error'] }, fsFix);
     await expect('adapter-interstitial', file, 'load-phase no-fill is silent and frees the slot', async () => {
-      const { port, errors } = freshAdapter(adapter);
+      const { port, errors } = await readyAdapter(adapter);
       port.preloadInterstitial();
       sdkStub.emit(lastAd('interstitial'), 'error', { phase: 'load', reason: 'no-fill' });
       port.preloadInterstitial();
@@ -367,23 +380,35 @@ run(async () => {
     }, { errors: [], created: 2 }, 'Only log load errors that are not no-fill; destroy the failed ad and clear its slot so the next quiet moment preloads again.');
 
     const rwFix = 'Restore showRewarded from the template: grant only after EARNED_REWARD; CLOSED alone is "dismissed"; ERROR or a rejected show() is "unavailable".';
-    await expect('adapter-rewarded', file, 'closed without EARNED_REWARD', async () => showWith(freshAdapter(adapter).port, 'rewarded', [['closed']]), { result: 'dismissed', destroyed: true }, rwFix);
-    await expect('adapter-rewarded', file, 'EARNED_REWARD, then closed', async () => showWith(freshAdapter(adapter).port, 'rewarded', [['rewarded_earned_reward', { type: 'perk', amount: 1 }], ['closed']]), { result: 'rewarded', destroyed: true }, rwFix);
-    await expect('adapter-rewarded', file, 'presentation fails (ERROR phase show, no CLOSED)', async () => showWith(freshAdapter(adapter).port, 'rewarded', [['error', { phase: 'show', reason: 'internal-error' }]]), { result: 'unavailable', destroyed: true }, rwFix);
-    await expect('adapter-rewarded', file, 'loaded state reaches subscribers', async () => {
+    await expect('adapter-rewarded', file, 'closed without EARNED_REWARD', async () => showWith((await readyAdapter(adapter)).port, 'rewarded', [['closed']]), { result: 'dismissed', destroyed: true }, rwFix);
+    await expect('adapter-rewarded', file, 'EARNED_REWARD, then closed', async () => showWith((await readyAdapter(adapter)).port, 'rewarded', [['rewarded_earned_reward', { type: 'perk', amount: 1 }], ['closed']]), { result: 'rewarded', destroyed: true }, rwFix);
+    await expect('adapter-rewarded', file, 'presentation fails (ERROR phase show, no CLOSED)', async () => showWith((await readyAdapter(adapter)).port, 'rewarded', [['error', { phase: 'show', reason: 'internal-error' }]]), { result: 'unavailable', destroyed: true }, rwFix);
+    const statusFix = "Restore the template's rewarded status (L11): 'unavailable' before initialize (a preload then starts nothing), 'loading' from a preload until LOADED, 'ready' after LOADED, 'unavailable' once the ad is shown or after a load error until the next preload; tell subscribeRewardedStatus listeners each change.";
+    await expect('adapter-rewarded-status', file, 'before initialize a preload starts nothing', async () => {
       const { port } = freshAdapter(adapter);
-      const seen = [];
-      port.subscribeRewardedLoaded((isLoaded) => seen.push(isLoaded));
       port.preloadRewarded();
-      const before = port.isRewardedLoaded();
+      return { status: port.rewardedStatus(), sdk: sdkStub.calls() };
+    }, { status: 'unavailable', sdk: [] }, statusFix);
+    await expect('adapter-rewarded-status', file, 'loading, ready, then unavailable once shown', async () => {
+      const { port } = await readyAdapter(adapter);
+      const seen = [];
+      port.subscribeRewardedStatus(() => seen.push(port.rewardedStatus()));
+      port.preloadRewarded();
       sdkStub.emit(lastAd('rewarded'), 'rewarded_loaded');
-      const after = port.isRewardedLoaded();
       const pending = port.showRewarded();
       await tick();
       sdkStub.emit(lastAd('rewarded'), 'closed');
       await settled(pending);
-      return { before, after, seen, create: sdkStub.calls()[0] };
-    }, { before: false, after: true, seen: [true, false], create: `rewarded.create:${UNITS.rewarded}` }, 'Notify subscribeRewardedLoaded listeners on LOADED (true) and when the ad is used or fails (false), so "Watch an ad" buttons appear and disappear.');
+      return { seen, create: sdkStub.calls()[0] };
+    }, { seen: ['loading', 'ready', 'unavailable'], create: `rewarded.create:${UNITS.rewarded}` }, statusFix);
+    await expect('adapter-rewarded-status', file, 'a load error until the next preload', async () => {
+      const { port } = await readyAdapter(adapter);
+      port.preloadRewarded();
+      sdkStub.emit(lastAd('rewarded'), 'error', { phase: 'load', reason: 'no-fill' });
+      const afterError = port.rewardedStatus();
+      port.preloadRewarded();
+      return { afterError, again: port.rewardedStatus() };
+    }, { afterError: 'unavailable', again: 'loading' }, statusFix);
 
     await expect('adapter-banner', file, 'renderBanner element', () => {
       const { port } = freshAdapter(adapter);
@@ -404,16 +429,20 @@ run(async () => {
       await port.initialize();
       port.preloadInterstitial();
       port.preloadRewarded();
-      return { interstitial: await settled(port.showInterstitial()), rewarded: await settled(port.showRewarded()), loaded: port.isRewardedLoaded(), sdk: sdkStub.calls() };
-    }, { interstitial: 'unavailable', rewarded: 'unavailable', loaded: false, sdk: [] }, fix);
-    await expect('ads-factory', file, 'ADS_MODE=test uses Google test units', () => {
+      return { interstitial: await settled(port.showInterstitial()), rewarded: await settled(port.showRewarded()), status: port.rewardedStatus(), sdk: sdkStub.calls() };
+    }, { interstitial: 'unavailable', rewarded: 'unavailable', status: 'unavailable', sdk: [] }, fix);
+    await expect('ads-factory', file, 'ADS_MODE=test uses Google test units', async () => {
+      const port = factory.createAdsPort({ adsMode: 'test', adUnits: null }, () => undefined);
+      await port.initialize();
       sdkStub.reset();
-      factory.createAdsPort({ adsMode: 'test', adUnits: null }, () => undefined).preloadInterstitial();
+      port.preloadInterstitial();
       return sdkStub.calls()[0];
     }, `interstitial.create:${TestIds.INTERSTITIAL}`, fix);
-    await expect('ads-factory', file, 'ADS_MODE=live uses the game units', () => {
+    await expect('ads-factory', file, 'ADS_MODE=live uses the game units', async () => {
+      const port = factory.createAdsPort({ adsMode: 'live', adUnits: UNITS }, () => undefined);
+      await port.initialize();
       sdkStub.reset();
-      factory.createAdsPort({ adsMode: 'live', adUnits: UNITS }, () => undefined).preloadRewarded();
+      port.preloadRewarded();
       return sdkStub.calls()[0];
     }, `rewarded.create:${UNITS.rewarded}`, fix);
     await expect('ads-factory', file, 'ADS_MODE=live without units', () => { try { factory.createAdsPort({ adsMode: 'live', adUnits: null }, () => undefined); return 'accepted'; } catch { return 'threw'; } }, 'threw', fix);

@@ -52,6 +52,11 @@ const SPEC = {
     'packages/shell/src/config/shell-plugins.ts (Shell step 8), ui-feedback until packages/shell/src/app/start-shell.ts',
     '(Shell step 7). Once the file exists the rule is strict.',
     '',
+    'The toggle part of ui-feedback belongs to the screens that play it (S11\'s settings actions and S6\'s pause',
+    'model, Shell step 9): while shell-slice.json lists neither S11 nor S6 it prints a slice SKIP',
+    '("S11 not in shell-slice.json (nor S6): ..."); once either is in the slice (or there is no shell-slice.json)',
+    'it is strict. The tap, win and lose parts are strict from Shell step 7.',
+    '',
     'Example: node check-audio-haptics.mjs .',
   ].join('\n'),
 };
@@ -145,6 +150,8 @@ const WORKLET_DIRECTIVE = /^(?:\s*(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/))*\s*['"]work
 const IS_TEST = /\.(test|golden\.test|sim\.test)\.tsx?$/;
 const UI_FEEDBACK_FILE = `${AUDIO}/ui-feedback.ts`;
 const PRESS_FEEDBACK_FILE = 'packages/shell/src/app/press-feedback-context.tsx';
+// The screens whose handlers play the toggle feedback: S11's settings actions and S6's pause model.
+const TOGGLE_SCREENS = ['S11', 'S6'];
 const UI_FEEDBACK_KINDS = { tap: 'every button press (ShellApp wraps the app in <PressFeedbackProvider onPress={() => { playUiFeedback(services, \'tap\'); }}>)', toggle: 'every toggle row and picker step', win: 'the move that wins the run (the game host\'s session controller does it once createGameHost gets feedback: debugFeedbackOf(() => debug, { audio, haptics }))', lose: 'the move that loses the run (the game host\'s session controller, the same call)' };
 
 function readRel(root, rel) {
@@ -396,6 +403,11 @@ function checkUiFeedback(root, files, report) {
     report.skip({ file: UI_FEEDBACK_FILE, rule: 'ui-feedback', message: bootDue });
     return;
   }
+  // The toggle feedback is played only by S11's settings actions and S6's pause model (Shell step 9):
+  // while neither screen is in shell-slice.json its part prints a slice SKIP; tap, win and lose stay strict.
+  const slice = readShellSlice(root);
+  const isToggleOutOfSlice = TOGGLE_SCREENS.every((screen) => sliceSkipReason(slice, screen) !== null);
+  const toggleSkip = isToggleOutOfSlice ? `${sliceSkipReason(slice, 'S11')} (nor S6): the toggle feedback (ui.toggle) is played by S11's settings actions and S6's pause model` : null;
   const played = new Set();
   let isPressWired = false;
   for (const rel of files) {
@@ -407,7 +419,9 @@ function checkUiFeedback(root, files, report) {
     }
     if (rel !== PRESS_FEEDBACK_FILE && /\busePressFeedback\s*\(/.test(source)) isPressWired = true;
   }
+  if (toggleSkip !== null) report.skip({ file: UI_FEEDBACK_FILE, rule: 'ui-feedback', message: toggleSkip });
   for (const [kind, where] of Object.entries(UI_FEEDBACK_KINDS)) {
+    if (kind === 'toggle' && toggleSkip !== null) continue;
     if (!played.has(kind)) report.problem({ file: UI_FEEDBACK_FILE, line: 0, rule: 'ui-feedback', message: `the Shell never plays its '${kind}' feedback (ui.${kind})`, fix: `Call playUiFeedback(services, '${kind}') on ${where}; see references/audio-architecture.md, "UI feedback".` });
   }
   if (!isPressWired) report.problem({ file: PRESS_FEEDBACK_FILE, line: 0, rule: 'ui-feedback', message: 'no Shell component calls usePressFeedback(), so button taps are silent', fix: 'In the Pressable hosts (raised-surface.tsx, quiet-button.tsx, list-row.tsx) call const onPressFeedback = usePressFeedback(); and run it in onPress (not for switch rows, which play the toggle feedback).' });

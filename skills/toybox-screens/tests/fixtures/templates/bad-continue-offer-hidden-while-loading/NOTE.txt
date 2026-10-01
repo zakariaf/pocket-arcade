@@ -1,0 +1,4 @@
+The round-4 S7 continue offer laid over the templates: result-model.ts has continueOffer 'ad' |
+'premium' | null and continue-offer.tsx draws nothing while the rewarded ad loads (the offer was
+hidden, so a hidden offer did not mean unavailable). check-screens --screen S7 must fail
+continue-offer-loading on both files (lead decision L11).

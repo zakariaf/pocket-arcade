@@ -27,7 +27,7 @@ RULES
 - "Apply a move": returns the new state plus a list of events (what happened, for animations and sounds, for example "column 3 cleared, beam hit monster 2 for 8").
 - "Is it over?": win, lose (with a reason), or still playing.
 - Score and the goal/progress line for the top bar.
-- Whether undo, hints and continue are supported, and how continue works.
+- Whether undo, hints and continue are supported, and how continue works. The Shell decides when a continue can be offered; when none can (ads off, offline, no rewarded ad, no Premium), it shows the result at once, so a game's finished run is never stranded (lead decision L11).
 - The facts the Shell reads to draw its own screens: whether the game has music, whether it has hints, and whether its levels are rated by moves against par or by score (S5, S6, S7, S11; lead decisions L1, L3 and L8).
 
 LEVELS
@@ -73,7 +73,8 @@ One file per game holds:
 - AdMob app id and ad unit ids per platform (banner, interstitial, rewarded), from the owner. Test ids in development. The scaffold's placeholder ids can never be released.
 - Ad rules: frequency numbers (spec 8.8), ads on/off master switch (spec 4.3).
 - Modes on/off, packs and level counts, free hints per day, continue allowed.
-- Privacy policy link and support email (for the stores and About).
+- Privacy policy link and support email (for the stores and About), from the owner. The scaffold's placeholders (`example.com` and `support@example.com`) can never be released either.
+- A game counts as complete only when every owner value is in: the completeness check fails on each placeholder (ad ids, privacy link, support email) until the owner supplies the real one (decided 2026-10-01, lead decision L14; owner steps G5 and G3).
 - Age rating answers, target audience.
 
 ## 12 · Making the next game from the Shell

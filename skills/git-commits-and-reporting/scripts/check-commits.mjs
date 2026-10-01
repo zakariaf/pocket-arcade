@@ -52,7 +52,8 @@ const SPEC = {
     '                       files under skills/ or .claude/ count only for patterns that start with that folder)',
     '  gate-change-unneeded a Gate-Change trailer but no gated file changed (only when the files are known)',
     '  trailer-empty        a Gate-Change or Spec-Change trailer has no real reason (under 10 characters)',
-    '  spec-change-format   a Spec-Change trailer names no spec section or ID',
+    '  spec-change-format   a Spec-Change trailer names no spec section or ID (a directed swap\'s exact trailer,',
+    '                       "with-shell final composer (phase 0 placeholder replaced)", needs none)',
     '  trailer-placement    a trailer sits outside the last paragraph (git would not read it)',
     '  placeholder-left     a __PLACEHOLDER__ from templates/commit-message.txt is still in the message',
     '  sample-mismatch      (--samples) a sample gives other rule ids than the shared list says: the hook and',
@@ -72,10 +73,14 @@ const HEADER = /^(?<type>[a-z]+)(?:\((?<scope>[^)]*)\))?(?<bang>!)?: (?<subject>
 const GIT_GENERATED = /^(Merge |Revert "|fixup! |squash! |amend! )/;
 const TRAILER = /^(Gate-Change|Spec-Change|Co-Authored-By|Signed-off-by|Refs):\s*(.*)$/i;
 const SPEC_ID = /\b(?:spec(?:'s)?\s+(?:sections?\s+)?\d{1,2}(?:\.\d{1,2})?|S\d{1,2}[a-d]?|N\d{1,2}|D\d)\b/i;
+// Spec-Change reasons of the directed swaps the build order names letter for letter (the same list as
+// the repo's commit-trailer-rules.ts DIRECTED_SWAP_TRAILERS): such a swap replaces a phase-0 file and
+// its test on purpose and serves no spec section, so this exact reason needs no spec id.
+const DIRECTED_SWAP_TRAILERS = ['with-shell final composer (phase 0 placeholder replaced)'];
 const NOT_IMPERATIVE = new Set('added adds adding fixed fixes fixing updated updates updating changed changes changing removed removes removing created creates creating improved improves improving refactored refactors refactoring implemented implements implementing made makes making moved moves moving renamed renames renaming deleted deletes deleting introduced introduces introducing bumped bumps bumping upgraded upgrades upgrading replaced replaces replacing cleaned cleans cleaning wrote writes writing merged merges merging tested tests testing'.split(' '));
 const VAGUE = /^(wip|misc|stuff|update|updates|changes|change|fix|fixes|tweak|tweaks|cleanup|work|progress|temp|tmp)$/i;
 // The gated paths of the platform, used when the repo has no quality-gates.json yet.
-const DEFAULT_GATED = ['quality-gates.json', 'eslint.config.mjs', 'tsconfig.base.json', 'tsconfig.json', '**/tsconfig.json', 'jest.config.js', 'jest.sim.config.js', 'stryker.config.json', 'knip.json', 'lefthook.yml', '.prettierrc.json', '.prettierignore', '.npmrc', '.claude/settings.json', 'packages/tooling/network-audit/**', 'packages/tooling/license-exceptions.json', 'packages/tooling/scripts/install-maestro.sh', 'babel.config.js', 'jest.setup.ts', 'tsconfig.stryker.json', 'test/goldens/boards/skia-golden.ts', '**/__snapshots__/*.golden.test.ts.snap', '**/*.golden.test.ts.snap.ios', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', '**/fixtures/save-v*.json', 'parity/waivers.json', 'parity/game-facts.json', 'packages/tooling/src/quality/verify-plan.ts', 'packages/tooling/src/quality/run-verify.ts', 'packages/tooling/src/quality/shell-slice.ts', 'packages/tooling/src/quality/device-only.ts'];
+const DEFAULT_GATED = ['quality-gates.json', 'eslint.config.mjs', 'tsconfig.base.json', 'tsconfig.json', '**/tsconfig.json', 'jest.config.js', 'jest.sim.config.js', 'stryker.config.json', 'knip.json', 'lefthook.yml', '.prettierrc.json', '.prettierignore', '.npmrc', '.claude/settings.json', 'packages/tooling/network-audit/**', 'packages/tooling/license-exceptions.json', 'packages/tooling/scripts/install-maestro.sh', 'babel.config.js', 'jest.setup.ts', 'tsconfig.stryker.json', 'test/goldens/boards/skia-golden.ts', '**/__snapshots__/*.golden.test.ts.snap', '**/*.golden.test.ts.snap.ios', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'perf-baselines/**', '**/fixtures/save-v*.json', 'parity/waivers.json', 'parity/game-facts.json', 'packages/tooling/src/quality/verify-plan.ts', 'packages/tooling/src/quality/run-verify.ts', 'packages/tooling/src/quality/shell-slice.ts', 'packages/tooling/src/quality/device-only.ts'];
 
 function git(repo, args) {
   const result = spawnSync('git', ['-C', repo, ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
@@ -172,6 +177,7 @@ function checkTrailers(add, lines, files, gated) {
     if (reason.trim().length < 10) add(entry.line, 'trailer-empty', `"${entry.text}" gives no real reason`, 'Say why in a few words: "Gate-Change: new daily golden for 2026-09-26 after the damage table change".');
   }
   for (const entry of find('Spec-Change')) {
+    if (DIRECTED_SWAP_TRAILERS.includes(entry.text.replace(/^[^:]+:\s*/, '').trim())) continue;
     if (!SPEC_ID.test(entry.text) && !/\bspec\s+\d/i.test(entry.text)) add(entry.line, 'spec-change-format', `"${entry.text.slice(0, 60)}" names no spec section`, 'Write "Spec-Change: spec <section or ID> <what changed>", for example "Spec-Change: spec 8.1 two stars now reach par + 3 (owner decision)".');
   }
   if (files === null) return;

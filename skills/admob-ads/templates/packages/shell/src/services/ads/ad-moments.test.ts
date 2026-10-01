@@ -27,7 +27,7 @@ const REQUEST: InterstitialRequest = {
 function setup(overrides: Partial<FakeAdsScript> = {}) {
   const calls: string[] = [];
   const ads = createFakeAds({
-    isRewardedLoaded: true,
+    rewardedStatus: 'ready',
     interstitialResult: 'shown',
     rewardResult: 'rewarded',
     calls,

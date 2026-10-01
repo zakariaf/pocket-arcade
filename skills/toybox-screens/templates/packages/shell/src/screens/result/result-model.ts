@@ -55,8 +55,14 @@ export type LoseResult = Omit<ResultBase, 'scoreText' | 'isNewBest'> & {
   readonly logo: LogoArt;
   /** games.<id>.loseReason; null falls back to result.lose.reason.no-moves. */
   readonly loseReason: string | null;
-  /** 'ad' = rewarded ad, 'premium' = free for owners, null = the game allows no continue or it is used. */
-  readonly continueOffer: 'ad' | 'premium' | null;
+  /**
+   * 'ad' = a rewarded ad is ready; 'ad-loading' = the same offer while its rewarded ad loads (the ad
+   * key busy: label kept, hopping blocks for the icon, pushed in, not pressable); 'premium' = free
+   * for owners; null = no continue: the game allows none, it is used, or nobody can give it. A loss
+   * nobody can rescue is recorded at once (L11, never strand a finished run), so a lose screen
+   * without the offer always shows a recorded loss.
+   */
+  readonly continueOffer: 'ad' | 'ad-loading' | 'premium' | null;
 };
 
 export type DailyResult = ResultBase & {

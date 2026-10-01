@@ -63,7 +63,10 @@
     "template": "packages/tooling/src/storekit/Premium.storekit.template",
     "entitlements": "packages/tooling/src/storekit/storekit-harness.entitlements",
     "flowsDir": "packages/shell/e2e/storekit/",
-    "allowedDir": "packages/tooling/src/storekit/"
+    "allowedDir": "packages/tooling/src/storekit/",
+    "relaunchFlows": ["02-refund-relaunch.yaml", "04-approval-relaunch.yaml"],
+    "relaunchWaitMs": 60000,
+    "relaunchWaitWhy": "A relaunch flow waits for the launch re-check (Transaction.all), which StoreKit answers only after storekitd has synced its transaction cache: on 2026-10-01 (iOS 26.5, Xcode 26.6) the query after testRefundAll took 28 s and a 15 s wait failed a correct app (the revocation arrived 2.6 s later)"
   },
   "catalogDir": "packages/shell/src/i18n/catalogs",
   "languages": [

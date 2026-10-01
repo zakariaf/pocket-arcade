@@ -739,13 +739,16 @@
       "id": "release-placeholder-ids",
       "area": "release",
       "topic": "Store gate",
-      "symptom": "check-game-app --stage complete, check-release-setup, check-store-artifact, store-gate.ts or audit-app-bundle fails on a placeholder: ca-app-pub-1234567890123456~1234567890 (or the ad units /1111111111, /2222222222, /3333333333), a com.example.* id, example.com or support@example.com",
-      "cause": "The scaffold writes placeholder AdMob ids until the owner creates the AdMob app and its three ad units (step G5), and ids from before owner decision O4 used com.example; the ship gates reject every placeholder by name",
-      "fix": "For the AdMob ids: owner step G5 (create the app and the three ad units, then give the ids), then write them into apps/<id>/game.config.ts; until then this failure is expected, by design. For the app id: it is fixed as io.applander.<game id without hyphens>, all lowercase (Line Siege: io.applander.linesiege), and Premium is <bundle id>.premium; new-game-scaffold writes it and withShell refuses any other",
+      "symptom": "A ship gate ends with owner-placeholder lines and OWNER STEPS PENDING: G3, G5 (check-game-app --stage complete, check-release-setup, check-store-artifact or audit-app-bundle with or without --unsigned, store-gate.ts, check-sim-app --variant store): ca-app-pub-1234567890123456~1234567890 (or the ad units /1111111111, /2222222222, /3333333333), example.com or support@example.com; or a com.example.* id",
+      "cause": "The scaffold writes placeholder AdMob ids until the owner creates the AdMob app and its three ad units (step G5), and the placeholder privacy-policy host and support address until the owner gives them with the App Privacy answers (step G3); every ship gate refuses each placeholder by name (rule owner-placeholder, from the shared ship-placeholders list) and no mode turns one into a pass. Ids from before owner decision O4 used com.example",
+      "fix": "Until the owner supplies G3 and G5 this is the expected result, by design: each gate ends with exactly the owner-placeholder lines, then OWNER STEPS PENDING: G3, G5, then RESULT: FAIL, and nothing else (Shell steps 11 and 12 and game step 14 say so). Never edit a gate or the list to pass. A pilot handed over before then ends with a slice report (check-report --kind slice): the rehearsal and these results under \"Not tested or not verified\", G3 and G5 under \"Owner steps (not blocking)\"; the release report follows the first upload. Then write the owner's values into apps/<id>/game.config.ts. The app id is fixed as io.applander.<game id without hyphens>, all lowercase, with Premium <bundle id>.premium",
       "match": [
         "ca-app-pub-1234567890123456",
         "com\\.example\\.",
-        "support@example\\.com"
+        "support@example\\.com",
+        "OWNER STEPS PENDING",
+        "\\[owner-placeholder\\]",
+        "placeholder privacy-policy host example\\.com"
       ],
       "status": "documented",
       "owner": true,
@@ -2810,7 +2813,10 @@
       "cause": "The commit-msg hook requires Gate-Change: <reason> for gated paths",
       "fix": "Get the owner's agreement, then commit the gate change with the trailer",
       "match": [
-        "Gate-Change"
+        "gate-change-missing",
+        "without a Gate-Change trailer",
+        "changed without Gate-Change",
+        "Gate-Change: <reason>"
       ],
       "status": "verified",
       "owner": false,
@@ -3761,7 +3767,7 @@
       "topic": "Purchases",
       "symptom": "The first storekit-harness.ts run on the pilot app fails at Metro readiness or flow order",
       "cause": "The Tier-2 runner and its seven flows had been verified step by step, never as a whole; the first whole runs (2026-09-30) failed 5 of 7 flows on the network guard blocking Metro, then 1 of 7 on a refund not undone after an offline launch",
-      "fix": "Both are fixed (testing-storekit-harness-metro-blocked, services-refund-after-offline-launch); the third run passed 7 of 7 on the pilot. Follow the release-day order in testing-tiers.md: the E2E run, then the harness on your own e07- simulator (maestro --device <udid> with its own driver port), then delete that simulator and run prebuild --clean before the store archive",
+      "fix": "Both are fixed (testing-storekit-harness-metro-blocked, services-refund-after-offline-launch); the third run passed 7 of 7 on the pilot, and the round-4 game clean room ran the harness again after the --udid to --device rename (2026-10-01 01:39, its own throwaway e07- simulator, since deleted): \"storekit: 0 of 7 scenario(s) failed\". Follow the release-day order in testing-tiers.md: the E2E run, then the harness on your own e07- simulator (maestro --device <udid> with its own driver port), then delete that simulator and run prebuild --clean before the store archive. Round 5 verified it again (2026-10-01, a fresh e07-r5-host-services-storekit simulator, its own Maestro driver port per flow): \"storekit: 0 of 7 scenario(s) failed\", then xcrun simctl delete and prebuild --clean (no StoreKitHarness target, no .storekit file left); and the integrator's final proof (2026-10-01 11:11, a fresh e07-r5-integrator-storekit simulator, seven driver ports) printed it once more, then simctl delete and prebuild --clean. A workspace copied with cp -Rc must lose apps/<game>/build/storekit first (build-derived-data-module-cache)",
       "match": [],
       "status": "verified",
       "owner": false,
@@ -5317,9 +5323,9 @@
       "id": "testing-coverage-untested-templates",
       "area": "testing",
       "topic": "Coverage",
-      "symptom": "npm run test:coverage fails on a repo built from the templates: Jest: \"global\" coverage threshold for statements (90%) not met: 83.8%",
-      "cause": "Template files that ship neither a test nor the device-only marker count at 0% (native adapters, Skia and frame-callback modules, composition files, model hooks)",
-      "fix": "Give each file a test (fakes, pure helpers, model hooks through renderWithShell) or, for native, Skia, frame-callback and composition files only, the line \"// device-only: covered by <e2e flow or simulator check>\" in its first 6 lines; jest.config.js leaves exactly the marked files out through packages/tooling/src/quality/device-only.ts. Never lower a threshold or hand-write coveragePathIgnorePatterns",
+      "symptom": "npm run test:coverage fails on a repo built from the templates: Jest: \"global\" coverage threshold for statements (90%) not met: 83.8% (or functions 89.8% right after a Shell build step)",
+      "cause": "Template files that ship neither a test nor the device-only marker count at 0% (native adapters, Skia and frame-callback modules, composition files, model hooks). Right after a build step the cause is the order: round 4 copied step-6 runtime files (route-guards.ts, board-direction-view.tsx, direction-context.tsx, i18n-provider.tsx, language-context.tsx, t-bridge.tsx, t-context.ts) while the tests that cover them waited for renderWithShell at step 7, so coverage fell to 89.8 % functions in between",
+      "fix": "Give each file a test (fakes, pure helpers, model hooks through renderWithShell) or, for native, Skia, frame-callback and composition files only, the line \"// device-only: covered by <e2e flow or simulator check>\" in its first 6 lines; jest.config.js leaves exactly the marked files out through packages/tooling/src/quality/device-only.ts. Between build steps, every step brings its files' tests: copy exactly the step's manifest (pocket-arcade-index), whose files land with their covering tests; check-index's step-import-closure rule reports a file whose covering tests only arrive later. Never lower a threshold or hand-write coveragePathIgnorePatterns",
       "match": [
         "coverage threshold for \\w+ \\(\\d+%\\) not met: [1-9]\\d\\.\\d+%"
       ],
@@ -5345,9 +5351,9 @@
       "id": "testing-render-with-shell-no-shell-context",
       "area": "testing",
       "topic": "Jest setup",
-      "symptom": "check-test-setup fails render-with-shell-missing although the only component test says // no-shell-context: in its header",
-      "cause": "An older check-test-setup counted tests that need no Shell providers",
-      "fix": "Use the current unit-and-component-tests: tests marked // no-shell-context: <why> are not counted; the helper is required once a component test needs the Shell",
+      "symptom": "check-test-setup fails render-with-shell-missing although the only component test says // no-shell-context: in its header, or at Shell step 5 for state-stores' progress-store.test.tsx before renderWithShell can exist",
+      "cause": "An older check-test-setup counted tests that need no Shell providers, and had no not-yet-due SKIP: renderWithShell imports the theme, the i18n providers and the test palette, so it lands only at Shell step 7 with the composition root",
+      "fix": "Use the current unit-and-component-tests: tests marked // no-shell-context: <why> are not counted, and before step 7 the rule prints SKIP packages/shell/src/testing/render-with-shell.tsx [render-with-shell-missing] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created (steps 5 and 6 name it). From step 7 the helper is required once a component test needs the Shell, and it is copied with the composition root",
       "match": [
         "render-with-shell-missing"
       ],
@@ -5373,11 +5379,12 @@
       "id": "gates-wiring-pending-targets",
       "area": "gates",
       "topic": "Guardrail",
-      "symptom": "check-gate-wiring fails script-target-missing for packages/tooling/src/i18n/verify-catalogs.ts and packages/tooling/src/audit/audit-network.ts on a fresh skeleton",
-      "cause": "Later skills build those two gate scripts (i18n-strings-and-catalogs, privacy-and-network-audit)",
-      "fix": "Run build step 1's command in full: check-gate-wiring.mjs . --pending packages/tooling/src/i18n/verify-catalogs.ts --pending packages/tooling/src/audit/audit-network.ts; drop each flag once its file exists",
+      "symptom": "check-gate-wiring prints SKIP package.json [script-target] npm run <script>: due at Shell step <n>: <target> not yet created on a fresh skeleton (round 4: it failed script-target-missing for packages/tooling/src/i18n/verify-catalogs.ts and packages/tooling/src/audit/audit-network.ts)",
+      "cause": "Later Shell steps copy those script targets: i18n:verify (step 6), audit:network, audit:privacy and build:ios:sim (step 8), e2e:ios and screenshots:ios (step 10), release:ios (step 11)",
+      "fix": "Nothing to fix before the step: the not-yet-due SKIP lines count as a pass and each one disappears at its step (Shell step 1 names all seven). A missing target of a step-1 script (verify, audit:licenses, new-game) is a problem at once. The old --pending flags are still accepted (they turn a SKIP line into a note)",
       "match": [
-        "script-target-missing"
+        "script-target-missing",
+        "\\[script-target\\]"
       ],
       "status": "verified",
       "owner": false,
@@ -5516,9 +5523,9 @@
       "id": "build-derived-data-module-cache",
       "area": "build",
       "topic": "Xcode",
-      "symptom": "npm run build:ios:sim fails with ** BUILD FAILED ** in a pod (Google-Mobile-Ads-SDK, openiap): a precompiled .pcm under apps/<game>/build/dd/ModuleCache.noindex \"was compiled with module cache path\" of another folder, then \"missing required module 'SwiftShims'\"",
+      "symptom": "npm run build:ios:sim fails with ** BUILD FAILED ** in a pod (Google-Mobile-Ads-SDK, openiap): a precompiled .pcm under apps/<game>/build/dd/ModuleCache.noindex (or the StoreKit harness's build/storekit, the archive's build/dd-device) \"was compiled with module cache path\" of another folder, then \"missing required module 'SwiftShims'\"",
       "cause": "The repo was copied or moved: the build script cleans ios/ but keeps apps/<game>/build/dd, and that DerivedData module cache still names the old repo path",
-      "fix": "Delete apps/<game>/build/dd (rm -rf apps/<game>/build/dd), then rerun the same build; after copying or moving a repo, delete build/dd and ios/ of each app before its first simulator build",
+      "fix": "Delete the copied DerivedData folders of the app (rm -rf apps/<game>/build/dd apps/<game>/build/storekit apps/<game>/build/dd-device), then rerun the same build; after copying or moving a repo, delete them and ios/ of each app before its first simulator build, harness run or archive (round 5: a cp -Rc workspace kept build/storekit and the harness's build-for-testing failed the same way)",
       "match": [
         "was compiled with module cache path",
         "missing required module 'SwiftShims'"
@@ -5620,8 +5627,8 @@
       "area": "testing",
       "topic": "Sims",
       "symptom": "check-balance fails [report-stale] although the rules and tuning did not change",
-      "cause": "The balance report's fingerprint covers the game's logic folders, the sim file and the game-kit files those import (followed through game-kit's own imports); one of them changed, or reports/ is gitignored and the local report was made before the change",
-      "fix": "Rerun npm run test:sim, then check-balance.mjs . --game <id>; never edit the report by hand. New game-kit files the sims do not import (timeline, particles, geometry) leave the report fresh",
+      "cause": "The balance report's fingerprint covers the game's logic folders, the sim file and the game-kit files those import (followed through game-kit's own imports); one of them changed, or reports/ is gitignored and the local report was made before the change. Round 4: the fingerprint also hashed the generated levels/pack-*.json, so generating the packs after the sims (Shell step 3) made the report stale at step 7",
+      "fix": "Rerun npm run test:sim, then check-balance.mjs . --game <id>; never edit the report by hand. New game-kit files the sims do not import (timeline, particles, geometry) leave the report fresh, and so do the generated pack-*.json files (the fingerprint leaves them out, so step 3's generate-levels after the sims keeps the report fresh); an older writer or checker that still hashes the packs reports report-stale right after generate-levels: copy the round-5 write-sim-report.ts and balance checker",
       "match": [
         "\\[report-stale\\]"
       ],
@@ -6101,6 +6108,433 @@
       "status": "verified",
       "owner": false,
       "skill": "naming-conventions"
+    },
+    {
+      "id": "engine-board-freeze-rewarded-continue",
+      "area": "engine",
+      "topic": "Animation clock",
+      "symptom": "After a rewarded continue (an ADS_MODE=test build: lose, tap \"Watch an ad to continue\", close the test video) the run resumes but the board stays on the continue's first frame: the tray is empty, the hearts are outlines, and a screenshot 5 s later is byte-identical; the next move redraws it. The Premium continue on the same seed animates",
+      "cause": "Cause class A, traced on the simulator 2026-10-01: runFullscreenAd's finally resumes the board, the continue scene is pushed ~20 ms later, the UI's frame for the old scene then reports done, and the round-4 use-board-clock compared that seq with a JS read of scene.get(), which still returned the old seq, so it stopped the continue scene before its first frame. A race: whether the UI runs a frame between the resume and the push decides it. Round 4 recorded the defect in admob-ads' smoke test and game-host-integration's session flow as \"reported to the board-rendering owner\"; this entry replaces those notes. Both device traces (perf-log entries of kind board-clock: the rewarded continue and the Premium continue on the same seed) are in board-rendering-skia's references/timeline-and-clock.md",
+      "fix": "board-rendering-skia's board-clock-state.ts (done messages carry their run; finishRun ignores a stale one; pushes while not runnable are held; every resume records a frame); check-board-code rule clock-runnable; admob-ads' ads-smoke/04-rewarded-continue.yaml asserts game.board-frame settled. Run the ads-smoke flows by hand on an ADS_MODE=test build after a fresh install started with xcrun simctl launch, never by e2e:ios. The integrator's final ADS_MODE=test build passed flows 1 to 5 on one fresh install (flow 4: game.board-frame settled for the continue's seq) and flow 6 on its own (2026-10-01)",
+      "match": [
+        "board stays on the continue",
+        "tray is empty, the hearts are outlines",
+        "byte-identical",
+        "rewarded continue",
+        "board-clock"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "board-rendering-skia"
+    },
+    {
+      "id": "parity-s15-ads-switch-off",
+      "area": "parity",
+      "topic": "Frame states",
+      "symptom": "[structure] s15-debug-menu dark-en: debug.list: shape differs: a 12.0 pt thick difference (52.0 x 30.3 pt) at +290.0,+325.7 from the element's top-left, inside its crop-only part debug.ads-always-test-switch.toggle",
+      "cause": "The s15-debug-menu frame state says \"ads always test on\", but nothing opened it: the capture showed the \"Always show test ads\" switch off, and check-harness passed because its harness-opener rule did not know the state",
+      "fix": "The debug-ads-always-test parity opener: e2e-maestro's use-debug-model.ts reads parityFrameState() === 'debug-ads-always-test' from app/parity/parity-session.ts and opens it once on mount through the switch's own handler (debug ads override always-test; never useParityOpener, which reads the gate and closes an import loop through the test-only entry), parity-plans gives the state to s15-debug-menu, and check-harness's harness-opener rule knows it (SKIP while S15 is outside shell-slice.json). Every other value of the state string comes from the fixture save and is checked on the capture",
+      "match": [
+        "debug\\.ads-always-test-switch",
+        "debug-ads-always-test",
+        "s15-debug-menu .*debug\\.list: shape differs"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
+      "id": "parity-s15-badge-high",
+      "area": "parity",
+      "topic": "Layout",
+      "symptom": "[bounds] debug.top-bar.badge: geometry off: dx -0.9 dy -12.3 dw +0.7 dh -0.4 pt (design 14.9,93.3 108.3 x 39.4; app 14,81 109 x 39; tolerance +-2 pt)",
+      "cause": "The S15 \"Test build\" badge sat 12 to 14 pt higher than the design in every variant: S15 was never captured, so its layout was never compared (the debug menu is test-only but still matched to its design, lead decision L12)",
+      "fix": "Build S15 to its design like every other screen (toybox-screens' S15 layout), then sign it off: check-screens.mjs . --screen S15 and check-signoff.mjs --screen S15 in light and dark times en and fa at its planned scroll offsets (Shell step 9 names both)",
+      "match": [
+        "debug\\.top-bar\\.badge"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "toybox-screens"
+    },
+    {
+      "id": "parity-s15-persian-digits",
+      "area": "parity",
+      "topic": "Digits",
+      "symptom": "[text-ink] s15-debug-menu light-fa: debug.jump-to-level-row.value: text \"۱۲\": ink width 4.0 vs design 10.7 pt (size, weight, family, letter-spacing or wrapping)",
+      "cause": "S15's labels stay English in every language (lead decision L13) but its numbers and dates follow the language's digits as the design draws them; the debug model built its values with String(n) and the wrong font run, so the Persian digits were drawn at the wrong size",
+      "fix": "use-debug-model.ts formats every number and date with the language's formatters (never String(n)), and S15's value text uses the type role the design uses; then recapture s15-debug-menu in fa (light and dark)",
+      "match": [
+        "debug\\.(jump-to-level|error-log)-row\\.value",
+        "s15-debug-menu .*text \"[۰-۹]"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "skills-parity-selftest-tooling-option",
+      "area": "skills",
+      "topic": "Pinned packages",
+      "symptom": "ERROR [bad-input] Unknown option '--tooling' (the toybox-visual-parity self-test, after every case ran)",
+      "cause": "The parity scripts take --tooling <dir> (or PARITY_TOOLING_DIR) for the folder that holds their pinned packages, but the round-4 selftest.mjs did not accept the option, so the step that says \"pass --tooling to every script\" failed there",
+      "fix": "The round-5 parity self-test reads its options first and passes --tooling to every suite (PARITY_TOOLING_DIR works the same; the shared check-testids accepts --tooling, PARITY_TOOLING_DIR, and the aliases --playwright and PLAYWRIGHT_DIR): node <parity skill>/scripts/selftest.mjs --tooling <repo>/.parity/tooling",
+      "match": [
+        "Unknown option '--tooling'",
+        "Unknown option --tooling"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
+      "id": "parity-signoff-date-utc",
+      "area": "parity",
+      "topic": "Sign-off ledger",
+      "symptom": "check-signoff --draft writes \"date\": \"2026-09-30\" into every parity/signoff.json entry at 01:17 local time on 2026-10-01 (the sign-off is recorded one day early)",
+      "cause": "The draft took the UTC calendar day; the waivers' reportedToOwner dates and the reports use the local day, the same rule the product uses for \"today\"",
+      "fix": "check-signoff --draft writes the local calendar day (round 5), and --date YYYY-MM-DD overrides it; with an older check-signoff, correct the drafted date to the local day before committing the ledger (check-signoff does not judge the date)",
+      "match": [
+        "one day early",
+        "check-signoff --draft writes",
+        "\"date\": \"\\d{4}-\\d{2}-\\d{2}\" .*UTC"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
+      "id": "testing-debug-setup-banner-open",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "Element not found: Text matching regex: Open (debug-setup.yaml in an ADS_MODE=test build, after the debug link moved the app to Game)",
+      "cause": "The sub-flow's guard runFlow when visible: 'Open' matched the AdMob test banner's OPEN call-to-action on Home (Maestro's text match ignores case), then tapOn 'Open' found nothing once the link had left Home. The E2E suite runs ADS_MODE=off and never sees it; admob-ads' smoke test reuses the sub-flow",
+      "fix": "Use the round-5 debug-setup.yaml (e2e-native, synced into e2e-maestro and premium-purchase): its guard matches only Apple's \"Open in .*?\" link alert and the tap below it is optional; check-flows rule open-alert-guard fails the old guard. Verified on an ADS_MODE=test build with the test banner on Home: the old sub-flow fails Tap on \"Open\", the new one passes",
+      "match": [
+        "Text matching regex: Open",
+        "Element not found: Text matching regex"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "services-eea-form-never-shows",
+      "area": "services",
+      "topic": "Consent",
+      "symptom": "Google's consent form (UMP) never appears in a test build: no S15 row, debug link value or build switch sets the consent geography, so the form shows only when the Mac's network geolocates to the EEA",
+      "cause": "debugServices.createConsent(geography) existed but no shipped file called it, while the smoke test and consent-flow.md said the debug menu sets the geography",
+      "fix": "Send geo=eea or geo=other in the first setup link after a fresh install (debugServices.setConsentGeography → createConsentPort with debugGeography; check-ads rule debug-geography-test-only). In a test build geo=other shows no GDPR form, but Google's sample AdMob app then shows its IDFA explainer before Apple's prompt (services-sample-idfa-explainer); the owner's app (no explainer, A3) shows Apple's prompt alone",
+      "match": [
+        "consent form .*never appears",
+        "UMP .*never",
+        "geo=eea",
+        "debug geography"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "services-att-alert-over-form",
+      "area": "services",
+      "topic": "Consent",
+      "symptom": "Apple's \"Allow ... to track\" alert appears while Google's consent form is still drawn behind it (iOS 26.5, ADS_MODE=test, geo=eea)",
+      "cause": "The consent moment asks App Tracking Transparency right after the form reports that it closed; the form's dismissal is still on screen when iOS presents the alert. The order is right: the form is answered, then the ATT prompt, then the banner",
+      "fix": "Nothing to fix: expected on iOS 26.5. A tester reads the form behind the alert as normal; only an ATT alert before the form is answered, or with ads mode off, is a bug (services-att-prompt)",
+      "match": [
+        "alert appears while .*form is still",
+        "ATT alert over the form",
+        "form .*behind the alert"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "testing-run-e2e-help-stack",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "Error: usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] ... (a Node stack trace from npm run e2e:ios -- --help)",
+      "cause": "run-e2e-ios.ts threw its usage text from parseCli instead of handling --help, so the flags (--sim, --flows-only, --write-perf-baseline) were only in e2e-maestro's SKILL.md",
+      "fix": "Use the round-5 run-e2e-ios.ts (e2e-native): --help and -h print the usage and exit 0, like build:ios:sim; until then read the flags in e2e-maestro's workflow",
+      "match": [
+        "Error: usage: npm run e2e:ios"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "gates-release-script-missing",
+      "area": "gates",
+      "topic": "Guardrail",
+      "symptom": "npm run release:ios fails with Cannot find module '<repo>/packages/tooling/src/release/release-ios.ts', or check-gate-wiring prints SKIP package.json [script-target] npm run release:ios: due at Shell step 11: packages/tooling/src/release/release-ios.ts not yet created",
+      "cause": "The bootstrap writes the canonical release:ios script at Shell step 1, but its target arrives only with ios-release-testflight's templates; round 4's step 11 never said to copy them, and check-gate-wiring did not look at script targets",
+      "fix": "At Shell step 11 copy ios-release-testflight's templates first (its workflow step 2: templates/packages/tooling/config/, src/release/ and src/asc/, as the step-11 manifest lists), then run the step's checks; check-gate-wiring's script-target rule then prints no SKIP line. Before step 11 the SKIP line is expected",
+      "match": [
+        "release-ios\\.ts",
+        "npm run release:ios"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "ios-release-testflight"
+    },
+    {
+      "id": "gates-report-outcome-limits",
+      "area": "gates",
+      "topic": "Reports",
+      "symptom": "[outcome-first] first line is 255 characters, the limit is 240 (round 4 printed only: the message starts with \"Line Siege can now be played end to end: ...\")",
+      "cause": "The outcome line has three limits: at most 240 characters, at most 2 sentences, and it ends in . or !; round 4's message named none of them",
+      "fix": "Shorten the first line to one plain sentence within the limits (split the rest into the next lines); check-report now prints one line per broken limit with its numbers (\"3 sentences, at most 2\", \"does not end in . or !\")",
+      "match": [
+        "\\[outcome-first\\]",
+        "the limit is 240",
+        "the message starts with"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "git-commits-and-reporting"
+    },
+    {
+      "id": "services-endless-result-stranded",
+      "area": "services",
+      "topic": "Run end",
+      "symptom": "An endless (or level) run lost with ads off, offline or no rewarded ad, and no Premium, never shows its result: no endless result with the score and New best, no lose result; the board just stays (e2e flow 13-endless with ads=off and premium=0)",
+      "cause": "The lost run waited for the player to take or decline the continue although no continue could be offered: the offer was hidden, so nothing ever ended the run (lead decision L11, \"never strand a finished run\")",
+      "fix": "Use the round-5 host and screens: isLossStranded(view, continueOffer) in game-host/run-end-policy.ts is true for a lost run whose continueState is offered, whose summary is null and whose offer is hidden; use-game-screen-model then sends { type: 'finish' } once per eventSeq, the run end is recorded, and the result shows at once. While the rewarded ad loads the offer is shown in its loading state (PerkOffer 'loading', AdsPort.rewardedStatus() 'loading'), so hidden always means unavailable. Flow 13-endless proves it with ads off and no Premium; check-game-host rule loss-not-stranded catches a host without the policy, and \"Assertion is false: id: result.endless-title is visible\" in 13-endless means the L11 parts are missing. Verified 2026-10-01: 13-endless passed in the integrator's E2E evidence run (ads off, no Premium)",
+      "match": [
+        "never shows (its|the) (endless )?result",
+        "stranded",
+        "isLossStranded",
+        "13-endless",
+        "Assertion is false: id: result\\.endless-title is visible"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "game-host-integration"
+    },
+    {
+      "id": "lint-step7-missing-core-files",
+      "area": "lint",
+      "topic": "Build order",
+      "symptom": "error TS2307: Cannot find module '@e07/shell/app/connect-audio-settings.ts' or its corresponding type declarations. (81 of these at Shell step 7)",
+      "cause": "Round 4's Shell step 7 named neither the files the composition root imports from settings-and-preferences, daily-and-statistics, toybox-screens and unit-and-component-tests nor those skills, so each file showed up only as a tsc error",
+      "fix": "Copy exactly Shell step 7's manifest in pocket-arcade-index's build orders (\"What each Shell step copies, installs and generates\"), with every skill it names loaded; check-index.mjs proves each step import-closed (rule step-import-closure). A TS2307 after following the manifest means the manifest is wrong: report it, never fetch files by following tsc errors",
+      "match": [
+        "TS2307: Cannot find module '@e07/shell/app/",
+        "Shell step 7"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "pocket-arcade-index"
+    },
+    {
+      "id": "testing-step6-tests-need-render-with-shell",
+      "area": "testing",
+      "topic": "Build order",
+      "symptom": "error TS2307: Cannot find module '@e07/shell/testing/render-with-shell.tsx' or its corresponding type declarations. (board-direction-view.test.tsx, route-guards.test.tsx or t.test.tsx at Shell step 6)",
+      "cause": "These tests render through renderWithShell, which imports the theme and lands at step 7; round 4 copied them (or their files) at step 6",
+      "fix": "The files and their tests land together at step 7 (board-direction-view, direction-context, route-guards, the i18n providers and contexts, t.tsx, use-localized-text-style and start-shell-imports.test.ts), as the step-6 and step-7 manifests list",
+      "match": [
+        "Cannot find module '@e07/shell/testing/render-with-shell\\.tsx'"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "pocket-arcade-index"
+    },
+    {
+      "id": "testing-save-benchmark-writes",
+      "area": "testing",
+      "topic": "E2E evidence",
+      "symptom": "check-e2e-report [save-benchmark]: the save benchmark made an unrecorded number of writes, not 300",
+      "cause": "The round-4 saveBenchmarkEntry (performance-budgets' save-benchmark.ts) wrote { p50, p95, max } only, so the evidence never said how many writes the percentiles came from",
+      "fix": "Use performance-budgets' round-5 save-benchmark.ts, whose entry records writes (BENCHMARK_WRITES, 300), and e2e-maestro's fake-debug-perf.ts, whose entry carries writes: 300 too; rebuild the test variant and rerun the E2E evidence run (smoke/04-debug-performance.yaml runs S15's Run save benchmark)",
+      "match": [
+        "unrecorded number of writes"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "performance-budgets"
+    },
+    {
+      "id": "testing-ads-smoke-close-too-early",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "An ads-smoke flow taps the test ad's close key, but the ad stays on screen (\"Test mode\" is still visible) and the next app assertion fails",
+      "cause": "Google's test full-screen ad ignores a tap on its close key until the key is ready, so one tap at a fixed point can land too early",
+      "fix": "Use admob-ads' round-5 ads-smoke flows: after the close tap they tap the close key again while \"Test mode\" is still visible (runFlow when visible), then assert the app",
+      "match": [
+        "close key",
+        "Test mode.*still visible"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "testing-storekit-harness-busy-mac",
+      "area": "testing",
+      "topic": "Purchases",
+      "symptom": "storekit-harness.ts: flows 02 to 06 time out (the relaunch re-checks never answer) and the runner prints \"storekit: the Mac is busy (load average ... on ... cores)\"",
+      "cause": "StoreKit's test store answers slowly on an overloaded Mac (round 5 saw a 1-minute load average of 450 to 630 on 12 cores), so a correct app times out; it is the Mac, not the app",
+      "fix": "Rerun the harness on a fresh e07- simulator once the load average is below twice the cores (the busy note names the limit); the round-5 runner gives each flow its own driver port and waits 60 s for the relaunch re-check (rules harness-maestro and harness-relaunch-wait)",
+      "match": [
+        "the Mac is busy \\(load average",
+        "StoreKit's test store answers slowly"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "premium-purchase"
+    },
+    {
+      "id": "testing-network-sampler-other-simulator",
+      "area": "testing",
+      "topic": "E2E evidence",
+      "symptom": "e2e:ios: network: the app opened non-loopback sockets (spec N3), with UDP ...->142.25x.x.x:443 lines, while every flow passes",
+      "cause": "The socket sampler watched every app process with the game's name on the Mac, so another session's ads-on copy of the app (Google's sockets) landed in this run's network.txt",
+      "fix": "Use the round-5 sampler: one sampler per simulator of the run, each given its UDID (appProcessPatterns, the shared sample-sockets.ts and network-runtime-layer.ts, the runner's socketSamplers); check-e2e-setup rule sampler-own-simulators fails the old form",
+      "match": [
+        "opened non-loopback sockets",
+        "sampler-own-simulators"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "testing-debug-perf-summary-stale",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "Assertion is false: \".*save p95 [0-9].*\", id: debug.perf-summary is visible (smoke/04-debug-performance.yaml, after Run save benchmark)",
+      "cause": "Either S15 read its outside state once and the React Compiler kept the stale value (an app build compiles S15 with it), or the flow tapped the benchmark row while the list was still gliding from a scroll",
+      "fix": "Use e2e-maestro's round-5 use-debug-model.ts, which reads S15's outside state through readDebugState(..., version) (check-e2e-setup rule debug-model), and the round-5 flow, which waits for the scroll to end (waitForAnimationToEnd) before it taps",
+      "match": [
+        "debug\\.perf-summary is visible",
+        "save p95"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "testing-maestro-hierarchy-500-hang",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "Exception in thread \"main\" UnknownFailure(errorResponse=Request for viewHierarchy failed, code: 500, body: ) in a screenshots:ios (or any Maestro) run, after which the Maestro process stays alive and the runner waits for ever",
+      "cause": "The XCTest driver could not answer a hierarchy request while the Mac was overloaded (2026-10-01: a 1-minute load average above 200 on 12 cores while a Release xcodebuild and two more simulators ran beside the screenshot matrix); Maestro's main thread died, but its JVM kept running, so the capture never ended",
+      "fix": "Stop that Maestro process only (it names your simulator's UDID and its own driver port; never another session's), wait until the load average is below twice the cores, and rerun the capture; run screenshots:ios, the E2E evidence run and the StoreKit harness alone, never beside a Release or archive build. Verified 2026-10-01: after stopping the hung Maestro the same screenshots:ios run on a quiet Mac captured all 176 screens, 0 changed",
+      "match": [
+        "Request for viewHierarchy failed, code: 500",
+        "UnknownFailure\\(errorResponse=Request for viewHierarchy failed"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "state-shell-app-test-at-step-7",
+      "area": "state",
+      "topic": "Build order",
+      "symptom": "[root-file-missing] packages/shell/src/app/shell-app.test.tsx at Shell step 7 (copied anyway, 2 of its 3 tests time out after 5 s waiting for Settings and Home)",
+      "cause": "The test renders Settings (S11) and Home (S4) through the real providers, and both are NotBuiltScreen stand-ins until step 9",
+      "fix": "It is the one deferred test of the Shell order: the step-7 manifest names it, and it joins with S11 at step 9; until then create-shell-app.test.tsx covers shell-app.tsx and check-game-host prints a slice SKIP for it (S11 not in shell-slice.json)",
+      "match": [
+        "shell-app\\.test\\.tsx",
+        "\\[root-file-missing\\]"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "game-host-integration"
+    },
+    {
+      "id": "services-ui-feedback-toggle-not-due",
+      "area": "services",
+      "topic": "Audio",
+      "symptom": "[ui-feedback] the Shell never plays its 'toggle' feedback (ui.toggle) (check-audio-haptics at Shell step 7)",
+      "cause": "The only toggle call sites are S11's settings actions and S6's pause model, which arrive at step 9",
+      "fix": "While S6 and S11 are outside shell-slice.json the toggle part of ui-feedback prints a slice SKIP (\"S11 not in shell-slice.json (nor S6)\"); Shell step 7's done-when names it, and the rule is strict once either screen is built",
+      "match": [
+        "never plays its 'toggle' feedback"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "game-audio-and-haptics"
+    },
+    {
+      "id": "services-sample-idfa-explainer",
+      "area": "services",
+      "topic": "Consent",
+      "symptom": "Google's \"Our app wants to stay free for you\" page (one Continue button) appears before Apple's tracking prompt in an ADS_MODE=test build with geo=other, after S3; IABTCF_gdprApplies is 0",
+      "cause": "Every ADS_MODE=test build uses Google's sample AdMob app id, and that sample app publishes an IDFA explainer message for non-EEA regions, so UMP shows it (and the Shell's S3 intro before it, because a UMP message is due) before Apple's prompt",
+      "fix": "Expected in test builds only: admob-ads' ads-smoke/06-geo-other.yaml expects S3, then the explainer (its Continue), asserts no GDPR form, then Apple's alert with the app's usage text. Never publish an IDFA explainer in the owner's AdMob console (console step A3); the owner's app then shows Apple's prompt alone outside the EEA (L10), which only a live build with the owner's AdMob ids (G5) can show; check-ad-behaviour's case \"prepareAds where consent is not required\" proves that path",
+      "match": [
+        "Our app wants to stay free for you",
+        "IDFA explainer"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "lint-jest-image-snapshot-types",
+      "area": "lint",
+      "topic": "Types",
+      "symptom": "error TS7016: Could not find a declaration file for module 'jest-image-snapshot'. (test/goldens/boards/skia-golden.ts)",
+      "cause": "jest-image-snapshot was installed without its companion @types/jest-image-snapshot; the plan printed only the package",
+      "fix": "Install both in one command: plan-dependency.mjs jest-image-snapshot (dependency-management) prints the companion @types/jest-image-snapshot; Shell step 7's manifest installs the pair",
+      "match": [
+        "TS7016: Could not find a declaration file for module 'jest-image-snapshot'"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "dependency-management"
+    },
+    {
+      "id": "gates-test-edits-directed-history",
+      "area": "gates",
+      "topic": "Test history",
+      "symptom": "[disabled-test-added] adds \"/** The shape the text must fit (a monster, a small cell): the text is\" (check-test-edits over a history that followed the skills; also code-without-test for a GENERATED file and assertion-changed for the step-8 with-shell swap)",
+      "cause": "Round 4's check-test-edits read prose in comments as a focused test (fit (), counted generated files and types-only modules as untested code, and the with-shell swap commit carried no Spec-Change trailer",
+      "fix": "The round-5 check-test-edits reads only code (comments and strings blanked; call forms of fit, fdescribe, xit, xtest, xdescribe and .only/.skip/.failing/.todo), exempts files whose first 3 lines say GENERATED by <tool path> and types-only modules from code-without-test, and the step-8 swap is committed with Spec-Change: with-shell final composer (phase 0 placeholder replaced). A history committed before these fixes keeps its lines: name them in the report, never rewrite history",
+      "match": [
+        "\\[disabled-test-added\\] adds \"/\\*\\*",
+        "text must fit \\(a monster",
+        "with-shell\\.test\\.ts.*\\[assertion-changed\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "tdd-workflow"
+    },
+    {
+      "id": "gates-perf-baseline-gated",
+      "area": "gates",
+      "topic": "Commit rules",
+      "symptom": "[gate-change-unneeded] a Gate-Change trailer but no gated file (the commit of perf-baselines/cold-start-sim-line-siege.json that e2e:ios asked for)",
+      "cause": "e2e-maestro's runner and rule 12 said to commit the cold-start baseline with a Gate-Change trailer, but round 4's quality-gates.json did not list perf-baselines/** as a gated path",
+      "fix": "perf-baselines/** is a gated path (the baseline sets the next runs' cold-start limit): commit it with Gate-Change: <why the baseline changed>; a baseline commit without the trailer fails gate-change-missing",
+      "match": [
+        "\\[gate-change-unneeded\\]",
+        "perf-baselines/"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "quality-gates"
+    },
+    {
+      "id": "i18n-debug-text-translated",
+      "area": "i18n",
+      "topic": "Catalogs",
+      "symptom": "[debug-english] a debug. text is translated in de, fa or ckb (copy-deck.mjs check or check-catalogs)",
+      "cause": "S15, the Debug menu, exists only in test builds, so its texts (every key under debug., debug.perf.* included) stay English in all four languages (lead decision L13); a translation drifts from the design and makes work for the owner's review",
+      "fix": "Put the en text into de, fa and ckb for every debug. key (copy-deck.mjs apply does it); the fa and ckb review sheet leaves debug keys out. Digits and dates inside debug values still follow the language",
+      "match": [
+        "\\[debug-english\\]",
+        "debug\\. text is translated"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "i18n-strings-and-catalogs"
     }
   ]
 }

@@ -4,7 +4,8 @@
 // the memory check (the game's smoke flows, then the feedback they asked for, read from the perf
 // log into feedback.json, then a relaunch, then `footprint` of the app: Maestro 2.10 stops the app
 // when a test ends, so the runner starts it again and the saved run resumes).
-// Writes reports/e2e/<game-id>/perf.json and feedback.json, reports/perf/sim-perf-log.json and, on
+// Writes reports/e2e/<game-id>/perf.json and feedback.json (and, after the flows step,
+// save-benchmark.json), reports/perf/sim-perf-log.json and, on
 // the first run or with --write-perf-baseline, perf-baselines/cold-start-sim-<game-id>.json.
 import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -12,6 +13,10 @@ import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
 import { feedbackEvidenceOf, feedbackFileText } from '@e07/tooling/e2e/feedback-evidence.ts';
+import {
+  saveBenchmarkEvidenceOf,
+  saveBenchmarkFileText,
+} from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import {
   baselineFileText,
   baselineMsFrom,
@@ -68,6 +73,19 @@ function readPerfLog(udid: string, app: AppInfo): unknown {
   } catch {
     return []; // no save.db or no perf_log table yet
   }
+}
+
+/**
+ * Right after the flows step: the newest save-benchmark entry the Shell's 04-debug-performance flow
+ * left in the perf log (S15's "Run save benchmark"), into reports/e2e/<game-id>/save-benchmark.json
+ * before any later step clears the app's data.
+ */
+export function recordSaveBenchmark(
+  run: { readonly udid: string; readonly app: AppInfo; readonly out: string },
+  flows: readonly string[],
+): void {
+  const evidence = saveBenchmarkEvidenceOf(readPerfLog(run.udid, run.app), flows);
+  writeFileSync(join(run.out, 'save-benchmark.json'), saveBenchmarkFileText(evidence));
 }
 
 const latestAt = (udid: string, app: AppInfo): number =>

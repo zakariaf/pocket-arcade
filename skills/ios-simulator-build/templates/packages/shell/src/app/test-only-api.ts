@@ -1,4 +1,5 @@
 // packages/shell/src/app/test-only-api.ts
+// device-only: covered by check-sim-setup entry-api-match and the E2E debug-link flows
 // The shape of TEST_ONLY: every member exists only in test builds. A member joins once the file
 // behind it exists (the S15 screen, e2e-maestro's debug kit, the parity harness, the perf log and
 // its debug actions and feedback recorders):
@@ -26,6 +27,7 @@ import type { AdsPort } from '@e07/shell/services/ads/ads-port.ts';
 import type { AudioPort } from '@e07/shell/services/audio/audio-port.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ConnectivityPort } from '@e07/shell/services/connectivity/connectivity-port.ts';
+import type { ConsentDebugTools } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
 import type { HapticsPort } from '@e07/shell/services/haptics/haptics-port.ts';
 import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
@@ -48,6 +50,11 @@ export type TestOnlyApi = {
   readonly createDebugServices: (deps: DebugServiceDeps) => DebugServices;
   /** <scheme>://debug/setup?...: started once the navigator is ready (start(Linking)). */
   readonly createDebugLinkHandler: (deps: DebugLinkDeps) => DebugLinkHandler;
+  /**
+   * admob-ads' consent debug tools: createDebugParts gives the debug services resetConsent for the
+   * debug link's geo=eea|other (only with ads on: an ADS_MODE=off build never calls Google's UMP).
+   */
+  readonly createAdmobConsentDebugAdapter: () => ConsentDebugTools;
   /** Blocks and counts JS fetch, XHR and WebSocket attempts (createDebugParts installs it first). */
   readonly installNetworkGuard: (
     scope: object,

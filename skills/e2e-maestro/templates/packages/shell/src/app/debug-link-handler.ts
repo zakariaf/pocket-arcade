@@ -1,8 +1,8 @@
 // packages/shell/src/app/debug-link-handler.ts
 // Test builds only, created through the test-only entry (TEST_ONLY.createDebugLinkHandler), so a
 // store bundle never contains it. It applies <scheme>://debug/setup?... in a fixed order: the
-// debug services (date, offline, premium, board layout, ads, seed: each kept in the test-only
-// key-value store), then one save write (settings, first run, level and star fixtures), then either
+// debug services (date, offline, premium, board layout, ads, seed, the consent geography: each kept
+// in the test-only key-value store), then one save write (settings, first run, level and star fixtures), then either
 // a direction reload (lang= flips the layout) or the requested screen. Before a reload it keeps the
 // screen in the same store; start() opens it once the reloaded navigator is ready, so a flow that
 // waits for the screen never notices the reload. S15's tools send typed requests through apply().
@@ -103,6 +103,7 @@ function applyServices(services: DebugServices, request: DebugLinkRequest): void
   if (request.ads !== undefined)
     services.setAdsOverride(request.ads === 'off' ? 'never' : 'always-test');
   if (request.seed !== undefined) services.setSeed(request.seed);
+  if (request.geo !== undefined) services.setConsentGeography(request.geo);
 }
 
 /** A level the game does not ship (the parser only knows 1..9999). */

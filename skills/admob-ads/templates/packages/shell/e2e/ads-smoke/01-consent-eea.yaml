@@ -1,0 +1,43 @@
+# packages/shell/e2e/ads-smoke/01-consent-eea.yaml — admob-ads' ads smoke test, step 1 (by hand, on
+# an ADS_MODE=test build, never through e2e:ios). Start from a fresh install with the tracking
+# answer reset, launched by simctl (Maestro's launchApp grants the App Tracking Transparency answer):
+#   xcrun simctl uninstall <udid> <bundle id>; xcrun simctl install <udid> <app>
+#   xcrun simctl privacy <udid> reset all <bundle id>; xcrun simctl launch <udid> <bundle id>
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
+# No ads= in the link: ads=test is S15's "Always show test ads", which drops the pacing rules that
+# step 3 proves (it is kept across launches, so a fresh install is the only way back).
+# geo=eea makes Google's UMP answer as for a player in the EEA on any network: S3 (the Shell's
+# intro), then Google's form, then Apple's prompt, then the first banner (spec S3, O1, L10).
+appId: ${APP_ID}
+name: Ads smoke 1 - EEA consent order, S3 then Google's form then Apple's prompt, then a banner
+tags: [ads-smoke]
+---
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=eea&lang=en&theme=light&firstRun=0&reduceMotion=1&boardLayout=1&seed=42&screen=home'
+      WAIT_FOR: 'consent.continue-button'
+- tapOn:
+    id: 'consent.continue-button'
+# system-ui: Google's UMP consent form (a web view from the AdMob console), not app text.
+- extendedWaitUntil:
+    visible: 'Consent'
+    timeout: 30000
+- waitForAnimationToEnd
+# system-ui: Google's form button.
+- tapOn: 'Consent'
+# system-ui: Apple's tracking alert. It may appear while Google's form is still drawn behind it;
+# wait for the alert's own button, never for the form to disappear (round 4, iOS 26.5).
+- extendedWaitUntil:
+    visible: 'Ask App Not to Track'
+    timeout: 30000
+# system-ui: Apple's tracking alert button (declining still serves ads, without the IDFA).
+- tapOn: 'Ask App Not to Track'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
+      id: 'home.banner-ad'
+    timeout: 60000

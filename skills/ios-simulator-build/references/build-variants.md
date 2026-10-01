@@ -124,7 +124,8 @@ After a build, `check-sim-app.mjs --app <path.app> --variant <v> --ads <m>` read
 |---|---|---|
 | `main.jsbundle` sentinel count | 1 or more | 0 |
 | `EXConstants.bundle/app.config` `extra.appVariant` / `extra.adsMode` | `test` / `test` or `off` | `store` / `live` or `off` |
-| `Info.plist` `GADApplicationIdentifier` | the sample ID | a real `ca-app-pub-<16 digits>~<10 digits>` for `live` (never the scaffold's `ca-app-pub-1234567890123456~1234567890`: owner step G5), the sample ID for `off` |
+| `Info.plist` `GADApplicationIdentifier` | the sample ID | a real `ca-app-pub-<16 digits>~<10 digits>` for `live`, the sample ID for `off` |
+| Owner placeholders (`owner-placeholder`) | the AdMob app id placeholder | the AdMob app id and (live) units `ca-app-pub-1234567890123456~1234567890`, `/1111111111`, `/2222222222`, `/3333333333` (owner step G5), the links `example.com` and `support@example.com` (owner step G3); then `OWNER STEPS PENDING: G3, G5` before `RESULT: FAIL`, the expected result until the owner supplies them |
 | `Info.plist` `CFBundleIdentifier` | `io.applander.<game>` (checked with `--game`) | `io.applander.<game>`, never `com.example.*` |
 | `NSUserTrackingUsageDescription` in `Info.plist` and in `en`, `de`, `fa`, `ckb.lproj/InfoPlist.strings` | required | required |
 | `*.storekit`, `*.xctest` in the bundle | allowed | none |

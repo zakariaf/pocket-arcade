@@ -35,26 +35,28 @@ One monorepo holds one reusable Shell and about 26 game apps. This skill keeps i
    | where a new file goes; adding a screen, a port or a game | [references/file-placement.md](references/file-placement.md) (the three recipes) |
 
 2. Copy the matching template and fill every `__PLACEHOLDER__` (table below; `__GAME_ID__` is the game's folder name). For a port, follow the port recipe and imitate [examples/clock-port/clock-port.ts](examples/clock-port/clock-port.ts), [examples/clock-port/system-clock-adapter.ts](examples/clock-port/system-clock-adapter.ts) and [examples/clock-port/fake-clock.ts](examples/clock-port/fake-clock.ts). Files marked "synced from the library" in the Files table are shared with other skills byte for byte: to change one, edit its canonical copy in the skill library's shared folder and run `node skills/_library/sync-shared.mjs`. For a game, imitate [examples/game-config.ts](examples/game-config.ts) and [examples/line-siege-module.ts](examples/line-siege-module.ts). Let Prettier format filled files.
-3. At the Shell's native step (every package on the plugin list installed in every app, before the first simulator build), copy `templates/with-shell.ts`, `templates/with-shell.test.ts`, `templates/shell-plugins.ts` and `templates/shell-plugins.test.ts` to `packages/shell/src/config/`, replacing the bootstrap's phase-0 composer and its test; then `npx jest packages/shell/src/config --ci --selectProjects unit --coverage --collectCoverageFrom='packages/shell/src/config/**/*.ts' --coverageThreshold='{}'` and `npx expo config --json` in every app (for each variant). Other skills name `shellPlugins` for their module; none adds a second list.
+3. At the Shell's native step (Shell step 8: every package on the plugin list installed in every app, before the first simulator build), copy `templates/with-shell.ts`, `templates/with-shell.test.ts`, `templates/shell-plugins.ts` and `templates/shell-plugins.test.ts` to `packages/shell/src/config/`, replacing the bootstrap's phase-0 composer and its test; then `npx jest packages/shell/src/config --ci --selectProjects unit --coverage --collectCoverageFrom='packages/shell/src/config/**/*.ts' --coverageThreshold='{}'` and `npx expo config --json` in every app (for each variant). The swap changes the phase-0 test's assertions on purpose, so commit it with this exact trailer line in the trailer paragraph (`check-test-edits` then accepts the changed assertions): `Spec-Change: with-shell final composer (phase 0 placeholder replaced)`. Other skills name `shellPlugins` for their module; none adds a second list.
 4. Stop and ask the owner before a fifth workspace, a new game-facing Shell module, a new vendor SDK, or a change to the zones: each is an architecture change that also edits `eslint.config.mjs` (with a `Gate-Change:` trailer) and this skill's `assets/architecture-rules.json`.
 5. Check (validation loop). When `node_modules` exist: `npm run lint`, `npm run typecheck`, `npm ls react react-native` (one version each), and in every app `npx expo config --json` (for the variants you touched), `npx expo install --check` and `npx expo-doctor`. Always: `node ${CLAUDE_SKILL_DIR}/scripts/check-layout.mjs .` and `node ${CLAUDE_SKILL_DIR}/scripts/check-boundaries.mjs .`. Fix every `FAIL` line (file, rule, fix) and rerun until both print `RESULT: PASS`.
 
+In a new repo each file lands at the Shell build step the project index gives it (named in the table); a later game or port reuses the same destinations.
+
 | Template | Destination in the app repo |
 |---|---|
-| `templates/package.root.json` | root `package.json` (the repo's one root manifest, synced from the library: workspaces, engines, overrides, scripts) |
-| `templates/package.game-kit.json`, `templates/package.shell.json`, `templates/package.tooling.json` | `packages/<name>/package.json` |
-| `templates/package.app.json` | `apps/<game-id>/package.json` |
-| `templates/app.config.ts`, `templates/index.ts`, `templates/game.config.ts`, `templates/metro.config.js` | `apps/<game-id>/` |
-| `templates/game-types.ts` | `apps/<game-id>/src/<game-id>-types.ts` |
+| `templates/package.root.json` | root `package.json` at Shell step 1, the bootstrap (the repo's one root manifest, synced from the library: workspaces, engines, overrides, scripts) |
+| `templates/package.game-kit.json`, `templates/package.shell.json`, `templates/package.tooling.json` | `packages/<name>/package.json` at Shell step 1 |
+| `templates/package.app.json` | `apps/<game-id>/package.json` at Shell step 1 |
+| `templates/app.config.ts`, `templates/index.ts`, `templates/game.config.ts`, `templates/metro.config.js` | `apps/<game-id>/`: the bootstrap writes them at Shell step 1 with a placeholder `index.ts`, and the 3-line `index.ts` replaces it at step 7 |
+| `templates/game-types.ts` | `apps/<game-id>/src/<game-id>-types.ts` at Shell step 7, with the game module |
 | `templates/port.ts`, `templates/vendor-port-adapter.ts`, `templates/fake-port.ts`, `templates/fake-port.test.ts` | `packages/shell/src/services/<port>/<port>-port.ts`, `<vendor>-<port>-adapter.ts`, `fake-<port>.ts`, `fake-<port>.test.ts` |
-| `templates/services-context.tsx` | `packages/shell/src/app/services-context.tsx` |
-| `templates/error-log-port.ts`, `templates/fake-error-log.ts`, `templates/fake-error-log.test.ts` | `packages/shell/src/services/error-log/` as is (the SQLite adapter comes from save-persistence-and-migrations) |
-| `examples/clock-port/clock-port.ts`, `fake-clock.ts`, `fake-clock.test.ts`, `system-clock-adapter.ts` | `packages/shell/src/services/clock/` as is, when missing (the same files the save skill ships) |
-| `templates/read-game-extra.ts`, `templates/read-game-extra.test.ts` | `packages/shell/src/app/` (needs `valibot` in the Shell and `expo-constants` in every app and as a Shell peer) |
-| `templates/app-variant.ts`, `templates/app-variant.test.ts` | `packages/shell/src/config/` |
-| `templates/with-shell.ts`, `templates/with-shell.test.ts`, `templates/shell-plugins.ts`, `templates/shell-plugins.test.ts` | `packages/shell/src/config/` at the Shell's native step: they replace the bootstrap's phase-0 `with-shell.ts` and its test once every plugin's package is installed (app-wiring-and-variants.md, "withShell") |
-| `templates/test-only.ts`, `templates/test-only-api.ts`, `templates/test-only-entry.ts` | `packages/shell/src/app/` at Shell step 4, with the save layer: the gate and the one shared test-only pair. At steps 4 to 6 the pair holds only `TEST_BUILD_SENTINEL` (the Shell core's members join at step 7) (delete every other member and its export: a member joins once the file behind it exists), so `test-only.ts` compiles from step 4; `DebugScreen` stays out while S15 is outside `shell-slice.json` |
-| `templates/with-app-variant-marker.ts` | `packages/shell/plugins/with-app-variant-marker.ts` (the shape of every local config plugin) |
+| `templates/services-context.tsx` | `packages/shell/src/app/services-context.tsx` at Shell step 7, with the composition root |
+| `templates/error-log-port.ts`, `templates/fake-error-log.ts`, `templates/fake-error-log.test.ts` | `packages/shell/src/services/error-log/` as is at Shell step 4, with the save layer (the SQLite adapter comes from save-persistence-and-migrations) |
+| `examples/clock-port/clock-port.ts`, `fake-clock.ts`, `fake-clock.test.ts`, `system-clock-adapter.ts` | `packages/shell/src/services/clock/` as is, when missing (the same files the save skill ships at Shell step 4) |
+| `templates/read-game-extra.ts`, `templates/read-game-extra.test.ts` | `packages/shell/src/app/` at Shell step 7, with the composition root (needs `valibot` in the Shell and `expo-constants` in every app and as a Shell peer) |
+| `templates/app-variant.ts`, `templates/app-variant.test.ts` | `packages/shell/src/config/` at Shell step 1, the bootstrap |
+| `templates/with-shell.ts`, `templates/with-shell.test.ts`, `templates/shell-plugins.ts`, `templates/shell-plugins.test.ts` | `packages/shell/src/config/` at the Shell's native step (Shell step 8): they replace the bootstrap's phase-0 `with-shell.ts` and its test once every plugin's package is installed (app-wiring-and-variants.md, "withShell") |
+| `templates/test-only.ts`, `templates/test-only-api.ts`, `templates/test-only-entry.ts` | `packages/shell/src/app/` at Shell step 6 (the boot pieces that compile alone): the gate and the one shared test-only pair. At step 6 the pair holds only `TEST_BUILD_SENTINEL` (delete every other member and its export: a member joins once the file behind it exists), so `test-only.ts` compiles; the Shell core's members join at step 7, where `hydrate-save.ts` is the first save file that imports the gate. No step-4 or step-5 template imports it. `DebugScreen` stays out while S15 is outside `shell-slice.json` |
+| `templates/with-app-variant-marker.ts` | `packages/shell/plugins/with-app-variant-marker.ts` at Shell step 1, the bootstrap (the shape of every local config plugin) |
 
 ## Definition of done
 
@@ -74,6 +76,7 @@ One monorepo holds one reusable Shell and about 26 game apps. This skill keeps i
 - **Letting an SDK leak past its adapter.** A screen that imports `expo-iap` (or `expo-sqlite/kv-store`, which ESLint's bare-name ban misses) couples the UI to a vendor and to native code in Jest; take the port from `useServices()`.
 - **`import type` from `with-shell.ts` or tooling "because it is only a type".** It still pulls Node into the app program; move the type to a neutral file.
 - **An `IS_TEST_BUILD` constant around `require()`.** Metro keeps the module in the store bundle; only the literal comparison in `test-only.ts` strips it.
+- **Test-only code reading `TEST_ONLY`.** The debug screen, its model, the parity harness and the perf tools are reached from `test-only-entry.ts`; importing `app/test-only.ts` again (directly or through `use-parity-opener.ts` or `use-reduce-motion.ts`) closes an import loop through the gate (`import-cycle`). They import the member from its own file, such as `parityFrameState` from `app/parity/parity-session.ts`.
 - **Reading `game.config.ts` at runtime, or `null` in `extra`.** Runtime values come from `expo.extra.game` through `readGameExtra()`, with absent keys instead of `null`.
 - **Creating stores, databases or adapters at module level.** A direction reload re-runs every module and doubles the writes; create them in the composition root (`createDeviceAdapters()`, `createShellParts`).
 - **Editing `ios/` or setting native options outside `withShell`.** Prebuild regenerates `ios/`; use a config plugin in `packages/shell/plugins/`.
@@ -115,7 +118,7 @@ One monorepo holds one reusable Shell and about 26 game apps. This skill keeps i
 | `templates/app-variant.ts` | `resolveBuildVariant`: the variant matrix as code | New repo; a variant change |
 | `templates/app-variant.test.ts` | Its tests (defaults, mismatch, forbidden pairs) | With `app-variant.ts` |
 | `templates/test-only.ts` | The literal gate that strips test-only code from store bundles | New repo |
-| `templates/test-only-api.ts` | `TestOnlyApi`, the type of the one shared test-only pair (synced from the library; do not edit here): one member per entry export; trim it to the members whose files exist (sentinel-only at Shell steps 4 to 7) | Shell step 4 (sentinel only), then each step that adds a member's file |
+| `templates/test-only-api.ts` | `TestOnlyApi`, the type of the one shared test-only pair (synced from the library; do not edit here): one member per entry export; trim it to the members whose files exist (sentinel-only at Shell step 6) | Shell step 6 (sentinel only), then each step that adds a member's file |
 | `templates/test-only-entry.ts` | The pair's entry: every test-only export `@public` plus `TEST_BUILD_SENTINEL` (synced from the library; do not edit here) | With `test-only-api.ts` |
 | `templates/with-app-variant-marker.ts` | A local config plugin (default export, `@public`) | A new config plugin |
 | [examples/clock-port/clock-port.ts](examples/clock-port/clock-port.ts) | A complete port type (the four clock files are synced from the library) | Workflow step 2 (ports); copy when the clock files are missing |
@@ -124,8 +127,8 @@ One monorepo holds one reusable Shell and about 26 game apps. This skill keeps i
 | [examples/clock-port/fake-clock.test.ts](examples/clock-port/fake-clock.test.ts) | The fake's tests | Workflow step 2 (ports) |
 | [examples/game-config.ts](examples/game-config.ts) | A complete `game.config.ts` (Line Siege) | Workflow step 2 (games) |
 | [examples/line-siege-module.ts](examples/line-siege-module.ts) | A game's `src/index.ts`: assembly only | Workflow step 2 (games) |
-| `scripts/check-boundaries.mjs` | Resolves every import and checks zones, purity, game-facing modules, Node world, vendor SDKs, banned packages, the test-only gate, `../` and cycles | Workflow step 4 |
-| `scripts/check-layout.mjs` | Checks workspaces, manifests, one React, native deps, app wiring, folders, port triples, placement and import-time work | Workflow step 4 |
+| `scripts/check-boundaries.mjs` | Resolves every import and checks zones, purity, game-facing modules, Node world, vendor SDKs, banned packages, the test-only gate, `../` and cycles (a loop back through the test-only gate is named as such) | Workflow step 5 |
+| `scripts/check-layout.mjs` | Checks workspaces, manifests, one React, native deps, app wiring, folders, port triples, placement and import-time work | Workflow step 5 |
 | `scripts/lib/import-graph.mjs` | Builds and resolves the import graph (workspace `exports`, built-ins, packages), finds cycles and Node-world reach | Only when changing a checker |
 | `scripts/lib/source-scan.mjs` | Dependency-free lexer for comments, strings and imports (synced from the library; do not edit here) | Only when changing a checker |
 | `scripts/lib/workspaces.mjs` | Reads the workspace packages (synced from the library) | Only when changing a checker |

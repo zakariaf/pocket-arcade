@@ -1,0 +1,2 @@
+SKIP packages/shell/src/app/start-shell.ts [polyfill-first] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created
+SKIP packages/shell/src/i18n [i18n-runtime] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created (t.tsx, t.test.tsx, i18n-provider.tsx, t-bridge.tsx, t-context.ts, language-context.tsx and test/integration/i18n/start-shell-imports.test.ts land with it)

@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
-import { createReporter, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
+import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { findCalls, findImports, findJsxTags, jsxAttributes, literalOf, maskCode } from './lib/source-scan.mjs';
 
 const SPEC = {
@@ -37,6 +37,10 @@ const SPEC = {
     '                      formatDayMonth(...) / formatWeekdayDayMonth(...) or a t() call given a *Name/*Text value; wrap it in',
     '                      stripIsolates() (i18n/bidi.ts) first, or nested FSI/PDI make CoreText flip the date in fa',
     '  polyfill-first      packages/shell/src/app/start-shell.ts must import the Intl polyfills first',
+    '  i18n-runtime        once the boot exists (start-shell.ts, Shell step 7), so do the i18n files that land with it:',
+    '                      i18n/t.tsx and t.test.tsx, i18n-provider.tsx, t-bridge.tsx, t-context.ts, language-context.tsx',
+    '                      and test/integration/i18n/start-shell-imports.test.ts (their tests need renderWithShell or',
+    '                      start-shell.ts). Before step 7 both boot rules print a not-yet-due SKIP line',
     '  polyfill-locales    intl-polyfills.ts must force Locale/PluralRules/NumberFormat with en, de, fa, ckb data only',
     '  jest-polyfills      jest.config.js must list intl-polyfills.ts in setupFiles',
     '',
@@ -51,6 +55,20 @@ const T_CALL = '(?:[A-Za-z_$][A-Za-z0-9_$]*\\.)?t';
 const TEXT_PROPS = new Set(['text', 'label', 'title', 'hint', 'message', 'placeholder', 'subtitle', 'description', 'caption', 'summary', 'accessibilityLabel', 'accessibilityHint']);
 const LETTER = /\p{L}/u;
 const POLYFILL_FILE = 'packages/shell/src/i18n/intl-polyfills.ts';
+/**
+ * The i18n files that land at Shell step 7 with the boot (start-shell.ts) and renderWithShell, not at
+ * the i18n step 6: their tests render through the Shell or read start-shell.ts, and nothing at step 6
+ * imports them (a file without its test at step 6 only lowers coverage).
+ */
+const RUNTIME_FILES = [
+  'packages/shell/src/i18n/t.tsx',
+  'packages/shell/src/i18n/t.test.tsx',
+  'packages/shell/src/i18n/i18n-provider.tsx',
+  'packages/shell/src/i18n/t-bridge.tsx',
+  'packages/shell/src/i18n/t-context.ts',
+  'packages/shell/src/i18n/language-context.tsx',
+  'test/integration/i18n/start-shell-imports.test.ts',
+];
 const POLYFILL_IMPORT = '@e07/shell/i18n/intl-polyfills.ts';
 const EXPECTED_POLYFILLS = [
   '@formatjs/intl-getcanonicallocales/polyfill.js',
@@ -227,7 +245,16 @@ run(async () => {
       report.problem({ file: shown(POLYFILL_FILE), line: 1, rule: 'polyfill-locales', message: `the polyfill imports are not the required list (${detail})`, fix: 'Copy templates/shell-i18n/intl-polyfills.ts: getcanonicallocales (conditional), then Locale, PluralRules + en/de/fa/ckb, NumberFormat + en/de/fa/ckb, all forced.' });
     }
   }
-  const startShell = join(root, 'packages/shell/src/app/start-shell.ts');
+  const startShell = join(root, SHELL_DUE_TARGETS.boot.file);
+  const bootNotDue = dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (bootNotDue) {
+    report.skip({ file: shown(SHELL_DUE_TARGETS.boot.file), rule: 'polyfill-first', message: bootNotDue });
+    report.skip({ file: shown('packages/shell/src/i18n'), rule: 'i18n-runtime', message: `${bootNotDue} (t.tsx, t.test.tsx, i18n-provider.tsx, t-bridge.tsx, t-context.ts, language-context.tsx and test/integration/i18n/start-shell-imports.test.ts land with it)` });
+  } else {
+    for (const file of RUNTIME_FILES.filter((rel) => !existsSync(join(root, rel)))) {
+      report.problem({ file: shown(file), line: 1, rule: 'i18n-runtime', message: `${file} is missing, but the boot (start-shell.ts) exists: Shell step 7 brings it`, fix: 'Copy it from templates/shell-i18n/ (templates/root-test/ for start-shell-imports.test.ts) in the same step as start-shell.ts, with its test.' });
+    }
+  }
   if (existsSync(startShell)) {
     const first = findImports(readFileSync(startShell, 'utf8'))[0];
     if (!first || first.from !== POLYFILL_IMPORT || !/^import\s*['"]/.test(first.text)) {

@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 // check-catalogs.mjs: lints every Pocket Arcade message catalog (Shell and games) with rules
-// L1-L12, and checks all four languages against English (missing/extra keys, placeholders, =N).
+// L1-L12, and checks all four languages against English (missing/extra keys, placeholders, =N,
+// and P5 debug-english: the S15 debug menu's debug.* texts stay English in every language).
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-catalogs.mjs [repo-root | catalog-dir...]
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
-import { LANGUAGES, lineOfKey, lintMessage, parityProblems, requiredGameKeys, RULES, ruleLabel, SOURCE_LANGUAGE } from './lib/catalog-rules.mjs';
+import { debugEnglishProblem, LANGUAGES, lineOfKey, lintMessage, parityProblems, requiredGameKeys, RULES, ruleLabel, SOURCE_LANGUAGE } from './lib/catalog-rules.mjs';
 
 const RULE_SUMMARIES = {
   L1: '2-5 lowercase kebab-case segments',
@@ -27,13 +28,14 @@ const RULE_SUMMARIES = {
   P2: 'no key that en lacks',
   P3: 'same placeholders and types as en',
   P4: 'same =N plural branches as en',
+  P5: 'debug.* texts (S15) equal en in de, fa and ckb',
   F1: 'en/de/fa/ckb.json exist, flat objects of strings',
   G1: 'a game catalog holds <game-id>.name, <game-id>.win-title and <game-id>.tagline (the identity keys)',
 };
 
 const SPEC = {
   name: 'check-catalogs',
-  summary: 'Checks the message catalogs of the Shell (packages/shell/src/i18n/catalogs/) and of every game (apps/<game-id>/src/i18n/): key shape and namespace, ICU syntax, placeholders, plurals, digits, bidi controls, Persian letters and punctuation, whole sentences, sorting, and parity of de/fa/ckb with en.',
+  summary: 'Checks the message catalogs of the Shell (packages/shell/src/i18n/catalogs/) and of every game (apps/<game-id>/src/i18n/): key shape and namespace, ICU syntax, placeholders, plurals, digits, bidi controls, Persian letters and punctuation, whole sentences, sorting, parity of de/fa/ckb with en, and the English debug menu (debug.* texts equal en in every language).',
   usage: '[repo-root | catalog-dir...]',
   options: {
     root: { type: 'string', value: 'dir', help: 'App repo root, used to find the catalogs when no folder is given (same as a positional repo-root)' },
@@ -142,6 +144,8 @@ run(async () => {
           continue;
         }
         if (typeof source.data[key] !== 'string' || typeof target.data[key] !== 'string') continue;
+        const debugProblem = debugEnglishProblem(key, source.data[key], target.data[key], language);
+        if (debugProblem) report.problem({ file: shown(target.file), line: lineOfKey(target.text, key), rule: ruleLabel(debugProblem.id), message: `${key}: ${debugProblem.message}`, fix: RULES.P5[1] });
         for (const problem of parityProblems(source.data[key], target.data[key])) {
           report.problem({ file: shown(target.file), line: lineOfKey(target.text, key), rule: ruleLabel(problem.id), message: `${key}: ${problem.message}`, fix: RULES[problem.id][1] });
         }

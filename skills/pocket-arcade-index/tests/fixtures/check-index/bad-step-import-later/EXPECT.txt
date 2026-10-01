@@ -1,0 +1,2 @@
+[step-import-closure]
+packages/shell/src/core/core.ts (step 1, alpha-one) imports packages/shell/src/core/util.ts, which step 2 copies (alpha-one)

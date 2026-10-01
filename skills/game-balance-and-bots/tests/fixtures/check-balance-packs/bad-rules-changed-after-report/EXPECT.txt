@@ -1,0 +1,3 @@
+[report-stale]
+reports/sim/line-siege.json:3
+not the generated pack-*.json

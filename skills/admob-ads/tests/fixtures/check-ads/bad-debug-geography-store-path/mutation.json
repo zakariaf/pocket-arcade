@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/consent-factory.ts",
+      "find": "  return createAdmobConsentAdapter(options);",
+      "with": "  // Planted: every build asks UMP as if the player were in the EEA.\n  return createAdmobConsentAdapter({ ...options, debugGeography: 'eea' });"
+    }
+  }
+]

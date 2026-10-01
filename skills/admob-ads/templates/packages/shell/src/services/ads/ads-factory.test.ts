@@ -11,7 +11,9 @@ describe('createAdsPort', () => {
   it('returns an adapter that never shows anything when ADS_MODE=off', async () => {
     const ads = createAdsPort({ adsMode: 'off', adUnits: null }, () => undefined);
     await expect(ads.showInterstitial()).resolves.toBe('unavailable');
-    expect(ads.isRewardedLoaded()).toBe(false);
+    ads.preloadRewarded();
+    // L11: with ads off the rewarded ad can never come, so a lost run ends at once.
+    expect(ads.rewardedStatus()).toBe('unavailable');
   });
 
   it('refuses live mode without unit IDs', () => {
@@ -27,6 +29,7 @@ describe('createAdsPort', () => {
     ] as const) {
       const ads = createAdsPort(extra, () => undefined);
       await expect(ads.showRewarded()).resolves.toBe('unavailable');
+      expect(ads.rewardedStatus()).toBe('unavailable'); // before initialize
     }
   });
 });

@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { createReporter, isBinary, lineOf, maskComments, parseArgs, REPO_SCAN_IGNORES, requireDir, run, walk } from './check-lib.mjs';
 import { partialShellProblems } from './lib/shell-complete.mjs';
 import { readPlist } from './lib/plist.mjs';
-import { appIdOf, placeholdersInText } from './lib/ship-placeholders.mjs';
+import { appIdOf, finishWithOwnerSteps, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
@@ -28,10 +28,16 @@ const SPEC = {
     '                      testFlightInternalTestingOnly true (test) / false (store)',
     "  game-config         every apps/<game>/game.config.ts has one `version: 'X.Y.Z'` and exactly one `buildNumber: <int>,` line,",
     "                      bundleId io.applander.<game id without hyphens> and premium productId <bundleId>.premium (owner",
-    '                      decision O4), and none of the scaffold placeholders: com.example.* ids, the AdMob app',
+    '                      decision O4), and no com.example.* id',
+    '  owner-placeholder   a scaffold value the owner replaces, by field: the AdMob app',
     '                      ca-app-pub-1234567890123456~1234567890 and units /1111111111, /2222222222, /3333333333 (owner',
-    '                      step G5), the privacy host example.com or support@example.com (owner step G3)',
+    '                      step G5), the privacy host example.com and support@example.com (owner step G3). The line before',
+    "                      RESULT is then 'OWNER STEPS PENDING: G3, G5' (the steps still pending) and the result stays FAIL:",
+    '                      until the owner supplies them these are the only expected FAIL lines',
     '  npm-script          root package.json release:ios runs packages/tooling/src/release/release-ios.ts',
+    "  release-files       the release templates are installed: packages/tooling/config/ (this skill's",
+    '                      templates/packages/tooling/config/), src/release/ (templates/packages/tooling/src/release/) and',
+    '                      src/asc/ (templates/packages/tooling/src/asc/), each with its tests (Shell step 11)',
     '  release-prereqs     root package.json has the verify, audit:privacy and audit:network scripts release:ios runs',
     '  api-key-signing     the archive uses -allowProvisioningUpdates and the three -authenticationKey* flags; no .p12 or security import',
     '  key-read            only packages/tooling/src/asc/asc-credentials.ts reads AuthKey_*.p8',
@@ -56,16 +62,31 @@ const DENY_RULES = ['Read(~/.appstoreconnect/**)', 'Read(**/*.p8)', 'Read(**/Aut
 const PRIVATE_KEY_TEXT = new RegExp(['-----BEGIN ', '(?:EC |RSA )?', 'PRIVATE KEY-----'].join(''));
 const SECRET_FILE = /(^|\/)(AuthKey_[^/]*|ApiKey_[^/]*|[^/]+\.p8|[^/]+\.p12|[^/]+\.mobileprovision)$/;
 
+/** The release templates by folder (Shell step 11 copies all three; tests come with them). */
+const RELEASE_FILES = {
+  'templates/packages/tooling/src/release/': ['release-ios.ts', 'release-preflight.ts', 'release-build.ts', 'release-upload.ts', 'release-runner.ts', 'release-options.ts', 'release-failures.ts', 'store-gate.ts', 'processing.ts', 'what-to-test.ts', 'build-number.ts', 'bump-build-number.ts', 'translation-review.ts'].map((name) => `packages/tooling/src/release/${name}`),
+  'templates/packages/tooling/src/asc/': ['asc-jwt.ts', 'asc-credentials.ts', 'asc-client.ts', 'find-app.ts', 'print-app-record.ts', 'beta-notes.ts'].map((name) => `packages/tooling/src/asc/${name}`),
+};
+
 function read(root, rel) {
   const abs = join(root, rel);
   return existsSync(abs) ? readFileSync(abs, 'utf8') : null;
+}
+
+/** Each missing release file names the template folder that brings it. */
+function checkReleaseFiles(ctx) {
+  for (const [folder, files] of Object.entries(RELEASE_FILES)) {
+    for (const rel of files) {
+      if (!existsSync(join(ctx.root, rel))) ctx.problem(rel, 0, 'release-files', 'is missing', `Copy this skill's ${folder} into packages/tooling/src/${folder.split('/').at(-2)}/ (every file with its test; Shell step 11 installs config/, src/release/ and src/asc/ together), then rerun.`);
+    }
+  }
 }
 
 function checkExportOptions(ctx) {
   for (const variant of ['test', 'store']) {
     const rel = `packages/tooling/config/export-options-${variant}.plist`;
     if (!existsSync(join(ctx.root, rel))) {
-      ctx.problem(rel, 0, 'export-options', 'file is missing', `Copy templates/packages/tooling/config/export-options-${variant}.plist.`);
+      ctx.problem(rel, 0, 'export-options', 'file is missing', `Copy this skill's templates/packages/tooling/config/export-options-${variant}.plist into packages/tooling/config/ (Shell step 11, with src/release/ and src/asc/).`);
       continue;
     }
     const plist = readPlist(join(ctx.root, rel));
@@ -99,8 +120,8 @@ function checkAppIds(ctx, full, source, game) {
   if (product !== null && product[1] !== `${wanted}.premium`) ctx.problem(full, lineOf(source, product.index), 'game-config', `premium productId is '${product[1]}', not '${wanted}.premium'`, 'Premium is <bundleId>.premium (owner decision O4).');
   for (const found of placeholdersInText(source)) {
     if (found.value === bundle?.[1] || found.value === product?.[1]) continue; // reported above
-    const step = found.name.includes('AdMob') ? 'owner step G5: the owner creates the AdMob app and its units and gives the agent the ids' : found.name.includes('bundle') ? 'owner decision O4: io.applander.<game id>' : "owner step G3: the owner's privacy-policy host and support address, with the store listing";
-    ctx.problem(full, lineOf(source, found.index), 'game-config', `holds ${found.name} (${found.value})`, `A release never ships a scaffold placeholder; ${step}.`);
+    if (found.entry.ownerStep === null) ctx.problem(full, lineOf(source, found.index), 'game-config', `holds ${found.name} (${found.value})`, 'A release never ships a scaffold placeholder; owner decision O4: io.applander.<game id>.');
+    else ctx.report.problem(ownerPlaceholderProblem({ entry: found.entry, file: full, line: lineOf(source, found.index) }));
   }
 }
 
@@ -120,12 +141,12 @@ function checkScriptsAndSigning(ctx) {
   const options = read(ctx.root, optionsRel) ?? '';
   const flags = ['-allowProvisioningUpdates', '-authenticationKeyPath', '-authenticationKeyID', '-authenticationKeyIssuerID'];
   const missing = flags.filter((flag) => !options.includes(`'${flag}'`));
-  if (missing.length > 0) ctx.problem(optionsRel, 0, 'api-key-signing', `the archive/export arguments lack ${missing.join(', ')}`, 'Sign only with the team API key (automatic signing, cloud-managed distribution certificate); copy the template.');
+  if (missing.length > 0) ctx.problem(optionsRel, 0, 'api-key-signing', `the archive/export arguments lack ${missing.join(', ')}`, "Sign only with the team API key (automatic signing, cloud-managed distribution certificate); copy release-options.ts from this skill's templates/packages/tooling/src/release/.");
   if (!options.includes("'--wait'")) ctx.problem(optionsRel, 0, 'upload-wait', 'the altool upload does not pass --wait', 'Pass --wait (it returns once Apple is PROCESSING) and then poll processing until VALID.');
   const processing = read(ctx.root, 'packages/tooling/src/release/processing.ts') ?? '';
-  if (!processing.includes('processingState')) ctx.problem('packages/tooling/src/release/processing.ts', 0, 'upload-wait', 'nothing reads the build processingState', 'An upload is done only at VALID; copy processing.ts and poll it (release-upload.ts).');
+  if (!processing.includes('processingState')) ctx.problem('packages/tooling/src/release/processing.ts', 0, 'upload-wait', 'nothing reads the build processingState', "An upload is done only at VALID; copy processing.ts from this skill's templates/packages/tooling/src/release/ and poll it (release-upload.ts).");
   const clock = read(ctx.root, 'packages/tooling/src/clock/system-clock.ts') ?? '';
-  if (!/export\s+function\s+nowEpochSeconds\b/.test(clock)) ctx.problem('packages/tooling/src/clock/system-clock.ts', 0, 'wall-clock', 'nowEpochSeconds() is not exported', 'Add it next to todayIso(): the JWT is signed with the current time, and only this file reads the clock.');
+  if (!/export\s+function\s+nowEpochSeconds\b/.test(clock)) ctx.problem('packages/tooling/src/clock/system-clock.ts', 0, 'wall-clock', 'nowEpochSeconds() is not exported', "Copy this skill's templates/packages/tooling/src/clock/system-clock.ts (nowEpochSeconds next to todayIso()): the JWT is signed with the current time, and only this file reads the clock.");
 }
 
 // A read (fs call, cat, copy) whose argument names the key: its path helper, a key-file variable or the file name,
@@ -199,12 +220,13 @@ run(async () => {
   const root = requireDir(positionals[0] ?? '.', 'repo root');
   const report = createReporter({ name: 'check-release-setup', json: options.json });
   if (!existsSync(join(root, 'package.json')) && !existsSync(join(root, 'packages'))) return report.finish({ checked: 0, unit: 'repo files' });
-  const ctx = { root, problem: (file, line, rule, message, fix) => report.problem({ file, line, rule, message, fix }) };
+  const ctx = { root, report, problem: (file, line, rule, message, fix) => report.problem({ file, line, rule, message, fix }) };
+  checkReleaseFiles(ctx);
   checkExportOptions(ctx);
   checkGameConfigs(ctx);
   checkScriptsAndSigning(ctx);
   checkTooling(ctx);
   checkSecrets(ctx);
   checkShellComplete(ctx);
-  return report.finish({ checked: 1, unit: 'repo' });
+  return finishWithOwnerSteps(report, { checked: 1, unit: 'repo' });
 });

@@ -94,7 +94,7 @@ Drop AdMob and sell each game as a paid app, or make it free with no ads. The Sh
 | Play levels, daily, endless | works | works |
 | Save / statistics / settings / languages | works | works |
 | Banner / interstitial ads | shown per rules | not shown, no message |
-| Rewarded ad buttons | shown | hidden |
+| Rewarded ad buttons | shown (loading until the ad is ready) | hidden (a run that ends goes straight to S7; lead decision L11) |
 | Buy Premium | works | "Connect to buy" |
 | Restore Premium | works | "Connect to restore" |
 | Premium already owned | works | works |
@@ -122,7 +122,7 @@ The exit test for the Shell and the pilot. Every item needs its evidence in the 
 
 ### 15.1 · Every screen in four languages
 
-Every screen in spec 6 exists and works in en, de, fa, ckb. Screenshots in LTR and RTL, light and dark, phone and tablet show nothing cut off, overlapping or wrongly mirrored.
+Every screen in spec 6 exists and works in en, de, fa, ckb. Screenshots in LTR and RTL, light and dark, phone and tablet show nothing cut off, overlapping or wrongly mirrored. Every screen, the test-only debug menu (S15) included, matches its design (lead decision L12).
 
 ### 15.2 · A full airplane-mode run
 
@@ -134,7 +134,7 @@ The network audit passes: only the ads and store components can go online.
 
 ### 15.4 · Ads
 
-Test ads appear only where spec 8.8 allows; the frequency rules pass their tests; Premium removes them instantly; consent appears before the first ad in a simulated EU region. On iPhone, Apple's tracking prompt appears after the consent step and before the first ad request, and declining it still shows ads.
+Test ads appear only where spec 8.8 allows; the frequency rules pass their tests; Premium removes them instantly; consent appears before the first ad in a simulated EU region. On iPhone, Apple's tracking prompt appears after the consent step and before the first ad request, and declining it still shows ads. No finished run is stranded: tests cover every case where no continue can be offered, and an automatic run proves that an endless loss in a build with ads off and without Premium shows the endless result (lead decision L11).
 
 ### 15.5 · Premium
 
@@ -175,7 +175,7 @@ Spec 12's steps are written down, so game 2 can start from the Shell without gue
 | The spec asked | Answer |
 |---|---|
 | The exact consent requirements (4.2) | Google's consent SDK: refresh the consent status every launch, show the form after the tutorial and before the first ad, show the "Ad privacy choices" row only where it is required |
-| iPhone tracking permission (4.2 point 3, D4) | decided 2026-09-30 (owner, O1): after the S3 intro and Google's form, Apple's tracking prompt while not yet answered, then the first ad request; declining still shows ads |
+| iPhone tracking permission (4.2 point 3, D4) | decided 2026-09-30 (owner, O1): after the S3 intro and Google's form (both only where Google's consent is required), Apple's tracking prompt while not yet answered, then the first ad request; when only Apple's prompt is due it appears on its own, without the intro (lead, L10, 2026-10-01); declining still shows ads |
 | Can direction switch live, or is a restart needed (S11)? | a direction change needs one restart ("Restart to apply", one tap) |
 | How does "copy back" work between games (1.2, 12)? | there is no copying: one monorepo, and every game app consumes the same Shell package |
 | Where does the game contract live (10)? | the `GameModule` type in the pure game kit |
@@ -186,5 +186,6 @@ Spec 12's steps are written down, so game 2 can start from the Shell without gue
 
 - Claude Code builds, tests and releases everything, and reports in plain language with evidence.
 - The owner reviews, play-tests and does only what needs a person: their identity, money, judgement or phone. For example: Apple and AdMob accounts and agreements, the app name and the App Store Connect app record for each game (created with the fixed bundle id), the real AdMob ids, the App Privacy questionnaire, the TestFlight play-test and purchase test, and "ship" / "submit" for each release. Already decided by the owner (2026-09-30), so never asked again: tracking follows Apple's rules (O1), Premium costs EUR 1.99 (O2), Family Sharing for Premium stays off (O3), and every app id is `io.applander.<game id without hyphens>` (O4; Line Siege `io.applander.linesiege`): the owner no longer chooses or approves a bundle id.
-- The owner's personal steps never block (O6, 2026-09-30): the native review of the Persian and Sorani texts, the Line Siege play-test, and listening to the sound previews. Claude drafts the texts in all four languages and renders the previews; every slice or release report lists the three under "Owner steps (not blocking)" with what is waiting, and no gate waits for them.
+- The owner's personal steps never block (O6, 2026-09-30): the native review of the Persian and Sorani texts (never a release gate, L14; the English debug-menu texts are not on it, L13), the Line Siege play-test, and listening to the sound previews. Claude drafts the texts in all four languages and renders the previews; every slice or release report lists the three under "Owner steps (not blocking)" with what is waiting, and no gate waits for them.
+- The owner's account values gate shipping (L14, 2026-10-01): until the owner supplies the real AdMob ids (owner step G5) and the privacy-policy host and support address (owner step G3), the completeness check (`check-game-app --stage complete`) and every ship gate fail on the scaffold's placeholders by name and end with `OWNER STEPS PENDING: G3, G5`. That failure is by design, never a skill gap; a pilot handed over before then is reported as a slice, with G3 and G5 under "Owner steps (not blocking)".
 - The stack in one line: Expo SDK 57 (React Native 0.86.3, React 19.2.3), TypeScript 6.0.3, React Navigation 7, Zustand 5, SQLite, react-intl, Skia with Reanimated and Gesture Handler for boards (no game engine), AdMob, expo-iap, Jest and Maestro, built locally with Xcode 26.6.

@@ -8,7 +8,7 @@ import { DEFAULT_LINE_HEIGHTS, scriptFontFor } from './fonts.ts';
 import { useLanguage } from './language-context.tsx';
 
 import type { FontWeightToken, LineHeightRatios, TypeFace } from './fonts.ts';
-import type { Language } from './languages.ts';
+import type { Direction, Language } from './languages.ts';
 import type { TextStyle } from 'react-native';
 
 export type TextAlignToken = 'start' | 'center' | 'end';
@@ -23,6 +23,15 @@ export type LocalizedTextOptions = {
   /** Tracking in em; Toybox tracks only the game name (0.01 em), never Arabic script. */
   readonly letterSpacingEm?: number;
   readonly language?: Language; // only for text in another language (language list)
+  /**
+   * A whole text written in the other direction than the layout: S15's English debug labels in an
+   * RTL layout (fa, ckb; L13) are 'ltr'. The paragraph is then laid left to right while it still
+   * aligns to the layout's start, so a wrapped line's trailing space stays out of the alignment and
+   * every line sits flush with the row's start, as the design draws an English run in an RTL row
+   * (laid right to left, iOS kept that space and moved the first line 4.4 pt off). Default: the
+   * layout direction. Never bidi controls for this; free text inside a sentence uses isolate().
+   */
+  readonly textDirection?: Direction;
 };
 
 // RN swaps 'left'/'right' when the layout is RTL (doLeftAndRightSwapInRTL), so
@@ -54,7 +63,7 @@ export function useLocalizedTextStyle(options: LocalizedTextOptions): TextStyle 
     // Never Math.round to whole points, and never nudge glyphs with padding or translateY here.
     lineHeight: snapToPixels(options.fontSize * ratio),
     ...(tracking === 0 ? {} : { letterSpacing: options.fontSize * tracking }),
-    writingDirection: direction,
+    writingDirection: options.textDirection ?? direction,
     textAlign: TEXT_ALIGN[options.align],
   };
 }

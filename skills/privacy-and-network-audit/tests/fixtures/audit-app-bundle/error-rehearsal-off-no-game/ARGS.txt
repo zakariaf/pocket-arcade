@@ -1,0 +1,1 @@
+--app DemoGame.app --variant store --ads-mode off --entitlements auto --unsigned

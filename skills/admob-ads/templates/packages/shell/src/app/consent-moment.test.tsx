@@ -56,7 +56,7 @@ async function renderMoment(options: Options = {}) {
       calls,
     }),
     ads: createFakeAds({
-      isRewardedLoaded: false,
+      rewardedStatus: 'unavailable',
       interstitialResult: 'unavailable',
       rewardResult: 'unavailable',
       calls,

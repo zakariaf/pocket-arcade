@@ -27,6 +27,7 @@ import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardClockTrace, BoardFrameTime } from '@e07/shell/game-host/game-board-host.tsx';
 import type {
   BoardHostFactory,
   BoardHostInput,
@@ -48,6 +49,12 @@ export type BoardPorts = {
    * boardLayout=1), read when the board draws. Store builds leave it out: never a layout probe.
    */
   readonly isLayoutProbeOn?: () => boolean;
+  /**
+   * Test builds only: the board-clock trace while boardLayout=1 is on (perf-log kind 'board-clock')
+   * and S15's frame recorder, both read when the board draws. Store builds leave them out.
+   */
+  readonly traceClock?: () => BoardClockTrace | undefined;
+  readonly frameTime?: () => BoardFrameTime | undefined;
 };
 
 /** Digits and Latin labels on the canvas: the embedded Vazirmatn (the expo-font plugin ships it). */
@@ -109,6 +116,8 @@ function boardHostFor<T extends ShellGameTypes>(
     });
     const format = { formatNumber: createNumberFormatter(localeTagFor(language, digits)) };
     const label = gameMessageText(t, board.describe(board.toView(result.state, format)));
+    const traceClock = ports.traceClock?.();
+    const onFrameTime = ports.frameTime?.();
     return (
       <BoardDirectionView isMirroredInRtl={board.isMirroredInRtl} testID={testID}>
         <GameBoardHost
@@ -133,6 +142,8 @@ function boardHostFor<T extends ShellGameTypes>(
           onFailure={handlers.onFailure}
           reportError={handlers.reportError}
           isLayoutProbeOn={ports.isLayoutProbeOn?.() === true}
+          {...(traceClock === undefined ? {} : { traceClock })}
+          {...(onFrameTime === undefined ? {} : { onFrameTime })}
         />
       </BoardDirectionView>
     );

@@ -3,7 +3,8 @@
   "testIDs": {
     "debug.network-attempts": "Debug screen (S15), test builds: the JS network guard's attempt counter, drawn under the fourteen rows (below the fold on a phone: scroll to it). Every smoke flow ends by asserting its text is '0' (subflows/assert-no-network.yaml).",
     "game.board-layout": "Game screen (S5), test builds with boardLayout=1 only: one small Text whose content is JSON.stringify({ x, y, layout }) (the canvas origin in window points plus the game's BoardLayout), so flows can tap board cells. Drawn by the board host's layout probe (board-rendering-skia: game-host/board-layout-probe.tsx).",
-    "game.moves-label": "Game screen (S5), test builds with boardLayout=1 only: the run's move count as one small Text ('1' after the first move), so a flow can prove a tap made a move and that the move survived a kill. Drawn by the Game screen's moves probe (screens/game/game-moves-probe.tsx, shipped with the S5 Game screen templates); the design draws the game's progress line instead."
+    "game.moves-label": "Game screen (S5), test builds with boardLayout=1 only: the run's move count as one small Text ('1' after the first move), so a flow can prove a tap made a move and that the move survived a kill. Drawn by the Game screen's moves probe (screens/game/game-moves-probe.tsx, shipped with the S5 Game screen templates); the design draws the game's progress line instead.",
+    "game.board-frame": "Game screen (S5), test builds with boardLayout=1 only: the board clock's frame probe, one small Text JSON.stringify({ seq, settled }) for the scene on screen (board-rendering-skia). admob-ads' ads-smoke rewarded-continue flow asserts it for the session's seq, so a board left on the first frame of the continue animation fails."
   },
   "gameFlowIds": {
     "$comment": "Screen-map ids the game flow templates rely on (listed here so a change to the map is seen against the flows; check-flows reads them from screen-testids.json, where each one is an element or a notDrawn id).",
@@ -17,10 +18,13 @@
     "result.come-back-note": "journeys/11-daily.yaml: the come-back note of the daily result.",
     "daily.current-streak-card.value": "journeys/11-daily.yaml: '1' on the next day.",
     "daily.replay-button": "journeys/11-daily.yaml: not shown on the next day (today is not done).",
-    "result.continue-premium-button": "journeys/12-continue-premium.yaml: the Premium owner's free continue after action=lose-level (E2E builds run with ads off, so the rewarded result.continue-ad-button never shows).",
-    "result.continue-ad-button": "journeys/12-continue-premium.yaml: must not show for a Premium owner.",
+    "result.continue-premium-button": "journeys/12-continue-premium.yaml: the Premium owner's free continue after action=lose-level (E2E builds run with ads off, so the rewarded result.continue-ad-button never shows); journeys/13-endless.yaml: must not show without Premium.",
+    "result.continue-ad-button": "journeys/12-continue-premium.yaml: must not show for a Premium owner; journeys/13-endless.yaml: must not show for an ads-off player without Premium.",
+    "result.continue-offer": "journeys/13-endless.yaml: absent at once after an ads-off loss without Premium (lead decision L11: the offer is hidden, so the run end is recorded and the endless result shows).",
     "home.endless-card": "journeys/13-endless.yaml: starts the endless run; afterwards its label ('Endless – Best <n>') carries a best above 0.",
-    "result.endless-title": "journeys/13-endless.yaml: the endless result after action=lose-level.",
+    "result.endless-title": "journeys/13-endless.yaml: the endless result, at once after action=lose-level (premium=0, ads=off).",
+    "debug.perf-benchmark-row": "smoke/04-debug-performance.yaml (Shell): S15's Run save benchmark, the key under test.",
+    "debug.perf-summary": "smoke/04-debug-performance.yaml (Shell): shows 'save p95 <n> ms' after the benchmark ran.",
     "result.score-card.new-best": "journeys/13-endless.yaml: New best! after the first endless run.",
     "result.home-button": "journeys/13-endless.yaml: back to Home from the endless result."
   }

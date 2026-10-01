@@ -42,6 +42,14 @@ jest.mock('@e07/shell/i18n/direction.ts', () => ({
   restartForDirection: jest.fn(() => Promise.resolve()),
 }));
 jest.mock('react-native-google-mobile-ads');
+// The build's ADS_MODE (expo.extra.adsMode): off unless a test switches it on.
+let mockAdsMode: 'off' | 'test' = 'off';
+jest.mock('@e07/shell/services/ads/read-ads-extra.ts', () => ({
+  readAdsExtra: () => ({ adsMode: mockAdsMode, adUnits: null }),
+}));
+
+type MockedConsentSdk = { readonly AdsConsent: { readonly reset: jest.Mock } };
+const consentSdk = jest.requireMock<MockedConsentSdk>('react-native-google-mobile-ads');
 
 const LINK = 'e07-line-siege://debug/setup';
 
@@ -162,6 +170,7 @@ describe('createDebugParts', () => {
   beforeEach(() => {
     mockStore.set('debug.overrides', null);
     mockStore.set('debug.pending-screen', null);
+    mockAdsMode = 'off';
   });
 
   it('builds no debug code without the test-build wrappers (a store build)', () => {
@@ -246,6 +255,21 @@ describe('createDebugParts', () => {
     const guarded = Reflect.get(globalThis, 'fetch') as (target: string) => Promise<unknown>;
     await expect(guarded('remote-a')).rejects.toThrow('fetch to remote-a blocked');
     expect(errorLog.recorded.map((entry) => entry.source)).toStrictEqual(['network']);
+  });
+
+  it("starts Google's consent over for geo=eea in an ADS_MODE=test build and keeps the geography", () => {
+    mockAdsMode = 'test';
+    const { parts } = setup();
+    parts.links?.handleUrl(`${LINK}?geo=eea`);
+    expect(consentSdk.AdsConsent.reset).toHaveBeenCalledTimes(1);
+    expect(setup().parts.services?.consentGeography()).toBe('eea');
+  });
+
+  it('leaves Google alone for geo=eea in an ADS_MODE=off build (no UMP call at all)', () => {
+    const { parts } = setup();
+    parts.links?.handleUrl(`${LINK}?geo=eea`);
+    expect(consentSdk.AdsConsent.reset).not.toHaveBeenCalled();
+    expect(parts.services?.consentGeography()).toBe('eea');
   });
 
   it('logs a bad link as a boot error and opens S15', () => {

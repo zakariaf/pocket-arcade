@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/app/test-only-api.ts",
+      "content": "// packages/shell/src/app/test-only-api.ts (fixture: the shape of TEST_ONLY names the debug tools' type)\nimport type { ConsentDebugTools } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';\n\nexport type TestOnlyApi = {\n  readonly createAdmobConsentDebugAdapter: () => ConsentDebugTools;\n  readonly TEST_BUILD_SENTINEL: string;\n};\n"
+    }
+  }
+]

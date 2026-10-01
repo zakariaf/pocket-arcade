@@ -18,7 +18,7 @@ type MockedSdk = {
   readonly InterstitialAd: AdFactory;
   readonly RewardedAd: AdFactory;
   readonly AdEventType: { readonly CLOSED: string; readonly ERROR: string };
-  readonly RewardedAdEventType: { readonly EARNED_REWARD: string };
+  readonly RewardedAdEventType: { readonly EARNED_REWARD: string; readonly LOADED: string };
 };
 
 const sdk = jest.requireMock<MockedSdk>('react-native-google-mobile-ads');
@@ -44,6 +44,13 @@ function fire(ad: MockAd, type: string, payload?: unknown): void {
     });
 }
 
+/** The adapter after initialize (ads load only after it). */
+async function initializedAds(): Promise<ReturnType<typeof createAdmobAdsAdapter>> {
+  const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+  await ads.initialize();
+  return ads;
+}
+
 function loadedAd(factory: AdFactory, preload: () => void): MockAd {
   preload();
   const ad = lastAd(factory);
@@ -53,7 +60,7 @@ function loadedAd(factory: AdFactory, preload: () => void): MockAd {
 
 describe('createAdmobAdsAdapter', () => {
   it('settles "unavailable" when an interstitial fails to present (ERROR, no CLOSED)', async () => {
-    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const ads = await initializedAds();
     const ad = loadedAd(sdk.InterstitialAd, ads.preloadInterstitial);
 
     const shown = ads.showInterstitial();
@@ -64,7 +71,7 @@ describe('createAdmobAdsAdapter', () => {
   });
 
   it('reports "shown" once the interstitial closes', async () => {
-    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const ads = await initializedAds();
     const ad = loadedAd(sdk.InterstitialAd, ads.preloadInterstitial);
 
     const shown = ads.showInterstitial();
@@ -74,7 +81,7 @@ describe('createAdmobAdsAdapter', () => {
   });
 
   it('grants a reward only after EARNED_REWARD', async () => {
-    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const ads = await initializedAds();
     const skipped = loadedAd(sdk.RewardedAd, ads.preloadRewarded);
     const dismissed = ads.showRewarded();
     fire(skipped, sdk.AdEventType.CLOSED);
@@ -88,10 +95,54 @@ describe('createAdmobAdsAdapter', () => {
   });
 
   it('shows nothing before an ad has loaded', async () => {
-    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const ads = await initializedAds();
     ads.preloadRewarded();
 
     await expect(ads.showRewarded()).resolves.toBe('unavailable');
-    expect(ads.isRewardedLoaded()).toBe(false);
+    expect(ads.rewardedStatus()).toBe('loading');
+  });
+});
+
+describe('rewardedStatus (L11)', () => {
+  it('is unavailable before initialize, and a preload before it starts nothing', () => {
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const created = sdk.RewardedAd.createForAdRequest.mock.calls.length;
+    ads.preloadRewarded();
+    expect(ads.rewardedStatus()).toBe('unavailable');
+    expect(sdk.RewardedAd.createForAdRequest.mock.calls).toHaveLength(created);
+  });
+
+  it('is loading from the preload until LOADED, then ready; subscribers hear each change', async () => {
+    const ads = await initializedAds();
+    const heard: string[] = [];
+    const stop = ads.subscribeRewardedStatus(() => heard.push(ads.rewardedStatus()));
+    ads.preloadRewarded();
+    expect(ads.rewardedStatus()).toBe('loading');
+    fire(lastAd(sdk.RewardedAd), sdk.RewardedAdEventType.LOADED);
+    expect(ads.rewardedStatus()).toBe('ready');
+    stop();
+    expect(heard).toStrictEqual(['loading', 'ready']);
+  });
+
+  it('is unavailable after a load error until the next preload starts', async () => {
+    const onAdError = jest.fn();
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError });
+    await ads.initialize();
+    ads.preloadRewarded();
+    fire(lastAd(sdk.RewardedAd), sdk.AdEventType.ERROR, { phase: 'load', reason: 'no-fill' });
+    expect(ads.rewardedStatus()).toBe('unavailable');
+    expect(onAdError).not.toHaveBeenCalled(); // no-fill is routine inventory
+    ads.preloadRewarded();
+    expect(ads.rewardedStatus()).toBe('loading');
+  });
+
+  it('is unavailable once the loaded ad is shown, until ad-moments preloads the next', async () => {
+    const ads = await initializedAds();
+    const ad = loadedAd(sdk.RewardedAd, ads.preloadRewarded);
+    fire(ad, sdk.RewardedAdEventType.LOADED);
+    const shown = ads.showRewarded();
+    expect(ads.rewardedStatus()).toBe('unavailable');
+    fire(ad, sdk.AdEventType.CLOSED);
+    await expect(shown).resolves.toBe('dismissed');
   });
 });

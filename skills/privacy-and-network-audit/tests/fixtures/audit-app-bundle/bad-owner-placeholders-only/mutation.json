@@ -1,0 +1,8 @@
+[
+  { "replace": { "file": "DemoGame.app/Info.plist", "find": "ca-app-pub-7310520968431056~5190264813", "with": "ca-app-pub-1234567890123456~1234567890" } },
+  { "json": { "file": "DemoGame.app/EXConstants.bundle/app.config", "path": ["extra", "adUnits", "banner"], "value": "ca-app-pub-1234567890123456/1111111111" } },
+  { "json": { "file": "DemoGame.app/EXConstants.bundle/app.config", "path": ["extra", "adUnits", "interstitial"], "value": "ca-app-pub-1234567890123456/2222222222" } },
+  { "json": { "file": "DemoGame.app/EXConstants.bundle/app.config", "path": ["extra", "adUnits", "rewarded"], "value": "ca-app-pub-1234567890123456/3333333333" } },
+  { "json": { "file": "DemoGame.app/EXConstants.bundle/app.config", "path": ["extra", "game", "links", "privacyPolicy", "host"], "value": "example.com" } },
+  { "json": { "file": "DemoGame.app/EXConstants.bundle/app.config", "path": ["extra", "game", "links", "supportEmail"], "value": "support@example.com" } }
+]

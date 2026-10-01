@@ -40,7 +40,36 @@
         "skills": [
           "alpha-one"
         ],
-        "proof": "`check-alpha.mjs .` (alpha-one) prints RESULT: PASS"
+        "proof": "`check-alpha.mjs .` (alpha-one) prints RESULT: PASS",
+        "copies": [
+          {
+            "skill": "alpha-one",
+            "paths": [
+              "packages/shell/src/core/**"
+            ]
+          }
+        ],
+        "installs": [
+          {
+            "package": "zustand",
+            "where": "packages/shell"
+          }
+        ]
+      },
+      {
+        "step": "Beta on top of alpha",
+        "skills": [
+          "beta-two"
+        ],
+        "proof": "the beta tests pass",
+        "copies": [
+          {
+            "skill": "beta-two",
+            "paths": [
+              "packages/shell/src/feature/**"
+            ]
+          }
+        ]
       }
     ],
     "slice": "A partial build lists its parts in slice.json.",

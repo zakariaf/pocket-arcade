@@ -24,9 +24,9 @@ A store build is released only when the release audit passes: no test-only modul
 |---|---|---|---|
 | Debug menu / deep links / network guard / StoreKit hooks absent | store | JS + binary | sentinel `SHELL_TEST_BUILD_ONLY` and `/screens/debug/` modules absent from the export; `main.jsbundle` in the IPA has no sentinel (Hermes bytecode keeps ASCII strings, verified) |
 | Google sample ad IDs absent from our code | store | JS | `3940256099942544` only inside `node_modules/react-native-google-mobile-ads/` (its `src/TestIds.ts` and `src/types/RequestOptions.ts` are in every bundle) |
-| Live AdMob app ID | store + live | binary | `GADApplicationIdentifier` matches `^ca-app-pub-\d{16}~\d{10}$`, is not the sample ID, and is not the scaffold's placeholder `ca-app-pub-1234567890123456~1234567890` (which fits the pattern: refused by name until owner step G5 gives the real id); `extra.adUnits` holds none of the placeholder units `ca-app-pub-1234567890123456/1111111111`, `/2222222222`, `/3333333333` |
+| Live AdMob app ID | store + live | binary | `GADApplicationIdentifier` matches `^ca-app-pub-\d{16}~\d{10}$` and is not the sample ID |
+| No owner placeholder (`owner-placeholder`) | all (links: store) | binary | Each scaffold value the owner replaces is reported by field: `GADApplicationIdentifier` = `ca-app-pub-1234567890123456~1234567890` (it fits the pattern, so it is refused by name) and `extra.adUnits.<slot>` = `ca-app-pub-1234567890123456/1111111111`, `/2222222222`, `/3333333333` (owner step G5); in a store build `extra.game.links.privacyPolicy.host` = `example.com` and `extra.game.links.supportEmail` = `support@example.com` (owner step G3). The line before `RESULT: FAIL` is then `OWNER STEPS PENDING: G3, G5` (only the steps still pending). The result stays FAIL in every mode, `--unsigned` included; until the owner supplies them these are the only expected FAIL lines (lead decision L14) |
 | The game's own id | store (all with `--game`) | binary | `CFBundleIdentifier` is `io.applander.<game id without hyphens>` (owner decision O4), never `com.example.*` |
-| No placeholder links | store | binary | `extra.game.links` holds neither the privacy host `example.com` nor `support@example.com` (owner step G3) |
 | App Tracking Transparency text | all | binary | `NSUserTrackingUsageDescription` in `Info.plist` and in `en`, `de`, `fa` and `ckb.lproj/InfoPlist.strings` (owner decision O1; iOS kills an app that asks without it) |
 | Real ad IDs absent | test | config + binary | `ads-config.test.ts` (sample app ID and no `adUnits` for test/off); `GADApplicationIdentifier` is the sample ID in test builds; `extra.adUnits` only in live builds |
 | Variant embedded correctly | all | binary | `EXConstants.bundle/app.config` `extra.appVariant` and `extra.adsMode` equal the exported variables |
@@ -101,6 +101,24 @@ node ${CLAUDE_SKILL_DIR}/scripts/audit-app-bundle.mjs --app apps/<game>/build/<S
 
 It prints `REHEARSAL: not a release gate` first, reports only `get-task-allow` as a `SKIP` line when the app has no signature (a signed app with `get-task-allow` still fails), and keeps every other rule strict. Without `--unsigned` the same app fails `get-task-allow` ("the app is not signed"). A rehearsal is never release evidence: the release audit runs on the signed export, and git-commits-and-reporting's report check refuses a `REHEARSAL` result.
 
+**The expected result before owner steps G3 and G5.** The scaffold's links are still in the store build (G3). A store/off archive carries Google's sample app id and no ad units, but the store/live build it rehearses carries the owner's AdMob ids (G5): a store/off rehearsal (`--unsigned`, with `--game`) reads them from `apps/<game>/game.config.ts` under `--repo` (default `.`, the repo root) and reports their placeholders there, as `check-release-setup` and `check-game-app --stage complete` do. So the rehearsal ends with exactly these lines and no other problem (verified on 2026-10-01 on the Line Siege pilot's store/off archive):
+
+```
+REHEARSAL: not a release gate (--unsigned: ...)
+SKIP entitlements [get-task-allow] REHEARSAL: the app has no signature (CODE_SIGNING_ALLOWED=NO); ...
+FAIL EXConstants.bundle/app.config [owner-placeholder] extra.game.links.privacyPolicy.host is the placeholder privacy-policy host example.com (owner step G3) Fix: ...
+FAIL EXConstants.bundle/app.config [owner-placeholder] extra.game.links.supportEmail is the placeholder support address support@example.com (owner step G3) Fix: ...
+FAIL apps/<game>/game.config.ts:<line> [owner-placeholder] ads.ids.ios.appId (for the store/live build this store/off rehearsal stands in for) is the placeholder AdMob app id ca-app-pub-1234567890123456~1234567890 (owner step G5) Fix: ...
+FAIL apps/<game>/game.config.ts:<line> [owner-placeholder] ads.ids.ios.units.banner (...) is the placeholder AdMob banner unit ca-app-pub-1234567890123456/1111111111 (owner step G5) Fix: ...
+FAIL apps/<game>/game.config.ts:<line> [owner-placeholder] ads.ids.ios.units.interstitial (...) is the placeholder AdMob interstitial unit ca-app-pub-1234567890123456/2222222222 (owner step G5) Fix: ...
+FAIL apps/<game>/game.config.ts:<line> [owner-placeholder] ads.ids.ios.units.rewarded (...) is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5) Fix: ...
+audit-app-bundle: 4 artefacts checked, 6 problems, 1 skipped
+OWNER STEPS PENDING: G3, G5
+RESULT: FAIL (6 problems)
+```
+
+Report it as the expected rehearsal result in a slice report (rehearsal under "Not tested or not verified", G3 and G5 under "Owner steps (not blocking)"); any other FAIL line is a real problem. With the owner's links and AdMob ids in `game.config.ts` the same rehearsal prints `RESULT: PASS` with the one SKIP line.
+
 ## Checklist
 
 - [ ] `npm run lint` is clean with the N3 rules, and `audit-repo.mjs` passes.
@@ -108,7 +126,7 @@ It prints `REHEARSAL: not a release gate` first, reports only `get-task-allow` a
 - [ ] `npm run audit:privacy` passes after the latest prebuild; the App Privacy answers match its "collected" output (Device ID used for tracking by the third-party ads SDK; the app asks App Tracking Transparency first).
 - [ ] `npm run audit:licenses` passes.
 - [ ] The E2E smoke flow shows "network attempts: 0" and the socket sampler found no non-loopback connection (Release, test variant, `ADS_MODE=off`).
-- [ ] Store build: `audit-bundle.mjs` and `audit-app-bundle.mjs --game <game-id>` pass (the tracking text in every language, `io.applander.<game>`, no placeholder AdMob id, unit or link).
+- [ ] Store build: `audit-bundle.mjs` and `audit-app-bundle.mjs --game <game-id>` pass (the tracking text in every language, `io.applander.<game>`, no `owner-placeholder` line and no `OWNER STEPS PENDING` line: the owner's AdMob ids (G5) and links (G3) are in).
 - [ ] Test build: none of the game's real ad IDs present.
 - [ ] No key material or tokens in the repo, logs or reports; the `.p8` is still mode 600.
 - [ ] Every baseline or allowlist change carries a `Gate-Change:` trailer and the owner's approval.

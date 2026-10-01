@@ -11,6 +11,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
+import { finishWithOwnerSteps } from './lib/app-files.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { appIds, checkAssembly, checkCatalogs, checkCompleteness, checkDeckTexts, checkConfigContract, checkConfigFiles, checkEntry, checkFiles, checkFonts, checkGameConfig, checkNewGameScript, checkPackage, checkParityFacts, checkPlaceholders, checkShellSlice, checkUsedKeys, listFiles } from './lib/app-checks.mjs';
 
@@ -33,10 +34,16 @@ const SPEC = {
     '  io.applander.<game id without hyphens>) and premium-id (<bundle id>.premium)',
     'Rules (complete): module-part-missing, evidence-missing, module-assembly, types-bag, config-contract,',
     '  pan-mode (engine.panMode is none, swipe, drag or aim), shell-slice (a repo with shell-slice.json never',
-    '  ships), entry = the 3-line startShell entry, owner-placeholder (each scaffold placeholder by name:',
-    '  com.example.*, the AdMob app and unit ids of step G5, the privacy host example.com and',
-    '  support@example.com of step G3), parity-game-facts (the game\'s parity/game-facts.json entry with',
-    '  designGame, hasMusic, winLine and hasHints; hasHints agrees with hints.freePerDay)',
+    '  ships), entry = the 3-line startShell entry, owner-placeholder (each owner placeholder by name, with',
+    '  its field and owner step: the AdMob app and unit ids of step G5 while ads are on, the privacy host',
+    '  example.com and support@example.com of step G3), parity-game-facts (the game\'s',
+    '  parity/game-facts.json entry with designGame, hasMusic, winLine and hasHints; hasHints agrees with',
+    '  hints.freePerDay)',
+    '',
+    'Owner placeholders (lead decision L14): until the owner supplies G3 and G5 the complete stage reports',
+    '  each placeholder as an owner-placeholder line, prints "OWNER STEPS PENDING: G3, G5" (only the steps',
+    '  still pending) right before the RESULT line, and stays FAIL. No option turns a placeholder into a',
+    '  pass; any other FAIL line is a real problem to fix.',
     '',
     'Examples:',
     '  node check-game-app.mjs . --app flock-tilt --stage scaffold',
@@ -79,5 +86,6 @@ run(async () => {
       checkParityFacts(repo, id, config, report);
     }
   }
-  return report.finish({ checked: ids.length, unit: 'apps' });
+  // An owner placeholder adds the line OWNER STEPS PENDING: G3, G5 right before RESULT; it stays a FAIL.
+  return finishWithOwnerSteps(report, { checked: ids.length, unit: 'apps' });
 });

@@ -67,11 +67,11 @@ First launch only.
 
 ### S3 · Ad consent and tracking
 
-Only where needed. (Spec draft 2, 2026-09-30: the owner's decision O1 to follow Apple's tracking rules; decision D4 reversed.)
+Only where needed. (Spec draft 2, 2026-09-30: the owner's decision O1 to follow Apple's tracking rules, decision D4 reversed; spec draft 3, 2026-10-01: the intro only before Google's form, lead decision L10.)
 
 - Purpose: the legal permission steps for ads (spec 4.2, points 2 and 3).
 - Shows, in this order, each step only when it applies:
-  1. The Shell's own short intro ("Ad privacy"), so the player knows why a question follows. It appears only when Google's consent message (step 2) follows, because its footnote says Google's form opens next; where only Apple's prompt follows, the prompt appears without it (the platform decision; spec draft 2 would also show it before Apple's prompt alone, see "Spec gaps with working defaults" in open-decisions.md).
+  1. The Shell's own short intro ("Ad privacy"), so the player knows why a question follows. It appears only when step 2 follows (its note says Google's form opens next). When only step 3 is due, Apple's prompt appears on its own, with our sentence explaining it (decided 2026-10-01, lead decision L10).
   2. Google's consent message, only in regions where it is required. Its content comes from Google.
   3. On iPhone, Apple's "Allow tracking?" system prompt, only while the player has not answered it yet. Its sentence is ours (the Shell text `consent.tracking.usage-description`, in all four languages); the dialog is Apple's.
   The Shell decides when this happens.
@@ -83,7 +83,7 @@ Only where needed. (Spec draft 2, 2026-09-30: the owner's decision O1 to follow 
   - Offline or Premium: skipped. It is shown later only if an ad is ever about to load.
   - Builds with ads switched off (automatic tests, screenshots) never show any of it.
   - Settings has a permanent "Ad privacy choices" row that reopens Google's step where it applies. Apple's answer is changed in the phone's own Settings (Privacy & Security > Tracking), not in the game.
-- How it is built (owner decision O1): Apple's prompt is asked only when the app is active, after Google's form has closed and only when ads may be requested; never during a level; a parity capture of S3 holds the moment before either question.
+- How it is built (owner decision O1, lead decision L10): Apple's prompt is asked only when the app is active, after Google's form has closed (or on its own when Google's form is not due) and only when ads may be requested; never during a level; a parity capture of S3 holds the moment before either question.
 
 ### S4 · Home
 
@@ -145,7 +145,12 @@ An overlay on the game.
   - A short, friendly reason: "The monsters broke through", "No moves left", "The wolf got a sheep".
   - Buttons: TRY AGAIN (big) | Levels.
   - Optional "Continue" (once per level): a rewarded ad, or free for Premium. Only for games that allow continuing (spec 8.10).
+- End of an endless run shows:
+  - The run's score, and "New best!" when it is one.
+  - Before it, the run's one optional "Continue", only when one can be offered (spec 8.10).
 - Rules:
+  - A finished run is never stranded (decided 2026-10-01, lead decision L11). When a run ends and no continue can be offered (ads off, offline, no rewarded ad available, no Premium), this screen appears at once: the endless result (the score, and "New best!" when it is one) or the lose result.
+  - While a rewarded ad is still loading, the Continue offer shows a loading state instead of disappearing. A hidden offer always means that no continue is possible.
   - Stars and statistics are saved before this screen appears.
   - A full-screen ad, if one is due (spec 8.8), appears after the player taps Next / Replay / Try again. Never before they have seen their result, and never on top of it.
   - At most once per day, one friendly Premium line may appear here ("Enjoying it? Remove ads for EUR 1.99", the price as the store reports it), see S12.
@@ -153,6 +158,8 @@ An overlay on the game.
   - L3: a level rated by score instead of moves (Line Siege's levels) shows a score line in place of the goal line: "Score {score} – best {bestScore}", where best is the level's best score after this run. A level rated by moves keeps "7 moves – par 7". Its visual parity uses the design's score-line variant of the win screen.
   - L6: parity compares the result and the Shell's parts over the game and masks the board (no board design reference).
   - L9: the big score number (level, daily and endless results) in Persian and Sorani uses the taller line height 1.45 (like the level numbers, L2), so Persian digits are never clipped.
+- Lead decision (2026-10-01):
+  - L11: never strand a finished run (the rules above). The loading offer is the same Continue key in its busy state (label kept, not pressable), so it adds no new text; the run end (statistics, streak, endless best) is recorded before the result shows, also when a shown offer becomes unavailable (offline, a failed load) and when a pending lost run is reopened from Home. The loading state has no design frame of its own: the design draws only the ready offer.
 
 ### S8 · Levels
 
@@ -309,3 +316,6 @@ Test builds only; never in store builds (it is compiled out of store builds). Fo
 - Simulate offline.
 - Export and import the save as text (testing only).
 - Also shows the local error log and the network-attempt counter ("network attempts: 0").
+- Rules (decided 2026-10-01):
+  - It matches its design like every other screen; being a test-only screen is no exemption from the screenshot comparison (lead decision L12: light and dark, en and fa, signed off like every frame).
+  - Its texts stay in English in all four languages, like every other debug text. No player ever sees it (lead decision L13). Numbers and dates in its values still use the language's digits, as the design draws them.

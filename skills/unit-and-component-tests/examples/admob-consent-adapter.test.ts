@@ -75,11 +75,18 @@ describe('createAdmobConsentAdapter', () => {
     expect(AdsConsent.getConsentInfo).toHaveBeenCalledTimes(1);
   });
 
-  it('passes a debug geography only when the debug menu sets one', async () => {
+  it('passes the debug geography and test devices only when a test build sets them (geo=)', async () => {
     await createAdmobConsentAdapter({ onError: jest.fn() }).refresh();
     await createAdmobConsentAdapter({ debugGeography: 'eea', onError: jest.fn() }).refresh();
+    const devices = ['2077ef9a63d2b398840261c8221a0c9b'];
+    const other = { debugGeography: 'other', testDeviceIdentifiers: devices } as const;
+    await createAdmobConsentAdapter({ ...other, onError: jest.fn() }).refresh();
 
-    expect(AdsConsent.requestInfoUpdate.mock.calls).toStrictEqual([[{}], [{ debugGeography: 1 }]]);
+    expect(AdsConsent.requestInfoUpdate.mock.calls).toStrictEqual([
+      [{}],
+      [{ debugGeography: 1 }],
+      [{ debugGeography: 4, testDeviceIdentifiers: devices }],
+    ]);
   });
 });
 

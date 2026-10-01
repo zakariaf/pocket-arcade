@@ -71,6 +71,27 @@ describe('rulesFingerprint', () => {
     expect(rulesFingerprint(GAME, root)).not.toBe(before);
   });
 
+  it('stays the same when the level packs are generated after the sims', () => {
+    put(`apps/${GAME}/src/levels/${GAME}-level-plan.ts`, 'export const rows = 4;\n');
+    const before = rulesFingerprint(GAME, root);
+    put(`apps/${GAME}/src/levels/pack-1.json`, '{ "levels": [] }\n');
+    put(`apps/${GAME}/src/levels/pack-2.json`, '{ "levels": [] }\n');
+
+    expect(rulesFingerprint(GAME, root)).toBe(before);
+    expect(fingerprintFiles(GAME, root)).toContain(`apps/${GAME}/src/levels/${GAME}-level-plan.ts`);
+  });
+
+  it('changes when a rules or level-plan file changes after the packs were generated', () => {
+    put(`apps/${GAME}/src/levels/pack-1.json`, '{ "levels": [] }\n');
+    const before = rulesFingerprint(GAME, root);
+    put(`apps/${GAME}/src/levels/${GAME}-level-plan.ts`, 'export const rows = 5;\n');
+    const afterPlan = rulesFingerprint(GAME, root);
+    put(`apps/${GAME}/src/rules/create.ts`, 'export const create = 2;\n');
+
+    expect(afterPlan).not.toBe(before);
+    expect(rulesFingerprint(GAME, root)).not.toBe(afterPlan);
+  });
+
   it('changes with the rules and the sim, but not with unit tests or the bands', () => {
     const before = rulesFingerprint(GAME, root);
     put(`apps/${GAME}/src/rules/create.test.ts`, '// another test\n');

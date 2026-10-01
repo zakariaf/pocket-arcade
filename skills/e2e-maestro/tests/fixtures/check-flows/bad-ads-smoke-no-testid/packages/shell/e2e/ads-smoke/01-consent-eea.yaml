@@ -1,0 +1,19 @@
+# packages/shell/e2e/ads-smoke/01-consent-eea.yaml — an ads smoke flow that only taps system UI and
+# never checks the app (planted: no testID step), and starts the app with launchApp.
+#   maestro test packages/shell/e2e/ads-smoke/01-consent-eea.yaml
+appId: ${APP_ID}
+name: Google's form, then Apple's prompt
+tags: [ads-smoke]
+---
+- launchApp
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&firstRun=0&screen=home'
+      WAIT_FOR: '${ROOT}'
+# system-ui: Google's UMP form and Apple's tracking prompt are not app UI.
+- tapOn:
+    text: 'Consent'
+# system-ui: Apple's tracking prompt.
+- tapOn:
+    text: 'Ask App Not to Track'

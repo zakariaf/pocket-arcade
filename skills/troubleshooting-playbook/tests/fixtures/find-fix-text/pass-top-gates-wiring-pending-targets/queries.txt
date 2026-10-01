@@ -1,0 +1,1 @@
+SKIP package.json [script-target] npm run i18n:verify: due at Shell step 6: packages/tooling/src/i18n/verify-catalogs.ts not yet created

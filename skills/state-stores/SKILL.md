@@ -22,7 +22,7 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 
 1. Read [references/store-pattern.md](references/store-pattern.md): the domains table, the pattern, action names, selectors, cross-section writes, tests and every checker rule. Read [references/game-session.md](references/game-session.md) before touching a run, undo, continue, hints or the saved run.
 2. Check the prerequisites in the app repo: the save layer (`SaveService`, `createFakeSaveStore`, `planLoad`, the schema in `services/save/`), `ClockPort` (`services/clock/clock-port.ts` with `nowMs`, `today` and `msUntilNextLocalDay`; `TEST_CLOCK` in `testing/create-test-save.ts` implements all three) and the Premium store (`stores/premium/premium-store.ts`). If the save layer or the clock port is missing, build it first (save-persistence-and-migrations ships both); the stores are hydrated from `save.doc()`.
-3. New Shell: first install Zustand into the Shell package, exactly this pinned line from the repo root (the dependency policy's plan for `zustand`; the repo's `.npmrc` sets `save-exact=true`, so npm writes the exact version):
+3. New Shell (Shell step 5 of the build order, where the stores and the GameSession store land with the services, so check-stores passes from step 5 on): first install Zustand into the Shell package, exactly this pinned line from the repo root (the dependency policy's plan for `zustand`; the repo's `.npmrc` sets `save-exact=true`, so npm writes the exact version):
 
    ```sh
    npm install zustand@5.0.15 -w packages/shell

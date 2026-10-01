@@ -11,17 +11,24 @@
 // and an accessible element on it (the Play key) is its own sibling, never its part.
 //
 // Static checks (shape, names, copy-deck keys) need only Node. The DOM checks render the design in
-// Chrome through Playwright (loaded at run time; see --help for where it is looked up).
+// Chrome through Playwright, loaded at run time from the tooling folder the way every parity script
+// loads its packages (check-lib's resolveToolingDir, importPackage and packageInstallFix): --tooling
+// <dir>, else $PARITY_TOOLING_DIR, else this script's own folder; --playwright <dir> and
+// $PLAYWRIGHT_DIR are accepted aliases of the option and the variable.
 
 import { existsSync, readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { createReporter, fail, parseArgs, requireFile, run } from './check-lib.mjs';
+import { createReporter, fail, importPackage, packageInstallFix, parseArgs, requireFile, resolveToolingDir, run } from './check-lib.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const NAME = 'check-testids';
+/** The tooling folder's variable and its place in an app repo (the parity skill's convention). */
+const TOOLING_ENV = 'PARITY_TOOLING_DIR';
+const TOOLING_REPO_DIR = '.parity/tooling';
+/** The older names, still accepted: --playwright <dir> and $PLAYWRIGHT_DIR. */
+const ALIAS_ENV = 'PLAYWRIGHT_DIR';
 
 const SPEC = {
   name: NAME,
@@ -39,16 +46,19 @@ const SPEC = {
     themes: { type: 'string', value: 'names', help: 'Comma-separated themes to render: light, dark (default: the map defaultRender.theme)' },
     matrix: { type: 'boolean', help: 'Render every game x every language x light and dark (slower)' },
     static: { type: 'boolean', help: 'Only the static checks (no browser)' },
-    playwright: { type: 'string', value: 'dir', help: 'A folder whose node_modules holds playwright (or set PLAYWRIGHT_DIR)' },
+    tooling: { type: 'string', value: 'dir', help: `Folder whose node_modules holds playwright 1.63.0 (default: $${TOOLING_ENV}, else this script's folder)` },
+    playwright: { type: 'string', value: 'dir', help: `The same as --tooling (an older name; $${ALIAS_ENV} is the same as $${TOOLING_ENV})` },
     list: { type: 'string', value: 'screen', help: 'Print one screen\'s contract (e.g. S4) as a table after the static checks; no DOM checks' },
     json: { type: 'boolean', help: 'Also print the problems as JSON' },
   },
   positionals: { min: 0, max: 0 },
   details: [
-    'Playwright is looked up in: --playwright <dir>, $PLAYWRIGHT_DIR, this script\'s own node_modules chain,',
-    'then the working directory. The owning skill pins it (playwright 1.63.0) in scripts/package.json and',
-    'installs it with: npm ci --prefix <skill>/scripts. The browser is the installed Google Chrome',
-    '(channel "chrome"), falling back to Playwright\'s bundled Chromium.',
+    `Playwright (1.63.0, pinned in the owning skill's scripts/package.json) is loaded from the tooling folder:`,
+    `--tooling <dir>, else $${TOOLING_ENV}, else this script's own folder (npm ci --prefix <skill>/scripts). When the`,
+    `skill folder must stay read-only or is shared, install into the app repo (npm ci --prefix <repo>/${TOOLING_REPO_DIR}`,
+    `from a copy of that package.json and package-lock.json) and pass --tooling <repo>/${TOOLING_REPO_DIR}. --playwright <dir>`,
+    `and $${ALIAS_ENV} are accepted as the same. The browser is the installed Google Chrome (channel "chrome"), falling`,
+    "back to Playwright's bundled Chromium.",
     '',
     'The design is rendered with localStorage pa-toybox.lang / .theme / .game set before load.',
     'Parent links are verified in the default render (map defaultRender); counts and texts in every render.',
@@ -486,25 +496,22 @@ function inspectPage({ screens, checkParents, accessible }) {
 }
 /* eslint-enable no-undef */
 
-async function loadPlaywright(dirOption) {
-  const attempts = [];
-  for (const dir of [dirOption, process.env.PLAYWRIGHT_DIR].filter(Boolean)) {
-    const base = resolve(dir);
-    attempts.push(() => createRequire(join(base, 'package.json'))('playwright'));
-    attempts.push(() => createRequire(join(base, 'index.js'))(base));
-  }
-  attempts.push(async () => import('playwright'));
-  attempts.push(() => createRequire(join(process.cwd(), 'package.json'))('playwright'));
-  for (const attempt of attempts) {
-    try {
-      const mod = await attempt();
-      const pw = mod?.chromium ? mod : mod?.default;
-      if (pw?.chromium) return pw;
-    } catch {
-      // try the next place
-    }
-  }
-  return null;
+/** The tooling folder of this run: --tooling (or --playwright), else the variable (or its alias), else HERE. */
+function toolingDirOf(options) {
+  const envVar = (process.env[TOOLING_ENV] ?? '').trim() !== '' ? TOOLING_ENV : ALIAS_ENV;
+  return resolveToolingDir({ given: options.tooling ?? options.playwright, envVar, scriptsDir: HERE });
+}
+
+/** Both install forms (the skill's folder, or a folder in the app repo), and the accepted aliases. */
+function installFix() {
+  return `${packageInstallFix({ scriptsDir: HERE, envVar: TOOLING_ENV, repoDir: TOOLING_REPO_DIR })} (--playwright <dir> and ${ALIAS_ENV} are accepted as the same.)`;
+}
+
+async function loadPlaywright(options) {
+  const mod = await importPackage('playwright', toolingDirOf(options), { what: 'playwright 1.63.0', fix: installFix() });
+  const pw = mod?.chromium ? mod : mod?.default;
+  if (!pw?.chromium) fail(`playwright in ${toolingDirOf(options)} has no chromium export`, installFix());
+  return pw;
 }
 
 async function launch(pw) {
@@ -571,8 +578,7 @@ run(async () => {
   }
 
   if (!options.static) {
-    const pw = await loadPlaywright(options.playwright);
-    if (!pw) fail('Playwright is not installed where this script can find it', 'Install it (npm ci --prefix <skill>/scripts, playwright 1.63.0), or pass --playwright <dir> / set PLAYWRIGHT_DIR.');
+    const pw = await loadPlaywright(options);
     const def = { lang: map.defaultRender?.lang ?? 'en', theme: map.defaultRender?.theme ?? 'light', game: map.defaultRender?.game ?? Object.keys(deck.games)[0] };
     const split = (value) => value.split(',').map((s) => s.trim()).filter(Boolean);
     const games = options.games ? split(options.games) : Object.keys(deck.games);

@@ -39,6 +39,7 @@ export const HOST_FILES = {
   'use-is-fullscreen-ad-showing.ts': ['useIsFullscreenAdShowing'],
   'use-game-session-controls.ts': ['useGameSessionControls', 'GameSessionControls'],
   'use-pause-on-background.ts': ['usePauseOnBackground', 'shouldPauseRun'],
+  'run-end-policy.ts': ['isLossStranded'],
 };
 
 export const HOST_TESTS = [
@@ -64,6 +65,8 @@ export const HOST_TESTS = [
   'use-is-fullscreen-ad-showing.test.ts',
   'use-board-selection.test.tsx',
   'tutorial-script.test.ts',
+  'run-end-policy.test.ts',
+  'stranded-loss.test.ts',
 ];
 
 /**
@@ -188,6 +191,22 @@ export function checkHostFiles(repo, report) {
   return checked;
 }
 
+/**
+ * shell-app.test.tsx renders Settings (S11) and Home (S4) through the real providers, so the build
+ * order brings it with S11 at Shell step 9 (create-shell-app.test.tsx covers shell-app.tsx until
+ * then): while either screen is outside shell-slice.json its absence is a slice SKIP. Strict once
+ * both are in, and without a slice file.
+ */
+const LATE_ROOT_TESTS = { 'packages/shell/src/app/shell-app.test.tsx': ['S11', 'S4'] };
+
+function lateRootTestSkip(repo, rel) {
+  for (const screen of LATE_ROOT_TESTS[rel] ?? []) {
+    const reason = sliceSkipReason(repo.slice, screen);
+    if (reason !== null) return reason;
+  }
+  return null;
+}
+
 /** The composition root templates and the Tutorial route, each with its test (D14, S13). */
 export function checkRootFiles(repo, report) {
   const noApp = sliceSkipReason(repo.slice);
@@ -198,7 +217,8 @@ export function checkRootFiles(repo, report) {
     TEST_ADAPTERS,
   ];
   for (const rel of wanted.filter((file) => !repo.exists(file))) {
-    if (noApp !== null) report.skip({ file: rel, rule: 'root-file-missing', message: noApp });
+    const skip = noApp ?? lateRootTestSkip(repo, rel);
+    if (skip !== null) report.skip({ file: rel, rule: 'root-file-missing', message: skip });
     else report.problem({ file: rel, rule: 'root-file-missing', message: 'composition root file is missing', fix: `Copy templates/${rel} from this skill (the composition root is a template: every part is wired and tested).` });
   }
   // The Tutorial route is part of the Shell core (D36): routed to TutorialScreen in every slice.
@@ -561,6 +581,49 @@ export function checkShellWiring(repo, report) {
   }
   if (!files.some((file) => /<GameHostProvider\b/.test(file.source))) report.problem({ file: 'packages/shell/src/app', rule: 'host-not-provided', message: 'no composition-root file renders <GameHostProvider host={host}>', fix: 'Wrap the navigator in <GameHostProvider host={host}> (shell-features.tsx) so useGameSessionControls finds the host.' });
   checkGameScreen(repo, report);
+}
+
+/**
+ * L11, never strand a finished run (D64): a lost run whose continue nobody can give (offer
+ * 'hidden': ads off, offline, no rewarded ad that can come, no Premium) is finished at once, so its
+ * run end is recorded and the recorded Result shows (the endless result with New best, or the lose
+ * result). run-end-policy.ts decides it, resultModelOf draws a loading ad as 'ad-loading' (so
+ * 'hidden' always means unavailable), and the Game screen model sends the finish.
+ */
+const STRANDED_CONDITIONS = [
+  { pattern: /status\s*===\s*'lost'/, what: "the run is lost (status === 'lost')" },
+  { pattern: /continueState\s*===\s*'offered'/, what: "its continue is still offered (continueState === 'offered')" },
+  { pattern: /summary\s*===\s*null/, what: 'it has no recorded summary yet (summary === null)' },
+  { pattern: /===\s*'hidden'/, what: "nobody can continue it (the offer is 'hidden')" },
+];
+
+export function checkLossNotStranded(repo, report) {
+  const policy = `${HOST}/run-end-policy.ts`;
+  const fixPolicy = 'Copy templates/packages/shell/src/game-host/run-end-policy.ts (+ test): isLossStranded(view, continueOffer) is true for a lost run whose continue is offered, whose summary is null and whose offer is hidden.';
+  if (!repo.exists(policy)) {
+    report.problem({ file: policy, rule: 'loss-not-stranded', message: 'missing: nothing ends a lost run that nobody can continue, so its result never shows (L11)', fix: fixPolicy });
+  } else {
+    const source = code(text(repo, policy));
+    for (const condition of STRANDED_CONDITIONS.filter((item) => !item.pattern.test(source))) {
+      report.problem({ file: policy, line: 1, rule: 'loss-not-stranded', message: `isLossStranded does not ask whether ${condition.what}`, fix: fixPolicy });
+    }
+  }
+  const model = `${HOST}/result-model-of.ts`;
+  if (repo.exists(model) && !/\bloading\s*:\s*'ad-loading'/.test(code(text(repo, model)))) {
+    report.problem({ file: model, line: 1, rule: 'loss-not-stranded', message: "resultModelOf does not map the continue offer 'loading' to 'ad-loading'", fix: "Restore CONTINUE_OFFER from the template: free -> 'premium', watch-ad -> 'ad', loading -> 'ad-loading' (S7 draws the ad key busy), hidden -> null." });
+  }
+  const skip = sliceSkipReason(repo.slice, 'S5');
+  const screen = 'packages/shell/src/screens/game/use-game-screen-model.ts';
+  if (skip !== null) {
+    report.skip({ file: screen, rule: 'loss-not-stranded', message: skip });
+    return;
+  }
+  const dir = join(repo.root, 'packages', 'shell', 'src', 'screens', 'game');
+  if (!existsSync(dir)) return;
+  const source = walk(dir, { include: ['*.ts', '*.tsx'] }).filter((file) => !/\.test\.tsx?$/.test(file)).map((file) => code(text(repo, `packages/shell/src/screens/game/${file}`))).join('\n');
+  if (!/\bisLossStranded\s*\(/.test(source) || !/type\s*:\s*'finish'/.test(source)) {
+    report.problem({ file: screen, line: 1, rule: 'loss-not-stranded', message: "the Game screen model never sends { type: 'finish' } for a stranded loss (isLossStranded)", fix: "Restore use-game-screen-model.ts from toybox-screens: once per eventSeq, when isLossStranded(view, continueOffer) is true, send({ type: 'finish' }), so an endless loss in an ads-off build without Premium shows its result at once." });
+  }
 }
 
 const GAME_SCREEN_NEEDS = [

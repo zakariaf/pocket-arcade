@@ -1,4 +1,5 @@
 [owner-placeholder]
-ads.ids.ios.appId is still the scaffold placeholder ca-app-pub-1234567890123456~1234567890
-ads.ids.ios.units.rewarded is still the scaffold placeholder ca-app-pub-1234567890123456/3333333333
-owner step G5
+ads.ids.ios.appId is the placeholder AdMob app id ca-app-pub-1234567890123456~1234567890 (owner step G5)
+ads.ids.ios.units.rewarded is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5)
+OWNER STEPS PENDING: G5
+RESULT: FAIL (2 problems)
