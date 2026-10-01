@@ -1,0 +1,5 @@
+{
+ "frame": "s6-pause",
+ "variant": "no-hints",
+ "derive": [{ "hide": ":scope > .gtb > .ibtn.sm:nth-last-child(2)" }]
+}

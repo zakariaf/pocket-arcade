@@ -6,8 +6,9 @@
 // test-only-entry.ts and wired into the Shell's startup through TEST_ONLY, the component specs draw
 // the edge widths the references draw, capture output is gitignored, the waiver and sign-off
 // files are well formed, every frame state has its opener in the hook that owns it, the frozen-motion
-// switch, the board probe and the consent hold are wired, and parity/game-facts.json holds each
-// app's facts, pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
+// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn (by
+// the parity root and inside every modal root), and parity/game-facts.json holds each app's facts
+// (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -19,6 +20,8 @@ import { readWaivers } from './lib/runs.mjs';
 
 const PARITY_DIR = 'packages/shell/src/app/parity';
 const STARTUP = 'packages/shell/src/app/parity-startup.tsx';
+/** Where the held S1 splash is registered (rtl-and-direction's start-shell template). */
+const HELD_SPLASH_FILE = 'packages/shell/src/app/start-shell.ts';
 const SPECS = 'packages/shell/src/ui/component-specs.json';
 const FILES = {
   plans: `${PARITY_DIR}/parity-plans.ts`,
@@ -34,6 +37,7 @@ const FILES = {
   errorView: `${PARITY_DIR}/parity-error-view.tsx`,
   root: `${PARITY_DIR}/parity-root.tsx`,
   startup: STARTUP,
+  marker: 'packages/shell/src/app/parity-launch-marker.tsx',
   entry: 'packages/shell/src/app/test-only-entry.ts',
 };
 
@@ -86,6 +90,17 @@ const PORT_STATES = ['premium-loading-price', 'premium-store-unavailable', 'prem
 const WIRING = [
   { name: 'isParityMotionFrozen', file: 'packages/shell/src/app/use-reduce-motion.ts', pattern: /\bisParityMotionFrozen\s*\(/, screens: null, fix: 'useReduceMotion() returns true while TEST_ONLY?.isParityMotionFrozen() is true (the one frozen-motion switch); the saved setting stays as it is.' },
   { name: 'isParityBoardProbeOn', file: null, pattern: /\bisParityBoardProbeOn\s*\(/, screens: ['S5', 'S6', 'S7'], fix: "The host's isLayoutProbeOn closure (create-shell-parts.ts) is also true while TEST_ONLY?.isParityBoardProbeOn() is, so the probe=board launch renders game.board-layout." },
+];
+
+/**
+ * The modal roots of the Shell: a modal layer hides everything outside it from the accessibility
+ * tree Maestro reads, so each draws the launch's nonce marker inside itself (the parity root draws
+ * one for every other frame). The screen decides whether the file is due in a partial Shell.
+ */
+const MODAL_ROOTS = [
+  { file: 'packages/shell/src/ui/scrim.tsx', screen: 'S14', what: 'the Scrim (S6 Pause and the S14 dialogs)' },
+  { file: 'packages/shell/src/screens/result/result-overlay.tsx', screen: 'S7', what: 'the Result overlay (S7)' },
+  { file: 'packages/shell/src/app/consent-moment.tsx', screen: 'S3', what: 'the consent cover (S3)' },
 ];
 
 /** The startup steps (parity-startup.tsx) the Shell calls; a harness nobody applies draws nothing. */
@@ -224,7 +239,7 @@ function checkGameFacts({ root, slice, frames, report, problem, read }) {
     return;
   }
   const text = read(FACTS_FILE);
-  const fix = "Copy the skill's templates/parity/game-facts.json to parity/game-facts.json and give every game app its facts (designGame, hasMusic, winLine).";
+  const fix = "Copy the skill's templates/parity/game-facts.json to parity/game-facts.json and give every game app its facts (designGame, hasMusic, winLine, hasHints).";
   if (text === null) {
     problem(FACTS_FILE, 0, 'harness-game-facts', `does not exist, so the reference variants of ${needed.join(', ')} cannot be chosen`, fix);
     return;
@@ -237,10 +252,10 @@ function checkGameFacts({ root, slice, frames, report, problem, read }) {
     return;
   }
   if (json?.version !== 1 || !json.games || typeof json.games !== 'object' || Array.isArray(json.games)) {
-    problem(FACTS_FILE, 0, 'harness-game-facts', 'expected { "version": 1, "games": { "<app id>": { "designGame", "hasMusic", "winLine" } } }', fix);
+    problem(FACTS_FILE, 0, 'harness-game-facts', 'expected { "version": 1, "games": { "<app id>": { "designGame", "hasMusic", "winLine", "hasHints" } } }', fix);
     return;
   }
-  for (const id of gameApps(root)) if (!json.games[id]) problem(FACTS_FILE, 0, 'harness-game-facts', `has no entry for the game app ${id}`, `Add "${id}": { "designGame": ..., "hasMusic": ..., "winLine": ... } (its test apps/${id}/src/parity-game-facts.test.ts pins them).`);
+  for (const id of gameApps(root)) if (!json.games[id]) problem(FACTS_FILE, 0, 'harness-game-facts', `has no entry for the game app ${id}`, `Add "${id}": { "designGame": ..., "hasMusic": ..., "winLine": ..., "hasHints": ... } (its test apps/${id}/src/parity-game-facts.test.ts pins them).`);
   for (const [id, entry] of Object.entries(json.games)) {
     const at = `games.${id}`;
     if (!existsSync(join(root, 'apps', id))) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}: there is no app folder apps/${id}`, 'Key each entry by its app id (the apps/<id> folder).');
@@ -255,20 +270,23 @@ function checkGameFacts({ root, slice, frames, report, problem, read }) {
       continue;
     }
     const clean = maskComments(test);
-    if (!/\bhasMusicOf\s*\(/.test(clean) || !/\bisScoreRatedOf\s*\(/.test(clean)) problem(testRel, 0, 'harness-game-facts', 'does not compare the facts with hasMusicOf(game) and isScoreRatedOf(game)', 'Copy the template test again: it pins the facts through the Shell helpers of game-host/game-facts.ts.');
+    if (!/\bhasMusicOf\s*\(/.test(clean) || !/\bisScoreRatedOf\s*\(/.test(clean) || !/\bhasHintsOf\s*\(/.test(clean)) problem(testRel, 0, 'harness-game-facts', 'does not compare the facts with hasMusicOf(game), isScoreRatedOf(game) and hasHintsOf(game)', 'Copy the template test again: it pins the facts through the Shell helpers of game-host/game-facts.ts.');
     const block = /PARITY_GAME_FACTS\s*=\s*\{([^}]*)\}/.exec(clean)?.[1] ?? '';
     const inTest = {
       designGame: /designGame:\s*'([^']*)'/.exec(block)?.[1],
       hasMusic: /hasMusic:\s*(true|false)/.exec(block)?.[1],
       winLine: /winLine:\s*'([^']*)'/.exec(block)?.[1],
+      hasHints: /hasHints:\s*(true|false)/.exec(block)?.[1],
     };
-    const inFile = { designGame: entry?.designGame, hasMusic: String(entry?.hasMusic), winLine: entry?.winLine };
+    const inFile = { designGame: entry?.designGame, hasMusic: String(entry?.hasMusic), winLine: entry?.winLine, hasHints: String(entry?.hasHints) };
     const differ = Object.keys(inTest).filter((k) => inTest[k] !== inFile[k]);
     if (differ.length) problem(FACTS_FILE, 0, 'harness-game-facts', `${at} disagrees with PARITY_GAME_FACTS in ${testRel} on ${differ.map((k) => `${k} (${inFile[k]} vs ${inTest[k] ?? 'missing'})`).join(', ')}`, 'The test pins the facts to the module: fix the one that is wrong, keep both equal (a Gate-Change trailer names the change).');
     const hasMusicSound = textsUnder(root, `apps/${id}/src/sounds`, /./).some((t) => /category:\s*'music'/.test(t));
     if (entry?.hasMusic === false && hasMusicSound) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.hasMusic is false, but apps/${id}/src/sounds has a sound in category music (the module disagrees)`, 'Set hasMusic true (the Music rows and key show), or remove the music sound.');
     const scoreRule = textsUnder(root, `apps/${id}/src/levels`, /./).some((t) => /kind['"]?\s*:\s*['"]score['"]/.test(t));
     if (entry?.winLine === 'moves' && scoreRule) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.winLine is moves, but apps/${id}/src/levels rates levels by score (the module disagrees)`, 'Set winLine "score": the win card shows the score line, not moves with par.');
+    const hintPolicy = textsUnder(root, `apps/${id}/src/rules`, /./).map((t) => /hints\s*:\s*\{\s*kind\s*:\s*['"](\w+)['"]/.exec(t)?.[1]).find(Boolean);
+    if (hintPolicy && (hintPolicy === 'solver') !== (entry?.hasHints === true)) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.hasHints is ${entry?.hasHints}, but apps/${id}/src/rules gives hints: { kind: '${hintPolicy}' } (the module disagrees)`, `Set hasHints ${hintPolicy === 'solver'} (true exactly when the hint policy is a solver: the S5 top bar then has its hint key).`);
   }
 }
 
@@ -381,6 +399,7 @@ run(async () => {
     if (!isTest(rel) && /\bTEST_ONLY\s*\??\.\s*readParityRequest\s*\(/.test(clean)) callers += 1;
     if (!isTest(rel) && rel !== STARTUP) {
       for (const name of Object.keys(STARTUP_CALLS)) if (new RegExp(`\\b${name}\\s*\\(`).test(clean)) wired.add(name);
+      if (/\bwithParityRoot\s*\(/.test(clean)) wired.add('withParityRoot');
       for (const name of Object.keys(LAUNCH_MEMBERS)) if (new RegExp(`\\.${name}\\s*\\?\\.\\s*\\(`).test(clean)) wired.add(`launch.${name}`);
     }
     // Tests never ship, so they may import the harness directly.
@@ -423,6 +442,38 @@ run(async () => {
       return text !== null && w.pattern.test(maskComments(text));
     });
     if (!found) problem(w.file ?? 'packages/shell/src', 0, 'harness-not-wired', `${w.file ? 'does not call' : 'nothing in the Shell calls'} TEST_ONLY?.${w.name}()`, w.fix);
+  }
+
+  // 4a'. The launch nonce marker: the parity root draws it and provides its context, and every modal
+  // root draws one inside itself (a modal layer hides the rest from the hierarchy), so capture-app
+  // can prove each dump came from its own launch. The held S1 splash is registered by start-shell
+  // outside the Shell root, so start-shell wraps it in the parity root too (withParityRoot).
+  if (texts.startup !== null && !wired.has('withParityRoot')) {
+    const skip = skipFor('S1');
+    if (skip) report.skip({ file: HELD_SPLASH_FILE, rule: 'harness-launch-marker', message: skip });
+    else {
+      checked += 1;
+      problem(HELD_SPLASH_FILE, 0, 'harness-launch-marker', 'registers the held S1 splash (frame s1-splash) outside the Shell root, and nothing outside parity-startup.tsx calls withParityRoot(), so the S1 capture has no launch marker ("hierarchy from another simulator")', 'Register it wrapped: registerRootComponent(withParityRoot(parity.request, createStartupSplash({ game, language, restart: holdSplash }))), importing withParityRoot from parity-startup.tsx.');
+    }
+  }
+  if (texts.root !== null) {
+    checked += 1;
+    const clean = maskComments(texts.root);
+    if (!/<ParityLaunchContext\b/.test(clean) || !/<ParityLaunchMarker\b/.test(clean)) {
+      problem(FILES.root, 0, 'harness-launch-marker', 'does not provide ParityLaunchContext with the request\'s nonce and draw <ParityLaunchMarker />', "Copy the template parity-root.tsx again: capture-app refuses a hierarchy without the launch's marker (\"hierarchy from another simulator\").");
+    }
+  }
+  for (const m of MODAL_ROOTS) {
+    const text = read(m.file);
+    const skip = skipFor(m.screen);
+    if (text === null || skip) {
+      if (skip) report.skip({ file: m.file, rule: 'harness-launch-marker', message: skip });
+      continue;
+    }
+    checked += 1;
+    if (!/<ParityLaunchMarker\b/.test(maskComments(text))) {
+      problem(m.file, 0, 'harness-launch-marker', `${m.what} is a modal root (accessibilityViewIsModal) but draws no <ParityLaunchMarker />, so a capture behind it has no nonce in its hierarchy`, 'Render <ParityLaunchMarker /> (packages/shell/src/app/parity-launch-marker.tsx) as the first child of the modal View: it draws nothing outside a parity capture.');
+    }
   }
 
   // 4b. Frame-state openers: every state a plan names is opened by the hook that owns it.

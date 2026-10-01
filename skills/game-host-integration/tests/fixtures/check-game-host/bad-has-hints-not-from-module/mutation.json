@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/game-host.ts",
+      "find": "    hasHints: hasHintsOf(game),",
+      "with": "    hasHints: true,"
+    }
+  }
+]

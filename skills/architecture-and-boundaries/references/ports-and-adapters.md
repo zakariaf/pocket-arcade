@@ -81,8 +81,17 @@ export type ConsentPort = {
   readonly showFormIfRequired: () => Promise<ConsentInfo>;
   /** Settings > Ad privacy choices. */
   readonly showPrivacyOptions: () => Promise<ConsentInfo>;
+  /**
+   * Apple's App Tracking Transparency prompt (owner decision O1): after Google's form, before the
+   * first ad request; asks only while not-determined and the app is active. Never rejects.
+   */
+  readonly requestTracking: () => Promise<TrackingStatus>;
 };
+
+export type TrackingStatus = 'authorized' | 'denied' | 'restricted' | 'not-determined' | 'unavailable';
 ```
+
+The consent port stays one of the nine ports: Apple's prompt is part of the consent step, and `admob-consent-adapter.ts` is the only importer of `expo-tracking-transparency` (as it is, with the ads adapter and the test-only debug adapter, of the ads SDK). The fake (`createFakeConsent`) scripts the status and counts the prompts; with `ADS_MODE=off` the factory's port answers `'unavailable'` without asking.
 
 ```ts
 // packages/shell/src/services/purchase/purchase-port.ts

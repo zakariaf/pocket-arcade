@@ -1,8 +1,1 @@
-[
- "--frame",
- "s4-home",
- "--frame",
- "s11-settings",
- "--themes",
- "light"
-]
+["--frame", "s4-home", "--frame", "s11-settings"]

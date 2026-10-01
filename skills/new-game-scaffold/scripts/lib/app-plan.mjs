@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { catalogText, fillTemplate, FONT_FILES, gameCatalogs, LANGUAGES, PILOT, renderGameConfig, sortedObject } from './app-files.mjs';
 
-export { BUNDLE_ID, DECK_LOSE_SLUGS, DEFAULT_LOSE_SLUG, deckGame, FONT_FILES, GAME_ID, idForms, LANGUAGES, LOSE_SLUG, PILOT, RESERVED_IDS, settingsProblems, suggestedSalt, VIOLENCE_RATINGS } from './app-files.mjs';
+export { BUNDLE_ID, BUNDLE_PREFIX, bundleIdFor, DECK_LOSE_SLUGS, DEFAULT_LOSE_SLUG, deckGame, FONT_FILES, GAME_ID, idForms, LANGUAGES, LOSE_SLUG, PILOT, PLACEHOLDERS, placeholdersIn, premiumIdFor, RESERVED_IDS, settingsProblems, suggestedSalt, VIOLENCE_RATINGS, withoutBundleIdOption } from './app-files.mjs';
 
 /** Dependencies of every existing app (except `skip`), sorted, for the lockstep check. */
 export function existingApps(root, skip) {

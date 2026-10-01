@@ -17,9 +17,11 @@ const TILE = COMPONENT_SPECS.iconTile;
 /** pop (default) · accent (Endless, Premium benefits) · gold (Premium) · danger · plain (locked pack). */
 export type IconTilePaint = 'pop' | 'accent' | 'gold' | 'danger' | 'plain';
 
+/** An icon, or the two-colour rating star ('rating-star' filled, 'rating-star-hollow'). */
+export type IconTileIcon = IconName | 'rating-star' | 'rating-star-hollow';
+
 export type IconTileProps = {
-  /** An icon, or the two-colour rating star ('rating-star' filled, 'rating-star-hollow'). */
-  readonly icon: IconName | 'rating-star' | 'rating-star-hollow';
+  readonly icon: IconTileIcon;
   readonly paint?: IconTilePaint;
   /** 'row' = 38 pt with a 22 pt icon; 'statHeader' = 34 pt with a 20 pt icon. */
   readonly size?: 'row' | 'statHeader';

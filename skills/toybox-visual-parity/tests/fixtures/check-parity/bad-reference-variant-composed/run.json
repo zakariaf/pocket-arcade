@@ -1,0 +1,23 @@
+{
+ "frame": "s6-pause",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "Planted: an s6-pause run captured against s6-pause--no-music, while the facts of a game without music and without hints select the composed s6-pause--no-music--no-hints (L8).",
+ "board": {
+  "rect": {
+   "x": 16,
+   "y": 128,
+   "w": 370,
+   "h": 700
+  },
+  "source": "probe=board"
+ },
+ "variant": "no-music",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s6-pause.png",
+  "layout": "../reference/lineSiege/light-en/s6-pause.layout.json"
+ }
+}

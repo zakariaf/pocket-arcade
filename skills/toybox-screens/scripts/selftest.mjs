@@ -12,6 +12,12 @@ const TEMPLATES = fileURLToPath(new URL('../templates', import.meta.url));
 const OVER_TEMPLATES = {
   'bad-overlay-not-modal': ['--screen', 'S7'],
   'bad-game-half-wired': ['--screen', 'S5'],
+  'bad-daily-card-not-pressable': ['--screen', 'S4'],
+  'bad-play-inside-opener': ['--screen', 'S4'],
+  'bad-hint-key-without-fact': ['--screen', 'S5'],
+  'bad-splash-ignores-freeze': ['--screen', 'S1'],
+  'bad-rate-outline-star': ['--screen', 'S11'],
+  'bad-debug-perf-row-missing': ['--screen', 'S15'],
 };
 
 await runSelftest(import.meta.url, [

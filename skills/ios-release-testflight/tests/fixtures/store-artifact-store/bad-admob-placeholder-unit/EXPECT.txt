@@ -1,0 +1,1 @@
+[ad-app-id] extra.adUnits.interstitial is a placeholder AdMob unit id (ca-app-pub-1234567890123456/2222222222)

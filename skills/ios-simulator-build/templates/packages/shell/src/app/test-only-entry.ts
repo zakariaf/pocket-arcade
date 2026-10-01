@@ -3,9 +3,10 @@
 // Every export is reached through `require` in test-only.ts (TEST_ONLY.<name>), which knip cannot
 // follow, so each one is tagged @public (knip's includeEntryExports would report it otherwise).
 // A member joins once the file behind it exists: until then leave the export and its TestOnlyApi
-// member out, never the sentinel. At Shell steps 4 to 7 the entry holds only TEST_BUILD_SENTINEL;
-// DebugScreen and FontTestScreen stay out while S15 is outside shell-slice.json. Every export has a TestOnlyApi
-// member of the same name, and every member an export (check-sim-setup: entry-api-match).
+// member out, never the sentinel. At Shell steps 4 to 6 the entry holds only TEST_BUILD_SENTINEL
+// (the Shell core's members join at step 7); DebugScreen and FontTestScreen stay out while S15 is
+// outside shell-slice.json. Every export has a TestOnlyApi member of the same name, and every member
+// an export (check-sim-setup: entry-api-match).
 /** @public */
 export { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 /** @public */
@@ -41,7 +42,15 @@ export {
 /** @public */
 export { readParityRequest } from '@e07/shell/app/parity/read-parity-request.ts';
 /** @public */
+export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
+/** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
+export {
+  /** @public */
+  recordAudioFeedback,
+  /** @public */
+  recordHapticsFeedback,
+} from '@e07/shell/services/audio/recording-feedback.ts';
 /** @public */
 export { DebugScreen } from '@e07/shell/screens/debug/debug-screen.tsx';
 /** @public */

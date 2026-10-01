@@ -1,0 +1,2 @@
+apps/line-siege/game.config.ts:10 [game-config] holds the placeholder AdMob app id (ca-app-pub-1234567890123456~1234567890)
+owner step G5

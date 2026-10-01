@@ -1,0 +1,2 @@
+[premium-id]
+premium.productId "com.example.flocktilt.premium" is not io.applander.flocktilt.premium

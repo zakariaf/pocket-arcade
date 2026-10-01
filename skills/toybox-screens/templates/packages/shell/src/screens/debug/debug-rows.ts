@@ -115,3 +115,34 @@ export const DEBUG_ROWS: readonly DebugRow[] = [
   },
   { testID: 'debug.font-test-row', icon: 'hash', labelKey: 'debug.font-test', action: 'font-test' },
 ];
+
+/** The Performance group's rows (test builds; the design draws no such group): see DEBUG_PERF_ROWS. */
+export type DebugPerfRowId = 'record' | 'share' | 'benchmark';
+
+export type DebugPerfRow = {
+  readonly id: DebugPerfRowId;
+  readonly testID: string;
+  readonly icon: IconName;
+  readonly labelKey: ShellMessageKey;
+};
+
+/**
+ * Debug menu > Performance, below the design's fourteen rows and the network counter, in this
+ * order: the switch that records frame times, Share performance report, Run save benchmark. Their
+ * testIDs are the screen map's S15 entries the design does not draw (check-screens debug-perf-rows).
+ */
+export const DEBUG_PERF_ROWS: readonly DebugPerfRow[] = [
+  {
+    id: 'record',
+    testID: 'debug.perf-record-switch',
+    icon: 'motion',
+    labelKey: 'debug.perf.record',
+  },
+  { id: 'share', testID: 'debug.perf-share-row', icon: 'forward', labelKey: 'debug.perf.share' },
+  {
+    id: 'benchmark',
+    testID: 'debug.perf-benchmark-row',
+    icon: 'clock',
+    labelKey: 'debug.perf.benchmark',
+  },
+];

@@ -2,11 +2,7 @@ import { View } from 'react-native';
 
 import type { ReactNode } from 'react';
 
-/** The one modal container: every dialog renders it, so VoiceOver stays inside the dialog. */
+/** The dialog card; the Scrim around it is the modal root (a modal card would hide the scrim). */
 export function DialogCard({ children }: { readonly children: ReactNode }): ReactNode {
-  return (
-    <View accessibilityViewIsModal testID="dialog.card">
-      {children}
-    </View>
-  );
+  return <View testID="dialog.card">{children}</View>;
 }

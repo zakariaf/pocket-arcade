@@ -1,0 +1,3 @@
+[bundle-id]
+bundleId "com.pocketarcade.flocktilt" is not io.applander.flocktilt
+io.applander.<game id without hyphens>, all lowercase (owner decision O4)

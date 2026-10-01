@@ -24,7 +24,8 @@ describe('LogoTile', () => {
       width: LOGO_TILE_VARIANTS.home.size,
       height: LOGO_TILE_VARIANTS.home.size,
       backgroundColor: TEST_PALETTE.standard.light.primary,
-      transform: [{ translateY: 0 }, { rotate: '-4deg' }],
+      // Rotate first, then the lift, as the mockup's CSS applies them (rotate() translateY()).
+      transform: [{ rotate: '-4deg' }, { translateY: 0 }],
     });
     expect(tile.props['accessibilityElementsHidden']).toBe(true);
   });

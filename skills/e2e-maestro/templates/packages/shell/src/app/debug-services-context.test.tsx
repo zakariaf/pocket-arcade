@@ -2,6 +2,8 @@
 // no-shell-context: the context holds one value; the hook is rendered bare on purpose.
 import { renderHook } from '@testing-library/react-native';
 
+import { createFakeDebugPerf } from '@e07/shell/screens/debug/fake-debug-perf.ts';
+
 import {
   DebugServicesProvider,
   useDebugLinks,
@@ -26,6 +28,7 @@ const SERVICES: DebugServices = {
   setSeed: jest.fn(),
   seedOverride: () => null,
   perfLog: { append: jest.fn(), entries: () => [] },
+  perf: createFakeDebugPerf(),
 };
 
 const LINKS: DebugLinkHandler = {

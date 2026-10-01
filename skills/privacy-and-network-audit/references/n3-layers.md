@@ -41,7 +41,7 @@ The lint config (owned by the TypeScript and lint rules work) must keep these N3
 
 - `no-restricted-globals`: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`.
 - `no-restricted-syntax`: `Literal[value=/^(https?|wss?|ftp):\/\//i]` and `TemplateElement[value.raw=/^(https?|wss?|ftp):\/\//i]`, exempt only in `packages/shell/src/config/external-links.ts` (OS hand-off links: store page, privacy policy, `mailto:`). Layer B exempts the same one file, for URLs only; keep the two exemptions naming the same path.
-- `no-restricted-imports`: `axios`, `@react-native-community/netinfo`, `expo-updates`, `expo-web-browser`, `react-native-webview`, `expo-file-system`, `react-native-purchases`, `react-native-iap`, `expo-tracking-transparency`; the vendor SDKs outside their adapters (`packages/shell/src/services/*/*-adapter.ts`); and expo-iap's `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, `verifyPurchase`, `useIAP` everywhere.
+- `no-restricted-imports`: `axios`, `@react-native-community/netinfo`, `expo-updates`, `expo-web-browser`, `react-native-webview`, `expo-file-system`, `react-native-purchases`, `react-native-iap`; `expo-tracking-transparency` everywhere except `packages/shell/src/services/consent/admob-consent-adapter.ts` (owner decision O1: the one file that asks App Tracking Transparency; the package is a system wrapper with no network code); the vendor SDKs outside their adapters (`packages/shell/src/services/*/*-adapter.ts`); and expo-iap's `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, `verifyPurchase`, `useIAP` everywhere.
 - The rules apply to `apps/*/src` and `packages/{shell,game-kit}/src`, not to `packages/tooling` (the SKAdNetwork refresh and the App Store Connect client legitimately use `fetch`).
 
 Remote images, fonts and downloads make requests without `fetch`, which is why URL literals are banned too. `audit-repo.mjs` repeats these checks without depending on the lint config, so a weakened lint rule cannot hide a violation; it also reports the forms lint's selectors can miss: `globalThis['fetch'](...)`, `new globalThis.WebSocket(...)`, and a network global taken into a variable (`const Socket = WebSocket`, `const send = globalThis.fetch`, rule `network-global`).
@@ -90,7 +90,7 @@ Read from `npx expo config --json --type prebuild` of a store build (and, static
 - `expo.updates.enabled` must be exactly `false`; `expo-updates` and `expo-dev-client` are never installed (OTA updates and dev clients are network components).
 - No `NSAllowsArbitraryLoads: true` (Expo's generated `NSAllowsLocalNetworking: true` only allows local-network loads and stays).
 - The expo-iap plugin takes no options (`iapkitApiKey`, `module: 'onside'`, `modules.onside`, `ios.alternativeBilling`, ...), `ios.onside.enabled` stays unset and `EXPO_IAP_ONSIDE` is never set (each Onside switch adds the OnsideKit pod).
-- The AdMob plugin never gets `userTrackingUsageDescription` (decision D4: no ATT prompt in v1).
+- App Tracking Transparency (owner decision O1): with ads enabled the `expo-tracking-transparency` plugin carries `userTrackingPermission` and `locales.<en|de|fa|ckb>.ios.NSUserTrackingUsageDescription` exist (`network-config-layer.ts`; `audit-repo.mjs` rule `att-config` checks the sources); the AdMob plugin never gets its own `userTrackingUsageDescription`, so the text has one source.
 - Banned npm packages are checked in the same run with `banned-packages.ts` (anywhere in the lockfile; HTTP clients only as direct dependencies).
 
 ## The runner: npm run audit:network

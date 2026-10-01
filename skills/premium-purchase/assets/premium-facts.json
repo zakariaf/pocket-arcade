@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-26",
+  "verified": "2026-09-30",
   "sdk": {
     "package": "expo-iap",
     "version": "5.8.0",
@@ -53,6 +53,12 @@
   },
   "productIdSuffix": ".premium",
   "familySharable": false,
+  "familySharableDecidedBy": "owner 2026-09-30 (O3): Family Sharing stays off for Premium, never turned on",
+  "price": {
+    "targetEur": 1.99,
+    "baseTerritory": "DEU",
+    "decidedBy": "owner 2026-09-30 (O2): the EUR 1.99 App Store price point; the app always shows the store's localised price"
+  },
   "storekit": {
     "template": "packages/tooling/src/storekit/Premium.storekit.template",
     "entitlements": "packages/tooling/src/storekit/storekit-harness.entitlements",

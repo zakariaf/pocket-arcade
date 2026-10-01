@@ -5,7 +5,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
-import { loadImageDeps } from './lib/deps.mjs';
+import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { TOLERANCES, frameGeometry, isCropOnly } from './lib/gates.mjs';
 import { parseAppLayout, parseMaestroHierarchy } from './lib/hierarchy.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
@@ -25,6 +25,7 @@ const SPEC = {
     out: { type: 'string', value: 'dir', help: 'Write the images here instead of into the run folder (one run only)' },
     reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
     device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: Infinity },
   details: [
@@ -100,7 +101,7 @@ run(async () => {
   if (options.out && dirs.length !== 1) fail('--out works with exactly one run folder', 'Drop --out to write into each run folder.');
   const device = readJson(resolve(options.device), 'device profile');
   const S = device.scale;
-  const { PNG, pixelmatch } = await loadImageDeps();
+  const { PNG, pixelmatch } = await loadImageDeps(toolingDirOf(options));
   const report = createReporter({ name: 'make-sheet' });
   const show = (p) => relative(process.cwd(), p) || '.';
   let made = 0;
@@ -219,9 +220,15 @@ run(async () => {
       if (!p.testID || seen.has(p.testID)) continue;
       seen.add(p.testID);
       // The design side comes from the window this capture shows (view), at the problem's screen
-      // rect, so a scrolled capture shows the same element on both sides.
-      const rr = p.viewRect ?? toView(p.rect, p.testID);
-      const ar = p.appRect ?? bounds.elements.get(p.testID) ?? rr;
+      // rect, so a scrolled capture shows the same element on both sides. A state card is a
+      // fragment, not a screen: its design side is cut at the fragment's own coordinates (the
+      // problem's page rect), and the app side where the app draws the element (a text run: its
+      // screen rect; anything else: its bounds).
+      const isCard = layout.kind === 'state-card';
+      const rr = isCard ? p.rect : (p.viewRect ?? toView(p.rect, p.testID));
+      const ar = isCard
+        ? (p.appRect ?? (p.rule === 'text-ink' ? p.viewRect : bounds.elements.get(p.testID)) ?? p.viewRect ?? rr)
+        : (p.appRect ?? bounds.elements.get(p.testID) ?? rr);
       const w = Math.min(Math.round(rr.w * S) + 2 * ctx, 1400);
       const h = Math.min(Math.round(rr.h * S) + 2 * ctx, 1400);
       const dc = crop(view, Math.round(rr.x * S) - ctx, Math.round(rr.y * S) - ctx, w, h);

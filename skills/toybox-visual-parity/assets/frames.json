@@ -1,11 +1,12 @@
 {
   "version": 1,
-  "about": "One entry per design frame key of screen-testids.json: the testID that proves the app reached the frame (root), and the exact app state the design draws (state). capture-app.mjs launches the app with -parity \"frame=<key>&theme=..&lang=..&game=..&date=2026-09-27&animations=off\"; the app's test-only parity harness turns that into this state. Numbers are Line Siege's; the other design games use the values in fixture.games. fixture describes the player as the design draws it; fixtureSave is the same player as save-document sections, which the harness writes (templates/packages/shell/src/app/parity/parity-fixture-save.json is a copy; check-harness.mjs compares them).",
+  "about": "One entry per design frame key of screen-testids.json: the testID that proves the app reached the frame (root), and the exact app state the design draws (state). Optional per frame: variants (design-derived references for other game facts), board and boardMask (the game's own board, masked), modal (a front layer VoiceOver keeps to itself), designFixes (a sample the mockup fixes to one language, re-rendered in the render language) and designMasks (unlisted parts behind a dialog, masked as their own frame masks them). capture-app.mjs launches the app with -parity \"frame=<key>&theme=..&lang=..&game=..&date=2026-09-27&animations=off\"; the app's test-only parity harness turns that into this state. Numbers are Line Siege's; the other design games use the values in fixture.games. fixture describes the player as the design draws it; fixtureSave is the same player as save-document sections, which the harness writes (templates/packages/shell/src/app/parity/parity-fixture-save.json is a copy; check-harness.mjs compares them).",
   "launchDefaults": { "date": "2026-09-27", "animations": "off" },
   "designFacts": {
-    "about": "The game facts the mockup draws: Music (the S11 Music rows, the S6 Music key) and a moves-rated win line ('7 moves – par 7'). A frame whose design state depends on a game fact has reference variants (frames.<key>.variants) derived from the rendered mockup for the other values; captures pick the reference from the app's facts in parity/game-facts.json (hasMusic: the sound bank has a sound in category music; winLine: 'moves' when levels are rated by moves against par, 'score' when the stars rule is score-based).",
+    "about": "The game facts the mockup draws: Music (the S11 Music rows, the S6 Music key, the Music rows of Settings under the S14 reset dialog), a moves-rated win line ('7 moves – par 7') and a hint key in the S5 top bar. A frame whose design state depends on a game fact has reference variants (frames.<key>.variants) derived from the rendered mockup for the other values; variants compose (every variant the facts match applies, in this file's order: s6-pause--no-music--no-hints). Captures pick the reference from the app's facts in parity/game-facts.json (hasMusic: the sound bank has a sound in category music; winLine: 'moves' when levels are rated by moves against par, 'score' when the stars rule is score-based; hasHints: the rules' hint policy is a solver, the rule behind isHintSupported). A fact missing from the file stops every script (exit 2).",
     "hasMusic": true,
-    "winLine": "moves"
+    "winLine": "moves",
+    "hasHints": true
   },
   "fixture": {
     "date": "2026-09-27 (Sunday)",
@@ -337,7 +338,7 @@
     },
     "s3-consent-moment": {
       "root": "consent.screen",
-      "state": "The Shell's consent intro shown before Google's form: gold shield art, title, lead, info note, Continue key, footnote. The plan makes consent required, the player online, the tutorial done and not Premium; the consent moment host shows the intro and holds it while isHeldParityStart(plan) is true (it never asks Google's form)."
+      "state": "The Shell's consent intro shown before Google's form: gold shield art, title, lead, info note, Continue key, footnote. The plan makes consent required, the player online, the tutorial done and not Premium; the consent moment host shows the intro and holds it while isHeldParityStart(plan) is true: it never requests Google's form and never asks Apple's tracking prompt (App Tracking Transparency), so no system alert is on screen."
     },
     "s3-google-s-form": {
       "root": null,
@@ -358,8 +359,8 @@
       "board": { "above": ["pause.dialog"] },
       "modal": {
         "reachedBy": "pause.dialog",
-        "hidden": ["game.top-bar", "game.pause-button", "game.mode-label", "game.progress-label", "game.score", "game.undo-button", "game.hint-button", "game.board", "pause.scrim"],
-        "why": "The Pause dialog is modal for VoiceOver (it traps focus), so the accessibility tree Maestro reads holds only the dialog and its parts: the paused Game screen under the scrim is not listed. The frame is proven reached by pause.dialog, the screen root sits at its known full-screen position, and the hidden elements are compared inside the root's crop (crop-only, like parts hidden from VoiceOver)."
+        "hidden": ["game.top-bar", "game.pause-button", "game.mode-label", "game.progress-label", "game.score", "game.undo-button", "game.hint-button", "game.board"],
+        "why": "The Pause layer is modal for VoiceOver: the Scrim is the modal root (accessibilityViewIsModal), so the accessibility tree Maestro reads holds only the scrim, the dialog and their parts (and the launch marker the Scrim draws); the paused Game screen under it is not listed. The frame is proven reached by pause.dialog, the screen root sits at its known full-screen position, and the hidden elements are compared inside the root's crop (crop-only, like parts hidden from VoiceOver). pause.scrim is listed and compared like any element."
       },
       "variants": {
         "no-music": {
@@ -370,6 +371,12 @@
           ],
           "reason": "L1",
           "state": "As the base frame, for a game without music (its sound bank has no sound in category music): the Music key is gone and the Sound and Vibration keys share the row in two equal columns with the 10 pt gap, as the app's usePairLayout lays them out."
+        },
+        "no-hints": {
+          "when": { "hasHints": false },
+          "derive": [{ "hide": ":scope > .gtb > .ibtn.sm:last-child" }],
+          "reason": "L8",
+          "state": "As the base frame, for a game without solver hints (Line Siege): the S5 top bar under the scrim has no hint key, so its row ends with the undo key, exactly as the app's flex row lays it out without the key (the Pause dialog draws no hint entry). Composed with no-music as s6-pause--no-music--no-hints."
         }
       }
     },
@@ -440,7 +447,15 @@
     },
     "s11a-language": {
       "root": "settings-language.screen",
-      "state": "Language setting System in en renders (radio checked on the System row); in other renders the row of the render language is checked. Direction note panel below."
+      "state": "Language setting System in en renders (radio checked on the System row); in other renders the row of the render language is checked. Direction note panel below. The System row names the render language, as the phone the capture launches does: 'System (English)' in en, 'سیستم (فارسی)' in fa (designFixes; the mockup's sample was English in every language).",
+      "designFixes": [
+        {
+          "sample": ":scope > .body > .list > .row:nth-child(1) > .tx > .lb",
+          "key": "settings.language.system",
+          "values": { "languageName": "@autonym" },
+          "reason": "R3S-G17e"
+        }
+      ]
     },
     "s11b-about-and-credits": {
       "root": "about.screen",
@@ -494,19 +509,47 @@
     },
     "s13-how-to-play": {
       "root": "how-to-play.screen",
-      "state": "Step 2 of 4: the game's goal, its picture on the stage, the step chip and pager dots (second active), step text 2, Previous and Next, the replay-tutorial nudge."
+      "state": "Step 2 of 4: the game's goal, its picture on the stage, the step chip and pager dots (second active), step text 2, Previous and Next, the replay-tutorial nudge. The picture is the game's own example board (the game's board code draws it), so it is masked like the S5 to S7 boards (boardMask); its frame and place are still gated.",
+      "boardMask": "how-to-play.picture"
     },
     "s14-reset-all-progress": {
       "root": "reset-progress-dialog.scrim",
-      "state": "Settings at scroll 0 under the scrim, with the reset-all-progress dialog; the hold button frozen at 46 % filled."
+      "state": "Settings at scroll 0 under the scrim, with the reset-all-progress dialog; the hold button frozen at 46 % filled.",
+      "variants": {
+        "no-music": {
+          "when": { "hasMusic": false },
+          "scope": "background",
+          "derive": [
+            { "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(3)" },
+            { "hide": ":scope > .bg-under > .body > .grp:nth-of-type(2) > .list > .row:nth-child(4)" }
+          ],
+          "reason": "R3S-G17",
+          "state": "As the base frame, for a game without music: the dimmed Settings under the dialog has no Music switch row and no Music volume row, and the rows below close up, as in s11-settings--no-music."
+        }
+      }
     },
     "s14-restart-to-apply": {
       "root": "restart-dialog.scrim",
-      "state": "The Language page under the scrim, with the restart-to-apply dialog (Later, Restart now)."
+      "state": "The Language page under the scrim, with the restart-to-apply dialog (Later, Restart now). The System row names the render language, as the phone the capture launches does (designFixes).",
+      "designFixes": [
+        {
+          "sample": ":scope > .bg-under > .body > .list > .row:nth-child(1) > .tx > .lb",
+          "key": "settings.language.system",
+          "values": { "languageName": "@autonym" },
+          "reason": "R3S-G17e"
+        }
+      ]
     },
     "s14-progress-restored": {
       "root": "save-restored-dialog.scrim",
-      "state": "Home (as s4-home) under the scrim, with the progress-restored dialog (OK)."
+      "state": "Home (as s4-home) under the scrim, with the progress-restored dialog (OK). The banner placeholder under the scrim is masked as home.banner-ad is on s4-home (designMasks).",
+      "designMasks": [
+        {
+          "selector": ":scope > .bg-under > .body.home-body > .ad",
+          "as": "home.banner-ad",
+          "why": "The banner slot of Home under the dialog: the creative is Google's (the test build shows none, ads off), so its pixels are masked exactly as s4-home masks home.banner-ad."
+        }
+      ]
     },
     "s15-debug-menu": {
       "root": "debug.screen",

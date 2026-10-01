@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/consent-moment-flow.ts",
+      "find": "    consent: trackingOverAdScreen(deps.consent, state),\n",
+      "with": "    consent: deps.consent,\n"
+    }
+  }
+]

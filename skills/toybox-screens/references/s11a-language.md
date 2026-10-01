@@ -32,7 +32,7 @@ System is chosen while the app follows the phone; the System label names the lan
 
 ## Data the model supplies
 
-`SettingsLanguageModel` (in `language-view.tsx`): `selected` (null = System), `systemLanguage`, `onSelect` (settings-and-preferences' `language-change.ts` decides whether the restart dialog opens), `onBack`, `isReducedMotion`. The list has no tab (the Toybox `List`); each row is a `ListRow` with `end="radio"`, `isSelected` and `onPress`; autonym rows pass `labelLanguage`.
+`SettingsLanguageModel` (in `language-view.tsx`): `selected` (null = System), `systemLanguage`, `onSelect` (settings-and-preferences' `language-change.ts` decides whether the restart dialog opens), `onBack`, `isReducedMotion`. The list has no tab (the Toybox `List`); each row is a `ListRow` with `end="radio"`, `isSelected` and `onPress`; autonym rows pass `labelLanguage`, which makes `ListRow` draw the label in the `optionNameList` role (18 Bold, in the language's own script and font), the design's `opt-n`; the 17 pt row label is wrong for them. Autonyms sit at the layout start (S2's end-aligned autonyms are OptionCard's, not this list's). The direction note is `NotePanel` with `iconTile="pop"`: the `globe` in a centred 38 pt pop tile, as the design draws it (a bare 22 pt icon is wrong).
 
 The template `use-settings-language-model.ts` (with its test) builds it: the saved choice from the settings store, System resolved against expo-localization's `getLocales()`, and a row that dispatches `planLanguageChange(...).action` at once; when the direction flips it opens the S14 `restart-to-apply` dialog, whose Restart calls `useDirectionRestart()` (audio disposed, then the reload) and whose Later keeps the old layout until the next launch.
 

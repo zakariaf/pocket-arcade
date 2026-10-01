@@ -176,6 +176,28 @@ describe('Stickers and art', () => {
     ).toBeOnTheScreen();
   });
 
+  it('keeps confetti on screen, at rest, when motion only holds still (a parity capture)', async () => {
+    await renderWithShell(
+      <Confetti isReducedMotion isHiddenBySetting={false} testID="premium.confetti" />,
+    );
+
+    expect(
+      screen.getByTestId('premium.confetti', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+  });
+
+  it('scatters the confetti from the physical left in both directions (the design sets left:)', async () => {
+    await renderWithShell(
+      <Confetti isReducedMotion isHiddenBySetting={false} testID="premium.confetti" />,
+      { language: 'fa' },
+    );
+
+    // The band lays its pieces out left to right, so start: 10 is 10 pt from the left in fa too.
+    expect(screen.getByTestId('premium.confetti', { includeHiddenElements: true })).toHaveStyle({
+      direction: 'ltr',
+    });
+  });
+
   it('hides confetti entirely under reduce motion', async () => {
     await renderWithShell(<Confetti isReducedMotion testID="premium.confetti" />);
 

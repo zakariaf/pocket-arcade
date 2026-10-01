@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/consent-factory.ts",
+      "find": "    return createFakeConsent({ afterRefresh: NO_ADS, afterForm: NO_ADS, calls: [] });\n",
+      "with": "    const off = createFakeConsent({ afterRefresh: NO_ADS, afterForm: NO_ADS, calls: [] });\n    return { ...off, requestTracking: createAdmobConsentAdapter(options).requestTracking };\n"
+    }
+  }
+]

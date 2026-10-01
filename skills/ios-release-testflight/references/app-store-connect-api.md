@@ -14,7 +14,7 @@ altool covers validate, upload and build status. The small REST client covers wh
 
 | Need | Endpoint | When |
 |---|---|---|
-| App record exists, and its numeric Apple ID | `GET /v1/apps?filter[bundleId]=...` | preflight, every release |
+| App record exists, and its numeric Apple ID | `GET /v1/apps?filter[bundleId]=io.applander.<game>` (owner decision O4: every game's bundle id) | preflight, every release |
 | Processing state | `GET /v1/builds?filter[app]=...&filter[version]=...&filter[preReleaseVersion.version]=...` | step 10 |
 | What to Test | `GET /v1/builds/{id}/betaBuildLocalizations`, then `PATCH /v1/betaBuildLocalizations/{id}` or `POST /v1/betaBuildLocalizations` | step 11 |
 | Internal tester group | `POST /v1/betaGroups` with `isInternalGroup: true`, `hasAccessToAllBuilds: true` | once per game; by default the owner creates it in the web UI together with the app record (step G2), because the owner must be added as its tester anyway |
@@ -39,7 +39,7 @@ Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issu
 | `packages/tooling/src/asc/asc-credentials.ts` | `requireEnv`, `ascKeyPath`, `loadAscCredentials(env)`: the only reader of the `.p8`, into memory |
 | `packages/tooling/src/asc/asc-client.ts` | `ascRequest(token, { method, path, body })` -> `{ ok, status, json }` or `{ ok: false, status, errors: [{ code, detail }] }` |
 | `packages/tooling/src/asc/find-app.ts` | `findAppByBundleId(token, bundleId)` -> `{ id, name }` or `null` |
-| `packages/tooling/src/asc/print-app-record.ts` | CLI: `node packages/tooling/src/asc/print-app-record.ts <bundleId>` prints `{"id","name"}` or exits 2 (no record: owner step G2) |
+| `packages/tooling/src/asc/print-app-record.ts` | CLI: `node packages/tooling/src/asc/print-app-record.ts --app <game-id>` (or the bundle id `io.applander.<game id without hyphens>`) prints `{"id","name"}` or exits 2 (no record: owner step G2); any other id is refused (exit 1) |
 | `packages/tooling/src/asc/beta-notes.ts` | `setWhatsNew(token, buildId, text)` and its pure payload builders |
 | `packages/tooling/src/clock/system-clock.ts` | `nowEpochSeconds()` and `todayIso()` |
 

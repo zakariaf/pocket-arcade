@@ -5,7 +5,7 @@ import { prepareAds, refreshConsentAtLaunch } from './ad-gate.ts';
 import { createFakeAds } from './fake-ads.ts';
 
 import type { AdGateInput } from './ad-gate.ts';
-import type { ConsentInfo } from '@e07/shell/services/consent/consent-port.ts';
+import type { ConsentInfo, TrackingStatus } from '@e07/shell/services/consent/consent-port.ts';
 
 const GRANTED: ConsentInfo = { canRequestAds: true, isPrivacyOptionsRequired: true };
 const DENIED: ConsentInfo = { canRequestAds: false, isPrivacyOptionsRequired: true };
@@ -16,11 +16,18 @@ const AFTER_TUTORIAL: AdGateInput = {
   isOnline: true,
 };
 
-/** afterRefresh DENIED: Google's form is required (a player in the EEA who has not answered). */
-function setup(afterForm: ConsentInfo, afterRefresh: ConsentInfo = DENIED) {
+/**
+ * afterRefresh DENIED: Google's form is required (a player in the EEA who has not answered).
+ * The ATT status starts not-determined on iOS, and the player declines unless told otherwise.
+ */
+function setup(
+  afterForm: ConsentInfo,
+  afterRefresh: ConsentInfo = DENIED,
+  tracking: TrackingStatus = 'not-determined',
+) {
   const calls: string[] = [];
   const seen: ConsentInfo[] = [];
-  const consent = createFakeConsent({ afterRefresh, afterForm, calls });
+  const consent = createFakeConsent({ afterRefresh, afterForm, tracking, calls });
   const ads = createFakeAds({
     isRewardedLoaded: false,
     interstitialResult: 'unavailable',
@@ -34,36 +41,55 @@ function setup(afterForm: ConsentInfo, afterRefresh: ConsentInfo = DENIED) {
   const onConsent = (info: ConsentInfo): void => {
     seen.push(info);
   };
-  return { calls, seen, deps: { ads, consent, onConsent, showIntro } };
+  return { calls, seen, consent, deps: { ads, consent, onConsent, showIntro } };
 }
 
 describe('ad gate', () => {
-  it('shows the consent moment, then the form, then initializes and preloads, in that order', async () => {
-    const { calls, seen, deps } = setup(GRANTED);
+  it('shows the consent moment, the form, the ATT prompt, then initializes and preloads', async () => {
+    const { calls, seen, consent, deps } = setup(GRANTED);
     await expect(prepareAds(deps, AFTER_TUTORIAL)).resolves.toBe(true);
     expect(calls).toStrictEqual([
       'refresh',
       'intro',
       'showFormIfRequired',
+      'requestTracking',
       'initialize',
       'preloadInterstitial',
       'preloadRewarded',
     ]);
     expect(seen).toStrictEqual([DENIED, GRANTED]);
+    expect(consent.trackingPrompts()).toBe(1);
   });
 
-  it('shows no consent moment and no form where consent is not required (or already given)', async () => {
+  it.each(['denied', 'restricted', 'unavailable'] as const)(
+    'initializes and preloads when tracking is %s too (ads without the IDFA)',
+    async (status) => {
+      const { calls, consent, deps } = setup(GRANTED, GRANTED, status);
+      await expect(prepareAds(deps, AFTER_TUTORIAL)).resolves.toBe(true);
+      expect(calls).toStrictEqual([
+        'refresh',
+        'requestTracking',
+        'initialize',
+        'preloadInterstitial',
+        'preloadRewarded',
+      ]);
+      expect(consent.trackingPrompts()).toBe(0); // Apple never asks twice
+    },
+  );
+
+  it('shows no consent moment and no form where consent is not required, but still asks ATT', async () => {
     const { calls, deps } = setup(GRANTED, GRANTED);
     await expect(prepareAds(deps, AFTER_TUTORIAL)).resolves.toBe(true);
     expect(calls).toStrictEqual([
       'refresh',
+      'requestTracking',
       'initialize',
       'preloadInterstitial',
       'preloadRewarded',
     ]);
   });
 
-  it('keeps the SDK uninitialized when consent does not allow ad requests', async () => {
+  it('keeps the SDK uninitialized and asks no ATT when consent does not allow ad requests', async () => {
     const { calls, deps } = setup(DENIED);
     await expect(prepareAds(deps, AFTER_TUTORIAL)).resolves.toBe(false);
     expect(calls).toStrictEqual(['refresh', 'intro', 'showFormIfRequired']);
@@ -74,7 +100,7 @@ describe('ad gate', () => {
     ['for Premium', { isPremium: true }],
     ['offline', { isOnline: false }],
     ['with ads off', { isAdsEnabled: false }],
-  ] as const)('skips the consent moment and the form %s', async (_label, change) => {
+  ] as const)('skips the consent moment, the form and ATT %s', async (_label, change) => {
     const { calls, deps } = setup(GRANTED);
     await expect(prepareAds(deps, { ...AFTER_TUTORIAL, ...change })).resolves.toBe(false);
     expect(calls).toStrictEqual([]);

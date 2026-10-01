@@ -9,12 +9,15 @@ export type HomeDaily = {
   /** date.weekday-day-month, formatted by the Shell date formatter in the UI language. */
   readonly dateText: string;
   readonly streakDays: number;
-  /** Today's challenge is finished: the play button becomes the "done" line. */
+  /** Today's challenge is finished: the Play key becomes the "done" line (the card still opens S9). */
   readonly isDoneToday: boolean;
 };
 
 export type HomeActions = {
   readonly onPlay: () => void;
+  /** The daily card's body (home.daily-card): opens S9 Daily challenge, done today or not. */
+  readonly onOpenDaily: () => void;
+  /** The daily card's Play key (home.daily-card.play-button): starts today's run. */
   readonly onPlayDaily: () => void;
   readonly onPlayEndless: () => void;
   readonly onOpenSettings: () => void;

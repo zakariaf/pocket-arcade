@@ -1,1 +1,1 @@
-{ "screens": ["S4", "S5", "S6", "S7", "S15"], "why": "the pilot game into Home: Game, Pause, Result and the Debug menu for the no-network check" }
+{ "screens": ["S4", "S5", "S6", "S7", "S8", "S15"], "why": "the pilot game into Home and Levels: Game, Pause, Result, Levels (the level-1 flow checks the stars there) and the Debug menu for the no-network check" }

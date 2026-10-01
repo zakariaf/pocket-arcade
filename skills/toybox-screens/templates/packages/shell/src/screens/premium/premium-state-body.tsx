@@ -61,7 +61,12 @@ export function PremiumStateBody({ model }: PremiumStateBodyProps): ReactNode {
         </>
       );
     case 'success':
-      return <PremiumSuccess isReducedMotion={model.isReducedMotion} />;
+      return (
+        <PremiumSuccess
+          isReducedMotion={model.isReducedMotion}
+          isConfettiHidden={model.isConfettiHidden}
+        />
+      );
     case 'error':
       return (
         <NotePanel testID="premium.error-note" icon="alert" isError text={t('premium.error')} />

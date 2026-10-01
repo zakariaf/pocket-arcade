@@ -86,8 +86,8 @@ export const RETIRED_KEYS = {
 /**
  * Shell texts the design's copy deck lacks. The deck is never edited, so these are written by hand
  * in all four Shell catalogs (packages/shell/src/i18n/catalogs/<lang>.json) with exactly these
- * texts; fa and ckb wait for a native speaker's review. check-screens accepts them as copy keys
- * and fails a screen that uses one while a Shell catalog lacks it.
+ * texts; the fa and ckb drafts go on the owner's own review list (never waited for). check-screens
+ * accepts them as copy keys and fails a screen that uses one while a Shell catalog lacks it.
  */
 export const SHELL_EXTRA_KEYS = {
   // S7 win line on a level rated by score (par is null): the score and the level's best after
@@ -101,6 +101,17 @@ export const SHELL_EXTRA_KEYS = {
   // S5 top bar: the undo and hint keys' VoiceOver labels (topBarPropsOf labels).
   'game-screen.undo-button.a11y-label': { en: 'Undo', de: 'Rückgängig', fa: 'واگرد', ckb: 'گەڕانەوە' },
   'game-screen.hint-button.a11y-label': { en: 'Hint', de: 'Tipp', fa: 'راهنمایی', ckb: 'ئاماژە' },
+  // S15 debug menu, test builds: the Performance group under the design's rows. English in all four
+  // catalogs, like every debug text (no review needed).
+  ...Object.fromEntries(
+    Object.entries({
+      'debug.perf.benchmark': 'Run save benchmark',
+      'debug.perf.heading': 'Performance',
+      'debug.perf.record': 'Record frame times',
+      'debug.perf.share': 'Share performance report',
+      'debug.perf.summary': 'Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}',
+    }).map(([key, en]) => [key, { en, de: en, fa: en, ckb: en }]),
+  ),
 };
 
 export const SHELL_CATALOGS_DIR = `${SHELL}/i18n/catalogs`;

@@ -90,7 +90,7 @@ ads: {
 
 - `GOOGLE_SAMPLE_APP_IDS`: Google's sample app IDs (iOS `~1458002511`, Android `~3347511713`). The only place in our code where the sample publisher `3940256099942544` may appear.
 - `assertLiveIds(ids)`: throws unless the app ID and all three unit IDs match the formats and none contains the sample publisher.
-- `admobPluginOptions(mode, ids, skAdNetworkItems)`: `iosAppId` is the game's app ID only when `live`, otherwise the sample; `delayAppMeasurementInit: true`; the SKAdNetwork list. The SDK is linked in every variant, so Info.plist always needs an app ID (a missing `GADApplicationIdentifier` crashes at launch). It never returns `userTrackingUsageDescription` (decision D4: no App Tracking Transparency prompt in v1).
+- `admobPluginOptions(mode, ids, skAdNetworkItems)`: `iosAppId` is the game's app ID only when `live`, otherwise the sample; `delayAppMeasurementInit: true`; the SKAdNetwork list. The SDK is linked in every variant, so Info.plist always needs an app ID (a missing `GADApplicationIdentifier` crashes at launch). It never returns `userTrackingUsageDescription`: Apple's tracking prompt text is written once, by the `expo-tracking-transparency` plugin entry and `withShell`'s locales (references/consent-flow.md, "App Tracking Transparency").
 - `adUnitsExtra(mode, ids)`: the unit IDs for `expo.extra.adUnits`, only when `live` (and validated); `null` otherwise.
 
 `ads-config.test.ts` proves: sample IDs and no units in `test`/`off`; the game's IDs in `live`; an iOS-only game (Android `null`) is accepted; sample or malformed IDs throw in `live`.
@@ -107,13 +107,22 @@ import { SKADNETWORK_IDS } from './skadnetwork-ids.ts';
 ['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)],
 ```
 
-Pass the options through this function only. Never add `userTrackingUsageDescription`, never write the plugin entry by hand with literal IDs, and never edit `ios/`.
+Pass the options through this function only. Never add `userTrackingUsageDescription` (a second writer of the ATT text), never write the plugin entry by hand with literal IDs, and never edit `ios/`.
+
+The same plugin list holds Apple's tracking prompt (owner decision O1), right after the ads line:
+
+```ts
+// packages/shell/src/config/shell-plugins.ts: the en text from the Shell catalog
+['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }],
+```
+
+`TRACKING_USAGE_DESCRIPTIONS` (exported by `shell-plugins.ts`) reads `consent.tracking.usage-description` from the four Shell catalogs, and `withShell` writes `locales.<lang>.ios.NSUserTrackingUsageDescription` for en, de, fa and ckb next to `CFBundleDisplayName`. Install the package in every app with the Expo table spec `~57.0.2` (the dependency-management skill's plan; the Shell lists it as a `*` peer and the root pins it in `overrides`).
 
 ## What the config plugin writes
 
 Read in the 17.2.0 plugin source and seen in a prebuilt `Info.plist`:
 
-- `GADApplicationIdentifier` (from `iosAppId`), `GADDelayAppMeasurementInit`, `SKAdNetworkItems` (it only adds IDs that are missing) and, only if given, `NSUserTrackingUsageDescription`.
+- `GADApplicationIdentifier` (from `iosAppId`), `GADDelayAppMeasurementInit`, `SKAdNetworkItems` (it only adds IDs that are missing) and, only if given, `NSUserTrackingUsageDescription` (never given: the `expo-tracking-transparency` plugin writes it, and Expo writes each language's `InfoPlist.strings` from `withShell`'s locales; seen in a 2026-09-30 build: the base `Info.plist` holds the en text and `en.lproj`, `de.lproj`, `fa.lproj`, `ckb.lproj` hold the four texts).
 - Android keys `APPLICATION_ID`, `DELAY_APP_MEASUREMENT_INIT`, `OPTIMIZE_INITIALIZATION`, `OPTIMIZE_AD_LOADING` (the last two default to `true`).
 - The plugin only warns (does not fail) when an app ID is missing, which is why `admobPluginOptions` always returns one.
 
@@ -139,7 +148,7 @@ The library's own `TestIds` module is bundled into every app (Metro does not tre
 - `test`: the AdMob adapter with `ADMOB_TEST_UNITS`.
 - `live`: the AdMob adapter with `extra.adUnits`; it throws when they are missing (a `withShell` bug).
 
-The consent port follows the same mode: `createConsentPort(adsMode, { onError })` (`consent-factory.ts`) returns a port that never calls Google UMP when `adsMode` is `off`, and the AdMob consent adapter otherwise.
+The consent port follows the same mode: `createConsentPort(adsMode, { onError })` (`consent-factory.ts`) returns a port that never calls Google UMP and never shows Apple's tracking prompt when `adsMode` is `off`, and the AdMob consent adapter otherwise.
 
 The ports reach screens through React Context, created once when the Shell app is created: `createAdsPort(readAdsExtra(), (error) => { errorLog.record('ads', error); })` and `createConsentPort(readAdsExtra().adsMode, { onError })`.
 
@@ -157,12 +166,12 @@ Google publishes the SKAdNetwork IDs of itself and its third-party buyers; the p
 
 The repo's `eslint.config.mjs` already holds the import rules; do not add copies:
 
-- `VENDOR_SDK_PATHS` bans `react-native-google-mobile-ads` (message: use AdsPort/ConsentPort) and `expo-network` in all runtime code (`no-restricted-imports`).
+- `VENDOR_SDK_PATHS` bans `react-native-google-mobile-ads` (message: use AdsPort/ConsentPort), `expo-network` and `expo-tracking-transparency` (ConsentPort) in all runtime code (`no-restricted-imports`).
 - The `ADAPTERS` block (files matching `packages/shell/src/services/*/*-adapter.ts`) lifts that ban, which covers `admob-ads-adapter.ts`, `admob-consent-adapter.ts`, the test-only `admob-consent-debug-adapter.ts` and `expo-network-connectivity-adapter.ts`.
-- `BANNED_PACKAGE_PATHS` bans `expo-tracking-transparency` (decision D4).
+- `expo-tracking-transparency` is no longer a banned package (owner decision O1 reversed the old "no ATT prompt in v1"); `check-ads.mjs` rule `att-adapter-only` allows it in `admob-consent-adapter.ts` alone.
 - The `__mocks__/**` block exempts the root mock from `import/no-default-export`.
 
-The lint rule allows any `*-adapter.ts` to import the SDK; `check-ads.mjs` is stricter and allows only the three named files and only the SDK names each one needs.
+The lint rule allows any `*-adapter.ts` to import the SDK; `check-ads.mjs` is stricter and allows only the three named files and only the SDK names each one needs, and only the consent adapter with only the permission calls for `expo-tracking-transparency`.
 
 ## Re-verify after an upgrade
 
@@ -170,3 +179,4 @@ The lint rule allows any `*-adapter.ts` to import the SDK; `check-ads.mjs` is st
 2. Rerun the Jest suites listed in `references/ad-policy.md` and `references/consent-flow.md`, and the simulator smoke test in `references/console-privacy-troubleshooting.md`.
 3. Update the root mock `__mocks__/react-native-google-mobile-ads.ts` and this skill's stand-in `scripts/lib/stubs/react-native-google-mobile-ads.mjs` when the library's surface, event names or `TestIds` change. Re-read how `show()` and a failed presentation are reported (the adapter relies on `ERROR` with phase `show` settling the show).
 4. Rerun the privacy-manifest audit (the pod manifests change with the SDK).
+5. On an `expo-tracking-transparency` upgrade (it follows the Expo SDK): re-read how its `TrackingTransparencyPermissionRequester.swift` maps restricted and denied, update the root mock and `scripts/lib/stubs/expo-tracking-transparency.mjs`, and rerun the ATT smoke test.

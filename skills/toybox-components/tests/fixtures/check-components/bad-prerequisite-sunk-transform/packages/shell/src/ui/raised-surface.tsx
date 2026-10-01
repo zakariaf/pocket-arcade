@@ -49,6 +49,8 @@ export type RaisedSurfaceProps = {
   readonly hint?: string;
   /** Layout of the face (padding, direction, alignment, min height) from the component. */
   readonly faceStyle?: StyleProp<ViewStyle>;
+  /** In a row of keys (dialog buttons): the key and its face fill the row's height. */
+  readonly isStretched?: boolean;
   /** Layout of the whole key in its parent (flex, alignSelf, width); never paint. */
   readonly layoutStyle?: StyleProp<ViewStyle>;
   /** Extra press-in / press-out work (hold-to-confirm); the sink animation always runs. */
@@ -67,6 +69,9 @@ const useStyles = makeStyles((theme) => {
     // Same box as the face; it slides from `elevation` below the face to 0 as the key sinks.
     shadow: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 },
     shadowPaint: { backgroundColor: theme.colors.shadow },
+    // isStretched: the key fills the height its row gives it, so both dialog keys are as tall as
+    // the taller one (CSS align-items: stretch): a one-line "Not now" beside a two-line "Restart now".
+    stretched: { flexGrow: 1 },
     face: {
       minHeight: MIN_TOUCH,
       minWidth: MIN_TOUCH,
@@ -91,6 +96,22 @@ function faceOverrides(props: RaisedSurfaceProps): ViewStyle {
     ...(props.edgeColor === undefined ? {} : { borderColor: props.edgeColor }),
     ...(props.edgeWidth === undefined ? {} : { borderWidth: props.edgeWidth }),
   };
+}
+
+type Styles = ReturnType<typeof useStyles>;
+
+function faceStylesOf(
+  props: RaisedSurfaceProps,
+  styles: Styles,
+  isDisabled: boolean,
+): StyleProp<ViewStyle> {
+  return [
+    styles.face,
+    faceOverrides(props),
+    isDisabled && styles.faceDisabled,
+    props.isStretched === true && styles.stretched,
+    props.faceStyle,
+  ];
 }
 
 function a11yProps(props: RaisedSurfaceProps, isInactive: boolean): PressableProps {
@@ -166,20 +187,11 @@ export function RaisedSurface(props: RaisedSurfaceProps): ReactNode {
       testID={props.testID}
       {...(props.layoutStyle === undefined ? {} : { style: props.layoutStyle })}
     >
-      <Animated.View style={keyStyle}>
+      <Animated.View style={[props.isStretched === true && styles.stretched, keyStyle]}>
         <Animated.View
           style={[styles.shadow, styles.shadowPaint, { borderRadius: props.radius }, shadowStyle]}
         />
-        <View
-          style={[
-            styles.face,
-            faceOverrides(props),
-            isDisabled && styles.faceDisabled,
-            props.faceStyle,
-          ]}
-        >
-          {props.children}
-        </View>
+        <View style={faceStylesOf(props, styles, isDisabled)}>{props.children}</View>
       </Animated.View>
     </Pressable>
   );

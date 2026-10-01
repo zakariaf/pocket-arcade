@@ -1,5 +1,7 @@
 // packages/tooling/src/scaffold/new-game.ts
-// Usage: npm run new-game -- --app <game-id> --name "<Name>" [--bundle-id <id>] [--write]
+// Usage: npm run new-game -- --app <game-id> --name "<Name>" --hints none|solver
+//   --continue once|none [--write]
+// The bundle id is always io.applander.<game id without hyphens>; the generator writes it.
 // The root script "new-game" runs this file. It forwards every argument to scaffold-game.mjs, the
 // generator of the new-game-scaffold skill (in the repo's skills folder, or the .claude/skills link
 // to it), so the npm script and the skill write exactly the same app from the same templates.

@@ -1,26 +1,61 @@
 // Loads the pinned packages (scripts/package.json) at run time, so --help and argument errors work
-// before `npm ci`. A missing package stops the script with exit 2 and the install command.
-import { fail } from '../check-lib.mjs';
-import { INSTALL_HINT } from './paths.mjs';
+// before `npm ci`. The packages live in a tooling folder: --tooling <dir>, else $PARITY_TOOLING_DIR,
+// else this skill's own scripts/ folder. A session whose skill folder must stay read-only (or is
+// shared by other sessions) installs them into the app repo instead:
+//   npm ci --prefix <repo>/.parity/tooling   (from a copy of scripts/package.json and package-lock.json)
+// and passes --tooling <repo>/.parity/tooling. A missing package stops the script with exit 2 and
+// both install forms.
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-export async function loadImageDeps() {
-  try {
-    const { PNG } = await import('pngjs');
-    const { default: pixelmatch } = await import('pixelmatch');
-    return { PNG, pixelmatch };
-  } catch {
-    return fail('the image packages (pngjs 7.0.0, pixelmatch 7.2.0) are not installed', `Run: ${INSTALL_HINT}`);
-  }
+import { fail, importPackage, packageInstallFix, resolveToolingDir } from '../check-lib.mjs';
+import { SCRIPTS_DIR } from './paths.mjs';
+
+export const TOOLING_ENV = 'PARITY_TOOLING_DIR';
+export const TOOLING_REPO_DIR = '.parity/tooling';
+
+/** The --tooling option every script that loads a package declares. */
+export const TOOLING_OPTION = Object.freeze({
+  type: 'string',
+  value: 'dir',
+  help: `Folder whose node_modules holds the pinned packages (default: $${TOOLING_ENV}, else the skill's scripts folder)`,
+});
+
+/** The tooling folder of this run (absolute). */
+export function toolingDirOf(options = {}) {
+  return resolveToolingDir({ given: options.tooling, envVar: TOOLING_ENV, scriptsDir: SCRIPTS_DIR });
 }
 
-export async function loadPlaywright() {
+/** The arguments that pass this run's tooling folder on to another script of the skill. */
+export function toolingArgs(options = {}) {
+  return options.tooling ? ['--tooling', toolingDirOf(options)] : [];
+}
+
+/** The fix text for a missing package: the skill-folder install and the --tooling install. */
+export function installFix() {
+  return packageInstallFix({ scriptsDir: SCRIPTS_DIR, envVar: TOOLING_ENV, repoDir: TOOLING_REPO_DIR });
+}
+
+export async function loadImageDeps(tooling = toolingDirOf()) {
+  const fix = installFix();
+  const { PNG } = await importPackage('pngjs', tooling, { what: 'pngjs 7.0.0', fix });
+  const pixelmatchModule = await importPackage('pixelmatch', tooling, { what: 'pixelmatch 7.2.0', fix });
+  return { PNG, pixelmatch: pixelmatchModule.default ?? pixelmatchModule };
+}
+
+export async function loadPlaywright(tooling = toolingDirOf()) {
+  const mod = await importPackage('playwright', tooling, { what: 'playwright 1.63.0', fix: `${installFix()} No browser download: the scripts use the installed Google Chrome.` });
+  const pw = mod.chromium ? mod : mod.default;
+  if (!pw?.chromium) fail(`playwright in ${tooling} has no chromium export`, installFix());
+  return pw;
+}
+
+/** The installed playwright version (for the reference manifest), or 'unknown'. */
+export function playwrightVersion(tooling = toolingDirOf()) {
   try {
-    const mod = await import('playwright');
-    const pw = mod.chromium ? mod : mod.default;
-    if (!pw?.chromium) throw new Error('no chromium export');
-    return pw;
+    return JSON.parse(readFileSync(join(tooling, 'node_modules', 'playwright', 'package.json'), 'utf8')).version;
   } catch {
-    return fail('playwright 1.63.0 is not installed', `Run: ${INSTALL_HINT} (no browser download: the scripts use the installed Google Chrome)`);
+    return 'unknown';
   }
 }
 

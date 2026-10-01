@@ -1,0 +1,2 @@
+[maestro-device] spawns Maestro without --device <udid> and --driver-host-port <port> before the command
+[maestro-device] passes Maestro's per-command --udid

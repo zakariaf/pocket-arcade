@@ -1,0 +1,2 @@
+[feedback-evidence] the smoke flows asked for no win sound (sounds: ui.tap, place)
+[feedback-evidence] the smoke flows asked for no success haptic (haptics: selection)

@@ -27,7 +27,7 @@ One special level per day, the same for every player in the world with no server
 - "If the phone's clock goes backwards, days that were already done stay done, and nothing crashes or double-counts."
 - "Streaks follow the plain rule 'played yesterday or today'. There is no streak insurance and no paid streak repair."
 - 8.3: the level comes from today's local date plus the game's own salt, run through the same generator as normal levels at a medium difficulty; every phone gets the same level on the same date; past days cannot be replayed for streaks (no archive in v1).
-- S4 Home daily card: today's date in the chosen language and digits, "Play today's challenge" or "Done - come back tomorrow", and the current daily streak.
+- S4 Home daily card: today's date in the chosen language and digits, "Play today's challenge" or "Done - come back tomorrow", and the current daily streak. The card's body opens S9 Daily challenge (also once today is done); its Play key starts today's run (the lead's decision L7, 2026-09-30).
 - S7 in Daily mode: today's result, streak and "Come back tomorrow". Stars and statistics are saved BEFORE the result screen appears.
 
 ## Date keys: calendar maths without Date
@@ -198,6 +198,7 @@ The week strip is the one numbered series of the screen: its columns are numbere
 ## The Home daily card and the daily result
 
 - Home (`home.daily-card`): title `home.daily-card.title` (`daily.title`), date `home.daily-card.date` (`date.weekday-day-month` from `summary.today`), streak sticker `home.daily-card.streak` (`daily.streak.count`, `daysCount` = `summary.currentStreak`; `=0` reads "No streak yet"), button `home.daily-card.play-button` (`daily.today.play-button`); once `summary.isDone` the button becomes the row `home.daily-card.done` with a success check and `daily.today.done` (chosen; not drawn).
+- Two controls on the Home card (L7): the card body (`home.daily-card`, a pressable surface under the card's content, labelled with the title, date and streak) opens S9 with `navigate('Daily')` in every state, done or not; the Play key (`home.daily-card.play-button`), its own button beside the surface, starts today's run with `navigate('Game', { start: 'new', ref: { kind: 'daily', date: summary.today } })`, the same run S9's Play key starts. The first finished attempt of the day counts either way. The pixels are the design's flat panel; toybox-screens' s04-home.md shows how the card is drawn, and E2E journey 02 taps the card to open S9.
 - Daily result (S7 layout without the stars row; chosen): chip `game-screen.mode.daily`, title `result.daily-title` (`result.daily.title`), the gold streak sticker `daily.streak.count`, the score panel, caption `result.daily.come-back`, hero key Home. It reads the same `useDailySummary()` after the run-end write.
 - Game top bar in a daily run: `game-screen.mode.daily` with `dateText` = `date.day-month` of `run.ref.date`.
 
@@ -210,3 +211,4 @@ The week strip is the one numbered series of the screen: its columns are numbere
 
 - A lost first attempt counts as the day played (default). If the owner wants only wins to count for streaks, change the run-end caller (`applyRunEnd`), not the model, and ask first.
 - The design does not draw S9 after today's game; the layout above is the chosen default.
+- Settled: Home reaches S9 through the daily card's body, and its Play key plays today's run (the lead's decision L7, 2026-09-30).

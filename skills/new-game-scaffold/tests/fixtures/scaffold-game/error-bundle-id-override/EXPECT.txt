@@ -1,0 +1,2 @@
+ERROR [bad-input] --bundle-id com.example.flocktilt: every app's bundle id is io.applander.flocktilt (owner decision O4)
+Drop --bundle-id

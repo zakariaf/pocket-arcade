@@ -50,6 +50,11 @@ export function runSaveBenchmark({ store, record, now }: SaveBenchmarkInput): Sa
   return summarizeWriteTimes(samples);
 }
 
+/** The device's high-resolution clock in ms (this file is on the ESLint clock allow-list). */
+export function deviceNow(): number {
+  return performance.now();
+}
+
 /** The perf-log entry the debug menu appends after a run. */
 export function saveBenchmarkEntry(result: SaveBenchmarkResult, atEpochMs: number): PerfEntry {
   return { kind: 'save-benchmark', label: 'save-write', atEpochMs, data: { ...result } };

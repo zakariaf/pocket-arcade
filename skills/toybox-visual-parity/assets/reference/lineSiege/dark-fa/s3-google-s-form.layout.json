@@ -2,7 +2,7 @@
 "version":1,
 "frame":"s3-google-s-form",
 "variant":null,
-"facts":{"hasMusic":true,"winLine":"moves"},
+"facts":{"hasMusic":true,"winLine":"moves","hasHints":true},
 "kind":"mock-only",
 "screens":[
 "S3/google-form"

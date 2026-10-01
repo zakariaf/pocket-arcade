@@ -46,7 +46,14 @@
     "expo-sqlite": "SaveStore/SqlDriver",
     "react-native-audio-api": "AudioPort",
     "expo-haptics": "HapticsPort",
-    "expo-network": "ConnectivityPort"
+    "expo-network": "ConnectivityPort",
+    "expo-tracking-transparency": "ConsentPort"
+  },
+  "vendorSdkFiles": {
+    "$comment": "Vendor SDKs that one adapter file alone may import (owner decision O1: Apple's ATT prompt lives in the consent adapter).",
+    "expo-tracking-transparency": [
+      "packages/shell/src/services/consent/admob-consent-adapter.ts"
+    ]
   },
   "adapterGlobs": [
     "packages/shell/src/services/*/*-adapter.ts",
@@ -65,7 +72,6 @@
     "@react-native-async-storage/async-storage": "Persist through SaveStore (expo-sqlite).",
     "react-native-iap": "IAP goes through PurchasePort (expo-iap).",
     "react-native-purchases": "No purchase server (N2).",
-    "expo-tracking-transparency": "No ATT prompt in v1.",
     "react-native-restart": "Use reloadAppAsync from expo."
   },
   "nodeWorldMarkers": [

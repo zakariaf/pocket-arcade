@@ -10,7 +10,10 @@ import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { levelCountOf, useGameExtra } from '@e07/shell/app/use-game-extra.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
+import {
+  createNumberFormatter,
+  createPercentFormatter,
+} from '@e07/shell/i18n/create-number-formatter.ts';
 import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { formatWeekdayLetter, formatWeekdayName } from '@e07/shell/i18n/format-date.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
@@ -33,9 +36,8 @@ export function useStatsModel(): StatsModel {
   const extra = useGameExtra();
   const openDialog = useOpenDialog();
   const { onConfirmResetStats } = useSettingsResets();
-  const formatNumber = createNumberFormatter(
-    localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
-  );
+  const localeTag = localeTagFor(useLanguage(), useSettingsStore(selectDigits));
+  const formatNumber = createNumberFormatter(localeTag);
   const summary = useStatsSummary({
     levelCount: levelCountOf(extra),
     hasEndless: extra.modes.endless,
@@ -54,6 +56,7 @@ export function useStatsModel(): StatsModel {
     gameName: gameMessageText(t, { id: host.nameId }),
     logo: host.logo,
     formatNumber,
+    formatPercent: createPercentFormatter(localeTag),
     isReducedMotion: useReduceMotion(),
     banner: useBannerSlot('stats'),
     onBack: () => {

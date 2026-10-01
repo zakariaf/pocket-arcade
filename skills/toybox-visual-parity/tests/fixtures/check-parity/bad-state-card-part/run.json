@@ -1,0 +1,14 @@
+{
+ "frame": "s12-loading-price",
+ "variant": null,
+ "theme": "light",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. Planted: the Buy key of the state card repainted; a part of a state card is still compared (fill, crop).",
+ "reference": {
+  "image": "../reference-r3/lineSiege/light-fa/s12-loading-price.png",
+  "layout": "../reference-r3/lineSiege/light-fa/s12-loading-price.layout.json"
+ }
+}

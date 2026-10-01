@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/ios/Premium.storekit",
+      "content": "{\n  \"identifier\" : \"E07PREMIUM\",\n  \"nonRenewingSubscriptions\" : [ ],\n  \"products\" : [\n    {\n      \"displayPrice\" : \"1.99\",\n      \"familyShareable\" : true,\n      \"internalID\" : \"900000001\",\n      \"localizations\" : [ { \"description\" : \"No ads, ever.\", \"displayName\" : \"Premium\", \"locale\" : \"en_US\" } ],\n      \"productID\" : \"io.applander.demogame.premium\",\n      \"referenceName\" : \"Premium\",\n      \"type\" : \"NonConsumable\"\n    }\n  ],\n  \"settings\" : { \"_failTransactionsEnabled\" : false, \"_locale\" : \"en_US\", \"_storefront\" : \"DEU\", \"_storeKitErrors\" : [ ] },\n  \"subscriptionGroups\" : [ ],\n  \"version\" : { \"major\" : 2, \"minor\" : 0 }\n}\n"
+    }
+  }
+]

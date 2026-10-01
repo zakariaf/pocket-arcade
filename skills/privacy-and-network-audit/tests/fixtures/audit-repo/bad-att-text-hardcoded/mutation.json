@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "apps/demo-game/app.config.ts",
+      "find": "export default withShell(gameConfig, process.env);",
+      "with": "export default { ...withShell(gameConfig, process.env), ios: { infoPlist: { NSUserTrackingUsageDescription: 'We track you' } } };"
+    }
+  }
+]

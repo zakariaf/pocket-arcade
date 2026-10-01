@@ -8,7 +8,8 @@ Three messages the owner receives, written the way the release pipeline and this
 Line Siege 1.0.0 (build 8) is in TestFlight as a store build.
 
 What I checked before uploading: the store build contains no debug menu or test code, uses the
-game's real AdMob app ID, has no StoreKit test files and no debug entitlement, and was built by
+game's real AdMob app ID and its own id io.applander.linesiege, carries Apple's tracking question
+in all four languages, has no StoreKit test files and no debug entitlement, and was built by
 Xcode 26.6 (store-artifact gate: PASS). Apple validated and processed it (state VALID).
 
 What testers see under "What to Test":
@@ -52,7 +53,7 @@ public API cannot create one (step G2, about 2 minutes):
 
 App Store Connect > My Apps > + > New App:
   Platform: iOS   Name: Maze Loop   Primary language: English (U.S.)
-  Bundle ID: com.example.mazeloop   SKU: maze-loop
+  Bundle ID: io.applander.mazeloop   SKU: maze-loop   (fixed: io.applander.<game id>)
 Then, in the new app: TestFlight > Internal Testing > +, name "Owner", turn on automatic
 distribution and add yourself, so every build I upload appears in TestFlight on your iPhone.
 

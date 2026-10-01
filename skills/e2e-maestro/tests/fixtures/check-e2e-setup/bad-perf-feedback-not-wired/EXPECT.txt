@@ -1,0 +1,1 @@
+packages/shell/src/app/create-debug-parts.ts [perf-layer] createDebugParts does not make the audio feedback recorder (no win sound in feedback.json) with TEST_ONLY.recordAudioFeedback

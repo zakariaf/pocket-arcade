@@ -12,5 +12,6 @@
   { "from": "repo-templates/apps/__GAME_ID__/src/rules/apply-move.test.ts", "to": "templates/rules.test.ts" },
   { "from": "repo-templates/__mocks__/expo-iap.ts", "to": "templates/__mocks__/expo-iap.ts" },
   { "from": "repo-templates/__mocks__/react-native-google-mobile-ads.ts", "to": "templates/__mocks__/react-native-google-mobile-ads.ts" },
+  { "from": "repo-templates/__mocks__/expo-tracking-transparency.ts", "to": "templates/__mocks__/expo-tracking-transparency.ts" },
   { "from": "repo-templates/packages/game-kit/src/testing/play-choices.ts", "to": "templates/packages/game-kit/src/testing/play-choices.ts" }
 ]

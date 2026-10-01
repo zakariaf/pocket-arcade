@@ -1,1 +1,1 @@
-[config-att]
+packages/shell/src/config/shell-plugins.ts:14 [att-config] the AdMob plugin's userTrackingUsageDescription is set

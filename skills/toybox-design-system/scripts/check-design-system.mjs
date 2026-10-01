@@ -14,8 +14,9 @@ import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, createReporter, dueSkipReason, fa
 import { diffObject, importTsModule, inRanges, masked, readSource, sameValue, show, styleSheetRanges } from './lib/app-source.mjs';
 import { schemeProblems } from './lib/palette-rules.mjs';
 import {
-  APP_FONT_FILES, COLOR_FIELDS, asRenderedBorder, expectedLogoTileVariants, expectedPalette, expectedScales,
-  expectedShellColors, expectedTypeScale, expectedTypeStyles, loadTokens,
+  APP_FONT_FILES, COLOR_FIELDS, PERSIAN_NUMBER_MIN_LINE_HEIGHT, TABULAR_ROLES, TABULAR_STYLES, asRenderedBorder,
+  expectedLogoTileVariants, expectedPalette, expectedScales, expectedShellColors, expectedTypeScale, expectedTypeStyles,
+  loadTokens,
 } from './lib/toybox-expectations.mjs';
 
 const SPEC = {
@@ -45,7 +46,20 @@ const SPEC = {
     '                         may round a lineHeight with Math.round/ceil/floor (React Native rounds text boxes up',
     '                         to whole pixels, so whole points and fractions both drift from the references)',
     '  no-glyph-nudge         AppText or use-localized-text-style.ts moves glyphs (translateY, top, padding or',
-    '                         margin on the text); the CoreText vs Chrome offset is absorbed by the parity gate',
+    '                         margin on the text); the CoreText vs Chrome offset is absorbed by the parity gate.',
+    '                         The one exception is AppText\'s overflowGuardOf (arabic-overflow-guard)',
+    '  arabic-overflow-guard  AppText lacks the Persian overflow guard: iOS puts all of a Vazirmatn line\'s',
+    '                         overflow above its box (content box 2100 + 1100 of 2048 per em) and clips the Text,',
+    '                         where Chrome centres it; from 1.5 pt of half overflow AppText must wrap the Text in a',
+    '                         View that keeps the line box and the testID, pad the Text by ceil(h) + h / ceil(h) - h',
+    '                         and cancel it with marginVertical -ceil(h)',
+    '  balanced-display       AppText does not balance display text (useBalancedWrap for face display, as the',
+    '                         design\'s .d: text-wrap balance), or ui/use-balanced-wrap.ts sets its state from a',
+    '                         closure (iOS sends onTextLayout and onLayout in one batch: use functional updates)',
+    '  tabular-digits         TYPE_SCALE.number or TYPE_STYLES.statValueCompact lacks isTabular, or AppText does not map',
+    '                         isTabular to fontVariant [\'tabular-nums\'] (the design\'s .sv stat values)',
+    '  persian-number-clip    TYPE_STYLES.levelNumber or scoreValue has a Persian line height under 1.45, so iOS clips',
+    '                         the tops of Vazirmatn digits (lead decisions L2 and L9)',
     '  sunk-by-layout         ui/raised-surface.tsx sinks a pushed-in key (chosen segment, disabled, busy, locked',
     '                         tile) with a transform instead of `top: elevation` on the Pressable: VoiceOver and',
     '                         Maestro report the layout frame, so the key\'s bounds sat 3 pt above the design\'s',
@@ -74,8 +88,10 @@ const SHELL = 'packages/shell/src';
 const REQUIRED_FILES = [
   'theme/theme-types.ts', 'theme/tokens.ts', 'theme/type-styles.ts', 'theme/shell-colors.ts', 'theme/motion.ts',
   'theme/make-styles.ts', 'theme/theme-set.ts', 'theme/use-theme.ts', 'i18n/fonts.ts',
-  'i18n/use-localized-text-style.ts', 'ui/app-text.tsx', 'ui/raised-surface.tsx', 'ui/toybox-styles.ts',
+  'i18n/use-localized-text-style.ts', 'ui/app-text.tsx', 'ui/use-balanced-wrap.ts', 'ui/raised-surface.tsx',
+  'ui/toybox-styles.ts',
 ];
+const BALANCE_FILE = `${SHELL}/ui/use-balanced-wrap.ts`;
 const TEXT_STYLE_FILE = `${SHELL}/i18n/use-localized-text-style.ts`;
 const APP_TEXT_FILE = `${SHELL}/ui/app-text.tsx`;
 const RAISED_SURFACE_FILE = `${SHELL}/ui/raised-surface.tsx`;
@@ -135,11 +151,14 @@ async function checkThemeModules(report, root, tokens) {
         compareExport(report, { file, rule: 'scale-mismatch', name, actual: tokensModule[name], expected, fix });
       }
     }
-    compareExport(report, { file, rule: 'type-scale-mismatch', name: 'TYPE_SCALE', actual: tokensModule.TYPE_SCALE, expected: expectedTypeScale(tokens), fix: FIX_TEMPLATE });
+    compareExport(report, { file, rule: 'type-scale-mismatch', name: 'TYPE_SCALE', actual: withoutTabular(tokensModule.TYPE_SCALE), expected: expectedTypeScale(tokens), fix: FIX_TEMPLATE });
+    checkTabular(report, file, 'TYPE_SCALE', tokensModule.TYPE_SCALE, TABULAR_ROLES);
   }
   const styles = await loadModule(report, root, 'theme/type-styles.ts');
   if (styles) {
-    compareExport(report, { file: `${SHELL}/theme/type-styles.ts`, rule: 'type-style-mismatch', name: 'TYPE_STYLES', actual: styles.TYPE_STYLES, expected: expectedTypeStyles(tokens), fix: FIX_TEMPLATE });
+    compareExport(report, { file: `${SHELL}/theme/type-styles.ts`, rule: 'type-style-mismatch', name: 'TYPE_STYLES', actual: withoutTabular(styles.TYPE_STYLES), expected: expectedTypeStyles(tokens), fix: FIX_TEMPLATE });
+    checkTabular(report, `${SHELL}/theme/type-styles.ts`, 'TYPE_STYLES', styles.TYPE_STYLES, TABULAR_STYLES);
+    checkPersianNumbers(report, styles.TYPE_STYLES);
     checkGridFunction(report, styles);
   }
   const shell = await loadModule(report, root, 'theme/shell-colors.ts');
@@ -148,6 +167,39 @@ async function checkThemeModules(report, root, tokens) {
   if (motion) checkMotion(report, motion, tokens);
   const fonts = await loadModule(report, root, 'i18n/fonts.ts');
   if (fonts) compareExport(report, { file: `${SHELL}/i18n/fonts.ts`, rule: 'font-family', name: 'FONT_FAMILIES', actual: fonts.FONT_FAMILIES, expected: FONT_FAMILIES, fix: FIX_TEMPLATE });
+}
+
+/** A type table without the isTabular flags, which tabular-digits checks on its own. */
+function withoutTabular(table) {
+  if (!table || typeof table !== 'object') return table;
+  return Object.fromEntries(Object.entries(table).map(([name, style]) => {
+    if (!style || typeof style !== 'object' || !('isTabular' in style)) return [name, style];
+    const { isTabular: _tabular, ...rest } = style;
+    return [name, rest];
+  }));
+}
+
+const TABULAR_FIX = 'Copy tokens.ts, type-styles.ts and app-text.tsx from the templates: stat values carry isTabular: true, which AppText maps to fontVariant [\'tabular-nums\'] (the design\'s .sv).';
+
+/** Stat values use tabular figures: the flag on each role or style the design sets as .sv. */
+function checkTabular(report, file, name, table, keys) {
+  if (!table || typeof table !== 'object') return;
+  for (const key of keys) {
+    if (table[key]?.isTabular !== true) {
+      report.problem({ file, line: 1, rule: 'tabular-digits', message: `${name}.${key} has no isTabular: true, so its digits are proportional (Persian stat values measured 12 pt of ink for 20.3)`, fix: TABULAR_FIX });
+    }
+  }
+}
+
+/** Display numbers keep a Persian line box tall enough for Vazirmatn's digits (L2, L9). */
+function checkPersianNumbers(report, table) {
+  if (!table || typeof table !== 'object') return;
+  for (const [key, min] of Object.entries(PERSIAN_NUMBER_MIN_LINE_HEIGHT)) {
+    const arabic = table[key]?.lineHeight?.arabic;
+    if (typeof arabic === 'number' && arabic < min) {
+      report.problem({ file: `${SHELL}/theme/type-styles.ts`, line: 1, rule: 'persian-number-clip', message: `TYPE_STYLES.${key} has a Persian line height of ${arabic}: iOS clips the tops of Vazirmatn digits at that box (Chrome lets them overflow), so fa and ckb need ${min}`, fix: `Write ${key}: display(<size>, [1, ${min}]) as the template does; the tile or panel keeps its own height (minHeight).` });
+    }
+  }
 }
 
 /** type-styles.ts exports snapToGrid, and it puts the Toybox line heights on the 3x pixel grid. */
@@ -176,7 +228,74 @@ function checkTextMetrics(report, root) {
   for (const file of [TEXT_STYLE_FILE, APP_TEXT_FILE]) {
     const source = readSource(join(root, file));
     if (source === null) continue;
-    scan(report, file, masked(source), 'no-glyph-nudge', /\b(translateY|top|paddingTop|paddingBottom|paddingBlock|paddingVertical|marginTop|marginBottom|marginBlock|marginVertical)\s*:/g, { message: (m) => `${m[1]} moves the text box to nudge its glyphs`, fix: 'Remove it: the box heights are exact on the pixel grid, and the remaining CoreText vs Chrome glyph offset is measured by the parity text-ink gate, not fixed in layout.' });
+    const text = masked(source);
+    // The overflow guard (its type and its function) is the one place AppText pads text.
+    const guard = file === APP_TEXT_FILE ? [functionRange(text, 'overflowGuardOf'), typeRange(text, 'OverflowGuard')].filter(Boolean) : [];
+    scan(report, file, text, 'no-glyph-nudge', /\b(translateY|top|paddingTop|paddingBottom|paddingBlock|paddingVertical|marginTop|marginBottom|marginBlock|marginVertical)\s*:/g, { when: (m) => !inRanges(m.index, guard), message: (m) => `${m[1]} moves the text box to nudge its glyphs`, fix: 'Remove it: the box heights are exact on the pixel grid, and the remaining CoreText vs Chrome glyph offset is measured by the parity text-ink gate, not fixed in layout (only AppText\'s overflowGuardOf pads Arabic-script text, from the font metrics).' });
+  }
+  checkAppTextGuards(report, root);
+}
+
+/** The [start, end) range of `type <name> = { ... };` in masked source, or null. */
+function typeRange(text, name) {
+  const head = new RegExp(`type ${name}\\s*=\\s*\\{`).exec(text);
+  if (head === null) return null;
+  const end = text.indexOf('}', head.index);
+  return end < 0 ? null : [head.index, end + 1];
+}
+
+/** The [start, end) range of `function <name>(...) { ... }` in masked source, or null. */
+function functionRange(text, name) {
+  const head = new RegExp(`function ${name}\\s*\\(`).exec(text);
+  if (head === null) return null;
+  const open = text.indexOf('{', text.indexOf(')', head.index));
+  if (open < 0) return null;
+  let depth = 0;
+  for (let i = open; i < text.length; i += 1) {
+    if (text[i] === '{') depth += 1;
+    else if (text[i] === '}') {
+      depth -= 1;
+      if (depth === 0) return [head.index, i + 1];
+    }
+  }
+  return null;
+}
+
+const GUARD_FIX = 'Copy ui/app-text.tsx from the templates: overflowGuardOf pads Arabic-script text by half of Vazirmatn\'s overflow (content box 2100 + 1100 of 2048 per em) inside a View that keeps the line box and the testID (references/type-and-fonts.md, "Persian overflow on iOS").';
+const BALANCE_FIX = 'Copy ui/app-text.tsx and ui/use-balanced-wrap.ts from the templates: display text runs useBalancedWrap(style.face === \'display\', ...), and the hook updates its state with functional updates (references/type-and-fonts.md, "Balanced display text").';
+
+/**
+ * AppText's device fixes, each proven on the simulator: the Persian overflow guard, balanced
+ * display text, and tabular figures for stat values.
+ */
+function checkAppTextGuards(report, root) {
+  const source = readSource(join(root, APP_TEXT_FILE));
+  if (source === null) return;
+  const text = masked(source);
+  const range = functionRange(text, 'overflowGuardOf');
+  const guard = range === null ? '' : text.slice(range[0], range[1]);
+  const hasMetrics = /2100\s*\/\s*2048/.test(text) && /1100\s*\/\s*2048/.test(text);
+  const hasShape = /\bpaddingTop\s*:/.test(guard) && /\bpaddingBottom\s*:/.test(guard) && /\bmarginVertical\s*:\s*-/.test(guard) && /Math\.ceil\s*\(/.test(guard);
+  const hasWrapper = /<View\b[^>]*\btestID\b/.test(text);
+  if (!hasMetrics || !hasShape || !hasWrapper) {
+    const missing = [!hasMetrics && 'the Vazirmatn metrics (2100 / 1100 of 2048)', !hasShape && 'overflowGuardOf (padding ceil(h) + h and ceil(h) - h, marginVertical -ceil(h))', !hasWrapper && 'a wrapper View that carries the testID'].filter(Boolean);
+    report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'arabic-overflow-guard', message: `AppText has no Persian overflow guard (missing ${missing.join(', ')}): iOS puts a Vazirmatn line's overflow above its box and clips it, so Persian digits lose their tops and text sits up to 3 pt high`, fix: GUARD_FIX });
+  }
+  const balanceCall = /\buseBalancedWrap\s*\(\s*style\.face\s*===\s*['"]display['"]/.test(text);
+  if (!balanceCall) {
+    report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'balanced-display', message: 'AppText wraps display text greedily; the design balances every display text (.d: text-wrap balance), so two-line titles broke in other places', fix: BALANCE_FIX });
+  }
+  const hook = readSource(join(root, BALANCE_FILE));
+  if (hook !== null) {
+    const hookText = masked(hook);
+    const functional = [...hookText.matchAll(/\bset\w*\(\s*\(\s*\w+\s*\)\s*=>/g)].length;
+    if (functional < 2) {
+      report.problem({ file: BALANCE_FILE, line: lineOf(hookText, Math.max(0, hookText.search(/\bonTextLayout\b/))), rule: 'balanced-display', message: 'the balance search sets its state from a closure: iOS sends onTextLayout and onLayout in one batch, so one update is lost and the search never starts on the device', fix: BALANCE_FIX });
+    }
+  }
+  const mapsTabular = /\bisTabular\b/.test(text) && /\bfontVariant\s*:\s*\[\s*['"]tabular-nums['"]\s*\]/.test(text);
+  if (!mapsTabular) {
+    report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'tabular-digits', message: 'AppText does not map isTabular to fontVariant [\'tabular-nums\'], so stat values keep proportional digits', fix: TABULAR_FIX });
   }
 }
 

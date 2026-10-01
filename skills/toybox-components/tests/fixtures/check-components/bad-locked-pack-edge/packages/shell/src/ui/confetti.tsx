@@ -23,7 +23,11 @@ const PIECE = COMPONENT_SPECS.confetti;
 const BAND = 70;
 const FALL = 40;
 type Paint = 'accent' | 'pop' | 'gold';
-/** Where the design scatters the pieces (x, y in pt from the start and top) and how they tilt. */
+/**
+ * Where the design scatters the pieces (x, y in pt from the left and top) and how they tilt. The
+ * mockup sets `left:`, so the scatter does not mirror in right-to-left languages: the band lays
+ * its pieces out left to right (direction ltr), where start is the left edge.
+ */
 const PIECES: readonly {
   readonly x: number;
   readonly y: number;
@@ -38,13 +42,19 @@ const PIECES: readonly {
 ];
 
 export type ConfettiProps = {
+  /** No fall: the pieces are drawn at rest (Reduce motion, or a parity capture holding still). */
   readonly isReducedMotion: boolean;
+  /**
+   * The saved Reduce motion setting hides the confetti entirely (spec S12); a parity capture only
+   * holds motion still and keeps the design's pieces. Defaults to isReducedMotion.
+   */
+  readonly isHiddenBySetting?: boolean;
   /** `premium.confetti`. */
   readonly testID: string;
 };
 
 const styles = StyleSheet.create({
-  band: { height: BAND, alignSelf: 'stretch' },
+  band: { height: BAND, alignSelf: 'stretch', direction: 'ltr' },
   piece: {
     position: 'absolute',
     width: PIECE.size,
@@ -61,19 +71,21 @@ function paintOf(theme: Theme, paint: Paint): string {
 }
 
 /** Five tilted squares that fall into place with the success sticker; hidden under reduce motion. */
-export function Confetti({ isReducedMotion, testID }: ConfettiProps): ReactNode {
+export function Confetti(props: ConfettiProps): ReactNode {
+  const { isReducedMotion, testID } = props;
   const theme = useTheme();
-  const drop = useSharedValue(0);
+  const drop = useSharedValue(isReducedMotion ? 1 : 0);
   useEffect(() => {
+    if (isReducedMotion) return;
     drop.set(
       withTiming(1, { duration: MOTION_MS.stickerSlap, easing: Easing.bezier(...EASING.boing) }),
     );
-  }, [drop]);
+  }, [drop, isReducedMotion]);
   const fall = useAnimatedStyle(() => ({
     opacity: drop.get(),
     transform: [{ translateY: interpolate(drop.get(), [0, 1], [-FALL, 0]) }],
   }));
-  if (isReducedMotion) return null;
+  if (props.isHiddenBySetting ?? isReducedMotion) return null;
   return (
     <Animated.View
       style={[styles.band, fall]}

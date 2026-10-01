@@ -68,28 +68,28 @@ describe('createGameHost', () => {
     const host = hostFor(createTestSave());
     expect([host.id, host.counterIds]).toStrictEqual(['tally', ['adds', 'biggest-add']]);
     expect(host.counters).toStrictEqual([
-      { id: 'adds', labelId: 'tally.stats.adds' },
-      { id: 'biggest-add', labelId: 'tally.stats.biggest' },
+      { id: 'adds', labelId: 'tally.stats.adds', aggregate: 'sum' },
+      { id: 'biggest-add', labelId: 'tally.stats.biggest', aggregate: 'max' },
     ]);
     expect(host.hasSavedRun()).toBe(false);
   });
 
-  it('says whether the game has music and rates its levels by score (game-facts.ts)', () => {
+  it('says whether the game has music, rates its levels by score and gives hints (game-facts.ts)', () => {
     const host = hostFor(createTestSave());
-    expect([host.hasMusic, host.isScoreRated]).toStrictEqual([false, false]);
-    const theme = { category: 'music', recipe: [], isLoop: true } as const;
-    const presentation = { ...TALLY_GAME.presentation, sounds: { theme } };
+    expect([host.hasMusic, host.isScoreRated, host.hasHints]).toStrictEqual([false, false, true]);
+    const sounds = { theme: { category: 'music', recipe: [], isLoop: true } } as const;
     const table = TALLY_GAME.levels.table.map((entry) => ({
       ...entry,
       stars: { kind: 'score', thresholds: [0, 20, 30] } as const,
     }));
     const game: typeof TALLY_GAME = {
       ...TALLY_GAME,
-      presentation,
+      presentation: { ...TALLY_GAME.presentation, sounds },
+      rules: { ...TALLY_GAME.rules, hints: { kind: 'none' } },
       levels: { ...TALLY_GAME.levels, table },
     };
-    const scored = createGameHost(game, depsFor(createTestSave()));
-    expect([scored.hasMusic, scored.isScoreRated]).toStrictEqual([true, true]);
+    const { hasMusic, isScoreRated, hasHints } = createGameHost(game, depsFor(createTestSave()));
+    expect([hasMusic, isScoreRated, hasHints]).toStrictEqual([true, true, false]);
   });
 
   it('hands S8 the level packs and S13 its pages and pictures, drawn by the board layer', () => {
@@ -114,6 +114,7 @@ describe('createGameHost', () => {
     ]);
     expect(pictures).toStrictEqual([game]);
     expect(isValidElement(host.renderHowToPlayPicture(0))).toBe(true);
+    expect(host.howToPlayPictureAspect).toBe(320 / 206); // the Toybox picture, S13's size contract
     expect(hostFor(createTestSave()).renderHowToPlayPicture(0)).toBeNull();
   });
 

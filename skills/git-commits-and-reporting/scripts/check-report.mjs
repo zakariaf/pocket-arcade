@@ -2,7 +2,9 @@
 // check-report.mjs: checks a message to the owner before it is sent. Evidence reports (slice or
 // release): outcome first in plain words, at most one request with its default, an Evidence line,
 // the Checks with numbers from reports/, what changed for players, at most five things to look at,
-// and an honest "not verified" list. Requests (a stop-and-ask message): one plain sentence first,
+// an honest "not verified" list, and the owner's own checks listed as "Owner steps (not blocking)" (the
+// fa and ckb review, the play-test, listening to the sound previews: listed, never waited for). A release
+// report never cites a keyless rehearsal as evidence. Requests (a stop-and-ask message): one plain sentence first,
 // exactly one request with the default that applies until the owner answers. No placeholders left.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-report.mjs report.md [--kind slice|release|request]
 
@@ -39,10 +41,17 @@ const SPEC = {
     '  waiver-trailer         a "Parity waivers changed" line names no waiver class (platform, platform-text-shaping,',
     '                         design-artefact) or no "Gate-Change trailer in <sha>"',
     '  copy-review            a "Texts changed in all four languages" line does not name en, de, fa and ckb, or does not',
-    '                         say that fa and ckb wait for a native speaker\'s review',
+    '                         say that the fa and ckb drafts go to the owner\'s review',
+    '  owner-steps-listed     a slice or release report has no "Owner steps (not blocking)" block, the block does not',
+    '                         name the fa and ckb review, the play-test and listening to the sound previews (each line says',
+    '                         what is pending, or "none pending"), says "none pending" for fa and ckb although texts',
+    '                         changed, or calls an owner step blocking (these are listed and never waited for)',
+    '  rehearsal-not-evidence a release report cites a keyless rehearsal (a REHEARSAL result, check-store-artifact',
+    '                         --unsigned) outside "Not tested or not verified" and "Details": a rehearsal is not a release gate',
     '',
-    'The last three sections are optional: add each one when the work changed a design reference, a parity',
-    'waiver or a player-visible text, and its rule applies to every line in it.',
+    'The three change sections are optional: add each one when the work changed a design reference, a parity',
+    'waiver or a player-visible text, and its rule applies to every line in it. "Owner steps (not blocking)" is',
+    'required in every slice and release report.',
     '',
     'Slice form: Checks need "Types, lint, format" and "Tests". Release form: also Coverage, Mutation, Bots,',
     'End-to-end, Network, Screenshots and Design match, each with its source file. A "Design match" line names',
@@ -54,7 +63,18 @@ const SPEC = {
 
 const RELEASE_CHECKS = ['Coverage', 'Mutation', 'Bots', 'End-to-end', 'Network', 'Screenshots', 'Design match'];
 const SOURCED = ['Coverage', 'Mutation', 'Bots', 'End-to-end', 'Network', 'Screenshots', 'Design match'];
-const HEADINGS = ['Checks', 'What changed for players', 'Please look at', 'Goldens and baselines changed on purpose', 'Design references changed on purpose', 'Parity waivers changed', 'Texts changed in all four languages', 'Not tested or not verified', 'Details'];
+const OWNER_STEPS = 'Owner steps (not blocking)';
+const HEADINGS = ['Checks', 'What changed for players', 'Please look at', 'Goldens and baselines changed on purpose', 'Design references changed on purpose', 'Parity waivers changed', 'Texts changed in all four languages', OWNER_STEPS, 'Not tested or not verified', 'Details'];
+/** The owner's personal checks (owner decision O6): each is named in every slice and release report. */
+const OWNER_CHECKS = [
+  { what: 'the owner\'s review of the fa and ckb texts', test: (text) => /\bfa\b/.test(text) && /\bckb\b/.test(text), example: '- Review the new fa and ckb texts: the two tutorial lines (step R3), or "fa and ckb texts: none pending"' },
+  { what: 'the play-test', test: (text) => /play-?test/i.test(text), example: '- Play-test Line Siege on TestFlight build 8 (step G6), or "Play-test: done on <date>"' },
+  { what: 'listening to the sound previews', test: (text) => /\bsound|\blisten/i.test(text), example: '- Listen to the six sound previews in reports/sfx/line-siege/ (step G9)' },
+];
+const NONE_PENDING = /\b(none|nothing|no \w+(?: \w+)?) pending\b/i;
+const BLOCKING_WORDS = /\b(blocks|blocked|blocking|waits? (?:for|on)|waiting (?:for|on)|before (?:a|the|any|each) release|gates?)\b/i;
+const NOT_BLOCKING = /\bnot blocking\b|\bnever (?:waited for|waits|blocks|a gate)\b|\bno gate\b/gi;
+const REHEARSAL = /\bREHEARSAL\b|--unsigned\b|\brehearsal\b/i;
 const FRAME_KEY = /\bs\d{1,2}[a-d]?-[a-z0-9]+(?:-[a-z0-9]+)*(?:--[a-z0-9-]+)?\b/;
 const CHANGE_ID = /\bchanges?\s+(?:[A-Z]{1,4}-?\d+[a-z]?)(?:\s*(?:,|and)\s*[A-Z]{1,4}-?\d+[a-z]?)*\b/;
 const WAIVER_CLASS = /\b(platform-text-shaping|platform|design-artefact)\b/;
@@ -70,8 +90,42 @@ function checkChangeSections(parts, add) {
   }
   for (const item of parts.get('Texts changed in all four languages')?.items ?? []) {
     const languages = ['en', 'de', 'fa', 'ckb'].filter((code) => !new RegExp(`\\b${code}\\b`).test(item.text));
-    if (languages.length > 0 || !/\bnative\b/i.test(item.text)) add(item.line, 'copy-review', `"${item.text.slice(0, 60)}" ${languages.length > 0 ? `does not name ${languages.join(', ')}` : 'does not say that fa and ckb wait for native review'}`, 'Give the key or place, the new en text, say that de, fa and ckb changed with it, and that fa and ckb wait for a native speaker\'s review (R3).');
+    if (languages.length > 0 || !/\bowner\b/i.test(item.text) || !/\breview/i.test(item.text)) add(item.line, 'copy-review', `"${item.text.slice(0, 60)}" ${languages.length > 0 ? `does not name ${languages.join(', ')}` : 'does not say that the fa and ckb drafts go to the owner\'s review'}`, 'Give the key or place, the new en text, say that de, fa and ckb changed with it, and that the fa and ckb drafts go to the owner\'s review (R3), listed under "Owner steps (not blocking)".');
   }
+}
+
+/**
+ * The owner's personal checks (the fa and ckb review, the play-test, listening to the sound previews)
+ * are listed in every slice and release report and never waited for (owner decision O6).
+ */
+function checkOwnerSteps(parts, add) {
+  const block = parts.get(OWNER_STEPS);
+  if (!block || block.items.length === 0) {
+    add(block?.line ?? 0, 'owner-steps-listed', `"${OWNER_STEPS}" is ${block ? 'empty' : 'missing'}`, `Add "${OWNER_STEPS}" with one line each for the fa and ckb review, the play-test and the sound previews, saying what is pending or "none pending" (templates/report-changes.md).`);
+    return;
+  }
+  for (const check of OWNER_CHECKS) {
+    if (!block.items.some((item) => check.test(item.text))) add(block.line, 'owner-steps-listed', `the "${OWNER_STEPS}" block does not name ${check.what}`, `Add a line such as "${check.example}"; the owner does it personally and the work never waits for it.`);
+  }
+  const textsChanged = (parts.get('Texts changed in all four languages')?.items.length ?? 0) > 0;
+  for (const item of block.items) {
+    if (textsChanged && OWNER_CHECKS[0].test(item.text) && NONE_PENDING.test(item.text)) add(item.line, 'owner-steps-listed', `"${item.text.slice(0, 60)}" says no fa and ckb texts are pending, but texts changed in all four languages`, 'Name the changed texts whose fa and ckb drafts wait for the owner\'s review.');
+    if (BLOCKING_WORDS.test(item.text.replace(NOT_BLOCKING, ''))) add(item.line, 'owner-steps-listed', `"${item.text.slice(0, 60)}" calls an owner step blocking`, 'Owner steps are listed, never waited for: say what the owner can do and when it helps, not what waits for it.');
+  }
+}
+
+/** A keyless rehearsal (check-store-artifact --unsigned, REHEARSAL) is never release evidence. */
+function checkRehearsal(lines, parts, add) {
+  const exempt = ['Not tested or not verified', 'Details'].map((name) => parts.get(name)).filter(Boolean);
+  const exemptRanges = exempt.map((part) => {
+    const next = [...parts.values()].filter((other) => other.line > part.line).map((other) => other.line).sort((a, b) => a - b)[0] ?? lines.length + 1;
+    return [part.line, next - 1];
+  });
+  lines.forEach((text, index) => {
+    const line = index + 1;
+    if (!REHEARSAL.test(text) || exemptRanges.some(([from, to]) => line >= from && line <= to)) return;
+    add(line, 'rehearsal-not-evidence', `"${text.trim().slice(0, 60)}" cites a keyless rehearsal as release evidence`, 'A rehearsal (check-store-artifact --unsigned prints "REHEARSAL: not a release gate") proves only the archive\'s contents: cite the signed archive\'s check-store-artifact run, and mention the rehearsal under "Not tested or not verified" at most.');
+  });
 }
 
 function headingOf(line) {
@@ -164,6 +218,8 @@ run(async () => {
     if (!part || part.items.length === 0) add(part?.line ?? 0, 'section-missing', `"${name}" is ${part ? 'empty' : 'missing'}`, `Add "${name}" with at least one line (say "none" plainly when there is nothing).`);
   }
   checkChangeSections(parts, add);
+  checkOwnerSteps(parts, add);
+  if (kind === 'release') checkRehearsal(lines, parts, add);
   const look = parts.get('Please look at');
   if (look && look.items.length > 5) add(look.line, 'look-at-limit', `"Please look at" lists ${look.items.length} things`, 'Point at no more than five things, the most important first.');
   checkPlaceholders(lines, add);

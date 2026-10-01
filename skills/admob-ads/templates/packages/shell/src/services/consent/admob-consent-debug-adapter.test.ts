@@ -3,6 +3,7 @@
 import { createAdmobConsentDebugAdapter } from './admob-consent-debug-adapter.ts';
 
 jest.mock('react-native-google-mobile-ads');
+jest.mock('expo-tracking-transparency');
 
 type MockedSdk = {
   readonly default: jest.Mock<{ readonly openAdInspector: jest.Mock<Promise<void>> }>;
@@ -13,6 +14,9 @@ type MockedSdk = {
 };
 
 const sdk = jest.requireMock<MockedSdk>('react-native-google-mobile-ads');
+const tracking = jest.requireMock<{ readonly requestTrackingPermissionsAsync: jest.Mock }>(
+  'expo-tracking-transparency',
+);
 
 describe('createAdmobConsentDebugAdapter', () => {
   it('resets consent on this device only when asked', () => {
@@ -22,6 +26,12 @@ describe('createAdmobConsentDebugAdapter', () => {
     tools.resetConsent();
 
     expect(sdk.AdsConsent.reset).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets Google's answer only: Apple's tracking answer has no reset", () => {
+    createAdmobConsentDebugAdapter().resetConsent();
+
+    expect(tracking.requestTrackingPermissionsAsync).not.toHaveBeenCalled();
   });
 
   it('reads the decoded consent choices', async () => {

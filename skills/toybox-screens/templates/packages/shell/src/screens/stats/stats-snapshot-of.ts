@@ -5,7 +5,10 @@
 import type { GameStat, StatsSnapshot, StatsWeekDay } from './stats-model.ts';
 import type { StatsSummary } from './stats-summary.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
-import type { HostCounter } from '@e07/shell/game-host/game-host.ts';
+import type { HostCounter } from '@e07/shell/game-host/host-counter.ts';
+
+/** U+00D7 MULTIPLICATION SIGN: the same glyph in every language. */
+const TIMES = '\u00D7';
 
 export type SnapshotText = {
   readonly formatNumber: (value: number) => string;
@@ -22,7 +25,10 @@ function gameStatsOf(
 ): GameStat[] {
   return counters.map((counter) => {
     const value = summary.counters.find((entry) => entry.id === counter.id)?.value ?? 0;
-    return { key: counter.id, label: text.labelOf(counter), valueText: text.formatNumber(value) };
+    // A best-of counter reads as a multiplier (the design's ×6); a running total as a plain number.
+    const number = text.formatNumber(value);
+    const valueText = counter.aggregate === 'max' ? `${TIMES}${number}` : number;
+    return { key: counter.id, label: text.labelOf(counter), valueText };
   });
 }
 

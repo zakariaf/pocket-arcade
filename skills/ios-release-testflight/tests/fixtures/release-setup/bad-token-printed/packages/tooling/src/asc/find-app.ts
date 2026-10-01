@@ -13,7 +13,8 @@ function toAppRecord(item: unknown): AppRecord | null {
   return typeof id === 'string' && typeof name === 'string' ? { id, name } : null;
 }
 
-// Returns null when App Store Connect has no app record for the bundle ID (a human step).
+// Returns null when App Store Connect has no app record for the bundle ID (owner step G2). The
+// bundle ID is always io.applander.<game id without hyphens> (owner decision O4).
 export async function findAppByBundleId(
   token: string,
   bundleId: string,

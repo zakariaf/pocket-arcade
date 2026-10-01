@@ -12,6 +12,11 @@ What changed for players
 Please look at (at most 5)
 - __SCREENSHOT_OR_GALLERY_ROW__, because __REASON__
 
+Owner steps (not blocking)
+- fa and ckb texts: __PENDING_TEXTS_OR_NONE_PENDING__ (step R3)
+- Play-test __GAME_NAME__: __STILL_OPEN_OR_DONE_ON_DATE__ (step G6)
+- Listen to the __GAME_NAME__ sound previews in reports/sfx/__GAME_ID__/: __STILL_OPEN_OR_DONE_ON_DATE__ (step G9)
+
 Not tested or not verified
 - __HONEST_LIST_OR_NOTHING_DEVICE_SPECIFIC_IN_THIS_SLICE__
 

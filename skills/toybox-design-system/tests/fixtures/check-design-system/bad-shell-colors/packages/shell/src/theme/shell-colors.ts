@@ -28,7 +28,7 @@ export const SHELL_COLORS: Readonly<Record<ColorScheme, ShellColors>> = {
   light: {
     success: '#17804A',
     warning: '#8A5A00',
-    dangerFill: '#FFD9DD',
+    dangerFill: '#FFDCDF',
     gold: '#FFD000',
     cut: '#FFFFFF',
     toyInk: '#1D1B3A',

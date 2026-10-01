@@ -66,13 +66,15 @@ Sound: every press runs the Shell's tap feedback first. `RaisedSurface`, `QuietB
 | secondary (default) | `surface` | `ink` | `outline` |
 | pop | `pop` | `onPop` | `outline` |
 | danger | `surface` | `danger` | `danger` |
-| quiet | none (the 3 pt edge folds into the padding) | `ink`, underlined 2 pt, offset 5 | none, no shadow |
+| quiet | none (the 3 pt edge folds into the padding) | `ink`, a drawn 2 pt underline, offset 5 (below) | none, no shadow |
 
 **States:** default · pressed (see the press model) · disabled (`isDisabled`: `sunken` fill, `inkSoft` label, dashed `inkSoft` edge, pushed in; quiet: `inkSoft`, no transform) · busy (`isBusy`: label kept, the start icon replaced by three hopping 9 pt blocks in the label colour; pushed in; `accessibilityState.busy`).
 
-**Layout:** `isBlock` stretches to the body width. `isInRow` makes a button share a row (dialog rows, Replay / Levels): flex 1 1 with a 120 pt basis, so two buttons wrap at 200 % text.
+**Layout:** `isBlock` stretches to the body width. `isInRow` makes a button share a row (dialog rows, Replay / Levels): flex 1 1 with a 120 pt basis, so two buttons wrap at 200 % text. A row key also stretches to the row's height (`RaisedSurface isStretched`: the key and its face `flexGrow: 1`), as CSS `align-items: stretch` makes both dialog keys as tall as the taller one: a one-line "Not now" beside a two-line "Restart now" (S14 restart). Only row keys stretch; a blanket `flexGrow` on every key made each icon button 6 pt too tall. `button.test.tsx` and `raised-surface.test.tsx` pin both sides.
 
 *Quiet button* (`quietButton`): minHeight 44 · paddingBlock 8 · paddingInline 10 · underlineThickness 2 · underlineOffset 5 · elevation 0. A flat `Pressable` (the one allowed besides `RaisedSurface` and `ListRow`): pressed = `sunken` background and scale 0.97.
+
+*The quiet underline is drawn, not styled.* The design's `.quiet` sets `text-decoration-thickness: 2px` and `text-underline-offset: 5px`; Chrome draws that line at the text's content top + the rounded ascent + the offset. iOS's `textDecorationLine: 'underline'` is 1 pt thick at its own depth, and React Native has no style for either, so every quiet button failed the parity ink width and position (the S7 premium nudge, `pause.home-button` 2.9 pt low, S11d, S12, S13). `QuietButton` therefore draws a 2 pt bar in the label colour (`text`, `textMuted` when disabled; CSS `currentColor`), absolutely placed at `quietUnderlineTop(fontSize, lineHeight, isArabic)` = `(lineHeight - content) / 2 + round(ascent) + 5`, where `content = round(ascent) + round(descent)` from the hhea metrics per em: Rubik 935 / 250 of 1000, Vazirmatn 2100 / 1100 of 2048. For Rubik 15 on its 1.25 line that is 19 pt under the content top, as measured on the S12 and S13 references. The `nudge` text style has no underline, and the bar is hidden from VoiceOver. `check-components` rule `quiet-underline` fails a `textDecorationLine` (or `isUnderlined`) in `QuietButton` or the nudge style, and a `QuietButton` that draws no bar.
 
 **Accessibility:** role `button`, name = the visible label, `accessibilityState` `{ disabled, busy }`, optional translated `hint` only when the result is not obvious.
 
@@ -197,6 +199,8 @@ Sound: every press runs the Shell's tap feedback first. `RaisedSurface`, `QuietB
 **Radio mark:** 32 × 32 square, radius 9, 3 pt `outline` edge, `surface` fill, 20 pt `check` when selected, empty otherwise. Decorative: the card or row around it is the `radio`.
 
 *Measurements* (`radio`): size 32 · radius 9 · border 3 · icon 20.
+
+**Alignment (S2):** the row centres its parts (CSS `align-items: center`), and the sticker sets `alignSelf: 'flex-start'` on itself, so `OptionCard` wraps the badge in an `alignSelf: 'center'` View; a top-aligned "Phone language" sticker failed S2. S2 also sets each autonym in its own direction: when `directionOf(language)` differs from `useDirection()` (فارسی on an English screen, English on a Persian one), `OptionCard` passes `align="end"`, so the autonym sits at the end of its row next to the mark, as the design draws it. S11a's language list does not do this (its autonyms stay at the layout start), so the rule lives in `OptionCard`, never in `useLocalizedTextStyle`. `controls.test.tsx` pins both cases.
 
 **Accessibility:** the card is a `radio` with `accessibilityState.selected` and `accessibilityLanguage` for the autonym. **testID parts:** `.radio` (`language-choice.language-row.fa.radio`). **Chosen:** the "Phone language" sticker marks the phone's own language, not the selection.
 

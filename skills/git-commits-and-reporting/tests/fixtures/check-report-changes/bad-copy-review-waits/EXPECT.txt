@@ -1,0 +1,2 @@
+[copy-review]
+does not say that the fa and ckb drafts go to the owner's review

@@ -2,17 +2,23 @@
 import { buildStatsSummary } from '@e07/shell/screens/stats/stats-summary.ts';
 import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 
-import { dailyCells, levelCells, overviewCells } from './stats-cards.ts';
+import { dailyCells, gameCells, levelCells, overviewCells } from './stats-cards.ts';
 
 const doc = createDefaultSaveDoc('line-siege');
 const view = buildStatsSummary({
-  stats: { ...doc.stats, gamesPlayed: 8, wins: 6, playMs: 8_040_000 },
+  stats: {
+    ...doc.stats,
+    gamesPlayed: 8,
+    wins: 6,
+    playMs: 8_040_000,
+    counters: { 'monsters-defeated': 42, 'biggest-combo': 6 },
+  },
   progress: doc.progress,
   daily: { ...doc.daily, completed: 3, bestStreak: 3 },
   today: '2026-09-26',
   levelCount: 90,
   hasEndless: false,
-  counterIds: [],
+  counterIds: ['monsters-defeated', 'biggest-combo'],
 });
 
 describe('stats cards', () => {
@@ -48,6 +54,33 @@ describe('stats cards', () => {
       { kind: 'count', value: 3 },
       { kind: 'days', daysCount: 0 },
       { kind: 'days', daysCount: 3 },
+    ]);
+  });
+
+  it('shows the win rate as a bare percentage value, labelled by stats.overview.win-rate', () => {
+    expect(overviewCells(view)[2]).toStrictEqual({
+      testID: 'stats.overview-card.win-rate',
+      labelKey: 'stats.overview.win-rate',
+      value: { kind: 'percent', rate: 0.75 },
+    });
+  });
+
+  it('shows a best-of counter as a multiplier and a running total as the plain number', () => {
+    const cells = gameCells(view, [
+      { id: 'monsters-defeated', labelId: 'line-siege.stat.monsters-defeated', aggregate: 'sum' },
+      { id: 'biggest-combo', labelId: 'line-siege.stat.biggest-combo', aggregate: 'max' },
+    ]);
+    expect(cells).toStrictEqual([
+      {
+        testID: 'stats.game-card.monsters-defeated',
+        labelKey: 'line-siege.stat.monsters-defeated',
+        value: { kind: 'count', value: 42 },
+      },
+      {
+        testID: 'stats.game-card.biggest-combo',
+        labelKey: 'line-siege.stat.biggest-combo',
+        value: { kind: 'multiplier', value: 6 },
+      },
     ]);
   });
 });

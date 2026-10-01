@@ -45,8 +45,8 @@ function applyMutation(dir, ops, label) {
 
 /**
  * tests/fixtures/<suite>/<case> -> <tmp>/<case>: base repo + mutation + the case's own files. Cases are
- * the good and bad-<case> folders (run by runSelftest) and the pass-<case> folders (outcome cases of
- * selftest.mjs that pin what a passing run prints).
+ * the good, bad-<case> and pass-<case> folders, all run by runSelftest (a pass-<case> pins what a
+ * passing run prints).
  */
 export function assembleSuite(baseRepo, suiteDir) {
   const tmp = makeTempDir('dependency-fixtures-');

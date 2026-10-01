@@ -1,5 +1,7 @@
 [
   { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
+  { "from": "scripts/lib/tracking-text.mjs", "to": "scripts/lib/tracking-text.mjs" },
   { "from": "repo-templates/packages/shell/src/config/app-variant.ts", "to": "templates/packages/shell/src/config/app-variant.ts" },
   { "from": "repo-templates/packages/shell/src/config/app-variant.test.ts", "to": "templates/packages/shell/src/config/app-variant.test.ts" },
   { "from": "repo-templates/packages/tooling/src/ios/toolchain.ts", "to": "templates/packages/tooling/src/ios/toolchain.ts" },

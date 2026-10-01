@@ -2,7 +2,7 @@
   {
     "replace": {
       "file": "packages/shell/src/app/create-shell-parts.ts",
-      "find": "    feedback: { audio, haptics },\n",
+      "find": "    feedback: input.feedback,\n",
       "with": ""
     }
   }

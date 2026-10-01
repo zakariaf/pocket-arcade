@@ -16,11 +16,14 @@ const LATIN_NAME = 'Flock Tilt';
 export const gameConfig: GameConfig = {
   id: 'flock-tilt',
   appName: { en: LATIN_NAME, de: LATIN_NAME, fa: LATIN_NAME, ckb: LATIN_NAME },
-  bundleId: 'com.pocketarcade.flocktilt',
+  bundleId: 'io.applander.flocktilt',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 1,
-  premium: { productId: 'com.pocketarcade.flocktilt.premium', priceNote: 'EUR 1.99 tier (D3)' },
+  premium: {
+    productId: 'io.applander.flocktilt.premium',
+    priceNote: 'EUR 1.99 price point (owner decision)',
+  },
   ads: {
     isEnabled: true,
     policy: {
@@ -28,13 +31,14 @@ export const gameConfig: GameConfig = {
       minMsBetweenInterstitials: 180_000,
       minLevelsCompletedBetween: 2,
     },
+    // Self-test stand-ins for the owner's AdMob ids (step G5): not the scaffold placeholders.
     ids: {
       ios: {
-        appId: 'ca-app-pub-1234567890123456~1234567890',
+        appId: 'ca-app-pub-7777777777777777~7777777777',
         units: {
-          banner: 'ca-app-pub-1234567890123456/1111111111',
-          interstitial: 'ca-app-pub-1234567890123456/2222222222',
-          rewarded: 'ca-app-pub-1234567890123456/3333333333',
+          banner: 'ca-app-pub-7777777777777777/4444444444',
+          interstitial: 'ca-app-pub-7777777777777777/5555555555',
+          rewarded: 'ca-app-pub-7777777777777777/6666666666',
         },
       },
       android: null,
@@ -45,8 +49,9 @@ export const gameConfig: GameConfig = {
   hints: { freePerDay: 0 },
   isContinueAllowed: true,
   links: {
-    privacyPolicy: { host: 'example.com', path: '/flock-tilt/privacy' },
-    supportEmail: 'support@example.com',
+    // Self-test stand-ins for the owner's privacy host and support address (step G3).
+    privacyPolicy: { host: 'games.test', path: '/flock-tilt/privacy' },
+    supportEmail: 'support@games.test',
   },
   store: {
     audience: 'general',

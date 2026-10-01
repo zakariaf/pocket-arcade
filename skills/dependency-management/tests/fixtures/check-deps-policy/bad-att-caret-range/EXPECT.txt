@@ -1,0 +1,4 @@
+expo-spec
+apps/alpha/package.json
+expo-tracking-transparency is "^57.0.2", not "~57.0.2", the specifier of this SDK's module map
+(cd apps/alpha && npx expo install expo-tracking-transparency@~57.0.2)

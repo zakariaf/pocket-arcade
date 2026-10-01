@@ -1,7 +1,10 @@
 // packages/shell/src/app/debug-switches.test.ts
 import { createNavigationContainerRef, StackActions } from '@react-navigation/native';
 
-import { debugSwitchesOf } from './debug-switches.ts';
+import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
+import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
+
+import { debugFeedbackOf, debugSwitchesOf } from './debug-switches.ts';
 
 import type { DebugParts } from './create-debug-parts.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
@@ -18,6 +21,7 @@ function partsWith(services: Partial<DebugServices> | null): DebugParts {
     services: services === null ? null : (services as DebugServices),
     links: null,
     navigationRef: createNavigationContainerRef<ParamListBase>(),
+    feedback: null,
   };
 }
 
@@ -51,5 +55,29 @@ describe('debugSwitchesOf', () => {
     const params = { start: 'new', ref: { kind: 'level', level: 1 } } as const;
     debugSwitchesOf(() => parts).openGame(params);
     expect(dispatch).toHaveBeenCalledWith(StackActions.push('Game', params));
+  });
+});
+
+describe('debugFeedbackOf', () => {
+  it('plays through the real ports until the debug parts exist, then through their recorders', () => {
+    const real = { audio: createFakeAudio(), haptics: createFakeHaptics() };
+    const recorded = { audio: createFakeAudio(), haptics: createFakeHaptics() };
+    let parts: DebugParts | null = null;
+    const feedback = debugFeedbackOf(() => parts, real);
+    feedback.audio.play('ui.tap', 0);
+    parts = { ...partsWith(null), feedback: recorded };
+    feedback.audio.play('ui.win', 120);
+    feedback.haptics.play('success');
+    expect(real.audio.calls).toStrictEqual([{ kind: 'play', soundId: 'ui.tap', delayMs: 0 }]);
+    expect(recorded.audio.calls).toStrictEqual([{ kind: 'play', soundId: 'ui.win', delayMs: 120 }]);
+    expect(recorded.haptics.played).toStrictEqual(['success']);
+  });
+
+  it('keeps the real ports in a store build (no recorders)', () => {
+    const real = { audio: createFakeAudio(), haptics: createFakeHaptics() };
+    const feedback = debugFeedbackOf(() => partsWith(null), real);
+    feedback.haptics.play('error');
+    expect(real.haptics.played).toStrictEqual(['error']);
+    expect(feedback.haptics.isSupported).toBe(real.haptics.isSupported);
   });
 });

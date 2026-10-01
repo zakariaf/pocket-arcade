@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "4283a423f15cc8e5c17e871bb54db9450a6611dd3a93aac3c1f9fbe661a12a2a",
-  "map": "a16554405817718b357b6f803acd0bbf7923dfb2788d66f091f2272b268cac7c",
-  "frames": "b2e1fdf39786dea40e8261f36b458cea9497975a7b4e3b89539f56dae83fe36b",
+  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
+  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -66,8 +66,11 @@
  ],
  "variants": [
   "s6-pause--no-music",
+  "s6-pause--no-hints",
+  "s6-pause--no-music--no-hints",
   "s7-result-win--score",
-  "s11-settings--no-music"
+  "s11-settings--no-music",
+  "s14-reset-all-progress--no-music"
  ],
  "files": {
   "light-en/s12-error.layout.json": {

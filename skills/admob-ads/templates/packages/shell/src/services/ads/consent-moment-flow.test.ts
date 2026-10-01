@@ -25,7 +25,10 @@ type Setup = {
   readonly errors: unknown[];
 };
 
-/** afterRefresh DENIED: a player in a region where Google's form is required, not yet asked. */
+/**
+ * afterRefresh DENIED: a player in a region where Google's form is required, not yet asked; on
+ * iOS with the ATT answer still not-determined.
+ */
 function setup(
   script: { afterRefresh?: ConsentInfo; afterForm?: ConsentInfo; isHeld?: boolean } = {},
 ): Setup {
@@ -35,6 +38,7 @@ function setup(
   const consent = createFakeConsent({
     afterRefresh: script.afterRefresh ?? DENIED,
     afterForm: script.afterForm ?? GRANTED,
+    tracking: 'not-determined',
     calls,
   });
   const ads = createFakeAds({
@@ -59,7 +63,7 @@ function setup(
 }
 
 describe('consent moment flow', () => {
-  it('shows the moment over a banner screen, then the form, initialize and preload after Continue', async () => {
+  it('shows the moment over a banner screen, then the form, ATT, initialize and preload', async () => {
     const { flow, calls, saved } = setup();
     flow.updateInput(AFTER_TUTORIAL);
     flow.requestAdMoment();
@@ -72,6 +76,7 @@ describe('consent moment flow', () => {
     expect(calls).toStrictEqual([
       'refresh',
       'showFormIfRequired',
+      'requestTracking',
       'initialize',
       'preloadInterstitial',
       'preloadRewarded',
@@ -79,7 +84,7 @@ describe('consent moment flow', () => {
     expect(saved).toStrictEqual([DENIED, GRANTED]);
   });
 
-  it('shows no moment where consent is not required or was already given', async () => {
+  it('shows no moment where consent is not required or was already given (ATT still first)', async () => {
     const { flow, calls } = setup({ afterRefresh: GRANTED });
     flow.updateInput(AFTER_TUTORIAL);
     flow.requestAdMoment();
@@ -87,6 +92,7 @@ describe('consent moment flow', () => {
     expect(flow.getSnapshot().isIntroShown).toBe(false);
     expect(calls).toStrictEqual([
       'refresh',
+      'requestTracking',
       'initialize',
       'preloadInterstitial',
       'preloadRewarded',
@@ -104,17 +110,45 @@ describe('consent moment flow', () => {
     expect(flow.getSnapshot().isIntroShown).toBe(true);
   });
 
+  it('asks ATT only over a banner screen: a player who left for a level is asked back on Home', async () => {
+    const { flow, calls } = setup({ afterRefresh: GRANTED });
+    flow.updateInput(AFTER_TUTORIAL);
+    const leaveHome = flow.requestAdMoment();
+    leaveHome(); // Play tapped before Google answered: no prompt over the level
+    await flushMicrotasks();
+    expect(calls).toStrictEqual(['refresh']);
+    flow.requestAdMoment(); // back on Home
+    await flushMicrotasks();
+    expect(calls).toStrictEqual([
+      'refresh',
+      'requestTracking',
+      'initialize',
+      'preloadInterstitial',
+      'preloadRewarded',
+    ]);
+  });
+
   it.each([
     ['during the tutorial', { isTutorialDone: false }],
     ['offline', { isOnline: false }],
     ['for Premium', { isPremium: true }],
     ['with ads off (ADS_MODE=off or the game switch)', { isAdsEnabled: false }],
-  ] as const)('asks nothing %s', async (_label, change) => {
+  ] as const)('asks nothing, ATT included, %s', async (_label, change) => {
     const { flow, calls } = setup();
     flow.updateInput({ ...AFTER_TUTORIAL, ...change });
     flow.requestAdMoment();
     await flushMicrotasks();
     expect([calls, flow.getSnapshot().isIntroShown]).toStrictEqual([[], false]);
+  });
+
+  it('decides again when the facts change while the gate decides (tutorial ended as Home opened)', async () => {
+    const { flow, calls } = setup();
+    flow.updateInput({ ...AFTER_TUTORIAL, isTutorialDone: false });
+    flow.requestAdMoment(); // Home's banner slot asks first (child effects run first)
+    flow.updateInput(AFTER_TUTORIAL); // then the moment hears that the tutorial is done
+    await flushMicrotasks();
+    expect(calls).toStrictEqual(['refresh']);
+    expect(flow.getSnapshot().isIntroShown).toBe(true);
   });
 
   it('tries again when the player comes online on a banner screen', async () => {
@@ -142,7 +176,7 @@ describe('consent moment flow', () => {
     expect(flow.getSnapshot()).toStrictEqual({ isIntroShown: false, canRequestAds: false });
   });
 
-  it('holds the S3 parity frame: the moment at once, and Google is never asked', async () => {
+  it('holds the S3 parity frame: the moment at once, and neither Google nor Apple is asked', async () => {
     const { flow, calls } = setup({ isHeld: true });
     expect(flow.getSnapshot().isIntroShown).toBe(true);
     flow.updateInput(AFTER_TUTORIAL);

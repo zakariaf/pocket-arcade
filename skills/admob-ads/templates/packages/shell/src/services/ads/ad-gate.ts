@@ -1,7 +1,11 @@
 // packages/shell/src/services/ads/ad-gate.ts
-// Orchestrates consent -> initialize -> preload (spec S3: consent before the first ad request).
-// Where Google's form is required, the Shell's own consent moment (S3, ConsentIntroScreen) comes
-// first: showIntro resolves when the player taps Continue, and only then Google's form opens.
+// Orchestrates consent -> tracking -> initialize -> preload (spec S3: consent before the first ad
+// request). Where Google's form is required, the Shell's own consent moment (S3, ConsentIntroScreen)
+// comes first: showIntro resolves when the player taps Continue, and only then Google's form opens.
+// Once ads may be requested, Apple's App Tracking Transparency prompt comes next (guideline
+// 5.1.2(i); the port asks only while the answer is not-determined), so every ad request follows
+// the ATT answer. Whatever the answer, ads initialize and serve; without 'authorized' Google's SDK
+// sends no IDFA.
 import type { AdsPort } from './ads-port.ts';
 import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
 
@@ -45,6 +49,7 @@ export async function prepareAds(deps: PrepareAdsDeps, input: AdGateInput): Prom
   // Consent given before, or not required in this region: no intro and no form.
   const info = known.canRequestAds ? known : await consentThroughIntro(deps);
   if (!info.canRequestAds) return false;
+  await deps.consent.requestTracking(); // after Google's form, before the SDK can request an ad
   await deps.ads.initialize();
   deps.ads.preloadInterstitial();
   deps.ads.preloadRewarded();

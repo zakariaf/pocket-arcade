@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
-import { appIds, checkAssembly, checkCatalogs, checkCompleteness, checkDeckTexts, checkConfigContract, checkConfigFiles, checkEntry, checkFiles, checkFonts, checkGameConfig, checkNewGameScript, checkPackage, checkPlaceholders, checkShellSlice, checkUsedKeys, listFiles } from './lib/app-checks.mjs';
+import { appIds, checkAssembly, checkCatalogs, checkCompleteness, checkDeckTexts, checkConfigContract, checkConfigFiles, checkEntry, checkFiles, checkFonts, checkGameConfig, checkNewGameScript, checkPackage, checkParityFacts, checkPlaceholders, checkShellSlice, checkUsedKeys, listFiles } from './lib/app-checks.mjs';
 
 const SPEC = {
   name: 'check-game-app',
@@ -29,10 +29,14 @@ const SPEC = {
     '  entry, fonts, catalogs, catalog-keys, catalog-missing-key (every <id>.* key the copied templates and the',
     '  game code use is in all four catalogs), deck-text (a game in the copy deck keeps the deck\'s words in every',
     '  deck key its catalogs hold), placeholder-left (the templates\' own placeholder names, outside',
-    '  ios/, android/, build/, out/, Pods and node_modules), game-config, new-game-script',
+    '  ios/, android/, build/, out/, Pods and node_modules), game-config, new-game-script, bundle-id (always',
+    '  io.applander.<game id without hyphens>) and premium-id (<bundle id>.premium)',
     'Rules (complete): module-part-missing, evidence-missing, module-assembly, types-bag, config-contract,',
     '  pan-mode (engine.panMode is none, swipe, drag or aim), shell-slice (a repo with shell-slice.json never',
-    '  ships), and entry = the 3-line startShell entry, bundleId not the com.example placeholder',
+    '  ships), entry = the 3-line startShell entry, owner-placeholder (each scaffold placeholder by name:',
+    '  com.example.*, the AdMob app and unit ids of step G5, the privacy host example.com and',
+    '  support@example.com of step G3), parity-game-facts (the game\'s parity/game-facts.json entry with',
+    '  designGame, hasMusic, winLine and hasHints; hasHints agrees with hints.freePerDay)',
     '',
     'Examples:',
     '  node check-game-app.mjs . --app flock-tilt --stage scaffold',
@@ -72,6 +76,7 @@ run(async () => {
       checkCompleteness(repo, id, report);
       checkAssembly(repo, id, report);
       await checkConfigContract(modules, repo, id, config, report);
+      checkParityFacts(repo, id, config, report);
     }
   }
   return report.finish({ checked: ids.length, unit: 'apps' });

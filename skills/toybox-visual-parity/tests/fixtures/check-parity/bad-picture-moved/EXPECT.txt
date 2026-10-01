@@ -1,0 +1,2 @@
+[bounds] how-to-play.picture
+geometry off: dx +4.0

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/consent-moment-flow.ts",
+      "find": "    if (deps.isHeld || state.phase !== 'idle' || state.openSlots === 0 || input === null) return;\n",
+      "with": "    if (deps.isHeld) void deps.consent.requestTracking();\n    if (deps.isHeld || state.phase !== 'idle' || state.openSlots === 0 || input === null) return;\n"
+    }
+  }
+]

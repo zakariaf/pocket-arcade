@@ -31,8 +31,8 @@ export type LicencesModel = {
 export type LicencesViewProps = { readonly model: LicencesModel };
 
 const styles = StyleSheet.create({
-  column: { gap: 4 },
-  nudge: { alignSelf: 'flex-start' },
+  // The nudge sits in the middle of the row (the design's .nudge), under the licence line.
+  nudge: { alignSelf: 'center' },
 });
 
 const GROUPS: readonly { id: LicenceGroupId; titleKey: ShellMessageKey; icon: IconName }[] = [
@@ -47,47 +47,55 @@ function nameOf(entry: LicenceEntry): string {
   return isolate(entry.version === undefined ? entry.name : `${entry.name} ${entry.version}`);
 }
 
-/** The licence line (and, on a column row, the quiet "Show licence text") under the name. */
-function licenceBlock(entry: LicenceEntry, model: LicencesModel, t: TFunction): ReactNode {
+/**
+ * A chevron row: the bold name over its licence (the row's muted description line, `.licence`),
+ * the chevron opens the text. A column row (an entry with a description): name, description,
+ * licence, then the centred quiet "Show licence text" (`.show-text-button`), no chevron.
+ */
+function entryProps(
+  entry: LicenceEntry,
+  model: LicencesModel,
+  t: TFunction,
+): Partial<ListRowProps> {
   const id = `licences.entry-row.${entry.key}`;
-  const licence = (
-    <AppText text={entry.licence} variant="rowDescription" tone="muted" testID={`${id}.licence`} />
-  );
-  if (entry.description === undefined) return licence;
-  return (
-    <View style={styles.column}>
-      {licence}
-      <View style={styles.nudge}>
-        <QuietButton
-          testID={`${id}.show-text-button`}
-          label={t('licences.show-text')}
-          iconEnd="chevron"
-          onPress={() => {
-            model.onShowText(entry.key);
-          }}
-          isReducedMotion={model.isReducedMotion}
-        />
-      </View>
-    </View>
-  );
-}
-
-/** A chevron row opens the licence text; a column row (with a description) has the nudge instead. */
-function entryProps(entry: LicenceEntry, model: LicencesModel): Partial<ListRowProps> {
-  if (entry.description !== undefined) return { description: entry.description };
+  const handleShowText = (): void => {
+    model.onShowText(entry.key);
+  };
+  if (entry.description === undefined) {
+    return {
+      description: entry.licence,
+      descriptionTestID: `${id}.licence`,
+      end: 'chevron',
+      onPress: handleShowText,
+    };
+  }
   return {
-    end: 'chevron',
-    onPress: () => {
-      model.onShowText(entry.key);
-    },
+    description: entry.description,
+    textExtra: (
+      <>
+        <AppText
+          text={entry.licence}
+          variant="rowDescription"
+          tone="muted"
+          testID={`${id}.licence`}
+        />
+        <View style={styles.nudge}>
+          <QuietButton
+            testID={`${id}.show-text-button`}
+            label={t('licences.show-text')}
+            iconEnd="chevron"
+            onPress={handleShowText}
+            isReducedMotion={model.isReducedMotion}
+          />
+        </View>
+      </>
+    ),
   };
 }
 
 /**
- * S11d Licences (body gap 18): the intro, then four group tabs over lists. Every row puts its
- * licence (`.licence`) under the name through ListRow's `below` slot; a row with a description
- * is a column row with a quiet "Show licence text" (`.show-text-button`), the others are
- * chevron rows.
+ * S11d Licences (body gap 18): the intro, then four group tabs over lists of bold names with
+ * their licence under them (entryProps: chevron rows and the one column row).
  */
 export function LicencesView({ model }: LicencesViewProps): ReactNode {
   const t = useT();
@@ -116,10 +124,10 @@ export function LicencesView({ model }: LicencesViewProps): ReactNode {
                   key={entry.key}
                   testID={`licences.entry-row.${entry.key}`}
                   label={nameOf(entry)}
+                  isStrong
                   isFirst={index === 0}
-                  below={licenceBlock(entry, model, t)}
                   isReducedMotion={model.isReducedMotion}
-                  {...entryProps(entry, model)}
+                  {...entryProps(entry, model, t)}
                 />
               ))}
           </ListGroup>

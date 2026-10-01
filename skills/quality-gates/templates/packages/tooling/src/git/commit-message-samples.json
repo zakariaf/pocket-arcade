@@ -212,6 +212,18 @@
       "message": "test(line-siege): record the pilot's facts for the parity references\n\nSpec S7 and S11: captures use the no-music and score-line references.",
       "files": ["parity/game-facts.json", "apps/line-siege/src/parity-game-facts.test.ts"],
       "rules": ["gate-change-missing"]
+    },
+    {
+      "name": "good-game-facts-has-hints",
+      "message": "test(line-siege): record that the pilot has no hints for parity\n\nSpec S5 and S6: Line Siege has no solver hints, so its top bar has no hint\nkey and Pause captures use the no-music and no-hints reference.\n\nGate-Change: hasHints false picks s6-pause--no-music--no-hints",
+      "files": ["parity/game-facts.json", "apps/line-siege/src/parity-game-facts.test.ts"],
+      "rules": []
+    },
+    {
+      "name": "game-facts-has-hints-without-trailer",
+      "message": "test(line-siege): record that the pilot has no hints for parity\n\nSpec S5 and S6: Pause captures use the no-hints reference.",
+      "files": ["parity/game-facts.json"],
+      "rules": ["gate-change-missing"]
     }
   ]
 }

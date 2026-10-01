@@ -1,16 +1,19 @@
 // packages/tooling/src/e2e/sim-perf-steps.ts — steps 2 and 3 of `npm run e2e:ios` on the phone
 // simulator: the cold-start run (Home set up through the debug-setup sub-flow, then 6 launches
 // into Home, read back from the test build's perf log) and
-// the memory check (the game's smoke flows, then a relaunch, then `footprint` of the app: Maestro
-// 2.10 stops the app when a test ends, so the runner starts it again and the saved run resumes).
-// Writes reports/e2e/<game-id>/perf.json, reports/perf/sim-perf-log.json and, on the first run or
-// with --write-perf-baseline, perf-baselines/cold-start-sim-<game-id>.json.
+// the memory check (the game's smoke flows, then the feedback they asked for, read from the perf
+// log into feedback.json, then a relaunch, then `footprint` of the app: Maestro 2.10 stops the app
+// when a test ends, so the runner starts it again and the saved run resumes).
+// Writes reports/e2e/<game-id>/perf.json and feedback.json, reports/perf/sim-perf-log.json and, on
+// the first run or with --write-perf-baseline, perf-baselines/cold-start-sim-<game-id>.json.
 import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+import { feedbackEvidenceOf, feedbackFileText } from '@e07/tooling/e2e/feedback-evidence.ts';
 import {
+  baselineFileText,
   baselineMsFrom,
   COLD_LAUNCHES,
   judgeColdStart,
@@ -31,11 +34,13 @@ import {
   runMaestro,
   terminateApp,
   type AppInfo,
+  type MaestroDevice,
 } from '@e07/tooling/e2e/simulator.ts';
 
 export type PerfStepInput = {
   readonly game: string;
-  readonly udid: string;
+  /** The phone simulator's UDID (and the session's own driver port, when it passed one). */
+  readonly device: MaestroDevice;
   readonly app: AppInfo;
   /** reports/e2e/<game-id> */
   readonly out: string;
@@ -86,13 +91,15 @@ async function waitForColdStart(udid: string, app: AppInfo, afterEpochMs: number
  * would leave up. Home then records this process's cold start.
  */
 async function openHome(input: PerfStepInput): Promise<void> {
-  const { udid, app } = input;
+  const { device, app } = input;
+  const { udid } = device;
   terminateApp(udid, app);
   const setupAt = latestAt(udid, app);
   launchApp(udid, app);
   const outDir = join(input.out, 'cold-start-setup');
-  const status = runMaestro(
-    debugSetupArgs({ udid, app, query: HOME_QUERY, waitFor: 'home.screen', outDir }),
+  const status = await runMaestro(
+    device,
+    debugSetupArgs({ app, query: HOME_QUERY, waitFor: 'home.screen', outDir }),
   );
   if (status !== 0) {
     throw new Error(
@@ -106,7 +113,8 @@ async function measureColdStart(
   input: PerfStepInput,
   budgets: PerfBudgets,
 ): Promise<ColdStartResult> {
-  const { game, udid, app } = input;
+  const { game, app } = input;
+  const { udid } = input.device;
   await openHome(input);
   const launchesMs: number[] = [];
   for (let launch = 0; launch < COLD_LAUNCHES; launch += 1) {
@@ -126,7 +134,7 @@ async function measureColdStart(
   if (baselineMs !== null && !input.isWritingBaseline) return result;
   // The first run writes the baseline; a slower rewrite needs the owner and a Gate-Change trailer.
   mkdirSync('perf-baselines', { recursive: true });
-  writeFileSync(baselineFile, `${JSON.stringify({ medianMs: Math.round(result.medianMs) })}\n`);
+  writeFileSync(baselineFile, baselineFileText(result.medianMs));
   console.log(`e2e:ios: wrote ${baselineFile}; commit it with a Gate-Change: trailer`);
   return { ...result, isRegression: false };
 }
@@ -135,8 +143,10 @@ async function measureColdStart(
 export type MemoryOps = {
   /** apps/<game-id>/e2e/flows/smoke/*.yaml, sorted. */
   readonly smokeFlows: () => readonly string[];
-  /** `maestro test <flows>`: its exit code. */
-  readonly runFlows: (flows: readonly string[], dir: string) => number;
+  /** `maestro test <flows>` on this simulator: its exit code. */
+  readonly runFlows: (flows: readonly string[], dir: string) => Promise<number>;
+  /** Reads the perf log the flows left and writes feedback.json (the win sound, the success haptic). */
+  readonly recordFeedback: (flows: readonly string[]) => void;
   /** `xcrun simctl launch`: the app starts again and resumes the saved run. */
   readonly relaunch: () => void;
   readonly pid: () => string | null;
@@ -158,7 +168,10 @@ async function waitForPid(ops: MemoryOps): Promise<string | null> {
   return null;
 }
 
-/** The smoke flows, then (Maestro 2.10 stops the app when a test ends) a relaunch, then footprint. */
+/**
+ * The smoke flows, the feedback they asked for, then (Maestro 2.10 stops the app when a test ends)
+ * a relaunch, then footprint.
+ */
 export async function measureMemory(
   input: Pick<PerfStepInput, 'game' | 'out'>,
   budgets: PerfBudgets,
@@ -170,8 +183,9 @@ export async function measureMemory(
   }
   const dir = join(input.out, 'memory');
   mkdirSync(dir, { recursive: true });
-  if (ops.runFlows(flows, dir) !== 0)
+  if ((await ops.runFlows(flows, dir)) !== 0)
     throw new Error(`memory: the smoke flow failed before the measurement, see ${dir}`);
+  ops.recordFeedback(flows);
   ops.relaunch();
   const pid = await waitForPid(ops);
   if (pid === null) throw new Error('memory: the app did not start again after the smoke flow');
@@ -183,11 +197,16 @@ export async function measureMemory(
 }
 
 /** The memory step's operations on this simulator and app. */
-function simulatorMemoryOps({ game, udid, app }: PerfStepInput): MemoryOps {
+function simulatorMemoryOps({ game, device, app, out }: PerfStepInput): MemoryOps {
+  const { udid } = device;
   return {
     smokeFlows: () => globSync(`apps/${game}/e2e/flows/smoke/*.yaml`).sort(),
     runFlows: (flows, dir) =>
-      runMaestro(['test', ...flows, '--udid', udid, '--test-output-dir', dir, ...appEnv(app)]),
+      runMaestro(device, ['test', ...flows, '--test-output-dir', dir, ...appEnv(app)]),
+    recordFeedback: (flows) => {
+      const evidence = feedbackEvidenceOf(readPerfLog(udid, app), flows);
+      writeFileSync(join(out, 'feedback.json'), feedbackFileText(evidence));
+    },
     relaunch: () => {
       launchApp(udid, app);
     },

@@ -8,6 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createReporter, lineOf, maskComments, parseArgs, requireDir, run, walk } from './check-lib.mjs';
+import { maestroSpawnProblems } from './lib/maestro-spawns.mjs';
 
 const SPEC = {
   name: 'check-sim-setup',
@@ -38,6 +39,10 @@ const SPEC = {
     "                      target file exists: privacy-and-network-audit's tooling lands before the first build",
     '  no-xcode-select     tooling never runs xcode-select --switch/-s or sudo',
     '  sim-safety          tooling never shuts down, erases or deletes "all" simulators, and creates only e07-* names',
+    '  maestro-device      every spawn of the Maestro binary under packages/tooling/src (build:ios:sim --link, e2e:ios,',
+    '                      screenshots:ios, the StoreKit harness) starts with the global --device <udid> and',
+    '                      --driver-host-port <port> (maestroGlobalArgs from e2e/maestro-args.ts, a free port per run),',
+    '                      never the per-command --udid or a fixed port: another session\'s simulator can answer',
     '  gitignore           .gitignore ignores apps/*/ios/, apps/*/android/, apps/*/build/ and reports/',
   ].join('\n'),
 };
@@ -112,6 +117,7 @@ function checkTooling(ctx) {
   const plan = read(ctx.root, planRel);
   if (plan === null || !['CODE_SIGNING_ALLOWED=NO', "'iphonesimulator'", "'Release'"].every((token) => plan.includes(token))) ctx.problem(planRel, plan === null ? 0 : 1, 'sim-build-args', 'the simulator build is not Release + iphonesimulator + CODE_SIGNING_ALLOWED=NO', 'Copy templates/packages/tooling/src/build/sim-build-plan.ts.');
   if (!existsSync(join(ctx.root, 'packages/tooling/src'))) return;
+  const tooling = [];
   for (const rel of walk(join(ctx.root, 'packages/tooling/src'), { include: ['*.ts', '*.mts', '*.sh'] })) {
     const full = `packages/tooling/src/${rel}`;
     const source = maskComments(readFileSync(join(ctx.root, full), 'utf8'));
@@ -119,6 +125,7 @@ function checkTooling(ctx) {
       const match = pattern.exec(source);
       if (match) ctx.problem(full, lineOf(source, match.index), rule, message, fix);
     }
+    if (/\.test\.m?ts$/.test(full) === false && !full.endsWith('.sh')) tooling.push({ rel: full, code: source });
     // Array form after simctl (['simctl', 'create', 'name'] or simctl(['create', 'name'])) and shell
     // form (simctl create "name" ...); a bare ['create', ...] list is not a simctl call.
     for (const match of source.matchAll(/(?:'simctl',\s*|simctl\(\s*\[\s*)'create',\s*'([^']+)'|simctl\s+create\s+(?:"([^"]+)"|'([^']+)'|([^\s"'`]+))/g)) {
@@ -127,6 +134,8 @@ function checkTooling(ctx) {
       if (!name.startsWith('e07-') && !name.startsWith('$')) ctx.problem(full, lineOf(source, match.index), 'sim-safety', `creates a simulator named "${name}"`, 'Name every simulator e07-<purpose> through simulatorName() so cleanup can never touch another agent\'s device.');
     }
   }
+  // Every Maestro run names its simulator and its own XCTest driver port before the command.
+  for (const found of maestroSpawnProblems(tooling)) ctx.problem(found.file, found.line, 'maestro-device', found.message, found.fix);
 }
 
 const TOOLING_BANS = [

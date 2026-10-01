@@ -65,6 +65,7 @@ Compiler and lint errors seen with the strict TypeScript 6 setup and the one ESL
 | `lint-destructured-boolean` | const { granted } = ... or ({ disabled }: Props) rejected by naming-convention | Destructured booleans need the is/has prefix too | Rename while destructuring: { granted: isGranted } | verified | `naming-conventions` |
 | `lint-navigator-constant-name` | const RootStack = createNativeStackNavigator(...) rejected | A navigator object is a value, so camelCase | rootStack plus StaticParamList<typeof rootStack> and a ReactNavigation.RootParamList merge in a .d.ts | verified | `naming-conventions` |
 | `lint-blocklist-invalid-pattern` | check-file/filename-blocklist crashes with "invalid pattern" | The suggestion was free text | Give the rule a glob suggestion such as '**/[a-z]*-[a-z]*.ts' | verified | `naming-conventions` |
+| `lint-bundle-id-applander` | check-file-names fails bundle-id-applander: "bundleId 'com.example.linesiege' is not 'io.applander.linesiege'" | Owner decision O4 fixes every app id as io.applander.<game id without hyphens>, all lowercase, with Premium <bundleId>.premium; the game.config.ts predates it | Set bundleId: 'io.applander.<id without hyphens>' and premium.productId: '<bundleId>.premium' in apps/<id>/game.config.ts (new-game-scaffold writes these; withShell throws on any other id) | verified | `naming-conventions` |
 
 ## Components
 

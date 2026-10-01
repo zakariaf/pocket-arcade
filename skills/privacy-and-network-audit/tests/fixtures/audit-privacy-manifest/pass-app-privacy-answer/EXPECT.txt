@@ -1,0 +1,1 @@
+App Privacy: DeviceID collected, linked to the user, used for tracking by the third-party ads SDK Google-Mobile-Ads-SDK (the app asks App Tracking Transparency first)

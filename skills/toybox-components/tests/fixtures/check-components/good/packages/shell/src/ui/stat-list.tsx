@@ -6,6 +6,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
+import { useChromeBaseline } from './use-chrome-baseline.ts';
 
 import type { ReactNode } from 'react';
 
@@ -29,15 +30,22 @@ export type StatListProps = {
 
 const useStyles = makeStyles((theme) => {
   const styles = StyleSheet.create({
+    // CSS .slist>div: key and value pushed apart (space-between), 9 pt pads, on one baseline.
+    // The baseline comes from Chrome's layout (useChromeBaseline), not from Yoga: iOS reports the
+    // baseline of a Persian line that overflows its box differently, which put values 8 pt low.
     row: {
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
       gap: LIST.gap,
       paddingBlock: LIST.rowPaddingBlock,
     },
+    // The first row (the heading) has no top pad and no rule (.slist>div:first-child).
+    first: { paddingTop: 0 },
     // A 2 pt `line` rule between rows, none above the first.
     rule: { borderTopWidth: LIST.separator, borderColor: SHELL_COLORS[theme.scheme].line },
-    label: { flex: 1 },
+    // The key keeps its own width (the design measures it), and may shrink to wrap.
+    label: { flexShrink: 1 },
   });
   return styles;
 });
@@ -45,12 +53,16 @@ const useStyles = makeStyles((theme) => {
 /** Key / value rows split across the panel (best scores); values are display 22, end-aligned. */
 export function StatList({ testIDBase, rows, heading }: StatListProps): ReactNode {
   const styles = useStyles();
+  const keyBaseline = useChromeBaseline('statListKey');
+  const valueBaseline = useChromeBaseline('statListValue');
+  const keyDrop = { marginTop: Math.max(0, valueBaseline - keyBaseline) };
+  const valueDrop = { marginTop: Math.max(0, keyBaseline - valueBaseline) };
   const hasHeading = heading !== undefined;
   return (
     <View testID={`${testIDBase}.list`}>
       {heading === undefined ? null : (
-        <View style={styles.row}>
-          <AppText text={heading.text} variant="label" isHeader testID={heading.testID} />
+        <View style={[styles.row, styles.first]}>
+          <AppText text={heading.text} variant="statListHeading" isHeader testID={heading.testID} />
         </View>
       )}
       {rows.map((row, index) => {
@@ -59,14 +71,21 @@ export function StatList({ testIDBase, rows, heading }: StatListProps): ReactNod
         return (
           <View
             key={row.id}
-            style={[styles.row, isRuled ? styles.rule : null]}
+            style={[styles.row, isRuled ? styles.rule : styles.first]}
             accessible
             testID={id}
           >
-            <View style={styles.label}>
+            <View style={[styles.label, keyDrop]}>
               <AppText text={row.label} variant="statListKey" testID={`${id}.label`} />
             </View>
-            <AppText text={row.value} variant="statListValue" align="end" testID={`${id}.value`} />
+            <View style={valueDrop}>
+              <AppText
+                text={row.value}
+                variant="statListValue"
+                align="end"
+                testID={`${id}.value`}
+              />
+            </View>
           </View>
         );
       })}

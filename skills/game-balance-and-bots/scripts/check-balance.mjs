@@ -15,7 +15,7 @@ const SPEC = {
   usage: '[options] [repo-root]',
   options: {
     game: { type: 'string', multiple: true, value: 'id', help: 'Check only this game (apps/<id>)' },
-    release: { type: 'boolean', help: 'Also require owner-approved bands (status "approved" with approvedOn)' },
+    release: { type: 'boolean', help: 'Release run: prints unapproved bands as an OWNER STEP (not blocking) line (owner decision O6)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
@@ -34,7 +34,8 @@ const SPEC = {
     '  bands-missing        test/sims/<id>/balance-bands.json exists',
     '  bands-invalid        the bands file is complete and consistent (metrics, rules, >= 100 seeds, a grid of level',
     '                       difficulties 0..99; an endless mode has its own "endless" block at difficulty 100)',
-    '  bands-unapproved     (--release) the owner approved the bands after a play-test',
+    '  bands-unapproved     (--release) an OWNER STEP (not blocking) line, never a problem: the bands are still',
+    '                       "proposed" until the owner play-tests (owner decision O6: the play-test never blocks)',
     '  tuning-missing       apps/<id>/src/rules/<id>-tuning.ts (real-time: src/sim/<id>-tuning.ts) holds the balance knobs',
     '  tuning-undocumented  every knob in the tuning file has a comment saying what it controls (a key documented on',
     '                       the DifficultyKnobs type counts; rows of the difficulty table are values, not knobs)',
@@ -290,7 +291,11 @@ function checkBandsFile(root, game, report, options) {
   for (const problem of problems) report.problem({ file: rel, line: 1, rule: 'bands-invalid', message: problem, fix: 'Fix the bands file (fields and metrics in references/balance-contract.md).' });
   if (problems.length > 0) return null;
   if (value.gameId !== game) report.problem({ file: rel, line: lineAt(text, '"gameId"'), rule: 'bands-invalid', message: `gameId is "${value.gameId}", expected "${game}"`, fix: 'Use the app folder name.' });
-  if (options.release && value.status !== 'approved') report.problem({ file: rel, line: lineAt(text, '"status"'), rule: 'bands-unapproved', message: 'the bands are still "proposed"', fix: 'Ask the owner to play-test and approve; then set "status": "approved" and "approvedOn": "YYYY-MM-DD".' });
+  // Owner decision O6 (2026-09-30): the play-test is the owner's personal step and never blocks a
+  // release; a release run prints it for the report's "Owner steps (not blocking)" list.
+  if (options.release && value.status !== 'approved') {
+    console.log(`OWNER STEP (not blocking) ${rel}:${lineAt(text, '"status"')} [bands-unapproved] the bands are still "proposed": list "Play-test ${game} on a phone" under Owner steps (not blocking); when the owner agrees, set "status": "approved" and "approvedOn": "YYYY-MM-DD". Nothing waits for it.`);
+  }
   return { rel, text, bands: value };
 }
 

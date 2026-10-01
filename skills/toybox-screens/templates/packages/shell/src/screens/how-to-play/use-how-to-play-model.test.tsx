@@ -20,7 +20,9 @@ const PAGES = [
 
 async function howToPlay() {
   const renderHowToPlayPicture = jest.fn(() => null);
-  const shell = createHostWrapper({ host: { howToPlayPages: PAGES, renderHowToPlayPicture } });
+  const shell = createHostWrapper({
+    host: { howToPlayPages: PAGES, renderHowToPlayPicture, howToPlayPictureAspect: 4 / 3 },
+  });
   const view = await renderHook(() => useHowToPlayModel(), { wrapper: shell.wrapper });
   return { ...view, renderHowToPlayPicture };
 }
@@ -34,6 +36,7 @@ describe('useHowToPlayModel', () => {
       'Tap the other side to add two.',
     ]);
     expect(result.current.renderPicture).toBe(renderHowToPlayPicture);
+    expect(result.current.pictureAspect).toBe(4 / 3);
   });
 
   it('pages forward and back within the pages', async () => {

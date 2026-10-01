@@ -14,6 +14,19 @@ export const NPM_SCRIPT = new RegExp(RULES.npmScript);
 export const ENV_VAR = new RegExp(RULES.envVar);
 export const TEST_TITLE = new RegExp(RULES.testTitle);
 
+/**
+ * The one bundle id (iOS) and package (Android) of a game (owner decision O4):
+ * 'line-siege' -> 'io.applander.linesiege'. The game id without hyphens, all lowercase.
+ */
+export function bundleIdFor(gameId) {
+  return `${RULES.appIds.bundleIdPrefix}${gameId.replaceAll('-', '')}`.toLowerCase();
+}
+
+/** The Premium product id of a game: 'line-siege' -> 'io.applander.linesiege.premium'. */
+export function premiumIdFor(gameId) {
+  return `${bundleIdFor(gameId)}${RULES.appIds.premiumSuffix}`;
+}
+
 /** 'use-save-game' -> 'useSaveGame' */
 export function camelFromKebab(kebab) {
   return kebab.replace(/-([a-z0-9])/g, (_, ch) => ch.toUpperCase());

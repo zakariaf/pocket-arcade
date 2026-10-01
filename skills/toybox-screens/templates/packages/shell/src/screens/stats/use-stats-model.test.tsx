@@ -81,7 +81,7 @@ describe('useStatsModel', () => {
     });
     expect(snapshot.gameStats).toStrictEqual([
       { key: 'adds', label: 'Adds', valueText: '7' },
-      { key: 'biggest-add', label: 'Biggest add', valueText: '0' },
+      { key: 'biggest-add', label: 'Biggest add', valueText: '×0' },
     ]);
   });
 

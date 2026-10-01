@@ -118,6 +118,27 @@ describe('ScorePanel and WeekBars', () => {
     });
   });
 
+  it('draws New best as the design small sticker: sm pads and 14 pt text, tilted +6 deg (S7)', async () => {
+    await renderWithShell(
+      <ScorePanel
+        testIDBase="result.score-card"
+        label="Score"
+        value="1,840"
+        newBestText="New best!"
+        progressLine="Monsters 10 / 10"
+        isReducedMotion
+      />,
+    );
+
+    // The sticker's width is 2 + 7 + 18 (star) + 6 (gap) + text + 9 + 2: the .stk.sm pads around
+    // Lilita One 14. The regular sticker (9 / 11 pads, 16 pt text) came out 12 pt wider on the device.
+    const sticker = screen.getByTestId('result.score-card.new-best');
+    // allow-style-assertion: the sticker's pads and tilt are its measured size and angle in the design
+    expect(sticker).toHaveStyle({ paddingBlock: 3, paddingStart: 7, paddingEnd: 9, gap: 6 });
+    expect(sticker).toHaveStyle({ transform: [{ rotate: '6deg' }, { scale: 1 }] });
+    expect(within(sticker).getByText('New best!')).toHaveStyle({ fontSize: 14 });
+  });
+
   it('derives the score-line part for a score-rated win (spec S7)', async () => {
     await renderWithShell(
       <ScorePanel

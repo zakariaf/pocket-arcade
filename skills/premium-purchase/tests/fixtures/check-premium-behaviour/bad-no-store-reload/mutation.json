@@ -2,8 +2,8 @@
   {
     "replace": {
       "file": "packages/shell/src/app/connect-premium-reloads.ts",
-      "find": "    if (shouldReloadStore(flowKind(), isOnline)) loadStore(premiumDeps).catch(premiumDeps.onError);\n",
-      "with": "    if (isOnline) loadStore(premiumDeps).catch(premiumDeps.onError);\n"
+      "find": "    if (!shouldReloadStore(flowKind(), isOnline)) return;\n",
+      "with": "    if (!isOnline) return;\n"
     }
   }
 ]

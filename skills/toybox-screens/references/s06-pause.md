@@ -26,7 +26,7 @@ S6 Pause is an overlay on the game: the board stays visible, dimmed, and paused 
 
 The Game screen stays visible under the scrim. `GameLayout` draws the overlay beside the Game screen's safe-area frame, not inside it, so the scrim covers the whole screen, the status bar included, as the reference draws it (inside the frame the status bar stayed undimmed). The overlay (padding 28 x 20, centred) holds the Pause dialog card (radius 22, padding 20 / 18 / 18, gap 12, hard shadow 8):
 
-1. Header row (baseline-aligned, space-between, wraps, gap 10): title (`title` 30, "Paused") and the mode line (muted, "Level 12").
+1. Header row (baseline-aligned, space-between, wraps, gap 10): title (`title` 30, "Paused") and the mode line (muted, "Level 12"). The row is `alignItems: 'flex-start'` and each text sits in a View whose `paddingTop` is the difference of the two `useChromeBaseline` values (`title` and `body`), as StatList does with a margin (in this wrapping row iOS ignored a `marginTop` on the item; measured on the simulator). Yoga's `alignItems: 'baseline'` put the Persian mode line's box 4.7 pt above the design (the title's overflow guard pads change where Yoga finds its baseline); the Chrome baselines drop it 9.83 pt in en and 12.5 pt in fa at 3x (design 10 and 13).
 2. Hero key with a `play` cap: "Resume" (the dialog's one hero key).
 3. Secondary block button with the `restore` icon: "Restart level".
 4. Secondary block button with the `book` icon: "How to play".
@@ -37,7 +37,9 @@ The Game screen stays visible under the scrim. `GameLayout` draws the overlay be
 
 The design draws Sound on, Music off, Vibration on. Music is left out for games without music and Vibration on devices without haptics (the same rule as the Settings rows). The keys that remain share the row exactly as `usePairLayout` lays them out: each key's cell grows (`flexGrow: 1` in ToggleKey, never `flex: 1`, which collapsed the row to 0 pt inside a column cell and let the keys cover the Home button on the device).
 
-Visual parity picks the reference from the game's facts (`parity/game-facts.json` in the app repo): a game without music (Line Siege) is compared with the design-derived variant `s6-pause--no-music` (Music key removed, the other keys sharing the row), never with the base frame. The parity frame `pause-open` is opened by the Game screen's session-controls hook (game-host-integration): Pause over the design's level-12 run, its top bar showing the fixture's numbers.
+The dialog draws no hint entry: hints live only in the S5 top bar under the scrim, and a game without solver hints (`useGameHost().hasHints` false, Line Siege) has no hint key there either (the lead's decision L8; s05-game.md).
+
+Visual parity picks the reference from the game's facts (`parity/game-facts.json` in the app repo, `hasMusic` and `hasHints`). Variants compose in the frames' order, music before hints: a game without music is compared with `s6-pause--no-music` (Music key removed, the other keys sharing the row), a game without hints with `s6-pause--no-hints` (the top bar under the scrim without its hint key), and a game with neither, like Line Siege, with `s6-pause--no-music--no-hints`, never with the base frame. The parity frame `pause-open` is opened by the Game screen's session-controls hook (game-host-integration): Pause over the design's level-12 run, its top bar showing the fixture's numbers.
 
 ## Data the model supplies
 
@@ -93,7 +95,7 @@ Exactly these, from the shared screen map (`assets/screen-testids.json`). Set th
 
 ## Reference images
 
-- `assets/reference/s6-pause.png` (normal; phone). A game without music is compared with toybox-visual-parity's `s6-pause--no-music` variant.
+- `assets/reference/s6-pause.png` (normal; phone). A game without music or without hints is compared with toybox-visual-parity's design-derived variants `s6-pause--no-music`, `s6-pause--no-hints` or `s6-pause--no-music--no-hints` (Line Siege).
 
 Open the image before building and compare the finished screen with it (toybox-visual-parity runs the exact comparison).
 

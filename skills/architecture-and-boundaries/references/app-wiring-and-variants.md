@@ -87,7 +87,7 @@ export type GameConfig = {
 };
 ```
 
-Spec 11 → field: app name per language → `appName`; store id / bundle id → `bundleId`, `appStoreId`; version → `version`, `buildNumber`; Premium product id and price note → `premium`; AdMob app and unit IDs per platform → `ads.ids` (test IDs are chosen by `ADS_MODE`, never written here); frequency numbers and the master switch → `ads.policy`, `ads.isEnabled`; modes, packs and level counts → `modes`, `levels`; free hints per day → `hints.freePerDay`; continue allowed → `isContinueAllowed`; privacy policy link and support email → `links`; age rating answers and target audience → `store`.
+Spec 11 → field: app name per language → `appName`; store id / bundle id → `bundleId` (always `io.applander.<game id without hyphens>`, all lowercase: owner decision O4, 2026-09-30; Line Siege is `io.applander.linesiege`, and the same id is the Android package), `appStoreId`; version → `version`, `buildNumber`; Premium product id and price note → `premium` (`productId` is `<bundleId>.premium`, for example `io.applander.linesiege.premium`; the price is the EUR 1.99 App Store price point, owner decision O2, and the app always shows the store's localised price, never the note); AdMob app and unit IDs per platform → `ads.ids` (test IDs are chosen by `ADS_MODE`, never written here); frequency numbers and the master switch → `ads.policy`, `ads.isEnabled`; modes, packs and level counts → `modes`, `levels`; free hints per day → `hints.freePerDay`; continue allowed → `isContinueAllowed`; privacy policy link and support email → `links`; age rating answers and target audience → `store`.
 
 The privacy link is stored as host + path because app-bundle files may not contain `https://` literals; the one allowlisted file `packages/shell/src/config/external-links.ts` composes the URL. `ageRating` uses App Store Connect's `ageRatingDeclarations` attribute names (`advertising` is `true` for every game with ads). The `fa` and `ckb` display names need the native-speaker review.
 
@@ -128,7 +128,7 @@ It comes in two versions at the same path. The bootstrap's phase-0 composer (mon
 
 | Field or check | Value and why |
 |---|---|
-| bundle id check | throws unless `bundleId` matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` |
+| app id check | throws unless `bundleId` is `appIdOf(game.id)` = `io.applander.<game id without hyphens>` and `premium.productId` is `<bundleId>.premium` (owner decision O4): `com.example.*` and every other placeholder fail at `expo config`, prebuild and every build |
 | `resolveBuildVariant(env)` | throws on an unknown value, a mismatch between `APP_VARIANT` and `EXPO_PUBLIC_APP_VARIANT`, or a forbidden pair |
 | `name`, `slug`, `version` | `appName.en`, the game id, `version` |
 | `orientation: 'portrait'`, `supportsTablet: true` | portrait-first; iPad still rotates and iOS 27 makes iPhone windows resizable, so layouts never assume a size |
@@ -139,7 +139,7 @@ It comes in two versions at the same path. The bootstrap's phase-0 composer (mon
 | `ios.buildNumber`, `android.versionCode` | from `buildNumber` |
 | `ios.config.usesNonExemptEncryption: false` | skips the export-compliance question |
 | `infoPlist.CADisableMinimumFrameDurationOnPhone: true` | 120 Hz on ProMotion |
-| `CFBundleAllowMixedLocalizations` + `locales` | the home-screen name per language |
+| `CFBundleAllowMixedLocalizations` + `locales` | per language: the home-screen name (`CFBundleDisplayName`) and Apple's tracking prompt text (`NSUserTrackingUsageDescription`, from the Shell catalogs' `consent.tracking.usage-description` through `TRACKING_USAGE_DESCRIPTIONS`); Expo writes them into each language's `InfoPlist.strings` at prebuild |
 | `privacyManifests` | aggregated required-reason APIs (`npm run audit:privacy`) |
 | `updates.enabled: false` | no OTA network traffic (N3) |
 | `experiments.reactCompiler: true` | the React Compiler |
@@ -157,9 +157,10 @@ It comes in two versions at the same path. The bootstrap's phase-0 composer (mon
 | `['expo-font', { fonts: FONT_FILES }]` (Lilita One, Rubik Regular and Bold, Vazirmatn Regular and Bold, from `./assets/fonts/`) | toybox-design-system |
 | `'expo-iap'` (the bare string: every option adds a server or an SDK) | premium-purchase |
 | `['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)]` | admob-ads |
+| `['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }]` (Apple's ATT prompt, owner decision O1; in every variant, and never asked with `ADS_MODE=off`) | admob-ads |
 | `AUDIO_API_PLUGIN` (no background audio, microphone, permissions or downloads) | game-audio-and-haptics |
 
-Outside the list, `withShell` adds `ios.privacyManifests: PRIVACY_MANIFESTS` (privacy-and-network-audit) and ends with `withGameArt(config, game.id)` (code-drawn-art-and-icons). Paths in plugin options are relative to the app folder (Expo's project root): each app carries its own `assets/fonts/`, copied by the new-game scaffold. A new native module with a config plugin gets one line in `shellPlugins`, never a second list and never an edit in `ios/`; the Xcode-27 scene-support wrapper (expo-sdk-upgrade) wraps this list when it is due. `with-shell.test.ts` proves the order (marker first, then every Shell plugin), the privacy manifest, and that the icon and splash join only for a game `render-art.ts` has drawn; `shell-plugins.test.ts` proves each line and its options.
+Outside the list, `withShell` adds `ios.privacyManifests: PRIVACY_MANIFESTS` (privacy-and-network-audit) and ends with `withGameArt(config, game.id)` (code-drawn-art-and-icons). Paths in plugin options are relative to the app folder (Expo's project root): each app carries its own `assets/fonts/`, copied by the new-game scaffold. A new native module with a config plugin gets one line in `shellPlugins`, never a second list and never an edit in `ios/`; the Xcode-27 scene-support wrapper (expo-sdk-upgrade) wraps this list when it is due. `with-shell.test.ts` proves the order (marker first, then every Shell plugin), the privacy manifest, the app ids (a `com.example.*` or hyphenated bundle id and a Premium id other than `<bundleId>.premium` throw), the tracking text in all four locales, and that the icon and splash join only for a game `render-art.ts` has drawn; `shell-plugins.test.ts` proves each line and its options, the tracking entry with the catalog's en text in every ads mode included. `shell-plugins.ts` reads the four Shell catalogs with `import ... with { type: 'json' }` through `@e07/shell/i18n/catalogs/<lang>.json` (Node, Jest and Expo's config loader all accept it; verified with `npx expo config` on 2026-09-30).
 
 ## Runtime configuration: expo.extra.game
 
@@ -205,7 +206,7 @@ export const TEST_ONLY: TestOnlyApi | null =
 ```
 
 - `test-only-entry.ts` exports everything test-only (debug screens, the deep-link handler, the JS network guard, the StoreKit harness hooks, the parity harness, the performance tools) plus the sentinel `TEST_BUILD_SENTINEL = 'SHELL_TEST_BUILD_ONLY'` that the store-artifact gate greps for; `test-only-api.ts` is its type, `TestOnlyApi`, with one member per export.
-- The pair is one shared file set (this skill's `templates/test-only-api.ts` and `templates/test-only-entry.ts`, the same bytes the simulator-build and parity skills ship). A member joins when the file behind it exists: at Shell steps 4 to 7 the pair holds only `TEST_BUILD_SENTINEL`, so `test-only.ts` compiles from step 4 (the save layer's step) without the debug kit, the parity harness or the perf log; `DebugScreen` stays out while S15 is outside `shell-slice.json`. Trim the copied pair to those members; never remove the sentinel. The members are `DebugScreen`, the simulated clock and connectivity, the debug store, services, link handler and network guard (e2e-maestro), the parity harness (`readParityRequest` ... `parityFrameState`, `isParityMotionFrozen`, `isParityBoardProbeOn`, `parityGameFixture`; toybox-visual-parity) and `createPerfLog` (performance-budgets).
+- The pair is one shared file set (this skill's `templates/test-only-api.ts` and `templates/test-only-entry.ts`, the same bytes the simulator-build and parity skills ship). A member joins when the file behind it exists: at Shell steps 4 to 6 the pair holds only `TEST_BUILD_SENTINEL` (the Shell core's members join at step 7), so `test-only.ts` compiles from step 4 (the save layer's step) without the debug kit, the parity harness or the perf log; `DebugScreen` stays out while S15 is outside `shell-slice.json`. Trim the copied pair to those members; never remove the sentinel. The members are `DebugScreen`, the simulated clock and connectivity, the debug store, services, link handler and network guard (e2e-maestro), the parity harness (`readParityRequest` ... `parityFrameState`, `isParityMotionFrozen`, `isParityBoardProbeOn`, `parityGameFixture`; toybox-visual-parity) and `createPerfLog` (performance-budgets).
 - Callers use `TEST_ONLY?.parityFrameState()` and similar. `IS_TEST_BUILD`-style constants may drive *behaviour*, never *inclusion*.
 - It lives in `src/app/` (app code), not in the Node-world `src/config/`. The ESLint config carries its one exemption (`@typescript-eslint/no-require-imports`).
 - `check-boundaries.mjs` (`test-only-gate`) reports `require()` anywhere else in app code, a direct import of `test-only-entry.ts`, and a gate that is not the literal comparison.

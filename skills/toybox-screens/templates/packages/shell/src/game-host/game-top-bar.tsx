@@ -28,6 +28,15 @@ export type GameTopBarProps = {
   readonly isReducedMotion: boolean;
 };
 
+/**
+ * What the Game screen draws: the host's top-bar props (topBarPropsOf) plus the game's hint fact.
+ * A game without solver hints (GameHost.hasHints false, Line Siege) has no hint key at all.
+ */
+export type GameTopBarViewProps = GameTopBarProps & {
+  /** GameHost.hasHints (hasHintsOf: rules.hints.kind 'solver'); false draws no hint key. */
+  readonly hasHints: boolean;
+};
+
 function keyOf(tool: GameTool): GameKey {
   return { label: tool.label, onPress: tool.onPress, isDisabled: !tool.isAvailable };
 }
@@ -36,10 +45,12 @@ function keyOf(tool: GameTool): GameKey {
  * S5 game top bar: the Toybox GameTopBar with the Game screen's ids (testIDBase "game" derives
  * game.top-bar, game.pause-button, game.mode-label, game.progress-label, game.score,
  * game.undo-button, game.hint-button) and the translated Pause label. Pause 48, undo and hint 44.
+ * The hint key exists only for a game with solver hints (hasHints), whatever the perk offer says.
  */
-export function GameTopBar(props: GameTopBarProps): ReactNode {
+export function GameTopBar(props: GameTopBarViewProps): ReactNode {
   const t = useT();
-  const { undo, hint } = props;
+  const { undo } = props;
+  const hint = props.hasHints ? props.hint : null;
   return (
     <ToyboxGameTopBar
       testIDBase="game"

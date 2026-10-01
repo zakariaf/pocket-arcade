@@ -66,7 +66,7 @@ The caller passes the rest: `<dialog>.scrim` to Scrim, `<dialog>.art` to ArtTile
 7. **Headings pass `isHeader`:** top-bar titles, dialog titles, panel headers, empty-state titles, the stat-list heading. The group tab is the exception: its tab View is the heading (`accessibilityRole="header"`), because the design measures the whole tab.
 8. **Text in another language than the UI passes `language`** (autonym rows and option cards), which also sets `accessibilityLanguage`.
 9. **Toasts are alerts and are also announced** by the screen (`announceForAccessibility`); a toast is transparent until it lands.
-10. **Dialogs are modal** (`accessibilityViewIsModal`) and always offer a way out.
+10. **Dialogs are modal** and always offer a way out. The `Scrim` is the modal root (`accessibilityViewIsModal` on the scrim, never on `DialogCard`), so VoiceOver stays inside while the scrim's testID stays in the accessibility tree that Maestro and the parity capture read.
 11. **Shape before colour:** every state keeps a non-colour cue (check or dash, dashed edge and padlock, filled vs hollow star, pushed-in depth).
 12. **Everything reflows at 200 % text:** labels wrap, dialog rows wrap (120 pt basis), the screen stacks key grids; never truncate.
 

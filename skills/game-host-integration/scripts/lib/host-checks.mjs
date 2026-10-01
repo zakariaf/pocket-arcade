@@ -12,8 +12,10 @@ const HOST = 'packages/shell/src/game-host';
 /** This skill's Shell files and the exports other code relies on. */
 export const HOST_FILES = {
   'shell-game-module.ts': ['ShellGameTypes', 'GamePresentation', 'ShellGameModule'],
-  'game-host.ts': ['createGameHost', 'GameHost', 'GameHostDeps', 'BoardHostFactory', 'BoardHostInput', 'BoardHostProps', 'OpenedSession', 'HostCounter', 'ExamplePictureFactory', 'ExamplePictureProps'],
-  'game-facts.ts': ['hasMusicOf', 'isScoreRatedOf', 'isScoreRule'],
+  'game-host.ts': ['createGameHost', 'GameHost', 'GameHostDeps', 'BoardHostFactory', 'BoardHostInput', 'BoardHostProps', 'OpenedSession', 'ExamplePictureFactory', 'ExamplePictureProps'],
+  'host-counter.ts': ['HostCounter'],
+  'game-facts.ts': ['hasMusicOf', 'isScoreRatedOf', 'hasHintsOf', 'isScoreRule'],
+  'example-picture-aspect.ts': ['EXAMPLE_PICTURE_ASPECT', 'examplePictureAspectOf', 'ExampleAspectSource'],
   'game-debug-controls.ts': ['createGameDebugControls', 'GameDebugControls', 'EXAMPLE_RUN', 'endStateOf', 'StagedExample', 'DebugRuns'],
   'game-fixture.ts': ['GameFixture', 'FixtureResult', 'fixtureHudOf', 'fixtureSummaryOf', 'fixtureHudViewOf', 'fixtureResultViewOf'],
   'run-tracker.ts': ['createRunTracker', 'RunTracker'],
@@ -42,6 +44,7 @@ export const HOST_FILES = {
 export const HOST_TESTS = [
   'game-host.test.ts',
   'game-facts.test.ts',
+  'example-picture-aspect.test.ts',
   'game-debug-controls.test.ts',
   'game-fixture.test.ts',
   'run-tracker.test.ts',
@@ -302,6 +305,27 @@ const HOST_WIRING = [
     fix: 'hasMusic: hasMusicOf(game), isScoreRated: isScoreRatedOf(game): the parity pin test checks parity/game-facts.json against the same two functions.',
   },
   {
+    fn: 'factsOf',
+    pattern: /hasHints\s*:\s*hasHintsOf\s*\(\s*game\s*\)/,
+    rule: 'game-facts',
+    message: 'GameHost.hasHints does not come from the module through game-facts.ts (hasHintsOf)',
+    fix: 'hasHints: hasHintsOf(game) (the rules\' hint policy is a solver, the rule behind isHintSupported): the S5 hint key and the parity --no-hints variants follow it.',
+  },
+  {
+    fn: 'factsOf',
+    pattern: /\baggregate\b/,
+    rule: 'game-facts',
+    message: 'GameHost.counters drops each counter\'s aggregate, so S10 cannot show a max counter as ×N',
+    fix: 'Map every counter to { id, labelId, aggregate } (HostCounter in host-counter.ts).',
+  },
+  {
+    fn: 'factsOf',
+    pattern: /howToPlayPictureAspect\s*:\s*examplePictureAspectOf\s*\(/,
+    rule: 'game-facts',
+    message: 'GameHost.howToPlayPictureAspect does not come from examplePictureAspectOf (the S13 picture size contract)',
+    fix: 'howToPlayPictureAspect: examplePictureAspectOf(game.presentation.board): 320 / 206 unless the board gives exampleAspect.',
+  },
+  {
     fn: 'firstSession',
     pattern: /resumeSession\s*\(/,
     rule: 'saved-run-validated',
@@ -332,6 +356,11 @@ export function checkHostWiring(repo, report) {
     report.problem({ file: summaryRel, line: 1, rule: 'stars-from-table', message: 'stars are not rated with starsFor on the level\'s table rule', fix: 'Spec 8.1: stars come from the level entry\'s StarRule through starsFor (par or score thresholds).' });
   }
   checkScoreLine(repo, summary, report);
+  const factsRel = `${HOST}/game-facts.ts`;
+  const facts = code(text(repo, factsRel));
+  if (facts !== '' && !/rules\.hints\.kind\s*===\s*'solver'/.test(functionBody(facts, 'hasHintsOf'))) {
+    report.problem({ file: factsRel, line: 1, rule: 'game-facts', message: 'hasHintsOf does not read the module\'s rules.hints.kind === \'solver\' (the rule behind isHintSupported)', fix: 'return game.rules.hints.kind === \'solver\'; the S5 hint key, GameHost.hasHints and parity/game-facts.json hasHints must agree.' });
+  }
   checkFrameOpeners(repo, report);
   for (const rel of walk(join(repo.root, HOST), { include: ['*.ts', '*.tsx'] }).filter((file) => !/\.test\.tsx?$/.test(file))) {
     const source = code(text(repo, `${HOST}/${rel}`));
@@ -474,7 +503,7 @@ function checkHostDeps(root, host, line, report) {
   const deps = /createGameHost\s*\([^,]+,\s*\{([\s\S]*?)\n\s*\}\s*\)/.exec(root.source.slice(host));
   if (deps === null) return;
   if (!(/\bwriteRunEnd\b/.test(deps[1]) && /\bupdateAndPublish\s*\(/.test(root.source))) report.problem({ file: root.rel, line, rule: 'run-end-publish', message: 'createGameHost gets no writeRunEnd that calls updateAndPublish', fix: 'Pass writeRunEnd: (write) => { updateAndPublish(save, stores, write); } so the run end is one write and the progress and stats stores re-read it before S7 (state-stores).' });
-  if (!/\bfeedback\s*:/.test(deps[1])) report.problem({ file: root.rel, line, rule: 'host-deps', message: 'createGameHost gets no feedback ports', fix: 'Pass feedback: { audio, haptics } (the same adapters the services use), so a decided run plays ui.win or ui.lose with its pulse.' });
+  if (!/\bfeedback\s*:/.test(deps[1])) report.problem({ file: root.rel, line, rule: 'host-deps', message: 'createGameHost gets no feedback ports', fix: 'Pass feedback: debugFeedbackOf(() => debug, { audio, haptics }) (the same adapters the services use; the debug parts\' recording ports in test builds), so a decided run plays ui.win or ui.lose with its pulse.' });
   if (!/\bcreateBoardHost\s*:\s*createGameBoardHost\s*\(/.test(deps[1])) report.problem({ file: root.rel, line, rule: 'host-deps', message: 'createBoardHost is not createGameBoardHost({ audio, haptics, errorLog })', fix: 'Copy templates/packages/shell/src/game-host/create-game-board-host.tsx and pass createBoardHost: createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn }).' });
   const literal = /\bisContinueAllowed\s*:\s*(true|false)\b/.exec(deps[1]);
   if (literal !== null) report.problem({ file: root.rel, line, rule: 'continue-from-config', message: `createGameHost gets isContinueAllowed: ${literal[1]} instead of the game's config`, fix: 'Spec 8.10: pass the game config\'s isContinueAllowed (readGameExtra(), from game.config.ts), so each game decides whether continues exist.' });
@@ -490,8 +519,29 @@ function checkDebugWiring(repo, root, report) {
   }
   const switchesRel = 'packages/shell/src/app/debug-switches.ts';
   const switches = code(text(repo, switchesRel));
+  checkRecordedFeedback(root, switchesRel, switches, report);
   if (switches !== '' && !/isLayoutProbeOn\s*:[\s\S]*?isParityBoardProbeOn\s*\(/.test(switches)) {
     report.problem({ file: switchesRel, line: 1, rule: 'parity-board-probe', message: 'the board-layout probe ignores a parity probe=board launch', fix: 'isLayoutProbeOn: () => parts()?.services?.isBoardLayoutOn() === true || TEST_ONLY?.isParityBoardProbeOn() === true (store builds stay false).' });
+  }
+}
+
+/**
+ * The E2E feedback evidence: in test builds the host plays the Shell's feedback through the debug
+ * parts' recording ports (parts.feedback, which also append { kind: 'feedback' } to the perf log),
+ * and createDebugParts gets the app's haptics port to wrap. Store builds keep the real ports.
+ */
+function checkRecordedFeedback(root, switchesRel, switches, report) {
+  if (!/createDebugParts\s*\(/.test(root.source)) return;
+  const fix = 'In create-shell-parts.ts: feedback: debugFeedbackOf(() => debug, { audio: adapters.audio, haptics }) for the host, and haptics in createDebugParts({ ... }); debugFeedbackOf (debug-switches.ts) plays through parts()?.feedback ?? ports.';
+  if (!/\bfeedback\s*:\s*debugFeedbackOf\s*\(/.test(root.source)) {
+    report.problem({ file: root.rel, line: 1, rule: 'feedback-recorded', message: 'the game host plays feedback through the real ports only, so a test build records no win sound or success pulse', fix });
+  }
+  const debugInput = /createDebugParts\s*\(\s*\{([\s\S]*?)\}\s*\)\s*;/.exec(root.source);
+  if (debugInput !== null && !/\bhaptics\b/.test(debugInput[1])) {
+    report.problem({ file: root.rel, line: 1, rule: 'feedback-recorded', message: 'createDebugParts gets no haptics port, so the success pulse is never recorded', fix });
+  }
+  if (switches !== '' && !/debugFeedbackOf[\s\S]*?parts\s*\(\s*\)\s*\?\.\s*feedback\s*\?\?/.test(switches)) {
+    report.problem({ file: switchesRel, line: 1, rule: 'feedback-recorded', message: 'debugFeedbackOf does not play through the debug parts\' recording ports', fix });
   }
 }
 

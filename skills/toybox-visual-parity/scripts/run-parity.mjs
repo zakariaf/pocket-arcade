@@ -7,10 +7,12 @@ import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, run } from './check-lib.mjs';
-import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
+import { TOOLING_OPTION, toolingArgs } from './lib/deps.mjs';
+import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeFacts, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
 import { scrollPlan } from './lib/gates.mjs';
 import { DEFAULTS, SCRIPTS_DIR, readJson } from './lib/paths.mjs';
 import { RUN_FILES, defaultRunDir, runDirName } from './lib/runs.mjs';
+import { driverPortOf, freeDriverPort } from './lib/tools.mjs';
 
 const SPEC = {
   name: 'run-parity',
@@ -25,7 +27,7 @@ const SPEC = {
     screen: { type: 'string', multiple: true, value: 'id', help: 'Screen id(s): every frame of the screen (S12 = 9 frames)' },
     'bundle-id': { type: 'string', value: 'id', help: "The test build's bundle identifier (needed unless --recheck)" },
     themes: { type: 'string', value: 'list', help: 'Themes', default: THEMES.join(',') },
-    langs: { type: 'string', value: 'list', help: 'Languages (add de,ckb before a release)', default: REQUIRED_LANGS.join(',') },
+    langs: { type: 'string', value: 'list', help: 'Languages (add de,ckb before a release; narrowing is for iteration, the sign-off needs en and fa)', default: REQUIRED_LANGS.join(',') },
     game: { type: 'string', value: 'id', help: 'Design game id of the app', default: 'lineSiege' },
     root: { type: 'string', value: 'dir', help: 'Run folder root', default: '.parity' },
     reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
@@ -37,27 +39,30 @@ const SPEC = {
     xcrun: { type: 'string', value: 'path', help: 'xcrun to use (passed to capture-app.mjs)' },
     maestro: { type: 'string', value: 'path', help: 'maestro to use (passed to capture-app.mjs)' },
     name: { type: 'string', value: 'name', help: "Simulator name (passed to capture-app.mjs; default: the device profile's, e07-parity)" },
-    'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port (passed to capture-app.mjs; default: $PARITY_MAESTRO_PORT, else 22087)" },
+    'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port (passed to capture-app.mjs; default: $PARITY_MAESTRO_PORT, else a free port picked for this run)" },
     facts: { type: 'string', value: 'file', help: "The app's game facts: which reference variant a frame uses", default: FACTS_FILE },
     app: { type: 'string', value: 'id', help: 'App id in the facts file (needed when it lists several apps)' },
+    tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: 0 },
   details: [
     'Before the first run: setup-parity-sim.mjs (once per boot) and a Release test build installed on the',
     'parity simulator. After a PASS: read every sheet listed, then sign off with check-signoff.mjs.',
-    'One parity simulator serves one session at a time. A second session on the same Mac makes its own simulator',
-    '(setup-parity-sim.mjs --name e07-parity-<key>) and passes --name and its own --driver-port (or PARITY_MAESTRO_PORT),',
-    "so Maestro's hierarchy call is never answered by the other session's driver on the default port 22087.",
+    'One parity simulator serves one session at a time: each session makes its own simulator',
+    '(setup-parity-sim.mjs --name e07-parity-<key>) and passes --name. Every Maestro call gets --device <udid> and',
+    '--driver-host-port <port> before the command; the port is --driver-port (or PARITY_MAESTRO_PORT) when given, else',
+    'a free port picked once for this run, and each launch carries a nonce the hierarchy dump must contain.',
     '',
     'Examples:',
-    '  node run-parity.mjs --screen S4 --bundle-id com.example.linesiege',
-    '  node run-parity.mjs --frame s11-settings --themes dark --langs fa --bundle-id <id>',
+    '  node run-parity.mjs --screen S4 --bundle-id io.applander.linesiege --name e07-parity',
+    '  node run-parity.mjs --frame s11-settings --themes dark --langs fa --bundle-id <id> --name e07-parity   (iteration only)',
     '  node run-parity.mjs --screen S4 --recheck',
-    '  node run-parity.mjs --screen S11 --bundle-id <id> --name e07-parity-b --driver-port 22187   (a second session)',
+    '  node run-parity.mjs --screen S11 --bundle-id <id> --name e07-parity-b --tooling .parity/tooling',
     '',
-    'Frames with reference variants (s11-settings, s6-pause, s7-result-win) use the variant the app\'s facts in',
-    'parity/game-facts.json select, and the summary names the reference of each frame. The Game-route frames',
-    '(s6-pause, s7-*) probe the board once per theme and language (probe=board) and mask it.',
+    'Frames with reference variants (s11-settings, s6-pause, s7-result-win, s14-reset-all-progress) use the variant',
+    'the app\'s facts in parity/game-facts.json select (variants compose: s6-pause--no-music--no-hints), and the',
+    'summary names the reference of each frame. The Game-route frames (s6-pause, s7-*) probe the board once per theme',
+    'and language (probe=board) and mask it. Writes only into --root (.parity/ in the app repo).',
   ].join('\n'),
 };
 
@@ -97,6 +102,9 @@ run(async () => {
   // The app's game facts pick the reference of a frame with variants; no frame with variants, no facts needed.
   const needsFacts = keys.some((k) => Object.keys(frames.get(k).variants ?? {}).length > 0);
   const facts = needsFacts ? readGameFacts(resolve(options.facts), { app: options.app ?? null, game: options.game }) : null;
+  // One driver port for the whole run: the one this session passed, else a free one.
+  const driverPort = options.recheck ? null : (driverPortOf(options['driver-port']) ?? (await freeDriverPort()));
+  const tooling = toolingArgs(options);
   const factsArgs = ['--facts', resolve(options.facts), ...(facts ? ['--app', facts.app] : options.app ? ['--app', options.app] : [])];
   const boardCacheDir = !options.recheck && keys.some((k) => frames.get(k).board) ? makeTempDir('run-parity-board-') : null;
   const boardArgs = boardCacheDir ? ['--board-cache', `${boardCacheDir}/board.json`] : [];
@@ -112,7 +120,8 @@ run(async () => {
   const table = [];
   const sheets = [];
   let runs = 0;
-  if (facts) report.note(`facts ${show(facts.path)}: app ${facts.app} (${facts.designGame}), hasMusic ${facts.facts.hasMusic}, winLine ${facts.facts.winLine}`);
+  if (facts) report.note(`facts ${show(facts.path)}: app ${facts.app} (${facts.designGame}), ${describeFacts(facts.facts)}`);
+  if (driverPort) report.note(`Maestro driver port ${driverPort} for this run${options['driver-port'] || process.env.PARITY_MAESTRO_PORT ? ' (given)' : ' (free port)'}`);
   for (const key of keys) {
     const frame = frames.get(key);
     if (frame.kind === 'mock-only') {
@@ -145,7 +154,8 @@ run(async () => {
               ...(options.xcrun ? ['--xcrun', options.xcrun] : []),
               ...(options.maestro ? ['--maestro', options.maestro] : []),
               ...(options.name ? ['--name', options.name] : []),
-              ...(options['driver-port'] ? ['--driver-port', options['driver-port']] : []),
+              '--driver-port', String(driverPort),
+              ...tooling,
             ];
             const cap = runScript('capture-app.mjs', ['--bundle-id', options['bundle-id'], '--frame', key, '--theme', theme, '--lang', lang, '--game', options.game, '--scroll', String(scrollY), '--root', runsRoot, ...extra, ...factsArgs, ...boardArgs, ...shared]);
             if (cap.status === 2) fail(`capture-app.mjs stopped on ${label}: ${cap.error ?? cap.out.trim().split('\n').at(-2)}`, cap.errorFix ?? 'Fix the environment (setup-parity-sim.mjs, the installed build), then run again.');
@@ -159,10 +169,10 @@ run(async () => {
             table.push(`${label.padEnd(40)} NOT CAPTURED`);
             continue;
           }
-          const check = runScript('check-parity.mjs', [dir, '--waivers', resolve(options.waivers), '--device', resolve(options.device), ...factsArgs, ...refArgs, '--map', resolve(options.map), '--frames', resolve(options.frames)]);
+          const check = runScript('check-parity.mjs', [dir, '--waivers', resolve(options.waivers), '--device', resolve(options.device), ...factsArgs, ...refArgs, '--map', resolve(options.map), '--frames', resolve(options.frames), ...tooling]);
           if (check.status === 2) fail(`check-parity.mjs stopped on ${label}: ${check.error}`, check.errorFix ?? 'Fix the input it names, then run again.');
           relay(check);
-          const sheet = runScript('make-sheet.mjs', [dir, '--device', resolve(options.device), ...refArgs]);
+          const sheet = runScript('make-sheet.mjs', [dir, '--device', resolve(options.device), ...refArgs, ...tooling]);
           if (sheet.status !== 0) relay(sheet);
           else sheets.push(show(join(dir, 'sheet.png')));
           const first = check.problems[0];

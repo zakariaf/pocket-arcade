@@ -34,6 +34,15 @@ describe('parseParityRequest', () => {
     expect(result).toMatchObject({ ok: true, request: { frame: 's6-pause', probe: 'board' } });
   });
 
+  it('reads the launch nonce the capture script proves the hierarchy with', () => {
+    const result = parseParityRequest(`${BASE}&nonce=3f9a0c1d2e4b`);
+
+    expect(result).toMatchObject({
+      ok: true,
+      request: { frame: 's4-home', nonce: '3f9a0c1d2e4b' },
+    });
+  });
+
   it('has no probe on a capture launch', () => {
     const result = parseParityRequest(BASE);
 
@@ -61,6 +70,8 @@ describe('parseParityRequest', () => {
     [BASE.replace('animations=off', 'animations=on'), 'animations "on" must be off'],
     [`${BASE}&scrollY=-40`, 'scrollY "-40" must be whole points >= 0'],
     [`${BASE}&probe=layout`, 'probe "layout" must be board'],
+    [`${BASE}&nonce=ABC123`, 'nonce "ABC123" must be 6 to 32 lower-case letters and digits'],
+    [`${BASE}&nonce=a1`, 'nonce "a1" must be 6 to 32 lower-case letters and digits'],
     [BASE.replace('lineSiege', 'line%E0'), 'parameter "game" has a broken %-escape'],
   ])('refuses %s', (query, error) => {
     expect(parseParityRequest(query)).toStrictEqual({ ok: false, error });

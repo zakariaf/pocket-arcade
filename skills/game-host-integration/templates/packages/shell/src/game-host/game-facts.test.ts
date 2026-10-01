@@ -1,7 +1,7 @@
 // packages/shell/src/game-host/game-facts.test.ts
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
 
-import { hasMusicOf, isScoreRatedOf, isScoreRule } from './game-facts.ts';
+import { hasHintsOf, hasMusicOf, isScoreRatedOf, isScoreRule } from './game-facts.ts';
 
 const THEME = { category: 'music', recipe: [], isLoop: true } as const;
 const TAP = { category: 'sfx', recipe: [] } as const;
@@ -30,6 +30,15 @@ describe('game facts', () => {
     expect(isScoreRatedOf(tallyWith({ rule: SCORE }))).toBe(true);
     const noLevels = { ...TALLY_GAME, levels: { ...TALLY_GAME.levels, table: [] } };
     expect(isScoreRatedOf(noLevels)).toBe(false);
+  });
+
+  it('gives a game hints exactly when its hint policy is a solver (the S5 hint key)', () => {
+    expect(hasHintsOf(TALLY_GAME)).toBe(true);
+    const noHints: typeof TALLY_GAME = {
+      ...TALLY_GAME,
+      rules: { ...TALLY_GAME.rules, hints: { kind: 'none' } },
+    };
+    expect(hasHintsOf(noHints)).toBe(false);
   });
 
   it('rates one level by score only for a score rule', () => {

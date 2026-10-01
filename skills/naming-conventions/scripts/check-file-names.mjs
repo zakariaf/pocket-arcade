@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createReporter, matchGlob, parseArgs, requireDir, run, walk } from './check-lib.mjs';
-import { BUNDLE_ID, KEBAB, NPM_SCRIPT, RULES, camelFromKebab, kebabFromPascal, pascalFromKebab, stem } from './lib/names.mjs';
+import { BUNDLE_ID, KEBAB, NPM_SCRIPT, RULES, bundleIdFor, camelFromKebab, kebabFromPascal, pascalFromKebab, premiumIdFor, stem } from './lib/names.mjs';
 import { scanSource } from './lib/source-scan.mjs';
 import { workspacePackages } from './lib/workspaces.mjs';
 
@@ -46,6 +46,8 @@ const SPEC = {
     '  save-fixture-file a frozen save fixture not named save-v<N>[.<case>].json',
     '  package-name      a workspace package is not @<scope>/<folder>, or the scopes differ',
     '  game-id           game.config.ts id differs from the folder, a bad bundle id, or a premium id other than <bundleId>.premium',
+    '  bundle-id-applander  game.config.ts bundleId is not io.applander.<folder id without hyphens> (owner decision O4:',
+    '                    line-siege -> io.applander.linesiege, the same Android package; Premium <bundleId>.premium)',
     '  npm-script-name   a root npm script is not <verb> or <area>:<verb> in kebab-case words',
     '',
     'Example: node check-file-names.mjs .            (from the app repo root)',
@@ -227,9 +229,13 @@ function checkGameConfig(root, dir, report) {
   const id = field('id');
   if (id && id.value !== folder) report.problem({ file, line: id.line, rule: 'game-id', message: `id '${id.value}' differs from the folder apps/${folder}`, fix: `Set id: '${folder}'; the game id, folder, slug and commit scope are one kebab-case name, stable forever.` });
   const bundle = field('bundleId');
-  if (bundle && !BUNDLE_ID.test(bundle.value)) report.problem({ file, line: bundle.line, rule: 'game-id', message: `bundleId '${bundle.value}' does not match ${BUNDLE_ID.source}`, fix: 'Use lowercase letters and digits in dot-separated segments, e.g. com.example.linesiege (valid on iOS and Android).' });
+  if (bundle && !BUNDLE_ID.test(bundle.value)) report.problem({ file, line: bundle.line, rule: 'game-id', message: `bundleId '${bundle.value}' does not match ${BUNDLE_ID.source}`, fix: `Use lowercase letters and digits in dot-separated segments: '${bundleIdFor(folder)}' (valid on iOS and Android).` });
+  const expected = bundleIdFor(folder);
+  if (bundle === null || bundle.value !== expected) {
+    report.problem({ file, line: bundle?.line ?? 1, rule: 'bundle-id-applander', message: bundle === null ? `no bundleId: apps/${folder} must use '${expected}'` : `bundleId '${bundle.value}' is not '${expected}'`, fix: `Set bundleId: '${expected}' and premium.productId: '${premiumIdFor(folder)}' (owner decision O4: io.applander.<game id without hyphens>, all lowercase; withShell uses it as the Android package too).` });
+  }
   const product = field('productId');
-  if (bundle && product && product.value !== `${bundle.value}.premium`) report.problem({ file, line: product.line, rule: 'game-id', message: `premium productId '${product.value}' is not '${bundle.value}.premium'`, fix: `Set productId: '${bundle.value}.premium'.` });
+  if (bundle && product && product.value !== `${bundle.value}.premium`) report.problem({ file, line: product.line, rule: 'game-id', message: `premium productId '${product.value}' is not '${bundle.value}.premium'`, fix: `Set productId: '${premiumIdFor(folder)}' (the bundle id io.applander.<game id without hyphens> + .premium).` });
 }
 
 function checkScripts(root, report) {

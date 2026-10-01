@@ -12,9 +12,11 @@ import { Sticker } from '@e07/shell/ui/sticker.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import { DebugImportSave } from './debug-import-save.tsx';
+import { DebugPerfSection } from './debug-perf-section.tsx';
 import { DEBUG_ROWS } from './debug-rows.ts';
 
 import type { DebugImportField } from './debug-import-save.tsx';
+import type { DebugPerf } from './debug-perf-section.tsx';
 import type { DebugAction, DebugRow, DebugSwitch, DebugValue } from './debug-rows.ts';
 import type { ListRowProps } from '@e07/shell/ui/list-row.tsx';
 import type { ReactNode } from 'react';
@@ -30,6 +32,8 @@ export type DebugModel = {
   readonly networkAttempts: string;
   /** The Import save row's paste field (drawn under the list while it is open). */
   readonly importField: DebugImportField;
+  /** Debug menu > Performance, drawn below the counter (DEBUG_PERF_ROWS and the summary line). */
+  readonly perf: DebugPerf;
   readonly isReducedMotion: boolean;
   readonly onBack: () => void;
   readonly onAction: (action: DebugAction) => void;
@@ -37,6 +41,7 @@ export type DebugModel = {
 };
 
 export type { DebugImportField } from './debug-import-save.tsx';
+export type { DebugPerf } from './debug-perf-section.tsx';
 
 export type DebugViewProps = { readonly model: DebugModel };
 
@@ -73,8 +78,9 @@ function rowProps(row: DebugRow, model: DebugModel): Partial<ListRowProps> {
 
 /**
  * S15 Debug menu (test builds only): the hazard strip, a top bar with the "Test build" sticker,
- * one list of fourteen tools, the Import save field while that row is open, and the network
- * counter. Compiled out of store builds through TEST_ONLY.
+ * one list of fourteen tools, the Import save field while that row is open, the network counter,
+ * and the Performance group below the design's rows. Compiled out of store builds through
+ * TEST_ONLY.
  */
 export function DebugView({ model }: DebugViewProps): ReactNode {
   const t = useT();
@@ -124,6 +130,7 @@ export function DebugView({ model }: DebugViewProps): ReactNode {
             tone="muted"
           />
         </View>
+        <DebugPerfSection perf={model.perf} isReducedMotion={model.isReducedMotion} />
       </ScreenBody>
     </ScreenFrame>
   );

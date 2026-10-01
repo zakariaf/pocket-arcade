@@ -1,0 +1,2 @@
+lacks the fact "hasHints"
+List every fact the mockup draws.

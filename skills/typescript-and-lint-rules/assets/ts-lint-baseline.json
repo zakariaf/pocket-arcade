@@ -433,6 +433,26 @@
         "what": "the expo-sqlite adapter-only ban"
       },
       {
+        "id": "att-banned",
+        "pattern": "const ATT_IMPORT = banned\\(\\s*'expo-tracking-transparency'",
+        "what": "the expo-tracking-transparency import ban (owner decision O1: only the consent adapter asks for tracking)"
+      },
+      {
+        "id": "att-in-banned-list",
+        "pattern": "BANNED_PACKAGE_PATHS = \\[[^\\]]*?\\n\\s*ATT_IMPORT,",
+        "what": "ATT_IMPORT in BANNED_PACKAGE_PATHS, so every file but the consent adapter keeps the ban"
+      },
+      {
+        "id": "att-adapter-only",
+        "pattern": "const ATT_ADAPTER = \\['packages/shell/src/services/consent/admob-consent-adapter\\.ts'\\];",
+        "what": "ATT_ADAPTER naming exactly packages/shell/src/services/consent/admob-consent-adapter.ts"
+      },
+      {
+        "id": "att-adapter-block",
+        "pattern": "files: ATT_ADAPTER,[\\s\\S]{0,400}?allow: \\[ATT_IMPORT\\]",
+        "what": "the ATT_ADAPTER block, the one place allow: [ATT_IMPORT] lifts the ban"
+      },
+      {
         "id": "runtime-imports-used",
         "pattern": "'no-restricted-imports':\\s*RUNTIME_IMPORTS",
         "what": "the runtime block's no-restricted-imports (RUNTIME_IMPORTS)"
@@ -610,6 +630,12 @@
         "pattern": "linterOptions\\s*:",
         "max": 1,
         "what": "a linterOptions block"
+      },
+      {
+        "id": "att-allow",
+        "pattern": "allow:\\s*\\[\\s*[A-Z]",
+        "max": 1,
+        "what": "an allow list that lifts a banned package (only the ATT_ADAPTER block has one)"
       }
     ],
     "forbiddenImports": [
@@ -742,6 +768,7 @@
     "coverage",
     "dist-audit",
     "parity",
+    "perf-baselines",
     "package.json",
     "package-lock.json",
     "tsconfig.json",

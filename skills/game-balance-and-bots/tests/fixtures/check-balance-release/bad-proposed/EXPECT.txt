@@ -1,3 +1,0 @@
-[bands-unapproved]
-test/sims/line-siege/balance-bands.json:3
-still "proposed"

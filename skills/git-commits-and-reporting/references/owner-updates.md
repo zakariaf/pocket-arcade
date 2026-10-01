@@ -4,7 +4,7 @@ The owner reads plain English, not logs, and never reads code. Every finished sl
 
 ## Contents
 
-- The seven rules
+- The eight rules
 - The message shape
 - Slice form and release form
 - UI changes: the design screenshots
@@ -13,7 +13,7 @@ The owner reads plain English, not logs, and never reads code. Every finished sl
 - Honest limits: what Claude never verifies
 - Plain words
 
-## The seven rules
+## The eight rules
 
 1. **Lead with the outcome in one sentence, in players' words:** "Line Siege now saves after every move: killing the app reopens the same board, paused."
 2. **Name things the way the spec does:** screens by name and ID (Home, S4), features by section (daily challenge, 8.3).
@@ -22,6 +22,7 @@ The owner reads plain English, not logs, and never reads code. Every finished sl
 5. **Point at no more than five things to look at**, and say where (gallery row, screenshot file, TestFlight build).
 6. **Be honest about limits:** list what was not verified (sound, haptics and 120 Hz need a phone; purchases need TestFlight).
 7. **Keep technical detail out of the first lines.** Stack traces, commands and file lists go after a "Details" line at the end, or into the commit messages.
+8. **List the owner's personal checks, never wait for them.** The owner reviews the fa and ckb texts, play-tests the game and listens to the sound previews personally. Every slice and release report has an "Owner steps (not blocking)" block with one line each, saying what is pending or "none pending"; no gate and no step of the work waits for them (rule `owner-steps-listed`).
 
 ## The message shape
 
@@ -51,8 +52,13 @@ Please look at (at most 5)
 Goldens and baselines changed on purpose
 - <file>: <reason> (Gate-Change trailer in <sha>)
 
+Owner steps (not blocking)
+- fa and ckb texts: <pending texts, or "none pending"> (step R3)
+- Play-test <game>: <still open, or done on YYYY-MM-DD> (step G6)
+- Listen to the <game> sound previews in reports/sfx/<game-id>/: <still open, or done> (step G9)
+
 Not tested or not verified
-- <honest list: device-only behaviour, StoreKit tiers 2 and 3, anything skipped>
+- <honest list: device-only behaviour, StoreKit tiers 2 and 3, a keyless rehearsal, anything skipped>
 
 Details
 <commands, file lists, red runs, anything technical>
@@ -72,9 +78,12 @@ Details
 | What changed for players | required | required |
 | Please look at | when there is something to look at (at most 5) | the gallery rows that changed (at most 5) |
 | Goldens and baselines changed on purpose | when any changed | required ("none" when none) |
+| Owner steps (not blocking) | required: the fa and ckb review, the play-test, the sound previews | required: the same three |
 | Not tested or not verified | required | required |
 
-For a release, also open the screenshot gallery for the owner (`open reports/screenshots/index.html`) and list the manual checks: the TestFlight purchase test (G6), the VoiceOver spot check (R2), the native-speaker read (R3), and the play-test sign-off (R1).
+For a release, also open the screenshot gallery for the owner (`open reports/screenshots/index.html`) and list the manual checks: the play-test with the TestFlight purchase test (G6), listening to the sound previews (G9) and the review of the fa and ckb texts (R3) under "Owner steps (not blocking)", and the VoiceOver spot check (R2) under "Not tested or not verified". The one request of a release report is the owner's "ship" (R1), because the release tag and the submission leave the Mac; it never waits for the play-test.
+
+**A keyless rehearsal is not release evidence.** Without the owner's signing key, a store archive built with `CODE_SIGNING_ALLOWED=NO` may be checked with `check-store-artifact --unsigned`, which prints `REHEARSAL: not a release gate`. Mention such a run only under "Not tested or not verified" (or Details); a Checks line or any other line that cites it fails rule `rehearsal-not-evidence`.
 
 For a slice, put the red run's assertion lines (Expected / Received) under Details: they are the evidence that the test came first.
 
@@ -96,7 +105,7 @@ Three kinds of change are deliberate but easy for the owner to miss, so each get
 
 **Parity waivers changed.** A waiver in `parity/waivers.json` changes what the parity gate accepts, so the file is a gated path: the commit that adds, removes or edits a waiver carries `Gate-Change: <which frames, which class, why>` and the report repeats it. One line per waiver group: the screen and elements, the class (`platform` for an iOS drawing difference such as React Native's dashed edges, `platform-text-shaping` for a glyph difference, `design-artefact` for a mistake in the design picture such as a tile drawn mid-press), the rule, the cause in plain words and `(Gate-Change trailer in <sha>)`. A retired waiver gets a line too. The owner finds all of them with `git log --grep Gate-Change`. Rule `waiver-trailer`. The same trailer rule covers `parity/game-facts.json`, the file that picks a game's reference variants.
 
-**Texts changed in all four languages.** A player-visible text that changed (a copy-deck text such as a tutorial step, or a new Shell text the deck lacks, such as the score line of a score-rated win) is reported once per text, not per language: where it shows, the new English text, that de, fa and ckb changed with it, and that the fa and ckb drafts wait for a native speaker's review (R3). Also list that review under "Not tested or not verified". Rule `copy-review`.
+**Texts changed in all four languages.** A player-visible text that changed (a copy-deck text such as a tutorial step, or a new Shell text the deck lacks, such as the score line of a score-rated win) is reported once per text, not per language: where it shows, the new English text, that de, fa and ckb changed with it, and that the fa and ckb drafts go to the owner's review (R3). Name those texts on the fa and ckb line of "Owner steps (not blocking)" (never "none pending" while texts changed); the review never blocks the work or a release. Rules `copy-review` and `owner-steps-listed`.
 
 ## Where each number comes from
 
@@ -116,8 +125,9 @@ Never round up, never type a number from memory, never call a check that did not
 ## Honest limits: what Claude never verifies
 
 - Sound, haptics and 120 Hz smoothness need a real phone.
-- Purchases beyond the local StoreKit harness need TestFlight (the owner's G6).
-- Persian and Sorani wording needs a native speaker (G7, R3).
+- Purchases beyond the local StoreKit harness need TestFlight (the owner's G6, listed under "Owner steps").
+- Persian and Sorani wording gets the owner's review (G7, R3); Claude writes natural drafts and lists them, and nothing waits for the review.
+- How the sounds and haptics feel: the owner listens to the previews and tries a phone (G9); the simulator only proves the app asked for them.
 - VoiceOver needs the owner's spot check (R2).
 - Real ads (live IDs) are never shown in test builds.
 - Anything skipped, quarantined or flaky in this run.

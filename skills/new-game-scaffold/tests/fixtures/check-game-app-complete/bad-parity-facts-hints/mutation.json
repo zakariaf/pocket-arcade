@@ -1,0 +1,1 @@
+[{ "replace": { "file": "parity/game-facts.json", "find": "\"hasHints\": false", "with": "\"hasHints\": true" } }]

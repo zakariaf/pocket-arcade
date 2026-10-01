@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>application-identifier</key>
-	<string>ABCDE12345.com.example.demogame</string>
+	<string>ABCDE12345.io.applander.demogame</string>
 	<key>com.apple.developer.team-identifier</key>
 	<string>ABCDE12345</string>
 </dict>

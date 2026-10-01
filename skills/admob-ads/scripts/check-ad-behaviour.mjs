@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // check-ad-behaviour.mjs: runs the spec 8.8 decision table against the repo's own ad modules
-// (ad-policy, ad-history, perk-offer, ad-gate, ad-moments, fullscreen-ad, ads-config, app-variant)
-// and runs the SDK adapters, the ads and consent factories and read-ads-extra against a scripted SDK stand-in
-// (lib/stubs/), all loaded with Node's type stripping. A weakened Jest test cannot hide a broken rule.
+// (ad-policy, ad-history, perk-offer, ad-gate, consent-moment-flow, ad-moments, fullscreen-ad,
+// ads-config, app-variant) and runs the SDK adapters, the ads and consent factories and read-ads-extra
+// against scripted stand-ins of the ads SDK, expo-tracking-transparency and react-native (lib/stubs/),
+// all loaded with Node's type stripping. A weakened Jest test cannot hide a broken rule.
 // Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-ad-behaviour.mjs [repo-root]
 
 import { dirname, join } from 'node:path';
@@ -11,6 +12,8 @@ import { fileURLToPath } from 'node:url';
 import { createReporter, parseArgs, requireDir, run } from './check-lib.mjs';
 import { importRepoModule, setModuleStubs } from './lib/load-ts.mjs';
 import { constantsStub } from './lib/stubs/expo-constants.mjs';
+import { trackingStub } from './lib/stubs/expo-tracking-transparency.mjs';
+import { reactNativeStub } from './lib/stubs/react-native.mjs';
 import { sdkStub, TestIds } from './lib/stubs/react-native-google-mobile-ads.mjs';
 
 const STUBS = join(dirname(fileURLToPath(import.meta.url)), 'lib', 'stubs');
@@ -18,11 +21,13 @@ setModuleStubs({
   'react-native-google-mobile-ads': join(STUBS, 'react-native-google-mobile-ads.mjs'),
   react: join(STUBS, 'react.mjs'),
   'expo-constants': join(STUBS, 'expo-constants.mjs'),
+  'expo-tracking-transparency': join(STUBS, 'expo-tracking-transparency.mjs'),
+  'react-native': join(STUBS, 'react-native.mjs'),
 });
 
 const SPEC = {
   name: 'check-ad-behaviour',
-  summary: "Loads the repo's ad modules (Node type stripping) and checks them against the spec 8.8 decision table: interstitial caps, banner screens, perk offers, ad history, the consent -> initialize -> preload order, pausing around fullscreen ads, which IDs each ADS_MODE gets, and that an ADS_MODE=off build never asks Google for consent.",
+  summary: "Loads the repo's ad modules (Node type stripping) and checks them against the spec 8.8 decision table: interstitial caps, banner screens, perk offers, ad history, the consent -> ATT -> initialize -> preload order, pausing around fullscreen ads, which IDs each ADS_MODE gets, and that an ADS_MODE=off build never asks Google for consent nor Apple for tracking.",
   usage: '[repo-root] [--json]',
   options: {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -30,9 +35,11 @@ const SPEC = {
   positionals: { min: 0, max: 1 },
   details: [
     'Rules: module-load, interstitial-rules, banner-rules, perk-rules, ad-history, consent-order,',
-    '  fullscreen-lifecycle, ads-config, variant-matrix, adapter-init, adapter-interstitial,',
-    '  adapter-rewarded, adapter-banner, ads-factory, read-ads-extra, consent-adapter, consent-factory.',
-    'The SDK, react and expo-constants are replaced by the scripted stand-ins in lib/stubs/.',
+    '  consent-moment-flow, fullscreen-lifecycle, ads-config, variant-matrix, adapter-init,',
+    '  adapter-interstitial, adapter-rewarded, adapter-banner, ads-factory, read-ads-extra,',
+    '  consent-adapter, tracking-adapter, consent-factory.',
+    'The SDK, expo-tracking-transparency, react-native, react and expo-constants are replaced by the',
+    'scripted stand-ins in lib/stubs/.',
     'Needs Node 22.18+ (type stripping). Modules must use erasable TypeScript and explicit .ts imports.',
   ].join('\n'),
 };
@@ -43,6 +50,7 @@ const FILES = {
   history: `${ADS}/ad-history.ts`,
   perk: `${ADS}/perk-offer.ts`,
   gate: `${ADS}/ad-gate.ts`,
+  flow: `${ADS}/consent-moment-flow.ts`,
   moments: `${ADS}/ad-moments.ts`,
   fullscreen: `${ADS}/fullscreen-ad.ts`,
   config: 'packages/shell/src/config/ads-config.ts',
@@ -78,11 +86,17 @@ function fakeAds(calls, { interstitialResult = 'shown', rewardResult = 'rewarded
   };
 }
 
-function fakeConsent(calls, afterRefresh, afterForm) {
+/** tracking: the ATT status; 'not-determined' shows the prompt (recorded) and answers `answer`. */
+function fakeConsent(calls, afterRefresh, afterForm, { tracking = 'not-determined', answer = 'denied' } = {}) {
+  let status = tracking;
   return {
     refresh: async () => { calls.push('refresh'); return afterRefresh; },
     showFormIfRequired: async () => { calls.push('showFormIfRequired'); return afterForm; },
     showPrivacyOptions: async () => { calls.push('showPrivacyOptions'); return afterForm; },
+    requestTracking: async () => {
+      if (status === 'not-determined') { calls.push('attPrompt'); status = answer; }
+      return status;
+    },
   };
 }
 
@@ -205,24 +219,61 @@ run(async () => {
     const granted = { canRequestAds: true, isPrivacyOptionsRequired: true };
     const denied = { canRequestAds: false, isPrivacyOptionsRequired: true };
     const input = { isPremium: false, isAdsEnabled: true, isTutorialDone: true, isOnline: true };
-    // afterRefresh denied: a player where Google's form is required and not yet answered.
-    const trace = async (fn, { afterRefresh = denied, afterForm = granted } = {}) => {
+    // afterRefresh denied: a player where Google's form is required and not yet answered; on iOS
+    // with the ATT answer not yet given ('attPrompt' marks the system prompt).
+    const trace = async (fn, { afterRefresh = denied, afterForm = granted, tracking = 'not-determined', answer = 'denied' } = {}) => {
       const calls = [];
       const seen = [];
       const showIntro = async () => { calls.push('intro'); };
-      const deps = { ads: fakeAds(calls), consent: fakeConsent(calls, afterRefresh, afterForm), onConsent: (info) => seen.push(info), showIntro };
+      const deps = { ads: fakeAds(calls), consent: fakeConsent(calls, afterRefresh, afterForm, { tracking, answer }), onConsent: (info) => seen.push(info), showIntro };
       const result = await fn(deps);
       return { calls, result, seen: seen.length };
     };
-    const fix = 'Restore ad-gate.ts: refresh, then (where the form is required) the S3 intro, then Google\'s form; only after the tutorial, online and not Premium; initialize only when canRequestAds, and await it before any preload.';
-    await expect('consent-order', FILES.gate, 'prepareAds with consent', () => trace((deps) => gate.prepareAds(deps, input)), { calls: ['refresh', 'intro', 'showFormIfRequired', 'initialize', 'initialized', 'preloadInterstitial', 'preloadRewarded'], result: true, seen: 2 }, fix);
-    await expect('consent-order', FILES.gate, 'prepareAds where consent is not required (no intro, no form)', () => trace((deps) => gate.prepareAds(deps, input), { afterRefresh: granted }), { calls: ['refresh', 'initialize', 'initialized', 'preloadInterstitial', 'preloadRewarded'], result: true, seen: 1 }, fix);
-    await expect('consent-order', FILES.gate, 'prepareAds when consent does not allow ads', () => trace((deps) => gate.prepareAds(deps, input), { afterForm: denied }), { calls: ['refresh', 'intro', 'showFormIfRequired'], result: false, seen: 2 }, fix);
-    for (const [label, change] of [['during the tutorial', { isTutorialDone: false }], ['for Premium', { isPremium: true }], ['offline', { isOnline: false }], ['with ads disabled', { isAdsEnabled: false }]]) {
-      await expect('consent-order', FILES.gate, `prepareAds ${label}`, () => trace((deps) => gate.prepareAds(deps, { ...input, ...change })), { calls: [], result: false, seen: 0 }, fix);
+    const fix = 'Restore ad-gate.ts: refresh, then (where the form is required) the S3 intro, then Google\'s form; then Apple\'s ATT prompt (consent.requestTracking) once ads may be requested; only after the tutorial, online and not Premium; initialize only when canRequestAds, whatever the ATT answer, and await it before any preload.';
+    const ready = ['initialize', 'initialized', 'preloadInterstitial', 'preloadRewarded'];
+    await expect('consent-order', FILES.gate, 'prepareAds with consent: intro, form, ATT, then initialize', () => trace((deps) => gate.prepareAds(deps, input)), { calls: ['refresh', 'intro', 'showFormIfRequired', 'attPrompt', ...ready], result: true, seen: 2 }, fix);
+    await expect('consent-order', FILES.gate, 'prepareAds where consent is not required (no intro, no form, ATT still first)', () => trace((deps) => gate.prepareAds(deps, input), { afterRefresh: granted }), { calls: ['refresh', 'attPrompt', ...ready], result: true, seen: 1 }, fix);
+    for (const [label, tracking] of [['ATT declined earlier', 'denied'], ['ATT restricted', 'restricted'], ['ATT unavailable', 'unavailable'], ['ATT authorized earlier', 'authorized']]) {
+      await expect('consent-order', FILES.gate, `prepareAds with ${label}: ads still initialize, no prompt`, () => trace((deps) => gate.prepareAds(deps, input), { afterRefresh: granted, tracking }), { calls: ['refresh', ...ready], result: true, seen: 1 }, fix);
     }
-    await expect('consent-order', FILES.gate, 'refreshConsentAtLaunch shows no form', () => trace((deps) => gate.refreshConsentAtLaunch(deps, { ...input, isTutorialDone: false })), { calls: ['refresh'], seen: 1 }, fix);
+    await expect('consent-order', FILES.gate, 'prepareAds when the player declines ATT now: ads still initialize', () => trace((deps) => gate.prepareAds(deps, input), { answer: 'denied' }), { calls: ['refresh', 'intro', 'showFormIfRequired', 'attPrompt', ...ready], result: true, seen: 2 }, fix);
+    await expect('consent-order', FILES.gate, 'prepareAds when consent does not allow ads (no ATT)', () => trace((deps) => gate.prepareAds(deps, input), { afterForm: denied }), { calls: ['refresh', 'intro', 'showFormIfRequired'], result: false, seen: 2 }, fix);
+    for (const [label, change] of [['during the tutorial', { isTutorialDone: false }], ['for Premium', { isPremium: true }], ['offline', { isOnline: false }], ['with ads disabled', { isAdsEnabled: false }]]) {
+      await expect('consent-order', FILES.gate, `prepareAds ${label} (no form, no ATT)`, () => trace((deps) => gate.prepareAds(deps, { ...input, ...change })), { calls: [], result: false, seen: 0 }, fix);
+    }
+    await expect('consent-order', FILES.gate, 'refreshConsentAtLaunch shows no form and no ATT', () => trace((deps) => gate.refreshConsentAtLaunch(deps, { ...input, isTutorialDone: false })), { calls: ['refresh'], seen: 1 }, fix);
     await expect('consent-order', FILES.gate, 'refreshConsentAtLaunch for Premium', () => trace((deps) => gate.refreshConsentAtLaunch(deps, { ...input, isPremium: true })), { calls: [], seen: 0 }, fix);
+  }
+
+  const { flow } = mods;
+  if (flow) {
+    const granted = { canRequestAds: true, isPrivacyOptionsRequired: false };
+    const input = { isPremium: false, isAdsEnabled: true, isTutorialDone: true, isOnline: true };
+    const fix = 'Restore consent-moment-flow.ts: a held S3 parity frame asks neither Google nor Apple, and the ATT prompt waits until a banner screen is open (never over a level).';
+    const run = async ({ isHeld, leaveFirst = false }) => {
+      const calls = [];
+      const moment = flow.createConsentMomentFlow({ ads: fakeAds(calls), consent: fakeConsent(calls, granted, granted), isHeld, savedCanRequestAds: null, onConsent: () => undefined, onError: (error) => calls.push(`error:${String(error?.message ?? error)}`) });
+      moment.updateInput(input);
+      const close = moment.requestAdMoment();
+      if (leaveFirst) close();
+      moment.refreshAtLaunch();
+      await tick();
+      await tick();
+      return calls;
+    };
+    await expect('consent-moment-flow', FILES.flow, 'the held S3 parity frame asks neither Google nor Apple', () => run({ isHeld: true }), [], fix);
+    await expect('consent-moment-flow', FILES.flow, 'no ATT prompt while no banner screen is open (the player left for a level)', () => run({ isHeld: false, leaveFirst: true }), ['refresh'], fix);
+    await expect('consent-moment-flow', FILES.flow, 'facts that change while the gate decides are used (the tutorial ended as Home opened)', async () => {
+      const calls = [];
+      const denied = { canRequestAds: false, isPrivacyOptionsRequired: true };
+      const moment = flow.createConsentMomentFlow({ ads: fakeAds(calls), consent: fakeConsent(calls, denied, granted), isHeld: false, savedCanRequestAds: null, onConsent: () => undefined, onError: () => undefined });
+      moment.updateInput({ ...input, isTutorialDone: false });
+      moment.requestAdMoment();
+      moment.updateInput(input);
+      await tick();
+      await tick();
+      return { calls, isIntroShown: moment.getSnapshot().isIntroShown };
+    }, { calls: ['refresh'], isIntroShown: true }, 'Restore consent-moment-flow.ts: when prepareAds ends without asking and the gate\'s facts changed meanwhile, decide again with the new facts.');
   }
 
   if (moments && fullscreen && history) {
@@ -404,6 +455,28 @@ run(async () => {
     }, ['AdsConsent.loadAndShowConsentFormIfRequired'], fix);
   }
 
+  if (consentAdapter) {
+    const file = FILES.consentAdapter;
+    const fix = 'Restore requestTracking in admob-consent-adapter.ts: off iOS \'unavailable\' without touching the module; read the status first and ask (requestTrackingPermissionsAsync) only while it is undetermined and the app is active; map granted to authorized and denied (Expo also reports restricted so) to denied; a failure is logged and answers \'unavailable\', never a rejection.';
+    const ask = async ({ status = 'undetermined', answer = 'denied', fail = false, os = 'ios', appState = 'active', becomeActive = false } = {}) => {
+      trackingStub.reset({ status, answer, fail });
+      reactNativeStub.reset({ os, appState });
+      const errors = [];
+      const pending = consentAdapter.createAdmobConsentAdapter({ onError: (error) => errors.push(String(error?.message ?? error)) }).requestTracking();
+      await tick();
+      const beforeActive = trackingStub.calls();
+      if (becomeActive) reactNativeStub.setAppState('active');
+      const result = await settled(pending);
+      return { result, errors, beforeActive, calls: trackingStub.calls() };
+    };
+    await expect('tracking-adapter', file, 'not-determined: the system prompt, once, then the answer', () => ask(), { result: 'denied', errors: [], beforeActive: ['getTrackingPermissionsAsync', 'requestTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync', 'requestTrackingPermissionsAsync'] }, fix);
+    await expect('tracking-adapter', file, 'an accepted prompt gives authorized', async () => (await ask({ answer: 'granted' })).result, 'authorized', fix);
+    await expect('tracking-adapter', file, 'answered before: no prompt', () => ask({ status: 'denied' }), { result: 'denied', errors: [], beforeActive: ['getTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync'] }, fix);
+    await expect('tracking-adapter', file, 'in the background: waits for the app to be active', () => ask({ appState: 'background', becomeActive: true }), { result: 'denied', errors: [], beforeActive: ['getTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync', 'requestTrackingPermissionsAsync'] }, fix);
+    await expect('tracking-adapter', file, 'a failing read resolves unavailable and is logged', () => ask({ fail: true }), { result: 'unavailable', errors: ['tracking module unavailable'], beforeActive: ['getTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync'] }, fix);
+    await expect('tracking-adapter', file, 'off iOS: unavailable, the module untouched', () => ask({ os: 'android' }), { result: 'unavailable', errors: [], beforeActive: [], calls: [] }, fix);
+  }
+
   if (consentFactory) {
     const file = FILES.consentFactory;
     const fix = 'Restore consent-factory.ts: ADS_MODE=off returns a consent port that never calls the SDK (canRequestAds false, no privacy row); test and live return the AdMob consent adapter with the options passed through.';
@@ -414,6 +487,12 @@ run(async () => {
       const infos = [await settled(consent.refresh()), await settled(consent.showFormIfRequired()), await settled(consent.showPrivacyOptions())];
       return { infos, sdk: sdkStub.calls() };
     }, { infos: [none, none, none], sdk: [] }, fix);
+    await expect('consent-factory', file, 'ADS_MODE=off never shows Apple\'s tracking prompt (every E2E build)', async () => {
+      trackingStub.reset({ status: 'undetermined' });
+      reactNativeStub.reset();
+      const status = await settled(consentFactory.createConsentPort('off', { onError: () => undefined }).requestTracking());
+      return { status, tracking: trackingStub.calls() };
+    }, { status: 'unavailable', tracking: [] }, 'Restore consent-factory.ts: the ADS_MODE=off port answers requestTracking with \'unavailable\' and never calls expo-tracking-transparency.');
     await expect('consent-factory', file, 'ADS_MODE=test uses the AdMob consent adapter', async () => {
       sdkStub.reset({ requestInfoUpdate: CONSENT_CACHED });
       const info = await settled(consentFactory.createConsentPort('test', { debugGeography: 'eea', onError: () => undefined }).refresh());

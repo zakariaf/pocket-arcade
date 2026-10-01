@@ -1,0 +1,4 @@
+[owner-placeholder]
+links.privacyPolicy.host is still the scaffold placeholder example.com
+links.supportEmail is still the scaffold placeholder support@example.com
+step G3

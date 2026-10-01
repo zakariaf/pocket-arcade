@@ -1,0 +1,14 @@
+{
+ "frame": "s14-reset-all-progress",
+ "variant": "no-music",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. Settings under the reset dialog has no Music rows in the app; the background variant s14-reset-all-progress--no-music matches it (R3S-G17c).",
+ "reference": {
+  "image": "../../check-parity/reference-r3/lineSiege/light-en/s14-reset-all-progress--no-music.png",
+  "layout": "../../check-parity/reference-r3/lineSiege/light-en/s14-reset-all-progress--no-music.layout.json"
+ }
+}

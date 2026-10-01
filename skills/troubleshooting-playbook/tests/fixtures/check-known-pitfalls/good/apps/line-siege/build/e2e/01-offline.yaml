@@ -1,4 +1,4 @@
 # Generated build output is never judged.
-appId: com.example.demo
+appId: io.applander.demo
 ---
 - setAirplaneMode: enabled

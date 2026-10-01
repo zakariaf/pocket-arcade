@@ -25,7 +25,7 @@ Every S11 setting: what the player sees, what is saved, which action changes it,
 - Reduce motion: on/off. Less screen shake, particles and bouncing. Defaults to the phone's own reduce-motion setting.
 - Hints during play: on/off (tutorial tips and nudges).
 - Premium: "Premium – active", or "Remove ads – {price}" (price from the store), which opens S12; Restore purchase.
-- Privacy: Ad privacy choices (reopens the consent step; only where consent applies); Privacy policy (offline text, S11c).
+- Privacy: Ad privacy choices (reopens Google's consent step; only where that consent applies; Apple's tracking answer is changed in the phone's Settings > Privacy & Security > Tracking, never in the game); Privacy policy (offline text, S11c).
 - Data: Reset statistics (confirm). Reset all progress (confirm by holding for 2 seconds): deletes levels, stars, daily results and statistics; keeps Premium, language and settings.
 - About: About and credits (S11b), Licences (S11d), Rate this game (the store app opens its page; the game makes no request), Contact support (the phone's mail app with address and version filled in).
 
@@ -119,7 +119,7 @@ Row ids and testIDs are in `templates/settings-rows.ts`; the handlers in `templa
 | Premium (`crown`) | Remove ads – {price} | `settings.remove-ads-row` | gold icon tile, bold label (its row spec sets `isStrong`, passed to `ListRow isStrong`), chevron → S12 | Premium store | not owned |
 | | Premium – active | `settings.premium-active` | gold sticker row | Premium store | owned |
 | | Restore purchase | `settings.restore-purchase-row` | chevron | Premium service `restore()` | always |
-| Privacy (`shield`) | Ad privacy choices | `settings.ad-privacy-row` | description + chevron | consent port `showPrivacyOptions()` | privacy options REQUIRED |
+| Privacy (`shield`) | Ad privacy choices | `settings.ad-privacy-row` | description + chevron | consent port `showPrivacyOptions()` (Google's options form only; Apple's tracking answer is changed in the phone's Settings app, and the app never asks it again) | privacy options REQUIRED |
 | | Privacy policy | `settings.privacy-policy-row` | chevron → S11c | none | always |
 | Data (`trash`) | Reset statistics | `settings.reset-stats-row` | danger row → S14 reset-stats dialog | `resetStatistics` | always |
 | | Reset all progress | `settings.reset-progress-row` | danger row + description → S14 hold dialog | `resetAllProgress` | always |

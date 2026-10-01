@@ -39,11 +39,11 @@ WCAG 2.2 relative luminance with the sRGB threshold 0.04045: `L = 0.2126 R + 0.7
 | `border` on `background`, `surface` | 3 | the ink outline: the boundary of every control, tile and star |
 | `starOff` on `surface` | 3 | hollow stars |
 | `focus` on `background`, `sunken` | 3 | the focus ring, including on a locked tile |
-| Shell `toastText` on `toastBackground`, `adText` on `adBackground`, `toyInk` on `gold`, `text` on `dangerFill` | 4.5 | Shell text (the S12 error note's body text sits on `dangerFill`) |
-| `danger` on Shell `dangerFill` | 3 | the danger icon and its edge on the danger icon tile: an icon pair |
+| Shell `toastText` on `toastBackground`, `adText` on `adBackground`, `toyInk` on `gold`, `text` and `textMuted` on `dangerFill` | 4.5 | Shell text (the S12 error note's body text sits on `dangerFill`) |
+| `danger` on Shell `dangerFill` | 4.5 | a text pair in both schemes: the S14 hold label stays on the key while the fill grows under it; the same pair covers the danger icons and edges on `dangerFill` tiles |
 | each fill (`primary` and `pop` on `background`, `starOn` on `surface`) against `border` **or** its ground, whichever is higher | 3 | the filled shape itself must be identifiable: light paints get it from the ink edge (5.9–11.5:1), dark paints from the ground (6.6–12:1) because the chalk edge is close to the fill there |
 
-Shell constants (`shell-colors.ts`), per scheme: toast text on toast (4.5), ad text on the ad band (4.5), sticker ink on gold (4.5), body text on `dangerFill` (4.5), and the danger icon on `dangerFill` (3, an icon pair).
+Shell constants (`shell-colors.ts`), per scheme: toast text on toast (4.5), ad text on the ad band (4.5), sticker ink on gold (4.5), body and muted text on `dangerFill` (4.5), and danger on `dangerFill` (4.5, a text pair since owner decision O5; there is no exception for it).
 
 **Why not `primary` on `background` or `starOn` on `surface`:** Toybox fills (accent, pop, star) are deliberately close to the light ground (1.0–1.9:1), but every such fill carries the 3 pt ink outline (10.9–16.4:1 against ground and surface), which is the visual boundary WCAG 1.4.11 asks for, and filled vs hollow stars differ in shape. An older pair set (`primary`/`background` ≥ 3, `starOn`/`surface` ≥ 3, `danger`/`background` ≥ 4.5) fails every light Toybox palette by design; this set replaces it. `danger` text never sits on the ground (3.8–4.3:1 in light), only on a surface (4.8–5.7:1).
 
@@ -63,7 +63,9 @@ WCAG 2.2 ratios of the design's own colours (L = light, D = dark; bold = below t
 | Text on pop (4.5) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 |
 | Danger text on surface (4.5) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 |
 | Danger text on ground (4.5) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 |
-| Danger icon on dangerFill (3) | 4.43 | 5.83 | 4.43 | 5.83 | 4.43 | 5.83 |
+| Danger text and icons on dangerFill (4.5) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
+| Body text on dangerFill (4.5) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 |
+| Muted text on dangerFill (4.5) | 7.59 | 6.96 | 7.59 | 7.78 | 7.59 | 7.27 |
 | Toast text on toast (4.5) | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 |
 | Ad text on ad band (4.5) | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 |
 | Sticker ink on gold (4.5) | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 |
@@ -82,9 +84,9 @@ What the numbers mean: all text passes where Toybox puts it; light fills are wea
 
 ## Danger colours: icon tiles, text and the hold-to-confirm label
 
-- **`danger` on `dangerFill` is an icon pair (3:1).** `dangerFill` is the tint behind destructive icons (the danger row's icon tile, the reset dialog's art tile) and the S12 error note; what sits on it in `danger` is an icon and an edge, never resting text. Light measures 4.43:1, dark 5.83:1: both pass. `check-contrast.mjs` checks it under `shell-contrast` at 3:1, and the parity references use exactly these colours, so the design is not changed and no `--allow` is needed.
-- **Danger text sits only on `surface`** and must reach 4.5:1 there (`text-contrast`, `danger` on `surface`); a danger text pair at 4.43:1 fails. The error note's body text is `text` on `dangerFill` (4.5:1, `shell-contrast`).
-- **The hold-to-confirm label** (S14 "Reset all progress") is the one place where danger text crosses `dangerFill`: while the finger is down, the fill grows under the resting label for 2 s, and the label meets 4.43:1 in light on the part already filled. Its resting state (danger on surface) passes 4.5:1, so this is a transient state of a control, not a resting text pair. It stays listed as an open owner decision in `toybox-design-system` (a lighter light `dangerFill`, `#FFDFE2`, would give 4.62:1 but is not in the mockup). Mention it once in the report of a release candidate; do not change the design colour on your own and do not pass `--allow` for it.
+- **`danger` on `dangerFill` is a text pair (4.5:1) in both schemes.** `dangerFill` is the tint behind destructive icons (the danger row's icon tile, the reset dialog's art tile), the S12 error note and the S14 hold-to-confirm fill. The light `dangerFill` is `#FFDCDF` (owner decision O5, 2026-09-30; it was `#FFD9DD`, where danger measured 4.43:1). It keeps the old hue and saturation at the first 8-bit lightness where danger `#C4243A` reaches 4.5:1: danger on it is 4.52:1, text 13.03:1, muted text 7.59:1; the dark `#4A1F3A` is unchanged (danger 5.83:1, text 12.27 to 12.61:1). `check-contrast.mjs` checks danger, text and muted text on `dangerFill` under `shell-contrast` at 4.5:1, with no exception.
+- **Danger text sits only on `surface` or `dangerFill`** and must reach 4.5:1 there (`text-contrast` for `danger` on `surface`, `shell-contrast` for `danger` on `dangerFill`). It never sits on the ground (3.8 to 4.3:1 in light). The error note's body text is `text` on `dangerFill`.
+- **The hold-to-confirm label** (S14 "Reset all progress", 17 pt Bold `danger`) stays on the key while the fill grows under it for 2 s, so it reads on `surface` (5.53 to 5.68:1) and on `dangerFill` (4.52:1) at once: 4.5:1 or more in every fill state, including the frozen 46 % fill of the parity capture. Nothing about it goes into a report as an open question any more.
 
 ## Board palettes: board-palettes.json and board-contrast.json
 

@@ -10,7 +10,7 @@ import type { PremiumChange } from './premium-service.ts';
 import type { StoreTransaction } from './purchase-port.ts';
 import type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';
 
-const ID = 'com.example.linesiege.premium';
+const ID = 'io.applander.linesiege.premium';
 const BOUGHT: StoreTransaction = {
   productId: ID,
   transactionId: 't1',

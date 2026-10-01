@@ -27,6 +27,55 @@
    "class": "platform",
    "reason": "React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only. A pre-listed platform waiver of the parity skill.",
    "reportedToOwner": "2026-09-30"
+  },
+  {
+   "frame": "s9-daily-challenge",
+   "testID": "daily.week-day.1.mark",
+   "rule": "structure",
+   "class": "platform",
+   "reason": "The fixture's missed day mark (Monday) is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+   "reportedToOwner": "2026-09-30"
+  },
+  {
+   "frame": "s9-daily-challenge",
+   "testID": "daily.week-day.7.mark",
+   "rule": "structure",
+   "class": "platform",
+   "reason": "The fixture's today mark (Sunday) is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+   "reportedToOwner": "2026-09-30"
+  },
+  {
+   "frame": "s9-daily-challenge",
+   "testID": "daily.week-card",
+   "rule": "structure",
+   "class": "platform",
+   "reason": "The legend's missed swatch inside the week card is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+   "reportedToOwner": "2026-09-30"
+  },
+  {
+   "frame": "s9-daily-challenge",
+   "testID": "daily.today-card.calendar.month",
+   "rule": "text-ink",
+   "class": "platform",
+   "themes": [
+    "dark"
+   ],
+   "langs": [
+    "fa"
+   ],
+   "reason": "The month sits on the tilted calendar tile. iOS draws the edges of a rotated view without edge antialiasing (React Native exposes no allowsEdgeAntialiasing), so the band edge next to the word is stepped; in dark fa Chrome's antialiased edge pixels near the text colour count as ink in the design window (ink height 23 pt) while the app's stepped edge does not (16.7 pt). The word itself matches. A pre-listed platform waiver of the parity skill.",
+   "reportedToOwner": "2026-09-30"
+  },
+  {
+   "frame": "s14-restart-to-apply",
+   "testID": "restart-dialog.card",
+   "rule": "structure",
+   "class": "platform",
+   "langs": [
+    "fa"
+   ],
+   "reason": "iOS lays every text line on the device pixel grid (a 25.5 pt Persian line is 25.67 pt, 77 px), while Chrome keeps fractional line boxes; the fa card holds three two-line texts, so the keys sit 0.33 pt lower and the card ends 0.33 pt lower: a 1.3 pt band along the key shadows. Self-test fixture copied from a round-3 test build.",
+   "reportedToOwner": "2026-09-30"
   }
  ]
 }

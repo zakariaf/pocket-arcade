@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/ad-gate.ts",
+      "find": "  await deps.consent.requestTracking(); // after Google's form, before the SDK can request an ad\n",
+      "with": "  if ((await deps.consent.requestTracking()) !== 'authorized') return false;\n"
+    }
+  }
+]

@@ -6,7 +6,7 @@
 import { connectAudioSettings } from '@e07/shell/app/connect-audio-settings.ts';
 import { connectPremiumReloads } from '@e07/shell/app/connect-premium-reloads.ts';
 import { createPremiumDeps } from '@e07/shell/app/create-premium-deps.ts';
-import { debugSwitchesOf } from '@e07/shell/app/debug-switches.ts';
+import { debugFeedbackOf, debugSwitchesOf } from '@e07/shell/app/debug-switches.ts';
 import { hydrateSave, resumeState } from '@e07/shell/app/hydrate-save.ts';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { createGameBoardHost } from '@e07/shell/game-host/create-game-board-host.tsx';
@@ -171,6 +171,7 @@ function openSave<T extends ShellGameTypes>(
 }
 
 type HostInput<T extends ShellGameTypes> = DebugSwitches & {
+  readonly feedback: ReturnType<typeof debugFeedbackOf>; // test builds: recording ports
   readonly game: ShellGameModule<T>;
   readonly core: Core;
   /** The stores exist before any run can end (after the first render). */
@@ -190,9 +191,8 @@ function recordAdLevelEnd(doc: SaveDoc, summary: RunSummary): SaveDoc {
 /** The one generic seam: the typed module stays inside the host's closure from here on. */
 function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
   const { adapters, haptics, save, clocks } = input.core;
-  const { audio, errorLog } = adapters;
+  const { audio, errorLog, createExamplePicture } = adapters;
   const { isLayoutProbeOn, seedOverride, openGame } = input;
-  const { createExamplePicture } = adapters;
   const pictures = createExamplePicture === undefined ? {} : { createExamplePicture };
   return createGameHost(input.game, {
     ...pictures,
@@ -203,7 +203,7 @@ function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
     seedOverride,
     openGame,
     createBoardHost: createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn }),
-    feedback: { audio, haptics },
+    feedback: input.feedback,
     extendRunEnd: recordAdLevelEnd,
     writeRunEnd: (write) => {
       updateAndPublish(save, input.stores(), write);
@@ -211,7 +211,7 @@ function hostFor<T extends ShellGameTypes>(input: HostInput<T>): GameHost {
   });
 }
 
-/** The ads and consent ports (a launch may bring a stand-in ads port). */
+/** The ads and consent ports; consent also asks Apple's ATT, never with ADS_MODE=off (E2E). */
 function adServicesFor(core: Core, launch: ShellLaunch): Pick<Services, 'ads' | 'consent'> {
   const { config, errorLog } = core.adapters;
   const recordAdError = (error: unknown): void => {
@@ -233,19 +233,17 @@ function premiumDepsFor(core: Core, launch: ShellLaunch, online: Online): Premiu
   const { isOnline } = network.connectivity;
   // A launch's stand-in store (test builds) is gated the same way as the device's.
   const standIn = launch.purchasePort?.(productId);
-  const premiumDeps = createPremiumDeps({
+  const purchase =
+    standIn === undefined ? adapters.createPurchase(isOnline) : withConnectivity(standIn, isOnline);
+  return createPremiumDeps({
     save: core.save,
     stores,
     clock: core.clocks.clock,
     errorLog: adapters.errorLog,
-    purchase:
-      standIn === undefined
-        ? adapters.createPurchase(isOnline)
-        : withConnectivity(standIn, isOnline),
+    purchase,
     productId,
     deviceLocales: adapters.deviceLocales,
   });
-  return premiumDeps;
 }
 
 /** Premium starts (never awaited), then its reloads: the first network state arrives later. */
@@ -273,6 +271,7 @@ function finishParts(core: Core, launch: ShellLaunch, made: Made): Rest {
   const { audio, errorLog, config, saveDriver } = adapters;
   const debug = adapters.createDebugParts({
     ...{ network, clocks, premiumDeps, stores, audio, errorLog, save, saveDriver },
+    ...{ haptics: core.haptics },
     extra: config.game,
     game: host.debugControls(),
   });
@@ -322,6 +321,7 @@ export function createShellParts<T extends ShellGameTypes>(
     core,
     stores: getStores,
     ...debugSwitchesOf(() => debug),
+    feedback: debugFeedbackOf(() => debug, { audio: adapters.audio, haptics }),
   });
   stores = createShellStores(hydrated.save);
   const rest = finishParts(core, launch, { stores, host });

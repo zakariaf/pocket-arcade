@@ -10,5 +10,6 @@ export function shellPlugins(ids: AdmobGameIds, adsMode: AdsMode): unknown[] {
     'expo-sqlite',
     'expo-iap',
     ['react-native-google-mobile-ads', admobPluginOptions(adsMode, ids, SKADNETWORK_IDS)],
+    ['expo-tracking-transparency', { userTrackingPermission: 'Google uses this to show you ads.' }],
   ];
 }

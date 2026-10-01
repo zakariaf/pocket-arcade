@@ -15,6 +15,7 @@ How sound reaches the speaker in a Pocket Arcade app, and why each piece is the 
 - Music
 - Wiring in the composition root
 - Testing
+- Simulator evidence: the app asked for the win feedback
 - What only the owner can check
 - Licences screen rows
 - Known issues
@@ -116,7 +117,7 @@ The product asks for a sound on every button tap, win and loss, and a short puls
 |---|---|---|---|
 | `tap` | `ui.tap` | none | Every button press, once for the whole app: `ShellApp` wraps the tree in `<PressFeedbackProvider onPress={() => { playUiFeedback(services, 'tap'); }}>`, and the three files allowed to hold a `Pressable` (`raised-surface.tsx` from `toybox-design-system`, `quiet-button.tsx` and `list-row.tsx` from `toybox-components`) call `const onPressFeedback = usePressFeedback();` and run it in `onPress`, except a switch row (`accessibilityRole: 'switch'`), whose handler plays `toggle` instead. Outside the provider the hook is a no-op, so component tests need no audio fake. |
 | `toggle` | `ui.toggle` | `selection` | The handler of every toggle row and picker step (Settings, Pause). |
-| `win` | `ui.win` | `success` | Once, for the move that wins the run: the game host's session controller calls `playUiFeedback(deps.feedback, session.status === 'won' ? 'win' : 'lose')` in its persist step, after the run end is saved and before the Result screen shows. The composition root passes `feedback: { audio, haptics }` to `createGameHost` (game-host-integration). |
+| `win` | `ui.win` | `success` | Once, for the move that wins the run: the game host's session controller calls `playUiFeedback(deps.feedback, session.status === 'won' ? 'win' : 'lose')` in its persist step, after the run end is saved and before the Result screen shows. The composition root passes `feedback: debugFeedbackOf(() => debug, { audio, haptics })` to `createGameHost` (game-host-integration): the real ports in a store build, the debug parts' recording ports in a test build. |
 | `lose` | `ui.lose` | `error` | Once, for the move that loses the run (the same call), including a loss that waits for its continue; declining the continue later records the loss silently. |
 
 The context lives in `packages/shell/src/app/press-feedback-context.tsx`, not in `services/audio/`: the Pressable hosts live in `ui/`, which never imports `services/` (ESLint's ui boundary), and this file imports only React. The hosts and `ShellApp` both import it from `@e07/shell/app/press-feedback-context.tsx`, so there is exactly one context. The toybox-design-system skill ships the same file byte for byte; whichever skill runs first copies it.
@@ -152,7 +153,8 @@ audio.load(composeSoundBank(game.presentation.sounds));
 // selectIsVibrationOn(settings.getState()), nowMs }); the lazy getState lets the game host get the
 // port before the stores exist.
 const haptics = createShellHaptics({ getState: () => stores.settings.getState() }, clock);
-// ... createGameHost(game, { ..., feedback: { audio, haptics } }), then the stores:
+// ... createGameHost(game, { ..., feedback: debugFeedbackOf(() => debug, { audio, haptics }) }),
+// then the stores (a store build plays through audio and haptics themselves):
 connectAudioSettings(stores.settings, audio); // settings-and-preferences skill
 const services = { ...otherPorts, audio, haptics };
 
@@ -181,15 +183,19 @@ Timeline cues reach both ports through the board's cue scheduler: sounds with `a
 - `synthesize-recipe.test.ts` runs `recipeProblems` over every UI sound; each game's `sound-bank.test.ts` does the same over its bank (see sound-design.md).
 - `ui-feedback.test.ts` proves each kind's sound and pulse and that every UI sound has a moment; `press-feedback-context.test.tsx` proves the hook is silent without the provider. The adapter test spies on the mock's `AudioBufferSourceNode.prototype.start`/`stop` to prove `cancelPending` stops and releases scheduled voices.
 
+## Simulator evidence: the app asked for the win feedback
+
+Test builds wrap the Shell's two ports with `recordAudioFeedback(audio, { perfLog, nowMs })` and `recordHapticsFeedback(haptics, { perfLog, nowMs })` (`services/audio/recording-feedback.ts`, test-only, wired by e2e-maestro's `createDebugParts` through the test-only entry; store builds contain none of it). Each cue passes through unchanged and is appended to the perf log as `{ kind: 'feedback', label: <sound id or haptic cue>, atEpochMs, data }` (sounds carry `{ delayMs }`). After the level-1 flow the E2E runner reads the log, and its report requires the win sound (`ui.win`) and the success haptic (`success`): the simulator proof that the app asked for them. Jest's fakes prove the wiring, the WAV preview proves the sound, and how they sound and feel is the owner's device check below, which never blocks.
+
 ## What only the owner can check
 
-Claude cannot hear, and the simulator has no Taptic Engine. Ask the owner, in plain words, on a real iPhone:
+Claude cannot hear, and the simulator has no Taptic Engine. These are owner steps that never block (owner decision O6, 2026-09-30): list them in every slice or release report under "Owner steps (not blocking)", carry on, and tune when the answers come. The questions, in plain words, on a real iPhone:
 
 1. Listen to the WAV previews in Finder (`apps/<game>/sfx-preview/`): does each sound fit its event, and are they balanced against each other?
 2. In the app: do sounds land in time with the animations (latency)? With the silent switch on, is the game silent? Does their own music keep playing underneath?
 3. Do the vibrations feel right for place, clear, win and lose, and never like a buzz?
 
-Record the answers in the evidence report; a "no" is a tuning task, not a failure to hide.
+Record the answers in the next report when they come; a "no" is a tuning task, not a failure to hide, and no gate waits for them.
 
 ## Licences screen rows
 

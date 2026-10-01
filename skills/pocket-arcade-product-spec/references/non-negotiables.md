@@ -30,21 +30,21 @@ Every game, every screen and every feature works in airplane mode, forever. The 
 
 No sign-in, no user profile and no backend of ours. No cloud saves, no online leaderboards, no multiplayer. No analytics, no crash reporting service, no remote configuration.
 
-- In practice: errors go to a small local error log that the debug menu shows (spec 8.14). The phone's own device backup may include the save (decision D5); that is the operating system's feature, not a request from us.
+- In practice: errors go to a small local error log that the debug menu shows (spec 8.14). The phone's own device backup may include the save (decision D5); that is the operating system's feature, not a request from us. Our code tracks nothing: Apple's tracking prompt (owner decision O1) asks only on behalf of Google's ads component, and the app's own privacy manifest declares no tracking of ours.
 - Enforced by: a banned-package list (analytics, crash reporting, remote config, update services), a banned native SDK and pod list, and the network audit.
 
 ### N3 · Our own code makes no network requests
 
 The only network traffic in the app comes from (a) the Google AdMob ads component and (b) the operating system's store purchase system (Apple / Google). A build check enforces this: the list of allowed network-capable components contains exactly those two, and anything else fails the build.
 
-- In practice: no `fetch`, `XMLHttpRequest`, `WebSocket`, remote image or font URLs, and no new network-capable SDK in app code. Online detection uses the OS path monitor (no HTTP probe). Rate and contact open the store app and the mail app through the OS.
+- In practice: no `fetch`, `XMLHttpRequest`, `WebSocket`, remote image or font URLs, and no new network-capable SDK in app code. Online detection uses the OS path monitor (no HTTP probe). Rate and contact open the store app and the mail app through the OS. Apple's "Allow tracking?" prompt (spec 4.2, point 3; owner decision O1) is a system dialog that makes no request of its own, so it adds nothing to the allowed list; the small wrapper module that shows it (`expo-tracking-transparency`) has no network code.
 - Enforced by: lint rules on our code, a scan of the release JavaScript bundle, a scan of native module sources, a vendor pod allowlist, config assertions, and a runtime socket check on the simulator (six layers; the `privacy-and-network-audit` skill owns them).
 
 ### N4 · One game = one app
 
 Each game has its own name, icon, store listing, ad IDs and purchase. Games never share an app.
 
-- In practice: one Expo app folder per game (`apps/<game-id>`), one bundle ID, one Premium product (`<bundle id>.premium`). Buying Premium in one game does not unlock another.
+- In practice: one Expo app folder per game (`apps/<game-id>`), one bundle ID, one Premium product (`<bundle id>.premium`). Buying Premium in one game does not unlock another. Every bundle ID (and Android package) is `io.applander.<game id without hyphens>`, all lowercase (owner decision O4, 2026-09-30): Line Siege is `io.applander.linesiege`, its Premium `io.applander.linesiege.premium`.
 
 ### N5 · One Shell
 
@@ -62,9 +62,9 @@ English (en) and German (de) are left-to-right; Persian (fa) and Kurdish Sorani 
 
 ### N7 · One purchase
 
-A single one-time purchase, "Premium", at about EUR 1.90. It removes all ads forever (spec 8.9). No subscriptions, no coins, no consumables, no second product.
+A single one-time purchase, "Premium", at EUR 1.99 (an App Store price point; decision D3, owner decision O2). It removes all ads forever (spec 8.9). No subscriptions, no coins, no consumables, no second product. Premium is not shared through Apple's Family Sharing.
 
-- In practice: one non-consumable product per game; the price comes from the store and is never typed into code. Premium never unlocks levels (decision D2).
+- In practice: one non-consumable product per game; the price comes from the store and is never typed into code (the app shows the store's localised price). Premium never unlocks levels (decision D2). Family Sharing stays off (owner decision O3).
 
 ### N8 · Ads never interrupt play
 

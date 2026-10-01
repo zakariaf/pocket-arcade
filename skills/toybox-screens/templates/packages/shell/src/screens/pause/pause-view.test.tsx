@@ -1,5 +1,6 @@
 // packages/shell/src/screens/pause/pause-view.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
+import { PixelRatio } from 'react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -47,6 +48,31 @@ describe('PauseView', () => {
 
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+
+  it.each([
+    // Chrome's baselines at 3x (useChromeBaseline), not Yoga's. en: Lilita One 30 on a 33 pt line
+    // (baseline 27) and Rubik 17 on 67/3 (17.17): design .pz-h 243.5 - 233.5 = 10. fa: Vazirmatn
+    // Bold 30 on 131/3 (29.33) and Vazirmatn 17 on 77/3 (16.83): design 239.67 - 226.67 = 13.
+    ['en', 9.83],
+    ['fa', 12.5],
+  ] as const)(
+    'puts the mode line on the title baseline where the design does (%s)',
+    async (language, drop) => {
+      jest.spyOn(PixelRatio, 'get').mockReturnValue(3);
+      await renderWithShell(
+        <PauseView model={modelWith()} onResume={jest.fn()} onHome={jest.fn()} />,
+        { language },
+      );
+
+      const title = screen.getByTestId('pause.title', { includeHiddenElements: true }).parent;
+      const mode = screen.getByTestId('pause.mode-label', { includeHiddenElements: true }).parent;
+      // allow-style-assertion: the header offsets are the contract (parity measures the box).
+      expect(title).toHaveStyle({ paddingTop: 0 });
+      // allow-style-assertion: the header offsets are the contract (parity measures the box).
+      expect(mode).toHaveStyle({ paddingTop: expect.closeTo(drop, 2) as number });
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    },
+  );
 
   it('hides the music key when the game has no music', async () => {
     await renderWithShell(

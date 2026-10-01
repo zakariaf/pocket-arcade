@@ -1,0 +1,2 @@
+REHEARSAL: not a release gate
+[get-task-allow] REHEARSAL: the app has no signature (CODE_SIGNING_ALLOWED=NO)

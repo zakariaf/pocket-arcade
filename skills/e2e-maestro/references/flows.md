@@ -11,7 +11,8 @@ Where flows live, how they are named and tagged, how they select elements and se
 - The shared sub-flows
 - The Shell's flows
 - A game's flows and board taps
-- The level-1 flow: one move, a kill, then a win
+- The level-1 flow: one move, a kill, a win, then the stars in Levels
+- A game's mode flows: daily, continue, endless
 - Taps and stars from the game: print-level-line
 - Ending smoke flows: no network
 - Waiting without sleeping
@@ -73,7 +74,7 @@ tags: [smoke, shell, offline]
 
 ## Setting up state: the debug-setup sub-flow
 
-State is set only through the test build's debug deep link, never by tapping through menus (slow, flaky, and it couples every flow to every screen):
+State is set only through the test build's debug deep link, never by tapping through menus (slow, flaky, and it couples every flow to every screen). The one tap a flow makes on its way is the key under test: the journey's own key on the screen the link opened, such as S9's Play key in the daily flow, Home's endless card, the Result screen's continue key, or the level-2 tile that proves the unlock. The state around that key still comes from the link:
 
 ```yaml
 - launchApp:
@@ -91,7 +92,7 @@ One link per setup is enough, also right after `launchApp: { clearState: true }`
 
 - **The first screen first.** Right after the launch the wait sees the app's first screen (`language-choice.screen`, `tutorial.screen`, `home.screen`, or `not-built.screen` in a partial Shell; `pause.dialog` when a killed run reopens), so the app's JavaScript is running. The app also listens for links from its first moment (`createDebugParts`) and keeps a link that arrives before its navigator is ready until it is; a link sent while nothing listened would be lost (round 2: every query failed after `clearState`).
 - **Save changes, then the screen.** The app writes the link's save changes first. When `firstRun=0` ends a first run (or `firstRun=1` starts one) the navigator changes group, and the app opens `screen=` on the next navigation state, once the new group is mounted: `firstRun=0&level=1&screen=game` opens Game in one link.
-- **`action=` in a link of its own**, once its level is on screen: `action=win-level` / `lose-level` ends the level on screen through the game host (`GameHost.debugControls().playTo`), which swaps the run's state for the game's example win or loss and runs the one run-end path (stars, statistics and ad history saved before Result shows). Without a run on screen the link is an error (logged; S15 opens). `firstRun` and `action` in one link, or `action` after a direction reload, are refused: send two links.
+- **`action=` in a link of its own**, once its run is on screen: `action=win-level` / `lose-level` ends the active run, whatever its kind (a level, today's daily or an endless run), through the game host (`GameHost.debugControls().playTo`), which swaps the run's state for the game's example win or loss and runs the one run-end path (stars, the daily result and streak, the endless best, statistics and ad history saved before Result shows). A loss that still has its continue shows the lose screen with the offer and is recorded only when the continue is used or declined. Without a run on screen the link is an error (logged; S15 opens). `firstRun` and `action` in one link, or `action` after a direction reload, are refused: send two links.
 - **`boardLayout=1` before reading the board probes.** `game.board-layout` and `game.moves-label` exist only while it is on; put it in the setup `QUERY`.
 
 ## The shared sub-flows
@@ -107,7 +108,7 @@ One link per setup is enough, also right after `launchApp: { clearState: true }`
 Templates in `templates/packages/shell/e2e/flows/` (all pass `maestro check-syntax`). Copy them at Shell step 10, once every screen they reach is built: in a partial Shell (`shell-slice.json`) a flow that reaches a screen outside the slice cannot run, and `check-flows` prints `SKIP <flow> [slice] <S-id> not in shell-slice.json` for it instead of checking it (flow 01 reaches S2 and the tutorial, 02 reaches S9 and S10, 03 reaches S8 and S11a).
 
 - `smoke/01-first-launch.yaml`: S1 → S2 → the tutorial. Clears state and keychain, picks English, continues, waits for `tutorial.screen`, asserts the skip button is not offered on the first tutorial, screenshots, asserts no network.
-- `journeys/02-core-journey-offline.yaml` (spec 15 item 2, offline via `offline=1`): Home without a banner ad → Play → win through `action=win-level` → Next → `killApp` and relaunch → the Pause overlay offers Resume (the save survived process death, spec 15 item 6) → Home → Daily → Stats → back, then no network.
+- `journeys/02-core-journey-offline.yaml` (spec 15 item 2, offline via `offline=1`): Home without a banner ad → Play → win through `action=win-level` → Next → `killApp` and relaunch → the Pause overlay offers Resume (the save survived process death, spec 15 item 6) → Home → Daily → Stats → back, then no network. Home's daily card has two accessible parts (lead decision L7): the card body `home.daily-card` opens S9 Daily challenge (also once today is done), and the Play key `home.daily-card.play-button`, a separate button above it, starts today's run. The journey taps `home.daily-card` and waits for `daily.screen`; the title, date, streak and icon are crop-only parts covered by the card (select the card, never them).
 - `rtl/03-language-switch.yaml` (S11a): Settings → Language → Persian → "Restart to apply" → Home again after the reload → the seeded 3-star level 1 still shows 3 stars, screenshot in Persian.
 
 ## A game's flows and board taps
@@ -131,7 +132,7 @@ Maestro reads each `evalScript` line as YAML first: `: ` (colon and space) insid
 
 Verified on Maestro 2.10.0 with the real Shell (Line Siege, iPhone 17 Pro Max, iOS 26.5): reading the JSON from `game.board-layout`, `regions.find` with an arrow function, the centre maths, `tapOn: { point }` reaching the Skia board in a Release build, twelve tap-then-tap moves, a kill and relaunch onto Pause with the move kept.
 
-## The level-1 flow: one move, a kill, then a win
+## The level-1 flow: one move, a kill, a win, then the stars in Levels
 
 `templates/apps/__GAME_ID__/e2e/flows/smoke/10-level-1.yaml` is every game's smoke flow. Copy it to `apps/<game-id>/e2e/flows/smoke/10-level-1.yaml` and fill the placeholders from `print-level-line.ts` (next section):
 
@@ -140,9 +141,26 @@ Verified on Maestro 2.10.0 with the real Shell (Line Siege, iPhone 17 Pro Max, i
 3. `killApp`, `launchApp: { stopApp: false }`: the saved run reopens on Pause; Resume; `game.moves-label` still shows `1`.
 4. `action=win-level` in its own link, `WAIT_FOR: result.screen`: the game host ends the level exactly like a real win.
 5. `result.stars-__WIN_STARS__`: the stars the game's `testing.examples.win()` earns on level 1 (Line Siege: score 180 against 0 / 150 / 180, so 3). List `result.stars-<n>` with that reason in `apps/<game-id>/e2e/testids.json`.
-6. A screenshot, then `assert-no-network.yaml`.
+6. A screenshot, then the stars reach progress: `screen=levels`, `levels.level-tile.1` with `text: '.*[^0-9]__WIN_STARS__ .*'` (the tile's VoiceOver label, "Level 1: 3 stars": the stars are crop-only parts inside the tile, and the count followed by a space never matches the level's own number), then a tap on `levels.level-tile.2` (the tile under test) opens `game.screen` with `game.mode-label` showing level 2, and `levels.locked-toast` never shows. `check-flows` rule `progress-after-win` asks for these steps in a game smoke flow that wins a level.
+7. `assert-no-network.yaml`.
+
+Since the Levels steps, the flow reaches S8: in a partial Shell without S8 in `shell-slice.json`, `check-flows` prints `SKIP ... [slice] S8 not in shell-slice.json` for it, so a pilot slice lists S8 (Levels) with Home, Game, Pause, Result and Debug.
 
 `action=win-level` needs the game host's debug controls (game-host-integration: `GameHost.debugControls()`, passed to `createDebugParts` as `game`). Where a repo does not have them yet, or to prove a real line end to end, play the bot's line instead: after step 3 write one tap pair per move of `print-level-line.ts`'s bot line (the same `evalScript` maths, one region at a time), assert `game.moves-label` after each move, then wait for `result.screen` and assert the stars that line earns (Line Siege level 1: 12 moves, score 140, `result.stars-1`). The line is deterministic: the level's seed and playBot's seed rule give the same moves in the app and in Node.
+
+## A game's mode flows: daily, continue, endless
+
+`check-flows` rule `mode-flows` reads `apps/<game-id>/game.config.ts` and asks for one flow per mode the game has. Copy each template from `templates/apps/__GAME_ID__/e2e/flows/journeys/` and fill `__GAME_ID__` and `__GAME_NAME__`; every id they use is in the screen map (`assets/e2e-testids.json` lists them under `gameFlowIds` with the step that needs each):
+
+| Game fact | Template | What it proves |
+|---|---|---|
+| `modes.daily` | `11-daily.yaml` | `date=2026-09-26&firstRun=0&screen=daily`, tap `daily.play-button` (S9's own key), `action=win-level`, the daily result (`result.daily-title`, `result.streak-sticker`, `result.come-back-note`), then a kill and `date=2026-09-27&screen=daily`: `daily.current-streak-card.value` reads 1 ("1 day": `text: '[^0-9]*1[^0-9]*'`) and today is not done (`daily.play-button` shown, `daily.replay-button` not) |
+| `isContinueAllowed` | `12-continue-premium.yaml` | `premium=1&level=1&firstRun=0&screen=game`, `action=lose-level`, the Premium owner's `result.continue-premium-button` (no `result.continue-ad-button`), then `game.screen` shows level 1 playing again |
+| `modes.endless` | `13-endless.yaml` | `seed=42&premium=1&firstRun=0&screen=home`, tap `home.endless-card`, `action=lose-level`; the first loss offers the one continue, which the Premium key takes, and a second `action=lose-level` ends the run: `result.endless-title` and `result.score-card.new-best`, then `result.home-button` and Home's `home.endless-card` label carries a best above 0 (`text: '.*[1-9].*'`); a game without a continue deletes the continue steps and `premium=1` |
+
+E2E builds run with ads off, so the rewarded continue (`result.continue-ad-button`, "Watch an ad to continue") never shows in these flows: admob-ads' simulator smoke test in an `ADS_MODE=test` build covers it (lose level 1, watch the test ad, the run resumes after the reward). For the same reason no E2E flow ever meets Google's consent form or Apple's tracking prompt.
+
+Verified on the simulator (Line Siege, iOS 26.5): all three flows passed. An endless loss that still has its continue shows the lose screen ("Not this time", Try again, Levels) with the offer, not the endless result: the host records the run only once the continue is used or declined, which is why the endless flow takes the Premium continue first.
 
 ## Taps and stars from the game: print-level-line
 
@@ -178,7 +196,7 @@ It asserts the test build's JS network guard counted zero `fetch`, `XMLHttpReque
 
 A flaky flow passed and failed on the same commit. It is a bug in the flow or the app.
 
-1. Rerun the failing flow alone: `tools/maestro/bin/maestro test <flow> --udid <udid> -e APP_ID=<id> -e APP_SCHEME=<scheme>` (with the three `MAESTRO_*` variables set).
+1. Rerun the failing flow alone: `tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test <flow> -e APP_ID=<id> -e APP_SCHEME=<scheme>` (with the three `MAESTRO_*` variables set; `<udid>` is this session's own `e07-*` simulator and `<port>` a free port of this run, never the default 7001, which another session's driver may hold).
 2. If it passes alone, it is flaky: fix the wait (`extendedWaitUntil` on an id, never a sleep), the setup (the debug link) or the app. `retry:` never wraps app assertions.
 3. If the fix needs more than this session, add `quarantine` to the flow's tags and a comment `# quarantine <YYYY-MM-DD>: <reason>`, report it in the evidence, and fix it within 7 days. The runner excludes `quarantine`; `check-flows.mjs` fails a quarantine older than 7 days.
 4. A `smoke` flow can never be quarantined: it blocks the release until fixed.

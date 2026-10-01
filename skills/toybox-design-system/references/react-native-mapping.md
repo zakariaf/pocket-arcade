@@ -16,15 +16,16 @@
 | File (app repo) | What it holds | Template |
 |---|---|---|
 | `packages/shell/src/theme/theme-types.ts` | `ColorTokens` (16 fields), `Palette`, `Theme` | yes |
-| `packages/shell/src/theme/tokens.ts` | `SPACING`, `LAYOUT`, `RADII`, `STROKE` (as rendered: tile 2), `ELEVATION`, `MIN_TOUCH`, `CONTENT_MAX_WIDTH`, `TYPE_SCALE` | yes |
-| `packages/shell/src/theme/type-styles.ts` | `TYPE_STYLES` (with the `rowLabelStrong` override), `TypeVariant`, `typeStyleOf()`, `snapToGrid()`, `lineHeightOf()` | yes |
-| `packages/shell/src/theme/shell-colors.ts` | `SHELL_COLORS[scheme]` | yes |
+| `packages/shell/src/theme/tokens.ts` | `SPACING`, `LAYOUT`, `RADII`, `STROKE` (as rendered: tile 2), `ELEVATION`, `MIN_TOUCH`, `CONTENT_MAX_WIDTH`, `TYPE_SCALE` (`number` with `isTabular`), the `TypeStyle` type | yes |
+| `packages/shell/src/theme/type-styles.ts` | `TYPE_STYLES` (with the `rowLabelStrong` and `statListHeading` overrides; `levelNumber` and `scoreValue` 1 / 1.45; `statValueCompact` tabular; `nudge` without underline), `TypeVariant`, `typeStyleOf()`, `snapToGrid()`, `lineHeightOf()` | yes |
+| `packages/shell/src/theme/shell-colors.ts` | `SHELL_COLORS[scheme]` (light `dangerFill` `#FFDCDF`) | yes |
 | `packages/shell/src/theme/motion.ts` | `EASING`, `MOTION_MS`, `RELEASE_SPRING`, `PRESS_SQUASH`, `KEYFRAMES` | yes |
 | `packages/shell/src/theme/theme-set.ts`, `theme-context.ts`, `use-theme.ts`, `make-styles.ts`, `theme-provider.tsx`, `contrast.ts` | the four themes built once, context, hook, style factory, provider, WCAG maths | yes |
 | `packages/shell/src/i18n/fonts.ts` | `FONT_FAMILIES`, `scriptFontFor(language, weight, face)` (synced from the library; the RTL skill ships the same file) | yes |
 | `packages/shell/src/i18n/use-localized-text-style.ts` | family, size, pixel-snapped line height (`snapToPixels`), tracking, direction, alignment (synced from the library; the RTL skill ships the same file) | yes |
-| `packages/shell/src/ui/app-text.tsx` | the only text component | yes |
-| `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash) | yes |
+| `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`) | yes |
+| `packages/shell/src/ui/use-balanced-wrap.ts` | `useBalancedWrap(isEnabled, text, align)`: the design's `text-wrap: balance` for display text | yes |
+| `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash; `isStretched` in a dialog row) | yes |
 | `packages/shell/src/ui/toybox-styles.ts` | `hardShadow()`, `dieCutRing()`, `focusRing()` | yes |
 | `packages/shell/src/testing/test-palette.ts` | the fixture palette for component tests (not a Toybox paint) | yes |
 | `packages/shell/src/testing/toybox-palette-checks.ts` | `checkToyboxPalette()` | yes |
@@ -104,7 +105,7 @@ Never use iOS `shadowRadius` / `shadowOpacity` / `shadowOffset` or Android `elev
 
 The only press implementation. The key is an animated wrapper holding two children: the **shadow** (same box, `shadow` colour) and the **face**. Pressing moves the wrapper down by the elevation and squashes it, while the shadow slides up inside it by the same amount, so at full press the shadow is exactly under the face, as in CSS where the shadow belongs to the element and scales with it. (A sibling shadow View outside the wrapper would leave a 1.6 pt band of shadow above and below a squashed 54 pt key.)
 
-- Props: `label` (translated, also the accessibility label), `onPress`, `testID`, `elevation`, `radius`, `fill`, `isReducedMotion`, and optional `squash`, `edgeColor`, `edgeWidth`, `isPushedIn`, `isDisabled`, `isBusy`, `accessibilityRole`, `isSelected`, `isChecked`, `hint`, `faceStyle` (padding, direction, min height of the face), `layoutStyle` (flex, width, alignSelf of the whole key; never paint), `onPressIn` / `onPressOut` (extra work such as a hold timer; the sink always runs) and `accessibilityActions` / `onAccessibilityAction` (VoiceOver's `activate` for hold buttons).
+- Props: `label` (translated, also the accessibility label), `onPress`, `testID`, `elevation`, `radius`, `fill`, `isReducedMotion`, and optional `squash`, `edgeColor`, `edgeWidth`, `isPushedIn`, `isDisabled`, `isBusy`, `accessibilityRole`, `isSelected`, `isChecked`, `hint`, `faceStyle` (padding, direction, min height of the face), `layoutStyle` (flex, width, alignSelf of the whole key; never paint), `isStretched` (the key and its face grow to the height the row gives them, as CSS `align-items: stretch` makes both dialog keys as tall as the taller one: a one-line "Not now" beside a two-line "Restart now"; only a key in a dialog row sets it, since a blanket `flexGrow` made every icon button 6 pt too tall), `onPressIn` / `onPressOut` (extra work such as a hold timer; the sink always runs) and `accessibilityActions` / `onAccessibilityAction` (VoiceOver's `activate` for hold buttons).
 - The shadow is drawn inside the key's box and slides `elevation` pt below it, outside the layout box, as a CSS `box-shadow` does: the design's gaps already leave room for it, so never add margin for the shadow, and never clip a key's parent with `overflow: 'hidden'`.
 - Press in: `withTiming(1, 70 ms ease-out)`; release: `withSpring(0, RELEASE_SPRING)`.
 - Reduce motion: the screen model passes `isReducedMotion` from `useReduceMotion()`, which removes the squash; the root `ReducedMotionConfig` makes the timing and spring instant.

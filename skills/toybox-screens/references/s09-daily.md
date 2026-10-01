@@ -28,8 +28,8 @@ Top bar "Daily challenge" with Back. Body (gap 14):
 
 1. Today panel (row, centred, gap 18): calendar tile (88 wide, radius 12, tilted -3 deg: accent month band over the day number 42) → column (start-aligned, gap 8): chip "Today" and heading 21 with the date.
 2. Hero key with a `play` cap: "Play today's challenge".
-3. Two streak panels in two columns (gap 12; padding 12 x 14, gap 4): current (18 pt `chain`, "Current streak", "5 days" in `streakValue` 28) and best (filled star, "Best streak").
-4. Rule line (row, gap 8, 15 muted, `chain` 20): "Play every day to grow your streak."
+3. Two streak panels in two columns (gap 12; padding 12 x 14, gap 4): current (18 pt `chain`, "Current streak", "5 days" in `streakValue` 28) and best (filled star, "Best streak"). Each label line is a row View holding the icon and the text, and the line View carries the testID (`daily.current-streak-card.label`, `daily.best-streak-card.label`): the design's label box is the whole line, icon included. An id on the text alone measures a box 24 pt narrower and moved.
+4. Rule line (row, gap 8, 15 muted, `chain` 20): "Play every day to grow your streak." The row View carries `daily.streak-rule` (the whole line, icon included), as the design draws it.
 5. Week panel: heading 21 "Last 7 days" → the week strip (12 pt top margin): seven equal columns (gap 4), each with the weekday letter (13 Bold muted), a 38 pt mark (done = accent + check, missed = dashed muted + cross, today = dashed + play) and, under today, the gold "Today" tag (11 Bold, tilt -4 deg) → legend (wrap row, gap 8 x 18, 14 top margin): 22 pt marks with "Done" and "Missed".
 
 ## States and variants
@@ -37,6 +37,7 @@ Top bar "Daily challenge" with Back. Body (gap 14):
 - **Before today's game** (`s9-daily-challenge.png`).
 - **After today's game** (Chosen, not drawn): the hero key becomes a secondary block "Play again for fun" (`daily.replay-button`) with the caption "Replays don't change today's result." (`daily.replay-note`); the today panel adds "Your score today: 1,840" (`daily.today-card.score`) and "Next challenge in 3 h 5 min" (`daily.today-card.next-in`); today's mark turns done.
 - The strip and the legend run right to left in fa/ckb (Monday on the right).
+- React Native draws a dashed edge (the missed and today marks, the legend's missed swatch) with its own dash length and phase. Visual parity pre-lists those S9 elements as platform waivers of the `structure` check; nothing here re-draws them.
 
 ## Data the model supplies
 
@@ -132,3 +133,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 - Colour-only week marks: done, missed and today differ by icon and edge too.
 - Formatting dates with `toLocaleDateString` or `Intl.DateTimeFormat`: use the Shell date formatter.
 - A banner on S9.
+- A testID on the label text instead of its line (streak cards, the streak rule): the design's box includes the icon.

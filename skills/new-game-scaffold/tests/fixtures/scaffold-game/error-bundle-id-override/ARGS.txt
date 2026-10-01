@@ -1,0 +1,1 @@
+--root . --app flock-tilt --hints none --continue once --bundle-id com.example.flocktilt

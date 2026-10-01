@@ -1,0 +1,2 @@
+home-daily-opener
+<Panel testID="home.daily-card"> has no onPress: nothing on Home opens S9 Daily challenge

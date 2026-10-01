@@ -1,4 +1,5 @@
 // packages/shell/src/game-host/top-bar-model.test.ts
+import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { perkOffer } from '@e07/shell/services/ads/perk-offer.ts';
 
 import { modeTextOf, topBarPropsOf } from './top-bar-model.ts';
@@ -115,5 +116,15 @@ describe('modeTextOf', () => {
     );
     expect(modeTextOf({ kind: 'endless' }, TEXT)).toBe('common.mode.endless');
     expect(modeTextOf({ kind: 'tutorial' }, TEXT)).toBe('');
+  });
+
+  it('hands t() the daily date without its own isolates, so each value is isolated once', () => {
+    // Like the Shell's t(): every value comes back isolated (FSI…PDI).
+    const isolating: TFunction = (key, values) =>
+      values === undefined
+        ? key
+        : [key, ...Object.values(values).map((value) => isolate(String(value)))].join(' ');
+    const label = modeTextOf({ kind: 'daily', date: '2026-09-26' }, { ...TEXT, t: isolating });
+    expect(label).toBe(`game-screen.mode.daily ${isolate(`date.day-month 26 date.month-short.9`)}`);
   });
 });

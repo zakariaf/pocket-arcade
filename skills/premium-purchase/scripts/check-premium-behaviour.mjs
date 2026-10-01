@@ -25,7 +25,7 @@ const SPEC = {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
-  details: 'Rules: module-load, s12-states, restore-notices, evidence, service-order, restore-flow, revocation, store-flow, price-format,\n  adapter-errors, adapter-restore, adapter-transactions, adapter-calls, offline-gate, result-nudge, store-reloads.\nstore-reloads: the composition root (packages/shell/src/app/, not tests) must call shouldReloadStore on a\n  connectivity change and recheckPremium when the app comes back to the foreground (startPremium runs\n  before the first network state, so without them the price never loads after an offline start).\nexpo-iap is replaced by the scripted stand-in lib/stubs/expo-iap.mjs.\nNeeds Node 22.18+ (type stripping).',
+  details: 'Rules: module-load, s12-states, restore-notices, evidence, service-order, restore-flow, revocation, store-flow, price-format,\n  adapter-errors, adapter-restore, adapter-transactions, adapter-calls, offline-gate, result-nudge, store-reloads.\nstore-reloads: the composition root (packages/shell/src/app/, not tests) must call shouldReloadStore on a\n  connectivity change (then recheckPremium once online) and recheckPremium when the app comes back to the\n  foreground (startPremium runs before the first network state, so without them the price never loads and\n  a refund is never revoked after an offline start).\nexpo-iap is replaced by the scripted stand-in lib/stubs/expo-iap.mjs.\nNeeds Node 22.18+ (type stripping).',
 };
 
 const STORES = 'packages/shell/src/stores/premium';
@@ -44,7 +44,7 @@ const FILES = {
   nudge: `${STORES}/premium-nudge.ts`,
 };
 
-const ID = 'com.example.demogame.premium';
+const ID = 'io.applander.demogame.premium';
 const PRODUCT = { productId: ID, displayPrice: '€1.99', price: 1.9899999999999998, currency: 'EUR' };
 const tx = (overrides = {}) => ({ productId: ID, transactionId: 't1', state: 'purchased', revocationDateMs: null, handle: null, ...overrides });
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -88,7 +88,15 @@ function checkStoreReloads(root, report) {
   for (const need of RELOADS) {
     if (!sources.some((text) => new RegExp(`\\b${need.call}\\s*\\(`).test(text))) report.problem({ file: APP_DIR, rule: 'store-reloads', message: need.message, fix: need.fix });
   }
-  return RELOADS.length;
+  // The launch re-check runs offline (absence is not evidence): the connectivity subscription that
+  // reloads the store must also re-check Premium once online, or a refund waits for a foreground.
+  const reloader = sources.find((text) => /\bshouldReloadStore\s*\(/.test(text)) ?? '';
+  const subscribeAt = reloader.search(/\.subscribe\s*\(/);
+  const subscription = subscribeAt < 0 ? '' : reloader.slice(subscribeAt, reloader.indexOf('\n  });', subscribeAt) + 1);
+  if (reloader !== '' && !/\brecheckPremium\s*\(/.test(subscription)) {
+    report.problem({ file: APP_DIR, rule: 'store-reloads', message: 'the connectivity subscription reloads the store but never re-checks Premium once online (a refund stays unrevoked after an offline launch)', fix: 'In connectPremiumReloads: after loadStore on an online change, run recheckPremium(premiumDeps) (StoreKit harness flow 02, 2026-09-30).' });
+  }
+  return RELOADS.length + 1;
 }
 
 run(async () => {
@@ -175,7 +183,7 @@ run(async () => {
       ['a pending purchase only', [tx({ state: 'pending' })], 'unknown'],
       ['a refunded purchase', [tx({ revocationDateMs: 1_700_000_000_000 })], 'revoked'],
       ['a newer purchase after a refund', [tx({ revocationDateMs: 1_700_000_000_000 }), tx({ transactionId: 't2' })], 'owned'],
-      ['another product', [tx({ productId: 'com.example.other.premium' })], 'unknown'],
+      ['another product', [tx({ productId: 'io.applander.other.premium' })], 'unknown'],
     ];
     for (const [label, list, want] of cases) await expect('evidence', FILES.evidence, label, () => evidence.entitlementEvidence(list, ID), want, fix);
     await expect('evidence', FILES.evidence, 'latest revocation date', () => evidence.latestRevocationMs([tx({ revocationDateMs: 5 }), tx({ transactionId: 't2', revocationDateMs: 9 })], ID), 9, fix);
@@ -210,7 +218,7 @@ run(async () => {
     }, ['dispatch:purchase-pending'], sfix);
     await expect('service-order', FILES.service, 'another product is ignored', async () => {
       const h = harness();
-      await service.processTransaction(h.deps, tx({ productId: 'com.example.other.premium' }));
+      await service.processTransaction(h.deps, tx({ productId: 'io.applander.other.premium' }));
       return h.log;
     }, [], sfix);
     await expect('service-order', FILES.service, 'a failing finish is logged, Premium stays', async () => {

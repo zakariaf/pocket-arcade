@@ -1,0 +1,49 @@
+{
+ "version": 1,
+ "frame": "s11-settings",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "elements": [
+  {
+   "testID": "settings.screen",
+   "count": 1,
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 402,
+    "h": 60
+   },
+   "checks": [
+    "bounds"
+   ]
+  },
+  {
+   "testID": "settings.language-row",
+   "count": 1,
+   "rect": {
+    "x": 0,
+    "y": 900,
+    "w": 402,
+    "h": 60
+   },
+   "checks": [
+    "bounds"
+   ]
+  },
+  {
+   "testID": "settings.version",
+   "count": 1,
+   "rect": {
+    "x": 0,
+    "y": 1800,
+    "w": 402,
+    "h": 60
+   },
+   "checks": [
+    "bounds"
+   ]
+  }
+ ],
+ "texts": []
+}

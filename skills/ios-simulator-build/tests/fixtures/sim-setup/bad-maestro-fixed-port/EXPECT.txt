@@ -1,0 +1,2 @@
+packages/tooling/src/build/sim-build-plan.ts:
+[maestro-device] uses a fixed Maestro driver port, which a second run on this Mac shares

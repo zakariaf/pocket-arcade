@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/game-host.ts",
+      "find": "  const counters = stats.map(({ id, labelId, aggregate }) => ({ id, labelId, aggregate }));",
+      "with": "  const counters = stats.map(({ id, labelId }) => ({ id, labelId }));"
+    }
+  }
+]

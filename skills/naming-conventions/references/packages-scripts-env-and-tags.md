@@ -18,13 +18,14 @@ The names outside the source files: workspace packages, game ids, bundle and pro
 | Game id / app folder / Expo `slug` / commit scope | kebab-case, stable forever | `line-siege` |
 | `GameModule.identity.id`, `GameConfig.id`, the save document's `gameId` | the same game id | `line-siege` |
 | Display name (`expo.name`) | the game's real name; prebuild derives the Xcode scheme from it without spaces | `Line Siege` → `LineSiege.xcworkspace` |
-| Bundle id | `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`, the same on iOS and Android | `com.example.linesiege` |
-| Premium product id | `<bundle id>.premium` | `com.example.linesiege.premium` |
+| Bundle id (iOS) and package (Android) | exactly `io.applander.<game id without hyphens>`, all lowercase, the same on both platforms (owner decision O4, 2026-09-30); `bundleIdFor(gameId)` in `scripts/lib/names.mjs` computes it | `io.applander.linesiege` |
+| Premium product id | `<bundle id>.premium` | `io.applander.linesiege.premium` |
 | Game types | game id in PascalCase + role | `LineSiegeState`, `LineSiegeMove`, `LineSiegeTypes` |
 | Game module export | game id in camelCase + `Game` | `lineSiegeGame` in `apps/line-siege/src/index.ts` |
 
 - `@e07` is a placeholder scope until the framework is named. Renaming it is one search-and-replace over the `package.json` files and imports; every workspace always uses one scope (`package-name`).
-- `check-file-names.mjs` checks that `game.config.ts` has `id` equal to the folder name, a valid `bundleId`, and a premium `productId` of `<bundleId>.premium` (`game-id`).
+- `check-file-names.mjs` checks that `game.config.ts` has `id` equal to the folder name, a valid `bundleId`, and a premium `productId` of `<bundleId>.premium` (`game-id`), and that the `bundleId` is exactly `io.applander.<folder id without hyphens>` (`bundle-id-applander`; `apps/tile-drop` needs `io.applander.tiledrop`). The owner uses the Applander domain for every game, so a new game never asks for a bundle id: the scaffold writes it, and a placeholder such as `com.example.*` fails.
+- Games whose ids differ only by hyphens (`tile-drop` and `tiledrop`) would share a bundle id; the catalogue has no such pair, and a new game id must keep it that way.
 - Cross-folder imports use the package name plus the path under `src/` and the file extension: `@e07/shell/ui/app-text.tsx`.
 
 ## npm scripts

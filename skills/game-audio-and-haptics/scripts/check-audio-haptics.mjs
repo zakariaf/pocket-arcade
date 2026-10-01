@@ -50,7 +50,7 @@ const SPEC = {
     '',
     'Rules whose target a later Shell build step creates print SKIP lines until it exists: audio-plugin until',
     'packages/shell/src/config/shell-plugins.ts (Shell step 8), ui-feedback until packages/shell/src/app/start-shell.ts',
-    '(Shell step 6). Once the file exists the rule is strict.',
+    '(Shell step 7). Once the file exists the rule is strict.',
     '',
     'Example: node check-audio-haptics.mjs .',
   ].join('\n'),
@@ -145,7 +145,7 @@ const WORKLET_DIRECTIVE = /^(?:\s*(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/))*\s*['"]work
 const IS_TEST = /\.(test|golden\.test|sim\.test)\.tsx?$/;
 const UI_FEEDBACK_FILE = `${AUDIO}/ui-feedback.ts`;
 const PRESS_FEEDBACK_FILE = 'packages/shell/src/app/press-feedback-context.tsx';
-const UI_FEEDBACK_KINDS = { tap: 'every button press (ShellApp wraps the app in <PressFeedbackProvider onPress={() => { playUiFeedback(services, \'tap\'); }}>)', toggle: 'every toggle row and picker step', win: 'the move that wins the run (the game host\'s session controller does it once createGameHost gets feedback: { audio, haptics })', lose: 'the move that loses the run (the game host\'s session controller, the same call)' };
+const UI_FEEDBACK_KINDS = { tap: 'every button press (ShellApp wraps the app in <PressFeedbackProvider onPress={() => { playUiFeedback(services, \'tap\'); }}>)', toggle: 'every toggle row and picker step', win: 'the move that wins the run (the game host\'s session controller does it once createGameHost gets feedback: debugFeedbackOf(() => debug, { audio, haptics }))', lose: 'the move that loses the run (the game host\'s session controller, the same call)' };
 
 function readRel(root, rel) {
   const abs = join(root, rel);
@@ -390,7 +390,7 @@ function callArguments(source, from) {
 /** Every Shell feedback moment is played somewhere, and a Pressable host runs the press feedback. */
 function checkUiFeedback(root, files, report) {
   if (!existsSync(join(root, UI_FEEDBACK_FILE))) return;
-  // The Shell's boot (start-shell.ts, Shell step 6) and the screens that play these come later.
+  // The Shell's boot (start-shell.ts, Shell step 7) and the screens that play these come later.
   const bootDue = dueSkipReason(root, SHELL_DUE_TARGETS.boot);
   if (bootDue !== null) {
     report.skip({ file: UI_FEEDBACK_FILE, rule: 'ui-feedback', message: bootDue });

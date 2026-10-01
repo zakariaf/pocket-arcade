@@ -10,6 +10,9 @@ export function useHomeActions(onPlay: () => void, today: DateKey): HomeActions 
   const navigation = useNavigation();
   return {
     onPlay,
+    onOpenDaily: () => {
+      navigation.navigate('Daily');
+    },
     onPlayDaily: () => {
       navigation.navigate('Game', { start: 'new', ref: { kind: 'daily', date: today } });
     },

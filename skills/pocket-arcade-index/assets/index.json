@@ -185,7 +185,7 @@
       "note": "Every S12 state screen must pass visual parity; the App Store Connect steps are the owner's."
     },
     {
-      "task": "Add or change ads, consent or a rewarded perk",
+      "task": "Add or change ads, consent, the ATT tracking permission or a rewarded perk",
       "skills": [
         "admob-ads",
         "architecture-and-boundaries",
@@ -195,7 +195,7 @@
         "unit-and-component-tests",
         "tdd-workflow"
       ],
-      "note": "Ads never interrupt play (N8); the AdMob console steps are the owner's."
+      "note": "Ads never interrupt play (N8); on iOS the order is the S3 intro, Google's form when required, then Apple's ATT prompt, all before the first ad request; the AdMob console steps are the owner's."
     },
     {
       "task": "Add or restyle a Toybox component",
@@ -239,7 +239,7 @@
         "naming-conventions",
         "accessibility"
       ],
-      "note": "Shell texts come from the copy deck; fa and ckb need the native review before a release."
+      "note": "Shell texts come from the copy deck; the fa and ckb drafts go to the owner for review, listed under \"Owner steps (not blocking)\" in the report and never waited for."
     },
     {
       "task": "Fix right-to-left layout, mirrored icons or Persian digits",
@@ -385,7 +385,7 @@
         "level-generation-and-solvers",
         "git-commits-and-reporting"
       ],
-      "note": "Bands stay proposed until the owner play-tests."
+      "note": "Bands stay proposed until the owner play-tests; check-balance --release prints that as an owner-step line, and nothing waits for it."
     },
     {
       "task": "Wire a game into the Shell (Game screen, Pause, Result, run end)",
@@ -436,6 +436,7 @@
       "task": "Release a game to TestFlight",
       "skills": [
         "ios-release-testflight",
+        "premium-purchase",
         "privacy-and-network-audit",
         "e2e-maestro",
         "toybox-visual-parity",
@@ -443,7 +444,7 @@
         "i18n-strings-and-catalogs",
         "git-commits-and-reporting"
       ],
-      "note": "Nothing leaves the Mac without the owner's word in this session."
+      "note": "Nothing leaves the Mac without the owner's word in this session; the owner's play-test, fa and ckb review and listening to the sound previews are listed as owner steps, never waited for."
     },
     {
       "task": "Add, upgrade or remove an npm package",
@@ -529,7 +530,7 @@
       "note": "The owner runs the VoiceOver checklist on each release candidate."
     },
     {
-      "task": "Prove the app makes no network requests, or answer App Privacy",
+      "task": "Prove the app makes no network requests, or answer App Privacy (tracking, ATT, the privacy manifest)",
       "skills": [
         "privacy-and-network-audit",
         "admob-ads",
@@ -537,7 +538,7 @@
         "e2e-maestro",
         "dependency-management"
       ],
-      "note": "Baseline and allowlist changes need the owner."
+      "note": "Baseline and allowlist changes need the owner; the ads SDK's Device ID used for tracking is an App Privacy answer, while the app's own manifest declares no tracking."
     },
     {
       "task": "A golden or snapshot test shows a diff",
@@ -577,7 +578,7 @@
     }
   ],
   "buildOrders": {
-    "commands": "Every \"done when\" command runs from the repo root and is written out in full. A `<name>.mjs` command is the script `scripts/<name>.mjs` of the skill named after it in brackets: with that skill loaded, put `node` and the skill's scripts folder in front (inside the skill it is `${CLAUDE_SKILL_DIR}/scripts/`). The first argument `.` is the repo root: every checker takes the root as an optional positional argument and never as `--root`. `npm run ...` and `node packages/tooling/...` commands run as written. A check is done when it prints `RESULT: PASS`; `SKIP` lines and `NOT APPLICABLE` count as a pass, while exit 2 (nothing to check, bad input) never does. A step whose check cannot pass yet is not done: name it in the report with the reason. `SKIP` lines have exactly two causes: a screen outside `shell-slice.json` (`<S-id> not in shell-slice.json`), or a rule that is not yet due because a later step creates its target (`due at Shell step <n>: <file> not yet created`). Once that step creates the file the rule is strict, which is why steps 6, 7 and 8 rerun some earlier checks and expect no such SKIP line.",
+    "commands": "Every \"done when\" command runs from the repo root and is written out in full. A `<name>.mjs` command is the script `scripts/<name>.mjs` of the skill named after it in brackets: with that skill loaded, put `node` and the skill's scripts folder in front (inside the skill it is `${CLAUDE_SKILL_DIR}/scripts/`). The first argument `.` is the repo root: every checker takes the root as an optional positional argument and never as `--root`. `npm run ...` and `node packages/tooling/...` commands run as written. A check is done when it prints `RESULT: PASS`; `SKIP` lines and `NOT APPLICABLE` count as a pass, while exit 2 (nothing to check, bad input) never does. A step whose check cannot pass yet is not done: name it in the report with the reason. `SKIP` lines have exactly two causes: a screen outside `shell-slice.json` (`<S-id> not in shell-slice.json`), or a rule that is not yet due because a later step creates its target (`due at Shell step <n>: <file> not yet created`). Once that step creates the file the rule is strict, which is why steps 7 and 8 rerun some earlier checks and expect no such SKIP line.",
     "shell": [
       {
         "step": "Bootstrap the repo and its gates; write shell-slice.json with \"screens\": [] (the Shell is not built yet)",
@@ -601,24 +602,24 @@
         "proof": "`check-rules-engine.mjs .` (game-rules-engine, RNG goldens) prints RESULT: PASS; `npx jest packages/game-kit/src/dates packages/game-kit/src/rng --ci --selectProjects unit` passes (the date, daily-seed and RNG goldens ship as unit tests); `npm run test:golden` is due from step 3, which adds the first `*.golden.test.ts` (until then it finds no tests and exits 1)"
       },
       {
-        "step": "The pilot game (Line Siege): its rules, bot and sims, then its levels. Its game code is copied from the canonical Line Siege example these skills ship, never adapted from the Tap Flip templates: rules/, levels/, testing/ and i18n/, plus the three board files the engine's timeline needs (board/build-timeline.ts, board-ids.ts and monster-tracks.ts, with their tests), because rules/line-siege-engine.ts names buildTimeline; the rest of board/ and sounds/ import the Shell's board kit and wait for step 7. The balance harness comes from game-balance-and-bots (packages/tooling/src/sims/write-sim-report.ts with its test write-sim-report.test.ts; check-balance reports harness-missing without the test). The balance sims pass before the packs are generated; a later tuning change regenerates the packs in a commit with a Gate-Change: trailer",
+        "step": "The pilot game (Line Siege): its rules, bot and sims, then its levels. Its game code is copied from the canonical Line Siege example these skills ship, never adapted from the Tap Flip templates: rules/, levels/ without its pack-*.json files, testing/ and i18n/, plus the three board files the engine's timeline needs (board/build-timeline.ts, board-ids.ts and monster-tracks.ts, with their tests), because rules/line-siege-engine.ts names buildTimeline; the rest of board/ and sounds/ import the Shell's board kit and wait for step 7. The balance harness comes from game-balance-and-bots (packages/tooling/src/sims/write-sim-report.ts with its test write-sim-report.test.ts; check-balance reports harness-missing without the test). The balance sims pass before the packs are generated: the packs are never copied (level-generation-and-solvers rule 2), so after the sims pass run `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/levels/generate-levels.ts --app line-siege`, which writes the three pack-<n>.json files (byte-identical to the example's); a later tuning change regenerates the packs in a commit with a Gate-Change: trailer",
         "skills": [
           "game-rules-engine",
           "game-balance-and-bots",
           "level-generation-and-solvers",
           "golden-tests"
         ],
-        "proof": "in this order: `check-rules-engine.mjs . --game line-siege` (game-rules-engine); `npm run test:sim` and `check-balance.mjs . --game line-siege` (game-balance-and-bots); then the packs are generated and `check-levels.mjs . --game line-siege` (level-generation-and-solvers) and `check-goldens.mjs .` (golden-tests) print RESULT: PASS and `npm run test:golden` passes"
+        "proof": "in this order: `check-rules-engine.mjs . --game line-siege` (game-rules-engine); `npm run test:sim` and `check-balance.mjs . --game line-siege` (game-balance-and-bots); then `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/levels/generate-levels.ts --app line-siege --check` exits 0, and `check-levels.mjs . --game line-siege` (level-generation-and-solvers) and `check-goldens.mjs .` (golden-tests) print RESULT: PASS and `npm run test:golden` passes"
       },
       {
-        "step": "The save format and migrations: copy only the save service and what it imports: packages/shell/src/services/save/ (drivers, stores, codec, load plan, SaveService, resets, the startup peek, schema v1, migrations, fixtures and their tests), the clock and error-log ports with their adapters and fakes (services/clock/, services/error-log/) and test/integration/save/. The two boot files app/hydrate-save.ts and app/use-checkpoint-on-background.ts (with their tests) wait for step 6, which brings what they import (the navigation types, the Testing Library, app/test-only.ts)",
+        "step": "The save format and migrations: copy only the save service and what it imports: packages/shell/src/services/save/ (drivers, stores, codec, load plan, SaveService, resets, the startup peek, schema v1, migrations, fixtures and their tests), the clock and error-log ports with their adapters and fakes (services/clock/, services/error-log/) and test/integration/save/. The two boot files app/hydrate-save.ts and app/use-checkpoint-on-background.ts (with their tests) wait for step 7, where the boot (start-shell.ts) that calls them lands with the composition root",
         "skills": [
           "save-persistence-and-migrations"
         ],
-        "proof": "`check-save-layer.mjs .` (save-persistence-and-migrations) prints RESULT: PASS, with not-yet-due SKIP lines for the two boot files (`due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created`); `npx jest packages/shell/src/services test/integration/save --ci --selectProjects unit` passes; the step commits on its own (the pre-commit typecheck passes); the kill test once a simulator build exists (step 8)"
+        "proof": "`check-save-layer.mjs .` (save-persistence-and-migrations) prints RESULT: PASS, with not-yet-due SKIP lines for the two boot files (`due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created`); `npx jest packages/shell/src/services test/integration/save --ci --selectProjects unit` passes; the step commits on its own (the pre-commit typecheck passes); the kill test once a simulator build exists (step 8)"
       },
       {
-        "step": "Services behind ports with fakes: clock, error log, connectivity, audio and haptics, ads and consent, purchase. Copy these prerequisites first, because the step's templates and tests import them: state-stores' testing/create-test-save.ts, app/stores-context.tsx and the stores its types name (state-stores' packages/shell/src/stores/ files: the progress, settings and stats stores with their reducers and selectors), unit-and-component-tests' testing/flush-microtasks.ts, and the Testing Library pair (`plan-dependency.mjs @testing-library/react-native` (dependency-management) prints RNTL 14.0.1 with its companion test-renderer 1.2.0). admob-ads' app/use-ad-context.ts and its test wait for step 7: they read the services context, the debug services and the game extra",
+        "step": "Services behind ports with fakes: clock, error log, connectivity, audio and haptics, ads and consent, purchase. Copy these prerequisites first, because the step's templates and tests import them: zustand, which the stores import (`plan-dependency.mjs zustand` (dependency-management) prints the pinned command, `npm install zustand@5.0.15 -w packages/shell`), then state-stores' testing/create-test-save.ts, app/stores-context.tsx and the stores its types name (state-stores' packages/shell/src/stores/ files: the progress, settings and stats stores with their reducers and selectors), unit-and-component-tests' testing/flush-microtasks.ts, and the Testing Library pair (`plan-dependency.mjs @testing-library/react-native` (dependency-management) prints RNTL 14.0.1 with its companion test-renderer 1.2.0). admob-ads' app/use-ad-context.ts and its test wait for step 7: they read the services context, the debug services and the game extra",
         "skills": [
           "architecture-and-boundaries",
           "game-audio-and-haptics",
@@ -628,22 +629,22 @@
           "unit-and-component-tests",
           "dependency-management"
         ],
-        "proof": "`check-layout.mjs .` and `check-boundaries.mjs .` (architecture-and-boundaries), `check-audio-haptics.mjs .` (game-audio-and-haptics), `check-ads.mjs .` (admob-ads) and `check-premium.mjs .` (premium-purchase) print RESULT: PASS. Rules whose target a later step creates print not-yet-due SKIP lines, which count as a pass: the plugin rules (check-ads and check-premium plugin-entry, check-audio-haptics audio-plugin) until packages/shell/src/config/shell-plugins.ts (step 8), the catalog rule (check-premium catalog-keys) until packages/shell/src/i18n/catalogs/en.json (step 6), and the wiring rule (check-audio-haptics ui-feedback) until packages/shell/src/app/start-shell.ts (step 6); step 8 reruns these checks with no such SKIP line"
+        "proof": "`check-layout.mjs .` and `check-boundaries.mjs .` (architecture-and-boundaries), `check-audio-haptics.mjs .` (game-audio-and-haptics), `check-ads.mjs .` (admob-ads) and `check-premium.mjs .` (premium-purchase) print RESULT: PASS. Rules whose target a later step creates print not-yet-due SKIP lines, which count as a pass: the plugin rules (check-ads and check-premium plugin-entry, check-audio-haptics audio-plugin) until packages/shell/src/config/shell-plugins.ts (step 8), the catalog rule (check-premium catalog-keys) until packages/shell/src/i18n/catalogs/en.json (step 6), and the wiring rule (check-audio-haptics ui-feedback) until packages/shell/src/app/start-shell.ts (step 7); steps 7 and 8 rerun these checks with no such SKIP line"
       },
       {
-        "step": "Boot: Intl polyfills and the catalog check, the direction check, hydration at the splash (S1), the stores, the navigator with every route (screens not built yet point at NotBuiltScreen); shell-slice.json becomes \"screens\": [\"S1\"]. This step also copies save-persistence-and-migrations' two boot files (app/hydrate-save.ts and app/use-checkpoint-on-background.ts, with their tests) together with architecture-and-boundaries' app/test-only.ts and the test-only pair (app/test-only-api.ts, app/test-only-entry.ts), which starts with only TEST_BUILD_SENTINEL; each other member joins when its file exists",
+        "step": "Boot pieces that compile alone (nothing here imports the theme, a component or start-shell.ts): the Intl polyfills and the catalog check (the four Shell catalogs and `npm run i18n:verify`), the language and text functions and the direction check (i18n/ without t.tsx and use-localized-text-style.ts, which need the Toybox text of step 7; rtl-and-direction's direction-guard adapter services/save/sqlite-kv-direction-guard-adapter.ts), the stores with the GameSession store (state-stores' game-host/game-session-reducer.ts, game-session-store.ts, game-session-types.ts, run-writer.ts and saved-run.ts, and testing/counter-game.ts, with their tests), navigation-and-routing's route-params.ts and route-guards.ts, and architecture-and-boundaries' app/test-only.ts with the test-only pair (app/test-only-api.ts, app/test-only-entry.ts), which holds only TEST_BUILD_SENTINEL. shell-slice.json stays \"screens\": []. The navigator, the splash (S1), the boot and its save files need the theme and the composition root, so they land together at step 7",
         "skills": [
           "i18n-strings-and-catalogs",
           "rtl-and-direction",
           "state-stores",
           "navigation-and-routing",
-          "save-persistence-and-migrations",
-          "architecture-and-boundaries"
+          "architecture-and-boundaries",
+          "save-persistence-and-migrations"
         ],
-        "proof": "`check-i18n-code.mjs .` (i18n-strings-and-catalogs), `check-rtl.mjs .` (rtl-and-direction), `check-stores.mjs .` (state-stores) and `check-navigation.mjs .` (navigation-and-routing, SKIP lines for the screens not built; a stand-in on a route with params keeps them typed, for example `NotBuiltScreen<GameParams>` on Game) print RESULT: PASS; `check-save-layer.mjs .` (save-persistence-and-migrations) prints RESULT: PASS with no not-yet-due SKIP line; `npm run i18n:verify` passes"
+        "proof": "`npx tsc --noEmit -p packages/shell` passes and `npm run -s check:fast` is green; `check-i18n-code.mjs .` (i18n-strings-and-catalogs), `check-rtl.mjs .` (rtl-and-direction), `check-stores.mjs .` (state-stores) and `check-navigation.mjs .` (navigation-and-routing; `SKIP packages/shell/src/navigation [route-table] no Shell app` while \"screens\" is []) print RESULT: PASS; `check-save-layer.mjs .` (save-persistence-and-migrations) prints RESULT: PASS with not-yet-due SKIP lines for the two boot files (`due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created`); `npm run i18n:verify` passes"
       },
       {
-        "step": "Hooks and UI primitives: theme, text, buttons, icons, error boundaries; the composition root (game-host-integration's templates: create-shell-app.tsx, create-shell-parts.ts, device-adapters.ts, create-premium-deps.ts, connect-premium-reloads.ts, shell-app.tsx, shell-features.tsx, shell-navigator.tsx, load-outcome-opener.tsx, each with its test) with the partial Shell core it imports (the table below) and admob-ads' app/use-ad-context.ts; the game host, board canvas, gestures and lifecycle. The balance report's fingerprint covers only the files the sims import, so the new game-kit files (timeline, particles, geometry) leave it fresh",
+        "step": "The composition root and the boot. Hooks and UI primitives: theme, text, buttons, icons, error boundaries; the composition root (game-host-integration's templates: create-shell-app.tsx, create-shell-parts.ts, device-adapters.ts, create-premium-deps.ts, connect-premium-reloads.ts, shell-app.tsx, shell-features.tsx, shell-navigator.tsx, load-outcome-opener.tsx, each with its test) with the partial Shell core it imports (the table below) and admob-ads' app/use-ad-context.ts; the game host, board canvas, gestures and lifecycle. With it land the files that import it or that it imports, because none of them compiles alone: rtl-and-direction's boot packages/shell/src/app/start-shell.ts, i18n/t.tsx and i18n/use-localized-text-style.ts; save-persistence-and-migrations' two boot files (app/hydrate-save.ts and app/use-checkpoint-on-background.ts, with their tests); toybox-screens' startup splash (app/create-startup-splash.tsx and app/startup-splash.tsx with their tests: S1, so shell-slice.json becomes \"screens\": [\"S1\"]); the JS half of performance-budgets' perf layer (packages/shell/src/app/perf/*.ts from its templates/shell-perf/, markJsEntry() inside startShell right after readParityLaunch(), and createDebugParts' perf log TEST_ONLY.createPerfLog, which the debug services expose as perfLog); the navigator (navigation-root.tsx, navigation-theme.ts, react-navigation.d.ts and root-stack.tsx with every route whose screen is not built on NotBuiltScreen, and not-built-screen.tsx); and the pilot's 3-line entry apps/line-siege/index.ts in place of the placeholder. The test-only pair gains each member whose file now exists (the debug kit, the parity harness, createPerfLog); DebugScreen and FontTestScreen wait for S15. The composition root's app/shell-app.test.tsx renders Settings through the real providers, so it joins with S11 at step 9. The balance report's fingerprint covers only the files the sims import, so the new game-kit files (timeline, particles, geometry) leave it fresh",
         "skills": [
           "toybox-design-system",
           "toybox-components",
@@ -653,12 +654,16 @@
           "board-rendering-skia",
           "board-gestures-and-input",
           "accessibility",
-          "game-balance-and-bots"
+          "game-balance-and-bots",
+          "rtl-and-direction",
+          "save-persistence-and-migrations",
+          "navigation-and-routing",
+          "performance-budgets"
         ],
-        "proof": "`check-design-system.mjs .` (toybox-design-system; its font-plugin rule prints a not-yet-due SKIP line until packages/shell/src/config/shell-plugins.ts exists at step 8), `check-components.mjs .` (toybox-components), `check-react-rules.mjs .` (react-components-and-hooks), `check-game-host.mjs .` (game-host-integration) `check-board-files.mjs .` (board-rendering-skia) and then `check-contrast.mjs .` (accessibility; every board palette needs its board-contrast.json) print RESULT: PASS; `check-balance.mjs . --game line-siege` (game-balance-and-bots) still prints RESULT: PASS with no sim rerun"
+        "proof": "`check-design-system.mjs .` (toybox-design-system; its font-plugin rule prints a not-yet-due SKIP line until packages/shell/src/config/shell-plugins.ts exists at step 8), `check-components.mjs .` (toybox-components), `check-react-rules.mjs .` (react-components-and-hooks), `check-game-host.mjs .` (game-host-integration), `check-board-files.mjs .` (board-rendering-skia) and then `check-contrast.mjs .` (accessibility; every board palette needs its board-contrast.json) print RESULT: PASS; `check-save-layer.mjs .` (save-persistence-and-migrations) prints RESULT: PASS with no not-yet-due SKIP line; `check-navigation.mjs .` (navigation-and-routing) prints RESULT: PASS with SKIP lines for the screens not built (a stand-in on a route with params keeps them typed, for example `NotBuiltScreen<GameParams>` on Game); `check-perf-code.mjs .` (performance-budgets) prints RESULT: PASS, with not-yet-due SKIP lines only for the native half (`due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created`), and `npx jest packages/shell/src/app/perf --ci --selectProjects unit` passes; `check-audio-haptics.mjs .` (game-audio-and-haptics) prints RESULT: PASS with no ui-feedback SKIP line (only its audio-plugin rule waits for step 8); `check-balance.mjs . --game line-siege` (game-balance-and-bots) still prints RESULT: PASS with no sim rerun"
       },
       {
-        "step": "Before the first simulator build: swap the bootstrap's phase-0 with-shell.ts for architecture-and-boundaries' final with-shell.ts and shell-plugins.ts (the one plugin list); install performance-budgets' cold-start layer in the same native rebuild, because the step-10 E2E run measures cold start: the shell-native module (ProcessStartModule.swift, E07Shell.podspec and expo-module.config.json into packages/shell/), packages/shell/src/app/perf/ (its templates/shell-perf/), markJsEntry() inside startShell (start-shell.ts), right after readParityLaunch(), and createDebugParts' perf log (TEST_ONLY.createPerfLog), which the debug services expose as perfLog; install expo-splash-screen (`npx expo install expo-splash-screen` in apps/line-siege), then render the pilot's app icon and splash (`node packages/tooling/src/art/render-art.ts --app line-siege`), both before the first expo config or prebuild that includes withGameArt; copy the privacy and network audit tooling (packages/tooling/src/audit/ and packages/tooling/network-audit/), because the simulator build runs audit:privacy right after prebuild; then the first Release simulator build",
+        "step": "Before the first simulator build: swap the bootstrap's phase-0 with-shell.ts for architecture-and-boundaries' final with-shell.ts and shell-plugins.ts (the one plugin list); install the native half of performance-budgets' cold-start layer in the same native rebuild, because the step-10 E2E run measures cold start: the shell-native module (ProcessStartModule.swift, E07Shell.podspec and expo-module.config.json into packages/shell/; the JS half, app/perf/*.ts and markJsEntry, landed at step 7); install expo-splash-screen (`npx expo install expo-splash-screen` in apps/line-siege), then render the pilot's app icon and splash (`node packages/tooling/src/art/render-art.ts --app line-siege`), both before the first expo config or prebuild that includes withGameArt; copy the privacy and network audit tooling (packages/tooling/src/audit/ and packages/tooling/network-audit/), because the simulator build runs audit:privacy right after prebuild; then the first Release simulator build",
         "skills": [
           "architecture-and-boundaries",
           "performance-budgets",
@@ -671,21 +676,22 @@
           "game-audio-and-haptics",
           "toybox-design-system"
         ],
-        "proof": "`node packages/tooling/src/art/render-art.ts --app line-siege --check` exits 0 and `check-app-art.mjs . --app line-siege` (code-drawn-art-and-icons) prints RESULT: PASS; `check-perf-code.mjs .` (performance-budgets) prints RESULT: PASS and `npx jest packages/shell/src/app/perf --ci --selectProjects unit` passes; `check-ads.mjs .` (admob-ads), `check-premium.mjs .` (premium-purchase), `check-audio-haptics.mjs .` (game-audio-and-haptics) and `check-design-system.mjs .` (toybox-design-system) print RESULT: PASS again with no not-yet-due SKIP line; `APP_VARIANT=test ADS_MODE=off npx expo config` in apps/line-siege resolves every plugin; `npm run audit:network` passes and `check-gate-wiring.mjs .` (quality-gates) passes with no --pending; `npm run build:ios:sim -- --app line-siege --variant test --ads off` succeeds (it runs audit:privacy after prebuild)"
+        "proof": "`node packages/tooling/src/art/render-art.ts --app line-siege --check` exits 0 and `check-app-art.mjs . --app line-siege` (code-drawn-art-and-icons) prints RESULT: PASS; `check-perf-code.mjs .` (performance-budgets) prints RESULT: PASS with no not-yet-due SKIP line; `check-ads.mjs .` (admob-ads), `check-premium.mjs .` (premium-purchase), `check-audio-haptics.mjs .` (game-audio-and-haptics) and `check-design-system.mjs .` (toybox-design-system) print RESULT: PASS again with no not-yet-due SKIP line; `APP_VARIANT=test ADS_MODE=off npx expo config` in apps/line-siege resolves every plugin; `npm run audit:network` passes and `check-gate-wiring.mjs .` (quality-gates) passes with no --pending; `npm run build:ios:sim -- --app line-siege --variant test --ads off` succeeds (it runs audit:privacy after prebuild)"
       },
       {
-        "step": "Screens S1 to S15 with their model hooks and component tests, in spec order, each matched to its Toybox design screenshot; each screen's commit adds its id to shell-slice.json. Home's model hook marks cold start (useColdStartMark with the debug services' perf log, null in store builds). S5 has no design frame of its own, because every game brings its own board: S5, S6 and S7 compare only the Shell chrome and the overlays, with the board masked by the rectangle the game reports, and parity/game-facts.json (a gated path) picks the reference variants (for Line Siege s6-pause--no-music, s7-result-win--score and s11-settings--no-music)",
+        "step": "Screens S1 to S15 with their model hooks (the S1 splash files landed at step 7 and are matched here with the rest) and component tests, in spec order, each matched to its Toybox design screenshot; each screen's commit adds its id to shell-slice.json. app/shell-app.test.tsx joins with S11. Home's model hook marks cold start (useColdStartMark with the debug services' perf log, null in store builds). S5 has no design frame of its own, because every game brings its own board: S5, S6 and S7 compare only the Shell chrome and the overlays, with the board masked by the rectangle the game reports, and parity/game-facts.json (a gated path; Line Siege: hasMusic false, hasHints false, winLine score) picks the reference variants, composed in frames.json order with no-music before no-hints: for Line Siege s6-pause--no-music--no-hints, s7-result-win--score, s7-result-lose, s11-settings--no-music and s14-reset-all-progress--no-music. A frame is signed off in all four variants, light and dark times en and fa, at every planned scroll offset; --theme and --lang narrowing is for iteration only and never counts as done, and de and ckb are added before a release",
         "skills": [
           "toybox-screens",
           "toybox-visual-parity",
           "settings-and-preferences",
           "daily-and-statistics",
-          "accessibility"
+          "accessibility",
+          "game-host-integration"
         ],
-        "proof": "`check-screens.mjs . --screen <id>` (toybox-screens) and `check-signoff.mjs --screen <id>` (toybox-visual-parity) print RESULT: PASS for every screen built (S5 is signed off through the S6 and S7 frames), and `check-settings.mjs .` (settings-and-preferences) once S11 is built; at the end `check-screens.mjs . --all`"
+        "proof": "`check-screens.mjs . --screen <id>` (toybox-screens) and `check-signoff.mjs --screen <id>` (toybox-visual-parity) print RESULT: PASS for every screen built (S5 is signed off through the S6 and S7 frames: `check-signoff.mjs --frame s6-pause --frame s7-result-win --frame s7-result-lose` (toybox-visual-parity) prints RESULT: PASS for all four variants and names the references the facts picked, s6-pause--no-music--no-hints, s7-result-win--score and s7-result-lose), and `check-settings.mjs .` (settings-and-preferences) once S11 is built; at the end `check-screens.mjs . --all`"
       },
       {
-        "step": "End-to-end flows, the debug deep link, the network guard, the screenshot matrix; the Shell flows (01 to 03) are copied here, not earlier, because they visit every screen; every screen is built now, so shell-slice.json is deleted in this step's first commit (step 11's release gates fail while it exists). The evidence run's cold-start and memory steps rely on step 8's perf layer and Home's mark (step 9)",
+        "step": "End-to-end flows, the debug deep link, the network guard, the screenshot matrix; the Shell flows (01 to 03) are copied here, not earlier, because they visit every screen (journey 02 opens S9 from Home's daily card), with the pilot's mode journeys 11-daily, 12-continue-premium and 13-endless (check-flows rule mode-flows); every screen is built now, so shell-slice.json is deleted in this step's first commit (step 11's release gates fail while it exists). The evidence run's cold-start and memory steps rely on step 8's perf layer and Home's mark (step 9)",
         "skills": [
           "e2e-maestro",
           "ios-simulator-build",
@@ -694,13 +700,15 @@
         "proof": "shell-slice.json is gone; `check-e2e-setup.mjs .` and `check-flows.mjs .` (e2e-maestro) print RESULT: PASS; `npm run e2e:ios -- --app line-siege` passes with an empty network.txt; `check-e2e-report.mjs . --app line-siege` (e2e-maestro) prints RESULT: PASS"
       },
       {
-        "step": "Audits and the release pipeline: network, privacy and licence audits (their tooling is in place since step 8), the performance budgets (the cold-start layer is in place since step 8), the store-artifact gate, a test build to TestFlight",
+        "step": "Audits and the release pipeline, in this order: the E2E evidence run of step 10 stands; then the StoreKit harness (premium-purchase, Tier 2) on its own throwaway e07- simulator; then `xcrun simctl delete <udid>` of that simulator; then a clean prebuild (`npx expo prebuild --clean` in apps/line-siege), because the harness's Debug build-for-testing shares apps/line-siege/ios with the Release builds; then the network, privacy and licence audits (their tooling is in place since step 8), the performance budgets (the cold-start layer is complete since step 8), the store archive with its store-artifact gate, and a test build to TestFlight. Without the owner's signing key a keyless rehearsal is allowed (a store/off archive built with CODE_SIGNING_ALLOWED=NO, then `check-store-artifact.mjs --unsigned`), but it prints REHEARSAL: not a release gate and never counts as release evidence. The owner's review of the fa and ckb texts, the play-test and listening to the sound previews are listed under \"Owner steps (not blocking)\" in the release report and never waited for",
         "skills": [
           "privacy-and-network-audit",
           "ios-release-testflight",
-          "performance-budgets"
+          "performance-budgets",
+          "premium-purchase",
+          "git-commits-and-reporting"
         ],
-        "proof": "`audit-repo.mjs .` (privacy-and-network-audit), `check-budgets.mjs .` (performance-budgets) and `check-release-setup.mjs .` (ios-release-testflight) print RESULT: PASS; `check-store-artifact.mjs --ipa <the exported .ipa> --variant test --ads <mode> --version <X.Y.Z> --build <N> .` (ios-release-testflight) passes; the owner's go before any upload"
+        "proof": "in this order: `node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --device <udid>` (premium-purchase) passes on its throwaway simulator and `xcrun simctl delete <udid>` removes it; `npx expo prebuild --clean` in apps/line-siege; `audit-repo.mjs .` (privacy-and-network-audit), `check-budgets.mjs .` (performance-budgets) and `check-release-setup.mjs .` (ios-release-testflight) print RESULT: PASS; `check-store-artifact.mjs --ipa <the exported .ipa> --variant test --ads <mode> --version <X.Y.Z> --build <N> .` (ios-release-testflight) passes; `check-report.mjs <the release report> --kind release` (git-commits-and-reporting) prints RESULT: PASS; the owner's go before any upload"
       },
       {
         "step": "The pilot passes the new-game completeness check, so game 2 starts from npm run new-game (installed by the bootstrap); shell-slice.json stays deleted (step 10), because a slice never ships",
@@ -708,12 +716,12 @@
           "new-game-scaffold",
           "navigation-and-routing"
         ],
-        "proof": "shell-slice.json is gone; `check-game-app.mjs . --app line-siege --stage complete` (new-game-scaffold) and `check-navigation.mjs . --complete` (navigation-and-routing) print RESULT: PASS; `npm run verify` is green with no SKIP line"
+        "proof": "shell-slice.json is gone; `check-navigation.mjs . --complete` (navigation-and-routing) prints RESULT: PASS; `check-game-app.mjs . --app line-siege --stage complete` (new-game-scaffold) prints RESULT: PASS once the owner's real AdMob ids (owner step G5) and the privacy-policy host and support address (owner step G3) are in game.config.ts and, until then, fails only on those placeholders (owner-placeholder lines), by design (the app id is already the fixed io.applander.linesiege); `npm run verify` is green with no SKIP line"
       }
     ],
-    "slice": "A repo without every Shell screen says so in `shell-slice.json` at the repo root: `{ \"screens\": [\"S4\", \"S11\", \"S12\"], \"why\": \"Home + Settings parity slice\" }`, with ids S1-S15 and S11a-S11d. `\"screens\": []` means a game-first repo with no Shell app; no file means the full Shell and every check is strict. While the file exists, every checker SKIPs (prints `SKIP <file> [<rule>] <S-id> not in shell-slice.json`, not counted) the rules of screens outside the slice, and the rules that need the Shell app itself when `screens` is `[]`; everything inside the slice is checked strictly. The route table never shrinks: a route whose screen is outside the slice points at `NotBuiltScreen` (navigation-and-routing), model hooks navigate normally, and a slice screen still routed to `NotBuiltScreen` fails. During the Shell build above: write `{ \"screens\": [], \"why\": \"Shell build in progress: no Shell app yet\" }` at step 1, change it to `[\"S1\"]` when step 6 builds the splash and the navigator, add each screen id in the commit that builds that screen (step 9), and delete the file at step 10, once every screen is built (the release gates of step 11 fail while it exists). A slice built on purpose (a parity slice, a game-first repo) follows the same rules. Screens outside the slice have no route or view files, but the partial Shell core below is always there. To add the pilot's Game, Pause and Result to a slice that lacks them, follow \"The pilot game into an existing Shell slice\". **A slice never ships:** `check-navigation.mjs . --complete`, `check-game-app.mjs . --stage complete`, `check-release-setup.mjs .` and `check-store-artifact.mjs ... .` fail while `shell-slice.json` exists or any route uses `NotBuiltScreen`.",
+    "slice": "A repo without every Shell screen says so in `shell-slice.json` at the repo root: `{ \"screens\": [\"S4\", \"S11\", \"S12\"], \"why\": \"Home + Settings parity slice\" }`, with ids S1-S15 and S11a-S11d. `\"screens\": []` means a game-first repo with no Shell app; no file means the full Shell and every check is strict. While the file exists, every checker SKIPs (prints `SKIP <file> [<rule>] <S-id> not in shell-slice.json`, not counted) the rules of screens outside the slice, and the rules that need the Shell app itself when `screens` is `[]`; everything inside the slice is checked strictly. The route table never shrinks: a route whose screen is outside the slice points at `NotBuiltScreen` (navigation-and-routing), model hooks navigate normally, and a slice screen still routed to `NotBuiltScreen` fails. During the Shell build above: write `{ \"screens\": [], \"why\": \"Shell build in progress: no Shell app yet\" }` at step 1, change it to `[\"S1\"]` when step 7 builds the splash and the navigator, add each screen id in the commit that builds that screen (step 9), and delete the file at step 10, once every screen is built (the release gates of step 11 fail while it exists). A slice built on purpose (a parity slice, a game-first repo) follows the same rules. Screens outside the slice have no route or view files, but the partial Shell core below is always there. To add the pilot's Game, Pause and Result to a slice that lacks them, follow \"The pilot game into an existing Shell slice\". **A slice never ships:** `check-navigation.mjs . --complete`, `check-game-app.mjs . --stage complete`, `check-release-setup.mjs .` and `check-store-artifact.mjs ... .` fail while `shell-slice.json` exists or any route uses `NotBuiltScreen`.",
     "sliceCore": {
-      "intro": "Screens outside `shell-slice.json` have no route or view files, but every Shell app has this core whatever the slice, because the composition root and startup import it: copy it with the composition root (Shell step 7, or before the first screen of a slice built on purpose). Each owning skill repeats its part in its own partial-Shell notes. The test-only pair (packages/shell/src/app/test-only-api.ts and test-only-entry.ts) starts with only TEST_BUILD_SENTINEL (Shell steps 4 to 7), and each member joins when its file exists; DebugScreen and its TestOnlyApi member stay out while S15 is outside the slice.",
+      "intro": "Screens outside `shell-slice.json` have no route or view files, but every Shell app has this core whatever the slice, because the composition root and startup import it: copy it with the composition root (Shell step 7, or before the first screen of a slice built on purpose). Each owning skill repeats its part in its own partial-Shell notes. The test-only pair (packages/shell/src/app/test-only-api.ts and test-only-entry.ts) holds only TEST_BUILD_SENTINEL at Shell steps 4 to 6, and each member joins when its file exists (the core's members at step 7); DebugScreen and its TestOnlyApi member stay out while S15 is outside the slice.",
       "rows": [
         {
           "files": "packages/shell/src/screens/dialogs/ (the dialog host, dialog-request.ts and the S14 dialogs) and packages/shell/src/app/dialog-context.tsx, with their tests",
@@ -751,7 +759,12 @@
           "skill": "toybox-visual-parity"
         },
         {
-          "files": "packages/shell/src/app/perf/ (from templates/shell-perf/), copied at Shell step 8 with the shell-native module",
+          "files": "packages/shell/src/app/create-startup-splash.tsx and packages/shell/src/app/startup-splash.tsx, with their tests",
+          "part": "the startup splash (S1) that start-shell.ts shows while the save hydrates",
+          "skill": "toybox-screens"
+        },
+        {
+          "files": "packages/shell/src/app/perf/*.ts (from templates/shell-perf/), the JS half, copied at Shell step 7 with start-shell.ts; the native module follows at step 8",
           "part": "the cold-start and frame log that createDebugParts and Home use",
           "skill": "performance-budgets"
         },
@@ -773,7 +786,7 @@
         "intro": "For a repo that already has a Shell slice without the play screens (for example the parity slice S1, S4, S8, S11) and now adds the pilot's Game, Pause and Result, for example to play a level end to end. The pilot's game code is in place first (Shell step 3 and the board of \"Every new game\" step 7), and the partial Shell core is already there because the composition root needs it.",
         "steps": [
           {
-            "step": "Add S5, S6, S7 and S15 to shell-slice.json in the commit that adds their files (S15 because every E2E flow ends on the debug menu's network counter). Copy the Game screen set (packages/shell/src/screens/game/game-screen.tsx with its model hook, its helpers and game-screen-back.test.tsx), Pause (S6), Result (S7) and the Debug menu (S15: its screen, view and use-debug-model.ts), route them, and add DebugScreen and FontTestScreen (S15's font test page) to the test-only pair now that S15 is in the slice. Write parity/game-facts.json for the pilot (Line Siege: designGame lineSiege, hasMusic false, winLine score) with its parity-game-facts test; it is a gated path, so that commit carries a Gate-Change: trailer. S5 has no design frame of its own: S5, S6 and S7 compare only the Shell chrome and the overlays, with the board masked by the rectangle the game reports, and the Game screen's session controls open the pause and result frame states",
+            "step": "Add S5, S6, S7, S8 and S15 to shell-slice.json in the commit that adds their files (S8 because the pilot's level-1 flow opens Levels after the win to prove the stars and the level-2 unlock; S15 because every E2E flow ends on the debug menu's network counter). Copy the Game screen set (packages/shell/src/screens/game/game-screen.tsx with its model hook, its helpers and game-screen-back.test.tsx), Pause (S6), Result (S7), Levels (S8, when the slice lacks it) and the Debug menu (S15: its screen, view and use-debug-model.ts), route them, and add DebugScreen and FontTestScreen (S15's font test page) to the test-only pair now that S15 is in the slice. Write parity/game-facts.json for the pilot (Line Siege: designGame lineSiege, hasMusic false, hasHints false, winLine score) with its parity-game-facts test; it is a gated path, so that commit carries a Gate-Change: trailer. S5 has no design frame of its own: S5, S6 and S7 compare only the Shell chrome and the overlays, with the board masked by the rectangle the game reports, and the Game screen's session controls open the pause and result frame states",
             "skills": [
               "toybox-screens",
               "game-host-integration",
@@ -782,10 +795,10 @@
               "toybox-visual-parity",
               "git-commits-and-reporting"
             ],
-            "proof": "`check-screens.mjs . --screen S5 --screen S6 --screen S7 --screen S15` (toybox-screens), `check-game-host.mjs . --game line-siege` (game-host-integration) and `check-navigation.mjs .` (navigation-and-routing) print RESULT: PASS; `check-signoff.mjs --frame s6-pause --frame s7-result-win --frame s7-result-lose` (toybox-visual-parity) prints RESULT: PASS and names the references it used from parity/game-facts.json: s6-pause--no-music, s7-result-win--score and s7-result-lose"
+            "proof": "`check-screens.mjs . --screen S5 --screen S6 --screen S7 --screen S8 --screen S15` (toybox-screens), `check-game-host.mjs . --game line-siege` (game-host-integration) and `check-navigation.mjs .` (navigation-and-routing) print RESULT: PASS; `check-signoff.mjs --frame s6-pause --frame s7-result-win --frame s7-result-lose` (toybox-visual-parity) prints RESULT: PASS for all four variants (light and dark times en and fa, at every planned scroll offset; --theme and --lang narrowing never counts as done) and names the references it used from parity/game-facts.json: s6-pause--no-music--no-hints, s7-result-win--score and s7-result-lose"
           },
           {
-            "step": "The pilot's own E2E flow (flow 10 and up: a real first move, the kill and relaunch, the win) and the evidence run; the Shell flows 01 to 03 wait for Shell step 10. The cold-start and memory steps need the perf layer of Shell step 8 and Home's mark",
+            "step": "The pilot's own E2E flows and the evidence run: flow 10 (a real first move, the kill and relaunch, the win, then Levels shows level 1's stars and level 2 opens), and one journey per game mode the pilot's game.config.ts turns on (e2e-maestro's journeys/11-daily.yaml for modes.daily, 12-continue-premium.yaml for isContinueAllowed, 13-endless.yaml for modes.endless; check-flows' mode-flows rule SKIPs a mode whose screen, S9 for daily and S7 for the others, is outside the slice); the Shell flows 01 to 03 wait for Shell step 10. The cold-start and memory steps need the perf layer of Shell step 8 and Home's mark",
             "skills": [
               "e2e-maestro",
               "ios-simulator-build",
@@ -844,7 +857,7 @@
     },
     "game": [
       {
-        "step": "Before code: the owner picks the game and approves modes, packs, star rule, bands, name and bundle id; scaffold apps/<game-id> with `npm run new-game -- --app <game-id> --name \"<Name>\" --bundle-id <approved id> --hints none|solver --continue once|none` and `--lose-reason <slug>` for a game outside the copy deck (the answers come from the design notes)",
+        "step": "Before code: the owner picks the game and approves modes, packs, star rule, bands and name; scaffold apps/<game-id> with `npm run new-game -- --app <game-id> --name \"<Name>\" --hints none|solver --continue once|none` and `--lose-reason <slug>` for a game outside the copy deck (the answers come from the design notes). The scaffold always writes the app id io.applander.<game-id without hyphens>, all lowercase, as the iOS bundle id and the Android package (Line Siege: io.applander.linesiege), and <bundle id>.premium as the Premium product; there is no --bundle-id override",
         "skills": [
           "pocket-arcade-product-spec",
           "new-game-scaffold"
@@ -939,7 +952,7 @@
         "proof": "`check-game-host.mjs . --game <id>` (game-host-integration) and `check-realtime-loop.mjs .` (realtime-game-loop; NOT APPLICABLE for a turn-based game, and exit 2 before src/index.ts exists) print RESULT: PASS"
       },
       {
-        "step": "The game's own E2E flows (numbered 10 and up, one real board tap) and screenshot baselines; every screen matches its Toybox design screenshot",
+        "step": "The game's own E2E flows (numbered 10 and up, one real board tap; the level-1 win then shows the stars on Levels and opens level 2) with one journey per mode its game.config.ts turns on (11-daily, 12-continue-premium, 13-endless from e2e-maestro's templates), and screenshot baselines; every screen matches its Toybox design screenshot",
         "skills": [
           "e2e-maestro",
           "toybox-visual-parity",
@@ -955,13 +968,14 @@
         "proof": "`npm run audit:network` and `npm run audit:privacy` pass"
       },
       {
-        "step": "Prove it complete, then release once the owner's steps and play-test are done",
+        "step": "Prove it complete, then release in the documented order: the E2E evidence run, the StoreKit harness (premium-purchase, Tier 2) on a throwaway e07- simulator, `xcrun simctl delete <udid>` of that simulator, a clean prebuild (`npx expo prebuild --clean` in apps/<id>), then the store archive and its gates. The owner's store steps come first: the App Store Connect record with the fixed id (G2), the App Privacy answers with the privacy-policy host and support address (G3) and the real AdMob ids (G5); until G3 and G5 the complete stage and the store gates fail on those placeholders (example.com, support@example.com, the placeholder AdMob ids) by design. The play-test, the owner's review of the fa and ckb texts and listening to the sound previews are listed under \"Owner steps (not blocking)\" in the release report and never waited for",
         "skills": [
           "new-game-scaffold",
+          "premium-purchase",
           "ios-release-testflight",
           "git-commits-and-reporting"
         ],
-        "proof": "`check-game-app.mjs . --app <id> --stage complete` (new-game-scaffold) prints RESULT: PASS; `npm run verify` is green with no SKIP line; `check-store-artifact.mjs --ipa <the exported .ipa> --variant store --ads live --version <X.Y.Z> --build <N>` (ios-release-testflight) passes"
+        "proof": "`check-game-app.mjs . --app <id> --stage complete` (new-game-scaffold) prints RESULT: PASS; `npm run verify` is green with no SKIP line; `node packages/tooling/src/storekit/storekit-harness.ts --app <id> --device <udid>` (premium-purchase) passes and `xcrun simctl delete <udid>` removes its simulator; after `npx expo prebuild --clean`, `check-store-artifact.mjs --ipa <the exported .ipa> --variant store --ads live --version <X.Y.Z> --build <N>` (ios-release-testflight) passes; `check-report.mjs <the release report> --kind release` (git-commits-and-reporting) prints RESULT: PASS"
       }
     ]
   }

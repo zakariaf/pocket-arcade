@@ -1,0 +1,3 @@
+[price-target]
+packages/tooling/src/storekit/Premium.storekit.template
+displayPrice is 2.99

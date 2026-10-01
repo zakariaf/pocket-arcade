@@ -1,6 +1,6 @@
 __ONE_SENTENCE_OUTCOME_IN_PLAYERS_WORDS__.
 
-Please play TestFlight build __BUILD__ and answer "ship" or "don't ship" (step R1). Until then I keep working on __OTHER_WORK__.
+Please say "ship" when TestFlight build __BUILD__ may go to App Review (step R1). Until then it stays on TestFlight and I keep working on __OTHER_WORK__.
 
 Evidence: __GAME_ID__ release __VERSION__ on __YYYY_MM_DD__, commit __SHA__
 
@@ -24,10 +24,16 @@ Please look at (at most 5)
 Goldens and baselines changed on purpose
 - __FILE__: __REASON__ (Gate-Change trailer in __SHA__), or "none"
 
+Owner steps (not blocking)
+- Play-test __GAME_NAME__ on TestFlight build __BUILD__, with the purchase test: buy, cancel, restore after reinstall (step G6)
+- Listen to the __SOUND_COUNT__ __GAME_NAME__ sound previews in reports/sfx/__GAME_ID__/ and feel the haptics on your phone (step G9)
+- Review the fa and ckb texts: __PENDING_TEXTS_OR_NONE_PENDING__ (step R3)
+
 Not tested or not verified
-- Sound, haptics and 120 Hz: need your phone (TestFlight play-test, R1)
+- Sound, haptics and 120 Hz on a phone: your play-test and listening above (G6, G9)
 - Purchase on TestFlight: buy, cancel, restore after reinstall (G6)
-- VoiceOver spot check (R2) and the native-speaker read of changed fa/ckb texts (R3)
+- VoiceOver spot check (R2)
+- __ANYTHING_ELSE_THAT_DID_NOT_RUN__ (a keyless rehearsal, check-store-artifact --unsigned, belongs here and never under Checks)
 
 Details
 - Mutation survivors: __EACH_SURVIVOR_AND_WHY__

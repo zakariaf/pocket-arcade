@@ -8,7 +8,7 @@ import { Chip } from '@e07/shell/ui/chip.tsx';
 import { HowToStage } from '@e07/shell/ui/how-to-stage.tsx';
 import { PagerDots } from '@e07/shell/ui/pager-dots.tsx';
 import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
+import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import type { ReactNode } from 'react';
@@ -22,6 +22,11 @@ export type HowToPlayModel = {
   readonly stepIndex: number;
   /** The game draws each step's picture in code. */
   readonly renderPicture: (stepIndex: number) => ReactNode;
+  /**
+   * Width / height of the picture (GameHost.howToPlayPictureAspect; the Toybox default is the
+   * mockup's 320 x 206 illustration). The picture is drawn full width at this aspect.
+   */
+  readonly pictureAspect: number;
   readonly isReducedMotion: boolean;
   readonly onBack: () => void;
   readonly onPrevious: () => void;
@@ -35,6 +40,9 @@ export type HowToPlayModel = {
 export type HowToPlayViewProps = { readonly model: HowToPlayModel };
 
 const styles = StyleSheet.create({
+  // Full width inside the stage, as tall as the aspect says: without a height the game's canvas
+  // measures 0 and draws nothing (the aspect comes from the model, 320 / 206 by default).
+  picture: { alignSelf: 'stretch' },
   pager: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   grow: { flexGrow: 1 },
   // Previous / Next share a row (isInRow: grow from a 120 pt basis) and wrap at 200 % text.
@@ -52,7 +60,7 @@ export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
   const stepText = model.steps[model.stepIndex] ?? '';
   const isLast = model.stepIndex >= total - 1;
   return (
-    <ScreenFrame testID="how-to-play.screen">
+    <ScreenFrame testID="how-to-play.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
       <TopBar
         testID="how-to-play.top-bar"
         title={t('common.how-to-play')}
@@ -60,7 +68,7 @@ export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
         onBack={model.onBack}
         isReducedMotion={model.isReducedMotion}
       />
-      <ScreenBody>
+      <ScreenBody isUnderHomeIndicator>
         <AppText text={model.goal} tone="muted" testID="how-to-play.goal" />
         <HowToStage testID="how-to-play.stage">
           {/* The picture is one labelled image for VoiceOver: the step sentence describes it. */}
@@ -69,6 +77,7 @@ export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
             accessibilityRole="image"
             accessibilityLabel={stepText}
             testID="how-to-play.picture"
+            style={[styles.picture, { aspectRatio: model.pictureAspect }]}
           >
             {model.renderPicture(model.stepIndex)}
           </View>

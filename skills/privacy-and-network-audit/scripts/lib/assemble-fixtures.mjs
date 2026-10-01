@@ -52,7 +52,7 @@ function applyMutation(dir, ops, label) {
  */
 export function assembleSuite({ templates, baseRepo, suiteDir, prefix = 'skill-fixtures-', extraCopies = [] }) {
   const tmp = makeTempDir(prefix);
-  for (const name of readdirSync(suiteDir).filter((entry) => entry === 'good' || entry.startsWith('bad-'))) {
+  for (const name of readdirSync(suiteDir).filter((entry) => entry === 'good' || /^(bad|pass|error)-/.test(entry))) {
     const source = join(suiteDir, name);
     const target = join(tmp, name);
     if (templates) cpSync(templates, target, { recursive: true });

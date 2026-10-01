@@ -98,7 +98,7 @@ One difficulty scale, 0..100. Levels and the daily use 0..99 through four tuning
 ## Continue, hints and undo
 
 - **Continue** (spec 8.10, one per run): `line-siege.continue.push-back` ("One more go: the monsters fall back and the board clears a little"). It rescues both losses: hearts = max(hearts, 1); every monster moves back 3 lane rows (never past row 0); when no block fits, the 2 fullest board rows are emptied (no score, no beams, no shockwave); then the tray is redrawn (with the single block in the first slot if nothing drawn would fit).
-- **Hints:** none. There is no exact solver to suggest a best move.
+- **Hints:** none. There is no exact solver to suggest a best move. So the game fact "has hints" is false (lead decision L8): the top bar (S5) shows no Hint key and the Pause menu (S6) no hint entry.
 - **Undo:** unlimited.
 
 ## What the player sees and hears
@@ -131,7 +131,9 @@ The first placement fires a beam that defeats a monster in every greedy run. Gre
 
 ## Owner questions
 
-1. **Answered by the lead on 2026-09-30 (L4): the teaching copy now matches the tuning.** The copy deck used to say "After each block you place, the monsters march one row closer" (how-to-play step 4) and "the monsters step closer after every block" (tutorial step 4), while the tuned game marches every 4 to 6 placements. The lead reworded both steps in all four languages to "The monsters march closer every few blocks" (texts under "What the player sees and hears"), in the design copy deck and the mockup. The owner is told in the lead's report; fa and ckb await the native review.
+The owner answers these in the Line Siege play-test, the owner's personal step (O6, 2026-09-30): every report lists it under "Owner steps (not blocking)", and no work waits for the answers; the numbers stay defaults until then.
+
+1. **Answered by the lead on 2026-09-30 (L4): the teaching copy now matches the tuning.** The copy deck used to say "After each block you place, the monsters march one row closer" (how-to-play step 4) and "the monsters step closer after every block" (tutorial step 4), while the tuned game marches every 4 to 6 placements. The lead reworded both steps in all four languages to "The monsters march closer every few blocks" (texts under "What the player sees and hears"), in the design copy deck and the mockup. The owner is told in the lead's report; fa and ckb await the owner's own review (O6, not blocking).
 2. Is choosing a line because of where a monster is enjoyable? Does the beam feel satisfying? Is the screen readable at phone size? (The toy's questions, still open.)
 3. Are 3 hearts, 6 lane rows, 4 to 7 monsters per wave and the four difficulty rows the right pace? All are knobs.
 4. Is a breach of the last heart that ends an otherwise cleared wave a fair loss?

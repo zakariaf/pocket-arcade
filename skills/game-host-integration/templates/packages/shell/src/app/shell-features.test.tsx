@@ -63,7 +63,7 @@ describe('ShellFeatures', () => {
       { services },
     );
     expect(screen.getByTestId('probe.text')).toHaveTextContent(
-      'tally tally.name com.example.tally.premium',
+      'tally tally.name io.applander.tally.premium',
     );
     await fireEvent.press(screen.getByTestId('probe.button'));
     expect(audio.calls).toStrictEqual([{ kind: 'play', soundId: 'ui.tap', delayMs: 0 }]);

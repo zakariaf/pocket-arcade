@@ -14,7 +14,7 @@ export function createIapBody(appId: string, productId: string): unknown {
         name: 'Premium', // reference name, max 64 chars, never shown to players
         productId, // letters, digits, '.', '-', '_'; max 100; never reusable in this app
         inAppPurchaseType: 'NON_CONSUMABLE',
-        familySharable: false, // default off; Apple: once on, it cannot be turned off
+        familySharable: false, // owner decision O3 (2026-09-30): off; once on, it can never be turned off
         reviewNote: 'Removes all ads. Restore purchase is on the Premium page and in Settings.',
       },
       relationships: { app: rel('apps', appId) },
@@ -41,8 +41,8 @@ export function localizationBody(iapId: string, index: number): unknown {
   };
 }
 
-// Spec D3: about EUR 1.90 at the nearest Apple price point. Returns the points closest first;
-// the caller uses an exact match, or asks the owner (D3) when there is none.
+// Owner decision O2: the EUR 1.99 App Store price point. Returns the points closest first; the
+// caller uses the exact match, and stops to ask the owner only if Apple no longer offers it.
 export function closestPricePoints(points: readonly PricePoint[], target: number): PricePoint[] {
   return [...points].sort(
     (a, b) => Math.abs(a.customerPrice - target) - Math.abs(b.customerPrice - target),

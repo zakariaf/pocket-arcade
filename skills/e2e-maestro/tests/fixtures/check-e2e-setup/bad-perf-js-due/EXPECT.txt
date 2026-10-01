@@ -1,0 +1,2 @@
+packages/shell/src/app/perf/use-cold-start-mark.ts [perf-layer] is missing, so the e2e:ios cold-start and feedback steps have nothing to read
+SKIP packages/shell/expo-module.config.json [perf-layer] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created

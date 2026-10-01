@@ -1,0 +1,1 @@
+ERROR [bad-input] nothing to check: folder no-such-folder does not exist or is not a folder

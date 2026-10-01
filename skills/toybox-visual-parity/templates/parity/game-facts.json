@@ -4,7 +4,8 @@
     "__GAME_ID__": {
       "designGame": "lineSiege",
       "hasMusic": false,
-      "winLine": "score"
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }

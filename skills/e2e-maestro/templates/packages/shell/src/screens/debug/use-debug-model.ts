@@ -4,7 +4,9 @@
 // handler's apply() and importSave() (useDebugServices / useDebugLinks), exactly what the debug
 // link does, so a flow and a tester reach the same state. DebugView only draws what this returns:
 // the Import save row opens importField (a paste field the view draws under the list), the Font
-// test row opens the FontTest route.
+// test row opens the FontTest route, and the Performance section draws perf (the switch
+// debug.perf-record-switch, the rows debug.perf-share-row and debug.perf-benchmark-row, the value
+// debug.perf-summary), all through services.perf over the perf log.
 import { useNavigation } from '@react-navigation/native';
 import { useReducer, useState } from 'react';
 
@@ -25,6 +27,7 @@ import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import { runDebugAction } from './debug-actions.ts';
+import { perfSummaryOf, perfSummaryText } from './debug-perf.ts';
 import { DEBUG_SHEETS } from './debug-sheets.ts';
 import { localeValue, networkAttemptsOf } from './debug-tools.ts';
 
@@ -32,6 +35,7 @@ import type { DebugAction, DebugSwitch } from './debug-rows.ts';
 import type { DebugServices } from './debug-services.ts';
 import type { DebugModel } from './debug-view.tsx';
 import type { DebugImportResult } from '@e07/shell/app/debug-link-handler.ts';
+import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 
 /** "Import save from text": the paste field the Import save row opens. */
 export type DebugImportField = {
@@ -45,6 +49,21 @@ export type DebugImportField = {
   readonly onCancel: () => void;
 };
 
+/** S15's Performance section (test builds): frame recording, the report, the save benchmark. */
+export type DebugPerfModel = {
+  /** debug.perf-record-switch: frame times are recorded into the perf log while it is on. */
+  readonly isRecording: boolean;
+  readonly onToggleRecording: () => void;
+  /** debug.perf-share-row: the iOS share sheet with the perf log as JSON (nothing is sent). */
+  readonly onShare: () => void;
+  /** debug.perf-benchmark-row: 300 save writes into a scratch database, one save-benchmark entry. */
+  readonly onRunBenchmark: () => void;
+  /** PerfLog.entries().length: the count S15's debug.perf.summary text names. */
+  readonly entriesCount: number;
+  /** debug.perf-summary: "cold 3 · 1049 ms · save p95 0.41 ms". */
+  readonly summary: string;
+};
+
 /** DebugModel plus the JS network guard's counter (debug.network-attempts, flows assert "0"). */
 export type DebugScreenModel = DebugModel & {
   readonly networkAttempts: string;
@@ -53,6 +72,7 @@ export type DebugScreenModel = DebugModel & {
   readonly importSave: (text: string) => DebugImportResult;
   /** The font test page (the FontTest route of the Debug group). */
   readonly openFontTest: () => void;
+  readonly perf: DebugPerfModel;
 };
 
 type ImportFieldState = {
@@ -139,6 +159,31 @@ function useValues(errorCount: number): DebugModel['values'] {
   };
 }
 
+type PerfHooks = { readonly onChanged: () => void; readonly errorLog: ErrorLogPort };
+
+/** The Performance section over services.perf; a failed share goes to the error log. */
+function perfModelOf(services: DebugServices, hooks: PerfHooks): DebugPerfModel {
+  const { perf, perfLog } = services;
+  return {
+    isRecording: perf.isRecording(),
+    onToggleRecording: () => {
+      perf.setRecording(!perf.isRecording());
+      hooks.onChanged();
+    },
+    onShare: () => {
+      perf.share().catch((error: unknown) => {
+        hooks.errorLog.record('boot', error);
+      });
+    },
+    onRunBenchmark: () => {
+      perf.runSaveBenchmark();
+      hooks.onChanged();
+    },
+    entriesCount: perfLog.entries().length,
+    summary: perfSummaryText(perfSummaryOf(perfLog.entries())),
+  };
+}
+
 export function useDebugModel(): DebugScreenModel {
   const navigation = useNavigation();
   const services = useDebugServices();
@@ -178,5 +223,6 @@ export function useDebugModel(): DebugScreenModel {
     importField: imports.field,
     importSave,
     openFontTest,
+    perf: perfModelOf(services, { onChanged: refresh, errorLog }),
   };
 }

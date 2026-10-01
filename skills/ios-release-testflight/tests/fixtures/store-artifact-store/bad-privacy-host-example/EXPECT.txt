@@ -1,0 +1,1 @@
+[links] extra.game.links holds the placeholder privacy-policy host example.com

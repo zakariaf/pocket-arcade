@@ -1,0 +1,3 @@
+[system-text-missing]
+consent.tracking.usage-description is a system dialog text withShell writes into Info.plist for ckb
+ckb.json:1

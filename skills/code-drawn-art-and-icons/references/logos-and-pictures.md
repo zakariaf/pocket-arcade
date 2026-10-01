@@ -86,7 +86,7 @@ A square of size *s*, radius 0.24 *s*, `accent` fill, outline, tilt, the logo at
 | `lose` | 104 | 3, `border` | 6 white | +17 | 6 pt lower (S7 lose) |
 | `splash` | 152 | 4, `border` | 7 white | -6 | S1 |
 
-The tile is a View (ring = `boxShadow` spread, via `dieCutRing`), the art is one Skia `<Canvas>` inside it. It is decorative (`accessibilityElementsHidden`); the screen names the game in text. `drawLogoTile()` in `packages/shell/src/art/draw-logo.ts` draws the same tile imperatively (ring, face, inner edge, art) for scripts and goldens.
+The tile is a View (ring = `boxShadow` spread, via `dieCutRing`), the art is one Skia `<Canvas>` inside it. Its transform is `[{ rotate }, { translateY }]`, rotate first, in the order the mockup's CSS applies `rotate() translateY()`: the other order moves the 104 pt lose tile's lift sideways and S7 lose misses its design box (the test pins the order). It is decorative (`accessibilityElementsHidden`); the screen names the game in text. `drawLogoTile()` in `packages/shell/src/art/draw-logo.ts` draws the same tile imperatively (ring, face, inner edge, art) for scripts and goldens.
 
 Verified: the S1 tiles drawn by `drawLogoTile` at 2x differ from the design's Chrome render in 0.01 % of pixels for Line Siege and Scrap Shove and 0.3 to 0.5 % for Flock Tilt (anti-aliasing on the rotated sheep).
 

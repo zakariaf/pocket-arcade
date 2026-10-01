@@ -1,0 +1,1 @@
+[bundle-id] CFBundleIdentifier com.example.linesiege is the scaffold's placeholder (com.example.*)

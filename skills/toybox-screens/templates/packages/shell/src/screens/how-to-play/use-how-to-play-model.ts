@@ -1,8 +1,9 @@
 // packages/shell/src/screens/how-to-play/use-how-to-play-model.ts
 // S13's model hook: the game's pages from the host (goal and step sentence as catalog keys, the
-// picture drawn by the game's own board), the page shown (local state, clamped to the pages),
-// Done going back to where the player came from (Home, or Pause with the run still paused), and
-// "Play the tutorial again" as a new tutorial run (FirstRun is gone after the first launch).
+// picture drawn by the game's own board at the host's picture aspect), the page shown (local
+// state, clamped to the pages), Done going back to where the player came from (Home, or Pause
+// with the run still paused), and "Play the tutorial again" as a new tutorial run (FirstRun is
+// gone after the first launch).
 // A parity capture of s13-how-to-play (test builds) opens on step 2, the page one Next shows.
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
@@ -23,7 +24,11 @@ function nextStepOf(index: number, lastIndex: number): number {
 export function useHowToPlayModel(): HowToPlayModel {
   const t = useT();
   const navigation = useNavigation();
-  const { howToPlayPages: pages, renderHowToPlayPicture } = useGameHost();
+  const {
+    howToPlayPages: pages,
+    renderHowToPlayPicture,
+    howToPlayPictureAspect: pictureAspect,
+  } = useGameHost();
   const lastIndex = Math.max(0, pages.length - 1);
   const [stepIndex, setStepIndex] = useState(() =>
     TEST_ONLY?.parityFrameState() === 'how-to-play-step-2' ? nextStepOf(0, lastIndex) : 0,
@@ -37,6 +42,7 @@ export function useHowToPlayModel(): HowToPlayModel {
     steps: pages.map((each) => gameMessageText(t, { id: each.bodyId })),
     stepIndex,
     renderPicture: renderHowToPlayPicture,
+    pictureAspect,
     isReducedMotion: useReduceMotion(),
     onBack: goBack,
     onPrevious: () => {

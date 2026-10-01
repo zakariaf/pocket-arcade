@@ -6,7 +6,7 @@ import { loadStore, shouldReloadStore } from './premium-store-flow.ts';
 import type { FakePurchaseScript } from './fake-purchase.ts';
 import type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';
 
-const ID = 'com.example.linesiege.premium';
+const ID = 'io.applander.linesiege.premium';
 
 function setup(isOnline: () => boolean) {
   const script: FakePurchaseScript = {

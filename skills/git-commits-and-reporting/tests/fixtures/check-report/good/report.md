@@ -1,6 +1,6 @@
-Line Siege 1.0.0 is ready for your play-test: every screen works in all four languages, levels save after every move, and ads never interrupt play.
+Line Siege 1.0.0 is on TestFlight as build 8: every screen works in all four languages, levels save after every move, and ads never interrupt play.
 
-Please play TestFlight build 8 and answer "ship" or "don't ship" (step R1). Until then I keep working on the Flock Tilt rules.
+Please say "ship" when build 8 may go to App Review (step R1). Until then it stays on TestFlight and I keep working on the Flock Tilt rules.
 
 Evidence: line-siege release 1.0.0 on 2026-10-20, commit 9f3c2ab
 
@@ -27,10 +27,15 @@ Please look at (at most 5)
 Goldens and baselines changed on purpose
 - apps/line-siege/e2e/baselines: 12 screenshots after the Toybox button update (Gate-Change trailer in 7a1b2c3)
 
+Owner steps (not blocking)
+- Play-test Line Siege on TestFlight build 8, with the purchase test: buy, cancel, restore after reinstall (step G6)
+- Listen to the six Line Siege sound previews in reports/sfx/line-siege/ and feel the haptics on your phone (step G9)
+- Review the fa and ckb texts: none pending in this release (step R3)
+
 Not tested or not verified
-- Sound, haptics and 120 Hz: need your phone (TestFlight play-test, R1)
+- Sound, haptics and 120 Hz on a phone: your play-test and listening above (G6, G9)
 - Purchase on TestFlight: buy, cancel, restore after reinstall (G6)
-- VoiceOver spot check (R2) and the native-speaker read of changed fa/ckb texts (R3)
+- VoiceOver spot check (R2)
 
 Details
 - Mutation survivors: 3 in the monster march timer, equivalent mutants (a zero-step march changes nothing).

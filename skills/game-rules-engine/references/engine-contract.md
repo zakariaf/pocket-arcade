@@ -111,7 +111,7 @@ Every game uses one scale: whole numbers 0..100, the save schema's range. `contr
 |---|---|---|
 | `hud(state)` | `{ score, goal: Message }` | Top bar (S5): the score and the goal/progress line, e.g. `{ id: 'tap-flip.hud.moves', values: { moves: 3, maxMoves: 6 } }`. The Shell adds mode, level and par. |
 | `undo` | `none` / `unlimited` / `limited(perLevel)` | Spec 8.5: unlimited in puzzle games; the game may limit it. The Shell keeps the history. |
-| `hints` | `none` / `solver(suggest)` | `suggest(state)` returns the next good move or null (usually the first move of a solver line; see level-generation-and-solvers). |
+| `hints` | `none` / `solver(suggest)` | `suggest(state)` returns the next good move or null (usually the first move of a solver line; see level-generation-and-solvers). The kind is also the game fact `hasHints` (lead decision L8): `hasHintsOf(module)` in `packages/shell/src/game-host/game-facts.ts` is true exactly when `rules.hints.kind` is `'solver'` (the rule behind the host's `isHintSupported`). With `'none'` (Line Siege) the S5 top bar has no Hint key and S6 no hint entry, and parity picks the design's no-hints variants from `parity/game-facts.json` (`"hasHints": false`). |
 | `continueRun` | `none` / `once(descriptionId, apply)` | Spec 8.10: one rescue per run, only after a loss. `apply(lost)` returns `{ state, events }` whose state is playing again from every way of losing (Tap Flip adds 3 moves; Line Siege gives a heart back, pushes the monsters back 3 rows, empties the two fullest rows after a board-full loss and redraws the tray). The Shell forbids undo across it. |
 
 ## Persistence, statistics, testing members

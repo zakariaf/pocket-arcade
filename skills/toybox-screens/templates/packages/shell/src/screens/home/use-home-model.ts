@@ -5,6 +5,8 @@
 //                        (the level count from useGameExtra())
 //   endless              useGameExtra().modes.endless and the progress store's best
 //   daily card           useDailySummary() (daily-and-statistics) and the Shell date formatter
+//   actions              useHomeActions(): every key, the daily card's body (opens S9 Daily) and
+//                        its Play key (today's run), exactly as navigation-and-routing's table says
 //   banner               useBannerSlot('home') (admob-ads: Premium, online, consent, tutorial, levels)
 //   cold start           useColdStartMark(perf log of a test build's debug services, else null)
 //   parity frame         s14-progress-restored opens the "Progress restored" dialog over Home

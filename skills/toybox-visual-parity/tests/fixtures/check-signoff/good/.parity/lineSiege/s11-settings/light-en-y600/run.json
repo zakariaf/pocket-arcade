@@ -6,7 +6,7 @@
  "lang": "en",
  "game": "lineSiege",
  "scrollY": 600,
- "bundleId": "com.example.linesiege.test",
+ "bundleId": "io.applander.linesiege",
  "simulator": {
   "name": "e07-parity",
   "udid": "00000000-0000-0000-0000-000000000000",

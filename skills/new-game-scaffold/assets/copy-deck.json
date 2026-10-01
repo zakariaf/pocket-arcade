@@ -1319,6 +1319,12 @@
       "fa": "حریم خصوصی تبلیغات",
       "ckb": "تایبەتێتیی ڕیکلام"
     },
+    "consent.tracking.usage-description": {
+      "en": "Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data.",
+      "de": "Google nutzt das, um dir Werbung zu zeigen, die zu deinen Interessen passt. Werbung siehst du so oder so, und das Spiel selbst sammelt keine Daten.",
+      "fa": "گوگل از این برای نمایش تبلیغ‌هایی متناسب با علاقه‌های شما استفاده می‌کند. در هر صورت تبلیغ می‌بینید و خود بازی هیچ داده‌ای جمع نمی‌کند.",
+      "ckb": "گووگڵ ئەمە بەکاردەهێنێت بۆ پیشاندانی ڕیکلامی گونجاو لەگەڵ حەزەکانت. بە هەر حاڵ ڕیکلام دەبینیت، و یارییەکە خۆی هیچ زانیارییەک کۆ ناکاتەوە."
+    },
     "daily.next-in": {
       "en": "Next challenge in {hours, plural, one {# h} other {# h}} {minutes, plural, one {# min} other {# min}}",
       "de": "Nächste Challenge in {hours, plural, one {# Std.} other {# Std.}} {minutes, plural, one {# Min.} other {# Min.}}",

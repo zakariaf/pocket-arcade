@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/shell-plugins.ts",
+      "find": "    ['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }],\n",
+      "with": ""
+    }
+  }
+]

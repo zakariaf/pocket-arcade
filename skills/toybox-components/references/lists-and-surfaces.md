@@ -37,21 +37,24 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 **Templates:** `list-row.tsx` (`ListRow`), `sub-row.tsx` (`SubRow`), example `examples/sound-group.tsx`.
 
-**Row:** min 60 tall, padding 10 × 14, gap 12, centred vertically: icon tile (38) · text column (label `rowLabel` 17 regular, gap 2; description `rowDescription` 14 `inkSoft`) · end slot (`end`): `chevron` (value `rowValue` 15 `inkSoft`, end-aligned, then a 20 pt `inkSoft` chevron that flips in RTL), `toggle` (the Toggle), `radio` (a RadioMark) or `none`. Rows after the first have a 2 pt `line` separator on top (`isFirst` drops it).
+**Row:** min 60 tall, padding 10 × 14, gap 12, centred vertically (`alignItems` and `alignContent: 'center'`: the row wraps, and Yoga's default `alignContent: 'flex-start'` put a single line of parts at the top of the 60 pt row, where CSS centres a one-line flex row; S11a failed until it was set): icon tile (38) · text column (label `rowLabel` 17 regular, gap 2; description `rowDescription` 14 `inkSoft`) · end slot (`end`): `chevron` (value `rowValue` 15 `inkSoft`, end-aligned, then a 20 pt `inkSoft` chevron that flips in RTL), `toggle` (the Toggle), `radio` (a RadioMark) or `none`. Rows after the first have a 2 pt `line` separator on top (`isFirst` drops it).
 
 *Measurements* (`row`): minHeight 60 · paddingBlock 10 · paddingInline 14 · gap 12 · separator 2 · labelGap 2 · chevron 20 · subRowPaddingStart 64.
 
 - **Wrap row** (`below`): the end content drops to a full-width line under the label (the Numbers and Theme rows carry a segmented control there).
 - **Danger row** (`isDanger`): label `danger` Bold, icon tile `dangerFill` with `danger` icon and edge.
 - **Strong row** (`isStrong`): label Bold in the normal ink, e.g. S11 "Remove ads – €1.99". Strong and danger labels use `rowLabelStrong` (17 Bold, line height 1.32 Latin / 1.5 Arabic, a mockup override in the theme's `TYPE_STYLES`), not the button `label` role (1.25), which made each such line 1.2 pt shorter than the reference.
-- **Autonym row** (`labelLanguage`): the language list shows each name in its own script.
+- **Autonym row** (`labelLanguage`): the language list shows each name in its own script, in the option-name style (`optionNameList`, 18 Bold, the design's `opt-n`), never the 17 pt row label.
+- **Icon** (`icon?: IconTileIcon`): an `IconName`, or the two-colour rating star (`'rating-star'` filled, `'rating-star-hollow'`), which the S11 "Rate this game" row uses (the design's `star(false)`, a 1.8 edge; the 2.5-stroke `star-outline` icon looked heavier).
+- **Column row** (`textExtra`): more lines in the text column under the description, where each part keeps its own width (the column has `alignItems: 'flex-start'`), as the design's S11d licence column: the second muted line and the centred "Show licence text" nudge. Never put such lines in `below`, the wrapping end slot: its 12 pt row gap made every S11d row 10 pt taller and shifted the tall capture's scroll offsets.
+- **Description id** (`descriptionTestID`): the description's own testID where the screen map names the part (S11d `settings-licences.<id>.licence`); the default is `<testID>.description`.
 - **Sub-row** (volume under Sound effects and Music): no separator, min height 0, padding top 0, start padding 64 (lines up with the label), label 14 `inkSoft`, then a slider.
 
 **Press:** a row is flat. It is one of the three files allowed to use `Pressable` directly: pressed = `sunken` background, nothing moves. The whole row is the target for chevron, toggle and radio rows.
 
 **Accessibility:** role follows the end: `button` (chevron), `switch` with `accessibilityState.checked` (toggle), `radio` with `selected` (radio), no role and no press for `none`. The name is the label (plus value) as VoiceOver reads the row; the toggle and radio marks inside are hidden.
 
-**testID parts:** `.icon`, `.label`, `.description`, `.value`, `.toggle`, `.radio` (`settings.sound-effects-switch.toggle`). A sub-row: `.label`; its slider has its own id.
+**testID parts:** `.icon`, `.label`, `.description` (or `descriptionTestID`), `.value`, `.toggle`, `.radio` (`settings.sound-effects-switch.toggle`). A sub-row: `.label`; its slider has its own id.
 
 **Do:** make the whole row the target. **Don't:** add shadows to rows or lists; put a raised button inside a row.
 
@@ -59,7 +62,7 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 **Template:** `icon-tile.tsx` (`IconTile`, paints pop, accent, gold, danger, plain; sizes row 38 and statHeader 34).
 
-**Anatomy:** 38 × 38 square, radius 10, 2 pt `outline` edge (as rendered), 22 pt icon. Paints: default `pop` / `onPop`; `accent` / `onAccent` (Endless card, Premium benefits); `gold` gold / toy ink with toy-ink edge (Premium rows, debug Premium); `danger` `dangerFill` / `danger` with `danger` edge; `plain` `surface` / `ink` (locked pack). In stat panel headers: 34 with a 20 pt icon. It may also hold a rating star (`rating-star`, `rating-star-hollow`). Decorative (the row carries the label).
+**Anatomy:** 38 × 38 square, radius 10, 2 pt `outline` edge (as rendered), 22 pt icon. Paints: default `pop` / `onPop`; `accent` / `onAccent` (Endless card, Premium benefits); `gold` gold / toy ink with toy-ink edge (Premium rows, debug Premium); `danger` `dangerFill` / `danger` with `danger` edge; `plain` `surface` / `ink` (locked pack). In stat panel headers: 34 with a 20 pt icon. It may also hold a rating star: `icon` is an `IconTileIcon` (`export type IconTileIcon = IconName | 'rating-star' | 'rating-star-hollow'`), which `ListRow`, `NotePanel` and the S10 Best panel pass through (the Best panel's header draws the gold `rating-star`, the design's `star(true)`, not an ink `star-filled`). Decorative (the row carries the label).
 
 *Measurements* (`iconTile`): size 38 · radius 10 · border 2 (token 2.5) · icon 22 · sizeInStatHeader 34 · iconInStatHeader 20.
 
@@ -75,7 +78,7 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 **Panel header:** an icon tile 34 (20 pt icon) or a logo tile 36 at the start (`leading`), then the heading (`heading` 21 display, a header), gap 10, 12 pt above the content. testID = `<panel>.title`.
 
-**Note panel:** a panel laid out as a row, gap 12, top-aligned: 22 pt icon (2 pt top margin) + body text. Error variant (`isError`, S12): `danger` edge, `dangerFill` fill, `danger` icon. `isStrong` makes the text bold (S12 pending). Part `.icon`.
+**Note panel:** a panel laid out as a row, gap 12, top-aligned (the design's `.note-p`: `align-items: flex-start`): the 22 pt icon has `alignSelf: 'flex-start'` and a 2 pt top margin, then the body text. A centred icon sat lower than the design's on every multi-line S12 note. Error variant (`isError`, S12): `danger` edge, `dangerFill` fill, `danger` icon. `isStrong` sets the text in `rowLabelStrong` (17 Bold on the body's 1.32 / 1.5 line, the design's `<b>` in a body paragraph), never the 17/1.25 `label` role, which made the S12 pending panel 2.4 pt short. `iconTile` (an `IconTilePaint`) puts the icon on a 38 pt tile of that paint, centred on the text: the S11a right-to-left note shows a pop globe tile, not a bare icon. **Width:** the design's `<p>` is a flex item as wide as its text, so a note that laid out on one line shrinks to its text (`flexShrink: 1`), while a wrapped note keeps `flex: 1` and fills the row. `AppText`'s `onLineCount` tells the panel which case it is. A one-line right-to-left note otherwise started 9 pt further left than the design's, and the parity text-ink window cut off the start of the line (S12 unavailable fa). `lists.test.tsx` pins both widths. Parts `.icon`, `.label`.
 
 **Offer box** (S7 lose): a dashed 3 pt `outline` frame, radius 14, padding 14, gap 10, no fill: the pop "Continue – watch an ad" block button + a caption.
 
@@ -90,6 +93,8 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 **Anatomy:** a tilted label: padding 5 top and bottom / 9 on the left / 11 on the right in both directions (the mockup pads physically, `padding: 5px 11px 5px 9px`, so in RTL the larger pad sits on the right, next to the icon; the component swaps its logical start and end pads when the layout is RTL, because physical style keys are banned), gap 6, radius 8, 2 pt toy-ink edge (as rendered), **3.5 pt white die-cut ring** (`dieCutRing`, colour `cut`) outside the edge, text `sticker` style (16 display) in toy ink, optional 18 pt icon or rating star at the start; default tilt −4°, range 2–8° either way; never wider than its container (`maxWidth: '100%'`, long German or Sorani text wraps inside).
 
 *Measurements* (`sticker`, start/end as seen left to right): paddingBlock 5 · paddingStart 9 · paddingEnd 11 · gap 6 · radius 8 · border 2 (token 2.5) · ring 3.5 (box-shadow, token value) · icon 18 · rotateDefault -4 · rotateRange 2/8 · sm.paddingBlock 3 · sm.paddingStart 7 · sm.paddingEnd 9 · xs.paddingBlock 2 · xs.paddingStart 5 · xs.paddingEnd 7 · xs.gap 4 · xs.icon 14.
+
+**The S7 New best sticker** is the gold `sm` sticker with the rating star, tilted **+6°** (the mockup's `sticker(t('result.win.new-best'), {cls: 'sm', r: 6, icon: 'star'})`): 2 + 7 + 18 + 6 + text + 9 + 2 pt wide (103 × 28 unrotated in en). `ScorePanel` sets both; the regular size (9 / 11 pads, 16 pt text) and the default −4° made it 12 pt wider than the design on the device.
 
 **Papers:** gold (default: streak, New best, Phone language, Premium) · accent (the game's win title, "The wall holds!") · pop (the Home tagline, tilt −2°) · ink (toy ink with **white** text: Locked, Test build). **Sizes:** regular 16; `sm` 14; `xs` 12.
 
@@ -123,7 +128,10 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 ## Confetti (4.34)
 
-**Template:** `confetti.tsx` (`Confetti`, testID `premium.confetti`). Five 16 × 16 squares (radius 4, 2 pt toy-ink edge as rendered) in `accent`, `pop` and gold, scattered in a 70 pt band and tilted (18°, −12°, 30°, −24°, 8°). Chosen: they fall with the success sticker's slap timing; **under reduce motion the component renders nothing**. Decorative.
+**Template:** `confetti.tsx` (`Confetti`, testID `premium.confetti`). Five 16 × 16 squares (radius 4, 2 pt toy-ink edge as rendered) in `accent`, `pop` and gold, scattered in a 70 pt band and tilted (18°, −12°, 30°, −24°, 8°). Chosen: they fall with the success sticker's slap timing. Decorative.
+
+- **Reduce motion:** `isHiddenBySetting` (the player's saved Reduce motion setting, from `useReduceMotionSetting()`; the screen passes it) hides the confetti entirely (spec S12). `isReducedMotion` alone (the answer of `useReduceMotion()`, which a parity capture turns on to hold motion still) draws the pieces at rest, the first still frame, with no fall. When the screen passes no `isHiddenBySetting`, it defaults to `isReducedMotion`. Returning nothing whenever motion was reduced left the frozen success card without its confetti (an S12 structure difference).
+- **Never mirrored:** the mockup places the pieces with `left:`, so the scatter is the same in every language. Physical keys are banned, so the band has `direction: 'ltr'`, where `start` is the left edge; with `start: x` alone the scatter mirrored in fa and ckb (S12 success dark-fa). `check-components` rule `confetti-ltr` fails a band without it; `tiles.test.tsx` pins both cases.
 
 *Measurements* (`confetti`): size 16 · radius 4 · border 2 (token 2.5).
 

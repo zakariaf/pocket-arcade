@@ -1,0 +1,3 @@
+[att-plugin]
+packages/shell/src/config/shell-plugins.ts
+no ['expo-tracking-transparency', { userTrackingPermission }] entry

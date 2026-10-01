@@ -69,6 +69,10 @@ const scratch = () => {
 };
 const extraArgs = (dir) => (existsSync(join(dir, 'args.json')) ? JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8')) : null);
 const fakes = ['--xcrun', join(FAKES, 'fake-xcrun.mjs')];
+// The fake xcrun writes each launch's nonce here and the fake maestro puts its marker into the dump,
+// as the app's parity root does (every child script inherits the variable).
+const fakeStateDir = mkdtempSync(join(tmpdir(), 'toybox-visual-parity-fake-'));
+process.env.FAKE_PARITY_STATE = join(fakeStateDir, 'launch.json');
 // map-edit.json { "dropTestID": "<id>" }: a copy of the skill's testID map without that element, so a
 // map change that reaches a reference (one element fewer measured) must show as drift.
 const editedMap = (dir) => {
@@ -127,8 +131,42 @@ const editedMap = (dir) => {
   console.log('ok   make-sheet crops a scrolled bounds failure from the window the capture shows');
 }
 
-// Every JSON template is exactly what Prettier writes (2-space indentation, a trailing newline), so
-// format:check passes right after a copy.
+// frames-edit.json { "frame", "variant", "derive" }: a copy of the skill's frames manifest whose variant
+// derive is replaced, so a derive that hides the wrong element must fail (variant-derive).
+const editedFrames = (dir) => {
+  const editPath = join(dir, 'frames-edit.json');
+  if (!existsSync(editPath)) return [];
+  const edit = JSON.parse(readFileSync(editPath, 'utf8'));
+  const frames = JSON.parse(readFileSync(join(HERE, '..', 'assets', 'frames.json'), 'utf8'));
+  frames.frames[edit.frame].variants[edit.variant].derive = edit.derive;
+  const out = join(scratch(), 'frames.json');
+  writeFileSync(out, JSON.stringify(frames));
+  return ['--frames', out];
+};
+
+// Every JSON template is exactly what Prettier writes (2-space indentation, a trailing newline, and
+// an array of plain values on one line when it fits the repo's printWidth of 100), so format:check
+// passes right after a copy. JSON.stringify(value, null, 2) alone is not that shape: it breaks
+// "langs": ["en"] over three lines, which Prettier joins.
+const PRINT_WIDTH = 100;
+const isPlain = (value) => value === null || typeof value !== 'object';
+function prettierJson(value, indent = 0, prefix = 0) {
+  const pad = ' '.repeat(indent + 2);
+  if (Array.isArray(value)) {
+    if (value.length === 0) return '[]';
+    if (value.every(isPlain)) {
+      const line = `[${value.map((item) => JSON.stringify(item)).join(', ')}]`;
+      if (indent + prefix + line.length + 1 <= PRINT_WIDTH) return line;
+    }
+    return `[\n${value.map((item) => pad + prettierJson(item, indent + 2)).join(',\n')}\n${' '.repeat(indent)}]`;
+  }
+  if (!isPlain(value)) {
+    const entries = Object.entries(value);
+    if (entries.length === 0) return '{}';
+    return `{\n${entries.map(([key, item]) => `${pad}${JSON.stringify(key)}: ${prettierJson(item, indent + 2, JSON.stringify(key).length + 2)}`).join(',\n')}\n${' '.repeat(indent)}}`;
+  }
+  return JSON.stringify(value);
+}
 {
   const { readdirSync, statSync } = await import('node:fs');
   const templates = join(HERE, '..', 'templates');
@@ -139,10 +177,10 @@ const editedMap = (dir) => {
   });
   const bad = walkJson(templates).filter((path) => {
     const text = readFileSync(path, 'utf8');
-    return text !== `${JSON.stringify(JSON.parse(text), null, 2)}\n`;
+    return text !== `${prettierJson(JSON.parse(text))}\n`;
   });
   if (bad.length) {
-    for (const path of bad) console.log(`FAIL ${path.slice(templates.length + 1)} [template-json] not the Prettier shape Fix: Write it as JSON.stringify(value, null, 2) plus a newline.`);
+    for (const path of bad) console.log(`FAIL ${path.slice(templates.length + 1)} [template-json] not the Prettier shape Fix: Run npx prettier --write on it in an app repo (2-space JSON, short arrays of plain values on one line, a trailing newline) and copy it back.`);
     console.log(`RESULT: FAIL (${bad.length} problems)`);
     process.exit(1);
   }
@@ -162,11 +200,14 @@ const editedMap = (dir) => {
   const cases = [
     { name: 'board rectangle missing', script: 'check-parity.mjs', dir: 'exit2/board-rect-missing', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
     { name: 'facts file missing', script: 'check-parity.mjs', dir: 'exit2/facts-missing', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
-    { name: 'facts of another design game', script: 'capture-app.mjs', dir: 'exit2/facts-wrong-game', args: ['--bundle-id', 'com.example.linesiege.test', '--frame', 's11-settings', '--theme', 'light', '--lang', 'en', '--out', scratch(), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], exit: 2 },
+    { name: 'facts without hasHints (never a guess)', script: 'check-parity.mjs', dir: 'exit2/facts-no-hints', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
+    { name: 'packages missing from the --tooling folder', script: 'check-parity.mjs', dir: 'exit2/tooling-empty', args: ['.', '--waivers', 'none.json', '--no-write', '--tooling', fakeStateDir], exit: 2 },
+    { name: 'facts of another design game', script: 'capture-app.mjs', dir: 'exit2/facts-wrong-game', args: ['--bundle-id', 'io.applander.linesiege', '--frame', 's11-settings', '--theme', 'light', '--lang', 'en', '--out', scratch(), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], exit: 2 },
     { name: 'the no-music variant chosen by the facts', script: 'check-parity.mjs', dir: 'variants/s11-no-music-light-en', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music (variant no-music, chosen by the game facts)', '1 of 1 runs pass'] },
     { name: 'a real S11 capture whose list edge runs under the group tab (dark fa, scroll 1042)', script: 'check-parity.mjs', dir: 'variants/s11-no-music-dark-fa-y1042-tab-edge', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music', '1 of 1 runs pass'] },
+    { name: 'the S14 reset dialog over Settings without music (a background variant)', script: 'check-parity.mjs', dir: 'variants/s14-reset-no-music-light-en', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s14-reset-all-progress--no-music (variant no-music, chosen by the game facts)', '1 of 1 runs pass'] },
     { name: 'the same edge drawn 2 px thicker', script: 'check-parity.mjs', dir: 'variants/s11-no-music-dark-fa-y1042-thick-edge', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 1, lines: ['[border] settings.group.privacy.list: border differs: top 3.7 pt'] },
-    { name: 'the change entries of a signed-off frame', script: 'check-signoff.mjs', dir: 'check-signoff/good', args: ['--frame', 's4-home', '--frame', 's11-settings', '--themes', 'light', '--langs', 'en', '--reference', join(FIXTURES, 'check-signoff', 'reference')], exit: 0, lines: ['reference s11-settings (base)', 'intended reference change L5 (2026-09-30)'], absent: ['X1'] },
+    { name: 'the change entries of a signed-off frame', script: 'check-signoff.mjs', dir: 'check-signoff/good', args: ['--frame', 's4-home', '--frame', 's11-settings', '--reference', join(FIXTURES, 'check-signoff', 'reference')], exit: 0, lines: ['reference s11-settings (base)', 'intended reference change L5 (2026-09-30)', 'light-en done | light-fa done | dark-en done | dark-fa done'], absent: ['X1', 'narrowed'] },
   ];
   for (const c of cases) {
     const dir = join(FIXTURES, c.dir);
@@ -184,15 +225,18 @@ const editedMap = (dir) => {
   }
   // capture-app on a Game-route frame: the probe's board rectangle and the facts' variant land in run.json.
   const out = scratch();
-  const r = spawnSync(process.execPath, [join(HERE, 'capture-app.mjs'), '--bundle-id', 'com.example.linesiege.test', '--frame', 's6-pause', '--theme', 'light', '--lang', 'en', '--out', out, '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], { cwd: join(FIXTURES, 'capture-app-board', 'good'), encoding: 'utf8' });
+  const r = spawnSync(process.execPath, [join(HERE, 'capture-app.mjs'), '--bundle-id', 'io.applander.linesiege', '--frame', 's6-pause', '--theme', 'light', '--lang', 'en', '--out', out, '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], { cwd: join(FIXTURES, 'capture-app-board', 'good'), encoding: 'utf8' });
   const info = existsSync(join(out, 'run.json')) ? JSON.parse(readFileSync(join(out, 'run.json'), 'utf8')) : {};
   const probeLaunch = `${r.stdout}`.includes('probe=board');
-  if (r.status !== 0 || info.variant !== 'no-music' || info.board?.rect?.w !== 370 || !probeLaunch) {
-    console.log(`FAIL tests/fixtures/capture-app-board/good [capture-app] exit ${r.status}, variant ${info.variant}, board ${JSON.stringify(info.board?.rect)}, probe launch ${probeLaunch} Fix: capture-app must probe the board once (probe=board) and pick the variant from the facts.`);
+  // Every capture names its simulator and its own driver port, and proves its dumps by two nonces.
+  const proved = /^[0-9a-f]{12}$/.test(info.nonce ?? '') && /^[0-9a-f]{12}$/.test(info.board?.nonce ?? '') && info.nonce !== info.board?.nonce
+    && info.simulator?.udid === '11111111-2222-3333-4444-555555555555' && Number.isInteger(info.simulator?.driverPort) && info.systemAlert === null;
+  if (r.status !== 0 || info.variant !== 'no-music--no-hints' || info.referenceName !== 's6-pause--no-music--no-hints' || info.board?.rect?.w !== 370 || !probeLaunch || !proved) {
+    console.log(`FAIL tests/fixtures/capture-app-board/good [capture-app] exit ${r.status}, variant ${info.variant}, board ${JSON.stringify(info.board?.rect)}, probe launch ${probeLaunch}, nonces ${info.nonce}/${info.board?.nonce}, simulator ${JSON.stringify(info.simulator)} Fix: capture-app must probe the board once (probe=board), compose the variant from the facts, and record the UDID, driver port and both launch nonces.`);
     console.log('RESULT: FAIL (1 problems)');
     process.exit(1);
   }
-  console.log('ok   capture-app probes the board (probe=board) and picks s6-pause--no-music from the facts');
+  console.log('ok   capture-app probes the board (probe=board), composes s6-pause--no-music--no-hints from the facts, and records the UDID, driver port and both launch nonces');
 }
 
 await runSelftest(import.meta.url, [
@@ -219,7 +263,7 @@ await runSelftest(import.meta.url, [
   {
     script: 'check-signoff.mjs',
     fixtures: '../tests/fixtures/check-signoff',
-    args: (dir) => [...(extraArgs(dir) ?? ['--frame', 's4-home', '--themes', 'light']), '--langs', 'en', '--reference', join(dir, '..', 'reference')],
+    args: (dir) => [...(extraArgs(dir) ?? ['--frame', 's4-home', '--themes', 'light', '--langs', 'en']), '--reference', join(dir, '..', 'reference')],
   },
   {
     script: 'check-signoff.mjs',
@@ -229,17 +273,17 @@ await runSelftest(import.meta.url, [
   {
     script: 'capture-app.mjs',
     fixtures: '../tests/fixtures/capture-app',
-    args: () => ['--bundle-id', 'com.example.linesiege.test', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
+    args: () => ['--bundle-id', 'io.applander.linesiege', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
   },
   {
     script: 'capture-app.mjs',
     fixtures: '../tests/fixtures/capture-app-board',
-    args: () => ['--bundle-id', 'com.example.linesiege.test', '--frame', 's6-pause', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
+    args: () => ['--bundle-id', 'io.applander.linesiege', '--frame', 's6-pause', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
   },
   {
     script: 'capture-app.mjs',
     fixtures: '../tests/fixtures/capture-app-retry',
-    args: () => ['--bundle-id', 'com.example.linesiege.test', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
+    args: () => ['--bundle-id', 'io.applander.linesiege', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
   },
   {
     script: 'setup-parity-sim.mjs',
@@ -254,17 +298,17 @@ await runSelftest(import.meta.url, [
   {
     script: 'shoot-design.mjs',
     fixtures: '../tests/fixtures/shoot-design',
-    args: (dir) => ['--check', '--frame', 's12-error', '--theme', 'light', '--lang', 'en', ...(existsSync(join(dir, 'reference')) ? ['--reference', join(dir, 'reference')] : []), ...editedMap(dir)],
+    args: (dir) => ['--check', ...(extraArgs(dir) ?? ['--frame', 's12-error', '--theme', 'light', '--lang', 'en']), ...(existsSync(join(dir, 'reference')) ? ['--reference', join(dir, 'reference')] : []), ...editedMap(dir), ...editedFrames(dir)],
   },
   {
     script: 'run-parity.mjs',
     fixtures: '../tests/fixtures/run-parity',
-    args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'com.example.linesiege.test', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
+    args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')],
   },
   {
     script: 'run-parity.mjs',
     fixtures: '../tests/fixtures/run-parity-session',
-    args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'com.example.linesiege.test', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs'), ...(extraArgs(dir) ?? [])],
+    args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs'), ...(extraArgs(dir) ?? [])],
   },
   {
     script: 'check-harness.mjs',
@@ -287,3 +331,4 @@ await runSelftest(import.meta.url, [
 ]);
 
 if (scratchRoot) rmSync(scratchRoot, { recursive: true, force: true });
+rmSync(fakeStateDir, { recursive: true, force: true });

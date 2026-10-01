@@ -1,0 +1,2 @@
+apps/line-siege/game.config.ts:4 [game-config] bundleId is 'com.example.linesiege', not 'io.applander.linesiege'
+apps/line-siege/game.config.ts:5 [game-config] premium productId is 'com.example.linesiege.premium', not 'io.applander.linesiege.premium'

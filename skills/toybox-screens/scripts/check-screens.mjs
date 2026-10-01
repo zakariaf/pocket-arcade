@@ -9,7 +9,18 @@
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-import { createReporter, fail, parseArgs, readShellSlice, run, sliceSkipReason, toPosix, walk } from './check-lib.mjs';
+import {
+  SHELL_DUE_TARGETS,
+  createReporter,
+  dueSkipReason,
+  fail,
+  parseArgs,
+  readShellSlice,
+  run,
+  sliceSkipReason,
+  toPosix,
+  walk,
+} from './check-lib.mjs';
 import {
   BANNER_SCREENS,
   COMPONENT_IDS,
@@ -32,6 +43,8 @@ import {
 import {
   bannerUses,
   countHeroKeys,
+  jsxElementWith,
+  propValue,
   scanIdProps,
   scanStrings,
   scanTKeys,
@@ -84,6 +97,17 @@ const SPEC = {
     '  retired-copy-key     a screen still uses a retired key (result.win.moves-count: the score line replaced it)',
     '  game-screen-wiring   S5 (screens/game/) never calls topBarPropsOf, resultModelOf, perkOffer or',
     '                       showInterstitialIfDue: the Game screen is only half assembled',
+    '  home-daily-opener    S4: the element with testID="home.daily-card" is not a pressable surface whose',
+    '                       onPress calls onOpenDaily, or the Play key (home.daily-card.play-button) is nested',
+    '                       inside it (lead decision L7: the card body opens S9, the Play key only plays)',
+    '  hint-key-fact        S5: the hint key is not decided by the game fact GameHost.hasHints (game-top-bar.tsx',
+    '                       draws a hint whenever the offer has one, or the Game screen never reads hasHints)',
+    '  splash-held          S1: the restart splash (app/create-startup-splash.tsx) reads only the phone\'s Reduce',
+    '                       motion, so a parity capture never holds it still (OR TEST_ONLY.isParityMotionFrozen())',
+    '  rate-row-icon        S11: the Rate this game row (settings-row-specs.ts) does not use the design\'s hollow',
+    '                       rating star, icon \'rating-star-hollow\'',
+    '  debug-perf-rows      S15: a Performance row the map lists for S15 (debug.perf-*) is set nowhere in',
+    '                       screens/debug/ (the switch, Share report, Run save benchmark, the summary)',
     '',
     'Partial Shell: with shell-slice.json at the repo root ({ "screens": ["S4", "S11"], "why": "..." }),',
     'every rule of a screen outside the slice prints "SKIP <folder> [screen] <S-id> not in shell-slice.json"',
@@ -401,6 +425,120 @@ function checkRouteHooks(roots, screen, route, report) {
   }
 }
 
+const DAILY_CARD = 'home.daily-card';
+
+/** L7: the daily card's body is the opener of S9 (onOpenDaily) and the Play key is its sibling. */
+function checkDailyOpener(screen, code, report) {
+  if (screen.id !== 'S4') return;
+  const fix =
+    'Copy home-daily-card.tsx from the skill\'s templates: a plain View card whose bottom layer is a RaisedSurface ' +
+    'filling it (testID="home.daily-card", onPress={onOpenDaily}, label = title, date, streak), with the header ' +
+    'drawn above it and the Play key as a sibling (references/s04-home.md, "Two controls on one card").';
+  for (const file of code.files.filter((entry) => !isTestFile(entry.rel))) {
+    for (const attribute of [`testID="${DAILY_CARD}"`, `testID={'${DAILY_CARD}'}`]) {
+      const element = jsxElementWith(file.source ?? '', attribute);
+      if (element === null) continue;
+      const at = { file: file.rel, line: element.line, rule: 'home-daily-opener', fix };
+      const onPress = propValue(element.opening, 'onPress');
+      if (onPress === null) {
+        report.problem({ ...at, message: `<${element.name} testID="${DAILY_CARD}"> has no onPress: nothing on Home opens S9 Daily challenge` });
+      } else if (!/\bonOpenDaily\b/.test(onPress)) {
+        report.problem({ ...at, message: `<${element.name} testID="${DAILY_CARD}"> presses ${onPress}, not onOpenDaily: the card body must open S9` });
+      }
+      if (element.body.includes(`${DAILY_CARD}.play-button`)) {
+        report.problem({ ...at, message: `the Play key ${DAILY_CARD}.play-button is nested inside the opener <${element.name} testID="${DAILY_CARD}">` });
+      }
+      return;
+    }
+  }
+  report.problem({
+    file: SCREEN_PATHS.S4[0],
+    rule: 'home-daily-opener',
+    message: `no JSX element in S4's files sets testID="${DAILY_CARD}", so the daily card cannot open S9`,
+    fix,
+  });
+}
+
+const GAME_TOP_BAR = `${SCREEN_PATHS.S5[1]}`;
+
+/** L8: the hint key exists only for a game with solver hints (GameHost.hasHints). */
+function checkHintFact(screen, code, report) {
+  if (screen.id !== 'S5') return;
+  const sources = code.files.filter((file) => !isTestFile(file.rel));
+  const fix =
+    'Copy game-host/game-top-bar.tsx and screens/game/use-game-screen-model.ts from the skill\'s templates: the ' +
+    'model reads useGameHost().hasHints and passes hint null when it is false, and GameTopBar draws a hint only ' +
+    'when props.hasHints (references/s05-game.md).';
+  const topBar = sources.find((file) => file.rel === GAME_TOP_BAR);
+  if (topBar !== undefined && !/\bhasHints\s*(?:\?|&&)/.test(topBar.source ?? '')) {
+    report.problem({ file: GAME_TOP_BAR, rule: 'hint-key-fact', message: 'GameTopBar draws the hint key whenever the offer has one, without the game fact hasHints', fix });
+  }
+  const game = sources.filter((file) => file.rel !== GAME_TOP_BAR);
+  if (game.length > 0 && !game.some((file) => /\.hasHints\b|\bhasHints\b[^;]*=\s*useGameHost\(\)/.test(file.source ?? ''))) {
+    report.problem({ file: SCREEN_PATHS.S5[0], rule: 'hint-key-fact', message: 'the Game screen never reads GameHost.hasHints, so the hint key does not follow the game\'s hint fact', fix });
+  }
+}
+
+const RESTART_SPLASH = 'packages/shell/src/app/create-startup-splash.tsx';
+
+/** S1: the restart splash holds still in a parity capture (the frozen-motion switch). */
+function checkSplashHeld(roots, screen, report) {
+  if (screen.id !== 'S1') return;
+  const found = [...roots].reverse().map((root) => join(root, RESTART_SPLASH)).find((abs) => existsSync(abs));
+  if (found === undefined) {
+    // The restart splash lands with start-shell.ts at Shell step 7: before that it is not yet due.
+    const isBootBuilt = roots.some((root) => dueSkipReason(root, SHELL_DUE_TARGETS.boot) === null);
+    if (!isBootBuilt) {
+      report.skip({ file: RESTART_SPLASH, rule: 'splash-held', message: dueSkipReason(roots[0], SHELL_DUE_TARGETS.boot) });
+      return;
+    }
+    report.problem({ file: RESTART_SPLASH, rule: 'splash-held', message: 'the restart splash is missing while start-shell.ts exists', fix: 'Copy app/create-startup-splash.tsx and its test from the skill\'s templates (references/s01-splash.md).' });
+    return;
+  }
+  const source = readFileSync(found, 'utf8');
+  const reduced = /\bisReducedMotion\s*=([^;]*);/.exec(source);
+  if (!/\bisParityMotionFrozen\s*\(/.test(source) || reduced === null || !/isParityMotionFrozen/.test(reduced[1])) {
+    report.problem({
+      file: RESTART_SPLASH,
+      rule: 'splash-held',
+      message: 'the restart splash reads only the phone\'s Reduce motion: its loader keeps hopping in a parity capture',
+      fix: 'Set const isReducedMotion = isSystemReduceMotionOn || isParityMotionFrozen(), where isParityMotionFrozen() is TEST_ONLY?.isParityMotionFrozen() === true (the template does).',
+    });
+  }
+}
+
+const RATE_ROW = /\brate\s*:\s*\{([^}]*)\}/;
+
+/** S11: "Rate this game" draws the design's star(false), the hollow rating star. */
+function checkRateRow(screen, code, report) {
+  if (screen.id !== 'S11') return;
+  const specs = code.files.find((file) => file.rel.endsWith('/settings-row-specs.ts'));
+  if (specs === undefined) return;
+  const row = RATE_ROW.exec(specs.source ?? '');
+  const icon = row === null ? null : /\bicon\s*:\s*'([^']+)'/.exec(row[1])?.[1] ?? null;
+  if (icon === 'rating-star-hollow') return;
+  report.problem({
+    file: specs.rel,
+    rule: 'rate-row-icon',
+    message: `the Rate this game row uses ${icon === null ? 'no icon' : `the '${icon}' icon`}, while the design draws star(false), the hollow rating star`,
+    fix: "Use icon: 'rating-star-hollow' (IconTile draws it; SettingsRowSpec.icon is IconTileIcon), as the template does.",
+  });
+}
+
+/** S15: every Performance row the map lists (debug.perf-*) is drawn by the debug menu. */
+function checkDebugPerfRows(screen, code, report) {
+  if (screen.id !== 'S15') return;
+  for (const id of [...screen.extraIds].filter((each) => each.startsWith('debug.perf-')).sort()) {
+    if (code.literals.has(id)) continue;
+    report.problem({
+      file: SCREEN_PATHS.S15[0],
+      rule: 'debug-perf-rows',
+      message: `the Performance row ${id} (a map entry of S15 the design does not draw) is set nowhere in screens/debug/`,
+      fix: 'Copy debug-rows.ts (DEBUG_PERF_ROWS), debug-perf-section.tsx and debug-view.tsx from the skill\'s templates (references/s15-debug.md, "Performance").',
+    });
+  }
+}
+
 /** Shell texts the deck lacks must be in all four Shell catalogs, exactly (when the repo has them). */
 function checkExtraKeys(roots, code, report) {
   const used = new Set(code.tKeys.map((entry) => entry.key).filter((key) => key in SHELL_EXTRA_KEYS));
@@ -414,7 +552,7 @@ function checkExtraKeys(roots, code, report) {
     const catalog = existsSync(abs) ? JSON.parse(readFileSync(abs, 'utf8')) : {};
     for (const key of used) {
       if (catalog[key] === SHELL_EXTRA_KEYS[key][lang]) continue;
-      report.problem({ file, rule: 'extra-key-catalog', message: `${key} is ${key in catalog ? 'different' : 'missing'} in the ${lang} Shell catalog`, fix: `Write "${key}": ${JSON.stringify(SHELL_EXTRA_KEYS[key][lang])} into ${file} (keys sorted; the deck lacks this text, so copy-deck.mjs never writes it; fa and ckb await a native review).` });
+      report.problem({ file, rule: 'extra-key-catalog', message: `${key} is ${key in catalog ? 'different' : 'missing'} in the ${lang} Shell catalog`, fix: `Write "${key}": ${JSON.stringify(SHELL_EXTRA_KEYS[key][lang])} into ${file} (keys sorted; the deck lacks this text, so copy-deck.mjs never writes it unless it runs with --extras; the fa and ckb drafts go on the owner's review list, never waited for).` });
     }
   }
 }
@@ -457,6 +595,11 @@ run(async () => {
     checkFiles(screen, code, report);
     checkModelHooks(roots, screen, report);
     checkGameWiring(screen, code, report);
+    checkDailyOpener(screen, code, report);
+    checkHintFact(screen, code, report);
+    checkSplashHeld(roots, screen, report);
+    checkRateRow(screen, code, report);
+    checkDebugPerfRows(screen, code, report);
     checkExtraKeys(roots, code, report);
   }
   if (checked === 0 && report.count === 0 && slice === null) fail('no screen code found under packages/shell/src', 'Run from the app repo root (node check-screens.mjs .), after building at least one screen.');

@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => {
   return styles;
 });
 
-/** A dialog card: optional art, title, body, then the buttons (safe choice at the start). */
+/** A dialog card: optional art, title, body, then the buttons (safe choice at the start). Drawn on a Scrim, which keeps VoiceOver inside. */
 export function DialogCard(props: DialogCardProps): ReactNode {
   const styles = useStyles();
   const base = props.testIDBase;
@@ -61,7 +61,6 @@ export function DialogCard(props: DialogCardProps): ReactNode {
     <View
       style={[styles.card, props.variant === 'pause' ? styles.pause : styles.regular]}
       testID={props.cardTestID ?? `${base}.card`}
-      accessibilityViewIsModal
     >
       {props.art}
       {props.title === undefined ? null : (

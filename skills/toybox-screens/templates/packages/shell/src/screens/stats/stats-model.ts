@@ -17,7 +17,7 @@ export type GameStat = { readonly key: string; readonly label: string; readonly 
 export type StatsSnapshot = {
   readonly gamesPlayed: number;
   readonly wins: number;
-  /** 0..1, shown with stats.win-rate (::percent). */
+  /** 0..1, shown as a bare percentage (formatPercent), under the stats.overview.win-rate label. */
   readonly winRate: number;
   readonly playHours: number;
   readonly playMinutes: number;
@@ -55,6 +55,8 @@ export type StatsModel = {
   readonly logo: LogoArt;
   /** Plain numbers in the chosen digits (createNumberFormatter). */
   readonly formatNumber: (value: number) => string;
+  /** A 0..1 rate as a bare percentage in the chosen digits (the win-rate cell: 62%). */
+  readonly formatPercent: (rate: number) => string;
   readonly isReducedMotion: boolean;
   readonly banner: Pick<AdBannerSlotProps, 'renderBanner' | 'isAllowed'>;
   readonly onBack: () => void;

@@ -1,0 +1,2 @@
+splash-held
+the restart splash is missing while start-shell.ts exists

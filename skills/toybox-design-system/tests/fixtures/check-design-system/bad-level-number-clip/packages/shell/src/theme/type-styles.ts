@@ -46,9 +46,13 @@ export const TYPE_STYLES = {
    * them overflow). The tile keeps its 62 pt height; in fa and ckb the mini stars sit lower.
    */
   levelNumber: display(21, [1, 1]),
-  scoreValue: display(44, [1, 1]),
+  /**
+   * Arabic script 1.45 for the same reason (lead decision L9): at a 44 pt box the Persian score lost
+   * the tops of its digits. The score line grows from 44 to 191/3 pt in fa and ckb.
+   */
+  scoreValue: display(44, [1, 1.45]),
   /** No wrap. */
-  statValueCompact: display(23, [1.1, 1.1]),
+  statValueCompact: { ...display(23, [1.1, 1.1]), isTabular: true },
   /** Align end. */
   statListValue: display(22, [1.1, 1.1]),
   streakValue: display(28, [1.1, 1.45]),
@@ -91,13 +95,16 @@ export const TYPE_STYLES = {
   /** Colour toastInk. */
   toast: text(15, 'regular', [1.35, 1.55]),
   /** Underline 2 pt, offset 5. */
-  nudge: { ...text(15, 'regular', [1.25, 1.45]), isUnderlined: true },
+  /** The quiet nudge's label; QuietButton draws its 2 pt underline itself (quietUnderlineTop). */
+  nudge: text(15, 'regular', [1.25, 1.45]),
   /** Colour textMuted. */
   scoreLabel: text(17, 'bold', [1.32, 1.5]),
   scoreLines: text(16, 'regular', [1.32, 1.5]),
   /** Colour textMuted. */
   statLabel: text(14, 'regular', [1.3, 1.5]),
   statListKey: text(15, 'regular', [1.32, 1.5]),
+  /** The bold first row of a stat list (S10 "Best score"): the key's size, bold. */
+  statListHeading: text(15, 'bold', [1.32, 1.5]),
   /** Colour textMuted. */
   streakLabel: text(14, 'bold', [1.32, 1.5]),
   packProgress: text(15, 'bold', [1.32, 1.5]),

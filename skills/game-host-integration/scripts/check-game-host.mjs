@@ -32,7 +32,7 @@ const SPEC = {
     '  continue-once, play-time, stars-from-table, saved-run-validated, unsafe-cast, screens-type-erased,',
     '  host-not-created, host-order, continue-from-config, run-end-publish, host-deps, host-not-provided,',
     '  game-screen-wiring, debug-controls, debug-run-end, game-facts, score-line, parity-frame-openers,',
-    '  parity-board-probe',
+    '  parity-board-probe, feedback-recorded (test builds play the Shell feedback through the debug parts\' recorders)',
     'Rules (game): assembly-file-missing, module-assembly, types-bag, entry, contract-test, save-policy,',
     '  config-rules, teaching, teaching-keys',
     '',

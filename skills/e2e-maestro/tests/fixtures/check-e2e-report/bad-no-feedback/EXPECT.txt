@@ -1,0 +1,1 @@
+reports/e2e/demo/feedback.json [feedback-evidence] is missing, so nothing shows the app asked for the win feedback on the simulator

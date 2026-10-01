@@ -1,0 +1,3 @@
+[consent-order]
+prepareAds with ATT declined earlier: ads still initialize
+prepareAds when the player declines ATT now: ads still initialize

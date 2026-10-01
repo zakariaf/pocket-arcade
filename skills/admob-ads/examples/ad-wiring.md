@@ -28,7 +28,8 @@ const adsExtra = readAdsExtra(); // { adsMode, adUnits } embedded at build time
 const ads = createAdsPort(adsExtra, (error) => {
   errorLog.record('ads', error);
 });
-// ADS_MODE=off (screenshots, E2E, ads-off games): a consent port that never calls Google UMP.
+// ADS_MODE=off (screenshots, E2E, ads-off games): a consent port that never calls Google UMP and
+// never shows Apple's tracking prompt (requestTracking answers 'unavailable').
 const consent = createConsentPort(adsExtra.adsMode, {
   onError: (error) => {
     errorLog.record('ads', error);
@@ -61,10 +62,12 @@ Nothing calls the ad gate by hand. `ShellFeatures` (game-host-integration's comp
 ```ts
 // consent-moment-flow.ts: the intro step is the Shell's S3 screen, shown over the open banner screen
 prepareAds({ ads, consent, onConsent, showIntro }, input);
-// refresh -> (form required) intro -> Continue -> showFormIfRequired -> initialize -> preload
+// refresh -> (form required) intro -> Continue -> showFormIfRequired
+//   -> (canRequestAds) consent.requestTracking() (Apple's ATT prompt, only while not-determined)
+//   -> initialize -> preload: ads serve whatever the ATT answer, without the IDFA unless authorized
 ```
 
-`onConsent` saves `canRequestAds` and `isPrivacyOptionsRequired` in the save's ads section (for the next launch and the Settings row) and updates the flow's live answer, which `useAdContext` reads, so the Home banner appears as soon as the form allows it.
+The flow holds the ATT request until a banner screen is open, like the intro, so Apple's prompt never covers a level. `onConsent` saves `canRequestAds` and `isPrivacyOptionsRequired` in the save's ads section (for the next launch and the Settings row) and updates the flow's live answer, which `useAdContext` reads, so the Home banner appears as soon as the form allows it.
 
 Home, Levels and Statistics end with the slot. The screen views (from the screen work) take it from their view model, so the model hook computes the flag with the policy:
 

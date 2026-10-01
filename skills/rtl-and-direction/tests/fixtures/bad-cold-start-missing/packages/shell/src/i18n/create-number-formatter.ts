@@ -7,3 +7,9 @@ export function createNumberFormatter(localeTag: string): NumberFormatter {
   const format = new Intl.NumberFormat(localeTag, { maximumFractionDigits: 0 });
   return (value) => format.format(value);
 }
+
+/** A rate (0..1) as a whole percentage in the chosen digits and the locale's sign: 62%, ۶۲٪. */
+export function createPercentFormatter(localeTag: string): NumberFormatter {
+  const format = new Intl.NumberFormat(localeTag, { style: 'percent', maximumFractionDigits: 0 });
+  return (value) => format.format(value);
+}

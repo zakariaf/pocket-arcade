@@ -15,6 +15,8 @@ eslint.config.mjs:13
 [testing-maestro-airplane]
 [i18n-localization-rtl-flags]
 [services-att-prompt]
+packages/shell/src/config/shell-plugins.ts:4
+no NSUserTrackingUsageDescription
 [deps-expo-iap-servers]
 [deps-knip-skills-folder]
 knip.json:1

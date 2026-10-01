@@ -1,0 +1,1 @@
+FAIL app.png [missing] s6-pause light-en: game.hint-button: not found in the app

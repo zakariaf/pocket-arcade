@@ -1,0 +1,1 @@
+apps/demo/e2e/flows/smoke/10-level-1.yaml:1 [progress-after-win] wins a level but never proves the stars reached progress: after action=win-level it does not open screen=levels, assert levels.level-tile.1 with text: (the stars in its label), tap levels.level-tile.2 (level 2 unlocked)

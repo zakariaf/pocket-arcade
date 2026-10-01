@@ -29,9 +29,9 @@ An animating screen differed by 1.08% between two captures one second apart (ver
 
 ## Running it
 
-`npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--app-path <.app>]`
+`npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--app-path <.app>] [--driver-port <n>]`
 
-`templates/packages/tooling/src/e2e/capture-screenshots-ios.ts` first runs `install-maestro.sh` (idempotent, checksum-verified), then, for each device: ensure and prepare its simulator; for light then dark: set the appearance; for each language: run `maestro test matrix.yaml` with `-e APP_ID -e APP_SCHEME -e LANG -e THEME` into `reports/screenshots/raw/<device>/<lang>-<theme>/`, then compare each PNG with its baseline through `compare-png.ts` (pixelmatch, threshold 0.1 per pixel, `MAX_DIFF_RATIO = 0.002` of pixels). It writes `reports/screenshots/summary.json` and `index.html`, prints `<n> screenshots, <m> changed; gallery: reports/screenshots/index.html`, and exits 1 when anything changed. A capture flow that fails stops the run; its Maestro log is under `reports/screenshots/raw/<device>/<lang>-<theme>/`.
+`templates/packages/tooling/src/e2e/capture-screenshots-ios.ts` first runs `install-maestro.sh` (idempotent, checksum-verified), then, for each device: ensure and prepare its simulator; for light then dark: set the appearance; for each language: run `maestro --device <udid> --driver-host-port <port> test matrix.yaml` (through `runMaestro`: the device's UDID and a free driver port of this capture, or the session's `--driver-port`) with `-e APP_ID -e APP_SCHEME -e LANG -e THEME` into `reports/screenshots/raw/<device>/<lang>-<theme>/`, then compare each PNG with its baseline through `compare-png.ts` (pixelmatch, threshold 0.1 per pixel, `MAX_DIFF_RATIO = 0.002` of pixels). It writes `reports/screenshots/summary.json` and `index.html`, prints `<n> screenshots, <m> changed; gallery: reports/screenshots/index.html`, and exits 1 when anything changed. A capture flow that fails stops the run; its Maestro log is under `reports/screenshots/raw/<device>/<lang>-<theme>/`.
 
 `comparePng` returns `match`, `mismatch` (with the diff PNG path), `size-changed` or `missing-baseline`.
 

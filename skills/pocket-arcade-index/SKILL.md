@@ -30,7 +30,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Build or change any other Shell screen, overlay or dialog (S1-S15) | `toybox-screens` `toybox-components` `toybox-design-system` `i18n-strings-and-catalogs` `rtl-and-direction` `accessibility` `toybox-visual-parity` `react-components-and-hooks` `navigation-and-routing` `unit-and-component-tests` `tdd-workflow` |
 | Build the Settings screen or add a setting (S11) | `settings-and-preferences` `toybox-screens` `state-stores` `save-persistence-and-migrations` `i18n-strings-and-catalogs` `rtl-and-direction` `toybox-visual-parity` `tdd-workflow` |
 | Sell Premium or change the purchase flow (S12) | `premium-purchase` `toybox-screens` `state-stores` `save-persistence-and-migrations` `i18n-strings-and-catalogs` `toybox-visual-parity` `privacy-and-network-audit` `tdd-workflow` |
-| Add or change ads, consent or a rewarded perk | `admob-ads` `architecture-and-boundaries` `game-host-integration` `settings-and-preferences` `privacy-and-network-audit` `unit-and-component-tests` `tdd-workflow` |
+| Add or change ads, consent, the ATT tracking permission or a rewarded perk | `admob-ads` `architecture-and-boundaries` `game-host-integration` `settings-and-preferences` `privacy-and-network-audit` `unit-and-component-tests` `tdd-workflow` |
 | Add or restyle a Toybox component | `toybox-components` `toybox-design-system` `code-drawn-art-and-icons` `accessibility` `react-components-and-hooks` `unit-and-component-tests` `tdd-workflow` `toybox-visual-parity` |
 | Change colours, fonts, dark mode or a game's palette | `toybox-design-system` `accessibility` `toybox-visual-parity` `toybox-components` |
 | Add an icon, a game logo, the app icon or the splash | `code-drawn-art-and-icons` `toybox-design-system` `golden-tests` `ios-simulator-build` |
@@ -52,7 +52,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Write or fix end-to-end flows or the screenshot matrix | `e2e-maestro` `ios-simulator-build` `toybox-visual-parity` `privacy-and-network-audit` `golden-tests` |
 | Prove a screen matches its Toybox design screenshot | `toybox-visual-parity` `ios-simulator-build` `toybox-screens` `toybox-components` `toybox-design-system` |
 | Build, run or smoke-test on the iOS simulator | `ios-simulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
-| Release a game to TestFlight | `ios-release-testflight` `privacy-and-network-audit` `e2e-maestro` `toybox-visual-parity` `game-balance-and-bots` `i18n-strings-and-catalogs` `git-commits-and-reporting` |
+| Release a game to TestFlight | `ios-release-testflight` `premium-purchase` `privacy-and-network-audit` `e2e-maestro` `toybox-visual-parity` `game-balance-and-bots` `i18n-strings-and-catalogs` `git-commits-and-reporting` |
 | Add, upgrade or remove an npm package | `dependency-management` `privacy-and-network-audit` `performance-budgets` `ios-simulator-build` `quality-gates` |
 | Move to a new Expo SDK or Xcode version | `expo-sdk-upgrade` `dependency-management` `board-gestures-and-input` `unit-and-component-tests` `golden-tests` `ios-simulator-build` `e2e-maestro` |
 | A quality gate, hook or verify run fails | `quality-gates` `troubleshooting-playbook` `typescript-and-lint-rules` `unit-and-component-tests` |
@@ -61,7 +61,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Something errors, crashes, hangs or renders wrong | `troubleshooting-playbook` `quality-gates` `ios-simulator-build` |
 | Check or improve performance | `performance-budgets` `board-rendering-skia` `react-components-and-hooks` `realtime-game-loop` |
 | Review accessibility or VoiceOver | `accessibility` `toybox-components` `i18n-strings-and-catalogs` `e2e-maestro` |
-| Prove the app makes no network requests, or answer App Privacy | `privacy-and-network-audit` `admob-ads` `premium-purchase` `e2e-maestro` `dependency-management` |
+| Prove the app makes no network requests, or answer App Privacy (tracking, ATT, the privacy manifest) | `privacy-and-network-audit` `admob-ads` `premium-purchase` `e2e-maestro` `dependency-management` |
 | A golden or snapshot test shows a diff | `golden-tests` `level-generation-and-solvers` `board-rendering-skia` `git-commits-and-reporting` |
 | Commit, tag, report to the owner or ask the owner a question | `git-commits-and-reporting` `pocket-arcade-product-spec` `quality-gates` |
 | Find out what the spec requires (a screen, rule, feature or game) | `pocket-arcade-product-spec` `pocket-arcade-index` |
@@ -75,7 +75,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 3. **Place the work.** For building the Shell or a new game, find the current step in [references/build-orders.md](references/build-orders.md); do not start a step whose predecessor has not passed its check. Run each step's "done when" commands exactly as written there (repo root as the first argument, never `--root`). A repo without every Shell screen declares it in `shell-slice.json` (the same reference says how, lists the partial Shell core every Shell app keeps whatever the slice, gives the order for adding the pilot's Game, Pause and Result to an existing slice, and says that a slice never ships), and its table "When npm run verify is green" says which verify steps are still expected red at the current step.
 4. **Do the work** as the lead skill's workflow says, test-first, with the other loaded skills' rules applied to the parts they own.
 5. **Prove it.** Run every loaded skill's definition-of-done checks and `npm run -s check:fast`; fix every `FAIL` line and rerun until each prints `RESULT: PASS`.
-6. **Report.** Write the owner report as [references/loading-and-reporting.md](references/loading-and-reporting.md) ("Reporting") says: outcome first, the skills used, their `RESULT` lines, what was not verified, at most one question.
+6. **Report.** Write the owner report as [references/loading-and-reporting.md](references/loading-and-reporting.md) ("Reporting") says: outcome first, the skills used, their `RESULT` lines, what was not verified, the owner's own checks under "Owner steps (not blocking)" (the fa and ckb review, the play-test, the sound previews: listed, never waited for), at most one question.
 7. **Keep the index exact** (only when skills changed): `node ${CLAUDE_SKILL_DIR}/scripts/build-index.mjs --write`, then `node ${CLAUDE_SKILL_DIR}/scripts/check-index.mjs --readme skills/README.md` (the library README's catalogue is checked too; add the new skill there by hand), fixing every `FAIL` line until it prints `RESULT: PASS`.
 
 ## Definition of done

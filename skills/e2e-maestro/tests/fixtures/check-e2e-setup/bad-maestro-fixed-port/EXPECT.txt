@@ -1,0 +1,2 @@
+packages/tooling/src/e2e/capture-screenshots-ios.ts:
+[maestro-device] uses a fixed Maestro driver port, which a second run on this Mac shares

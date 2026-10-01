@@ -46,6 +46,7 @@ Each of these is a dependency of **every** app with the identical specifier, and
 | `expo-haptics` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | HapticsPort adapter |
 | `expo-network` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | ConnectivityPort; no HTTP probe |
 | `expo-store-review` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | "Rate this game" (OS component) |
+| `expo-tracking-transparency` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | App Tracking Transparency prompt behind `ConsentPort.requestTracking` (owner decision O1, 2026-09-30); on 2026-09-30 npm `sdk-57` = `latest` = 57.0.2, published 2026-09-11, MIT, no install script; imported only by `services/consent/admob-consent-adapter.ts`; its plugin entry in `shell-plugins.ts` (`userTrackingPermission`) writes `NSUserTrackingUsageDescription` (Expo's generic English sentence when the option is missing) and adds Android's `com.google.android.gms.permission.AD_ID` |
 | `expo-splash-screen` | 57.0.9 | `~57.0.9` | npx expo install (in each app) | splash config plugin (code-drawn art) |
 | `expo-system-ui` | 57.0.4 | `~57.0.4` | npx expo install (in each app) | `userInterfaceStyle: 'automatic'` needs it (knip checks); app-only, not a Shell peer |
 | `@shopify/react-native-skia` | 2.6.2 | `2.6.2` | npx expo install (in each app) | Expo pin; npm latest 2.13.0 is not for SDK 57; postinstall needs approval |

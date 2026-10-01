@@ -1,2 +1,2 @@
-packages/shell/src/app/create-debug-parts.ts [perf-layer] does not create the perf log (TEST_ONLY.createPerfLog(saveDriver))
+packages/shell/src/app/create-debug-parts.ts [perf-layer] createDebugParts does not make the perf log (Home has no log to mark the cold start in) with TEST_ONLY.createPerfLog
 packages/shell/src/app/test-only-entry.ts [perf-layer] does not export createPerfLog

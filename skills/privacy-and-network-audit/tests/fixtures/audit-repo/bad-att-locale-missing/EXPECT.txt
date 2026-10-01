@@ -1,0 +1,1 @@
+packages/shell/src/i18n/catalogs/fa.json [att-config] has no consent.tracking.usage-description (the fa tracking prompt text)

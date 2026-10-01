@@ -9,6 +9,10 @@ import { join, relative } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { plistGet, readPlist } from './lib/plist.mjs';
+import { bundleIdProblem, placeholderName } from './lib/ship-placeholders.mjs';
+import { trackingTextProblems } from './lib/tracking-text.mjs';
+
+export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
 const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
@@ -17,8 +21,8 @@ const ALLOWED = { test: ['off', 'test'], store: ['off', 'live'] };
 
 const SPEC = {
   name: 'check-sim-app',
-  summary: 'Checks a built .app against its build variant: Xcode used, platform, test-only code present (test) or absent (store), variant and ads mode in EXConstants, the AdMob app ID, and the required Info.plist keys.',
-  usage: '--app <path.app> --variant test|store --ads off|test|live [options]',
+  summary: 'Checks a built .app against its build variant: Xcode used, platform, test-only code present (test) or absent (store), variant and ads mode in EXConstants, the AdMob app ID, the app id, the tracking prompt text, and the required Info.plist keys.',
+  usage: '--app <path.app> --variant test|store --ads off|test|live [--game <game-id>] [options]',
   options: {
     app: { type: 'string', help: 'The built .app folder (apps/<game>/build/dd/Build/Products/Release-iphonesimulator/<Scheme>.app)' },
     variant: { type: 'string', help: 'APP_VARIANT the build was made with: test or store' },
@@ -27,6 +31,7 @@ const SPEC = {
     platform: { type: 'string', default: 'iphonesimulator', help: 'DTPlatformName: iphonesimulator, or iphoneos for a device build' },
     version: { type: 'string', help: 'Expected CFBundleShortVersionString (game.config.ts version)' },
     build: { type: 'string', help: 'Expected CFBundleVersion (game.config.ts buildNumber)' },
+    game: { type: 'string', help: 'The game id: CFBundleIdentifier must be io.applander.<id without hyphens> (store builds check the form without it)' },
     json: { type: 'boolean', help: 'Also print the problems as JSON' },
   },
   positionals: { min: 0, max: 0 },
@@ -37,7 +42,13 @@ const SPEC = {
     '  min-ios             MinimumOSVersion is 16.4',
     '  test-code           main.jsbundle contains SHELL_TEST_BUILD_ONLY in test builds and never in store builds',
     '  constants-variant   EXConstants.bundle/app.config extra.appVariant / extra.adsMode match --variant / --ads',
-    '  ad-app-id           GADApplicationIdentifier: Google sample ID for off/test, a real ID for live',
+    '  ad-app-id           GADApplicationIdentifier: Google sample ID for off/test, a real ID for live (never the',
+    '                      scaffold placeholder ca-app-pub-1234567890123456~1234567890: owner step G5)',
+    '  bundle-id           store builds (and any build with --game): CFBundleIdentifier is io.applander.<game id without',
+    '                      hyphens>, never com.example.* (owner decision O4)',
+    '  att-string          every build: Info.plist has NSUserTrackingUsageDescription and en, de, fa and ckb.lproj/',
+    "                      InfoPlist.strings each hold it (App Tracking Transparency, owner decision O1; Apple's prompt",
+    '                      crashes the app without it)',
     '  encryption-flag     ITSAppUsesNonExemptEncryption is false',
     '  frame-rate          CADisableMinimumFrameDurationOnPhone is true (120 Hz)',
     '  privacy-manifest    PrivacyInfo.xcprivacy is in the bundle',
@@ -103,7 +114,9 @@ function checkInfoKeys({ info, where, options, report }) {
   const file = `${where}/Info.plist`;
   const appId = info.GADApplicationIdentifier;
   if (options.ads === 'live') {
-    if (typeof appId !== 'string' || !LIVE_APP_ID.test(appId) || appId === SAMPLE_APP_ID) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected the game's real AdMob app ID`, fix: "Put the real ID in game.config.ts ads.ids.ios.appId (owner step G5) and build with ADS_MODE=live." });
+    const placeholder = placeholderName(appId);
+    if (placeholder !== null) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is ${placeholder} (${appId}), expected the game's real AdMob app ID`, fix: 'The owner creates the AdMob app and its units (owner step G5); put the real ids in game.config.ts ads.ids.ios and build again.' });
+    else if (typeof appId !== 'string' || !LIVE_APP_ID.test(appId) || appId === SAMPLE_APP_ID) report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected the game's real AdMob app ID`, fix: "Put the real ID in game.config.ts ads.ids.ios.appId (owner step G5) and build with ADS_MODE=live." });
   } else if (appId !== SAMPLE_APP_ID) {
     report.problem({ file, rule: 'ad-app-id', message: `GADApplicationIdentifier is "${appId ?? 'missing'}", expected Google's sample ID ${SAMPLE_APP_ID}`, fix: 'Non-live builds use the sample app ID (a missing ID crashes at launch); check withShell and ADS_MODE, then prebuild again.' });
   }
@@ -113,6 +126,19 @@ function checkInfoKeys({ info, where, options, report }) {
   if (!existsSync(join(options.app, 'PrivacyInfo.xcprivacy'))) report.problem({ file: `${where}/PrivacyInfo.xcprivacy`, rule: 'privacy-manifest', message: 'PrivacyInfo.xcprivacy is missing from the bundle', fix: 'withShell declares ios.privacyManifests; run a clean prebuild.' });
   if (options.version && info.CFBundleShortVersionString !== options.version) report.problem({ file, rule: 'version', message: `CFBundleShortVersionString is "${info.CFBundleShortVersionString}", expected ${options.version}`, fix: 'The version comes only from game.config.ts; prebuild again after changing it.' });
   if (options.build && String(info.CFBundleVersion) !== options.build) report.problem({ file, rule: 'build-number', message: `CFBundleVersion is "${info.CFBundleVersion}", expected ${options.build}`, fix: 'The build number comes only from game.config.ts; prebuild again after changing it.' });
+}
+
+/** The app id (owner decision O4): io.applander.<game id without hyphens>, never a placeholder. */
+function checkBundleId({ info, where, options, report }) {
+  if (options.variant !== 'store' && options.game === undefined) return;
+  const problem = bundleIdProblem(info.CFBundleIdentifier, options.game ?? null);
+  if (problem !== null) report.problem({ file: `${where}/Info.plist`, rule: 'bundle-id', message: `CFBundleIdentifier ${problem}`, fix: 'game.config.ts bundleId is io.applander.<game id without hyphens> (withShell refuses any other); prebuild with --clean and build again.' });
+}
+
+/** App Tracking Transparency (O1): the prompt text in Info.plist and in every app language. */
+function checkTrackingText({ info, where, options, report }) {
+  const fix = "shell-plugins.ts adds ['expo-tracking-transparency', { userTrackingPermission }] and withShell writes locales.<lang>.ios.NSUserTrackingUsageDescription from the Shell catalogs (consent.tracking.usage-description); prebuild with --clean.";
+  for (const found of trackingTextProblems(options.app, info, readPlist)) report.problem({ file: `${where}/${found.file}`, rule: 'att-string', message: found.message, fix });
 }
 
 function checkStoreArtefacts({ where, options, report }) {
@@ -130,6 +156,8 @@ run(async () => {
   checkTestCode(context);
   checkConstants(context);
   checkInfoKeys(context);
+  checkBundleId(context);
+  checkTrackingText(context);
   checkStoreArtefacts(context);
   return report.finish({ checked: 1, unit: `app (${options.variant}/${options.ads})` });
 });

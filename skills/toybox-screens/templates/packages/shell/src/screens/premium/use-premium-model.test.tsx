@@ -27,7 +27,7 @@ jest.mock('@e07/shell/i18n/game-message-text.ts', () => ({
   gameMessageText: () => 'Line Siege',
 }));
 
-const PRODUCT_ID = 'com.example.linesiege.premium';
+const PRODUCT_ID = 'io.applander.linesiege.premium';
 
 async function setup(options: RenderWithShellOptions = {}, port: PurchasePort | null = null) {
   const shell = createShellWrapper(options);
@@ -73,6 +73,16 @@ describe('usePremiumModel', () => {
     expect(result.current).toMatchObject({ view: 'loading-price', gameName: 'Line Siege' });
     result.current.onBack();
     expect(mockGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the success confetti by the saved Reduce motion setting, not the phone's switch alone", async () => {
+    const saved = await setup({ settings: { reduceMotion: 'on' } });
+    expect(saved.result.current).toMatchObject({ isReducedMotion: true, isConfettiHidden: true });
+    const normal = await setup({ settings: { reduceMotion: 'off' } });
+    expect(normal.result.current).toMatchObject({
+      isReducedMotion: false,
+      isConfettiHidden: false,
+    });
   });
 
   it('shows the thank-you page for NOTICE_MS, then the owner page', async () => {
@@ -140,6 +150,15 @@ describe('usePremiumModel in a parity capture', () => {
     } finally {
       jest.useRealTimers();
     }
+  });
+
+  it('keeps the confetti while the capture freezes motion: the saved setting stays off', async () => {
+    const { result } = await parityCard('s12-success');
+    expect(result.current).toMatchObject({
+      view: 'success',
+      isReducedMotion: true,
+      isConfettiHidden: false,
+    });
   });
 
   it("stacks the four restore outcomes on the design's restore card, and none elsewhere", async () => {

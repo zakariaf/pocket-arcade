@@ -45,8 +45,7 @@ function applyMutation(dir, ops, label) {
 
 /**
  * tests/fixtures/<suite>/<case> -> <tmp>/<case>: the bases, the mutation, the case's own files. Cases are
- * the good and bad-<case> folders (run by runSelftest) and the pass-<case> and error-<case> folders
- * (the outcome cases of selftest.mjs).
+ * the good, bad-<case>, pass-<case> and error-<case> folders, all run by runSelftest.
  */
 export function assembleSuite(bases, suiteDir) {
   const tmp = makeTempDir('sdk-upgrade-fixtures-');

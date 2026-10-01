@@ -45,7 +45,7 @@ Every helper in `packages/game-kit/src/` is a pure, deterministic module with na
 | `scripts/selftest.mjs` | Proves the checker passes good input and catches each planted bug | After changing the checker |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |
-| `tests/fixtures/` | Good and planted-bad inputs for the self-test | When adding a rule to the checker |
+| `tests/fixtures/` | Self-test inputs: `good/`, planted bugs `bad-*/` (exit 1), passing cases `pass-*/` (exit 0) and bad input `error-*/` (exit 2, with an optional `ARGS.txt`), each case with its `EXPECT.txt` | When adding a rule to the checker |
 
 ## Related skills
 

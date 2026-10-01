@@ -1,0 +1,3 @@
+[att-adapter-only]
+packages/shell/src/screens/home/use-tracking-status.ts:2
+imports expo-tracking-transparency outside the consent adapter

@@ -1,0 +1,4 @@
+[nested-isolates]
+top-bar-model.ts:8
+formatDayMonth(…) is passed into t() as a value
+stripIsolates(formatDayMonth(…))

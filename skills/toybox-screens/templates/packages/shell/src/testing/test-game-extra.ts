@@ -11,7 +11,7 @@ import type { GameExtra } from '@e07/shell/config/game-extra.ts';
 
 export const TEST_GAME_EXTRA: GameExtra = {
   id: 'line-siege',
-  premiumProductId: 'com.example.linesiege.premium',
+  premiumProductId: 'io.applander.linesiege.premium',
   adPolicy: {
     isAdsEnabled: true,
     minLevelsCompletedBeforeFirst: 3,

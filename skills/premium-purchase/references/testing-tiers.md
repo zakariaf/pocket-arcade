@@ -7,6 +7,7 @@
 - Tier 2 files
 - Tier 2 scenarios and flows
 - Running Tier 2 by hand
+- Release-day order
 - Tier 2 gotchas
 - Tier 3: the owner on TestFlight
 - Keeping the harness out of shipped builds
@@ -51,7 +52,7 @@ All in `packages/tooling/src/storekit/` (templates in this skill):
 | `storekit-harness.entitlements` | `get-task-allow = true`, referenced by the app's Debug configuration only |
 | `ArmTests.swift` | hosted tests: `testArmDefault`, `testArmAskToBuy`, `testArmFail`, `testApproveAll`, `testRefundAll` |
 | `add-harness.rb` | adds the `StoreKitHarness` unit-test target to a freshly prebuilt project with the `xcodeproj` gem that ships with CocoaPods (idempotent; `PRODUCT_NAME = $(TARGET_NAME)` avoids the Xcode error `Multiple commands produce .../PlugIns/.xctest`; Debug-only entitlement) |
-| `storekit-harness.ts` | the runner: fresh test-variant prebuild, harness files + target, Debug `build-for-testing`, Metro, then per scenario: arm, run one Maestro flow |
+| `storekit-harness.ts` | the runner: fresh test-variant prebuild, harness files + target, Debug `build-for-testing` against this run's own Metro port (`RCT_METRO_PORT`), Metro on that port, then per scenario: arm, run one Maestro flow with the global `--device <udid>` and this run's own driver port (`maestroGlobalArgs` from `packages/tooling/src/e2e/maestro-args.ts`, e2e-maestro's shared helper) |
 
 The flows live in `packages/shell/e2e/storekit/` (outside `e2e/flows/`, so the normal E2E run never runs them against an unarmed build) and use the shared `../subflows/debug-setup.yaml` (the test-build debug deep link `<scheme>://debug/setup?<query>`; the Shell keeps one copy of it, shared with the E2E flows: it first waits for the app's first screen root, because right after `launchApp` the app's JS may not be listening to links yet, and the app queues a link until its navigator is ready). Harness builds use `ADS_MODE=off`, so the flows check Premium states, not banners.
 
@@ -73,13 +74,26 @@ Flow 07 works only because the port is wrapped in `withConnectivity` and the deb
 
 The relaunch flows start with `- launchApp` (Maestro stops the app first) and pass only `screen=premium`, so the cached Premium from the previous flow is what the re-check must change. Never use `launchApp: { clearState: true }` here: uninstalling cleared the test transactions, and `clearState` may reinstall.
 
-Status: each step was verified by hand; the runner and the seven flows as a whole are unrun until the pilot app exists. Its first run confirms Metro readiness and the flow order.
+Status: first real runs of `storekit-harness.ts`, 2026-09-30 (Xcode 26.6, iOS 26.5 simulator `e07-r4-host-storekit`, a fresh one per run, its UDID named in every call; Line Siege, `io.applander.linesiege`, product `io.applander.linesiege.premium`; the runner's own free ports, in run 3 Maestro driver port 54878 and Metro 54879):
+
+| Run | Result | Cause and fix |
+|---|---|---|
+| 1 | 5 of 7 failed | The test build's network guard blocked Metro's HMR websocket and LogBox covered the app (see Tier 2 gotchas). Fixed in the guard: loopback passes in a `__DEV__` build. |
+| 2 | 1 of 7 failed (`02-refund-relaunch`: Premium stayed on) | The launch re-check ran before the first network state arrived, saw the store as unavailable and kept Premium; once online, `connectPremiumReloads` reloaded the store but never re-checked. Fixed: the online reload is followed by `recheckPremium` (Jest: "rechecks Premium once the first network state says online (a refund is revoked on launch)"; `check-premium-behaviour.mjs` rule `store-reloads`). |
+| 3 | `storekit: 0 of 7 scenario(s) failed`, exit 0 | All seven flows passed. |
+
+Afterwards the simulator was deleted and `npx expo prebuild --platform ios --clean` regenerated `ios/` without the harness target and the `.storekit` file (Release-day order, steps 3 and 4).
 
 ## Running Tier 2 by hand
 
 ```sh
-node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --udid <udid>
+UDID=$(xcrun simctl create e07-storekit "iPhone 17 Pro" com.apple.CoreSimulator.SimRuntime.iOS-26-5)
+xcrun simctl boot "$UDID"
+node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --device "$UDID"
+xcrun simctl delete "$UDID"                              # the test store persists per simulator
 ```
+
+The runner picks a free Maestro driver port and a free Metro port itself (listening on port 0); `--driver-port <n>` and `--metro-port <n>` pass fixed ones. Every Maestro call is `maestro --device <udid> --driver-host-port <port> test <flow>`: a per-command `--udid` alone and the default driver port 7001 let a call reach whichever simulator's XCTest driver already listens there (in round 3 a hierarchy call answered from another session's simulator), and the default Metro port 8081 would load another session's bundle.
 
 The equivalent steps, as run on 2026-09-26:
 
@@ -100,7 +114,16 @@ xcrun simctl spawn "$UDID" log show --last 2m --info --debug --style compact \
 xcrun simctl delete "$UDID"                              # the test store persists per simulator
 ```
 
-Name throwaway simulators `e07-<purpose>` and delete them afterwards.
+Name throwaway simulators `e07-<purpose>` and delete them afterwards; name the UDID in every `simctl`, `xcodebuild` (`-destination id=<udid>`) and Maestro call, never `booted`.
+
+## Release-day order
+
+E2E, the harness and the store build share `apps/<game>/ios`, and the harness leaves a Debug project with its test target, `Premium.storekit` and the Debug `get-task-allow` entitlement in it. So on a release day, in this order:
+
+1. The E2E evidence run (e2e-maestro's `npm run e2e:ios -- --app <game>`: a clean prebuild and a Release test build).
+2. This harness on its own simulator: `node packages/tooling/src/storekit/storekit-harness.ts --app <game> --device <udid>` (its fresh test-variant prebuild replaces `ios/`).
+3. `xcrun simctl delete <that udid>`: the armed StoreKit test store persists per simulator.
+4. `npx expo prebuild --platform ios --clean` in `apps/<game>` before any Release or store build, which removes the harness target, the `.storekit` file and the entitlement; the store-artifact gate still checks the IPA.
 
 ## Tier 2 gotchas
 
@@ -108,6 +131,7 @@ Name throwaway simulators `e07-<purpose>` and delete them afterwards.
 - `failTransactionsEnabled` is deprecated since iOS 17 ("Use simulatedError(forAPI:)"); Xcode warns but it still worked on iOS 26.5. If it stops working, `testArmFail` becomes `try await s.setSimulatedError(.generic(.unknown), forAPI: .purchase)` (not verified).
 - Once, after a reinstall, the simulated "Sign in with Apple Account ... [Environment: Xcode]" alert appeared during a StoreKit call; Maestro `tapOn: "OK"` (or `"Cancel"`) dismisses it.
 - Maestro 2.10 has `--include-tags`/`--exclude-tags`, not `--tags`; `JAVA_HOME` must point at Java 17.
+- The harness app is a Debug test build, so the test build's JS network guard (e2e-maestro's `screens/debug/network-guard.ts`) runs in it too. It must let a Debug build reach its own Metro on loopback (the bundle and the HMR websocket on `localhost:<metro port>`): on 2026-09-30 a guard that blocked every websocket threw "N3: websocket to http://localhost:<port>/hot blocked" from `HMRClient.setup`, LogBox covered the app, and 5 of 7 flows failed. Loopback is not network traffic (the runtime `lsof` audit allows it too), and Release E2E builds have `__DEV__` false, so they still block everything.
 
 ## Tier 3: the owner on TestFlight
 

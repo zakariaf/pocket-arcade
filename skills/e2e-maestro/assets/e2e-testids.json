@@ -4,5 +4,24 @@
     "debug.network-attempts": "Debug screen (S15), test builds: the JS network guard's attempt counter, drawn under the fourteen rows (below the fold on a phone: scroll to it). Every smoke flow ends by asserting its text is '0' (subflows/assert-no-network.yaml).",
     "game.board-layout": "Game screen (S5), test builds with boardLayout=1 only: one small Text whose content is JSON.stringify({ x, y, layout }) (the canvas origin in window points plus the game's BoardLayout), so flows can tap board cells. Drawn by the board host's layout probe (board-rendering-skia: game-host/board-layout-probe.tsx).",
     "game.moves-label": "Game screen (S5), test builds with boardLayout=1 only: the run's move count as one small Text ('1' after the first move), so a flow can prove a tap made a move and that the move survived a kill. Drawn by the Game screen's moves probe (screens/game/game-moves-probe.tsx, shipped with the S5 Game screen templates); the design draws the game's progress line instead."
+  },
+  "gameFlowIds": {
+    "$comment": "Screen-map ids the game flow templates rely on (listed here so a change to the map is seen against the flows; check-flows reads them from screen-testids.json, where each one is an element or a notDrawn id).",
+    "levels.level-tile.1": "smoke/10-level-1.yaml: after the win, the tile's VoiceOver label carries the stars earned ('Level 1: 3 stars'; the stars themselves are crop-only parts inside it).",
+    "levels.level-tile.2": "smoke/10-level-1.yaml: tapped after the win; level 2 is unlocked when it opens game.screen instead of levels.locked-toast.",
+    "levels.locked-toast": "smoke/10-level-1.yaml: must not show after the tap on level 2.",
+    "game.mode-label": "smoke/10-level-1.yaml and journeys/12-continue-premium.yaml: the level the run shows ('Level 2', 'Level 1').",
+    "daily.play-button": "journeys/11-daily.yaml: S9's Play key, the key under test, starts today's run; after the next day it is offered again.",
+    "result.daily-title": "journeys/11-daily.yaml: the daily result after action=win-level.",
+    "result.streak-sticker": "journeys/11-daily.yaml: the streak sticker of the daily result.",
+    "result.come-back-note": "journeys/11-daily.yaml: the come-back note of the daily result.",
+    "daily.current-streak-card.value": "journeys/11-daily.yaml: '1' on the next day.",
+    "daily.replay-button": "journeys/11-daily.yaml: not shown on the next day (today is not done).",
+    "result.continue-premium-button": "journeys/12-continue-premium.yaml: the Premium owner's free continue after action=lose-level (E2E builds run with ads off, so the rewarded result.continue-ad-button never shows).",
+    "result.continue-ad-button": "journeys/12-continue-premium.yaml: must not show for a Premium owner.",
+    "home.endless-card": "journeys/13-endless.yaml: starts the endless run; afterwards its label ('Endless – Best <n>') carries a best above 0.",
+    "result.endless-title": "journeys/13-endless.yaml: the endless result after action=lose-level.",
+    "result.score-card.new-best": "journeys/13-endless.yaml: New best! after the first endless run.",
+    "result.home-button": "journeys/13-endless.yaml: back to Home from the endless result."
   }
 }

@@ -57,6 +57,18 @@ describe('createRunTracker', () => {
     expect(runs.active()).toBeNull();
   });
 
+  it('acts on a daily or an endless run like a level: action= ends any active run', () => {
+    const runs = createRunTracker<TallyTypes>();
+    const daily = controllerFor({ kind: 'daily', date: TEST_CLOCK.today() });
+    runs.track(daily);
+    expect(runs.active()).toBe(daily);
+    const endless = controllerFor({ kind: 'endless' });
+    const handle = runs.track(endless);
+    expect(runs.active()).toBe(endless);
+    handle.send({ type: 'leave' });
+    expect(runs.active()).toBeNull();
+  });
+
   it('hands a staged example only to the next new level-1 run, once', () => {
     const runs = createRunTracker<TallyTypes>();
     runs.stage(EXAMPLE);

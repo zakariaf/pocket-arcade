@@ -20,7 +20,7 @@ Every Pocket Arcade game is played thousands of times headless by seeded bots be
 9. **The fun-within-seconds kill test:** on the easiest level the greedy bot reaches the first payoff within 1-3 moves (seconds for real-time games: `runSimBot` with `payoffStepTicks: 120`) in at least 90 % of runs, and the twist fires at least once per run. If even the lookahead bot cannot, stop and report to the owner. Why: the prototype toys showed that ideas fail here structurally (Snare Snake caught nothing in 13 foreseen moves; Scrap Shove's twist came 0.25 times per game).
 10. **A report counts only for the code it measured:** its fingerprint covers the game's `rules/`, `levels/`, `sim/` and `testing/` folders, the sim file and the `packages/game-kit/src` files they import (the sim's import closure), and game logic imports nothing outside them; rerun `npm run test:sim` after any change there (a game-kit file nothing there imports leaves the report fresh). Why: stale numbers approve code that no longer exists.
 11. **Change the game, not the player:** improve a bot's evaluation only to match reasonable human play, never to reach a band. Why: a bot tuned to the bands measures nothing.
-12. **The owner's play-test is the final judge:** bands stay `"proposed"` until the owner has played and agreed, then become `"approved"`; a release requires approved bands. Why: bots measure pace, not joy.
+12. **The owner's play-test is the final judge, and it never blocks:** bands stay `"proposed"` until the owner has played and agreed, then become `"approved"`. The play-test is the owner's personal step (owner decision O6, 2026-09-30): every slice and release report lists it under "Owner steps (not blocking)", and `check-balance.mjs --release` prints unapproved bands as an `OWNER STEP (not blocking)` line, not a problem. Why: bots measure pace, not joy, and the owner's feel wins whenever it comes; nothing waits for it.
 
 ## Workflow
 
@@ -33,7 +33,7 @@ Every Pocket Arcade game is played thousands of times headless by seeded bots be
 7. **Write the bands** around the tuned numbers with a margin and a `why` per band, and the story in `notes` in plain words; keep `"status": "proposed"`.
 8. **Kill test verdict.** If the first payoff or the twist cannot be reached after reasonable tuning, stop and tell the owner (fun-and-kill-test.md, "When a game fails"). Do not polish a game that fails it.
 9. **Run the check** (run, fix, rerun until `RESULT: PASS`): `npm run test:sim`, then `node ${CLAUDE_SKILL_DIR}/scripts/check-balance.mjs .` (add `--game <game-id>` for one game). Every `FAIL` line names the file, the rule and the fix.
-10. **Report and hand over.** Put the plain-language "Bots" line per difficulty (numbers from the report) in the evidence report and ask the owner to play the first levels on a phone. When they agree, set `"status": "approved"` and `"approvedOn"`; before a release run the check with `--release`. The balance sims pass before level-generation-and-solvers generates the packs; a tuning change after the packs exist regenerates them in the same commit with a `Gate-Change:` trailer.
+10. **Report and hand over.** Put the plain-language "Bots" line per difficulty (numbers from the report) in the evidence report, and list "Play-test <game> on a phone" under "Owner steps (not blocking)" until the owner has done it. When they agree, set `"status": "approved"` and `"approvedOn"`. Before a release run the check with `--release`: it passes with proposed bands and prints the `OWNER STEP (not blocking)` line to copy into the release report. The balance sims pass before level-generation-and-solvers generates the packs; a tuning change after the packs exist regenerates them in the same commit with a `Gate-Change:` trailer.
 
 ## Definition of done
 
@@ -41,7 +41,7 @@ Every Pocket Arcade game is played thousands of times headless by seeded bots be
 - [ ] Each game has a documented tuning file on the 0..100 scale (`rowFor` + `reduce`, an endless row only with an endless mode) with its test, bot hooks with tests, `test/sims/<game-id>/balance.sim.test.ts` and `balance-bands.json` with `notes` (grid 0..99, the endless block when the game has one).
 - [ ] `npm run test:sim` passes: no cap hits, identical replays, every band, the curve, the skill gap, the first payoff and the twist; one sim file runs in about 60 s or less.
 - [ ] `reports/sim/<game-id>.json` is fresh (fingerprint matches) and its numbers are in the evidence report in plain words.
-- [ ] For a release: the owner has play-tested, the bands say `"approved"`, and the check passes with `--release`.
+- [ ] For a release: the check passes with `--release`; its `OWNER STEP (not blocking)` line, when the bands are still `"proposed"`, is copied into the report's "Owner steps (not blocking)" list (the owner's play-test never blocks, O6).
 - [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-balance.mjs .` prints `RESULT: PASS`
 
 ## Anti-patterns
@@ -77,13 +77,13 @@ Every Pocket Arcade game is played thousands of times headless by seeded bots be
 | [templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.test.ts](templates/apps/__GAME_ID__/src/testing/__GAME_ID__-bot.test.ts) | Its test | Step 4 |
 | `examples/line-siege/` | Line Siege v1, synced from the library (never edit here): the whole rules folder (with the tuning file, its endless row and `line-siege-evaluate.ts`), the bot hooks and example states (+ tests) under `apps/line-siege/src/`, the sim and bands with an endless block under `test/sims/line-siege/`, and the real report under `reports/sim/` | Steps 3-7, as the model |
 | `examples/halo-drift/` | The real-time model: a reduced Halo Drift fixed-step sim and `'worklet'` tuning file (+ replay tests), `SimBotGame` hooks and the idle/wander/dodge command policies (+ tests), a `runSimBot` sim, bands in ticks and seconds, and its real report | Steps 3-7 for a real-time game |
-| `scripts/check-balance.mjs` | Checks the sim config, harness, sims, bot hooks, tuning file, fingerprint scope and bands, and judges each report (fresh, for this game, complete, no cap hits, bands, curve, skill gap, first payoff, twist); `--release` requires approved bands | Steps 2 and 9 |
+| `scripts/check-balance.mjs` | Checks the sim config, harness, sims, bot hooks, tuning file, fingerprint scope and bands, and judges each report (fresh, for this game, complete, no cap hits, bands, curve, skill gap, first payoff, twist); `--release` prints unapproved bands as an `OWNER STEP (not blocking)` line | Steps 2, 9 and 10 |
 | `scripts/selftest.mjs` | Proves the checker passes the good fixtures and catches every planted bug | After changing the checker, a template or the example |
 | `scripts/lib/balance.mjs` | JavaScript port of the fingerprint and the bands rules | When changing the checker |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in (check-lib, the sim Jest config, the Line Siege example) | When adding a shared file |
 | `tests/build-fixtures.mjs` | Rebuilds `tests/fixtures/` from the templates and both examples plus one planted bug per case | After changing a template, an example or the checker |
-| `tests/fixtures/` | Good repos (a turn-based and a real-time game) and planted-bad copies: the normal suite, the `-wrapped` suite (a Prettier-wrapped difficulty table must pass), the `--release` suite and the `-kit-growth` suite (game-kit files the sims never import leave the report fresh) | When adding a rule |
+| `tests/fixtures/` | Good repos (a turn-based and a real-time game) and planted-bad copies: the normal suite, the `-wrapped` suite (a Prettier-wrapped difficulty table must pass), the `--release` suite (`pass-proposed`: proposed bands pass and print the owner step; `bad-approved-without-date`) and the `-kit-growth` suite (game-kit files the sims never import leave the report fresh) | When adding a rule |
 
 ## Related skills
 

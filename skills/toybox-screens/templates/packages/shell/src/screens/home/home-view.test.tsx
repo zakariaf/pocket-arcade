@@ -1,9 +1,10 @@
 // packages/shell/src/screens/home/home-view.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
+import { fireEvent, screen, userEvent, within } from '@testing-library/react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { Panel } from '@e07/shell/ui/panel.tsx';
 
 import { HomeView } from './home-view.tsx';
 
@@ -44,6 +45,7 @@ function modelWith(overrides: Partial<HomeModel> = {}): HomeModel {
     banner: { renderBanner: () => null, isAllowed: true },
     actions: {
       onPlay: jest.fn(),
+      onOpenDaily: jest.fn(),
       onPlayDaily: jest.fn(),
       onPlayEndless: jest.fn(),
       onOpenSettings: jest.fn(),
@@ -96,14 +98,98 @@ describe('HomeView', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
-  it('replaces the daily play button once today is done', async () => {
+  it('replaces the daily play button once today is done, and the card still opens S9', async () => {
     const model = modelWith({
       daily: { dateText: 'Sunday, 27 Sep', streakDays: 5, isDoneToday: true },
     });
+    const user = userEvent.setup();
     await renderWithShell(<HomeView model={model} />);
 
-    expect(screen.getByTestId('home.daily-card.done')).toBeOnTheScreen();
+    expect(
+      screen.getByTestId('home.daily-card.done', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
     expect(screen.queryByTestId('home.daily-card.play-button')).toBeNull();
+    const card = screen.getByRole('button', {
+      name: 'Daily challenge, Sunday, 27 Sep, 5 day streak, Done – come back tomorrow',
+    });
+    await user.press(card);
+    expect(model.actions.onOpenDaily).toHaveBeenCalledTimes(1);
+    expect(model.actions.onPlayDaily).not.toHaveBeenCalled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('opens S9 from the daily card body and plays only from its Play key', async () => {
+    const model = modelWith();
+    const user = userEvent.setup();
+    await renderWithShell(<HomeView model={model} />);
+
+    await user.press(screen.getByTestId('home.daily-card'));
+    expect(model.actions.onOpenDaily).toHaveBeenCalledTimes(1);
+    expect(model.actions.onPlayDaily).not.toHaveBeenCalled();
+
+    await user.press(screen.getByTestId('home.daily-card.play-button'));
+    expect(model.actions.onPlayDaily).toHaveBeenCalledTimes(1);
+    expect(model.actions.onOpenDaily).toHaveBeenCalledTimes(1);
+
+    // VoiceOver's double tap runs the activate action: it opens S9 wherever the centre falls.
+    await fireEvent(screen.getByTestId('home.daily-card'), 'accessibilityAction', {
+      nativeEvent: { actionName: 'activate' },
+    });
+    expect(model.actions.onOpenDaily).toHaveBeenCalledTimes(2);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('gives VoiceOver exactly two daily elements: the card and its Play key', async () => {
+    await renderWithShell(<HomeView model={modelWith()} />);
+
+    const card = screen.getByRole('button', {
+      name: 'Daily challenge, Sunday, 27 Sep, 5 day streak',
+    });
+    expect(card).toBe(screen.getByTestId('home.daily-card'));
+    expect(screen.getByRole('button', { name: 'Play today’s challenge' })).toBe(
+      screen.getByTestId('home.daily-card.play-button'),
+    );
+    // The title, date, streak and icon are read in the card's label, never on their own.
+    expect(screen.queryByRole('header', { name: 'Daily challenge' })).toBeNull();
+    expect(screen.queryByText('Sunday, 27 Sep')).toBeNull();
+    expect(screen.queryByText('5 day streak')).toBeNull();
+    // The Play key is a sibling above the surface, never nested inside the opener.
+    expect(within(card).queryByTestId('home.daily-card.play-button')).toBeNull();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws the daily card exactly as the flat Panel draws it (L7 changes no pixel)', async () => {
+    // allow-style-assertion: the opener must keep the design's flat daily panel pixel for pixel.
+    const LOOK = ['borderWidth', 'borderColor', 'borderRadius', 'backgroundColor'] as const;
+    const pick = (style: object, keys: readonly string[]): Record<string, unknown> =>
+      Object.fromEntries(keys.map((key) => [key, (style as Record<string, unknown>)[key]]));
+    const styleOf = (node: { readonly props: Record<string, unknown> }): object =>
+      StyleSheet.flatten(node.props['style'] as never) ?? {};
+
+    await renderWithShell(
+      <Panel testID="probe.panel" padding="daily">
+        <View />
+      </Panel>,
+    );
+    const panel = styleOf(screen.getByTestId('probe.panel'));
+
+    await renderWithShell(<HomeView model={modelWith()} />);
+    const surface = screen.getByTestId('home.daily-card');
+    const [face] = surface.queryAll(
+      (node) => (styleOf(node) as { borderWidth?: unknown }).borderWidth !== undefined,
+    );
+    const card = surface.parent;
+    expect(face === undefined ? {} : pick(styleOf(face), LOOK)).toStrictEqual(pick(panel, LOOK));
+    // The card's padding keeps the edge the surface draws: the parts sit where the Panel put them.
+    const edge = (panel as { borderWidth: number }).borderWidth;
+    const { paddingTop, paddingInline, paddingBottom } = panel as Record<string, number>;
+    expect(
+      pick(card === null ? {} : styleOf(card), ['paddingTop', 'paddingInline', 'paddingBottom']),
+    ).toStrictEqual({
+      paddingTop: (paddingTop ?? 0) + edge,
+      paddingInline: (paddingInline ?? 0) + edge,
+      paddingBottom: (paddingBottom ?? 0) + edge,
+    });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

@@ -12,6 +12,7 @@ import { useShallow } from 'zustand/shallow';
 import { usePremiumScreenDeps } from '@e07/shell/app/premium-screen-deps-context.tsx';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { useAnnounce } from '@e07/shell/app/use-announce.ts';
+import { useReduceMotionSetting } from '@e07/shell/app/use-reduce-motion-setting.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -93,6 +94,7 @@ export function usePremiumModel(): PremiumModel {
     service: deps.service,
     gameName: gameMessageText(t, deps.gameName),
     isReducedMotion: useReduceMotion(),
+    isConfettiHidden: useReduceMotionSetting(),
     onBack: () => {
       navigation.goBack();
     },

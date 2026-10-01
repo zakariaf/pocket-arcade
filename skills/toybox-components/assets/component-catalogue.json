@@ -24,14 +24,32 @@
       "why": "ListRow's strong and danger labels use TYPE_STYLES.rowLabelStrong (17 Bold, 1.32 / 1.5)"
     },
     {
+      "file": "packages/shell/src/theme/type-styles.ts",
+      "owner": "toybox-design-system",
+      "mustContain": "statListHeading",
+      "why": "StatList's heading row uses TYPE_STYLES.statListHeading (15 Bold, the design's .slist first row)"
+    },
+    {
       "file": "packages/shell/src/ui/app-text.tsx",
       "owner": "toybox-design-system"
+    },
+    {
+      "file": "packages/shell/src/ui/app-text.tsx",
+      "owner": "toybox-design-system",
+      "mustContain": "onLineCount",
+      "why": "NotePanel fits a one-line note to its text from AppText onLineCount (the design p is as wide as its text)"
     },
     {
       "file": "packages/shell/src/ui/raised-surface.tsx",
       "owner": "toybox-design-system",
       "mustContain": "top: elevation",
       "why": "a pushed-in key (the chosen segment, a locked level tile) must sit elevation lower by layout, where Maestro and the parity bounds measure it, not by a transform"
+    },
+    {
+      "file": "packages/shell/src/ui/raised-surface.tsx",
+      "owner": "toybox-design-system",
+      "mustContain": "isStretched",
+      "why": "Button stretches a dialog-row key to the height of its neighbour through RaisedSurface isStretched (CSS align-items stretch)"
     },
     {
       "file": "packages/shell/src/ui/toybox-styles.ts",
@@ -62,6 +80,14 @@
     {
       "file": "use-hold-to-confirm.ts",
       "what": "the 2 s hold timer (ReduceMotion.Never)"
+    },
+    {
+      "file": "text-metrics.ts",
+      "what": "lineMetricsOf / chromeBaseline: where Chrome puts a line's text (rounded hhea ascent and descent of the five Toybox faces)"
+    },
+    {
+      "file": "use-chrome-baseline.ts",
+      "what": "useChromeBaseline(variant): the design's baseline of a text style in the current language (StatList rows)"
     }
   ],
   "components": [
@@ -262,7 +288,8 @@
         ".value",
         ".toggle",
         ".radio"
-      ]
+      ],
+      "notes": "icon takes IconTileIcon (an IconName, 'rating-star' or 'rating-star-hollow'); isStrong names the row label in Bold; textExtra adds lines under the description in a column that keeps each part's width (S11d licence line and nudge); descriptionTestID replaces .description where the map names the part (S11d .licence)"
     },
     {
       "name": "SubRow",
@@ -284,7 +311,8 @@
       "role": "none (decorative)",
       "testID": "optional",
       "interactive": false,
-      "parts": []
+      "parts": [],
+      "notes": "exports IconTileIcon = IconName | 'rating-star' | 'rating-star-hollow' (the two-colour rating star, filled or hollow)"
     },
     {
       "name": "Panel",
@@ -317,7 +345,8 @@
       "parts": [
         ".icon",
         ".label"
-      ]
+      ],
+      "notes": "iconTile puts the icon on a centred 38 pt tile of that paint (S11a); a bare icon sits at the top; a one-line note shrinks to its text"
     },
     {
       "name": "OfferBox",
@@ -377,7 +406,8 @@
       "role": "none (decorative)",
       "testID": "testID",
       "interactive": false,
-      "parts": []
+      "parts": [],
+      "notes": "isHiddenBySetting (the saved Reduce motion setting) hides it; isReducedMotion alone draws the pieces at rest; the band is direction ltr (never mirrored)"
     },
     {
       "name": "LevelTile",
@@ -479,17 +509,18 @@
       "file": "scrim.tsx",
       "section": "4.18",
       "group": "overlays",
-      "role": "none",
+      "role": "none (modal root)",
       "testID": "testID",
       "interactive": false,
-      "parts": []
+      "parts": [],
+      "notes": "the modal root: accessibilityViewIsModal sits here, never on DialogCard"
     },
     {
       "name": "DialogCard",
       "file": "dialog-card.tsx",
       "section": "4.18",
       "group": "overlays",
-      "role": "none (modal)",
+      "role": "none (the Scrim is the modal root)",
       "testID": "testIDBase",
       "interactive": false,
       "parts": [
@@ -518,7 +549,8 @@
       "interactive": true,
       "parts": [
         ".fill"
-      ]
+      ],
+      "notes": "the fill grows in an absolute track pinned to the face edges, so its share is of the whole face"
     },
     {
       "name": "Toast",

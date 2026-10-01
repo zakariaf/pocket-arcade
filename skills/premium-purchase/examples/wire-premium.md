@@ -8,7 +8,7 @@ The order Claude follows for the pilot game. Only the Premium calls are shown; s
 cd apps/line-siege && npm install -E expo-iap@5.8.0
 ```
 
-Copy from `templates/`: `packages/shell/src/services/purchase/*`, `packages/shell/src/stores/premium/*`, `__mocks__/expo-iap.ts`, and later the Tier 2 and App Store Connect tooling. The bare string `'expo-iap'` is a line of `shellPlugins` in `packages/shell/src/config/shell-plugins.ts` (architecture-and-boundaries' one plugin list). `apps/line-siege/game.config.ts` already has `premium: { productId: 'com.example.linesiege.premium' }` (bundle ID + `.premium`).
+Copy from `templates/`: `packages/shell/src/services/purchase/*`, `packages/shell/src/stores/premium/*`, `__mocks__/expo-iap.ts`, and later the Tier 2 and App Store Connect tooling. The bare string `'expo-iap'` is a line of `shellPlugins` in `packages/shell/src/config/shell-plugins.ts` (architecture-and-boundaries' one plugin list). `apps/line-siege/game.config.ts` already has `premium: { productId: 'io.applander.linesiege.premium' }` (bundle ID + `.premium`).
 
 The composition root that runs the code below is game-host-integration's template set in `packages/shell/src/app/` (copy it verbatim): `device-adapters.ts` creates the gated port, `create-premium-deps.ts` builds `premiumDeps`, `create-shell-parts.ts` calls `startPremium` and then `connectPremiumReloads`, and `shell-features.tsx` provides the S12 dependencies. The snippets show what those files do.
 
@@ -54,9 +54,11 @@ startPremium(premiumDeps).catch(premiumDeps.onError); // subscribe -> connect ->
 // connectPremiumReloads(connectivity, stores, premiumDeps)
 connectivity.subscribe((isOnline) => {
   // back online on an "unavailable" page, or gone offline from a quiet page; never mid-purchase
-  if (shouldReloadStore(stores.premium.getState().flow.kind, isOnline)) {
-    loadStore(premiumDeps).catch(premiumDeps.onError);
-  }
+  if (!shouldReloadStore(stores.premium.getState().flow.kind, isOnline)) return;
+  // online: the launch re-check ran offline (absence is not evidence), so re-check after the load
+  const reload = loadStore(premiumDeps);
+  const done = isOnline ? reload.then(async () => recheckPremium(premiumDeps)) : reload;
+  done.catch(premiumDeps.onError);
 });
 AppState.addEventListener('change', (next) => {
   if (next === 'active' && connectivity.isOnline()) recheckPremium(premiumDeps).catch(premiumDeps.onError);
@@ -127,4 +129,4 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-premium.mjs .
 node ${CLAUDE_SKILL_DIR}/scripts/check-premium-behaviour.mjs .
 ```
 
-Before the release: the Tier 2 harness (`node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --udid <udid>`), then ask the owner for the App Store Connect steps and the Tier 3 TestFlight run.
+Before the release, after the E2E evidence run: the Tier 2 harness on its own `e07-` simulator (`node packages/tooling/src/storekit/storekit-harness.ts --app line-siege --device <udid>`; then delete the simulator and `npx expo prebuild --clean`), then ask the owner for the App Store Connect steps and the Tier 3 TestFlight run.

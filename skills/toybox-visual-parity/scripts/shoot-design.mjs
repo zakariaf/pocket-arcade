@@ -2,14 +2,13 @@
 // shoot-design.mjs: renders the Toybox design frames at the parity device's geometry (1206 x 2622
 // for a phone frame) with the installed Google Chrome, and writes each frame's layout.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireFile, run, sha256 } from './check-lib.mjs';
-import { CHROME_ARGS, launchChrome, loadImageDeps, loadPlaywright } from './lib/deps.mjs';
-import { LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName } from './lib/frames.mjs';
+import { CHROME_ARGS, TOOLING_OPTION, launchChrome, loadImageDeps, loadPlaywright, playwrightVersion, toolingDirOf } from './lib/deps.mjs';
+import { LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
 import { referenceChangeProblems } from './lib/reference-changes.mjs';
-import { DEFAULTS, SCRIPTS_DIR, readJson } from './lib/paths.mjs';
+import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { compactJson, encodePng, readPng } from './lib/png.mjs';
 import { openDesign, shootFrame } from './lib/render.mjs';
 
@@ -19,7 +18,8 @@ const SPEC = {
     'Renders design frames (every frame by default) in light and dark x en and fa at the parity device geometry ' +
     '(iPhone 16 Pro, 402 x 874 pt @3x, safe top 62) and writes <frame>.png (lossless) + <frame>.layout.json ' +
     '(testID rects, texts, styles, text runs), plus each reference variant a frame has for other game facts ' +
-    '(<frame>--<variant>, derived from the rendered mockup by the DOM change frames.json names). --check re-renders ' +
+    '(<frame>--<variant>, derived from the rendered mockup by the DOM change frames.json names; variants compose, as in ' +
+    's6-pause--no-music--no-hints). --check re-renders ' +
     'and fails on any pixel or layout difference from the committed reference set.',
   usage: '(--out <dir> | --update-reference | --check) [options]',
   options: {
@@ -36,6 +36,7 @@ const SPEC = {
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
     reference: { type: 'string', value: 'dir', help: 'Reference root for --check / --update-reference', default: DEFAULTS.reference },
+    tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: 0 },
   details: [
@@ -50,18 +51,14 @@ const SPEC = {
     '  node shoot-design.mjs --out .parity/design --frame s4-home --theme dark --lang fa',
     '  node shoot-design.mjs --out .parity/self --as-app               (design-vs-design runs for check-parity)',
     '',
-    'A frame renders with its variants (s11-settings also writes s11-settings--no-music). --update-reference keeps',
+    'A frame renders with its variants and every combination of them (s6-pause also writes s6-pause--no-music,',
+    's6-pause--no-hints and s6-pause--no-music--no-hints). A frame\'s designFixes (the System row names the render',
+    'language) apply to every render of it, and its designMasks are measured into the layout. --update-reference keeps',
     'the manifest\'s referenceChanges log: add an entry for every deliberate change before re-rendering.',
+    'Writes only into --out, into a temporary folder (--check), or into the skill\'s committed reference set',
+    '(--update-reference, the parity owner\'s step after a design change).',
   ].join('\n'),
 };
-
-function playwrightVersion() {
-  try {
-    return createRequire(join(SCRIPTS_DIR, 'package.json'))('playwright/package.json').version;
-  } catch {
-    return 'unknown';
-  }
-}
 
 /** A Maestro-shaped hierarchy (integer point bounds, labels) of a design layout: design-as-app. */
 function hierarchyFromLayout(layout, viewportHeight) {
@@ -127,8 +124,9 @@ run(async () => {
   const report = createReporter({ name: 'shoot-design' });
   const where = (file) => relative(process.cwd(), file) || file;
 
-  const { PNG } = await loadImageDeps();
-  const pw = await loadPlaywright();
+  const tooling = toolingDirOf(options);
+  const { PNG } = await loadImageDeps(tooling);
+  const pw = await loadPlaywright(tooling);
   const browser = await launchChrome(pw);
   const files = {};
   const staleMetadata = [];
@@ -150,17 +148,20 @@ run(async () => {
             return;
           }
           mkdirSync(join(gameDir, tag), { recursive: true });
-          const plan = keys.flatMap((key) => [
-            { key, variant: null },
-            ...Object.values(frames.get(key).variants ?? {}).map((variant) => ({ key, variant })),
-          ]);
+          const plan = keys.flatMap((key) => referencePlan(frames.get(key)).map((variant) => ({ key, variant })));
           for (const { key: frameKey, variant } of plan) {
             const frame = frames.get(frameKey);
             const key = referenceName(frameKey, variant?.id);
-            const elements = elementsForFacts(elementsForGame(frame, deck, game), variant?.facts ?? designFacts);
-            const shot = await shootFrame(page, { frame, elements, device, variant, lang, fixtureScore });
+            const forGame = elementsForGame(frame, deck, game);
+            const elements = elementsForFacts(forGame, variant?.facts ?? designFacts);
+            const shot = await shootFrame(page, { frame, elements, checkElements: forGame, device, variant, lang, fixtureScore });
+            const fixes = {
+              'variant-derive': `Fix the derive of ${variant?.parts?.map((id) => `frames.${frameKey}.variants.${id}`).join(' and ') ?? 'the variant'} in frames.json: each step matches exactly one element, and it hides exactly the elements whose "when" the variant's facts do not match (screen-testids.json).`,
+              'design-fix': `Fix frames.${frameKey}.designFixes in frames.json (each sample selector matches exactly one element).`,
+              'design-mask': `Fix frames.${frameKey}.designMasks in frames.json (each selector matches exactly one element).`,
+            };
             for (const p of shot.problems) {
-              report.problem({ file: `${key}`, rule: p.rule, message: `[${tag}] ${p.message}`, fix: p.rule === 'variant-derive' ? `Fix frames.${frameKey}.variants.${variant?.id}.derive in frames.json (each step matches exactly one element of the rendered frame).` : 'Fix frameSelectors in screen-testids.json (the design may have reordered its frames).' });
+              report.problem({ file: `${key}`, rule: p.rule, message: `[${tag}] ${p.message}`, fix: fixes[p.rule] ?? 'Fix frameSelectors in screen-testids.json (the design may have reordered its frames).' });
             }
             if (!shot.png) continue;
             if (shot.caption !== frameKey) report.problem({ file: key, rule: 'frame-caption', message: `[${tag}] the selector reached the frame captioned "${shot.caption}"`, fix: 'Fix frameSelectors (or frameKeys) in screen-testids.json.' });
@@ -196,6 +197,7 @@ run(async () => {
               image: `${key}.png`,
               elements: layoutElements,
               texts: shot.layout.texts,
+              ...(shot.layout.masks ? { masks: shot.layout.masks } : {}),
             };
             const png = encodePng(PNG, { width: decoded.width, height: decoded.height, data: decoded.data });
             const layoutText = compactJson(layout);
@@ -226,7 +228,7 @@ run(async () => {
       version: 1,
       game,
       rendered: new Date().toISOString().slice(0, 10),
-      renderer: { chrome: browser.version(), playwright: playwrightVersion(), flags: CHROME_ARGS.join(' ') },
+      renderer: { chrome: browser.version(), playwright: playwrightVersion(tooling), flags: CHROME_ARGS.join(' ') },
       device: { name: device.name, points: device.points, scale: device.scale, safeTop: device.safeArea.top },
       inputs: {
         design: sha256(readFileSync(designPath)),
@@ -237,7 +239,7 @@ run(async () => {
       themes,
       langs,
       frames: keys,
-      variants: keys.flatMap((key) => Object.keys(frames.get(key).variants ?? {}).map((id) => referenceName(key, id))),
+      variants: keys.flatMap((key) => referenceNames(frames.get(key)).slice(1)),
       files: Object.fromEntries(Object.entries(files).sort(([a], [b]) => (a < b ? -1 : 1))),
     };
     if (modes[0] !== 'check') {

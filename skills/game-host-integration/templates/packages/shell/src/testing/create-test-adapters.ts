@@ -23,7 +23,7 @@ import type { FakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts'
 /** expo.extra.game of a test app whose id is the tally game's. */
 export const TEST_GAME_EXTRA: GameExtra = {
   id: 'tally',
-  premiumProductId: 'com.example.tally.premium',
+  premiumProductId: 'io.applander.tally.premium',
   adPolicy: {
     isAdsEnabled: true,
     minLevelsCompletedBeforeFirst: 3,
@@ -62,7 +62,10 @@ export type TestAdapterOptions = {
 
 /** What createDebugParts returns in a store build: no debug services, no link handler. */
 function storeBuildDebugParts(): DebugParts {
-  return { services: null, links: null, navigationRef: createNavigationContainerRef() };
+  return {
+    ...{ services: null, links: null, feedback: null },
+    navigationRef: createNavigationContainerRef(),
+  };
 }
 
 export function createTestAdapters(options: TestAdapterOptions = {}): TestAdapters {
@@ -70,7 +73,7 @@ export function createTestAdapters(options: TestAdapterOptions = {}): TestAdapte
   const purchase = createFakePurchase({
     isConnected: true,
     product: {
-      productId: 'com.example.tally.premium',
+      productId: 'io.applander.tally.premium',
       displayPrice: '€1.99',
       price: 1.99,
       currency: 'EUR',
@@ -102,6 +105,7 @@ export function createTestAdapters(options: TestAdapterOptions = {}): TestAdapte
     deviceLocales: [{ languageCode: 'en', languageScriptCode: null }],
     // A store build's debug parts: the tests that need S15's services build their own.
     createDebugParts: options.createDebugParts ?? storeBuildDebugParts,
+    // ADS_MODE=off, as in every E2E build: the consent port asks neither Google UMP nor Apple ATT.
     config: { game: TEST_GAME_EXTRA, ads: { adsMode: 'off', adUnits: null }, appVersion: '1.0.0' },
   };
 }

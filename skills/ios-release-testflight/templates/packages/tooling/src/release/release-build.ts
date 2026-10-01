@@ -12,7 +12,7 @@ import { storeGateProblems } from '@e07/tooling/release/store-gate.ts';
 import type { ReleaseOptions } from '@e07/tooling/release/release-options.ts';
 import type { Preflight } from '@e07/tooling/release/release-preflight.ts';
 import type { ReleaseContext } from '@e07/tooling/release/release-runner.ts';
-import type { ArtifactFacts } from '@e07/tooling/release/store-gate.ts';
+import type { ArtifactFacts, TRACKING_LANGUAGES } from '@e07/tooling/release/store-gate.ts';
 
 export type BuiltIpa = { readonly ipa: string; readonly appDirInIpa: string };
 
@@ -94,10 +94,44 @@ function hasGetTaskAllow(appDir: string): boolean {
   return /<key>get-task-allow<\/key>\s*<true\s*\/>/.test(xml);
 }
 
+/** Whether a non-empty NSUserTrackingUsageDescription is in Info.plist and each language. */
+function trackingTextOf(appDir: string, info: string): ArtifactFacts['trackingText'] {
+  const has = (plist: string): boolean =>
+    (plistValue(plist, 'NSUserTrackingUsageDescription') ?? '').trim() !== '';
+  const lproj = (lang: (typeof TRACKING_LANGUAGES)[number]): boolean =>
+    has(join(appDir, `${lang}.lproj`, 'InfoPlist.strings'));
+  return {
+    'Info.plist': has(info),
+    en: lproj('en'),
+    de: lproj('de'),
+    fa: lproj('fa'),
+    ckb: lproj('ckb'),
+  };
+}
+
 function readExtra(appDir: string): Readonly<Record<string, unknown>> {
   const constants = join(appDir, 'EXConstants.bundle', 'app.config');
   const parsed = JSON.parse(readFileSync(constants, 'utf8')) as { extra?: Record<string, unknown> };
   return parsed.extra ?? {};
+}
+
+const textOf = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : undefined;
+const fieldOf = (value: unknown, key: string): unknown =>
+  typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
+
+/** extra.adUnits (live builds), extra.game.links: what the placeholder checks read. */
+function idsAndLinksOf(extra: Readonly<Record<string, unknown>>): Partial<ArtifactFacts> {
+  const units = extra['adUnits'];
+  const links = fieldOf(extra['game'], 'links');
+  return {
+    adUnits:
+      typeof units === 'object' && units !== null
+        ? Object.values(units).filter((unit): unit is string => typeof unit === 'string')
+        : [],
+    privacyHost: textOf(fieldOf(fieldOf(links, 'privacyPolicy'), 'host')),
+    supportEmail: textOf(fieldOf(links, 'supportEmail')),
+  };
 }
 
 /** Step 6: the facts the gate needs, read from the unpacked app. */
@@ -106,15 +140,17 @@ export function readArtifactFacts(appDir: string): ArtifactFacts {
   const extra = readExtra(appDir);
   const bundle = readFileSync(join(appDir, 'main.jsbundle')).toString('latin1');
   const encryption = plistValue(info, 'ITSAppUsesNonExemptEncryption');
-  const text = (value: unknown): string | undefined =>
-    typeof value === 'string' ? value : undefined;
   return {
+    adUnits: [],
+    privacyHost: undefined,
+    supportEmail: undefined,
+    ...idsAndLinksOf(extra),
     buildNumber: plistValue(info, 'CFBundleVersion') ?? '',
     version: plistValue(info, 'CFBundleShortVersionString') ?? '',
     usesNonExemptEncryption: encryption === undefined ? undefined : encryption === 'true',
     gadAppId: plistValue(info, 'GADApplicationIdentifier'),
-    extraAppVariant: text(extra['appVariant']),
-    extraAdsMode: text(extra['adsMode']),
+    extraAppVariant: textOf(extra['appVariant']),
+    extraAdsMode: textOf(extra['adsMode']),
     sentinelCount: bundle.split('SHELL_TEST_BUILD_ONLY').length - 1,
     placeholderCount: bundle.split('not-built.screen').length - 1,
     testArtefacts: globSync(join(appDir, '**', '*.{storekit,xctest}')),
@@ -122,6 +158,8 @@ export function readArtifactFacts(appDir: string): ArtifactFacts {
     hasGetTaskAllow: hasGetTaskAllow(appDir),
     allowsArbitraryLoads:
       plistValue(info, 'NSAppTransportSecurity.NSAllowsArbitraryLoads') === 'true',
+    bundleId: plistValue(info, 'CFBundleIdentifier'),
+    trackingText: trackingTextOf(appDir, info),
   };
 }
 
@@ -139,6 +177,7 @@ export function runStoreGate(input: GateInput): void {
     variant: input.options.variant,
     buildNumber: input.buildNumber,
     version: input.version,
+    game: input.options.game,
   });
   if (problems.length > 0) {
     throw new Error(

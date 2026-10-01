@@ -1,7 +1,8 @@
 // packages/tooling/src/e2e/capture-screenshots-ios.ts
-// `npm run screenshots:ios -- --app line-siege [--update] [--devices phone] [--langs en,fa]`
+// `npm run screenshots:ios -- --app line-siege [--update] [--devices phone] [--langs en,fa] [--driver-port <n>]`
 // 4 languages x light/dark x phone/tablet. Maestro captures (it waits for the UI to settle); comparePng
 // checks each PNG against apps/<game>/e2e/baselines/<device>/<lang>-<theme>[-<text size>]/<screen>.png.
+// Every capture names its simulator's UDID and a driver port of its own (runMaestro).
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -18,9 +19,9 @@ import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 import {
   ensureSimulator,
   findSimulatorBuild,
-  maestroEnv,
   prepareSimulator,
   readAppInfo,
+  runMaestro,
   setAppearance,
   type AppInfo,
 } from './simulator.ts';
@@ -31,7 +32,6 @@ const DEVICES: Readonly<Record<string, { readonly name: string; readonly model: 
 };
 const DEFAULT_TEXT_SIZE = 'large';
 const MAX_DIFF_RATIO = 0.002;
-const MAESTRO = join('tools', 'maestro', 'bin', 'maestro');
 
 type Cli = {
   readonly game: string;
@@ -41,6 +41,8 @@ type Cli = {
   readonly devices: readonly string[];
   readonly langs: readonly string[];
   readonly textSize: string;
+  /** --driver-port <n>: the session's own Maestro driver port (else a free one per capture). */
+  readonly driverPort: number | undefined;
 };
 type Combo = { readonly device: string; readonly lang: string; readonly theme: 'light' | 'dark' };
 
@@ -49,7 +51,7 @@ function comboDir(cli: Cli, combo: Combo): string {
   return join(combo.device, `${combo.lang}-${combo.theme}${suffix}`);
 }
 
-function capture(cli: Cli, udid: string, combo: Combo): string[] {
+async function capture(cli: Cli, udid: string, combo: Combo): Promise<string[]> {
   const outDir = join('reports', 'screenshots', 'raw', comboDir(cli, combo));
   const vars = {
     APP_ID: cli.app.id,
@@ -58,19 +60,11 @@ function capture(cli: Cli, udid: string, combo: Combo): string[] {
     THEME: combo.theme,
   };
   rmSync(outDir, { recursive: true, force: true });
-  execFileSync(
-    MAESTRO,
-    [
-      'test',
-      cli.flow,
-      '--udid',
-      udid,
-      '--test-output-dir',
-      outDir,
-      ...Object.entries(vars).flatMap(([key, value]) => ['-e', `${key}=${value}`]),
-    ],
-    { stdio: 'inherit', env: maestroEnv() },
-  );
+  const status = await runMaestro({ udid, driverPort: cli.driverPort }, [
+    ...['test', cli.flow, '--test-output-dir', outDir],
+    ...Object.entries(vars).flatMap(([key, value]) => ['-e', `${key}=${value}`]),
+  ]);
+  if (status !== 0) throw new Error(`screenshots: maestro exited ${String(status)}, see ${outDir}`);
   return globSync(join(outDir, '**', '*.png'));
 }
 
@@ -105,6 +99,7 @@ function parseCli(): Cli {
       devices: { type: 'string', default: 'phone,tablet' },
       langs: { type: 'string', default: 'en,de,fa,ckb' },
       'text-size': { type: 'string', default: DEFAULT_TEXT_SIZE },
+      'driver-port': { type: 'string' },
     },
   });
   if (values.app === undefined) {
@@ -118,10 +113,11 @@ function parseCli(): Cli {
     devices: values.devices.split(','),
     langs: values.langs.split(','),
     textSize: values['text-size'],
+    driverPort: values['driver-port'] === undefined ? undefined : Number(values['driver-port']),
   };
 }
 
-function runDevice(cli: Cli, device: string): GalleryRow[] {
+async function runDevice(cli: Cli, device: string): Promise<GalleryRow[]> {
   const spec = DEVICES[device];
   if (spec === undefined) {
     throw new Error(`unknown device ${device}`);
@@ -133,7 +129,7 @@ function runDevice(cli: Cli, device: string): GalleryRow[] {
     setAppearance(udid, theme);
     for (const lang of cli.langs) {
       const combo = { device, lang, theme };
-      rows.push(...capture(cli, udid, combo).map((actual) => check(cli, combo, actual)));
+      rows.push(...(await capture(cli, udid, combo)).map((actual) => check(cli, combo, actual)));
     }
   }
   return rows;
@@ -144,7 +140,8 @@ execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh
   stdio: 'ignore',
 });
 const cli = parseCli();
-const rows = cli.devices.flatMap((device) => runDevice(cli, device));
+const rows: GalleryRow[] = [];
+for (const device of cli.devices) rows.push(...(await runDevice(cli, device)));
 writeFileSync(join('reports', 'screenshots', 'summary.json'), `${JSON.stringify(rows, null, 2)}\n`);
 const changed = rows.filter(({ result }) => isChanged(result));
 console.warn(

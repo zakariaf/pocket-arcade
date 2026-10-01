@@ -110,6 +110,8 @@ type Layout = {
   readonly elevation: number;
   readonly faceStyle: StyleProp<ViewStyle>;
   readonly layoutStyle: StyleProp<ViewStyle>;
+  /** Row keys fill the row's height (both dialog keys as tall as the taller one). */
+  readonly isStretched: boolean;
   readonly variant: 'heroKeyLabel' | 'label';
   readonly align: 'start' | 'center';
 };
@@ -124,6 +126,7 @@ function layoutOf(props: ButtonProps, styles: Styles): Layout {
     elevation: isHero ? HERO.elevation : BUTTON.elevation,
     faceStyle: [styles.face, isHero && styles.heroFace, hasCap && styles.heroWithCap],
     layoutStyle: props.isInRow === true ? styles.inRow : outer,
+    isStretched: props.isInRow === true,
     variant: isHero ? 'heroKeyLabel' : 'label',
     align: hasCap ? 'start' : 'center',
   };
@@ -153,6 +156,7 @@ export function Button(props: ButtonProps): ReactNode {
       {...(props.hint === undefined ? {} : { hint: props.hint })}
       faceStyle={layout.faceStyle}
       layoutStyle={layout.layoutStyle}
+      isStretched={layout.isStretched}
     >
       {capSlot(props, styles, theme.colors.icon)}
       {startSlot(props, paint)}

@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "    feedback: debugFeedbackOf(() => debug, { audio: adapters.audio, haptics }),\n",
+      "with": "    feedback: { audio: adapters.audio, haptics },\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/app/create-shell-parts.ts",
+      "find": "    ...{ haptics: core.haptics },\n",
+      "with": ""
+    }
+  }
+]

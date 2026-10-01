@@ -1,0 +1,4 @@
+eslint-required
+att-adapter-only
+eslint-weakened
+att-allow

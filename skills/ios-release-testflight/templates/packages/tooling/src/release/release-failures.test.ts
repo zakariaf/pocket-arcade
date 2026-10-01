@@ -7,7 +7,7 @@ describe('classifyReleaseFailure', () => {
     ['You have not agreed to the Xcode license agreements.', 'xcode-license', 'O4'],
     ['You must accept the updated Program License Agreement', 'agreement', 'R4'],
     ['xcodebuild: error: PLA Update available', 'agreement', 'R4'],
-    ['No App Store Connect app record for com.example.linesiege.', 'app-record-missing', 'G2'],
+    ['No App Store Connect app record for io.applander.linesiege.', 'app-record-missing', 'G2'],
     ['App Store Connect answered 401 (NOT_AUTHORIZED)', 'not-authorized', 'O3'],
     ['FORBIDDEN_ERROR: not allowed to create distribution certificates', 'forbidden', 'O3'],
     ['"processingState": "INVALID"', 'processing-invalid', null],
@@ -29,7 +29,7 @@ describe('classifyReleaseFailure', () => {
     ['ERROR ITMS-90062: version must be higher', 'version-not-raised'],
     ['ITMS-90683: Missing purpose string in Info.plist', 'purpose-string'],
     ['ITMS-91053: Missing API declaration', 'privacy-manifest'],
-    ["error: No profiles for 'com.example.linesiege' were found", 'signing-flags'],
+    ["error: No profiles for 'io.applander.linesiege' were found", 'signing-flags'],
   ])('names the agent fix for "%s"', (output, id) => {
     expect(classifyReleaseFailure(output)).toMatchObject({ id, isStop: false, ownerStep: null });
   });

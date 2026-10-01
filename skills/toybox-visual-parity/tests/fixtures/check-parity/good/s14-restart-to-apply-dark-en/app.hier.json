@@ -1,0 +1,596 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "title": "",
+  "value": "",
+  "text": "",
+  "hintText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]",
+  "enabled": "false",
+  "focused": "false",
+  "selected": "false",
+  "checked": "false"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "Line Siege",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]",
+    "enabled": "true",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,874]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,874]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,874]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[0,0][402,874]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [
+            {
+             "attributes": {
+              "accessibilityText": "",
+              "title": "",
+              "value": "",
+              "text": "",
+              "hintText": "",
+              "resource-id": "",
+              "bounds": "[0,0][402,874]",
+              "enabled": "true",
+              "focused": "false",
+              "selected": "false",
+              "checked": "false"
+             },
+             "children": [
+              {
+               "attributes": {
+                "accessibilityText": "",
+                "title": "",
+                "value": "",
+                "text": "",
+                "hintText": "",
+                "resource-id": "",
+                "bounds": "[0,0][402,874]",
+                "enabled": "true",
+                "focused": "false",
+                "selected": "false",
+                "checked": "false"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "accessibilityText": "",
+                  "title": "",
+                  "value": "",
+                  "text": "",
+                  "hintText": "",
+                  "resource-id": "",
+                  "bounds": "[0,0][402,874]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "selected": "false",
+                  "checked": "false"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "accessibilityText": "",
+                    "title": "",
+                    "value": "",
+                    "text": "",
+                    "hintText": "",
+                    "resource-id": "restart-dialog.scrim",
+                    "bounds": "[0,0][402,874]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "selected": "false",
+                    "checked": "false"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "accessibilityText": "",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.card",
+                      "bounds": "[20,289][382,584]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "accessibilityText": "Restart to apply",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.title",
+                      "bounds": "[43,390][359,418]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "Restart to apply",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[43,390][359,418]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "accessibilityText": "The layout direction changes after a quick restart. Your progress is saved.",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.body",
+                      "bounds": "[43,430][359,474]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "The layout direction changes after a quick restart. Your progress is saved.",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[43,430][359,474]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "accessibilityText": "",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.buttons",
+                      "bounds": "[43,493][359,561]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "accessibilityText": "Not now",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.later-button",
+                      "bounds": "[43,493][195,561]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    },
+                    {
+                     "attributes": {
+                      "accessibilityText": "Restart now",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "restart-dialog.restart-button",
+                      "bounds": "[207,493][359,561]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": true,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  },
+  {
+   "attributes": {
+    "accessibilityText": "",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][0,0]",
+    "enabled": "false",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,54]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,54]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,14][92,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "10:43 AM",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,22][92,42]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[309,14][345,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "Cellular",
+            "title": "",
+            "value": "4 of 4 bars, signal strength",
+            "text": "4 of 4 bars, signal strength",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[288,26][307,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "SSID, 3 of 3 Wi-Fi bars",
+            "text": "SSID, 3 of 3 Wi-Fi bars",
+            "hintText": "",
+            "resource-id": "3 of 3 Wi-Fi bars",
+            "bounds": "[315,26][332,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "100% battery power",
+            "title": "",
+            "value": "Not charging",
+            "text": "Not charging",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[339,26][366,39]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": false,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  }
+ ],
+ "enabled": false,
+ "focused": false,
+ "checked": false,
+ "selected": false
+}

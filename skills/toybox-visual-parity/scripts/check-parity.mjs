@@ -4,8 +4,8 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
-import { loadImageDeps } from './lib/deps.mjs';
-import { FACTS_FILE, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor, withMapMetadata, withModal } from './lib/frames.mjs';
+import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
+import { FACTS_FILE, describeFacts, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor, withMapMetadata, withModal } from './lib/frames.mjs';
 import { TOLERANCES, compareRun } from './lib/gates.mjs';
 import { parseAppLayout, parseMaestroHierarchy } from './lib/hierarchy.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
@@ -32,6 +32,7 @@ const SPEC = {
     json: { type: 'boolean', help: 'Also print the problems as JSON' },
     facts: { type: 'string', value: 'file', help: "The app's game facts: the reference variant a run must have used", default: FACTS_FILE },
     app: { type: 'string', value: 'id', help: 'App id in the facts file (needed when it lists several apps)' },
+    tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: Infinity },
   details: [
@@ -63,7 +64,7 @@ run(async () => {
   }
   if (dirs.length === 0) fail('nothing to check: pass run folders or --runs <folder>', 'Run: node check-parity.mjs --help');
   const device = readJson(resolve(options.device), 'device profile');
-  const { PNG, pixelmatch } = await loadImageDeps();
+  const { PNG, pixelmatch } = await loadImageDeps(toolingDirOf(options));
   const report = createReporter({ name: 'check-parity', json: options.json });
   const show = (p) => relative(process.cwd(), p) || '.';
   const catalogue = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });
@@ -86,7 +87,7 @@ run(async () => {
       const f = factsFor();
       const wanted = variantFor(frame, f.facts);
       if ((wanted?.id ?? null) !== info.variant) {
-        report.problem({ file, rule: 'reference-variant', message: `captured against ${referenceName(info.frame, info.variant)}, but the facts of app ${f.app} (hasMusic ${f.facts.hasMusic}, winLine ${f.facts.winLine}) select ${describeReference(info.frame, wanted)}`, fix: `Capture again (capture-app.mjs reads parity/game-facts.json), or fix the facts file if it is wrong for this game.` });
+        report.problem({ file, rule: 'reference-variant', message: `captured against ${referenceName(info.frame, info.variant)}, but the facts of app ${f.app} (${describeFacts(f.facts)}) select ${describeReference(info.frame, wanted)}`, fix: `Capture again (capture-app.mjs reads parity/game-facts.json), or fix the facts file if it is wrong for this game.` });
         continue;
       }
     }
@@ -118,7 +119,7 @@ run(async () => {
     const boundsJson = readJson(boundsPath, 'app bounds');
     const bounds = runInfo.appLayout ? parseAppLayout(boundsJson) : parseMaestroHierarchy(boundsJson);
     const board = frame?.board ? { ...frame.board, rect: info.board.rect, source: info.board.source } : null;
-    const result = compareRun({ design: { img: designImg, layout }, app: { img: appImg, bounds }, device, pixelmatch, scrollY: info.scrollY, board, reachedBy: frame?.modal?.reachedBy ?? null });
+    const result = compareRun({ design: { img: designImg, layout }, app: { img: appImg, bounds }, device, pixelmatch, scrollY: info.scrollY, board, reachedBy: frame?.modal?.reachedBy ?? null, boardMask: frame?.boardMask ?? null });
     const { kept, waived, unused } = applyWaivers(result.problems, waiverFile.waivers, info);
     runs += 1;
     const c = result.checked;

@@ -45,7 +45,7 @@ Notes:
 - Names or numbers inside a right-to-left sentence are isolated at display time, so they never jump to the wrong side.
 - Punctuation lives in the translation: Persian and Sorani use ، ؛ ؟.
 - Tone: German uses informal "du" (normal for games; decision D7). Persian and Sorani use a friendly, neutral tone.
-- Claude Code writes all four languages. Persian and Sorani texts should be read once by a native speaker before each release. Machine-written Sorani especially can sound unnatural.
+- Claude Code writes all four languages. Persian and Sorani texts should be read once by a native speaker before each release. Machine-written Sorani especially can sound unnatural. The owner does this review personally (decided 2026-09-30, owner decision O6): Claude Code drafts the texts, lists the review as the owner's step in its reports ("Owner steps (not blocking)"), and never waits for it.
 - Game module texts (title, tutorial, how-to-play, piece and enemy names, result reasons, stats labels) are required in all four languages. A missing text fails the build.
 
 ### 7.5 · What mirrors in right-to-left
@@ -106,6 +106,7 @@ The game defines what counts; the Shell stores and shows it: best per level, bes
 
 - Undo: if the game supports it. The Shell keeps a history of states, and Undo steps back one move (unlimited in puzzle games; the game can limit it).
 - Hints: if the game supports it. The game's solver suggests the next good move, and the Shell highlights it. Hint budget: 1 free hint per day, then a rewarded ad per hint, or unlimited with Premium (decision D2).
+- Every game states whether it has hints at all. A game without hints (for example Line Siege) shows no hint key on the Game screen and no hint entry in the Pause menu (lead decision L8).
 
 ### 8.6 · Saving
 
@@ -148,11 +149,13 @@ General rules:
 - Premium removes banners and interstitials immediately and turns rewarded perks into free perks.
 - Ad content filters: no gambling or other sensitive categories, as far as the ad settings allow (set in the AdMob console).
 - Audience: the games are rated for general audiences but not designed for children, so the child-directed ad rules do not apply. If a game is ever aimed at children, ads must switch to the child-safe mode (decision D8).
+- On iPhone, Apple's tracking permission is asked before the first ad request that could use the advertising ID (S3, spec 4.2; owner decision O1, 2026-09-30). If the player declines, or tracking is restricted, ads still load, without that ID.
 
 ### 8.9 · Premium purchase
 
-- One non-consumable product per game ("Premium", about EUR 1.90).
-- Prices are set in the App Store and Google Play consoles, not in the app. Apple uses fixed price points. If EUR 1.90 is not one of them, use the nearest (for example EUR 1.99). Google allows any price (decision D3).
+- One non-consumable product per game ("Premium", EUR 1.99).
+- Prices are set in the App Store and Google Play consoles, not in the app. EUR 1.99 is one of Apple's fixed price points, so the App Store uses exactly that, and Google Play uses the same price (decision D3, decided 2026-09-30, owner decision O2). The app always shows the price the store reports, in the player's currency, and never types it into the code.
+- Family Sharing stays off for Premium (decided 2026-09-30, owner decision O3). Once Apple's switch is on for a product it cannot be turned off again.
 - After a purchase, the Shell stores "Premium = yes" on the phone. From then on Premium works offline forever, without asking the store again.
 - When online, the Shell quietly re-checks the purchase with the store at app start and updates the stored status (for example after a refund). Premium is revoked only on an explicit, verified revocation, never because a purchase is briefly missing.
 - Restore purchase is required, and is available in S12 and Settings. Reinstalling or a new phone plus Restore gives Premium back.
@@ -166,7 +169,7 @@ General rules:
 ### 8.11 · Accessibility
 
 - Text grows with the phone's text-size setting up to 200%, and layouts reflow rather than cut off.
-- Colour contrast meets normal readability guidelines in light and dark themes.
+- Colour contrast meets the standard guideline (WCAG AA) in light and dark themes: every text reaches at least 4.5:1 against what is behind it, in every state, including a button label while a "hold to confirm" fill grows under it (decided 2026-09-30, owner decision O5; the light `dangerFill` is `#FFDCDF`).
 - Nothing important is shown by colour alone (the colour-blind option adds shapes and symbols).
 - Screen readers can read and use every menu, button and setting. Game boards give a short spoken summary ("Level 12, 3 monsters, your turn") where practical.
 - Reduce motion (settings + phone setting).

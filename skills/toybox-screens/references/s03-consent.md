@@ -21,6 +21,7 @@ S3 is the Shell's own screen right before Google's consent form; Google draws th
 - Offline or Premium: skipped; shown later only if an ad is about to load.
 - Settings has a permanent "Ad privacy choices" row that reopens the form.
 - Not a route: the consent flow (admob-ads) shows this screen full screen, then calls the consent port.
+- Apple's tracking rules (App Store guideline 5.1.2(i), App Tracking Transparency; the owner's decision of 2026-09-30): on iOS the app asks the system tracking question before any ad request that could use the device's advertising identifier. The order is this intro, then Google's form where it is required, then Apple's system prompt while the player has not answered it yet. Where Google's form is not required, this intro is skipped and Apple's prompt comes alone (its footnote says Google's form opens next). Declining (or a phone where tracking is restricted) changes nothing on screen: ads still show, without the identifier.
 
 ## Layout, top to bottom
 
@@ -36,6 +37,10 @@ No top bar, no banner. Body (gap 14), the two grows centre the text block betwee
 8. Caption (13, muted): the footnote.
 
 **Google's form** (the second frame, `s3-google-s-form`): the same screen under the scrim with Google's sheet on top. Mock only: Google UMP draws the real form natively; never build that sheet.
+
+**What follows Continue.** "Choose options" opens Google's form where it is required (`showFormIfRequired` on the consent port). When the form has closed, the consent flow calls the port's `requestTracking()` if Google allows ad requests (`canRequestAds`) and the app is active: iOS shows its own tracking dialog only while the status is still undetermined, with the text of the copy-deck key `consent.tracking.usage-description` in the phone's app language ("Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data."), set as the app's `NSUserTrackingUsageDescription` by the config plugin. Only then are ads initialised, so every ad request follows the answer. Apple draws that dialog; the Shell draws nothing for it, and the S3 texts stay exactly as they are. Where Google's form is not required the intro is skipped, and Apple's prompt still comes before the first ad request. admob-ads owns the flow and the port; this screen only calls `onContinue`.
+
+Never asked: with ads mode off (every E2E build), for Premium owners, offline (the moment is retried online), before the tutorial is finished, during a level, and in the held parity frame of `s3-consent-moment`, which asks neither Google nor Apple.
 
 ## States and variants
 
@@ -87,3 +92,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 
 - Imitating Google's form or pre-ticking anything: the Shell draws only this intro.
 - Showing it before the tutorial is finished, or to players who never need it.
+- Adding Shell text or a screen for Apple's tracking prompt, or asking it before Google's form closes: iOS draws the prompt, and the consent flow asks after the form, before the first ad request.

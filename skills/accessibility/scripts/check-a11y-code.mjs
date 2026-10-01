@@ -33,7 +33,12 @@ const SPEC = {
     '                      app/system-a11y-store.ts (use useReduceMotion())',
     '  announce            announceForAccessibility outside app/use-announce.ts (use useAnnounce())',
     '  modal-overlay       a *dialog/*overlay/*sheet/pause-menu component that neither sets',
-    '                      accessibilityViewIsModal nor renders a component that does (DialogCard, Modal)',
+    '                      accessibilityViewIsModal nor renders a component that does (the Scrim, the modal',
+    '                      root of every Toybox dialog; an overlay root; Modal)',
+    '  nested-pressable    an accessible Pressable/Touchable* that contains another accessible pressable (a',
+    '                      raw one, or a component that renders one, such as Button): iOS then reads the',
+    '                      outer element and VoiceOver never reaches the inner key; make them siblings (a',
+    '                      card opener under an absolutely filled layer, the key above it)',
     '  board-image         board-canvas.tsx must expose one accessible image with a label',
     '  hold-alternative    a call to useHoldToConfirm(...) or onLongPress without accessibilityActions',
     '  adjustable          accessibilityRole="adjustable" without accessibilityValue, accessibilityActions',
@@ -153,6 +158,50 @@ function mayHoldText(masked, tag) {
   return children.includes('{');
 }
 
+/** The index just after the matching closing tag of an opening tag from findJsxTags. */
+function bodyOf(masked, tag) {
+  const closeTag = `</${tag.name}>`;
+  const opener = new RegExp(`<${tag.name.replace('.', '\\.')}[\\s>/]`, 'y');
+  let depth = 1;
+  for (let i = tag.end + 1; i < masked.length; i += 1) {
+    if (masked.startsWith(closeTag, i)) {
+      depth -= 1;
+      if (depth === 0) return { from: tag.end + 1, to: i };
+    } else {
+      opener.lastIndex = i;
+      if (opener.test(masked)) depth += 1;
+    }
+  }
+  return { from: tag.end + 1, to: masked.length };
+}
+
+/**
+ * Names of components that render a pressable: raw Pressable/Touchable*, or a component exported
+ * by a file that renders one (Button -> RaisedSurface -> Pressable), followed to a fixed point.
+ */
+function findPressableNames(root, files) {
+  const sources = files
+    .filter((rel) => rel.endsWith('.tsx') && !/\.test\.tsx$/.test(rel))
+    .map((rel) => {
+      const source = readFileSync(join(root, rel), 'utf8');
+      const masked = maskCode(source);
+      return { masked, tags: new Set(findJsxTags(source, masked).map((tag) => tag.name)) };
+    });
+  const names = new Set(PRESSABLES);
+  const done = new Set();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const file of sources) {
+      if (done.has(file) || ![...file.tags].some((name) => names.has(name))) continue;
+      done.add(file);
+      changed = true;
+      for (const m of file.masked.matchAll(/export\s+(?:function|const)\s+([A-Z][\w$]*)/g)) names.add(m[1]);
+    }
+  }
+  return names;
+}
+
 /**
  * Files whose components are modal: they set accessibilityViewIsModal (or render <Modal>), or
  * render a component exported by such a file (DialogFrame -> DialogCard), followed to a fixed point.
@@ -190,6 +239,7 @@ run(async () => {
   if (files.length === 0) fail(`nothing to check: no .ts/.tsx files under ${rootArg}/packages/shell/src or apps/*/src`, 'Run from the app repo root, or pass it as the argument.');
   const report = createReporter({ name: 'check-a11y-code', json: options.json });
   const modalFiles = findModalFiles(root, files);
+  const pressableNames = findPressableNames(root, files);
   const shown = (rel) => toPosix(relative(process.cwd(), join(root, rel))) || rel;
 
   for (const rel of files) {
@@ -253,6 +303,14 @@ run(async () => {
         problem(tag.start, 'adjustable', `an adjustable control lacks ${missing.join(', ')}`, "Give sliders accessibilityValue={{ min, max, now }}, accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]} and onAccessibilityAction that handles both; without the declared actions VoiceOver's swipe up/down does nothing.");
       }
       if (!PRESSABLES.has(tag.name)) continue;
+      const isAccessible = !/^\{?\s*false\s*\}?$/.test(attrs.get('accessible')?.value?.trim() ?? '');
+      if (isAccessible && !tag.selfClosing) {
+        const body = bodyOf(masked, tag);
+        const inner = findJsxTags(source, masked).find((other) => other.start > body.from && other.start < body.to && pressableNames.has(other.name));
+        if (inner) {
+          problem(inner.start, 'nested-pressable', `<${inner.name}> sits inside an accessible <${tag.name}>, so VoiceOver reads only the outer element and never reaches this key`, 'Make them siblings: the card opener is an absolutely filled Pressable (role button, label joining the card\'s visible texts, which hide from VoiceOver) under the card\'s content, and the key is a separate element above it (references/roles-labels-and-voiceover.md, "Card that opens a screen plus its own key").');
+        }
+      }
       if (!attrs.has('accessibilityRole') && !attrs.has('role') && !spreadGives('accessibilityRole') && !spreadGives('role')) {
         problem(tag.start, 'pressable-role', `<${tag.name}> has no accessibilityRole`, "Add accessibilityRole=\"button\" (or 'switch', 'tab', 'link', 'radio' where true); VoiceOver and getByRole need it.");
       }

@@ -1,0 +1,3 @@
+[system-text-plain]
+consent.tracking.usage-description is a system dialog text
+en.json

@@ -11,7 +11,7 @@ import { callRanges, configFiles, isTestFile, lineAt, packageJsonFiles, parseImp
 
 const SPEC = {
   name: 'check-ads',
-  summary: 'Checks the AdMob integration of a Pocket Arcade app repo: files in place, the SDK pinned and imported only by its adapters, no banned SDK APIs, consent and test-only tools kept apart, IDs and ATT settings, SKAdNetwork list, policy numbers, banner placement and interstitial triggers.',
+  summary: 'Checks the AdMob integration of a Pocket Arcade app repo: files in place, the SDK pinned and imported only by its adapters, no banned SDK APIs, consent and test-only tools kept apart, IDs, the ATT prompt (only in the consent adapter, after the Google form, before initialize, with its plugin and four localised texts), SKAdNetwork list, policy numbers, banner placement and interstitial triggers.',
   usage: '[repo-root] [--json]',
   options: {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -20,12 +20,13 @@ const SPEC = {
   details: [
     'Rules: required-file, sdk-pin, sdk-import, sdk-api, deprecated-banner-size, error-code-branch,',
     '  reward-on-earned, content-rating, test-only-api, debug-adapter-import, consent-factory, sample-id, hard-coded-id,',
-    '  att-prompt, plugin-entry, extra-ad-units, skadnetwork, game-config-ids, policy-numbers, banner-placement,',
-    '  ad-in-effect, pure-policy, root-mock, level-end-recorded, consent-moment, free-hints-config.',
+    '  att-adapter-only, att-order, att-plugin, plugin-entry, extra-ad-units, skadnetwork, game-config-ids,',
+    '  policy-numbers, banner-placement, ad-in-effect, pure-policy, root-mock, level-end-recorded, consent-moment,',
+    '  free-hints-config.',
     'Facts (versions, allowlists, minimums) come from assets/admob-facts.json.',
     '',
     'Rules whose target a later Shell build step creates print SKIP lines until it exists (they count as a',
-    'pass): plugin-entry until packages/shell/src/config/shell-plugins.ts (step 8); level-end-recorded until',
+    'pass): plugin-entry and att-plugin until packages/shell/src/config/shell-plugins.ts (step 8); level-end-recorded until',
     'packages/shell/src/app/create-shell-parts.ts and consent-moment until packages/shell/src/app/shell-features.tsx',
     '(step 7). With shell-slice.json "screens": [] (no Shell app) those two skip as well.',
   ].join('\n'),
@@ -51,9 +52,6 @@ function checkPins(root, report) {
       if (spec !== undefined && spec !== FACTS.sdk.version) {
         report.problem({ file: rel, rule: 'sdk-pin', message: `${field}.${SDK} is "${spec}", not exactly "${FACTS.sdk.version}"`, fix: `Run npm install -E ${SDK}@${FACTS.sdk.version} in every app (npx expo install writes a caret).` });
       }
-    }
-    for (const field of ['dependencies', 'devDependencies']) {
-      if (json[field]?.['expo-tracking-transparency'] !== undefined) report.problem({ file: rel, rule: 'att-prompt', message: 'expo-tracking-transparency is installed', fix: 'Remove it: decision D4 = no tracking prompt in v1.' });
     }
   }
 }
@@ -129,7 +127,6 @@ function checkSourceRules(files, sources, report) {
       for (const match of raw.matchAll(/ca-app-pub-\d{16}[~/]\d{10}/g)) {
         if (!match[0].includes(FACTS.samplePublisher)) add(match.index, 'hard-coded-id', `AdMob ID ${match[0]} in app code`, 'Real IDs live only in apps/<game>/game.config.ts and reach the runtime through expo.extra.adUnits.');
       }
-      for (const match of text.matchAll(/\b(NS)?[uU]serTrackingUsageDescription\b/g)) add(match.index, 'att-prompt', 'tracking usage description set', 'Remove it: decision D4 = no App Tracking Transparency prompt in v1.');
     }
   }
 }
@@ -143,6 +140,105 @@ function checkConsentFactory(files, sources, report) {
     const text = maskComments(sources.get(rel));
     for (const match of text.matchAll(/\bcreateAdmobConsentAdapter\s*\(/g)) {
       report.problem({ file: rel, line: lineAt(text, match.index), rule: 'consent-factory', message: 'createAdmobConsentAdapter() is called directly', fix: 'Build the ConsentPort with createConsentPort(readAdsExtra().adsMode, options): an ADS_MODE=off build must never ask Google UMP (a network request from the app).' });
+    }
+  }
+}
+
+/**
+ * Owner decision O1 (Apple 5.1.2(i)): Apple's tracking prompt goes through the ConsentPort. Only
+ * admob-consent-adapter.ts imports expo-tracking-transparency (the other ports, screens and the
+ * fake never ask), and it imports only the permission calls.
+ */
+function checkTrackingImports(files, sources, report) {
+  const { package: pkg, adapter, allowedNames } = FACTS.tracking;
+  for (const rel of files) {
+    for (const imp of parseImports(sources.get(rel))) {
+      if (imp.specifier !== pkg && !imp.specifier.startsWith(`${pkg}/`)) continue;
+      if (rel !== adapter) {
+        report.problem({ file: rel, line: imp.line, rule: 'att-adapter-only', message: `imports ${pkg} outside the consent adapter`, fix: `Ask through ConsentPort.requestTracking() (useServices().consent); only ${adapter} imports ${pkg}.` });
+        continue;
+      }
+      for (const name of imp.names.filter((item) => !allowedNames.includes(item))) {
+        report.problem({ file: rel, line: imp.line, rule: 'att-adapter-only', message: `imports ${name} from ${pkg}`, fix: `Use only ${allowedNames.join(', ')}; the IDFA itself is Google's SDK's business, never the app's.` });
+      }
+    }
+  }
+}
+
+/** The body of `export async function prepareAds` (masked), or ''. */
+function prepareAdsBody(text) {
+  const start = text.search(/export\s+async\s+function\s+prepareAds\b/);
+  if (start < 0) return { body: '', start: -1 };
+  const end = text.indexOf('\n}', start);
+  return { body: text.slice(start, end < 0 ? undefined : end), start };
+}
+
+/**
+ * The D43 order inside prepareAds: Google's form (consentThroughIntro / showFormIfRequired) and the
+ * canRequestAds check come first, then requestTracking(), then initialize(). So Apple's prompt
+ * never appears before Google's form, and no ad request leaves before the player answered it.
+ */
+function checkTrackingOrder(root, report) {
+  const rel = FACTS.tracking.gate;
+  if (!existsSync(join(root, rel))) return; // required-file reports it
+  const text = maskComments(readRepoText(root, rel));
+  const { body, start } = prepareAdsBody(text);
+  const add = (index, message, fix) => report.problem({ file: rel, line: lineAt(text, Math.max(start, 0) + Math.max(index, 0)), rule: 'att-order', message, fix });
+  if (start < 0) {
+    add(0, 'no prepareAds() in the ad gate', 'Copy templates/packages/shell/src/services/ads/ad-gate.ts.');
+    return;
+  }
+  const at = (re) => body.search(re);
+  const tracking = at(/\.requestTracking\s*\(/);
+  const form = Math.max(at(/\bconsentThroughIntro\s*\(/), at(/\.showFormIfRequired\s*\(/));
+  const allowed = at(/\bcanRequestAds\b/);
+  const initialize = at(/\.initialize\s*\(/);
+  const fix = 'In prepareAds: refresh, then (where required) the S3 intro and Google\'s form, then `if (!info.canRequestAds) return false;`, then `await deps.consent.requestTracking();`, then `await deps.ads.initialize();` and the preloads.';
+  if (tracking < 0) add(0, 'prepareAds never asks Apple\'s tracking prompt (ConsentPort.requestTracking)', fix);
+  else {
+    if (form >= 0 && tracking < form) add(tracking, 'requestTracking() runs before Google\'s form', fix);
+    if (allowed >= 0 && tracking < allowed) add(tracking, 'requestTracking() runs before the canRequestAds check (a player who allowed no ads would be asked)', fix);
+    if (initialize >= 0 && tracking > initialize) add(tracking, 'requestTracking() runs after initialize(): the SDK may request an ad before the ATT answer', fix);
+  }
+}
+
+/**
+ * Apple's prompt needs NSUserTrackingUsageDescription (without it expo-tracking-transparency stops
+ * the app): the plugin entry with the en text in shell-plugins.ts, the four localised texts in
+ * withShell's locales from the Shell catalogs, and the package in every app. One writer only: the
+ * AdMob plugin's own userTrackingUsageDescription stays unset.
+ */
+function checkTrackingPlugin(root, report) {
+  const facts = FACTS.tracking;
+  const read = (rel) => (existsSync(join(root, rel)) ? maskComments(readRepoText(root, rel)) : '');
+  const plugins = read(facts.plugins);
+  if (!new RegExp(`\\[\\s*['"]${facts.package}['"]\\s*,\\s*\\{[^}]*userTrackingPermission\\s*:`).test(plugins)) {
+    report.problem({ file: facts.plugins, rule: 'att-plugin', message: `no ['${facts.package}', { userTrackingPermission }] entry in the plugin list`, fix: `Add ['${facts.package}', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }] to shellPlugins (architecture-and-boundaries' shell-plugins.ts template).` });
+  }
+  const withShell = read(facts.withShell);
+  if (!/\bNSUserTrackingUsageDescription\s*:/.test(withShell)) {
+    report.problem({ file: facts.withShell, rule: 'att-plugin', message: 'withShell writes no localised NSUserTrackingUsageDescription', fix: 'In localizedNames: ios: { CFBundleDisplayName, NSUserTrackingUsageDescription: TRACKING_USAGE_DESCRIPTIONS[lang] } for en, de, fa and ckb.' });
+  }
+  for (const lang of facts.languages) {
+    const rel = `${facts.catalogDir}/${lang}.json`;
+    const text = readRepoJson(root, rel)?.[facts.catalogKey];
+    if (typeof text !== 'string' || text.trim() === '') report.problem({ file: rel, rule: 'att-plugin', message: `no "${facts.catalogKey}" text in ${lang}`, fix: 'Add the copy deck\'s consent.tracking.usage-description text to the Shell catalog (i18n-strings-and-catalogs).' });
+  }
+  const apps = join(root, 'apps');
+  for (const name of existsSync(apps) ? readdirSync(apps).sort() : []) {
+    const rel = `apps/${name}/package.json`;
+    const json = readRepoJson(root, rel);
+    if (json === null || json === undefined) continue;
+    if (json.dependencies?.[facts.package] === undefined) report.problem({ file: rel, rule: 'att-plugin', message: `${facts.package} is not installed in this app (its plugin cannot resolve)`, fix: `Plan it with the dependency-management skill (plan-dependency, --online), then install "${facts.appSpec}" in every app.` });
+  }
+}
+
+/** The AdMob plugin's own ATT string would be a second writer of NSUserTrackingUsageDescription. */
+function checkNoSecondTrackingWriter(files, sources, report) {
+  for (const rel of files.filter((file) => !isTestFile(file))) {
+    const text = maskComments(sources.get(rel));
+    for (const match of text.matchAll(/\buserTrackingUsageDescription\b/g)) {
+      report.problem({ file: rel, line: lineAt(text, match.index), rule: 'att-plugin', message: 'userTrackingUsageDescription is set (a second writer of the ATT text)', fix: 'Remove it: the expo-tracking-transparency plugin and withShell\'s locales write NSUserTrackingUsageDescription, from the Shell catalogs.' });
     }
   }
 }
@@ -172,8 +268,13 @@ function checkAdapterContent(root, report) {
 function checkConfig(root, report) {
   const files = configFiles(root);
   const pluginsDue = dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
-  if (pluginsDue !== null) report.skip({ file: SHELL_DUE_TARGETS.plugins.file, rule: 'plugin-entry', message: pluginsDue });
-  else checkPluginEntry(root, files, report);
+  if (pluginsDue !== null) {
+    report.skip({ file: SHELL_DUE_TARGETS.plugins.file, rule: 'plugin-entry', message: pluginsDue });
+    report.skip({ file: SHELL_DUE_TARGETS.plugins.file, rule: 'att-plugin', message: pluginsDue });
+  } else {
+    checkPluginEntry(root, files, report);
+    checkTrackingPlugin(root, report);
+  }
   checkUnitsExtra(root, files, report);
 }
 
@@ -451,6 +552,10 @@ run(async () => {
   checkPins(root, report);
   checkImports(root, unique, sources, report);
   checkConsentFactory(unique, sources, report);
+  checkTrackingImports(unique, sources, report);
+  checkTrackingOrder(root, report);
+  const withConfig = [...new Set([...unique, ...configFiles(root)])];
+  checkNoSecondTrackingWriter(withConfig, new Map(withConfig.map((rel) => [rel, sources.get(rel) ?? readRepoText(root, rel)])), report);
   checkSourceRules(unique, sources, report);
   checkAdapterContent(root, report);
   checkConfig(root, report);

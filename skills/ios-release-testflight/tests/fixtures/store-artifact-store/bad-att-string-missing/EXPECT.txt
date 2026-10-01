@@ -1,0 +1,1 @@
+Info.plist [att-string] NSUserTrackingUsageDescription is missing or empty, so the tracking prompt would crash the app

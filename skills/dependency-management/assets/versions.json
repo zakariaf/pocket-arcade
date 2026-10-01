@@ -161,6 +161,14 @@
       "why": "\"Rate this game\" (OS component)",
       "native": true
     },
+    "expo-tracking-transparency": {
+      "version": "57.0.2",
+      "spec": "~57.0.2",
+      "install": "expo",
+      "where": "apps",
+      "why": "App Tracking Transparency prompt behind ConsentPort.requestTracking (owner decision O1, 2026-09-30); sdk-57 = latest = 57.0.2, published 2026-09-11, MIT, no install script; imported only by packages/shell/src/services/consent/admob-consent-adapter.ts; its plugin entry in shell-plugins.ts (userTrackingPermission) writes NSUserTrackingUsageDescription and adds Android's AD_ID permission",
+      "native": true
+    },
     "expo-splash-screen": {
       "version": "57.0.9",
       "spec": "~57.0.9",

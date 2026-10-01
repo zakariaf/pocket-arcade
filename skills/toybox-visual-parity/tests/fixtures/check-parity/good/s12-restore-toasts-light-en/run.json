@@ -1,0 +1,14 @@
+{
+ "frame": "s12-restore-results-toasts",
+ "variant": null,
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. The toasts float over the Premium page in the app and over the empty card ground in the design: each part of a state card is compared inside its own painted shape (R3S-G17b).",
+ "reference": {
+  "image": "../../reference-r3/lineSiege/light-en/s12-restore-results-toasts.png",
+  "layout": "../../reference-r3/lineSiege/light-en/s12-restore-results-toasts.layout.json"
+ }
+}

@@ -144,6 +144,44 @@ describe('RaisedSurface', () => {
     });
   });
 
+  it('stretches its key and face to the row height only when asked (a dialog button row)', async () => {
+    await renderWithShell(
+      <>
+        <RaisedSurface
+          label="Not now"
+          onPress={jest.fn()}
+          testID="restart-dialog.later-button"
+          elevation={ELEVATION.control}
+          radius={RADII.md}
+          fill="transparent"
+          isReducedMotion={false}
+          isStretched
+        >
+          <AppText text="Not now" variant="label" />
+        </RaisedSurface>
+        <RaisedSurface
+          label="Settings"
+          onPress={jest.fn()}
+          testID="home.settings-button"
+          elevation={ELEVATION.iconButton}
+          radius={RADII.md}
+          fill="transparent"
+          isReducedMotion={false}
+        >
+          <AppText text="Settings" variant="label" />
+        </RaisedSurface>
+      </>,
+    );
+
+    // CSS align-items: stretch makes both dialog keys as tall as the taller one; a blanket flexGrow
+    // would also grow every icon key (6 pt too tall), so only a stretched key grows.
+    const face = screen.getByText('Not now').parent;
+    // allow-style-assertion: the stretch is a layout rule the unit tests can only see as styles
+    expect(face).toHaveStyle({ flexGrow: 1 });
+    expect(face?.parent).toHaveStyle({ flexGrow: 1 });
+    expect(screen.getByText('Settings').parent).not.toHaveStyle({ flexGrow: 1 });
+  });
+
   it('plays the tap feedback before the action, except on a switch', async () => {
     const calls: string[] = [];
     const user = userEvent.setup();

@@ -1,0 +1,4 @@
+[
+  { "replace": { "file": "parity/game-facts.json", "find": "      \"winLine\": \"moves\",\n      \"hasHints\": false\n", "with": "      \"winLine\": \"moves\"\n" } },
+  { "delete": "apps/flock-tilt/src/parity-game-facts.test.ts" }
+]

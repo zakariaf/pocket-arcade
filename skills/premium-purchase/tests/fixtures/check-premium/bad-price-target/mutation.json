@@ -1,0 +1,16 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/asc/create-premium-iap.ts",
+      "find": "const TARGET_EUR = 1.99;",
+      "with": "const TARGET_EUR = 1.9;"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/tooling/src/asc/premium-iap-payloads.ts",
+      "find": "// Owner decision O2: the EUR 1.99 App Store price point.",
+      "with": "// Spec D3: about EUR 1.90 at the nearest Apple price point."
+    }
+  }
+]

@@ -11,3 +11,33 @@ FAIL app.png [missing] s11-settings light-en: settings.music-switch: not found i
 FAIL app.png [text] s7-result-win light-en: result.score-card.moves-line: text differs
 FAIL app.png [text-ink] s8-levels light-fa: levels.level-tile.12: ink height 10.0 vs design 14.0
 [Parsing Failed at 23:60]
+ATT prompt missing before the first ad request
+ATT prompt never appears
+This app has crashed because it attempted to access privacy-sensitive data without a usage description. The app's Info.plist must contain an NSUserTrackingUsageDescription key with a string value explaining to the user how the app uses this data.
+App Review rejection risk under guideline 5.1.2(i): the ads SDK declares tracking
+The Premium price is EUR 1.90
+Should Family Sharing be on for Premium
+FAIL apps/line-siege/game.config.ts [ad-app-id] ca-app-pub-1234567890123456~1234567890 is a placeholder
+FAIL [bundle-id] com.example.linesiege is a placeholder
+hold-to-confirm label 4.43:1 during the hold
+Assertion is false: id: daily.screen is visible
+FAIL app.png [missing] s6-pause light-en: game.hint-button: not found in the app
+FAIL app.png [text-ink] s7-result-win--score light-fa: result.score-card.value: ink height 29.0 vs design 38.0
+fa and ckb need the native review before a release
+bands-unapproved
+screen-not-reached on every S14 frame
+FAIL [screen-not-reached] the root testID reset-progress.scrim is not on screen
+Persian text 3 pt high or digit tops clipped
+underline ink width fails on quiet buttons
+two-line titles break elsewhere
+proportional Persian digits
+stat values 8 pt low
+balanced wrap never settles
+missing element with 5 pt on screen
+hold fill 16 pt short
+text-ink reads a neighbour's dots
+every Bash call exits 1 with no output
+hierarchy shows another screen or language
+hierarchy from another simulator: the dump has no marker of this launch
+release:ios refuses a store build: fa/ckb messages differ from their reviewed hash
+Tracking prompt shown twice, or a Google explainer before it

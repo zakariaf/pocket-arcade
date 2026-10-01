@@ -30,4 +30,14 @@ describe('findBannedPackages', () => {
     const clean: Lockfile = { packages: { '': {}, 'node_modules/zustand': {} } };
     expect(findBannedPackages(inventoryFromLockfile(clean))).toStrictEqual([]);
   });
+
+  it('allows the App Tracking Transparency module the consent adapter asks with', () => {
+    const withAtt: Lockfile = {
+      packages: {
+        'apps/line-siege': { dependencies: { 'expo-tracking-transparency': '~57.0.2' } },
+        'node_modules/expo-tracking-transparency': {},
+      },
+    };
+    expect(findBannedPackages(inventoryFromLockfile(withAtt))).toStrictEqual([]);
+  });
 });

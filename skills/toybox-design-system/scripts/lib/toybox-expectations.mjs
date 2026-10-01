@@ -107,7 +107,24 @@ export const TYPE_STYLE_OVERRIDES = {
   // `.row.strong .rl` and `.row.danger .rl`: the row label (17, 1.32 / 1.5) in Bold. Danger rows
   // used the button label role (1.25), 1.2 pt shorter than the references per line.
   rowLabelStrong: { fontSize: 17, weight: 'bold', face: 'text', lineHeight: { latin: 1.32, arabic: 1.5 } },
+  // `.slist>div:first-child`: the stat list's heading row ("Best score") is the key's 15 pt in Bold,
+  // not the 17 pt label role (S10 measured the heading 2 pt too tall).
+  statListHeading: { fontSize: 15, weight: 'bold', face: 'text', lineHeight: { latin: 1.32, arabic: 1.5 } },
 };
+
+/**
+ * Stat values use tabular figures (the mockup's `.sv`: font-variant-numeric tabular-nums): the
+ * TYPE_SCALE role and the TYPE_STYLES entries below carry `isTabular: true`, which AppText maps to
+ * fontVariant ['tabular-nums']. Persian digits were proportional without it (ink 12 vs 20.3 pt).
+ */
+export const TABULAR_ROLES = ['number'];
+export const TABULAR_STYLES = ['statValueCompact'];
+
+/**
+ * Display numbers whose Persian line box must hold Vazirmatn's tall digits: iOS clips a Text at its
+ * frame where Chrome lets the glyphs overflow. Lead decisions L2 (level tiles) and L9 (scores).
+ */
+export const PERSIAN_NUMBER_MIN_LINE_HEIGHT = { levelNumber: 1.45, scoreValue: 1.45 };
 
 export function expectedScales(tokens) {
   return {
@@ -171,7 +188,8 @@ export function expectedTypeStyles(tokens) {
       face: faceOf(name, style),
       lineHeight: { latin: style.lineHeight, arabic: style.arabicLineHeight },
       ...(style.letterSpacingEm ? { letterSpacingEm: style.letterSpacingEm } : {}),
-      ...(style.underline ? { isUnderlined: true } : {}),
+      // A token underline ({ thickness, offset }, the nudge) is drawn by QuietButton as a 2 pt bar,
+      // never by iOS's textDecorationLine (1 pt at its own depth), so no style is isUnderlined.
     };
     if (typeof style.size === 'number') {
       out[name] = { fontSize: style.size, ...base };

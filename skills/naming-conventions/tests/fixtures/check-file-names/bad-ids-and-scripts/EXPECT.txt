@@ -5,3 +5,4 @@ apps/tile-drop/game.config.ts:7 [game-id] bundleId 'com.Example.tile_drop'
 apps/tile-drop/game.config.ts:8 [game-id] premium productId 'com.example.tiledrop.pro'
 package.json:1 [npm-script-name] script "checkFast"
 script "test:Golden"
+apps/tile-drop/game.config.ts:7 [bundle-id-applander] bundleId 'com.Example.tile_drop' is not 'io.applander.tiledrop'

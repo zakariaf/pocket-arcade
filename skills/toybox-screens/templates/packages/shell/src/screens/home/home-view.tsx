@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
 
 /**
  * S4 Home, top to bottom: the top bar (brand lock + settings gear); the tagline sticker (no
- * Endless, or Premium); the hero Play key; the daily panel; the Endless row button; the three
- * keys; the Premium row button (not for owners); the banner pinned under the scrolling body
- * (not for owners).
+ * Endless, or Premium); the hero Play key; the daily panel (its body opens S9, its Play key
+ * starts today's run); the Endless row button; the three keys; the Premium row button (not for
+ * owners); the banner pinned under the scrolling body (not for owners).
  */
 export function HomeView({ model }: HomeViewProps): ReactNode {
   const t = useT();
@@ -57,6 +57,7 @@ export function HomeView({ model }: HomeViewProps): ReactNode {
         />
         <HomeDailyCard
           daily={model.daily}
+          onOpenDaily={actions.onOpenDaily}
           onPlayDaily={actions.onPlayDaily}
           isReducedMotion={isReducedMotion}
         />

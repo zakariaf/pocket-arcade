@@ -1,0 +1,3 @@
+bundle-id
+apps/line-siege/game.config.ts
+bundleId "com.example.linesiege" is not io.applander.linesiege

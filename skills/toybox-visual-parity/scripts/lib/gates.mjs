@@ -32,6 +32,7 @@ export const TOLERANCES = Object.freeze({
   anchorEdgeLuma: 24,
   anchorMinEdgePt: 3,
   fillInsetPt: 2,
+  minVisiblePt: 8,
 });
 
 /**
@@ -350,17 +351,31 @@ export function rotatedCore(rect, degrees) {
   return { cx: rect.x + rect.w / 2, cy: rect.y + rect.h / 2, hw: w / 2, hh: h / 2, cos: Math.cos(rad), sin: Math.sin(rad) };
 }
 
+/** The part of a pixel window inside a clip rectangle (pt), or null when nothing is left. */
+function clipWindow(win, clip, scale, padPt) {
+  if (!clip) return win;
+  const bx = Math.max(win.bx, Math.floor((clip.x - padPt) * scale));
+  const by = Math.max(win.by, Math.floor((clip.y - padPt) * scale));
+  const ex = Math.min(win.ex, Math.ceil((clip.x + clip.w + padPt) * scale));
+  const ey = Math.min(win.ey, Math.ceil((clip.y + clip.h + padPt) * scale));
+  return ex - bx < 2 || ey - by < 2 ? null : { bx, by, ex, ey };
+}
+
 /**
  * Ink box of a text run, measured by its text colour (coordinates in pt):
  *   - a pixel is ink when its colour lies on the way from the window's background to the text
  *     colour, past halfway (so a sticker's yellow paper or a sky gradient is never ink);
  *   - a rotated run keeps only pixels inside its rotated line box (core, from rotatedCore);
+ *   - the window is clipped to the owner element's box (limits.clip, plus the pad): Chrome gives a
+ *     Vazirmatn run a line box 1.5625 em tall, which reaches into the element below it;
  *   - ink components that touch the window's edge belong to something larger than the text (a
- *     segment's border and corner, a sticker's edge, a neighbouring line) and are dropped.
+ *     segment's border and corner, a sticker's edge, a neighbouring line) and are dropped, and so
+ *     are components whose centre lies in another element's text box outside the owner's box
+ *     (limits.foreign: the dots of the label under a Persian value).
  * Returns null when no ink is left.
  */
-export function inkBoxByColour(img, rect, scale, padPt, fg, core = null) {
-  const win = windowPx(img, rect, scale, padPt);
+export function inkBoxByColour(img, rect, scale, padPt, fg, core = null, limits = null) {
+  const win = clipWindow(windowPx(img, rect, scale, padPt), limits?.clip ?? null, scale, padPt);
   if (!win) return null;
   const { bx, by, ex, ey } = win;
   const bg = ringColour(img, bx, by, ex, ey);
@@ -435,6 +450,7 @@ export function inkBoxByColour(img, rect, scale, padPt, fg, core = null) {
       }
     }
   }
+  if (limits?.foreign?.length) dropForeignComponents(ink, w, h, { bx, by, scale, clip: limits.clip ?? null, foreign: limits.foreign });
   let n = 0;
   let sx = 0;
   let sy = 0;
@@ -456,6 +472,49 @@ export function inkBoxByColour(img, rect, scale, padPt, fg, core = null) {
   }
   if (n === 0) return null;
   return { n, cx: (bx + sx / n) / scale, cy: (by + sy / n) / scale, w: (x1 - x0 + 1) / scale, h: (y1 - y0 + 1) / scale };
+}
+
+/**
+ * Clears the ink components (8-neighbour) whose centre lies in another element's text box (pt) and
+ * outside the owner's box: glyph parts of a neighbour, never of the run.
+ */
+function dropForeignComponents(ink, w, h, { bx, by, scale, clip, foreign }) {
+  const seen = new Uint8Array(w * h);
+  const stack = [];
+  const members = [];
+  const inRect = (x, y, r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+  for (let i = 0; i < w * h; i += 1) {
+    if (!ink[i] || seen[i]) continue;
+    members.length = 0;
+    let sx = 0;
+    let sy = 0;
+    stack.push(i);
+    seen[i] = 1;
+    while (stack.length) {
+      const k = stack.pop();
+      members.push(k);
+      const x = k % w;
+      const y = (k / w) | 0;
+      sx += x;
+      sy += y;
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dx = -1; dx <= 1; dx += 1) {
+          const xx = x + dx;
+          const yy = y + dy;
+          if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+          const j = yy * w + xx;
+          if (ink[j] && !seen[j]) {
+            seen[j] = 1;
+            stack.push(j);
+          }
+        }
+      }
+    }
+    const cx = (bx + sx / members.length + 0.5) / scale;
+    const cy = (by + sy / members.length + 0.5) / scale;
+    if ((clip && inRect(cx, cy, clip)) || !foreign.some((r) => inRect(cx, cy, r))) continue;
+    for (const k of members) ink[k] = 0;
+  }
 }
 
 /**
@@ -786,12 +845,20 @@ function applyBoardMask({ board, layout, byId, pairs, design, app, S }) {
  * Returns { problems, notes, checked, coverage, offscreen, stats }. Problems are ordered in the
  * order they should be fixed: screen reached, missing, geometry, text, colour, type, structure.
  */
-export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null }) {
+export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null, boardMask = null }) {
   const T = TOLERANCES;
   const S = device.scale;
   const layout = design.layout;
   const kind = layout.kind;
   const isPhone = kind === 'phone' || kind === 'phone-tall';
+  // A state card is a fragment of the phone screen (S12): compared by text, fill, border, ink size
+  // and crop, never by position. Its root is the fragment itself (its padding, its stand-in heading,
+  // its parts stacked in a column), which can never align with the phone screen.
+  const isStateCard = kind === 'state-card';
+  // The root of a state card is the fragment itself (its designSelector is :scope, so its rect is
+  // the whole card); the S12 restore frame's root is instead its first toast, a real element.
+  const rootEl = (layout.elements ?? []).find((el) => el.testID === layout.root && el.rect);
+  const rootIsFragment = isStateCard && Boolean(rootEl) && rootEl.rect.x === 0 && rootEl.rect.y === 0 && Math.abs(rootEl.rect.w - (layout.size?.w ?? rootEl.rect.w)) < 1;
   const problems = [];
   const notes = [];
   const stats = {};
@@ -862,6 +929,12 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   // "floating" elements (drawn at an illustrative position: no bounds check) are design coordinates.
   const deviceMasks = fullScreen ? (device.masks ?? []).map((m) => ({ x: m.x, y: m.y, w: m.width, h: m.height })) : [];
   const maskedDesign = allEls.filter((el) => el.mask).map((el) => el.rect);
+  // Unlisted parts behind a dialog that their own frame masks (Home's banner under an S14 dialog).
+  for (const m of layout.masks ?? []) {
+    if (!m.rect) continue;
+    maskedDesign.push(m.rect);
+    notes.push(`${m.as}: masked under the dialog (${m.selector}), as its own frame masks it`);
+  }
   const floating = isPhone ? designEls.filter((el) => el.testID !== layout.root && el.checks.length > 0 && !el.checks.includes('bounds')) : [];
   const coveredBy = (el) => floating.filter((f) => f !== el && f.testID !== el.parent).map((f) => f.rect);
 
@@ -915,6 +988,25 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     notes.push(...mask.notes);
     stats.boardMask = { rect: board.rect, pieces: mask.pieces.map((r) => ({ x: Math.round(r.x * 100) / 100, y: Math.round(r.y * 100) / 100, w: Math.round(r.w * 100) / 100, h: Math.round(r.h * 100) / 100 })), masked: [...mask.masked] };
   }
+  // A picture the game draws with its own board code (S13's example picture, frames.json boardMask):
+  // the union of the app's and the reference's rectangles of that element is filled in both images;
+  // the element keeps its bounds check (its frame and place), elements wholly inside are skipped.
+  if (boardMask?.testID && byId.get(boardMask.testID)) {
+    const el = byId.get(boardMask.testID);
+    const pair = pairs.get(boardMask.testID);
+    const appRect = pair ? { x: pair.a.x, y: pair.a.y, w: pair.a.w, h: pair.a.h } : el.rect;
+    const mask = applyBoardMask({ board: { rect: appRect, source: `${boardMask.testID} in the app`, above: [] }, layout: { ...layout, root: layout.root }, byId: new Map([...byId, ['game.board', el]]), pairs, design, app, S });
+    design = { ...design, img: mask.images.design };
+    app = { ...app, img: mask.images.app };
+    maskedDesign.push(...mask.pieces);
+    for (const id of mask.masked) {
+      if (id === boardMask.testID) continue;
+      boardMasked.add(id);
+      pairs.delete(id);
+    }
+    boardMasked.add(`${boardMask.testID}#pixels`);
+    notes.push(`${boardMask.testID}: the game's own picture, masked in both images (union of the app's ${JSON.stringify(appRect)} and the reference's rectangle); its bounds are still checked`, ...mask.notes.slice(1).filter((n) => !n.startsWith(`${boardMask.testID}:`)));
+  }
   // Screen bands (app coordinates, pt) where a body element's pixels are hidden: under the fixed
   // header, and behind the pinned banner. Everything else only loses the pinned band.
   // The bands run past the screen edges, so the part of an element scrolled off the screen is
@@ -932,8 +1024,11 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   for (const el of designEls) {
     if (pairs.has(el.testID) || boardMasked.has(el.testID)) continue;
     if (geo.inBody(el)) {
+      // An element with less than minVisiblePt on screen counts as off-screen: iOS leaves such a
+      // sliver out of the accessibility snapshot Maestro reads, and the scroll plan shows it whole
+      // at another offset (S11c fa at scroll 0: 5 pt of the backup body).
       const y = expectedY(el);
-      if (y >= geo.bodyBottom || y + el.rect.h <= geo.headerBottom) {
+      if (y >= geo.bodyBottom - T.minVisiblePt || y + el.rect.h <= geo.headerBottom + T.minVisiblePt) {
         offscreen.push(el.testID);
         continue;
       }
@@ -1155,11 +1250,29 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     const source = dx !== null && dy !== null ? 'pixels' : dx !== null ? 'pixels-x' : dy !== null ? 'pixels-y' : 'maestro';
     return { dx: dx ?? off.dx, dy: dy ?? off.dy, source };
   };
+  // Dialog cards (DialogCard: the S14 dialogs, the Pause dialog) hide what lies under them. A run of
+  // the screen behind the dialog whose box meets the card is not ink-checked: the card covers it
+  // wholly or in part, and a sliver of it measures only where the card edge falls.
+  const cards = allEls.filter((el) => el.component === 'DialogCard').map((el) => ({ testID: el.testID, rect: extentOf(el) }));
+  const behindCard = (run, owner) => cards.find((c) => intersects(run, c.rect) && !(owner && owner.testID !== layout.root && inside(owner.rect, c.rect, T.boundsPt)));
+  const skippedUnderCard = new Set();
+  let skippedStateCardChrome = 0;
   for (const run of layout.texts) {
     const owner = run.owner ? byId.get(run.owner) : null;
     if (owner?.mask || boardMasked.has(run.owner)) continue;
     const centre = { x: run.x + run.w / 2, y: run.y + run.h / 2 };
     if (inAny(centre.x, centre.y, maskedDesign)) continue;
+    const card = behindCard(run, owner);
+    if (card) {
+      skippedUnderCard.add(card.testID);
+      continue;
+    }
+    // The fragment's own text outside every mapped part (the state card's stand-in heading) is not
+    // the app's: the phone screen draws the real top bar there.
+    if (isStateCard && (!run.owner || (run.owner === layout.root && rootIsFragment))) {
+      skippedStateCardChrome += 1;
+      continue;
+    }
     if (inAny(centre.x, centre.y, floating.filter((f) => f !== owner).map((f) => f.rect))) continue;
     // A crop-only owner is placed through its cover (the nearest reachable, compared ancestor).
     const measuredOwner = owner && isCropOnly(owner) ? (owner.coveredBy ?? owner.parent ?? null) : run.owner;
@@ -1175,12 +1288,19 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     // comparable ink box; it is checked in the capture that shows it whole.
     const runHidden = owner ? hiddenFor(owner) : inBody(run) ? bodyBands : bottomBand;
     if (runHidden.some((r) => intersects(pad(ar, T.inkPadPt), r))) continue;
-    const rotate = owner?.box?.rotate ?? 0;
+    // The run's own tilt when the layout records it (every transform above it), else its owner's.
+    const rotate = run.rotate ?? owner?.box?.rotate ?? 0;
     const core = rotatedCore(run, rotate);
+    // The ink window stays inside the owner's box (unrotated owners), and glyph parts in another
+    // element's text box are not the run's (R3S-G27: a Vazirmatn run's tall line box reached into the
+    // label below and took in its dots).
+    const clip = owner && owner.testID !== layout.root && !rotate && !core ? owner.rect : null;
+    const foreign = clip ? layout.texts.filter((t) => t.owner !== run.owner).map((t) => ({ x: t.x, y: t.y, w: t.w, h: t.h })) : [];
+    const limitsAt = (dx, dy) => (clip ? { clip: shift(clip, dx, dy), foreign: foreign.map((r) => shift(r, dx, dy)) } : null);
     let fg = null;
     let d = null;
     for (const colour of runTextColours(design.img, run, S, T.inkPadPt, T.inkDistance, owner?.style?.color)) {
-      const box = inkBoxByColour(design.img, run, S, T.inkPadPt, colour, core);
+      const box = inkBoxByColour(design.img, run, S, T.inkPadPt, colour, core, limitsAt(0, 0));
       if (box && (!d || box.n > d.n)) {
         d = box;
         fg = colour;
@@ -1205,7 +1325,7 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     for (const at of [snapped, { dx: Math.round(off.dx * S) / S, dy: Math.round(off.dy * S) / S }]) {
       const appRun = shift(run, at.dx, at.dy);
       const appCore = core ? { ...core, cx: core.cx + at.dx, cy: core.cy + at.dy } : null;
-      const got = fg ? inkBoxByColour(app.img, appRun, S, T.inkPadPt, fg, appCore) : inkBox(app.img, appRun, S, T.inkPadPt, T.inkDistance);
+      const got = fg ? inkBoxByColour(app.img, appRun, S, T.inkPadPt, fg, appCore, limitsAt(at.dx, at.dy)) : inkBox(app.img, appRun, S, T.inkPadPt, T.inkDistance);
       if (got && (!a || Math.abs(got.n - d.n) < Math.abs(a.n - d.n))) a = got;
     }
     const label = run.owner ?? layout.root ?? 'text';
@@ -1224,12 +1344,16 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     const why = [];
     if (Math.abs(a.w - d.w) > T.inkSizePt) why.push(`ink width ${round1(a.w)} vs design ${round1(d.w)} pt (size, weight, family, letter-spacing or wrapping)`);
     if (Math.abs(a.h - d.h) > T.inkSizePt) why.push(`ink height ${round1(a.h)} vs design ${round1(d.h)} pt (size, line breaks or clipping)`);
-    if (Math.abs(dx) > floor.centrePt || Math.abs(dy) > floor.centrePt) why.push(`moved dx ${signed(dx)} dy ${signed(dy)} pt inside its element (alignment, padding or line height; limit ${floor.centrePt} pt for ${floor.role})`);
+    // A state card is never compared by position: only the ink size of its runs counts.
+    if (!isStateCard && (Math.abs(dx) > floor.centrePt || Math.abs(dy) > floor.centrePt)) why.push(`moved dx ${signed(dx)} dy ${signed(dy)} pt inside its element (alignment, padding or line height; limit ${floor.centrePt} pt for ${floor.role})`);
     if (why.length && !inkSeen.has(key)) {
       inkSeen.add(key);
       add('text-ink', label, `text "${run.text.slice(0, 60)}": ${why.join('; ')}`, `Use the design's text style (${run.font}) and alignment.`, { rect: run, viewRect: { x: ar.x, y: ar.y, w: ar.w, h: ar.h } });
     }
   }
+
+  for (const id of skippedUnderCard) notes.push(`text of the screen behind ${id} is not ink-checked where the dialog card covers it`);
+  if (skippedStateCardChrome) notes.push(`state card: ${skippedStateCardChrome} run${skippedStateCardChrome === 1 ? '' : 's'} of the fragment's own heading not ink-checked (the phone screen draws its top bar there)`);
 
   // 9. Structure: each element's painted area (box, hard shadow, ring, focus outline) is cropped
   // from both images and aligned (+-6 px: Maestro bounds are whole points); diff blobs outside text
@@ -1241,6 +1365,12 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     const isRoot = el.testID === layout.root;
     if (!(el.checks.includes('crop') || el.checks.includes('fill') || isRoot)) continue;
     if (isRoot && kind === 'phone-tall' && Math.abs(scrollShift) > T.boundsPt) continue;
+    // A state card's root is the design fragment, not a screen: its parts are compared one by one.
+    if (isRoot && rootIsFragment) {
+      notes.push(`${el.testID}: state card root, no structure check (its parts are compared one by one)`);
+      continue;
+    }
+    if (boardMask?.testID === el.testID) continue;
     const ext = isRoot ? el.rect : extentOf(el);
     items.push({ el, a, ext, area: el.rect.w * el.rect.h });
   }
@@ -1267,6 +1397,19 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     for (const r of designExclude) {
       for (let y = Math.max(0, Math.floor(r.y)); y < Math.min(crop.h, Math.ceil(r.y + r.h)); y += 1) {
         for (let x = Math.max(0, Math.floor(r.x)); x < Math.min(crop.w, Math.ceil(r.x + r.w)); x += 1) ignore[y * crop.w + x] = 1;
+      }
+    }
+    // A part of a state card is compared inside its own painted shape (rounded box and hard
+    // shadows): around it the design shows the fragment's empty ground, the app the phone page
+    // behind it (the S12 toasts float over the Premium page's Buy key).
+    if (isStateCard && !(el.testID === layout.root && rootIsFragment)) {
+      const shapes = paintedShapes(el);
+      for (let y = 0; y < crop.h; y += 1) {
+        for (let x = 0; x < crop.w; x += 1) {
+          const px = (crop.x + x + 0.5) / S;
+          const py = (crop.y + y + 0.5) / S;
+          if (!shapes.some((sh) => inShape(px, py, sh, 0))) ignore[y * crop.w + x] = 1;
+        }
       }
     }
     // The screen root is the screen: it is never shifted to fit (its pixels are the gaps between elements).

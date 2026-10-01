@@ -42,7 +42,7 @@ The mockup has no large-text frames, so these are the chosen layouts at `isLarge
 
 Check them in screenshots at `accessibility-extra-extra-extra-large` in en and fa: nothing clipped or overlapping, nothing truncated.
 
-Clipping also happens at normal size when a Persian line box is too short: iOS cuts glyphs at the line box where Chrome (the design references) lets them overflow. At line height 1.0 the tops of Vazirmatn's digits on every fa level tile were cut off, so the level number now uses 1.45 in fa and ckb (the theme's `TYPE_STYLES.levelNumber`, a token-file change). In fa and ckb screenshots look at the tops and bottoms of digits and of marks such as madda and hamza, not only at wrapping; a clipped glyph is a defect, never a waiver.
+Clipping also happens at normal size when a Persian line box is too short: iOS cuts glyphs at the line box where Chrome (the design references) lets them overflow. At line height 1.0 the tops of Vazirmatn's digits on every fa level tile were cut off, so the level number now uses 1.45 in fa and ckb (the theme's `TYPE_STYLES.levelNumber`, a token-file change, lead decision L2). The 44 pt score (`TYPE_STYLES.scoreValue`: S7, the endless and daily results) lost the tops of its Persian digits the same way and uses 1.45 too (lead decision L9); keep only minimum heights around both, never a fixed row height. Beyond the line box, `AppText`'s overflow guard centres a Vazirmatn line's overflow as Chrome does, since iOS puts it all above the line and clips it (toybox-design-system). In fa and ckb screenshots look at the tops and bottoms of digits and of marks such as madda and hamza, not only at wrapping; a clipped glyph is a defect, never a waiver.
 
 ## Reduce motion: one source of truth
 

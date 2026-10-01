@@ -1,0 +1,1 @@
+[{ "replace": { "file": "DemoGame.app/Info.plist", "find": "\t<key>NSUserTrackingUsageDescription</key>\n", "with": "\t<key>RemovedKey</key>\n" } }, { "delete": "DemoGame.app/ckb.lproj" }]

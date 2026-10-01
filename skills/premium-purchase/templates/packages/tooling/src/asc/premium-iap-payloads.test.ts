@@ -2,6 +2,7 @@
 import {
   availabilityBody,
   closestPricePoints,
+  createIapBody,
   screenshotCommitBody,
   screenshotReserveBody,
 } from './premium-iap-payloads.ts';
@@ -12,14 +13,28 @@ const IAP = 'inAppPurchases';
 const SCREENSHOT = 'inAppPurchaseAppStoreReviewScreenshots';
 const TERRITORY = 'territories';
 
+describe('createIapBody', () => {
+  it('creates one non-consumable Premium with Family Sharing off (owner decision O3)', () => {
+    expect(createIapBody('app-1', 'io.applander.linesiege.premium')).toMatchObject({
+      data: {
+        attributes: {
+          productId: 'io.applander.linesiege.premium',
+          inAppPurchaseType: 'NON_CONSUMABLE',
+          familySharable: false,
+        },
+      },
+    });
+  });
+});
+
 describe('closestPricePoints', () => {
-  it('ranks the points by distance to the EUR 1.90 target', () => {
+  it('ranks the points by distance to the EUR 1.99 target', () => {
     const points = [
-      { id: 'a', customerPrice: 1.49 },
+      { id: 'a', customerPrice: 1.89 },
       { id: 'b', customerPrice: 1.99 },
       { id: 'c', customerPrice: 2.49 },
     ];
-    expect(closestPricePoints(points, 1.9).map((p) => p.id)).toStrictEqual(['b', 'a', 'c']);
+    expect(closestPricePoints(points, 1.99).map((p) => p.id)).toStrictEqual(['b', 'a', 'c']);
   });
 });
 

@@ -40,7 +40,8 @@ export type AdmobPluginOptions = {
 };
 
 // The SDK is linked in every variant, so Info.plist always needs an app ID (missing = crash).
-// No userTrackingUsageDescription: decision D4 = no App Tracking Transparency prompt in v1.
+// No userTrackingUsageDescription: Apple's ATT text (owner decision O1) has one writer, the
+// expo-tracking-transparency plugin entry and withShell's locales (shell-plugins.ts, with-shell.ts).
 export function admobPluginOptions(
   mode: AdsMode,
   ids: AdmobGameIds,

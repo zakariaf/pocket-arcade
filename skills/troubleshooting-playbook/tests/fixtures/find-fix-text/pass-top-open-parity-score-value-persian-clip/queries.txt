@@ -1,0 +1,1 @@
+FAIL app.png [text-ink] s7-result-win--score light-fa: result.score-card.value: ink height 29.0 vs design 38.0

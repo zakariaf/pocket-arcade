@@ -13,6 +13,7 @@ import type { ReactNode } from 'react';
 
 const WEEK = COMPONENT_SPECS.weekStrip;
 const TAG = WEEK.tag;
+const TAG_OVERFLOW = 12;
 
 export type WeekDay = {
   /** Weekday letter (date.weekday-strip.1..7), in the UI language. */
@@ -37,6 +38,10 @@ export type WeekStripProps = {
 const styles = StyleSheet.create({
   strip: { flexDirection: 'row', gap: WEEK.gap },
   day: { flex: 1, alignItems: 'center', gap: WEEK.dayGap },
+  // "Today" (45 pt with its pads) is wider than a day column (43 pt): as in the design, the tag
+  // overflows its column, centred, instead of wrapping inside it ("Toda / y"). The invisible
+  // wrapper reaches TAG_OVERFLOW past the column on each side; nothing else moves.
+  tagRoom: { alignSelf: 'stretch', alignItems: 'center', marginInline: -TAG_OVERFLOW },
   tag: {
     paddingBlock: TAG.paddingBlock,
     paddingInline: TAG.paddingInline,
@@ -57,8 +62,10 @@ function dayColumn(day: WeekDay, id: string, tag: TodayTag): ReactNode {
       <AppText text={day.letter} variant="weekdayLetter" tone="muted" testID={`${id}.letter`} />
       <WeekMark state={day.state} size="regular" label={day.label} testID={`${id}.mark`} />
       {day.isToday ? (
-        <View style={[styles.tag, tag.paint]} testID={`${id}.today-tag`}>
-          <AppText text={tag.text} variant="weekTodayTag" tone="toyInk" />
+        <View style={styles.tagRoom}>
+          <View style={[styles.tag, tag.paint]} testID={`${id}.today-tag`}>
+            <AppText text={tag.text} variant="weekTodayTag" tone="toyInk" />
+          </View>
         </View>
       ) : null}
     </View>

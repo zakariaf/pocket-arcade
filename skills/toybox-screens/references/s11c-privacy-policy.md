@@ -34,7 +34,7 @@ One state.
 
 `PrivacyPolicyModel` (in `privacy-policy-view.tsx`): `gameName`, `emailText`, `updatedDateText`, `isReducedMotion`, `onBack`.
 
-The template `use-privacy-policy-model.ts` (with its test) builds it: the game's name from the host, the support address from `useGameExtra().links.supportEmail`, and `updatedDateText` = `date.day-month-year` of `PRIVACY_POLICY_UPDATED` (Chosen: 2026-09-27, the day the policy text last changed; change it together with the `privacy.*` texts).
+The template `use-privacy-policy-model.ts` (with its test) builds it: the game's name from the host, the support address from `useGameExtra().links.supportEmail`, and `updatedDateText` = `date.day-month-year` of `PRIVACY_POLICY_UPDATED` (Chosen: 2026-09-27, the day the policy text last changed; change it together with the `privacy.*` texts). The formatted date goes through `stripIsolates` before it becomes `{dateText}`: the date formatter already wraps it in bidi isolates, and the i18n interpolation isolates it again, so a Persian line held a nested FSI/PDI pair that CoreText draws differently from the design (the date moved). One isolate, the interpolation's, is enough; any interpolated formatted date does the same.
 
 ## Templates
 
@@ -102,3 +102,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 
 - A web view or remote URL: the text is bundled and offline.
 - A banner on this screen.
+- Interpolating an already isolated date: strip the formatter's isolates first (`stripIsolates`), so the text holds one isolate pair.

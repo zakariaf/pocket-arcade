@@ -1,0 +1,2 @@
+[game-facts]
+GameHost.counters drops each counter's aggregate

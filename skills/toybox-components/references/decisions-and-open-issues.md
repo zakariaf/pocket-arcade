@@ -20,7 +20,7 @@ Values the mockup does not fix, states it does not draw, and open questions an o
 | Banner position | Home and Statistics: pinned under the body; Levels: the last item of the body column (`marginTop: 'auto'`, the wrapper cancels the 20 pt gutters) | the design's S8 `.body` closes with the banner; the long Statistics capture shows it pinned at the end |
 | Toast | above the banner, 14 pt over the body's bottom; about 3 s (S8's locked-tile toast: absolute, 352 pt below the body's top, as the design draws it) | parity compares the S8 toast with the design, so S8 follows it |
 | Hold-to-confirm | 2 s linear fill from the start edge, 150 ms empty on release; `frozenProgress` holds a static fill for the parity capture only | the mockup draws a static 46 % fill |
-| Confetti | falls with the success sticker's slap; nothing under reduce motion | the mockup is static |
+| Confetti | falls with the success sticker's slap; hidden by the saved Reduce motion setting (`isHiddenBySetting`), drawn at rest when motion only holds still (a parity capture); never mirrored (`direction: 'ltr'` band) | the mockup is static and places the pieces with `left:` |
 | Focus ring | on the tapped locked tile and on iPad keyboard focus | the mockup draws only the tile |
 | "Phone language" sticker | marks the phone's own language | the mockup draws it on the selected option because that is the default |
 | Slider step for VoiceOver | 10 % | not in the design |
@@ -30,6 +30,18 @@ Values the mockup does not fix, states it does not draw, and open questions an o
 | Locked pack edge | the panel's ink edge, dashed, on `sunken` | the design draws `3px dashed` ink; a `textMuted` edge failed S8 |
 | Persian level numbers | line height 1.45 in fa and ckb (1 in en and de); the tile stays 62 tall, the stars sit lower | at 1.0 iOS clips Vazirmatn's digits; the token file and design changed to 1.45 on 2026-09-30 (lead-approved, an intended reference change) |
 | Score-rated win line | `ScorePanel` `line.kind` `'score'`: "Score 1,840 – best 1,840" (`.score-line`); moves-rated games keep `'moves'` (`.moves-line`) | par is never shown for a score-rated level (Line Siege); decided 2026-09-30 with a design-derived S7 variant |
+| Hold-to-confirm contrast | light `dangerFill` `#FFDCDF` (owner decision O5, 2026-09-30): danger on it 4.52:1, dark 5.83:1 | the hold label stays on the key while the fill grows under it, so it reads at 4.5:1 in every fill state; `check-contrast` has no exception |
+| Modal root | the `Scrim` carries `accessibilityViewIsModal`, never `DialogCard` | a modal child hides the scrim's testID and the screen under it from the accessibility tree (every S14 capture: "screen not reached"); VoiceOver still stays inside the scrim |
+| Quiet underline | a drawn 2 pt bar at `quietUnderlineTop` (5 pt under the text); the nudge style has no underline | iOS's `textDecorationLine` is 1 pt at its own depth; the design's `.quiet` is 2 px thick, offset 5 px |
+| Hold fill | in an absolute track pinned to the face edges | Yoga takes an absolute child's percentage inside the parent's padding (the fill ended 16 pt short) |
+| Dialog-row keys | stretched to the row's height (`isStretched`), only in a row | CSS `align-items: stretch`; a blanket `flexGrow` grew every icon button by 6 pt |
+| Stat list | 15 Bold heading row without top pad or rule; keys keep their width; Chrome's baselines from font metrics; tabular stat values | the design's `.slist` and `.sv`; iOS reported another baseline for overflowing Persian lines (values 8 pt low) |
+| Note panel | icon at the top; strong text `rowLabelStrong`; a one-line note shrinks to its text; optional icon tile (`iconTile`) | the design's `.note-p` (`align-items: flex-start`, a `<p>` as wide as its text) and the S11a globe tile |
+| List row | `alignContent: 'center'`; `textExtra` column; `descriptionTestID`; `IconTileIcon` icons | a one-line row sat at the top under Yoga's default; S11d's licence column; the S11 Rate row's hollow rating star |
+| Week strip and legend | the Today tag overflows its column, centred (`marginInline: -12`); legend gap 6 | "Today" is wider than a 43 pt column; `.legend>span{gap:6px}` |
+| Option card | badge centred; an autonym of the other direction at the row end | S2 draws the sticker centred and each autonym in its own direction |
+| New best sticker | gold `sm`, rating star, +6° | the mockup's `sticker(..., {cls: 'sm', r: 6, icon: 'star'})`; the regular size was 12 pt wider |
+| Persian score | `scoreValue` 1 / 1.45 (lead decision L9); the score panel keeps only minimum heights | at 1.0 iOS clipped the Persian digits |
 
 ## States the mockup does not draw
 
@@ -37,7 +49,6 @@ Built as described, but no design capture proves them: pressed segment, slider d
 
 ## Open issues
 
-1. **Hold-to-confirm label contrast.** During the hold, the 17 pt Bold `danger` label sits on `dangerFill` at 4.43:1 in light (needs 4.5). Options for the owner: a lighter light `dangerFill` (`#FFDFE2` gives 4.62:1; not in the mockup), or accept it as a transient state. The template keeps the design's `dangerFill`; accessibility's `check-contrast.mjs` checks danger on `dangerFill` as an icon pair (3:1, which it passes) and body text on `dangerFill` at 4.5:1; the hold label's 4.43:1 stays an open owner decision that goes into every report, never an `--allow`.
-2. **Unverified on device:** `boxShadow` crispness and cost with many tiles, `outline` (the focus ring) around rotated or dashed views, and the spring feel. Check in the first simulator build; the fallback for a shadow is a shadow View inside `RaisedSurface`.
-3. **Copy is a draft.** Persian and Sorani await native review; longer final strings may change wrapping, so re-check option cards, Home keys and stickers after the review.
-4. **Screen gutters.** The top bar pads 16 and the body 20; a screen frame that pads its column by 16 would double the gutter. The banner band itself has no negative margin (a -20 margin inside the band made it 40 pt too wide): on Home and Statistics the slot is pinned outside the body's gutters, and on Levels the screen's wrapper around the slot cancels them once.
+1. **Unverified on device:** `boxShadow` crispness and cost with many tiles, `outline` (the focus ring) around rotated or dashed views, and the spring feel. Check in the first simulator build; the fallback for a shadow is a shadow View inside `RaisedSurface`.
+2. **Copy is a draft.** Persian and Sorani await the owner's own native review (owner step O6: listed in every report under "Owner steps (not blocking)", never waited for); longer final strings may change wrapping, so re-check option cards, Home keys and stickers after the review.
+3. **Screen gutters.** The top bar pads 16 and the body 20; a screen frame that pads its column by 16 would double the gutter. The banner band itself has no negative margin (a -20 margin inside the band made it 40 pt too wide): on Home and Statistics the slot is pinned outside the body's gutters, and on Levels the screen's wrapper around the slot cancels them once.

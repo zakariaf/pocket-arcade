@@ -1,4 +1,4 @@
 SKIP packages/shell/src/config/shell-plugins.ts [audio-plugin] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
-SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created
+SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created
 [voice-policy]
 RESULT: FAIL (1 problems)

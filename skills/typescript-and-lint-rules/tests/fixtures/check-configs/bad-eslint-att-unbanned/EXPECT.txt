@@ -1,0 +1,2 @@
+eslint-required
+att-in-banned-list

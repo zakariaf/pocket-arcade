@@ -45,10 +45,11 @@ The spec forbids our code from reaching the network (N1 to N3) and forbids analy
 | `expo-notifications` | The product has no push notifications | nothing |
 | `@amplitude/*`, `expo-analytics-amplitude`, `@segment/*` | Analytics | nothing |
 | `react-native-webview`, `expo-web-browser` | Web views are a network surface (`@expo/dom-webview` comes with `expo`: allowed installed, banned from imports) | OS hand-off links through `Linking` |
-| `expo-tracking-transparency` | No ATT prompt in v1; its plugin writes a tracking string | nothing |
 | `react-native-restart` | A pre-1.0 native dependency | `reloadAppAsync()` from `expo` |
 | `eslint-plugin-react-compiler` | Superseded by `eslint-plugin-react-hooks` 7 (brought by `eslint-config-expo`) | nothing |
 | `axios`, `ky`, `got`, `node-fetch`, `cross-fetch` (direct) | App code makes no requests; tooling uses Node's built-in `fetch` | built-in `fetch` in `packages/tooling` only |
+
+`expo-tracking-transparency` is not on this list. The owner decided on 2026-09-30 (O1) to follow App Store guideline 5.1.2(i): on iOS the app asks for App Tracking Transparency before any ad request that could use the advertising identifier (IDFA), after the consent intro and Google's consent form. The module is an app-wide Expo package (versions table, `~57.0.2`), a thin wrapper around Apple's `ATTrackingManager` that makes no network request of its own. Only `packages/shell/src/services/consent/admob-consent-adapter.ts` may import it (ESLint `no-restricted-imports` everywhere else), and its config plugin entry in `shell-plugins.ts` writes the tracking text (`userTrackingPermission`; without the option the plugin writes Expo's generic English sentence) and adds Android's `com.google.android.gms.permission.AD_ID` permission.
 
 HTTP clients are banned only as direct dependencies, because some tools pull them in transitively (for example `fbjs` pulls `cross-fetch`). Everything else is banned anywhere in `package-lock.json`: if a banned package appears transitively, find the parent with `npm explain <pkg>` and remove the parent.
 
@@ -59,7 +60,7 @@ Also "do not add" (not banned, just wrong): `babel-preset-expo` (57.0.13 comes w
 Some installed packages are fine while one of their options is not. Other skills enforce these; know them so an install never re-enables one:
 
 - `expo-iap`: the exports `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, the plugin options `iapkitApiKey` and `modules.onside`, and `ios.onside.enabled` (they add servers).
-- `react-native-google-mobile-ads`: the plugin option `userTrackingUsageDescription` (no ATT in v1).
+- `react-native-google-mobile-ads`: the plugin option `userTrackingUsageDescription` stays unset. The tracking text has one source: the `expo-tracking-transparency` plugin entry (`userTrackingPermission`, the English text) and the Shell's localised `NSUserTrackingUsageDescription` per language (owner decision O1).
 - Maestro: the commands `assertWithAI`, `assertNoDefectsWithAI`, `extractTextWithAI` (they upload screenshots to an LLM service).
 - Pods: none of `Firebase*`, `GoogleAppMeasurement`, `Sentry`, `Bugsnag`, `Crashlytics`, `Adjust`, `AppsFlyerFramework`, `Branch`, `Amplitude`, `Mixpanel`, `Segment`, `RevenueCat`/`PurchasesHybridCommon`, `OneSignal`, `OnsideKit`, `FBSDKCoreKit`, `FBAudienceNetwork`, `GoogleMobileAdsMediation*` may appear in `Podfile.lock`. Only three pods may come from the CocoaPods trunk at all (see the table above). CocoaPods has no age gate; pods follow the npm pins because the podspecs pin them exactly (as resolved on 2026-09-26: Google-Mobile-Ads-SDK 13.6.0, GoogleUserMessagingPlatform 3.1.0, openiap 3.6.0).
 
@@ -118,7 +119,7 @@ Every npm package that ends up in a release JS bundle must carry an allowed lice
 | `src/deps/banned-packages.ts` (+ test) | the banned list as regexes and the lockfile inventory (direct vs anywhere); also used by the network audit |
 | `src/deps/app-lockstep.ts` (+ test) | every package that two apps declare with different specifiers |
 | `src/deps/expo-patch-age.ts` (+ test) | pure: parses the `expo install --check` and `expo-doctor` mismatches and decides which are patches younger than 7 days (a `WARN` line with the due date) and which fail |
-| `src/clock/system-clock.ts` | the only tooling module that reads the wall clock (`todayIso()` for the expiry check) |
+| `src/clock/system-clock.ts` (+ test) | the only tooling module that reads the wall clock (`todayIso()` for the expiry check, `nowEpochSeconds()` for the App Store Connect JWT); the test keeps both exports used, so knip passes in a repo without the App Store Connect client |
 | `src/audit/audit-licenses.ts`, `license-policy.ts` (+ test) | the licence audit described above |
 | `license-exceptions.json` | starts as `{}` |
 

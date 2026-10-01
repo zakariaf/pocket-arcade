@@ -1,0 +1,3 @@
+[att-plugin]
+packages/shell/src/i18n/catalogs/fa.json
+no "consent.tracking.usage-description" text in fa

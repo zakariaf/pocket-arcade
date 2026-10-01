@@ -1,0 +1,2 @@
+[narrowed]
+narrowed: not a sign-off (checked light x en; the done set is light and dark x en and fa at every planned offset)

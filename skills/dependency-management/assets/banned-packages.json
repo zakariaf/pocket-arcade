@@ -67,11 +67,6 @@
       "reason": "Web views are a network surface (N3); @expo/dom-webview comes with expo and is allowed installed but banned from imports."
     },
     {
-      "pattern": "^expo-tracking-transparency$",
-      "scope": "anywhere",
-      "reason": "No ATT prompt in v1; its plugin writes a tracking string."
-    },
-    {
       "pattern": "^react-native-restart$",
       "scope": "anywhere",
       "reason": "A pre-1.0 native dependency; reloadAppAsync from expo covers restarts."

@@ -38,7 +38,7 @@ describe('appProcessPattern', () => {
   it("finds the app in any bundle folder, Maestro's clearState reinstall included", () => {
     const pattern = appProcessPattern('LineSiege');
     expect(matches(pattern, `${bundle}/LineSiege.app/LineSiege`)).toBe(true);
-    expect(matches(pattern, `${bundle}/com.example.linesiege-1790732416578.app/LineSiege`)).toBe(
+    expect(matches(pattern, `${bundle}/io.applander.linesiege-1790732416578.app/LineSiege`)).toBe(
       true,
     );
     expect(matches(pattern, `${bundle}/LineSiege.app/LineSiege -AppleLanguages (fa)`)).toBe(true);
@@ -47,7 +47,7 @@ describe('appProcessPattern', () => {
 
   it("keeps to one simulator's copy when given its udid", () => {
     const pattern = appProcessPattern('LineSiege', 'U1');
-    expect(matches(pattern, `${bundle}/com.example.linesiege-1.app/LineSiege`)).toBe(true);
+    expect(matches(pattern, `${bundle}/io.applander.linesiege-1.app/LineSiege`)).toBe(true);
     expect(matches(pattern, `${bundle.replace('U1', 'U2')}/LineSiege.app/LineSiege`)).toBe(false);
   });
 });

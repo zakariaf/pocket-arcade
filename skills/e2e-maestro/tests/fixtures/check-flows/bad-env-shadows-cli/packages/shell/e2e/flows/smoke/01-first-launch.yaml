@@ -3,7 +3,7 @@ appId: ${APP_ID}
 name: First launch goes from language choice to the tutorial
 tags: [smoke, shell]
 env:
-  APP_ID: com.example.demo
+  APP_ID: io.applander.demo
   LANG: en
 ---
 - launchApp:

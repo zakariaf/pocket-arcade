@@ -11,7 +11,7 @@ jest.mock('./splash-grounds.ts', () => ({
 const BASE: ExpoConfig = {
   name: 'Line Siege',
   slug: 'line-siege',
-  ios: { bundleIdentifier: 'com.example.linesiege' },
+  ios: { bundleIdentifier: 'io.applander.linesiege' },
   plugins: [['expo-font', { fonts: ['./assets/fonts/LilitaOne.ttf'] }]],
 };
 const GROUND = { light: '#A5DAF3', dark: '#1B1943' };
@@ -22,7 +22,7 @@ describe('withArt', () => {
 
     expect(config.icon).toBe('./assets/generated/icon-light.png');
     expect(config.ios).toStrictEqual({
-      bundleIdentifier: 'com.example.linesiege',
+      bundleIdentifier: 'io.applander.linesiege',
       icon: ICON_CONFIG.iosIcon,
     });
   });

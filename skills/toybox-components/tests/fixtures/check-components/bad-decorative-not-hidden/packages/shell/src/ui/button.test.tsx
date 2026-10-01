@@ -94,6 +94,33 @@ describe('Button', () => {
     });
   });
 
+  it('stretches a key in a dialog row to the height of its neighbour, and only there', async () => {
+    await renderWithShell(
+      <>
+        <Button
+          label="Not now"
+          onPress={jest.fn()}
+          testID="restart-dialog.later-button"
+          kind="secondary"
+          isInRow
+          isReducedMotion={false}
+        />
+        <Button
+          label="Play"
+          onPress={jest.fn()}
+          testID="home.play-button"
+          kind="primary"
+          isReducedMotion={false}
+        />
+      </>,
+    );
+
+    // The label sits in a View on the key's face: its parent is the face.
+    // allow-style-assertion: CSS align-items stretch in the dialog row is only visible as flexGrow
+    expect(screen.getByText('Not now').parent?.parent).toHaveStyle({ flexGrow: 1 });
+    expect(screen.getByText('Play').parent?.parent).not.toHaveStyle({ flexGrow: 1 });
+  });
+
   it('renders a quiet nudge as an underlined, unraised button', async () => {
     const onPress = jest.fn();
     const user = userEvent.setup();
@@ -111,6 +138,7 @@ describe('Button', () => {
     await user.press(screen.getByRole('button', { name: 'Restore purchase' }));
 
     expect(onPress).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Restore purchase')).toHaveStyle({ textDecorationLine: 'underline' });
+    const label = screen.getByText('Restore purchase');
+    expect(label.parent?.children.find((child) => child !== label)).toHaveStyle({ height: 2 });
   });
 });

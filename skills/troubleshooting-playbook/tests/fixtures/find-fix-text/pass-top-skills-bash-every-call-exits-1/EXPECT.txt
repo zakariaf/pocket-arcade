@@ -1,0 +1,1 @@
+MATCH skills-bash-every-call-exits-1 [

@@ -4,26 +4,47 @@
 // Every native setting comes only from this file and config plugins. This full version replaces the
 // bootstrap's phase-0 composer once every native module is installed (architecture-and-boundaries):
 // it adds the privacy manifest, the one plugin list (shell-plugins.ts) and the game's art.
+// The app ids are the owner's decision O4 (2026-09-30): io.applander.<game id without hyphens>
+// for the iOS bundle and the Android package, and <bundle id>.premium for Premium.
 import { adUnitsExtra } from './ads-config.ts';
 import { resolveBuildVariant } from './app-variant.ts';
 import { withGameArt } from './art-config.ts';
 import { toGameExtra } from './game-extra.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
-import { shellPlugins } from './shell-plugins.ts';
+import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
 
 import type { BuildEnv } from './app-variant.ts';
 import type { GameConfig, LanguageCode } from './game-config.ts';
 import type { ExpoConfig } from 'expo/config';
 
 const LANGUAGES: readonly LanguageCode[] = ['en', 'de', 'fa', 'ckb'];
-const BUNDLE_ID = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
+
+/** The one app id of a game: io.applander.<game id without hyphens>, all lowercase (O4). */
+export function appIdOf(gameId: string): string {
+  return `io.applander.${gameId.replaceAll('-', '')}`.toLowerCase();
+}
+
+/** Refuses any other bundle id (com.example.* and other placeholders) or Premium product id. */
+function assertAppIds(game: GameConfig): void {
+  const appId = appIdOf(game.id);
+  if (game.bundleId !== appId) {
+    throw new Error(`bundleId ${game.bundleId} must be ${appId} (io.applander.<game id>)`);
+  }
+  if (game.premium.productId !== `${appId}.premium`) {
+    throw new Error(`premium.productId ${game.premium.productId} must be ${appId}.premium`);
+  }
+}
 
 function localizedNames(game: GameConfig): NonNullable<ExpoConfig['locales']> {
   return Object.fromEntries(
     LANGUAGES.map((lang) => [
       lang,
       {
-        ios: { CFBundleDisplayName: game.appName[lang] },
+        ios: {
+          CFBundleDisplayName: game.appName[lang],
+          // admob-ads: Apple's tracking prompt text, localised (InfoPlist.strings at prebuild).
+          NSUserTrackingUsageDescription: TRACKING_USAGE_DESCRIPTIONS[lang],
+        },
         android: { app_name: game.appName[lang] },
       },
     ]),
@@ -49,9 +70,7 @@ function iosConfig(game: GameConfig, teamId: string | undefined): NonNullable<Ex
 
 /** Pure: app.config.ts passes process.env; tests pass a plain object. */
 export function withShell(game: GameConfig, env: BuildEnv): ExpoConfig {
-  if (!BUNDLE_ID.test(game.bundleId)) {
-    throw new Error(`bundleId ${game.bundleId} must match ${BUNDLE_ID.source}`);
-  }
+  assertAppIds(game);
   const variant = resolveBuildVariant(env);
   const adsMode = game.ads.isEnabled ? variant.adsMode : 'off';
   const adUnits = adUnitsExtra(adsMode, game.ads.ids); // null unless ADS_MODE=live

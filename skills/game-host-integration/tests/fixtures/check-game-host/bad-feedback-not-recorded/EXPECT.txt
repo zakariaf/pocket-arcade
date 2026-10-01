@@ -1,0 +1,4 @@
+[feedback-recorded]
+packages/shell/src/app/create-shell-parts.ts:1
+the game host plays feedback through the real ports only
+createDebugParts gets no haptics port

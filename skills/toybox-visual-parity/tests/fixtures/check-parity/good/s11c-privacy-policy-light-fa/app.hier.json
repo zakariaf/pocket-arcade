@@ -1,0 +1,1357 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "title": "",
+  "value": "",
+  "text": "",
+  "hintText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]",
+  "enabled": "false",
+  "focused": "false",
+  "selected": "false",
+  "checked": "false"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "Line Siege",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]",
+    "enabled": "true",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,874]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,874]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,874]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[0,0][402,874]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [
+            {
+             "attributes": {
+              "accessibilityText": "",
+              "title": "",
+              "value": "",
+              "text": "",
+              "hintText": "",
+              "resource-id": "",
+              "bounds": "[0,0][402,874]",
+              "enabled": "true",
+              "focused": "false",
+              "selected": "false",
+              "checked": "false"
+             },
+             "children": [
+              {
+               "attributes": {
+                "accessibilityText": "",
+                "title": "",
+                "value": "",
+                "text": "",
+                "hintText": "",
+                "resource-id": "",
+                "bounds": "[0,0][402,874]",
+                "enabled": "true",
+                "focused": "false",
+                "selected": "false",
+                "checked": "false"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "accessibilityText": "",
+                  "title": "",
+                  "value": "",
+                  "text": "",
+                  "hintText": "",
+                  "resource-id": "",
+                  "bounds": "[0,0][402,874]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "selected": "false",
+                  "checked": "false"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "accessibilityText": "",
+                    "title": "",
+                    "value": "",
+                    "text": "",
+                    "hintText": "",
+                    "resource-id": "",
+                    "bounds": "[0,0][402,874]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "selected": "false",
+                    "checked": "false"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "accessibilityText": "",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "",
+                      "bounds": "[0,0][402,874]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "accessibilityText": "",
+                            "title": "",
+                            "value": "",
+                            "text": "",
+                            "hintText": "",
+                            "resource-id": "",
+                            "bounds": "[0,0][402,874]",
+                            "enabled": "true",
+                            "focused": "false",
+                            "selected": "false",
+                            "checked": "false"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "accessibilityText": "",
+                              "title": "",
+                              "value": "",
+                              "text": "",
+                              "hintText": "",
+                              "resource-id": "",
+                              "bounds": "[0,0][402,874]",
+                              "enabled": "true",
+                              "focused": "false",
+                              "selected": "false",
+                              "checked": "false"
+                             },
+                             "children": [
+                              {
+                               "attributes": {
+                                "accessibilityText": "",
+                                "title": "",
+                                "value": "",
+                                "text": "",
+                                "hintText": "",
+                                "resource-id": "",
+                                "bounds": "[0,0][402,874]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "selected": "false",
+                                "checked": "false"
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "accessibilityText": "",
+                                  "title": "",
+                                  "value": "",
+                                  "text": "",
+                                  "hintText": "",
+                                  "resource-id": "privacy-policy.screen",
+                                  "bounds": "[0,0][402,874]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "selected": "false",
+                                  "checked": "false"
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "بازگشت",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "privacy-policy.top-bar.back-button",
+                                    "bounds": "[338,69][386,117]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "privacy-policy.top-bar",
+                                    "bounds": "[0,62][402,128]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "سیاست حریم خصوصی",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "",
+                                    "bounds": "[16,71][326,114]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "سیاست حریم خصوصی",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[16,71][326,114]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "privacy-policy.top-bar.title",
+                                    "bounds": "[16,73][326,112]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "",
+                                    "bounds": "[0,128][402,874]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[0,128][402,874]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "",
+                                        "title": "",
+                                        "value": "",
+                                        "text": "",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[0,128][402,1107]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[0,128][402,1107]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.summary-card",
+                                            "bounds": "[20,134][382,259]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "به طور خلاصه: حساب کاربری در کار نیست و خود بازی هیچ داده‌ای جمع نمی‌کند.",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.summary-card.label",
+                                            "bounds": "[39,151][297,242]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "به طور خلاصه: حساب کاربری در کار نیست و خود بازی هیچ داده‌ای جمع نمی‌کند.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[39,151][297,242]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "خود بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.game.title",
+                                            "bounds": "[20,277][382,307]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "خود بازی",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,277][382,307]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.game",
+                                            "bounds": "[20,277][382,425]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨Line Siege⁩ آفلاین کار می‌کند. نه حساب کاربری دارد و نه ورود به حساب. پیشرفت، آمار و تنظیمات شما فقط روی همین گوشی ذخیره می‌شود و خود بازی هیچ چیزی به جایی نمی‌فرستد.",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.game.body",
+                                            "bounds": "[20,313][382,425]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "⁨Line Siege⁩ آفلاین کار می‌کند. نه حساب کاربری دارد و نه ورود به حساب. پیشرفت، آمار و تنظیمات شما فقط روی همین گوشی ذخیره می‌شود و خود بازی هیچ چیزی به جایی نمی‌فرستد.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,313][382,425]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "تبلیغات",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.ads.title",
+                                            "bounds": "[20,443][382,473]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "تبلیغات",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,443][382,473]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.ads",
+                                            "bounds": "[20,443][382,675]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "اگر پریمیوم نداشته باشید، بازی تبلیغات Google AdMob را نشان می‌دهد. هنگام بارگذاری تبلیغ، گوگل ممکن است داده‌هایی مانند شناسهٔ دستگاه، موقعیت تقریبی و نحوهٔ تعامل با تبلیغات را طبق سیاست حریم خصوصی خودش جمع‌آوری کند. هر جا قانون لازم بداند، اول از شما پرسیده می‌شود. هر وقت خواستید می‌توانید انتخابتان را در تنظیمات تغییر دهید.",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.ads.body",
+                                            "bounds": "[20,479][382,675]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "اگر پریمیوم نداشته باشید، بازی تبلیغات Google AdMob را نشان می‌دهد. هنگام بارگذاری تبلیغ، گوگل ممکن است داده‌هایی مانند شناسهٔ دستگاه، موقعیت تقریبی و نحوهٔ تعامل با تبلیغات را طبق سیاست حریم خصوصی خودش جمع‌آوری کند. هر جا قانون لازم بداند، اول از شما پرسیده می‌شود. هر وقت خواستید می‌توانید انتخابتان را در تنظیمات تغییر دهید.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,479][382,675]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "خرید",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.purchase.title",
+                                            "bounds": "[20,693][382,724]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "خرید",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,693][382,724]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.purchase",
+                                            "bounds": "[20,693][382,814]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "پریمیوم از طریق App Store یا Google Play خریده می‌شود. پرداخت را اپل یا گوگل انجام می‌دهد و بازی هرگز اطلاعات پرداخت شما را نمی‌بیند.",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.purchase.body",
+                                            "bounds": "[20,730][382,814]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "پریمیوم از طریق App Store یا Google Play خریده می‌شود. پرداخت را اپل یا گوگل انجام می‌دهد و بازی هرگز اطلاعات پرداخت شما را نمی‌بیند.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,730][382,814]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "پشتیبان‌گیری گوشی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.backup.title",
+                                            "bounds": "[20,832][382,862]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "پشتیبان‌گیری گوشی",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,832][382,862]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "privacy-policy.section.backup",
+                                            "bounds": "[20,832][382,952]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, ۲ pages",
+                                        "title": "",
+                                        "value": "‏۰٪",
+                                        "text": "‏۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[396,156][426,812]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[396,159][399,654]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, ۱ page",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[62,841][340,871]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, ۲ pages",
+                                        "title": "",
+                                        "value": "‏۰٪",
+                                        "text": "‏۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[396,156][426,812]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[396,159][399,654]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, ۱ page",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[62,841][340,871]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              }
+                             ],
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      },
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": true,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  },
+  {
+   "attributes": {
+    "accessibilityText": "",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][0,0]",
+    "enabled": "false",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,54]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,54]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,14][92,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "10:32 AM",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,22][92,42]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[309,14][345,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "Cellular",
+            "title": "",
+            "value": "4 of 4 bars, signal strength",
+            "text": "4 of 4 bars, signal strength",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[288,26][307,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "SSID, 3 of 3 Wi-Fi bars",
+            "text": "SSID, 3 of 3 Wi-Fi bars",
+            "hintText": "",
+            "resource-id": "3 of 3 Wi-Fi bars",
+            "bounds": "[315,26][332,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "100% battery power",
+            "title": "",
+            "value": "Not charging",
+            "text": "Not charging",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[339,26][366,39]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": false,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  }
+ ],
+ "enabled": false,
+ "focused": false,
+ "checked": false,
+ "selected": false
+}

@@ -17,7 +17,8 @@ new  apps/flock-tilt/assets/fonts/Vazirmatn-Bold.ttf
 new  apps/flock-tilt/assets/fonts/LilitaOne-OFL.txt
 new  apps/flock-tilt/assets/fonts/Rubik-OFL.txt
 new  apps/flock-tilt/assets/fonts/Vazirmatn-OFL.txt
-would write 19 new files for flock-tilt (daily on, endless off, hints solver, continue once, lose key flock-tilt.lose.wolf-got-sheep, violence NONE, bundle id com.example.flocktilt - a placeholder until the owner approves one, step G1)
+would write 19 new files for flock-tilt (daily on, endless off, hints solver, continue once, lose key flock-tilt.lose.wolf-got-sheep, violence NONE, bundle id io.applander.flocktilt, Premium io.applander.flocktilt.premium)
+placeholders until the owner's steps: the AdMob ids (G5) and the privacy host and support address (G3); check-game-app --stage complete fails on each by name
 suggested daily salt for flock-tilt: 0x9c3b (fix it forever in src/levels/flock-tilt-levels.ts)
 scaffold-game: 19 planned files checked, 0 problems
 RESULT: PASS

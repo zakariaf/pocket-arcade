@@ -98,7 +98,7 @@ They never change with the game and live in `SHELL_COLORS[scheme]` (`packages/sh
 | `success` | `#17804A` | `#7EE3A6` | check marks in the score panel, "done" confirmations |
 | `warning` | `#8A5A00` | `#FFC95C` | reserved (no screen uses it yet) |
 | `danger` (in ColorTokens) | `#C4243A` | `#FF8593` | destructive text, outline and icons |
-| `dangerFill` | `#FFD9DD` | `#4A1F3A` | tint behind destructive icons, the hold-to-confirm fill, the Premium error panel |
+| `dangerFill` | `#FFDCDF` | `#4A1F3A` | tint behind destructive icons, the hold-to-confirm fill, the Premium error panel; light `#FFDCDF` since owner decision O5 (2026-09-30), so danger text on it reaches 4.52:1 |
 | `focus` (in ColorTokens) | `#C8157A` | `#FF8AD8` | focus ring and the tapped-locked-tile highlight |
 | `star` = `starOn` (in ColorTokens) | `#FFC928` | `#FFD23F` | filled stars (dark differs from gold) |
 | `gold` | `#FFC928` | `#FFC928` | sticker paper, flags, the "Today" tag, gold icon tiles, Premium art, confetti |

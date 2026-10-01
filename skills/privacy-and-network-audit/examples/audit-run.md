@@ -36,11 +36,12 @@ apps/line-siege: 31 pod manifests
   required NSPrivacyAccessedAPICategoryUserDefaults: CA92.1
   collected Google-Mobile-Ads-SDK: DeviceID linked=true tracking=true
   ...
+  App Privacy: DeviceID collected, linked to the user, used for tracking by the third-party ads SDK Google-Mobile-Ads-SDK (the app asks App Tracking Transparency first)
 FAIL packages/shell/src/config/privacy-manifest.ts [missing-reason] NSPrivacyAccessedAPICategoryFileTimestamp 0A2A.1 is declared by pod ExampleSqlitePod but not by the app Fix: Add it to PRIVACY_MANIFESTS ...
 RESULT: FAIL (1 problems)
 ```
 
-(The `0A2A.1` line is illustrative: a new native library brought a new reason.) Claude adds `'0A2A.1'` to the FileTimestamp reasons in `privacy-manifest.ts`, prebuilds again and reruns until `RESULT: PASS`. The "collected" lines are what the owner needs for the App Privacy questionnaire.
+(The `0A2A.1` line is illustrative: a new native library brought a new reason.) Claude adds `'0A2A.1'` to the FileTimestamp reasons in `privacy-manifest.ts`, prebuilds again and reruns until `RESULT: PASS`. The "collected" lines and the `App Privacy:` tracking line are what the owner needs for the App Privacy questionnaire (owner step G3).
 
 ## 3. Layers B-E for every app
 
@@ -70,7 +71,7 @@ to `packages/tooling/network-audit/js-baseline.json` (in Prettier's layout, one 
 
 ```sh
 rm -rf build/ipa-check && mkdir -p build/ipa-check && unzip -q build/LineSiege.ipa -d build/ipa-check
-node ${CLAUDE_SKILL_DIR}/scripts/audit-app-bundle.mjs --app build/ipa-check/Payload/LineSiege.app --variant store --ads-mode live
+node ${CLAUDE_SKILL_DIR}/scripts/audit-app-bundle.mjs --app build/ipa-check/Payload/LineSiege.app --variant store --ads-mode live --game line-siege
 ```
 
 ```text
@@ -78,6 +79,13 @@ audit-app-bundle: 4 artefacts checked, 0 problems
 RESULT: PASS
 ```
 
+Before the owner has given the real AdMob ids (owner step G5), the same command on a live build names the scaffold's placeholders instead (verified on the Line Siege store/live archive of 2026-09-30):
+
+```text
+FAIL EXConstants.bundle/app.config [extra-ad-units] extra.adUnits.banner is a placeholder AdMob unit id (ca-app-pub-1234567890123456/1111111111) Fix: ...
+FAIL Info.plist [ad-app-id] GADApplicationIdentifier is the placeholder AdMob app id (ca-app-pub-1234567890123456~1234567890) Fix: The owner creates the AdMob app and its units (owner step G5); ...
+```
+
 ## 5. Report to the owner
 
-"The network and privacy audit passed for Line Siege 1.0 (build 3): our code makes no network requests, only the Google ads and Apple purchase components can go online, the store build has no test code or test ads, and the privacy declarations match the SDKs. One change needs your OK: the audio library can download files in theory; we never use that, and I added it to the audit's allow list with the reason. For the App Store 'App Privacy' form, here is what the ads component collects: [table]. You still need to choose option 1 or 2 for the tracking question (details below)."
+"The network and privacy audit passed for Line Siege 1.0 (build 3): our code makes no network requests, only the Google ads and Apple purchase components can go online, the store build has no test code or test ads, and the privacy declarations match the SDKs. One change needs your OK: the audio library can download files in theory; we never use that, and I added it to the audit's allow list with the reason. For the App Store 'App Privacy' form, here is what the ads component collects: [table]. Answer 'Device ID: used for tracking' (the Google ads component uses it; the game asks Apple's tracking permission first, and players who say no still see ads, just without that ID)."

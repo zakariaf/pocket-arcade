@@ -1,0 +1,3 @@
+LineSiege.app/Info.plist [att-string] NSUserTrackingUsageDescription is missing or empty, so the tracking prompt would crash the app
+LineSiege.app/fa.lproj/InfoPlist.strings [att-string] is missing, so there is no fa tracking prompt text
+LineSiege.app/ckb.lproj/InfoPlist.strings [att-string] has no NSUserTrackingUsageDescription

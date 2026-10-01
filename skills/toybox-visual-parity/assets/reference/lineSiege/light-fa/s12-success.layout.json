@@ -2,7 +2,7 @@
 "version":1,
 "frame":"s12-success",
 "variant":null,
-"facts":{"hasMusic":true,"winLine":"moves"},
+"facts":{"hasMusic":true,"winLine":"moves","hasHints":true},
 "kind":"state-card",
 "screens":[
 "S12/success"
@@ -16,15 +16,15 @@
 "size":{"w":402,"h":370},
 "image":"s12-success.png",
 "elements":[
-{"testID":"premium.state.success","screen":"S12/success","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"سپاسگزاریم! پریمیوم فعال شد. تبلیغات برای همیشه حذف شد. پریمیوم – فعال","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
-{"testID":"premium.confetti","screen":"S12/success","role":"none","component":"Confetti","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":70},"box":{"w":362,"h":70,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
-{"testID":"premium.success-title","screen":"S12/success","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":106,"w":362,"h":55.09},"box":{"w":362,"h":55,"rotate":0},"text":"سپاسگزاریم!","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 38px/55.1px Vazirmatn"}},
-{"testID":"premium.success-body","screen":"S12/success","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":173.09,"w":362,"h":27},"box":{"w":362,"h":27,"rotate":0},"text":"پریمیوم فعال شد. تبلیغات برای همیشه حذف شد.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/27px Vazirmatn"}},
-{"testID":"premium.active-sticker","screen":"S12/success","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":232.83,"y":208.24,"w":150.04,"h":44.9},"box":{"w":148,"h":37,"rotate":-3},"text":"پریمیوم – فعال","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"700 16px/23.2px Vazirmatn"}}
+{"testID":"premium.state.success","screen":"S12/success","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"سپاسگزاریم! پریمیوم فعال شد. تبلیغات برای همیشه حذف شد. پریمیوم – فعال","aria":null,"style":{"fill":"#A5DAF3","color":"#1D1B3A","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.confetti","screen":"S12/success","role":"none","component":"Confetti","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":true,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":24,"w":362,"h":70},"box":{"w":362,"h":70,"rotate":0},"text":"","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 17px/25.5px Vazirmatn"}},
+{"testID":"premium.success-title","screen":"S12/success","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":106,"w":362,"h":55.09},"box":{"w":362,"h":55,"rotate":0},"text":"سپاسگزاریم!","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"700 38px/55.1px Vazirmatn"}},
+{"testID":"premium.success-body","screen":"S12/success","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":173.09,"w":362,"h":27},"box":{"w":362,"h":27,"rotate":0},"text":"پریمیوم فعال شد. تبلیغات برای همیشه حذف شد.","aria":null,"style":{"fill":null,"color":"#1D1B3A","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/27px Vazirmatn"}},
+{"testID":"premium.active-sticker","screen":"S12/success","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":232.83,"y":208.24,"w":150.04,"h":44.9},"box":{"w":148,"h":37,"rotate":-3},"text":"پریمیوم – فعال","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"700 16px/23.2px Vazirmatn"}}
 ],
 "texts":[
 {"text":"سپاسگزاریم!","x":193.86,"y":104,"w":188.14,"h":59,"owner":"premium.success-title","font":"700 38px Vazirmatn"},
 {"text":"پریمیوم فعال شد. تبلیغات برای همیشه حذف شد.","x":27,"y":172.09,"w":355,"h":28,"owner":"premium.success-body","font":"400 18px Vazirmatn"},
-{"text":"پریمیوم – فعال","x":244.13,"y":216.17,"w":101.47,"h":30.21,"owner":"premium.active-sticker","font":"700 16px Vazirmatn"}
+{"text":"پریمیوم – فعال","x":244.13,"y":216.17,"w":101.47,"h":30.21,"owner":"premium.active-sticker","font":"700 16px Vazirmatn","rotate":-3}
 ]
 }

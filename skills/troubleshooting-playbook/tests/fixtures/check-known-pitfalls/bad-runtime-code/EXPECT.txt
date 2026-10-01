@@ -16,3 +16,6 @@ packages/shell/src/screens/daily/next-in.ts:3
 packages/shell/src/ui/flag-bob.tsx:8
 [services-interstitial-only-once]
 packages/shell/src/app/create-shell-parts.ts:5
+[services-att-prompt]
+packages/shell/src/app/ask-tracking-early.ts:2
+imports expo-tracking-transparency outside the consent adapter

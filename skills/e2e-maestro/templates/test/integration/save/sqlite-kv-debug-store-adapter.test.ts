@@ -4,6 +4,7 @@
 // kv-store module over the same database file, as after reloadAppAsync or a killed app. It lives in
 // the root test/ folder, the only place with Node types.
 import { createDebugServices } from '@e07/shell/screens/debug/debug-services.ts';
+import { createFakeDebugPerf } from '@e07/shell/screens/debug/fake-debug-perf.ts';
 import { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
 import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
@@ -70,6 +71,7 @@ function startRun(adapter: AdapterModule = { createSqliteKvDebugStoreAdapter }):
     clock,
     store: adapter.createSqliteKvDebugStoreAdapter(),
     perfLog: { append: jest.fn(), entries: () => [] },
+    perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),
     dispatchPremium: jest.fn(),
     nowMs: () => 0,

@@ -7,10 +7,11 @@ import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { GameTopBar } from './game-top-bar.tsx';
 
-import type { GameTopBarProps } from './game-top-bar.tsx';
+import type { GameTopBarViewProps } from './game-top-bar.tsx';
 
-function propsWith(overrides: Partial<GameTopBarProps> = {}): GameTopBarProps {
+function propsWith(overrides: Partial<GameTopBarViewProps> = {}): GameTopBarViewProps {
   return {
+    hasHints: true,
     modeText: 'Level 12',
     progressText: 'Monsters 3 / 10',
     scoreText: '1,840',
@@ -50,6 +51,26 @@ describe('GameTopBar', () => {
 
     expect(screen.queryByTestId('game.undo-button')).toBeNull();
     expect(screen.queryByTestId('game.hint-button')).toBeNull();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws no hint key for a game without solver hints, whatever the perk offer says', async () => {
+    // Line Siege: hasHints false. The offer below would draw an enabled key for a solver game.
+    const hint = { label: 'Hint', isAvailable: true, onPress: jest.fn() };
+    await renderWithShell(<GameTopBar {...propsWith({ hasHints: false, hint })} />);
+
+    expect(screen.queryByTestId('game.hint-button')).toBeNull();
+    expect(screen.getByTestId('game.undo-button')).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws the hint key for a game with solver hints when the offer holds one', async () => {
+    const hint = { label: 'Hint', isAvailable: true, onPress: jest.fn() };
+    const user = userEvent.setup();
+    await renderWithShell(<GameTopBar {...propsWith({ hasHints: true, hint })} />);
+
+    await user.press(screen.getByRole('button', { name: 'Hint' }));
+    expect(hint.onPress).toHaveBeenCalledTimes(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

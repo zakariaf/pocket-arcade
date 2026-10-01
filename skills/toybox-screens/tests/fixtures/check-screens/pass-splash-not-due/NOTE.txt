@@ -1,0 +1,1 @@
+S1 alone, before Shell step 7: the restart splash (app/create-startup-splash.tsx) lands with start-shell.ts, so splash-held is not yet due and prints a SKIP line.

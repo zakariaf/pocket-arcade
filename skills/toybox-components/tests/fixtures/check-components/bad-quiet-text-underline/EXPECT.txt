@@ -1,0 +1,3 @@
+[quiet-underline]
+packages/shell/src/theme/type-styles.ts:
+the nudge text style is underlined

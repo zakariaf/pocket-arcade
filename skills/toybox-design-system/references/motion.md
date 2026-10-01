@@ -24,8 +24,8 @@ In Reanimated: `Easing.bezier(...EASING.boing)`.
 | Screen push | 260 ms | slide; moves in the reading direction (mirrors in RTL) | | 150 ms cross-fade |
 | Current level tile bobs | 1600 ms loop | ease-in-out | translateY 0, -3, 0 | no loop |
 | Busy blocks hop (buttons, splash) | 900 ms loop, 120 ms stagger | boing | 0 % / 60 % / 100 %: 0; 30 %: -7 | static blocks plus the busy text |
-| Hold to confirm (S14 reset) | 2000 ms | linear fill from the start edge (**Chosen**; the mockup draws a static 46 % fill) | `dangerFill` width 0 to 100 % | unchanged (functional timer, `ReduceMotion.Never`) |
-| Confetti (S12 success) | with the success sticker's slap (**Chosen**) | boing | falls into place | hidden |
+| Hold to confirm (S14 reset) | 2000 ms | linear fill from the start edge (**Chosen**; the mockup draws a static 46 % fill) | `dangerFill` width 0 to 100 % of the whole face (a track pinned to the face edges) | unchanged (functional timer, `ReduceMotion.Never`) |
+| Confetti (S12 success) | with the success sticker's slap (**Chosen**) | boing | falls into place | hidden by the saved setting (`isHiddenBySetting`); a parity capture, which only holds motion still, draws the pieces at rest |
 
 ## Spring mass
 

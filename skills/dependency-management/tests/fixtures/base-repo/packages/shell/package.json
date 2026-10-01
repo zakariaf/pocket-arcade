@@ -15,6 +15,7 @@
     "@react-navigation/native": "*",
     "expo": "*",
     "expo-haptics": "*",
+    "expo-tracking-transparency": "*",
     "react": "*",
     "react-native": "*",
     "react-native-google-mobile-ads": "*"

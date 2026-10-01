@@ -5,7 +5,7 @@
  "lang": "fa",
  "game": "lineSiege",
  "scrollY": 1042,
- "bundleId": "com.example.linesiege",
+ "bundleId": "io.applander.linesiege",
  "source": "self-test fixture",
  "note": "The same capture with the privacy list top edge drawn 2 px thicker under the tab: the border gate still catches it."
 }

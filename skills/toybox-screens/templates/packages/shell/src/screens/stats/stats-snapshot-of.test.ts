@@ -16,7 +16,10 @@ const COUNTERS = [
   { id: 'beams-fired', labelId: 'line-siege.stats.beams-fired' },
 ];
 
-function summaryOf(stats: Partial<SaveDoc['stats']>) {
+function summaryOf(
+  stats: Partial<SaveDoc['stats']>,
+  counterIds: readonly string[] = COUNTERS.map((counter) => counter.id),
+) {
   return buildStatsSummary({
     stats: {
       gamesPlayed: 0,
@@ -35,7 +38,7 @@ function summaryOf(stats: Partial<SaveDoc['stats']>) {
     today: '2026-09-26',
     levelCount: 90,
     hasEndless: false,
-    counterIds: COUNTERS.map((counter) => counter.id),
+    counterIds,
   });
 }
 
@@ -54,6 +57,19 @@ describe('statsSnapshotOf', () => {
       },
       { key: 'beams-fired', label: 'label:line-siege.stats.beams-fired', valueText: 'n12' },
     ]);
+  });
+
+  it('marks a best-of counter (aggregate max) with a times sign, as the design draws ×6', () => {
+    const counters = [
+      { id: 'biggest-combo', labelId: 'line-siege.stats.biggest-combo', aggregate: 'max' as const },
+    ];
+    const snapshot = statsSnapshotOf(
+      summaryOf({ counters: { 'biggest-combo': 6 } }, ['biggest-combo']),
+      counters,
+      TEXT,
+    );
+
+    expect(snapshot.gameStats[0]?.valueText).toBe('×n6');
   });
 
   it('leaves out Endless and the best level score until they exist, and names seven days', () => {

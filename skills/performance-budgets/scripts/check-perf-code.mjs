@@ -38,12 +38,15 @@ const SPEC = {
     '  perf-clock-in-tests    a test times with the global performance.now() (a 1 ms mock in Jest)',
     '  promotion-plist        packages/shell/src/config/with-shell.ts without',
     '                         CADisableMinimumFrameDurationOnPhone: true (iOS then caps the app at 60 fps)',
-    '  perf-layer             the cold-start layer is incomplete: the shell-native module (expo-module.config.json,',
-    '                         ios/E07Shell.podspec, ios/ProcessStartModule.swift), app/perf/, markJsEntry() in',
+    '  perf-layer             the cold-start layer is incomplete. JS half (Shell step 7, due once',
+    '                         packages/shell/src/app/start-shell.ts exists): app/perf/*.ts, markJsEntry() in',
     '                         start-shell.ts, createPerfLog in TestOnlyApi and in createDebugParts, and',
-    "                         useColdStartMark in Home's model hook. Due at Shell step 8 (with the native plugin list,",
-    '                         packages/shell/src/config/shell-plugins.ts): SKIP before; the Home mark SKIPs while S4',
-    '                         is outside shell-slice.json, and all of it with "screens": [] (no Shell app).',
+    "                         useColdStartMark in Home's model hook (SKIP while S4 is outside shell-slice.json).",
+    '                         Native half (Shell step 8, due once packages/shell/src/config/shell-plugins.ts exists):',
+    '                         expo-module.config.json, ios/E07Shell.podspec, ios/ProcessStartModule.swift.',
+    '                         Both SKIP with "screens": [] (no Shell app).',
+    '  debug-perf-wired       the debug menu cannot reach its Performance actions: createDebugPerfActions is not a',
+    '                         TestOnlyApi member, or createDebugParts never builds it (due with start-shell.ts).',
   ].join('\n'),
 };
 
@@ -95,38 +98,66 @@ function frameRanges(masked, source) {
   return ranges;
 }
 
-/** The cold-start layer (D34): installed at Shell step 8, before the E2E evidence run measures it. */
-const PERF_FILES = [
+/**
+ * The perf layer, in two halves (D52). The JS half (app/perf/*.ts: the perf log, the cold-start
+ * mark, the frame recorder, the save benchmark and the debug menu's actions) lands at Shell step 7
+ * as Shell core, with start-shell.ts and the composition root that import it. The native half
+ * (the process-start module, its podspec and module config) lands at step 8 with the native
+ * plugin list and the rebuild, before the E2E evidence run measures cold start.
+ */
+const PERF_JS_FILES = [
+  ...['cold-start', 'perf-log', 'use-cold-start-mark', 'frame-report', 'use-frame-recorder', 'save-benchmark', 'large-save-doc', 'debug-perf-actions'].flatMap((name) => [`packages/shell/src/app/perf/${name}.ts`, `packages/shell/src/app/perf/${name}.test.ts`]),
+  ...['process-start', 'frame-histogram', 'share-perf-report', 'debug-perf-device'].map((name) => `packages/shell/src/app/perf/${name}.ts`),
+];
+const PERF_NATIVE_FILES = [
   'packages/shell/expo-module.config.json',
   'packages/shell/ios/E07Shell.podspec',
   'packages/shell/ios/ProcessStartModule.swift',
-  ...['cold-start', 'perf-log', 'use-cold-start-mark', 'frame-report', 'use-frame-recorder', 'save-benchmark'].flatMap((name) => [`packages/shell/src/app/perf/${name}.ts`, `packages/shell/src/app/perf/${name}.test.ts`]),
-  ...['process-start', 'frame-histogram', 'share-perf-report'].map((name) => `packages/shell/src/app/perf/${name}.ts`),
 ];
 const PERF_WIRING = [
   { file: 'packages/shell/src/app/start-shell.ts', pattern: /\bmarkJsEntry\s*\(\s*\)/, message: 'start-shell.ts does not call markJsEntry() (the first JS timestamp of a launch)', fix: 'Call markJsEntry() inside startShell (start-shell.ts), right after readParityLaunch() (rtl-and-direction owns the file).' },
   { file: 'packages/shell/src/app/test-only-api.ts', pattern: /\bcreatePerfLog\s*:/, message: 'TestOnlyApi has no createPerfLog member (test builds cannot keep the perf log)', fix: 'Sync the shared test-only pair: createPerfLog (from app/perf/perf-log.ts) joins it once perf-log.ts exists.' },
   { file: 'packages/shell/src/app/create-debug-parts.ts', pattern: /\bcreatePerfLog\s*\(/, message: 'createDebugParts creates no perf log (Home has nothing to write its cold-start mark to)', fix: 'In createDebugParts: perfLog = TEST_ONLY.createPerfLog(saveDriver), exposed on DebugServices as perfLog (e2e-maestro owns the file).' },
 ];
+/** The debug menu's Performance section (S15): its actions reach test builds through the pair. */
+const DEBUG_PERF_WIRING = [
+  { file: 'packages/shell/src/app/test-only-api.ts', pattern: /\bcreateDebugPerfActions\s*:/, message: 'TestOnlyApi has no createDebugPerfActions member (the debug menu has no Performance section)', fix: 'Sync the shared test-only pair: createDebugPerfActions (from app/perf/debug-perf-actions.ts) joins it once that file exists (e2e-maestro, the pair\'s one editor).' },
+  { file: 'packages/shell/src/app/create-debug-parts.ts', pattern: /\bcreateDebugPerfActions\s*\(/, message: 'createDebugParts builds no debug perf actions (S15 cannot record frames, share the report or run the save benchmark)', fix: 'In createDebugParts: perf = TEST_ONLY.createDebugPerfActions({ perfLog, nowMs }), exposed on DebugServices (e2e-maestro owns the file).' },
+];
 const HOME_MARK = { file: 'packages/shell/src/screens/home/use-home-model.ts', pattern: /\buseColdStartMark\s*\(/, message: 'Home never marks cold start (the E2E run finds no cold-start entry)', fix: 'In use-home-model.ts: useColdStartMark(useOptionalDebugServices()?.perfLog ?? null) (toybox-screens owns the file; null in store builds).' };
+
+function missingFiles(root, files, step, report) {
+  for (const rel of files.filter((file) => !existsSync(join(root, file)))) {
+    const where = rel.startsWith('packages/shell/src/app/perf/') ? 'templates/shell-perf/ into packages/shell/src/app/perf/' : 'templates/shell-native/ into packages/shell/';
+    report.problem({ file: rel, line: 1, rule: 'perf-layer', message: 'a file of the cold-start layer is missing', fix: `Copy it from this skill (${where}) at Shell step ${step}${step === 8 ? ', then rebuild the simulator app' : ''}.` });
+  }
+}
+
+function checkWiring(root, items, rule, report) {
+  for (const item of items) {
+    const path = join(root, item.file);
+    const source = existsSync(path) ? readFileSync(path, 'utf8').replace(/\/\/.*$|\/\*[\s\S]*?\*\//gm, '') : '';
+    if (!item.pattern.test(source)) report.problem({ file: item.file, line: 1, rule, message: existsSync(path) ? item.message : `${item.file} is missing, so ${item.message.charAt(0).toLowerCase()}${item.message.slice(1)}`, fix: item.fix });
+  }
+}
 
 function checkPerfLayer(root, report) {
   const slice = readShellSlice(root);
-  const reason = sliceSkipReason(slice) ?? dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
-  if (reason !== null) {
-    report.skip({ file: 'packages/shell/src/app/perf', rule: 'perf-layer', message: reason });
-    return;
+  const noShell = sliceSkipReason(slice);
+  const jsReason = noShell ?? dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (jsReason !== null) {
+    report.skip({ file: 'packages/shell/src/app/perf', rule: 'perf-layer', message: jsReason });
+    report.skip({ file: 'packages/shell/src/app/perf/debug-perf-actions.ts', rule: 'debug-perf-wired', message: jsReason });
+  } else {
+    missingFiles(root, PERF_JS_FILES, 7, report);
+    const homeSkip = sliceSkipReason(slice, 'S4');
+    if (homeSkip !== null) report.skip({ file: HOME_MARK.file, rule: 'perf-layer', message: homeSkip });
+    checkWiring(root, homeSkip === null ? [...PERF_WIRING, HOME_MARK] : PERF_WIRING, 'perf-layer', report);
+    checkWiring(root, DEBUG_PERF_WIRING, 'debug-perf-wired', report);
   }
-  for (const rel of PERF_FILES.filter((file) => !existsSync(join(root, file)))) {
-    report.problem({ file: rel, line: 1, rule: 'perf-layer', message: 'a file of the cold-start layer is missing', fix: `Copy it from this skill (templates/shell-native/ into packages/shell/, templates/shell-perf/ into packages/shell/src/app/perf/) at Shell step 8, then rebuild the simulator app.` });
-  }
-  const homeSkip = sliceSkipReason(slice, 'S4');
-  if (homeSkip !== null) report.skip({ file: HOME_MARK.file, rule: 'perf-layer', message: homeSkip });
-  for (const item of homeSkip === null ? [...PERF_WIRING, HOME_MARK] : PERF_WIRING) {
-    const path = join(root, item.file);
-    const source = existsSync(path) ? readFileSync(path, 'utf8').replace(/\/\/.*$|\/\*[\s\S]*?\*\//gm, '') : '';
-    if (!item.pattern.test(source)) report.problem({ file: item.file, line: 1, rule: 'perf-layer', message: existsSync(path) ? item.message : `${item.file} is missing, so ${item.message.charAt(0).toLowerCase()}${item.message.slice(1)}`, fix: item.fix });
-  }
+  const nativeReason = noShell ?? dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
+  if (nativeReason !== null) report.skip({ file: 'packages/shell/ios', rule: 'perf-layer', message: nativeReason });
+  else missingFiles(root, PERF_NATIVE_FILES, 8, report);
 }
 
 run(async () => {

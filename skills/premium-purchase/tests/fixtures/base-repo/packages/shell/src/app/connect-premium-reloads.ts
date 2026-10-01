@@ -14,7 +14,10 @@ export function connectPremiumReloads(
   premiumDeps: PremiumServiceDeps,
 ): void {
   connectivity.subscribe((isOnline) => {
-    if (shouldReloadStore(flowKind(), isOnline)) loadStore(premiumDeps).catch(premiumDeps.onError);
+    if (!shouldReloadStore(flowKind(), isOnline)) return;
+    const reload = loadStore(premiumDeps);
+    const done = isOnline ? reload.then(async () => recheckPremium(premiumDeps)) : reload;
+    done.catch(premiumDeps.onError);
   });
   AppState.addEventListener('change', (next) => {
     if (next === 'active' && connectivity.isOnline()) {

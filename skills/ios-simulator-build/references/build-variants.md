@@ -24,7 +24,9 @@ Every Pocket Arcade build is either a **test** build (debug menu, test hooks, ne
 | `test` | `live` | forbidden | real ads in a debug build | nowhere |
 | `store` | `test` | forbidden | test ads in a store build | nowhere |
 
-Both variants use the same bundle ID and the same App Store Connect app record. A separate `.test` bundle ID would need a second app record, which is an owner step, so it is not used.
+Both variants use the same bundle ID and the same App Store Connect app record: `io.applander.<game id without hyphens>`, all lowercase (owner decision O4, 2026-09-30; Line Siege is `io.applander.linesiege`), with Premium `<bundle id>.premium`. `withShell` refuses any other id, so `com.example.*` never builds. A separate `.test` bundle ID would need a second app record, which is an owner step, so it is not used.
+
+Every variant also carries Apple's App Tracking Transparency text (owner decision O1): the `expo-tracking-transparency` plugin in `shell-plugins.ts` writes `NSUserTrackingUsageDescription` (the en text) into `Info.plist`, and `withShell`'s `locales.<lang>.ios.NSUserTrackingUsageDescription` puts each language's text into `<lang>.lproj/InfoPlist.strings` (en, de, fa, ckb). The prompt itself shows only when ads run (`ADS_MODE=test` or `live`), after Google's consent form; an `off` build never asks.
 
 The Info.plist always carries a `GADApplicationIdentifier` (a missing one crashes at launch), because the AdMob SDK is linked in every variant: the sample ID unless the mode is `live`.
 
@@ -122,7 +124,9 @@ After a build, `check-sim-app.mjs --app <path.app> --variant <v> --ads <m>` read
 |---|---|---|
 | `main.jsbundle` sentinel count | 1 or more | 0 |
 | `EXConstants.bundle/app.config` `extra.appVariant` / `extra.adsMode` | `test` / `test` or `off` | `store` / `live` or `off` |
-| `Info.plist` `GADApplicationIdentifier` | the sample ID | a real `ca-app-pub-<16 digits>~<10 digits>` for `live`, the sample ID for `off` |
+| `Info.plist` `GADApplicationIdentifier` | the sample ID | a real `ca-app-pub-<16 digits>~<10 digits>` for `live` (never the scaffold's `ca-app-pub-1234567890123456~1234567890`: owner step G5), the sample ID for `off` |
+| `Info.plist` `CFBundleIdentifier` | `io.applander.<game>` (checked with `--game`) | `io.applander.<game>`, never `com.example.*` |
+| `NSUserTrackingUsageDescription` in `Info.plist` and in `en`, `de`, `fa`, `ckb.lproj/InfoPlist.strings` | required | required |
 | `*.storekit`, `*.xctest` in the bundle | allowed | none |
 | `DTXcode` | `2660` | `2660` |
 

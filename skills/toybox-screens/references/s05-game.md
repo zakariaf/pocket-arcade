@@ -18,7 +18,7 @@ S5 is the game itself: the Shell draws the frame, the top bar and the Pause and 
 
 ## What the product requires
 
-- Top bar (the Shell's), mirrored in RTL: Pause at the start; mode and level label ("Level 12", "Daily – 26 Sep", "Endless"); the goal or progress line (the game decides the text, the Shell draws it); score; Undo if the game supports it; Hint if it supports hints (free for Premium, otherwise the game's small daily allowance, then a rewarded ad).
+- Top bar (the Shell's), mirrored in RTL: Pause at the start; mode and level label ("Level 12", "Daily – 26 Sep", "Endless"); the goal or progress line (the game decides the text, the Shell draws it); score; Undo if the game supports it; Hint if it supports hints (free for Premium, otherwise the game's small daily allowance, then a rewarded ad). A game without solver hints (Line Siege) has no hint key at all (the lead's decision L8).
 - Board area (the game's) and an optional bottom area (the game's).
 - **No banner ad on this screen. Ever.**
 - Every move is saved at once; killing the app mid-level and reopening lands back here in the same state.
@@ -37,7 +37,7 @@ Not drawn on its own: its parts come from the S6 frame, where they sit under the
 
 ## States and variants
 
-Playing, paused (S6 over it), finished (S7 over it), and `missing` (no run to open: the screen pops to Home at once). Tools the game lacks are left out (undo, hint); a tool that is temporarily unavailable is disabled (`isAvailable: false`), never hidden. A hint the player cannot pay for right now (the day's free hints used, offline or no ad loaded, not Premium) is `hidden` by the ads layer: the key is left out rather than shown broken. The score is always drawn (a game without a score passes its own progress figure).
+Playing, paused (S6 over it), finished (S7 over it), and `missing` (no run to open: the screen pops to Home at once). Tools the game lacks are left out (undo, hint); the hint key follows one game fact, `useGameHost().hasHints` (game-host-integration's `hasHintsOf(module)`: true exactly when the rules' hint policy is a solver, `rules.hints.kind === 'solver'`, the rule behind the session view's `isHintSupported`). When it is false the top bar draws no hint key, whatever the perk offer says: `useGameScreenModel` passes `hint: null` and `hasHints: false`, and `GameTopBar` (`game-host/game-top-bar.tsx`) drops a hint it is still handed. The game's facts file for parity (`parity/game-facts.json`, `hasHints`) says the same, so a capture of such a game picks the design-derived no-hints reference. A tool that is temporarily unavailable is disabled (`isAvailable: false`), never hidden. A hint the player cannot pay for right now (the day's free hints used, offline or no ad loaded, not Premium) is `hidden` by the ads layer: the key is left out rather than shown broken. The score is always drawn (a game without a score passes its own progress figure).
 
 ## How the screen is assembled
 
@@ -61,11 +61,11 @@ check-screens treats `game-screen.tsx` as S5's route (`route-model-hook`: it cal
 
 ## Data the model supplies
 
-`GameScreenModel` (`use-game-screen-model.ts`): `topBar` (`GameTopBarProps` or null while there is no run) and `result` (`ResultModel` or null while the run is live and for the tutorial). `GameTopBarProps` (`game-host/game-top-bar.tsx`): `modeText`, `progressText`, `scoreText` (formatted in the chosen digits), `undo` and `hint` (`GameTool` or null: `label`, `isAvailable`, `onPress`; null = the game has no such tool or the hint is not payable), `onPause`, `isReducedMotion`. game-host-integration's `topBarPropsOf` builds them from the session view; `GameTopBar` draws them with the Toybox `GameTopBar` (`testIDBase="game"`, `pauseLabel` = `t('common.pause')`, an unavailable tool = `isDisabled`). The Game frames of the parity harness show the design's numbers (level 12, score 1,840, Monsters 3 / 10): the host's `debugControls().applyFixtureHud(fixture)` puts them in the top bar, never the screen.
+`GameScreenModel` (`use-game-screen-model.ts`): `topBar` (`GameTopBarViewProps` = `GameTopBarProps` plus `hasHints`, or null while there is no run) and `result` (`ResultModel` or null while the run is live and for the tutorial). `GameTopBarProps` (`game-host/game-top-bar.tsx`): `modeText`, `progressText`, `scoreText` (formatted in the chosen digits), `undo` and `hint` (`GameTool` or null: `label`, `isAvailable`, `onPress`; null = the game has no such tool or the hint is not payable), `onPause`, `isReducedMotion`. game-host-integration's `topBarPropsOf` builds them from the session view; `GameTopBar` draws them with the Toybox `GameTopBar` (`testIDBase="game"`, `pauseLabel` = `t('common.pause')`, an unavailable tool = `isDisabled`). The Game frames of the parity harness show the design's numbers (level 12, score 1,840, Monsters 3 / 10): the host's `debugControls().applyFixtureHud(fixture)` puts them in the top bar, never the screen.
 
 ## Shell texts the copy deck lacks
 
-The design has no copy key for the undo and hint keys' VoiceOver labels. They are Shell texts written by hand into the four Shell catalogs (`packages/shell/src/i18n/catalogs/<lang>.json`, keys sorted); fa and ckb wait for a native speaker's review. check-screens accepts them as copy keys and fails a screen that uses one while a catalog lacks it (`extra-key-catalog`).
+The design has no copy key for the undo and hint keys' VoiceOver labels. They are Shell texts written by hand into the four Shell catalogs (`packages/shell/src/i18n/catalogs/<lang>.json`, keys sorted); the fa and ckb drafts go on the owner's own review list (an owner step in the report, not blocking). check-screens accepts them as copy keys and fails a screen that uses one while a catalog lacks it (`extra-key-catalog`).
 
 | Key | en | de | fa (review) | ckb (review) |
 |---|---|---|---|---|
@@ -101,7 +101,7 @@ Map note: Not drawn on its own: the S6 frame shows the Game screen under the Pau
 | `game.progress-label` | AppText | text | `games.<id>.progress` |  | (drawn by GameTopBar from `testIDBase="game"`) |
 | `game.score` | AppText | text |  |  | (drawn by GameTopBar from `testIDBase="game"`) |
 | `game.undo-button` | IconButton (undo, 44 (sm)) | button | a11y `game-screen.undo-button.a11y-label` |  | (drawn by GameTopBar from `testIDBase="game"`) |
-| `game.hint-button` | IconButton (hint, 44 (sm)) | button | a11y `game-screen.hint-button.a11y-label` |  | (drawn by GameTopBar from `testIDBase="game"`) |
+| `game.hint-button` | IconButton (hint, 44 (sm)) | button | a11y `game-screen.hint-button.a11y-label` | only when `hasHints` | (drawn by GameTopBar from `testIDBase="game"`) |
 | `game.board` | GameBoardHost | none |  |  |  |
 
 Chosen states the design does not draw may also set: `game.board-canvas` (the board host's canvas) and `game.moves-label` (the E2E move count above). The board host's own layout probe (`game.board-layout`, drawn while the debug switch or a parity board probe is on) belongs to game-host-integration, not to this map.
@@ -128,6 +128,7 @@ Open the image before building and compare the finished screen with it (toybox-v
 - The overlay inside `game.screen`: it is inset a second time (Result 59 pt low, its bottom keys clipped; the Pause scrim stops under the status bar).
 - Sending `hint` or `continue` before the payment resolved, or showing an interstitial before the player has seen the result.
 - A free hint from a constant: the allowance is the game's `hints.freePerDay` (Line Siege: 0).
+- A hint key decided by view state or by the perk offer alone: only `hasHints` decides whether the key exists (check-screens `hint-key-fact`); the offer only decides whether it is free, paid or hidden for now.
 - Hard-coding "Level 12": the host formats the mode line with `game-screen.mode.*` and the chosen digits.
 - Hiding a tool when it is only unavailable for a moment: disable it.
 - Rewriting the screen's pieces in another folder: check-screens reads `screens/game/` and `game-host/game-top-bar.tsx`, and its `game-screen-wiring` rule looks for the four calls there.

@@ -1,0 +1,39 @@
+# apps/demo/e2e/flows/journeys/12-continue-premium.yaml — continue after a loss (for a game
+# whose isContinueAllowed is true; check-flows rule mode-flows asks for it). E2E builds run with ads
+# off, so the rewarded continue (result.continue-ad-button) never shows here: Premium owners get
+# the free continue (result.continue-premium-button) instead, and admob-ads' simulator smoke test
+# in an ADS_MODE=test build covers the rewarded one.
+# 1. the debug link makes the player a Premium owner and opens level 1;
+# 2. action=lose-level ends the run as a loss the player may still rescue;
+# 3. the Result screen's continue key (the key under test) brings the same run back to play.
+appId: ${APP_ID}
+name: Demo Premium continue after a loss brings the same level back to play
+tags: [demo, premium]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&premium=1&level=1&ads=off&firstRun=0&reduceMotion=1&screen=game'
+      WAIT_FOR: 'game.screen'
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=lose-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.continue-premium-button'
+- assertNotVisible:
+    id: 'result.continue-ad-button'
+- tapOn:
+    id: 'result.continue-premium-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- assertNotVisible:
+    id: 'result.screen'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*1.*'

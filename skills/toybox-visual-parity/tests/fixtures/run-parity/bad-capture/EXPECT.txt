@@ -1,2 +1,3 @@
+[system-alert] s4-home light-en: a system alert is on screen: "Open in “Line Siege”?"
 [screen-not-reached] s4-home light-en: the root testID home.screen is not on screen
-CAPTURE FAILED (screen-not-reached)
+CAPTURE FAILED (system-alert, screen-not-reached)

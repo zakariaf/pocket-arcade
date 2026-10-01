@@ -62,7 +62,7 @@ function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
     borderWidth: spec.edgeWidth,
     borderColor: spec.isCut ? shell.toyInk : theme.colors.border,
     backgroundColor: theme.colors.primary,
-    transform: [{ translateY: spec.translateY }, { rotate: `${String(spec.rotateDeg)}deg` }],
+    transform: [{ rotate: `${String(spec.rotateDeg)}deg` }, { translateY: spec.translateY }],
     ...(spec.ring > 0 ? dieCutRing(spec.ring, shell.cut) : {}),
   };
 }

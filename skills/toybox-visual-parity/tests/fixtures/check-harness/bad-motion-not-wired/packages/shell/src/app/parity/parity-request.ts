@@ -4,8 +4,11 @@
 //   frame=s4-home&theme=dark&lang=fa&game=lineSiege&date=2026-09-27&animations=off&scrollY=600
 // and, once before the capture of a Game-route frame, the same query with probe=board: that launch
 // opens no frame state and turns the board-layout probe on, so the capture script can read the
-// board rectangle it masks. An unknown or malformed parameter is an error, never ignored: a capture
-// of the wrong state would compare the wrong screen with the reference.
+// board rectangle it masks. Every launch also carries nonce=<a fresh hex word>: the parity root
+// shows it as the testID parity.launch.<nonce> (ParityLaunchMarker), so the capture script can
+// prove a hierarchy dump came from this launch and not from another session's simulator. An
+// unknown or malformed parameter is an error, never ignored: a capture of the wrong state would
+// compare the wrong screen with the reference.
 import { PARITY_PLANS, isParityFrameKey } from './parity-plans.ts';
 
 import type { ParityFrameKey, ParityPlan } from './parity-plans.ts';
@@ -28,6 +31,8 @@ export type ParityRequest = {
   readonly scrollY: number;
   /** probe=board: the board probe launch (no frame state; the host renders game.board-layout). */
   readonly probe?: 'board';
+  /** This launch's nonce: the parity root renders the marker parity.launch.<nonce>. */
+  readonly nonce?: string;
 };
 
 export type ParityParseResult =
@@ -93,6 +98,12 @@ const FIELDS: readonly FieldCheck[] = [
     isValid: (value) => value === 'board',
     message: 'must be board',
   },
+  {
+    key: 'nonce',
+    required: false,
+    isValid: (value) => /^[a-z0-9]{6,32}$/.test(value),
+    message: 'must be 6 to 32 lower-case letters and digits',
+  },
 ];
 
 function decode(raw: string): string | null {
@@ -134,6 +145,12 @@ function probeOf(fields: ReadonlyMap<string, string>): Pick<ParityRequest, 'prob
   return fields.get('probe') === 'board' ? { probe: 'board' } : {};
 }
 
+/** The launch nonce, when the capture script sent one. */
+function nonceOf(fields: ReadonlyMap<string, string>): Pick<ParityRequest, 'nonce'> {
+  const nonce = fields.get('nonce');
+  return nonce === undefined ? {} : { nonce };
+}
+
 function toRequest(fields: ReadonlyMap<string, string>): ParityRequest | null {
   const frame = fields.get('frame') ?? '';
   const theme = fields.get('theme') ?? '';
@@ -148,6 +165,7 @@ function toRequest(fields: ReadonlyMap<string, string>): ParityRequest | null {
     date: fields.get('date') ?? '',
     scrollY: Number(fields.get('scrollY') ?? '0'),
     ...probeOf(fields),
+    ...nonceOf(fields),
   };
 }
 

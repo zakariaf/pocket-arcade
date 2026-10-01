@@ -60,4 +60,24 @@ tags: [smoke, demo]
 - assertVisible:
     id: 'result.stars-1'
 - takeScreenshot: demo-level-1-won
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.1'
+# The count, then a space ("Level 1: 1 star"), so the level's own number never matches it.
+- assertVisible:
+    id: 'levels.level-tile.1'
+    text: '.*[^0-9]1 .*'
+- tapOn:
+    id: 'levels.level-tile.2'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- assertNotVisible:
+    id: 'levels.locked-toast'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*2.*'
 - runFlow: ../../../../../packages/shell/e2e/subflows/assert-no-network.yaml

@@ -1,0 +1,2665 @@
+{
+ "attributes": {
+  "accessibilityText": "",
+  "title": "",
+  "value": "",
+  "text": "",
+  "hintText": "",
+  "resource-id": "",
+  "bounds": "[0,0][0,0]",
+  "enabled": "false",
+  "focused": "false",
+  "selected": "false",
+  "checked": "false"
+ },
+ "children": [
+  {
+   "attributes": {
+    "accessibilityText": "Line Siege",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][402,874]",
+    "enabled": "true",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,874]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,874]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,874]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[0,0][402,874]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [
+            {
+             "attributes": {
+              "accessibilityText": "",
+              "title": "",
+              "value": "",
+              "text": "",
+              "hintText": "",
+              "resource-id": "",
+              "bounds": "[0,0][402,874]",
+              "enabled": "true",
+              "focused": "false",
+              "selected": "false",
+              "checked": "false"
+             },
+             "children": [
+              {
+               "attributes": {
+                "accessibilityText": "",
+                "title": "",
+                "value": "",
+                "text": "",
+                "hintText": "",
+                "resource-id": "",
+                "bounds": "[0,0][402,874]",
+                "enabled": "true",
+                "focused": "false",
+                "selected": "false",
+                "checked": "false"
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "accessibilityText": "",
+                  "title": "",
+                  "value": "",
+                  "text": "",
+                  "hintText": "",
+                  "resource-id": "",
+                  "bounds": "[0,0][402,874]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "selected": "false",
+                  "checked": "false"
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "accessibilityText": "",
+                    "title": "",
+                    "value": "",
+                    "text": "",
+                    "hintText": "",
+                    "resource-id": "",
+                    "bounds": "[0,0][402,874]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "selected": "false",
+                    "checked": "false"
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "accessibilityText": "",
+                      "title": "",
+                      "value": "",
+                      "text": "",
+                      "hintText": "",
+                      "resource-id": "",
+                      "bounds": "[0,0][402,874]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "selected": "false",
+                      "checked": "false"
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "accessibilityText": "",
+                            "title": "",
+                            "value": "",
+                            "text": "",
+                            "hintText": "",
+                            "resource-id": "",
+                            "bounds": "[0,0][402,874]",
+                            "enabled": "true",
+                            "focused": "false",
+                            "selected": "false",
+                            "checked": "false"
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "accessibilityText": "",
+                              "title": "",
+                              "value": "",
+                              "text": "",
+                              "hintText": "",
+                              "resource-id": "",
+                              "bounds": "[0,0][402,874]",
+                              "enabled": "true",
+                              "focused": "false",
+                              "selected": "false",
+                              "checked": "false"
+                             },
+                             "children": [
+                              {
+                               "attributes": {
+                                "accessibilityText": "",
+                                "title": "",
+                                "value": "",
+                                "text": "",
+                                "hintText": "",
+                                "resource-id": "",
+                                "bounds": "[0,0][402,874]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "selected": "false",
+                                "checked": "false"
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "accessibilityText": "",
+                                  "title": "",
+                                  "value": "",
+                                  "text": "",
+                                  "hintText": "",
+                                  "resource-id": "stats.screen",
+                                  "bounds": "[0,0][402,874]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "selected": "false",
+                                  "checked": "false"
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "بازگشت",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "stats.top-bar.back-button",
+                                    "bounds": "[338,69][386,117]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "stats.top-bar",
+                                    "bounds": "[0,62][402,128]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "آمار",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "",
+                                    "bounds": "[16,71][326,114]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "آمار",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[16,71][326,114]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "stats.top-bar.title",
+                                    "bounds": "[16,73][326,112]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "",
+                                    "bounds": "[0,128][402,774]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "accessibilityText": "",
+                                      "title": "",
+                                      "value": "",
+                                      "text": "",
+                                      "hintText": "",
+                                      "resource-id": "",
+                                      "bounds": "[0,128][402,774]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "selected": "false",
+                                      "checked": "false"
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "",
+                                        "title": "",
+                                        "value": "",
+                                        "text": "",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[0,-724][402,775]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[0,-724][402,775]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.best-card",
+                                            "bounds": "[20,-297][382,41]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "طولانی‌ترین زنجیرهٔ برد, ۹",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.best-card.win-streak",
+                                            "bounds": "[39,-20][363,24]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "طولانی‌ترین زنجیرهٔ برد",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.best-card.win-streak.label",
+                                              "bounds": "[237,-6][363,15]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "طولانی‌ترین زنجیرهٔ برد",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[237,-6][363,15]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.best-card.win-streak.value",
+                                              "bounds": "[39,-9][50,14]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.daily-card",
+                                            "bounds": "[20,57][382,207]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "چالش روزانه",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.daily-card.title",
+                                            "bounds": "[39,76][319,107]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "چالش روزانه",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[39,76][319,107]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۱۹, چالش‌های انجام‌شده",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.daily-card.completed",
+                                            "bounds": "[264,120][362,190]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.completed.value",
+                                              "bounds": "[264,120][362,146]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "چالش‌های انجام‌شده",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.completed.label",
+                                              "bounds": "[264,148][362,190]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "چالش‌های انجام‌شده",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[264,148][362,190]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۵ روز, زنجیرهٔ فعلی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.daily-card.current-streak",
+                                            "bounds": "[151,120][250,190]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.current-streak.value",
+                                              "bounds": "[151,120][250,146]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "زنجیرهٔ فعلی",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.current-streak.label",
+                                              "bounds": "[151,148][250,169]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "زنجیرهٔ فعلی",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[151,148][250,169]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۱۲ روز, بهترین زنجیره",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.daily-card.best-streak",
+                                            "bounds": "[39,120][137,190]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.best-streak.value",
+                                              "bounds": "[39,120][137,146]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "بهترین زنجیره",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.daily-card.best-streak.label",
+                                              "bounds": "[39,148][137,169]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "بهترین زنجیره",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[39,148][137,169]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-card",
+                                            "bounds": "[20,223][382,481]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۷ روز گذشته",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-card.title",
+                                            "bounds": "[39,242][319,272]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "۷ روز گذشته",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[39,242][319,272]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "تعداد بازی در هر روز",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-card.subtitle",
+                                            "bounds": "[39,286][363,307]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "تعداد بازی در هر روز",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[39,286][363,307]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨دوشنبه⁩: ۰ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.1",
+                                            "bounds": "[316,315][363,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.1.value",
+                                              "bounds": "[336,420][342,435]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "د",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.1.day",
+                                              "bounds": "[336,445][342,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "د",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[336,445][342,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨سه‌شنبه⁩: ۳ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.2",
+                                            "bounds": "[270,315][316,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.2.value",
+                                              "bounds": "[289,370][298,385]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.2.bar",
+                                              "bounds": "[280,390][306,436]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "س",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.2.day",
+                                              "bounds": "[285,445][301,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "س",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[285,445][301,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨چهارشنبه⁩: ۵ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.3",
+                                            "bounds": "[224,315][270,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.3.value",
+                                              "bounds": "[243,339][251,355]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.3.bar",
+                                              "bounds": "[234,359][260,435]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "چ",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.3.day",
+                                              "bounds": "[242,445][251,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "چ",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[242,445][251,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨پنجشنبه⁩: ۲ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.4",
+                                            "bounds": "[178,315][224,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.4.value",
+                                              "bounds": "[197,385][204,401]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.4.bar",
+                                              "bounds": "[188,405][214,435]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "پ",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.4.day",
+                                              "bounds": "[195,445][207,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "پ",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[195,445][207,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨جمعه⁩: ۶ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.5",
+                                            "bounds": "[131,315][178,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.5.value",
+                                              "bounds": "[151,324][158,339]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.5.bar",
+                                              "bounds": "[141,344][167,436]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "ج",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.5.day",
+                                              "bounds": "[150,445][159,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "ج",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[150,445][159,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨شنبه⁩: ۴ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.6",
+                                            "bounds": "[85,315][131,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.6.value",
+                                              "bounds": "[104,355][112,370]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.6.bar",
+                                              "bounds": "[95,374][121,436]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "ش",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.6.day",
+                                              "bounds": "[100,445][116,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "ش",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[100,445][116,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-card.chart",
+                                            "bounds": "[39,315][363,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "⁨یکشنبه⁩: ۱ بازی",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.week-bar.7",
+                                            "bounds": "[39,315][85,464]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.7.value",
+                                              "bounds": "[60,401][64,416]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.7.bar",
+                                              "bounds": "[49,420][75,436]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "ی",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.week-bar.7.day",
+                                              "bounds": "[57,445][67,464]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "ی",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[57,445][67,464]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.game-card",
+                                            "bounds": "[20,497][382,649]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "آمار ⁨Line Siege⁩",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.game-card.title",
+                                            "bounds": "[39,517][317,547]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "آمار ⁨Line Siege⁩",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[39,517][317,547]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۱٬۲۸۴, هیولاهای شکست‌خورده",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.game-card.monsters-defeated",
+                                            "bounds": "[264,562][362,632]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.monsters-defeated.value",
+                                              "bounds": "[264,562][362,588]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "هیولاهای شکست‌خورده",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.monsters-defeated.label",
+                                              "bounds": "[264,589][362,631]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "هیولاهای شکست‌خورده",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[264,589][362,631]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "۳٬۹۰۷, پرتوهای شلیک‌شده",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.game-card.beams-fired",
+                                            "bounds": "[151,562][250,632]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.beams-fired.value",
+                                              "bounds": "[151,562][250,588]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "پرتوهای شلیک‌شده",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.beams-fired.label",
+                                              "bounds": "[151,589][250,631]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "پرتوهای شلیک‌شده",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[151,589][250,631]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "×۶, بزرگ‌ترین کمبو",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.game-card.biggest-combo",
+                                            "bounds": "[39,562][137,632]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.biggest-combo.value",
+                                              "bounds": "[39,562][137,588]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            },
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "بزرگ‌ترین کمبو",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.game-card.biggest-combo.label",
+                                              "bounds": "[39,589][137,610]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [
+                                              {
+                                               "attributes": {
+                                                "accessibilityText": "بزرگ‌ترین کمبو",
+                                                "title": "",
+                                                "value": "",
+                                                "text": "",
+                                                "hintText": "",
+                                                "resource-id": "",
+                                                "bounds": "[39,589][137,610]",
+                                                "enabled": "true",
+                                                "focused": "false",
+                                                "selected": "false",
+                                                "checked": "false"
+                                               },
+                                               "children": [],
+                                               "enabled": true,
+                                               "focused": false,
+                                               "checked": false,
+                                               "selected": false
+                                              }
+                                             ],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "بازنشانی آمار",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.reset-button",
+                                            "bounds": "[20,665][382,719]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "",
+                                            "bounds": "[358,735][382,759]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "stats.local-note.icon",
+                                              "bounds": "[358,735][382,759]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "stats.local-note",
+                                            "bounds": "[20,735][382,759]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          },
+                                          {
+                                           "attributes": {
+                                            "accessibilityText": "فقط روی همین گوشی ذخیره می‌شود.",
+                                            "title": "",
+                                            "value": "",
+                                            "text": "",
+                                            "hintText": "",
+                                            "resource-id": "",
+                                            "bounds": "[20,736][352,757]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "selected": "false",
+                                            "checked": "false"
+                                           },
+                                           "children": [
+                                            {
+                                             "attributes": {
+                                              "accessibilityText": "فقط روی همین گوشی ذخیره می‌شود.",
+                                              "title": "",
+                                              "value": "",
+                                              "text": "",
+                                              "hintText": "",
+                                              "resource-id": "",
+                                              "bounds": "[20,736][352,757]",
+                                              "enabled": "true",
+                                              "focused": "false",
+                                              "selected": "false",
+                                              "checked": "false"
+                                             },
+                                             "children": [],
+                                             "enabled": true,
+                                             "focused": false,
+                                             "checked": false,
+                                             "selected": false
+                                            }
+                                           ],
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, ۳ pages",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[3,128][33,774]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[3,495][6,770]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, ۱ page",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[0,741][402,771]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[6,768][399,771]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Vertical scroll bar, ۳ pages",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[3,128][33,774]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[3,495][6,770]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "accessibilityText": "Horizontal scroll bar, ۱ page",
+                                        "title": "",
+                                        "value": "‏۱۰۰٪",
+                                        "text": "‏۱۰۰٪",
+                                        "hintText": "",
+                                        "resource-id": "",
+                                        "bounds": "[0,741][402,771]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "selected": "false",
+                                        "checked": "false"
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "accessibilityText": "",
+                                          "title": "",
+                                          "value": "",
+                                          "text": "",
+                                          "hintText": "",
+                                          "resource-id": "",
+                                          "bounds": "[6,768][399,771]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "selected": "false",
+                                          "checked": "false"
+                                         },
+                                         "children": [],
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "stats.banner-ad",
+                                    "bounds": "[0,774][402,840]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "accessibilityText": "",
+                                    "title": "",
+                                    "value": "",
+                                    "text": "",
+                                    "hintText": "",
+                                    "resource-id": "parity.banner-stand-in",
+                                    "bounds": "[41,782][361,832]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "selected": "false",
+                                    "checked": "false"
+                                   },
+                                   "children": [],
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              }
+                             ],
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      },
+                      {
+                       "attributes": {
+                        "accessibilityText": "",
+                        "title": "",
+                        "value": "",
+                        "text": "",
+                        "hintText": "",
+                        "resource-id": "",
+                        "bounds": "[0,0][402,874]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "selected": "false",
+                        "checked": "false"
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "accessibilityText": "",
+                          "title": "",
+                          "value": "",
+                          "text": "",
+                          "hintText": "",
+                          "resource-id": "",
+                          "bounds": "[0,0][402,874]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "selected": "false",
+                          "checked": "false"
+                         },
+                         "children": [],
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": true,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  },
+  {
+   "attributes": {
+    "accessibilityText": "",
+    "title": "",
+    "value": "",
+    "text": "",
+    "hintText": "",
+    "resource-id": "",
+    "bounds": "[0,0][0,0]",
+    "enabled": "false",
+    "focused": "false",
+    "selected": "false",
+    "checked": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    },
+    {
+     "attributes": {
+      "accessibilityText": "",
+      "title": "",
+      "value": "",
+      "text": "",
+      "hintText": "",
+      "resource-id": "",
+      "bounds": "[0,0][402,54]",
+      "enabled": "true",
+      "focused": "false",
+      "selected": "false",
+      "checked": "false"
+     },
+     "children": [
+      {
+       "attributes": {
+        "accessibilityText": "",
+        "title": "",
+        "value": "",
+        "text": "",
+        "hintText": "",
+        "resource-id": "",
+        "bounds": "[0,0][402,54]",
+        "enabled": "true",
+        "focused": "false",
+        "selected": "false",
+        "checked": "false"
+       },
+       "children": [
+        {
+         "attributes": {
+          "accessibilityText": "",
+          "title": "",
+          "value": "",
+          "text": "",
+          "hintText": "",
+          "resource-id": "",
+          "bounds": "[0,0][402,54]",
+          "enabled": "true",
+          "focused": "false",
+          "selected": "false",
+          "checked": "false"
+         },
+         "children": [
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,14][92,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "10:26 AM",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[55,22][92,42]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "",
+            "text": "",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[309,14][345,51]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "Cellular",
+            "title": "",
+            "value": "4 of 4 bars, signal strength",
+            "text": "4 of 4 bars, signal strength",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[288,26][307,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "",
+            "title": "",
+            "value": "SSID, 3 of 3 Wi-Fi bars",
+            "text": "SSID, 3 of 3 Wi-Fi bars",
+            "hintText": "",
+            "resource-id": "3 of 3 Wi-Fi bars",
+            "bounds": "[315,26][332,38]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          },
+          {
+           "attributes": {
+            "accessibilityText": "100% battery power",
+            "title": "",
+            "value": "Not charging",
+            "text": "Not charging",
+            "hintText": "",
+            "resource-id": "",
+            "bounds": "[339,26][366,39]",
+            "enabled": "true",
+            "focused": "false",
+            "selected": "false",
+            "checked": "false"
+           },
+           "children": [],
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "enabled": false,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  }
+ ],
+ "enabled": false,
+ "focused": false,
+ "checked": false,
+ "selected": false
+}

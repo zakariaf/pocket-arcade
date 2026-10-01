@@ -113,6 +113,7 @@ describe('useHomeModel', () => {
     const { actions } = model;
     for (const press of [
       actions.onPlay,
+      actions.onOpenDaily,
       actions.onPlayDaily,
       actions.onPlayEndless,
       actions.onOpenSettings,
@@ -125,6 +126,7 @@ describe('useHomeModel', () => {
 
     expect(mockNavigate.mock.calls).toStrictEqual([
       ['Game', { start: 'new', ref: { kind: 'level', level: 3 } }],
+      ['Daily'],
       ['Game', { start: 'new', ref: { kind: 'daily', date: '2026-09-26' } }],
       ['Game', { start: 'new', ref: { kind: 'endless' } }],
       ['Settings'],

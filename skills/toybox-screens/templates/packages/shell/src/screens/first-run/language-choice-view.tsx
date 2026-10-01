@@ -8,7 +8,7 @@ import { ArtTile } from '@e07/shell/ui/art-tile.tsx';
 import { Button } from '@e07/shell/ui/button.tsx';
 import { OptionCard } from '@e07/shell/ui/option-card.tsx';
 import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
+import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 import { Sticker } from '@e07/shell/ui/sticker.tsx';
 
 import type { TFunction } from '@e07/shell/i18n/create-t.ts';
@@ -40,8 +40,10 @@ const styles = StyleSheet.create({
 export function LanguageChoiceView({ model }: LanguageChoiceViewProps): ReactNode {
   const t = useT();
   return (
-    <ScreenFrame testID="language-choice.screen">
-      <ScreenBody>
+    // The body runs under the home indicator (34 pt bottom padding), so the hero key's 6 pt hard
+    // shadow is drawn below it as the design draws it, not clipped by the scroll view's edge.
+    <ScreenFrame testID="language-choice.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
+      <ScreenBody isUnderHomeIndicator>
         <View style={styles.header}>
           <ArtTile testID="language-choice.art" icon="globe" paint="pop" />
           <AppText

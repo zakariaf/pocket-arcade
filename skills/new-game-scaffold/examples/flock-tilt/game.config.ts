@@ -12,15 +12,24 @@ const LATIN_NAME = 'Flock Tilt';
  *   when rules.continueRun is { kind: 'once' }.
  * - store.ageRating is the owner's App Store answer set (step G1): violenceCartoonOrFantasy is
  *   NONE unless the game hits monsters or characters.
+ * - bundleId is always io.applander.<game id without hyphens> and premium.productId is
+ *   <bundleId>.premium (owner decision O4). The AdMob ids, the privacy host and the support
+ *   address are placeholders until the owner's steps G5 and G3; check-game-app --stage complete
+ *   rejects them.
+ * - Premium is the EUR 1.99 App Store price point with Family Sharing off (owner decisions O2, O3);
+ *   the app always shows the store's localised price, never this note.
  */
 export const gameConfig: GameConfig = {
   id: 'flock-tilt',
   appName: { en: LATIN_NAME, de: LATIN_NAME, fa: LATIN_NAME, ckb: LATIN_NAME },
-  bundleId: 'com.example.flocktilt',
+  bundleId: 'io.applander.flocktilt',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 1,
-  premium: { productId: 'com.example.flocktilt.premium', priceNote: 'EUR 1.99 tier (D3)' },
+  premium: {
+    productId: 'io.applander.flocktilt.premium',
+    priceNote: 'EUR 1.99 price point (owner decision)',
+  },
   ads: {
     isEnabled: true,
     policy: {

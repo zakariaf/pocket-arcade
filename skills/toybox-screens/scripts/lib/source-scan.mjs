@@ -160,6 +160,73 @@ export function scanIdProps(rawSource, idProps) {
   return hits;
 }
 
+/** The index of `needle` in `text` outside every {...} (a prop's own value, not nested JSX), or -1. */
+function indexAtDepthZero(text, needle) {
+  let depth = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    if (depth === 0 && text.startsWith(needle, i)) return i;
+    if (text[i] === '{') depth += 1;
+    else if (text[i] === '}') depth -= 1;
+  }
+  return -1;
+}
+
+/** The index of the closing tag that matches the element <name ...> opened before `from`, or -1. */
+function closingTagIndex(source, name, from) {
+  const tags = new RegExp(`<(/?)${name.replace(/\./g, '\\.')}\\b`, 'g');
+  tags.lastIndex = from;
+  let depth = 1;
+  for (let match = tags.exec(source); match !== null; match = tags.exec(source)) {
+    if (match[1] === '/') {
+      depth -= 1;
+      if (depth === 0) return match.index;
+    } else if (!openingTag(source, match.index).endsWith('/>')) {
+      depth += 1;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The first JSX element whose own opening tag sets `attribute` (for example testID="home.daily-card";
+ * a prop value holding nested JSX does not count): { name, opening, body, line }. `body` is the
+ * source between the opening tag and its matching closing tag ('' for a self-closing element).
+ * null when no element sets it.
+ */
+export function jsxElementWith(rawSource, attribute) {
+  const source = maskComments(rawSource);
+  for (const match of source.matchAll(/<([A-Za-z][A-Za-z0-9.]*)\b/g)) {
+    const opening = openingTag(source, match.index);
+    if (indexAtDepthZero(opening, attribute) === -1) continue;
+    const end = match.index + opening.length;
+    const close = opening.endsWith('/>') ? end : closingTagIndex(source, match[1], end);
+    return {
+      name: match[1],
+      opening,
+      body: close === -1 ? source.slice(end) : source.slice(end, close),
+      line: lineOf(source, match.index),
+    };
+  }
+  return null;
+}
+
+/** The raw value of one prop of an opening tag ("{onOpenDaily}", "\"x\""), or null when it is not set. */
+export function propValue(opening, prop) {
+  const at = indexAtDepthZero(opening, ` ${prop}=`);
+  const start = at === -1 ? indexAtDepthZero(opening, `\n${prop}=`) : at;
+  if (start === -1) return null;
+  let i = start + prop.length + 2;
+  while (/\s/.test(opening[i] ?? '')) i += 1;
+  if (opening[i] === '"') return opening.slice(i, opening.indexOf('"', i + 1) + 1);
+  if (opening[i] !== '{') return null;
+  let depth = 0;
+  for (let j = i; j < opening.length; j += 1) {
+    if (opening[j] === '{') depth += 1;
+    else if (opening[j] === '}' && (depth -= 1) === 0) return opening.slice(i, j + 1);
+  }
+  return opening.slice(i);
+}
+
 /** How many hero keys a file renders: size="hero" or size={'hero'}. */
 export function countHeroKeys(source) {
   return [...source.matchAll(/\bsize=(?:"hero"|\{\s*['"]hero['"]\s*\})/g)].map((match) => lineOf(source, match.index));

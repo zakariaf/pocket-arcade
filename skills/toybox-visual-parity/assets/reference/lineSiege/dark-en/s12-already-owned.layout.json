@@ -2,7 +2,7 @@
 "version":1,
 "frame":"s12-already-owned",
 "variant":null,
-"facts":{"hasMusic":true,"winLine":"moves"},
+"facts":{"hasMusic":true,"winLine":"moves","hasHints":true},
 "kind":"state-card",
 "screens":[
 "S12/owned"
@@ -16,15 +16,14 @@
 "size":{"w":402,"h":370},
 "image":"s12-already-owned.png",
 "elements":[
-{"testID":"premium.state.owned","screen":"S12/owned","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"Premium Premium – active Thanks for supporting Line Siege! Restore purchase","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
-{"testID":"premium.top-bar.title","screen":"S12/owned","role":"header","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":24,"w":362,"h":33},"box":{"w":362,"h":33,"rotate":0},"text":"Premium","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 30px/33px Lilita One"}},
-{"testID":"premium.restore-button","screen":"S12/owned","role":"button","component":"Button","kind":"secondary block, restore icon","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":292,"w":362,"h":54},"box":{"w":362,"h":54,"rotate":0},"text":"Restore purchase","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
-{"testID":"premium.active-sticker","screen":"S12/owned","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":19.27,"y":64.72,"w":165.94,"h":40.95},"box":{"w":164,"h":32,"rotate":-3},"text":"Premium – active","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"400 16px/18.4px Lilita One"}},
-{"testID":"premium.owned-body","screen":"S12/owned","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":113.39,"w":362,"h":23.75},"box":{"w":362,"h":24,"rotate":0},"text":"Thanks for supporting Line Siege!","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/23.76px Rubik"}}
+{"testID":"premium.state.owned","screen":"S12/owned","role":"none","component":"View","kind":null,"checks":[],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":0,"y":0,"w":402,"h":370},"box":{"w":422,"h":390,"rotate":0},"text":"Premium Premium – active Thanks for supporting Line Siege! Restore purchase","aria":null,"style":{"fill":"#1B1943","color":"#F4F2FF","border":"10px solid #141320","radius":"0px","shadow":null,"outline":null,"font":"400 17px/22.44px Rubik"}},
+{"testID":"premium.restore-button","screen":"S12/owned","role":"button","component":"Button","kind":"secondary block, restore icon","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":292,"w":362,"h":54},"box":{"w":362,"h":54,"rotate":0},"text":"Restore purchase","aria":null,"style":{"fill":"#2B2862","color":"#F4F2FF","border":"3px solid #E4E0FF","radius":"14px","shadow":"rgb(7, 6, 26) 0px 5px 0px 0px","outline":null,"font":"700 17px/21.25px Rubik"}},
+{"testID":"premium.active-sticker","screen":"S12/owned","role":"text","component":"Sticker","kind":"gold, crown, -3 deg","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":19.27,"y":64.72,"w":165.94,"h":40.95},"box":{"w":164,"h":32,"rotate":-3},"text":"Premium – active","aria":null,"style":{"fill":"#FFC928","color":"#1D1B3A","border":"2px solid #1D1B3A","radius":"8px","shadow":"rgb(255, 255, 255) 0px 0px 0px 3.5px","outline":null,"font":"400 16px/18.4px Lilita One"}},
+{"testID":"premium.owned-body","screen":"S12/owned","role":"text","component":"AppText","kind":null,"checks":["text"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":113.39,"w":362,"h":23.75},"box":{"w":362,"h":24,"rotate":0},"text":"Thanks for supporting Line Siege!","aria":null,"style":{"fill":null,"color":"#F4F2FF","border":null,"radius":"0px","shadow":null,"outline":null,"font":"400 18px/23.76px Rubik"}}
 ],
 "texts":[
-{"text":"Premium","x":20,"y":23,"w":115.36,"h":35,"owner":"premium.top-bar.title","font":"400 30px Lilita One"},
-{"text":"Premium – active","x":54.53,"y":71.39,"w":117.3,"h":25.07,"owner":"premium.active-sticker","font":"400 16px Lilita One"},
+{"text":"Premium","x":20,"y":23,"w":115.36,"h":35,"owner":"premium.state.owned","font":"400 30px Lilita One"},
+{"text":"Premium – active","x":54.53,"y":71.39,"w":117.3,"h":25.07,"owner":"premium.active-sticker","font":"400 16px Lilita One","rotate":-3},
 {"text":"Thanks for supporting","x":20,"y":113.39,"w":188.25,"h":22,"owner":"premium.owned-body","font":"400 18px Rubik"},
 {"text":"Line Siege","x":208.25,"y":113.39,"w":86.36,"h":22,"owner":"premium.owned-body","font":"400 18px Rubik"},
 {"text":"!","x":294.61,"y":113.39,"w":4.42,"h":22,"owner":"premium.owned-body","font":"400 18px Rubik"},

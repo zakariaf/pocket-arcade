@@ -1,2 +1,2 @@
 [config-iap-options]
-packages/shell/src/config/with-shell.ts
+packages/shell/src/config/shell-plugins.ts

@@ -25,7 +25,7 @@ const SPEC = {
     'Rules:',
     '  missing-file            a file of the standard save layer is missing (the boot files hydrate-save.ts and',
     '                          use-checkpoint-on-background.ts, with their tests, print SKIP until',
-    '                          packages/shell/src/app/start-shell.ts exists: they are due at Shell step 6)',
+    '                          packages/shell/src/app/start-shell.ts exists: they are due at Shell step 7)',
     '  sqlite-outside-save     expo-sqlite / node:sqlite used outside services/save, services/error-log, test/, tooling',
     '  second-persistence      AsyncStorage, MMKV, SecureStore or zustand/middleware used for app data',
     '  zod-banned              zod imported (valibot is the chosen validator)',
@@ -79,7 +79,7 @@ const REQUIRED = [
   'test/integration/save/sqlite-save-store.test.ts',
 ];
 /**
- * The boot's save files: copied at Shell step 6 with the Shell boot (start-shell.ts), because they
+ * The boot's save files: copied at Shell step 7 with the Shell boot (start-shell.ts) and the composition root, because they
  * need @react-navigation/native, RNTL, the state-stores testing helpers and the test-only pair,
  * which arrive then. Before start-shell.ts exists a missing one is a SKIP line, never a problem.
  */

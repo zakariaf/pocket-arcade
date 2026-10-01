@@ -73,6 +73,7 @@ export function SettingsLanguageView({ model }: SettingsLanguageViewProps): Reac
         <NotePanel
           testID="settings-language.direction-note"
           icon="globe"
+          iconTile="pop"
           text={t('language.direction-note')}
         />
       </ScreenBody>

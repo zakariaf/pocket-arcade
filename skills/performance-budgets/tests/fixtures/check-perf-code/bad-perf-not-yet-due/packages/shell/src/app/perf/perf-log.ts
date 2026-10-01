@@ -2,7 +2,11 @@
 import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
 
 export type PerfEntry = {
-  readonly kind: 'frames' | 'cold-start' | 'save-benchmark';
+  /**
+   * 'feedback': a sound or haptic cue the app asked for (game-audio-and-haptics' recording
+   * decorators, label = the sound id or the cue), the simulator evidence of the win feedback.
+   */
+  readonly kind: 'frames' | 'cold-start' | 'save-benchmark' | 'feedback';
   readonly label: string;
   readonly atEpochMs: number;
   readonly data: Readonly<Record<string, number | null | readonly number[]>>;

@@ -9,6 +9,7 @@
 //     Siege catalogs) and a game outside the copy deck (template keys, lose slug), each with a bug.
 //   check-game-app.mjs --stage complete: passes that app plus check-game-app-complete/base (stubs
 //     for every module part and the evidence files) and fails each check-game-app-complete/bad-*.
+//   PLACEHOLDERS (the scaffold placeholders --stage complete rejects by name) equals the pinned list.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs
 
 import { spawnSync } from 'node:child_process';
@@ -16,7 +17,8 @@ import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { makeTempDir, runSelftest } from './check-lib.mjs';
+import { createReporter, makeTempDir, runSelftest } from './check-lib.mjs';
+import { PLACEHOLDERS } from './lib/app-plan.mjs';
 import { assembleFixtures } from './lib/assemble-fixtures.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -74,6 +76,33 @@ function copied(name) {
   return dir;
 }
 
+/**
+ * check-game-app --stage complete rejects exactly these scaffold placeholders by name (owner decision
+ * O4; the ship gates keep the same list). Dropping or changing one fails the self-test.
+ */
+const PINNED_PLACEHOLDERS = [
+  'com.example.*',
+  'ca-app-pub-1234567890123456~1234567890',
+  'ca-app-pub-1234567890123456/1111111111',
+  'ca-app-pub-1234567890123456/2222222222',
+  'ca-app-pub-1234567890123456/3333333333',
+  'example.com',
+  'support@example.com',
+];
+
+/** True (and prints the problem) when PLACEHOLDERS is not the pinned list. */
+function placeholdersDrifted() {
+  const values = PLACEHOLDERS.map((entry) => entry.value);
+  if (JSON.stringify(values) === JSON.stringify(PINNED_PLACEHOLDERS)) {
+    console.log(`ok   PLACEHOLDERS pinned (${values.length} values)`);
+    return false;
+  }
+  const report = createReporter({ name: 'selftest' });
+  report.problem({ file: 'scripts/lib/app-files.mjs', rule: 'placeholders-pinned', message: `PLACEHOLDERS is ${JSON.stringify(values)}, not the pinned ${JSON.stringify(PINNED_PLACEHOLDERS)}`, fix: 'Keep every scaffold placeholder in the shared list (it is synced from the library); change the pin only with the owner decision that changes the list.' });
+  process.exitCode = report.finish({ checked: 1, unit: 'lists' });
+  return true;
+}
+
 const suites = {
   addMissing: () => copied('scaffold-game-add-missing'),
   scaffold: () => assembleFixtures(join(fixtures, 'check-game-app-scaffold'), scaffolded),
@@ -81,10 +110,11 @@ const suites = {
   pilot: () => assembleFixtures(join(fixtures, 'check-game-app-pilot'), pilot),
   templateKeys: () => assembleFixtures(join(fixtures, 'check-game-app-template-keys'), outsideDeck),
 };
-const built = wantsHelp ? Object.fromEntries(Object.keys(suites).map((key) => [key, fixtures])) : Object.fromEntries(Object.entries(suites).map(([key, build]) => [key, build()]));
+const drifted = !wantsHelp && placeholdersDrifted();
+const built = wantsHelp || drifted ? Object.fromEntries(Object.keys(suites).map((key) => [key, fixtures])) : Object.fromEntries(Object.entries(suites).map(([key, build]) => [key, build()]));
 const scaffoldArgs = (app) => (dir) => [dir, '--app', app, '--stage', 'scaffold'];
 try {
-  await runSelftest(import.meta.url, [
+  if (!drifted) await runSelftest(import.meta.url, [
     { script: 'scaffold-game.mjs', fixtures: '../tests/fixtures/scaffold-game', args: (dir) => ['--root', dir, '--app', 'flock-tilt', ...DECISIONS] },
     { script: 'scaffold-game.mjs', fixtures: built.addMissing, args: (dir) => ['--root', dir, '--app', 'line-siege', '--add-missing'] },
     { script: 'check-game-app.mjs', fixtures: built.scaffold, args: scaffoldArgs('flock-tilt') },
@@ -93,5 +123,6 @@ try {
     { script: 'check-game-app.mjs', fixtures: built.complete, args: (dir) => [dir, '--app', 'flock-tilt', '--stage', 'complete'] },
   ]);
 } finally {
-  if (!wantsHelp) for (const dir of Object.values(built)) rmSync(dir, { recursive: true, force: true });
+  // Only the temporary folders the suites built; with --help or a drifted pin they are the skill's own fixtures.
+  if (!wantsHelp && !drifted) for (const dir of Object.values(built)) rmSync(dir, { recursive: true, force: true });
 }

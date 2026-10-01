@@ -130,6 +130,6 @@ Verified on 2026-09-30 in a test workspace with the full route table (every scre
 ## Pitfalls seen before
 
 - Calling `reloadAppAsync` while the bundle is still evaluating crashed a Release build ("startSurface failed. Global was not installed"); the direction reload runs from the mounted startup splash's effect instead.
-- Transition direction with `headerShown: false` was confirmed only by reading react-native-screens source; the RTL play-test should still look at one push.
+- Transition direction with `headerShown: false` was confirmed only by reading react-native-screens source; the owner's play-test looks at one push in Persian (an owner step, not blocking).
 - `usePreventRemove` cannot see app kills; the save after every move is the guarantee.
 - A test stack typed through the global `RootParamList` fails `tsc` under `exactOptionalPropertyTypes`: type test refs with `ParamListBase`.

@@ -8,6 +8,7 @@ import {
   linkScreenshotPath,
   linkSetupArgs,
   linkWaitFor,
+  maestroEnvOf,
   moduleCachePathIn,
   parseSimBuildArgs,
   readyReason,
@@ -19,6 +20,8 @@ import {
   variantEnv,
   xcodebuildSimArgs,
 } from './sim-build-plan.ts';
+
+const UDID = '0C9E3F8A-51D2-4B7E-9A61-2F4D8C7B1E03';
 
 describe('buildScriptProblems (the preflight before prebuild)', () => {
   const AUDIT = 'node packages/tooling/src/audit/audit-privacy.ts';
@@ -56,6 +59,7 @@ describe('parseSimBuildArgs', () => {
       variant: { appVariant: 'test', adsMode: 'test' },
       purpose: 'smoke',
       link: null,
+      driverPort: null,
     });
   });
 
@@ -118,19 +122,60 @@ describe('parseSimBuildArgs', () => {
     ]);
     expect(linkProblems(parseSimBuildArgs(['--app', 'line-siege']), () => false)).toStrictEqual([]);
     const link = { query: 'screen=home', waitFor: 'home.screen' };
-    expect(
-      linkSetupArgs({ udid: 'U', bundleId: 'com.x', scheme: 'e07-x', link, outDir: 'out' }),
-    ).toStrictEqual([
-      ...['test', 'packages/shell/e2e/subflows/debug-setup.yaml', '--udid', 'U'],
-      ...['--test-output-dir', 'out', '-e', 'APP_ID=com.x', '-e', 'APP_SCHEME=e07-x'],
+    const run = { udid: UDID, driverPort: 53_117, scheme: 'e07-line-siege', link, outDir: 'out' };
+    expect(linkSetupArgs({ ...run, bundleId: 'io.applander.linesiege' })).toStrictEqual([
+      ...['--device', UDID, '--driver-host-port', '53117'],
+      ...['test', 'packages/shell/e2e/subflows/debug-setup.yaml', '--test-output-dir', 'out'],
+      ...['-e', 'APP_ID=io.applander.linesiege', '-e', 'APP_SCHEME=e07-line-siege'],
       ...['-e', 'QUERY=screen=home', '-e', 'WAIT_FOR=home.screen'],
     ]);
+  });
+
+  it('names the device before the command and never passes the per-command --udid', () => {
+    const link = { query: 'screen=home', waitFor: 'home.screen' };
+    const args = linkSetupArgs({
+      ...{ udid: UDID, driverPort: 61_234, bundleId: 'io.applander.linesiege' },
+      ...{ scheme: 'e07-line-siege', link, outDir: 'out' },
+    });
+    expect(args.indexOf('--device')).toBeLessThan(args.indexOf('test'));
+    expect(args).not.toContain('--udid');
+    expect(() =>
+      linkSetupArgs({
+        ...{ udid: 'booted', driverPort: 61_234, bundleId: 'x' },
+        scheme: 's',
+        link,
+        outDir: 'o',
+      }),
+    ).toThrow('is not a simulator UDID');
+  });
+
+  it("takes the session's own --driver-port, else none (a free one per run)", () => {
+    const base = ['--app', 'line-siege', '--link', 'screen=home'];
+    expect(parseSimBuildArgs(base).driverPort).toBeNull();
+    expect(parseSimBuildArgs([...base, '--driver-port', '61234']).driverPort).toBe(61_234);
+    expect(() => parseSimBuildArgs([...base, '--driver-port', '80'])).toThrow(
+      '--driver-port 80: pass a port from 1024 to 65535',
+    );
   });
 
   it('rejects an unknown flag', () => {
     expect(() => parseSimBuildArgs(['--app', 'line-siege', '--fast', 'yes'])).toThrow(
       'unexpected argument "--fast"',
     );
+  });
+});
+
+describe('maestroEnvOf', () => {
+  it('turns off analytics, the analysis prompt and the update check, with Java 17', () => {
+    const env = maestroEnvOf({ PATH: '/bin' }, () => '/jdk17');
+    expect(env).toMatchObject({
+      PATH: '/bin',
+      JAVA_HOME: '/jdk17',
+      MAESTRO_CLI_NO_ANALYTICS: 'true',
+      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
+      MAESTRO_DISABLE_UPDATE_CHECK: 'true',
+    });
+    expect(maestroEnvOf({ JAVA_HOME: '/mine' }, () => '/jdk17')['JAVA_HOME']).toBe('/mine');
   });
 });
 

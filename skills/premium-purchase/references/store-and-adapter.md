@@ -2,7 +2,7 @@
 
 ## Contents
 
-- What Premium is (spec N7, 8.9, D2, D3)
+- What Premium is (spec N7, 8.9, D2; owner decisions O2, O3)
 - Three StoreKit facts that shape everything
 - Versions, install and the config plugin
 - Banned APIs and plugin options (no server, no extra SDK)
@@ -11,9 +11,9 @@
 - Error codes -> S12 results
 - Re-verify after an upgrade
 
-## What Premium is (spec N7, 8.9, D2, D3)
+## What Premium is (spec N7, 8.9, D2; owner decisions O2, O3)
 
-- One non-consumable product per game, "Premium", about EUR 1.90 (D3: EUR 1.90 where the store allows, otherwise the nearest Apple price point such as EUR 1.99). No subscriptions, coins, consumables or second product (N7).
+- One non-consumable product per game, "Premium", at the EUR 1.99 App Store price point (owner decision O2, 2026-09-30; it replaced the product spec's older, rounder target). The app always shows the store's localised price (`formatStorePrice`, fallback `displayPrice`) and never types it. No subscriptions, coins, consumables or second product (N7). Family Sharing is off (owner decision O3).
 - It removes all ads, and hints and continues become free (D2). Levels are never sold.
 - Each game is its own app, so each has its own Premium; buying it in one game unlocks nothing elsewhere.
 - After a purchase the Shell stores "Premium = yes" on the phone; from then on it works offline forever without asking the store again. When online, the Shell quietly re-checks at app start and on return to the foreground (for example after a refund).

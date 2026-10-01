@@ -1,0 +1,2 @@
+apps/tile-drop/game.config.ts:7 [bundle-id-applander] bundleId 'io.pocketarcade.tiledrop' is not 'io.applander.tiledrop'
+Set bundleId: 'io.applander.tiledrop' and premium.productId: 'io.applander.tiledrop.premium'

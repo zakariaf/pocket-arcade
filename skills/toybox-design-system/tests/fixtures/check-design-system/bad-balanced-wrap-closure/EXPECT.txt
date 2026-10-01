@@ -1,0 +1,3 @@
+[balanced-display]
+packages/shell/src/ui/use-balanced-wrap.ts:
+sets its state from a closure

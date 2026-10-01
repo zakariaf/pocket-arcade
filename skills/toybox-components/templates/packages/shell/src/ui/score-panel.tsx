@@ -19,6 +19,8 @@ const LINES_SPACE = 12;
 const RULE = 2;
 const CHECK = 20;
 const LINE_GAP = 8;
+/** The New best sticker leans right (+6 deg), the win title sticker left. */
+const NEW_BEST_TILT = 6;
 
 /**
  * The win's third line. `moves` for levels rated by moves against par (result.win.moves,
@@ -92,9 +94,12 @@ export function ScorePanel(props: ScorePanelProps): ReactNode {
         <AppText text={props.value} variant="scoreValue" testID={`${base}.value`} />
         {props.newBestText === undefined ? null : (
           <View style={styles.push}>
+            {/* The design's .stk.sm, tilted +6 deg (sticker(..., {cls: 'sm', r: 6, icon: 'star'})). */}
             <Sticker
               text={props.newBestText}
               icon="rating-star"
+              size="sm"
+              tiltDeg={NEW_BEST_TILT}
               testID={`${base}.new-best`}
               slapDelayMs={MOTION_MS.newBestStickerDelay}
               isReducedMotion={props.isReducedMotion}

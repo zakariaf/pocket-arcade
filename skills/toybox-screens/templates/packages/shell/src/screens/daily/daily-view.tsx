@@ -78,7 +78,8 @@ export function DailyView({ model }: DailyViewProps): ReactNode {
           <StreakCard kind="current" days={model.currentStreak} layoutStyle={pair.item} />
           <StreakCard kind="best" days={model.bestStreak} layoutStyle={pair.item} />
         </View>
-        <View style={styles.rule}>
+        {/* The rule element is the whole line, icon included (the design's box). */}
+        <View style={styles.rule} testID="daily.streak-rule">
           <Icon
             name="chain"
             color={theme.colors.textMuted}
@@ -86,12 +87,7 @@ export function DailyView({ model }: DailyViewProps): ReactNode {
             testID="daily.streak-rule.icon"
           />
           <View style={styles.ruleText}>
-            <AppText
-              text={t('daily.streak.rule')}
-              variant="rule"
-              tone="muted"
-              testID="daily.streak-rule"
-            />
+            <AppText text={t('daily.streak.rule')} variant="rule" tone="muted" />
           </View>
         </View>
         <DailyWeekCard week={model.week} />

@@ -13,7 +13,11 @@ import type { GameConfig, LanguageCode } from './game-config.ts';
 import type { ExpoConfig } from 'expo/config';
 
 const LANGUAGES: readonly LanguageCode[] = ['en', 'de', 'fa', 'ckb'];
-const BUNDLE_ID = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
+
+/** Owner decision O4: every app's bundle id and Android package is io.applander.<id without hyphens>. */
+function bundleIdOf(gameId: string): string {
+  return `io.applander.${gameId.replaceAll('-', '')}`;
+}
 
 function localizedNames(game: GameConfig): NonNullable<ExpoConfig['locales']> {
   return Object.fromEntries(
@@ -44,8 +48,9 @@ function iosConfig(game: GameConfig, teamId: string | undefined): NonNullable<Ex
 
 /** Pure: app.config.ts passes process.env; tests pass a plain object. */
 export function withShell(game: GameConfig, env: BuildEnv): ExpoConfig {
-  if (!BUNDLE_ID.test(game.bundleId)) {
-    throw new Error(`bundleId ${game.bundleId} must match ${BUNDLE_ID.source}`);
+  const bundleId = bundleIdOf(game.id);
+  if (game.bundleId !== bundleId) {
+    throw new Error(`bundleId ${game.bundleId} must be ${bundleId} (io.applander.<game id>)`);
   }
   const variant = resolveBuildVariant(env);
   const adsMode = game.ads.isEnabled ? variant.adsMode : 'off';

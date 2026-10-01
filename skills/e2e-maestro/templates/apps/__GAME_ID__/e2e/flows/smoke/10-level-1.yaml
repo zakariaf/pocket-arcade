@@ -6,7 +6,10 @@
 # 2. a kill and relaunch: the run resumes on Pause with the move kept;
 # 3. action=win-level: GameHost.debugControls().playTo('won') swaps the run's state for the game's
 #    testing.examples.win() and ends it through the host's one run-end path, as a real win does
-#    (stars, statistics and ad history saved before Result shows).
+#    (stars, statistics and ad history saved before Result shows);
+# 4. the stars reach progress: Levels shows level 1's stars (read from the tile's VoiceOver label,
+#    "Level 1: __WIN_STARS__ stars", because the stars are crop-only parts inside the tile) and level
+#    2 is open: tapping its tile (the tile under test) starts level 2 instead of the locked toast.
 # The taps and the star count come from the game itself:
 #   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/e2e/print-level-line.ts --app __GAME_ID__ --level 1
 # prints the first move's taps (a tap-then-tap game selects in __FROM_REGION_ID__ first; a one-tap
@@ -60,4 +63,24 @@ tags: [smoke, __GAME_ID__]
 - assertVisible:
     id: 'result.stars-__WIN_STARS__'
 - takeScreenshot: __GAME_ID__-level-1-won
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.1'
+# The count, then a space ("Level 1: 3 stars"), so the level's own number never matches it.
+- assertVisible:
+    id: 'levels.level-tile.1'
+    text: '.*[^0-9]__WIN_STARS__ .*'
+- tapOn:
+    id: 'levels.level-tile.2'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- assertNotVisible:
+    id: 'levels.locked-toast'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*2.*'
 - runFlow: ../../../../../packages/shell/e2e/subflows/assert-no-network.yaml

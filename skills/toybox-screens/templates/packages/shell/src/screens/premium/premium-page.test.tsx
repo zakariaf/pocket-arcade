@@ -17,6 +17,7 @@ function modelWith(view: PremiumView, overrides: Partial<PremiumModel> = {}): Pr
     priceText: '€1.99',
     gameName: 'Line Siege',
     isReducedMotion: false,
+    isConfettiHidden: false,
     onBack: jest.fn(),
     onBuy: jest.fn(),
     onRestore: jest.fn(),
@@ -116,6 +117,26 @@ describe('PremiumPage', () => {
 
     for (const testID of testIDs)
       expect(screen.getByTestId(testID, { includeHiddenElements: true })).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws the success confetti at rest under frozen motion, and hides it only by the setting', async () => {
+    // A parity capture (and the phone's Reduce motion) holds the pieces still; the saved Reduce
+    // motion setting is the one thing that removes them (spec S12).
+    const view = await renderWithShell(
+      <PremiumPage model={modelWith('success', { isReducedMotion: true })} />,
+    );
+    expect(
+      screen.getByTestId('premium.confetti', { includeHiddenElements: true }),
+    ).toBeOnTheScreen();
+
+    await view.rerender(
+      <PremiumPage
+        model={modelWith('success', { isReducedMotion: true, isConfettiHidden: true })}
+      />,
+    );
+    expect(screen.queryByTestId('premium.confetti', { includeHiddenElements: true })).toBeNull();
+    expect(screen.getByTestId('premium.success-title')).toBeOnTheScreen();
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

@@ -16,11 +16,14 @@ const LATIN_NAME = 'Line Siege';
 export const gameConfig: GameConfig = {
   id: 'line-siege',
   appName: { en: LATIN_NAME, de: LATIN_NAME, fa: LATIN_NAME, ckb: LATIN_NAME },
-  bundleId: 'com.pocketarcade.linesiege',
+  bundleId: 'io.applander.linesiege',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 1,
-  premium: { productId: 'com.pocketarcade.linesiege.premium', priceNote: 'EUR 1.99 tier (D3)' },
+  premium: {
+    productId: 'io.applander.linesiege.premium',
+    priceNote: 'EUR 1.99 price point (owner decision)',
+  },
   ads: {
     isEnabled: true,
     policy: {

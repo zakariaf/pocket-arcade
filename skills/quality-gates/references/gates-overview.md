@@ -85,7 +85,7 @@ A repo without every Shell screen declares so in `shell-slice.json` at the repo 
 
 Every other step stays strict, a malformed `shell-slice.json` stops `verify` at once, and a slice never ships: the release checks fail while the file exists. The last line names a step that ran with a `SKIP` line apart from a clean one (`verify: 11 steps passed, 1 with SKIP lines`), so a slice run is never reported as clean.
 
-Skill checkers print a second kind of `SKIP` line during the Shell build: `due at Shell step <n>: <file> not yet created`, for a rule whose target a later build step creates (the plugin list at step 8, the Shell catalogs and boot file at step 6). It counts as a pass until that step; from then on the rule is strict, and the build order reruns the check. A checker that decides whether something may ship never prints it. [root-files.md](root-files.md) explains the runner, the file format and each knip entry.
+Skill checkers print a second kind of `SKIP` line during the Shell build: `due at Shell step <n>: <file> not yet created`, for a rule whose target a later build step creates (the plugin list at step 8, the Shell catalogs at step 6, the boot file start-shell.ts at step 7). It counts as a pass until that step; from then on the rule is strict, and the build order reruns the check. A checker that decides whether something may ship never prints it; its one exception is the keyless rehearsal (`check-store-artifact --unsigned` on an archive built with `CODE_SIGNING_ALLOWED=NO`), which prints `REHEARSAL: not a release gate` first, skips only the signing rule, is never run by the release pipeline and never counts as release evidence. [root-files.md](root-files.md) explains the runner, the file format and each knip entry.
 
 ## When verify is green
 

@@ -1,0 +1,4 @@
+[
+  { "json": { "file": "apps/alpha/package.json", "path": ["dependencies", "expo-tracking-transparency"], "value": "^57.0.2" } },
+  { "json": { "file": "package-lock.json", "path": ["packages", "apps/alpha", "dependencies", "expo-tracking-transparency"], "value": "^57.0.2" } }
+]

@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import { State } from 'react-native-gesture-handler';
 import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-handler/jest-utils';
 
+import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
@@ -169,6 +170,42 @@ describe('OptionCard', () => {
     expect(screen.getByRole('radio', { name: 'فارسی' })).toBeSelected();
     expect(screen.getByTestId('language-choice.language-row.fa.label')).toHaveStyle({
       fontFamily: 'Vazirmatn-Bold',
+    });
+  });
+});
+
+describe('OptionCard alignment', () => {
+  it('sets an autonym of the other direction at the end of its row, next to the mark (S2)', async () => {
+    await renderWithShell(
+      <OptionCard
+        label="فارسی"
+        language="fa"
+        isSelected={false}
+        onSelect={jest.fn()}
+        testID="language-choice.language-row.fa"
+        isReducedMotion={false}
+      />,
+    );
+
+    expect(screen.getByTestId('language-choice.language-row.fa.label')).toHaveStyle({
+      textAlign: TEXT_ALIGN.end,
+    });
+  });
+
+  it('keeps an autonym of the same direction at the start', async () => {
+    await renderWithShell(
+      <OptionCard
+        label="Deutsch"
+        language="de"
+        isSelected={false}
+        onSelect={jest.fn()}
+        testID="language-choice.language-row.de"
+        isReducedMotion={false}
+      />,
+    );
+
+    expect(screen.getByTestId('language-choice.language-row.de.label')).toHaveStyle({
+      textAlign: TEXT_ALIGN.start,
     });
   });
 });

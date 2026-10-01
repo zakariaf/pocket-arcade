@@ -4,7 +4,7 @@ The owner played five levels of Line Siege on a TestFlight test build, relaunche
 
 ```json
 {
- "appId": "com.example.linesiege",
+ "appId": "io.applander.linesiege",
  "appVersion": "1.0.0",
  "buildNumber": "12",
  "deviceModel": "iPhone17,1",
@@ -28,7 +28,7 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs reports/perf/iphone17-1.0
 ```
 
 ```
-report: com.example.linesiege 1.0.0 (12) on iPhone17,1
+report: io.applander.linesiege 1.0.0 (12) on iPhone17,1
 cold start: median 820 ms of 5 launches (limit 1000 ms)
 frames line-siege/level-1: 1440 frames at 120 Hz, p95 <= 17 ms, hitch 3.2 ms/s
 frames line-siege/level-2: 1440 frames at 120 Hz, p95 <= 17 ms, hitch 6.4 ms/s

@@ -10,13 +10,19 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
+import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, parseArgs, run, toPosix } from './check-lib.mjs';
 import { LANGUAGES, lineOfKey } from './lib/catalog-rules.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_DECK = join(HERE, '..', 'assets', 'copy-deck.json');
 /** The Shell texts the deck lacks, and the retired Shell keys (a table in this skill, never the deck). */
 const EXTRAS_FILE = join(HERE, '..', 'assets', 'shell-extras.json');
+/**
+ * System dialog texts: iOS shows them itself (Info.plist purpose strings such as
+ * NSUserTrackingUsageDescription, written per language by withShell from the Shell catalogs).
+ * Nothing formats them as ICU, so they are plain text: no {argument}, plural or '{' escape.
+ */
+const SYSTEM_TEXT_KEY = /\.usage-description$/;
 
 const SPEC = {
   name: 'copy-deck',
@@ -27,7 +33,7 @@ const SPEC = {
     prefix: { type: 'string', multiple: true, value: 'text', help: 'Select deck keys starting with this text' },
     key: { type: 'string', multiple: true, value: 'key', help: 'Select one deck key' },
     all: { type: 'boolean', help: 'Select every Shell key in the deck' },
-    extras: { type: 'boolean', help: 'Also select the Shell texts the deck lacks (assets/shell-extras.json: score line, undo/hint labels, tap-then-tap announcements)' },
+    extras: { type: 'boolean', help: 'Also select the Shell texts the deck lacks (assets/shell-extras.json: score line, undo/hint labels, tap-then-tap announcements, the debug Performance section)' },
     game: { type: 'string', value: 'game-id', help: 'Also select one game\'s texts (line-siege, flock-tilt, scrap-shove)' },
     root: { type: 'string', value: 'dir', help: 'App repo root (apply, check); same as the positional repo-root (default .)' },
     overwrite: { type: 'boolean', help: 'apply: replace catalog texts that differ from the deck' },
@@ -45,6 +51,10 @@ const SPEC = {
     '         (deck-drift), and every selected key must exist (deck-key-missing). A Shell text the',
     '         deck lacks must equal assets/shell-extras.json (extra-drift; required with --extras:',
     '         extra-key-missing), and a retired Shell key such as result.win.moves-count fails (retired-key)',
+    '         A system dialog text (a key ending in .usage-description, such as consent.tracking.usage-description,',
+    '         which the build copies into Info.plist) is plain text in every language: no {argument}, plural',
+    '         or brace (system-text-plain); once packages/shell/src/config/shell-plugins.ts exists (Shell step 8)',
+    '         every deck system text is in all four Shell catalogs (system-text-missing; SKIP before that step)',
     '',
     'Game texts map to game catalog keys like this (id = the game id, for example line-siege):',
     '  name -> id.name   tagline -> id.tagline   goal -> id.goal   progress -> id.progress',
@@ -53,7 +63,7 @@ const SPEC = {
     '  <slug> names what happened (every way of losing has its own id.lose.<slug> key):',
     '    line-siege -> broke-through   flock-tilt -> wolf-got-sheep   scrap-shove -> caught',
     '  A text the deck lacks (another lose reason, an endless HUD line, a continue) is written in all',
-    '  four catalogs by hand, fa and ckb marked for native review; the deck itself is never edited.',
+    '  four catalogs by hand, fa and ckb listed for the owner\'s review; the deck itself is never edited.',
     '',
     'Examples:',
     '  node copy-deck.mjs keys --screen S4 --lang all',
@@ -161,6 +171,29 @@ function select(deck, options) {
   else if (wantsGameTexts) notes.push('the screen also shows game texts: add --game <game-id> to include them');
   const extras = options.extras ? loadExtras().entries : [];
   return { shell: [...shell.values(), ...extras].sort((a, b) => (a.key < b.key ? -1 : 1)), game, notes };
+}
+
+/**
+ * System dialog texts (SYSTEM_TEXT_KEY): plain text in every Shell catalog (system-text-plain), and,
+ * once the native plugin list exists (Shell step 8, where withShell writes Info.plist), every deck
+ * system text present in all four catalogs (system-text-missing).
+ */
+function checkSystemTexts(root, sDir, deck, report, shown) {
+  const due = dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
+  const deckKeys = Object.keys(deck.strings).filter((key) => SYSTEM_TEXT_KEY.test(key));
+  for (const lang of LANGUAGES) {
+    const file = join(sDir, `${lang}.json`);
+    const catalog = readCatalog(file);
+    for (const [key, text] of Object.entries(catalog.data)) {
+      if (!SYSTEM_TEXT_KEY.test(key) || typeof text !== 'string' || !/[{}]/.test(text)) continue;
+      report.problem({ file: shown(file), line: lineOfKey(catalog.text, key), rule: 'system-text-plain', message: `${key} is a system dialog text (iOS shows it from Info.plist, where nothing formats ICU) but holds an ICU argument or brace: ${JSON.stringify(text)}`, fix: 'Write it as one plain sentence without {…}: name the app in words the dialog already shows (iOS puts the app name in the title), and change the copy deck first, then apply.' });
+    }
+    for (const key of deckKeys) {
+      if (Object.hasOwn(catalog.data, key)) continue;
+      if (due !== null) report.skip({ file: shown(file), rule: 'system-text-missing', message: `${key}: ${due}` });
+      else report.problem({ file: shown(file), line: 1, rule: 'system-text-missing', message: `${key} is a system dialog text withShell writes into Info.plist for ${lang}, but the catalog lacks it`, fix: `Run: node copy-deck.mjs apply . --key ${key} (it writes all four Shell catalogs).` });
+    }
+  }
 }
 
 function readCatalog(file) {
@@ -306,6 +339,7 @@ run(async () => {
     const { entries: extras, retired } = loadExtras();
     const extraTexts = new Map(extras.filter((e) => Object.hasOwn(en, e.key) || selected.has(e.key)).map((e) => [e.key, e.texts]));
     compare(sDir, extraTexts, new Map(extras.filter((e) => selected.has(e.key)).map((e) => [e.key, e.source])), EXTRA_RULES);
+    checkSystemTexts(root, sDir, deck, report, shown);
     for (const lang of LANGUAGES) {
       const file = join(sDir, `${lang}.json`);
       const catalog = readCatalog(file);

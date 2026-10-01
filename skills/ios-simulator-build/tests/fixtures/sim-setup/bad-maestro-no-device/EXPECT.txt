@@ -1,0 +1,4 @@
+packages/tooling/src/build/build-ios-sim.ts:
+[maestro-device] runs Maestro without --device <udid> and --driver-host-port <port> before the command
+packages/tooling/src/build/sim-build-plan.ts:
+[maestro-device] passes Maestro's per-command --udid

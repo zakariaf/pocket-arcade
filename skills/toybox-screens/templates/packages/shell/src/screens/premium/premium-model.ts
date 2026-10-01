@@ -13,6 +13,8 @@ export type PremiumModel = {
   readonly priceText: string | null;
   readonly gameName: string;
   readonly isReducedMotion: boolean;
+  /** The saved Reduce motion choice (never the parity freeze): it hides the success confetti. */
+  readonly isConfettiHidden: boolean;
   readonly onBack: () => void;
   readonly onBuy: () => void;
   readonly onRestore: () => void;

@@ -4,6 +4,11 @@
   "testId": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)+$",
   "i18nKey": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*){1,4}$",
   "bundleId": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$",
+  "appIds": {
+    "$comment": "Owner decision O4 (2026-09-30): every app's iOS bundle id and Android package is bundleIdPrefix + the game id without hyphens, all lowercase (line-siege -> io.applander.linesiege); the Premium product id is the bundle id + premiumSuffix. names.mjs bundleIdFor(gameId) and premiumIdFor(gameId) compute them exactly.",
+    "bundleIdPrefix": "io.applander.",
+    "premiumSuffix": ".premium"
+  },
   "npmScript": "^[a-z0-9]+(-[a-z0-9]+)*(:[a-z0-9]+(-[a-z0-9]+)*)*$",
   "envVar": "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$",
   "testTitle": "^(can|[a-z]+s)\\b",

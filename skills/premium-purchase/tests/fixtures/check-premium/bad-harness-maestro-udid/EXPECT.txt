@@ -1,0 +1,3 @@
+[harness-maestro]
+packages/tooling/src/storekit/storekit-harness.ts:139
+per-command --udid

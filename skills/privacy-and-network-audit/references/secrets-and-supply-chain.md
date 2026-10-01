@@ -71,6 +71,5 @@ None may appear in `Podfile.lock`, `package-lock.json` or a config plugin list. 
 | Online detection | `@react-native-community/netinfo` | its default reachability probe fetches `clients3.google.com` from our bundle; use `expo-network` (NWPathMonitor, no HTTP probe) behind ConnectivityPort |
 | Web views | `react-native-webview`, `expo-web-browser` | network surfaces |
 | HTTP clients (direct) | `axios`, `ky`, `got`, `node-fetch`, `cross-fetch` | N3 |
-| Tracking prompt | `expo-tracking-transparency` | decision D4 |
 
-The machine-readable list is `assets/privacy-facts.json` (`bannedPackages`, `bannedPodFamilies`, `bannedImports`).
+The machine-readable list is `assets/privacy-facts.json` (`bannedPackages`, `bannedPodFamilies`, `bannedImports`). Not banned since owner decision O1 (2026-09-30): `expo-tracking-transparency`, Apple's App Tracking Transparency prompt, a system wrapper with no network code (`systemWrappers`), which only `packages/shell/src/services/consent/admob-consent-adapter.ts` may import (`restrictedImports`; the lint config says the same). It is pinned like every Expo package (the SDK 57 version from `npx expo install`, 57.0.2 on 2026-09-30).

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/storekit/Premium.storekit.template",
+      "find": "\"displayPrice\" : \"1.99\",",
+      "with": "\"displayPrice\" : \"2.99\","
+    }
+  }
+]

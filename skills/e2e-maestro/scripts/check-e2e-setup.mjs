@@ -16,6 +16,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, dueSkipReason, fail, maskComments, parseArgs, readShellSlice, requireDir, run, SHELL_DUE_TARGETS, sliceSkipReason, walk } from './check-lib.mjs';
+import { maestroSpawnProblems } from './lib/maestro-spawns.mjs';
 
 const SPEC = {
   name: 'check-e2e-setup',
@@ -38,6 +39,15 @@ const SPEC = {
     '                        (runPerfSteps: judgeColdStart, footprint, judgeMemory) or large text (a11y flows at',
     '                        accessibility-extra-extra-extra-large in en and fa)',
     '  shared-simulator      the tooling uses "booted" or another agent\'s simulator instead of a named, dedicated one',
+    '  maestro-device        a spawn of the Maestro binary under packages/tooling/src does not start with the global',
+    '                        --device <udid> and --driver-host-port <port> (maestroGlobalArgs from e2e/maestro-args.ts,',
+    '                        a free port per run), passes the per-command --udid, or fixes the driver port: another',
+    '                        session\'s simulator or XCTest driver can answer the run',
+    '  e2e-ads-off           run-e2e-ios.ts does not refuse a build that is not the test variant with ADS_MODE=off',
+    '                        (requireAdsOffTestBuild): only with ads off does no consent form or tracking prompt cover a',
+    '                        screen and no ad SDK open a socket',
+    '  feedback-evidence     sim-perf-steps.ts does not write feedback.json from the perf log after the smoke flows',
+    '                        (feedbackEvidenceOf), or feedback-evidence.ts is missing',
     '  openurl-prompt        the tooling opens a debug link with simctl openurl: iOS answers with an "Open in <app>?"',
     '                        prompt nobody accepts, so the app never gets the link (use debugSetupArgs: debug-setup.yaml)',
     '  maestro-upload        the tooling or an npm script uses maestro cloud/login or test --analyze (uploads the run)',
@@ -65,14 +75,18 @@ const SPEC = {
     '  debug-model           S15\'s model hook (use-debug-model.ts with debug-actions, debug-tools, debug-sheets) is',
     '                        missing, or reaches the debug state other than through useDebugServices() and useDebugLinks()',
     '  subflow-missing       debug-setup, assert-no-network or shoot-screen sub-flow, or the matrix flow, is missing',
-    '  perf-layer            the cold-start layer the evidence run measures is missing (Shell step 8, before E2E):',
-    '                        app/perf/ (cold-start, perf-log, process-start, use-cold-start-mark), the shell-native',
-    '                        module (packages/shell/expo-module.config.json, ios/E07Shell.podspec,',
-    '                        ios/ProcessStartModule.swift), markJsEntry() in start-shell.ts, the perf log made in',
-    '                        createDebugParts (TEST_ONLY.createPerfLog) and exported by the test-only entry, or',
+    '  perf-layer            the perf layer the evidence run measures is missing, in two halves. JS half (Shell step 7,',
+    '                        with the composition root, due once packages/shell/src/app/start-shell.ts exists):',
+    '                        app/perf/*.ts (cold-start, perf-log, process-start, use-cold-start-mark,',
+    '                        debug-perf-actions), the feedback recorders services/audio/recording-feedback.ts',
+    '                        (game-audio-and-haptics), markJsEntry() in start-shell.ts, createDebugParts',
+    '                        making the perf log (TEST_ONLY.createPerfLog), S15\'s Performance actions',
+    '                        (createDebugPerfActions) and the feedback recorders (recordAudioFeedback,',
+    '                        recordHapticsFeedback), each exported by the test-only entry, and',
     "                        useColdStartMark(...perfLog...) in Home's use-home-model.ts (SKIP while S4 is outside",
-    '                        shell-slice.json). The whole rule SKIPs for a game-first repo ("screens": []) and until',
-    '                        Shell step 8 created packages/shell/src/config/shell-plugins.ts',
+    '                        shell-slice.json). Native half (Shell step 8, due once packages/shell/src/config/',
+    '                        shell-plugins.ts exists): packages/shell/expo-module.config.json, ios/E07Shell.podspec and',
+    '                        ios/ProcessStartModule.swift. Both halves SKIP for a game-first repo ("screens": [])',
     '',
     'A partial Shell (shell-slice.json): the debug kit (network guard, debug services, link, persistence, the',
     'debug actions) is Shell core, strict in every Shell app once the composition root exists (before Shell step',
@@ -98,6 +112,8 @@ const VISUAL_DEPS = { pixelmatch: '7.2.0', pngjs: '7.0.0', '@types/pngjs': '6.0.
 const FILES = [
   'packages/tooling/src/e2e/run-e2e-ios.ts',
   'packages/tooling/src/e2e/simulator.ts',
+  'packages/tooling/src/e2e/maestro-args.ts',
+  'packages/tooling/src/e2e/feedback-evidence.ts',
   'packages/tooling/src/e2e/write-gallery.ts',
   'packages/tooling/src/e2e/capture-screenshots-ios.ts',
   'packages/tooling/src/e2e/sim-perf.ts',
@@ -163,6 +179,12 @@ function checkRunner(root, report) {
       [/LANG=\$\{/, 'the large-text step does not pass LANG to the a11y flows'],
     ];
     for (const [pattern, message] of steps) if (!pattern.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-steps', message, fix: "Restore run-e2e-ios.ts from this skill's template: flows, cold start, memory and large text run in one evidence run (--flows-only is for iterating)." });
+    if (!/\brequireAdsOffTestBuild\s*\(/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the flows on whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off', fix: "Restore startRun from this skill's template: requireAdsOffTestBuild(appPath, game) before the simulator is prepared (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket)." });
+  }
+  if (exists(root, simulator)) {
+    const code = maskComments(read(root, simulator));
+    const guard = /function\s+e2eBuildProblem\b[\s\S]*?\n\}/.exec(code)?.[0] ?? '';
+    if (!/appVariant\s*===\s*['"]test['"]/.test(guard) || !/adsMode\s*===\s*['"]off['"]/.test(guard)) report.problem({ file: simulator, line: 1, rule: 'e2e-ads-off', message: "e2eBuildProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: "Restore e2eBuildProblem and requireAdsOffTestBuild from this skill's template (they read EXConstants.bundle/app.config of the build)." });
   }
   const perfSteps = 'packages/tooling/src/e2e/sim-perf-steps.ts';
   if (exists(root, perfSteps)) {
@@ -174,6 +196,7 @@ function checkRunner(root, report) {
       [/cold-start-sim-/, 'does not read the committed perf-baselines/cold-start-sim-<game-id>.json'],
     ];
     for (const [pattern, message] of needs) if (!pattern.test(code)) report.problem({ file: perfSteps, line: 1, rule: 'runner-steps', message, fix: "Restore sim-perf-steps.ts from this skill's template." });
+    if (!/\bfeedbackEvidenceOf\s*\(/.test(code) || !/feedback\.json/.test(code)) report.problem({ file: perfSteps, line: 1, rule: 'feedback-evidence', message: 'the memory step does not write feedback.json from the perf log after the smoke flows', fix: "Restore sim-perf-steps.ts from this skill's template: recordFeedback reads the perf log with feedbackEvidenceOf right after the smoke flows (check-e2e-report needs the win sound and the success haptic)." });
   }
   const capture = 'packages/tooling/src/e2e/capture-screenshots-ios.ts';
   if (exists(root, capture)) {
@@ -191,9 +214,17 @@ function checkRunner(root, report) {
     if (!exists(root, rel)) continue;
     const code = maskComments(read(root, rel));
     if (/['"](?:--analyze|cloud|login)['"]/.test(code)) report.problem({ file: rel, line: 1, rule: 'maestro-upload', message: 'passes --analyze, cloud or login to Maestro', fix: 'Remove it: those send the run, its screenshots or the app to Maestro\'s servers; runs stay on the Mac.' });
-    if (/['"]booted['"]/.test(code)) report.problem({ file: rel, line: 1, rule: 'shared-simulator', message: 'targets the "booted" simulator', fix: 'Use ensureSimulator(\'e07-...\', model) and pass --udid; never run on another agent\'s simulator.' });
+    if (/['"]booted['"]/.test(code)) report.problem({ file: rel, line: 1, rule: 'shared-simulator', message: 'targets the "booted" simulator', fix: 'Use ensureSimulator(\'e07-...\', model) and name its UDID in every simctl call and every Maestro run (runMaestro: --device <udid> before the command); never run on another agent\'s simulator.' });
     if (/['"]openurl['"]/.test(code)) report.problem({ file: rel, line: 1, rule: 'openurl-prompt', message: 'opens a URL with simctl openurl, which iOS answers with an "Open in <app>?" prompt that nothing accepts, so the app never gets the link', fix: 'Launch the app, then runMaestro(debugSetupArgs({ udid, app, query, waitFor, outDir })): the debug-setup sub-flow taps Open and waits for the screen.' });
   }
+}
+
+/** Every Maestro run of the repo tooling names its simulator and its own driver port first. */
+function checkMaestroDevice(root, report) {
+  const base = 'packages/tooling/src';
+  if (!existsSync(join(root, base))) return;
+  const files = walk(join(root, base), { include: ['*.ts', '*.mts'], ignore: ['*.test.ts', '*.test.mts'] }).map((rel) => ({ rel: `${base}/${rel}`, code: maskComments(read(root, `${base}/${rel}`)) }));
+  for (const found of maestroSpawnProblems(files)) report.problem({ ...found, rule: 'maestro-device' });
 }
 
 const DEBUG_DIR = 'packages/shell/src/screens/debug';
@@ -337,31 +368,49 @@ function checkDebugKit(root, slice, report) {
   if (modelSkip === null) checkModel(root, report);
 }
 
-const PERF_FILES = ['cold-start.ts', 'perf-log.ts', 'process-start.ts', 'use-cold-start-mark.ts'].map((name) => `${APP_DIR}/perf/${name}`);
+const PERF_FILES = [...['cold-start.ts', 'perf-log.ts', 'process-start.ts', 'use-cold-start-mark.ts', 'debug-perf-actions.ts'].map((name) => `${APP_DIR}/perf/${name}`), 'packages/shell/src/services/audio/recording-feedback.ts'];
 const NATIVE_FILES = ['packages/shell/expo-module.config.json', 'packages/shell/ios/E07Shell.podspec', 'packages/shell/ios/ProcessStartModule.swift'];
 const START_SHELL = `${APP_DIR}/start-shell.ts`;
 const HOME_MODEL = 'packages/shell/src/screens/home/use-home-model.ts';
+/** What createDebugParts takes from TEST_ONLY for the perf layer, each exported by the test-only entry. */
+const PERF_MEMBERS = [
+  ['createPerfLog', 'the perf log (Home has no log to mark the cold start in)'],
+  ['createDebugPerfActions', "S15's Performance actions (record frame times, share the report, run the save benchmark)"],
+  ['recordAudioFeedback', 'the audio feedback recorder (no win sound in feedback.json)'],
+  ['recordHapticsFeedback', 'the haptics feedback recorder (no success haptic in feedback.json)'],
+];
 
 /**
- * The cold-start layer the evidence run's step 2 reads (performance-budgets' templates, installed
- * at Shell step 8 with the native plugin list): without it every E2E run fails "no new cold-start
- * entry within 30 s". It is Shell core, whatever the slice; Home's mark needs S4.
+ * The perf layer the evidence run reads (performance-budgets' templates), in two halves. Its JS half
+ * (app/perf/*.ts, the JS entry mark, the perf log, S15's Performance actions and the feedback
+ * recorders the debug parts make, Home's cold-start mark) is Shell core and lands at Shell step 7 with
+ * the composition root, so it is due once start-shell.ts exists. Its native half (the process-start
+ * module) lands at Shell step 8 with the native plugin list and the rebuild. Without either, every E2E
+ * run fails "no new cold-start entry within 30 s" or finds no feedback evidence.
  */
 function checkPerfLayer(root, slice, report) {
   const problem = (file, message, fix) => report.problem({ file, line: 0, rule: 'perf-layer', message, fix });
-  const notYet = sliceSkipReason(slice) ?? dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
-  if (notYet !== null) {
-    report.skip({ file: `${APP_DIR}/perf/`, rule: 'perf-layer', message: notYet });
-    return;
-  }
-  const fromPerf = "Copy it from performance-budgets' templates (shell-perf/ into packages/shell/src/app/perf/, shell-native/ into packages/shell/) at Shell step 8, then rebuild: the cold-start step measures it.";
-  for (const rel of [...PERF_FILES, ...NATIVE_FILES]) if (!exists(root, rel)) problem(rel, 'is missing, so the e2e:ios cold-start step has nothing to measure', fromPerf);
-  if (exists(root, START_SHELL) && !/\bmarkJsEntry\s*\(\s*\)/.test(codeOf(root, START_SHELL))) problem(START_SHELL, 'does not call markJsEntry(), so the cold start has no JS entry mark', 'Call markJsEntry() once inside startShell (start-shell.ts), right after readParityLaunch() (performance-budgets).');
-  if (exists(root, PARTS) && !/\bcreatePerfLog\s*\(/.test(codeOf(root, PARTS))) problem(PARTS, 'does not create the perf log (TEST_ONLY.createPerfLog(saveDriver)), so Home has no log to mark the cold start in', "Restore createDebugParts from this skill's template: perfLog: build.api.createPerfLog(input.saveDriver), exposed as debugServices.perfLog.");
-  if (exists(root, ENTRY) && !/\bcreatePerfLog\b/.test(codeOf(root, ENTRY))) problem(ENTRY, 'does not export createPerfLog', "Copy the shared test-only pair (ios-simulator-build's templates/packages/shell/src/app/): /** @public */ export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts' and its TestOnlyApi member.");
+  const fromPerf = (step) => `Copy it from performance-budgets' templates at Shell step ${step} (${step === 7 ? 'shell-perf/ into packages/shell/src/app/perf/' : 'shell-native/ into packages/shell/, then rebuild'}): the cold-start and feedback steps read it.`;
+  const jsSkip = sliceSkipReason(slice) ?? dueSkipReason(root, SHELL_DUE_TARGETS.boot);
+  if (jsSkip !== null) report.skip({ file: `${APP_DIR}/perf/`, rule: 'perf-layer', message: jsSkip });
+  else checkPerfJsHalf(root, slice, problem, fromPerf(7));
+  const nativeSkip = sliceSkipReason(slice) ?? dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
+  if (nativeSkip !== null) report.skip({ file: NATIVE_FILES[0], rule: 'perf-layer', message: nativeSkip });
+  else for (const rel of NATIVE_FILES) if (!exists(root, rel)) problem(rel, 'is missing, so the e2e:ios cold-start step has no process start time to measure from', fromPerf(8));
   const homeSkip = sliceSkipReason(slice, 'S4');
-  if (homeSkip !== null) report.skip({ file: HOME_MODEL, rule: 'perf-layer', message: homeSkip });
-  else if (!/\buseColdStartMark\s*\([^;]{0,160}?perfLog/.test(codeOf(root, HOME_MODEL))) problem(HOME_MODEL, "Home does not call useColdStartMark with the debug services' perfLog, so no cold start is ever recorded", "Call useColdStartMark(useOptionalDebugServices()?.perfLog ?? null) in useHomeModel (toybox-screens' template; null in store builds).");
+  if (jsSkip === null && homeSkip !== null) report.skip({ file: HOME_MODEL, rule: 'perf-layer', message: homeSkip });
+  else if (jsSkip === null && !/\buseColdStartMark\s*\([^;]{0,160}?perfLog/.test(codeOf(root, HOME_MODEL))) problem(HOME_MODEL, "Home does not call useColdStartMark with the debug services' perfLog, so no cold start is ever recorded", "Call useColdStartMark(useOptionalDebugServices()?.perfLog ?? null) in useHomeModel (toybox-screens' template; null in store builds).");
+}
+
+function checkPerfJsHalf(root, slice, problem, fromPerf) {
+  for (const rel of PERF_FILES) if (!exists(root, rel)) problem(rel, 'is missing, so the e2e:ios cold-start and feedback steps have nothing to read', fromPerf);
+  if (exists(root, START_SHELL) && !/\bmarkJsEntry\s*\(\s*\)/.test(codeOf(root, START_SHELL))) problem(START_SHELL, 'does not call markJsEntry(), so the cold start has no JS entry mark', 'Call markJsEntry() once inside startShell (start-shell.ts), right after readParityLaunch() (performance-budgets).');
+  const parts = codeOf(root, PARTS);
+  const entry = codeOf(root, ENTRY);
+  for (const [name, what] of PERF_MEMBERS) {
+    if (exists(root, PARTS) && !new RegExp(`\\b${name}\\s*\\(`).test(parts)) problem(PARTS, `createDebugParts does not make ${what} with TEST_ONLY.${name}`, "Restore createDebugParts from this skill's template: the perf log, services.perf and parts.feedback come from the test-only entry in test builds.");
+    if (exists(root, ENTRY) && !new RegExp(`\\b${name}\\b`).test(entry)) problem(ENTRY, `does not export ${name}`, `Copy the shared test-only pair (ios-simulator-build's templates/packages/shell/src/app/): /** @public */ export { ${name} } from its file (performance-budgets' app/perf/, or game-audio-and-haptics' services/audio/recording-feedback.ts for the recorders), and its TestOnlyApi member.`);
+  }
 }
 
 function checkPackage(root, report) {
@@ -437,6 +486,7 @@ run(async () => {
   const slice = readShellSlice(root);
   checkInstaller(root, report);
   checkRunner(root, report);
+  checkMaestroDevice(root, report);
   checkDebugKit(root, slice, report);
   checkPerfLayer(root, slice, report);
   checkPackage(root, report);

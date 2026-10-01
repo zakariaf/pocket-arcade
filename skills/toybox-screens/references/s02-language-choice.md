@@ -24,10 +24,10 @@ S2 lets a Persian or Sorani speaker whose phone is set to English switch at once
 
 ## Layout, top to bottom
 
-No top bar (first launch), no banner. Body (gap 14):
+No top bar (first launch), no banner. The body runs under the home indicator: `ScreenFrame edges={UNDER_HOME_INDICATOR_EDGES}` and `ScreenBody isUnderHomeIndicator` (the content ends `max(34, bottom inset)` above the screen edge). A body that ends at the safe area clips the Continue key's 6 pt hard shadow at the scroll view's edge. Body (gap 14):
 
 1. Header column (start-aligned, gap 10, 18 pt top padding): art tile `globe` on pop paper (64, radius 16, tilted -5 deg) → title (`title` 30) → subtitle (body, muted).
-2. Options column (gap 12, 10 extra top margin): four option cards (min 66, padding 10 x 14, radius 14, elevation 5) in the order en, de, fa, ckb; each autonym uses `optionNameChoice` (21 Bold) in its own script and direction; a radio mark (32, radius 9) at the end; the phone's language carries the small gold "Phone language" sticker (tilt +3 deg). The chosen card is accent, pushed in, and its radio shows a check.
+2. Options column (gap 12, 10 extra top margin): four option cards (min 66, padding 10 x 14, radius 14, elevation 5) in the order en, de, fa, ckb; each autonym uses `optionNameChoice` (21 Bold) in its own script and direction; a radio mark (32, radius 9) at the end; the phone's language carries the small gold "Phone language" sticker (tilt +3 deg). The chosen card is accent, pushed in, and its radio shows a check. The sticker is centred on its row (OptionCard wraps it in `alignSelf: 'center'`), and an autonym whose script reads the other way from the screen sits at the end of its row, next to the mark (OptionCard passes `align='end'` when `directionOf(language)` differs from `useDirection()`); both are inside toybox-components' OptionCard, so the screen passes nothing extra. S11a does not do this: its autonyms sit at the layout start.
 3. grow.
 4. Hero key without a cap, forward icon at the end: "Continue".
 
@@ -90,3 +90,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 - Showing autonyms in the UI font: each one uses its own script's font (pass `language` to AppText).
 - Translating the language names: autonyms never change with the UI language.
 - Navigating to the tutorial by hand instead of letting the route guards switch groups.
+- A body that ends at the safe area (the Continue key's shadow is clipped): use `UNDER_HOME_INDICATOR_EDGES` and `isUnderHomeIndicator`.

@@ -33,4 +33,12 @@ describe('usePrivacyPolicyModel', () => {
     const { result } = await renderHook(() => usePrivacyPolicyModel(), { wrapper: shell.wrapper });
     expect(result.current.updatedDateText).toContain('۲۰۲۶');
   });
+
+  it('keeps the date free of isolates, so the sentence isolate takes the month direction', async () => {
+    // An isolated month inside the isolated date left the outer isolate with no strong letter:
+    // it resolved left to right and the fa date read "۲۰۲۶ سپتامبر ۲۷".
+    const shell = createHostWrapper({ language: 'fa' });
+    const { result } = await renderHook(() => usePrivacyPolicyModel(), { wrapper: shell.wrapper });
+    expect(result.current.updatedDateText).toBe(stripIsolates(result.current.updatedDateText));
+  });
 });

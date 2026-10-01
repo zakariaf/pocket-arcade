@@ -75,7 +75,7 @@ describe('command arguments', () => {
   it('uploads with --wait and the four identifying flags', () => {
     const meta = {
       appleAppId: '6400000000',
-      bundleId: 'com.example.linesiege',
+      bundleId: 'io.applander.linesiege',
       buildNumber: 8,
       version: '1.0.0',
     };

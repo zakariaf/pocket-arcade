@@ -1,4 +1,4 @@
 # A skill fixture plants a banned command on purpose; the repo scan skips skills/.
-appId: com.example.demo
+appId: io.applander.demo
 ---
 - setAirplaneMode: enabled

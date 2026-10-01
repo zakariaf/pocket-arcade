@@ -86,6 +86,36 @@ describe('GameHost.debugControls', () => {
     expect(save.doc().run).not.toBeNull();
   });
 
+  it("plays today's daily run to a win: the daily result and the streak are saved first", () => {
+    const { host, save, order } = hostWith();
+    const today = TEST_CLOCK.today();
+    const opened = host.openSession({ start: 'new', ref: { kind: 'daily', date: today } });
+    opened?.handle.subscribe(() => {
+      order.push(`view ${opened.handle.getView().status}`);
+    });
+    expect(host.debugControls().playTo('won')).toBe(true);
+    expect([order[0], order.at(-1)]).toStrictEqual(['write', 'view won']);
+    const { daily, run } = save.doc();
+    expect(daily.results[today]).toMatchObject({ won: true });
+    expect([daily.completed, daily.streak]).toStrictEqual([1, { lastDate: today, length: 1 }]);
+    expect(run).toBeNull();
+    expect(opened?.handle.getView()).toMatchObject({ status: 'won', ref: { kind: 'daily' } });
+  });
+
+  it('ends an endless run lost: the endless best is saved and beats the old best (New best!)', () => {
+    const { host, save } = hostWith();
+    const opened = host.openSession({ start: 'new', ref: { kind: 'endless' } });
+    expect(host.debugControls().playTo('lost')).toBe(true);
+    opened?.handle.send({ type: 'finish' }); // Try again: the offered continue is declined
+    const lostScore = TALLY_GAME.testing.examples.lose().count;
+    expect(opened?.handle.getView()).toMatchObject({
+      status: 'lost',
+      summary: { isNewBest: true },
+    });
+    expect(save.doc().progress.endlessBest).toBe(lostScore);
+    expect(save.doc().stats.bestScore.endless).toBe(lostScore);
+  });
+
   it('does nothing without an open run, after the run ended and after leaving for Home', () => {
     const { host } = hostWith();
     expect(host.debugControls().playTo('won')).toBe(false);

@@ -1,9 +1,10 @@
 // packages/shell/src/game-host/game-facts.ts
-// Two facts about a game that the Shell and the parity harness both need, decided in one place:
-// does its sound bank hold music (the S6 and S11 Music rows), and are its levels rated by score
-// (the S7 win line and the null par). GameHost.hasMusic and GameHost.isScoreRated come from here,
-// and the parity pin test (apps/<id>/src/parity-game-facts.test.ts) checks parity/game-facts.json
-// against the same two functions, so a capture never picks the wrong reference variant.
+// Three facts about a game that the Shell and the parity harness both need, decided in one place:
+// does its sound bank hold music (the S6 and S11 Music rows), are its levels rated by score (the
+// S7 win line and the null par), and does it give hints (the S5 top bar's hint key).
+// GameHost.hasMusic, GameHost.isScoreRated and GameHost.hasHints come from here, and the parity
+// pin test (apps/<id>/src/parity-game-facts.test.ts) checks parity/game-facts.json against the
+// same three functions, so a capture never picks the wrong reference variant.
 import type { StarRule } from '@e07/game-kit/contract/levels.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 
@@ -20,6 +21,15 @@ export function hasMusicOf<T extends ShellGameTypes>(game: ShellGameModule<T>): 
  */
 export function isScoreRule(rule: StarRule | null): rule is ScoreRule {
   return rule !== null && rule.kind === 'score';
+}
+
+/**
+ * True when the game gives hints: its rules' hint policy is a solver. This is the same rule the
+ * session view's isHintSupported uses, so the S5 top bar has a hint key exactly when this is true
+ * (Line Siege: false, its rules say hints: { kind: 'none' }).
+ */
+export function hasHintsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): boolean {
+  return game.rules.hints.kind === 'solver';
 }
 
 /** True when the game's levels are rated by score (Line Siege), false when by moves against par. */

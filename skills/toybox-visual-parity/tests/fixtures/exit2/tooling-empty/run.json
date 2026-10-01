@@ -1,0 +1,9 @@
+{
+ "frame": "s6-pause",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A Game-route frame captured without the probe=board launch: no board rectangle to mask."
+}

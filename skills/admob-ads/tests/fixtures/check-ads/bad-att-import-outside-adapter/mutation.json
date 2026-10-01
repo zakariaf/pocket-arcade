@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/home/use-tracking-status.ts",
+      "content": "// packages/shell/src/screens/home/use-tracking-status.ts (planted: a screen asks Apple itself)\nimport { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';\n\nexport async function askTracking(): Promise<void> {\n  await requestTrackingPermissionsAsync();\n}\n"
+    }
+  }
+]

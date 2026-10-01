@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/line-siege/game.config.ts", "find": "productId: 'io.applander.linesiege.premium',", "with": "productId: 'io.applander.linesiege.pro'," } }]

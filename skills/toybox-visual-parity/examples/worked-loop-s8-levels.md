@@ -1,6 +1,6 @@
 # Worked example: S8 Levels in English and Persian, with pre-listed waivers
 
-The parity loop for S8 on the pilot (Line Siege, a partial Shell with S8 in `shell-slice.json`), from the round-3 proof run of 2026-09-30. It shows the parts S4 does not: a frame state opened by a model hook, the frozen-motion switch, Persian level numbers at line height 1.45, and the pre-listed waivers for dashed edges and the mid-press tile. Commands run from the app repo root; `$S` stands for `${CLAUDE_SKILL_DIR}/scripts`. A second session on the same Mac used its own simulator and driver port.
+The parity loop for S8 on the pilot (Line Siege, a partial Shell with S8 in `shell-slice.json`), from the round-3 proof run of 2026-09-30. It shows the parts S4 does not: a frame state opened by a model hook, the frozen-motion switch, Persian level numbers at line height 1.45, the pre-listed waivers for dashed edges and the mid-press tile, and why a narrowed run is iteration, not a sign-off. Commands run from the app repo root; `$S` stands for `${CLAUDE_SKILL_DIR}/scripts`. The session used its own simulator; the scripts give every Maestro call its UDID and a free driver port.
 
 ## 1. What must be in place
 
@@ -11,9 +11,9 @@ The parity loop for S8 on the pilot (Line Siege, a partial Shell with S8 in `she
 ## 2. Capture and check
 
 ```sh
-node $S/setup-parity-sim.mjs --appearance light --name e07-r3-parity
+node $S/setup-parity-sim.mjs --appearance light --name e07-parity-s8
 xcrun simctl install <udid> <path to>/LineSiege.app
-node $S/run-parity.mjs --frame s8-levels --themes light --langs en,fa --bundle-id com.example.linesiege --name e07-r3-parity --driver-port 22513
+node $S/run-parity.mjs --frame s8-levels --themes light --langs en,fa --bundle-id io.applander.linesiege --name e07-parity-s8   # iteration: light only
 ```
 
 ```
@@ -53,9 +53,23 @@ node $S/check-signoff.mjs --draft .parity/lineSiege/s8-levels/light-fa
 
 Fill in the eye checks (`feel` is `waived: ...` naming the dash phase and the mid-press tile, both pre-listed) and the differences (`"status": "waived"` for those two, `"fixed"` for anything fixed on the way), add the entry to `parity/signoff.json` for both runs, then:
 
+While only the light runs exist, a narrowed check says so and fails; it is never the sign-off:
+
 ```sh
 node $S/check-signoff.mjs --frame s8-levels --themes light --langs en,fa
 ```
+
+```
+FAIL parity/signoff.json [narrowed] narrowed: not a sign-off (checked light x en, fa; the done set is light and dark x en and fa at every planned offset) Fix: Drop --themes and --langs ...
+```
+
+Capture dark too (`run-parity.mjs --frame s8-levels --bundle-id io.applander.linesiege --name e07-parity-s8`, all four), look at the dark sheets, record them, then run the check with its default set:
+
+```sh
+node $S/check-signoff.mjs --frame s8-levels
+```
+
+The round-3 proof signed off light en and light fa this way (its output, before the done set was enforced):
 
 ```
 reference s8-levels (base)
@@ -69,4 +83,4 @@ check-signoff: 2 frame variants checked, 0 problems
 RESULT: PASS
 ```
 
-The report to the owner names both intended reference changes, the 20 pre-listed waivers with their two causes, the open design question (keep the mid-press tile, or draw it at rest and re-render), and attaches the light fa `sheet.png`. Dark mode follows the same loop (`--themes dark`).
+With all four variants recorded, the same command lists `light-en done | light-fa done | dark-en done | dark-fa done` and prints `RESULT: PASS`. The report to the owner names both intended reference changes, the 20 pre-listed waivers with their two causes, the open design question (keep the mid-press tile, or draw it at rest and re-render), and attaches the dark fa `sheet.png`.

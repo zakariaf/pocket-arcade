@@ -31,7 +31,13 @@ describe('QuietButton', () => {
 
     await user.press(screen.getByRole('button', { name: 'Restore purchase' }));
     expect(onPress).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('Restore purchase')).toHaveStyle({ textDecorationLine: 'underline' });
+    // The underline is drawn as the design draws it (2 pt, 5 pt under the text), not by iOS.
+    expect(screen.getByText('Restore purchase')).not.toHaveStyle({
+      textDecorationLine: 'underline',
+    });
+    const label = screen.getByText('Restore purchase');
+    const underline = label.parent?.children.find((child) => child !== label);
+    expect(underline).toHaveStyle({ height: 2, backgroundColor: COLORS.text });
     expect(screen.getByTestId('premium.restore-button')).not.toHaveStyle({ borderWidth: 3 });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });

@@ -1,0 +1,14 @@
+{
+ "frame": "s10-statistics",
+ "variant": null,
+ "theme": "light",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 852,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. Planted: part of the Persian combo value erased inside its own box; clipping the ink window to the owner's box must not hide it.",
+ "reference": {
+  "image": "../reference-r3/lineSiege/light-fa/s10-statistics.png",
+  "layout": "../reference-r3/lineSiege/light-fa/s10-statistics.layout.json"
+ }
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/app/connect-premium-reloads.ts",
+      "find": "    const done = isOnline ? reload.then(async () => recheckPremium(premiumDeps)) : reload;\n",
+      "with": "    const done = reload;\n"
+    }
+  }
+]

@@ -109,7 +109,7 @@ The only two things that go online, and the proof that nothing else does.
 
 | Skill | Description |
 |---|---|
-| `admob-ads` | Builds and checks Pocket Arcade AdMob ads - AdsPort adapters, UMP consent, spec 8.8 ad policy, banner/interstitial/rewarded slots, ADS_MODE test IDs, SKAdNetwork. Use when touching ads, consent, ad IDs or rewarded perks. Not for Premium (premium-purchase) or N3 audits (privacy-and-network-audit). |
+| `admob-ads` | Builds and checks Pocket Arcade AdMob ads - AdsPort adapters, UMP consent, ATT prompt, spec 8.8 ad policy, banner/interstitial/rewarded slots, ADS_MODE test IDs, SKAdNetwork. Use when touching ads, consent, ATT, ad IDs or rewarded perks. Not for Premium (premium-purchase) or N3 audits. |
 | `premium-purchase` | Builds and checks each game's one Premium purchase - expo-iap behind PurchasePort, S12 state reducer, save-before-finish, pending, restore, refund revocation, store price, StoreKit harness, App Store Connect product. Use when touching IAP, buy, restore or Premium state. Not for ads (admob-ads). |
 | `privacy-and-network-audit` | Proves Pocket Arcade code makes no network requests (N3) - banned SDKs and pods, bundle/runtime checks, privacy manifest, App Privacy answers, key safety, release audit. Use when native code lands, a release is near, or audit:network fails. Not for installing packages (dependency-management). |
 

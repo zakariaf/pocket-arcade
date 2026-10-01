@@ -177,9 +177,13 @@ export function applyWaivers(problems, waivers, info) {
 // the entry in its fix text, and an app repo copies the template). Two kinds today:
 //   platform         React Native on iOS draws borderStyle 'dashed' with its own dash length and
 //                    phase, and no style sets them: the dashed edges of the locked level tiles, the
-//                    locked pack panel and the S7 offer box differ from Chrome's along the edge only.
+//                    locked pack panel, the S7 offer box, the S9 missed and today marks and legend
+//                    swatch, and the disabled S12 Buy key differ from Chrome's along the edge only;
+//                    and iOS draws the edges of a rotated view without antialiasing (the S9 calendar
+//                    month in dark fa).
 //   design-artefact  the S8 mockup draws tile 13 mid-press (.lt.is-pressed), a squash no app can
-//                    hold after the finger lifts (bounds and structure).
+//                    hold after the finger lifts (bounds and structure); the S11b version chip's
+//                    .chip{gap:6px} splits "Version" and the version into two flex items (en).
 // ---------------------------------------------------------------------------------------------
 export const PRELISTED_WAIVERS_FILE = join(SKILL_DIR, 'templates', 'parity', 'waivers.json');
 
@@ -195,5 +199,7 @@ export function prelistedWaiverFor(problem, info) {
   const w = prelistedWaivers().find((x) => x.frame === info.frame && x.testID === problem.testID && x.rule === problem.rule
     && (!x.themes || x.themes.includes(info.theme)) && (!x.langs || x.langs.includes(info.lang)) && (!x.games || x.games.includes(info.game)));
   if (!w) return null;
-  return { class: w.class, cause: w.class === 'design-artefact' ? `mockup CSS ${w.designCause}` : "React Native's iOS dash pattern" };
+  const sentences = w.reason.split(/(?<=\.) /);
+  const platformCause = /dash/i.test(w.reason) ? "React Native's iOS dash pattern" : (sentences.find((x) => /iOS|React Native/.test(x)) ?? sentences[0]).replace(/\.$/, '');
+  return { class: w.class, cause: w.class === 'design-artefact' ? `mockup CSS ${w.designCause}` : platformCause };
 }

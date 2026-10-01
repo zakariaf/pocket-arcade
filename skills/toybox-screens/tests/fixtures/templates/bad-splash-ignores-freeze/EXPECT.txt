@@ -1,0 +1,2 @@
+splash-held
+the restart splash reads only the phone's Reduce motion: its loader keeps hopping in a parity capture

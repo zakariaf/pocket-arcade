@@ -37,13 +37,17 @@ It walks the rendered host tree, finds every element with a press handler, and r
 
 ## Large text on the simulator (Maestro)
 
-The `a11y`-tagged flows run at the largest text size, in en and fa, on the phone and iPad simulators. `npm run e2e:ios -- --app <game>` does this in its large-text step (the e2e-maestro runner: `--include-tags a11y`, `-e LANG=en` and `-e LANG=fa`, on `e07-e2e-phone` and `e07-e2e-tablet`), writes the reports and screenshots to `reports/e2e/<game>/large-text/<phone|tablet>-<en|fa>/`, and resets the size to `large` afterwards; its flows step leaves `a11y` flows out, because they need `LANG`. To run the pass by hand on one simulator (Java 17 as the runner finds it):
+The `a11y`-tagged flows run at the largest text size, in en and fa, on the phone and iPad simulators. `npm run e2e:ios -- --app <game>` does this in its large-text step (the e2e-maestro runner: `--include-tags a11y`, `-e LANG=en` and `-e LANG=fa`, on `e07-e2e-phone` and `e07-e2e-tablet`), writes the reports and screenshots to `reports/e2e/<game>/large-text/<phone|tablet>-<en|fa>/`, and resets the size to `large` afterwards; its flows step leaves `a11y` flows out, because they need `LANG`. To run the pass by hand on one simulator (Java 17 as the runner finds it), name the device before the command (`--device`) and give the run its own driver port (`--driver-host-port`), as the runner does for every Maestro call (e2e-maestro's `packages/tooling/src/e2e/maestro-args.ts`): without them a hierarchy call can reach another session's simulator.
 
 ```sh
 export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || echo '/Applications/Android Studio.app/Contents/jbr/Contents/Home')"
 export MAESTRO_CLI_NO_ANALYTICS=true MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED=true MAESTRO_DISABLE_UPDATE_CHECK=true
+# UDID: your own simulator (named e07-<purpose>), never "booted" and never another session's.
+# PORT: a free local port for this run's Maestro driver (listen on port 0 and read it back).
+# BUNDLE_ID: io.applander.<gameId without hyphens>, all lowercase (Line Siege: io.applander.linesiege).
+PORT="$(node -e "const s=require('node:net').createServer().listen(0,()=>{console.log(s.address().port);s.close();})")"
 xcrun simctl ui "$UDID" content_size accessibility-extra-extra-extra-large
-tools/maestro/bin/maestro test packages/shell/e2e/flows/a11y --udid "$UDID" --include-tags a11y \
+tools/maestro/bin/maestro --device "$UDID" --driver-host-port "$PORT" test packages/shell/e2e/flows/a11y --include-tags a11y \
   -e APP_ID="$BUNDLE_ID" -e APP_SCHEME="$APP_SCHEME" -e LANG=fa \
   --format JUNIT --output reports/e2e/a11y-fa.xml --test-output-dir reports/e2e/a11y-fa
 xcrun simctl ui "$UDID" content_size large

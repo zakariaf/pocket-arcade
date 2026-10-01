@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/game-host/game-facts.ts",
+      "find": "  return game.rules.hints.kind === 'solver';",
+      "with": "  return game.rules.undo.kind !== 'none';"
+    }
+  }
+]

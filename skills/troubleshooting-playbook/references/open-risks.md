@@ -16,6 +16,7 @@ Known unknowns: behaviour not yet verified, and decisions only the owner can mak
 - Git
 - Art
 - Copy
+- Owner steps
 - Design
 - Gestures
 - Parity
@@ -58,8 +59,8 @@ Known unknowns: behaviour not yet verified, and decisions only the owner can mak
 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
-| `open-price-point` | The Premium price tier (EUR 1.90 vs 1.99) is not settled | Apple price points were not checked (no key) | The IAP script refuses to guess and asks the owner (D3) | open, owner | `premium-purchase` |
-| `open-family-sharing` | Family Sharing for Premium is undecided | Turning it on in App Store Connect cannot be undone | Default off; only the owner turns it on | open, owner | `premium-purchase` |
+| `open-price-point` | An old note or the spec says the Premium price is about EUR 1.90 | Before owner decision O2 (2026-09-30) the price point was open | Decided (owner, O2): Premium is the EUR 1.99 App Store price point in the DEU base territory; create-premium-iap.ts targets exactly 1.99 and stops only if Apple no longer offers it; the app always shows the store's localised price (formatStorePrice with the displayPrice fallback) and never types it | documented | `premium-purchase` |
+| `open-family-sharing` | Family Sharing for Premium: should it be on? | Turning Family Sharing on in App Store Connect cannot be undone; before owner decision O3 (2026-09-30) it was undecided | Decided (owner, O3): off. familyShareable is false in the StoreKit config and familySharable false in the App Store Connect payload; leave Family Sharing off in App Store Connect and never turn it on; check-premium enforces both wherever a StoreKit config is checked | documented | `premium-purchase` |
 
 ## Ads
 
@@ -83,7 +84,13 @@ Known unknowns: behaviour not yet verified, and decisions only the owner can mak
 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
-| `open-copy-deck-draft` | fa and ckb strings may wrap differently after review | The copy deck is a draft awaiting native review | Re-check S2, S4 keys and stickers after the review | open, owner | `toybox-screens` |
+| `open-copy-deck-draft` | fa and ckb strings may wrap differently after review | The copy deck is a draft awaiting native review | Re-check S2, S4 keys and stickers after the owner's review (R3); the review is listed under "Owner steps (not blocking)" and never waited for | open | `toybox-screens` |
+
+## Owner steps
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `open-owner-personal-checks` | A report, a gate or a plan waits for the native review of fa and ckb texts, the play-test or listening to the sound previews ("fa and ckb need the native review before a release") | Before owner decision O6 (2026-09-30) these were treated as release gates; the owner now does all three personally | List them under "Owner steps (not blocking)" in every slice and release report (check-report rule owner-steps-listed) and keep working: Claude drafts the texts, renders the WAV previews (reports/sfx/<game-id>/) and names the play-test; no gate waits for them, and check-balance --release prints unapproved bands as an owner-step line | documented | `git-commits-and-reporting` |
 
 ## Design
 
@@ -102,11 +109,11 @@ Known unknowns: behaviour not yet verified, and decisions only the owner can mak
 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
-| `open-parity-hint-key-no-hints` | S6 Pause parity (and the S5 top bar under it) fails [missing] on game.hint-button for a game without solver hints (Line Siege) | The design's game top bar always draws a hint key, while the app leaves the key out for a game whose hints are none (a hidden key, never a broken one); no game fact selects a reference without it yet | Owner decision (asked 2026-09-30): a hasHints game fact with a --no-hints reference variant, like hasMusic. Until it is decided, leave the S6 sign-off of a hint-less game open; never waive the missing key and never draw a dead hint key | open, owner | `toybox-visual-parity` |
-| `open-parity-score-value-persian-clip` | S7 Result win in fa or ckb fails [text-ink] on result.score-card.value (ink height about 29 vs 38 pt): the tops of the Persian digits of the 44 pt score are cut off | The scoreValue type role keeps a Persian line height of 1.0, which clips Vazirmatn's tall digits on iOS (the same clip the level numbers had before they moved to 1.45) | Owner decision (asked 2026-09-30): the token scoreValue.arabicLineHeight 1.45 with a matching mockup rule and a re-render, as for levelNumber. Until then the fa and ckb S7 win sign-offs stay open; never waive clipped digits | open, owner | `toybox-design-system` |
+| `open-parity-hint-key-no-hints` | S6 Pause parity (and the S5 top bar under it) fails [missing] on game.hint-button for a game without solver hints (Line Siege) | The design's game top bar always draws a hint key, while the app leaves the key out for a game whose hints are none (a hidden key, never a broken one); no game fact selects a reference without it yet | Decided (lead, L8): the game facts gain hasHints (true only when the module's rules.hints.kind is 'solver'; Line Siege false). parity/game-facts.json sets it, and captures compose the variants in frames.json order with no-music before no-hints (Line Siege: s6-pause--no-music--no-hints); the S5 top bar has no hint key when it is false. A missing fact is exit 2, never a guess | documented | `toybox-visual-parity` |
+| `open-parity-score-value-persian-clip` | S7 Result win in fa or ckb fails [text-ink] on result.score-card.value (ink height about 29 vs 38 pt): the tops of the Persian digits of the 44 pt score are cut off | The scoreValue type role keeps a Persian line height of 1.0, which clips Vazirmatn's tall digits on iOS (the same clip the level numbers had before they moved to 1.45) | Decided (lead, L9): typeRoles.scoreValue.arabicLineHeight is 1.45, with the mockup rule .ar .sc-v{line-height:1.45}, and the references were re-rendered (reference change L9). Copy the current type roles from toybox-design-system (scoreValue display(44, [1, 1.45])) and rerun; never waive clipped digits | documented | `toybox-design-system` |
 
 ## Navigation
 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
-| `open-home-opens-daily` | The Shell journey 02-core-journey-offline fails "Assertion is false: id: daily.screen is visible" after tapping home.daily-card: nothing on Home opens S9 Daily challenge | navigation-and-routing's table says the daily card title opens S9 (navigate('Daily')), but the Toybox design draws the daily panel flat, with only the Play today's challenge button (the testID map's note asks which element opens S9), so the Home view has no control for it and a player cannot reach S9 | Owner decision (found on the simulator 2026-09-30): which Home element opens S9 and how VoiceOver reaches it. Until then S9 is reachable only through the debug link (screen=daily); do not make the whole card pressable (VoiceOver would lose the play button inside it) | open, owner | `toybox-screens` |
+| `open-home-opens-daily` | The Shell journey 02-core-journey-offline fails "Assertion is false: id: daily.screen is visible" after tapping home.daily-card: nothing on Home opens S9 Daily challenge | navigation-and-routing's table says the daily card title opens S9 (navigate('Daily')), but the Toybox design draws the daily panel flat, with only the Play today's challenge button (the testID map's note asks which element opens S9), so the Home view has no control for it and a player cannot reach S9 | Decided (lead, L7): the daily card's body is an accessible button (testID home.daily-card, its label joins the title, date and streak) that opens S9, and its Play key (home.daily-card.play-button) is a separate accessible sibling that starts today's run; the pixels do not change, and a finished day still opens S9. Copy toybox-screens' current Home daily card and the Shell journey 02, which taps home.daily-card | documented | `toybox-screens` |

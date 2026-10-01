@@ -1,10 +1,17 @@
 // packages/tooling/src/e2e/simulator.ts — dedicated, named simulators (never touch other agents' ones)
-// and the environment every Maestro run needs.
+// and the environment every Maestro run needs. Every simctl call names the simulator's UDID (never
+// "booted"), and every Maestro run goes through runMaestro: the global --device <udid> and a driver
+// port of its own (maestro-args.ts) before the command.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { globSync } from 'node:fs';
+import { globSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { appProcessPattern } from '@e07/tooling/audit/network-runtime-layer.ts';
+import {
+  freeDriverPort,
+  maestroGlobalArgs,
+  maestroRunLine,
+} from '@e07/tooling/e2e/maestro-args.ts';
 
 export const IOS_RUNTIME = 'com.apple.CoreSimulator.SimRuntime.iOS-26-5';
 const ANDROID_STUDIO_JAVA = '/Applications/Android Studio.app/Contents/jbr/Contents/Home';
@@ -54,6 +61,14 @@ export function e2eSimulatorName(value: string | undefined, fallback: string): s
     );
   }
   return name;
+}
+
+/**
+ * The iPad of the large-text step: e07-<purpose>-tablet with --sim, so a session never drives
+ * another session's iPad either; without it, `fallback`.
+ */
+export function e2eTabletName(value: string | undefined, fallback: string): string {
+  return value === undefined ? fallback : e2eSimulatorName(`${value}-tablet`, fallback);
 }
 
 /** What to do when simctl cannot boot another simulator (other sessions' simulators fill the Mac). */
@@ -161,6 +176,28 @@ export function findSimulatorBuild(game: string, override: string | undefined): 
   return appPath;
 }
 
+/** The variant a build was made with (withShell's expo.extra, embedded in EXConstants.bundle). */
+export type BuildVariantInfo = { readonly appVariant: unknown; readonly adsMode: unknown };
+
+/**
+ * E2E runs only a test-variant build with ads off: the debug link and S15 exist, and neither
+ * Google's consent form, Apple's tracking prompt nor an ad SDK socket can cover a screen or fill
+ * network.txt (ConsentPort never asks with ads mode off). Null when the build fits.
+ */
+export function e2eBuildProblem(build: BuildVariantInfo, game: string): string | null {
+  if (build.appVariant === 'test' && build.adsMode === 'off') return null;
+  const found = `${String(build.appVariant)}/${String(build.adsMode)}`;
+  return `e2e:ios needs a test build with ADS_MODE=off, this one is ${found}: run npm run build:ios:sim -- --app ${game} --variant test --ads off`;
+}
+
+/** Reads EXConstants.bundle/app.config and throws when the build is not test/off. */
+export function requireAdsOffTestBuild(appPath: string, game: string): void {
+  const config = readFileSync(join(appPath, 'EXConstants.bundle', 'app.config'), 'utf8');
+  const extra = (JSON.parse(config) as { extra?: BuildVariantInfo }).extra;
+  const problem = e2eBuildProblem(extra ?? { appVariant: null, adsMode: null }, game);
+  if (problem !== null) throw new Error(problem);
+}
+
 export function setAppearance(udid: string, theme: 'light' | 'dark'): void {
   simctl(['ui', udid, 'appearance', theme]);
 }
@@ -184,9 +221,23 @@ export function maestroEnv(): NodeJS.ProcessEnv {
   };
 }
 
-/** `maestro test <args>` with Java 17 and no telemetry; returns Maestro's exit code. */
-export function runMaestro(args: readonly string[]): number {
-  return spawnSync(MAESTRO, args, { stdio: 'inherit', env: maestroEnv() }).status ?? 1;
+/** Where a Maestro run goes: the simulator's UDID and, when the session passes its own, a port. */
+export type MaestroDevice = {
+  readonly udid: string;
+  /** --driver-port <n> of the session; without it every run gets a free port of its own. */
+  readonly driverPort?: number | undefined;
+};
+
+/**
+ * `maestro --device <udid> --driver-host-port <port> <args>` with Java 17 and no telemetry; returns
+ * Maestro's exit code. A run of its own port never talks to another session's XCTest driver (the
+ * default port 7001 answered from another simulator in round 3).
+ */
+export async function runMaestro(device: MaestroDevice, args: readonly string[]): Promise<number> {
+  const target = { udid: device.udid, driverPort: device.driverPort ?? (await freeDriverPort()) };
+  console.log(maestroRunLine(target, args));
+  const command = [...maestroGlobalArgs(target), ...args];
+  return spawnSync(MAESTRO, command, { stdio: 'inherit', env: maestroEnv() }).status ?? 1;
 }
 
 /** The -e values every flow reads: the app's bundle id and URL scheme. */
@@ -202,7 +253,6 @@ export function appEnv(app: AppInfo): string[] {
 export const DEBUG_SETUP_FLOW = join('packages', 'shell', 'e2e', 'subflows', 'debug-setup.yaml');
 
 export type DebugSetupRun = {
-  readonly udid: string;
   readonly app: AppInfo;
   /** The debug link's query, for example 'lang=en&firstRun=0&screen=home'. */
   readonly query: string;
@@ -211,10 +261,13 @@ export type DebugSetupRun = {
   readonly outDir: string;
 };
 
-/** `maestro test` arguments that apply one debug link to the running app and wait for waitFor. */
+/**
+ * `maestro test` arguments that apply one debug link to the running app and wait for waitFor; run
+ * them with runMaestro, which puts the device and the driver port first.
+ */
 export function debugSetupArgs(run: DebugSetupRun): string[] {
   return [
-    ...['test', DEBUG_SETUP_FLOW, '--udid', run.udid, '--test-output-dir', run.outDir],
+    ...['test', DEBUG_SETUP_FLOW, '--test-output-dir', run.outDir],
     ...appEnv(run.app),
     ...['-e', `QUERY=${run.query}`, '-e', `WAIT_FOR=${run.waitFor}`],
   ];

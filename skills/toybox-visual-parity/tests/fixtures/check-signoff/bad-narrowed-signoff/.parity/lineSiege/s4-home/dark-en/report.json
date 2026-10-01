@@ -1,0 +1,21 @@
+{
+ "version": 1,
+ "result": "PASS",
+ "frame": "s4-home",
+ "theme": "dark",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "reference": {
+  "imageSha256": "32191ef4b226dbfedf582b2520d27bbccdc295a4061d411f621f0b4acf699eae",
+  "layoutSha256": "c94cc0dff6345e7c8b262775e0c302c4a645712794d1f94f2d412f6d20c303d9"
+ },
+ "app": {
+  "imageSha256": "fd1d92d75594775e87a602156d31cdeb23bf0eaad97aa1f9ab13603c7e87f863"
+ },
+ "coverage": [],
+ "offscreen": [],
+ "problems": [],
+ "waived": [],
+ "notes": []
+}

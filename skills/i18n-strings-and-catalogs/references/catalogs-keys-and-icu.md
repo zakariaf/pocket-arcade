@@ -8,7 +8,8 @@ Everything about the text itself: where catalogs live, how keys are named, how p
 - Key grammar
 - Placeholders
 - Numbers and plurals (CLDR categories, verified outputs)
-- Free text and bidi isolation
+- Free text and bidi isolation (and nested isolates)
+- System dialog texts
 - Dates and month names
 - Writing rules for translators
 - The catalog rules (L1-L12, P1-P4, F1, G1)
@@ -25,7 +26,7 @@ Everything about the text itself: where catalogs live, how keys are named, how p
 - **English is the source.** A key exists in en.json first; de, fa and ckb have exactly the same keys.
 - **Keys are sorted alphabetically** (JavaScript default sort) in every file, so diffs stay small. `copy-deck.mjs apply` writes sorted files; Prettier keeps the JSON shape (2-space indent).
 - The game-id prefix makes a Shell/game key collision impossible: Shell keys never start with a game id, game keys always start with their own.
-- The Shell's catalogs are the copy deck's `strings` (288 keys, every Shell screen S1-S15). Create them with `copy-deck.mjs apply --all`; a game's catalogs with `copy-deck.mjs apply --game <game-id>`.
+- The Shell's catalogs are the copy deck's `strings` (289 keys: every Shell screen S1-S15 and the system dialog text `consent.tracking.usage-description`) plus the ten Shell texts the deck lacks (`assets/shell-extras.json`). Create them with `copy-deck.mjs apply --all --extras`; a game's catalogs with `copy-deck.mjs apply --game <game-id>`.
 
 ## Key grammar
 
@@ -100,6 +101,16 @@ Persian and Sorani format with `٬` (U+066C) for grouping, `٫` (U+066B) for dec
 - Numbers and select keys are never isolated (a select would stop matching).
 - Catalogs never contain bidi controls themselves (U+202A-U+202E, U+2066-U+2069) or the Arabic Letter Mark U+061C, which the Vazirmatn font lacks.
 - Tests compare with `FSI`/`PDI` in the expected string, or strip them with `stripIsolates()`.
+- **Never isolate twice.** A text that already went through `t()` with a `*Name`/`*Text` value carries isolates inside it: every date from `formatDayMonth()` and `formatWeekdayDayMonth()` (the month name is a `monthName` value), and any `t()` result built with a name or text value. Passed straight into another message as a `*Text` value, `t()` wraps it again, and the nested FSI…PDI leave the outer isolate with no strong letter of its own, so iOS (CoreText) resolves it left to right: in fa, "روزانه – ۲۶ سپتامبر" shows the month before the day (the Chrome mockup draws it right, so only the device is wrong). Strip the inner isolates first, a date being one run of its language: `t('game-screen.mode.daily', { dateText: stripIsolates(formatDayMonth(date, t)) })` (`stripIsolates` in `packages/shell/src/i18n/bidi.ts`). The same holds for any formatted number text passed as a `*Text` value. `check-i18n-code.mjs` rule `nested-isolates` fails a formatter result or a `t()` call with a name or text value that goes straight into `t()` unstripped; `format-date.test.ts` shows both strings.
+
+## System dialog texts
+
+Some Shell texts are shown by iOS itself, not by the app: the purpose strings of `Info.plist` that a system permission dialog prints under its title. Today there is one, Apple's tracking prompt (App Tracking Transparency, owner decision O1): `consent.tracking.usage-description`, "Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data.", in all four languages from the copy deck.
+
+- **Key:** `<area>.<topic>.usage-description`, under the screen area that leads to the dialog (`consent`, S3). The last segment marks it as a system dialog text for the checkers.
+- **Plain text only:** no `{argument}`, plural, select or brace in any language (`copy-deck.mjs check` rule `system-text-plain`). Nothing formats it as ICU on the way to the dialog, so a placeholder would show as braces; iOS already names the app in the dialog title. One or two whole sentences, the same rules as any other text (L7-L11: no literal digits, Persian punctuation in fa/ckb, typographic apostrophes).
+- **How it reaches the dialog:** `copy-deck.mjs apply --all` writes it into the four Shell catalogs like every deck text. The Shell's config composer `withShell` (`packages/shell/src/config/with-shell.ts`) writes the four texts as `locales.<lang>.ios.NSUserTrackingUsageDescription` next to `CFBundleDisplayName` (one `InfoPlist.strings` per language, Expo's documented way to localise `Info.plist` strings), and `shell-plugins.ts` passes the English text to the `expo-tracking-transparency` plugin as `userTrackingPermission`, the base value. The texts that reach `Info.plist` are exactly the catalogs' texts: if the config reads them from a TypeScript table (for example `packages/shell/src/config/tracking-usage.ts`, because `app.config.ts` runs under Node's type stripping without JSON imports), a unit test keeps that table equal to the four catalogs. iOS shows the text in the language of the phone (or of the app's language in iOS Settings), not the in-app choice. Once `shell-plugins.ts` exists (Shell step 8), `copy-deck.mjs check` requires every deck system text in all four catalogs (`system-text-missing`; a SKIP line before that step).
+- **Review:** its fa and ckb drafts are on the owner's review list like every new text (owner decision O6; not blocking).
 
 ## Dates and month names
 
@@ -114,7 +125,7 @@ node -e "const f=new Intl.DateTimeFormat(process.argv[1],{day:'numeric',month:'s
 
 - German uses the format-context abbreviations (`Jan.` … `Sept.` … `Dez.`); a bare `{month:'short'}` gives the stand-alone `Sep` instead.
 - The English pattern follows the product ("Daily – 26 Sep"), not en-US CLDR ("Sep 26").
-- CLDR 48 spells Sorani December `کانونی یەکەم` but January `کانوونی دووەم`; the catalogs use `کانوونی یەکەم` for consistency, pending the native review.
+- CLDR 48 spells Sorani December `کانونی یەکەم` but January `کانوونی دووەم`; the catalogs use `کانوونی یەکەم` for consistency, pending the owner's review.
 
 ## Writing rules for translators
 

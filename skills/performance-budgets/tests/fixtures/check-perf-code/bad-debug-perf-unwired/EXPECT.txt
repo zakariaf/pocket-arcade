@@ -1,0 +1,3 @@
+[debug-perf-wired]
+packages/shell/src/app/create-debug-parts.ts
+createDebugParts builds no debug perf actions

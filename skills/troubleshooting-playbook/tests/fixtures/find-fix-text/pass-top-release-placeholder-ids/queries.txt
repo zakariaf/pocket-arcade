@@ -1,0 +1,1 @@
+FAIL apps/line-siege/game.config.ts [ad-app-id] ca-app-pub-1234567890123456~1234567890 is a placeholder

@@ -17,16 +17,16 @@ S12 sells the one purchase honestly and draws every purchase state.
 ## What the product requires
 
 - Title "Premium"; what you get as three short lines (no ads ever; hints and continues without ads; support the developer).
-- The price exactly as the store reports it, in the player's currency; never typed into the code.
+- The price exactly as the store reports it, in the player's currency; never typed into the code. Premium is the EUR 1.99 App Store price point (the owner's decision of 2026-09-30), and it is not shared through Apple's Family Sharing: each Apple account buys it for itself.
 - One big BUY button; Restore purchase (link); small print: "One-time purchase. No subscription. Works offline after purchase. Applies to this game only."
 - States, each designed and tested: Loading price (spinner on the button, the rest readable); Store unavailable / offline ("Connect to the internet to buy or restore.", BUY disabled); Purchase in progress (buttons locked, spinner); Pending ("Waiting for approval – you can keep playing."; Premium turns on by itself); Success (a thank-you animation; ads vanish everywhere at once; "Premium – active"); Cancelled (quietly back to the normal page, no error); Error ("The purchase couldn't be completed. You were not charged." + Try again); Already owned ("Premium – active" + Restore).
 - Premium is never pushed with pop-ups. No banner.
 
 ## Layout, top to bottom
 
-Top bar "Premium" with Back (in every state). **Normal page** (`s12-premium.png`), body gap 14:
+Top bar "Premium" with Back (in every state). The body runs under the home indicator (`UNDER_HOME_INDICATOR_EDGES`, `ScreenBody isUnderHomeIndicator`), so a key at the bottom (Restore on the owned page) keeps its hard shadow. **Normal page** (`s12-premium.png`): the page column's gap is the body's block gap, 14 (`LAYOUT.blockGap`; a gap of 12 put the benefits 2 pt high and Buy 3.4 pt low):
 
-1. Header row (centred, gap 20, padding 6 block): the Premium art (108, radius 22, gold, 5 pt ring, tilt -6 deg, 64 pt crown) → column (gap 6): title (`display` 38) + subtitle (muted).
+1. Header row (centred, gap 20, padding 6 block): the Premium art (108, radius 22, gold, 5 pt ring, tilt -6 deg, 64 pt crown) → column (gap 6, content-sized with `flexShrink: 1`, never `flex: 1`, as the design's span: a one-line Persian subtitle keeps the column narrower than the room beside the art): title (`display` 38) + subtitle (muted).
 2. Benefits list (accent icon tiles): `close` "No ads, ever." · `hint` "Hints and continues without watching ads." · `star-filled` "Support the developer of this game."
 3. grow.
 4. Hero key with a `crown` cap: "Buy – €1.99".
@@ -41,7 +41,7 @@ Top bar "Premium" with Back (in every state). **Normal page** (`s12-premium.png`
 | Store unavailable (`store-unavailable`) | note panel `wifi-off` · grow · disabled hero with `crown` cap "Remove ads" · disabled quiet Restore |
 | Purchase in progress (`purchase-in-progress`) | subtitle · grow · busy hero "Purchase in progress…" · disabled quiet Restore · small print |
 | Pending (`pending`) | note panel `clock` with Bold text · muted detail · grow · quiet Restore |
-| Success (`success`) | confetti (hidden under Reduce motion) · "Thank you!" (`display`) · lead · "Premium – active" sticker (crown, tilt -3 deg, slapped in) |
+| Success (`success`) | confetti · "Thank you!" (`display`) · lead · "Premium – active" sticker (crown, tilt -3 deg, slapped in). The confetti follows two inputs: `isReducedMotion` (`useReduceMotion()`, also on during a parity capture) holds it at its first still frame, and `isConfettiHidden` (the model's `useReduceMotionSetting()`, the player's saved Reduce motion setting, never the frozen-motion answer) removes it. So the frozen success card still draws its confetti, as the design does. |
 | Error (`error`) | error note panel (danger edge, dangerFill, `alert`) · grow · hero with `restore` cap "Try again" · quiet Restore |
 | Already owned (`already-owned`) | "Premium – active" sticker · lead "Thanks for supporting {gameName}!" · grow · secondary block Restore purchase |
 | Restore results (`restoring`, `restore-empty`, `restore-failed`) | the normal page plus one toast: busy "Restoring…", "No earlier purchase was found.", "Couldn't restore right now…"; a successful restore shows "Purchase restored. Premium is active." |
@@ -52,7 +52,7 @@ The state comes from the premium store's `premiumView()` (premium-purchase owns 
 
 ## Data the model supplies
 
-`PremiumModel` (`premium-model.ts`): `view` (`PremiumView`), `hasJustRestored`, `isRestoreToastStack` (the parity restore card only), `priceText` (the store's string or null), `gameName`, `isReducedMotion`, `onBack`, `onBuy`, `onRestore`, `onTryAgain`. `premium-hero.ts` picks the one hero key of each state.
+`PremiumModel` (`premium-model.ts`): `view` (`PremiumView`), `hasJustRestored`, `isRestoreToastStack` (the parity restore card only), `priceText` (the store's localised string, or null while loading: the price is never typed in the app; Premium is the EUR 1.99 App Store price point), `gameName`, `isReducedMotion`, `isConfettiHidden` (the saved Reduce motion setting, for the success confetti), `onBack`, `onBuy`, `onRestore`, `onTryAgain`. `premium-hero.ts` picks the one hero key of each state.
 
 The model hook ships as a template, wired to premium-purchase's store and service:
 
@@ -174,3 +174,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 - A hard-coded or formatted price: show the store's string as it is.
 - An error message on cancel: cancelling returns quietly to the normal page.
 - A banner, a countdown or a pop-up on S12.
+- Handing the confetti the frozen-motion answer as its hide switch: a parity capture then loses the pieces the design draws. Pass the saved setting (`useReduceMotionSetting()`) as `isHiddenBySetting`.

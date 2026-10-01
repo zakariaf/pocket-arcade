@@ -1,6 +1,9 @@
 // jest.setup.ts — runs after the test framework is installed, in the 'unit' project only.
 // Versions verified: react-native-gesture-handler 2.32, react-native-worklets 0.10.1, react-native-reanimated 4.5.1,
 // @shopify/react-native-skia 2.6.2.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
 import 'react-native-gesture-handler/jestSetup';
 
 jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'));
@@ -36,8 +39,11 @@ jest.mock('@shopify/react-native-skia', () => {
   });
 });
 
-// Once packages/shell/src/ui/icons/icon-raster.ts exists, add (a jest.mock of a module that does not
-// exist yet fails this setup file for every suite):
-// jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
-//   getIconUri: () => 'data:image/png;base64,',
-// }));
+// The icon raster draws with Skia; unit tests only need a stable image URI. The file arrives with the
+// Toybox icons at Shell step 7, and a jest.mock of a module that does not exist yet fails this setup
+// file for every suite, so the mock waits for the file (steps 1 to 6 run their tests without it).
+if (existsSync(join(__dirname, 'packages/shell/src/ui/icons/icon-raster.ts'))) {
+  jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
+    getIconUri: () => 'data:image/png;base64,',
+  }));
+}

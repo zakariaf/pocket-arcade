@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // tests/selftest.mjs: the library's own self-test.
 //  1. check-lib: globs, walker, REPO_SCAN_IGNORES, shell-slice.json, dueSkipReason, argument parsing, reporter output
-//     (SKIP lines, NOT APPLICABLE), exit codes, comment masking.
+//     (SKIP lines, NOT APPLICABLE), exit codes, comment masking, the self-test runner's four fixture kinds
+//     (good, pass-*, bad-*, error-*), and the pinned-package helpers (--tooling folder, install fix).
 //  2. The validator on every case in tests/cases/: good cases pass, and each planted-bad case fails
 //     with exactly the rule named in its case.json (run on a synced temporary copy).
-//  3. The validator's library-layout rule, the skill template, and the frontmatter parser.
+//  3. The validator's library-layout rule, the device-explicit detector, the skill template, and the
+//     frontmatter parser.
 //  4. sync-shared, link-skills (link and copy modes), record-sources + check-staleness, selftest-all.
 //  5. The shared files: fonts match fonts/SOURCES.md, JSON copies parse, settings.proposed.json.
 
@@ -17,8 +19,8 @@ import { fileURLToPath } from 'node:url';
 import { listCaseSkills, readManifest, syncShared } from '../lib/library.mjs';
 import { parseYamlSubset, splitFrontmatter } from '../lib/frontmatter.mjs';
 import { sanitize } from '../refresh-shared.mjs';
-import { findProjectRefs } from '../validate-skills.mjs';
-import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, createReporter, dueSkipReason, globToRegExp, isRepoScanIgnored, makeTempDir, maskComments, matchGlob, parseArgs, readShellSlice, removeTempDir, run, sha256, sliceSkipReason, walk } from '../shared/scripts/check-lib.mjs';
+import { findImplicitDeviceCalls, findProjectRefs } from '../validate-skills.mjs';
+import { REPO_SCAN_IGNORES, SELFTEST_CASES, SHELL_DUE_TARGETS, createReporter, dueSkipReason, globToRegExp, importPackage, isRepoScanIgnored, makeTempDir, maskComments, matchGlob, packageInstallFix, parseArgs, readShellSlice, removeTempDir, resolveToolingDir, run, selftestCaseKind, sha256, sliceSkipReason, walk } from '../shared/scripts/check-lib.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const LIB = join(HERE, '..');
@@ -148,10 +150,13 @@ test('check-lib: dueSkipReason and SHELL_DUE_TARGETS', () => {
     assert.ok(Object.isFrozen(SHELL_DUE_TARGETS) && Object.values(SHELL_DUE_TARGETS).every(Object.isFrozen));
     assert.deepEqual(SHELL_DUE_TARGETS.plugins, { file: 'packages/shell/src/config/shell-plugins.ts', step: 8 });
     assert.deepEqual(SHELL_DUE_TARGETS.catalogs, { file: 'packages/shell/src/i18n/catalogs/en.json', step: 6 });
-    assert.deepEqual(SHELL_DUE_TARGETS.boot, { file: 'packages/shell/src/app/start-shell.ts', step: 6 });
+    // start-shell.ts lands at Shell step 7 with the composition root (it imports createShellApp and the
+    // startup splash), together with the two save boot files, the splash and the JS half of app/perf/.
+    assert.deepEqual(SHELL_DUE_TARGETS.boot, { file: 'packages/shell/src/app/start-shell.ts', step: 7 });
     // Missing: the rule is not yet due, with the step and the file in the reason.
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.plugins), 'due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created');
     assert.equal(dueSkipReason(dir, { file: './packages/shell/src/app/start-shell.ts', step: 6 }), 'due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created');
+    assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.boot), 'due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created');
     // Present: the rule is strict from now on.
     write(join(dir, 'packages', 'shell', 'src', 'config', 'shell-plugins.ts'), 'export const SHELL_PLUGINS = [];\n');
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.plugins), null);
@@ -380,6 +385,147 @@ test('check-lib: runSelftest catches a checker that misses its planted bug', () 
   } finally {
     removeTempDir(dir);
   }
+});
+
+test('check-lib: runSelftest runs pass-* (exit 0) and error-* (exit 2) cases with their EXPECT.txt lines', () => {
+  assert.equal(selftestCaseKind('good'), 'good');
+  assert.equal(selftestCaseKind('pass-skip-line'), 'pass-');
+  assert.equal(selftestCaseKind('bad-x'), 'bad-');
+  assert.equal(selftestCaseKind('error-no-root'), 'error-');
+  for (const name of ['base', 'pass-', 'bad-', 'error-', 'passing', 'good-2', 'errors']) assert.equal(selftestCaseKind(name), null, name);
+  assert.deepEqual(Object.fromEntries(Object.entries(SELFTEST_CASES).map(([kind, value]) => [kind, value.exit])), { good: 0, 'pass-': 0, 'bad-': 1, 'error-': 2 });
+  const dir = makeTempDir('selftest-kinds-');
+  try {
+    cpSync(join(LIB, 'skill-template'), join(dir, 'skill'), { recursive: true });
+    const skill = join(dir, 'skill');
+    cpSync(CHECK_LIB, join(skill, 'scripts', 'check-lib.mjs'));
+    const selftest = join(skill, 'scripts', 'selftest.mjs');
+    const fixtures = join(skill, 'tests', 'fixtures');
+    const ok = node(selftest, [], dir);
+    assert.equal(ok.status, 0, ok.output);
+    assert.match(ok.stdout, /^ok {3}check-exports\.mjs pass-declaration-files \(exit 0, found "check-exports: 1 TypeScript files checked, 0 problems"\)$/m);
+    // The error case ran with the words of its ARGS.txt, not with args(dir).
+    assert.match(ok.stdout, /^ok {3}check-exports\.mjs error-missing-folder \(exit 2, found "ERROR \[bad-input\] nothing to check: folder no-such-folder/m);
+    // A checker that misses a line a passing case must print fails the self-test.
+    const checker = join(skill, 'scripts', 'check-exports.mjs');
+    const original = readFileSync(checker, 'utf8');
+    writeFileSync(checker, original.replace("createReporter({ name: 'check-exports', json: options.json })", "createReporter({ name: 'check-modules', json: options.json })"));
+    const missed = node(selftest, [], dir);
+    assert.equal(missed.status, 1, missed.output);
+    assert.match(missed.stdout, /\[selftest-case\] check-exports\.mjs pass-declaration-files: output does not contain "check-exports: 1 TypeScript files checked, 0 problems"/);
+    assert.match(missed.stdout, /Fix: Fix the checker so this passing case exits 0 and prints what EXPECT\.txt says\./);
+    // A passing case whose checker finds a problem (exit 1) fails too.
+    writeFileSync(checker, original);
+    write(join(fixtures, 'pass-declaration-files', 'src', 'extra.ts'), 'export default 1;\n');
+    const exit1 = node(selftest, [], dir);
+    assert.match(exit1.stdout, /\[selftest-case\] check-exports\.mjs pass-declaration-files: expected exit 0, got 1/);
+    rmSync(join(fixtures, 'pass-declaration-files', 'src', 'extra.ts'));
+    // A checker that reports bad input as a problem (exit 1) instead of stopping (exit 2) fails the error case.
+    writeFileSync(checker, original.replace(".map((folder) => requireDir(folder, 'folder'));", ".filter((folder) => existsSync(folder) || (earlyProblems.push(folder), false)).map((folder) => requireDir(folder, 'folder'));").replace("import { join, relative, resolve } from 'node:path';", "import { join, relative, resolve } from 'node:path';\nimport { existsSync } from 'node:fs';\nconst earlyProblems = [];").replace("  let checked = 0;\n", "  let checked = 0;\n  for (const folder of earlyProblems) report.problem({ file: folder, rule: 'missing-folder', message: `nothing to check: folder ${folder} does not exist or is not a folder` });\n"));
+    const wrongExit = node(selftest, [], dir);
+    assert.equal(wrongExit.status, 1, wrongExit.output);
+    assert.match(wrongExit.stdout, /\[selftest-case\] check-exports\.mjs error-missing-folder: expected exit 2, got 1/);
+    assert.match(wrongExit.stdout, /exit 1 is for problems found, exit 2 for bad input\./);
+    writeFileSync(checker, original);
+    // Every case kind except good needs a non-empty EXPECT.txt.
+    writeFileSync(join(fixtures, 'error-missing-folder', 'EXPECT.txt'), '\n');
+    assert.match(node(selftest, [], dir).stdout, /\[selftest-expect\] error-missing-folder has no EXPECT\.txt \(or it is empty\)/);
+    writeFileSync(join(fixtures, 'error-missing-folder', 'EXPECT.txt'), 'ERROR [bad-input] nothing to check\n');
+    rmSync(join(fixtures, 'pass-declaration-files', 'EXPECT.txt'));
+    assert.match(node(selftest, [], dir).stdout, /\[selftest-expect\] pass-declaration-files has no EXPECT\.txt/);
+    // An error case stops with exit 2 on purpose, so it never makes the runner think the environment is broken.
+    writeFileSync(join(fixtures, 'pass-declaration-files', 'EXPECT.txt'), 'check-exports: 1 TypeScript files checked, 0 problems\n');
+    const again = node(selftest, [], dir);
+    assert.equal(again.status, 0, again.output);
+    // The validator asks for the same EXPECT.txt in every pass-* and error-* case.
+    writeFileSync(join(fixtures, 'error-missing-folder', 'EXPECT.txt'), '');
+    const validated = node(join(LIB, 'validate-skills.mjs'), ['--json', '--no-run', skill], dir);
+    assert.ok(rulesOf(validated).includes('fixtures'), validated.output);
+    assert.match(validated.stdout, /tests\/fixtures\/error-missing-folder\/EXPECT\.txt/);
+  } finally {
+    removeTempDir(dir);
+  }
+});
+
+test('check-lib: pinned packages load from a --tooling folder, and the install fix names both places', async () => {
+  const dir = makeTempDir('selftest-tooling-');
+  const envVar = 'SELFTEST_TOOLING_DIR';
+  try {
+    const scriptsDir = join(dir, 'skill', 'scripts');
+    mkdirSync(scriptsDir, { recursive: true });
+    // resolveToolingDir: the option wins, then the variable, then the skill's scripts/ folder.
+    delete process.env[envVar];
+    assert.equal(resolveToolingDir({ scriptsDir, envVar }), scriptsDir);
+    process.env[envVar] = join(dir, 'from-env');
+    assert.equal(resolveToolingDir({ scriptsDir, envVar }), join(dir, 'from-env'));
+    assert.equal(resolveToolingDir({ given: join(dir, 'repo', '.parity', 'tooling'), scriptsDir, envVar }), join(dir, 'repo', '.parity', 'tooling'));
+    assert.throws(() => resolveToolingDir({}), /needs scriptsDir/);
+    // packageInstallFix: the skill-folder install and the repo install with --tooling and the variable.
+    const fix = packageInstallFix({ scriptsDir, envVar, repoDir: '.parity/tooling' });
+    assert.ok(fix.includes(`npm ci --prefix "${scriptsDir}"`), fix);
+    assert.ok(fix.includes('npm ci --prefix <repo>/.parity/tooling'), fix);
+    assert.ok(fix.includes(`pass --tooling <repo>/.parity/tooling (or set ${envVar}=<repo>/.parity/tooling)`), fix);
+    assert.ok(!packageInstallFix({ scriptsDir }).includes('(or set'), 'no variable named when none is given');
+    // importPackage: ESM exports (import condition), a CommonJS main, and a missing package (exit 2 text).
+    const tooling = join(dir, 'repo', '.parity', 'tooling');
+    write(join(tooling, 'node_modules', 'esm-pkg', 'package.json'), JSON.stringify({ name: 'esm-pkg', version: '1.0.0', type: 'module', exports: { '.': { types: './index.d.ts', import: './index.mjs', require: './index.cjs' } } }));
+    write(join(tooling, 'node_modules', 'esm-pkg', 'index.mjs'), 'export const kind = "esm";\n');
+    write(join(tooling, 'node_modules', '@scope', 'cjs-pkg', 'package.json'), JSON.stringify({ name: '@scope/cjs-pkg', version: '1.0.0', main: './lib/main.js' }));
+    write(join(tooling, 'node_modules', '@scope', 'cjs-pkg', 'lib', 'main.js'), 'exports.kind = "cjs";\n');
+    assert.equal((await importPackage('esm-pkg', tooling)).kind, 'esm');
+    assert.equal((await importPackage('@scope/cjs-pkg', tooling)).default.kind, 'cjs');
+    await assert.rejects(() => importPackage('pngjs', tooling, { what: 'pngjs 7.0.0', fix }), (error) => error.name === 'UsageError' && /pngjs 7\.0\.0 is not installed in .*\/\.parity\/tooling\/node_modules/.test(error.message) && error.fix === fix);
+  } finally {
+    delete process.env[envVar];
+    removeTempDir(dir);
+  }
+});
+
+test('validator: device-explicit finds maestro, simctl and xcodebuild calls that do not name their simulator', () => {
+  const md = (text) => findImplicitDeviceCalls(text, { kind: 'md' }).map((hit) => `${hit.line} ${hit.what}`);
+  const script = (text) => findImplicitDeviceCalls(text, { kind: 'script' }).map((hit) => `${hit.line} ${hit.what}`);
+  // Flagged in markdown: command lines in fences (with continuations) and in inline code.
+  assert.deepEqual(md('```sh\nmaestro test flows/a.yaml\n```'), ['2 "maestro test" without --device <udid> before the command']);
+  assert.deepEqual(md('```sh\ntools/maestro/bin/maestro test packages/shell/e2e/flows/a11y --udid "$UDID" \\\n  --include-tags a11y\n```'), ['2 "maestro test" without --device <udid> before the command']);
+  assert.deepEqual(md('Rerun it alone: `tools/maestro/bin/maestro test <flow> --udid <udid> -e APP_ID=<id>`.'), ['1 "maestro test" without --device <udid> before the command']);
+  assert.deepEqual(md('Dump it: `maestro --driver-host-port 7001 hierarchy --no-reinstall-driver`'), ['1 "maestro hierarchy" without --device <udid> before the command']);
+  assert.deepEqual(md('Run `xcrun simctl io booted screenshot a.png`.'), ['1 "simctl io booted" targets whichever simulator is booted']);
+  assert.deepEqual(md('If it hangs, run `xcrun simctl shutdown all`, then the setup again.'), ['1 "simctl shutdown all" targets every simulator on the Mac']);
+  // A negation in an earlier clause does not excuse a command that is then run.
+  assert.deepEqual(md('If the flow does not pass, rerun it: `maestro test flows/a.yaml`'), ['1 "maestro test" without --device <udid> before the command']);
+  assert.deepEqual(md("```sh\nxcodebuild build -workspace A.xcworkspace \\\n  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'\n```"), ['2 xcodebuild -destination "platform=iOS Simulator,name=iPhone 17 Pro" does not name the simulator by id=']);
+  // Not flagged: named devices, mentions, prohibitions, anti-patterns, archives and non-device commands.
+  for (const text of [
+    '```sh\nmaestro --device "$UDID" --driver-host-port "$PORT" test flows/a.yaml\n```',
+    '`maestro --device <udid> hierarchy --no-reinstall-driver`',
+    'The runner calls `maestro test` once per flow; `maestro hierarchy` lists on-screen elements.',
+    'No uploads: `maestro test --analyze`, `maestro cloud`, `maestro record` without `--local`.',
+    'Never `xcrun simctl shutdown all`: other sessions use other simulators.',
+    '## Anti-patterns\n\n- **`xcrun simctl erase all` to start fresh.** Reset only your own simulator.',
+    '`xcrun simctl boot "$UDID"` then `xcrun simctl bootstatus $UDID -b`; `xcrun simctl list devices booted -j`; `xcrun simctl delete unavailable`',
+    "```sh\nxcodebuild -workspace A.xcworkspace -destination id=$UDID build\nxcodebuild archive -destination 'generic/platform=iOS' -archivePath build/A.xcarchive\n```",
+    '| `-sdk iphonesimulator`, `-destination id=<udid>` | builds for the simulator the run will use |',
+    'npm pack expo --pack-destination /tmp/x',
+    '### Element bounds with maestro hierarchy',
+  ]) assert.deepEqual(md(text), [], text);
+  // Scripts: call forms and command strings.
+  assert.deepEqual(script("const r = maestro('hierarchy', '--no-reinstall-driver');"), ['1 a maestro "hierarchy" call without "--device", <udid> before the command']);
+  assert.deepEqual(script("spawnSync('maestro', ['test', flow, '-e', env]);"), ['1 a maestro "test" call without "--device", <udid> before the command']);
+  assert.deepEqual(script("simctl('io', 'booted', 'screenshot', path);"), ['1 a simctl "io" call on "booted"']);
+  assert.deepEqual(script("fail('wedged', 'Quit Simulator.app and run: xcrun simctl shutdown all');"), ['1 "simctl shutdown all" targets every simulator on the Mac']);
+  assert.deepEqual(script("exec('xcodebuild', ['-workspace', ws, '-destination', 'platform=iOS Simulator,OS=latest']);"), ['1 xcodebuild -destination "platform=iOS Simulator,OS=latest" does not name the simulator by id=']);
+  for (const text of [
+    "let r = maestro('--device', udid, 'hierarchy', '--no-reinstall-driver');",
+    "spawnSync(tool, [...maestroGlobalArgs({ udid, driverPort }), 'test', flow]);",
+    "step(`maestro hierarchy, attempt ${attempt} (about 11 s)`);",
+    "'no-hierarchy': { type: 'boolean', help: 'Skip maestro hierarchy (then write app.layout.json yourself)' },",
+    "simctl('ui', udid, 'appearance', theme); simctl('launch', '--terminate-running-process', udid, bundleId);",
+    "exec('xcodebuild', ['-destination', `id=${udid}`, '-derivedDataPath', dd]); exec('xcodebuild', ['-destination', destination]);",
+    "// never simctl openurl booted: the prompt is never accepted",
+    "const maestro = makeMaestro(options.maestro, { udid, driverPort });\nlet r = maestro('hierarchy', '--no-reinstall-driver');",
+  ]) assert.deepEqual(script(text), [], text);
+  // A runner built without the device does not name it.
+  assert.deepEqual(script("const maestro = makeMaestro(options.maestro);\nlet r = maestro('hierarchy');"), ['2 a maestro "hierarchy" call without "--device", <udid> before the command']);
 });
 
 // ---------------------------------------------------------------------------------------------

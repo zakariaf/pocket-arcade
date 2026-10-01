@@ -14,7 +14,9 @@ export type PremiumOfferProps = { readonly model: PremiumModel };
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 20, paddingBlock: 6 },
-  title: { flex: 1, gap: 6 },
+  // Content-sized, as the design's span (min-width 0, no grow): a one-line Persian subtitle keeps
+  // the column narrower than the room beside the art.
+  title: { flexShrink: 1, gap: 6 },
 });
 
 /** S12 normal page, top part: Premium art, title and subtitle, the three benefits (a List: no tab). */

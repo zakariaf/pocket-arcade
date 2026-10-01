@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 const ROW_GAP = 8;
 const COLUMN_GAP = 18;
 const MARGIN_TOP = 14;
-const ITEM_GAP = 8;
+const ITEM_GAP = 6;
 
 export type WeekLegendProps = {
   /** Translated "Done" and "Missed". */

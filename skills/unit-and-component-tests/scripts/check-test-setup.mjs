@@ -64,7 +64,8 @@ const SPEC = {
     '  sim-config                jest.sim.config.js is missing, not a plain node environment, or matches more than sims',
     '  stryker-config            stryker.config.json is missing or weaker (runner, jest config, checker, break >= 75, logic scope, report)',
     '  stryker-tsconfig          tsconfig.stryker.json is missing or not a jest-only program',
-    '  root-mock-missing         an app uses react-native-google-mobile-ads or expo-iap but __mocks__/<sdk>.ts is missing',
+    '  root-mock-missing         an app uses react-native-google-mobile-ads, expo-iap or expo-tracking-transparency but',
+    '                            __mocks__/<sdk>.ts is missing',
     '  nested-sdk-mock           a vendor SDK mock sits in a __mocks__ folder Jest does not apply to node modules',
     '  render-with-shell-missing component tests exist but packages/shell/src/testing/render-with-shell.tsx does not',
     '                            (a test marked "// no-shell-context: <why>" needs no Shell and does not count)',
@@ -74,7 +75,7 @@ const SPEC = {
 };
 
 const EXACT = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
-const VENDOR_SDKS = ['react-native-google-mobile-ads', 'expo-iap'];
+const VENDOR_SDKS = ['react-native-google-mobile-ads', 'expo-iap', 'expo-tracking-transparency'];
 const SCRIPTS = {
   test: 'jest --ci',
   'test:golden': 'jest --ci --selectProjects golden',
@@ -387,9 +388,13 @@ function checkSetup(root, report) {
   if (/retryTimes/.test(text)) report.problem({ file: rel, line: 1, rule: 'jest-retries', message: 'calls jest.retryTimes', fix: 'Remove it; fix the flaky test instead.' });
   if (!/jest\.mock\(\s*['"]@shopify\/react-native-skia['"]/.test(maskComments(text))) report.problem({ file: rel, line: 1, rule: 'skia-unit-mock', message: 'does not mock @shopify/react-native-skia', fix: "Copy the jest.mock('@shopify/react-native-skia', ...) block from templates/jest.setup.ts: Skia's native module cannot load in the unit project, so every suite that imports the logo tile, a code-drawn picture, the hazard strip, the debug screen or a board canvas crashes. A per-file Skia mock is only for a test that inspects Skia calls." });
   const hasRaster = existsSync(join(root, 'packages', 'shell', 'src', 'ui', 'icons', 'icon-raster.ts'));
-  const mocksRaster = /jest\.mock\(\s*['"]@e07\/shell\/ui\/icons\/icon-raster\.ts['"]/.test(maskComments(text));
-  if (hasRaster && !mocksRaster) report.problem({ file: rel, line: 1, rule: 'icon-raster-mock', message: 'icon-raster.ts exists but is not mocked', fix: "Uncomment the jest.mock('@e07/shell/ui/icons/icon-raster.ts', ...) lines of templates/jest.setup.ts: Skia's native module cannot load in the unit project, so every test that renders an Icon would fail." });
-  if (!hasRaster && mocksRaster) report.problem({ file: rel, line: 1, rule: 'icon-raster-mock', message: 'mocks icon-raster.ts, which does not exist yet', fix: 'Comment the mock out until packages/shell/src/ui/icons/icon-raster.ts exists: a jest.mock of a missing module fails the setup file and with it every suite.' });
+  const masked = maskComments(text);
+  const mocksRaster = /jest\.mock\(\s*['"]@e07\/shell\/ui\/icons\/icon-raster\.ts['"]/.test(masked);
+  // The template's mock waits for the file (if (existsSync(...icon-raster.ts...)) { jest.mock(...) }),
+  // so it is right at every build step: before Shell step 7 and after.
+  const waitsForRaster = mocksRaster && /\bif\s*\(\s*existsSync\([^)]*icon-raster\.ts['"]\s*\)\s*\)/.test(masked);
+  if (hasRaster && !mocksRaster) report.problem({ file: rel, line: 1, rule: 'icon-raster-mock', message: 'icon-raster.ts exists but is not mocked', fix: "Copy jest.setup.ts from templates/: its jest.mock('@e07/shell/ui/icons/icon-raster.ts', ...) waits for the file with existsSync. Skia's native module cannot load in the unit project, so every test that renders an Icon would fail." });
+  if (!hasRaster && mocksRaster && !waitsForRaster) report.problem({ file: rel, line: 1, rule: 'icon-raster-mock', message: 'mocks icon-raster.ts, which does not exist yet', fix: 'Copy jest.setup.ts from templates/: its mock waits for packages/shell/src/ui/icons/icon-raster.ts with existsSync, because a jest.mock of a missing module fails the setup file and with it every suite.' });
 }
 
 function checkSim(root, report) {

@@ -7,9 +7,13 @@ import type { StatCell } from '@e07/shell/ui/stat-grid.tsx';
 import type { StatListRow } from '@e07/shell/ui/stat-list.tsx';
 
 type Input = Pick<StatsModel, 'snapshot' | 'formatNumber'>;
+type OverviewInput = Pick<StatsModel, 'snapshot' | 'formatNumber' | 'formatPercent'>;
 
 /** Overview, 2 columns: games played, wins, win rate, total play time. */
-export function overviewCells({ snapshot: s, formatNumber }: Input, t: TFunction): StatCell[] {
+export function overviewCells(
+  { snapshot: s, formatNumber, formatPercent }: OverviewInput,
+  t: TFunction,
+): StatCell[] {
   return [
     {
       id: 'games-played',
@@ -23,7 +27,8 @@ export function overviewCells({ snapshot: s, formatNumber }: Input, t: TFunction
     },
     {
       id: 'win-rate',
-      value: t('stats.win-rate', { rate: s.winRate }),
+      // The design's value is the bare percentage (N(0.62, '::percent')); the label names it.
+      value: formatPercent(s.winRate),
       label: t('stats.overview.win-rate'),
     },
     {

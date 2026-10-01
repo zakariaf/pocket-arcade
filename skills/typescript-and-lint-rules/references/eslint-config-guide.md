@@ -103,7 +103,7 @@ In flat config a later block **replaces** a rule's options for the files it matc
 - `withoutProperty('Date', 'now')` for the clock adapter,
 - `runtimeSyntax(['newDate'])` to drop one `no-restricted-syntax` entry,
 - `without(RUNTIME_PATHS, PRESSABLE_IMPORT)` to lift one import ban,
-- `restrictedImports({ paths, patterns })` always prepends `BANNED_PACKAGE_PATHS` and `PARENT_IMPORT`.
+- `restrictedImports({ paths, patterns })` always prepends `BANNED_PACKAGE_PATHS` and `PARENT_IMPORT`; its `allow` list lifts one banned package, and only the file-exact `ATT_ADAPTER` block uses it (`allow: [ATT_IMPORT]`; `check-configs.mjs` fails a second one, rule `att-allow`).
 
 A block that writes a fresh short list (for example `'no-restricted-imports': ['error', { paths: [x] }]`) silently drops every other ban for those files. That is the most likely way to weaken the config by accident.
 
@@ -123,6 +123,7 @@ Exemptions name single files on purpose:
 | raw `Pressable` | `packages/shell/src/ui/**` |
 | raw `Image` | `packages/shell/src/ui/icons/icon.tsx` |
 | vendor SDK imports | `ADAPTERS` (one adapter per port) |
+| `expo-tracking-transparency` | `packages/shell/src/services/consent/admob-consent-adapter.ts` (`ATT_ADAPTER`; owner decision O1: the consent adapter asks for App Tracking Transparency, every other file, adapters and tests included, keeps the ban) |
 | `react-intl` | `packages/shell/src/i18n/**` |
 | typed-array mutation (`no-param-reassign` props) | `apps/*/src/sim/**/*.ts`, `packages/game-kit/src/geom/spatial-hash.ts` |
 | `export default` | `apps/*/app.config.ts`, `packages/shell/plugins/**/*.ts`, `__mocks__/**`, JS config files |

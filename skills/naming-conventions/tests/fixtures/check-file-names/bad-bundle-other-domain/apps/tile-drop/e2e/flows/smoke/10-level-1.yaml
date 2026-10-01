@@ -1,0 +1,5 @@
+# apps/tile-drop/e2e/flows/smoke/10-level-1.yaml
+appId: ${APP_ID}
+---
+- assertVisible:
+    id: 'game.board'

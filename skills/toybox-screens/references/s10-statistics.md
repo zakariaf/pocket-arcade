@@ -24,19 +24,19 @@ S10 shows players their own history, stored only on the phone.
 
 Top bar "Statistics" with Back. Body gap **16**; each panel has a header (icon tile 34 with a 20 pt icon, or the logo tile 36, + heading 21, 12 below):
 
-1. Overview (`stats`): 2-column grid (gap 14): games played, wins, win rate (`stats.win-rate`, ::percent), total play time (`stats.duration`). Cells: value (`number` 30) over label (14 muted).
+1. Overview (`stats`): 2-column grid (gap 14): games played, wins, win rate, total play time (`stats.duration`). Cells: value (`number` 30) over label (14 muted). The win-rate value is the bare percentage ("62%", the design's `N(0.62, '::percent')`), formatted by `model.formatPercent` (`createPercentFormatter(localeTag)` in the chosen digits) under the label `stats.overview.win-rate`; the sentence key `stats.win-rate` ("Win rate 62%") is not the cell's value.
 2. Levels (`grid`): 3 columns (values 23, no wrap): completed, stars "28 / 270", three-star levels.
-3. Best (filled star): a stat list: the Bold sub-heading "Best score"; Levels, Daily and Endless (only games with Endless) values (22 display, end-aligned); best level score "Level 9: 2,310"; longest win streak. 2 pt rules between rows.
+3. Best (the gold rating star, `'rating-star'`, the design's `star(true)`; not the ink `star-filled` icon): a stat list: the Bold sub-heading "Best score"; Levels, Daily and Endless (only games with Endless) values (22 display, end-aligned); best level score "Level 9: 2,310"; longest win streak. 2 pt rules between rows.
 4. Daily challenge (`calendar`): 3 columns: completed, current streak, best streak.
 5. Last 7 days (`stats`): subtitle "Games played per day" (14 muted) → bar chart (8 top margin): seven columns, 124 pt plot on a 3 pt baseline, value (13 Bold) over a 26 pt accent bar (height = value / max x 92, top radius 5), the day letter 6 below; zero days show only "0".
-6. The game's panel: logo tile 36 + "{gameName} stats" → 3 columns of the game's own counters (values such as ×6 keep their sign).
+6. The game's panel: logo tile 36 + "{gameName} stats" → 3 columns of the game's own counters. A counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) reads as a multiplier, "×6" (`stats-snapshot-of.ts` prefixes ×); a running total (`'sum'`) is the plain number.
 
-Then a danger block button with `trash`: "Reset statistics" → caption row with a `lock` icon: "Stored only on this phone." → the banner, pinned under the scroll.
+Then a danger block button with `trash`: "Reset statistics" → the local note: a row with a 24 pt `lock` icon, a 6 pt gap and "Stored only on this phone." (caption, muted); the element `stats.local-note` is the whole row, padlock included (`StatsLocalNote hasIcon`) → the banner, pinned under the scroll. With a banner slot the body ends one block gap above the band (`ScreenBody isAboveBanner`: `paddingBottom` is the body's gap, as the design's band is the body's last flex item); without one (Premium) the body runs under the home indicator.
 
 ## States and variants
 
 - **Normal** (`s10-statistics.png`, a tall frame; the app scrolls).
-- **Empty** (`s10-statistics-empty.png`): top bar, then the empty state (column centred vertically, start-aligned, gap 14): the boxed-star picture (190 x 150, drawn in code), "No stats yet" (`title` 30), the lead, a hero key with a `play` cap "Play a level", the local note; and the banner.
+- **Empty** (`s10-statistics-empty.png`): top bar, then the empty state (column centred vertically, start-aligned, gap 14; the page keeps the default 14 pt body gap, not the panels page's 16): the boxed-star picture (190 x 150, drawn in code), "No stats yet" (`title` 30), the lead, a hero key with a `play` cap "Play a level", the local note as the bare caption (no padlock, `StatsLocalNote` without `hasIcon`); and the banner.
 
 ## Data the model supplies
 

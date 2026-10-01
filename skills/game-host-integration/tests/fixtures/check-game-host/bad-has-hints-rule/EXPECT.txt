@@ -1,0 +1,3 @@
+[game-facts]
+packages/shell/src/game-host/game-facts.ts
+hasHintsOf does not read the module's rules.hints.kind

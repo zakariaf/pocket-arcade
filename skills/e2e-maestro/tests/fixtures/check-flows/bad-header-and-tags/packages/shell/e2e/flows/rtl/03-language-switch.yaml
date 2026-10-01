@@ -1,5 +1,5 @@
 # packages/shell/e2e/flows/rtl/03-language-switch.yaml — S11a: LTR -> RTL needs "Restart to apply".
-appId: com.example.demo
+appId: io.applander.demo
 tags: [rtl, fast]
 ---
 - launchApp:

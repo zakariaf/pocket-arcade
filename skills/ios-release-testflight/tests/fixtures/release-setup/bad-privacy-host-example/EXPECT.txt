@@ -1,0 +1,3 @@
+apps/line-siege/game.config.ts:8 [game-config] holds the placeholder privacy-policy host example.com (example.com)
+apps/line-siege/game.config.ts:9 [game-config] holds the placeholder support address support@example.com
+owner step G3

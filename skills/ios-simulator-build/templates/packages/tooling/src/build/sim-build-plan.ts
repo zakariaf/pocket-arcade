@@ -3,6 +3,7 @@
 import { join } from 'node:path';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { maestroGlobalArgs } from '@e07/tooling/e2e/maestro-args.ts';
 
 export type SimBuildOptions = {
   readonly game: string;
@@ -10,6 +11,8 @@ export type SimBuildOptions = {
   readonly purpose: string;
   /** --link: a debug-link query opened once the app is ready (test builds only), then shot. */
   readonly link: LinkRequest | null;
+  /** --driver-port: this session's own Maestro driver port for --link (else a free one). */
+  readonly driverPort: number | null;
 };
 
 /** The debug link to open after launch and the testID that proves its screen is shown. */
@@ -20,7 +23,7 @@ export const MAESTRO_BIN = 'tools/maestro/bin/maestro';
 export const LINK_SETUP_FLOW = 'packages/shell/e2e/subflows/debug-setup.yaml';
 
 export const SIM_BUILD_USAGE = [
-  'usage: npm run build:ios:sim -- --app <game-id> [--variant test|store] [--ads off|test|live] [--sim <purpose>] [--link <debug query> [--wait-for <testID>]]',
+  'usage: npm run build:ios:sim -- --app <game-id> [--variant test|store] [--ads off|test|live] [--sim <purpose>] [--link <debug query> [--wait-for <testID>] [--driver-port <n>]]',
   '  --app      the game folder under apps/ (kebab-case)',
   '  --variant  test (default: debug menu, debug link, test-only code) or store',
   '  --ads      off, test (default for test builds) or live (store builds only)',
@@ -29,9 +32,20 @@ export const SIM_BUILD_USAGE = [
   "             debug-setup sub-flow (for example 'firstRun=0&level=1&screen=game'), wait for the",
   '             screen root, then until the screen holds still, and screenshot it too',
   "  --wait-for the testID that proves the link's screen (default: the root of its screen=)",
+  '  --driver-port  the Maestro driver port of --link (default: a free port; the run names',
+  '             --device <udid> and this port before the command, so it never reaches another',
+  "             session's simulator)",
   '  --help, -h print this and exit',
 ].join('\n');
-const FLAGS = new Set(['--app', '--variant', '--ads', '--sim', '--link', '--wait-for']);
+const FLAGS = new Set([
+  '--app',
+  '--variant',
+  '--ads',
+  '--sim',
+  '--link',
+  '--wait-for',
+  '--driver-port',
+]);
 
 /** --help or -h anywhere: print SIM_BUILD_USAGE and build nothing. */
 export function isHelpRequest(argv: readonly string[]): boolean {
@@ -90,7 +104,12 @@ export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
     ADS_MODE: flags.get('--ads'),
   });
   const link = linkOf(flags, variant);
-  return { game, variant, purpose: flags.get('--sim') ?? 'smoke', link };
+  const port = flags.get('--driver-port');
+  const driverPort = port === undefined ? null : Number(port);
+  if (driverPort !== null && !(Number.isInteger(driverPort) && driverPort >= 1024)) {
+    throw new Error(`--driver-port ${String(port)}: pass a port from 1024 to 65535`);
+  }
+  return { game, variant, purpose: flags.get('--sim') ?? 'smoke', link, driverPort };
 }
 
 /** The three variables stay exported for the WHOLE run: prebuild, Constants and Metro read them. */
@@ -196,19 +215,36 @@ export function linkProblems(
 
 export type LinkRun = {
   readonly udid: string;
+  /** This run's own Maestro driver port (freeDriverPort() or --driver-port). */
+  readonly driverPort: number;
   readonly bundleId: string;
   readonly scheme: string;
   readonly link: LinkRequest;
   readonly outDir: string;
 };
 
-/** `maestro test` arguments: the setup sub-flow applies the link to the running app. */
+/**
+ * The whole Maestro command line after the binary: the device and this run's driver port first
+ * (maestroGlobalArgs), then `test` with the setup sub-flow, which applies the link to the app.
+ */
 export function linkSetupArgs(run: LinkRun): string[] {
   return [
-    ...['test', LINK_SETUP_FLOW, '--udid', run.udid, '--test-output-dir', run.outDir],
+    ...maestroGlobalArgs({ udid: run.udid, driverPort: run.driverPort }),
+    ...['test', LINK_SETUP_FLOW, '--test-output-dir', run.outDir],
     ...['-e', `APP_ID=${run.bundleId}`, '-e', `APP_SCHEME=${run.scheme}`],
     ...['-e', `QUERY=${run.link.query}`, '-e', `WAIT_FOR=${run.link.waitFor}`],
   ];
+}
+
+/** Maestro with Java 17 and no analytics, update check or analysis prompt (as e2e:ios runs it). */
+export function maestroEnvOf(env: NodeJS.ProcessEnv, javaHome: () => string): NodeJS.ProcessEnv {
+  return {
+    ...env,
+    JAVA_HOME: env['JAVA_HOME'] ?? javaHome(),
+    MAESTRO_CLI_NO_ANALYTICS: 'true',
+    MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
+    MAESTRO_DISABLE_UPDATE_CHECK: 'true',
+  };
 }
 
 /** The screenshot taken after --link: next to the launch screenshot. */

@@ -90,7 +90,13 @@ export const PITFALLS = [
   { id: 'deps-expo-install-range', detect: (ctx) => depRule(ctx, ['react-native-audio-api', 'react-native-google-mobile-ads', 'expo-iap'], (v) => !/^\d+\.\d+\.\d+$/.test(v), 'is not pinned exactly (a fast-moving package outside Expo\'s module map: write the exact version)') },
   { id: 'deps-expo-iap-servers', detect: (ctx) => grep(ctx, CONFIG, /\bonside\b|iapkitApiKey/, 'enables an expo-iap option that adds a server (Onside or IAPKit)') },
   // ---- services and i18n
-  { id: 'services-att-prompt', detect: (ctx) => [...grep(ctx, CONFIG, /userTrackingUsageDescription/, 'passes userTrackingUsageDescription: v1 never asks for tracking'), ...depRule(ctx, ['expo-tracking-transparency'], always, 'v1 never asks for tracking (D4)')] },
+  // Owner decision O1: ask for App Tracking Transparency before any ad request. The plugin entry gives
+  // Info.plist its NSUserTrackingUsageDescription (without it the request crashes), and only the
+  // consent adapter asks, after the S3 intro and Google's form.
+  { id: 'services-att-prompt', detect: (ctx) => [
+    ...filesMatching(ctx, ['packages/shell/src/config/shell-plugins.ts']).filter((rel) => { const body = text(ctx, rel); return /['"]react-native-google-mobile-ads['"]/.test(body) && !/['"]expo-tracking-transparency['"]/.test(body); }).map((rel) => ({ file: rel, line: lineOf(text(ctx, rel), text(ctx, rel).search(/['"]react-native-google-mobile-ads['"]/)), message: "lists Google's ads SDK but no ['expo-tracking-transparency', { userTrackingPermission }] entry: the app has no NSUserTrackingUsageDescription, so the ATT request before the first ad crashes" })),
+    ...grep(ctx, CODE, /from\s+['"]expo-tracking-transparency['"]|require\(\s*['"]expo-tracking-transparency['"]\s*\)/, 'imports expo-tracking-transparency outside the consent adapter: only services/consent/admob-consent-adapter.ts asks for tracking, after the S3 intro and Google\'s form', { except: ['packages/shell/src/services/consent/admob-consent-adapter.ts'], tests: false }),
+  ] },
   { id: 'i18n-localization-rtl-flags', detect: (ctx) => grep(ctx, CONFIG, /\b(supportsRTL|forcesRTL)\b/, 'sets expo-localization supportsRTL/forcesRTL; the Shell owns direction') },
   { id: 'i18n-force-rtl-reload', detect: (ctx) => grep(ctx, CODE, /Updates\.reloadAsync|from\s+['"]expo-updates['"]/, "reloads through expo-updates; use reloadAppAsync from 'expo'") },
   { id: 'i18n-dynamic-locale-import', detect: (ctx) => grep(ctx, CODE, /\bimport\(\s*`/, 'template-string dynamic import: Metro cannot bundle it') },

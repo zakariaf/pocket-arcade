@@ -3,7 +3,7 @@ import { readGameExtra } from './read-game-extra.ts';
 
 const GAME = {
   id: 'line-siege',
-  premiumProductId: 'com.example.linesiege.premium',
+  premiumProductId: 'io.applander.linesiege.premium',
   adPolicy: {
     isAdsEnabled: true,
     minLevelsCompletedBeforeFirst: 3,

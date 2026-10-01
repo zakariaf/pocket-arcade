@@ -131,6 +131,14 @@
      "children": []
     }
    ]
+  },
+  {
+   "attributes": {
+    "accessibilityText": "",
+    "resource-id": "pause.scrim",
+    "bounds": "[0,0][402,874]"
+   },
+   "children": []
   }
  ]
 }

@@ -23,6 +23,11 @@ export type ScreenBodyProps = {
    */
   readonly isUnderHomeIndicator?: boolean;
   /**
+   * A banner band follows the body (S10): as in the design, where the band is the body's last
+   * flex item, the content ends one block gap above it (the band itself is pinned outside).
+   */
+  readonly isAboveBanner?: boolean;
+  /**
    * The first block pokes up into the top bar (S4's tilted tagline sticker: its high corner and
    * die-cut ring rise about 8 pt above its box). A scroll view clips its content, so the clip edge
    * starts OVERHANG_ROOM higher and the content is padded down by the same amount: nothing moves
@@ -81,7 +86,10 @@ export function ScreenBody(props: ScreenBodyProps): ReactNode {
   const { children, gap = 'default', testID } = props;
   // The context is null outside a SafeAreaProvider (component tests): treat the inset as 0.
   const insetBottom = use(SafeAreaInsetsContext)?.bottom ?? 0;
-  const paddingBottom = bottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
+  const paddingBottom =
+    props.isAboveBanner === true
+      ? GAPS[gap]
+      : bottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
   const isOverhang = props.hasTopOverhang === true;
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
   const harnessScrollY = use(ScreenScrollTargetContext);

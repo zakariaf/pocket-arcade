@@ -13,7 +13,7 @@ const s = {
   locale: 'en_US',
   statusBar: 'Current Status Bar Overrides:\n=============================\nTime: 9:41 \nDataNetworkType: 11\nWiFi Mode: 3, WiFi Bars: 3\nCell Mode: 3, Cell Bars: 4\nOperator Name: \nBattery State: 0, Battery Level: 100, Not Charging: 0\n',
   ui: { appearance: 'light', content_size: 'large', increase_contrast: 'disabled' },
-  launchctl: '93512\t0\tUIKitApplication:com.example.linesiege.test[ee0e][rb-legacy]\n93511\t0\tUIKitApplication:com.apple.Spotlight[b96c][rb-legacy]\n',
+  launchctl: '93512\t0\tUIKitApplication:io.applander.linesiege[ee0e][rb-legacy]\n93511\t0\tUIKitApplication:com.apple.Spotlight[b96c][rb-legacy]\n',
   screenshots: [],
   ...scenario,
 };
@@ -43,7 +43,14 @@ if (cmd === 'spawn') {
 }
 if (cmd === 'status_bar') done(rest[1] === 'list' ? s.statusBar : '');
 if (cmd === 'ui') done(rest.length === 2 ? (s.ui[rest[1]] ?? '') + '\n' : '');
-if (cmd === 'launch') done(s.launchFails ? '' : 'com.example.linesiege.test: 93512\n', s.launchFails ? 1 : 0);
+if (cmd === 'launch') {
+  // The launch's nonce (in the -parity query) goes to $FAKE_PARITY_STATE, where the fake maestro reads
+  // it: the real app renders the marker parity.launch.<nonce> that the dump must contain.
+  const query = rest[rest.indexOf('-parity') + 1] ?? '';
+  const nonce = new URLSearchParams(query).get('nonce');
+  if (process.env.FAKE_PARITY_STATE && nonce) writeFileSync(process.env.FAKE_PARITY_STATE, JSON.stringify({ nonce, udid: rest.find((a) => /^[0-9A-F-]{36}$/i.test(a)) ?? null }));
+  done(s.launchFails ? '' : 'io.applander.linesiege: 93512\n', s.launchFails ? 1 : 0);
+}
 if (cmd === 'io' && rest[1] === 'screenshot') {
   // Screenshots are served in order from scenario.screenshots (paths relative to the fixture folder);
   // the last one repeats. The counter lives next to the output file.

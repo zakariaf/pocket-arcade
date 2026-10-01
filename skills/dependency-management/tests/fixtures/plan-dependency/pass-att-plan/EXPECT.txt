@@ -1,0 +1,6 @@
+package  expo-tracking-transparency ~57.0.2 (Expo-managed; belongs in every app)
+present  nowhere yet
+add "expo-tracking-transparency": "*" to packages/shell/package.json peerDependencies and "expo-tracking-transparency": "57.0.2" to the root package.json overrides
+(cd apps/alpha && npx expo install expo-tracking-transparency@~57.0.2)
+(cd apps/beta && npx expo install expo-tracking-transparency@~57.0.2)
+native change: npx expo prebuild --clean

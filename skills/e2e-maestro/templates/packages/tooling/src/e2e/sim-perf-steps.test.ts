@@ -1,5 +1,6 @@
 // packages/tooling/src/e2e/sim-perf-steps.test.ts
-// The memory step's order over fake simulator operations. Maestro 2.10 stops the app when a test
+// The memory step's order over fake simulator operations. The feedback evidence is read right after
+// the smoke flows (the perf log still holds their cues). Maestro 2.10 stops the app when a test
 // ends, so footprint measures only after the runner started the app again and it settled.
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -27,7 +28,10 @@ function fakeOps(calls: string[], script: Script = {}): MemoryOps {
     runFlows: (flows) => {
       calls.push(`maestro test ${flows.join(' ')}`);
       isRunning = false; // Maestro 2.10 stops the app when the test ends.
-      return script.flowStatus ?? 0;
+      return Promise.resolve(script.flowStatus ?? 0);
+    },
+    recordFeedback: (flows) => {
+      calls.push(`feedback after ${flows.join(' ')}`);
     },
     relaunch: () => {
       calls.push('simctl launch');
@@ -58,7 +62,7 @@ describe('measureMemory', () => {
     rmSync(out, { recursive: true, force: true });
   });
 
-  it('relaunches the app before footprint: smoke flows, relaunch, pid, 10 s settle, footprint', async () => {
+  it('reads the feedback, then relaunches the app before footprint: smoke flows, feedback, relaunch, pid, 10 s settle, footprint', async () => {
     const calls: string[] = [];
     const result = await measureMemory(
       { game: 'demo', out },
@@ -67,6 +71,7 @@ describe('measureMemory', () => {
     );
     expect(calls).toStrictEqual([
       'maestro test apps/demo/e2e/flows/smoke/10-level-1.yaml',
+      'feedback after apps/demo/e2e/flows/smoke/10-level-1.yaml',
       'simctl launch',
       'pid',
       'wait 250',
@@ -94,7 +99,7 @@ describe('measureMemory', () => {
     expect(calls).not.toContain('footprint 4242');
   });
 
-  it('skips the relaunch after a failed smoke flow', async () => {
+  it('skips the feedback and the relaunch after a failed smoke flow', async () => {
     const calls: string[] = [];
     await expect(
       measureMemory({ game: 'demo', out }, DEFAULT_PERF_BUDGETS, fakeOps(calls, { flowStatus: 1 })),

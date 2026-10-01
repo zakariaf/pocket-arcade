@@ -18,7 +18,7 @@ Every component and hook in the Shell and the game apps follows one set of React
 7. **Render is pure:** no clock, no random, no ref reads, no components declared inside components.
 8. **Pressables live in `ui/`, carry a role, a translated name, their state, and a 44 × 44 pt box of their own** (never `hitSlop`); holds have a screen-reader alternative.
 9. **Layout survives any window:** never `Dimensions`; size from `useWindowClass()` (or `onLayout`), pure layout maths tested at the listed sizes and at 200 % text, `ScreenFrame` for safe areas, logical style keys only, no `isRTL`.
-10. **Reduce motion comes only from `useReduceMotion()`**; `<MotionConfig/>` applies it to every Reanimated animation, and a parity capture freezes every loop through the same hook (the Settings row alone reads `useReduceMotionSetting()`).
+10. **Reduce motion comes only from `useReduceMotion()`**; `<MotionConfig/>` applies it to every Reanimated animation, and a parity capture freezes every loop through the same hook. Only the saved choice itself reads `useReduceMotionSetting()`: the Settings row, and the S12 success confetti's hide switch (`isHiddenBySetting`: the pieces vanish for the player's setting, while a capture freeze only holds them at their first still frame).
 11. **Lists render every item in a `ScrollView` with stable keys** (no FlatList, FlashList or index keys in v1); at most 8 Skia canvases per screen outside the board.
 12. **`ShellErrorBoundary` wraps the app root and the board host;** its fallback has one way out and never retries; errors boundaries cannot see are caught where they happen and logged.
 

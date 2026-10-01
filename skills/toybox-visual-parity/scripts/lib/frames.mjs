@@ -70,9 +70,13 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
       fail(`frames.json gives frame ${key} the root "${frame.root}", which is not one of its testIDs`, 'Use a testID the frame lists (usually <scope>.screen).');
     }
     for (const el of frame.elements) if (el.when !== undefined) checkFacts(el.when, `screen-testids.json ${el.screen} ${el.testID} when`);
+    frame.designFacts = designFacts;
     frame.variants = checkVariants(key, entry.variants, designFacts, frame);
     frame.board = checkBoard(key, entry.board, frame);
+    frame.boardMask = checkBoardMask(key, entry.boardMask, frame);
     frame.modal = checkModal(key, entry.modal, frame);
+    frame.designFixes = checkDesignFixes(key, entry.designFixes);
+    frame.designMasks = checkDesignMasks(key, entry.designMasks);
   }
   checkGameFixture(extra);
   return { frames, map, manifest: extra, designFacts };
@@ -80,19 +84,27 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 
 // ---------------------------------------------------------------------------------------------
 // Game facts and reference variants. A frame whose design state depends on what the game has
-// (Music rows, the win line) gets reference variants next to its base reference. The base shows
-// the design's own facts (designFacts in frames.json: Music on, a moves line with par); a variant
-// is derived from the rendered mockup by a DOM change (derive) before it is measured and shot, and
-// is named <frame>--<variant>. Captures pick the reference from the app's facts, read from
-// parity/game-facts.json in the app repo; a missing or mismatched facts file stops (exit 2).
+// (Music rows, the win line, the hint key) gets reference variants next to its base reference. The
+// base shows the design's own facts (designFacts in frames.json: Music on, a moves line with par, a
+// hint key); a variant is derived from the rendered mockup by a DOM change (derive) before it is
+// measured and shot. Variants compose: every variant whose "when" the app's facts match applies, in
+// frames.json order, and the reference is named <frame>--<id1>--<id2> (s6-pause--no-music--no-hints).
+// Captures pick the reference from the app's facts, read from parity/game-facts.json in the app
+// repo; a missing or mismatched facts file (a fact left out included) stops with exit 2.
 // ---------------------------------------------------------------------------------------------
 
 /** The game facts a reference can depend on, and their allowed values. */
-export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'] });
+export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
 export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
 const DERIVE_OPS = ['hide', 'style', 'text'];
-const VARIANT_REASONS = ['L1', 'L3'];
+// The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
+// R3S-G17 (Settings under the S14 reset dialog without its Music rows).
+const VARIANT_REASONS = ['L1', 'L3', 'L8', 'R3S-G17'];
+// scope "frame": the variant changes elements of the frame (a "when" in the map says which);
+// scope "background": it changes only the screen drawn behind the frame's dialog, which the map
+// does not list (S14 draws Settings under the scrim), so no mapped element may change.
+const VARIANT_SCOPES = ['frame', 'background'];
 
 /** Validates a facts object ({ hasMusic, winLine }); `complete` demands every fact. */
 function checkFacts(facts, where, { complete = false } = {}) {
@@ -119,7 +131,9 @@ function checkVariants(key, variants, designFacts, frame) {
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) fail(`${at}: the variant id must be kebab-case`, 'The files are named <frame>--<variant>.png.');
     checkFacts(v?.when, `${at}.when`);
     if (Object.keys(v.when).length === 0 || factsMatch(v.when, designFacts)) fail(`${at}.when must name a fact value the mockup does not draw`, `The base reference already shows ${JSON.stringify(designFacts)}.`);
-    if (!VARIANT_REASONS.includes(v.reason)) fail(`${at}.reason must be one of ${VARIANT_REASONS.join(', ')}`, 'Name the lead decision that asked for the variant.');
+    if (!VARIANT_REASONS.includes(v.reason)) fail(`${at}.reason must be one of ${VARIANT_REASONS.join(', ')}`, 'Name the decision that asked for the variant.');
+    const scope = v.scope ?? 'frame';
+    if (!VARIANT_SCOPES.includes(scope)) fail(`${at}.scope must be ${VARIANT_SCOPES.join(' or ')}`, 'Use "background" only for a change behind the frame\'s dialog that the map does not list.');
     if (!Array.isArray(v.derive) || v.derive.length === 0) fail(`${at}.derive must list the DOM changes`, 'Use { "hide": "<selector>" }, { "style": "<selector>", "css": {...} } or { "text": "<selector>", "key": "<shell key>", "values": {...} }.');
     for (const op of v.derive) {
       const kinds = DERIVE_OPS.filter((k) => typeof op?.[k] === 'string');
@@ -132,12 +146,73 @@ function checkVariants(key, variants, designFacts, frame) {
       }
     }
     const facts = { ...designFacts, ...v.when };
-    if (!frame.elements.some((el) => el.when !== undefined && factsMatch(el.when, facts) !== factsMatch(el.when, designFacts))) {
-      fail(`${at}: no element of the frame changes with ${JSON.stringify(v.when)}`, 'Mark the elements that exist only for some facts with "when" in screen-testids.json.');
+    const changed = frame.elements.filter((el) => el.when !== undefined && factsMatch(el.when, facts) !== factsMatch(el.when, designFacts));
+    if (scope === 'frame' && changed.length === 0) {
+      fail(`${at}: no element of the frame changes with ${JSON.stringify(v.when)}`, 'Mark the elements that exist only for some facts with "when" in screen-testids.json (or use "scope": "background" for a change behind the dialog).');
+    }
+    if (scope === 'background' && changed.length > 0) {
+      fail(`${at}: a background variant changes only what the map does not list, but ${changed.map((el) => el.testID).join(', ')} change with ${JSON.stringify(v.when)}`, 'Use "scope": "frame" (the default).');
     }
   }
   const ids = Object.keys(variants);
-  return Object.fromEntries(ids.map((id) => [id, { id, ...variants[id], facts: { ...designFacts, ...variants[id].when } }]));
+  return Object.fromEntries(ids.map((id) => [id, { id, ...variants[id], scope: variants[id].scope ?? 'frame', facts: { ...designFacts, ...variants[id].when } }]));
+}
+
+/**
+ * One reference variant made of several frames.json variants (in frames.json order): its id joins
+ * theirs with "--", its derive runs their steps in order, its facts hold all their conditions.
+ */
+export function composeVariants(frame, list) {
+  if (!list.length) return null;
+  const when = Object.assign({}, ...list.map((v) => v.when));
+  return {
+    id: list.map((v) => v.id).join('--'),
+    parts: list.map((v) => v.id),
+    when,
+    facts: { ...(frame.designFacts ?? {}), ...when },
+    derive: list.flatMap((v) => v.derive),
+    texts: Object.assign({}, ...list.map((v) => v.texts ?? {})),
+    reason: list.map((v) => v.reason).join(', '),
+    reasons: list.map((v) => v.reason),
+    scope: list.every((v) => v.scope === 'background') ? 'background' : 'frame',
+    state: list.map((v) => v.state).filter(Boolean).join(' '),
+  };
+}
+
+/**
+ * Every reference a frame has: the base (null), then each non-empty combination of its variants
+ * whose conditions can hold together (a fact never takes two values): single variants first, then
+ * pairs and so on, each group in frames.json order.
+ */
+export function referencePlan(frame) {
+  const list = Object.values(frame.variants ?? {});
+  const combos = [];
+  for (let mask = 1; mask < 1 << list.length; mask += 1) {
+    const chosen = list.filter((_v, i) => mask & (1 << i));
+    const when = {};
+    let agrees = true;
+    for (const v of chosen) {
+      for (const [k, value] of Object.entries(v.when)) {
+        if (k in when && when[k] !== value) agrees = false;
+        when[k] = value;
+      }
+    }
+    if (agrees) combos.push({ mask, variant: composeVariants(frame, chosen) });
+  }
+  const order = (m) => [...list.keys()].filter((i) => m & (1 << i));
+  combos.sort((a, b) => {
+    const oa = order(a.mask);
+    const ob = order(b.mask);
+    if (oa.length !== ob.length) return oa.length - ob.length;
+    for (let i = 0; i < oa.length; i += 1) if (oa[i] !== ob[i]) return oa[i] - ob[i];
+    return 0;
+  });
+  return [null, ...combos.map((c) => c.variant)];
+}
+
+/** Every reference name of a frame (base and composed variants). */
+export function referenceNames(frame) {
+  return referencePlan(frame).map((v) => referenceName(frame.key, v?.id));
 }
 
 /**
@@ -151,6 +226,54 @@ function checkBoard(key, board, frame) {
   if (!board || !Array.isArray(board.above)) fail(`${at} must be { "above": [<testIDs drawn over the board>] }`, 'Name the overlay elements (the Pause dialog, the Result screen).');
   for (const id of board.above) if (!frame.elements.some((el) => el.testID === id)) fail(`${at}.above names ${id}, which is not a testID of the frame`, 'Use a testID the frame lists.');
   return { above: [...board.above] };
+}
+
+/**
+ * A frame whose picture is a game board (S13's example picture, D56): the game draws it with its own
+ * board code while the mockup draws a stylised board, so it is masked like the S5 to S7 boards. The
+ * mask is the union of the app's and the reference's rectangles of that testID; the picture's frame
+ * and position are still gated (bounds).
+ */
+function checkBoardMask(key, boardMask, frame) {
+  if (boardMask === undefined) return null;
+  const at = `frames.json ${key} boardMask`;
+  if (typeof boardMask !== 'string' || !frame.elements.some((el) => el.testID === boardMask && !el.parent && el.a11yHidden !== true)) fail(`${at} must name a reachable testID of the frame (the picture the game draws)`, 'Name the picture element, for example "how-to-play.picture".');
+  if (frame.board) fail(`${at}: the frame already masks a board through "board"`, 'Use one of "board" and "boardMask".');
+  return { testID: boardMask };
+}
+
+/**
+ * Sample fixes applied to every render of a frame before it is measured (never to the design file):
+ * the mockup fills a placeholder with one fixed sample where the product shows the render language's
+ * own value (the System row's languageName, R3S-G17e). Each step re-renders the element's text with
+ * the mockup's own message function: { "sample": "<selector>", "key": "<deck key>", "values": {
+ * "<name>": "@autonym" }, "reason": "<id>" }. @autonym is the render language's autonym.
+ */
+function checkDesignFixes(key, fixes) {
+  if (fixes === undefined) return [];
+  const at = `frames.json ${key} designFixes`;
+  if (!Array.isArray(fixes) || fixes.length === 0) fail(`${at} must be a non-empty list`, 'Remove it, or list the sample fixes.');
+  for (const f of fixes) {
+    if (!f || typeof f.sample !== 'string' || typeof f.key !== 'string' || !f.values || typeof f.values !== 'object') fail(`${at}: every fix is { "sample": "<selector>", "key": "<deck key>", "values": {...}, "reason": "<id>" }`, 'Fix the entry.');
+    if (!Object.values(f.values).every((v) => v === '@autonym')) fail(`${at}: a sample value must be "@autonym" (the render language's autonym)`, 'Only the language sample is fixed per render.');
+    if (typeof f.reason !== 'string' || !f.reason) fail(`${at}: every fix names the decision that asked for it (reason)`, 'Add "reason": "R3S-G17e".');
+  }
+  return fixes;
+}
+
+/**
+ * Parts of the mockup drawn behind a frame's dialog that the map does not list but a sibling frame
+ * masks (the banner placeholder of Home under the S14 dialog, masked like home.banner-ad on S4): the
+ * render measures each selector's rectangle into the layout (masks), and the gates skip its pixels.
+ */
+function checkDesignMasks(key, masks) {
+  if (masks === undefined) return [];
+  const at = `frames.json ${key} designMasks`;
+  if (!Array.isArray(masks) || masks.length === 0) fail(`${at} must be a non-empty list`, 'Remove it, or list the masks.');
+  for (const m of masks) {
+    if (!m || typeof m.selector !== 'string' || typeof m.as !== 'string' || typeof m.why !== 'string' || m.why.length < 20) fail(`${at}: every mask is { "selector": "<selector>", "as": "<testID it stands for>", "why": "<20+ characters>" }`, 'Fix the entry.');
+  }
+  return masks;
 }
 
 /**
@@ -212,11 +335,13 @@ export function elementsForFacts(elements, facts) {
   return elements.filter((el) => el.when === undefined || factsMatch(el.when, facts));
 }
 
-/** The variant of a frame the facts select, or null for the base reference. */
+/**
+ * The reference variant of a frame the facts select, or null for the base: every variant whose
+ * "when" the facts match, composed in frames.json order (see composeVariants).
+ */
 export function variantFor(frame, facts) {
   const matching = Object.values(frame.variants ?? {}).filter((v) => factsMatch(v.when, facts));
-  if (matching.length > 1) fail(`frame ${frame.key}: the facts ${JSON.stringify(facts)} select several variants (${matching.map((v) => v.id).join(', ')})`, 'Make the variants\' "when" conditions exclusive in frames.json.');
-  return matching[0] ?? null;
+  return composeVariants(frame, matching);
 }
 
 /** The reference file stem: <frame> for the base, <frame>--<variant> for a variant. */
@@ -262,10 +387,15 @@ export function readGameFacts(path, { app = null, game = null } = {}) {
   return { path, app: id, designGame, facts };
 }
 
-/** "s11-settings--no-music (hasMusic false)" or "s11-settings (base)". */
+/** "s6-pause--no-music--no-hints (hasMusic false, hasHints false; L1, L8)" or "s11-settings (base)". */
 export function describeReference(frameKey, variant) {
   if (!variant) return `${frameKey} (base)`;
   return `${referenceName(frameKey, variant.id)} (${Object.entries(variant.when).map(([k, v]) => `${k} ${v}`).join(', ')}; ${variant.reason})`;
+}
+
+/** "hasMusic false, winLine score, hasHints false": the facts a run used, in FACT_VALUES order. */
+export function describeFacts(facts) {
+  return Object.keys(FACT_VALUES).map((k) => `${k} ${facts[k]}`).join(', ');
 }
 
 /**
@@ -274,7 +404,7 @@ export function describeReference(frameKey, variant) {
  * shoot-design --check does not compare them, so a metadata fix in the map (a component name, a
  * check) needs no re-render. Everything else in a layout is measured from the design.
  */
-export const MAP_METADATA_KEYS = ['role', 'component', 'kind', 'checks', 'mask', 'parent', 'a11yHidden', 'coveredBy', 'a11yLabel', 'state', 'when'];
+export const MAP_METADATA_KEYS = ['role', 'component', 'kind', 'checks', 'mask', 'parent', 'a11yHidden', 'coveredBy', 'a11yLabel', 'state', 'when', 'surface'];
 
 /** The metadata of one map element as a layout records it (see shoot-design.mjs). */
 export function mapMetadataOf(el) {
@@ -290,6 +420,7 @@ export function mapMetadataOf(el) {
     a11yLabel: typeof el.a11yLabel === 'string',
     state: el.state ?? null,
     when: el.when ?? null,
+    surface: el.surface === true,
   };
 }
 

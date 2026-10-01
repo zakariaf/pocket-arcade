@@ -1,0 +1,3 @@
+apps/demo/game.config.ts [mode-flows] modes.daily is true, but no flow of apps/demo/e2e/flows/ plays today's daily (tap daily.play-button, then action=win-level)
+apps/demo/game.config.ts [mode-flows] isContinueAllowed is true, but no flow of apps/demo/e2e/flows/ continues after a loss
+apps/demo/game.config.ts [mode-flows] modes.endless is true, but no flow of apps/demo/e2e/flows/ plays an endless run to its end

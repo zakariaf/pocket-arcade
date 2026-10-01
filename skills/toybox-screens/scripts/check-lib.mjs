@@ -10,8 +10,12 @@
 //   walk(root, options)     sorted file list with ignore/include globs (gitignore-style basename globs)
 //   createReporter(opts)    problem collection (file:line, rule id, message, fix) and the standard summary
 //   run(main)               wraps main(): exit 0 pass, 1 problems, 2 bad input or environment
-//   runSelftest(url, suites) the self-test runner: good fixture must pass, every bad-* fixture must fail
-//                           with each line of its EXPECT.txt in the output
+//   runSelftest(url, suites) the self-test runner: good/ and every pass-*/ must pass, every bad-*/ must
+//                           fail (exit 1) and every error-*/ must stop (exit 2), each printing every
+//                           line of its EXPECT.txt
+//   packageInstallFix(o)    the fix text for a missing pinned package: the skill-folder install and the
+//                           --tooling <dir> install for a read-only skill folder; resolveToolingDir and
+//                           importPackage load a package from that folder
 //   REPO_SCAN_IGNORES       the folders every checker that walks the app repo skips (skills/, .claude/,
 //                           node_modules, generated native and build output); isRepoScanIgnored(rel)
 //   readShellSlice(root)    null (the full Shell) or { screens, why } from shell-slice.json;
@@ -35,7 +39,7 @@ import { existsSync, lstatSync, mkdtempSync, readdirSync, readFileSync, rmSync, 
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs as nodeParseArgs } from 'node:util';
 
 export const EXIT = Object.freeze({ PASS: 0, FAIL: 1, BAD_INPUT: 2 });
@@ -417,14 +421,19 @@ export function sliceSkipReason(slice, screenId = null) {
 /**
  * The files the Shell build order creates at a later step and that other rules wait for. Pass one
  * to dueSkipReason: dueSkipReason(root, SHELL_DUE_TARGETS.plugins).
- *   plugins   the one native plugin list (expo-font, ads, IAP, audio plugin entries)      step 8
+ *   plugins   the one native plugin list (expo-font, ads, IAP, audio, tracking entries,   step 8
+ *             the native perf module)
  *   catalogs  the Shell's English catalog (catalog-key rules)                             step 6
- *   boot      the Shell boot file (hydration, checkpoint and UI-feedback wiring rules)    step 6
+ *   boot      the Shell boot file start-shell.ts, which lands with the composition root   step 7
+ *             (rules on hydration, the background checkpoint, the startup splash, UI
+ *             feedback and the JS half of the perf layer, app/perf/*.ts)
+ * A perf rule splits in two: its JS half (app/perf/*.ts, markJsEntry inside startShell) waits for
+ * .boot, and its native half (the process-start module and its plugin entry) waits for .plugins.
  */
 export const SHELL_DUE_TARGETS = Object.freeze({
   plugins: Object.freeze({ file: 'packages/shell/src/config/shell-plugins.ts', step: 8 }),
   catalogs: Object.freeze({ file: 'packages/shell/src/i18n/catalogs/en.json', step: 6 }),
-  boot: Object.freeze({ file: 'packages/shell/src/app/start-shell.ts', step: 6 }),
+  boot: Object.freeze({ file: 'packages/shell/src/app/start-shell.ts', step: 7 }),
 });
 
 /**
@@ -668,25 +677,50 @@ function tail(text, count = 8) {
   return text.trimEnd().split('\n').slice(-count).map((line) => `      | ${line}`).join('\n');
 }
 
+/** The fixture kinds runSelftest runs, by folder-name prefix: what each must do. */
+export const SELFTEST_CASES = Object.freeze({
+  good: Object.freeze({ exit: EXIT.PASS, expect: 'optional', meaning: 'clean input: exit 0 with RESULT: PASS' }),
+  'pass-': Object.freeze({ exit: EXIT.PASS, expect: 'required', meaning: 'a passing case: exit 0 with RESULT: PASS and every EXPECT.txt line (a SKIP line, a NOT APPLICABLE fact, a note)' }),
+  'bad-': Object.freeze({ exit: EXIT.FAIL, expect: 'required', meaning: 'a planted bug: exit 1 with every EXPECT.txt line (the rule id, file:line)' }),
+  'error-': Object.freeze({ exit: EXIT.BAD_INPUT, expect: 'required', meaning: 'bad input or environment: exit 2 with every EXPECT.txt line (the ERROR text)' }),
+});
+
+/** The kind of one fixture folder ('good', 'pass-', 'bad-', 'error-'), or null for a folder runSelftest ignores. */
+export function selftestCaseKind(name) {
+  if (name === 'good') return 'good';
+  for (const prefix of ['pass-', 'bad-', 'error-']) if (name.startsWith(prefix) && name.length > prefix.length) return prefix;
+  return null;
+}
+
 /**
- * Prove each checker: its good fixture passes, and every bad-* fixture fails with the text in
- * that fixture's EXPECT.txt (each non-empty line must appear in the output).
+ * Prove each checker on its fixture folders, one kind per folder-name prefix:
+ *   good/          exits 0 and ends with RESULT: PASS (EXPECT.txt optional)
+ *   pass-<case>/   exits 0, ends with RESULT: PASS and prints every line of its EXPECT.txt
+ *                  (a SKIP line, a NOT APPLICABLE fact, the variant a run picked)
+ *   bad-<case>/    exits 1 with a RESULT line and prints every line of its EXPECT.txt
+ *                  (the rule id, file:line); a suite needs at least one
+ *   error-<case>/  exits 2 with a RESULT line and prints every line of its EXPECT.txt
+ *                  (the ERROR [bad-input] text a missing or malformed input gives); an optional
+ *                  ARGS.txt in the folder replaces args(dir) with its whitespace-separated words
+ * Each non-empty EXPECT.txt line must appear in the output.
  *
  *   // scripts/selftest.mjs
  *   import { runSelftest } from './check-lib.mjs';
  *   await runSelftest(import.meta.url, [
- *     { script: 'check-exports.mjs', fixtures: '../tests/fixtures', args: (dir) => ['--root', dir] },
+ *     { script: 'check-exports.mjs', fixtures: '../tests/fixtures', args: (dir) => [dir] },
  *   ]);
  *
  * script and fixtures are relative to the selftest file. args(dir) builds the arguments for one
  * fixture folder (default: no arguments; the checker runs with that folder as its working
- * directory). Also checks that --help exits 0.
+ * directory). Also checks that --help exits 0. When every good, pass and bad fixture stops with the
+ * same exit-2 error, the environment is not ready (a package is not installed): the self-test says
+ * that once and exits 2. error-* fixtures are meant to exit 2 and never count towards that.
  */
 export async function runSelftest(selftestUrl, suites, { timeoutMs = 120000 } = {}) {
   await run(async () => {
     parseArgs(process.argv.slice(2), {
       name: 'selftest',
-      summary: 'Runs every checker of this skill on tests/fixtures: good/ must pass (exit 0) and each bad-*/ must fail (exit 1) with every line of its EXPECT.txt in the output.',
+      summary: 'Runs every checker of this skill on tests/fixtures: good/ and pass-*/ must pass (exit 0), each bad-*/ must fail (exit 1) and each error-*/ must stop (exit 2), each printing every line of its EXPECT.txt.',
       usage: '',
       positionals: { min: 0, max: 0 },
     });
@@ -715,7 +749,7 @@ export async function runSelftest(selftestUrl, suites, { timeoutMs = 120000 } = 
         continue;
       }
       const dirs = readdirSync(fixtures, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
-      const bad = dirs.filter((name) => name.startsWith('bad-'));
+      const bad = dirs.filter((name) => selftestCaseKind(name) === 'bad-');
       if (!dirs.includes('good')) {
         report.problem({ file: toPosix(relative(here, fixtures)), rule: 'selftest-fixtures', message: 'no good/ fixture', fix: 'Add tests/fixtures/good/ with input the checker must pass.' });
       }
@@ -723,27 +757,34 @@ export async function runSelftest(selftestUrl, suites, { timeoutMs = 120000 } = 
         report.problem({ file: toPosix(relative(here, fixtures)), rule: 'selftest-fixtures', message: 'no bad-* fixture: a check that has only ever passed proves nothing', fix: 'Add tests/fixtures/bad-<case>/ with a planted bug and an EXPECT.txt.' });
       }
       const ran = [];
-      for (const name of dirs.filter((dir) => dir === 'good' || dir.startsWith('bad-'))) {
+      for (const name of dirs.filter((dir) => selftestCaseKind(dir) !== null)) {
+        const kind = selftestCaseKind(name);
         const dir = join(fixtures, name);
         const expectPath = join(dir, 'EXPECT.txt');
-        const expected = name === 'good' ? [] : existsSync(expectPath) ? readFileSync(expectPath, 'utf8').split('\n').map((line) => line.trim()).filter(Boolean) : null;
-        if (expected === null || (name !== 'good' && expected.length === 0)) {
-          report.problem({ file: toPosix(relative(here, expectPath)), rule: 'selftest-expect', message: `${name} has no EXPECT.txt (or it is empty)`, fix: 'Write the rule id or message the checker must print, one per line.' });
+        const expected = existsSync(expectPath) ? readFileSync(expectPath, 'utf8').split('\n').map((line) => line.trim()).filter(Boolean) : kind === 'good' ? [] : null;
+        if (expected === null || (kind !== 'good' && expected.length === 0)) {
+          report.problem({ file: toPosix(relative(here, expectPath)), rule: 'selftest-expect', message: `${name} has no EXPECT.txt (or it is empty)`, fix: kind === 'pass-' ? 'Write the lines a passing run must print (a SKIP line, a note), one per line.' : kind === 'error-' ? 'Write the ERROR text the checker must print for this input, one per line.' : 'Write the rule id or message the checker must print, one per line.' });
           continue;
         }
-        ran.push({ name, dir, expected, result: runNode(script, args(dir), dir, timeoutMs) });
+        // An error case is usually a bad argument list, which one args(dir) for the suite cannot
+        // express: an error-<case>/ may hold ARGS.txt, whose words replace args(dir) for that case.
+        const argsPath = join(dir, 'ARGS.txt');
+        const argv = kind === 'error-' && existsSync(argsPath) ? readFileSync(argsPath, 'utf8').trim().split(/\s+/).filter(Boolean) : args(dir);
+        ran.push({ name, kind, dir, expected, result: runNode(script, argv, dir, timeoutMs) });
         runs += 1;
       }
-      // Every fixture stopped with the same exit-2 error: the environment is not ready (for
-      // example a package is not installed). Say that once instead of failing every case.
-      const errors = ran.map(({ result }) => (result.status === 2 ? /^ERROR \[[^\]]+\] (.*)$/m.exec(result.stdout)?.[1] : null));
-      if (ran.length > 0 && errors.every((error) => error && error === errors[0])) {
+      // Every fixture that should run stopped with the same exit-2 error: the environment is not
+      // ready (for example a package is not installed). Say that once instead of failing every case.
+      // error-* fixtures stop with exit 2 on purpose, so they never count here.
+      const runnable = ran.filter(({ kind }) => kind !== 'error-');
+      const errors = runnable.map(({ result }) => (result.status === 2 ? /^ERROR \[[^\]]+\] (.*)$/m.exec(result.stdout)?.[1] : null));
+      if (runnable.length > 0 && errors.every((error) => error && error === errors[0])) {
         const [message, fix = 'Fix the environment, then rerun.'] = errors[0].split(' Fix: ');
         throw new UsageError(`${label} cannot run here, every fixture stopped with: ${message}`, fix);
       }
-      for (const { name, dir, expected, result } of ran) {
+      for (const { name, kind, dir, expected, result } of ran) {
         const shown = `${label} ${name}`;
-        const want = name === 'good' ? 0 : 1;
+        const want = SELFTEST_CASES[kind].exit;
         const final = lastLine(result.stdout);
         const problems = [];
         if (result.timedOut) problems.push(`timed out after ${timeoutMs} ms`);
@@ -752,7 +793,13 @@ export async function runSelftest(selftestUrl, suites, { timeoutMs = 120000 } = 
         else if (want === 0 && final !== 'RESULT: PASS') problems.push(`expected RESULT: PASS, got "${final}"`);
         for (const text of expected) if (!result.output.includes(text)) problems.push(`output does not contain "${text}"`);
         if (problems.length > 0) {
-          report.problem({ file: toPosix(relative(here, dir)), rule: 'selftest-case', message: `${shown}: ${problems.join('; ')}\n${tail(result.output)}`, fix: name === 'good' ? 'Fix the checker (or the good fixture) so clean input passes.' : 'Fix the checker so it catches the planted bug and names it as EXPECT.txt says.' });
+          const fix = {
+            good: 'Fix the checker (or the good fixture) so clean input passes.',
+            'pass-': 'Fix the checker so this passing case exits 0 and prints what EXPECT.txt says.',
+            'bad-': 'Fix the checker so it catches the planted bug and names it as EXPECT.txt says.',
+            'error-': 'Fix the checker so this input stops with exit 2 (fail() or UsageError) and prints what EXPECT.txt says; exit 1 is for problems found, exit 2 for bad input.',
+          }[kind];
+          report.problem({ file: toPosix(relative(here, dir)), rule: 'selftest-case', message: `${shown}: ${problems.join('; ')}\n${tail(result.output)}`, fix });
         } else {
           console.log(`ok   ${shown} (exit ${result.status}${expected.length ? `, found ${expected.map((text) => `"${text}"`).join(', ')}` : ''})`);
         }
@@ -760,6 +807,68 @@ export async function runSelftest(selftestUrl, suites, { timeoutMs = 120000 } = 
     }
     return report.finish({ checked: runs, unit: 'runs' });
   });
+}
+
+// ---------------------------------------------------------------------------------------------
+// Pinned packages of a skill that needs them (scripts/package.json)
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * The folder that holds a skill's installed packages (its node_modules/): the --tooling option,
+ * else the environment variable, else the skill's own scripts/ folder. Use the option or the
+ * variable when the skill folder must stay read-only or is shared by several sessions.
+ *   const tooling = resolveToolingDir({ given: options.tooling, envVar: 'PARITY_TOOLING_DIR', scriptsDir: SCRIPTS_DIR });
+ */
+export function resolveToolingDir({ given, envVar, scriptsDir } = {}) {
+  const fromEnv = envVar ? process.env[envVar] : undefined;
+  const dir = [given, fromEnv].find((value) => typeof value === 'string' && value.trim() !== '') ?? scriptsDir;
+  if (typeof dir !== 'string' || dir.trim() === '') throw new Error('resolveToolingDir needs scriptsDir (the skill\'s scripts/ folder)');
+  return resolve(dir);
+}
+
+/**
+ * The fix text for a pinned package that is not installed. It gives both install forms: into the
+ * skill's own scripts/ folder, and, when the skill folder must stay read-only or is shared, into a
+ * folder in the app repo that the script is then pointed at with --tooling <dir> (or the variable).
+ *   fail('pngjs 7.0.0 is not installed', packageInstallFix({ scriptsDir: SCRIPTS_DIR, envVar: 'PARITY_TOOLING_DIR', repoDir: '.parity/tooling' }));
+ */
+export function packageInstallFix({ scriptsDir, envVar, option = '--tooling', repoDir = '.tooling' } = {}) {
+  if (typeof scriptsDir !== 'string' || scriptsDir.trim() === '') throw new Error('packageInstallFix needs scriptsDir (the skill\'s scripts/ folder)');
+  const pinned = `the pinned package.json and package-lock.json of ${scriptsDir}`;
+  const pointAt = envVar ? `pass ${option} <repo>/${repoDir} (or set ${envVar}=<repo>/${repoDir})` : `pass ${option} <repo>/${repoDir}`;
+  return `Install the pinned packages into the skill: npm ci --prefix "${scriptsDir}". When the skill folder must stay read-only or is shared by other sessions, copy ${pinned} into <repo>/${repoDir}, run npm ci --prefix <repo>/${repoDir}, and ${pointAt}.`;
+}
+
+/** The entry file of an installed package for import(): exports (node, import, default), then main. */
+function packageEntry(pkgDir) {
+  const pkg = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8'));
+  const pick = (value) => {
+    if (typeof value === 'string') return value;
+    if (Array.isArray(value)) return value.map(pick).find(Boolean) ?? null;
+    if (value && typeof value === 'object') {
+      if ('.' in value) return pick(value['.']);
+      for (const condition of ['node', 'import', 'default', 'require']) if (condition in value) {
+        const found = pick(value[condition]);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+  return (pkg.exports !== undefined ? pick(pkg.exports) : null) ?? pkg.main ?? 'index.js';
+}
+
+/**
+ * Load a pinned package from a tooling folder (resolveToolingDir), or stop with exit 2 and the
+ * install fix. Keeps --help and argument errors working before any install.
+ *   const { PNG } = await importPackage('pngjs', tooling, { what: 'pngjs 7.0.0', fix: packageInstallFix({ ... }) });
+ */
+export async function importPackage(name, toolingDir, { what = name, fix } = {}) {
+  const pkgDir = join(resolve(toolingDir), 'node_modules', ...name.split('/'));
+  if (!existsSync(join(pkgDir, 'package.json'))) {
+    throw new UsageError(`${what} is not installed in ${toPosix(resolve(toolingDir))}/node_modules`, fix ?? `Run: npm ci --prefix "${toolingDir}"`);
+  }
+  const entry = join(pkgDir, packageEntry(pkgDir));
+  return import(pathToFileURL(entry).href);
 }
 
 /** Make an empty temporary folder; remove it with removeTempDir(). */

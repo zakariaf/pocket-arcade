@@ -1,0 +1,2 @@
+debug-perf-rows
+the Performance row debug.perf-benchmark-row (a map entry of S15 the design does not draw) is set nowhere in screens/debug/

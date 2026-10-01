@@ -24,7 +24,7 @@ jest.mock('expo-constants', () =>
     .testExpoConstantsWith({ hints: { freePerDay: 1 } }),
 );
 
-type Setup = { readonly isPremium?: boolean; readonly ref?: RunRef };
+type Setup = { readonly isPremium?: boolean; readonly ref?: RunRef; readonly hasHints?: boolean };
 
 /** Tally level 1: the target is 4 and par is 2; column 0 adds one, column 1 adds two. */
 const LEVEL_1: RunRef = { kind: 'level', level: 1 };
@@ -35,7 +35,7 @@ function navSpies(): GameScreenNav & Record<keyof GameScreenNav, jest.Mock> {
   return { onLevels: jest.fn(), onHome: jest.fn(), onOpenPremium: jest.fn() };
 }
 
-async function gameScreen({ isPremium = false, ref = LEVEL_1 }: Setup = {}) {
+async function gameScreen({ isPremium = false, ref = LEVEL_1, hasHints = true }: Setup = {}) {
   const script: FakeAdsScript = {
     isRewardedLoaded: false,
     interstitialResult: 'unavailable',
@@ -44,6 +44,7 @@ async function gameScreen({ isPremium = false, ref = LEVEL_1 }: Setup = {}) {
   };
   const shell = createHostWrapper({
     isPremium,
+    host: { hasHints },
     services: {
       ads: createFakeAds(script),
       connectivity: createFakeConnectivity(true),
@@ -95,6 +96,13 @@ describe('useGameScreenModel', () => {
     expect(shell.save.doc().hints).toStrictEqual({ freeDate: '2026-09-26', freeUsed: 1 });
     // Spent, offline for ads (no rewarded ad loaded): hidden, never a broken button (spec 8.8).
     expect(result.current.model.topBar?.hint).toBeNull();
+  });
+
+  it('draws no hint key for a game without solver hints, even with a free hint left (L8)', async () => {
+    // The tally run supports hints and the config gives a free one, so only the fact hides the key.
+    const { result } = await gameScreen({ hasHints: false });
+    expect(result.current.model.topBar).toMatchObject({ hasHints: false, hint: null });
+    expect(result.current.model.topBar?.undo).toMatchObject({ label: 'Undo' });
   });
 
   it('shows the win with its stars only after they are saved (spec S7, 8.1)', async () => {

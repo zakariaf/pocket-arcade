@@ -1,0 +1,3 @@
+[reference-variant]
+captured against s6-pause--no-music
+select s6-pause--no-music--no-hints (hasMusic false, hasHints false; L1, L8)

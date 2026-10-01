@@ -37,9 +37,13 @@ const SPEC = {
     '  directional-icons       DIRECTIONAL_ICONS must be exactly the directional icons that exist',
     '  board-ltr               a BoardCanvas is rendered but nothing keeps the board LTR',
     '  direction-before-render start-shell.ts must plan the direction before it renders the app',
-    '  cold-start-mark         once app/perf/cold-start.ts exists (Shell step 8), start-shell.ts calls markJsEntry()',
+    '  cold-start-mark         once app/perf/cold-start.ts exists (Shell step 7), start-shell.ts calls markJsEntry()',
     '                          inside startShell, right after readParityLaunch() and before the direction plan (never',
     '                          at module scope: a direction reload re-runs every module)',
+    '  root-direction-provider a root that renders text outside the navigator (app/create-startup-splash.tsx: the',
+    '                          restart splash and the held parity splash) does not wrap itself in',
+    '                          <DirectionProvider direction={directionOf(language)}>, so its Persian text is',
+    '                          written left to right (the S1 tagline\'s full stop stood at the right end)',
     '  vazirmatn-files         every app ships assets/fonts/Vazirmatn-Regular.ttf and -Bold.ttf',
     '',
     'Test files (*.test.ts[x]) may assert styles and mock modules; only the structural rules apply to them.',
@@ -59,6 +63,8 @@ const ICON_FILE = 'packages/shell/src/ui/icons/icon.tsx';
 const APP_TEXT_FILE = 'packages/shell/src/ui/app-text.tsx';
 const BIDI_FILE = 'packages/shell/src/i18n/bidi.ts';
 const COLD_START_FILE = 'packages/shell/src/app/perf/cold-start.ts';
+/** Roots registered outside the navigator: they set the direction of their own language. */
+const OUTSIDE_ROOTS = ['packages/shell/src/app/create-startup-splash.tsx'];
 const BIDI_ESCAPE = new RegExp(`${String.fromCharCode(92)}${String.fromCharCode(92)}u(061[cC]|200[eEfF]|202[a-eA-E]|206[6-9])`);
 const BIDI_RAW = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/;
 
@@ -230,6 +236,13 @@ run(async () => {
     if (!test && rel.startsWith('packages/shell/src/game-host/')) code(/\bdirection\s*:\s*['"]ltr['"]/g, () => { hasBoardWrapper = true; });
 
     if (rel === 'packages/shell/src/ui/icons/icon-paths.ts') checkDirectionalIcons(source, masked, (index, message) => problem(index, 'directional-icons', message, `DIRECTIONAL_ICONS = exactly the icons among ${DIRECTIONAL.join(', ')} that exist; play, clocks, stars, logos and pictures never flip.`));
+    if (OUTSIDE_ROOTS.includes(rel)) {
+      const provider = findJsxTags(source, masked).find((tag) => tag.name === 'DirectionProvider');
+      const direction = provider === undefined ? null : jsxAttributes(source, provider, masked).get('direction');
+      if (provider === undefined || direction === undefined || !/\bdirectionOf\s*\(/.test(masked)) {
+        problem(provider?.start ?? 0, 'root-direction-provider', 'this root renders text outside the navigator without a DirectionProvider for its language, so Persian and Sorani text is written left to right', 'Wrap the root in <DirectionProvider direction={directionOf(language)}> (references/direction-switch.md, "Roots outside the navigator").');
+      }
+    }
     if (rel === 'packages/shell/src/app/start-shell.ts') {
       const plan = masked.search(/\bplanDirection\s*\(/);
       const render = masked.search(/\bcreateShellApp\s*\(/);
@@ -254,7 +267,7 @@ run(async () => {
 });
 
 /**
- * The cold-start clock's JS entry mark (performance-budgets' app/perf/, Shell step 8): inside
+ * The cold-start clock's JS entry mark (performance-budgets' app/perf/ JS half, Shell step 7): inside
  * startShell, right after the parity read and before the direction plan. At module scope it would
  * be work at import time, and a missing mark leaves the E2E run with no cold-start entry.
  */

@@ -8,7 +8,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createReporter, maskComments, parseArgs, readText, REPO_SCAN_IGNORES, requireDir, run, walk } from './check-lib.mjs';
+import { createReporter, dueSkipReason, maskComments, parseArgs, readText, REPO_SCAN_IGNORES, requireDir, run, SHELL_DUE_TARGETS, walk } from './check-lib.mjs';
 import { configFiles, isTestFile, lineAt, packageJsonFiles, parseImports, readRepoJson, readRepoText, runtimeSourceFiles } from './lib/repo-scan.mjs';
 
 const SPEC = {
@@ -21,8 +21,14 @@ const SPEC = {
   positionals: { min: 0, max: 1 },
   details: [
     'Rules: network-call, network-global, remote-url, banned-import, vendor-import, iap-server-api, network-guard-import,',
-    '  banned-package, config-updates, config-ats, config-att, config-iap-options, vendor-pod, banned-pod,',
+    '  banned-package, config-updates, config-ats, att-config, config-iap-options, vendor-pod, banned-pod,',
     '  privacy-manifest, audit-wiring, baseline, gitignore-secrets, secret-file, private-key, deny-rules.',
+    'att-config (owner decision O1, App Tracking Transparency): with ads enabled in a game.config.ts, shell-plugins.ts',
+    '  lists expo-tracking-transparency with userTrackingPermission, with-shell.ts writes the localized',
+    '  NSUserTrackingUsageDescription, and the en, de, fa and ckb catalogs hold consent.tracking.usage-description;',
+    '  no other config file sets the text, and the AdMob plugin never gets userTrackingUsageDescription (one',
+    '  source). Before Shell step 8 created shell-plugins.ts the plugin part is a not-yet-due SKIP.',
+    'banned-import also covers expo-tracking-transparency outside packages/shell/src/services/consent/admob-consent-adapter.ts.',
     'Facts (allowlists, banned lists, required reasons) come from assets/privacy-facts.json.',
   ].join('\n'),
 };
@@ -45,9 +51,11 @@ const NETWORK_GLOBALS = [
   /(?<!new\s+)\b(?:globalThis|window|global|self|navigator)\s*(?:\.\s*(fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon)\b|\[\s*(['"`])(fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon)\2\s*\])(?!\s*\()/g,
 ];
 
-function bannedImportReason(specifier) {
+function bannedImportReason(specifier, rel) {
   const bare = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
   if (FACTS.bannedImports[bare]) return FACTS.bannedImports[bare];
+  const restricted = FACTS.restrictedImports[bare];
+  if (restricted) return restricted.onlyIn.includes(rel) ? null : restricted.reason;
   const prefix = Object.keys(FACTS.bannedImportPrefixes).find((p) => specifier.startsWith(p));
   return prefix ? FACTS.bannedImportPrefixes[prefix] : null;
 }
@@ -71,7 +79,7 @@ function layerA(files, sources, report) {
       for (const match of text.matchAll(new RegExp(`\\b(${FACTS.iapServerApis.join('|')})\\b`, 'g'))) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'iap-server-api', message: `${match[1]} (expo-iap server feature)`, fix: 'IAPKit and server verification are banned; StoreKit 2 verifies on the phone.' });
     }
     for (const imp of parseImports(raw)) {
-      const reason = bannedImportReason(imp.specifier);
+      const reason = bannedImportReason(imp.specifier, rel);
       if (reason) report.problem({ file: rel, line: imp.line, rule: 'banned-import', message: `imports ${imp.specifier}`, fix: reason });
       const vendor = FACTS.vendorSdks.find((sdk) => imp.specifier === sdk || imp.specifier.startsWith(`${sdk}/`));
       if (vendor && !ADAPTER.test(rel) && !isTest) report.problem({ file: rel, line: imp.line, rule: 'vendor-import', message: `imports the vendor SDK ${vendor} outside an adapter`, fix: 'Vendor SDKs are imported only by packages/shell/src/services/<port>/<vendor>-adapter.ts.' });
@@ -118,11 +126,49 @@ function layerE(root, report) {
     const text = rel.endsWith('.json') ? raw : maskComments(raw);
     if (/\bupdates\b['"]?\s*:\s*\{\s*['"]?enabled['"]?\s*:\s*false\b/.test(text)) hasUpdatesOff = true;
     for (const match of text.matchAll(/NSAllowsArbitraryLoads['"]?\s*:\s*true/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'config-ats', message: 'NSAllowsArbitraryLoads is true', fix: 'Remove the App Transport Security exception; the app loads nothing remote.' });
-    for (const match of text.matchAll(/\b(NS)?[uU]serTrackingUsageDescription\b/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'config-att', message: 'a tracking usage description is set', fix: 'Decision D4: no App Tracking Transparency prompt in v1.' });
+    // Tests may name the keys to prove where they are (or are not); only config code sets them.
+    const isConfigCode = !isTestFile(rel);
+    for (const match of isConfigCode ? text.matchAll(/\buserTrackingUsageDescription\b/g) : []) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'att-config', message: "the AdMob plugin's userTrackingUsageDescription is set", fix: `The tracking text has one source (owner decision O1): the ${FACTS.att.plugin} plugin's ${FACTS.att.pluginOption} in ${FACTS.att.pluginsFile} and withShell's locales, from the Shell catalogs (${FACTS.att.catalogKey}); remove the AdMob option.` });
+    if (isConfigCode && rel !== FACTS.att.pluginsFile && rel !== FACTS.att.withShellFile) {
+      for (const match of text.matchAll(/\b(NSUserTrackingUsageDescription|userTrackingPermission)\b/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'att-config', message: `${match[1]} is set outside ${FACTS.att.pluginsFile} and ${FACTS.att.withShellFile}`, fix: `Set the tracking text only there, from the Shell catalogs' ${FACTS.att.catalogKey} (so every language and every game get the same reviewed text).` });
+    }
     for (const match of text.matchAll(/\[\s*['"]expo-iap['"]\s*,|\b(iapkitApiKey|alternativeBilling|onside|EXPO_IAP_ONSIDE)\b/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'config-iap-options', message: `expo-iap option or switch (${match[0].trim()})`, fix: "Use the bare plugin string 'expo-iap'; IAPKit and Onside add a server or the OnsideKit pod." });
     for (const match of text.matchAll(/['"](expo-updates|expo-dev-client)['"]/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'config-updates', message: `${match[1]} in the build config`, fix: 'OTA updates and dev clients are network components; remove them.' });
   }
   if (!hasUpdatesOff) report.problem({ file: 'packages/shell/src/config/with-shell.ts', rule: 'config-updates', message: 'no updates: { enabled: false } in the app config', fix: 'withShell must set updates: { enabled: false } (no OTA updates).' });
+}
+
+/** Whether any game enables ads (game.config.ts ads: { isEnabled: true }). */
+function adsEnabledGames(root) {
+  const apps = join(root, 'apps');
+  if (!existsSync(apps)) return [];
+  return readdirSync(apps).sort().filter((name) => {
+    const rel = `apps/${name}/game.config.ts`;
+    return existsSync(join(root, rel)) && /\bisEnabled\s*:\s*true\b/.test(maskComments(readRepoText(root, rel)));
+  });
+}
+
+/** Owner decision O1: with ads on, the ATT plugin, the localized text and the catalog strings exist. */
+function attConfig(root, report) {
+  const games = adsEnabledGames(root);
+  if (games.length === 0) return;
+  const { att } = FACTS;
+  const problem = (file, message, fix) => report.problem({ file, rule: 'att-config', message, fix });
+  const notYet = dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
+  if (notYet !== null) report.skip({ file: att.pluginsFile, rule: 'att-config', message: notYet });
+  else {
+    const plugins = maskComments(readRepoText(root, att.pluginsFile));
+    if (!new RegExp(`\\[\\s*['"]${att.plugin}['"]\\s*,\\s*\\{[^}]*\\b${att.pluginOption}\\s*:`).test(plugins)) problem(att.pluginsFile, `${games.join(', ')} enable ads, but the ${att.plugin} plugin with ${att.pluginOption} is not listed`, `Add ['${att.plugin}', { ${att.pluginOption}: <the en catalog's ${att.catalogKey}> }] to shellPlugins (Apple's prompt crashes the app without ${att.infoPlistKey}).`);
+    const withShell = existsSync(join(root, att.withShellFile)) ? maskComments(readRepoText(root, att.withShellFile)) : '';
+    if (!new RegExp(`\\b${att.infoPlistKey}\\b`).test(withShell)) problem(att.withShellFile, `withShell does not write locales.<lang>.ios.${att.infoPlistKey}`, `Write it for ${att.languages.join(', ')} from the Shell catalogs next to CFBundleDisplayName (Expo writes each InfoPlist.strings at prebuild).`);
+  }
+  for (const lang of att.languages) {
+    const rel = `${att.catalogDir}/${lang}.json`;
+    if (!existsSync(join(root, rel))) continue; // catalog-key rules belong to the i18n checks (Shell step 6)
+    const catalog = readRepoJson(root, rel) ?? {};
+    const text = catalog[att.catalogKey];
+    if (typeof text !== 'string' || text.trim() === '') problem(rel, `has no ${att.catalogKey} (the ${lang} tracking prompt text)`, `Add the copy deck's ${att.catalogKey} text for ${lang} (the owner reviews fa and ckb; it never blocks the build).`);
+  }
 }
 
 function layerD(root, report) {
@@ -228,6 +274,7 @@ run(async () => {
   layerA(files, sources, report);
   bannedPackages(root, report);
   layerE(root, report);
+  attConfig(root, report);
   layerD(root, report);
   privacyManifest(root, report);
   auditWiring(root, report);

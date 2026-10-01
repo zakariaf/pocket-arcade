@@ -39,6 +39,8 @@ async function settingsExtras() {
     refresh: () => Promise.resolve(INFO),
     showFormIfRequired: () => Promise.resolve(INFO),
     showPrivacyOptions: jest.fn(() => Promise.resolve(INFO)),
+    // Apple's tracking prompt belongs to the consent moment, never to Settings (D43).
+    requestTracking: jest.fn(() => Promise.resolve('not-determined' as const)),
   };
   const shell = createHostWrapper({ services: { consent } });
   const { result } = await renderHook(() => useSettingsExtras(), { wrapper: shell.wrapper });
@@ -76,6 +78,7 @@ describe('useSettingsExtras', () => {
     extras.onOpenAdPrivacy();
     expect(jest.mocked(restorePremium)).toHaveBeenCalledTimes(1);
     expect(consent.showPrivacyOptions).toHaveBeenCalledTimes(1);
+    expect(consent.requestTracking).not.toHaveBeenCalled();
   });
 
   it('asks before each reset, and the reset reaches the stores', async () => {

@@ -19,6 +19,12 @@ import {
   type ReleaseOptions,
 } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep, type ReleaseContext } from '@e07/tooling/release/release-runner.ts';
+import { appIdOf } from '@e07/tooling/release/store-gate.ts';
+import {
+  missingSheetLine,
+  REVIEW_SHEET,
+  translationReviewLines,
+} from '@e07/tooling/release/translation-review.ts';
 
 export type AppIdentity = {
   readonly name: string;
@@ -88,19 +94,26 @@ function readIdentity(context: ReleaseContext): Omit<AppIdentity, 'appleAppId'> 
   return { name, version, bundleId };
 }
 
-/** Store builds ship fa/ckb text only after a native speaker reviewed it (owner steps G7/R3). */
-function assertTranslationsReviewed(context: ReleaseContext): void {
-  const reviewSheet = join('packages', 'tooling', 'src', 'i18n', 'review-sheet.ts');
-  if (!existsSync(reviewSheet)) {
-    throw new Error(
-      `${reviewSheet} is missing: the fa/ckb review gate must exist before a store release`,
-    );
+/**
+ * Owner step R3, never a gate (owner decision O6): the review sheet lists the fa and ckb texts the
+ * owner has not read yet (reports/i18n/review-<lang>.csv), the release prints them and goes on.
+ */
+export function reportTranslationsToReview(context: ReleaseContext): void {
+  if (!existsSync(REVIEW_SHEET)) {
+    console.log(`release:ios: ${missingSheetLine(`${REVIEW_SHEET} is missing`)}`);
+    return;
   }
-  runReleaseStep(
-    'i18n-review',
-    { file: 'node', args: [reviewSheet, '--release'], atRoot: true },
-    context,
-  );
+  try {
+    const output = runReleaseStep(
+      'i18n-review',
+      { file: 'node', args: [REVIEW_SHEET], atRoot: true },
+      context,
+    );
+    for (const line of translationReviewLines(output)) console.log(`release:ios: ${line}`);
+  } catch (error: unknown) {
+    const reason = error instanceof Error ? error.message.split('\n')[0] : String(error);
+    console.log(`release:ios: ${missingSheetLine(reason ?? 'the review sheet failed')}`);
+  }
 }
 
 async function lookUpAppleAppId(bundleId: string, env: NodeJS.ProcessEnv): Promise<string> {
@@ -141,8 +154,13 @@ export async function preflight(
   assertKeychainUnlocked();
   runReleaseStep('verify', { file: 'npm', args: ['run', '-s', 'verify'], atRoot: true }, context);
   const identity = readIdentity(context);
+  if (identity.bundleId !== appIdOf(options.game)) {
+    throw new Error(
+      `the bundle id is ${identity.bundleId}, not ${appIdOf(options.game)}: every game ships as io.applander.<game id without hyphens> (owner decision O4); fix game.config.ts bundleId`,
+    );
+  }
   if (options.variant.appVariant === 'store') {
-    assertTranslationsReviewed(context);
+    reportTranslationsToReview(context);
     const tags = git(['tag', '--list', `${options.game}/v*`]).split('\n');
     if (!isVersionAboveLastRelease(identity.version, tags, options.game)) {
       throw new Error(

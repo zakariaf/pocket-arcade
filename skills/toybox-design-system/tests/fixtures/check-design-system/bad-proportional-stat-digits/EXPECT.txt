@@ -1,0 +1,3 @@
+[tabular-digits]
+packages/shell/src/theme/type-styles.ts:
+TYPE_STYLES.statValueCompact has no isTabular

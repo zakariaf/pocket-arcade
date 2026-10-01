@@ -51,6 +51,7 @@ function modelWith(overrides: Partial<StatsModel> = {}): StatsModel {
     gameName: 'Line Siege',
     logo: LOGO,
     formatNumber: (value) => value.toString(),
+    formatPercent: (rate) => `${String(Math.round(rate * 100))}%`,
     isReducedMotion: false,
     banner: { renderBanner: () => null, isAllowed: true },
     onBack: jest.fn(),
@@ -77,6 +78,15 @@ const CELLS = [
 ].flatMap((id) => [id, `${id}.value`, `${id}.label`]);
 
 describe('StatsView', () => {
+  it('shows the win rate as the bare percentage under its label (the design: 62% over "Win rate")', async () => {
+    await renderWithShell(<StatsView model={modelWith()} />);
+
+    expect(screen.getByTestId('stats.overview-card.win-rate.value')).toHaveTextContent('62%', {
+      exact: true,
+    });
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
   it('draws every S10 panel with its design testIDs', async () => {
     await renderWithShell(<StatsView model={modelWith()} />);
 

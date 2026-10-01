@@ -1,0 +1,2 @@
+home-daily-edge
+Home never calls navigate('Daily'): nothing on Home opens S9 Daily challenge

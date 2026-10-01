@@ -28,11 +28,15 @@ Parity waivers changed
 - Settings (S11): the version-gap waiver, class design-artefact, retired because the design is fixed (Gate-Change trailer in 8c2f4b0).
 
 Texts changed in all four languages
-- Line Siege how-to-play step 4 and tutorial step 4 (en, de, fa, ckb): en now reads "The monsters march closer every few blocks." and "Careful: the monsters march closer every few blocks."; de, fa and ckb changed with it, and fa and ckb wait for a native speaker's review (R3).
-- The win line of score-rated levels (en, de, fa, ckb): en reads "Score 1,840 – best 1,840"; the fa and ckb drafts wait for a native speaker's review (R3).
+- Line Siege how-to-play step 4 and tutorial step 4 (en, de, fa, ckb): en now reads "The monsters march closer every few blocks." and "Careful: the monsters march closer every few blocks."; de, fa and ckb changed with it, and the fa and ckb drafts go to the owner's review (R3).
+- The win line of score-rated levels (en, de, fa, ckb): en reads "Score 1,840 – best 1,840"; the fa and ckb drafts go to the owner's review (R3).
+
+Owner steps (not blocking)
+- Review the fa and ckb drafts of the two step-4 texts and the score line (step R3)
+- Play-test Line Siege: still open, whenever suits you (step G6)
+- Listen to the six Line Siege sound previews in reports/sfx/line-siege/ (step G9)
 
 Not tested or not verified
-- The new fa and ckb texts need a native speaker (R3).
 - Sound and haptics on Pause need your phone.
 
 Details

@@ -1,0 +1,3 @@
+[family-sharing]
+apps/demo-game/ios/Premium.storekit
+familyShareable is true

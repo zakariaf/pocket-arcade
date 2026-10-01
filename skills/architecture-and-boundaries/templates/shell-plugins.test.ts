@@ -1,7 +1,12 @@
 // packages/shell/src/config/shell-plugins.test.ts
 import { GOOGLE_SAMPLE_APP_IDS } from './ads-config.ts';
 import { AUDIO_API_PLUGIN } from './audio-config.ts';
-import { FONT_FILES, shellPlugins, SUPPORTED_LOCALES } from './shell-plugins.ts';
+import {
+  FONT_FILES,
+  shellPlugins,
+  SUPPORTED_LOCALES,
+  TRACKING_USAGE_DESCRIPTIONS,
+} from './shell-plugins.ts';
 
 import type { GameConfig } from './game-config.ts';
 import type { PluginEntry } from './shell-plugins.ts';
@@ -9,11 +14,11 @@ import type { PluginEntry } from './shell-plugins.ts';
 const GAME: GameConfig = {
   id: 'probe-game',
   appName: { en: 'Probe Game', de: 'Probe Game', fa: 'Probe Game', ckb: 'Probe Game' },
-  bundleId: 'com.example.probegame',
+  bundleId: 'io.applander.probegame',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 1,
-  premium: { productId: 'com.example.probegame.premium', priceNote: 'EUR 1.99 tier' },
+  premium: { productId: 'io.applander.probegame.premium', priceNote: 'EUR 1.99 (owner, O2)' },
   ads: {
     isEnabled: true,
     policy: {
@@ -58,8 +63,18 @@ describe('shellPlugins', () => {
       'expo-font',
       'expo-iap',
       'react-native-google-mobile-ads',
+      'expo-tracking-transparency',
       'react-native-audio-api',
     ]);
+  });
+
+  it("gives Apple's tracking prompt the Shell catalog's en text, in every ads mode", () => {
+    for (const mode of ['off', 'test', 'live'] as const) {
+      expect(entryNamed(shellPlugins(GAME, mode), 'expo-tracking-transparency')).toStrictEqual({
+        userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en,
+      });
+    }
+    expect(TRACKING_USAGE_DESCRIPTIONS.en).toContain('Google');
   });
 
   it('gives expo-localization only the four languages and expo-font the five Toybox faces', () => {

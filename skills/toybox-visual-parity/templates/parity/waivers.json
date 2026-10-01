@@ -170,6 +170,78 @@
       "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
       "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. A press squash cannot be held after the finger lifts, and bounds never see transforms. A pre-listed design-artefact pair of the parity skill.",
       "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.1.mark",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "The fixture's missed day mark (Monday) is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.7.mark",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "The fixture's today mark (Sunday) is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-card",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "The legend's missed swatch inside the week card is dashed: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["fa"],
+      "reason": "The month sits on the tilted calendar tile. iOS draws the edges of a rotated view without edge antialiasing (React Native exposes no allowsEdgeAntialiasing), so the band edge next to the word is stepped; in dark fa Chrome's antialiased edge pixels near the text colour count as ink in the design window (ink height 23 pt) while the app's stepped edge does not (16.7 pt). The word itself matches. A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s12-store-unavailable-offline",
+      "testID": "premium.buy-button",
+      "rule": "structure",
+      "class": "platform",
+      "reason": "The disabled Buy key has a dashed edge: React Native on iOS draws a dashed border with its own dash length and corner phase (no style sets dash length or phase); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (the same cause as the S8 locked tiles). A pre-listed platform waiver of the parity skill.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["en"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. A pre-listed design-artefact waiver of the parity skill; the design fix is the owner's.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["en"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. A pre-listed design-artefact waiver of the parity skill; the design fix is the owner's.",
+      "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["en"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. A pre-listed design-artefact waiver of the parity skill; the design fix is the owner's.",
+      "reportedToOwner": "2026-09-30"
     }
   ]
 }

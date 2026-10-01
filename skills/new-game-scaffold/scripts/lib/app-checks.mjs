@@ -6,7 +6,7 @@ import { join } from 'node:path';
 
 import { lineOf, readShellSlice, readText, REPO_SCAN_IGNORES, walk } from '../check-lib.mjs';
 import { DECK_LOSE_SLUGS, deckEntries } from './app-files.mjs';
-import { BUNDLE_ID, existingApps, FONT_FILES, idForms, LANGUAGES } from './app-plan.mjs';
+import { BUNDLE_PREFIX, bundleIdFor, existingApps, FONT_FILES, idForms, LANGUAGES, placeholdersIn, premiumIdFor } from './app-plan.mjs';
 import { errorText } from './app-modules.mjs';
 import { code } from './ts-scan.mjs';
 
@@ -47,6 +47,7 @@ export function evidenceParts(id) {
     { part: 'board pixel goldens', test: (repo) => repo.exists(`test/goldens/boards/${id}-board.golden.test.ts`), where: `test/goldens/boards/${id}-board.golden.test.ts`, skill: 'board-rendering-skia' },
     { part: 'bot simulations', test: (repo) => repo.files(`test/sims/${id}`).some((file) => file.endsWith('.sim.test.ts')) || repo.files(`apps/${id}/src`).some((file) => file.endsWith('.sim.test.ts')), where: `test/sims/${id}/*.sim.test.ts`, skill: 'game-balance-and-bots' },
     { part: 'E2E flows', test: (repo) => repo.files(`apps/${id}/e2e/flows`).some((file) => file.endsWith('.yaml')), where: `apps/${id}/e2e/flows/**/*.yaml`, skill: 'e2e-maestro' },
+    { part: 'parity facts pin test', test: (repo) => repo.exists(`apps/${id}/src/parity-game-facts.test.ts`), where: `apps/${id}/src/parity-game-facts.test.ts`, skill: 'toybox-visual-parity' },
   ];
 }
 
@@ -226,7 +227,11 @@ export async function checkGameConfig(modules, repo, id, stage, report) {
     return null;
   }
   const problems = gameConfigProblems(config, id, stage);
-  for (const [message, fix] of problems) report.problem({ file: rel, rule: 'game-config', message, fix });
+  const text = readText(join(repo.root, rel)) ?? '';
+  for (const [message, fix, rule = 'game-config', field] of problems) {
+    const at = field === undefined ? -1 : text.indexOf(`${field.split('.').at(-1)}:`);
+    report.problem({ file: rel, line: at < 0 ? undefined : lineOf(text, at), rule, message, fix });
+  }
   return problems.length === 0 || config ? config : null;
 }
 
@@ -237,14 +242,14 @@ function isCount(value, min = 0) {
 export function gameConfigProblems(config, id, stage) {
   if (!config || typeof config !== 'object') return [['exports no gameConfig object', 'export const gameConfig: GameConfig = { ... }']];
   const problems = [];
-  const need = (isOk, message, fix) => { if (!isOk) problems.push([message, fix]); };
+  const need = (isOk, message, fix, rule, field) => { if (!isOk) problems.push([message, fix, rule, field]); };
   need(config.id === id, `id is "${config.id}", the folder is apps/${id}`, 'GameConfig.id equals the folder name, identity.id and the save document\'s gameId.');
   need(LANGUAGES.every((lang) => typeof config.appName?.[lang] === 'string' && config.appName[lang].trim() !== ''), 'appName needs en, de, fa and ckb', 'Give the display name in all four languages (Latin script is fine for fa and ckb; native-speaker review later).');
-  need(typeof config.bundleId === 'string' && BUNDLE_ID.test(config.bundleId), `bundleId "${config.bundleId}" does not match ${BUNDLE_ID.source}`, 'Use the owner-approved id, e.g. com.example.flocktilt.');
-  need(stage !== 'complete' || !String(config.bundleId).startsWith('com.example.'), `bundleId "${config.bundleId}" is still the scaffold placeholder`, 'Ask the owner for the app name and bundle id (step G1) and write them here.');
+  const bundleId = bundleIdFor(id);
+  need(config.bundleId === bundleId, `bundleId "${config.bundleId}" is not ${bundleId}`, `Every app's iOS bundle id and Android package is ${BUNDLE_PREFIX}<game id without hyphens>, all lowercase (owner decision O4): write bundleId: '${bundleId}'.`, 'bundle-id', 'bundleId');
   need(config.appStoreId === null || /^\d+$/.test(String(config.appStoreId)), 'appStoreId is neither null nor the numeric App Store id', 'Keep null until the App Store Connect record exists (step G2).');
   need(/^\d+\.\d+\.\d+$/.test(String(config.version)) && isCount(config.buildNumber, 1), 'version must be MAJOR.MINOR.PATCH and buildNumber a whole number >= 1', 'Start at 1.0.0 and build 1; only the release pipeline bumps buildNumber.');
-  need(typeof config.premium?.productId === 'string' && config.premium.productId.length > 0, 'premium.productId is missing', 'Use <bundleId>.premium.');
+  need(config.premium?.productId === premiumIdFor(id), `premium.productId "${config.premium?.productId}" is not ${premiumIdFor(id)}`, `The game's one Premium product is <bundle id>.premium: write productId: '${premiumIdFor(id)}'.`, 'premium-id', 'productId');
   need(isCount(config.levels?.packCount, 1) && isCount(config.levels?.levelsPerPack, 1), 'levels.packCount and levels.levelsPerPack must be whole numbers >= 1', 'Default: 3 packs x 30 levels (decision D9).');
   need(typeof config.modes?.daily === 'boolean' && typeof config.modes?.endless === 'boolean', 'modes.daily and modes.endless must be booleans', 'Daily is on by default; endless only for games without a natural end.');
   need(isCount(config.hints?.freePerDay, 0) && typeof config.isContinueAllowed === 'boolean', 'hints.freePerDay (whole number) and isContinueAllowed (boolean) are required', 'From the game\'s rules: hints.freePerDay 0 without a solver hint (1 with one), isContinueAllowed true exactly when rules.continueRun is once (scaffold-game.mjs --hints and --continue).');
@@ -253,7 +258,52 @@ export function gameConfigProblems(config, id, stage) {
   need(typeof config.links?.supportEmail === 'string' && config.links.supportEmail.includes('@'), 'links.supportEmail is not an e-mail address', 'Use the support address the owner gives.');
   need(['general', 'children'].includes(config.store?.audience), 'store.audience must be general or children', 'Default: general (decision D8).');
   need(config.ads?.isEnabled !== undefined && isCount(config.ads?.policy?.minMsBetweenInterstitials, 0), 'ads.isEnabled and ads.policy are required', 'Keep the scaffold ad policy (3 levels first, 3 minutes and 2 levels between interstitials).');
+  if (stage === 'complete') for (const [field, value] of ownerFields(config)) for (const entry of placeholdersIn(value)) need(false, `${field} is still the scaffold placeholder ${entry.value}`, `Replace it with ${entry.step}; a finished app and every store build carry the owner's real value (the ship gates reject the same list).`, 'owner-placeholder', field);
   return problems;
+}
+
+/** The game.config.ts values an owner step replaces: [field, value]. AdMob ids only while ads are on. */
+function ownerFields(config) {
+  const units = config.ads?.ids?.ios?.units ?? {};
+  const android = config.ads?.ids?.android ?? null;
+  return [
+    ['bundleId', config.bundleId],
+    ['premium.productId', config.premium?.productId],
+    ...(config.ads?.isEnabled === false ? [] : [
+      ['ads.ids.ios.appId', config.ads?.ids?.ios?.appId],
+      ...Object.entries(units).map(([slot, value]) => [`ads.ids.ios.units.${slot}`, value]),
+      ...(android === null ? [] : [['ads.ids.android.appId', android.appId], ...Object.entries(android.units ?? {}).map(([slot, value]) => [`ads.ids.android.units.${slot}`, value])]),
+    ]),
+    ['links.privacyPolicy.host', config.links?.privacyPolicy?.host],
+    ['links.supportEmail', config.links?.supportEmail],
+  ];
+}
+
+const WIN_LINES = ['moves', 'score'];
+
+/**
+ * Stage complete: the game's entry in parity/game-facts.json, which picks the Toybox reference
+ * variants for the Shell frames (toybox-visual-parity): designGame, hasMusic, winLine and hasHints.
+ * hasHints is knowable here: a game has a hint exactly when a solver proves the next move, which is
+ * when game.config.ts gives free hints (hints.freePerDay 0 with no solver means hasHints false).
+ */
+export function checkParityFacts(repo, id, config, report) {
+  const rel = 'parity/game-facts.json';
+  const handOff = `Add "${id}": { "designGame", "hasMusic", "winLine", "hasHints" } to parity/game-facts.json and copy the parity pin test (toybox-visual-parity: templates/parity/game-facts.json and templates/apps/__GAME_ID__/src/parity-game-facts.test.ts).`;
+  if (!repo.exists(rel)) return report.problem({ file: rel, rule: 'parity-game-facts', message: 'does not exist, so no Shell frame can pick its reference for this game', fix: handOff });
+  const facts = readJson(repo, rel);
+  const entry = facts?.games?.[id];
+  const text = readText(join(repo.root, rel)) ?? '';
+  const line = Math.max(1, lineOf(text, Math.max(0, text.indexOf(`"${id}"`))));
+  if (entry === undefined || entry === null || typeof entry !== 'object') return report.problem({ file: rel, line: 1, rule: 'parity-game-facts', message: facts === undefined ? 'is not valid JSON' : `has no entry for ${id}`, fix: handOff });
+  const wrong = [];
+  if (typeof entry.designGame !== 'string' || entry.designGame === '') wrong.push('designGame is not a design game key (the Line Siege frames: "lineSiege")');
+  if (typeof entry.hasMusic !== 'boolean') wrong.push('hasMusic is not true or false (true when the sound bank has a music sound)');
+  if (!WIN_LINES.includes(entry.winLine)) wrong.push('winLine is not "moves" or "score" (the stars rule: moves against par, or a score)');
+  if (typeof entry.hasHints !== 'boolean') wrong.push('hasHints is not true or false (true exactly when rules.hints.kind is \'solver\')');
+  const freePerDay = config?.hints?.freePerDay;
+  if (typeof entry.hasHints === 'boolean' && Number.isInteger(freePerDay) && entry.hasHints !== freePerDay > 0) wrong.push(`hasHints is ${entry.hasHints}, but game.config.ts gives ${freePerDay} free hints a day (${freePerDay > 0 ? 'a solver hint: hasHints true' : 'no solver hint: hasHints false'})`);
+  for (const message of wrong) report.problem({ file: rel, line, rule: 'parity-game-facts', message: `${id}: ${message}`, fix: 'Set the entry to the game\'s facts; the parity pin test apps/<id>/src/parity-game-facts.test.ts holds the same values (toybox-visual-parity).' });
 }
 
 /** Stage complete: every module part and evidence file exists. */

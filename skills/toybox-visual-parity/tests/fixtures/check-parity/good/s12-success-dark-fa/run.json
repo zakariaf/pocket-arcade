@@ -1,0 +1,14 @@
+{
+ "frame": "s12-success",
+ "variant": null,
+ "theme": "dark",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. The success card: the fragment root is never structure-checked (R3S-G17b).",
+ "reference": {
+  "image": "../../reference-r3/lineSiege/dark-fa/s12-success.png",
+  "layout": "../../reference-r3/lineSiege/dark-fa/s12-success.layout.json"
+ }
+}

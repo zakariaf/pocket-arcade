@@ -7,7 +7,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
-import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
+import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeFacts, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
 import { isCropOnly } from './lib/gates.mjs';
 import { DEFAULTS } from './lib/paths.mjs';
 import { changesForFrame } from './lib/reference-changes.mjs';
@@ -18,18 +18,20 @@ export const EYE_CHECKS = ['icons', 'pictures', 'shadows', 'alignment', 'wrappin
 const SPEC = {
   name: 'check-signoff',
   summary:
-    'Proves screen parity is done: for each frame and each required theme x language (light, dark x en, fa), the ' +
-    'latest run passes check-parity against the current reference, every element was checked (tall frames: across ' +
-    'scroll captures), the sheet is fresh, and parity/signoff.json has an entry for exactly that sheet with every ' +
-    'eye check answered and no open difference. --draft <run-dir> prints a ledger entry to fill in.',
+    'Proves screen parity is done: for each frame and each required theme x language (light and dark x en and fa, the ' +
+    'done set), the latest run passes check-parity against the reference the game facts select, every element was ' +
+    'checked (tall frames: across every planned scroll offset), the sheet is fresh, and parity/signoff.json has an entry ' +
+    'for exactly that sheet with every eye check answered and no open difference. --themes and --langs narrowing is for ' +
+    'iteration only: a narrowed run prints "narrowed: not a sign-off" and exits 1. --draft <run-dir> prints a ledger ' +
+    'entry to fill in.',
   usage: '(--frame <key>... | --screen <S4>... | --all) [options] | --draft <run-dir> [--from-ledger]',
   options: {
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) to sign off (s4-home, s4-home-premium, ...)' },
     screen: { type: 'string', multiple: true, value: 'id', help: 'Screen id(s): every frame of the screen (S4 = s4-home + s4-home-premium)' },
     all: { type: 'boolean', help: 'Every frame of the design' },
     game: { type: 'string', value: 'id', help: 'Design game id', default: 'lineSiege' },
-    themes: { type: 'string', value: 'list', help: 'Themes required', default: THEMES.join(',') },
-    langs: { type: 'string', value: 'list', help: 'Languages required (add de,ckb before a release)', default: REQUIRED_LANGS.join(',') },
+    themes: { type: 'string', value: 'list', help: 'Themes required (default light,dark: the done set; fewer is iteration only and fails "narrowed")', default: THEMES.join(',') },
+    langs: { type: 'string', value: 'list', help: 'Languages required (default en,fa: the done set; add de,ckb before a release; fewer fails "narrowed")', default: REQUIRED_LANGS.join(',') },
     runs: { type: 'string', value: 'dir', help: 'Run folder root', default: '.parity' },
     ledger: { type: 'string', value: 'file', help: 'Sign-off ledger', default: 'parity/signoff.json' },
     waivers: { type: 'string', value: 'file', help: 'Waiver file', default: 'parity/waivers.json' },
@@ -45,6 +47,10 @@ const SPEC = {
   details: [
     `Eye checks (each "match", "n/a", or "waived: <reason of 20+ characters>"): ${EYE_CHECKS.join(', ')}.`,
     'A difference is { "what": "...", "status": "fixed" | "waived" } once handled; "open" blocks sign-off.',
+    '',
+    'The done set: a frame is signed off in light and dark x en and fa, at every scroll offset run-parity.mjs plans,',
+    'against the reference its game\'s facts pick; de and ckb are added before a release. --themes and --langs may',
+    'narrow the check while fixing, but such a run is never a sign-off.',
     '',
     'Examples:',
     '  node check-signoff.mjs --screen S4',
@@ -137,6 +143,7 @@ run(async () => {
   for (const k of keys) if (!frames.has(k)) fail(`unknown frame "${k}"`, `Use one of: ${[...frames.keys()].join(', ')}`);
   const themes = listOption(options.themes, THEMES);
   const langs = listOption(options.langs, REQUIRED_LANGS);
+  const narrowed = !THEMES.every((t) => themes.includes(t)) || !REQUIRED_LANGS.every((l) => langs.includes(l));
   const runsRoot = resolve(options.runs);
   const ledgerPath = resolve(options.ledger);
   const ledger = readLedger(ledgerPath);
@@ -292,7 +299,15 @@ run(async () => {
     }
     table.push(`${key.padEnd(32)} ${cells.join(' | ')}`);
   }
-  if (facts) report.note(`facts ${show(facts.path)}: app ${facts.app}, hasMusic ${facts.facts.hasMusic}, winLine ${facts.facts.winLine}`);
+  if (facts) report.note(`facts ${show(facts.path)}: app ${facts.app}, ${describeFacts(facts.facts)}`);
+  if (narrowed) {
+    report.problem({
+      file: show(ledgerPath),
+      rule: 'narrowed',
+      message: `narrowed: not a sign-off (checked ${themes.join(', ')} x ${langs.join(', ')}; the done set is light and dark x en and fa at every planned offset)`,
+      fix: 'Drop --themes and --langs (narrowing is for iteration only), capture the missing variants with run-parity.mjs, look at their sheets and record them.',
+    });
+  }
   for (const line of changeNotes) report.note(line);
   for (const line of table) report.note(line);
   for (const w of waiverFile.waivers.filter((x) => keys.includes(x.frame))) {

@@ -1,0 +1,2 @@
+premium-id
+premium.productId "io.applander.linesiege.pro" is not io.applander.linesiege.premium

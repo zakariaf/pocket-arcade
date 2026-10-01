@@ -127,7 +127,7 @@ Never widen a band, lower `minStep`, cut `seedsPerCell` or edit the report to ma
 
 ## Owner approval
 
-The owner does not read JSON. Tell them, in the evidence report, what the bots found per level in plain words (see bots-and-sims.md, "Reporting to the owner") and ask them to play the first levels on a phone. When they agree the pace feels right, set `"status": "approved"` and `"approvedOn"`. Before a release, `check-balance.mjs --release` requires approved bands for every game. If the owner's play-test disagrees with the bots ("level 1 is too easy"), the owner wins: retune toward their feel and move the bands with them.
+The owner does not read JSON. Tell them, in the evidence report, what the bots found per level in plain words (see bots-and-sims.md, "Reporting to the owner") and ask them to play the first levels on a phone. When they agree the pace feels right, set `"status": "approved"` and `"approvedOn"`. The play-test is the owner's personal step and never blocks (owner decision O6, 2026-09-30): until it is done, every report lists "Play-test <game> on a phone" under "Owner steps (not blocking)", and `check-balance.mjs --release` passes with proposed bands, printing `OWNER STEP (not blocking) ... [bands-unapproved]` for the release report instead of a problem. If the owner's play-test disagrees with the bots ("level 1 is too easy"), the owner wins: retune toward their feel and move the bands with them.
 
 ## How the check judges
 

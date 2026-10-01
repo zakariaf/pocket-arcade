@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/storekit/storekit-harness.ts",
+      "find": "const args = [...maestroGlobalArgs(target), ...command];",
+      "with": "const args = [...command, '--udid', target.udid];"
+    }
+  }
+]

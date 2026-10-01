@@ -1,0 +1,54 @@
+# apps/__GAME_ID__/e2e/flows/journeys/11-daily.yaml — today's daily challenge, won, then the next day
+# (for a game with modes.daily; check-flows rule mode-flows asks for it):
+# 1. the debug link sets the day (date=2026-09-26) and opens S9 Daily challenge;
+# 2. S9's own Play key (daily.play-button) starts today's run: the key under test is tapped, the
+#    state around it comes from the link;
+# 3. action=win-level ends the daily run through the game host's one run-end path, as a real win
+#    does (the daily result, today's score and the streak are saved before Result shows);
+# 4. a kill and relaunch, then the next day (date=2026-09-27): the streak is 1 and today is not done,
+#    so S9 offers Play again (daily.play-button), not Replay.
+appId: ${APP_ID}
+name: __GAME_NAME__ daily challenge is won, then the next day keeps a one-day streak
+tags: [__GAME_ID__, daily]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&date=2026-09-26&ads=off&firstRun=0&reduceMotion=1&screen=daily'
+      WAIT_FOR: 'daily.play-button'
+- tapOn:
+    id: 'daily.play-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- assertVisible:
+    id: 'result.daily-title'
+- assertVisible:
+    id: 'result.streak-sticker'
+- assertVisible:
+    id: 'result.come-back-note'
+- takeScreenshot: __GAME_ID__-daily-won
+- killApp
+- launchApp:
+    stopApp: false
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'date=2026-09-27&screen=daily'
+      WAIT_FOR: 'daily.screen'
+# The value reads "1 day": exactly the number 1, whatever words surround it.
+- assertVisible:
+    id: 'daily.current-streak-card.value'
+    text: '[^0-9]*1[^0-9]*'
+- assertVisible:
+    id: 'daily.play-button'
+- assertNotVisible:
+    id: 'daily.replay-button'

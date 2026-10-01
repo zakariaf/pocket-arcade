@@ -3,7 +3,7 @@ import { entitlementEvidence } from './entitlement-evidence.ts';
 
 import type { StoreTransaction } from '@e07/shell/services/purchase/purchase-port.ts';
 
-const ID = 'com.example.linesiege.premium';
+const ID = 'io.applander.linesiege.premium';
 
 function tx(transactionId: string, revocationDateMs: number | null): StoreTransaction {
   return { productId: ID, transactionId, state: 'purchased', revocationDateMs, handle: null };

@@ -50,7 +50,7 @@ run(async () => {
   const problem = (rule, message, fix) => report.problem({ file: name, rule, message, fix });
   const step = (text) => report.note(`${options.check ? 'check' : 'setup'} ${text}`);
   const must = (r, what) => {
-    if (r.status !== 0) fail(`${what} failed: ${(r.stderr || r.stdout).trim().split('\n')[0]}`, 'Read the simctl message; if CoreSimulator is wedged, quit Simulator.app and run: xcrun simctl shutdown all');
+    if (r.status !== 0) fail(`${what} failed: ${(r.stderr || r.stdout).trim().split('\n')[0]}`, 'Read the simctl message; if this session\'s simulator is wedged, shut down only it (xcrun simctl shutdown <its UDID>) and run this script again; other sessions\' simulators are never touched.');
     return r.stdout;
   };
 

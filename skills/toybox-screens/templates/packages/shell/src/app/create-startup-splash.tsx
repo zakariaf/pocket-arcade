@@ -6,11 +6,15 @@
 // evaluated crashed a Release build ("startSurface failed. Global was not installed").
 import { useEffect } from 'react';
 import { Appearance } from 'react-native';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 
 import { GameStartupSplash } from '@e07/shell/app/game-startup-splash.tsx';
 import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
+import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
+import { DirectionProvider } from '@e07/shell/i18n/direction-context.tsx';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
+import { directionOf } from '@e07/shell/i18n/languages.ts';
 import { ThemeContext } from '@e07/shell/theme/theme-context.ts';
 import { createThemeSet, resolveColorScheme, selectTheme } from '@e07/shell/theme/theme-set.ts';
 
@@ -35,6 +39,20 @@ export type StartupSplashInput = {
   readonly restart: () => Promise<void>;
 };
 
+/**
+ * A parity capture of S1 (test builds) holds the loader still, as useReduceMotion() does on every
+ * other screen: this root has no settings store, so it reads the same TEST_ONLY switch directly.
+ */
+function isParityMotionFrozen(): boolean {
+  return TEST_ONLY?.isParityMotionFrozen() === true;
+}
+
+/** The window's first metrics; unknown only off-device (Jest), where no insets apply. */
+const WINDOW_METRICS = initialWindowMetrics ?? {
+  frame: { x: 0, y: 0, width: 0, height: 0 },
+  insets: { top: 0, left: 0, right: 0, bottom: 0 },
+};
+
 /** No error log exists yet (nothing may be written before the direction check). */
 const ignore = (): void => undefined;
 
@@ -44,30 +62,39 @@ export function createStartupSplash(input: StartupSplashInput): ComponentType {
     scheme: resolveColorScheme('system', Appearance.getColorScheme()),
     mode: 'standard',
   });
+  const direction = directionOf(language);
   return function RestartSplash(): ReactNode {
-    const isReducedMotion = useStore(systemA11yStore, (state) => state.isReduceMotionOn);
+    const isSystemReduceMotionOn = useStore(systemA11yStore, (state) => state.isReduceMotionOn);
+    const isReducedMotion = isSystemReduceMotionOn || isParityMotionFrozen();
     // Allowed effect: one call into an external system after mount (the reload).
     useEffect(() => {
       // forceRTL is already persisted, so a failed reload is fixed by the next cold start.
       input.restart().catch(ignore);
     }, []);
-    // No SafeAreaProvider: ScreenFrame's SafeAreaView measures the insets natively.
+    // The provider with the window's first metrics: without it ScreenFrame's SafeAreaView drew this
+    // root with no insets (the S1 capture sat 17 pt high and the loader 34 pt low).
     return (
-      <I18nProvider
-        language={language}
-        digits="automatic"
-        gameCatalogs={game.texts}
-        onError={ignore}
-      >
-        <ThemeContext value={theme}>
-          <GameStartupSplash
-            logo={game.presentation.art.logo}
-            nameId={game.identity.nameId}
-            taglineId={game.identity.taglineId}
-            isReducedMotion={isReducedMotion}
-          />
-        </ThemeContext>
-      </I18nProvider>
+      <SafeAreaProvider initialMetrics={WINDOW_METRICS}>
+        <I18nProvider
+          language={language}
+          digits="automatic"
+          gameCatalogs={game.texts}
+          onError={ignore}
+        >
+          {/* The texts are written in the language's direction (without it a Persian tagline
+              was written left to right: its full stop stood at the right end of the line). */}
+          <DirectionProvider direction={direction}>
+            <ThemeContext value={theme}>
+              <GameStartupSplash
+                logo={game.presentation.art.logo}
+                nameId={game.identity.nameId}
+                taglineId={game.identity.taglineId}
+                isReducedMotion={isReducedMotion}
+              />
+            </ThemeContext>
+          </DirectionProvider>
+        </I18nProvider>
+      </SafeAreaProvider>
     );
   };
 }

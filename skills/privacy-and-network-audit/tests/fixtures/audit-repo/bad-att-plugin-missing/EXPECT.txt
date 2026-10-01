@@ -1,0 +1,1 @@
+packages/shell/src/config/shell-plugins.ts [att-config] demo-game enable ads, but the expo-tracking-transparency plugin with userTrackingPermission is not listed

@@ -2,6 +2,7 @@
 // tools (a path ending in .mjs runs with this Node); the real tools are found as below.
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -47,25 +48,57 @@ export function findJavaHome() {
 }
 
 /**
- * The XCUITest driver port for Maestro: --driver-port, else $PARITY_MAESTRO_PORT, else null (Maestro's
- * default 22087). Two sessions on one Mac need two ports, or one session's hierarchy call can be
- * answered by the other simulator's driver.
+ * The XCUITest driver port a session passed on purpose: --driver-port, else $PARITY_MAESTRO_PORT, else
+ * null (capture-app then takes a free port for its run with freeDriverPort()).
  */
 export function driverPortOf(option) {
   const raw = option ?? process.env.PARITY_MAESTRO_PORT ?? null;
   if (raw === null || raw === '') return null;
   const port = Number(raw);
-  if (!Number.isInteger(port) || port < 1024 || port > 65535) fail(`driver port "${raw}" is not a port number from 1024 to 65535`, 'Pass e.g. --driver-port 22187 (or set PARITY_MAESTRO_PORT).');
+  if (!Number.isInteger(port) || port < 1024 || port > 65535) fail(`driver port "${raw}" is not a port from 1024 to 65535`, 'Pass e.g. --driver-port 22187 (or set PARITY_MAESTRO_PORT).');
   return port;
+}
+
+/** A port nobody listens on right now: the system picks it (listen on port 0), then it is released. */
+export function freeDriverPort() {
+  return new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.unref();
+    server.once('error', reject);
+    server.listen({ port: 0, host: '127.0.0.1' }, () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address !== null ? address.port : 0;
+      server.close(() => (port ? resolvePort(port) : reject(new Error('the system gave no free port'))));
+    });
+  });
+}
+
+const UDID = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
+
+/**
+ * The global arguments that go before every Maestro command, as the repo's e2e helper
+ * (packages/tooling/src/e2e/maestro-args.ts) builds them: this simulator's UDID and this run's own
+ * XCUITest driver port. Never "booted", a name, or Maestro's default port: in round 3 a hierarchy
+ * call answered from another session's simulator.
+ */
+export function maestroGlobalArgs({ udid, driverPort }) {
+  if (!UDID.test(String(udid ?? ''))) fail(`"${udid}" is not a simulator UDID`, 'Pass the UDID of this session\'s own simulator (setup-parity-sim.mjs prints it).');
+  if (!Number.isInteger(driverPort) || driverPort < 1024 || driverPort > 65535) fail(`driver port "${driverPort}" is not a port from 1024 to 65535`, 'Pass --driver-port, or let capture-app pick a free one.');
+  return ['--device', udid, '--driver-host-port', String(driverPort)];
+}
+
+/** One Maestro command with this run's global arguments in front: maestroArgs(target, 'hierarchy'). */
+export function maestroArgs(target, ...command) {
+  return [...maestroGlobalArgs(target), ...command];
 }
 
 /**
  * The maestro runner, or null when Maestro is not installed. Looked up in this order: --maestro,
  * $PARITY_MAESTRO, $MAESTRO_BIN, the app repo's tools/maestro/bin/maestro (the pinned install),
- * maestro on PATH, ~/.maestro/bin/maestro. With a driver port every call gets
- * --driver-host-port <port> before the command, so this session's driver never answers another's.
+ * maestro on PATH, ~/.maestro/bin/maestro. Every call site builds its arguments with maestroArgs():
+ * --device <udid> --driver-host-port <port> before the command.
  */
-export function makeMaestro(maestroPath, { driverPort = null } = {}) {
+export function makeMaestro(maestroPath) {
   let tool = maestroPath || process.env.PARITY_MAESTRO || process.env.MAESTRO_BIN || null;
   const repoInstall = join(process.cwd(), 'tools', 'maestro', 'bin', 'maestro');
   if (!tool && existsSync(repoInstall)) tool = repoInstall;
@@ -78,10 +111,8 @@ export function makeMaestro(maestroPath, { driverPort = null } = {}) {
   const isFake = /\.m?js$/.test(tool);
   const javaHome = isFake ? null : findJavaHome();
   const env = { MAESTRO_CLI_NO_ANALYTICS: 'true', MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true', MAESTRO_DISABLE_UPDATE_CHECK: 'true', ...(javaHome ? { JAVA_HOME: javaHome } : {}) };
-  const portArgs = driverPort ? ['--driver-host-port', String(driverPort)] : [];
-  const maestro = (...args) => exec(tool, [...portArgs, ...args], { env, timeoutMs: 180000 });
+  const maestro = (...args) => exec(tool, args, { env, timeoutMs: 180000 });
   maestro.tool = tool;
-  maestro.driverPort = driverPort;
   maestro.javaHome = javaHome;
   return maestro;
 }

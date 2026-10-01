@@ -1,16 +1,30 @@
 #!/usr/bin/env node
 // capture-app.mjs: puts the app on one design frame through launch arguments, waits until the
 // screen is still, takes the simulator screenshot and dumps element bounds with maestro hierarchy.
+import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
-import { loadImageDeps } from './lib/deps.mjs';
-import { FACTS_FILE, LANGS, THEMES, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
+import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
+import { FACTS_FILE, LANGS, THEMES, describeFacts, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
 import { parseMaestroHierarchy } from './lib/hierarchy.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { RUN_FILES, defaultRunDir } from './lib/runs.mjs';
-import { driverPortOf, findSimulator, makeMaestro, makeSimctl, sleep } from './lib/tools.mjs';
+import { driverPortOf, findSimulator, freeDriverPort, maestroArgs, makeMaestro, makeSimctl, sleep } from './lib/tools.mjs';
+
+/** The testID of the nonce marker the parity root renders for one launch. */
+const launchMarker = (nonce) => `parity.launch.${nonce}`;
+
+// System alerts that must never be on screen in a capture: Apple's tracking prompt (App Tracking
+// Transparency), other permission prompts, and the "Open in ...?" alert of a deep link. The held S3
+// consent moment in particular asks neither Google's form nor Apple's prompt.
+const SYSTEM_ALERT = /Ask App Not to Track|to track your activity|Would Like to|Don[’']t Allow|Allow Once|^Open in [“"]/;
+
+/** The first system-alert text in a dump, or null. */
+function systemAlertIn(parsed) {
+  return parsed.labels.find((label) => SYSTEM_ALERT.test(label)) ?? null;
+}
 
 const SPEC = {
   name: 'capture-app',
@@ -21,7 +35,9 @@ const SPEC = {
     'checks the screen did not change meanwhile and that the frame\'s root testID is on screen, and writes run.json. ' +
     'A frame with reference variants picks its reference from the app\'s game facts (parity/game-facts.json); a Game-route ' +
     'frame (S5, S6, S7) first launches once with probe=board to read the board rectangle the game reports, which ' +
-    'check-parity masks.',
+    'check-parity masks. Every Maestro call names this simulator and this run\'s own driver port ' +
+    '(--device <udid> --driver-host-port <port> before the command), and every launch carries a fresh nonce that the ' +
+    'dump must contain (the marker parity.launch.<nonce>): a dump without it came from another simulator (exit 2).',
   usage: '--bundle-id <id> --frame <key> --theme light|dark --lang en|fa [options]',
   options: {
     'bundle-id': { type: 'string', value: 'id', help: 'The app\'s iOS bundle identifier (test build)' },
@@ -40,25 +56,32 @@ const SPEC = {
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     xcrun: { type: 'string', value: 'path', help: 'xcrun to use (default: xcrun on PATH, or $PARITY_XCRUN)' },
     maestro: { type: 'string', value: 'path', help: 'maestro to use (default: $MAESTRO_BIN, PATH, ~/.maestro/bin/maestro)' },
-    'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port for this session (default: $PARITY_MAESTRO_PORT, else Maestro's 22087)" },
+    'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port for this session (default: $PARITY_MAESTRO_PORT, else a free port for this run)" },
     facts: { type: 'string', value: 'file', help: `The app's game facts (picks a frame's reference variant)`, default: FACTS_FILE },
     app: { type: 'string', value: 'id', help: 'App id in the facts file (needed when it lists several apps)' },
     'board-cache': { type: 'string', value: 'file', help: 'Board rectangles already probed in this run (run-parity passes one per run)' },
+    tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: 0 },
   details: [
     'Install the Release test build first (xcrun simctl install <udid> <App>.app). Maestro needs Java 17 ($JAVA_HOME,',
     'or Android Studio\'s bundled JBR). The first hierarchy call installs Maestro\'s driver (about 20 s), later ones',
     'take about 11 s. Deep links are not used: they raise an "Open in ...?" alert that hides the app.',
-    'One parity simulator serves one session at a time: a second session uses its own simulator (--name, made with',
-    'setup-parity-sim.mjs --name) and its own driver port (--driver-port or PARITY_MAESTRO_PORT).',
+    'One parity simulator serves one session at a time: each session uses its own simulator (--name, made with',
+    'setup-parity-sim.mjs --name e07-parity-<key>). Maestro gets --device <udid> and --driver-host-port <port> before',
+    'every command: the port is --driver-port (or PARITY_MAESTRO_PORT) when given, else a free port picked for this run.',
+    'Each launch passes nonce=<hex> in -parity; the parity root renders the marker parity.launch.<nonce>, and a dump',
+    'without it stops the capture (exit 2, "hierarchy from another simulator"). run.json records the UDID, the port and',
+    'both nonces.',
     '',
     'Example:',
-    '  node capture-app.mjs --bundle-id com.example.linesiege --frame s4-home --theme dark --lang fa',
-    '  node capture-app.mjs --bundle-id com.example.linesiege --frame s11-settings --theme light --lang en --scroll 573',
+    '  node capture-app.mjs --bundle-id io.applander.linesiege --frame s4-home --theme dark --lang fa --name e07-parity',
+    '  node capture-app.mjs --bundle-id io.applander.linesiege --frame s11-settings --theme light --lang en --scroll 573',
     '',
-    'Reference variants: s11-settings, s6-pause and s7-result-win have variants chosen by the app\'s facts (hasMusic,',
-    'winLine) in parity/game-facts.json; run.json records the one used. A missing or mismatched facts file is exit 2.',
+    'Reference variants: s11-settings, s6-pause, s7-result-win and s14-reset-all-progress have variants chosen by the',
+    'app\'s facts (hasMusic, winLine, hasHints) in parity/game-facts.json; the variants a frame\'s facts match compose',
+    '(s6-pause--no-music--no-hints). run.json records the one used. A missing or mismatched facts file (a fact left out',
+    'included) is exit 2. run.json also records systemAlert: null when no system alert was on screen.',
     'Board probe: for s6-pause and the s7 frames the app is first launched with probe=board (no frame state; the host',
     'renders game.board-layout), and the board rectangle goes into run.json "board".',
   ].join('\n'),
@@ -90,7 +113,8 @@ run(async () => {
   const facts = hasVariants ? readGameFacts(resolve(options.facts), { app: options.app ?? null, game: options.game }) : null;
   const variant = facts ? variantFor(frame, facts.facts) : null;
   const settleMs = Number(options['settle-ms'] ?? frame.settleMs ?? 8000);
-  const driverPort = driverPortOf(options['driver-port']);
+  const givenPort = driverPortOf(options['driver-port']);
+  const driverPort = givenPort ?? (await freeDriverPort());
   const simctl = makeSimctl(options.xcrun);
   const name = options.name ?? device.simulatorName;
   const sim = findSimulator(simctl, name).find((f) => f.runtime === device.runtime && f.device.state === 'Booted');
@@ -102,7 +126,8 @@ run(async () => {
   const file = relative(process.cwd(), join(outDir, RUN_FILES.app)) || RUN_FILES.app;
   const problem = (rule, message, fix) => report.problem({ file, rule, message, fix });
   const step = (text) => report.note(`step  ${text}`);
-  report.note(`reference ${describeReference(frame.key, variant)}${facts ? ` from ${relative(process.cwd(), facts.path) || facts.path} (app ${facts.app}: hasMusic ${facts.facts.hasMusic}, winLine ${facts.facts.winLine})` : ''}`);
+  report.note(`reference ${describeReference(frame.key, variant)}${facts ? ` from ${relative(process.cwd(), facts.path) || facts.path} (app ${facts.app}: ${describeFacts(facts.facts)})` : ''}`);
+  report.note(`simulator ${name} ${udid}, Maestro driver port ${driverPort}${givenPort ? ' (given)' : ' (free port for this run)'}`);
 
   // 1. The simulator shows the right appearance and a clean status bar.
   if (simctl('ui', udid, 'appearance').stdout.trim() !== options.theme) {
@@ -123,21 +148,23 @@ run(async () => {
 
   // 3. Launch straight into the frame. Arguments are separate words (no shell), so "(fa)" arrives intact.
   const langArgs = device.languages?.[options.lang] ?? { appleLanguages: `(${options.lang})`, appleLocale: options.lang };
+  // Each launch gets a fresh nonce; the dump that follows must contain its marker.
   const launchWith = (extra) => {
-    const query = new URLSearchParams({ frame: frame.key, theme: options.theme, lang: options.lang, game: options.game, ...(manifest.launchDefaults ?? {}), ...extra });
+    const nonce = randomBytes(6).toString('hex');
+    const query = new URLSearchParams({ frame: frame.key, theme: options.theme, lang: options.lang, game: options.game, ...(manifest.launchDefaults ?? {}), ...extra, nonce });
     const args = ['-AppleLanguages', langArgs.appleLanguages, '-AppleLocale', langArgs.appleLocale, '-parity', query.toString()];
-    step(`launch ${options['bundle-id']} ${args.join(' ')}`);
+    step(`launch ${options['bundle-id']} on ${udid} ${args.join(' ')}`);
     const launched = simctl('launch', '--terminate-running-process', udid, options['bundle-id'], ...args);
     if (launched.status !== 0) {
       fail(`the app did not launch: ${(launched.stderr || launched.stdout).trim().split('\n')[0]}`, `Install the test build first: xcrun simctl install ${udid} <path to the .app> (and check --bundle-id).`);
     }
-    return args;
+    return { args, nonce };
   };
 
   // 4. Wait for a still screen: two screenshots in a row, 300 ms apart, the same outside the masked
   // status bar and home indicator (the home indicator comes and goes once XCUITest has touched the
   // app) and within 3/255 per channel (shadow dithering changes on a redraw).
-  const { PNG } = await loadImageDeps();
+  const { PNG } = await loadImageDeps(toolingDirOf(options));
   const masks = device.masks.map((m) => ({ x0: m.x * device.scale, y0: m.y * device.scale, x1: (m.x + m.width) * device.scale, y1: (m.y + m.height) * device.scale }));
   const sameScreen = (bufA, bufB) => {
     if (bufA.equals(bufB)) return true;
@@ -161,9 +188,15 @@ run(async () => {
     }
     return true;
   };
+  // shot(): one screenshot. simctl's own notes ("Detected file type", "Note: No display specified")
+  // are not the error, so the message quotes the other stderr lines; one transient failure is retried.
   const shot = (path) => {
-    const r = simctl('io', udid, 'screenshot', '--type=png', path);
-    if (r.status !== 0 || !existsSync(path)) fail(`simctl screenshot failed: ${(r.stderr || '').trim().split('\n')[0]}`, 'Check that the simulator is booted and not showing a crash dialog.');
+    let r = simctl('io', udid, 'screenshot', '--type=png', path);
+    if (r.status !== 0 || !existsSync(path)) r = simctl('io', udid, 'screenshot', '--type=png', path);
+    if (r.status !== 0 || !existsSync(path)) {
+      const lines = (r.stderr || '').split('\n').map((l) => l.trim()).filter((l) => l && !/^(Note:|Detected file type)/.test(l));
+      fail(`simctl screenshot failed twice (exit ${String(r.status)}): ${lines.join(' ').slice(0, 300) || 'no error text'}`, 'Check that the simulator is booted and not showing a crash dialog.');
+    }
     return readFileSync(path);
   };
   const tmp = (n) => join(outDir, `.capture-${n}.png`);
@@ -186,17 +219,30 @@ run(async () => {
     writeFileSync(join(outDir, RUN_FILES.app), last);
     return report.finish({ checked: 1, unit: 'captures' });
   };
-  const maestro = options['no-hierarchy'] ? null : makeMaestro(options.maestro, { driverPort });
+  const maestro = options['no-hierarchy'] ? null : makeMaestro(options.maestro);
+  const target = { udid, driverPort };
   if (!options['no-hierarchy'] && !maestro) fail('Maestro is not installed', 'Install Maestro 2.10 (see the e2e-maestro skill), or set $MAESTRO_BIN; Java 17 must be available.');
-  const dumpHierarchy = () => {
-    let r = maestro('--device', udid, 'hierarchy', '--no-reinstall-driver');
-    if (r.status !== 0) r = maestro('--device', udid, 'hierarchy');
+  // A dump belongs to this launch only when it holds the launch's nonce marker: without it, the
+  // XCUITest driver that answered serves another simulator (round 3: another session's Settings).
+  const dumpHierarchy = (nonce) => {
+    let r = maestro(...maestroArgs(target, 'hierarchy', '--no-reinstall-driver'));
+    if (r.status !== 0) r = maestro(...maestroArgs(target, 'hierarchy'));
+    let json;
     try {
-      return JSON.parse(r.stdout.slice(r.stdout.indexOf('{')));
+      json = JSON.parse(r.stdout.slice(r.stdout.indexOf('{')));
     } catch {
       cleanTmp();
       return fail(`maestro hierarchy did not print JSON (exit ${r.status}): ${(r.stderr || r.stdout).trim().split('\n').slice(-1)[0]}`, maestro.javaHome ? 'Run the same command by hand to see the error.' : 'Maestro needs Java 17: set JAVA_HOME.');
     }
+    if (!parseMaestroHierarchy(json).elements.has(launchMarker(nonce))) {
+      cleanTmp();
+      writeFileSync(join(outDir, 'rejected.hier.json'), `${JSON.stringify(json, null, 1)}\n`);
+      return fail(
+        `hierarchy from another simulator: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}); it was kept as rejected.hier.json`,
+        'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or a modal root lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
+      );
+    }
+    return json;
   };
 
   // 3b. A Game-route frame (S5, S6, S7) masks the board the game draws: each game brings its own
@@ -212,12 +258,12 @@ run(async () => {
       board = { ...cache[cacheKey], cached: true };
       step(`board rectangle from this run's probe: ${JSON.stringify(board.rect)}`);
     } else if (maestro) {
-      launchWith({ probe: 'board' });
+      const probeLaunch = launchWith({ probe: 'board' });
       await sleep(1000);
       const probeSettled = await settle(null);
       if (!probeSettled.stable) return unstable(probeSettled.previous);
       step('maestro hierarchy of the board probe');
-      const probed = parseMaestroHierarchy(dumpHierarchy());
+      const probed = parseMaestroHierarchy(dumpHierarchy(probeLaunch.nonce));
       const text = probed.elements.get('game.board-layout')?.label ?? null;
       let parsed = null;
       try {
@@ -233,13 +279,13 @@ run(async () => {
           'In a parity probe launch the host must render the board-layout probe: parity-session\'s isParityBoardProbeOn() is true, and the host\'s isLayoutProbeOn closure must return true while it is (game-host-integration); the probe opens no frame state.');
         return report.finish({ checked: 1, unit: 'captures' });
       }
-      board = { rect: { x: parsed.x, y: parsed.y, w, h }, source: 'probe=board', probedAt: new Date().toISOString() };
+      board = { rect: { x: parsed.x, y: parsed.y, w, h }, source: 'probe=board', probedAt: new Date().toISOString(), nonce: probeLaunch.nonce };
       step(`board rectangle ${JSON.stringify(board.rect)}`);
       if (cachePath) writeFileSync(cachePath, `${JSON.stringify({ ...cache, [cacheKey]: board }, null, 1)}\n`);
     }
   }
 
-  const launchArgs = launchWith(scrollY ? { scrollY: String(scrollY) } : {});
+  const { args: launchArgs, nonce } = launchWith(scrollY ? { scrollY: String(scrollY) } : {});
   const started = Date.now();
   await sleep(1000);
   let settled = await settle(null);
@@ -251,11 +297,12 @@ run(async () => {
   // screen or a late data load can hold still for 300 ms, so a change during the dump means: settle
   // again and dump again (3 attempts).
   let hierarchy = null;
+  let systemAlert = null;
   if (maestro) {
     let accepted = false;
     for (let attempt = 1; attempt <= 3 && !accepted; attempt += 1) {
       step(`maestro hierarchy, attempt ${attempt} (about 11 s; 20 s the first time)`);
-      hierarchy = dumpHierarchy();
+      hierarchy = dumpHierarchy(nonce);
       const after = shot(tmp('after'));
       if (sameScreen(after, stable)) {
         accepted = true;
@@ -270,6 +317,8 @@ run(async () => {
     if (!accepted) problem('changed-during-capture', 'the screen changed while the hierarchy was read, 3 times in a row, so bounds and pixels may not match', 'Stop timers and animations in parity mode (the harness freezes them), then capture again.');
     writeFileSync(join(outDir, RUN_FILES.hier), `${JSON.stringify(hierarchy, null, 1)}\n`);
     const parsed = parseMaestroHierarchy(hierarchy);
+    systemAlert = systemAlertIn(parsed);
+    if (systemAlert) problem('system-alert', `a system alert is on screen: "${systemAlert}"`, 'Nothing may ask the system in a parity launch: the held consent moment (S3) never requests Google\'s form or Apple\'s tracking prompt, and captures never use deep links. Dismiss it, find what asked, and capture again.');
     const reached = frame.root && (parsed.elements.has(frame.root) || (frame.modal && parsed.elements.has(frame.modal.reachedBy)));
     if (frame.root && !reached) {
       const known = frame.elements.filter((el) => parsed.elements.has(el.testID)).length;
@@ -297,8 +346,10 @@ run(async () => {
     game: options.game,
     scrollY,
     bundleId: options['bundle-id'],
-    simulator: { name, udid, runtime: device.runtime, ...(driverPort ? { driverPort } : {}) },
+    simulator: { name, udid, runtime: device.runtime, driverPort },
     launchArgs,
+    nonce,
+    ...(maestro ? { hierarchyNonce: launchMarker(nonce), systemAlert } : {}),
     ...(facts ? { facts: { file: relative(process.cwd(), facts.path) || facts.path, app: facts.app, ...facts.facts } } : {}),
     ...(board ? { board } : {}),
     capturedAt: new Date().toISOString(),

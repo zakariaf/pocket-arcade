@@ -5,6 +5,7 @@
     "expo": "~57.0.25",
     "expo-iap": "5.8.0",
     "expo-network": "~57.0.2",
+    "expo-tracking-transparency": "~57.0.2",
     "react-native-google-mobile-ads": "17.2.0"
   }
 }

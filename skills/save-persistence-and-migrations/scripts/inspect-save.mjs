@@ -35,8 +35,8 @@ const SPEC = {
     '',
     'Examples:',
     '  node inspect-save.mjs ./save.db --game-id line-siege',
-    '  node inspect-save.mjs --udid "$UDID" --bundle-id com.example.linesiege --game-id line-siege',
-    '  node inspect-save.mjs --udid "$UDID" --bundle-id com.example.linesiege --game-id line-siege --deep --repo .',
+    '  node inspect-save.mjs --udid "$UDID" --bundle-id io.applander.linesiege --game-id line-siege',
+    '  node inspect-save.mjs --udid "$UDID" --bundle-id io.applander.linesiege --game-id line-siege --deep --repo .',
   ].join('\n'),
 };
 

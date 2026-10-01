@@ -6,6 +6,7 @@ import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-co
 
 import { decodeDebugOverrides } from './debug-overrides.ts';
 import { createDebugServices } from './debug-services.ts';
+import { createFakeDebugPerf } from './fake-debug-perf.ts';
 import { createFakeDebugStore } from './fake-debug-store.ts';
 import { createSimulatedClock } from './simulated-clock.ts';
 import { createSimulatedConnectivity } from './simulated-connectivity.ts';
@@ -30,6 +31,7 @@ const sdk = jest.requireMock<MockedSdk>('react-native-google-mobile-ads');
 const NOW_MS = 1_790_424_000_000;
 /** The perf log createDebugParts makes with TEST_ONLY.createPerfLog (a stand-in here). */
 const PERF_LOG = { append: jest.fn(), entries: () => [] };
+const PERF = createFakeDebugPerf(PERF_LOG);
 
 type Setup = {
   readonly services: DebugServices;
@@ -58,6 +60,7 @@ function setup(
     clock,
     store,
     perfLog: PERF_LOG,
+    perf: PERF,
     persistPremium: (change) => {
       calls.push(change);
     },
@@ -194,6 +197,10 @@ describe('createDebugServices', () => {
   describe('the perf log', () => {
     it('is the one createDebugParts made, for Home (useOptionalDebugServices()?.perfLog)', () => {
       expect(setup().services.perfLog).toBe(PERF_LOG);
+    });
+
+    it("gives S15's Performance section the actions createDebugParts made over it", () => {
+      expect(setup().services.perf).toBe(PERF);
     });
   });
 

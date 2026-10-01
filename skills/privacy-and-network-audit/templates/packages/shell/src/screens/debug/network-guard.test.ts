@@ -1,6 +1,6 @@
 // packages/shell/src/screens/debug/network-guard.test.ts — drives the guard with a fake global scope.
 // Targets are plain words: lint bans URL literals in app code, tests included.
-import { installNetworkGuard } from './network-guard.ts';
+import { installNetworkGuard, isDevLoopback } from './network-guard.ts';
 
 import type { NetworkAttempt } from './network-guard.ts';
 
@@ -45,5 +45,14 @@ describe('installNetworkGuard', () => {
     expect(() => member('open')('GET', 'remote-b')).toThrow('N3: xhr to remote-b');
     expect(() => member('WebSocket')('socket-c')).toThrow('N3: websocket to socket-c');
     expect(seen.map((attempt) => attempt.kind)).toStrictEqual(['xhr', 'websocket']);
+  });
+
+  it("lets only a Debug build's own Metro on loopback through", () => {
+    const metro = ['ws', '://localhost:8081/hot'].join('');
+    const remote = ['https', '://example.org/'].join('');
+
+    expect(isDevLoopback(metro, true)).toBe(true);
+    expect(isDevLoopback(metro, false)).toBe(false);
+    expect(isDevLoopback(remote, true)).toBe(false);
   });
 });

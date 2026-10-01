@@ -2,3 +2,4 @@ packages/shell/src/screens/premium/premium-screen.tsx:2 [vendor-sdk] imports the
 packages/shell/src/screens/premium/premium-screen.tsx:3 [banned-package] imports expo-router
 packages/shell/src/i18n/kv-direction-guard.ts:2 [vendor-sdk] imports the vendor SDK expo-sqlite outside its adapter
 packages/shell/src/i18n/kv-direction-guard.ts:3 [banned-package] imports @react-native-async-storage/async-storage
+packages/shell/src/services/clock/system-clock-adapter.ts:2 [vendor-sdk] imports expo-tracking-transparency, which only packages/shell/src/services/consent/admob-consent-adapter.ts may import

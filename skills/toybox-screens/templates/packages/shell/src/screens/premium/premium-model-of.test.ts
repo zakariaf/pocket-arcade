@@ -26,7 +26,7 @@ function setup(overrides: Partial<PremiumServiceDeps> = {}): Setup {
   };
   const deps: PremiumServiceDeps = {
     port: createFakePurchase(script),
-    productId: 'com.example.linesiege.premium',
+    productId: 'io.applander.linesiege.premium',
     dispatch: (action) => sent.push(action),
     persistPremium: jest.fn(),
     formatPrice: () => '€1.99',
@@ -47,6 +47,7 @@ function modelOf(state: PremiumState, deps: PremiumServiceDeps) {
     service: deps,
     gameName: 'Line Siege',
     isReducedMotion: false,
+    isConfettiHidden: false,
     onBack: jest.fn(),
   });
 }

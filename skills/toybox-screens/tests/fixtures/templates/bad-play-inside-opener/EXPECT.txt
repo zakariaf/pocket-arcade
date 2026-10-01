@@ -1,0 +1,2 @@
+home-daily-opener
+the Play key home.daily-card.play-button is nested inside the opener <RaisedSurface testID="home.daily-card">

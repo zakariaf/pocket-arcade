@@ -6,7 +6,9 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { FONT_FILES, LANGUAGES, PILOT, renderGameConfig } from './app-files.mjs';
+import { BUNDLE_PREFIX, bundleIdFor, FONT_FILES, LANGUAGES, PILOT, premiumIdFor, renderGameConfig } from './app-files.mjs';
+
+export { bundleIdFor, premiumIdFor };
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const SKILL_DIR = resolve(HERE, '..', '..');
@@ -32,12 +34,14 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
  */
 export const MONOREPO_TOP_LEVEL = new Set([
   'apps', 'packages', 'test', '__mocks__', 'skills', 'node_modules', 'reports', 'tools', 'coverage',
-  'dist-audit', 'parity', 'package.json', 'package-lock.json', 'tsconfig.json', 'tsconfig.base.json',
+  'dist-audit', 'parity', 'perf-baselines', 'package.json', 'package-lock.json', 'tsconfig.json', 'tsconfig.base.json',
   'tsconfig.stryker.json', 'eslint.config.mjs', 'knip.json', 'lefthook.yml', 'quality-gates.json',
   'AGENTS.md', 'CLAUDE.md', 'babel.config.js', 'jest.config.js', 'jest.setup.ts', 'jest.sim.config.js',
   'stryker.config.json',
   // A partial Shell's declaration (quality-gates): part of the monorepo, formatted and checked.
   'shell-slice.json',
+  // (perf-baselines above: the committed cold-start baselines e2e-maestro's runner writes on its first
+  // run, perf-baselines/cold-start-sim-<game-id>.json; formatted JSON, part of the monorepo.)
 ]);
 
 const toPosix = (path) => path.split(sep).join('/');
@@ -86,7 +90,7 @@ export function validateVars(vars) {
   const problems = [];
   if (!APP_ID.test(vars.appId)) problems.push(`app id "${vars.appId}" is not kebab-case (for example line-siege)`);
   else if (vars.appId !== PILOT.id) problems.push(`the pilot app is ${PILOT.id} (Line Siege v1: its catalogs, modes, hints, continue and age rating are canonical), not "${vars.appId}"; bootstrap with --app ${PILOT.id}, then scaffold every other game with the new-game-scaffold skill`);
-  if (!BUNDLE_ID.test(vars.bundleId)) problems.push(`bundle id "${vars.bundleId}" must match ${BUNDLE_ID.source} (lowercase letters and digits, no hyphens)`);
+  if (vars.bundleId !== bundleIdFor(vars.appId)) problems.push(`bundle id "${vars.bundleId}" is not ${bundleIdFor(vars.appId)} (every app's id is ${BUNDLE_PREFIX}<game id without hyphens>, owner decision O4)`);
   for (const [label, value] of [['app name', vars.appName], ['fa name', vars.appNameFa], ['ckb name', vars.appNameCkb]]) {
     if (value !== null && (!value.trim() || /['\\]/.test(value))) problems.push(`${label} "${value}" must be non-empty without quotes or backslashes`);
   }
@@ -94,10 +98,10 @@ export function validateVars(vars) {
   return problems;
 }
 
-/** Default display name and bundle id derived from the app id (fa and ckb names: none yet). */
+/** Default display name and the fixed bundle id (owner decision O4) of the app id (fa and ckb names: none yet). */
 export function defaultVars(appId, today) {
   const appName = appId.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  return { appId, appName, appNameFa: null, appNameCkb: null, bundleId: `com.example.${appId.replace(/-/g, '')}`, today };
+  return { appId, appName, appNameFa: null, appNameCkb: null, bundleId: bundleIdFor(appId), today };
 }
 
 /** The pilot's game.config.ts settings (the shared renderer the new-game scaffold uses too). */

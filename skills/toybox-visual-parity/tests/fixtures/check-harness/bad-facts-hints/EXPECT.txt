@@ -1,0 +1,3 @@
+[harness-game-facts]
+disagrees with PARITY_GAME_FACTS
+hasHints (true vs false)

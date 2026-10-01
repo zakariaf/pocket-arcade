@@ -38,7 +38,8 @@ export function StreakCard({ kind, days, layoutStyle }: StreakCardProps): ReactN
   return (
     <View style={layoutStyle}>
       <Panel testID={testID} padding="compact" gap={STREAK_GAP}>
-        <View style={styles.label}>
+        {/* The label element is the whole line, icon included (the design's label box). */}
+        <View style={styles.label} testID={`${testID}.label`}>
           {kind === 'current' ? (
             <Icon
               name="chain"
@@ -56,7 +57,6 @@ export function StreakCard({ kind, days, layoutStyle }: StreakCardProps): ReactN
             text={t(kind === 'current' ? 'daily.streak.current' : 'daily.streak.best')}
             variant="streakLabel"
             tone="muted"
-            testID={`${testID}.label`}
           />
         </View>
         <AppText

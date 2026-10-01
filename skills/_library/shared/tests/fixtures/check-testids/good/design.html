@@ -11,20 +11,23 @@
 .body{display:flex;flex-direction:column;gap:14px}
 .btn{display:block;padding:10px;background:#F8FBFF}
 .mini{width:390px;min-height:200px;display:flex;flex-direction:column;gap:12px}
+.hk{display:inline-flex;width:44px;height:44px;background:#F8FBFF}
+.panel{display:flex;flex-direction:column;gap:8px;padding:14px;background:#F8FBFF}
 </style>
 </head>
 <body>
-<script type="application/json" id="pa-deck">{"meta":{"languages":["en"],"languageNames":{"en":"English"}},"games":{"lineSiege":{"id":"line-siege","modes":["levels","daily","endless"],"name":{"en":"Line Siege"}}},"strings":{"common.levels":{"en":"Levels"},"common.premium":{"en":"Premium"},"common.settings":{"en":"Settings"},"common.statistics":{"en":"Statistics"},"home.endless-card.label":{"en":"Endless – Best {bestScore, number}"},"home.play-button.continue":{"en":"Continue – Level {level, number}"},"premium.loading":{"en":"Loading price…"}}}</script>
+<script type="application/json" id="pa-deck">{"meta":{"languages":["en"],"languageNames":{"en":"English"}},"games":{"lineSiege":{"id":"line-siege","modes":["levels","daily","endless"],"name":{"en":"Line Siege"}}},"strings":{"common.levels":{"en":"Levels"},"common.premium":{"en":"Premium"},"common.settings":{"en":"Settings"},"common.statistics":{"en":"Statistics"},"home.endless-card.label":{"en":"Endless – Best {bestScore, number}"},"home.play-button.continue":{"en":"Continue – Level {level, number}"},"premium.loading":{"en":"Loading price…"},"daily.title":{"en":"Daily challenge"},"daily.today.play-button":{"en":"Play today"}}}</script>
 <div id="pa-screens">
   <div class="pg-group"><h3 class="pg-h3">Home and Premium</h3>
     <div class="pg-shelf">
       <figure class="pg-fig"><div class="phone"><div class="app scr">
-        <div class="tb"><span class="brand">Line Siege</span><span class="ibtn" role="img" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2h20v20H2z"/></svg></span></div>
+        <div class="tb"><span class="brand">Line Siege</span><span class="ibtn" role="img" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2h20v20H2z"/></svg></span><span class="hk">?</span></div>
         <div class="body">
           <span class="btn xl">Continue – Level 12</span>
           <span class="btn rowbtn"><span class="lb">Endless – Best 4,210</span></span>
           <span class="btn key">Levels</span>
           <span class="btn key">Statistics</span>
+          <div class="panel daily"><h3>Daily challenge</h3><span class="btn">Play today</span></div>
         </div>
       </div></div><figcaption class="pg-tag"><span class="pg-hole"></span><b>S4</b><span>Home</span></figcaption></figure>
     </div>

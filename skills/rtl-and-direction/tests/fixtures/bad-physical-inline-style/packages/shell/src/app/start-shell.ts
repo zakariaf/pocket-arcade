@@ -20,7 +20,7 @@ import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell
 // Called by apps/<game>/index.ts. Nothing here writes the save before the direction check:
 // a reload re-runs every module, so writes before it would happen twice (verified gotcha).
 export function startShell<T extends ShellGameTypes>(game: ShellGameModule<T>): void {
-  // The cold-start clock's JS entry mark (app/perf/, Shell step 8); no parity harness here yet.
+  // The cold-start clock's JS entry mark (app/perf/, Shell step 7); no parity harness here yet.
   markJsEntry();
   const guard = createSqliteKvDirectionGuardAdapter();
   const language = resolveLanguage(languageFromRawSave(peekCurrentSave()), getLocales());

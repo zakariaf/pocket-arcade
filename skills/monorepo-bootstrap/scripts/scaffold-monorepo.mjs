@@ -7,6 +7,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+import { withoutBundleIdOption } from './lib/app-files.mjs';
 import { buildPlan, defaultVars, preExistingEntries, validateVars } from './lib/bootstrap-plan.mjs';
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 
@@ -20,7 +21,6 @@ const SPEC = {
     name: { type: 'string', value: 'text', help: 'Pilot display name (default: from the id, "Line Siege")' },
     'name-fa': { type: 'string', value: 'text', help: 'Persian display name (default: the Latin name until the i18n step)' },
     'name-ckb': { type: 'string', value: 'text', help: 'Sorani display name (default: the Latin name until the i18n step)' },
-    'bundle-id': { type: 'string', value: 'id', help: 'Pilot bundle id (default: com.example.<id without hyphens>)' },
     today: { type: 'string', value: 'YYYY-MM-DD', help: 'Date that decides whether the dated .npmrc exclude block is still needed (default: today, UTC)' },
     write: { type: 'boolean', help: 'Write the files (without it nothing is changed)' },
     replace: { type: 'string', multiple: true, value: 'file', help: 'Overwrite this conflicting repo file with the template' },
@@ -32,16 +32,21 @@ const SPEC = {
     '  conflict   an existing file differs from the template (or settings.json disagrees with the gates)',
     '  differs    (--compare) a file is missing or not what the templates produce',
     '',
+    'The pilot\'s bundle id is always io.applander.linesiege and Premium io.applander.linesiege.premium',
+    '(owner decision O4); there is no option for it, and --bundle-id with any other value stops (exit 2).',
+    '',
     'Example: node scaffold-monorepo.mjs --root . --app line-siege --name "Line Siege" --write',
   ].join('\n'),
 };
 
 run(async () => {
-  const { options } = parseArgs(process.argv.slice(2), SPEC);
+  const given = withoutBundleIdOption(process.argv.slice(2), 'line-siege');
+  if (given.error) fail(...given.error);
+  const { options } = parseArgs(given.argv, SPEC);
   if (!options.root) fail('pass --root <dir> (the repo root to scaffold)', 'Example: --root . (nothing is written without --write).');
   const root = requireDir(options.root, 'repo root');
   const today = options.today ?? new Date().toISOString().slice(0, 10);
-  const vars = { ...defaultVars(options.app, today), ...(options.name ? { appName: options.name } : {}), ...(options['bundle-id'] ? { bundleId: options['bundle-id'] } : {}), ...(options['name-fa'] ? { appNameFa: options['name-fa'] } : {}), ...(options['name-ckb'] ? { appNameCkb: options['name-ckb'] } : {}) };
+  const vars = { ...defaultVars(options.app, today), ...(options.name ? { appName: options.name } : {}), ...(options['name-fa'] ? { appNameFa: options['name-fa'] } : {}), ...(options['name-ckb'] ? { appNameCkb: options['name-ckb'] } : {}) };
   const invalid = validateVars(vars);
   if (invalid.length) fail(invalid.join('; '), 'Fix the option values and rerun.');
 

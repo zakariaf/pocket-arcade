@@ -1,6 +1,6 @@
 // packages/shell/src/ui/app-text.test.tsx
 import { screen } from '@testing-library/react-native';
-import { PixelRatio } from 'react-native';
+import { PixelRatio, StyleSheet } from 'react-native';
 
 import { FSI, PDI } from '@e07/shell/i18n/bidi.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -36,6 +36,37 @@ describe('AppText', () => {
       lineHeight: 91 / 3, // 21 x 1.45 = 30.45 on the pixel grid
       writingDirection: 'rtl',
     });
+  });
+
+  it('lets tall Persian digits overflow a tight number line instead of being clipped (S10)', async () => {
+    await renderWithShell(
+      <AppText text="۵۸" variant="number" testID="stats.overview-card.games-played.value" />,
+      { language: 'fa' },
+    );
+
+    // The element keeps the design's 33 pt line box; the text inside moves down by half of the
+    // 14 pt overflow (Vazirmatn's content box is 47 pt at 30 pt) and its frame holds the ink.
+    const text = screen.getByText('۵۸');
+    expect(text).toHaveStyle({ lineHeight: 33, marginVertical: -7 });
+    expect(StyleSheet.flatten(text.props['style'])).toMatchObject({
+      paddingTop: 14,
+      paddingBottom: 0,
+    });
+    expect(screen.getByTestId('stats.overview-card.games-played.value')).toHaveTextContent('۵۸');
+  });
+
+  it('draws Latin numbers without the overflow guard', async () => {
+    await renderWithShell(<AppText text="58" variant="number" testID="stats.value" />);
+
+    expect(screen.getByTestId('stats.value')).not.toHaveStyle({ marginVertical: -8 });
+  });
+
+  it('sets stat values in tabular figures (the design .sv: font-variant-numeric tabular-nums)', async () => {
+    await renderWithShell(<AppText text="۱۱" variant="statValueCompact" testID="stats.value" />, {
+      language: 'fa',
+    });
+
+    expect(screen.getByText('۱۱')).toHaveStyle({ fontVariant: ['tabular-nums'] });
   });
 
   it('uses Rubik Bold for button labels', async () => {

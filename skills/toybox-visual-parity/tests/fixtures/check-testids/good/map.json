@@ -86,6 +86,22 @@
           "coveredBy": "home.settings-button"
         },
         {
+          "testID": "home.hint-button",
+          "role": "button",
+          "component": "IconButton",
+          "text": null,
+          "a11yLabel": null,
+          "when": {
+            "hasHints": true
+          },
+          "designSelector": ":scope > .tb > .hk",
+          "checks": [
+            "bounds",
+            "fill"
+          ],
+          "note": "Self-test: an element only games with solver hints show (hasHints true, which the mockup draws)."
+        },
+        {
           "testID": "home.play-button",
           "role": "button",
           "component": "Button",
@@ -140,6 +156,43 @@
           "component": "KeyButton",
           "text": "common.statistics",
           "designSelector": ":scope > .body > .key:nth-child(4)",
+          "checks": [
+            "bounds",
+            "text",
+            "fill"
+          ]
+        },
+        {
+          "testID": "home.daily-card",
+          "role": "button",
+          "component": "Pressable",
+          "text": null,
+          "surface": true,
+          "designSelector": ":scope > .body > .panel.daily",
+          "checks": [
+            "bounds",
+            "fill"
+          ],
+          "note": "Self-test: a card surface (an accessible Pressable under the card's content)."
+        },
+        {
+          "testID": "home.daily-card.title",
+          "role": "header",
+          "component": "AppText",
+          "text": "daily.title",
+          "designSelector": ":scope > .body > .panel.daily > h3",
+          "checks": [
+            "crop"
+          ],
+          "a11yHidden": true,
+          "coveredBy": "home.daily-card"
+        },
+        {
+          "testID": "home.daily-card.play-button",
+          "role": "button",
+          "component": "Button",
+          "text": "daily.today.play-button",
+          "designSelector": ":scope > .body > .panel.daily > .btn",
           "checks": [
             "bounds",
             "text",

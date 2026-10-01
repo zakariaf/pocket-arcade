@@ -1,0 +1,1 @@
+Info.plist [bundle-id] CFBundleIdentifier com.example.demogame is the scaffold's placeholder (com.example.*)

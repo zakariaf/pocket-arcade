@@ -5,11 +5,12 @@ import type { GameConfig } from '@e07/shell/config/game-config.ts';
 export const gameConfig: GameConfig = {
   id: 'line-siege',
   appName: { en: 'Line Siege', de: 'Line Siege', fa: 'محاصره خط', ckb: 'گەمارۆی هێڵ' },
-  bundleId: 'com.example.linesiege',
+  // Owner decision O4: io.applander.<game id without hyphens>; withShell refuses anything else.
+  bundleId: 'io.applander.linesiege',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 1,
-  premium: { productId: 'com.example.linesiege.premium', priceNote: 'EUR 1.99 tier (D3)' },
+  premium: { productId: 'io.applander.linesiege.premium', priceNote: 'EUR 1.99 (owner, O2)' },
   ads: {
     isEnabled: true,
     policy: {

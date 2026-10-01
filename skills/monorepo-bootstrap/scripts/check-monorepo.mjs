@@ -8,7 +8,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { FONT_FILES, LANGUAGES } from './lib/app-files.mjs';
-import { BUNDLE_ID, TEMPLATES, preExistingEntries } from './lib/bootstrap-plan.mjs';
+import { bundleIdFor, premiumIdFor, TEMPLATES, preExistingEntries } from './lib/bootstrap-plan.mjs';
 import { EXACT_VERSION, lineMatching, npmrcExcludeProblems, npmrcPolicyOverrides, readJsonFile, readTextFile, workspaceFolders } from './lib/repo-read.mjs';
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 
@@ -26,7 +26,8 @@ const SPEC = {
     'Rules: root-file workspace-layout root-manifest root-scripts root-overrides pin-exact root-runtime',
     '  npmrc-policy npmrc-exclude node-pin gitignore prettier-config format-ignore lint-ignore tsconfig-base',
     '  tsconfig-workspace package-manifest app-manifest app-lockstep shell-peer shell-only banned app-files',
-    '  app-config metro-cache game-config runtime-game-config shell-files tooling-files knip-config lefthook',
+    '  app-config metro-cache game-config bundle-id premium-id runtime-game-config shell-files tooling-files',
+    '  knip-config lefthook',
     '  quality-gates gate-scope stryker-config claude-settings agents lockfile install-scripts one-react',
     'Scripts whose tool file does not exist yet are listed as "pending" (not a failure).',
     'root-overrides covers one React, one typescript-eslint (the ten @typescript-eslint/* packages at the',
@@ -57,7 +58,6 @@ const BANNED = [
   [/^(firebase|@react-native-firebase\/.+|@sentry\/.+|sentry-expo|@bugsnag\/.+|@datadog\/.+|expo-insights|expo-observe|expo-app-metrics|@amplitude\/.+|expo-analytics-amplitude|@segment\/.+)$/, 'a backend, analytics or crash service (N2)'],
   [/^expo-notifications$/, 'no push notifications'],
   [/^(react-native-webview|expo-web-browser)$/, 'web views are a network surface (N3)'],
-  [/^expo-tracking-transparency$/, 'no ATT prompt in v1'],
   [/^react-native-restart$/, 'reloadAppAsync from expo covers restarts'],
   [/^eslint-plugin-react-compiler$/, 'superseded by eslint-plugin-react-hooks 7'],
   [/^(axios|ky|got|node-fetch|cross-fetch)$/, 'our code makes no HTTP requests (N3)'],
@@ -292,7 +292,9 @@ function checkApps(ctx, add) {
     if (game !== null) {
       if (!new RegExp(`^\\s*id: '${app}',$`, 'm').test(game)) add(`${dir}/game.config.ts`, lineMatching(game, /^\s*id:/), 'game-config', `id must equal the folder name '${app}'`, 'The game id is the folder, the slug and the save gameId: keep them equal.');
       const bundle = /bundleId: '([^']*)'/.exec(game)?.[1];
-      if (bundle === undefined || !BUNDLE_ID.test(bundle)) add(`${dir}/game.config.ts`, lineMatching(game, /bundleId:/), 'game-config', `bundleId "${bundle ?? ''}" must match ${BUNDLE_ID.source}`, 'Use lowercase letters and digits between dots (valid on iOS and Android).');
+      if (bundle !== bundleIdFor(app)) add(`${dir}/game.config.ts`, lineMatching(game, /bundleId:/), 'bundle-id', `bundleId "${bundle ?? ''}" is not ${bundleIdFor(app)}`, `Every app's iOS bundle id and Android package is io.applander.<game id without hyphens> (owner decision O4): write bundleId: '${bundleIdFor(app)}' (scaffold-monorepo.mjs writes it).`);
+      const product = /productId: '([^']*)'/.exec(game)?.[1];
+      if (product !== premiumIdFor(app)) add(`${dir}/game.config.ts`, lineMatching(game, /productId:/), 'premium-id', `premium.productId "${product ?? ''}" is not ${premiumIdFor(app)}`, `The one Premium product is <bundle id>.premium: write productId: '${premiumIdFor(app)}'.`);
     }
     const runtimeFiles = ['index.ts', ...listTs(join(ctx.root, dir, 'src')).map((file) => `src/${file}`)];
     for (const file of runtimeFiles) {

@@ -1,9 +1,44 @@
 {
-  "about": "Shell texts the design copy deck lacks. Each is written into the four Shell catalogs (packages/shell/src/i18n/catalogs/<lang>.json) exactly as here; fa and ckb await a native speaker's review. copy-deck.mjs keys/apply/check --extras reads this file; references/translation-workflow.md shows the same table. The copy deck itself is never edited here.",
+  "about": "Shell texts the design copy deck lacks. Each is written into the four Shell catalogs (packages/shell/src/i18n/catalogs/<lang>.json) exactly as here. The fa and ckb texts are drafts for the owner's own review (owner decision O6: listed in reports under Owner steps (not blocking), never waited for); debug.* texts are English in all four languages on purpose, like every S15 debug menu text in the deck (test builds only), so they need no review. copy-deck.mjs keys/apply/check --extras reads this file; references/translation-workflow.md shows the same table. The copy deck itself is never edited here.",
   "retired": {
     "result.win.moves-count": "Retired by the lead's decision L3 (2026-09-30): a score-rated win prints result.win.score-line (score and best), not a moves count."
   },
   "strings": {
+    "debug.perf.benchmark": {
+      "owner": "toybox-screens (S15 debug menu, test builds: Performance > the row debug.perf-benchmark-row that runs the save benchmark)",
+      "en": "Run save benchmark",
+      "de": "Run save benchmark",
+      "fa": "Run save benchmark",
+      "ckb": "Run save benchmark"
+    },
+    "debug.perf.heading": {
+      "owner": "toybox-screens (S15 debug menu, test builds: the Performance section heading)",
+      "en": "Performance",
+      "de": "Performance",
+      "fa": "Performance",
+      "ckb": "Performance"
+    },
+    "debug.perf.record": {
+      "owner": "toybox-screens (S15 debug menu, test builds: Performance > the switch debug.perf-record-switch that records frame times)",
+      "en": "Record frame times",
+      "de": "Record frame times",
+      "fa": "Record frame times",
+      "ckb": "Record frame times"
+    },
+    "debug.perf.share": {
+      "owner": "toybox-screens (S15 debug menu, test builds: Performance > the row debug.perf-share-row that opens the share sheet with the perf log)",
+      "en": "Share performance report",
+      "de": "Share performance report",
+      "fa": "Share performance report",
+      "ckb": "Share performance report"
+    },
+    "debug.perf.summary": {
+      "owner": "toybox-screens (S15 debug menu, test builds: Performance > the summary row's label, how many entries the perf log holds, entriesCount = PerfLog.entries().length; the row's value is the debug kit's untranslated number line perfSummaryText, 'cold 2 · 1049 ms · save p95 0.41 ms')",
+      "en": "Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}",
+      "de": "Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}",
+      "fa": "Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}",
+      "ckb": "Performance log: {entriesCount, plural, =0 {empty} one {# entry} other {# entries}}"
+    },
     "game-screen.board.selected.a11y-announcement": {
       "owner": "game-host-integration (tap-then-tap: a piece was picked)",
       "en": "Picked. Now tap where it goes.",

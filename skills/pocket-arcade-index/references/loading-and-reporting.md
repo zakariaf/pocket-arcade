@@ -66,10 +66,11 @@ Every task ends with one message to the owner. The owner never reads code or log
 
 1. **Outcome first, in players' words,** with screens named by name and ID ("Home (S4) now shows today's daily card").
 2. **Evidence, copied, never retyped:** test counts from the Jest summary, numbers from the files in `reports/` (naming each file), and the `RESULT` line of every loaded skill's check, for example `check-screens.mjs . --screen S4: RESULT: PASS`, with the number of `SKIP` lines or the `NOT APPLICABLE` fact when there were any.
-3. **Design match** for every changed screen: which variants passed visual parity (light and dark, en and fa) and any waiver with its reason.
-4. **Not verified:** an honest list (sound, haptics, 120 Hz, purchases and VoiceOver need a device or the owner).
-5. **At most one question,** with the default that applies until the owner answers.
-6. **Details last:** commits, commands, the red test runs.
+3. **Design match** for every changed screen: all four variants passed visual parity (light and dark times en and fa, at every planned scroll offset, against the reference the game's facts pick) and any waiver with its reason; a run narrowed with `--theme` or `--lang` never counts.
+4. **Not verified:** an honest list (sound, haptics, 120 Hz, purchases and VoiceOver need a device or the owner); a keyless rehearsal (`REHEARSAL: not a release gate`) goes here, never under the checks.
+5. **Owner steps (not blocking):** the owner's own checks, one line each: the review of pending fa and ckb texts, the play-test, listening to the sound previews ("none pending" or "done" when that is so). They are listed, never waited for; no step of the work stops for them.
+6. **At most one question,** with the default that applies until the owner answers.
+7. **Details last:** commits, commands, the red test runs.
 
 A short slice report, for shape:
 
@@ -81,6 +82,8 @@ Checks: check-screens.mjs . --screen S4 PASS; check-signoff.mjs --screen S4 PASS
 check-i18n-code.mjs . PASS; check-rtl.mjs . PASS; check-a11y-code.mjs . PASS; check:fast green.
 Tests: 214/214 (reports/jest-summary.txt).
 Not verified: VoiceOver speech (owner checklist before release).
+Owner steps (not blocking): fa and ckb texts: none pending; Line Siege play-test: still open;
+the Line Siege sound previews: still open.
 Question: none.
 ```
 
@@ -92,5 +95,7 @@ Stop and ask, in one message with one question answerable in a word and the defa
 - a conflict with a non-negotiable (N1 to N12), a spec gap a player would see, a new screen, route, setting or game;
 - a change to a quality gate, a golden, a baseline, a budget or a pinned version;
 - account steps (keys, agreements, app records, consoles, Xcode installs, `sudo`).
+
+Never stop for the owner's own checks (the review of fa and ckb texts, the play-test, listening to the sound previews): list them under "Owner steps (not blocking)" and keep going.
 
 Keep working on everything that does not depend on the answer.

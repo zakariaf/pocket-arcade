@@ -7,6 +7,7 @@ How Maestro gets onto the Mac, how it runs without sending anything anywhere, an
 - What is pinned
 - Installing (no Homebrew)
 - The environment every run needs
+- Naming the device and the driver port
 - Commands that are verified on 2.10.0
 - Commands that are banned
 - Checking syntax without a simulator
@@ -46,6 +47,17 @@ MAESTRO_DISABLE_UPDATE_CHECK: 'true',
 ```
 
 The three variables were read in the 2.10.0 jar: no analytics, no "analyze your run" prompt, no update check. So a run sends nothing off the Mac. Set them in your shell too when calling `tools/maestro/bin/maestro` directly.
+
+## Naming the device and the driver port
+
+Maestro 2.10.0 has two global options that go **before** the command: `--device <udid>` (the simulator; `maestro --help` lists it with its alias `--udid`) and `--driver-host-port <port>` (the host port of the XCTest driver it installs on that simulator; default 7001). `--help` does not list the second one, but the 2.10.0 CLI defines it in its `App` class and passes it to `test` (read in the jar; verified on the simulator: `lsof -nP -iTCP:<port> -sTCP:LISTEN` shows `maestro-d` on exactly the port passed). Several sessions share this Mac, and a driver another session left on 7001 can answer a run that asked for your device: round 3's `hierarchy` call returned another session's screen. So every call names both:
+
+```sh
+tools/maestro/bin/maestro --device "$UDID" --driver-host-port "$PORT" test <flow> -e APP_ID=<id> -e APP_SCHEME=<scheme>
+tools/maestro/bin/maestro --device "$UDID" --driver-host-port "$PORT" hierarchy
+```
+
+`$UDID` is this session's own `e07-*` simulator (`xcrun simctl list devices` shows its UDID), and `$PORT` a free port for this run (`node -e "const s=require('net').createServer();s.listen(0,'127.0.0.1',()=>{console.log(s.address().port);s.close()})"`), never 7001. In code, `maestroGlobalArgs({ udid, driverPort })` from `packages/tooling/src/e2e/maestro-args.ts` builds the two options and `freeDriverPort()` finds the port; `check-e2e-setup` (rule `maestro-device`) fails any other spawn. `check-syntax` and `--version` need no device.
 
 ## Commands that are verified on 2.10.0
 

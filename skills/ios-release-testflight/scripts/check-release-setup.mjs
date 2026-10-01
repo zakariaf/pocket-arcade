@@ -11,6 +11,9 @@ import { join } from 'node:path';
 import { createReporter, isBinary, lineOf, maskComments, parseArgs, REPO_SCAN_IGNORES, requireDir, run, walk } from './check-lib.mjs';
 import { partialShellProblems } from './lib/shell-complete.mjs';
 import { readPlist } from './lib/plist.mjs';
+import { appIdOf, placeholdersInText } from './lib/ship-placeholders.mjs';
+
+export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
 const SPEC = {
   name: 'check-release-setup',
@@ -23,7 +26,11 @@ const SPEC = {
     '  export-options      packages/tooling/config/export-options-{test,store}.plist: method app-store-connect, destination export,',
     '                      signingStyle automatic, manageAppVersionAndBuildNumber false, uploadSymbols true,',
     '                      testFlightInternalTestingOnly true (test) / false (store)',
-    "  game-config         every apps/<game>/game.config.ts has one `version: 'X.Y.Z'` and exactly one `buildNumber: <int>,` line",
+    "  game-config         every apps/<game>/game.config.ts has one `version: 'X.Y.Z'` and exactly one `buildNumber: <int>,` line,",
+    "                      bundleId io.applander.<game id without hyphens> and premium productId <bundleId>.premium (owner",
+    '                      decision O4), and none of the scaffold placeholders: com.example.* ids, the AdMob app',
+    '                      ca-app-pub-1234567890123456~1234567890 and units /1111111111, /2222222222, /3333333333 (owner',
+    '                      step G5), the privacy host example.com or support@example.com (owner step G3)',
     '  npm-script          root package.json release:ios runs packages/tooling/src/release/release-ios.ts',
     '  release-prereqs     root package.json has the verify, audit:privacy and audit:network scripts release:ios runs',
     '  api-key-signing     the archive uses -allowProvisioningUpdates and the three -authenticationKey* flags; no .p12 or security import',
@@ -79,6 +86,21 @@ function checkGameConfigs(ctx) {
     if (builds.length !== 1) ctx.problem(full, 0, 'game-config', `has ${builds.length} "buildNumber: <int>," lines, expected exactly 1`, 'Keep one `buildNumber: <int>,` line: release:ios bumps it with a line-exact edit.');
     else if (Number(builds[0][2]) < 1) ctx.problem(full, lineOf(source, builds[0].index), 'game-config', 'buildNumber is below 1', 'Build numbers start at 1 and only go up.');
     if (!/^\s*version: '\d+\.\d+\.\d+',$/m.test(source)) ctx.problem(full, 0, 'game-config', "has no `version: 'MAJOR.MINOR.PATCH',` line", 'The version lives only in game.config.ts as SemVer.');
+    checkAppIds(ctx, full, source, rel.split('/')[0]);
+  }
+}
+
+/** Owner decision O4 and the scaffold's placeholders: a release ships only the owner's real ids. */
+function checkAppIds(ctx, full, source, game) {
+  const wanted = appIdOf(game);
+  const bundle = /\bbundleId\s*:\s*['"]([^'"]*)['"]/.exec(source);
+  if (bundle?.[1] !== wanted) ctx.problem(full, bundle ? lineOf(source, bundle.index) : 0, 'game-config', `bundleId is ${bundle ? `'${bundle[1]}'` : 'missing'}, not '${wanted}'`, `Every game ships as io.applander.<game id without hyphens> (owner decision O4): set bundleId: '${wanted}'. The app record (owner step G2) uses the same id.`);
+  const product = /\bproductId\s*:\s*['"]([^'"]*)['"]/.exec(source);
+  if (product !== null && product[1] !== `${wanted}.premium`) ctx.problem(full, lineOf(source, product.index), 'game-config', `premium productId is '${product[1]}', not '${wanted}.premium'`, 'Premium is <bundleId>.premium (owner decision O4).');
+  for (const found of placeholdersInText(source)) {
+    if (found.value === bundle?.[1] || found.value === product?.[1]) continue; // reported above
+    const step = found.name.includes('AdMob') ? 'owner step G5: the owner creates the AdMob app and its units and gives the agent the ids' : found.name.includes('bundle') ? 'owner decision O4: io.applander.<game id>' : "owner step G3: the owner's privacy-policy host and support address, with the store listing";
+    ctx.problem(full, lineOf(source, found.index), 'game-config', `holds ${found.name} (${found.value})`, `A release never ships a scaffold placeholder; ${step}.`);
   }
 }
 

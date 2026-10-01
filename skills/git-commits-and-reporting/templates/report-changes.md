@@ -5,4 +5,4 @@ Parity waivers changed
 - __SCREEN_NAME__ (__SCREEN_ID__): __WHICH_ELEMENTS__, class __PLATFORM_OR_PLATFORM_TEXT_SHAPING_OR_DESIGN_ARTEFACT__, rule __RULE__, because __CAUSE_IN_PLAIN_WORDS__ (Gate-Change trailer in __SHA__).
 
 Texts changed in all four languages
-- __WHERE_THE_TEXT_SHOWS__ (en, de, fa, ckb): en now reads "__NEW_EN_TEXT__"; de, fa and ckb changed with it, and fa and ckb wait for a native speaker's review (R3).
+- __WHERE_THE_TEXT_SHOWS__ (en, de, fa, ckb): en now reads "__NEW_EN_TEXT__"; de, fa and ckb changed with it, and the fa and ckb drafts go to the owner's review (R3), listed under "Owner steps (not blocking)".

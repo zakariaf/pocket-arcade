@@ -14,6 +14,7 @@ import {
   isHeldParitySplash,
   parityLaunchFor,
   readParityLaunch,
+  withParityRoot,
 } from '@e07/shell/app/parity-startup.tsx';
 import { markJsEntry } from '@e07/shell/app/perf/cold-start.ts';
 import { languageFromRawSave, planDirection } from '@e07/shell/i18n/direction-plan.ts';
@@ -37,7 +38,7 @@ export function startShell<T extends ShellGameTypes>(game: ShellGameModule<T>): 
   // Test builds: a parity capture (toybox-visual-parity) launches into one design frame; a
   // malformed request shows only the error view. Store builds always get { kind: 'normal' }.
   const parity = readParityLaunch();
-  // The cold-start clock's JS entry mark (app/perf/, Shell step 8): once per runtime, in memory
+  // The cold-start clock's JS entry mark (app/perf/, Shell step 7): once per runtime, in memory
   // only, so a direction reload marks its new runtime again and nothing is written twice.
   markJsEntry();
   if (parity.kind === 'error') {
@@ -74,7 +75,10 @@ type AppStart<T extends ShellGameTypes> = {
 function startApp<T extends ShellGameTypes>(start: AppStart<T>): void {
   const { game, language, parity } = start;
   if (parity.kind === 'frame' && isHeldParitySplash(parity.request)) {
-    registerRootComponent(createStartupSplash({ game, language, restart: holdSplash }));
+    // The held S1 splash is registered outside the Shell root: the parity root wraps it too, so
+    // the capture's hierarchy carries this launch's marker (parity.launch.<nonce>).
+    const splash = createStartupSplash({ game, language, restart: holdSplash });
+    registerRootComponent(withParityRoot(parity.request, splash));
     return;
   }
   const launch =

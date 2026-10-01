@@ -1,0 +1,4 @@
+[persian-number-clip]
+packages/shell/src/theme/type-styles.ts:
+TYPE_STYLES.scoreValue has a Persian line height of 1
+[type-style-mismatch]

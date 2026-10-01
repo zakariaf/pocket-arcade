@@ -31,7 +31,7 @@ A task is done only when every line that applies is true and its evidence is in 
 | Native modules, config plugins, `app.config.ts`, the config composer | `npx expo config --json` for every allowed variant pair, a clean prebuild, a simulator build, a launch screenshot looked at, the privacy and network audits |
 | A new dependency | exact version, at least 7 days old (or a dated exception), all apps in lockstep, install script reviewed, licence allowed, knip clean, network audit clean |
 | Ads or Premium | fake-based tests for every affected spec 8.8 rule or S12 state (each numeric limit at exactly its value); Premium changes also the StoreKit harness on the simulator |
-| Anything that reaches players (a release) | the release checklist, end-to-end and screenshot runs green on this commit, mutation score at or above 75%, the owner's play-test and VoiceOver check |
+| Anything that reaches players (a release) | the release checklist, end-to-end and screenshot runs green on this commit, mutation score at or above 75%, the StoreKit harness, the VoiceOver check; the owner's play-test, review of the fa and ckb texts and listening to the sound previews are listed in the report as owner steps and never waited for |
 
 ## The test pyramid
 
@@ -45,7 +45,7 @@ A task is done only when every line that applies is true and its evidence is in 
 | 5 | Mutation testing of logic folders | Stryker | 1-30 min | nightly, before a release, when a rules module is finished |
 | 6 | End-to-end on a Release simulator build | Maestro flows | 10-60 s per flow | `e2e:ios`: nightly, before a release, after UI or navigation changes |
 | 7 | Screenshot matrix (4 languages x light/dark x phone/tablet) | Maestro + image compare | 5-20 min | `screenshots:ios`: before a release, after any UI change |
-| 8 | Store sandbox and the owner's play-test | StoreKit harness, TestFlight, the owner | manual | per release |
+| 8 | Store sandbox and the owner's play-test | StoreKit harness (before the store build), TestFlight, the owner (listed as an owner step, never waited for) | manual | per release |
 
 Most tests live in levels 1-3. A typical game ships with a few hundred level-1 and level-2 tests, 10-40 component tests, 3-6 simulations, 3-8 own end-to-end flows plus the Shell's shared flows, and about 180 matrix screenshots.
 

@@ -2,6 +2,7 @@
   {"prompt": "VoiceOver reads the level tiles as 'button button button'; give them real labels and make sure every tap target is big enough", "expect": "accessibility"},
   {"prompt": "check that the new dark palette for Bank Shot has enough contrast and still works for colour-blind players", "expect": "accessibility"},
   {"prompt": "wire the rewarded ad for the extra hint and make sure the consent form shows for players in the EEA", "expect": "admob-ads"},
+  {"prompt": "ask for App Tracking Transparency permission before ads, after the consent form", "expect": "admob-ads"},
   {"prompt": "the banner ad must never appear for Premium owners; also set how often interstitial ads show between levels", "expect": "admob-ads"},
   {"prompt": "where should the new clock port, its adapter and its fake live, and may a game import the Shell's store?", "expect": "architecture-and-boundaries"},
   {"prompt": "eslint reports import/no-restricted-paths when line-siege imports from another package; which dependency zone is allowed?", "expect": "architecture-and-boundaries"},

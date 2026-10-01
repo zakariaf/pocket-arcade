@@ -13,9 +13,9 @@ import { Icon } from './icons/icon.tsx';
 import { RadioMark } from './radio-mark.tsx';
 import { Toggle } from './toggle.tsx';
 
-import type { IconTilePaint } from './icon-tile.tsx';
-import type { IconName } from './icons/icon-paths.ts';
+import type { IconTileIcon, IconTilePaint } from './icon-tile.tsx';
 import type { Language } from '@e07/shell/i18n/languages.ts';
+import type { TypeVariant } from '@e07/shell/theme/type-styles.ts';
 import type { ReactNode } from 'react';
 import type {
   AccessibilityRole,
@@ -34,9 +34,16 @@ export type ListRowProps = {
   readonly isReducedMotion: boolean;
   readonly end?: ListRowEnd;
   /** The 38 pt icon tile at the start (`<testID>.icon`); danger rows paint it danger. */
-  readonly icon?: IconName;
+  readonly icon?: IconTileIcon;
   readonly iconPaint?: IconTilePaint;
   readonly description?: string;
+  /** The description's own testID when the map names it (S11d `.licence`); default `.description`. */
+  readonly descriptionTestID?: string;
+  /**
+   * More lines in the text column under the description (S11d's column row: a second muted line
+   * and the centred "Show licence text" nudge). The column then keeps each part at its own width.
+   */
+  readonly textExtra?: ReactNode;
   /** Muted value before the chevron ("System (English)", "12"). */
   readonly value?: string;
   /** For end="toggle". */
@@ -46,6 +53,8 @@ export type ListRowProps = {
   readonly onPress?: () => void;
   /** Destructive rows: bold danger label and a danger icon tile. */
   readonly isDanger?: boolean;
+  /** A bold label in the normal ink, e.g. S11 "Remove ads – €1.99" (the design's strong row). */
+  readonly isStrong?: boolean;
   /** The first row of a list draws no separator. */
   readonly isFirst?: boolean;
   /** Wrap rows put this under the label at full width (a segmented control). */
@@ -72,10 +81,15 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
+      // A single line of parts shorter than the 60 pt row sits in its middle, as CSS centres a
+      // one-line flex row (align-content: normal); Yoga's default put it at the top (S11a).
+      alignContent: 'center',
     },
     separated: { borderTopWidth: ROW.separator, borderTopColor: SHELL_COLORS[theme.scheme].line },
     pressed: { backgroundColor: theme.colors.sunken },
     text: { flex: 1, gap: ROW.labelGap },
+    // A column row (textExtra): each part keeps its own width, as the design's lic-x column.
+    textColumn: { alignItems: 'flex-start' },
     below: { flexBasis: '100%' },
   });
   return styles;
@@ -102,6 +116,12 @@ function endSlot(props: ListRowProps, color: string): ReactNode {
 
 type Styles = ReturnType<typeof useStyles>;
 
+/** Autonyms (S11a) are the option name in 18 Bold; strong and danger labels the row label Bold. */
+function labelVariantOf(props: ListRowProps): TypeVariant {
+  if (props.labelLanguage !== undefined) return 'optionNameList';
+  return props.isDanger === true || props.isStrong === true ? 'rowLabelStrong' : 'rowLabel';
+}
+
 function rowContent(props: ListRowProps, styles: Styles, color: string): ReactNode {
   const isDanger = props.isDanger === true;
   const tilePaint = isDanger ? 'danger' : (props.iconPaint ?? 'pop');
@@ -110,10 +130,12 @@ function rowContent(props: ListRowProps, styles: Styles, color: string): ReactNo
       {props.icon === undefined ? null : (
         <IconTile icon={props.icon} paint={tilePaint} testID={`${props.testID}.icon`} />
       )}
-      <View style={styles.text}>
+      <View style={[styles.text, props.textExtra === undefined ? null : styles.textColumn]}>
         <AppText
           text={props.label}
-          variant={isDanger ? 'label' : 'rowLabel'}
+          // Strong and danger labels are the row label in Bold (17, line height 1.32 / 1.5),
+          // not the button label role (1.25), which made each line 1.2 pt short of the design.
+          variant={labelVariantOf(props)}
           tone={isDanger ? 'danger' : 'default'}
           testID={`${props.testID}.label`}
           {...(props.labelLanguage === undefined ? {} : { language: props.labelLanguage })}
@@ -123,9 +145,10 @@ function rowContent(props: ListRowProps, styles: Styles, color: string): ReactNo
             text={props.description}
             variant="rowDescription"
             tone="muted"
-            testID={`${props.testID}.description`}
+            testID={props.descriptionTestID ?? `${props.testID}.description`}
           />
         )}
+        {props.textExtra}
       </View>
       {props.value === undefined ? null : (
         <AppText

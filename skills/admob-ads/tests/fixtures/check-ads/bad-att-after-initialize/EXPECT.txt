@@ -1,0 +1,3 @@
+[att-order]
+packages/shell/src/services/ads/ad-gate.ts
+requestTracking() runs after initialize()

@@ -2,15 +2,19 @@
 // The glue between the debug services, the link handler and the app: the flags survive a reload
 // through the key-value store, save writes reach the stores, routes reach the navigator ref (after
 // the group switch a first-run link starts), links sent while the app starts wait for the
-// navigator, the perf log lives in the save database, a direction flip stops the audio before the
-// reload, a bad link reaches the error log.
+// navigator, the perf log lives in the save database with S15's Performance actions over it, the
+// Shell's sounds and pulses also land in the perf log (E2E feedback evidence) while still reaching
+// the real ports, a direction flip stops the audio before the reload, a bad link reaches the error
+// log.
 import { restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { createFakeDebugStore } from '@e07/shell/screens/debug/fake-debug-store.ts';
 import { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
 import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-connectivity.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
+import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
 import { createFakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
 import { planLoad } from '@e07/shell/services/save/load-plan.ts';
 import { createSaveService } from '@e07/shell/services/save/save-service.ts';
@@ -102,6 +106,8 @@ type Setup = {
   readonly driver: ReturnType<typeof createRowDriver>;
   readonly order: string[];
   readonly errorLog: FakeErrorLog;
+  readonly audio: ReturnType<typeof createFakeAudio>;
+  readonly haptics: ReturnType<typeof createFakeHaptics>;
 } & Pick<DebugPartsInput, 'save' | 'stores'>;
 
 function setup(isTestBuild = true): Setup {
@@ -113,6 +119,8 @@ function setup(isTestBuild = true): Setup {
   const connectivity = createSimulatedConnectivity(createFakeConnectivity(true));
   const links = fakeLinks();
   const driver = createRowDriver();
+  const audio = createFakeAudio();
+  const haptics = createFakeHaptics();
   const parts = createDebugParts({
     network: { simulated: isTestBuild ? connectivity : null },
     clocks: { simulated: isTestBuild ? clock : null },
@@ -121,11 +129,13 @@ function setup(isTestBuild = true): Setup {
     saveDriver: driver,
     stores,
     audio: {
+      ...audio,
       dispose: () => {
         order.push('audio stopped');
         return Promise.resolve();
       },
     },
+    haptics,
     errorLog,
     extra: { levels: { packCount: 3, levelsPerPack: 30 } },
     linking: links,
@@ -142,7 +152,10 @@ function setup(isTestBuild = true): Setup {
       listener();
     });
   };
-  return { parts, clock, navigate, nextState, links, driver, order, save, stores, errorLog };
+  return {
+    ...{ parts, clock, navigate, nextState, links, driver, order, save, stores, errorLog },
+    ...{ audio, haptics },
+  };
 }
 
 describe('createDebugParts', () => {
@@ -153,7 +166,7 @@ describe('createDebugParts', () => {
 
   it('builds no debug code without the test-build wrappers (a store build)', () => {
     const { parts } = setup(false);
-    expect([parts.services, parts.links]).toStrictEqual([null, null]);
+    expect([parts.services, parts.links, parts.feedback]).toStrictEqual([null, null, null]);
   });
 
   it('keeps the date and the offline flag for the next run of the app', () => {
@@ -198,6 +211,25 @@ describe('createDebugParts', () => {
     parts.services?.perfLog.append({ kind: 'cold-start', label: 'home', atEpochMs: 1, data: {} });
     expect(parts.services?.perfLog.entries()).toHaveLength(1);
     expect(driver.tables.join(' ')).toContain('perf_log');
+  });
+
+  it('logs every Shell sound and pulse as feedback and still plays it (e2e feedback.json)', () => {
+    const { parts, audio, haptics } = setup();
+    parts.feedback?.audio.play('ui.win');
+    parts.feedback?.haptics.play('success');
+    const logged = parts.services?.perfLog.entries().filter((entry) => entry.kind === 'feedback');
+    expect(logged?.map((entry) => entry.label)).toStrictEqual(['ui.win', 'success']);
+    expect(audio.calls).toStrictEqual([{ kind: 'play', soundId: 'ui.win', delayMs: 0 }]);
+    expect(haptics.played).toStrictEqual(['success']);
+  });
+
+  it("gives S15's Performance section actions over the same perf log", () => {
+    const { parts } = setup();
+    const perf = parts.services?.perf;
+    perf?.setRecording(true);
+    expect(perf?.isRecording()).toBe(true);
+    perf?.setRecording(false);
+    expect(perf?.isRecording()).toBe(false);
   });
 
   it('stops the audio, then reloads for a direction flip', async () => {

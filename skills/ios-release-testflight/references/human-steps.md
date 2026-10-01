@@ -30,20 +30,20 @@ One message, one request answerable in a word or one action: the step ID, the ex
 
 ## Per game (G1-G8)
 
-- **G1.** Approve the app name and the bundle ID the agent proposes. The bundle ID must match `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$` (valid on iOS and Android: no hyphens) and the name must be unique on the App Store.
-- **G2.** Create the **app record** in App Store Connect (My Apps > + > New App: iOS, name, primary language, the bundle ID, SKU = the game slug). The public API cannot create apps. In the same visit, create the **internal tester group**: the app > TestFlight > Internal Testing > +, name it `Owner`, turn on automatic distribution, and add yourself. TestFlight shows a build only to testers in a group that has it; with automatic distribution every processed build reaches the group without another step. About 3 minutes.
-- **G3.** Fill in the **App Privacy** questionnaire (web). Decide it together with the no-ATT choice: the Google Mobile Ads SDK's manifest declares DeviceID with tracking=true while the app never shows ATT, a guideline 5.1.2 risk.
+- **G1.** Confirm the app name (it must be unique on the App Store). The bundle ID is fixed, not a choice: `io.applander.<game id without hyphens>`, all lowercase (owner decision O4, 2026-09-30: every game uses the Applander domain; Line Siege is `io.applander.linesiege`, its Premium product `io.applander.linesiege.premium`). It is valid on iOS and Android.
+- **G2.** Create the **app record** in App Store Connect (My Apps > + > New App: iOS, name, primary language, the bundle ID `io.applander.<game id without hyphens>`, SKU = the game slug). The public API cannot create apps. In the same visit, create the **internal tester group**: the app > TestFlight > Internal Testing > +, name it `Owner`, turn on automatic distribution, and add yourself. TestFlight shows a build only to testers in a group that has it; with automatic distribution every processed build reaches the group without another step. About 3 minutes.
+- **G3.** Fill in the **App Privacy** questionnaire (web) from `npm run audit:privacy`'s output: **Device ID is collected, linked to the user and used for tracking, by the third-party ads SDK (Google Mobile Ads)**; the app asks Apple's App Tracking Transparency permission before any ad request that could use it (owner decision O1, guideline 5.1.2(i)), and players who decline still get ads without the IDFA. The other types (coarse location, advertising data, product interaction, performance, crash and other diagnostic data) come from the same table and are not used for tracking. Our own code collects nothing. In the same step give the privacy-policy host and path and the support address that go into `game.config.ts` `links` (until then the scaffold's `example.com` and `support@example.com` are there, and `check-game-app --stage complete` and every store gate refuse them by name).
 - **G4.** Check the **Premium** in-app purchase the agent created through the API, or create it in the web UI. The first IAP must be submitted together with an app version.
-- **G5.** AdMob: create the app and its 3 ad units and give the IDs to the agent (they go into `game.config.ts`). After release, link the AdMob app to the store listing and publish `app-ads.txt`.
+- **G5.** AdMob: create the app and its 3 ad units and give the IDs to the agent (they go into `game.config.ts`). Until then `game.config.ts` holds the scaffold's placeholders (`ca-app-pub-1234567890123456~1234567890` and units `/1111111111`, `/2222222222`, `/3333333333`), and every store/live gate refuses them by name. Do not publish an IDFA explainer message in the AdMob console: the app asks ATT itself after Google's form. After release, link the AdMob app to the store listing and publish `app-ads.txt`.
 - **G6.** Play-test on TestFlight, including the purchase test: buy, cancel, restore after reinstall (the sandbox does not charge).
-- **G7.** Have a native speaker read the Persian and Sorani texts.
+- **G7.** Read the Persian and Sorani texts yourself (owner decision O6: the agent drafts them and writes `reports/i18n/review-fa.csv` and `review-ckb.csv`; every report lists them under "Owner steps (not blocking)", and no release waits for them).
 - **G8.** Approve the store listing (texts, screenshots, age-rating answers).
 
 ## Per release (R1-R6)
 
 - **R1.** Play the TestFlight build and answer "ship" or "don't ship".
 - **R2.** VoiceOver spot check.
-- **R3.** Native-speaker read of changed fa/ckb strings.
+- **R3.** Read the changed fa/ckb strings (the preflight prints `Owner step R3 (not blocking)` with the CSV paths; the release goes on).
 - **R4.** Accept any new Apple agreement the agent reports as blocking.
 - **R5.** Submit for review: one click in App Store Connect, or tell the agent "submit". The agent never submits without that message.
 - **R6.** Answer App Review messages (Resolution Center); choose manual or automatic release after approval.
@@ -55,11 +55,10 @@ Before `npm run release:ios -- --variant store`:
 - [ ] `npm run verify` is green (it includes the network audit, licence audit, i18n verify, coverage, `npx expo install --check` and `expo-doctor` for every app).
 - [ ] `npm run e2e:ios` and `npm run screenshots:ios` are green on a test-variant simulator build of **this** commit, and the screenshot diffs were reviewed.
 - [ ] `version` in `game.config.ts` is correct and higher than the last approved version.
-- [ ] `game.config.ts` holds the real AdMob app and unit IDs and the Premium product ID (the unit test "production IDs never contain 3940256099942544" passes).
+- [ ] `game.config.ts` holds the bundle ID `io.applander.<game id without hyphens>`, the Premium product ID `<bundle id>.premium`, the real AdMob app and unit IDs (never the scaffold's `1234567890123456` placeholders; the unit test "production IDs never contain 3940256099942544" passes) and the owner's links (`check-release-setup.mjs` rule `game-config`).
 - [ ] The SKAdNetwork list was refreshed from Google's page.
 - [ ] The Paid Apps Agreement and the other agreements are current; the app record exists; the Premium IAP exists (first release: attached to the version).
-- [ ] The owner play-tested the latest **test** build of this commit (R1), including the purchase test on a game's first release.
-- [ ] Changed fa/ckb strings are native-speaker reviewed (R3).
+- [ ] The report lists, under **Owner steps (not blocking)**: the play-test of the latest test build (R1, G6, with the purchase test on a game's first release), the fa/ckb texts waiting for review (R3, with the CSV paths) and the sound previews to listen to. None of them blocks the release (owner decision O6); the owner's "ship" does.
 
 After the upload:
 

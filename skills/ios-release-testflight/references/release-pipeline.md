@@ -19,6 +19,7 @@
 - Step 11: What to Test
 - Step 12: tag and report
 - Resuming a stopped run
+- Rehearsal without the owner's key (no upload)
 - Versions, build numbers and tags
 - After "ship"
 
@@ -53,10 +54,11 @@ Stop on the first failure, before anything is built, committed or uploaded:
 - `ASC_KEY_ID`, `ASC_ISSUER_ID` and `APPLE_TEAM_ID` are set; the key file exists with mode `-rw-------` (checked with `stat`, never read).
 - The login keychain is unlocked: `security show-keychain-info ~/Library/Keychains/login.keychain-db` exits 0.
 - `xcodebuild -version` prints Xcode 26.6 (from `selectXcode()`).
-- The app record exists: `node packages/tooling/src/asc/print-app-record.ts <bundleId>` prints `{"id","name"}`; exit 2 means no record, which is owner step G2. The numeric `id` is the Apple ID (`APPLE_APP_ID`) for the upload.
-- Store only: the `version` in `game.config.ts` is higher than the last release tag `<slug>/vX.Y.Z` (build tags contain `+` and do not count), and the fa/ckb review gate passes (`node packages/tooling/src/i18n/review-sheet.ts --release`).
+- The bundle id the app config resolves is `io.applander.<game id without hyphens>` (owner decision O4: every game, all lowercase; Line Siege is `io.applander.linesiege`, Premium `<bundle id>.premium`). Anything else stops the preflight.
+- The app record exists: `node packages/tooling/src/asc/print-app-record.ts --app <game>` (or the bundle id itself) prints `{"id","name"}`; exit 2 means no record, which is owner step G2. The numeric `id` is the Apple ID (`APPLE_APP_ID`) for the upload.
+- Store only: the `version` in `game.config.ts` is higher than the last release tag `<slug>/vX.Y.Z` (build tags contain `+` and do not count).
 
-The review gate is written with the first store release if the repo does not have it yet (the `i18n-strings-and-catalogs` skill owns the catalogs). Its contract: `packages/shell/src/i18n/review-state.json` stores, per language (`fa`, `ckb`) and message key, the SHA-256 of the text a native speaker reviewed and the review date. `review-sheet.ts` writes `reports/i18n/review-<lang>.csv` (key, English text, current text, the screenshot that shows it) for every fa/ckb message whose text differs from its reviewed hash; with `--release` it exits 1 when there is any such message. If the owner decides to ship without a review, record `"reviewer": "waived-by-owner"` for those keys in the same file and commit with a `Gate-Change:` trailer.
+**The fa/ckb review is an owner step, never a gate (owner decision O6).** For a store release the preflight runs `node packages/tooling/src/i18n/review-sheet.ts` (without `--release`; the `i18n-strings-and-catalogs` skill ships it): it writes `reports/i18n/review-<fa|ckb>.csv` (key, English text, current text, the screen that shows it) for every text the owner has not read yet, and the preflight prints one line per language with texts waiting, `Owner step R3 (not blocking): 3 fa texts await your review: reports/i18n/review-fa.csv`, and goes on (`translation-review.ts`, tested in `release-preflight.test.ts`). A missing or failing sheet is the same kind of line. The release report lists them under "Owner steps (not blocking)". The owner's answers go into the copy deck and the catalogs, and `review-sheet.ts --mark-reviewed <lang> --date <day>` records them as read.
 
 ## Step 2: build number
 
@@ -118,13 +120,15 @@ APPDIR=$(ls -d build/ipa-check/Payload/*.app)
 
 ## Step 7: the store-artifact gate
 
-All checks run for store builds; test builds run the version, build number, `extra`, AdMob app ID, `get-task-allow` and placeholder checks only. The placeholder check fails both variants when `main.jsbundle` contains `not-built.screen`, the testID of the partial Shell's `NotBuiltScreen`: testers never get a placeholder either. `release-ios.ts` runs them through `store-gate.ts`; `check-store-artifact.mjs` (this skill) checks the same `.ipa` independently. By hand:
+All checks run for store builds; test builds run the version, build number, `extra`, AdMob app ID, the app id, the tracking text, `get-task-allow` and placeholder-screen checks only. Every build carries the app id `io.applander.<game id without hyphens>` (owner decision O4) and Apple's tracking prompt text in `Info.plist` and in `en`, `de`, `fa` and `ckb.lproj/InfoPlist.strings` (owner decision O1). A store build also refuses the scaffold's placeholders by name: the AdMob app `ca-app-pub-1234567890123456~1234567890` and units `/1111111111`, `/2222222222`, `/3333333333` (owner step G5; the format check alone lets them through), the privacy host `example.com` and `support@example.com` (owner step G3). The placeholder check fails both variants when `main.jsbundle` contains `not-built.screen`, the testID of the partial Shell's `NotBuiltScreen`: testers never get a placeholder either. `release-ios.ts` runs them through `store-gate.ts`; `check-store-artifact.mjs` (this skill) checks the same `.ipa` independently. By hand:
 
 ```sh
 plutil -extract CFBundleVersion raw "$APPDIR/Info.plist"                # == new buildNumber
 plutil -extract CFBundleShortVersionString raw "$APPDIR/Info.plist"     # == version
 plutil -extract ITSAppUsesNonExemptEncryption raw "$APPDIR/Info.plist"  # false
-plutil -extract GADApplicationIdentifier raw "$APPDIR/Info.plist"       # live: ^ca-app-pub-\d{16}~\d{10}$ and not the sample ID; off/test: the sample ID
+plutil -extract GADApplicationIdentifier raw "$APPDIR/Info.plist"       # live: ^ca-app-pub-\d{16}~\d{10}$, not the sample ID, not ca-app-pub-1234567890123456~1234567890; off/test: the sample ID
+plutil -extract CFBundleIdentifier raw "$APPDIR/Info.plist"             # io.applander.<game id without hyphens>
+plutil -extract NSUserTrackingUsageDescription raw "$APPDIR/Info.plist" # present (and in each <lang>.lproj/InfoPlist.strings)
 plutil -extract extra.appVariant raw "$APPDIR/EXConstants.bundle/app.config"   # == $APP_VARIANT (plutil reads this JSON file)
 plutil -extract extra.adsMode raw "$APPDIR/EXConstants.bundle/app.config"      # == $ADS_MODE
 grep -a -c 'SHELL_TEST_BUILD_ONLY' "$APPDIR/main.jsbundle"              # store: 0 (Hermes bytecode keeps ASCII strings)
@@ -191,7 +195,7 @@ Known issues
 git tag "line-siege/v1.0.0+8"          # buildTag(): after a successful upload that reached VALID
 ```
 
-Report to the owner in one message: game, version (build), variant, "available in TestFlight", and the What-to-Test text. For a store build the owner answers "ship" or "don't ship" (owner step R1). Push tags only when the owner has said so in this session.
+Report to the owner in one message: game, version (build), variant, "available in TestFlight", and the What-to-Test text, then a block **Owner steps (not blocking)** that lists, whenever they apply: the fa/ckb texts waiting for the owner's review (the preflight's `Owner step R3` lines with their CSV paths), the play-test of this build (R1 and G6), and listening to the game's sound previews (owner decision O6). The release never waits for them. For a store build the owner answers "ship" or "don't ship" (owner step R1). Push tags only when the owner has said so in this session.
 
 ## Resuming a stopped run
 
@@ -199,13 +203,36 @@ Every failure message ends with a `Resume:` line that says which of these to use
 
 | Where it stopped | Rerun with | What happens |
 |---|---|---|
-| Preflight (`verify`, `expo-config`, `i18n-review`, key, keychain, app record) | the same command | nothing was bumped yet |
+| Preflight (`verify`, `expo-config`, the bundle id, key, keychain, app record) | the same command | nothing was bumped yet |
 | After the bump, before the upload (`prebuild`, audits, `archive`, `export`, the gate, `validate`), and the owner fixed it (keychain, agreement, licence) | the same command plus `--resume build` | reuses the committed build number and starts again at the prebuild |
 | The cause was in the code (a gate failure, a lint or audit finding) | the same command, after committing the fix | the fix commit means a new build number; `--resume` refuses because HEAD is no longer the bump commit |
 | `upload` failed and the TestFlight tab does not list the build | the same command | a new build number |
 | The build is uploaded (processing timeout, a What to Test or tag failure) | the same command plus `--resume processing` | waits for `VALID`, sets What to Test, tags; builds and uploads nothing |
 
 `--resume` checks before it reuses anything: HEAD must still be `chore(<slug>): build <n>` for the number in `game.config.ts`, and no `<slug>/v*+<n>` tag may exist. Otherwise it stops with "cannot resume" and a plain run is right (gaps in build numbers are harmless; Apple rejects only duplicates).
+
+## Rehearsal without the owner's key (no upload)
+
+Until the owner's API key exists (owner step O3), or to prove a store build without touching Apple, rehearse the store build end to end on an unsigned archive. It proves the prebuild, both audits, the archive and every artifact rule except the signature; it uploads nothing and is never release evidence. Store with ads off, because live needs the owner's real AdMob ids (owner step G5):
+
+```sh
+export DEVELOPER_DIR=/Applications/Xcode-26.6.0.app/Contents/Developer   # the pinned Xcode (selectXcode() prints it)
+export APP_VARIANT=store EXPO_PUBLIC_APP_VARIANT=store ADS_MODE=off EXPO_NO_TELEMETRY=1 CI=1
+(cd apps/<game> && npx expo prebuild --platform ios --clean)
+npm run audit:privacy -- --app <game>
+npm run audit:network
+(cd apps/<game> && xcodebuild -workspace ios/<Scheme>.xcworkspace -scheme <Scheme> -configuration Release \
+  -destination generic/platform=iOS -archivePath build/<Scheme>.xcarchive -derivedDataPath build/dd-device \
+  CODE_SIGNING_ALLOWED=NO archive > build/logs/rehearsal-archive.log 2>&1)
+APP=apps/<game>/build/<Scheme>.xcarchive/Products/Applications/<Scheme>.app
+node ${CLAUDE_SKILL_DIR}/scripts/check-store-artifact.mjs --app "$APP" --variant store --ads off --version <version> --build <buildNumber> --game <game> --unsigned .
+```
+
+Then the binary half of the release audit on the same app, with privacy-and-network-audit (its release audit reference, "The keyless rehearsal"): `audit-app-bundle.mjs --app "$APP" --variant store --ads-mode off --game <game> --unsigned`.
+
+`<Scheme>` is the app name without spaces (`LineSiege`); the `.app` sits inside the archive at `Products/Applications/<Scheme>.app`. Such an app has no signature at all (`codesign -d` answers "code object is not signed at all"), so both gates take `--unsigned`: each prints `REHEARSAL: not a release gate` as its first line, reports only the signing and `get-task-allow` rule as a `SKIP` line when the app has no signature (a signed app that grants `get-task-allow` still fails), and keeps every other rule strict. Without `--unsigned` the same app fails "the app is not signed". `release-ios.ts` never passes the flag, and git-commits-and-reporting's report check refuses a `REHEARSAL` result as release evidence.
+
+Verified on 2026-09-30 on the Line Siege pilot (Xcode 26.6): the prebuild, `audit:privacy` (28 pod manifests, 0 problems, the Device ID tracking answer), `audit:network` (0 failures) and the archive ran through, and both gates printed `REHEARSAL: not a release gate`, one `SKIP` line and `RESULT: PASS` with `io.applander.linesiege` and the tracking text in all four languages (the game's links were the owner's; with the scaffold's `example.com` links both gates fail `links`, owner step G3). The same app checked as store/live fails, naming the placeholder AdMob app id and units (owner step G5).
 
 ## Versions, build numbers and tags
 

@@ -73,13 +73,14 @@ export const RULES = {
   'ref-toc': `references longer than ${TOC_THRESHOLD} lines start with a table of contents`,
   'no-project-ref': 'no project knowledge paths (docs/, design/, idea-hunt, spec.txt, SPEC.md, 99-final-decisions, /Users/, scratchpad, ../, other skill folders, CLAUDE_PROJECT_DIR)',
   'no-shouting': 'no ALL-CAPS shouting (MUST, NEVER, ALWAYS, IMPORTANT, ...) outside code',
+  'device-explicit': 'every documented or scripted maestro, simctl and xcodebuild call names its simulator: maestro --device <udid> before the command, a simctl UDID (never booted or all), xcodebuild -destination id=<udid>',
   layout: 'only SKILL.md, references/, templates/, examples/, scripts/, tests/, assets/; no symlinks or empty folders',
   'script-lib': 'scripts are Node .mjs entry points that import ./check-lib.mjs (selftest.mjs uses runSelftest)',
   'script-deps': 'scripts import only node: built-ins, relative files, or packages pinned in scripts/package.json (loaded with await import())',
   'script-help': 'every script prints "Usage:" and exits 0 for --help',
   'script-result': 'every script run with no arguments in an empty folder exits 0, 1 or 2 and ends with the RESULT line',
   'selftest-missing': 'a skill with scripts has scripts/selftest.mjs',
-  fixtures: 'the self-test has tests/fixtures/good/ and bad-*/ folders, each bad one with a non-empty EXPECT.txt',
+  fixtures: 'the self-test has tests/fixtures/good/ and bad-*/ folders; each bad-*, pass-* and error-* case has a non-empty EXPECT.txt',
   'shared-json': 'assets/shared.json is a valid list of { "from", "to" } entries',
   'shared-drift': 'every declared shared file is identical to the canonical copy (run sync-shared.mjs)',
   'shared-undeclared': 'a check-lib.mjs copy is declared in assets/shared.json',
@@ -170,6 +171,13 @@ const WORD_REFS = [
 ];
 const KNOWLEDGE_DIRS = new Set(['docs', 'design', 'idea-hunt']);
 
+/** The skill files the device-explicit rule reads: every markdown file, and scripts and shell snippets. */
+function isDeviceScanned(rel) {
+  if (rel.endsWith('.md')) return true;
+  if (rel.startsWith('scripts/') && /\.(mjs|sh)$/.test(rel) && rel !== 'scripts/check-lib.mjs') return true;
+  return /\.sh$/.test(rel);
+}
+
 /** Find project references in one line. Returns [{ index, what }]. */
 export function findProjectRefs(line, { markdownProse = false, script = false } = {}) {
   const found = [];
@@ -205,6 +213,178 @@ export function findProjectRefs(line, { markdownProse = false, script = false } 
     const index = clean.indexOf('../../');
     if (index !== -1) found.push({ index, what: 'a "../../" path that leaves the skill' });
   }
+  return found;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Device-explicit calls: maestro, simctl and xcodebuild always name their simulator
+// ---------------------------------------------------------------------------------------------
+
+// Several sessions share one Mac. A call that picks "the booted simulator" (or Maestro's first
+// device) can reach another session's simulator: a hierarchy dump from someone else's screen, a
+// shutdown of someone else's run. So every command line a skill documents or scripts names its
+// device: maestro --device <udid> before the command, a simctl UDID or variable, and xcodebuild
+// -destination id=<udid> (or generic/platform=... for an archive, which targets no device).
+const MAESTRO_DEVICE_COMMANDS = new Set(['test', 'hierarchy', 'record', 'start-device']);
+const MAESTRO_VALUE_OPTIONS = new Set(['--device', '--udid', '--driver-host-port', '--host', '--port', '--platform', '-p']);
+const SIMCTL_DEVICE_COMMANDS = new Set([
+  'boot', 'shutdown', 'erase', 'delete', 'rename', 'clone', 'install', 'uninstall', 'launch', 'terminate', 'openurl', 'addmedia',
+  'io', 'spawn', 'get_app_container', 'listapps', 'appinfo', 'privacy', 'push', 'keychain', 'status_bar', 'ui', 'pbcopy', 'pbpaste',
+  'pbsync', 'bootstatus', 'getenv', 'location', 'icloud_sync', 'upgrade', 'diagnose', 'logverbose', 'install_app_data', 'notify_post',
+]);
+const IMPLICIT_SIMCTL_DEVICES = new Set(['booted', 'all']);
+// A span that forbids the command ("never `xcrun simctl shutdown all`") names it without running it.
+const NEGATION_BEFORE = /\b(never|not|no|avoid|without|instead of|rather than|forbidden|banned|refuses?|rejects?|don't)\b[^.,;:!?]{0,40}$/i;
+const ARG_LIKE = /^(?:-|<|\$|"|'|>|\||\.{0,2}\/|[\w.@-]*\/|[\w.@-]+\.(?:ya?ml|json|mp4|png|txt)\b)/;
+const OPERAND_LIKE = /^(?:<|\$|"\$|'\$|\.{0,2}\/|[\w.@${}-]*\/|[\w.@-]+\.(?:ya?ml|json)\b)/;
+
+const cleanToken = (token) => token.replace(/^[`'"(]+|[`'",;)]+$/g, '');
+
+/** maestro command lines in one span of command text: [{ index, what }]. */
+function maestroTextHits(text, { isCode }) {
+  const hits = [];
+  const word = /(?:^|[\s;&|(`"'=])((?:[\w.~${}-]*\/)*maestro|"?\$\{?MAESTRO\w*\}?"?)(?=\s)/g;
+  for (const match of text.matchAll(word)) {
+    const start = match.index + match[0].length - match[1].length;
+    const tokens = text.slice(start + match[1].length).trim().split(/\s+/).filter(Boolean);
+    const globals = [];
+    let i = 0;
+    while (i < tokens.length && tokens[i].startsWith('-')) {
+      const option = tokens[i].split('=')[0];
+      globals.push(option);
+      i += MAESTRO_VALUE_OPTIONS.has(option) && !tokens[i].includes('=') ? 2 : 1;
+    }
+    const sub = tokens[i];
+    if (!sub || !MAESTRO_DEVICE_COMMANDS.has(sub)) continue;
+    const rest = tokens.slice(i + 1);
+    const isCommandLine = isCode || (sub === 'test' || sub === 'record' ? rest.some((token) => !token.startsWith('-') && OPERAND_LIKE.test(token)) : rest.length > 0 && ARG_LIKE.test(rest[0]));
+    if (!isCommandLine || globals.includes('--device')) continue;
+    hits.push({ index: start, what: `"maestro ${sub}" without --device <udid> before the command`, fix: `Write maestro --device <udid> ${sub} ... (the global option comes before the command; in code build the arguments with maestroGlobalArgs()), so the call can only reach this session's simulator.` });
+  }
+  return hits;
+}
+
+/** simctl calls in one span of command text that pick booted or all: [{ index, what }]. */
+function simctlTextHits(text) {
+  const hits = [];
+  for (const match of text.matchAll(/\bsimctl\s+(?:--set\s+\S+\s+)?([a-z_]+)((?:\s+-{1,2}[\w-]+(?:=\S+)?)*)\s+(\S+)/g)) {
+    const device = cleanToken(match[3]);
+    if (SIMCTL_DEVICE_COMMANDS.has(match[1]) && IMPLICIT_SIMCTL_DEVICES.has(device)) {
+      hits.push({ index: match.index, what: `"simctl ${match[1]} ${device}" targets ${device === 'all' ? 'every simulator on the Mac' : 'whichever simulator is booted'}`, fix: 'Name the simulator by its UDID (xcrun simctl <command> "$UDID" ...; find it with xcrun simctl list devices -j and the e07-<purpose> name), so the call never touches another session\'s simulator.' });
+    }
+  }
+  return hits;
+}
+
+/** xcodebuild -destination values that do not name the simulator by id=. */
+function destinationHits(text) {
+  const hits = [];
+  for (const match of text.matchAll(/(?<![\w-])-destination(?![\w-])/g)) {
+    let i = match.index + match[0].length;
+    const skip = () => {
+      while (i < text.length && /[\s,]/.test(text[i])) i += 1;
+    };
+    skip();
+    if (/['"`]/.test(text[i]) && /^['"`]\s*,/.test(text.slice(i))) {
+      i += 1;
+      skip();
+    }
+    let value;
+    let quoted = false;
+    if (/['"`]/.test(text[i] ?? '')) {
+      const quote = text[i];
+      const end = text.indexOf(quote, i + 1);
+      value = text.slice(i + 1, end === -1 ? text.length : end);
+      quoted = true;
+    } else {
+      value = /^[^\s,)\]`;]*/.exec(text.slice(i))[0];
+    }
+    if (value === '') continue;
+    const variable = /^\$|^<|^\{/.test(value) || (!quoted && /^[A-Za-z_][\w.]*$/.test(value) && !value.includes('='));
+    if (variable || /(^|[,\s])id=/.test(value) || value.startsWith('generic/')) continue;
+    hits.push({ index: match.index, what: `xcodebuild -destination "${value}" does not name the simulator by id=`, fix: 'Use -destination id=<udid> (or "id=$UDID") for a simulator build, and generic/platform=iOS only for an archive, so xcodebuild never picks a simulator by name or OS.' });
+  }
+  return hits;
+}
+
+/** maestro, simctl and xcodebuild calls written as code: maestro('--device', udid, 'hierarchy'), simctl('io', 'booted', ...). */
+function callFormHits(line) {
+  const hits = [];
+  const call = /(?:\b(?:run)?[Mm]aestro\w*\s*\(|['"]maestro['"]\s*,\s*\[|\[\s*['"]maestro['"])/g;
+  for (const match of line.matchAll(call)) {
+    const after = line.slice(match.index);
+    const sub = /['"](test|hierarchy|record|start-device)['"]/.exec(after);
+    if (!sub) continue;
+    const before = after.slice(0, sub.index);
+    if (/['"]--device['"]/.test(before) || /\b(?:maestro(?:Global)?Args|deviceArgs)\s*\(/.test(line)) continue;
+    hits.push({ index: match.index, what: `a maestro "${sub[1]}" call without "--device", <udid> before the command`, fix: `Build the arguments with maestroGlobalArgs() or pass '--device', udid before '${sub[1]}'.` });
+  }
+  const simctlCall = /(?:\bsimctl\s*\(\s*|\[\s*['"]simctl['"]\s*,\s*)['"]([a-z_]+)['"]\s*,\s*(?:['"]-[\w-]+['"]\s*,\s*)*['"](booted|all)['"]/g;
+  for (const match of line.matchAll(simctlCall)) {
+    if (SIMCTL_DEVICE_COMMANDS.has(match[1])) hits.push({ index: match.index, what: `a simctl "${match[1]}" call on "${match[2]}"`, fix: 'Pass the simulator\'s UDID (a variable), never booted or all.' });
+  }
+  return hits;
+}
+
+/**
+ * Calls in one file that reach a simulator without naming it. kind 'md' reads fenced code lines
+ * and inline code spans (a forbidding sentence or an Anti-patterns section names a command
+ * without running it); kind 'script' reads every line. Returns [{ line, what, fix }].
+ */
+export function findImplicitDeviceCalls(text, { kind = 'md' } = {}) {
+  const found = [];
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const push = (line, hits) => {
+    for (const hit of hits) if (!found.some((item) => item.line === line && item.what === hit.what)) found.push({ line, what: hit.what, fix: hit.fix });
+  };
+  const negated = (prefix) => NEGATION_BEFORE.test(prefix);
+  if (kind === 'script') {
+    // A script whose maestro runner is built for one device (maestroGlobalArgs(), or a
+    // make/createMaestro factory given the udid) names the device in every call through that runner.
+    const bindsDevice = /\bmaestro(?:Global)?Args\s*\(/.test(text) || /\b(?:make|create)\w*Maestro\w*\s*\([^)]*\b(?:udid|device)\b/i.test(text);
+    lines.forEach((line, i) => {
+      const calls = callFormHits(line).filter((hit) => !(bindsDevice && hit.what.startsWith('a maestro')));
+      const hits = [...maestroTextHits(line, { isCode: false }), ...simctlTextHits(line), ...destinationHits(line), ...calls];
+      push(i + 1, hits.filter((hit) => !negated(line.slice(0, hit.index))));
+    });
+    return found;
+  }
+  let fence = null;
+  let section = '';
+  let continued = null;
+  lines.forEach((line, i) => {
+    const opener = /^\s*(```|~~~)/.exec(line);
+    if (fence) {
+      if (opener && line.trim().startsWith(fence)) {
+        fence = null;
+        continued = null;
+        return;
+      }
+      if (/^\s*anti-patterns\s*$/i.test(section)) return;
+      // A shell command continued with a trailing backslash is one command line.
+      const start = continued ?? { line: i + 1, text: '' };
+      start.text += `${line.replace(/\\\s*$/, '')} `;
+      if (/\\\s*$/.test(line)) {
+        continued = start;
+        return;
+      }
+      continued = null;
+      push(start.line, [...maestroTextHits(start.text, { isCode: true }), ...simctlTextHits(start.text), ...destinationHits(start.text), ...callFormHits(start.text)]);
+      return;
+    }
+    if (opener) {
+      fence = opener[1];
+      return;
+    }
+    const heading = /^#{1,6}\s+(.*?)\s*#*\s*$/.exec(line);
+    if (heading && /^#{1,2}\s/.test(line)) section = heading[1];
+    if (/^\s*anti-patterns\s*$/i.test(section)) return;
+    for (const span of line.matchAll(/(`+)([\s\S]*?)\1/g)) {
+      if (negated(line.slice(0, span.index))) continue;
+      const code = span[2];
+      push(i + 1, [...maestroTextHits(code, { isCode: false }), ...simctlTextHits(code), ...destinationHits(code), ...callFormHits(code)]);
+    }
+  });
   return found;
 }
 
@@ -501,6 +681,14 @@ export function validateSkill(target, roots, { runScripts = true } = {}) {
     });
   }
 
+  // ---- device-explicit calls (SKILL.md, references, examples, templates' docs and scripts) ----
+  for (const rel of files.filter((path) => !path.startsWith('tests/') && !path.startsWith('assets/') && !path.startsWith('scripts/node_modules/') && isDeviceScanned(path))) {
+    const buffer = readFileSync(join(dir, rel));
+    if (isBinary(buffer)) continue;
+    const kind = rel.endsWith('.md') ? 'md' : 'script';
+    for (const hit of findImplicitDeviceCalls(buffer.toString('utf8'), { kind })) add('device-explicit', rel, hit.line, hit.what, hit.fix);
+  }
+
   // ---- scripts ----
   const packageJsonPath = join(dir, 'scripts', 'package.json');
   let pinned = {};
@@ -562,11 +750,12 @@ export function validateSkill(target, roots, { runScripts = true } = {}) {
       for (const suite of suiteRoots) {
         const names = childDirs(join(fixturesDir, suite));
         if (names.includes('good')) goods.push(posix.join(suite, 'good'));
-        for (const name of names.filter((item) => item.startsWith('bad-'))) bads.push(posix.join(suite, name));
+        // bad-* (exit 1), pass-* (exit 0) and error-* (exit 2) cases all pin what the checker prints.
+        for (const name of names.filter((item) => /^(bad|pass|error)-./.test(item))) bads.push(posix.join(suite, name));
       }
       for (const bad of bads) {
         const expect = join(fixturesDir, bad, 'EXPECT.txt');
-        if (!existsSync(expect) || readFileSync(expect, 'utf8').trim() === '') add('fixtures', `tests/fixtures/${bad}/EXPECT.txt`, 0, 'missing or empty', 'Write the rule id or message the checker must print, one per line.');
+        if (!existsSync(expect) || readFileSync(expect, 'utf8').trim() === '') add('fixtures', `tests/fixtures/${bad}/EXPECT.txt`, 0, 'missing or empty', 'Write what the checker must print for this case (the rule id and file:line, the SKIP line, or the ERROR text), one per line.');
       }
     }
   }

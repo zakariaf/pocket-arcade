@@ -1,0 +1,14 @@
+{
+ "frame": "s14-restart-to-apply",
+ "variant": null,
+ "theme": "dark",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "source": "self-test fixture",
+ "note": "A real capture of a round-3 test build (2026-09-30), checked against the design as it was then, rendered with the round-4 map and frames manifest. Only the top of the dimmed \"Deutsch\" shows above the dialog card: a run the card covers in part is not ink-checked (R3S-G27c; the round-3 sliver waiver is gone).",
+ "reference": {
+  "image": "../../reference-r3/lineSiege/dark-en/s14-restart-to-apply.png",
+  "layout": "../../reference-r3/lineSiege/dark-en/s14-restart-to-apply.layout.json"
+ }
+}

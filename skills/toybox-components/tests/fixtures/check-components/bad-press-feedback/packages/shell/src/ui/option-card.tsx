@@ -1,6 +1,8 @@
 // packages/shell/src/ui/option-card.tsx
 import { StyleSheet, View } from 'react-native';
 
+import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
+import { directionOf } from '@e07/shell/i18n/languages.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { AppText } from './app-text.tsx';
@@ -36,12 +38,19 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   label: { flex: 1 },
+  // The row centres its parts (CSS align-items: center); the sticker is top-aligned on its own.
+  badge: { alignSelf: 'center' },
   block: { alignSelf: 'stretch' },
 });
 
 /** A raised choice row (S2 languages): pushed in, accent and checked when chosen. */
 export function OptionCard(props: OptionCardProps): ReactNode {
   const theme = useTheme();
+  const layoutDirection = useDirection();
+  // S2 sets each autonym in its own direction: فارسی on an English screen (and English on a
+  // Persian one) sits at the end of its row, next to the mark.
+  const isOtherDirection =
+    props.language !== undefined && directionOf(props.language) !== layoutDirection;
   return (
     <RaisedSurface
       label={props.label}
@@ -62,11 +71,14 @@ export function OptionCard(props: OptionCardProps): ReactNode {
           text={props.label}
           variant="optionNameChoice"
           tone={props.isSelected ? 'onPrimary' : 'default'}
+          align={isOtherDirection ? 'end' : 'start'}
           testID={`${props.testID}.label`}
           {...(props.language === undefined ? {} : { language: props.language })}
         />
       </View>
-      {props.badge}
+      {props.badge === undefined || props.badge === null ? null : (
+        <View style={styles.badge}>{props.badge}</View>
+      )}
       <RadioMark isSelected={props.isSelected} testID={`${props.testID}.radio`} />
     </RaisedSurface>
   );

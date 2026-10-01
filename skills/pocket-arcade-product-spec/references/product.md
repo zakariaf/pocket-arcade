@@ -78,9 +78,9 @@ The owner asked for (a) an offline app with no requests to the internet, and (b)
 
 ### 4.2 · What this changes compared with a fully private app
 
-1. **Privacy labels.** Apple's "App Privacy" details and Google Play's "Data safety" form must declare what the ads component collects (usually device identifiers, approximate location from the network, and ad interaction data). So the app cannot claim "collects no data". It can claim no accounts, no personal data collected by us, and fully playable offline.
+1. **Privacy labels.** Apple's "App Privacy" details and Google Play's "Data safety" form must declare what the ads component collects (usually device identifiers, approximate location from the network, and ad interaction data). The device ID is declared as "used for tracking" by the third-party ads component (see point 3). So the app cannot claim "collects no data". It can claim no accounts, no personal data collected by us, and fully playable offline.
 2. **Consent in Europe.** Google requires a consent message for players in the European Economic Area, the UK and Switzerland before it serves personalised ads. Germany is in the EEA. The Shell therefore includes Google's consent step (S3) and a permanent "Ad privacy choices" entry in Settings (resolved: the consent status is refreshed every launch, the form appears after the tutorial and before the first ad, and the privacy row shows only where it is required).
-3. **iPhone tracking permission.** Personalised ads on iPhone need Apple's "Allow tracking?" prompt. Without it, ads are still shown, just not personalised (lower revenue). Default: do not ask in v1 (decision D4).
+3. **iPhone tracking permission (decided 2026-09-30: follow Apple's rules, decision D4; owner decision O1).** Apple's App Review guideline 5.1.2(i) requires Apple's App Tracking Transparency permission before an app, or an ads component inside it, tracks the player. The ads component can use the iPhone's advertising ID (IDFA) for tracking. So on iPhone the Shell asks Apple's "Allow tracking?" system prompt before any ad request that could use the advertising ID, in this order: (a) the Shell's own short consent intro (S3), shown only when Google's consent message follows; (b) Google's consent message, only where it is required (point 2); (c) Apple's tracking prompt, only while the player has not answered it yet. If the player declines, or tracking is restricted on the phone, ads are still shown, just without the advertising ID (not personalised by it; lower revenue). The prompt's sentence is ours, in all four languages (the Shell text `consent.tracking.usage-description`); the dialog is Apple's. The player can change the answer later in the phone's Settings (Privacy & Security > Tracking). Builds with ads switched off (every E2E test build) never ask.
 4. **A privacy policy web page.** Both stores require a privacy-policy link, and ads make one mandatory anyway. AdMob also expects an `app-ads.txt` file on the developer's website. That is a static web page, not a server, and it is built in the store-pages step. The app shows the same privacy text offline inside Settings (S11c).
 
 ### 4.3 · If the owner ever wants truly zero network
@@ -99,6 +99,7 @@ Drop AdMob and sell each game as a paid app, or make it free with no ads. The Sh
 | Restore Premium | works | "Connect to restore" |
 | Premium already owned | works | works |
 | Consent step | shown where required | deferred until online |
+| Tracking prompt (iPhone) | asked before the first ad | deferred until online |
 | Rate / contact | opens store / email app | the OS handles it |
 
 ## 14 · Not in version 1
@@ -133,7 +134,7 @@ The network audit passes: only the ads and store components can go online.
 
 ### 15.4 · Ads
 
-Test ads appear only where spec 8.8 allows; the frequency rules pass their tests; Premium removes them instantly; consent appears before the first ad in a simulated EU region.
+Test ads appear only where spec 8.8 allows; the frequency rules pass their tests; Premium removes them instantly; consent appears before the first ad in a simulated EU region. On iPhone, Apple's tracking prompt appears after the consent step and before the first ad request, and declining it still shows ads.
 
 ### 15.5 · Premium
 
@@ -146,6 +147,8 @@ Killing the app at any moment loses at most the move in progress; an upgrade fro
 ### 15.7 · The pilot game
 
 Every shipped level is proven winnable; bots show a sensible difficulty curve; the owner has play-tested it and signed off.
+
+Owner decision O6 (2026-09-30): the play-test is the owner's personal step. Every report lists it under "Owner steps (not blocking)" until the owner has done it, and no gate or release waits for it.
 
 ### 15.8 · The next game can start
 
@@ -162,7 +165,7 @@ Spec 12's steps are written down, so game 2 can start from the Shell without gue
 | "Settings" | S11 |
 | "Levels" | S8, 8.1 |
 | "Google AdMob" | 8.8, 4 |
-| "Purchase section, about EUR 1.90" | S12, 8.9, D3 |
+| "Purchase section, EUR 1.99" (decided 2026-09-30, owner O2) | S12, 8.9, D3 |
 | "Multi-language, LTR and RTL: English, German, Persian, Kurdish Sorani" | N6, S2, 7 |
 | "Offline, no user account, no internet requests" | N1-N3, 4, 9 |
 | "Build all the games from the research, one by one" | 13, 12 |
@@ -172,6 +175,7 @@ Spec 12's steps are written down, so game 2 can start from the Shell without gue
 | The spec asked | Answer |
 |---|---|
 | The exact consent requirements (4.2) | Google's consent SDK: refresh the consent status every launch, show the form after the tutorial and before the first ad, show the "Ad privacy choices" row only where it is required |
+| iPhone tracking permission (4.2 point 3, D4) | decided 2026-09-30 (owner, O1): after the S3 intro and Google's form, Apple's tracking prompt while not yet answered, then the first ad request; declining still shows ads |
 | Can direction switch live, or is a restart needed (S11)? | a direction change needs one restart ("Restart to apply", one tap) |
 | How does "copy back" work between games (1.2, 12)? | there is no copying: one monorepo, and every game app consumes the same Shell package |
 | Where does the game contract live (10)? | the `GameModule` type in the pure game kit |
@@ -181,5 +185,6 @@ Spec 12's steps are written down, so game 2 can start from the Shell without gue
 ## Who does what
 
 - Claude Code builds, tests and releases everything, and reports in plain language with evidence.
-- The owner reviews, play-tests and does only what needs a person: their identity, money, judgement or phone. For example: Apple and AdMob accounts and agreements, the App Store Connect app record for each game, the App Privacy questionnaire, the Premium price point and Family Sharing, the TestFlight play-test and purchase test, the native-speaker read of Persian and Sorani, and "ship" / "submit" for each release.
+- The owner reviews, play-tests and does only what needs a person: their identity, money, judgement or phone. For example: Apple and AdMob accounts and agreements, the app name and the App Store Connect app record for each game (created with the fixed bundle id), the real AdMob ids, the App Privacy questionnaire, the TestFlight play-test and purchase test, and "ship" / "submit" for each release. Already decided by the owner (2026-09-30), so never asked again: tracking follows Apple's rules (O1), Premium costs EUR 1.99 (O2), Family Sharing for Premium stays off (O3), and every app id is `io.applander.<game id without hyphens>` (O4; Line Siege `io.applander.linesiege`): the owner no longer chooses or approves a bundle id.
+- The owner's personal steps never block (O6, 2026-09-30): the native review of the Persian and Sorani texts, the Line Siege play-test, and listening to the sound previews. Claude drafts the texts in all four languages and renders the previews; every slice or release report lists the three under "Owner steps (not blocking)" with what is waiting, and no gate waits for them.
 - The stack in one line: Expo SDK 57 (React Native 0.86.3, React 19.2.3), TypeScript 6.0.3, React Navigation 7, Zustand 5, SQLite, react-intl, Skia with Reanimated and Gesture Handler for boards (no game engine), AdMob, expo-iap, Jest and Maestro, built locally with Xcode 26.6.

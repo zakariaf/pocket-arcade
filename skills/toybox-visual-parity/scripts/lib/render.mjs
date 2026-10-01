@@ -166,6 +166,10 @@ function extractLayout({ selector, elements }) {
     }
     const cs = getComputedStyle(host);
     if (cs.visibility === 'hidden' || Number(cs.opacity) === 0) continue;
+    // The run's own tilt (every transform between it and the frame): a run outside every mapped
+    // element (Home's tilted streak sticker under an S14 dialog) has no owner to take it from.
+    let tilt = 0;
+    for (let p = host; p && p !== frame; p = p.parentElement) tilt += rotation(getComputedStyle(p).transform);
     const range = document.createRange();
     range.selectNodeContents(n);
     for (const b of range.getClientRects()) {
@@ -178,6 +182,7 @@ function extractLayout({ selector, elements }) {
         h: r2(b.height),
         owner,
         font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily.split(',')[0].replace(/["']/g, '')}`,
+        ...(r2(tilt) ? { rotate: r2(tilt) } : {}),
       });
     }
   }
@@ -211,7 +216,8 @@ function applyDerive({ selector, derive, lang, fixtureScore }) {
   const number = new Intl.NumberFormat(tag, { maximumFractionDigits: 2 });
   const format = (message, values) => message.replace(/\{(\w+), number\}/g, (m, name) => (name in values ? number.format(values[name]) : m));
   // Proof that this formatter is the mockup's own: the fixture score the mockup drew with its N()
-  // (the .sc-v value of the win card) must read the same through it.
+  // (the .sc-v value of the win card, type role scoreValue: 44 px display, line height 1, and 1.45
+  // for Persian since lead decision L9) must read the same through it.
   const scoreValue = frame.querySelector('.sc-v');
   const formatCheck = scoreValue ? { drawn: scoreValue.textContent.trim(), ours: number.format(fixtureScore) } : null;
   for (const step of derive) {
@@ -235,8 +241,79 @@ function applyDerive({ selector, derive, lang, fixtureScore }) {
     for (const child of [...node.childNodes]) if (!(child.nodeType === 1 && child.matches('svg, .ic'))) child.remove();
     node.append(document.createTextNode(text));
   }
-  window.__parityUndo = undo;
+  window.__parityUndo = [...(window.__parityUndo ?? []), ...undo];
   return { problems, formatCheck };
+}
+
+/**
+ * In-page: the frame's sample fixes (frames.json designFixes), applied to every render of the frame
+ * before it is measured. The mockup fills {languageName} of the System row with the fixed sample
+ * "English" in every language; the product names the phone's language, which the capture sets to the
+ * render language. Each fix re-renders the element's text the way the mockup's own T() does in HTML
+ * mode (literal text escaped, each plain {name} placeholder wrapped in <bdi>), from the deck embedded
+ * in the page, with "@autonym" replaced by the render language's autonym. Undone with the derive
+ * (window.__parityUndo).
+ */
+function applyDesignFixes({ selector, fixes, lang }) {
+  const frame = document.querySelector(selector);
+  const deck = JSON.parse(document.getElementById('pa-deck').textContent);
+  const problems = [];
+  window.__parityUndo ??= [];
+  for (const fix of fixes) {
+    const list = frame.querySelectorAll(fix.sample);
+    const entry = deck.strings[fix.key];
+    const message = entry ? (entry[lang] ?? entry.en) : null;
+    if (list.length !== 1 || typeof message !== 'string' || /\{[^}]*,/.test(message)) {
+      problems.push(list.length !== 1 ? `design fix selector "${fix.sample}" matched ${list.length} elements` : `design fix key "${fix.key}" is not a plain deck message`);
+      continue;
+    }
+    const node = list[0];
+    const holder = document.createElement('span');
+    for (const part of message.split(/(\{\w+\})/)) {
+      const name = /^\{(\w+)\}$/.exec(part)?.[1];
+      if (!name) {
+        holder.append(document.createTextNode(part));
+        continue;
+      }
+      const value = fix.values[name] === '@autonym' ? deck.meta.languageNames[lang] : fix.values[name];
+      const bdi = document.createElement('bdi');
+      bdi.textContent = String(value ?? part);
+      holder.append(bdi);
+    }
+    window.__parityUndo.push({ node, kind: 'html', value: node.innerHTML });
+    node.innerHTML = holder.innerHTML;
+  }
+  return problems;
+}
+
+/** In-page: which mapped elements of the frame are hidden (no box), by testID. */
+function hiddenElements({ selector, elements }) {
+  const frame = document.querySelector(selector);
+  const out = {};
+  for (const el of elements) {
+    let list;
+    try {
+      list = el.designSelector === ':scope' ? [frame] : [...frame.querySelectorAll(el.designSelector)];
+    } catch {
+      list = [];
+    }
+    if (list.length === 1) out[el.testID] = list[0].getClientRects().length === 0;
+  }
+  return out;
+}
+
+/** In-page: the rectangles of the frame's design masks (frames.json designMasks), in frame points. */
+function measureMasks({ selector, masks }) {
+  const frame = document.querySelector(selector);
+  const fr = frame.getBoundingClientRect();
+  const origin = { x: fr.left + frame.clientLeft, y: fr.top + frame.clientTop };
+  const r2 = (v) => Math.round(v * 100) / 100;
+  return masks.map((m) => {
+    const list = frame.querySelectorAll(m.selector);
+    if (list.length !== 1) return { as: m.as, selector: m.selector, count: list.length };
+    const r = list[0].getBoundingClientRect();
+    return { as: m.as, selector: m.selector, count: 1, rect: { x: r2(r.left - origin.x), y: r2(r.top - origin.y), w: r2(r.width), h: r2(r.height) } };
+  });
 }
 
 function undoDerive() {
@@ -249,23 +326,53 @@ function undoDerive() {
 }
 
 /**
- * Shoot one frame (or one of its reference variants: `variant` from frames.json). Returns
- * { problems[], png (Buffer from Chrome), layout, caption, size }. The frame is pinned at (0,0)
- * and clipped, which avoids the fractional-offset element screenshot (1206 x 2625 instead of
- * 1206 x 2622). A variant's derive is applied after pinning and undone before returning.
+ * The derive of a variant changes exactly the elements its facts change: every mapped element it
+ * hides must exist only for other facts (a "when" the variant's facts do not match), and every
+ * element that exists only for other facts must be hidden or re-texted by it. So a derive that hides
+ * the undo key instead of the hint key fails (rule variant-derive).
  */
-export async function shootFrame(page, { frame, elements, device, variant = null, lang = 'en', fixtureScore = 1840 }) {
+function deriveProblems({ variant, checkElements, before, after, textTargets }) {
+  const problems = [];
+  const matches = (el) => Object.entries(el.when ?? {}).every(([k, v]) => variant.facts[k] === v);
+  for (const el of checkElements) {
+    if (!(el.testID in before) || before[el.testID]) continue;
+    const hidden = after[el.testID] === true;
+    if (hidden && matches(el)) problems.push(`${variant.id}: the derive hides ${el.testID}, which exists for these facts (${JSON.stringify(variant.when)})`);
+    if (!hidden && !matches(el) && !textTargets.includes(el.testID)) problems.push(`${variant.id}: ${el.testID} exists only when ${JSON.stringify(el.when)}, but the derive leaves it on screen`);
+  }
+  return problems;
+}
+
+/**
+ * Shoot one frame (or one of its reference variants: `variant` from frames.json, composed by
+ * variantFor/referencePlan). Returns { problems[], png (Buffer from Chrome), layout, caption, size }.
+ * The frame is pinned at (0,0) and clipped, which avoids the fractional-offset element screenshot
+ * (1206 x 2625 instead of 1206 x 2622). The frame's design fixes and a variant's derive are applied
+ * after pinning and undone before returning; `checkElements` (every mapped element of the frame for
+ * the game, whatever its "when") lets the derive be checked against the map.
+ */
+export async function shootFrame(page, { frame, elements, checkElements = elements, device, variant = null, lang = 'en', fixtureScore = 1840 }) {
   const pinned = await page.evaluate(pinFrame, { selector: frame.selector });
   if (pinned.count !== 1) return { problems: [{ rule: 'frame-selector', message: `frame selector matched ${pinned.count} elements` }] };
   try {
     const problems = [];
+    const probe = checkElements.map((el) => ({ testID: el.testID, designSelector: el.designSelector }));
+    if ((frame.designFixes ?? []).length) {
+      for (const message of await page.evaluate(applyDesignFixes, { selector: frame.selector, fixes: frame.designFixes, lang })) problems.push({ rule: 'design-fix', message });
+      if (problems.length) return { problems };
+    }
     if (variant) {
+      const before = await page.evaluate(hiddenElements, { selector: frame.selector, elements: probe });
       const derive = variant.derive.map((step) => (step.text === undefined ? step : { ...step, messages: variant.texts[step.key] }));
       const derived = await page.evaluate(applyDerive, { selector: frame.selector, derive, lang, fixtureScore });
       for (const message of derived.problems) problems.push({ rule: 'variant-derive', message: `${variant.id}: ${message}` });
       if (derived.formatCheck && derived.formatCheck.drawn !== derived.formatCheck.ours) {
         problems.push({ rule: 'variant-derive', message: `${variant.id}: the mockup drew the score "${derived.formatCheck.drawn}" but the variant's number format gives "${derived.formatCheck.ours}"` });
       }
+      const after = await page.evaluate(hiddenElements, { selector: frame.selector, elements: probe });
+      const textSelectors = variant.derive.filter((step) => step.text !== undefined).map((step) => step.text);
+      const textTargets = checkElements.filter((el) => textSelectors.includes(el.designSelector)).map((el) => el.testID);
+      for (const message of deriveProblems({ variant, checkElements, before, after, textTargets })) problems.push({ rule: 'variant-derive', message });
       if (problems.length) return { problems };
     }
     const size = await page.evaluate((sel) => ({ height: document.querySelector(sel).clientHeight }), frame.selector);
@@ -286,9 +393,14 @@ export async function shootFrame(page, { frame, elements, device, variant = null
       png = again;
     }
     const layout = await page.evaluate(extractLayout, { selector: frame.selector, elements: elements.map((el) => ({ testID: el.testID, designSelector: el.designSelector })) });
+    if ((frame.designMasks ?? []).length) {
+      layout.masks = await page.evaluate(measureMasks, { selector: frame.selector, masks: frame.designMasks });
+      for (const m of layout.masks) if (m.count !== 1) problems.push({ rule: 'design-mask', message: `design mask "${m.selector}" (${m.as}) matched ${m.count} elements` });
+      if (problems.length) return { problems };
+    }
     return { problems: [], png, layout, caption: pinned.caption, isCard: pinned.isCard, size: { w: width, h: height } };
   } finally {
-    if (variant) await page.evaluate(undoDerive);
+    if (variant || (frame.designFixes ?? []).length) await page.evaluate(undoDerive);
     await page.evaluate(unpinFrame);
     await page.setViewportSize({ width: 1400, height: 1000 });
   }

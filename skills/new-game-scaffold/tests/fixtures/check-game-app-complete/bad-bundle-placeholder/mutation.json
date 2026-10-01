@@ -1,1 +1,1 @@
-[{ "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "bundleId: 'com.pocketarcade.flocktilt'", "with": "bundleId: 'com.example.flocktilt'" } }]
+[{ "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "bundleId: 'io.applander.flocktilt'", "with": "bundleId: 'com.example.flocktilt'" } }]

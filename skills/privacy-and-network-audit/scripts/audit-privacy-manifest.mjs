@@ -22,7 +22,17 @@ const SPEC = {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
-  details: 'Rules: missing-reason, app-tracking, tracking-outside-google, prebuilt-stale.\nNeeds a prebuild: npx expo prebuild --platform ios --clean (it runs pod install).',
+  details: [
+    'Rules: missing-reason, app-tracking, tracking-outside-google, prebuilt-stale.',
+    'app-tracking: the app\'s own manifest (privacy-manifest.ts and the prebuilt PrivacyInfo.xcprivacy) keeps',
+    '  NSPrivacyTracking false and lists no NSPrivacyTrackingDomains. Our code tracks nothing, and Apple fails',
+    '  requests to listed domains for players who decline App Tracking Transparency (ads would stop for them);',
+    '  only Google\'s ad pods declare tracking, and the app asks ATT before any ad request (owner decision O1).',
+    '  Source: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains',
+    'Prints the App Privacy input, with the tracking answer: Device ID collected, linked, used for tracking by the',
+    '  third-party ads SDK.',
+    'Needs a prebuild: npx expo prebuild --platform ios --clean (it runs pod install).',
+  ].join('\n'),
 };
 
 const FACTS = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'privacy-facts.json'), 'utf8'));
@@ -37,7 +47,8 @@ function declaredReasons(text) {
     declared.set(match[1], new Set([...(declared.get(match[1]) ?? []), ...reasons]));
   }
   const tracking = /NSPrivacyTracking\s*:\s*(true|false)/.exec(body)?.[1] ?? null;
-  return { declared, tracking };
+  const domains = /NSPrivacyTrackingDomains\s*:\s*\[([^\]]*)\]/.exec(body)?.[1] ?? '';
+  return { declared, tracking, hasDomains: /['"]/.test(domains) };
 }
 
 function mergeInto(target, manifest) {
@@ -62,8 +73,10 @@ run(async () => {
   if (appDirs.length === 0) fail('no prebuilt app: no apps/*/ios/Pods folder', 'Run npx expo prebuild --platform ios --clean in the app first (it runs pod install).');
   const report = createReporter({ name: 'audit-privacy-manifest', json: options.json });
   const manifestRel = toPosix(relative(root, manifestPath)) || manifestPath;
-  const { declared, tracking } = declaredReasons(readFileSync(manifestPath, 'utf8'));
-  if (tracking !== 'false') report.problem({ file: manifestRel, rule: 'app-tracking', message: `NSPrivacyTracking is ${tracking ?? 'missing'}`, fix: 'Our code tracks nothing: NSPrivacyTracking: false.' });
+  const { declared, tracking, hasDomains } = declaredReasons(readFileSync(manifestPath, 'utf8'));
+  const trackingFix = "Our code tracks nothing: NSPrivacyTracking: false and no NSPrivacyTrackingDomains (Apple blocks requests to listed domains for players who decline ATT, which would stop their ads). Google's pods declare their own tracking; the app asks ATT before any ad request (owner decision O1).";
+  if (tracking !== 'false') report.problem({ file: manifestRel, rule: 'app-tracking', message: `NSPrivacyTracking is ${tracking ?? 'missing'}`, fix: trackingFix });
+  if (hasDomains) report.problem({ file: manifestRel, rule: 'app-tracking', message: 'NSPrivacyTrackingDomains lists domains', fix: trackingFix });
   let checked = 0;
   const trackingAllowed = new Set(FACTS.trackingAllowedPods);
   for (const appDir of appDirs) {
@@ -73,6 +86,7 @@ run(async () => {
     const required = new Map();
     const owners = new Map();
     const collected = new Set();
+    const answers = new Set();
     for (const rel of files) {
       checked += 1;
       const pod = rel.split('/')[0];
@@ -83,10 +97,12 @@ run(async () => {
       }
       const domains = manifest?.NSPrivacyTrackingDomains ?? [];
       if ((manifest?.NSPrivacyTracking === true || domains.length > 0) && !trackingAllowed.has(pod)) {
-        report.problem({ file: toPosix(relative(root, join(pods, rel))), rule: 'tracking-outside-google', message: `pod ${pod} declares tracking${domains.length ? ` (domains: ${domains.join(', ')})` : ''}`, fix: 'Only the Google ad pods may declare tracking (spec N2, decision D4); remove the package that brought this pod.' });
+        report.problem({ file: toPosix(relative(root, join(pods, rel))), rule: 'tracking-outside-google', message: `pod ${pod} declares tracking${domains.length ? ` (domains: ${domains.join(', ')})` : ''}`, fix: 'Only the Google ad pods may declare tracking (spec N2): a tracking pod means an analytics or attribution SDK slipped in; remove the package that brought it.' });
       }
       for (const item of manifest?.NSPrivacyCollectedDataTypes ?? []) {
-        collected.add(`${pod}: ${String(item.NSPrivacyCollectedDataType).replace('NSPrivacyCollectedDataType', '')} linked=${item.NSPrivacyCollectedDataTypeLinked} tracking=${item.NSPrivacyCollectedDataTypeTracking}`);
+        const type = String(item.NSPrivacyCollectedDataType).replace('NSPrivacyCollectedDataType', '');
+        collected.add(`${pod}: ${type} linked=${item.NSPrivacyCollectedDataTypeLinked} tracking=${item.NSPrivacyCollectedDataTypeTracking}`);
+        if (item.NSPrivacyCollectedDataTypeTracking === true) answers.add(`App Privacy: ${type} collected, ${item.NSPrivacyCollectedDataTypeLinked ? 'linked to the user' : 'not linked'}, used for tracking by the third-party ads SDK ${pod} (the app asks App Tracking Transparency first)`);
       }
     }
     for (const [category, reasons] of required) {
@@ -98,7 +114,9 @@ run(async () => {
     const appManifest = readdirSync(iosDir).map((name) => join(iosDir, name, 'PrivacyInfo.xcprivacy')).find((path) => !path.includes(`${join('ios', 'Pods')}`) && existsSync(path));
     if (appManifest) {
       const built = new Map();
-      mergeInto(built, readPlist(appManifest));
+      const builtManifest = readPlist(appManifest);
+      mergeInto(built, builtManifest);
+      if (builtManifest?.NSPrivacyTracking === true || (builtManifest?.NSPrivacyTrackingDomains ?? []).length > 0) report.problem({ file: toPosix(relative(root, appManifest)), rule: 'app-tracking', message: 'the prebuilt app manifest declares tracking or tracking domains', fix: trackingFix });
       for (const [category, reasons] of declared) {
         for (const reason of reasons) {
           if (built.get(category)?.has(reason) !== true) report.problem({ file: toPosix(relative(root, appManifest)), rule: 'prebuilt-stale', message: `the prebuilt manifest lacks ${category} ${reason}`, fix: 'The ios/ folder is older than privacy-manifest.ts: run npx expo prebuild --platform ios --clean.' });
@@ -108,6 +126,7 @@ run(async () => {
     report.note(`${toPosix(relative(root, appDir)) || appDir}: ${files.length} pod manifests`);
     for (const [category, reasons] of [...required].sort()) report.note(`  required ${category}: ${[...reasons].sort().join(', ')}`);
     for (const line of [...collected].sort()) report.note(`  collected ${line}`);
+    for (const line of [...answers].sort()) report.note(`  ${line}`);
   }
   return report.finish({ checked, unit: 'pod manifests' });
 });

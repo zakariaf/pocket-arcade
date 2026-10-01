@@ -73,7 +73,7 @@ Moves all apps of the monorepo to the next Expo SDK (or the build Mac to another
 | `scripts/check-sdk-alignment.mjs` | Proves the repo sits on one SDK line (18 rules); `--target-sdk` adds the readiness scan | Workflow steps 3 and 7, and after any SDK-related change |
 | `scripts/lib/sdk.mjs` | Shared helpers: repo manifests, module maps, version comparison, dates | Read only to change a script |
 | `scripts/lib/assemble-fixtures.mjs` | Builds each self-test case from a base repo plus its `mutation.json` | Read only to add a self-test case |
-| `scripts/selftest.mjs` | Proves both scripts on SDK 57, readiness, SDK 58 and trigger cases: 30 planted alignment problems, 3 "move due" cases (due, overdue with and without its dist-tag), 6 "no move due" cases whose printed reason and date are pinned, and two exit-2 cases (no facts, no "latest" tag) | After changing a script, an asset or a fixture |
+| `scripts/selftest.mjs` | Proves both scripts on SDK 57, readiness, SDK 58 and trigger cases: 30 planted alignment problems, 3 "move due" cases (due, overdue with and without its dist-tag), 6 "no move due" cases (`pass-*`) whose printed reason and date are pinned, and two exit-2 cases (`error-*`: no facts, no "latest" tag), all run by the shared runner | After changing a script, an asset or a fixture |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files copied into this skill | When adding a shared file |
 | `tests/fixtures/` | Base repos for SDK 57 and 58, trigger facts, one `mutation.json` and `EXPECT.txt` per case (`good`, `bad-*`, and the trigger's `pass-*` and `error-*` outcome cases, with an optional `ARGS.txt`) | When adding a rule |

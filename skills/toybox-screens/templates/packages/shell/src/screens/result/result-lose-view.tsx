@@ -23,7 +23,7 @@ export type ResultLoseViewProps = { readonly model: LoseResult };
 const styles = StyleSheet.create({
   chip: { flexDirection: 'row', justifyContent: 'center', paddingTop: 4 },
   logo: { alignItems: 'center', paddingTop: 8, paddingBottom: 4 },
-  reasonText: { flex: 1 },
+  reasonText: { flexShrink: 1 },
   grow: { flexGrow: 1 },
 });
 

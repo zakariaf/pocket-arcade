@@ -51,6 +51,16 @@ const SPEC = {
     '                       part hidden from VoiceOver, "a11yHidden"): Maestro never lists it, so use its coveredBy element',
     '  win-stars            a game flow asserts result.stars-<n> that apps/<game-id>/e2e/testids.json does not list',
     '                       (print-level-line.ts prints the stars the example win earns on level 1)',
+    '  mode-flows           a game mode without its flow, read from apps/<game-id>/game.config.ts: modes.daily needs a',
+    '                       flow that taps daily.play-button and sends action=win-level (journeys/11-daily.yaml),',
+    '                       isContinueAllowed a flow that sends action=lose-level and taps result.continue-premium-button',
+    '                       (journeys/12-continue-premium.yaml; E2E builds run with ads off), modes.endless a flow that',
+    '                       taps home.endless-card and sends action=lose-level (journeys/13-endless.yaml). With',
+    '                       shell-slice.json a mode whose screen (S9 for daily, S7 for the others) is outside the slice is',
+    '                       a SKIP line',
+    '  progress-after-win   a game smoke flow wins a level (action=win-level) but never shows the stars reaching',
+    '                       progress: after the win it must open screen=levels, assert levels.level-tile.1 with a text:',
+    '                       filter (the stars in its label) and tap or assert levels.level-tile.2 (level 2 unlocked)',
     '  runflow-missing      runFlow points at a file that does not exist',
     '  subflow-in-flows     a file under flows/ is used as a sub-flow (it would also run on its own and fail)',
     '  smoke-network        a smoke flow does not end with runFlow .../subflows/assert-no-network.yaml',
@@ -70,7 +80,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSETS = join(HERE, '..', 'assets');
 const SELECTOR_COMMANDS = new Set(['tapOn', 'doubleTapOn', 'longPressOn', 'assertVisible', 'assertNotVisible', 'copyTextFrom', 'scrollUntilVisible']);
 const CLI_VARS = new Set(['APP_ID', 'APP_SCHEME', 'LANG', 'THEME']);
-const BASE_TAGS = new Set(['smoke', 'shell', 'rtl', 'offline', 'a11y', 'quarantine', 'screenshots']);
+const BASE_TAGS = new Set(['smoke', 'shell', 'rtl', 'offline', 'a11y', 'quarantine', 'screenshots', 'daily', 'endless', 'premium']);
 const TESTID = /^[a-z0-9]+(-[a-z0-9]+)*(\.[a-z0-9]+(-[a-z0-9]+)*)+$/;
 const FLOW_NAME = /^(\d{2})-[a-z0-9]+(-[a-z0-9]+)*\.ya?ml$/;
 const SYSTEM_UI = /^system-ui:\s*\S.{5,}/;
@@ -377,7 +387,7 @@ function checkHeader(rel, info, parsed, gameIds, report) {
     report.problem({ file: rel, line: 1, rule: 'flow-header', message: 'has no tags:', fix: info.game ? `Add tags: [smoke, ${info.game}] (or without smoke).` : 'Add tags: [smoke, shell] (or [shell, rtl], ...).' });
     return;
   }
-  for (const tag of tags) if (!BASE_TAGS.has(tag) && !gameIds.has(tag) && !(info.kind === 'storekit' && tag === 'storekit')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: `unknown tag "${tag}"`, fix: 'Use smoke, shell, rtl, offline, a11y, quarantine, screenshots or a game id.' });
+  for (const tag of tags) if (!BASE_TAGS.has(tag) && !gameIds.has(tag) && !(info.kind === 'storekit' && tag === 'storekit')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: `unknown tag "${tag}"`, fix: 'Use smoke, shell, rtl, offline, a11y, quarantine, screenshots, daily, endless, premium or a game id.' });
   if (info.kind === 'flow' && info.game === null && !tags.includes('shell')) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: 'a Shell flow without the shell tag', fix: 'Add shell to tags.' });
   if (info.kind === 'flow' && info.game !== null && !tags.includes(info.game)) report.problem({ file: rel, line: line('tags'), rule: 'flow-tags', message: `a ${info.game} flow without the ${info.game} tag`, fix: `Add ${info.game} to tags.` });
   return tags;
@@ -414,6 +424,68 @@ function checkSteps(rel, info, parsed, tags, params, report) {
     const file = typeof last.arg === 'string' ? last.arg : last.arg?.file;
     if (last.name !== 'runFlow' || typeof file !== 'string' || !file.endsWith('subflows/assert-no-network.yaml')) report.problem({ file: rel, line: steps.lines?.[steps.length - 1] ?? 1, rule: 'smoke-network', message: 'a smoke flow does not end with the no-network assertion', fix: 'End it with - runFlow: <relative path>/subflows/assert-no-network.yaml (spec N3: the JS guard counted zero attempts).' });
   }
+}
+
+/** The debug QUERYs a flow sends through debug-setup.yaml, in step order, and the ids it taps or asserts. */
+function flowActions(parsed) {
+  const events = [];
+  visitMaps(parsed.steps, (key, value, parentKey, owner) => {
+    if (key === 'runFlow' && value && typeof value === 'object' && typeof value.env?.QUERY === 'string') events.push({ kind: 'query', query: value.env.QUERY });
+    if (SELECTOR_COMMANDS.has(key) && value && typeof value === 'object' && typeof value.id === 'string') events.push({ kind: key, id: value.id, text: value.text, line: owner.lines?.[key] ?? 0 });
+  });
+  return events;
+}
+
+const hasQuery = (events, pattern) => events.some((event) => event.kind === 'query' && pattern.test(event.query));
+const tapped = (events, id) => events.some((event) => event.kind === 'tapOn' && event.id === id);
+
+/** The game modes of apps/<game>/game.config.ts (null when there is no config to read). */
+function gameModes(root, game) {
+  const rel = `apps/${game}/game.config.ts`;
+  if (!existsSync(join(root, rel))) return null;
+  const text = readFileSync(join(root, rel), 'utf8').replace(/\/\/[^\n]*/g, '');
+  const flag = (pattern) => pattern.exec(text)?.[1] === 'true';
+  return { rel, daily: flag(/\bdaily\s*:\s*(true|false)/), endless: flag(/\bendless\s*:\s*(true|false)/), continues: flag(/\bisContinueAllowed\s*:\s*(true|false)/) };
+}
+
+const MODE_FLOWS = [
+  { key: 'daily', screen: 'S9', template: 'journeys/11-daily.yaml', what: 'plays today\'s daily (tap daily.play-button, then action=win-level)', found: (events) => tapped(events, 'daily.play-button') && hasQuery(events, /(^|&)action=win-level(&|$)/) },
+  { key: 'continues', screen: 'S7', template: 'journeys/12-continue-premium.yaml', what: 'continues after a loss (action=lose-level, then tap result.continue-premium-button; E2E builds run with ads off)', found: (events) => hasQuery(events, /(^|&)action=lose-level(&|$)/) && tapped(events, 'result.continue-premium-button') },
+  { key: 'endless', screen: 'S7', template: 'journeys/13-endless.yaml', what: 'plays an endless run to its end (tap home.endless-card, then action=lose-level)', found: (events) => tapped(events, 'home.endless-card') && hasQuery(events, /(^|&)action=lose-level(&|$)/) },
+];
+
+/** Each mode the game has needs a flow that plays it (spec: the daily, continue and endless journeys). */
+function checkModeFlows(root, flowsByGame, slice, report) {
+  for (const [game, flows] of flowsByGame) {
+    const modes = gameModes(root, game);
+    if (modes === null) continue;
+    for (const mode of MODE_FLOWS) {
+      if (!modes[mode.key]) continue;
+      const skip = sliceSkipReason(slice, mode.screen);
+      if (skip !== null) {
+        report.skip({ file: modes.rel, rule: 'mode-flows', message: skip });
+        continue;
+      }
+      if (flows.some((events) => mode.found(events))) continue;
+      const flag = mode.key === 'continues' ? 'isContinueAllowed' : `modes.${mode.key}`;
+      report.problem({ file: modes.rel, line: 0, rule: 'mode-flows', message: `${flag} is true, but no flow of apps/${game}/e2e/flows/ ${mode.what}`, fix: `Copy this skill's templates/apps/__GAME_ID__/e2e/flows/${mode.template} to apps/${game}/e2e/flows/${mode.template} and fill __GAME_ID__ and __GAME_NAME__ (references/flows.md, "A game's mode flows").` });
+    }
+  }
+}
+
+/** A game smoke flow that wins a level shows the stars reaching Levels and level 2 opening. */
+function checkProgressAfterWin(rel, info, parsed, tags, report) {
+  if (info.kind !== 'flow' || info.game === null || !tags.includes('smoke')) return;
+  const events = flowActions(parsed);
+  const win = events.findIndex((event) => event.kind === 'query' && /(^|&)action=win-level(&|$)/.test(event.query));
+  if (win === -1) return;
+  const after = events.slice(win + 1);
+  const opensLevels = hasQuery(after, /(^|&)screen=levels(&|$)/);
+  const stars = after.some((event) => event.kind === 'assertVisible' && event.id === 'levels.level-tile.1' && typeof event.text === 'string');
+  const unlocked = after.some((event) => (event.kind === 'tapOn' || event.kind === 'assertVisible') && event.id === 'levels.level-tile.2');
+  if (opensLevels && stars && unlocked) return;
+  const missing = [opensLevels ? null : 'open screen=levels', stars ? null : "assert levels.level-tile.1 with text: (the stars in its label)", unlocked ? null : 'tap levels.level-tile.2 (level 2 unlocked)'].filter(Boolean).join(', ');
+  report.problem({ file: rel, line: 1, rule: 'progress-after-win', message: `wins a level but never proves the stars reached progress: after action=win-level it does not ${missing}`, fix: "Add the Levels steps of this skill's templates/apps/__GAME_ID__/e2e/flows/smoke/10-level-1.yaml after the win: screen=levels, levels.level-tile.1 with text: '.*[^0-9]<stars> .*', then tap levels.level-tile.2 and wait for game.screen." });
 }
 
 const FLOWS_DIR = 'packages/shell/e2e/flows';
@@ -466,6 +538,7 @@ run(async () => {
     return parsedFiles.get(fileRel);
   };
   const slice = readShellSlice(root);
+  const flowsByGame = new Map();
   for (const rel of rels) {
     const info = classify(rel);
     if (info === null) continue;
@@ -497,6 +570,8 @@ run(async () => {
     checkSelectors(rel, parsed, report);
     checkIds(rel, parsed, known, report);
     checkWinStars(rel, info, parsed, known, report);
+    checkProgressAfterWin(rel, info, parsed, tags, report);
+    if (info.kind === 'flow' && info.game !== null) flowsByGame.set(info.game, [...(flowsByGame.get(info.game) ?? []), flowActions(parsed)]);
     for (const target of runFlowTargets(parsed)) {
       if (target.file.includes('${')) continue;
       const resolved = posix.normalize(posix.join(posix.dirname(rel), target.file));
@@ -518,6 +593,7 @@ run(async () => {
   for (const [target, { from, line }] of usedAsSubflow) {
     if (/\/e2e\/flows\//.test(target)) report.problem({ file: from, line, rule: 'subflow-in-flows', message: `uses ${target} as a sub-flow, but it sits under flows/`, fix: 'Move shared steps to packages/shell/e2e/subflows/ (files under flows/ run on their own).' });
   }
+  checkModeFlows(root, flowsByGame, slice, report);
   if (options.syntax) checkSyntax(root, rels, options.maestro, report);
   return report.finish({ checked: rels.length, unit: 'flow files' });
 });

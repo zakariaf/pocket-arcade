@@ -1,0 +1,3 @@
+[system-alert]
+Open in “Line Siege”?
+CAPTURE FAILED (system-alert, screen-not-reached)

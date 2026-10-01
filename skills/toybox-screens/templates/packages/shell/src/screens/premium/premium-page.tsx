@@ -2,10 +2,11 @@
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { LAYOUT } from '@e07/shell/theme/tokens.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { Button } from '@e07/shell/ui/button.tsx';
 import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
+import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import { premiumHeroFor } from './premium-hero.ts';
@@ -45,7 +46,8 @@ const SMALL_PRINT_VIEWS: ReadonlySet<PremiumView> = new Set<PremiumView>([
 ]);
 
 const styles = StyleSheet.create({
-  column: { flexGrow: 1, gap: 12 },
+  // The body's block gap (14): header, benefits, Buy, Restore and the small print (S12 design).
+  column: { flexGrow: 1, gap: LAYOUT.blockGap },
   grow: { flexGrow: 1 },
 });
 
@@ -58,7 +60,9 @@ export function PremiumPage({ model }: PremiumPageProps): ReactNode {
   const hero = premiumHeroFor(model, t);
   const marker = STATE_MARKERS[model.view];
   return (
-    <ScreenFrame testID="premium.screen">
+    // Under the home indicator: a key at the bottom (Restore on the owned page) keeps its hard
+    // shadow, which the scroll view's edge clipped at the safe-area bottom.
+    <ScreenFrame testID="premium.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
       <TopBar
         testID="premium.top-bar"
         title={t('common.premium')}
@@ -66,7 +70,7 @@ export function PremiumPage({ model }: PremiumPageProps): ReactNode {
         onBack={model.onBack}
         isReducedMotion={model.isReducedMotion}
       />
-      <ScreenBody>
+      <ScreenBody isUnderHomeIndicator>
         <View style={styles.column} {...(marker === null ? {} : { testID: marker })}>
           {marker === null ? <PremiumOffer model={model} /> : <PremiumStateBody model={model} />}
           <View style={styles.grow} />

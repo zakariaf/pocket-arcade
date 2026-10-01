@@ -6,6 +6,7 @@ How each budget is measured, what the templates do, and the exact commands.
 
 - Frame-time recorder
 - The perf log and the shared report
+- The debug menu's Performance section
 - Cold-start log
 - Save-write performance
 - Draw-call budget
@@ -26,7 +27,7 @@ Files: `frame-histogram.ts`, `frame-report.ts`, `use-frame-recorder.ts` (templat
 ## The perf log and the shared report
 
 - `createPerfLog(driver)` (test builds only) keeps one JSON row in the save database: table `perf_log`, ring buffer of the last 200 entries, outside the save slots and outside the save migrations.
-- An entry: `{ "kind": "frames" | "cold-start" | "save-benchmark", "label", "atEpochMs", "data" }`, for example:
+- An entry: `{ "kind": "frames" | "cold-start" | "save-benchmark" | "feedback", "label", "atEpochMs", "data" }`. A `feedback` entry is a sound or haptic cue the app asked for in a test build (label = the sound id, such as `ui.win`, or the haptic cue, such as `success`; sounds carry `{ delayMs }`): the E2E runner reads them after the level-1 flow as the simulator evidence of the win feedback. For example:
 
 ```json
 { "kind": "frames", "label": "line-siege/level-12", "atEpochMs": 1790430000000,
@@ -45,6 +46,19 @@ sqlite3 "$DATA/Documents/SQLite/save.db" "SELECT payload FROM perf_log WHERE id 
 
 - `check-perf-report.mjs <report.json>` judges either form against the budgets.
 
+## The debug menu's Performance section
+
+Test builds only (S15, e2e-maestro's debug menu, reached through the test-only entry): `createDebugPerfActions({ perfLog, nowMs })` (`app/perf/debug-perf-actions.ts`, with its test) gives the section its four actions, each built on the perf layer's own pieces. `createDebugParts` builds it once over the debug services' perf log and their simulated clock.
+
+| Row | Action | What it does |
+|---|---|---|
+| "Record frame times" (switch) | `isRecording()`, `setRecording(isOn)` | on: a fresh frame histogram; the board host's frame runner feeds it with `sampleFrame(actions.frames.histogram, actions.frames.isRecording, dt)`; off: one `frames` entry (label `debug-menu`, the `FrameReport`), nothing when no frame ran |
+| "Run save benchmark" | `runSaveBenchmark()` | writes the largest realistic save (`large-save-doc.ts`: 90 levels, 60 daily results, a 200-move run, the same document the Jest guard writes) 300 times after 20 warm-up writes into the scratch `perf-bench.db` (never the player's `save.db`), closes it, appends one `save-benchmark` entry (`{ p50, p95, max }`) and returns the numbers |
+| "Share performance report" | `share()` | `sharePerfReport(perfLog, header)`: the iOS share sheet with the whole log |
+| The summary line | `summary()` | how many entries of each kind the log holds (`frames`, `cold-start`, `save-benchmark`, `feedback`) |
+
+The device side is `DEVICE_PERF` (`app/perf/debug-perf-device.ts`, device-only): `openScratchStore` (the real save layer, `createSqliteSaveStore` over `createExpoSqliteSqlDriver`, on the scratch file, with its `close`), `now` (`deviceNow`, `performance.now` in `save-benchmark.ts`, the one file on the ESLint clock allow-list), `header` (the app id, version and build number from `expo-constants`, and the platform) and `share` (`sharePerfReport`); the Jest test passes its own through `deps.device` (a fake save store, so it mocks no store module). The shared values are made once with `makeMutable`, so the switch and the board host read the same recorder. `check-perf-code.mjs` rule `debug-perf-wired` (due with `start-shell.ts`) fails until the test-only pair exports `createDebugPerfActions` and `createDebugParts` builds it.
+
 ## Cold-start log
 
 - **Why a native module:** React Native's own startup marks begin when the JS bundle starts loading, not when the process starts. Measured on the simulator (66 cold launches of a probe app): process start -> first frame had a median of 539 ms, and 484 ms of it passed before the app's JS module ran; JS then took a median of 30 ms. JS-only timing would miss about 90 % of the cold start.
@@ -54,18 +68,20 @@ sqlite3 "$DATA/Documents/SQLite/save.db" "SELECT payload FROM perf_log WHERE id 
 
 ### When the layer is installed, and who wires what
 
-The cold-start layer is installed at **Shell step 8**, together with the native plugin list (`packages/shell/src/config/shell-plugins.ts`): the Swift module needs a native rebuild anyway, and the step-10 E2E evidence run measures cold start, so it must exist before the first E2E run. Installing it later (it used to be step 11) makes `npm run e2e:ios` fail its cold-start step with "no new cold-start entry within 30 s". This skill ships the files; three other skills own the lines that connect them:
+The layer lands in two halves. **The JS half at Shell step 7**, as Shell core together with `start-shell.ts` and the composition root: every file of `templates/shell-perf/` (`perf-log.ts`, `cold-start.ts`, `process-start.ts`, the frame recorder, the save benchmark, `share-perf-report.ts` and `debug-perf-actions.ts`, with their tests) goes to `packages/shell/src/app/perf/`, because `start-shell.ts` (`markJsEntry`), the debug kit and Home's model import them. **The native half at Shell step 8**, together with the native plugin list (`packages/shell/src/config/shell-plugins.ts`): the Swift module `ProcessStartModule.swift`, `E07Shell.podspec` and `expo-module.config.json` need a native rebuild anyway, and the step-10 E2E evidence run measures cold start, so both halves exist before the first E2E run (until the native half is in, `process-start.ts` answers null and only the JS time is known). Installing it later (it used to be step 11) makes `npm run e2e:ios` fail its cold-start step with "no new cold-start entry within 30 s". This skill ships the files; three other skills own the lines that connect them:
 
 | Piece | File | Owner | What it does |
 |---|---|---|---|
-| The shell-native module | `packages/shell/expo-module.config.json`, `packages/shell/ios/E07Shell.podspec`, `packages/shell/ios/ProcessStartModule.swift` | this skill (`templates/shell-native/`) | the process start time |
-| The perf layer | `packages/shell/src/app/perf/` (every file of `templates/shell-perf/`) | this skill | marks, perf log, recorder, benchmark, share |
+| The shell-native module (Shell step 8) | `packages/shell/expo-module.config.json`, `packages/shell/ios/E07Shell.podspec`, `packages/shell/ios/ProcessStartModule.swift` | this skill (`templates/shell-native/`) | the process start time |
+| The perf layer (Shell step 7) | `packages/shell/src/app/perf/` (every file of `templates/shell-perf/`) | this skill | marks, perf log, recorder, benchmark, share, the debug menu's actions |
 | The JS entry mark | `packages/shell/src/app/start-shell.ts`: `markJsEntry()` inside `startShell`, right after `readParityLaunch()` | rtl-and-direction | the first JS timestamp of the launch |
 | The perf log | `packages/shell/src/app/create-debug-parts.ts`: `TEST_ONLY.createPerfLog(saveDriver)`, exposed on `DebugServices` as `perfLog` | e2e-maestro | test builds keep the log in `save.db`; store builds have no debug parts |
 | The test-only member | `createPerfLog` in the shared test-only pair (`test-only-api.ts`, `test-only-entry.ts`) | e2e-maestro (the pair's one editor) | joins once `perf-log.ts` exists |
 | The Home mark | `packages/shell/src/screens/home/use-home-model.ts`: `useColdStartMark(useOptionalDebugServices()?.perfLog ?? null)` | toybox-screens | the cold-start entry, null in store builds |
+| The debug menu's Performance actions | `createDebugPerfActions` in the test-only pair, and `TEST_ONLY.createDebugPerfActions({ perfLog, nowMs })` in `createDebugParts`, exposed on `DebugServices`; the S15 Performance section's rows call it | e2e-maestro | record frames, run the save benchmark, share, the summary line |
+| The feedback evidence | `TEST_ONLY.recordAudioFeedback(audio, { perfLog, nowMs })` and `recordHapticsFeedback(haptics, { perfLog, nowMs })` (game-audio-and-haptics' `services/audio/recording-feedback.ts`) around the audio and haptics ports in `createDebugParts`, appending to the perf log | e2e-maestro | `feedback` entries: the win sound and the success haptic of the level-1 flow |
 
-`check-perf-code.mjs` rule `perf-layer` fails while any of these is missing once the plugin list exists (before that it prints a `SKIP` line; the Home mark skips while S4 is outside `shell-slice.json`, everything with `"screens": []`), and e2e-maestro's `check-e2e-setup.mjs` fails on the same gaps before an E2E run. The app/perf files belong to the Shell core of every slice: the composition root and the debug kit import them.
+`check-perf-code.mjs` rule `perf-layer` fails while any of these is missing: the JS half once `start-shell.ts` exists and the native half once the plugin list exists (before that each prints a `SKIP` line; the Home mark skips while S4 is outside `shell-slice.json`, everything with `"screens": []`); rule `debug-perf-wired` fails while `createDebugPerfActions` is not in the test-only pair or `createDebugParts` never builds it, and e2e-maestro's `check-e2e-setup.mjs` fails on the same gaps before an E2E run. The app/perf files belong to the Shell core of every slice: the composition root and the debug kit import them.
 - A launch that flips the layout direction and reloads is slower by design: label those runs and leave them out of the budget.
 - **Simulator run** (Release test build, after the smoke flows): `npm run e2e:ios -- --app <game>` does this in its cold-start step (the e2e-maestro runner; results in `reports/e2e/<game>/perf.json`): it opens Home through the debug link, then 6 times `xcrun simctl terminate <udid> <bundleId>`, `xcrun simctl launch <udid> <bundleId>` and a wait until the perf log has a newer `cold-start` entry (read with the `sqlite3` command above), saves the payload as `reports/perf/sim-perf-log.json`, and writes the baseline on the first run. By hand, the same payload is judged with `node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs reports/perf/sim-perf-log.json --root . --sim-baseline <medianMs>`: it takes the latest 6 launches, drops the first as warm-up, and compares the median of the other 5 with the baseline × `coldStartSimRegressionFactor` (1.2); no frames entry is needed. The baseline is committed as `perf-baselines/cold-start-sim-<game>.json` = `{ "medianMs": <n> }`: the first accepted run writes it; a slower new baseline needs the owner's approval and a `Gate-Change:` trailer. Reference: host `simctl launch` -> first frame median 648 ms; process start -> first frame median 539 ms.
 - The perf log survives app updates (it is a ring buffer of 200 entries in `save.db`), so `check-perf-report.mjs` judges only the latest 5 cold starts of a device report (`--min-launches`); the owner's 5 relaunches must be the last launches before sharing.
@@ -75,7 +91,7 @@ The cold-start layer is installed at **Shell step 8**, together with the native 
 - **Jest guard** (`test/integration/save/save-write.perf.test.ts`, template): the real save store on Node's built-in `node:sqlite` driver, WAL with `synchronous = FULL`, the largest realistic document (90 levels, 60 daily results, a 200-move run, validated by the save schema), 300 per-move writes of `current` after 20 warm-up writes; asserts p95 < 5 ms. It lives in the root `test/` folder because it imports Node built-ins.
 - **Time Jest perf tests with `performance` from `node:perf_hooks`,** never the global `performance.now()`: the React Native Jest preset replaces it with a 1 ms `Date.now` mock (the first version of the test reported p50 = 0.00 ms).
 - Measured on the Mac: p50 about 0.01–0.12 ms, p95 about 0.02–0.17 ms. The 5 ms budget, with more than 30× headroom, is a stable regression guard: it catches a missing transaction or a quadratic serializer, not device I/O.
-- **On the device:** Debug menu -> Performance -> "Run save benchmark" (`save-benchmark.ts`, template, test builds only) writes the same document 300 times into a scratch database `perf-bench.db` (never the real save) through the expo-sqlite driver, times each write with `performance.now()` (high-resolution on device; the file is on the ESLint clock allow-list) and appends `{ kind: 'save-benchmark', data: { p50, p95, max } }` to the perf log.
+- **On the device:** Debug menu -> Performance -> "Run save benchmark" (`debug-perf-actions.ts` over `save-benchmark.ts`, templates, test builds only) writes the same document (`large-save-doc.ts`) 300 times into a scratch database `perf-bench.db` (never the real save) through the expo-sqlite driver, times each write with `performance.now()` (`deviceNow`; high-resolution on device; the file is on the ESLint clock allow-list) and appends `{ kind: 'save-benchmark', data: { p50, p95, max } }` to the perf log.
 
 ## Draw-call budget
 

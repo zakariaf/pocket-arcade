@@ -1,0 +1,2 @@
+hint-key-fact
+GameTopBar draws the hint key whenever the offer has one, without the game fact hasHints

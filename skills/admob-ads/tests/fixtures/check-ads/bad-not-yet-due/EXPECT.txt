@@ -1,4 +1,5 @@
 SKIP packages/shell/src/config/shell-plugins.ts [plugin-entry] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
+SKIP packages/shell/src/config/shell-plugins.ts [att-plugin] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created
 SKIP packages/shell/src/app/create-shell-parts.ts [level-end-recorded] due at Shell step 7: packages/shell/src/app/create-shell-parts.ts not yet created
 SKIP packages/shell/src/app/shell-features.tsx [consent-moment] due at Shell step 7: packages/shell/src/app/shell-features.tsx not yet created
 [error-code-branch]

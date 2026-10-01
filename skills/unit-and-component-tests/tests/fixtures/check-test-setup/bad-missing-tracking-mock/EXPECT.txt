@@ -1,0 +1,2 @@
+[root-mock-missing]
+__mocks__/expo-tracking-transparency.ts [root-mock-missing] apps/demo/package.json depends on expo-tracking-transparency

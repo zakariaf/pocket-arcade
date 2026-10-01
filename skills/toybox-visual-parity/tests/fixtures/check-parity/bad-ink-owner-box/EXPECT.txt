@@ -1,0 +1,2 @@
+[text-ink] stats.game-card.biggest-combo.value
+has no ink in the app where the design has it

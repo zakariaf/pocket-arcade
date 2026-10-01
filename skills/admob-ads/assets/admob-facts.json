@@ -1,9 +1,12 @@
 {
-  "verified": "2026-09-26",
+  "verified": "2026-09-30",
   "sdk": {
     "package": "react-native-google-mobile-ads",
     "version": "17.2.0",
-    "iosPods": { "Google-Mobile-Ads-SDK": "13.6.0", "GoogleUserMessagingPlatform": "3.1.0" }
+    "iosPods": {
+      "Google-Mobile-Ads-SDK": "13.6.0",
+      "GoogleUserMessagingPlatform": "3.1.0"
+    }
   },
   "adapters": {
     "packages/shell/src/services/ads/admob-ads-adapter.ts": [
@@ -32,13 +35,44 @@
   },
   "debugAdapter": {
     "file": "packages/shell/src/services/consent/admob-consent-debug-adapter.ts",
-    "allowedImporters": ["packages/shell/src/app/test-only-entry.ts", "packages/shell/src/screens/debug/"]
+    "allowedImporters": [
+      "packages/shell/src/app/test-only-entry.ts",
+      "packages/shell/src/screens/debug/"
+    ]
   },
   "consentFactory": {
     "file": "packages/shell/src/services/consent/consent-factory.ts",
     "adapter": "packages/shell/src/services/consent/admob-consent-adapter.ts"
   },
-  "testOnlyCalls": ["AdsConsent.reset", "AdsConsent.getUserChoices", "openAdInspector"],
+  "tracking": {
+    "decidedBy": "owner decision O1, 2026-09-30 (Apple guideline 5.1.2(i))",
+    "package": "expo-tracking-transparency",
+    "version": "57.0.2",
+    "appSpec": "~57.0.2",
+    "adapter": "packages/shell/src/services/consent/admob-consent-adapter.ts",
+    "allowedNames": [
+      "getTrackingPermissionsAsync",
+      "requestTrackingPermissionsAsync",
+      "PermissionStatus",
+      "PermissionResponse"
+    ],
+    "gate": "packages/shell/src/services/ads/ad-gate.ts",
+    "plugins": "packages/shell/src/config/shell-plugins.ts",
+    "withShell": "packages/shell/src/config/with-shell.ts",
+    "catalogKey": "consent.tracking.usage-description",
+    "languages": [
+      "en",
+      "de",
+      "fa",
+      "ckb"
+    ],
+    "catalogDir": "packages/shell/src/i18n/catalogs"
+  },
+  "testOnlyCalls": [
+    "AdsConsent.reset",
+    "AdsConsent.getUserChoices",
+    "openAdInspector"
+  ],
   "bannedSdkNames": [
     "useAppOpenAd",
     "useAppOpenAdManager",
@@ -62,10 +96,20 @@
     "GAMBannerAd",
     "GAMInterstitialAd"
   ],
-  "bannedRequestOptions": ["tagForChildDirectedTreatment", "tagForUnderAgeOfConsent", "ageRestrictedTreatment", "requestNonPersonalizedAdsOnly"],
+  "bannedRequestOptions": [
+    "tagForChildDirectedTreatment",
+    "tagForUnderAgeOfConsent",
+    "ageRestrictedTreatment",
+    "requestNonPersonalizedAdsOnly"
+  ],
   "samplePublisher": "3940256099942544",
-  "sampleAllowedIn": ["packages/shell/src/config/ads-config.ts"],
-  "idPatterns": { "appId": "^ca-app-pub-\\d{16}~\\d{10}$", "unitId": "^ca-app-pub-\\d{16}/\\d{10}$" },
+  "sampleAllowedIn": [
+    "packages/shell/src/config/ads-config.ts"
+  ],
+  "idPatterns": {
+    "appId": "^ca-app-pub-\\d{16}~\\d{10}$",
+    "unitId": "^ca-app-pub-\\d{16}/\\d{10}$"
+  },
   "skadnetwork": {
     "file": "packages/shell/src/config/skadnetwork-ids.ts",
     "first": "cstr6suwn9.skadnetwork",
@@ -89,6 +133,7 @@
   ],
   "requiredFiles": [
     "__mocks__/react-native-google-mobile-ads.ts",
+    "__mocks__/expo-tracking-transparency.ts",
     "packages/shell/src/config/ads-config.ts",
     "packages/shell/src/config/ads-config.test.ts",
     "packages/shell/src/config/app-variant.ts",
@@ -114,6 +159,7 @@
     "packages/shell/src/services/ads/ad-moments.test.ts",
     "packages/shell/src/services/consent/consent-port.ts",
     "packages/shell/src/services/consent/admob-consent-adapter.ts",
+    "packages/shell/src/services/consent/admob-consent-adapter.test.ts",
     "packages/shell/src/services/consent/consent-factory.ts",
     "packages/shell/src/services/consent/consent-factory.test.ts",
     "packages/shell/src/services/consent/fake-consent.ts",

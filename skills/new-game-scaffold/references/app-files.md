@@ -71,16 +71,16 @@ Spec section 11: one file per game holds every per-game value. It is read by `ap
 |---|---|---|
 | `id` | the game id | equals the folder, `identity.id` and the save document's `gameId` |
 | `appName` | `{ en, de, fa, ckb }`, `LATIN_NAME` where equal | game names are Latin in every language by default; fa/ckb names need the native-speaker review |
-| `bundleId` | `--bundle-id`, else `com.example.<id>` | owner-approved (G1), `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`, same on iOS and Android |
+| `bundleId` | `io.applander.<game id without hyphens>` (`bundleIdFor(id)`) | fixed by the owner's decision O4, all lowercase, the same on iOS and Android; `check-game-app.mjs` rule `bundle-id` at every stage, and `withShell` throws on anything else |
 | `appStoreId` | `null` | the numeric Apple ID once the record exists (G2) |
 | `version`, `buildNumber` | `'1.0.0'`, `1` | only the release pipeline bumps `buildNumber` |
-| `premium` | `<bundleId>.premium`, price note `EUR 1.99 tier (D3)` | the price lives in the store consoles |
-| `ads` | enabled, 3 levels before the first interstitial, 180,000 ms and 2 levels between, placeholder AdMob IDs | real IDs replace the placeholders after G5; test builds use Google's test IDs through `ADS_MODE`, never written here |
+| `premium` | `<bundleId>.premium`, price note `EUR 1.99 price point (owner decision)` | rule `premium-id` at every stage. Premium is the EUR 1.99 App Store price point with Family Sharing off (owner decisions O2 and O3); the app always shows the store's localised price, never this note, and the price lives in App Store Connect |
+| `ads` | enabled, 3 levels before the first interstitial, 180,000 ms and 2 levels between, placeholder AdMob IDs | real IDs replace the placeholders after G5 (`--stage complete` rule `owner-placeholder` names each one until then); test builds use Google's test IDs through `ADS_MODE`, never written here |
 | `modes` | daily on (`--no-daily` off), endless off (`--endless` on), or the copy deck's modes | `modes.endless` is `true` exactly when the levels spec has `endless: { kind: 'endless', difficulty: ENDLESS_DIFFICULTY }` and `modes.daily` exactly when it has a daily (the level-generation skill's `check-levels` rule `endless-mode`, and `--stage complete` here) |
 | `levels` | `{ packCount: 3, levelsPerPack: 30 }` | must match the generated packs |
 | `hints.freePerDay` | `--hints none` → 0, `--hints solver` → 1 | from the game's rules: 1 free hint a day only when a solver proves the next move (spec 8.5); a game without an exact solver (Line Siege) has no hint |
 | `isContinueAllowed` | `--continue once` → `true`, `--continue none` → `false` | `true` exactly when `rules.continueRun.kind === 'once'` (`--stage complete` fails a config that allows a continue the rules do not have) |
-| `links` | `{ privacyPolicy: { host, path }, supportEmail }` | no `https://` literal in app files; the Shell composes the URL |
+| `links` | `{ privacyPolicy: { host, path }, supportEmail }`, placeholders `example.com` and `support@example.com` | no `https://` literal in app files; the Shell composes the URL; the owner's privacy link replaces the placeholders at G3 (`owner-placeholder` until then) |
 | `store` | general audience, age-rating answers; `violenceCartoonOrFantasy` from `--violence-rating` (default `'NONE'`) | App Store Connect `ageRatingDeclarations` names. The owner confirms the answers at step G1: `'INFREQUENT_OR_MILD'` when the game hits monsters or characters (Line Siege), `'NONE'` otherwise |
 
 Never put `null` into anything that reaches `expo.extra` (it arrived as `{}` on the device); `withShell` omits absent keys.

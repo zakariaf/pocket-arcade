@@ -2,6 +2,8 @@
 // no-shell-context: the restart splash brings its own i18n and theme (no stores exist before the
 // direction check), so it is rendered bare, exactly as startShell registers it. The texts are
 // matched loosely: AppText isolates free text with FSI/PDI.
+// allow-style-assertion: a Persian splash writes its tagline right to left (writingDirection is the
+// contract the DirectionProvider fixes; without it the full stop stood at the wrong end).
 import { render, screen } from '@testing-library/react-native';
 import { createElement } from 'react';
 
@@ -39,5 +41,19 @@ describe('createStartupSplash', () => {
     );
     expect(restart).toHaveBeenCalledTimes(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('writes a right-to-left language right to left (the full stop ends the line on the left)', async () => {
+    const restartSplash = createStartupSplash({
+      game: GAME,
+      language: 'fa',
+      restart: () => Promise.resolve(),
+    });
+
+    await render(createElement(restartSplash));
+
+    expect(screen.getByTestId('splash.tagline', { includeHiddenElements: true })).toHaveStyle({
+      writingDirection: 'rtl',
+    });
   });
 });

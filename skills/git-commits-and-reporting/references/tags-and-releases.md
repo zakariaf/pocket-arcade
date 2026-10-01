@@ -13,7 +13,7 @@ One repository holds about 26 apps, so every tag carries the game id. Tags, rele
 - `<build>` is the monotonic build number in `game.config.ts` (the iOS bundle version). It only goes up within a game, across versions, and is never reused.
 - Both forms pass `git check-ref-format`. The Shell and the packages are not tagged: they ship inside the apps.
 - Never move, delete or reuse a tag. A bad build gets a new build number, never the old tag.
-- A release tag without an upload tag for the same version is impossible in a correct history: the owner ships a build that was uploaded and play-tested.
+- A release tag without an upload tag for the same version is impossible in a correct history: the owner ships a build that was uploaded. The owner's play-test is their own check, listed under "Owner steps (not blocking)"; the "ship" word (R1) never waits for it.
 
 `scripts/check-tags.mjs` checks the format, the game id, the upload tag behind every release tag, and the build-number order: across versions by version number, and in upload order by each tag's creation date (read with `git for-each-ref`), so a lower build number tagged after a higher one of the same version is caught too. With `--list <file>` a line may carry the date as `<tag> <unix seconds>`; without dates only the order across versions is checked.
 

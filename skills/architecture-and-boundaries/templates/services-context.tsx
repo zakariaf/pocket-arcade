@@ -18,6 +18,7 @@ export type Services = {
   readonly audio: AudioPort;
   readonly clock: ClockPort;
   readonly connectivity: ConnectivityPort;
+  /** Google's consent (UMP) and Apple's tracking prompt (ATT), in that order, before any ad. */
   readonly consent: ConsentPort;
   readonly errorLog: ErrorLogPort;
   readonly haptics: HapticsPort;

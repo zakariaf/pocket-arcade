@@ -1,0 +1,3 @@
+[arabic-overflow-guard]
+packages/shell/src/ui/app-text.tsx:
+AppText has no Persian overflow guard

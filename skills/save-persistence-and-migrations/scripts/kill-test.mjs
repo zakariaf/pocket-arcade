@@ -20,7 +20,7 @@ const SPEC = {
   usage: '--udid <id>|--create --bundle-id <id> --game-id <id> [--app <path.app>] [--repo <dir>] [--kills <n>] [--step-ms <ms>] [--dry-run]',
   options: {
     udid: { type: 'string', value: 'id', help: 'The simulator to use (a dedicated one: this test kills apps on it)' },
-    create: { type: 'boolean', help: 'Create a fresh simulator "pa-kill-test" and delete it afterwards' },
+    create: { type: 'boolean', help: 'Create a fresh simulator "e07-kill-test" and delete it afterwards' },
     'device-type': { type: 'string', default: 'iPhone 17', value: 'name', help: 'Device type for --create' },
     runtime: { type: 'string', default: 'com.apple.CoreSimulator.SimRuntime.iOS-26-5', value: 'id', help: 'Runtime for --create' },
     app: { type: 'string', value: 'path', help: 'A built .app to install first (Release, test variant)' },
@@ -62,7 +62,7 @@ function simctl(args, { dryRun, allowFail = false } = {}) {
 /** Creates the throwaway simulator for --create (deleted in run()'s finally), else uses --udid. */
 function simulatorFor(options) {
   if (!options.create) return options.udid;
-  return simctl(['create', 'pa-kill-test', options['device-type'], options.runtime], { dryRun: options['dry-run'] }) || '<new-udid>';
+  return simctl(['create', 'e07-kill-test', options['device-type'], options.runtime], { dryRun: options['dry-run'] }) || '<new-udid>';
 }
 
 function prepareSimulator(udid, options) {

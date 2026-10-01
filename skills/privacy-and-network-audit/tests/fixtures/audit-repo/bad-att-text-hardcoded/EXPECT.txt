@@ -1,0 +1,1 @@
+apps/demo-game/app.config.ts:6 [att-config] NSUserTrackingUsageDescription is set outside packages/shell/src/config/shell-plugins.ts and packages/shell/src/config/with-shell.ts

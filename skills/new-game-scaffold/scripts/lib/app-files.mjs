@@ -21,6 +21,56 @@ export const FONT_FILES = Object.freeze([
 
 export const GAME_ID = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 export const BUNDLE_ID = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
+
+/**
+ * The owner's app ids (decision O4, 2026-09-30): every app's iOS bundle id and Android package is
+ * io.applander.<game id without hyphens>, all lowercase (line-siege: io.applander.linesiege), and its
+ * one Premium product is <bundle id>.premium. The scaffolds always write these; nothing overrides them.
+ */
+export const BUNDLE_PREFIX = 'io.applander.';
+export function bundleIdFor(gameId) {
+  return `${BUNDLE_PREFIX}${String(gameId).replaceAll('-', '').toLowerCase()}`;
+}
+export function premiumIdFor(gameId) {
+  return `${bundleIdFor(gameId)}.premium`;
+}
+
+/**
+ * The scaffold's placeholder values (and the older com.example ids) that must never reach a finished
+ * app or a store build. `field` names the game.config.ts field, `step` the owner step that replaces
+ * the value. check-game-app --stage complete (new-game-scaffold) rejects each one by name.
+ */
+export const PLACEHOLDERS = Object.freeze([
+  Object.freeze({ value: 'com.example.*', field: 'bundleId / premium.productId', step: `the fixed id ${BUNDLE_PREFIX}<game id> (owner decision O4)`, matches: (text) => /^com\.example\./.test(text) }),
+  Object.freeze({ value: 'ca-app-pub-1234567890123456~1234567890', field: 'ads.ids.ios.appId', step: 'the owner\'s AdMob app id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456~1234567890' }),
+  Object.freeze({ value: 'ca-app-pub-1234567890123456/1111111111', field: 'ads.ids.ios.units.banner', step: 'the owner\'s banner unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/1111111111' }),
+  Object.freeze({ value: 'ca-app-pub-1234567890123456/2222222222', field: 'ads.ids.ios.units.interstitial', step: 'the owner\'s interstitial unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/2222222222' }),
+  Object.freeze({ value: 'ca-app-pub-1234567890123456/3333333333', field: 'ads.ids.ios.units.rewarded', step: 'the owner\'s rewarded unit id (owner step G5)', matches: (text) => text === 'ca-app-pub-1234567890123456/3333333333' }),
+  Object.freeze({ value: 'example.com', field: 'links.privacyPolicy.host', step: 'the owner\'s privacy policy host (the privacy link, owner step G3 with the App Privacy answers)', matches: (text) => text === 'example.com' }),
+  Object.freeze({ value: 'support@example.com', field: 'links.supportEmail', step: 'the owner\'s support address (the privacy link\'s contact, owner step G3)', matches: (text) => text === 'support@example.com' }),
+]);
+
+/**
+ * The generators have no --bundle-id option any more (the id is fixed). An old command line may still
+ * pass one: with the fixed id it is dropped, with any other value the caller stops with exit 2.
+ * Returns { argv } without the option, or { error: [message, fix] }.
+ */
+export function withoutBundleIdOption(argv, defaultApp) {
+  const at = argv.findIndex((arg) => arg === '--bundle-id' || arg.startsWith('--bundle-id='));
+  if (at === -1) return { argv };
+  const inline = argv[at].startsWith('--bundle-id=');
+  const given = inline ? argv[at].slice('--bundle-id='.length) : argv[at + 1];
+  const appAt = argv.findIndex((arg) => arg === '--app' || arg.startsWith('--app='));
+  const app = appAt === -1 ? defaultApp : argv[appAt].startsWith('--app=') ? argv[appAt].slice('--app='.length) : argv[appAt + 1];
+  const expected = app === undefined ? `${BUNDLE_PREFIX}<game id without hyphens>` : bundleIdFor(app);
+  if (given !== expected) return { error: [`--bundle-id ${given ?? '(no value)'}: every app's bundle id is ${expected} (owner decision O4), and the scaffold writes it`, `Drop --bundle-id; the scaffold writes the fixed ${BUNDLE_PREFIX} id and <bundle id>.premium.`] };
+  return { argv: [...argv.slice(0, at), ...argv.slice(at + (inline ? 1 : 2))] };
+}
+
+/** Every placeholder a string holds, as PLACEHOLDERS entries. */
+export function placeholdersIn(text) {
+  return PLACEHOLDERS.filter((entry) => typeof text === 'string' && entry.matches(text));
+}
 export const RESERVED_IDS = Object.freeze(new Set(['game-kit', 'shell', 'tooling', 'app', 'apps', 'packages', 'test']));
 
 /** hints.freePerDay per hint design: no hint, or a solver's next move (spec 8.5: one free per day). */
@@ -91,7 +141,7 @@ function appNameText(names) {
 export function settingsProblems(settings) {
   const problems = [];
   if (!GAME_ID.test(settings.gameId) || RESERVED_IDS.has(settings.gameId)) problems.push(`game id "${settings.gameId}" is not a kebab-case game id`);
-  if (!BUNDLE_ID.test(settings.bundleId)) problems.push(`bundle id "${settings.bundleId}" does not match ${BUNDLE_ID.source}`);
+  if (settings.bundleId !== bundleIdFor(settings.gameId)) problems.push(`bundle id "${settings.bundleId}" is not ${bundleIdFor(settings.gameId)} (every app's id is ${BUNDLE_PREFIX}<game id without hyphens>, owner decision O4)`);
   for (const lang of LANGUAGES) if (typeof settings.names?.[lang] !== 'string' || settings.names[lang].trim() === '') problems.push(`the ${lang} name is empty`);
   if (!(settings.hints in HINT_FREE_PER_DAY)) problems.push(`hints "${settings.hints}" is not none or solver`);
   if (!(settings.continueRun in CONTINUE_ALLOWED)) problems.push(`continue "${settings.continueRun}" is not once or none`);

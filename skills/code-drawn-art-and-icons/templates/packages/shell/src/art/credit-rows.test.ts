@@ -9,7 +9,7 @@ const WORD_LIST: CreditEntry = {
   version: '2.0',
   license: 'LicenseRef-Public-Domain',
   copyright: 'Alan Beale and M. Cooper',
-  source: 'example.com/enable-word-list',
+  source: 'norvig.com/ngrams/enable1.txt',
 };
 
 describe('creditRowsOf', () => {

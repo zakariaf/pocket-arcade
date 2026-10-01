@@ -111,7 +111,7 @@ Two ways to hear every sound before a build:
 1. **In the repo:** `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON packages/tooling/src/audio/render-sfx-wav.ts --app <game-id>` writes `apps/<game-id>/sfx-preview/<id>.wav` (48 kHz, 16-bit mono; `apps/*/sfx-preview/` is gitignored). Verified: two runs give identical bytes; `afinfo` reports `1 ch, 48000 Hz, Int16`.
 2. **From this skill:** `node ${CLAUDE_SKILL_DIR}/scripts/check-sound-banks.mjs . --wav-dir /tmp/sfx` writes `/tmp/sfx/<game-or-shell>/<id>.wav` for every clean sound, byte-identical to the app's synth (the checker verifies a pinned hash of Line Siege's `beam` at startup).
 
-Tuning loop: change one number, re-render, listen next to the neighbouring sounds (open them in Finder and press space), keep it or revert. Ask the owner to listen before calling the sound set done; Claude cannot hear.
+Tuning loop: change one number, re-render, listen next to the neighbouring sounds (open them in Finder and press space), keep it or revert. Claude cannot hear: the sound set is done when the previews are rendered and listed in the report under "Owner steps (not blocking)" (owner decision O6); the owner listens whenever they can, and the tuning follows their answer.
 
 ## Worked example: Line Siege
 

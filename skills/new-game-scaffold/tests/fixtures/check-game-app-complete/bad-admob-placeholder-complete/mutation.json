@@ -1,0 +1,4 @@
+[
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "appId: 'ca-app-pub-7777777777777777~7777777777'", "with": "appId: 'ca-app-pub-1234567890123456~1234567890'" } },
+  { "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "rewarded: 'ca-app-pub-7777777777777777/6666666666'", "with": "rewarded: 'ca-app-pub-1234567890123456/3333333333'" } }
+]

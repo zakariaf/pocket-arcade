@@ -58,8 +58,9 @@ export function shellLicenceEntries(t: TFunction): LicenceEntry[] {
       licence: OFL,
       description: t('licences.entry.vazirmatn'),
     },
-    { key: 'lilita-one', group: 'fonts', name: 'Lilita One', version: '1.002', licence: OFL },
-    { key: 'rubik', group: 'fonts', name: 'Rubik', version: '2.300', licence: OFL },
+    // The S11d design names these two without a version (only the deck's Vazirmatn has one).
+    { key: 'lilita-one', group: 'fonts', name: 'Lilita One', licence: OFL },
+    { key: 'rubik', group: 'fonts', name: 'Rubik', licence: OFL },
     ...SOFTWARE.map((entry) => ({ ...entry, group: 'software' as const })),
     ...ADS_STORE.map((entry) => ({ ...entry, group: 'ads-store' as const })),
     {

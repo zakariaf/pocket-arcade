@@ -1,5 +1,5 @@
-SKIP packages/shell/src/app/hydrate-save.ts [missing-file] due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created
-SKIP packages/shell/src/app/use-checkpoint-on-background.ts [missing-file] due at Shell step 6
-SKIP packages/shell/src/app/use-checkpoint-on-background.ts [no-background-checkpoint] due at Shell step 6
+SKIP packages/shell/src/app/hydrate-save.ts [missing-file] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created
+SKIP packages/shell/src/app/use-checkpoint-on-background.ts [missing-file] due at Shell step 7
+SKIP packages/shell/src/app/use-checkpoint-on-background.ts [no-background-checkpoint] due at Shell step 7
 [pragmas]
 RESULT: FAIL (1 problems)

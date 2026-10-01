@@ -1,0 +1,1 @@
+SKIP packages/shell/expo-module.config.json [perf-layer] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created

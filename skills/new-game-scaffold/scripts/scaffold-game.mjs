@@ -12,7 +12,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, run } from './check-lib.mjs';
-import { buildAppPlan, DECK_LOSE_SLUGS, DEFAULT_LOSE_SLUG, deckGame, existingApps, GAME_ID, LOSE_SLUG, PILOT, RESERVED_IDS, settingsProblems, suggestedSalt, VIOLENCE_RATINGS } from './lib/app-plan.mjs';
+import { buildAppPlan, bundleIdFor, DECK_LOSE_SLUGS, DEFAULT_LOSE_SLUG, deckGame, existingApps, GAME_ID, LOSE_SLUG, PILOT, RESERVED_IDS, settingsProblems, suggestedSalt, VIOLENCE_RATINGS, withoutBundleIdOption } from './lib/app-plan.mjs';
 
 const SPEC = {
   name: 'scaffold-game',
@@ -21,7 +21,6 @@ const SPEC = {
   options: {
     app: { type: 'string', help: 'Game id, kebab-case (e.g. flock-tilt); becomes apps/<id>, @e07/<id> and GameConfig.id', value: 'id' },
     name: { type: 'string', help: 'Display name in Latin script (en and de; fa and ckb too unless given); default: the copy deck\'s name', value: 'text' },
-    'bundle-id': { type: 'string', help: 'Owner-approved bundle id (step G1); default com.example.<id> placeholder', value: 'id' },
     'name-fa': { type: 'string', help: 'Persian display name (default: the Latin name)', value: 'text' },
     'name-ckb': { type: 'string', help: 'Sorani display name (default: the Latin name)', value: 'text' },
     hints: { type: 'string', value: 'kind', help: 'none (no hint: hints.freePerDay 0) or solver (a solver\'s next move: 1 free per day); required unless the game\'s rules are known (the pilot line-siege: none)' },
@@ -40,6 +39,8 @@ const SPEC = {
     'other content, left alone), "FAIL ... [conflict]" (--write or the plan: exists with other content).',
     'Rules: conflict (a file differs; --write writes nothing), deps-lockstep (existing apps disagree on',
     'dependencies, so the new package.json has no single set to copy).',
+    'The bundle id is always io.applander.<game id without hyphens> and Premium is <bundle id>.premium',
+    '(owner decision O4); there is no option for it, and --bundle-id with any other value stops (exit 2).',
     '',
     'Examples:',
     '  node scaffold-game.mjs --app flock-tilt --hints none --continue once --write',
@@ -86,7 +87,7 @@ function settingsFor(options, root, gameId, deck) {
   const deckModes = game?.modes ?? null;
   const settings = {
     gameId,
-    bundleId: options['bundle-id'] ?? `com.example.${gameId.replaceAll('-', '')}`,
+    bundleId: bundleIdFor(gameId),
     names: namesFor(options, game?.name),
     modes: {
       daily: !options['no-daily'] && (deckModes === null || deckModes.includes('daily')),
@@ -135,7 +136,9 @@ function classify(plan, root, addMissing, report, gameId) {
 }
 
 run(async () => {
-  const { options } = parseArgs(process.argv.slice(2), SPEC);
+  const given = withoutBundleIdOption(process.argv.slice(2));
+  if (given.error) fail(...given.error);
+  const { options } = parseArgs(given.argv, SPEC);
   const root = resolve(options.root);
   const gameId = validateTarget(options, root);
   const report = createReporter({ name: 'scaffold-game' });
@@ -154,7 +157,8 @@ run(async () => {
     }
   }
   const done = writes && report.count === 0;
-  report.note(`${done ? 'wrote' : 'would write'} ${fresh.length} new files for ${gameId} (daily ${settings.modes.daily ? 'on' : 'off'}, endless ${settings.modes.endless ? 'on' : 'off'}, hints ${settings.hints}, continue ${settings.continueRun}, lose key ${gameId}.lose.${loseSlug}, violence ${settings.violence}, bundle id ${settings.bundleId}${settings.bundleId.startsWith('com.example.') ? ' - a placeholder until the owner approves one, step G1' : ''})`);
+  report.note(`${done ? 'wrote' : 'would write'} ${fresh.length} new files for ${gameId} (daily ${settings.modes.daily ? 'on' : 'off'}, endless ${settings.modes.endless ? 'on' : 'off'}, hints ${settings.hints}, continue ${settings.continueRun}, lose key ${gameId}.lose.${loseSlug}, violence ${settings.violence}, bundle id ${settings.bundleId}, Premium ${settings.bundleId}.premium)`);
+  report.note('placeholders until the owner\'s steps: the AdMob ids (G5) and the privacy host and support address (G3); check-game-app --stage complete fails on each by name');
   report.note(`suggested daily salt for ${gameId}: 0x${suggestedSalt(gameId).toString(16).padStart(4, '0')} (fix it forever in src/levels/${gameId}-levels.ts)`);
   if (done) report.note(`next: npm install (links the workspace), then node <this skill>/scripts/check-game-app.mjs . --app ${gameId} --stage scaffold`);
   return report.finish({ checked: plan.length, unit: 'planned files' });

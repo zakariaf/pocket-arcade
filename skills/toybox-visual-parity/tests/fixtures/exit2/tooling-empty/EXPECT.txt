@@ -1,0 +1,4 @@
+pngjs 7.0.0 is not installed in
+npm ci --prefix
+--tooling <repo>/.parity/tooling
+PARITY_TOOLING_DIR

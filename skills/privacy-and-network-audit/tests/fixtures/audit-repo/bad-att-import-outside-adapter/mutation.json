@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/screens/home/ask-tracking.ts",
+      "content": "// A screen that asks for tracking itself (planted): only the consent adapter may.\nimport { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';\n\nexport const askTracking = requestTrackingPermissionsAsync;\n"
+    }
+  }
+]

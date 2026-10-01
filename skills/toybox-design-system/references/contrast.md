@@ -23,7 +23,9 @@ All values are WCAG 2.2 ratios (relative-luminance formula, sRGB threshold 0.040
 | Text on pop (4.5) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 |
 | Danger text on surface (4.5) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 |
 | Danger text on ground (4.5) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 |
-| Danger label on dangerFill, hold (4.5; check-contrast checks the pair at 3:1 as an icon pair) | **4.43** | 5.83 | **4.43** | 5.83 | **4.43** | 5.83 |
+| Danger label and icons on dangerFill, hold (4.5; a text pair in check-contrast) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
+| Body text on dangerFill, error note (4.5) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 |
+| Muted text on dangerFill (4.5) | 7.59 | 6.96 | 7.59 | 7.78 | 7.59 | 7.27 |
 | Success icon on surface (3) | 4.79 | 8.48 | 4.79 | 7.17 | 4.92 | 8.02 |
 | Toast text on toast (4.5) | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 |
 | Ad text on ad band (4.5) | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 |
@@ -53,7 +55,7 @@ All values are WCAG 2.2 ratios (relative-luminance formula, sRGB threshold 0.040
 - **Surface vs ground is 1.25 to 1.45:1 in every paint:** panels, lists and keys are delimited by their ink outline, never by their fill (rule 3).
 - **Dark hard shadows are faint (1.2 to 1.3:1)**: depth cues, not boundaries.
 - **Danger text on the light ground fails (3.8 to 4.3:1):** Toybox never puts danger text on the ground; it is always on a surface (4.8 to 5.7:1). Rule: danger text only on `surface`.
-- **The danger label during hold-to-confirm** sits on `dangerFill` at 4.43:1 in light (just under 4.5 for 17 pt Bold). Open owner decision (see `decisions-and-open-issues.md`); accessibility's `check-contrast.mjs` checks danger on `dangerFill` as an icon pair (3:1, which it passes) and body text on `dangerFill` at 4.5:1; the hold label's 4.43:1 stays an open owner decision that goes into every report, never an `--allow`.
+- **The danger label during hold-to-confirm** stays on the key while `dangerFill` grows under it. The light `dangerFill` is `#FFDCDF` (owner decision O5, 2026-09-30), so the label reads at 4.52:1 on the fill and 5.53 to 5.68:1 on the surface: 4.5:1 or more in every fill state. accessibility's `check-contrast.mjs` checks danger, text and muted text on `dangerFill` as 4.5 text pairs in both schemes, with no exception.
 - **Focus** is at least 3.6:1 against every ground and 4.4:1 against the sunken locked tile.
 
 ## The Toybox palette rules

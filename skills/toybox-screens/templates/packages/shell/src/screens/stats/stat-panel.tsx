@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 /** The header's start: a 34 pt pop icon tile, or the game panel's 36 pt logo tile. */
 export type StatPanelLeading =
-  | { readonly kind: 'icon'; readonly icon: IconName }
+  | { readonly kind: 'icon'; readonly icon: IconName | 'rating-star' }
   | { readonly kind: 'logo'; readonly logo: LogoArt };
 
 export type StatPanelProps = {

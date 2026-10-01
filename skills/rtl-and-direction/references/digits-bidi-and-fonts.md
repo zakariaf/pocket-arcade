@@ -35,6 +35,15 @@ const formatNumber = createNumberFormatter(localeTagFor(language, digits));
 const numberText = formatNumber(12); // "۱۲" in fa, "12" in en
 ```
 
+A rate shown as a bare percentage (the S10 win rate, "62%" in en, "۶۲٪" in fa and ckb) uses the percent formatter from the same module, never a catalog sentence and never a hand-glued sign:
+
+```ts
+const formatPercent = createPercentFormatter(localeTagFor(language, digits));
+const winRateText = formatPercent(0.62); // "62%" en, "62 %" de (no-break space), "۶۲٪" fa and ckb
+```
+
+It rounds to a whole percentage and uses the locale's own sign and spacing (`style: 'percent'`); `create-number-formatter.test.ts` pins all four languages and the Latin choice.
+
 - Formatting happens in JS (the screen's model hook or the board presenter); components and the board receive **strings**.
 - `Intl.NumberFormat` always gets a tag from `localeTagFor` (never a literal `'en'`, `undefined` or nothing); `check-rtl.mjs` fails otherwise. The store price formatter re-formats a numeric store price with the same tag (`style: 'currency'`), and falls back to the store's own string.
 - A value that must stay Latin (a code or symbol) uses `localeTagFor(language, 'latin')` for that value only, with a comment saying why.

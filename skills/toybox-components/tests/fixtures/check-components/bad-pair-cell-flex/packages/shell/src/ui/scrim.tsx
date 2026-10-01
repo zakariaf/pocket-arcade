@@ -34,11 +34,15 @@ const useStyles = makeStyles((theme) => {
   return styles;
 });
 
-/** Dims the whole screen (the only translucent paint) and centres the dialog on it. */
+/**
+ * Dims the whole screen (the only translucent paint) and centres the dialog on it. The scrim is the
+ * modal root: VoiceOver stays inside it, and the accessibility tree (what Maestro and the parity
+ * capture read) still lists the scrim's own testID, which a modal child would hide.
+ */
 export function Scrim({ testID, children }: ScrimProps): ReactNode {
   const styles = useStyles();
   return (
-    <View style={styles.scrim} testID={testID}>
+    <View style={styles.scrim} testID={testID} accessibilityViewIsModal>
       {children}
     </View>
   );

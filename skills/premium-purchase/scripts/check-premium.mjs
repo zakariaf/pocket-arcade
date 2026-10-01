@@ -20,7 +20,11 @@ const SPEC = {
   details: [
     'Rules: required-file, sdk-pin, sdk-import, sdk-api, banned-api, plugin-entry, plugin-options,',
     '  adapter-facts, store-offline, debug-only, product-id, typed-price, catalog-keys, state-testids, harness-isolation,',
-    '  storekit-config, family-sharing.',
+    '  storekit-config, family-sharing (the template, every generated apps/<id>/ios/*.storekit and the ASC',
+    '  payloads), price-target (TARGET_EUR and every StoreKit displayPrice are the owner\'s 1.99, and the old spec target',
+    '  is gone from the Premium files),',
+    '  harness-maestro (the StoreKit harness builds every Maestro call with maestroGlobalArgs: the global --device <udid>',
+    '  and its own --driver-host-port, never the per-command --udid).',
     'Facts (version, allowlists, keys, test IDs) come from assets/premium-facts.json; typed-price skips',
     'i18n/, testing/ and typedPriceAllowedIn (the parity harness\'s fixture store, test builds only).',
     'Not yet due (SKIP lines, a pass): plugin-entry until packages/shell/src/config/shell-plugins.ts exists',
@@ -208,25 +212,99 @@ function checkHarness(root, report) {
       report.problem({ file: rel, rule: 'harness-isolation', message: 'a StoreKit flow inside e2e/flows/', fix: `Move it to ${flowsDir}: the normal E2E run must never run it against an unarmed build.` });
     }
   }
-  if (existsSync(join(root, template))) {
-    let config = null;
-    try {
-      config = JSON.parse(readRepoText(root, template));
-    } catch {
-      report.problem({ file: template, rule: 'storekit-config', message: 'not valid JSON', fix: 'Copy the template from this skill.' });
-    }
-    const products = config?.products ?? [];
-    const product = products[0];
-    if (config && (products.length !== 1 || product.type !== 'NonConsumable' || product.productID !== '__PRODUCT_ID__' || product.familyShareable !== FACTS.familySharable)) {
-      report.problem({ file: template, rule: 'storekit-config', message: 'expects exactly one NonConsumable product "__PRODUCT_ID__" with familyShareable as decided', fix: 'One non-consumable Premium per game; the runner fills in <bundleId>.premium.' });
-    }
-  }
+  checkStoreKitConfigs(root, template, report);
   const payloads = 'packages/tooling/src/asc/premium-iap-payloads.ts';
   if (existsSync(join(root, payloads))) {
     const text = maskComments(readRepoText(root, payloads));
     const match = /familySharable\s*:\s*(true|false)/.exec(text);
     if (!match || match[1] !== String(FACTS.familySharable)) report.problem({ file: payloads, rule: 'family-sharing', message: `familySharable is ${match?.[1] ?? 'not set'}, the owner's decision is ${FACTS.familySharable}`, fix: 'Family Sharing cannot be turned off once on: change it only when the owner decides, and record it in assets/premium-facts.json.' });
     if (!/NON_CONSUMABLE/.test(text)) report.problem({ file: payloads, rule: 'storekit-config', message: 'the product is not NON_CONSUMABLE', fix: 'Premium is one non-consumable product.' });
+  }
+}
+
+/**
+ * Every StoreKit configuration: the template (exactly one NonConsumable "__PRODUCT_ID__") and each
+ * configuration the harness generated from it (apps/<id>/ios/*.storekit, exactly one NonConsumable
+ * "<bundleId>.premium"), each with familyShareable as the owner decided (O3: false).
+ */
+function storeKitConfigs(root, template) {
+  const found = existsSync(join(root, template)) ? [{ rel: template, productId: '__PRODUCT_ID__' }] : [];
+  const apps = join(root, 'apps');
+  for (const name of existsSync(apps) ? readdirSync(apps).sort() : []) {
+    const ios = join(apps, name, 'ios');
+    for (const file of existsSync(ios) ? readdirSync(ios).filter((entry) => entry.endsWith('.storekit')).sort() : []) {
+      found.push({ rel: `apps/${name}/ios/${file}`, productId: null });
+    }
+  }
+  return found;
+}
+
+function checkStoreKitConfigs(root, template, report) {
+  for (const { rel, productId } of storeKitConfigs(root, template)) {
+    let config = null;
+    try {
+      config = JSON.parse(readRepoText(root, rel));
+    } catch {
+      report.problem({ file: rel, rule: 'storekit-config', message: 'not valid JSON', fix: 'Copy the template from this skill; the harness generates the rest from it.' });
+      continue;
+    }
+    const products = config?.products ?? [];
+    const product = products[0] ?? {};
+    const isPremiumId = productId === null ? typeof product.productID === 'string' && product.productID.endsWith(FACTS.productIdSuffix) : product.productID === productId;
+    if (products.length !== 1 || product.type !== 'NonConsumable' || !isPremiumId) {
+      report.problem({ file: rel, rule: 'storekit-config', message: `expects exactly one NonConsumable product "${productId ?? `<bundleId>${FACTS.productIdSuffix}`}"`, fix: 'One non-consumable Premium per game; the runner fills in <bundleId>.premium from the template.' });
+    }
+    if (product.displayPrice !== FACTS.price.targetEur.toFixed(2)) {
+      report.problem({ file: rel, rule: 'price-target', message: `displayPrice is ${String(product.displayPrice)}, not the owner's EUR ${FACTS.price.targetEur.toFixed(2)} price point (O2)`, fix: `"displayPrice" : "${FACTS.price.targetEur.toFixed(2)}" in the template; the harness copies it into every generated configuration.` });
+    }
+    if (product.familyShareable !== FACTS.familySharable) {
+      report.problem({ file: rel, rule: 'family-sharing', message: `familyShareable is ${String(product.familyShareable)}, the owner's decision (O3) is ${String(FACTS.familySharable)}`, fix: 'Family Sharing stays off for Premium (owner decision O3, 2026-09-30); fix the template and rerun the harness.' });
+    }
+  }
+}
+
+/**
+ * The StoreKit harness shares the Mac with other sessions: every Maestro call names its simulator
+ * with the global --device <udid> and its own driver port (maestroGlobalArgs from the repo's
+ * packages/tooling/src/e2e/maestro-args.ts), never the per-command --udid, which leaves the XCTest
+ * driver port shared with whichever simulator already listens there.
+ */
+function checkHarnessMaestro(root, report) {
+  const rel = 'packages/tooling/src/storekit/storekit-harness.ts';
+  if (!existsSync(join(root, rel))) return;
+  const text = maskComments(readRepoText(root, rel));
+  const fix = 'Build the Maestro arguments with maestroGlobalArgs({ udid, driverPort }) from packages/tooling/src/e2e/maestro-args.ts before the command (copy the harness template again).';
+  if (!/\bmaestroGlobalArgs\s*\(/.test(text)) report.problem({ file: rel, line: 1, rule: 'harness-maestro', message: 'runs Maestro without maestroGlobalArgs (the global --device <udid> and its own --driver-host-port)', fix });
+  for (const match of text.matchAll(/['"`]--udid['"`]/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'harness-maestro', message: "passes Maestro's per-command --udid, so the run shares the XCTest driver port with other sessions", fix });
+}
+
+/** The product spec's old "about EUR 1.9-0" target, in either decimal notation. */
+const OLD_TARGET = new RegExp(`\\b1[.,]${'9'}0\\b`, 'g');
+const OLD_TARGET_TEXT = `EUR 1.${'9'}0`;
+
+/** The Premium code the price rule reads: the ASC tooling, the StoreKit files, S12's services and state. */
+const PRICE_DIRS = ['packages/tooling/src/asc/', 'packages/tooling/src/storekit/', 'packages/shell/src/services/purchase/', 'packages/shell/src/stores/premium/'];
+
+/**
+ * Owner decision O2 (2026-09-30): Premium is the EUR 1.99 App Store price point. The ASC script
+ * targets exactly 1.99, and no Premium file still carries the product spec's old target (built from
+ * parts below, so this checker's own text never carries it).
+ */
+function checkPriceTarget(root, report) {
+  const script = 'packages/tooling/src/asc/create-premium-iap.ts';
+  if (existsSync(join(root, script))) {
+    const text = maskComments(readRepoText(root, script));
+    const target = /\bTARGET_EUR\s*=\s*([0-9.]+)/.exec(text);
+    if (target === null || Number(target[1]) !== FACTS.price.targetEur) {
+      report.problem({ file: script, line: target === null ? 1 : lineAt(text, target.index), rule: 'price-target', message: `TARGET_EUR is ${target?.[1] ?? 'not set'}, not the owner's EUR ${String(FACTS.price.targetEur)} price point`, fix: `const TARGET_EUR = ${String(FACTS.price.targetEur)}; // owner decision O2, 2026-09-30 (the script stops only if Apple no longer offers it)` });
+    }
+  }
+  const files = walk(root, { include: ['*.ts', '*.tsx', '*.storekit', '*.template', '*.json'], ignore: [...REPO_SCAN_IGNORES] }).filter((rel) => PRICE_DIRS.some((dir) => rel.startsWith(dir)) || rel.endsWith('/game.config.ts'));
+  for (const rel of files) {
+    const text = readRepoText(root, rel);
+    for (const match of text.matchAll(OLD_TARGET)) {
+      report.problem({ file: rel, line: lineAt(text, match.index), rule: 'price-target', message: `"${match[0]}": the old ${OLD_TARGET_TEXT} target`, fix: 'Premium is the EUR 1.99 App Store price point (owner decision O2); the app shows the store\'s localised price, never a typed one.' });
+    }
   }
 }
 
@@ -246,5 +324,7 @@ run(async () => {
   checkCatalogs(root, report);
   checkScreen(root, report);
   checkHarness(root, report);
+  checkPriceTarget(root, report);
+  checkHarnessMaestro(root, report);
   return report.finish({ checked: files.length, unit: 'files' });
 });

@@ -12,7 +12,8 @@
 //   (the composition root passes it as createGameBoardHost's isLayoutProbeOn);
 // - ads=off|test and seed=<n> are kept here for the ad policy and the game host to read;
 // - perfLog is the test build's perf log (performance-budgets): Home's useColdStartMark reads it
-//   through useOptionalDebugServices()?.perfLog, which is null in store builds.
+//   through useOptionalDebugServices()?.perfLog, which is null in store builds; perf is S15's
+//   Performance section over that log (record frame times, share the report, save benchmark).
 // Every flag outside the save is written to the test-only key-value store at once and applied
 // again when the services are created, so it survives the direction reload and a killed app.
 import { createConsentPort } from '@e07/shell/services/consent/consent-factory.ts';
@@ -20,6 +21,7 @@ import { createConsentPort } from '@e07/shell/services/consent/consent-factory.t
 import { decodeDebugOverrides, encodeDebugOverrides } from './debug-overrides.ts';
 
 import type { DebugAdsOverride, DebugOverrides, DebugStore } from './debug-overrides.ts';
+import type { DebugPerfActions } from './debug-perf.ts';
 import type { SimulatedClock } from './simulated-clock.ts';
 import type { SimulatedConnectivity } from './simulated-connectivity.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
@@ -39,6 +41,8 @@ export type DebugServiceDeps = {
   readonly store: DebugStore;
   /** TEST_ONLY.createPerfLog(save driver): the cold-start and frame entries e2e:ios reads back. */
   readonly perfLog: PerfLog;
+  /** TEST_ONLY.createDebugPerfActions over that perf log: S15's Performance section. */
+  readonly perf: DebugPerfActions;
   /** The premium service's synchronous save write (premiumDeps.persistPremium). */
   readonly persistPremium: (change: PremiumChange) => void;
   /** stores.premium.getState().dispatch */
@@ -67,8 +71,10 @@ export type DebugServices = {
   /** seed=<n>: the seed the game host uses for the next level run; null uses the level's own. */
   readonly setSeed: (seed: number | null) => void;
   readonly seedOverride: () => number | null;
-  /** The perf log (Home's cold-start mark, the frame recorder, the save benchmark). */
+  /** The perf log (Home's cold-start mark, the frame recorder, the save benchmark, feedback cues). */
   readonly perfLog: PerfLog;
+  /** S15's Performance section: record frame times, share the report, run the save benchmark. */
+  readonly perf: DebugPerfActions;
 };
 
 type Overrides = {
@@ -133,5 +139,6 @@ export function createDebugServices(deps: DebugServiceDeps): DebugServices {
     },
     seedOverride: () => overrides.current().seed,
     perfLog: deps.perfLog,
+    perf: deps.perf,
   };
 }

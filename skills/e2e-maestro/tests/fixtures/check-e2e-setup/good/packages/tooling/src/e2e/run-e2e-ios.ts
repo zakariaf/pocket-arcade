@@ -1,14 +1,20 @@
 // packages/tooling/src/e2e/run-e2e-ios.ts —
-// `npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--flows-only] [--write-perf-baseline] [maestro test options]`
-// --sim runs the phone steps on this session's own simulator e07-<purpose> (default e07-e2e-phone).
-// Needs a Release simulator build of the test variant with ADS_MODE=off. While the layer-F socket
-// sampler watches the app's sockets, on dedicated simulators it runs:
+// `npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--flows-only] [--write-perf-baseline] [maestro test options]`
+// --sim runs the phone steps on this session's own simulator e07-<purpose> (default e07-e2e-phone)
+// and the iPad steps on e07-<purpose>-tablet (default e07-e2e-tablet). Every Maestro run names its
+// simulator's UDID and a driver port of its own (a free one per run, or --driver-port for the whole
+// session) before the command, so no run reaches another session's simulator.
+// Needs a Release simulator build of the test variant with ADS_MODE=off and refuses any other
+// (requireAdsOffTestBuild): with ads off ConsentPort asks neither Google's form nor Apple's tracking
+// prompt, so no system prompt covers a screen and no ad SDK opens a socket. While the layer-F
+// socket sampler watches the app's sockets, on dedicated simulators it runs:
 // 1. flows: every Shell and game flow (a11y-tagged flows wait for step 4);
 // 2. cold start: 6 launches into Home, the median of the last 5 against the committed
 //    perf-baselines/cold-start-sim-<game-id>.json x coldStartSimRegressionFactor (sim-perf-steps.ts);
-// 3. memory: the game's smoke flows again, then the app's phys_footprint (sim-perf-steps.ts);
+// 3. memory: the game's smoke flows again, the feedback the level asked for (feedback.json: the
+//    win sound and the success haptic from the perf log), then the app's phys_footprint;
 // 4. large text: the a11y-tagged flows at 200 % text in en and fa, on the phone and the iPad.
-// Writes reports/e2e/<game-id>/{junit.xml, network.txt, perf.json, memory/, large-text/<device>-<lang>/}
+// Writes reports/e2e/<game-id>/{junit.xml, network.txt, perf.json, feedback.json, memory/, large-text/<device>-<lang>/}
 // and reports/perf/sim-perf-log.json. --flows-only (while iterating) runs step 1 only; it is never
 // the evidence run.
 import { execFileSync, spawn } from 'node:child_process';
@@ -19,15 +25,18 @@ import { runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
   appEnv,
   e2eSimulatorName,
+  e2eTabletName,
   ensureSimulator,
   findSimulatorBuild,
   prepareSimulator,
   readAppInfo,
+  requireAdsOffTestBuild,
   runMaestro,
   setAppearance,
   setTextSize,
   terminateApp,
   type AppInfo,
+  type MaestroDevice,
 } from '@e07/tooling/e2e/simulator.ts';
 
 const SOCKET_SAMPLER = join('packages', 'tooling', 'src', 'audit', 'sample-sockets.ts');
@@ -40,7 +49,11 @@ type Cli = {
   readonly game: string;
   /** The phone simulator's name (--sim <purpose>, default e07-e2e-phone). */
   readonly phone: string;
+  /** The iPad's name for the large-text step (e07-<purpose>-tablet, default e07-e2e-tablet). */
+  readonly tablet: string;
   readonly appPath: string | undefined;
+  /** --driver-port <n>: this session's own Maestro driver port for every run (else a free one each). */
+  readonly driverPort: number | undefined;
   readonly isFlowsOnly: boolean;
   readonly isWritingBaseline: boolean;
   readonly rest: string[];
@@ -66,13 +79,17 @@ function parseCli(argv: readonly string[]): Cli {
   const game = take('--app');
   if (game === undefined) {
     throw new Error(
-      'usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--flows-only] [--write-perf-baseline] [maestro test options]',
+      'usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--flows-only] [--write-perf-baseline] [maestro test options]',
     );
   }
+  const sim = take('--sim');
+  const port = take('--driver-port');
   return {
     game,
-    phone: e2eSimulatorName(take('--sim'), PHONE.name),
+    phone: e2eSimulatorName(sim, PHONE.name),
+    tablet: e2eTabletName(sim, TABLET.name),
     appPath: take('--app-path'),
+    driverPort: port === undefined ? undefined : Number(port),
     isFlowsOnly: has('--flows-only'),
     isWritingBaseline: has('--write-perf-baseline'),
     rest,
@@ -84,17 +101,20 @@ const reportArgs = (dir: string): string[] => [
   ...['--format', 'JUNIT', '--output', join(dir, 'junit.xml'), '--test-output-dir', dir],
 ];
 
+/** The simulator a run goes to, with the session's own driver port when it passed one. */
+const deviceOf = (cli: Cli, udid: string): MaestroDevice => ({ udid, driverPort: cli.driverPort });
+
 /** Step 1: every flow of the Shell and the game, except quarantined and a11y (step 4) ones. */
-function runFlows({ cli, udid, app, out }: E2eRun): string[] {
+async function runFlows({ cli, udid, app, out }: E2eRun): Promise<string[]> {
   // Maestro does not recurse into sub-folders: list the <area>/<nn>-<name>.yaml files explicitly.
   const flows = [
     ...globSync('packages/shell/e2e/flows/*/*.yaml'),
     ...globSync(`apps/${cli.game}/e2e/flows/*/*.yaml`),
   ].sort();
-  const status = runMaestro([
+  const status = await runMaestro(deviceOf(cli, udid), [
     'test',
     ...flows,
-    ...['--udid', udid, ...reportArgs(out), '--exclude-tags', 'quarantine,a11y'],
+    ...[...reportArgs(out), '--exclude-tags', 'quarantine,a11y'],
     ...appEnv(app),
     ...cli.rest,
   ]);
@@ -102,7 +122,7 @@ function runFlows({ cli, udid, app, out }: E2eRun): string[] {
 }
 
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
-function runLargeText({ cli, udid, app, out }: E2eRun): string[] {
+async function runLargeText({ cli, udid, app, out }: E2eRun): Promise<string[]> {
   const flows = [
     ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
     ...globSync(`apps/${cli.game}/e2e/flows/a11y/*.yaml`),
@@ -113,7 +133,7 @@ function runLargeText({ cli, udid, app, out }: E2eRun): string[] {
   }
   const failures: string[] = [];
   for (const device of [PHONE, TABLET]) {
-    const target = device.key === 'phone' ? udid : ensureSimulator(device.name, device.model);
+    const target = device.key === 'phone' ? udid : ensureSimulator(cli.tablet, device.model);
     if (device.key === 'tablet') {
       // The socket sampler follows one running copy of the app: stop the phone's first.
       terminateApp(udid, app);
@@ -124,10 +144,10 @@ function runLargeText({ cli, udid, app, out }: E2eRun): string[] {
     for (const lang of LARGE_TEXT_LANGS) {
       const dir = join(out, 'large-text', `${device.key}-${lang}`);
       mkdirSync(dir, { recursive: true });
-      const status = runMaestro([
+      const status = await runMaestro(deviceOf(cli, target), [
         'test',
         ...flows,
-        ...['--udid', target, ...reportArgs(dir), '--include-tags', 'a11y'],
+        ...[...reportArgs(dir), '--include-tags', 'a11y'],
         ...['--exclude-tags', 'quarantine', ...appEnv(app), '-e', `LANG=${lang}`],
       ]);
       if (status !== 0) failures.push(`large text: ${device.key} ${lang} failed, see ${dir}`);
@@ -143,13 +163,17 @@ function startRun(cli: Cli): E2eRun {
   execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
     stdio: 'ignore',
   });
-  const app = readAppInfo(findSimulatorBuild(cli.game, cli.appPath));
+  const appPath = findSimulatorBuild(cli.game, cli.appPath);
+  // Ads off, always: no Google form, no tracking prompt and no ad socket in any E2E run.
+  requireAdsOffTestBuild(appPath, cli.game);
+  const app = readAppInfo(appPath);
   const udid = ensureSimulator(cli.phone, PHONE.model);
   prepareSimulator(udid, app, 'large');
   setAppearance(udid, 'light');
   const out = join('reports', 'e2e', cli.game);
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
+  console.log(`e2e:ios: phone ${cli.phone} ${udid}; every Maestro run names this UDID`);
   return { cli, udid, app, out };
 }
 
@@ -164,11 +188,12 @@ async function main(): Promise<number> {
   });
   const failures: string[] = [];
   try {
-    failures.push(...runFlows(run));
+    failures.push(...(await runFlows(run)));
     if (!cli.isFlowsOnly) {
       const { game, isWritingBaseline } = cli;
-      failures.push(...(await runPerfSteps({ game, udid, app, out, isWritingBaseline })));
-      failures.push(...runLargeText(run));
+      const device = deviceOf(cli, udid);
+      failures.push(...(await runPerfSteps({ game, device, app, out, isWritingBaseline })));
+      failures.push(...(await runLargeText(run)));
     }
   } finally {
     sampler.kill();

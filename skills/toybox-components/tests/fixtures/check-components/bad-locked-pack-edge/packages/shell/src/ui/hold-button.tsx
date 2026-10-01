@@ -44,8 +44,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     overflow: 'hidden',
   },
-  // Grows from the start edge (right to left in RTL) under the label while the finger is down.
-  fill: { position: 'absolute', top: 0, bottom: 0, start: 0 },
+  // Grows from the start edge (right to left in RTL) under the label while the finger is down. The
+  // share is of the whole face (the design's .hf: width var(--h) of the key's padding box): Yoga
+  // resolves an absolute child's percentage inside the face's padding (46 % of 278 pt instead of
+  // 310), so the fill lives in a track pinned to the face's edges.
+  fillTrack: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0, flexDirection: 'row' },
+  fill: { alignSelf: 'stretch' },
   block: { alignSelf: 'stretch' },
 });
 
@@ -81,10 +85,16 @@ export function HoldButton(props: HoldButtonProps): ReactNode {
       faceStyle={styles.face}
       layoutStyle={styles.block}
     >
-      <Animated.View
-        style={[styles.fill, { backgroundColor: SHELL_COLORS[theme.scheme].dangerFill }, fillStyle]}
-        testID={`${props.testID}.fill`}
-      />
+      <View style={styles.fillTrack} pointerEvents="none">
+        <Animated.View
+          style={[
+            styles.fill,
+            { backgroundColor: SHELL_COLORS[theme.scheme].dangerFill },
+            fillStyle,
+          ]}
+          testID={`${props.testID}.fill`}
+        />
+      </View>
       {props.icon === undefined ? null : (
         <Icon name={props.icon} color={theme.colors.danger} size={BUTTON.iconSize} />
       )}

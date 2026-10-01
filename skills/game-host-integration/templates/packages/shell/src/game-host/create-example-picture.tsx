@@ -7,6 +7,7 @@ import { StyleSheet, View } from 'react-native';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
 import { makeScene } from '@e07/shell/game-host/board-scene.ts';
 import { IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
+import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
 import { recordBoard } from '@e07/shell/game-host/record-board.ts';
 import { exampleHighlightOf } from '@e07/shell/game-host/tutorial-script.ts';
 import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
@@ -28,7 +29,9 @@ const NUMBER_FAMILY = 'Vazirmatn';
 const NUMBER_STYLE = { weight: 400, width: 5, slant: 0 } as const;
 const NUMBER_SIZE = 18;
 
-const styles = StyleSheet.create({ fill: { flex: 1 } });
+// The canvas fills the picture; the picture keeps its aspect (the S13 size contract), so it never
+// measures 0 whatever its container does.
+const styles = StyleSheet.create({ fill: { flex: 1 }, picture: { alignSelf: 'stretch' } });
 
 type Size = { readonly width: number; readonly height: number };
 
@@ -36,6 +39,7 @@ function examplePictureFor<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
 ): ComponentType<ExamplePictureProps> {
   const board = game.presentation.board;
+  const aspectRatio = examplePictureAspectOf(board);
   // Once per app, on the JS thread: unit paths and scratch paints (as the board host does per run).
   const kit = makeBoardKit(Skia, {
     paths: board.buildPaths(Skia),
@@ -79,7 +83,7 @@ function examplePictureFor<T extends ShellGameTypes>(
           });
     return (
       <View
-        style={styles.fill}
+        style={[styles.picture, { aspectRatio }]}
         onLayout={handleLayout}
         accessible
         accessibilityRole="image"

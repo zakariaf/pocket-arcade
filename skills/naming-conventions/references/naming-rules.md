@@ -67,7 +67,8 @@ Where the repo adds its own convention (kebab-case `kind` values, testIDs, i18n 
 | Adapter file | `admob-ads-adapter.ts`, `expo-iap-purchase-adapter.ts`, `sqlite-save-store.ts` | `ads.ts`, `AdMobAdapter.ts`, `ads-admob.ts` | ESLint `ADAPTERS` glob, `export-name` |
 | Fake | `fake-ads.ts` → `createFakeAds()` | `ads.mock.ts`, `mock-ads.ts` | `fake-file` |
 | testID | `home.play-button`, `levels.level-tile.12` | `playButton`, `Home.Play`, `home_play` | `testIdFormat`, `testid-format` |
-| i18n key | `home.play-button.continue`, `line-siege.lose.broke-through` | `continueLevel12`, `Home.Play`, `home.play.Continue` | `i18n:verify`, `i18n-key` |
+| i18n key | `home.play-button.continue`, `line-siege.lose.broke-through`, `consent.tracking.usage-description` (a system dialog text: plain, no placeholders) | `continueLevel12`, `Home.Play`, `home.play.Continue`, `consent.tracking.NSUserTrackingUsageDescription` | `i18n:verify`, `i18n-key` |
+| Bundle id / Android package | `io.applander.linesiege` (`io.applander.<game id without hyphens>`) | `com.example.linesiege`, `io.applander.line-siege`, `io.Applander.LineSiege` | `bundle-id-applander`, `game-id` |
 | Placeholder | `{level, number}`, `{movesCount, plural, …}`, `{packName}` | `{0}`, `{best-score}`, `{LEVEL}`, plain `{level}` for a number | `i18n:verify`, `i18n-placeholder` |
 | Env var | `APP_VARIANT`, `EXPO_PUBLIC_APP_VARIANT` | `appVariant`, `EXPO_APP_VARIANT` | `env-var`, `app-env.d.ts` |
 | Commit | `feat(line-siege): add endless mode` | `Added endless mode.`, `feat: stuff`, `feat(ui): x` | commit-msg hook |

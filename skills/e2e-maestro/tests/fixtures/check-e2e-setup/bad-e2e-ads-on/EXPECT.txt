@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/run-e2e-ios.ts:1 [e2e-ads-off] runs the flows on whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off

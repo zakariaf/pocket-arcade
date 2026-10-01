@@ -41,6 +41,11 @@ describe('Toybox line heights on the pixel grid', () => {
     expect(lineHeightOf('levelNumber', 'arabic', 3)).toBe(91 / 3); // 21 x 1.45 = 30.45
   });
 
+  it('gives Persian scores the same 1.45 box (S7, the endless and daily results)', () => {
+    expect(lineHeightOf('scoreValue', 'latin', 3)).toBe(44); // 44 x 1
+    expect(lineHeightOf('scoreValue', 'arabic', 3)).toBe(191 / 3); // 44 x 1.45 = 63.8
+  });
+
   it('keeps values that are already on the grid', () => {
     expect(snapToGrid(25.5, 2)).toBe(25.5);
     expect(snapToGrid(18.2, 2)).toBe(18);

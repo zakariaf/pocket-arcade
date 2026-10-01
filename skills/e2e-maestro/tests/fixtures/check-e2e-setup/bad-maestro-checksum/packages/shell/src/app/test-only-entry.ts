@@ -5,6 +5,14 @@
 /** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
 /** @public */
+export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
+export {
+  /** @public */
+  recordAudioFeedback,
+  /** @public */
+  recordHapticsFeedback,
+} from '@e07/shell/services/audio/recording-feedback.ts';
+/** @public */
 export { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 /** @public */
 export { DebugScreen } from '@e07/shell/screens/debug/debug-screen.tsx';

@@ -51,7 +51,7 @@ The handler, the parser and the store adapter are reached only through `packages
 | `reduceMotion` | `0`, `1` | reduce motion setting |
 | `stars` | `demo` or `<level>:<stars>,...` (stars 0-3) | progress fixtures: `demo` = levels 1-11 won with 28 stars (the screenshot fixture); `0` clears a level |
 | `screen` | `home`, `levels`, `daily`, `stats`, `settings`, `premium`, `how-to-play`, `debug`, `game`, or `game-start`, `game-middle`, `result-win`, `result-lose` | opens a route (kebab-case) or one of the game's example states (spec 10 TESTING) |
-| `action` | `win-level`, `lose-level` | ends the level on screen with that outcome: the game host (`GameHost.debugControls().playTo`) swaps the run's state for `testing.examples.win()` or `lose()` and runs its one run-end path (stars, statistics, ad history saved before Result shows). A link of its own, once the level is on screen; without an active run it is an error |
+| `action` | `win-level`, `lose-level` | ends the active run with that outcome, whatever its kind (a level, today's daily or an endless run): the game host (`GameHost.debugControls().playTo`) swaps the run's state for `testing.examples.win()` or `lose()` and runs its one run-end path (stars, the daily result and streak, the endless best, statistics, ad history saved before Result shows; a loss that still has its continue shows the offer first). A link of its own, once the run is on screen; without an active run it is an error |
 | `boardLayout` | `0`, `1` | `debugServices.setBoardLayout`: `1` renders `game.board-layout`; off by default, so screenshots never show it |
 
 A new parameter is added to `debug-link.ts` (its `READERS`), `assets/debug-link-params.json` and this table in the same change: `check-e2e-setup.mjs` (rule `debug-link`) fails when the parser and the JSON differ, and `check-flows.mjs` reads the JSON.
@@ -111,22 +111,34 @@ Once, in test builds, by three owners (the templates here are the pieces; game-h
    const debug = adapters.createDebugParts({
      ...{ network, clocks, premiumDeps, stores, audio, errorLog, save },
      saveDriver: adapters.saveDriver, // the one save.db connection: the perf log's table
+     haptics: core.haptics,           // with audio: wrapped by the feedback recorders
      game: host.debugControls(),      // action= and the example screens
      extra: config.game,
    });
    // the board host factory: isLayoutProbeOn: () => debug?.services?.isBoardLayoutOn() === true
+   // the game host's Shell feedback: ports that play through debug?.feedback ?? { audio, haptics }
+   //   at call time (the host exists before the debug parts, which need its debug controls)
    // the app root's parts: debug
    ```
 
-   `createDebugParts` (template) installs the JS network guard first, creates the perf log in the save database (`TEST_ONLY.createPerfLog(saveDriver)`; Home's cold-start mark and the frame recorder write it, `npm run e2e:ios` reads it back), the debug services over the test-only key-value store (the flags come back here; `services.perfLog` is the log), the link handler (save writes through `updateAndPublish`, `restart` = `audio.dispose()` then `restartForDirection`, routes through the navigator ref, the group-switch wait through `navigationRef.addListener('state', ...)`, bad links to the error log) and `navigationRef = createNavigationContainerRef()`, then starts listening to `Linking` (`links.listen`). It takes `game?: DebugGameControls` (`GameHost.debugControls()`, only test builds reach it) for `action=` and the example screens; without it those parameters are refused with a clear error.
+   `createDebugParts` (template) installs the JS network guard first, creates the perf log in the save database (`TEST_ONLY.createPerfLog(saveDriver)`; Home's cold-start mark, the frame recorder and the feedback recorders write it, `npm run e2e:ios` reads it back), S15's Performance actions over it (`TEST_ONLY.createDebugPerfActions({ perfLog, nowMs })`: record frame times, share the report, run the save benchmark; `services.perf`), the debug services over the test-only key-value store (the flags come back here; `services.perfLog` is the log), `feedback`: the audio and haptics ports wrapped by `TEST_ONLY.recordAudioFeedback` / `recordHapticsFeedback`, so every sound and pulse also appends `{ kind: 'feedback', label }` to the perf log (the E2E feedback evidence; `null` in a store build), the link handler (save writes through `updateAndPublish`, `restart` = `audio.dispose()` then `restartForDirection`, routes through the navigator ref, the group-switch wait through `navigationRef.addListener('state', ...)`, bad links to the error log) and `navigationRef = createNavigationContainerRef()`, then starts listening to `Linking` (`links.listen`). It takes `game?: DebugGameControls` (`GameHost.debugControls()`, only test builds reach it) for `action=` and the example screens; without it those parameters are refused with a clear error.
 2. **The app root** (`shell-app.tsx`, `shell-features.tsx`) passes `debug` down, and `shell-navigator.tsx` provides `<DebugServicesProvider services={debug.services} links={debug.links}>` around the navigator.
 3. **The navigator root** (`NavigationRoot`, navigation-and-routing) takes `navigationRef={debug.navigationRef}` (passed on as the container's `ref`) and `onReady`, which `shell-navigator.tsx` sets to start `debug.links?.start(Linking)` (stopping an earlier handler first): the pending screen of a reload, the launch URL, then every link.
 
-`check-e2e-setup.mjs` (rules `debug-link`, `debug-persistence`, `perf-layer`) fails when nothing calls `start(Linking)`, `createDebugParts` does not `listen` at once, the handler opens `screen=` before a group switch, the test-only entry does not export the handler, the store or `createPerfLog`, the flags are not kept, or the perf layer is missing. These three edits keep `createShellApp` within the 80-line function limit (the `...{ }` spread keeps the call on four lines).
+`check-e2e-setup.mjs` (rules `debug-link`, `debug-persistence`, `perf-layer`) fails when nothing calls `start(Linking)`, `createDebugParts` does not `listen` at once, the handler opens `screen=` before a group switch, the test-only entry does not export the handler, the store, `createPerfLog`, `createDebugPerfActions` or the two feedback recorders, `createDebugParts` does not make them, the flags are not kept, or the perf layer is missing (its JS half is due with `start-shell.ts` at Shell step 7, its native half with `shell-plugins.ts` at step 8). These three edits keep `createShellApp` within the 80-line function limit (the `...{ }` spread keeps the call on four lines).
 
 ## S15's model hook
 
-`packages/shell/src/screens/debug/use-debug-model.ts` (template, with a `renderHook` test through the Shell wrapper) is the `useDebugModel()` that toybox-screens' `debug-screen.tsx` renders. It reads only `useDebugServices()`, `useDebugLinks()`, `useServices()` (clock, error log, save), the progress, premium and settings stores, `useGameExtra()` and navigation. It returns `DebugModel` plus `networkAttempts` (the view renders it as `debug.network-attempts`), `importField` (the paste field the Import save row opens: `isOpen`, `text`, `error`, `onChangeText`, `onSubmit`, `onCancel`; the view draws it with `debug.import-save-field`, `debug.import-save-button` and `debug.import-save-error`), `importSave(text)` and `openFontTest()`:
+`packages/shell/src/screens/debug/use-debug-model.ts` (template, with a `renderHook` test through the Shell wrapper) is the `useDebugModel()` that toybox-screens' `debug-screen.tsx` renders. It reads only `useDebugServices()`, `useDebugLinks()`, `useServices()` (clock, error log, save), the progress, premium and settings stores, `useGameExtra()` and navigation. It returns `DebugModel` plus `networkAttempts` (the view renders it as `debug.network-attempts`), `importField` (the paste field the Import save row opens: `isOpen`, `text`, `error`, `onChangeText`, `onSubmit`, `onCancel`; the view draws it with `debug.import-save-field`, `debug.import-save-button` and `debug.import-save-error`), `importSave(text)`, `openFontTest()` and `perf`, the Performance section built from `services.perf` over `services.perfLog`:
+
+| `perf` member | The view draws | What it does |
+|---|---|---|
+| `isRecording`, `onToggleRecording()` | `debug.perf-record-switch` | "Record frame times": `perf.setRecording(!isRecording)`; the board hosts' frame sampler reads the switch, and turning it off appends the frames entry |
+| `onShare()` | `debug.perf-share-row` | "Share performance report": the iOS share sheet with the perf log as JSON (nothing is sent); a failed share goes to the error log |
+| `onRunBenchmark()` | `debug.perf-benchmark-row` | "Run save benchmark": 300 writes into a scratch `perf-bench.db`, then one `save-benchmark` entry in the perf log |
+| `summary` | `debug.perf-summary` | `cold 3 · 1049 ms · save p95 0.41 ms` (`perfSummaryText(perfSummaryOf(entries))` in `debug-perf.ts`: the cold starts, the newest one and the newest save p95) |
+
+The contract types live in `debug-perf.ts` (`DebugPerfDeps`, `DebugPerfActions`); performance-budgets implements the actions behind the test-only entry (`app/perf/debug-perf-actions.ts`) and game-audio-and-haptics the feedback recorders (`services/audio/recording-feedback.ts`), and `fake-debug-perf.ts` is the Jest stand-in. The S15 rows:
 
 | Row | Value or switch | Tool (`debug-actions.ts`) |
 |---|---|---|
@@ -154,7 +166,7 @@ The sheets are `ActionSheetIOS` and `Share` (`debug-sheets.ts`): ESLint bans `Al
 useColdStartMark(useOptionalDebugServices()?.perfLog ?? null); // null in store builds
 ```
 
-The perf layer (`app/perf/`, the shell-native `ProcessStart` module, `markJsEntry()` in `start-shell.ts`) is installed at Shell step 8 with the native plugin list, before the E2E step: the evidence run's cold-start step reads the log back from the simulator's `save.db`.
+The perf layer lands in two halves: its JS half (`app/perf/*.ts`, `markJsEntry()` in `start-shell.ts`, the perf log, the Performance actions and the feedback recorders `createDebugParts` makes) at Shell step 7 with the composition root, its native half (the shell-native `ProcessStart` module) at Shell step 8 with the native plugin list and the rebuild. The evidence run's cold-start step and its feedback evidence read the log back from the simulator's `save.db`.
 
 ## game.board-layout
 

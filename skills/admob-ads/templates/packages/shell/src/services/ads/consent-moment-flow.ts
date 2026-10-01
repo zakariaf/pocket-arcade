@@ -3,13 +3,14 @@
 // time an ad is about to load (a banner screen is open: Home, Levels or Statistics) the flow runs
 // prepareAds once per session; where Google's form is required, its intro step shows the moment
 // over that screen until the player taps Continue, and only then the form, initialize and
-// preload run. Never during the tutorial, offline, for Premium or with ads off (the gate), and
-// never over a level: the intro waits while no banner screen is open. A parity capture of the S3
-// frame holds the intro and never asks Google.
+// preload run. Apple's tracking prompt (ATT) follows the form, before initialize; like the intro,
+// it shows only over a banner screen. Never during the tutorial, offline, for Premium or with ads
+// off (the gate), and never over a level: the intro and the ATT prompt wait while no banner screen
+// is open. A parity capture of the S3 frame holds the intro and asks neither Google nor Apple.
 import { prepareAds, refreshConsentAtLaunch } from './ad-gate.ts';
 
 import type { AdGateDeps, AdGateInput, PrepareAdsDeps } from './ad-gate.ts';
-import type { ConsentInfo } from '@e07/shell/services/consent/consent-port.ts';
+import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
 
 export type ConsentMomentSnapshot = {
   readonly isIntroShown: boolean;
@@ -49,6 +50,8 @@ type FlowState = {
   /** The moment was shown this session: whatever the answer, it is not shown again. */
   wasAsked: boolean;
   release: (() => void) | null;
+  /** A tracking request waiting for a banner screen (the player left for a level meanwhile). */
+  adScreenWaiters: (() => void)[];
   input: AdGateInput | null;
   canRequestAds: boolean | null;
 };
@@ -82,16 +85,29 @@ function createPublisher(deps: ConsentMomentFlowDeps, state: Readonly<FlowState>
   };
 }
 
+/** Apple's prompt, like the S3 intro, shows only over a banner screen: never over a level. */
+function trackingOverAdScreen(consent: ConsentPort, state: FlowState): ConsentPort {
+  return {
+    ...consent,
+    requestTracking: async () => {
+      if (state.openSlots === 0) {
+        await new Promise<void>((resolve) => state.adScreenWaiters.push(resolve));
+      }
+      return consent.requestTracking();
+    },
+  };
+}
+
 export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMomentFlow {
   const state: FlowState = {
     ...{ phase: 'idle', openSlots: 0, isIntroWanted: false, wasAsked: false },
-    ...{ release: null, input: null },
+    ...{ release: null, adScreenWaiters: [], input: null },
     canRequestAds: deps.savedCanRequestAds,
   };
   const { publish, ...reads } = createPublisher(deps, state);
   const gate: PrepareAdsDeps = {
     ads: deps.ads,
-    consent: deps.consent,
+    consent: trackingOverAdScreen(deps.consent, state),
     onConsent: (info: ConsentInfo) => {
       deps.onConsent(info);
       state.canRequestAds = info.canRequestAds;
@@ -114,6 +130,9 @@ export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMom
       // Once the player saw the moment (or ads are ready) it never comes back this session.
       (isReady) => {
         state.phase = isReady || state.wasAsked ? 'done' : 'idle';
+        // The facts changed while the gate decided (a first-run link ends the tutorial as Home
+        // opens): decide again with the new ones, or the moment would wait for the next screen.
+        if (state.phase === 'idle' && state.input !== input) prepareIfDue();
       },
       (error: unknown) => {
         deps.onError(error);
@@ -143,6 +162,7 @@ function createFlowApi(parts: FlowParts): ConsentMomentFlow {
     },
     requestAdMoment: () => {
       state.openSlots += 1;
+      for (const resume of state.adScreenWaiters.splice(0)) resume();
       prepareIfDue();
       publish();
       return () => {

@@ -87,8 +87,11 @@ function importProblems(graph, rel, entry) {
     const banned = RULES.bannedPackages[target.name];
     if (banned) out.push(['banned-package', `imports ${target.name}: ${banned}`, 'Use the decided port or Shell API instead.']);
     const port = RULES.vendorSdks[target.name];
+    const onlyFiles = RULES.vendorSdkFiles?.[target.name];
     if (port && RUNTIME_ZONES.has(zone) && !any(rel, RULES.adapterGlobs)) {
       out.push(['vendor-sdk', `imports the vendor SDK ${target.name} outside its adapter`, `Only the ${port} adapter (packages/shell/src/services/<port>/<vendor>-<port>-adapter.ts) imports it; take the port from useServices() or a factory argument.`]);
+    } else if (Array.isArray(onlyFiles) && RUNTIME_ZONES.has(zone) && !onlyFiles.includes(rel)) {
+      out.push(['vendor-sdk', `imports ${target.name}, which only ${onlyFiles.join(', ')} may import`, `Ask through the ${port} (useServices()); only ${onlyFiles.join(', ')} imports ${target.name}.`]);
     }
     if ((zone === 'game-kit' || zone === 'app-pure') && isFramework(target.name)) {
       out.push([zone === 'game-kit' ? 'game-kit-pure' : 'rules-pure', `imports ${target.name}`, 'Rules, levels and game-kit are pure TypeScript: no React, React Native, Expo, Skia or zustand; they run headless for bots, solvers and replays.']);

@@ -1,2 +1,3 @@
-[game-config]
-is still the scaffold placeholder
+[bundle-id]
+[owner-placeholder]
+bundleId is still the scaffold placeholder com.example.*

@@ -1,0 +1,18 @@
+{
+ "version": 1,
+ "frame": "s4-home",
+ "kind": "phone",
+ "theme": "dark",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "bundleId": "io.applander.linesiege",
+ "simulator": {
+  "name": "e07-parity",
+  "udid": "00000000-0000-0000-0000-000000000000",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
+ },
+ "launchArgs": [],
+ "capturedAt": "2026-09-28T12:00:00.000Z",
+ "appSha256": "fd1d92d75594775e87a602156d31cdeb23bf0eaad97aa1f9ab13603c7e87f863"
+}

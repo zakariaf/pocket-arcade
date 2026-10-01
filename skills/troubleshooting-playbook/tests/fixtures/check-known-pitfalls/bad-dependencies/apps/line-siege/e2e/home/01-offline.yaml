@@ -1,4 +1,4 @@
-appId: com.example.linesiege
+appId: io.applander.linesiege
 tags: [smoke]
 ---
 - launchApp

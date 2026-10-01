@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.example.demogame</string>
+	<string>io.applander.demogame</string>
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-1234567890123456~1234567890</string>
+	<string>ca-app-pub-7310520968431056~5190264813</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>

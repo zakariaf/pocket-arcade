@@ -1,0 +1,1 @@
+Info.plist [ad-app-id] GADApplicationIdentifier is the placeholder AdMob app id (ca-app-pub-1234567890123456~1234567890)

@@ -44,6 +44,20 @@ describe('createPerfLog', () => {
     expect(createPerfLog(driver).entries()).toStrictEqual([entry(1), entry(2)]);
   });
 
+  it("keeps the feedback entries the test build's recording ports append", () => {
+    const log = createPerfLog(createRowDriver());
+    const win: PerfEntry = {
+      kind: 'feedback',
+      label: 'ui.win',
+      atEpochMs: 5,
+      data: { delayMs: 0 },
+    };
+    const pulse: PerfEntry = { kind: 'feedback', label: 'success', atEpochMs: 6, data: {} };
+    log.append(win);
+    log.append(pulse);
+    expect(log.entries()).toStrictEqual([win, pulse]);
+  });
+
   it('keeps only the newest 200 entries', () => {
     const log = createPerfLog(createRowDriver());
     for (let index = 1; index <= 205; index += 1) log.append(entry(index));

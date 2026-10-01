@@ -1,0 +1,3 @@
+[nested-pressable]
+packages/shell/src/screens/home/daily-card.tsx:35
+<PrimaryButton> sits inside an accessible <Pressable>

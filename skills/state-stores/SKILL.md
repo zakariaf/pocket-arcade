@@ -22,7 +22,13 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 
 1. Read [references/store-pattern.md](references/store-pattern.md): the domains table, the pattern, action names, selectors, cross-section writes, tests and every checker rule. Read [references/game-session.md](references/game-session.md) before touching a run, undo, continue, hints or the saved run.
 2. Check the prerequisites in the app repo: the save layer (`SaveService`, `createFakeSaveStore`, `planLoad`, the schema in `services/save/`), `ClockPort` (`services/clock/clock-port.ts` with `nowMs`, `today` and `msUntilNextLocalDay`; `TEST_CLOCK` in `testing/create-test-save.ts` implements all three) and the Premium store (`stores/premium/premium-store.ts`). If the save layer or the clock port is missing, build it first (save-persistence-and-migrations ships both); the stores are hydrated from `save.doc()`.
-3. New Shell: copy `templates/packages/shell/src/` into `packages/shell/src/` (stores, `app/stores-context.tsx`, game host, testing helpers). The settings files are the same files the settings work uses; keep them identical. Wire `createShellStores(hydrated.save)` into the composition root and `<StoresProvider>`.
+3. New Shell: first install Zustand into the Shell package, exactly this pinned line from the repo root (the dependency policy's plan for `zustand`; the repo's `.npmrc` sets `save-exact=true`, so npm writes the exact version):
+
+   ```sh
+   npm install zustand@5.0.15 -w packages/shell
+   ```
+
+   Every store template imports `zustand`, so without it `tsc` fails with `TS2307: Cannot find module 'zustand'`. Then copy `templates/packages/shell/src/` into `packages/shell/src/` (stores, `app/stores-context.tsx`, game host, testing helpers). The settings files are the same files the settings work uses; keep them identical. Wire `createShellStores(hydrated.save)` into the composition root and `<StoresProvider>`.
 4. New action: write the failing reducer test first (one example per action, a fast-check property for ranges and idempotence), add the union member and the reducer case, and name it by rule 3. The store's `dispatch` stays generic.
 5. New read in a component or hook: pick or add a selector in `<domain>-selectors.ts`; a value built per call goes through `useShallow` (see [examples/use-display-settings.ts](examples/use-display-settings.ts) and [examples/use-hint-button.ts](examples/use-hint-button.ts)).
 6. Cross-section change: compose the pure section functions in one recipe and call `updateAndPublish(save, stores, { recipe, refreshBackup: true })`.
@@ -52,6 +58,7 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 - **Event-style action names (`hint-used`, `themeChanged`).** Name the command: `use-hint`, `set-theme`.
 - **Mutating `past` or `log` with `push`.** Spread into new arrays; `check-reducers` freezes the input to catch it.
 - **Keeping undo history on disk.** Save the move log and snapshot; rebuild `past` by replay on restore.
+- **A bare `npm install zustand` (or `@latest`, or a caret range).** It floats to whatever is newest, can be younger than the 7-day release age, and breaks the one-version pin; run exactly `npm install zustand@5.0.15 -w packages/shell` from the repo root.
 
 ## Files in this skill
 

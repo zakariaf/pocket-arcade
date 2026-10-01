@@ -1,8 +1,9 @@
-import { View } from 'react-native';
+import { DialogCard } from '@e07/shell/ui/dialog-card.tsx';
 
 import type { ReactNode } from 'react';
 
-// Planted bug: the frame no longer renders DialogCard, so VoiceOver can reach the screen behind.
+// Planted bug: the frame renders the card without the Scrim (the modal root), so VoiceOver can
+// reach the screen behind the dialog.
 export function DialogFrame({ children }: { readonly children: ReactNode }): ReactNode {
-  return <View testID="dialog.frame">{children}</View>;
+  return <DialogCard>{children}</DialogCard>;
 }

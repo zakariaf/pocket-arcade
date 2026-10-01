@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/flock-tilt/game.config.ts", "find": "productId: 'io.applander.flocktilt.premium',", "with": "productId: 'com.example.flocktilt.premium'," } }]

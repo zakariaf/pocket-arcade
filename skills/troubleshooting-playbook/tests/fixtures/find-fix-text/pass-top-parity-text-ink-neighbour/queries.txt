@@ -1,0 +1,1 @@
+text-ink reads a neighbour's dots

@@ -20,7 +20,7 @@ S11 Settings lists every preference in seven groups; every change applies at onc
 - SOUND AND FEEL: Sound effects on/off + volume; Music on/off + volume (hidden if the game has no music); Vibration on/off (hidden on devices without vibration).
 - DISPLAY: Theme (System / Light / Dark); Colour-blind friendly colours; Reduce motion (defaults to the phone's setting); Hints during play.
 - PREMIUM: "Premium – active", or "Remove ads – €1.99" (price from the store) which opens S12; Restore purchase.
-- PRIVACY: Ad privacy choices (reopens the consent form; only where consent applies); Privacy policy (S11c).
+- PRIVACY: Ad privacy choices (reopens Google's consent form; only where that consent applies; Apple's tracking answer is changed in the phone's own Settings, never here); Privacy policy (S11c).
 - DATA: Reset statistics (confirm); Reset all progress (confirm by holding 2 s). Keeps Premium, language and settings.
 - ABOUT: About and credits (S11b); Licences (S11d); Rate this game (the store app handles it); Contact support (the phone's mail app).
 - Every change applies immediately. A language change of direction shows "Restart to apply".
@@ -44,7 +44,7 @@ Top bar "Settings" with Back. Body gap **20**: seven groups, each a group tab ov
 | Premium (`crown`) | Remove ads (gold `crown`) · Restore purchase (`restore`) |
 | Privacy (`shield`) | Ad privacy choices (`shield`, description) · Privacy policy (`doc`) |
 | Data (`trash`) | Reset statistics (danger) · Reset all progress (danger, description) |
-| About (`info`) | About and credits (`info`) · Licences (`doc`) · Rate this game (hollow rating star) · Contact support (`mail`) |
+| About (`info`) | About and credits (`info`) · Licences (`doc`) · Rate this game (the hollow rating star, `icon: 'rating-star-hollow'` in `settings-row-specs.ts`: the design's `star(false)` with its 1.8 edge, never the 2.5-stroke `star-outline`; `SettingsRowSpec.icon` is an `IconTileIcon`, proven by `settings-row-specs.test.ts` and check-screens `rate-row-icon`) · Contact support (`mail`) |
 
 Footer (column, start-aligned, gap 4, 14 muted, padding 0 / 4 / 8): an 18 pt check + "Changes apply right away." (6 pt between the icon and the text), then "Version 1.0.0 (8)" as one text (`about.version`, a normal word space, like every other label and value pair). The reference measures `settings.autosave-note` as the whole note row (icon plus text, 194.6 wide), so the testID sits on the row View, and both the note row and the version line are `alignSelf: 'flex-start'` (as wide as their content, never stretched to the column). The mockup once drew a 6 pt flex gap between "Version" and the number; that design artefact is corrected in the design itself (an intended reference change, recorded by toybox-visual-parity), so the version line needs no waiver.
 

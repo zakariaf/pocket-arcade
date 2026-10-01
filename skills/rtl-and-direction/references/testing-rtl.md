@@ -23,6 +23,7 @@ Jest proves the decisions (direction plan, digits, bidi, alignment and font of t
 | `direction-plan.test.ts` | keep / restart / give-up for every combination; `languageFromRawSave` tolerates garbage |
 | `direction.test.ts` | the layout reads LTR in Jest; `restartForDirection` writes the guard, then reloads once with a reason |
 | `digits.test.ts` | the digit table; ckb gets Persian-style digits; Persian decimal and percent signs; Latin on request |
+| `create-number-formatter.test.ts` | `createPercentFormatter`: a 0.62 rate is "62%", "62 %", "۶۲٪" in en, de, fa/ckb, Latin on request, whole percentages only |
 | `bidi.test.ts` | FSI/PDI code points; `stripIsolates` |
 | `fonts.test.ts` | the family per language, weight and face (Vazirmatn for fa/ckb, Lilita One for game names everywhere) |
 | `use-localized-text-style.test.tsx` | the pixel-snapped line height per script (55/3, 67/3, 77/3 at 3x), direction, start/end alignment, no tracking in Arabic script |
@@ -38,7 +39,7 @@ Verified with Xcode 26.6 on the iOS 26.5 simulator:
 
 | Purpose | Command |
 |---|---|
-| "System" language path | `xcrun simctl launch <udid> <bundleId> -AppleLanguages "(fa)" -AppleLocale fa_IR` (Sorani: `-AppleLanguages "(ckb)" -AppleLocale ckb_IQ`) |
+| "System" language path | `xcrun simctl launch <udid> io.applander.<gameId without hyphens> -AppleLanguages "(fa)" -AppleLocale fa_IR` (Line Siege: `io.applander.linesiege`) (Sorani: `-AppleLanguages "(ckb)" -AppleLocale ckb_IQ`) |
 | Forced in-app language and digits (test variant) | the debug deep link, or launch arguments read by test-only code with React Native's `Settings.get('<key>')`, e.g. `-shellLanguage ckb -shellDigits latin` |
 | Screenshot | `xcrun simctl status_bar <udid> override --time 9:41`, then `xcrun simctl io <udid> screenshot out.png` |
 | 200 % text | `xcrun simctl ui <udid> content_size accessibility-extra-extra-extra-large` (reset with `large`) |

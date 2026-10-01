@@ -5,6 +5,7 @@ The machine gates prove geometry, strings, colours, type and shape. What they ca
 ## Contents
 
 - Reading the sheets
+- The done set
 - The sign-off ledger: parity/signoff.json
 - Waivers: parity/waivers.json
 - Pre-listed waivers
@@ -24,6 +25,10 @@ The machine gates prove geometry, strings, colours, type and shape. What they ca
 | `eye-1.png` ... | every icon, logo and picture (checks include `crop`) as design and app pairs at 3x | Read every page; the testIDs are listed top to bottom in `sheets.json` (`eyePages`) and in the script's output |
 
 Look for the seven eye checks (details in [what-exact-means.md](what-exact-means.md)): `icons`, `pictures`, `shadows`, `alignment`, `wrapping`, `direction`, `feel`. Anything visibly different is a difference to fix, even when every gate passed: the gates have tolerances, the owner's eye does not.
+
+## The done set
+
+A frame is signed off in **light and dark x en and fa**, at every scroll offset `run-parity.mjs` plans for a tall frame, against the reference its game's facts pick (a composed variant such as `s6-pause--no-music--no-hints` included). That is `check-signoff.mjs`'s default. `--themes` and `--langs` narrow a check while fixing one variant, but a narrowed check is never a sign-off: it prints `narrowed: not a sign-off` and exits 1 (rule `narrowed`). de and ckb join the set before a release (render their references with `shoot-design.mjs --out .parity/design --lang de,ckb` and pass `--langs en,fa,de,ckb --reference .parity/design`). A ledger with only light en and dark fa entries (as round 3 kept) is not done.
 
 ## The sign-off ledger: parity/signoff.json
 
@@ -106,9 +111,15 @@ Some differences show on every correct build, have a known cause and were report
 |---|---|---|---|---|
 | `platform` | `s8-levels` | `levels.level-tile.14` to `levels.level-tile.30` (the locked tiles), `levels.pack.2` (the locked pack panel) | `structure` | React Native on iOS draws `borderStyle: 'dashed'` with its own dash length and corner phase, and no style sets them; Chrome's dashes sit elsewhere, so the edge differs along the dashes only. Nothing re-draws dashed edges in Skia to imitate Chrome. |
 | `platform` | `s7-result-lose` | `result.continue-offer` (the offer box, which has its own crop for this reason) | `structure` | the same dash pattern |
+| `platform` | `s9-daily-challenge` | `daily.week-day.1.mark` (the fixture's missed Monday), `daily.week-day.7.mark` (today), `daily.week-card` (the legend's dashed missed swatch inside it) | `structure` | the same dash pattern |
+| `platform` | `s9-daily-challenge` (dark fa) | `daily.today-card.calendar.month` | `text-ink` | the month sits on the tilted calendar tile, and iOS draws the edges of a rotated view without antialiasing (React Native exposes no `allowsEdgeAntialiasing`): Chrome's antialiased edge pixels next to the word count as ink in dark fa, the app's stepped edge does not; the word itself matches |
+| `platform` | `s12-store-unavailable-offline` | `premium.buy-button` (the disabled key's dashed edge) | `structure` | the same dash pattern |
 | `design-artefact` | `s8-levels` | `levels.level-tile.13` | `bounds` and `structure` | `.lt.is-pressed{transform:translateY(3px) scale(1.04,.94)}`: the mockup draws the tapped locked tile mid-press |
+| `design-artefact` | `s11b-about-and-credits` (en) | `about.version-chip` | `bounds`, `text-ink` and `structure` | `.chip{display:inline-flex;gap:6px}` splits "Version " and the version into two flex items 6 px apart (the artefact L5 fixed only in the S11 footer); the app writes one text with one space |
 
 A dashed edge that is missing, too thick or in the wrong colour is still a fix: the waiver covers the dash pattern, not the edge.
+
+What is no longer a waiver since round 4 (the gates or the references handle it, so copying a round-3 entry for it is wrong): the S12 state cards' mini heading, root and small print (state cards are compared by parts, ink size and painted shape), the S12 restore toasts' corners, S13's example picture and stage fill (masked as a game board), S14's dimmed Settings with Music rows (the `--no-music` variant), Home's banner and the texts under the S14 dialog cards, the "English" sample of the System row (re-rendered in the render language), the 5 pt sliver of S11c fa, and the S10 fa "×۶" window. What stays: a real platform limit found on a capture, such as the S14 restart card in Persian (platform, `langs: ["fa"]`): its three two-line Vazirmatn texts snap to the device pixel grid on iOS, so the centred card comes out a few device pixels taller than Chrome's (round 3: 0.33 pt; round 4: 1.33 pt, 2 px at each edge) while every text still matches, recorded with the measured size in its reason.
 
 ## Intended reference changes are not waivers
 
@@ -120,4 +131,4 @@ When the references themselves change on purpose (the owner or the lead changed 
 
 ## What goes into the owner report
 
-For each screen signed off, one line per frame: the reference used (base or variant, with the game facts that chose it), the variants that pass (for example "s4-home: light/dark x en/fa pass, 0 problems"), what was checked by eye, every waiver with its class and reason, every intended reference change `check-signoff.mjs` printed for the frame, and any open question. A `design-artefact` waiver always comes with its question to the owner (for S8: "the mockup draws tile 13 mid-press; keep the waiver, or draw the tapped tile at rest and re-render?"). Attach or link the `sheet.png` of the dark fa run (the hardest combination) so the owner can see it without running anything.
+For each screen signed off, one line per frame: the reference used (base, variant or composed variant, with the game facts that chose it), the variants that pass (for example "s4-home: light/dark x en/fa pass, 0 problems"), what was checked by eye, every waiver with its class and reason, every intended reference change `check-signoff.mjs` printed for the frame, and any open question. A `design-artefact` waiver always comes with its question to the owner (for S8: "the mockup draws tile 13 mid-press; keep the waiver, or draw the tapped tile at rest and re-render?"). Attach or link the `sheet.png` of the dark fa run (the hardest combination) so the owner can see it without running anything.

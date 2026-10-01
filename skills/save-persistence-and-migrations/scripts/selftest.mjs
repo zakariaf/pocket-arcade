@@ -17,7 +17,7 @@ import { buildFixtureTree } from './lib/fixture-tree.mjs';
 
 const skill = join(dirname(fileURLToPath(import.meta.url)), '..');
 const templates = join(skill, 'templates');
-// A Shell boot stand-in (start-shell.ts, Shell step 6): with it the boot save files are due.
+// A Shell boot stand-in (start-shell.ts, Shell step 7): with it the boot save files are due.
 const support = join(skill, 'tests', 'fixtures', 'support');
 
 await runSelftest(import.meta.url, [

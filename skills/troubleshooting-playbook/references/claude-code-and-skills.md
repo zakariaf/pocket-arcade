@@ -14,6 +14,7 @@ Why a skill does not load, trigger or run, and other Claude Code behaviours that
 - Naming
 - Scripts
 - Validation
+- Session
 
 ## Loading
 
@@ -80,3 +81,9 @@ Why a skill does not load, trigger or run, and other Claude Code behaviours that
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
 | `skills-plugin-validate-weak` | claude plugin validate passes a skill that is still broken | It checks only YAML parsing and a missing frontmatter or description | Run node skills/_library/validate-skills.mjs, which checks the whole standard | verified | `skill-maintenance` |
+
+## Session
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `skills-bash-every-call-exits-1` | Every Bash call exits 1 with no output, even true or exit 0, in the foreground and in the background (Read and Write still work) | The Claude Code session's shell tool broke after hours of long runs (most likely exhausted processes or descriptors); nothing in the repo or the skills causes it | Stop at once and reply with exactly what is done and what is left. Never build a workaround such as a job queue or a file-watcher runner; the session needs a restart. Prevent it: shut down your own simulators and stop your own Metro, Maestro drivers, log streams and monitors as soon as you are done with them | verified, owner | `troubleshooting-playbook` |

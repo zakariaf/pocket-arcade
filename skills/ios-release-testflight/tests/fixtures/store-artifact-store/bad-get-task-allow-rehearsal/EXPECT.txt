@@ -1,0 +1,2 @@
+REHEARSAL: not a release gate
+[get-task-allow] the entitlements grant get-task-allow

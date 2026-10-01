@@ -100,16 +100,19 @@ export const FILL_EDGES = [
 ];
 
 /**
- * Shell constants (per scheme) against each other and the palette. Text pairs need 4.5:1; the
- * danger icon and edge on the dangerFill tile is an icon pair (3:1, WCAG 1.4.11). Danger text only
- * ever sits on surface (PALETTE_PAIRS); the error note's body text is ink on dangerFill.
+ * Shell constants (per scheme) against each other and the palette, all at 4.5:1. Danger on
+ * dangerFill is a text pair in both schemes (owner decision O5, 2026-09-30): the S14 hold label
+ * ("Hold to reset", 17 pt Bold danger) stays on the key while the fill grows under it, so it must
+ * read at 4.5:1 in every fill state. The same pair covers the danger icons on dangerFill tiles.
+ * The error note's body text is ink (text, textMuted) on dangerFill.
  */
 export const SHELL_PAIRS = [
   ['toastText', 'toastBackground', 4.5],
   ['adText', 'adBackground', 4.5],
   ['toyInk', 'gold', 4.5],
   ['palette.text', 'dangerFill', 4.5],
-  ['palette.danger', 'dangerFill', 3],
+  ['palette.textMuted', 'dangerFill', 4.5],
+  ['palette.danger', 'dangerFill', 4.5],
 ];
 
 /** The four sets of a board palette (board-palettes.json), identical keys in each. */

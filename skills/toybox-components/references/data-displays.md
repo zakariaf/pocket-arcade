@@ -27,11 +27,11 @@ The Daily, Statistics, Result and How-to-play parts: calendar tile, week strip a
 
 **Templates:** `week-strip.tsx` (`WeekStrip`), `week-mark.tsx` (`WeekMark`), `week-legend.tsx` (`WeekLegend`).
 
-**Strip:** seven equal columns (gap 4), each centred with gap 6: weekday letter (`weekdayLetter` 13 Bold `inkSoft`, from `date.weekday-strip.1..7`) · mark 38 × 38, radius 10, 2 pt edge (as rendered), 20 pt icon · the "Today" tag under today's mark (11 Bold toy ink on gold, padding 1 × 5, radius 5, 1 pt toy-ink edge as rendered (token 1.5), tilt −4°, no ring). Runs right to left in fa and ckb (plain `flexDirection: 'row'`).
+**Strip:** seven equal columns (gap 4), each centred with gap 6: weekday letter (`weekdayLetter` 13 Bold `inkSoft`, from `date.weekday-strip.1..7`) · mark 38 × 38, radius 10, 2 pt edge (as rendered), 20 pt icon · the "Today" tag under today's mark (11 Bold toy ink on gold, padding 1 × 5, radius 5, 1 pt toy-ink edge as rendered (token 1.5), tilt −4°, no ring). "Today" is about 45.7 pt wide with its pads, wider than a 43 pt day column: as in the design, the tag overflows its column, centred, instead of wrapping inside it ("Toda / y", which made the card 15 pt taller on the device). An invisible wrapper (`alignSelf: 'stretch'`, `alignItems: 'center'`, `marginInline: -12`) gives it room 12 pt past the column on each side; nothing else moves. Runs right to left in fa and ckb (plain `flexDirection: 'row'`).
 
 **Marks** (`state`): **done** `accent` fill, `onAccent` check · **missed** dashed `inkSoft` edge, no fill, `inkSoft` close icon · **today** (not played yet) dashed `outline` edge, `surface` fill, `ink` play icon. A day already played today is `done` with `isToday`.
 
-**Legend:** a wrap row (gap 8 × 18, 14 top margin, 14 `inkSoft` `legend` text): 22 pt marks (radius 6, 2 pt edge, 13 pt icon) + "Done" / "Missed".
+**Legend:** a wrap row (gap 8 × 18, 14 top margin, 14 `inkSoft` `legend` text): 22 pt marks (radius 6, 2 pt edge, 13 pt icon) + "Done" / "Missed", mark and word 6 pt apart (`ITEM_GAP` 6, the design's `.legend>span{gap:6px}`; 8 failed S9).
 
 *Measurements* (`weekStrip`): gap 4 · dayGap 6 · mark 38 · markRadius 10 · markBorder 2 (token 2.5) · markIcon 20 · markXs 22 · markXsRadius 6 · markXsBorder 2 · markXsIcon 13 · tag.paddingBlock 1 · tag.paddingInline 5 · tag.radius 5 · tag.border 1 (token 1.5) · tag.rotate -4.
 
@@ -43,11 +43,15 @@ The Daily, Statistics, Result and How-to-play parts: calendar tile, week strip a
 
 **Templates:** `stat-grid.tsx` (`StatGrid`: `cells`, `columns` 2 or 3), `stat-list.tsx` (`StatList`: `rows`, optional `heading`).
 
-**Stat grid:** 2 columns (or 3, the compact per-game grid), gap 14. **Cell:** value (`number` 30 display; `statValueCompact` 23 and no wrap in 3 columns) over label (`statLabel` 14 `inkSoft`), gap 2. A short last row keeps the column widths (empty cells fill it). Each cell is one accessibility element (value and label read together).
+**Stat grid:** 2 columns (or 3, the compact per-game grid), gap 14. **Cell:** value (`number` 30 display; `statValueCompact` 23 and no wrap in 3 columns; both in tabular figures, the design's `.sv`) over label (`statLabel` 14 `inkSoft`), gap 2. A short last row keeps the column widths (empty cells fill it). Each cell is one accessibility element (value and label read together).
 
 *Measurements* (`statGrid`): columns 2 · columnsCompact 3 · gap 14 · cellGap 2.
 
-**Stat list** (best scores): rows split key / value, baseline-aligned, gap 12, padding 9 block, 2 pt `line` rule between rows (none above the first unless a heading precedes): key 15 (`statListKey`); value `statListValue` 22 display, end-aligned. The optional first row is a bold sub-heading with no value ("Score").
+**Stat list** (best scores): rows split key / value (`justifyContent: 'space-between'`), gap 12, padding 9 block, 2 pt `line` rule between rows (none above the first unless a heading precedes): key 15 (`statListKey`), which keeps its own width and may shrink to wrap (`flexShrink: 1`, never `flex: 1`, since the design measures the key); value `statListValue` 22 display, end-aligned. The optional first row is a bold sub-heading with no value ("Best score"): `statListHeading` (15 Bold, the key's size; the design's `.slist>div:first-child`), with no top padding and no rule; the first row after it has no rule either. The 17 pt `label` role and a padded first row made the S10 heading 2 pt too tall.
+
+**Baselines:** the design aligns key and value on one CSS baseline. With a Persian value line that overflows its box, iOS reports another baseline and put values 8 pt low, so rows align `flex-start` and each side gets a top margin that puts both on Chrome's baseline: `useChromeBaseline(variant)` (`ui/use-chrome-baseline.ts`) computes a style's baseline in the current language from the font metrics in `ui/text-metrics.ts` (`chromeBaseline(family, size, lineHeight) = (lineHeight - content) / 2 + round(ascent)`, `content` = rounded ascent + rounded descent: Lilita One 0.923 / 0.22, Rubik 0.935 / 0.25, Vazirmatn 2100 / 1100 of 2048 per em). The side with the higher baseline moves down by the difference (4.7 pt for the value in en). `text-metrics.test.ts` and `use-chrome-baseline.test.tsx` pin the numbers; `lists.test.tsx` the rows.
+
+**Percentages and bests:** a bare win rate ("62%", "۶۲٪") is formatted by `createPercentFormatter(localeTagFor(language, digits))` (rtl-and-direction's number formatter), not by a catalog sentence; the Best panel's header tile draws the gold `rating-star` (the design's `star(true)`).
 
 *Measurements* (`statList`): rowPaddingBlock 9 · separator 2 · gap 12.
 
@@ -59,7 +63,7 @@ The Daily, Statistics, Result and How-to-play parts: calendar tile, week strip a
 
 **Template:** `score-panel.tsx` (`ScorePanel`).
 
-**Anatomy** (S7 win, also the Endless result): a panel; first row (wrap, gap 6 × 12, centred): "Score" (`scoreLabel` 17 Bold `inkSoft`) · value (`scoreValue` 44 display, line height 1) · the "New best!" sticker (gold, rating star) pushed to the end by a growing row slot with `justifyContent: 'flex-end'` (the Sticker's own `alignSelf: 'flex-start'` beats a column's `alignItems`), slapped in at 950 ms. Then the lines (gap 6, 12 top margin and 12 padding over a 2 pt `line` rule, `scoreLines` 16): each line a row of a 20 pt `success` check and its text (gap 8), as the design's `.sc-lines > span` rows: the game's full progress line, then the win's line, which has its check too.
+**Anatomy** (S7 win, also the Endless result): a panel; first row (wrap, gap 6 × 12, centred): "Score" (`scoreLabel` 17 Bold `inkSoft`) · value (`scoreValue` 44 display, line height 1 in Latin and 1.45 in fa and ckb, lead decision L9: at 1.0 iOS clipped the tops of the Persian digits; the row keeps no fixed height, so a Persian score line grows to 191/3 pt at 3x) · the "New best!" sticker (the gold `sm` sticker with the rating star, tilted +6°, the design's `.stk.sm`; the regular size drew it 12 pt wider) pushed to the end by a growing row slot with `justifyContent: 'flex-end'` (the Sticker's own `alignSelf: 'flex-start'` beats a column's `alignItems`), slapped in at 950 ms. Then the lines (gap 6, 12 top margin and 12 padding over a 2 pt `line` rule, `scoreLines` 16): each line a row of a 20 pt `success` check and its text (gap 8), as the design's `.sc-lines > span` rows: the game's full progress line, then the win's line, which has its check too.
 
 **The win line** (`line?: { kind: 'moves' | 'score'; text: string }`, exported as `ScorePanelLine`): the screen picks the kind from how the level is rated, and the kind picks the part id.
 - `kind: 'moves'` for levels rated by moves against par: `result.win.moves` ("7 moves – par 7"), part `.moves-line`.

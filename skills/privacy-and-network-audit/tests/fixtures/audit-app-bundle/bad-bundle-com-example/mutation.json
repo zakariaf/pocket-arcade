@@ -1,0 +1,1 @@
+[{ "replace": { "file": "DemoGame.app/Info.plist", "find": "<string>io.applander.demogame</string>", "with": "<string>com.example.demogame</string>" } }]

@@ -1,0 +1,2 @@
+fa.lproj/InfoPlist.strings [att-string] is missing, so there is no fa tracking prompt text
+de.lproj/InfoPlist.strings [att-string] has no NSUserTrackingUsageDescription

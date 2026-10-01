@@ -7,11 +7,11 @@ The parity loop for one screen, from a fresh build to a passing `check-signoff.m
 ```sh
 npm ci --prefix "$S"                                  # pinned pngjs, pixelmatch, playwright; no browser download
 node $S/selftest.mjs                                  # RESULT: PASS, or the tooling itself is broken: stop
-node $S/setup-parity-sim.mjs --appearance light       # creates/boots e07-parity, 9:41 status bar; prints the udid
+node $S/setup-parity-sim.mjs --appearance light --name e07-parity-s4   # this session's simulator, 9:41 status bar; prints the udid
 node $S/check-harness.mjs .                           # RESULT: PASS: harness complete and wired, specs draw the reference edges
 ```
 
-Build the Release test build and install it on the parity simulator (`ios-simulator-build`). Test and store builds share one bundle id (the scaffold placeholder is `com.example.linesiege` until the owner approves the real one); read it from the built app rather than guessing:
+Build the Release test build and install it on this session's parity simulator (`ios-simulator-build`: `xcrun simctl install <udid> <App>.app`). Test and store builds share one bundle id, `io.applander.<game id without hyphens>` (Line Siege: `io.applander.linesiege`); confirm it from the built app:
 
 ```sh
 BUNDLE_ID=$(plutil -extract CFBundleIdentifier raw -o - <path to>/LineSiege.app/Info.plist)
@@ -24,7 +24,7 @@ S4 has two frames (`s4-home`, `s4-home-premium`). Read `assets/reference/lineSie
 ## 3. Run the machine side
 
 ```sh
-node $S/run-parity.mjs --screen S4 --bundle-id "$BUNDLE_ID"
+node $S/run-parity.mjs --screen S4 --bundle-id "$BUNDLE_ID" --name e07-parity-s4
 ```
 
 8 runs (2 frames x light, dark x en, fa). One of them failed:
@@ -39,7 +39,7 @@ FAIL .parity/lineSiege/s4-home/light-en/app.png [structure] s4-home light-en: ho
 Read `.parity/lineSiege/s4-home/light-en/crops/home.settings-button.png`: the design shows the gear, the app shows an empty key. The 21 x 21 pt blob 13 pt inside the 48 pt button is exactly the 24 pt icon. Cause: the `IconButton` was rendered without its `gear` icon (the testID map says `kind: "gear"`). Fix it, rebuild (or swap the JS bundle), run again:
 
 ```sh
-node $S/run-parity.mjs --screen S4 --bundle-id "$BUNDLE_ID"
+node $S/run-parity.mjs --screen S4 --bundle-id "$BUNDLE_ID" --name e07-parity-s4
 ```
 
 A second loop on another screen found `[fill] ...: fill #FF6F4A but the design is #FF6B4A (max channel difference 4, tolerance 3)`: a hard-coded `#FF6F4A` in a style instead of the theme's `primary` (Toybox accent) colour. The tolerance is not the problem; the colour literal is.

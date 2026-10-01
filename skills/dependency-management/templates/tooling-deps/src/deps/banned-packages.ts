@@ -1,5 +1,7 @@
 // packages/tooling/src/deps/banned-packages.ts
 // Checked against package-lock.json by check-deps.ts (npm run verify) and by `npm run audit:network`.
+// expo-tracking-transparency is allowed (owner decision O1, 2026-09-30: the App Tracking Transparency
+// prompt); ESLint lets only packages/shell/src/services/consent/admob-consent-adapter.ts import it.
 export type BannedScope = 'anywhere' | 'direct';
 export type BannedRule = {
   readonly pattern: RegExp;
@@ -50,11 +52,6 @@ export const BANNED_PACKAGES: readonly BannedRule[] = [
     pattern: /^(react-native-webview|expo-web-browser)$/,
     scope: 'anywhere',
     reason: 'Web views are a network surface.',
-  },
-  {
-    pattern: /^expo-tracking-transparency$/,
-    scope: 'anywhere',
-    reason: 'Decision D4: no ATT prompt in v1.',
   },
   {
     pattern: /^react-native-restart$/,

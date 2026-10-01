@@ -2,7 +2,9 @@
 // check-e2e-report.mjs: reads the artefacts of an end-to-end run and proves it: every flow in
 // reports/e2e/<game-id>/junit.xml passed, every smoke flow of the Shell and the game ran, the socket
 // sampler's network.txt exists and is empty, the simulator cold start and memory are within budget
-// (perf.json), the a11y flows passed at 200 % text in en and fa on the phone and the iPad, and (with
+// (perf.json), the app asked for the win sound and the success haptic during the game's smoke flows
+// (feedback.json, read from the perf log), the a11y flows passed at 200 % text in en and fa on the
+// phone and the iPad, and (with
 // --screenshots) no screenshot differs from its baseline and every device/language/theme set is
 // complete. Prints the evidence lines for the report.
 // Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-e2e-report.mjs . --app <game-id> [--screenshots]
@@ -35,6 +37,10 @@ const SPEC = {
     '  cold-start           the simulator cold-start step failed, or its median is over baseline x 1.2',
     '  memory               the memory step failed, or phys_footprint after the smoke flow and a relaunch (Maestro 2.10',
     '                       stops the app when a test ends) is over the budget (150 MB)',
+    '  feedback-evidence    feedback.json is missing (the memory step did not read the perf log), or the game\'s',
+    '                       smoke flows asked for no win sound (a sound id "win" or ending in ".win", the Shell\'s ui.win)',
+    '                       or no success haptic: the win feedback is not wired to the ports (test builds record each',
+    '                       cue in the perf log; how they sound and feel is the owner\'s device check)',
     '  large-text-missing   a11y flows exist but large-text/<phone|tablet>-<en|fa>/junit.xml is missing',
     '  large-text-failed    an a11y flow failed at 200 % text',
     '  screenshot-changed   (--screenshots) a screenshot differs from its baseline, changed size or has no baseline',
@@ -135,6 +141,25 @@ function checkPerf(root, out, game, report) {
   else if (typeof memory.physFootprintMb === 'number') report.note(`evidence: Memory (simulator): phys_footprint ${memory.physFootprintMb} MB after the smoke flow and a relaunch (budget ${memory.limitMb} MB)`);
 }
 
+/** The win feedback: the Shell's win sound (ui.win) and the success haptic, asked for on the simulator. */
+function checkFeedback(root, out, game, report) {
+  const perfFile = join(out, 'perf.json');
+  if (!existsSync(perfFile)) return; // perf-missing already says the evidence steps did not run
+  const file = join(out, 'feedback.json');
+  const rel = file.slice(root.length + 1);
+  const evidence = existsSync(file) ? readJson(file) : null;
+  const fix = "Test builds record every feedback cue in the perf log: createDebugParts wraps the audio and haptics ports (TEST_ONLY.recordAudioFeedback / recordHapticsFeedback), and the game host plays the Shell's feedback through parts.feedback. Run check-e2e-setup.mjs . (perf-layer, feedback-evidence), rebuild the test variant and rerun.";
+  if (evidence === null || !Array.isArray(evidence.sounds) || !Array.isArray(evidence.haptics)) {
+    report.problem({ file: rel, line: 0, rule: 'feedback-evidence', message: existsSync(file) ? 'is not { flows, sounds, haptics } JSON' : 'is missing, so nothing shows the app asked for the win feedback on the simulator', fix: existsSync(file) ? fix : `Run the evidence run without --flows-only (npm run e2e:ios -- --app ${game}): the memory step writes it from the perf log after the smoke flows.` });
+    return;
+  }
+  const win = evidence.sounds.find((label) => /(^|\.)win$/.test(String(label)));
+  const success = evidence.haptics.includes('success');
+  if (win === undefined) report.problem({ file: rel, line: 0, rule: 'feedback-evidence', message: `the smoke flows asked for no win sound (sounds: ${evidence.sounds.slice(0, 8).join(', ') || 'none'})`, fix });
+  if (!success) report.problem({ file: rel, line: 0, rule: 'feedback-evidence', message: `the smoke flows asked for no success haptic (haptics: ${evidence.haptics.slice(0, 8).join(', ') || 'none'})`, fix });
+  if (win !== undefined && success) report.note(`evidence: Feedback (simulator): the win asked for sound ${win} and the success haptic (${evidence.sounds.length} sounds, ${evidence.haptics.length} haptics logged); how they sound and feel is the owner's device check`);
+}
+
 const LARGE_TEXT_SETS = ['phone-en', 'phone-fa', 'tablet-en', 'tablet-fa'];
 
 function checkLargeText(root, out, game, report) {
@@ -202,6 +227,7 @@ run(async () => {
   let checked = checkJunit(root, out, options.app, report);
   checkNetwork(root, out, options.app, report);
   checkPerf(root, out, options.app, report);
+  checkFeedback(root, out, options.app, report);
   checked += checkLargeText(root, out, options.app, report);
   if (options.screenshots) checked += checkScreenshots(root, options.reports, report);
   return report.finish({ checked: Math.max(checked, 1), unit: 'flows and screenshots' });

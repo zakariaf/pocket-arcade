@@ -19,6 +19,7 @@ S4 Home is the one-tap start and the door to everything else.
 - Top bar: game logo and title at the start; Settings (gear) at the end.
 - Big Play key: "Continue – Level 12" when a level is in progress, otherwise "Play – Level 13" (the next unfinished level).
 - Daily challenge card: today's date (chosen language and digits), "Play today's challenge" or "Done – come back tomorrow", and the current daily streak.
+- The card's body opens S9 Daily challenge; its Play key starts today's run (the lead's decision L7, 2026-09-30). When today is done, the card still opens S9. Nothing changes in the pixels.
 - Row of keys: Levels | Statistics | How to play.
 - Premium button with a small crown; hidden once Premium is owned and replaced by a small "Premium" badge by the logo.
 - Banner ad at the very bottom only if not Premium AND online AND consent handled; when no banner loads, the space collapses (no empty box).
@@ -34,6 +35,10 @@ S4 Home is the one-tap start and the door to everything else.
 1. Tagline sticker (pop paper, tilt -2 deg, start-aligned): only when the game has **no** Endless mode, or the player owns Premium (there is room then). Its high corner and 3.5 pt die-cut ring rise about 8 pt above its box, into the top bar's area; the body's scroll view would clip them flat, so `HomeView` passes `hasTopOverhang` to `ScreenBody` while the tagline shows (the clip edge moves 10 pt up, nothing else moves).
 2. Hero key with a `play` cap: `home.play-button.continue` or `home.play-button.play`.
 3. Daily panel (flat, padding 14 / 14 / 16, gap 12): header row (gap 12, top-aligned) of the `calendar` icon tile → text column (heading 21 "Daily challenge", the date muted, **title/date gap 1**: the reference puts the date 1 pt under the title; a gap of 2 pushed every block below it down 1.5 pt) → small gold streak sticker (chain, tilt +4 deg, 2 pt top margin); then a secondary block button with a `play` icon. Once today is played, the button becomes a row with a 20 pt success check and "Done – come back tomorrow" (`home.daily-card.done`, Chosen).
+
+   **Two controls on one card (L7).** `HomeDailyCard` draws the card as a plain `View` with the panel's padding plus its 2 pt edge (so every part sits where the flat Panel put it). Its bottom layer is the card surface: a `RaisedSurface` absolutely filling the card (`position: 'absolute'`, all four edges 0) with the panel's look (elevation 0, the panel radius and edge width, `colors.surface`, a zero squash, so a press never moves or scales it). It is the accessible opener: `testID="home.daily-card"`, role button, `accessibilityLabel` joining the visible title, date and streak (and the done text once today is played), `onPress={onOpenDaily}`, and the `activate` accessibility action for VoiceOver's double tap. The header row and the done row sit above it as siblings with `pointerEvents="none"`, `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`: a touch on them falls through to the surface, and VoiceOver hears them only in the surface's label (the map makes them crop-only, `coveredBy` `home.daily-card`). The Play key `home.daily-card.play-button` is its own sibling above the surface, never a child of it, so VoiceOver finds exactly two daily elements: the card and its Play key. A raw `Pressable` is not allowed in a screen (ESLint), which is why the surface is the Toybox `RaisedSurface`, and `Panel` stays for cards that are never pressed.
+
+   Maestro taps an element's centre. The card's centre lies above the Play key as long as the header row is taller than 45 pt (English: 47.5 pt, so 1.3 pt above the key; Persian: 6.5 pt), so `tapOn: home.daily-card` opens S9 and never plays. Keep the header's layout; a shorter header moves the centre onto the Play key.
 4. Endless row button (only games with Endless): secondary, accent icon tile `endless`, label with the best score, description, chevron.
 5. Home keys: three secondary keys (94 tall, icon 30, label 15 Bold) in three columns with gap 10: Levels (`grid`), Statistics (`stats`), How to play (`book`). They stack at 200 % text.
 6. Premium row button (pop, gold icon tile `crown`, "Premium" / "Remove ads", chevron); not for owners.
@@ -43,9 +48,9 @@ S4 Home is the one-tap start and the door to everything else.
 
 - **Normal** (`s4-home.png`): Line Siege has Endless, so the tagline is hidden.
 - **Premium** (`s4-home-premium.png`): badge under the name, tagline shown, no Premium key, no banner.
-- **Daily done** (Chosen, not drawn): the done line replaces the daily play button.
+- **Daily done** (Chosen, not drawn): the done line replaces the daily play button; the card body still opens S9.
 - A new player sees "Play – Level 1".
-- Open question (from the map): which element opens S9 from Home. The design's daily panel is flat and its only button plays today's challenge; the template adds no extra target. Ask the owner before adding one; a new target needs a new map testID.
+- Opening S9: the card body (`home.daily-card`) opens S9 Daily challenge in every state, and the Play key plays today's run (L7). E2E journey 02 taps `home.daily-card` and expects `daily.screen`.
 
 ## Data the model supplies
 
@@ -64,7 +69,7 @@ S4 Home is the one-tap start and the door to everything else.
 | `banner` | `useBannerSlot('home')` (admob-ads' `app/use-ad-context.ts`): the ads port's `renderBanner` and `shouldShowBanner(config, useAdContext('home'), 'home')`, where the context is Premium, `useIsOnline()`, the saved consent answer, the tutorial done and the levels won |
 | (cold start) | not a field: `useColdStartMark(useOptionalDebugServices()?.perfLog ?? null)` (performance-budgets' `app/perf/use-cold-start-mark.ts`) marks Home's first frame with real data into a test build's perf log, which the E2E evidence run reads; store builds have no debug services and pass null, so nothing is measured or stored |
 | (parity) | not a field: a parity capture of `s14-progress-restored` opens `{ kind: 'save-restored' }` over Home once (`useParityOpener`, the dialog host's `useOpenDialog()`) |
-| `actions` | `useHomeActions(onPlay, today)`: exactly navigation-and-routing's table (Game with `{ start: 'resume' }` or a new level, daily or endless run; Settings, Levels, Stats, HowToPlay, Premium). In a partial Shell a route outside the slice shows `NotBuiltScreen`; never write a no-op handler | `HomeTopBar` puts the Toybox `BrandLock` (`testID="home.brand-lock"`, `nameTestID="home.game-name"`, the `LogoTile` as `logo`, the Premium sticker as `badge`) at the start of the `TopBar`.
+| `actions` | `useHomeActions(onPlay, today)`: exactly navigation-and-routing's table (Game with `{ start: 'resume' }` or a new level, daily or endless run; Daily from the card body, `onOpenDaily`; the card's Play key, `onPlayDaily`, starts today's daily run; Settings, Levels, Stats, HowToPlay, Premium). In a partial Shell a route outside the slice shows `NotBuiltScreen`; never write a no-op handler | `HomeTopBar` puts the Toybox `BrandLock` (`testID="home.brand-lock"`, `nameTestID="home.game-name"`, the `LogoTile` as `logo`, the Premium sticker as `badge`) at the start of the `TopBar`.
 
 ## Templates
 
@@ -95,11 +100,11 @@ Exactly these, from the shared screen map (`assets/screen-testids.json`). Set th
 | `home.settings-button` | IconButton (gear) | button | a11y `common.settings` |  |  |
 | `home.tagline` | Sticker (pop, -2 deg) | text | `games.<id>.tagline` |  |  |
 | `home.play-button` | Button (primary hero, play cap) | button | `home.play-button.continue` |  |  |
-| `home.daily-card` | Panel (daily panel) | none |  |  |  |
-| `home.daily-card.icon` | IconTile (pop, calendar) | none |  |  |  |
-| `home.daily-card.title` | AppText | header | `daily.title` |  |  |
-| `home.daily-card.date` | AppText | text | `date.weekday-day-month` |  |  |
-| `home.daily-card.streak` | Sticker (gold sm, chain, +4 deg) | text | `daily.streak.count` |  |  |
+| `home.daily-card` | Pressable (card surface: the `RaisedSurface` filling the daily panel under its content) | button | a11y label: title, date, streak |  | opens S9 |
+| `home.daily-card.icon` | IconTile (pop, calendar) | none |  | crop-only, hidden |  |
+| `home.daily-card.title` | AppText | header | `daily.title` | crop-only, hidden, covered by the card |  |
+| `home.daily-card.date` | AppText | text | `date.weekday-day-month` | crop-only, hidden, covered by the card |  |
+| `home.daily-card.streak` | Sticker (gold sm, chain, +4 deg) | text | `daily.streak.count` | crop-only, hidden, covered by the card |  |
 | `home.daily-card.play-button` | Button (secondary block, play icon) | button | `daily.today.play-button` |  |  |
 | `home.endless-card` | RowButton (secondary) | button |  | endless | .icon .label .description |
 | `home.levels-button` | KeyButton (grid) | button | `common.levels` |  |  |
@@ -143,7 +148,8 @@ Open the image before building and compare the finished screen with it (toybox-v
 
 - Leaving an empty box where the banner failed to load: the slot has zero height until an ad loads.
 - Showing the banner or the Premium key to owners.
-- Making the whole daily panel pressable: panels lie flat; put a button in them.
+- Making the `Panel` itself pressable, nesting the Play key inside the opener, or leaving the header texts accessible: VoiceOver then reads four daily elements, a tap on the Play key may open S9, and a pressed panel moves. Use the template's surface and siblings (check-screens `home-daily-opener`).
+- A daily card whose body does nothing: players and journey 02 cannot reach S9.
 - Two hero keys (the daily button is a 54 pt secondary block, not a hero).
 - A tilted tagline clipped flat at the top of the body: pass `hasTopOverhang` while it shows.
 - A title/date gap of 2 in the daily panel (the reference uses 1).

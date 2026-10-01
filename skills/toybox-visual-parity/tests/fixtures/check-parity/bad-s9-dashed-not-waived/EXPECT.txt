@@ -1,0 +1,4 @@
+[structure] daily.week-day.1.mark
+pre-listed platform waiver
+React Native's iOS dash pattern
+templates/parity/waivers.json

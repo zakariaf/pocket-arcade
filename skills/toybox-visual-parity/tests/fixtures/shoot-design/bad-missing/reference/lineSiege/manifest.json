@@ -1,9 +1,9 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-09-28",
+ "rendered": "2026-09-30",
  "renderer": {
-  "chrome": "153.0.8010.54",
+  "chrome": "154.0.8037.58",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "29316297d90c9186fc8efef0959dd9707a5e29bd00950b1933e60f6edc2c32f7",
-  "map": "41448545daa6003c22437ac0ae0fc4ea373a254e37c772c82c013217b4447ce2",
-  "frames": "e03a78f9018321bfce7fb0451af9138e955e33290f7af48e9f7aa947049db0cc",
+  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
+  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -64,5 +64,13 @@
   "s14-progress-restored",
   "s15-debug-menu"
  ],
- "files": {}
+ "files": {},
+ "variants": [
+  "s6-pause--no-music",
+  "s6-pause--no-hints",
+  "s6-pause--no-music--no-hints",
+  "s7-result-win--score",
+  "s11-settings--no-music",
+  "s14-reset-all-progress--no-music"
+ ]
 }

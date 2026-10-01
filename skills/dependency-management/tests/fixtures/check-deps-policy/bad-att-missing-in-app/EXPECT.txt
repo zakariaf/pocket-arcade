@@ -1,0 +1,4 @@
+every-app
+apps/beta/package.json
+lacks expo-tracking-transparency
+(cd apps/beta && npx expo install expo-tracking-transparency@~57.0.2)

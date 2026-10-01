@@ -8,6 +8,7 @@ import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-sa
 
 import { runDebugAction } from './debug-actions.ts';
 import { createDebugServices } from './debug-services.ts';
+import { createFakeDebugPerf } from './fake-debug-perf.ts';
 import { createFakeDebugStore } from './fake-debug-store.ts';
 import { createSimulatedClock } from './simulated-clock.ts';
 import { createSimulatedConnectivity } from './simulated-connectivity.ts';
@@ -74,6 +75,7 @@ function setup(options: Options = {}): Setup {
     clock,
     store: createFakeDebugStore(),
     perfLog: { append: jest.fn(), entries: () => [] },
+    perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),
     dispatchPremium: jest.fn(),
     nowMs: () => 0,

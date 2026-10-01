@@ -1,0 +1,4 @@
+[owner-placeholder]
+ads.ids.ios.appId is still the scaffold placeholder ca-app-pub-1234567890123456~1234567890
+ads.ids.ios.units.rewarded is still the scaffold placeholder ca-app-pub-1234567890123456/3333333333
+owner step G5

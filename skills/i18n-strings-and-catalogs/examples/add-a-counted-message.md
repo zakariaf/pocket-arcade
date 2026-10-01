@@ -135,4 +135,4 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-i18n-code.mjs .
 npx jest test/integration/i18n
 ```
 
-All print `RESULT: PASS` / pass. The fa and ckb texts go on the next native-speaker review list, and the owner is asked to add the text to the copy deck at the next design pass.
+All print `RESULT: PASS` / pass. The fa and ckb texts go on the owner's review list (the report's "Owner steps (not blocking)"; nothing waits for it), and the owner is asked to add the text to the copy deck at the next design pass.

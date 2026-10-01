@@ -1,0 +1,3 @@
+[game-facts]
+packages/shell/src/game-host/game-host.ts
+GameHost.hasHints does not come from the module

@@ -33,7 +33,10 @@ function MockHome(): ReactNode {
 
 type Options = { readonly isHeld?: boolean; readonly debug?: DebugServices | null };
 
-/** A player past the tutorial, online, in a region where Google's form is required. */
+/**
+ * A player past the tutorial, online, in a region where Google's form is required, on an iPhone
+ * whose tracking answer is still not-determined (the player declines when asked).
+ */
 async function renderMoment(options: Options = {}) {
   const calls: string[] = [];
   const { save } = createTestSave();
@@ -49,6 +52,7 @@ async function renderMoment(options: Options = {}) {
     consent: createFakeConsent({
       afterRefresh: { canRequestAds: false, isPrivacyOptionsRequired: true },
       afterForm: { canRequestAds: true, isPrivacyOptionsRequired: true },
+      tracking: 'not-determined',
       calls,
     }),
     ads: createFakeAds({
@@ -69,7 +73,7 @@ async function renderMoment(options: Options = {}) {
 }
 
 describe('ConsentMoment', () => {
-  it('shows S3 over Home, and Google form, initialize and preload only after Continue', async () => {
+  it('shows S3 over Home, then Google form, ATT, initialize and preload after Continue', async () => {
     const user = userEvent.setup();
     const { calls, save } = await renderMoment();
     expect(screen.getByTestId('consent.screen')).toBeOnTheScreen();
@@ -79,6 +83,7 @@ describe('ConsentMoment', () => {
     expect(calls).toStrictEqual([
       'refresh',
       'showFormIfRequired',
+      'requestTracking',
       'initialize',
       'preloadInterstitial',
       'preloadRewarded',
@@ -89,7 +94,7 @@ describe('ConsentMoment', () => {
     expect(screen.getByTestId('probe.banner')).toHaveTextContent('banner');
   });
 
-  it('holds the S3 parity frame on screen and never asks Google', async () => {
+  it('holds the S3 parity frame on screen and asks neither Google nor Apple', async () => {
     const user = userEvent.setup();
     const { calls } = await renderMoment({ isHeld: true });
     await user.press(screen.getByRole('button', { name: 'Choose options' }));

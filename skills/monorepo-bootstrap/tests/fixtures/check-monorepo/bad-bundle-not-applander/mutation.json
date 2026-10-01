@@ -1,0 +1,1 @@
+[{ "replace": { "file": "apps/line-siege/game.config.ts", "find": "bundleId: 'io.applander.linesiege',", "with": "bundleId: 'com.example.linesiege'," } }]

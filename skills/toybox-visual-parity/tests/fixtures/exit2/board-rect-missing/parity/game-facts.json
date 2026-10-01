@@ -4,7 +4,8 @@
     "line-siege": {
       "designGame": "lineSiege",
       "hasMusic": true,
-      "winLine": "moves"
+      "winLine": "moves",
+      "hasHints": true
     }
   }
 }

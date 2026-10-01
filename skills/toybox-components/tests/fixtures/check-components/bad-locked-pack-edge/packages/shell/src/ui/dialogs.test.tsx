@@ -66,6 +66,26 @@ describe('DialogCard', () => {
     await user.press(screen.getByRole('button', { name: 'Cancel' }));
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
+
+  it('makes the scrim the modal root, so its testID stays in the accessibility tree', async () => {
+    await renderWithShell(
+      <Scrim testID="restart-dialog.scrim">
+        <DialogCard testIDBase="restart-dialog" title="Restart to apply?">
+          <Button
+            label="Later"
+            onPress={jest.fn()}
+            testID="restart-dialog.later-button"
+            isReducedMotion
+          />
+        </DialogCard>
+      </Scrim>,
+    );
+
+    // A modal card would hide the scrim's testID (and the screen under it) from VoiceOver's tree,
+    // which is also what Maestro and the parity capture read (S14: "screen not reached").
+    expect(screen.getByTestId('restart-dialog.scrim')).toHaveProp('accessibilityViewIsModal', true);
+    expect(screen.getByTestId('restart-dialog.card')).not.toHaveProp('accessibilityViewIsModal');
+  });
 });
 
 describe('HoldButton', () => {
@@ -128,6 +148,24 @@ describe('HoldButton frozen for a capture', () => {
     await user.press(screen.getByRole('button', { name: 'Hold to reset' }));
     expect(fill).toHaveStyle({ width: '46%' });
     expect(onConfirm).not.toHaveBeenCalled();
+  });
+
+  it('measures the fill share on the whole face, not inside its padding (.hf width: var(--h))', async () => {
+    await renderWithShell(
+      <HoldButton
+        label="Hold to reset"
+        hint="Hold for 2 seconds"
+        onConfirm={jest.fn()}
+        testID="reset-progress-dialog.confirm-button"
+        isReducedMotion
+        frozenProgress={0.46}
+      />,
+    );
+
+    // Yoga resolves an absolute child's percentage width inside the face's padding (46 % of 278 pt
+    // where the design fills 46 % of 310): the fill sits in a track pinned to the face's edges.
+    const track = screen.getByTestId('reset-progress-dialog.confirm-button.fill').parent;
+    expect(track).toHaveStyle({ position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 });
   });
 });
 

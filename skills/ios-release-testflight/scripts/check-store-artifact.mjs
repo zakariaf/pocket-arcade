@@ -2,10 +2,14 @@
 // check-store-artifact.mjs: the store-artifact gate on an exported .ipa (or its unpacked
 // Payload/<App>.app), run before --validate-app and again before the owner is told a build is
 // ready. It proves what players receive: no debug code, no StoreKit test files, no debug
-// entitlement, the right variant, AdMob app ID, version and build number, built by Xcode 26.6, and
-// a complete Shell (no shell-slice.json in the repo it was built from, no NotBuiltScreen route, no
-// placeholder in the bundle).
-// Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-store-artifact.mjs --ipa apps/<game>/build/export/<App>.ipa --variant store --ads live --version 1.0.0 --build 8 .
+// entitlement, the right variant, AdMob app ID (never a scaffold placeholder), the app id
+// io.applander.<game>, the App Tracking Transparency text in every app language, version and build
+// number, built by Xcode 26.6, and a complete Shell (no shell-slice.json in the repo it was built
+// from, no NotBuiltScreen route, no placeholder in the bundle).
+// Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-store-artifact.mjs --ipa apps/<game>/build/export/<App>.ipa --variant store --ads live --version 1.0.0 --build 8 --game <game-id> .
+// --unsigned is the keyless release rehearsal only (an archive built with CODE_SIGNING_ALLOWED=NO):
+// it prints REHEARSAL first, reports the signing rule as SKIP and keeps every other rule strict.
+// release-ios.ts never passes it, and a REHEARSAL result is never release evidence.
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -13,6 +17,10 @@ import { join, relative } from 'node:path';
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireDir, run, toPosix, walk } from './check-lib.mjs';
 import { parsePlistXml, plistGet, readPlist } from './lib/plist.mjs';
 import { NOT_BUILT_TESTID, partialShellProblems } from './lib/shell-complete.mjs';
+import { bundleIdProblem, placeholderName } from './lib/ship-placeholders.mjs';
+import { trackingTextProblems } from './lib/tracking-text.mjs';
+
+export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
 
 const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
@@ -21,8 +29,8 @@ const ALLOWED = { test: ['off', 'test'], store: ['off', 'live'] };
 
 const SPEC = {
   name: 'check-store-artifact',
-  summary: 'The store-artifact gate: checks an exported .ipa (or Payload/<App>.app) for its variant, test code, StoreKit test files, get-task-allow, AdMob app ID, Info.plist keys, version, build number and Xcode.',
-  usage: '(--ipa <file.ipa> | --app <Payload/App.app>) --variant test|store --ads off|test|live --version X.Y.Z --build N [options] [repo-root]',
+  summary: 'The store-artifact gate: checks an exported .ipa (or Payload/<App>.app) for its variant, test code, StoreKit test files, get-task-allow, AdMob app ID, app id, tracking text, Info.plist keys, version, build number and Xcode.',
+  usage: '(--ipa <file.ipa> | --app <Payload/App.app>) --variant test|store --ads off|test|live --version X.Y.Z --build N [--game <game-id>] [--unsigned] [options] [repo-root]',
   options: {
     ipa: { type: 'string', help: 'The exported .ipa (unzipped into a temporary folder)' },
     app: { type: 'string', help: 'An already unpacked Payload/<App>.app folder' },
@@ -32,6 +40,8 @@ const SPEC = {
     build: { type: 'string', help: 'Expected CFBundleVersion (the new build number)' },
     xcode: { type: 'string', default: '26.6', help: 'Xcode that must have built it (Info.plist DTXcode)' },
     entitlements: { type: 'string', help: 'Entitlements plist to use instead of running codesign -d (tests only)' },
+    game: { type: 'string', help: 'The game id: CFBundleIdentifier must be io.applander.<id without hyphens> (without it the form is checked)' },
+    unsigned: { type: 'boolean', help: "Keyless release rehearsal (archive built with CODE_SIGNING_ALLOWED=NO): prints 'REHEARSAL: not a release gate' first and reports only the signing and get-task-allow rule as SKIP; never passed by release:ios" },
     json: { type: 'boolean', help: 'Also print the problems as JSON' },
   },
   positionals: { min: 0, max: 1 },
@@ -41,8 +51,17 @@ const SPEC = {
     'Rules (store builds run all; test builds run the ones marked *):',
     ' *identity         CFBundleShortVersionString, CFBundleVersion, DTXcode, DTPlatformName iphoneos',
     ' *constants        EXConstants.bundle/app.config extra.appVariant / extra.adsMode match the release',
-    ' *get-task-allow   the signed entitlements do not grant get-task-allow (a debug entitlement)',
-    ' *ad-app-id        GADApplicationIdentifier: a real ID for live, the Google sample ID otherwise',
+    ' *get-task-allow   the app is signed and its entitlements do not grant get-task-allow (a debug entitlement);',
+    '                   with --unsigned (rehearsal only) an app without a signature is a SKIP line',
+    ' *ad-app-id        GADApplicationIdentifier: a real ID for live (never the scaffold placeholder',
+    '                   ca-app-pub-1234567890123456~1234567890, owner step G5), the Google sample ID otherwise;',
+    '                   live units in EXConstants never the placeholders /1111111111, /2222222222, /3333333333',
+    ' *bundle-id        CFBundleIdentifier is io.applander.<game id without hyphens> (owner decision O4), never',
+    '                   com.example.*; with --game it is exactly that game\'s id',
+    ' *att-string       Info.plist NSUserTrackingUsageDescription and en, de, fa and ckb.lproj/InfoPlist.strings each',
+    '                   hold the tracking prompt text (owner decision O1; the prompt crashes the app without it)',
+    '  links            the store build\'s privacy-policy host and support address are not the scaffold\'s',
+    '                   example.com and support@example.com',
     '  test-code        main.jsbundle contains no SHELL_TEST_BUILD_ONLY',
     '  test-artefacts   no *.storekit and no *.xctest inside the app',
     '  encryption-flag  ITSAppUsesNonExemptEncryption is false',
@@ -93,17 +112,23 @@ function checkIdentity(ctx) {
 }
 
 function checkVariant(ctx) {
-  const { info, appDir, options, problem } = ctx;
-  const constantsPath = join(appDir, 'EXConstants.bundle', 'app.config');
-  const extra = existsSync(constantsPath) ? JSON.parse(readFileSync(constantsPath, 'utf8')).extra ?? {} : {};
+  const { info, appDir, options, problem, extra } = ctx;
   for (const [key, want] of [['appVariant', options.variant], ['adsMode', options.ads]]) {
     if (extra[key] !== want) problem('EXConstants.bundle/app.config', 'constants', `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, 'Export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole release run.');
   }
   const appId = info.GADApplicationIdentifier;
-  const isLive = typeof appId === 'string' && LIVE_APP_ID.test(appId) && appId !== SAMPLE_APP_ID;
-  if (options.ads === 'live' ? !isLive : appId !== SAMPLE_APP_ID) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is "${appId ?? 'missing'}", expected ${options.ads === 'live' ? "the game's real AdMob app ID" : 'the Google sample ID'}`, 'Live builds take the real ID from game.config.ts (owner step G5); every other build uses the sample ID.');
+  const isLive = typeof appId === 'string' && LIVE_APP_ID.test(appId) && appId !== SAMPLE_APP_ID && placeholderName(appId) === null;
+  if (options.ads === 'live' && placeholderName(appId) !== null) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is ${placeholderName(appId)} (${appId})`, 'The owner creates the AdMob app and its units (owner step G5); put the real ids in game.config.ts ads.ids.ios and archive again with a new build number.');
+  else if (options.ads === 'live' ? !isLive : appId !== SAMPLE_APP_ID) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is "${appId ?? 'missing'}", expected ${options.ads === 'live' ? "the game's real AdMob app ID" : 'the Google sample ID'}`, 'Live builds take the real ID from game.config.ts (owner step G5); every other build uses the sample ID.');
+  for (const [slot, unit] of Object.entries(extra.adUnits ?? {})) {
+    if (placeholderName(unit) !== null) problem('EXConstants.bundle/app.config', 'ad-app-id', `extra.adUnits.${slot} is ${placeholderName(unit)} (${unit})`, 'The owner creates the AdMob units (owner step G5); put the real ids in game.config.ts ads.ids.ios.units.');
+  }
+  const idProblem = bundleIdProblem(info.CFBundleIdentifier, options.game ?? null);
+  if (idProblem !== null) problem('Info.plist', 'bundle-id', `CFBundleIdentifier ${idProblem}`, 'game.config.ts bundleId is io.applander.<game id without hyphens> (owner decision O4; withShell refuses any other); prebuild with --clean and archive again.');
+  for (const found of trackingTextProblems(appDir, info, readPlist)) problem(found.file, 'att-string', found.message, "shell-plugins.ts adds ['expo-tracking-transparency', { userTrackingPermission }] and withShell writes locales.<lang>.ios.NSUserTrackingUsageDescription from the Shell catalogs; prebuild with --clean (owner decision O1).");
   const entitlements = readEntitlements(appDir, options);
-  if (entitlements === null) problem('', 'get-task-allow', 'the app is not signed (codesign -d failed)', 'Export with the team API key; an unsigned app cannot be uploaded.');
+  if (entitlements === null && options.unsigned) ctx.skip('', 'get-task-allow', 'REHEARSAL: the app has no signature (CODE_SIGNING_ALLOWED=NO); the release gate runs on the signed export');
+  else if (entitlements === null) problem('', 'get-task-allow', 'the app is not signed (codesign -d failed)', 'Export with the team API key; an unsigned app cannot be uploaded. A keyless rehearsal archive passes --unsigned and is never release evidence.');
   else if (entitlements['get-task-allow'] === true) problem('', 'get-task-allow', 'the entitlements grant get-task-allow (a debug entitlement from the StoreKit harness)', 'Keep the harness entitlement in Debug only; archive the Release configuration.');
 }
 
@@ -124,10 +149,15 @@ function checkStoreOnly(ctx) {
   if (info.ITSAppUsesNonExemptEncryption !== false) problem('Info.plist', 'encryption-flag', 'ITSAppUsesNonExemptEncryption is not false', 'withShell sets ios.config.usesNonExemptEncryption: false (no export-compliance question per build).');
   if (!existsSync(join(appDir, 'PrivacyInfo.xcprivacy'))) problem('PrivacyInfo.xcprivacy', 'privacy-manifest', 'the privacy manifest is missing', 'Declare ios.privacyManifests through withShell and prebuild again.');
   if (plistGet(info, 'NSAppTransportSecurity.NSAllowsArbitraryLoads') === true) problem('Info.plist', 'ats', 'NSAllowsArbitraryLoads is true', 'Remove the ATS exception.');
+  const links = ctx.extra.game?.links ?? {};
+  for (const value of [links.privacyPolicy?.host, links.supportEmail]) {
+    if (placeholderName(value) !== null) problem('EXConstants.bundle/app.config', 'links', `extra.game.links holds ${placeholderName(value)}`, "Put the owner's privacy-policy host and support address in game.config.ts links (owner step G3, with the App Privacy answers), then archive again.");
+  }
 }
 
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
+  if (options.unsigned) console.log('REHEARSAL: not a release gate (--unsigned: an archive built without the signing key; only the signing rule is SKIP, every other rule stays strict)');
   validate(options);
   const root = requireDir(positionals[0] ?? '.', 'repo root');
   const { appDir, cleanup } = locateApp(options);
@@ -135,7 +165,10 @@ run(async () => {
     const report = createReporter({ name: 'check-store-artifact', json: options.json });
     const shown = options.app ? toPosix(relative(process.cwd(), appDir)) || appDir : `${options.ipa}:Payload/${appDir.split('/').pop()}`;
     const problem = (file, rule, message, fix) => report.problem({ file: file ? `${shown}/${file}` : shown, rule, message, fix });
-    const ctx = { info: readPlist(join(appDir, 'Info.plist')), appDir, options, problem };
+    const skip = (file, rule, message) => report.skip({ file: file ? `${shown}/${file}` : shown, rule, message });
+    const constantsPath = join(appDir, 'EXConstants.bundle', 'app.config');
+    const extra = existsSync(constantsPath) ? JSON.parse(readFileSync(constantsPath, 'utf8')).extra ?? {} : {};
+    const ctx = { info: readPlist(join(appDir, 'Info.plist')), appDir, options, problem, skip, extra };
     checkIdentity(ctx);
     checkVariant(ctx);
     checkShellComplete(ctx, root, report);

@@ -63,6 +63,8 @@ const ADAPTERS = [
   'packages/shell/src/services/*/*-sql-driver.ts',
 ];
 const CLOCK_ADAPTERS = ['packages/shell/src/services/clock/*-adapter.ts'];
+/** The one file that asks for App Tracking Transparency (ConsentPort.requestTracking; owner O1). */
+const ATT_ADAPTER = ['packages/shell/src/services/consent/admob-consent-adapter.ts'];
 const DIRECTION_MODULE = ['packages/shell/src/i18n/direction.ts'];
 const APP_TEXT = ['packages/shell/src/ui/app-text.tsx'];
 
@@ -130,6 +132,12 @@ const VENDOR_SDK_PATHS = [
   vendor('expo-network', 'ConnectivityPort'),
 ];
 const banned = (name, message) => ({ name, message });
+// Owner decision O1 (2026-09-30): the app asks for App Tracking Transparency before any ad request
+// that could use the IDFA, and only the consent adapter does (every other file keeps this ban).
+const ATT_IMPORT = banned(
+  'expo-tracking-transparency',
+  'Only packages/shell/src/services/consent/admob-consent-adapter.ts asks for tracking (ConsentPort).',
+);
 const BANNED_PACKAGE_PATHS = [
   banned('axios', N3),
   banned(
@@ -145,7 +153,7 @@ const BANNED_PACKAGE_PATHS = [
   banned('@react-native-async-storage/async-storage', 'Persist through SaveStore.'),
   banned('react-native-iap', 'IAP goes through PurchasePort (expo-iap).'),
   banned('react-native-purchases', 'No purchase server (N2).'),
-  banned('expo-tracking-transparency', 'No ATT prompt in v1 (spec D4).'),
+  ATT_IMPORT,
   banned('react-native-restart', 'Use reloadAppAsync from expo.'),
   {
     name: 'react-native',
@@ -209,10 +217,13 @@ const PURE_IMPORTS = {
     'Rules, levels and game-kit are pure TypeScript: import only @e07/game-kit/* and siblings.',
 };
 
-const restrictedImports = ({ paths = [], patterns = [] }) => [
+// Every block that narrows no-restricted-imports starts from RUNTIME_PATHS minus its exemptions.
+const without = (paths, ...removed) => paths.filter((entry) => !removed.includes(entry));
+// `allow` lifts a banned package for one file-exact block (the ATT adapter); nothing else does.
+const restrictedImports = ({ paths = [], patterns = [], allow = [] }) => [
   'error',
   {
-    paths: [...BANNED_PACKAGE_PATHS, ...paths],
+    paths: [...without(BANNED_PACKAGE_PATHS, ...allow), ...paths],
     patterns: [PARENT_IMPORT, ...patterns],
   },
 ];
@@ -244,8 +255,6 @@ const RUNTIME_PATHS = [
   REACT_INTL_IMPORT,
   ...UI_PATHS,
 ];
-// Every block that narrows no-restricted-imports starts from RUNTIME_PATHS minus its exemptions.
-const without = (paths, ...removed) => paths.filter((entry) => !removed.includes(entry));
 // Port types (`*-port.ts`) stay importable: a ui/ component may receive a port as a prop.
 // Match files, not folders: a negation cannot re-include a file under an excluded folder.
 const UI_BOUNDARY = {
@@ -749,6 +758,18 @@ export default defineConfig([
       'no-restricted-imports': restrictedImports({
         paths: [...without(RUNTIME_PATHS, ...VENDOR_SDK_PATHS), EXPO_IAP_SERVER_APIS],
         patterns: [NODE_BUILTINS, SHELL_BOUNDARY],
+      }),
+    },
+  },
+  // O1: the consent adapter alone imports expo-tracking-transparency (the ADAPTERS block above keeps
+  // the ban for every other adapter).
+  {
+    files: ATT_ADAPTER,
+    rules: {
+      'no-restricted-imports': restrictedImports({
+        paths: without(RUNTIME_PATHS, ...VENDOR_SDK_PATHS),
+        patterns: [NODE_BUILTINS, SHELL_BOUNDARY],
+        allow: [ATT_IMPORT],
       }),
     },
   },

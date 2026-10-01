@@ -334,7 +334,8 @@ function buildSuite(name, status, cases, adjust = () => {}, grow = () => {}) {
   stamp(good);
   grow(good);
   for (const [caseName, plant] of Object.entries(cases)) {
-    const dir = join(root, `bad-${caseName}`);
+    // A case named pass-<name> must pass and print its EXPECT.txt lines; every other case is bad-<name>.
+    const dir = join(root, caseName.startsWith('pass-') ? caseName : `bad-${caseName}`);
     cpSync(good, dir, { recursive: true });
     const result = plant(dir);
     const { keep = false, expect } = Array.isArray(result) ? { expect: result } : result;
@@ -352,10 +353,15 @@ const wrapped = buildSuite('check-balance-wrapped', 'proposed', {
     return ['[tuning-undocumented]', `${TUNING}:${lineOf(dir, TUNING, 'hearts: 3,')}`, 'knob "hearts: 3," has no comment'];
   },
 }, wrapTuning);
+// Owner decision O6: proposed bands pass a release run and print the owner step instead of failing it.
 const release = buildSuite('check-balance-release', 'approved', {
-  proposed: (dir) => {
+  'pass-proposed': (dir) => {
     editJson(dir, BANDS, (bands) => Object.assign(bands, { status: 'proposed', approvedOn: null }));
-    return ['[bands-unapproved]', `${BANDS}:${lineOf(dir, BANDS, '"status"')}`, 'still "proposed"'];
+    return ['OWNER STEP (not blocking)', `${BANDS}:${lineOf(dir, BANDS, '"status"')} [bands-unapproved]`, 'still "proposed"', 'Nothing waits for it.'];
+  },
+  'approved-without-date': (dir) => {
+    editJson(dir, BANDS, (bands) => Object.assign(bands, { status: 'approved', approvedOn: null }));
+    return ['[bands-invalid]', 'approved bands need approvedOn as YYYY-MM-DD'];
   },
 });
 // R2S-G16: board and gesture steps add game-kit files the sims never import (timeline/sample.ts,
@@ -374,4 +380,4 @@ const growth = buildSuite('check-balance-kit-growth', 'proposed', {
 }, () => {}, (dir) => {
   for (const [rel, text] of Object.entries(KIT_GROWTH)) write(dir, rel, text);
 });
-console.log(`built fixtures: check-balance good + ${main} bad, check-balance-wrapped good + ${wrapped} bad, check-balance-release good + ${release} bad, check-balance-kit-growth good + ${growth} bad`);
+console.log(`built fixtures: check-balance good + ${main} bad, check-balance-wrapped good + ${wrapped} bad, check-balance-release good + ${release} pass/bad, check-balance-kit-growth good + ${growth} bad`);

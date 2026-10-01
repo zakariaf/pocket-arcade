@@ -69,11 +69,14 @@ export function formatWeekdayLetter(date: DateKey, t: TFunction): string {
 }
 
 // '2026-09-26' -> "26 Sep" / "26. Sept." / "۲۶ سپتامبر" / "۲۶ی ئەیلوول" (catalog + digits).
+// The month comes back isolated (FSI…PDI): pass the result into another message only as
+// stripIsolates(formatDayMonth(…)), or the nested isolates flip the date in fa (nested-isolates).
 export function formatDayMonth(date: DateKey, t: TFunction): string {
   return t('date.day-month', { day: dayOf(date), monthName: formatMonthShort(date, t) });
 }
 
-// '2026-09-26' -> "Saturday, 26 Sep" (S4's daily card and the S9 date line).
+// '2026-09-26' -> "Saturday, 26 Sep" (S4's daily card and the S9 date line). Isolated inside, like
+// formatDayMonth: strip it before it becomes a *Text value of another message.
 export function formatWeekdayDayMonth(date: DateKey, t: TFunction): string {
   return t('date.weekday-day-month', {
     weekdayName: formatWeekdayName(date, t),

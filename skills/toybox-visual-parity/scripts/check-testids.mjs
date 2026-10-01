@@ -5,7 +5,10 @@
 // accessible element named as their parent. 0 or more than 1 match is a failure. It also proves the
 // reach policy: an element Maestro cannot list (inside an accessible parent, or a decorative part
 // its component hides from VoiceOver: a11yHidden) is checked only by the aligned crop of the
-// reachable ancestor named in coveredBy.
+// reachable ancestor named in coveredBy. A surface (an accessible Pressable filling a card, like
+// home.daily-card) is the card's bottom layer: the design nests the card's content in it, the app
+// draws that content above it as siblings, so its texts are crop-only parts coveredBy the surface
+// and an accessible element on it (the Play key) is its own sibling, never its part.
 //
 // Static checks (shape, names, copy-deck keys) need only Node. The DOM checks render the design in
 // Chrome through Playwright (loaded at run time; see --help for where it is looked up).
@@ -56,6 +59,9 @@ const SPEC = {
     '              hides from VoiceOver ("a11yHidden": true, for example IconTile, LogoTile, ArtTile):',
     '              "checks" is ["crop"] (or []) and "coveredBy" names the nearest reachable ancestor whose',
     '              crop is compared ("crop" or "fill" in its checks, or the frame root)',
+    '  surface     an accessible Pressable filling a card as its bottom layer ("surface": true, home.daily-card):',
+    '              its texts are crop-only (a11yHidden, coveredBy the surface), an accessible element on it is a',
+    '              sibling with no parent',
     '',
     'Examples:',
     '  node check-testids.mjs --map assets/screen-testids.json --design assets/design/toybox.html',
@@ -74,13 +80,13 @@ const ACCESSIBLE = ['button', 'switch', 'radio', 'adjustable', 'image', 'alert']
 const CHECKS = ['bounds', 'text', 'fill', 'crop'];
 const PRESENTATIONS = ['route', 'overlay', 'dialog', 'startup', 'consent'];
 const KINDS = ['phone', 'phone-tall', 'state-card', 'mock-only'];
-const ELEMENT_KEYS = ['testID', 'role', 'component', 'kind', 'text', 'a11yLabel', 'designSelector', 'checks', 'variants', 'requires', 'when', 'parent', 'a11yHidden', 'coveredBy', 'state', 'mask', 'note'];
+const ELEMENT_KEYS = ['testID', 'role', 'component', 'kind', 'text', 'a11yLabel', 'designSelector', 'checks', 'variants', 'requires', 'when', 'parent', 'a11yHidden', 'coveredBy', 'state', 'mask', 'surface', 'note'];
 // Game facts an element can depend on ("when"), and the facts the mockup itself draws: Music rows
-// and keys, and a moves-rated win line. An element whose "when" the mockup does not draw exists only
-// in a reference variant that toybox-visual-parity derives from the rendered mockup (its text is a
-// Shell text of that variant), so the default render skips it.
-const FACT_VALUES = { hasMusic: [true, false], winLine: ['moves', 'score'] };
-const DESIGN_FACTS = { hasMusic: true, winLine: 'moves' };
+// and keys, a moves-rated win line and a hint key. An element whose "when" the mockup does not draw
+// exists only in a reference variant that toybox-visual-parity derives from the rendered mockup (its
+// text is a Shell text of that variant), so the default render skips it.
+const FACT_VALUES = { hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] };
+const DESIGN_FACTS = { hasMusic: true, winLine: 'moves', hasHints: true };
 const isDesignDrawn = (el) => Object.entries(el.when ?? {}).every(([key, value]) => DESIGN_FACTS[key] === value);
 // Components that hide themselves from VoiceOver when they carry no accessible role and label
 // (decorative art, marks and graphics): Maestro cannot list them, so they are crop-only.
@@ -276,6 +282,9 @@ function checkStatic(map, deck, problem) {
       }
       for (const key of ['kind', 'state', 'note']) if (el[key] !== undefined && typeof el[key] !== 'string') problem('element-shape', `${where}: ${key} must be a string`, `Write ${key} as text.`);
       if (el.mask !== undefined && typeof el.mask !== 'boolean') problem('element-shape', `${where}: mask must be true or false`, 'Use a boolean.');
+      if (el.surface !== undefined && (el.surface !== true || !ACCESSIBLE.includes(el.role) || el.parent !== undefined || el.a11yHidden === true)) {
+        problem('element-surface', `${where}: surface marks an accessible card surface (role ${ACCESSIBLE.join(', ')}, no parent, not hidden) and is true or absent`, 'Use "surface": true on the card\'s Pressable (role button), or remove it.');
+      }
       checkReach(el, where, problem);
       for (const v of elVariants) {
         if (screen.variantKinds?.[v] === 'state-card' && el.checks?.includes('bounds')) problem('element-checks', `${where}: variant "${v}" is a state card, so "bounds" cannot be compared`, 'Drop "bounds" for state-card variants.');
@@ -415,12 +424,22 @@ function inspectPage({ screens, checkParents, accessible }) {
           if (checkParents) {
             let best = null;
             let bestDepth = -1;
+            let surface = null;
+            let surfaceDepth = -1;
             els.forEach((p, j) => {
               if (j === i || !accessible.includes(p.role) || nodes[j].list.length !== 1) return;
               const pn = nodes[j].list[0];
               if (pn !== node && pn.contains(node)) {
                 let depth = 0;
                 for (let n = pn; n; n = n.parentElement) depth += 1;
+                // A surface is the card's bottom layer, never an ancestor in the app.
+                if (p.surface) {
+                  if (depth > surfaceDepth) {
+                    surfaceDepth = depth;
+                    surface = p.testID;
+                  }
+                  return;
+                }
                 if (depth > bestDepth) {
                   bestDepth = depth;
                   best = p.testID;
@@ -428,6 +447,7 @@ function inspectPage({ screens, checkParents, accessible }) {
               }
             });
             result.computedParent = best;
+            result.onSurface = surface !== null && surfaceDepth > bestDepth ? surface : null;
             let cover = null;
             let coverDepth = -1;
             let hidden = null;
@@ -587,6 +607,7 @@ run(async () => {
               role: el.role,
               parent: el.parent,
               a11yHidden: el.a11yHidden === true,
+              surface: el.surface === true,
               coverCandidate: isCoverCandidate(el),
               designSelector: el.designSelector,
               variants: el.variants ?? screen.variants,
@@ -651,6 +672,9 @@ run(async () => {
             problem('element-parent', `${where}: parent is ${el.parent ? `"${el.parent}"` : 'unset'}, but the nearest accessible listed ancestor is ${r.computedParent ? `"${r.computedParent}"` : 'none'}`, r.computedParent ? `Set "parent": "${r.computedParent}".` : 'Remove "parent".', r.testID);
           } else if (isDefault && el.parent && r.parentContains === false) {
             problem('element-parent', `${where}: parent "${el.parent}" does not contain this element`, 'Fix parent or the selectors.', r.testID);
+          }
+          if (isDefault && r.onSurface && !ACCESSIBLE.includes(el.role) && !isCropOnly(el)) {
+            problem('element-reach', `${where}: it is drawn on the card surface "${r.onSurface}", whose accessibility label carries the card's texts, yet it is listed as a reachable ${el.role}`, `Set "a11yHidden": true, "checks": ["crop"] and "coveredBy": "${r.onSurface}" (VoiceOver reads it through the surface), or make it an accessible sibling such as a button.`, r.testID);
           }
           if (isDefault && r.hiddenAncestor && !isCropOnly(el)) {
             problem('element-reach', `${where}: it sits inside "${r.hiddenAncestor}", which its component hides from VoiceOver, so Maestro cannot list it`, 'Set "a11yHidden": true, "checks": ["crop"] and "coveredBy".', r.testID);

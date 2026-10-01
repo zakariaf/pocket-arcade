@@ -1,0 +1,2 @@
+[bands-invalid]
+approved bands need approvedOn as YYYY-MM-DD

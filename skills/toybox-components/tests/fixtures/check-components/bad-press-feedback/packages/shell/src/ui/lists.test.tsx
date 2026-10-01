@@ -1,5 +1,5 @@
 // packages/shell/src/ui/lists.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 
 import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
@@ -162,6 +162,21 @@ describe('Panels', () => {
     expect(screen.getByTestId('premium.error-note.label')).toHaveTextContent(
       'Something went wrong.',
     );
+  });
+
+  it('shrinks a one-line note to its text and lets a longer note fill the row (.note-p <p>)', async () => {
+    await renderWithShell(<NotePanel icon="wifi-off" text="Go online." testID="premium.note" />);
+    const label = screen.getByTestId('premium.note.label');
+    expect(label.parent).toHaveStyle({ flex: 1 });
+
+    await fireEvent(label, 'textLayout', { nativeEvent: { lines: [{ width: 80 }] } });
+    expect(screen.getByTestId('premium.note.label').parent).toHaveStyle({ flexShrink: 1 });
+    expect(screen.getByTestId('premium.note.label').parent).not.toHaveStyle({ flex: 1 });
+
+    await fireEvent(screen.getByTestId('premium.note.label'), 'textLayout', {
+      nativeEvent: { lines: [{ width: 300 }, { width: 40 }] },
+    });
+    expect(screen.getByTestId('premium.note.label').parent).toHaveStyle({ flex: 1 });
   });
 
   it('frames an offer with a dashed edge and shows chips as text', async () => {

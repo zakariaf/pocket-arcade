@@ -3,6 +3,7 @@
 // second set of services and a second handler over the same store, as after reloadAppAsync. The
 // navigator is a route log plus the callbacks waiting for its next state (a group switch).
 import { createDebugServices } from '@e07/shell/screens/debug/debug-services.ts';
+import { createFakeDebugPerf } from '@e07/shell/screens/debug/fake-debug-perf.ts';
 import { createFakeDebugStore } from '@e07/shell/screens/debug/fake-debug-store.ts';
 import { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
@@ -59,6 +60,7 @@ function startRun(options: RunOptions = {}): Run & { readonly store: FakeDebugSt
     clock,
     store,
     perfLog: { append: jest.fn(), entries: () => [] },
+    perf: createFakeDebugPerf(),
     persistPremium: jest.fn(),
     dispatchPremium: jest.fn(),
     nowMs: () => NOW_MS,

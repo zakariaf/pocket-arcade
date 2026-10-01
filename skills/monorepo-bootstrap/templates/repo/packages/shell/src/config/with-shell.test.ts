@@ -14,11 +14,14 @@ const LIVE_UNITS = {
 const GAME: GameConfig = {
   id: 'probe-game',
   appName: { en: 'Probe Game', de: 'Probe Game', fa: 'Probe Game', ckb: 'Probe Game' },
-  bundleId: 'com.example.probegame',
+  bundleId: 'io.applander.probegame',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 3,
-  premium: { productId: 'com.example.probegame.premium', priceNote: 'EUR 1.99 tier' },
+  premium: {
+    productId: 'io.applander.probegame.premium',
+    priceNote: 'EUR 1.99 price point (owner decision)',
+  },
   ads: {
     isEnabled: true,
     policy: {
@@ -93,9 +96,18 @@ describe('withShell', () => {
     expect(config.extra?.['game']).toMatchObject({ appStoreId: '1234567890' });
   });
 
-  it('rejects a bundle id that is not valid on both platforms', () => {
-    expect(() => withShell({ ...GAME, bundleId: 'com.example.probe-game' }, {})).toThrow(
-      'bundleId com.example.probe-game must match',
+  it('writes the fixed io.applander id on iOS and Android', () => {
+    const config = withShell(GAME, {});
+    expect(config.ios?.bundleIdentifier).toBe('io.applander.probegame');
+    expect(config.android?.package).toBe('io.applander.probegame');
+  });
+
+  it('rejects any bundle id but io.applander.<game id without hyphens>', () => {
+    expect(() => withShell({ ...GAME, bundleId: 'com.example.probegame' }, {})).toThrow(
+      'bundleId com.example.probegame must be io.applander.probegame',
+    );
+    expect(() => withShell({ ...GAME, bundleId: 'io.applander.probe-game' }, {})).toThrow(
+      'must be io.applander.probegame',
     );
   });
 });

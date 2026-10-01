@@ -52,6 +52,7 @@ const SCREEN_NAMES = {
   'first-run language choice': ['S2'],
   'language choice': ['S2'],
   language: ['S2', 'S11a'],
+  'ad consent and tracking': ['S3'],
   'ad consent': ['S3'],
   consent: ['S3'],
   home: ['S4'],

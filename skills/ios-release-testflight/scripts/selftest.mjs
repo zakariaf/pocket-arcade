@@ -7,6 +7,21 @@ import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node
 import { dirname, join } from 'node:path';
 
 import { makeTempDir, removeTempDir, runSelftest } from './check-lib.mjs';
+import { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
+
+// The ship gates refuse these scaffold placeholders by name (owner decision O4): the pinned list.
+const PINNED = {
+  bundleIdPrefix: 'com.example.',
+  admobAppId: 'ca-app-pub-1234567890123456~1234567890',
+  admobUnits: ['ca-app-pub-1234567890123456/1111111111', 'ca-app-pub-1234567890123456/2222222222', 'ca-app-pub-1234567890123456/3333333333'],
+  privacyHost: 'example.com',
+  supportEmail: 'support@example.com',
+};
+if (JSON.stringify(PLACEHOLDERS) !== JSON.stringify(PINNED)) {
+  console.log('FAIL scripts/lib/ship-placeholders.mjs [placeholders-pin] PLACEHOLDERS is not the pinned list Fix: Restore the list in _library/shared/scripts/lib/ship-placeholders.mjs (a change needs the owner) and sync.');
+  console.log('RESULT: FAIL (1 problems)');
+  process.exit(1);
+}
 
 const temps = [];
 process.on('exit', () => temps.forEach((dir) => removeTempDir(dir)));

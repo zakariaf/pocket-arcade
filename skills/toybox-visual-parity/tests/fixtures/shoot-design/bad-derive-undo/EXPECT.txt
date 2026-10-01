@@ -1,0 +1,3 @@
+[variant-derive]
+no-hints: the derive hides game.undo-button, which exists for these facts ({"hasHints":false})
+no-hints: game.hint-button exists only when {"hasHints":true}, but the derive leaves it on screen

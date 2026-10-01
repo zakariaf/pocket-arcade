@@ -15,12 +15,14 @@ import { createTestSave } from '@e07/shell/testing/create-test-save.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { createDebugServices } from './debug-services.ts';
+import { createFakeDebugPerf } from './fake-debug-perf.ts';
 import { createFakeDebugStore } from './fake-debug-store.ts';
 import { createSimulatedClock } from './simulated-clock.ts';
 import { createSimulatedConnectivity } from './simulated-connectivity.ts';
 import { useDebugModel } from './use-debug-model.ts';
 
 import type { DebugRoute } from '@e07/shell/app/debug-link-routes.ts';
+import type { PerfEntry } from '@e07/shell/app/perf/perf-log.ts';
 import type { FakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import type { ReactNode } from 'react';
 
@@ -52,11 +54,17 @@ async function setup() {
   const errorLog: FakeErrorLog = createFakeErrorLog();
   const { save } = createTestSave(clock);
   const shell = createShellWrapper({ services: { clock, errorLog, save } });
+  const entries: PerfEntry[] = [
+    { kind: 'cold-start', label: 'home', atEpochMs: 1, data: { totalMs: 1_049 } },
+  ];
+  const perfLog = { append: (entry: PerfEntry) => entries.push(entry), entries: () => entries };
+  const perf = createFakeDebugPerf(perfLog);
   const debug = createDebugServices({
     connectivity: createSimulatedConnectivity(createFakeConnectivity(true)),
     clock,
     store: createFakeDebugStore(),
-    perfLog: { append: jest.fn(), entries: () => [] },
+    perfLog,
+    perf,
     persistPremium: jest.fn(),
     dispatchPremium: shell.stores.premium.getState().dispatch,
     nowMs: clock.nowMs,
@@ -94,7 +102,7 @@ async function setup() {
     </shell.wrapper>
   );
   const { result } = await renderHook(() => useDebugModel(), { wrapper });
-  return { result, routes, errorLog, save };
+  return { result, routes, errorLog, save, perf };
 }
 
 describe('useDebugModel', () => {
@@ -215,5 +223,45 @@ describe('useDebugModel', () => {
     const { result } = await setup();
     result.current.onBack();
     expect(mockGoBack).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('useDebugModel: the Performance section', () => {
+  it('records frame times while the switch is on and shows the perf log in numbers', async () => {
+    const { result, perf } = await setup();
+    expect(result.current.perf.isRecording).toBe(false);
+    expect(result.current.perf.entriesCount).toBe(1);
+    expect(result.current.perf.summary).toBe('cold 1 · 1049 ms · save p95 –');
+
+    await act(() => {
+      result.current.perf.onToggleRecording();
+    });
+
+    expect(result.current.perf.isRecording).toBe(true);
+    expect(perf.calls).toStrictEqual(['record on']);
+  });
+
+  it('runs the save benchmark and shows its p95', async () => {
+    const { result } = await setup();
+    await act(() => {
+      result.current.perf.onRunBenchmark();
+    });
+    expect(result.current.perf.entriesCount).toBe(2);
+    expect(result.current.perf.summary).toBe('cold 1 · 1049 ms · save p95 0.4 ms');
+  });
+
+  it('shares the report, and a failed share only reaches the error log', async () => {
+    const { result, perf, errorLog } = await setup();
+    await act(() => {
+      result.current.perf.onShare();
+    });
+    expect(perf.calls).toStrictEqual(['share']);
+
+    jest.spyOn(perf, 'share').mockReturnValue(Promise.reject(new Error('sheet closed')));
+    await act(async () => {
+      result.current.perf.onShare();
+      await Promise.resolve();
+    });
+    expect(errorLog.recorded.map((entry) => entry.source)).toStrictEqual(['boot']);
   });
 });

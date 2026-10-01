@@ -18,11 +18,13 @@ Stopping is not failing. For each case below, stop that line of work, send the o
 | A change would touch a gated path (quality gates, goldens, baselines, fixtures, `.npmrc`, network baselines, parity waivers and game facts) other than by an intended, explained change | ask; an agreed change goes in one commit with a `Gate-Change:` trailer |
 | The spec is contradicted, ambiguous or silent about something a player would see | quote the spec lines, give the options with a recommended default, keep working; never trade away N1-N12 |
 | Two of the project's instructions disagree | follow the one that owns the topic, say so in the report, and name the other so it gets fixed |
-| Irreversible or outward-facing actions: an App Store Connect upload, submitting for review, creating or changing App Store Connect records (Premium product, age rating, tester groups), turning on Family Sharing, pushing branches or tags, force-pushing or rewriting pushed history, deleting files, data or simulators this session did not create, sending anything to a third party | ask first, unless the owner asked for exactly this action in this session; submit for review only after the owner says "submit" |
+| Irreversible or outward-facing actions: an App Store Connect upload, submitting for review, creating or changing App Store Connect records (Premium product, age rating, tester groups), pushing branches or tags, force-pushing or rewriting pushed history, deleting files, data or simulators this session did not create, sending anything to a third party | ask first, unless the owner asked for exactly this action in this session; submit for review only after the owner says "submit" |
 | A release stop (next section) | stop, do not retry, do not switch signing methods; one message with the step and the exact error line |
 | Anything that would read, print, copy, move or commit the App Store Connect `.p8` key, a JWT or a password | never; if a task seems to need it, ask |
 | A new dependency outside the documented procedure, a banned package, a held-back major version, an early release-age exception | ask, unless the dependency procedure covers it exactly |
 | An open owner decision becomes blocking | use the documented default and say so; ask when the default no longer works |
+| The owner's personal checks: the review of the fa and ckb texts, the play-test, listening to the sound previews (G6, G7, G9, R3) | these are not stop-and-ask items: never stop or wait for them; list each under "Owner steps (not blocking)" in every slice and release report (`check-report.mjs` rule `owner-steps-listed`) and keep working |
+| Family Sharing for Premium | never turn it on: the owner decided it stays off (it cannot be turned off again) |
 | The Stop hook still fails after its 8 continuations | report the failing gate and what was tried |
 
 ## The owner's human steps (IDs to name)
@@ -46,28 +48,29 @@ Per game:
 
 | ID | Step |
 |---|---|
-| G1 | Approve the app name and the bundle ID (the ID matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`, the name is unique on the App Store) |
-| G2 | Create the app record in App Store Connect (no API exists for it; about 2 minutes) |
-| G3 | Fill in the App Privacy questionnaire, together with decision D4 |
+| G1 | Confirm the app name (unique on the App Store). The app id is fixed, not asked: `io.applander.<game id without hyphens>`, all lowercase, as the iOS bundle ID and the Android package (Line Siege: `io.applander.linesiege`), and `<bundle ID>.premium` for Premium |
+| G2 | Create the app record in App Store Connect with the fixed bundle ID (no API exists for it; about 2 minutes) |
+| G3 | Fill in the App Privacy questionnaire with the prepared answers: Device ID collected, linked to the user and used for tracking by the third-party ads SDK (Google Mobile Ads), because the app asks for App Tracking Transparency on iOS; the app itself collects nothing. Give the privacy-policy host and path and the support address for `game.config.ts` `links` (until then `example.com` and `support@example.com`, which every ship gate refuses) |
 | G4 | Check (or create) the Premium in-app purchase; the first one is submitted with an app version |
-| P1 | Part of G4: decide Family Sharing (default off, irreversible once on) and confirm the price point when EUR 1.90 is not one (D3) |
+| P1 | Part of G4, both decided by the owner: the price is the EUR 1.99 App Store price point (the app always shows the store's localised price), and Family Sharing stays off: leave it off and never turn it on (it is irreversible once on) |
 | G5 | AdMob: create the app and 3 ad units and give the IDs; after release, link the store listing and publish `app-ads.txt` (A2, A5) |
-| G6 | Play-test on TestFlight, including the purchase test: buy, cancel, restore after reinstall |
-| G7 | Have a native speaker read the Persian and Sorani texts |
+| G6 | Play-test on TestFlight, including the purchase test: buy, cancel, restore after reinstall. The owner does it personally; not blocking: listed under "Owner steps (not blocking)", never waited for |
+| G7 | Review the Persian and Sorani texts (Claude writes natural drafts). The owner does it personally; not blocking: listed, never waited for |
+| G9 | Listen to the game's sound previews (`reports/sfx/<game-id>/*.wav`) and feel the haptics on a phone. The owner does it personally; not blocking: listed, never waited for |
 | G8 | Approve the store listing (texts, screenshots, age rating answers) |
 
 Per release:
 
 | ID | Step |
 |---|---|
-| R1 | Play the TestFlight build and answer "ship" or "don't ship" |
+| R1 | Say "ship" or "don't ship" for the TestFlight build: the release tag and the submission leave the Mac, so they wait for this word (the play-test, G6, never does) |
 | R2 | VoiceOver spot check (about 15 minutes) |
-| R3 | Native-speaker read of changed Persian and Sorani strings |
+| R3 | Review the changed Persian and Sorani texts. The owner does it personally; not blocking: listed, never waited for |
 | R4 | Accept any new Apple agreement reported as blocking |
 | R5 | Submit for review (one click, or tell Claude "submit"); on the first release, add Premium to the version first |
 | R6 | Answer App Review messages; choose manual or automatic release after approval |
 
-AdMob console steps: A1 account and payments (once); A2 per game the app and three ad units (banner, interstitial, rewarded); A3 publish the European regulations consent message (English and German); A4 blocking controls (gambling, dating, alcohol, get-rich-quick; maximum rating PG); A5 after the first release, link the store listing and publish `app-ads.txt`; A6 never needed: live-ID device testing (test builds always use test units).
+AdMob console steps: A1 account and payments (once); A2 per game the app and three ad units (banner, interstitial, rewarded); A3 publish the European regulations consent message (English and German) and no IDFA explainer message (the app asks for App Tracking Transparency itself right after Google's form; a published explainer would make Google's UMP run a second tracking prompt); A4 blocking controls (gambling, dating, alcohol, get-rich-quick; maximum rating PG); A5 after the first release, link the store listing and publish `app-ads.txt`; A6 never needed: live-ID device testing (test builds always use test units).
 
 ## Release stops: errors that are never retried
 

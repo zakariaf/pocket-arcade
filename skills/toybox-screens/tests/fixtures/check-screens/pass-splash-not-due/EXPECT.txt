@@ -1,0 +1,1 @@
+SKIP packages/shell/src/app/create-startup-splash.tsx [splash-held] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created

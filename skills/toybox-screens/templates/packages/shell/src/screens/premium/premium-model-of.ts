@@ -16,6 +16,8 @@ export type PremiumModelInput = {
   /** Already translated (gameMessageText). */
   readonly gameName: string;
   readonly isReducedMotion: boolean;
+  /** The saved Reduce motion choice (useReduceMotionSetting): it hides the success confetti. */
+  readonly isConfettiHidden: boolean;
   readonly onBack: () => void;
 };
 
@@ -35,6 +37,7 @@ export function premiumModelOf(input: PremiumModelInput): PremiumModel {
     priceText: priceOf(state.flow),
     gameName: input.gameName,
     isReducedMotion: input.isReducedMotion,
+    isConfettiHidden: input.isConfettiHidden,
     onBack: input.onBack,
     onBuy: handleBuy,
     onRestore: handleRestore,

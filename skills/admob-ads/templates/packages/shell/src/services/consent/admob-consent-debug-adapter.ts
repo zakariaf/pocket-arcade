@@ -2,6 +2,8 @@
 // Test builds only. Imported by nothing but the Shell's test-only entry (the debug menu, S15), which
 // store builds compile out. Resetting consent or opening the Ad Inspector changes consent behaviour
 // for real players, so these calls never live in admob-consent-adapter.ts.
+// Apple's tracking answer (ATT) has no reset: it comes back only after deleting the app, or through
+// Settings > Privacy & Security > Tracking. resetConsent resets Google's UMP answer alone.
 import mobileAds, { AdsConsent } from 'react-native-google-mobile-ads';
 
 import type { AdsConsentUserChoices } from 'react-native-google-mobile-ads';

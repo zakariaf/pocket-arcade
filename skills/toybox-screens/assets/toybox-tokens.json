@@ -406,7 +406,7 @@
         "success": "#17804A",
         "warning": "#8A5A00",
         "danger": "#C4243A",
-        "dangerFill": "#FFD9DD",
+        "dangerFill": "#FFDCDF",
         "focus": "#C8157A",
         "star": "#FFC928",
         "gold": "#FFC928",
@@ -745,7 +745,7 @@
         "size": 44,
         "face": "display",
         "lineHeight": 1,
-        "arabicLineHeight": 1
+        "arabicLineHeight": 1.45
       },
       "statValueCompact": {
         "size": 23,

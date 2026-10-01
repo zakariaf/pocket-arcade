@@ -55,6 +55,18 @@ const SPEC = {
     '  pair-cell-flex         a key the screens put in a pair-layout cell (KeyButton, ToggleKey) passes',
     '                         RaisedSurface a layoutStyle with flex: 1 (or flexBasis 0): a zero vertical basis in',
     '                         the column cell, so the row measured 0 pt on the device; use { flexGrow: 1 }',
+    '  modal-root             accessibilityViewIsModal sits on DialogCard (or any ui/ part but Scrim), or Scrim lacks',
+    '                         it: a modal child drops the scrim\'s testID (and the screen under it) from the',
+    '                         accessibility tree, so every S14 capture failed "screen not reached"; the scrim is',
+    '                         the modal root (VoiceOver still stays inside it)',
+    '  quiet-underline        QuietButton or the nudge text style underlines with textDecorationLine (isUnderlined):',
+    '                         iOS draws it 1 pt thick at its own depth, the design 2 pt at 5 pt under the text;',
+    '                         QuietButton draws the bar itself (quietUnderlineTop)',
+    '  hold-fill-track        HoldButton\'s fill is an absolute child of the face: Yoga takes its percentage inside',
+    '                         the face\'s padding (46 % of 278 pt, 16 pt short); the fill sits in a track pinned to',
+    '                         the face edges (position absolute, top, bottom, start and end 0, row)',
+    '  confetti-ltr           the Confetti band lacks direction: \'ltr\': its pieces (placed with start: x) mirror in',
+    '                         right-to-left languages, while the design scatters them from the left in every language',
     '',
     'Example: node check-components.mjs .   (from the app repo root)',
   ].join('\n'),
@@ -189,6 +201,65 @@ function checkReachAndFeedback(report, root) {
   }
 }
 
+/** The first `name: { ... }` style entry of comment-masked source, as its body and index. */
+function styleEntry(text, name) {
+  const match = new RegExp(`\\b${name}\\s*:\\s*\\{([^}]*)\\}`).exec(text);
+  return match === null ? null : { body: match[1], index: match.index };
+}
+
+/** Round-3 device fixes, each proven on the simulator: modal root, underline, hold track, confetti. */
+function checkDeviceRules(report, root) {
+  const read = (name) => {
+    const file = `${UI_DIR}/${name}`;
+    return existsSync(join(root, file)) ? { file, text: masked(readFileSync(join(root, file), 'utf8')) } : null;
+  };
+  const modalFix = 'Put accessibilityViewIsModal on the Scrim\'s root View (with its testID) and remove it from DialogCard, as the templates do: the scrim is the modal root.';
+  const uiParts = existsSync(join(root, UI_DIR)) ? walk(join(root, UI_DIR), { include: ['*.tsx'], ignore: SOURCE_EXCLUDES }) : [];
+  for (const name of uiParts.filter((part) => part !== 'scrim.tsx')) {
+    const found = read(name);
+    const at = found?.text.search(/\baccessibilityViewIsModal\b/) ?? -1;
+    if (found !== null && at >= 0) report.problem({ file: found.file, line: lineOf(found.text, at), rule: 'modal-root', message: `${name === 'dialog-card.tsx' ? 'DialogCard' : name} is marked modal, which hides the scrim's testID and the screen under it from the accessibility tree (every S14 capture: screen not reached)`, fix: modalFix });
+  }
+  const scrim = read('scrim.tsx');
+  if (scrim !== null && !/\baccessibilityViewIsModal\b/.test(scrim.text)) {
+    report.problem({ file: scrim.file, line: 1, rule: 'modal-root', message: 'the Scrim is not the modal root, so VoiceOver can leave the dialog for the screen under it', fix: modalFix });
+  }
+  const underlineFix = 'Drop textDecorationLine / isUnderlined and let QuietButton draw its 2 pt bar at quietUnderlineTop(...) (copy quiet-button.tsx and type-styles.ts from the templates).';
+  const quiet = read('quiet-button.tsx');
+  if (quiet !== null) {
+    const at = quiet.text.search(/\btextDecorationLine\b|\bisUnderlined\b/);
+    if (at >= 0) report.problem({ file: quiet.file, line: lineOf(quiet.text, at), rule: 'quiet-underline', message: 'QuietButton underlines its text with iOS\'s own 1 pt line, where the design draws 2 pt at 5 pt under the text', fix: underlineFix });
+    else if (!/\bquietUnderlineTop\s*\(/.test(quiet.text)) report.problem({ file: quiet.file, line: 1, rule: 'quiet-underline', message: 'QuietButton draws no underline bar (the design\'s .quiet: 2 px thick, 5 px under the text)', fix: underlineFix });
+  }
+  const stylesFile = 'packages/shell/src/theme/type-styles.ts';
+  if (existsSync(join(root, stylesFile))) {
+    const text = masked(readFileSync(join(root, stylesFile), 'utf8'));
+    const nudge = /\bnudge\s*:[^\n]*/.exec(text);
+    if (nudge !== null && /\bisUnderlined\s*:\s*true\b/.test(nudge[0])) report.problem({ file: stylesFile, line: lineOf(text, nudge.index), rule: 'quiet-underline', message: 'the nudge text style is underlined, so iOS draws a 1 pt line under every quiet button (the design: 2 pt, 5 pt under the text)', fix: underlineFix });
+  }
+  const hold = read('hold-button.tsx');
+  if (hold !== null) {
+    const track = /\b(\w+)\s*:\s*\{([^}]*)\}/g;
+    let trackName = null;
+    for (const match of hold.text.matchAll(track)) {
+      const body = match[2];
+      if (/position\s*:\s*'absolute'/.test(body) && ['top', 'bottom', 'start', 'end'].every((key) => new RegExp(`\\b${key}\\s*:\\s*0\\b`).test(body)) && /flexDirection\s*:\s*'row'/.test(body)) trackName = match[1];
+    }
+    const fillAt = hold.text.search(/\.fill`/);
+    const trackAt = trackName === null ? -1 : hold.text.search(new RegExp(`style=\\{styles\\.${trackName}\\b`));
+    if (fillAt >= 0 && (trackAt < 0 || trackAt > fillAt)) {
+      report.problem({ file: hold.file, line: lineOf(hold.text, fillAt), rule: 'hold-fill-track', message: 'the hold fill is an absolute child of the face, so its percentage is taken inside the face\'s padding (the held fill ended 16 pt short on the device)', fix: 'Wrap the fill in a View styled { position: \'absolute\', top: 0, bottom: 0, start: 0, end: 0, flexDirection: \'row\' } and give the fill alignSelf stretch and the percentage width (copy hold-button.tsx).' });
+    }
+  }
+  const confetti = read('confetti.tsx');
+  if (confetti !== null) {
+    const band = styleEntry(confetti.text, 'band');
+    if (band !== null && !/\bdirection\s*:\s*'ltr'/.test(band.body)) {
+      report.problem({ file: confetti.file, line: lineOf(confetti.text, band.index), rule: 'confetti-ltr', message: 'the confetti band has no direction \'ltr\', so its pieces (start: x) mirror in right-to-left languages; the design scatters them from the left in every language', fix: 'Add direction: \'ltr\' to the band style (start stays the left edge; physical left and right are banned).' });
+    }
+  }
+}
+
 function checkUiRules(report, file, source, catalogue) {
   const text = masked(source);
   const name = file.slice(UI_DIR.length + 1);
@@ -245,6 +316,7 @@ run(async () => {
     checkComponent(report, root, entry, tests);
   }
   checkReachAndFeedback(report, root);
+  checkDeviceRules(report, root);
   for (const file of sourceFiles(root)) {
     checked += 1;
     checkUiRules(report, file, readFileSync(join(root, file), 'utf8'), catalogue);

@@ -18,9 +18,6 @@ export const DEFAULTS = Object.freeze({
   reference: join(ASSETS_DIR, 'reference'),
 });
 
-/** The install command printed whenever a pinned package is missing. */
-export const INSTALL_HINT = `npm ci --prefix "${SCRIPTS_DIR}"`;
-
 /** Read and parse a JSON file, or stop with exit 2 naming the file. */
 export function readJson(path, what = 'JSON file') {
   if (!existsSync(path)) fail(`${what} not found: ${path}`, `Pass the path to the ${what}.`);

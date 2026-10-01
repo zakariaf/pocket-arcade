@@ -5,7 +5,7 @@ What every Shell screen shows and the rules it follows. This is the product view
 ## Contents
 
 - 5 · Screen map (and navigation rules)
-- 6 · Screens in detail: S1 Splash, S2 First-run language choice, S3 Ad consent, S4 Home, S5 Game screen, S6 Pause menu, S7 Result screen, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings (S11a Language, S11b About and credits, S11c Privacy policy, S11d Licences), S12 Premium, S13 How to play / Tutorial, S14 Dialogs, S15 Debug menu
+- 6 · Screens in detail: S1 Splash, S2 First-run language choice, S3 Ad consent and tracking, S4 Home, S5 Game screen, S6 Pause menu, S7 Result screen, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings (S11a Language, S11b About and credits, S11c Privacy policy, S11d Licences), S12 Premium, S13 How to play / Tutorial, S14 Dialogs, S15 Debug menu
 
 ## 5 · Screen map
 
@@ -13,7 +13,7 @@ What every Shell screen shows and the rules it follows. This is the product view
 S1 Splash
 S2 First-run language choice          (first launch only)
 --> S13 Tutorial level                (first launch only)
-S3 Ad consent                         (only where legally required; before the first ad)
+S3 Ad consent and tracking            (only where needed; before the first ad request)
 S4 Home
    |-- S5  Game screen
    |     |-- S6 Pause menu
@@ -65,18 +65,25 @@ First launch only.
   - One tap and done. Can be changed any time in Settings.
   - After Continue, the first launch goes to the tutorial level (S13), not to Home.
 
-### S3 · Ad consent
+### S3 · Ad consent and tracking
 
-Only where required.
+Only where needed. (Spec draft 2, 2026-09-30: the owner's decision O1 to follow Apple's tracking rules; decision D4 reversed.)
 
-- Purpose: the legal consent step for ads (spec 4.2).
-- Shows: Google's consent message. Its content comes from Google, but the Shell decides when it appears.
+- Purpose: the legal permission steps for ads (spec 4.2, points 2 and 3).
+- Shows, in this order, each step only when it applies:
+  1. The Shell's own short intro ("Ad privacy"), so the player knows why a question follows. It appears only when Google's consent message (step 2) follows, because its footnote says Google's form opens next; where only Apple's prompt follows, the prompt appears without it (the platform decision; spec draft 2 would also show it before Apple's prompt alone, see "Spec gaps with working defaults" in open-decisions.md).
+  2. Google's consent message, only in regions where it is required. Its content comes from Google.
+  3. On iPhone, Apple's "Allow tracking?" system prompt, only while the player has not answered it yet. Its sentence is ours (the Shell text `consent.tracking.usage-description`, in all four languages); the dialog is Apple's.
+  The Shell decides when this happens.
 - Rules:
   - Never shown before the player has finished the tutorial level: the first minute of the game is play, not paperwork.
-  - Shown before the first ad is ever requested.
-  - Only in regions where it is required. Everyone else never sees it.
+  - Shown before the first ad is ever requested. No ad request that could use the advertising ID happens before Apple's prompt has been answered.
+  - Google's step only in regions where it is required. Everyone else never sees it.
+  - Declining tracking, or tracking being restricted on the phone, never blocks ads: they are shown without the advertising ID.
   - Offline or Premium: skipped. It is shown later only if an ad is ever about to load.
-  - Settings has a permanent "Ad privacy choices" row that reopens it.
+  - Builds with ads switched off (automatic tests, screenshots) never show any of it.
+  - Settings has a permanent "Ad privacy choices" row that reopens Google's step where it applies. Apple's answer is changed in the phone's own Settings (Privacy & Security > Tracking), not in the game.
+- How it is built (owner decision O1): Apple's prompt is asked only when the app is active, after Google's form has closed and only when ads may be requested; never during a level; a parity capture of S3 holds the moment before either question.
 
 ### S4 · Home
 
@@ -84,7 +91,7 @@ Only where required.
 - Shows, top to bottom (mirrored in RTL):
   - Top bar: game logo/title at the start; Settings (gear) icon at the end.
   - Big PLAY button: "Continue - Level 12" when a level is in progress; "Play - Level 13" otherwise (the next unfinished level).
-  - Daily challenge card: today's date (in the chosen language and digits), "Play today's challenge" or "Done - come back tomorrow", and the current daily streak.
+  - Daily challenge card: today's date (in the chosen language and digits), "Play today's challenge" or "Done - come back tomorrow", and the current daily streak. Tapping the card opens the Daily challenge screen (S9); the card's own Play key starts today's run directly. The two are separate buttons, also for screen readers. When today is done, the card still opens S9.
   - Row of buttons: Levels | Statistics | How to play.
   - Premium button with a small crown. Hidden once Premium is owned; replaced by a small "Premium" badge on the logo.
   - Banner ad at the very bottom (only if not Premium AND online AND consent handled). When no banner loads, the space collapses; no empty box.
@@ -92,12 +99,13 @@ Only where required.
   - Background music, if the game has any, starts here and respects the settings.
   - Returning from a finished level shows updated stars and streak with a short animation (reduced if "Reduce motion" is on).
 - Games with an Endless mode (spec 8.2) show a third mode card on Home: "Endless - Best 4,210".
+- Lead decision (2026-09-30, L7): the card opens S9 and its Play key plays, as above; the design's pixels do not change and no text is added.
 
 ### S5 · Game screen
 
 - Purpose: the game itself. The Shell provides the frame; the game module provides the board.
 - Layout (portrait-first; landscape and tablets get a centred board with side panels):
-  - Top bar (the Shell's), mirrored in RTL: Pause button (at the start); mode and level label ("Level 12", "Daily - 26 Sep", "Endless"); goal/progress (for example "Moves 5 / Par 7" or "Monsters 3/10"; the game decides what, the Shell draws it); score; Undo button if the game supports undo; Hint button if the game supports hints (free for Premium; otherwise a rewarded ad or a small daily free allowance, spec 8.10). (The spec's own pointer here says 8.10, but the hint budget, 1 free hint per day, is defined in 8.5; cite 8.5 for hints and 8.10 for continues.)
+  - Top bar (the Shell's), mirrored in RTL: Pause button (at the start); mode and level label ("Level 12", "Daily - 26 Sep", "Endless"); goal/progress (for example "Moves 5 / Par 7" or "Monsters 3/10"; the game decides what, the Shell draws it); score; Undo button if the game supports undo; Hint button if the game supports hints (free for Premium; otherwise a rewarded ad or a small daily free allowance, spec 8.10). A game without hints (for example Line Siege) has no hint button at all. (The spec's own pointer here says 8.10, but the hint budget, 1 free hint per day, is defined in 8.5; cite 8.5 for hints and 8.10 for continues.)
   - Board area (the game's): the game draws its board and handles its input here.
   - Bottom area (the game's, optional): for example Line Siege's tray of three blocks.
   - No banner ad on this screen. Ever.
@@ -108,6 +116,7 @@ Only where required.
   - Screen shake and particles respect "Reduce motion".
   - Sounds respect the sound settings; vibration respects "Vibration".
 - Lead decision (2026-09-30, L6): the Game screen has no board design reference, because every game brings its own board. Its visual parity compares only the Shell's parts (top bar and frame) and masks the board area, which comes from the board layout the game reports.
+- Lead decision (2026-09-30, L8): whether the game supports hints is the game fact "has hints": true exactly when the game's rules give solver hints. Without it (Line Siege) the top bar has no Hint key and the other keys close up; the visual parity uses the design's no-hints variant.
 
 ### S6 · Pause menu
 
@@ -115,19 +124,21 @@ An overlay on the game.
 
 - Shows: Resume (big) | Restart level | How to play | Sound on/off | Music on/off | Vibration on/off | Home.
 - Rules:
+  - "Music on/off" appears only for games that have music. A game without music (for example Line Siege) has no Music key, and the remaining keys close up. Likewise a game without hints has no hint entry here.
   - "Restart level" asks for confirmation only if progress would be lost beyond a few moves.
   - "Home" keeps the level saved, so Continue on Home resumes it.
   - No ads here.
 - Lead decisions (2026-09-30):
   - L1: a game without music (Line Siege has none) shows no Music key; the other keys share the row. Its visual parity uses the design's no-music variant of this menu.
   - L6: parity compares the menu and the Shell's parts over the game and masks the board (no board design reference).
+  - L8: a game without hints (Line Siege) shows no Hint key in the top bar under the menu, and the menu itself has no hint entry. Its visual parity uses the design's no-hints variant (Line Siege: no music and no hints together).
 
 ### S7 · Result screen
 
 - Win shows:
   - "Level complete!" with 1-3 stars filling in one by one.
   - Score, and "New best!" when it is one.
-  - The goal line, for example "7 moves - par 7".
+  - The goal line. Levels rated by moves show the moves against par, for example "7 moves - par 7". Levels rated by score (for example Line Siege) show the score against the level's best, for example "Score 1,840 - best 1,840".
   - Buttons: NEXT LEVEL (big) | Replay | Levels.
   - In Daily mode: today's result, streak and "Come back tomorrow".
 - Lose shows:
@@ -137,10 +148,11 @@ An overlay on the game.
 - Rules:
   - Stars and statistics are saved before this screen appears.
   - A full-screen ad, if one is due (spec 8.8), appears after the player taps Next / Replay / Try again. Never before they have seen their result, and never on top of it.
-  - At most once per day, one friendly Premium line may appear here ("Enjoying it? Remove ads for EUR 1.90"), see S12.
+  - At most once per day, one friendly Premium line may appear here ("Enjoying it? Remove ads for EUR 1.99", the price as the store reports it), see S12.
 - Lead decisions (2026-09-30):
   - L3: a level rated by score instead of moves (Line Siege's levels) shows a score line in place of the goal line: "Score {score} – best {bestScore}", where best is the level's best score after this run. A level rated by moves keeps "7 moves – par 7". Its visual parity uses the design's score-line variant of the win screen.
   - L6: parity compares the result and the Shell's parts over the game and masks the board (no board design reference).
+  - L9: the big score number (level, daily and endless results) in Persian and Sorani uses the taller line height 1.45 (like the level numbers, L2), so Persian digits are never clipped.
 
 ### S8 · Levels
 
@@ -203,10 +215,10 @@ Rows, grouped:
   - Reduce motion: on/off. Less screen shake, particles and bouncing. Defaults to the phone's own reduce-motion setting.
   - Hints during play: on/off (tutorial tips and nudges).
 - PREMIUM
-  - Status row: "Premium - active", or "Remove ads - EUR 1.90" (price from the store), which opens S12.
+  - Status row: "Premium - active", or "Remove ads - EUR 1.99" (price from the store), which opens S12.
   - Restore purchase.
 - PRIVACY
-  - Ad privacy choices: reopens the consent step (S3). Shown only where consent applies.
+  - Ad privacy choices: reopens Google's consent step (S3). Shown only where that consent applies. Apple's tracking answer is changed in the phone's own Settings, not here.
   - Privacy policy: the offline text (S11c).
 - DATA
   - Reset statistics (confirm).
@@ -246,7 +258,7 @@ The purchase page. Purpose: sell the one purchase honestly.
 - Shows:
   - Title: "Premium".
   - What the player gets, as three short lines: no ads, ever; hints and continues without watching ads; support the developer of this game.
-  - Price, exactly as the store reports it, in the player's currency, for example "EUR 1,90", "€1.90" or "۱٫۹۰ یورو". Never typed into the code.
+  - Price, exactly as the store reports it, in the player's currency, for example "EUR 1,99", "€1.99" or "۱٫۹۹ یورو" (Premium is EUR 1.99, owner decision O2). Never typed into the code.
   - One big BUY button.
   - Restore purchase (link).
   - Small print: "One-time purchase. No subscription. Works offline after purchase. Applies to this game only."
@@ -265,7 +277,8 @@ The purchase page. Purpose: sell the one purchase honestly.
 
 - Rules:
   - Each game has its own Premium, because each game is a separate app. Buying Premium in one game does not unlock another.
-  - Premium is never pushed with pop-ups. The only reminders are the Home button, the Settings row, and one friendly line on the result screen at most once per day ("Enjoying it? Remove ads for EUR 1.90").
+  - Premium is never pushed with pop-ups. The only reminders are the Home button, the Settings row, and one friendly line on the result screen at most once per day ("Enjoying it? Remove ads for EUR 1.99").
+  - Premium is not shared through Apple's Family Sharing: each Apple account buys it for itself (owner decision O3, 2026-09-30).
 
 ### S13 · How to play / Tutorial
 

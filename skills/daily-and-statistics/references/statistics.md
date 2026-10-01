@@ -125,10 +125,10 @@ useStatsSummary({ levelCount, hasEndless, counterIds })   // useToday() + sectio
 ```
 
 - `isEmpty` is `gamesPlayed === 0`.
-- `winRate` is a fraction for ICU `::percent` (0.75 shows "75%" in the chosen digits).
+- `winRate` is a fraction (0..1). The screen shows it as the bare percentage, "75%" in the chosen digits (`createPercentFormatter(localeTag)`, the i18n layer's percent formatter), under the label `stats.overview.win-rate`. The sentence key `stats.win-rate` ("Win rate 75%") is not the cell's value: the design's cell draws the number alone.
 - `week.max` is at least 1, so a week of zero days never divides by zero; a bar is `games / max x 92` pt tall.
 - Selectors return section references (`selectStats`, `(s) => s.progress`, `selectDaily`), so no `useShallow` is needed; the summary is rebuilt on each render (it is cheap).
-- `examples/stats-cards.ts` turns the summary into stat-grid cells with their testIDs, label keys and value formats.
+- `examples/stats-cards.ts` turns the summary into stat-grid cells with their testIDs, label keys and value formats: the bare percentage for the win rate, and for the game's card (`gameCells`) a multiplier for a best-of counter.
 
 The names are `…-summary.ts` on purpose: the screen files in the same folder are `stats-view.tsx` (the `StatsView` component), `stats-model.ts` (`StatsModel` with its `StatsSnapshot`), `stats-cells.ts` and `use-stats-model.ts`. `use-stats-model.ts` fills the flat `StatsSnapshot` from `useStatsSummary(...)`:
 
@@ -142,7 +142,7 @@ The names are `…-summary.ts` on purpose: the screen files in the same folder a
 | `bestWinStreak` | `best.longestWinStreak` |
 | `dailyCompleted`, `currentStreak`, `bestStreak` | `daily.completed`, `daily.currentStreak`, `daily.bestStreak` |
 | `week[i]` (`letter`, `weekdayName`, `games`; the bar component numbers the bars by position) | `week.days[i]`: `date.weekday-strip.<weekday>`, `date.weekday.<weekday>`, `games` |
-| `gameStats[i]` (`key`, `label`, `valueText`) | `counters[i]`: `id`, the game's counter label, the value in the chosen digits |
+| `gameStats[i]` (`key`, `label`, `valueText`) | `counters[i]`: `id`, the game's counter label, the value in the chosen digits; a counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) gets the multiplication sign, "×6", and a `'sum'` counter is the plain number |
 
 ## S10 elements and their data
 
@@ -151,7 +151,7 @@ The names are `…-summary.ts` on purpose: the screen files in the same folder a
 | `stats.top-bar.title` | `common.statistics` | |
 | `stats.overview-card.title` | `stats.overview.title` | |
 | `stats.overview-card.games-played` / `.wins` | labels `stats.overview.games-played` / `stats.overview.wins`, plain numbers | `overview.gamesPlayed`, `overview.wins` |
-| `stats.overview-card.win-rate` | label `stats.overview.win-rate`, value a `::percent` number | `overview.winRate` |
+| `stats.overview-card.win-rate` | label `stats.overview.win-rate`, value the bare percentage ("62%", `createPercentFormatter`; never the sentence `stats.win-rate`) | `overview.winRate` |
 | `stats.overview-card.play-time` | label `stats.overview.play-time`, value `stats.duration` (`hours`, `minutes`) | `overview.playTime` |
 | `stats.levels-card.title` | `common.levels` | |
 | `stats.levels-card.completed` / `.three-star` | `stats.levels.completed` / `stats.levels.three-star` | `levels.completed`, `levels.threeStarLevels` |
@@ -166,9 +166,9 @@ The names are `…-summary.ts` on purpose: the screen files in the same folder a
 | `stats.week-card.title`, `.subtitle` | `daily.week.title` (`daysCount: 7`), `stats.week.subtitle` | |
 | `stats.week-bar.<n>` (`.value`, `.bar`, `.day`); `<n>` is the position, 1 = today minus 6 days, 7 = today | value (plain number), day letter `date.weekday-strip.<weekday>` (the day's ISO weekday), a11y `stats.week.bar.a11y-label` (`weekdayName` = `date.weekday.<weekday>`, `gamesCount`) | `week.days[i]` |
 | `stats.game-card.title` | `stats.game.title` (`gameName`), logo tile | |
-| `stats.game-card.<counter-id>` | the game's counter label; values such as "×6" keep the multiplication sign | `counters[i]` |
+| `stats.game-card.<counter-id>` | the game's counter label; the value is "×6" for a best-of counter (`aggregate: 'max'`) and the plain number for a running total (`'sum'`) | `counters[i]` with the host counter's `aggregate` |
 | `stats.reset-button` | `stats.reset-button` (danger, trash icon), opens the S14 dialog | |
-| `stats.local-note` | `stats.local-note` (lock icon) | |
+| `stats.local-note` | `stats.local-note`: on the cards page a row with a 24 pt lock icon (the element is the whole row); on the empty page the bare caption | |
 
 Card order and layout (Toybox S10): Overview (2 columns), Levels (3 columns), Best (stat list), Daily (3 columns), Last 7 days (bar chart), the game's card (3 columns), then the reset button, the local note and the banner slot; body gap 16. The layout itself, the stat grid, stat list and bar chart components belong to the screen and component work; match the Toybox S10 screenshot (normal and empty variants).
 

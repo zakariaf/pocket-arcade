@@ -736,6 +736,22 @@
       "skill": "privacy-and-network-audit"
     },
     {
+      "id": "release-placeholder-ids",
+      "area": "release",
+      "topic": "Store gate",
+      "symptom": "check-game-app --stage complete, check-release-setup, check-store-artifact, store-gate.ts or audit-app-bundle fails on a placeholder: ca-app-pub-1234567890123456~1234567890 (or the ad units /1111111111, /2222222222, /3333333333), a com.example.* id, example.com or support@example.com",
+      "cause": "The scaffold writes placeholder AdMob ids until the owner creates the AdMob app and its three ad units (step G5), and ids from before owner decision O4 used com.example; the ship gates reject every placeholder by name",
+      "fix": "For the AdMob ids: owner step G5 (create the app and the three ad units, then give the ids), then write them into apps/<id>/game.config.ts; until then this failure is expected, by design. For the app id: it is fixed as io.applander.<game id without hyphens>, all lowercase (Line Siege: io.applander.linesiege), and Premium is <bundle id>.premium; new-game-scaffold writes it and withShell refuses any other",
+      "match": [
+        "ca-app-pub-1234567890123456",
+        "com\\.example\\.",
+        "support@example\\.com"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "new-game-scaffold"
+    },
+    {
       "id": "release-jwt-lifetime",
       "area": "release",
       "topic": "REST",
@@ -2146,10 +2162,10 @@
       "topic": "Catalogs",
       "symptom": "Two spellings of Sorani December",
       "cause": "CLDR 48 is inconsistent",
-      "fix": "The catalog uses the second form pending native review (owner step G7)",
+      "fix": "The catalog uses the second form; the owner's review of the Sorani texts (G7) may change it later. It is listed under \"Owner steps (not blocking)\" and never waited for",
       "match": [],
       "status": "open",
-      "owner": true,
+      "owner": false,
       "skill": "i18n-strings-and-catalogs"
     },
     {
@@ -2266,24 +2282,58 @@
       "id": "services-gma-tracking-label",
       "area": "services",
       "topic": "Privacy",
-      "symptom": "App Review rejection risk under guideline 5.1.2",
-      "cause": "The AdMob SDK's privacy manifest declares DeviceID with tracking=true while the app never shows ATT",
-      "fix": "Owner decides the App Privacy answers together with the no-ATT choice (G3)",
+      "symptom": "App Review rejection risk under guideline 5.1.2(i): the ads SDK declares tracking (Device ID) in its privacy manifest",
+      "cause": "Google Mobile Ads' own privacy manifest declares DeviceID used for tracking; before owner decision O1 the app never showed ATT",
+      "fix": "Settled by owner decision O1 (2026-09-30): the app asks for ATT before any ad request; the App Privacy answers say Device ID collected, linked to the user and used for tracking by the third-party ads SDK (G3); the app's own manifest keeps NSPrivacyTracking false with no tracking domains, because the app's code tracks nothing and Apple blocks listed domains for players who decline",
       "match": [],
-      "status": "open",
-      "owner": true,
+      "status": "documented",
+      "owner": false,
       "skill": "privacy-and-network-audit"
     },
     {
       "id": "services-att-prompt",
       "area": "services",
       "topic": "Privacy",
-      "symptom": "The app asks for tracking permission, or Info.plist has NSUserTrackingUsageDescription",
-      "cause": "userTrackingUsageDescription was passed to the AdMob plugin, or expo-tracking-transparency was installed",
-      "fix": "No tracking prompt in v1 (decision D4): remove both; the owner decides any change",
+      "symptom": "The ATT prompt is missing before the first ad request, or the app has no NSUserTrackingUsageDescription (App Review guideline 5.1.2(i): the ads SDK tracks without asking)",
+      "cause": "The plugin list lacks the expo-tracking-transparency entry (so Info.plist has no usage string), or the consent moment never calls consent.requestTracking(), or code outside the consent adapter asks for tracking in the wrong order",
+      "fix": "Owner decision O1 (2026-09-30), which reverses the old no-ATT rule: on iOS the order is the S3 intro, then Google's form when required, then Apple's ATT prompt while the status is not-determined and the app is active, all before any ad request. Add ['expo-tracking-transparency', { userTrackingPermission: <the en catalog text> }] to shell-plugins.ts (with-shell writes the localized NSUserTrackingUsageDescription for en, de, fa and ckb), call consent.requestTracking() in consent-moment-flow.ts after the form when canRequestAds is true, and import expo-tracking-transparency only in services/consent/admob-consent-adapter.ts. A declined or restricted answer still serves ads without the IDFA; ADS_MODE=off builds never ask",
       "match": [
-        "NSUserTrackingUsageDescription",
-        "userTrackingUsageDescription"
+        "ATT prompt (is )?missing",
+        "no NSUserTrackingUsageDescription",
+        "never asks for tracking"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "services-att-prompt-never-shows",
+      "area": "services",
+      "topic": "Privacy",
+      "symptom": "The ATT prompt never appears (requestTracking() returns at once, or a Maestro flow never sees it), or the tracking question shows twice with a Google explainer before it",
+      "cause": "iOS shows the prompt only while the app is active; a device that restricts tracking answers at once (Expo reports restricted as denied); the player already answered (one answer per install, and in the EU a declined answer holds for a year); the flow started the app with Maestro's launchApp, which grants every permission by default, the ATT answer included (kTCCServiceUserTracking allowed, so the status reads authorized); or an IDFA explainer message is also published in the AdMob console, so Google's UMP runs its own ATT flow first and the app finds the question answered (two flows)",
+      "fix": "Ask only after the consent form closes and AppState is active (the consent adapter waits for it); publish no IDFA explainer message in AdMob (console step A3); to see the prompt again delete the app from your own e07- simulator and install it again, then launch with xcrun simctl launch <udid> <bundleId> (or launchApp: { permissions: { all: unset } } in a flow that must launch). Declined, restricted and unavailable are normal answers: ads still initialise and serve without the IDFA. ADS_MODE=off builds (every E2E build) never ask",
+      "match": [
+        "ATT prompt never (appears|shows)",
+        "tracking prompt (never|does not) (appear|show)",
+        "prompt shown twice",
+        "explainer before",
+        "launchApp.*(ATT|tracking|permission)"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "services-att-crash-no-usage-string",
+      "area": "services",
+      "topic": "Privacy",
+      "symptom": "The app crashes when it asks for tracking: \"This app has crashed because it attempted to access privacy-sensitive data without a usage description. The app's Info.plist must contain an NSUserTrackingUsageDescription key\"",
+      "cause": "requestTrackingPermissionsAsync ran in a build whose Info.plist has no NSUserTrackingUsageDescription: the expo-tracking-transparency plugin entry is missing, or the native project predates it",
+      "fix": "Add ['expo-tracking-transparency', { userTrackingPermission: <the en catalog text> }] to shell-plugins.ts (with-shell adds the de, fa and ckb strings from the catalogs), then npx expo prebuild --clean and rebuild; check-known-pitfalls reports the missing entry as services-att-prompt",
+      "match": [
+        "must contain an NSUserTrackingUsageDescription key",
+        "privacy-sensitive data without a usage description"
       ],
       "status": "documented",
       "owner": false,
@@ -2564,7 +2614,7 @@
       "topic": "Navigation",
       "symptom": "Push animations may slide the wrong way in RTL with headerShown false",
       "cause": "Not checked visually (the source says native-stack passes direction)",
-      "fix": "Owner RTL play-test confirms pushes slide from the reading direction",
+      "fix": "The owner's RTL play-test will show it; it is listed under \"Owner steps (not blocking)\" and nothing waits for it",
       "match": [],
       "status": "open",
       "owner": false,
@@ -2908,12 +2958,15 @@
       "id": "perf-hold-label-contrast",
       "area": "perf",
       "topic": "Accessibility",
-      "symptom": "The hold-to-confirm label is 4.43:1 during the hold (needs 4.5)",
-      "cause": "17 pt bold danger text on dangerFill in light",
-      "fix": "Owner chooses: a lighter dangerFill (#FFDFE2 gives 4.62:1) or accept it as a transient state",
-      "match": [],
-      "status": "open",
-      "owner": true,
+      "symptom": "The hold-to-confirm label measured 4.43:1 on the light danger fill during the hold (needs 4.5)",
+      "cause": "The old light dangerFill #FFD9DD was a little too dark for 17 pt bold danger text",
+      "fix": "Decided (owner, O5): the light dangerFill is #FFDCDF (same hue, lighter), where danger text reaches 4.52:1 (text 13.03:1, muted text 7.6:1); the dark fill is unchanged; check-contrast checks danger on dangerFill as a 4.5 text pair in both themes, with no exception. Copy the current tokens (toybox-design-system)",
+      "match": [
+        "4\\.43:1",
+        "hold(-to-confirm)? label.*contrast"
+      ],
+      "status": "documented",
+      "owner": false,
       "skill": "accessibility"
     },
     {
@@ -3203,12 +3256,15 @@
       "id": "open-price-point",
       "area": "open",
       "topic": "Purchases",
-      "symptom": "The Premium price tier (EUR 1.90 vs 1.99) is not settled",
-      "cause": "Apple price points were not checked (no key)",
-      "fix": "The IAP script refuses to guess and asks the owner (D3)",
-      "match": [],
-      "status": "open",
-      "owner": true,
+      "symptom": "An old note or the spec says the Premium price is about EUR 1.90",
+      "cause": "Before owner decision O2 (2026-09-30) the price point was open",
+      "fix": "Decided (owner, O2): Premium is the EUR 1.99 App Store price point in the DEU base territory; create-premium-iap.ts targets exactly 1.99 and stops only if Apple no longer offers it; the app always shows the store's localised price (formatStorePrice with the displayPrice fallback) and never types it",
+      "match": [
+        "EUR 1\\.90",
+        "1\\.90 vs 1\\.99"
+      ],
+      "status": "documented",
+      "owner": false,
       "skill": "premium-purchase"
     },
     {
@@ -3265,11 +3321,27 @@
       "topic": "Copy",
       "symptom": "fa and ckb strings may wrap differently after review",
       "cause": "The copy deck is a draft awaiting native review",
-      "fix": "Re-check S2, S4 keys and stickers after the review",
+      "fix": "Re-check S2, S4 keys and stickers after the owner's review (R3); the review is listed under \"Owner steps (not blocking)\" and never waited for",
       "match": [],
       "status": "open",
-      "owner": true,
+      "owner": false,
       "skill": "toybox-screens"
+    },
+    {
+      "id": "open-owner-personal-checks",
+      "area": "open",
+      "topic": "Owner steps",
+      "symptom": "A report, a gate or a plan waits for the native review of fa and ckb texts, the play-test or listening to the sound previews (\"fa and ckb need the native review before a release\")",
+      "cause": "Before owner decision O6 (2026-09-30) these were treated as release gates; the owner now does all three personally",
+      "fix": "List them under \"Owner steps (not blocking)\" in every slice and release report (check-report rule owner-steps-listed) and keep working: Claude drafts the texts, renders the WAV previews (reports/sfx/<game-id>/) and names the play-test; no gate waits for them, and check-balance --release prints unapproved bands as an owner-step line",
+      "match": [
+        "native (speaker|review).*before (a|the) release",
+        "bands-unapproved",
+        "waits? for the (native review|play-test|owner.s review)"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "git-commits-and-reporting"
     },
     {
       "id": "build-simctl-clt",
@@ -3676,10 +3748,10 @@
       "area": "testing",
       "topic": "Maestro",
       "symptom": "npm run e2e:ios reports no cold-start or memory numbers and always uses the large text size",
-      "cause": "run-e2e-ios.ts has no cold-start/footprint step and no --text-size option yet",
-      "fix": "Add both to run-e2e-ios.ts so the a11y pass needs no hand-run commands (screenshots:ios already has --text-size)",
+      "cause": "An old runner (before round 4) had no cold-start or footprint step and no text-size option",
+      "fix": "Use the current run-e2e-ios.ts from e2e-maestro: after the flows it runs 6 cold launches against perf-baselines/cold-start-sim-<game>.json, the footprint step (at most 150 MB) and the a11y flows at 200 % text in en and fa on the phone and the iPad; check-e2e-report.mjs then requires the cold-start, memory and feedback evidence",
       "match": [],
-      "status": "open",
+      "status": "verified",
       "owner": false,
       "skill": "performance-budgets"
     },
@@ -3688,10 +3760,10 @@
       "area": "testing",
       "topic": "Purchases",
       "symptom": "The first storekit-harness.ts run on the pilot app fails at Metro readiness or flow order",
-      "cause": "The Tier-2 runner and its seven flows were verified step by step, never as a whole",
-      "fix": "Run it once on the pilot, fix the order or wait, and record the result",
+      "cause": "The Tier-2 runner and its seven flows had been verified step by step, never as a whole; the first whole runs (2026-09-30) failed 5 of 7 flows on the network guard blocking Metro, then 1 of 7 on a refund not undone after an offline launch",
+      "fix": "Both are fixed (testing-storekit-harness-metro-blocked, services-refund-after-offline-launch); the third run passed 7 of 7 on the pilot. Follow the release-day order in testing-tiers.md: the E2E run, then the harness on your own e07- simulator (maestro --device <udid> with its own driver port), then delete that simulator and run prebuild --clean before the store archive",
       "match": [],
-      "status": "open",
+      "status": "verified",
       "owner": false,
       "skill": "premium-purchase"
     },
@@ -3785,12 +3857,16 @@
       "id": "i18n-unreviewed-texts",
       "area": "i18n",
       "topic": "Catalogs",
-      "symptom": "release:ios refuses a store build: fa/ckb messages differ from their reviewed hash",
-      "cause": "Changed Persian or Sorani texts have not been reviewed by a native speaker",
-      "fix": "Owner step: review (review-sheet.ts) or record a waiver (\"reviewer\": \"waived-by-owner\") with a Gate-Change trailer",
-      "match": [],
+      "symptom": "release:ios prints an \"Owner step R3 (not blocking)\" line, or review-sheet.ts lists texts: fa/ckb messages differ from their reviewed hash",
+      "cause": "Changed Persian or Sorani texts have not had the owner's review yet (the owner reviews them personally, owner decision O6)",
+      "fix": "Nothing to fix before a release: the review is the owner's own step (owner decision O6) and never blocks a build or the agent's work. The preflight runs review-sheet.ts, writes reports/i18n/review-<fa|ckb>.csv, prints the owner-step line and goes on; keep drafting and list the texts under \"Owner steps (not blocking)\" in the report. After the owner answers, apply the texts and run review-sheet.ts --mark-reviewed <lang> --date <day>; never edit the reviewed hashes by hand",
+      "match": [
+        "reviewed hash",
+        "i18n-review",
+        "texts await your review"
+      ],
       "status": "documented",
-      "owner": true,
+      "owner": false,
       "skill": "i18n-strings-and-catalogs"
     },
     {
@@ -4073,12 +4149,14 @@
       "id": "open-family-sharing",
       "area": "open",
       "topic": "Purchases",
-      "symptom": "Family Sharing for Premium is undecided",
-      "cause": "Turning it on in App Store Connect cannot be undone",
-      "fix": "Default off; only the owner turns it on",
-      "match": [],
-      "status": "open",
-      "owner": true,
+      "symptom": "Family Sharing for Premium: should it be on?",
+      "cause": "Turning Family Sharing on in App Store Connect cannot be undone; before owner decision O3 (2026-09-30) it was undecided",
+      "fix": "Decided (owner, O3): off. familyShareable is false in the StoreKit config and familySharable false in the App Store Connect payload; leave Family Sharing off in App Store Connect and never turn it on; check-premium enforces both wherever a StoreKit config is checked",
+      "match": [
+        "[Ff]amily [Ss]haring"
+      ],
+      "status": "documented",
+      "owner": false,
       "skill": "premium-purchase"
     },
     {
@@ -4974,7 +5052,7 @@
       "area": "parity",
       "topic": "App capture",
       "symptom": "capture-app cannot find the app by a .test bundle id",
-      "cause": "Test and store builds share one bundle id; com.example.<game> is the placeholder until the owner approves one",
+      "cause": "Test and store builds share one bundle id, io.applander.<game id without hyphens> (Line Siege: io.applander.linesiege), with no .test suffix",
       "fix": "Read the id from the built app with plutil (CFBundleIdentifier)",
       "match": [],
       "status": "verified",
@@ -5346,6 +5424,21 @@
       "skill": "skill-maintenance"
     },
     {
+      "id": "skills-bash-every-call-exits-1",
+      "area": "skills",
+      "topic": "Session",
+      "symptom": "Every Bash call exits 1 with no output, even true or exit 0, in the foreground and in the background (Read and Write still work)",
+      "cause": "The Claude Code session's shell tool broke after hours of long runs (most likely exhausted processes or descriptors); nothing in the repo or the skills causes it",
+      "fix": "Stop at once and reply with exactly what is done and what is left. Never build a workaround such as a job queue or a file-watcher runner; the session needs a restart. Prevent it: shut down your own simulators and stop your own Metro, Maestro drivers, log streams and monitors as soon as you are done with them",
+      "match": [
+        "every Bash (call|command) exits 1 with no output",
+        "Bash tool.*exit 1.*no output"
+      ],
+      "status": "verified",
+      "owner": true,
+      "skill": "troubleshooting-playbook"
+    },
+    {
       "id": "deps-duplicate-native-peer",
       "area": "deps",
       "topic": "Overrides",
@@ -5580,6 +5673,157 @@
       "skill": "toybox-design-system"
     },
     {
+      "id": "parity-dialog-modal-hides-scrim",
+      "area": "parity",
+      "topic": "App capture",
+      "symptom": "Every S14 capture fails screen-not-reached: the frame root <scope>.scrim is not in the hierarchy (\"the root testID ...scrim is not on screen\")",
+      "cause": "DialogCard sets accessibilityViewIsModal, which drops the scrim ancestor's testID (and the screen under it) from the accessibility tree",
+      "fix": "Put accessibilityViewIsModal on the Scrim, the modal root (VoiceOver still stays inside the dialog), and remove it from DialogCard: copy toybox-components' current ui/scrim.tsx and ui/dialog-card.tsx",
+      "match": [
+        "screen-not-reached on every S14",
+        "root testID \\S*\\.scrim is not on screen"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-persian-overflow-high",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "Persian text sits up to 3 pt high, or the tops of Persian digits are clipped (text-ink ink height 17.7 vs 20.7 on tight number lines), on S9, S10 and S12 in fa",
+      "cause": "iOS puts all of a line's overflow above the line box and clips the Text at its frame, while Chrome centres it; Vazirmatn's content box is 1.5625 em, so every Arabic-script line overflows",
+      "fix": "Copy toybox-components' current AppText: it wraps Arabic-script text whose half overflow h is 1.5 pt or more in a View that keeps the design line box and carries the testID, and gives the Text paddingTop ceil(h)+h, paddingBottom ceil(h)-h and marginVertical -ceil(h)",
+      "match": [
+        "Persian text [\\d.]+ pt high",
+        "digit tops (are )?clipped"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-quiet-underline",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "Underline ink width or position fails on every quiet button (the nudges of S11d, S12 and S13)",
+      "cause": "iOS draws textDecorationLine underline 1 pt thick at its own depth, while the design's .quiet has text-decoration-thickness 2px and text-underline-offset 5px",
+      "fix": "Copy toybox-components' current quiet-button.tsx and nudge style: no textDecorationLine; the button draws a 2 pt bar at the design's depth under the text (from each face's ascent)",
+      "match": [
+        "underline ink width",
+        "underline.*quiet button"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-display-balance-digits-baseline",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "Two-line titles break elsewhere than the design (S14 fa, S11c), proportional Persian digits (ink 12 vs 20.3 pt for ۱۱), or stat values 8 pt low (S10 fa)",
+      "cause": "The design balances every display text (text-wrap: balance), uses tabular digits for stat values (font-variant-numeric: tabular-nums) and aligns stat rows on Chrome's baselines; iOS wraps greedily, draws proportional digits and reports another baseline when Persian text overflows",
+      "fix": "Copy toybox-components' current AppText (balanced wrap for the display face, useBalancedWrap), the type styles' isTabular (fontVariant tabular-nums on number and statValueCompact) and StatList's baseline arithmetic (ui/text-metrics.ts, use-chrome-baseline.ts)",
+      "match": [
+        "titles break elsewhere",
+        "proportional Persian digits",
+        "stat values [\\d.]+ pt low"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-pause-mode-line-high",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "S6 Pause in Persian: pause.mode-label box 4.7 pt above the design (dy -4.7) while its glyphs match; or, after a baseline fix, the mode line sits level with the title top (dy -10.5 en, -13.7 fa)",
+      "cause": "Yoga's alignItems 'baseline' reads the title's baseline through AppText's Persian overflow-guard pads, so the fa mode line lands 4.7 pt high; and in the header's wrapping row (flexWrap: 'wrap') iOS ignored a marginTop on the item, so a Chrome-baseline drop written as a margin did nothing",
+      "fix": "Copy toybox-screens' current pause-view.tsx: the header row is alignItems 'flex-start', and each text sits in a View whose paddingTop is the difference of useChromeBaseline('title') and useChromeBaseline('body') (9.83 pt in en, 12.5 pt in fa at 3x; design 10 and 13); pause-view.test.tsx pins both",
+      "match": [
+        "pause\\.mode-label.*dy -(4\\.7|10\\.5|13\\.7)",
+        "mode line (sits )?(high|level with the title)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-screens"
+    },
+    {
+      "id": "parity-balanced-wrap-stalls",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "Balanced wrap never settles: a display text keeps its greedy line breaks on the device (S11c en stuck at 4 lines, the design has 3) while its Jest tests pass",
+      "cause": "onTextLayout and onLayout arrive in one batch, so a closure-based setState loses one of them; React Native sends no onTextLayout when a new width lays out the same lines, so a bisection that probes a wider width waits forever",
+      "fix": "Use toybox-components' ui/use-balanced-wrap.ts: functional state updates, every probe narrower than the widest kept line, back to the last kept width after a failed probe, and layouts wider than the room dropped",
+      "match": [
+        "balanced wrap never settles",
+        "balanced.wrap.*(stuck|never)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-sliver-counts-missing",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "[missing] for an element with only a few points on screen (S11c fa at scroll 0: privacy-policy.section.backup.body starts at y 869 of 874)",
+      "cause": "The iOS accessibility snapshot leaves out an element with a 5 pt sliver on screen, while the gate expects every element that starts above the body bottom",
+      "fix": "Use the current toybox-visual-parity gates, where an element with less than a few points on screen counts as off-screen (it is checked whole at the next scroll offset); with an older gate, a platform waiver (missing, that language) with this cause",
+      "match": [
+        "missing element with [\\d.]+ pt on screen",
+        "only [\\d.]+ pt on screen"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
+      "id": "parity-hold-fill-short",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "S14 reset: the held danger fill ends 16 pt short (structure fails in en and fa)",
+      "cause": "The fill is an absolute child with width 46%; Yoga resolves the percentage inside the face's padding (46% of 278 pt), while the design's .hf takes 46% of the key's padding box (310 pt)",
+      "fix": "Copy toybox-components' current hold-button.tsx: the fill sits in an absolute track pinned to the face edges and takes the percentage there",
+      "match": [
+        "hold fill [\\d.]+ pt short",
+        "held (danger )?fill.*short"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "parity-text-ink-neighbour",
+      "area": "parity",
+      "topic": "Comparison",
+      "symptom": "text-ink reads a neighbour's dots: a Persian value's ink height doubles (S10 fa \"×۶\": 29 vs 15.7 pt), or text hidden behind a dialog card is still ink-checked",
+      "cause": "A Chrome text run of a Vazirmatn line is 1.5625 em tall, so its ink window (+2 pt) reaches into the next element and counts that label's dots, which drop out in the app when the neighbour sits 1 pt lower; runs covered by the dialog are measured too",
+      "fix": "Use the current toybox-visual-parity gates (the ink window clipped to its own element, runs covered by .dlg skipped, state cards compared without position); with an older gate, a platform waiver with this cause",
+      "match": [
+        "text-ink reads a neighbou?r'?s dots",
+        "ink window.*neighbou?r"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
+      "id": "parity-hierarchy-other-simulator",
+      "area": "parity",
+      "topic": "App capture",
+      "symptom": "maestro hierarchy shows another screen or language (a Persian Settings screen during an English S7 capture), or capture-app stops with \"hierarchy from another simulator\"",
+      "cause": "Maestro reached another session's simulator: the call named no --device, or two sessions' drivers shared a port while several sessions' simulators were booted on the same Mac",
+      "fix": "Name the device on every call: maestro --device <udid> with its own --driver-host-port (maestroGlobalArgs() in the repo tooling), simctl with the UDID, xcodebuild -destination id=<udid>; use your own e07-<purpose> simulator and shut down only your own; capture-app proves each dump by its launch nonce and exits 2 otherwise",
+      "match": [
+        "hierarchy from another simulator",
+        "hierarchy shows another (screen|language)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
       "id": "testing-maestro-evalscript-colon",
       "area": "testing",
       "topic": "Maestro",
@@ -5671,10 +5915,13 @@
       "topic": "Parity",
       "symptom": "S6 Pause parity (and the S5 top bar under it) fails [missing] on game.hint-button for a game without solver hints (Line Siege)",
       "cause": "The design's game top bar always draws a hint key, while the app leaves the key out for a game whose hints are none (a hidden key, never a broken one); no game fact selects a reference without it yet",
-      "fix": "Owner decision (asked 2026-09-30): a hasHints game fact with a --no-hints reference variant, like hasMusic. Until it is decided, leave the S6 sign-off of a hint-less game open; never waive the missing key and never draw a dead hint key",
-      "match": [],
-      "status": "open",
-      "owner": true,
+      "fix": "Decided (lead, L8): the game facts gain hasHints (true only when the module's rules.hints.kind is 'solver'; Line Siege false). parity/game-facts.json sets it, and captures compose the variants in frames.json order with no-music before no-hints (Line Siege: s6-pause--no-music--no-hints); the S5 top bar has no hint key when it is false. A missing fact is exit 2, never a guess",
+      "match": [
+        "\\[missing\\].*game\\.hint-button",
+        "hint key.*no-hints"
+      ],
+      "status": "documented",
+      "owner": false,
       "skill": "toybox-visual-parity"
     },
     {
@@ -5683,10 +5930,13 @@
       "topic": "Parity",
       "symptom": "S7 Result win in fa or ckb fails [text-ink] on result.score-card.value (ink height about 29 vs 38 pt): the tops of the Persian digits of the 44 pt score are cut off",
       "cause": "The scoreValue type role keeps a Persian line height of 1.0, which clips Vazirmatn's tall digits on iOS (the same clip the level numbers had before they moved to 1.45)",
-      "fix": "Owner decision (asked 2026-09-30): the token scoreValue.arabicLineHeight 1.45 with a matching mockup rule and a re-render, as for levelNumber. Until then the fa and ckb S7 win sign-offs stay open; never waive clipped digits",
-      "match": [],
-      "status": "open",
-      "owner": true,
+      "fix": "Decided (lead, L9): typeRoles.scoreValue.arabicLineHeight is 1.45, with the mockup rule .ar .sc-v{line-height:1.45}, and the references were re-rendered (reference change L9). Copy the current type roles from toybox-design-system (scoreValue display(44, [1, 1.45])) and rerun; never waive clipped digits",
+      "match": [
+        "\\[text-ink\\].*result\\.score-card\\.value",
+        "score.*Persian.*clip"
+      ],
+      "status": "documented",
+      "owner": false,
       "skill": "toybox-design-system"
     },
     {
@@ -5695,13 +5945,162 @@
       "topic": "Navigation",
       "symptom": "The Shell journey 02-core-journey-offline fails \"Assertion is false: id: daily.screen is visible\" after tapping home.daily-card: nothing on Home opens S9 Daily challenge",
       "cause": "navigation-and-routing's table says the daily card title opens S9 (navigate('Daily')), but the Toybox design draws the daily panel flat, with only the Play today's challenge button (the testID map's note asks which element opens S9), so the Home view has no control for it and a player cannot reach S9",
-      "fix": "Owner decision (found on the simulator 2026-09-30): which Home element opens S9 and how VoiceOver reaches it. Until then S9 is reachable only through the debug link (screen=daily); do not make the whole card pressable (VoiceOver would lose the play button inside it)",
+      "fix": "Decided (lead, L7): the daily card's body is an accessible button (testID home.daily-card, its label joins the title, date and streak) that opens S9, and its Play key (home.daily-card.play-button) is a separate accessible sibling that starts today's run; the pixels do not change, and a finished day still opens S9. Copy toybox-screens' current Home daily card and the Shell journey 02, which taps home.daily-card",
       "match": [
         "id: daily\\.screen is visible"
       ],
-      "status": "open",
-      "owner": true,
+      "status": "documented",
+      "owner": false,
       "skill": "toybox-screens"
+    },
+    {
+      "id": "testing-storekit-harness-metro-blocked",
+      "area": "testing",
+      "topic": "Purchases",
+      "symptom": "The StoreKit harness fails most flows at once (5 of 7), LogBox covers the app, and the perf log lists a blocked websocket or fetch to ws://localhost:<port>/hot or http://localhost:<port>/ in the Debug build",
+      "cause": "The test build installs the JS network guard, which blocked the Debug build's own Metro on loopback (the bundle and the HMR websocket); the harness is the only Debug build that runs with the guard",
+      "fix": "Copy e2e-maestro's current packages/shell/src/screens/debug/network-guard.ts (and its test): isDevLoopback lets only a __DEV__ build reach localhost, 127.0.0.1 or [::1]; a Release build still blocks everything. Rebuild the harness and rerun it",
+      "match": [
+        "ws://localhost:\\d+/hot",
+        "blocked (websocket|fetch).*localhost",
+        "storekit.harness.*[57] of 7"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "premium-purchase"
+    },
+    {
+      "id": "services-refund-after-offline-launch",
+      "area": "services",
+      "topic": "Purchases",
+      "symptom": "A refund is not undone after a launch that started offline: Premium stays on when the phone comes back online (StoreKit harness flow 02)",
+      "cause": "The launch re-check inside startPremium ran offline, where a missing entitlement is not evidence, and nothing re-checked when ConnectivityPort reported online again, so the revocation waited for the next foreground",
+      "fix": "Copy game-host-integration's current app/connect-premium-reloads.ts: when ConnectivityPort changes to online, loadStore(deps) then recheckPremium(deps); on AppState active, recheckPremium(deps) when online; the debug offline switch notifies the ConnectivityPort subscribers when it flips. check-premium-behaviour.mjs rule store-reloads proves the wiring",
+      "match": [
+        "refund.*(offline|not (undone|revoked))",
+        "Premium stays on after (a )?refund"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "premium-purchase"
+    },
+    {
+      "id": "testing-maestro-driver-port-shared",
+      "area": "testing",
+      "topic": "Maestro",
+      "symptom": "A Maestro run fails to connect to its driver (port 7001 in use, \"Failed to connect\") or answers with another app's or another language's screen; check-e2e-setup or check-sim-setup fails maestro-device",
+      "cause": "The call used the default driver port 7001 (or a per-command --udid alone), which another session's XCTest driver on the same Mac already listens on",
+      "fix": "Build every Maestro call with maestroGlobalArgs({ udid, driverPort: await freeDriverPort() }) from packages/tooling/src/e2e/maestro-args.ts, so it reads maestro --device <udid> --driver-host-port <port> <command> ...; use your own e07-<purpose> simulator and pass its UDID to every simctl and xcodebuild call",
+      "match": [
+        "7001",
+        "driver-host-port",
+        "\\[maestro-device\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "testing-e2e-needs-ads-off",
+      "area": "testing",
+      "topic": "E2E flows",
+      "symptom": "npm run e2e:ios stops at once: \"e2e:ios needs a test build with ADS_MODE=off, this one is test/test\" (or store/...)",
+      "cause": "The simulator build is not the test variant with ads off; with ads on the consent moment could ask Google's form and Apple's tracking prompt, and the ad SDK opens sockets the network check would flag",
+      "fix": "Rebuild with npm run build:ios:sim -- --app <game> --variant test --ads off, then rerun; the ATT and consent order is proven separately on an ADS_MODE=test build (admob-ads' simulator smoke test)",
+      "match": [
+        "needs a test build with ADS_MODE=off",
+        "\\[e2e-ads-off\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "release-rehearsal-unsigned",
+      "area": "release",
+      "topic": "Store gate",
+      "symptom": "check-store-artifact or audit-app-bundle fails get-task-allow with \"the app is not signed (codesign -d failed)\" on a rehearsal archive built with CODE_SIGNING_ALLOWED=NO",
+      "cause": "The ship gates require a signed export; a keyless rehearsal archive has no signature",
+      "fix": "For a rehearsal only, pass --unsigned: the gate prints REHEARSAL: not a release gate first, reports only the signing and get-task-allow rule as SKIP and keeps every other rule strict. A REHEARSAL result is never release evidence (check-report refuses it); the real release exports with the team API key and runs the gates without the flag",
+      "match": [
+        "the app is not signed \\(codesign -d failed\\)",
+        "REHEARSAL: not a release gate"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "ios-release-testflight"
+    },
+    {
+      "id": "testing-feedback-evidence-missing",
+      "area": "testing",
+      "topic": "E2E flows",
+      "symptom": "check-e2e-report fails feedback-evidence: feedback.json is missing, or \"the smoke flows asked for no win sound\" or \"no success haptic\"",
+      "cause": "The run used --flows-only (the memory step writes feedback.json from the perf log), or the test build does not record feedback: createDebugParts does not wrap the audio and haptics ports (TEST_ONLY.recordAudioFeedback / recordHapticsFeedback from services/audio/recording-feedback.ts), or the game host plays feedback through the raw ports instead of parts.feedback (debugFeedbackOf)",
+      "fix": "Run check-e2e-setup.mjs . (rules perf-layer and feedback-evidence) and restore the templates it names, rebuild the test variant and rerun npm run e2e:ios -- --app <game> without --flows-only. The evidence proves the app asked for the cues; how they sound and feel is the owner's device check",
+      "match": [
+        "\\[feedback-evidence\\]",
+        "asked for no (win sound|success haptic)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "e2e-maestro"
+    },
+    {
+      "id": "i18n-system-text-plain",
+      "area": "i18n",
+      "topic": "Catalogs",
+      "symptom": "copy-deck check fails system-text-plain: consent.tracking.usage-description \"is a system dialog text ... but holds an ICU argument or brace\"",
+      "cause": "iOS shows NSUserTrackingUsageDescription straight from Info.plist, where nothing formats ICU, so a {placeholder} would show as typed",
+      "fix": "Write the text as one plain sentence without braces (iOS already names the app in the dialog title); change the copy deck first, then node copy-deck.mjs apply . --key consent.tracking.usage-description",
+      "match": [
+        "\\[system-text-plain\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "i18n-strings-and-catalogs"
+    },
+    {
+      "id": "i18n-system-text-missing",
+      "area": "i18n",
+      "topic": "Catalogs",
+      "symptom": "copy-deck check fails system-text-missing (\"a system dialog text withShell writes into Info.plist for <lang>, but the catalog lacks it\"), or an Info.plist or <lang>.lproj/InfoPlist.strings has no NSUserTrackingUsageDescription",
+      "cause": "The Shell catalogs predate the copy-deck key consent.tracking.usage-description; withShell reads the four texts from the catalogs",
+      "fix": "Run node copy-deck.mjs apply . --key consent.tracking.usage-description (it writes all four Shell catalogs), then prebuild again; the fa and ckb drafts wait for the owner's own review, which never blocks",
+      "match": [
+        "\\[system-text-missing\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "i18n-strings-and-catalogs"
+    },
+    {
+      "id": "i18n-nested-isolates",
+      "area": "i18n",
+      "topic": "RTL layout",
+      "symptom": "check-i18n-code fails nested-isolates, or the Persian daily date in a sentence (the S5 top bar) shows its day and month in the wrong order",
+      "cause": "A text that already carries bidi isolates (FSI...PDI from formatDayMonth) is passed into another t() call as a value, which isolates it again",
+      "fix": "Wrap it: stripIsolates(formatDayMonth(date, t)) from @e07/shell/i18n/bidi.ts, so the sentence holds one isolate per value",
+      "match": [
+        "\\[nested-isolates\\]"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "i18n-strings-and-catalogs"
+    },
+    {
+      "id": "lint-bundle-id-applander",
+      "area": "lint",
+      "topic": "Naming",
+      "symptom": "check-file-names fails bundle-id-applander: \"bundleId 'com.example.linesiege' is not 'io.applander.linesiege'\"",
+      "cause": "Owner decision O4 fixes every app id as io.applander.<game id without hyphens>, all lowercase, with Premium <bundleId>.premium; the game.config.ts predates it",
+      "fix": "Set bundleId: 'io.applander.<id without hyphens>' and premium.productId: '<bundleId>.premium' in apps/<id>/game.config.ts (new-game-scaffold writes these; withShell throws on any other id)",
+      "match": [
+        "\\[bundle-id-applander\\]",
+        "is not 'io\\.applander\\."
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "naming-conventions"
     }
   ]
 }

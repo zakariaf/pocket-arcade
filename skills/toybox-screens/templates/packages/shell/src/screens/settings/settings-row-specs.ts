@@ -3,7 +3,7 @@
 // show, in which order, with which testID, lives in settings-rows.ts (settings-and-preferences).
 import type { SettingsGroupId, SettingsRowId } from './settings-rows.ts';
 import type { ShellMessageKey } from '@e07/shell/i18n/messages.ts';
-import type { IconTilePaint } from '@e07/shell/ui/icon-tile.tsx';
+import type { IconTileIcon, IconTilePaint } from '@e07/shell/ui/icon-tile.tsx';
 import type { IconName } from '@e07/shell/ui/icons/icon-paths.ts';
 
 /** link = chevron row; toggle = switch row; volume = sub-row slider; digits/theme = wrap row with segments. */
@@ -11,7 +11,7 @@ export type SettingsRowKind = 'link' | 'toggle' | 'volume' | 'digits' | 'theme' 
 
 export type SettingsRowSpec = {
   readonly kind: SettingsRowKind;
-  readonly icon: IconName;
+  readonly icon: IconTileIcon;
   readonly labelKey: ShellMessageKey;
   readonly descriptionKey?: ShellMessageKey;
   readonly iconPaint?: IconTilePaint;
@@ -74,7 +74,8 @@ export const SETTINGS_ROW_SPECS: Readonly<Record<SettingsRowId, SettingsRowSpec>
   },
   about: { kind: 'link', icon: 'info', labelKey: 'settings.about.label' },
   licences: { kind: 'link', icon: 'doc', labelKey: 'settings.licences.label' },
-  rate: { kind: 'link', icon: 'star-outline', labelKey: 'settings.rate.label' },
+  // The design's star(false): the hollow rating star with its 1.8 edge, not the 2.5 outline icon.
+  rate: { kind: 'link', icon: 'rating-star-hollow', labelKey: 'settings.rate.label' },
   contact: { kind: 'link', icon: 'mail', labelKey: 'settings.contact.label' },
 };
 

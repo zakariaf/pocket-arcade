@@ -1,0 +1,60 @@
+# apps/__GAME_ID__/e2e/flows/journeys/13-endless.yaml — an endless run, lost, sets the endless best
+# (for a game with modes.endless; check-flows rule mode-flows asks for it):
+# 1. the debug link fixes the endless seed (seed=42), makes the player a Premium owner and opens Home;
+# 2. Home's endless card (the key under test) starts the run;
+# 3. action=lose-level loses it with the game's example loss (testing.examples.lose(), a score
+#    above 0). A game whose isContinueAllowed is true offers its one continue first and records the
+#    run only when the continue is used or declined: the Premium continue (the only one an ads-off
+#    E2E build can take) brings the run back, and a second action=lose-level ends it for good
+#    (a game with isContinueAllowed false deletes the continue steps and premium=1);
+# 4. the endless result: its title and New best!;
+# 5. Home: the endless card's label now carries a best above 0 (its label, "Endless – Best <n>",
+#    is read through the card: the label and description are parts inside it).
+appId: ${APP_ID}
+name: __GAME_NAME__ endless run ends with a new best that Home shows
+tags: [__GAME_ID__, endless]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&seed=42&premium=1&ads=off&firstRun=0&reduceMotion=1&screen=home'
+      WAIT_FOR: 'home.endless-card'
+- tapOn:
+    id: 'home.endless-card'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=lose-level'
+      WAIT_FOR: 'result.continue-premium-button'
+- tapOn:
+    id: 'result.continue-premium-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+- runFlow:
+    file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=lose-level'
+      WAIT_FOR: 'result.endless-title'
+- assertVisible:
+    id: 'result.endless-title'
+- assertVisible:
+    id: 'result.score-card.new-best'
+- takeScreenshot: __GAME_ID__-endless-new-best
+- tapOn:
+    id: 'result.home-button'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 15000
+# A best above 0: any digit 1-9 in the card's label ("Best 0" before the run has none).
+- assertVisible:
+    id: 'home.endless-card'
+    text: '.*[1-9].*'

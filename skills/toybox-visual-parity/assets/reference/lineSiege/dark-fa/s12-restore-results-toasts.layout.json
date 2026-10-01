@@ -2,7 +2,7 @@
 "version":1,
 "frame":"s12-restore-results-toasts",
 "variant":null,
-"facts":{"hasMusic":true,"winLine":"moves"},
+"facts":{"hasMusic":true,"winLine":"moves","hasHints":true},
 "kind":"state-card",
 "screens":[
 "S12/restore"
@@ -16,10 +16,10 @@
 "size":{"w":402,"h":370},
 "image":"s12-restore-results-toasts.png",
 "elements":[
-{"testID":"premium.restoring-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"busy blocks","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":79.5,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"در حال بازیابی…","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
-{"testID":"premium.restore-success-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"check","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":136.75,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"خرید بازیابی شد. پریمیوم فعال است.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
-{"testID":"premium.restore-empty-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"info","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":194,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"خرید قبلی‌ای پیدا نشد.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
-{"testID":"premium.restore-failed-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"alert","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"count":1,"rect":{"x":20,"y":251.25,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"الان بازیابی ممکن نشد. لطفاً بعداً دوباره تلاش کنید.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}}
+{"testID":"premium.restoring-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"busy blocks","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":79.5,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"در حال بازیابی…","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
+{"testID":"premium.restore-success-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"check","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":136.75,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"خرید بازیابی شد. پریمیوم فعال است.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
+{"testID":"premium.restore-empty-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"info","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":194,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"خرید قبلی‌ای پیدا نشد.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}},
+{"testID":"premium.restore-failed-toast","screen":"S12/restore","role":"alert","component":"Toast","kind":"alert","checks":["text","fill"],"mask":false,"parent":null,"a11yHidden":false,"coveredBy":null,"a11yLabel":false,"state":null,"when":null,"surface":false,"count":1,"rect":{"x":20,"y":251.25,"w":362,"h":47.25},"box":{"w":362,"h":47,"rotate":0},"text":"الان بازیابی ممکن نشد. لطفاً بعداً دوباره تلاش کنید.","aria":null,"style":{"fill":"#F4F2FF","color":"#1B1943","border":null,"radius":"12px","shadow":null,"outline":null,"font":"400 15px/23.25px Vazirmatn"}}
 ],
 "texts":[
 {"text":"بازیابی خرید","x":238.42,"y":22,"w":143.58,"h":47,"owner":null,"font":"700 30px Vazirmatn"},

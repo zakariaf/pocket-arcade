@@ -1,12 +1,15 @@
 // packages/shell/src/app/create-debug-parts.ts
 // The composition root's one call for everything test-only that reaches services: the JS network
-// guard, the test-only key-value store, the perf log (cold start, in the save database), the debug
-// services (S15 switches and the debug link), the debug link handler and the navigator ref it
-// navigates with. All of it comes through the test-only entry, so a store build (TEST_ONLY ===
-// null) gets services and links null and none of that code. The handler listens to Linking from
-// here on and queues links until the navigator is ready: the navigator gets navigationRef as its
-// ref and calls links?.start(Linking) from its onReady; the app root provides services and links
-// with DebugServicesProvider.
+// guard, the test-only key-value store, the perf log (cold start, in the save database) with S15's
+// Performance actions, the feedback recorders (every Shell sound and pulse also lands in the perf
+// log, which e2e:ios reads back as feedback.json), the debug services (S15 switches and the debug
+// link), the debug link handler and the navigator ref it navigates with. All of it comes through
+// the test-only entry, so a store build (TEST_ONLY === null) gets services, links and feedback null
+// and none of that code. The handler listens to Linking from here on and queues links until the
+// navigator is ready: the navigator gets navigationRef as its ref and calls links?.start(Linking)
+// from its onReady; the app root provides services and links with DebugServicesProvider. The game
+// host exists before these parts (they need its debug controls), so it plays the Shell's feedback
+// through ports that ask for parts.feedback at call time (game-host-integration's debug switches).
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { Linking } from 'react-native';
 
@@ -24,7 +27,9 @@ import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
 import type { AudioPort } from '@e07/shell/services/audio/audio-port.ts';
+import type { FeedbackPorts } from '@e07/shell/services/audio/ui-feedback.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
+import type { HapticsPort } from '@e07/shell/services/haptics/haptics-port.ts';
 import type { PremiumServiceDeps } from '@e07/shell/services/purchase/premium-service.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
 import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
@@ -40,8 +45,13 @@ export type DebugPartsInput = {
   /** The save database's driver (the device adapters' one save.db connection): the perf log's table. */
   readonly saveDriver: SqlDriver;
   readonly stores: SectionStores;
-  /** Stopped before a direction reload, as the restart dialog does. */
-  readonly audio: Pick<AudioPort, 'dispose'>;
+  /**
+   * The app's audio port: stopped before a direction reload, as the restart dialog does; in test
+   * builds the feedback recorder wraps it (parts.feedback).
+   */
+  readonly audio: AudioPort;
+  /** The app's haptics port: the feedback recorder wraps it in test builds (parts.feedback). */
+  readonly haptics: HapticsPort;
   readonly errorLog: ErrorLogPort;
   readonly extra: Pick<GameExtra, 'levels'>;
   /** GameHost.debugControls(): action= and the example screens (create-shell-parts passes it). */
@@ -57,6 +67,13 @@ export type DebugParts = {
   readonly links: DebugLinkHandler | null;
   /** Untyped params: the static navigator's ref prop takes a ParamListBase ref. */
   readonly navigationRef: NavigationContainerRefWithCurrent<ParamListBase>;
+  /**
+   * Test builds: the audio and haptics ports that also append { kind: 'feedback', label } to the
+   * perf log for every sound and pulse (the E2E feedback evidence); each call still reaches the
+   * real port. The Shell's feedback moments (win, lose, tap, toggle) play through them. null in a
+   * store build, which plays through the real ports.
+   */
+  readonly feedback: FeedbackPorts | null;
 };
 
 type TestBuild = {
@@ -66,13 +83,16 @@ type TestBuild = {
 };
 
 function createServices(build: TestBuild, input: DebugPartsInput): DebugServices {
+  // Home's useColdStartMark, the frame recorder and the feedback recorders write here; e2e:ios
+  // reads it back (cold start, feedback.json) and S15's Performance section shows and shares it.
+  const perfLog = build.api.createPerfLog(input.saveDriver);
   return build.api.createDebugServices({
     connectivity: build.connectivity,
     clock: build.clock,
     // The flags a direction reload or a kill interrupted come back here, before the first render.
     store: build.api.createSqliteKvDebugStoreAdapter(),
-    // Home's useColdStartMark and the frame recorder write here; e2e:ios reads it back.
-    perfLog: build.api.createPerfLog(input.saveDriver),
+    perfLog,
+    perf: build.api.createDebugPerfActions({ perfLog, nowMs: build.clock.nowMs }),
     persistPremium: input.premiumDeps.persistPremium,
     dispatchPremium: input.premiumDeps.dispatch,
     nowMs: build.clock.nowMs,
@@ -131,12 +151,25 @@ function guardNetwork(api: TestOnlyApi, errorLog: ErrorLogPort): void {
   });
 }
 
+/** The Shell's feedback ports with every cue also logged (E2E: the win sound and success pulse). */
+function recordFeedback(
+  build: TestBuild,
+  input: DebugPartsInput,
+  debug: DebugServices,
+): FeedbackPorts {
+  const deps = { perfLog: debug.perfLog, nowMs: build.clock.nowMs };
+  return {
+    audio: build.api.recordAudioFeedback(input.audio, deps),
+    haptics: build.api.recordHapticsFeedback(input.haptics, deps),
+  };
+}
+
 export function createDebugParts(input: DebugPartsInput): DebugParts {
   const navigationRef = createNavigationContainerRef<ParamListBase>();
   const connectivity = input.network.simulated;
   const clock = input.clocks.simulated;
   if (TEST_ONLY === null || connectivity === null || clock === null) {
-    return { services: null, links: null, navigationRef };
+    return { services: null, links: null, navigationRef, feedback: null };
   }
   guardNetwork(TEST_ONLY, input.errorLog);
   const build = { api: TEST_ONLY, connectivity, clock };
@@ -144,5 +177,5 @@ export function createDebugParts(input: DebugPartsInput): DebugParts {
   const links = createLinks(build, { ...input, debug: services }, navigationRef);
   // At once, not from onReady: a link sent while the app starts would otherwise be lost.
   links.listen(input.linking ?? Linking);
-  return { services, links, navigationRef };
+  return { services, links, navigationRef, feedback: recordFeedback(build, input, services) };
 }

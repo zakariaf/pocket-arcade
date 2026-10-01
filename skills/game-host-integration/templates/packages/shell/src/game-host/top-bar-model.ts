@@ -1,5 +1,6 @@
 // packages/shell/src/game-host/top-bar-model.ts
 import { MODE_LABEL_KEYS } from '@e07/shell/game-host/hud-model.ts';
+import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { formatDayMonth } from '@e07/shell/i18n/format-date.ts';
 
 import type { Message } from '@e07/game-kit/contract/messages.ts';
@@ -25,7 +26,11 @@ export function modeTextOf(ref: RunRef, text: RunText): string {
     case 'level':
       return text.t(MODE_LABEL_KEYS.level, { level: ref.level });
     case 'daily':
-      return text.t(MODE_LABEL_KEYS.daily, { dateText: formatDayMonth(ref.date, text.t) });
+      // The date already carries its bidi isolates; t() isolates each value again, so strip them
+      // (one isolate per value, or the fa date flips on the device).
+      return text.t(MODE_LABEL_KEYS.daily, {
+        dateText: stripIsolates(formatDayMonth(ref.date, text.t)),
+      });
     case 'endless':
       return text.t(MODE_LABEL_KEYS.endless);
     case 'tutorial':

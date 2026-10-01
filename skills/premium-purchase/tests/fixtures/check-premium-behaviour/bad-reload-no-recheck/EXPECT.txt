@@ -1,0 +1,2 @@
+[store-reloads]
+never re-checks Premium once online

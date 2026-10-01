@@ -1,5 +1,5 @@
 {
-  "verified": "2026-09-26",
+  "verified": "2026-09-30",
   "allowedComponents": {
     "react-native-google-mobile-ads": "AdMob ads + UMP consent (spec N3 a); pods Google-Mobile-Ads-SDK 13.6.0, GoogleUserMessagingPlatform 3.1.0; JS dependency @iabtcf/core",
     "expo-iap": "store purchases (spec N3 b); pod openiap 3.6.0 -> StoreKit 2"
@@ -27,10 +27,28 @@
     "expo-file-system": "Persist through SaveStore; its download API is a network path.",
     "react-native-purchases": "RevenueCat server (N2).",
     "react-native-iap": "Second IAP stack; use expo-iap through PurchasePort.",
-    "expo-tracking-transparency": "Decision D4: no ATT prompt in v1.",
     "expo-notifications": "Spec 14: no push notifications.",
     "firebase": "Spec N2: no backend or analytics.",
     "sentry-expo": "Spec N2: no crash reporting service."
+  },
+  "restrictedImports": {
+    "expo-tracking-transparency": {
+      "onlyIn": ["packages/shell/src/services/consent/admob-consent-adapter.ts"],
+      "reason": "Owner decision O1: only the consent adapter asks for App Tracking Transparency (ConsentPort.requestTracking, after Google's form)."
+    }
+  },
+  "systemWrappers": {
+    "expo-tracking-transparency": "Apple's App Tracking Transparency prompt (owner decision O1, 2026-09-30): a system wrapper with no network code (pod ExpoTrackingTransparency, a local podspec, not from the CocoaPods trunk), so N3 still allows only the ads and store SDKs online."
+  },
+  "att": {
+    "plugin": "expo-tracking-transparency",
+    "pluginOption": "userTrackingPermission",
+    "infoPlistKey": "NSUserTrackingUsageDescription",
+    "catalogKey": "consent.tracking.usage-description",
+    "languages": ["en", "de", "fa", "ckb"],
+    "pluginsFile": "packages/shell/src/config/shell-plugins.ts",
+    "withShellFile": "packages/shell/src/config/with-shell.ts",
+    "catalogDir": "packages/shell/src/i18n/catalogs"
   },
   "bannedImportPrefixes": {
     "@react-native-firebase/": "Spec N2: no backend or analytics.",
@@ -52,7 +70,6 @@
     { "pattern": "^expo-notifications$", "scope": "anywhere", "reason": "Spec 14: no push notifications." },
     { "pattern": "^(@amplitude/.+|expo-analytics-amplitude|@segment/.+|mixpanel-react-native|react-native-appsflyer|react-native-branch|react-native-adjust|react-native-onesignal|react-native-fbsdk-next)$", "scope": "anywhere", "reason": "Spec N2: analytics, attribution, push or Facebook SDK." },
     { "pattern": "^(react-native-webview|expo-web-browser)$", "scope": "anywhere", "reason": "Web views are a network surface." },
-    { "pattern": "^expo-tracking-transparency$", "scope": "anywhere", "reason": "Decision D4: no ATT prompt in v1." },
     { "pattern": "^(axios|ky|got|node-fetch|cross-fetch)$", "scope": "direct", "reason": "Spec N3: no HTTP client." }
   ],
   "bannedPodFamilies": [

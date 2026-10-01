@@ -1,7 +1,7 @@
 // packages/shell/src/i18n/format-date.test.ts
 import { createIntl } from 'react-intl';
 
-import { stripIsolates } from './bidi.ts';
+import { FSI, PDI, stripIsolates } from './bidi.ts';
 import { createT } from './create-t.ts';
 import { localeTagFor } from './digits.ts';
 import {
@@ -44,6 +44,20 @@ describe('formatDayMonth', () => {
       expect(stripIsolates(formatDayMonth('2026-09-26', tFor(language)))).toBe(expected);
     },
   );
+
+  describe('when the date goes into another message', () => {
+    it('nests isolates unless the inner ones are stripped first', () => {
+      const t = tFor('fa');
+      const date = formatDayMonth('2026-09-26', t);
+      expect(date).toBe(`۲۶ ${FSI}سپتامبر${PDI}`);
+      expect(t('game-screen.mode.daily', { dateText: date })).toBe(
+        `روزانه – ${FSI}۲۶ ${FSI}سپتامبر${PDI}${PDI}`,
+      );
+      expect(t('game-screen.mode.daily', { dateText: stripIsolates(date) })).toBe(
+        `روزانه – ${FSI}۲۶ سپتامبر${PDI}`,
+      );
+    });
+  });
 });
 
 describe('the weekday and month helpers', () => {

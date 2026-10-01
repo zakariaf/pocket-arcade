@@ -1,0 +1,3 @@
+[harness-launch-marker]
+packages/shell/src/app/start-shell.ts
+registers the held S1 splash

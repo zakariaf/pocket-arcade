@@ -2,23 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleIdentifier</key>
-	<string>com.example.linesiege</string>
+	<string>io.applander.linesiege</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>7</string>
-	<key>DTXcode</key>
-	<string>2660</string>
 	<key>DTPlatformName</key>
 	<string>iphonesimulator</string>
-	<key>MinimumOSVersion</key>
-	<string>16.4</string>
+	<key>DTXcode</key>
+	<string>2660</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
+	<key>MinimumOSVersion</key>
+	<string>16.4</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data.</string>
 </dict>
 </plist>

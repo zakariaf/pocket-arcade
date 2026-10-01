@@ -5,6 +5,7 @@ How `setup-parity-sim.mjs` and `capture-app.mjs` get a screenshot and element bo
 ## Contents
 
 - The parity device
+- Tooling in a read-only or shared skill folder
 - The dedicated simulator
 - Status bar, locale, appearance and text size
 - Launching straight into a frame
@@ -28,20 +29,38 @@ The Toybox mockup phone is 390 x 844 with a 54 pt status bar. No simulator has t
 
 Xcode 26.6 lists only the iPhone 17 family under iOS 26.5 by default, but `xcrun simctl create` accepts the iPhone 16 Pro type with the iOS 26.5 runtime. That is what the setup script does.
 
+## Tooling in a read-only or shared skill folder
+
+The scripts load pngjs, pixelmatch and playwright from a tooling folder: `--tooling <dir>`, else `$PARITY_TOOLING_DIR`, else the skill's own `scripts/` folder. When the skill folder must stay read-only, or several sessions share it, install the pinned packages into the app repo and point every script at them:
+
+```sh
+mkdir -p .parity/tooling
+cp ${CLAUDE_SKILL_DIR}/scripts/package.json ${CLAUDE_SKILL_DIR}/scripts/package-lock.json .parity/tooling/
+npm ci --prefix .parity/tooling
+export PARITY_TOOLING_DIR="$PWD/.parity/tooling"     # or pass --tooling .parity/tooling to each script
+```
+
+`.parity/` is gitignored, so the install stays out of git. Every script writes only into the app repo (`.parity/` runs and sheets, `parity/` ledger and waivers, `reports/`), never next to itself; the one exception is `shoot-design.mjs --update-reference`, which rewrites the skill's committed reference set after a design change. A missing package stops a script with exit 2 and both install forms.
+
 ## The dedicated simulator
 
-`setup-parity-sim.mjs --appearance light|dark` creates (once) and boots a simulator named **e07-parity**. It never touches another simulator, so other tasks' devices are safe, and every capture runs on the same device. `--check` changes nothing and fails with a rule id when something is off: `sim-missing`, `sim-not-booted`, `sim-wrong-model`, `sim-duplicate`, `sim-locale`, `sim-status-bar`, `sim-appearance`, `sim-content-size`, `sim-increase-contrast`. A same-named device on the wrong model or runtime is only replaced with `--recreate` (it asks for nothing else and adds no second device next to it).
+`setup-parity-sim.mjs --appearance light|dark --name e07-parity-<key>` creates (once) and boots this session's parity simulator (the default name is **e07-parity**; tools name their simulators `e07-<purpose>`). It prints the UDID, never touches another simulator, so other tasks' devices are safe, and every capture of the session runs on the same device. `--check` changes nothing and fails with a rule id when something is off: `sim-missing`, `sim-not-booted`, `sim-wrong-model`, `sim-duplicate`, `sim-locale`, `sim-status-bar`, `sim-appearance`, `sim-content-size`, `sim-increase-contrast`. A same-named device on the wrong model or runtime is only replaced with `--recreate` (it asks for nothing else and adds no second device next to it).
 
-**One parity simulator serves one session at a time.** Two sessions capturing on one simulator overwrite each other's launches, and two sessions on one Mac share Maestro's default XCUITest driver port (22087), so one session's hierarchy call can be answered by the other simulator's driver (seen live: labels of another screen, `screen-not-reached` on a correct capture). A second session makes its own simulator and driver port and passes both to every script:
+**One parity simulator serves one session.** Two sessions capturing on one simulator overwrite each other's launches, and a Maestro call that names no device or shares a driver port can be answered by another simulator's XCUITest driver (round 3: another session's Persian Settings screen came back, even with a separate port). So:
+
+- each session makes its own simulator (`--name e07-parity-<key>`) and passes `--name` to every script;
+- every Maestro call names the simulator's UDID and this run's own driver port before the command: `maestro --device <udid> --driver-host-port <port> hierarchy` (built by `maestroArgs()` in `scripts/lib/tools.mjs`, the same rule as the repo's `maestroGlobalArgs()`); the port is `--driver-port` (or `PARITY_MAESTRO_PORT`) when a session passes one, else a free port picked by listening on port 0, once per `run-parity.mjs` run;
+- every launch carries a nonce that the parity root shows as `parity.launch.<nonce>`; a dump without it is refused with exit 2, "hierarchy from another simulator" (parity-harness.md, "The launch nonce");
+- every `simctl` call names the UDID, never `booted` or `all`.
 
 ```sh
 node ${CLAUDE_SKILL_DIR}/scripts/setup-parity-sim.mjs --appearance light --name e07-parity-b
-node ${CLAUDE_SKILL_DIR}/scripts/run-parity.mjs --screen S11 --bundle-id <id> --name e07-parity-b --driver-port 22187
+node ${CLAUDE_SKILL_DIR}/scripts/run-parity.mjs --screen S11 --bundle-id io.applander.linesiege --name e07-parity-b
 ```
 
-`run-parity.mjs` forwards `--name` and `--driver-port` to every `capture-app.mjs` call; `PARITY_MAESTRO_PORT=22187` in the environment does the same as `--driver-port`. With a port, every Maestro call gets `--driver-host-port <port>`, and `run.json` records the simulator and the port. Each session installs its build on its own simulator.
+`run.json` records the simulator's name, UDID and driver port and the launch nonces. Each session installs its build on its own simulator (`xcrun simctl install <udid> <App>.app`).
 
-If CoreSimulator is wedged (boot hangs, `simctl` errors): quit Simulator.app, run `xcrun simctl shutdown all`, then the setup script again. `shutdown all` stops every session's simulators: say so before doing it when another session may be capturing.
+**When the session is done**, shut down its own simulator by UDID (`xcrun simctl shutdown <udid>`) and stop anything it started (Metro, Maestro drivers, log streams). Never shut down a simulator the session did not create. If this session's simulator is wedged (boot hangs, `simctl` errors on it), shut down only it by UDID, quit Simulator.app if nothing else uses it, and run the setup script again.
 
 ## Status bar, locale, appearance and text size
 
@@ -51,13 +70,14 @@ If CoreSimulator is wedged (boot hangs, `simctl` errors): quit Simulator.app, ru
 - `--time` accepts `9:41` or an ISO date with milliseconds (`2026-09-27T09:41:00.000Z`); "9:41 AM" and ISO dates without milliseconds are rejected.
 - The accessibility tree still reports the real clock, and the status bar is masked in every comparison anyway: the override keeps the sheets clean and the screenshots stable.
 - `xcrun simctl ui <udid> appearance light|dark` sets the theme (no value prints it); `content_size large` is the default text size that matches the design's 17 pt body; `increase_contrast disabled`.
+- **No system alert.** `capture-app.mjs` checks every dump for a system alert (Apple's tracking prompt, a permission prompt, an "Open in ...?" alert) and fails with `system-alert` when one is up; `run.json` records `systemAlert: null` otherwise. The held S3 consent moment asks neither Google's form nor Apple's prompt.
 
 ## Launching straight into a frame
 
 ```
-xcrun simctl launch --terminate-running-process <udid> <bundle-id> \
+xcrun simctl launch --terminate-running-process <udid> io.applander.linesiege \
   -AppleLanguages "(fa)" -AppleLocale fa_IR \
-  -parity "frame=s4-home&theme=dark&lang=fa&game=lineSiege&date=2026-09-27&animations=off"
+  -parity "frame=s4-home&theme=dark&lang=fa&game=lineSiege&date=2026-09-27&animations=off&nonce=3f9a0c1d2e4b"
 ```
 
 - Launch arguments of the form `-key value` land in NSUserDefaults; React Native's `Settings.get('parity')` reads them in a Release build. The app's test-only parity harness turns the query into the frame's state (see [parity-harness.md](parity-harness.md)).
@@ -65,15 +85,15 @@ xcrun simctl launch --terminate-running-process <udid> <bundle-id> \
 - `capture-app.mjs` passes each argument as its own word. In zsh an unquoted variable holding `-AppleLanguages (fa)` arrives as one word and is ignored.
 - **Never use deep links for parity.** `simctl openurl` for a custom scheme shows a SpringBoard alert "Open in ...?" (cold and warm); pending alerts queue up, dim the app and hide every testID, which fails the capture as `screen-not-reached`.
 - **Nothing else in front.** Another app in front adds a "back to" breadcrumb to the status bar; `capture-app.mjs` terminates other apps first (except Maestro's driver, whose restart would cost 20 s).
-- **The reference follows the app's facts.** For `s11-settings`, `s6-pause` and `s7-result-win`, `capture-app.mjs` reads `parity/game-facts.json` (in the working directory, the app repo root; `--facts <file>` otherwise) and records the reference variant it picked in `run.json` (`variant`), printing `reference s11-settings--no-music (hasMusic false; L1)`. A missing or mismatched facts file stops the capture with exit 2.
-- **Release test build, not Debug**: no LogBox or dev overlays, and the test variant so `TEST_ONLY` (and with it the harness) exists. Build it with `APP_VARIANT=test EXPO_PUBLIC_APP_VARIANT=test ADS_MODE=off` exported for the whole run (screenshots never load ads; the harness draws the stand-in banner). The build itself is the `ios-simulator-build` skill's job; install it on the parity simulator with `xcrun simctl install <udid> <App>.app` (`setup-parity-sim.mjs` prints the udid). The bundle id for `--bundle-id` is `plutil -extract CFBundleIdentifier raw -o - <App>.app/Info.plist`.
+- **The reference follows the app's facts.** For `s11-settings`, `s6-pause`, `s7-result-win` and `s14-reset-all-progress`, `capture-app.mjs` reads `parity/game-facts.json` (in the working directory, the app repo root; `--facts <file>` otherwise) and records the reference variant it picked in `run.json` (`variant`), printing for example `reference s6-pause--no-music--no-hints (hasMusic false, hasHints false; L1, L8)`. A missing fact or a mismatched facts file stops the capture with exit 2.
+- **Release test build, not Debug**: no LogBox or dev overlays, and the test variant so `TEST_ONLY` (and with it the harness) exists. Build it with `APP_VARIANT=test EXPO_PUBLIC_APP_VARIANT=test ADS_MODE=off` exported for the whole run (screenshots never load ads and never ask for tracking; the harness draws the stand-in banner). The build itself is the `ios-simulator-build` skill's job (`xcodebuild ... -destination id=<udid>`); install it on the parity simulator with `xcrun simctl install <udid> <App>.app` (`setup-parity-sim.mjs` prints the udid). Every app's bundle id is `io.applander.<game id without hyphens>` (Line Siege: `io.applander.linesiege`); confirm it with `plutil -extract CFBundleIdentifier raw -o - <App>.app/Info.plist`.
 
 ## The board probe launch (S5, S6, S7)
 
 A Game-route frame (`s6-pause`, `s7-result-win`, `s7-result-lose`) masks the board the game draws, and the board is where the game says it is. Before the real capture, `capture-app.mjs` launches the frame once more with `probe=board` added to the `-parity` query:
 
 ```
--parity "frame=s6-pause&theme=light&lang=en&game=lineSiege&date=2026-09-27&animations=off&probe=board"
+-parity "frame=s6-pause&theme=light&lang=en&game=lineSiege&date=2026-09-27&animations=off&probe=board&nonce=9c2e0b7a41d5"
 ```
 
 That launch opens no frame state (no Pause, no Result) and turns the board-layout probe on, so the board host renders `game.board-layout`: a small text inside the board frame holding `{ "x", "y", "layout": { "width", "height", "isMirrored", "regions" } }`, the canvas origin and `BoardLayout` in window points. The script waits for a still screen, reads that text from `maestro hierarchy`, and records the rectangle `{ x, y, w: layout.width, h: layout.height }` in `run.json` as `board` (with `source: "probe=board"`). `run-parity.mjs` passes each capture a cache file, so the probe runs once per device, theme and language in a run (the board does not move between S6 and S7). A probe without a usable `game.board-layout` fails `board-probe`; a Game-route run without `board` makes `check-parity.mjs` stop with exit 2.
@@ -87,13 +107,13 @@ That launch opens no frame state (no Pause, no Result) and turns the board-layou
 
 ## Element bounds with maestro hierarchy
 
-`maestro --device <udid> hierarchy --no-reinstall-driver` prints a JSON tree. Each node's `attributes` has `resource-id` (the React Native `testID`), `accessibilityText` (the accessibility label; for a Text it is the text), `bounds` as `[x0,y0][x1,y1]`, and more.
+`maestro --device <udid> --driver-host-port <port> hierarchy --no-reinstall-driver` prints a JSON tree. Each node's `attributes` has `resource-id` (the React Native `testID`), `accessibilityText` (the accessibility label; for a Text it is the text), `bounds` as `[x0,y0][x1,y1]`, and more.
 
 - **Units are points** (screen 402 x 874), rounded to whole points: an edge at 140.67 pt was reported as 140. Treat bounds as 1 pt accurate; the 2 pt tolerance includes this.
 - **Only on-screen elements are listed.** In a 90-tile ScrollView only the visible tiles appeared; a partly visible tile was listed with its full, unclipped bounds. Tall frames are therefore captured at several scroll offsets (`--scroll`, whole points; `run-parity.mjs` plans them), and coverage is the union of the elements each capture shows whole.
 - **Accessible elements hide their children, and hidden parts are not listed.** An accessible Pressable is reported with its label; its inner Text does not appear at all. A view with `accessibilityElementsHidden` (the components' decorative logo, icon and art tiles, pager dots ...) is missing from the dump with everything inside it. So a testID belongs on the accessible element itself, and the map's crop-only parts (`parent` or `a11yHidden`) are checked through the crop of their `coveredBy` element.
 - **System elements** (status bar clock, Wi-Fi bars, breadcrumb) appear too; the scripts ignore nodes whose `resource-id` is not a testID.
-- **Driver port**: Maestro's XCUITest driver listens on 22087 unless `--driver-host-port` says otherwise; `capture-app.mjs --driver-port` (or `PARITY_MAESTRO_PORT`) passes it (see The dedicated simulator).
+- **Device and driver port**: every call is `maestro --device <udid> --driver-host-port <port> ...`, the global options before the command (see The dedicated simulator); after each dump `capture-app.mjs` looks for the launch's `parity.launch.<nonce>` marker.
 - **Speed**: about 19 s for the first call (it installs the XCUITest driver `dev.mobile.maestro-driver-iosUITests.xctrunner`), about 11 s after that.
 - **Environment**: Java 17 (`$JAVA_HOME`, else Android Studio's bundled JBR, else `/usr/libexec/java_home -v 17`) and `MAESTRO_CLI_NO_ANALYTICS=true`, `MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED=true`, `MAESTRO_DISABLE_UPDATE_CHECK=true`, all set by the scripts. Maestro is looked up in `--maestro`, `$PARITY_MAESTRO`, `$MAESTRO_BIN`, the repo's `tools/maestro/bin/maestro`, PATH, then `~/.maestro/bin/maestro`.
 - `xcrun simctl` has no view-hierarchy command. If Maestro ever becomes the bottleneck, a test-build layout reporter that writes `app.layout.json` (`{ "elements": [{ "testID", "x", "y", "w", "h", "text" }] }` in points, from `measureInWindow`) is accepted by `check-parity.mjs` in its place (`capture-app.mjs --no-hierarchy`).

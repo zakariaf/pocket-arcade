@@ -1,0 +1,29 @@
+{
+ "devices": {
+  "com.apple.CoreSimulator.SimRuntime.iOS-26-5": [
+   {
+    "name": "e07-parity",
+    "udid": "99999999-2222-3333-4444-555555555555",
+    "state": "Booted",
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
+   },
+   {
+    "name": "e07-parity-b",
+    "udid": "11111111-2222-3333-4444-555555555555",
+    "state": "Booted",
+    "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
+   }
+  ]
+ },
+ "screenshots": [
+  "../../check-parity/reference/lineSiege/light-en/s4-home.png"
+ ],
+ "hierarchy": "../../fakes/hierarchy-alert.json",
+ "otherSession": "../../fakes/hierarchy-alert.json",
+ "requireArgs": [
+  "--device",
+  "11111111-2222-3333-4444-555555555555",
+  "--driver-host-port",
+  "22187"
+ ]
+}

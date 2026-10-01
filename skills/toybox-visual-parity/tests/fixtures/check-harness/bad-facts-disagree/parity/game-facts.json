@@ -4,7 +4,8 @@
     "line-siege": {
       "designGame": "lineSiege",
       "hasMusic": true,
-      "winLine": "score"
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }

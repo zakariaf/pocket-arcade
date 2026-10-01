@@ -1,0 +1,5 @@
+[parity-game-facts]
+flock-tilt: hasHints is not true or false
+[evidence-missing]
+parity facts pin test are missing
+toybox-visual-parity

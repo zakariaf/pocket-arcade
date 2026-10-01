@@ -1,0 +1,3 @@
+[harness-launch-marker]
+packages/shell/src/ui/scrim.tsx
+the Scrim (S6 Pause and the S14 dialogs) is a modal root

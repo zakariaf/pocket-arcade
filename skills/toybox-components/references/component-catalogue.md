@@ -37,6 +37,8 @@ Tests also need the Shell test wrapper: `packages/shell/src/testing/render-with-
 | `component-specs.ts` | `COMPONENT_SPECS`, the typed import of the JSON |
 | `button-paint.ts` | `kindPaint(theme, kind, isDisabled)`: fill, content colour, edge and text tone per button kind |
 | `use-hold-to-confirm.ts` | `useHoldToConfirm(onConfirm, frozenProgress?)` and `HOLD_TO_CONFIRM_MS` (2000, `ReduceMotion.Never`; `frozenProgress` holds a static fill for the parity capture), tested by `use-hold-to-confirm.test.ts` |
+| `text-metrics.ts` | `lineMetricsOf(family, size)` and `chromeBaseline(family, size, lineHeight)`: where Chrome puts a line's text (rounded hhea ascent and descent of the five Toybox faces), tested by `text-metrics.test.ts` |
+| `use-chrome-baseline.ts` | `useChromeBaseline(variant)`: the design's baseline of a type style in the current language (StatList rows), tested by `use-chrome-baseline.test.tsx` |
 
 ## The 53 components
 
@@ -78,8 +80,8 @@ Tests also need the Shell test wrapper: `packages/shell/src/testing/render-with-
 | BrandLock | brand-lock.tsx | 4.16 | levels-bars-overlays.md | none | testID + nameTestID |
 | GameTopBar | game-top-bar.tsx | 4.16 | levels-bars-overlays.md | none | testIDBase |
 | BannerBand | banner-band.tsx | 4.17 | levels-bars-overlays.md | none | testID |
-| Scrim | scrim.tsx | 4.18 | levels-bars-overlays.md | none | testID |
-| DialogCard | dialog-card.tsx | 4.18 | levels-bars-overlays.md | modal | testIDBase (+ cardTestID) |
+| Scrim | scrim.tsx | 4.18 | levels-bars-overlays.md | modal root (`accessibilityViewIsModal`) | testID |
+| DialogCard | dialog-card.tsx | 4.18 | levels-bars-overlays.md | none (the Scrim is the modal root) | testIDBase (+ cardTestID) |
 | DialogButtonRow | dialog-button-row.tsx | 4.18 | levels-bars-overlays.md | none | testID |
 | HoldButton | hold-button.tsx | 4.18 | levels-bars-overlays.md | button + activate action | testID |
 | Toast | toast.tsx | 4.19 | levels-bars-overlays.md | alert | testID |

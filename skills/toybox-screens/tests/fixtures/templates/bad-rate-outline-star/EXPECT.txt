@@ -1,0 +1,2 @@
+rate-row-icon
+the Rate this game row uses the 'star-outline' icon, while the design draws star(false), the hollow rating star

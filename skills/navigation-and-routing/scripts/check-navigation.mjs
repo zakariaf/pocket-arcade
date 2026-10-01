@@ -66,6 +66,8 @@ const SPEC = {
     '                             (TEST_ONLY.DebugScreen, TEST_ONLY.FontTestScreen)',
     '  route-not-built            a route points at NotBuiltScreen although its screen is due (in the slice,',
     '                             or the full Shell); Tutorial, part of every Shell app, never may',
+    '  home-daily-edge            S4 Home (screens/home/, once built) never navigates to Daily (the daily card body',
+    '                             opens S9, lead decision L7) or never starts the daily run (the card\'s Play key)',
     '  slice-present              --complete: shell-slice.json still exists (a slice never ships)',
   ].join('\n'),
 };
@@ -250,7 +252,28 @@ function requireFileIn(ctx, abs, shown, rule, fix) {
   return null;
 }
 
+/**
+ * S4 -> S9 and S4 -> today's run (L7): Home's daily card body navigates to Daily, and its Play key
+ * starts a daily run in Game. Checked once screens/home/ exists (check-screens owns "not built").
+ */
+function checkHomeDailyEdge(ctx, src, label) {
+  const home = join(src, 'screens', 'home');
+  if (!existsSync(home)) return;
+  const shown = toPosix(join(label, 'screens', 'home'));
+  if (!screenRule(ctx, 'S4', { file: shown, rule: 'home-daily-edge' })) return;
+  const files = walk(home, { include: ['*.ts', '*.tsx'], ignore: ['*.test.ts', '*.test.tsx'] });
+  const source = files.map((rel) => read(join(home, rel))).join('\n');
+  const fix = "Copy toybox-screens' use-home-actions.ts: onOpenDaily navigates to 'Daily' (the card body), onPlayDaily to Game with { start: 'new', ref: { kind: 'daily', date } } (the Play key); references/routes-and-flows.md.";
+  if (!/\bnavigate\(\s*['"]Daily['"]/.test(source)) {
+    ctx.report.problem({ file: `${shown}/`, line: 1, rule: 'home-daily-edge', message: "Home never calls navigate('Daily'): nothing on Home opens S9 Daily challenge", fix });
+  }
+  if (!/\bkind\s*:\s*['"]daily['"]/.test(source)) {
+    ctx.report.problem({ file: `${shown}/`, line: 1, rule: 'home-daily-edge', message: "Home never starts today's run (navigate('Game', { start: 'new', ref: { kind: 'daily', date } })) from the daily card's Play key", fix });
+  }
+}
+
 function checkNavigationFolder(ctx, src, label) {
+  checkHomeDailyEdge(ctx, src, label);
   const nav = (name) => ({ abs: join(src, 'navigation', name), shown: toPosix(join(label, 'navigation', name)) });
   const stack = nav('root-stack.tsx');
   if (existsSync(stack.abs)) checkRouteTable(ctx, stack.abs, stack.shown);

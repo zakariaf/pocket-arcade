@@ -38,7 +38,12 @@ export function StatsView({ model }: StatsViewProps): ReactNode {
         onBack={model.onBack}
         isReducedMotion={model.isReducedMotion}
       />
-      <ScreenBody gap="stats" isUnderHomeIndicator={isUnderHomeIndicator}>
+      {/* The empty page keeps the default 14 pt gap; the panels page the Statistics 16. */}
+      <ScreenBody
+        gap={model.isEmpty ? 'default' : 'stats'}
+        isUnderHomeIndicator={isUnderHomeIndicator}
+        isAboveBanner={!isUnderHomeIndicator}
+      >
         {model.isEmpty ? (
           <StatsEmptyState onPlay={model.onPlay} isReducedMotion={model.isReducedMotion} />
         ) : (
@@ -53,7 +58,7 @@ export function StatsView({ model }: StatsViewProps): ReactNode {
               isBlock
               isReducedMotion={model.isReducedMotion}
             />
-            <StatsLocalNote />
+            <StatsLocalNote hasIcon />
           </>
         )}
       </ScreenBody>

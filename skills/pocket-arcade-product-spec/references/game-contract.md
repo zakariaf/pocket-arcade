@@ -28,6 +28,7 @@ RULES
 - "Is it over?": win, lose (with a reason), or still playing.
 - Score and the goal/progress line for the top bar.
 - Whether undo, hints and continue are supported, and how continue works.
+- The facts the Shell reads to draw its own screens: whether the game has music, whether it has hints, and whether its levels are rated by moves against par or by score (S5, S6, S7, S11; lead decisions L1, L3 and L8).
 
 LEVELS
 
@@ -66,9 +67,10 @@ TESTING
 
 One file per game holds:
 
-- App name per language, store id / bundle id, version.
-- Premium product id; price note (the price itself is set in the stores).
-- AdMob app id and ad unit ids per platform (banner, interstitial, rewarded). Test ids in development.
+- App name per language, App Store id, version.
+- App id, the same on iOS (bundle id) and Android (package name): always `io.applander.<game id without hyphens>`, all lowercase, for example `io.applander.linesiege` for Line Siege (decided 2026-09-30, owner decision O4). Placeholder ids (`com.example...`, the scaffold's sample values) can never be released.
+- Premium product id: the app id plus `.premium`, for example `io.applander.linesiege.premium`; price note (the price itself is set in the stores).
+- AdMob app id and ad unit ids per platform (banner, interstitial, rewarded), from the owner. Test ids in development. The scaffold's placeholder ids can never be released.
 - Ad rules: frequency numbers (spec 8.8), ads on/off master switch (spec 4.3).
 - Modes on/off, packs and level counts, free hints per day, continue allowed.
 - Privacy policy link and support email (for the stores and About).
@@ -103,8 +105,8 @@ These names are fixed; use them exactly so searches find every use.
 | Pure game kit (contract types, seeded random numbers, geometry, timeline, solver and bot helpers) | `packages/game-kit` (no React, React Native, Expo or Skia imports) |
 | Build and release scripts | `packages/tooling` |
 | Game code folders | `apps/<game-id>/src/{rules,levels,board,tutorial,i18n}` and `src/index.ts`; catalogs `src/i18n/{en,de,fa,ckb}.json` |
-| Bundle id | matches `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`, same on iOS and Android |
-| Premium product id | `<bundle id>.premium` |
+| Bundle id | `io.applander.<game id without hyphens>`, all lowercase, the same on iOS (bundle id) and Android (package) (owner decision O4, 2026-09-30): `line-siege` is `io.applander.linesiege` |
+| Premium product id | `<bundle id>.premium` (`io.applander.linesiege.premium`) |
 | Modes | `levels`, `daily`, `endless` |
 
 What kind of engine a game needs:

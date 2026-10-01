@@ -7,7 +7,7 @@ Three filled-in requests, one per kind. Each passes `scripts/check-report.mjs <f
 ```text
 Flock Tilt cannot be uploaded to TestFlight yet because it has no App Store Connect app record.
 
-Please create the App Store Connect app record for Flock Tilt with the bundle ID com.example.flocktilt (step G2, about 2 minutes). Until then I keep working on the board.
+Please create the App Store Connect app record for Flock Tilt with its fixed bundle ID io.applander.flocktilt (step G2, about 2 minutes). Until then I keep working on the board.
 ```
 
 ## A spec question (from `templates/owner-request.md`)

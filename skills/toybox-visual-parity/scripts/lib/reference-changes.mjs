@@ -5,7 +5,7 @@
 //     "what": "<what changed in the references>", "why": "<the decision and who approved it>" }
 // shoot-design.mjs --update-reference keeps the log, --check validates it, and check-signoff.mjs
 // prints the entries of every frame it signs off, so the owner report can name them.
-import { referenceName } from './frames.mjs';
+import { referenceNames } from './frames.mjs';
 
 const CHANGE_KEYS = ['id', 'date', 'frames', 'variants', 'what', 'why'];
 
@@ -15,7 +15,7 @@ export function referenceChangeProblems(manifest, { frames }) {
   if (list === undefined) return [];
   if (!Array.isArray(list)) return ['referenceChanges must be a list of { id, date, frames, variants, what, why }'];
   const problems = [];
-  const variantNames = new Set([...frames.values()].flatMap((f) => Object.keys(f.variants ?? {}).map((id) => referenceName(f.key, id))));
+  const variantNames = new Set([...frames.values()].flatMap((f) => referenceNames(f).slice(1)));
   const ids = new Set();
   list.forEach((entry, i) => {
     const at = `referenceChanges[${i}]${entry?.id ? ` (${entry.id})` : ''}`;

@@ -1,12 +1,21 @@
 // packages/tooling/src/storekit/storekit-harness.ts
-// Tier-2 Premium purchase tests on a throwaway simulator. Test variant only.
-// Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --udid <udid>
-// Prebuilds a harness project, builds it (Debug), starts Metro, then per scenario arms the
-// simulator's StoreKit test store and runs one flow from packages/shell/e2e/storekit/.
+// Tier-2 Premium purchase tests on a throwaway simulator of your own. Test variant only.
+// Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --device <udid>
+//          [--driver-port <n>] [--metro-port <n>]
+// Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro, then
+// per scenario arms the simulator's StoreKit test store and runs one flow from
+// packages/shell/e2e/storekit/. Every Maestro call names the simulator and this run's own XCTest
+// driver port (maestro-args.ts), so no call can reach another session's simulator. Release-day
+// order: the E2E evidence run, then this harness, then `xcrun simctl delete <udid>`, then
+// `npx expo prebuild --clean` before any Release or store build (they share apps/<id>/ios).
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
+
+import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
+
+import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
 
 const HERE = import.meta.dirname;
 const ROOT = process.cwd();
@@ -30,6 +39,8 @@ const SCENARIOS: readonly (readonly [string | null, string])[] = [
 type Harness = {
   readonly appDir: string;
   readonly udid: string;
+  /** This run's Metro port, built into the Debug app (RCT_METRO_PORT) and passed to expo start. */
+  readonly metroPort: number;
   readonly scheme: string; // Xcode scheme = app target name
   readonly bundleId: string;
   readonly urlScheme: string; // for the debug deep link
@@ -57,7 +68,7 @@ function urlSchemeOf(ios: string, scheme: string): string {
 }
 
 // Fresh CNG project (test variant) + harness files + target. Never used for shipped builds.
-function prepareHarness(appDir: string, udid: string): Harness {
+function prepareHarness(appDir: string, udid: string, metroPort: number): Harness {
   run('npx', ['expo', 'prebuild', '--platform', 'ios', '--clean'], appDir);
   const ios = join(appDir, 'ios');
   const scheme = readdirSync(ios)
@@ -77,14 +88,19 @@ function prepareHarness(appDir: string, udid: string): Harness {
     join(ios, scheme, 'storekit-harness.entitlements'),
   );
   run('ruby', [join(HERE, 'add-harness.rb'), ios, scheme, bundleId], appDir);
-  return { appDir, udid, scheme, bundleId, urlScheme: urlSchemeOf(ios, scheme) };
+  return { appDir, udid, metroPort, scheme, bundleId, urlScheme: urlSchemeOf(ios, scheme) };
 }
 
 function xcodebuild(h: Harness, action: readonly string[]): void {
   const common = ['-workspace', `${h.scheme}.xcworkspace`, '-scheme', h.scheme];
   const target = ['-configuration', 'Debug', '-destination', `id=${h.udid}`];
   const derived = ['-derivedDataPath', '../build/storekit'];
-  run('xcodebuild', [...action, ...common, ...target, ...derived], join(h.appDir, 'ios'));
+  // A Debug app loads its JS from Metro on RCT_METRO_PORT (8081 unless set): this run's own port.
+  execFileSync('xcodebuild', [...action, ...common, ...target, ...derived], {
+    cwd: join(h.appDir, 'ios'),
+    env: { ...TEST_ENV, RCT_METRO_PORT: String(h.metroPort) },
+    stdio: 'inherit',
+  });
 }
 
 // testArmDefault | testArmAskToBuy | testArmFail | testApproveAll | testRefundAll
@@ -93,11 +109,11 @@ function arm(h: Harness, test: string): void {
 }
 
 // Debug builds load JS from Metro (localhost only; tooling may use fetch).
-async function startMetro(appDir: string): Promise<() => void> {
+async function startMetro(appDir: string, port: number): Promise<() => void> {
   const env = { ...TEST_ENV, CI: '1', EXPO_NO_TELEMETRY: '1' };
-  const metro = spawn('npx', ['expo', 'start', '--port', '8081'], { cwd: appDir, env });
+  const metro = spawn('npx', ['expo', 'start', '--port', String(port)], { cwd: appDir, env });
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const status = await fetch('http://localhost:8081/status').then(
+    const status = await fetch(`http://localhost:${String(port)}/status`).then(
       async (response) => response.text(),
       () => '',
     );
@@ -105,10 +121,10 @@ async function startMetro(appDir: string): Promise<() => void> {
     await sleep(1000);
   }
   metro.kill();
-  throw new Error('Metro did not start on port 8081');
+  throw new Error(`Metro did not start on port ${String(port)}`);
 }
 
-function runFlow(h: Harness, flow: string): boolean {
+function runFlow(h: Harness, target: MaestroTarget, flow: string): boolean {
   const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro'); // the pinned Maestro install
   const file = join(ROOT, 'packages', 'shell', 'e2e', 'storekit', flow);
   const vars = ['-e', `APP_ID=${h.bundleId}`, '-e', `APP_SCHEME=${h.urlScheme}`];
@@ -118,26 +134,31 @@ function runFlow(h: Harness, flow: string): boolean {
     MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
     MAESTRO_DISABLE_UPDATE_CHECK: 'true',
   };
-  return (
-    spawnSync(maestro, ['test', file, '--udid', h.udid, ...vars], { stdio: 'inherit', env })
-      .status === 0
-  );
+  const command = ['test', file, ...vars];
+  console.error(maestroRunLine(target, command));
+  const args = [...maestroGlobalArgs(target), ...command];
+  return spawnSync(maestro, args, { stdio: 'inherit', env }).status === 0;
 }
 
 async function main(argv: readonly string[]): Promise<number> {
-  const valueOf = (flag: string): string | undefined => argv[argv.indexOf(flag) + 1];
-  const game = argv.includes('--app') ? valueOf('--app') : undefined;
-  const udid = argv.includes('--udid') ? valueOf('--udid') : undefined;
+  const valueOf = (flag: string): string | undefined =>
+    argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : undefined;
+  const game = valueOf('--app');
+  const udid = valueOf('--device');
   if (game === undefined || udid === undefined) {
-    throw new Error('usage: storekit-harness.ts --app <game-id> --udid <udid>');
+    throw new Error('usage: storekit-harness.ts --app <game-id> --device <udid>');
   }
-  const h = prepareHarness(join(ROOT, 'apps', game), udid);
+  // The global --device and this run's own driver port (a free one unless --driver-port is given).
+  const target: MaestroTarget = { udid, driverPort: await driverPortFor(valueOf('--driver-port')) };
+  maestroGlobalArgs(target); // refuses a non-UDID before anything is built
+  const metroPort = await driverPortFor(valueOf('--metro-port')); // any free port serves Metro too
+  const h = prepareHarness(join(ROOT, 'apps', game), udid, metroPort);
   xcodebuild(h, ['build-for-testing', '-sdk', 'iphonesimulator']);
-  const stopMetro = await startMetro(h.appDir);
+  const stopMetro = await startMetro(h.appDir, metroPort);
   let failures = 0;
   for (const [test, flow] of SCENARIOS) {
     if (test !== null) arm(h, test);
-    if (!runFlow(h, flow)) failures += 1;
+    if (!runFlow(h, target, flow)) failures += 1;
   }
   stopMetro();
   console.error(`storekit: ${String(failures)} of ${String(SCENARIOS.length)} scenario(s) failed`);

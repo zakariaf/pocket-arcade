@@ -5,7 +5,7 @@
  "lang": "fa",
  "game": "lineSiege",
  "scrollY": 1042,
- "bundleId": "com.example.linesiege",
+ "bundleId": "io.applander.linesiege",
  "source": "self-test fixture",
  "note": "Real capture (2026-09-30, pilot, e07-r3-parity) of S11 without music in dark fa at scroll 1042: the privacy list top edge runs under the group tab. Both images draw the 3 pt edge as exactly 9 px; the border gate once read the tab fill above it as band (4.0 vs 3.4 pt) and now ends the band at the outside colour."
 }

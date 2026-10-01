@@ -396,14 +396,14 @@ const AUDIO_CASES = {
     rmSync(join(dir, 'packages/shell/src/services/audio/use-audio-lifecycle.test.ts'));
     return ['[audio-file-missing]', 'packages/shell/src/services/audio/use-audio-lifecycle.test.ts'];
   },
-  // Shell step 5: the services are in, the plugin list (step 8) and the boot (step 6) are not.
+  // Shell step 5: the services are in, the plugin list (step 8) and the boot (step 7) are not.
   'not-yet-due': (dir) => {
     rmSync(join(dir, 'packages/shell/src/config/shell-plugins.ts'));
     rmSync(join(dir, 'packages/shell/src/app/start-shell.ts'));
     replace(dir, 'packages/shell/src/services/audio/admit-voice.ts', 'MAX_VOICES = 8', 'MAX_VOICES = 16');
     return [
       'SKIP packages/shell/src/config/shell-plugins.ts [audio-plugin] due at Shell step 8: packages/shell/src/config/shell-plugins.ts not yet created',
-      'SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] due at Shell step 6: packages/shell/src/app/start-shell.ts not yet created',
+      'SKIP packages/shell/src/services/audio/ui-feedback.ts [ui-feedback] due at Shell step 7: packages/shell/src/app/start-shell.ts not yet created',
       '[voice-policy]',
       'RESULT: FAIL (1 problems)',
     ];

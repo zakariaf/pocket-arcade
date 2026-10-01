@@ -33,6 +33,9 @@ const SPEC = {
     '                      a hud goal id) that the game\'s en.json lacks',
     '  react-intl-import   react-intl imported outside packages/shell/src/i18n/',
     '  date-format-api     Intl.DateTimeFormat, Intl.RelativeTimeFormat or toLocale*String (use formatDayMonth)',
+    '  nested-isolates     a text that already carries bidi isolates passed straight into another t() call as a value:',
+    '                      formatDayMonth(...) / formatWeekdayDayMonth(...) or a t() call given a *Name/*Text value; wrap it in',
+    '                      stripIsolates() (i18n/bidi.ts) first, or nested FSI/PDI make CoreText flip the date in fa',
     '  polyfill-first      packages/shell/src/app/start-shell.ts must import the Intl polyfills first',
     '  polyfill-locales    intl-polyfills.ts must force Locale/PluralRules/NumberFormat with en, de, fa, ckb data only',
     '  jest-polyfills      jest.config.js must list intl-polyfills.ts in setupFiles',
@@ -40,6 +43,10 @@ const SPEC = {
     'Test files (*.test.ts[x]) and packages/shell/src/testing/ may use literal strings (queries, fixtures).',
   ].join('\n'),
 };
+
+/** Formatters whose result already holds FSI…PDI: they interpolate a *Name value through t(). */
+const ISOLATED_FORMATTERS = ['formatDayMonth', 'formatWeekdayDayMonth'];
+const T_CALL = '(?:[A-Za-z_$][A-Za-z0-9_$]*\\.)?t';
 
 const TEXT_PROPS = new Set(['text', 'label', 'title', 'hint', 'message', 'placeholder', 'subtitle', 'description', 'caption', 'summary', 'accessibilityLabel', 'accessibilityHint']);
 const LETTER = /\p{L}/u;
@@ -151,6 +158,7 @@ run(async () => {
         problem(call.start, 'dynamic-key', `t(${arg.split(',')[0]}) builds its key at runtime`, 'Write the key as a literal, or pick it from a typed table of literal keys (MONTH_SHORT_KEYS[month - 1]).');
       }
     }
+    if (!isTest) checkNestedIsolates(masked, problem);
     // Game code hands its texts to the Shell as literal ids ('line-siege.progress'): each
     // string literal that starts with the game id and has the key shape must be in its catalog.
     const app = /^apps\/([^/]+)\/src\//.exec(rel);
@@ -252,6 +260,48 @@ function literalBranch(expression) {
   }
   const match = /(?:^|[?:]|\?\?|\|\||&&)\s*(['"`])((?:(?!\1)[^\\]|\\.)*)\1/u.exec(blanked.trim());
   return match && LETTER.test(match[2]) && !/\$\{/.test(match[2]) ? match[0].trim() : null;
+}
+
+/** Index of the first comma at bracket depth 0 between from and to in masked source, or -1. */
+function topLevelComma(masked, from, to) {
+  let depth = 0;
+  for (let i = from; i < to; i += 1) {
+    const ch = masked[i];
+    if (ch === '(' || ch === '[' || ch === '{') depth += 1;
+    else if (ch === ')' || ch === ']' || ch === '}') depth -= 1;
+    else if (ch === ',' && depth === 0) return i;
+  }
+  return -1;
+}
+
+/** True when a t() call is given a *Name or *Text value, the only values t() isolates. */
+function hasTextValue(masked, call) {
+  const comma = topLevelComma(masked, call.open + 1, call.close);
+  return comma !== -1 && /\b[A-Za-z_$][\w$]*(?:Name|Text)\s*[:,}]/.test(masked.slice(comma, call.close));
+}
+
+/**
+ * A t() value that is itself isolated text: a date formatter's result, or a t() call given values.
+ * t() isolates every *Name/*Text value again, and the nested FSI…PDI leaves the outer isolate
+ * with no strong letter, so CoreText runs it left to right ("۲۶ سپتامبر" turns into
+ * "سپتامبر ۲۶" inside "روزانه – …"). Strip the inner isolates first: stripIsolates(formatDayMonth(…)).
+ */
+function checkNestedIsolates(masked, problem) {
+  const calls = findCalls(masked, T_CALL);
+  const values = calls
+    .map((call) => ({ from: topLevelComma(masked, call.open + 1, call.close), to: call.close }))
+    .filter((span) => span.from !== -1);
+  const strips = findCalls(masked, 'stripIsolates');
+  const inside = (index, span) => index > span.from && index < span.to;
+  const isStripped = (index) => strips.some((strip) => index > strip.open && index < strip.close);
+  const inner = [
+    ...ISOLATED_FORMATTERS.flatMap((name) => findCalls(masked, name).map((call) => ({ call, name: `${name}(…)` }))),
+    ...calls.filter((call) => hasTextValue(masked, call)).map((call) => ({ call, name: 't(…, values)' })),
+  ];
+  for (const { call, name } of inner) {
+    if (!values.some((span) => inside(call.start, span)) || isStripped(call.start)) continue;
+    problem(call.start, 'nested-isolates', `${name} is passed into t() as a value, but its text already carries bidi isolates (FSI…PDI), which t() isolates again`, `Wrap it: stripIsolates(${name.replace('(…, values)', '(…)')}) from @e07/shell/i18n/bidi.ts, so the sentence holds one isolate per value (a date is one run of its language).`);
+  }
 }
 
 function checkAlert(source, masked, problem) {

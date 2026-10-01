@@ -2,6 +2,8 @@
 import { createNavigationContainerRef, StackActions } from '@react-navigation/native';
 
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
+import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
+import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
 import { createFakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
 import { priceOf } from '@e07/shell/stores/premium/premium-state.ts';
 import { createTestAdapters } from '@e07/shell/testing/create-test-adapters.ts';
@@ -109,7 +111,10 @@ describe('createShellParts', () => {
     let received: DebugPartsInput | null = null;
     const createDebugParts = (input: DebugPartsInput): DebugParts => {
       received = input;
-      return { services: null, links: null, navigationRef: createNavigationContainerRef() };
+      return {
+        ...{ services: null, links: null, feedback: null },
+        navigationRef: createNavigationContainerRef(),
+      };
     };
     const parts = launch(createTestAdapters({ createDebugParts }));
     parts.host.openSession({ start: 'new', ref: { kind: 'level', level: 1 } });
@@ -121,15 +126,45 @@ describe('createShellParts', () => {
     expect(doc.ads.history.levelsCompletedSinceInterstitial).toBe(1);
   });
 
+  it("plays the Shell's win feedback through the debug parts' recording ports (E2E evidence)", () => {
+    const recorded = { audio: createFakeAudio(), haptics: createFakeHaptics() };
+    let received: DebugPartsInput | null = null;
+    const createDebugParts = (input: DebugPartsInput): DebugParts => {
+      received = input;
+      return {
+        ...{ services: null, links: null, feedback: recorded },
+        navigationRef: createNavigationContainerRef(),
+      };
+    };
+    const adapters = createTestAdapters({ createDebugParts });
+    const parts = launch(adapters);
+    // The recorders wrap the app's own ports, which createDebugParts receives.
+    expect((received as DebugPartsInput | null)?.audio).toBe(adapters.audio);
+    expect((received as DebugPartsInput | null)?.haptics).toBe(parts.services.haptics);
+    parts.host.openSession({ start: 'new', ref: { kind: 'level', level: 1 } });
+    (received as DebugPartsInput | null)?.game?.playTo('won');
+    expect(recorded.audio.calls).toContainEqual(expect.objectContaining({ soundId: 'ui.win' }));
+    expect(recorded.haptics.played).toContain('success');
+  });
+
   it('opens an example run by pushing the Game route on the debug navigator', () => {
     const navigationRef = createNavigationContainerRef<ParamListBase>();
     const dispatch = jest.spyOn(navigationRef, 'dispatch').mockImplementation(() => undefined);
     const adapters = createTestAdapters({
-      createDebugParts: () => ({ services: null, links: null, navigationRef }),
+      createDebugParts: () => ({ services: null, links: null, navigationRef, feedback: null }),
     });
     launch(adapters).host.debugControls().openExample('game-middle');
     const levelOne = { start: 'new', ref: { kind: 'level', level: 1 } };
     expect(dispatch).toHaveBeenCalledWith(StackActions.push('Game', levelOne));
+  });
+
+  it('builds a consent port that asks neither Google nor Apple with ADS_MODE=off (E2E builds)', async () => {
+    const { consent } = launch(createTestAdapters()).services;
+    await expect(consent.requestTracking()).resolves.toBe('unavailable');
+    await expect(consent.refresh()).resolves.toStrictEqual({
+      canRequestAds: false,
+      isPrivacyOptionsRequired: false,
+    });
   });
 
   it('holds the consent moment only for a launch that asks for it (the S3 parity frame)', () => {

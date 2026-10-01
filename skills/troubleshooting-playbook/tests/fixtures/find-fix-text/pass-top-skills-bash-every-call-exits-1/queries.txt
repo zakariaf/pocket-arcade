@@ -1,0 +1,1 @@
+every Bash call exits 1 with no output

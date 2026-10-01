@@ -52,6 +52,8 @@ export type TypeStyle = {
   readonly letterSpacingEm?: number;
   /** Quiet buttons and nudges are underlined. */
   readonly isUnderlined?: boolean;
+  /** Stat values use tabular figures (the design's .sv: font-variant-numeric tabular-nums). */
+  readonly isTabular?: boolean;
 };
 
 /** Toybox type roles, in pt before Dynamic Type. Latin / Arabic-script line heights per role. */
@@ -73,6 +75,7 @@ export const TYPE_SCALE: Readonly<Record<TypeRole, TypeStyle>> = {
     weight: 'bold',
     face: 'display',
     lineHeight: { latin: 1.1, arabic: 1.1 },
+    isTabular: true,
   },
   heading: {
     fontSize: 20,

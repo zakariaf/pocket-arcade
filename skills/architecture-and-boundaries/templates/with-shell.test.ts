@@ -1,8 +1,8 @@
 // packages/shell/src/config/with-shell.test.ts
 import { ICON_CONFIG } from './art-config.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
-import { shellPlugins } from './shell-plugins.ts';
-import { withShell } from './with-shell.ts';
+import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
+import { appIdOf, withShell } from './with-shell.ts';
 
 import type { GameConfig } from './game-config.ts';
 
@@ -22,11 +22,11 @@ const LIVE_UNITS = {
 const GAME: GameConfig = {
   id: 'probe-game',
   appName: { en: 'Probe Game', de: 'Probe Game', fa: 'Probe Game', ckb: 'Probe Game' },
-  bundleId: 'com.example.probegame',
+  bundleId: 'io.applander.probegame',
   appStoreId: null,
   version: '1.0.0',
   buildNumber: 3,
-  premium: { productId: 'com.example.probegame.premium', priceNote: 'EUR 1.99 tier' },
+  premium: { productId: 'io.applander.probegame.premium', priceNote: 'EUR 1.99 (owner, O2)' },
   ads: {
     isEnabled: true,
     policy: {
@@ -49,6 +49,12 @@ const GAME: GameConfig = {
   },
   store: { audience: 'general', ageRating: { advertising: true } },
 };
+
+/** The same game under another id, with the app ids that id must have. */
+function gameWithId(id: string): GameConfig {
+  const bundleId = appIdOf(id);
+  return { ...GAME, id, bundleId, premium: { ...GAME.premium, productId: `${bundleId}.premium` } };
+}
 
 const STORE_OFF = { APP_VARIANT: 'store', EXPO_PUBLIC_APP_VARIANT: 'store', ADS_MODE: 'off' };
 const STORE_LIVE = { APP_VARIANT: 'store', EXPO_PUBLIC_APP_VARIANT: 'store', ADS_MODE: 'live' };
@@ -87,7 +93,7 @@ describe('withShell', () => {
     expect(withShell(game, STORE_LIVE).extra?.['adsMode']).toBe('off');
   });
 
-  it('writes the team, the build number and the home-screen name per language', () => {
+  it('writes the team, the build number, the home-screen name and the ATT text per language', () => {
     const config = withShell(
       { ...GAME, appStoreId: '1234567890' },
       { APPLE_TEAM_ID: 'ABCDE12345' },
@@ -95,15 +101,45 @@ describe('withShell', () => {
     expect(config.ios?.appleTeamId).toBe('ABCDE12345');
     expect(config.ios?.buildNumber).toBe('3');
     expect(config.locales?.['fa']).toStrictEqual({
-      ios: { CFBundleDisplayName: 'Probe Game' },
+      ios: {
+        CFBundleDisplayName: 'Probe Game',
+        NSUserTrackingUsageDescription: TRACKING_USAGE_DESCRIPTIONS.fa,
+      },
       android: { app_name: 'Probe Game' },
     });
+    for (const lang of ['en', 'de', 'fa', 'ckb'] as const) {
+      expect(config.locales?.[lang]).toMatchObject({
+        ios: { NSUserTrackingUsageDescription: expect.stringMatching(/\S/) },
+      });
+    }
     expect(config.extra?.['game']).toMatchObject({ appStoreId: '1234567890' });
   });
 
-  it('rejects a bundle id that is not valid on both platforms', () => {
-    expect(() => withShell({ ...GAME, bundleId: 'com.example.probe-game' }, {})).toThrow(
-      'bundleId com.example.probe-game must match',
+  it('takes only io.applander.<game id without hyphens> as the bundle id (owner decision O4)', () => {
+    expect(appIdOf('line-siege')).toBe('io.applander.linesiege');
+    expect(withShell(GAME, {}).ios?.bundleIdentifier).toBe('io.applander.probegame');
+    expect(withShell(GAME, {}).android?.package).toBe('io.applander.probegame');
+    for (const bundleId of ['com.example.probegame', 'io.applander.probe-game']) {
+      expect(() => withShell({ ...GAME, bundleId }, {})).toThrow(
+        `bundleId ${bundleId} must be io.applander.probegame`,
+      );
+    }
+  });
+
+  it("rejects the scaffold's old placeholder id com.example.linesiege for Line Siege", () => {
+    const lineSiege = { ...gameWithId('line-siege'), bundleId: 'com.example.linesiege' };
+    expect(() => withShell(lineSiege, {})).toThrow(
+      'bundleId com.example.linesiege must be io.applander.linesiege',
+    );
+    expect(withShell(gameWithId('line-siege'), {}).ios?.bundleIdentifier).toBe(
+      'io.applander.linesiege',
+    );
+  });
+
+  it('takes only <bundle id>.premium as the Premium product id', () => {
+    const premium = { ...GAME.premium, productId: 'com.example.probegame.premium' };
+    expect(() => withShell({ ...GAME, premium }, {})).toThrow(
+      'premium.productId com.example.probegame.premium must be io.applander.probegame.premium',
     );
   });
 
@@ -118,7 +154,7 @@ describe('withShell', () => {
 
   it('adds the icon and the splash plugin last, only for a game render-art has drawn', () => {
     expect(withShell(GAME, {}).icon).toBeUndefined();
-    const drawn = withShell({ ...GAME, id: 'drawn-game' }, {});
+    const drawn = withShell(gameWithId('drawn-game'), {});
     expect(drawn.icon).toBe(ICON_CONFIG.icon);
     expect(drawn.ios?.icon).toStrictEqual(ICON_CONFIG.iosIcon);
     expect(drawn.plugins?.at(-1)).toStrictEqual([

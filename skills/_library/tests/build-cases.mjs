@@ -215,6 +215,7 @@ export const CASE_TABLE = [
   ['files-exist', baseBasic, 'files-exist', (files) => withSkill(files, (text) => replace(text, '| Greeting function to copy | Workflow step 2 |\n', '| Greeting function to copy | Workflow step 2 |\n| `references/ghost.md` | A file that is not there | Never |\n')), ['files-exist']],
   ['ref-toc', baseBasic, 'ref-toc', (files) => ({ ...files, 'references/guide.md': `${GUIDE}\n${Array.from({ length: 110 }, (_, i) => `- Greeting example ${i + 1}: Hello, friend number ${i + 1}.`).join('\n')}\n` }), ['ref-toc']],
   ['no-project-ref', baseBasic, 'no-project-ref', (files) => ({ ...files, 'references/guide.md': `${GUIDE}\nThe full wording rules are in docs/05-ui-and-components.md.\n` }), ['no-project-ref']],
+  ['device-explicit', baseBasic, 'device-explicit', (files) => ({ ...files, 'references/guide.md': `${GUIDE}\nTo see a greeting on the simulator:\n\n\`\`\`sh\nmaestro test flows/greeting.yaml\n\`\`\`\n` }), ['device-explicit']],
   ['no-shouting', baseBasic, 'no-shouting', (files) => ({ ...files, 'references/guide.md': `${GUIDE}\nIt is IMPORTANT to greet first.\n` }), ['no-shouting']],
   ['layout', baseBasic, 'layout', (files) => withSkill({ ...files, 'notes.txt': 'Loose notes at the top of the skill.\n' }, (text) => replace(text, '| Greeting function to copy | Workflow step 2 |\n', '| Greeting function to copy | Workflow step 2 |\n| `notes.txt` | Loose notes | Never |\n')), ['layout']],
   ['script-lib', baseScripted, 'script-lib', (files) => ({ ...files, 'scripts/check-greeting.mjs': HOSTILE_SCRIPT }), ['script-lib']],

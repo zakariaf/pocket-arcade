@@ -54,7 +54,8 @@ export function StatsPanels({ model }: StatsPanelsProps): ReactNode {
       </StatPanel>
       <StatPanel
         testID="stats.best-card"
-        leading={{ kind: 'icon', icon: 'star-filled' }}
+        // The design's star(true): the gold two-colour rating star on the pop tile.
+        leading={{ kind: 'icon', icon: 'rating-star' }}
         title={t('stats.best.title')}
       >
         <StatList

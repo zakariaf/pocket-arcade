@@ -1,0 +1,3 @@
+[root-direction-provider]
+packages/shell/src/app/create-startup-splash.tsx
+without a DirectionProvider for its language

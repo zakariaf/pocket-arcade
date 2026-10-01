@@ -1,9 +1,11 @@
 // packages/shell/src/ui/quiet-button.tsx
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { PRESS_SQUASH } from '@e07/shell/theme/motion.ts';
 import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
+import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { AppText } from './app-text.tsx';
@@ -17,6 +19,29 @@ import type { PressableStateCallbackType } from 'react-native';
 const SPEC = COMPONENT_SPECS.quietButton;
 const GAP = COMPONENT_SPECS.button.gap;
 const NUDGE_ICON = 20;
+const NUDGE = typeStyleOf('nudge');
+
+/**
+ * The design's underline (.quiet: text-decoration-thickness 2px, text-underline-offset 5px) where
+ * Chrome draws it: the offset under the rounded ascent, from the top of the text's content box
+ * (rounded ascent plus rounded descent, centred in the line). Measured on the S12 and S13
+ * references: the 2 pt line starts 19 pt under the content top of Rubik 15. iOS draws its own 1 pt
+ * line deeper and RN has no style for either, so the button draws it.
+ */
+const UNDERLINE_THICKNESS = 2;
+const UNDERLINE_OFFSET = 5;
+/** hhea ascent and descent per em: Rubik 935 / 250 of 1000, Vazirmatn 2100 / 1100 of 2048. */
+const FONT_EM = {
+  latin: { ascent: 0.935, descent: 0.25 },
+  arabic: { ascent: 2100 / 2048, descent: 1100 / 2048 },
+} as const;
+
+export function quietUnderlineTop(fontSize: number, lineHeight: number, isArabic: boolean): number {
+  const em = isArabic ? FONT_EM.arabic : FONT_EM.latin;
+  const ascent = Math.round(em.ascent * fontSize);
+  const content = ascent + Math.round(em.descent * fontSize);
+  return (lineHeight - content) / 2 + ascent + UNDERLINE_OFFSET;
+}
 
 export type QuietButtonProps = {
   readonly label: string;
@@ -46,6 +71,12 @@ const useStyles = makeStyles((theme) => {
       gap: GAP,
     },
     pressed: { backgroundColor: theme.colors.sunken },
+    underline: {
+      position: 'absolute',
+      start: 0,
+      end: 0,
+      height: UNDERLINE_THICKNESS,
+    },
     squashed: { transform: [{ scale: PRESS_SQUASH.quietButtonScale }] },
   });
   return styles;
@@ -57,6 +88,20 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
   const theme = useTheme();
   const isDisabled = props.isDisabled === true;
   const color = isDisabled ? theme.colors.textMuted : theme.colors.icon;
+  // The underline is the label's own colour (CSS currentColor).
+  const underlineColor = isDisabled ? theme.colors.textMuted : theme.colors.text;
+  const text = useLocalizedTextStyle({
+    fontSize: NUDGE.fontSize,
+    weight: NUDGE.weight,
+    face: NUDGE.face,
+    lineHeight: NUDGE.lineHeight,
+    align: 'center',
+  });
+  const underlineTop = quietUnderlineTop(
+    NUDGE.fontSize,
+    text.lineHeight ?? NUDGE.fontSize,
+    (text.fontFamily ?? '').startsWith('Vazirmatn'),
+  );
   const pressedStyle = (state: PressableStateCallbackType): (object | false)[] => [
     styles.face,
     state.pressed && !isDisabled && styles.pressed,
@@ -82,6 +127,11 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
           variant="nudge"
           tone={isDisabled ? 'muted' : 'default'}
           align="center"
+        />
+        <View
+          style={[styles.underline, { top: underlineTop, backgroundColor: underlineColor }]}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
         />
       </View>
       {props.iconEnd === undefined ? null : (

@@ -121,10 +121,10 @@ Groups switch by their if-hooks, never by `navigate`: a hook reads the settings 
 |---|---|---|
 | any top bar | Back | `navigation.goBack()` |
 | Home | Play / Continue | `navigate('Game', { start: 'resume' })` when a run is saved, else `navigate('Game', { start: 'new', ref })` |
-| Home | Daily card play | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })` |
+| Home | Daily card body (`home.daily-card`) | `navigate('Daily')`: opens S9 Daily challenge, also once today is done (L7) |
+| Home | Daily card Play key (`home.daily-card.play-button`) | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })`: today's run, without S9 |
 | Home | Endless card | `navigate('Game', { start: 'new', ref: { kind: 'endless' } })` |
 | Home | Levels / Statistics / How to play / Premium / settings gear | `navigate('Levels')`, `navigate('Stats')`, `navigate('HowToPlay')`, `navigate('Premium')`, `navigate('Settings')` |
-| Home | Daily card title | `navigate('Daily')` |
 | Levels | tap an unlocked tile | `navigate('Game', { start: 'new', ref: { kind: 'level', level } })` |
 | Daily | Play | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })` |
 | Stats (empty) | Play a level | `navigate('Game', …)` as Home's Play |
@@ -141,7 +141,7 @@ Navigation calls live in screens and their `use-<screen>-model.ts` hooks, never 
 ## Direction and transitions
 
 - The container gets `direction={readLayoutDirection()}` (the `I18nManager` value, read only in `i18n/direction.ts`). React Navigation's own default is `I18nManager.getConstants().isRTL`; passing it makes the shared source explicit. Never pass the language setting: during the one launch before a direction reload the language already says RTL while the layout is still LTR.
-- Native stack hands the direction to react-native-screens, which sets the navigation controller's semantic content attribute; UIKit then slides pushes in from the reading direction. This holds with `headerShown: false` (read in react-native-screens 4.26 source); confirm it once in the owner's RTL play-test.
+- Native stack hands the direction to react-native-screens, which sets the navigation controller's semantic content attribute; UIKit then slides pushes in from the reading direction. This holds with `headerShown: false` (read in react-native-screens 4.26 source); the owner's own Line Siege play-test looks at one push in Persian (an owner step in the report, never waited for).
 - Reduce motion (the Shell setting, which defaults to the phone's): pushes cross-fade (`animation: 'fade'`) instead of sliding. `templates/navigation-root.tsx` wraps `rootStack` with `.with(...)` so the options can read `useReduceMotion()`; verified at runtime in Jest.
 
 ## The Game screen's Back rule

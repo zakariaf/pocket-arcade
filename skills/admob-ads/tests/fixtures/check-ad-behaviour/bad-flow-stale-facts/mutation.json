@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/consent-moment-flow.ts",
+      "find": "        if (state.phase === 'idle' && state.input !== input) prepareIfDue();\n",
+      "with": ""
+    }
+  }
+]

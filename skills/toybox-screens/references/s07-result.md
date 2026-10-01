@@ -35,7 +35,7 @@ Chip and Sticker align themselves to the start (`alignSelf: 'flex-start'`), whic
 2. Stars row: 86 / 102 / 86 pt, 124 tall, gap 8, bottom-aligned, the middle star 24 higher; one image for VoiceOver ("Stars: 3 / 3"); the testID suffix is the star count (`result.stars-3`). Pop-in: 540 ms each, delays 250 / 400 / 550 ms (boing); Reduce motion shows them filled at once with a 120 ms fade.
 3. Title (`display` 38, centred): "Level complete!".
 4. The game's win-title sticker on accent paper (tilt -3 deg, slapped in at 700 ms, pulled up 2 pt, centred).
-5. Score panel: "Score" (17 Bold muted) · the value (44 display) · the gold "New best!" sticker (tilt +6 deg, slapped at 950 ms) at the end; then, over a 2 pt rule, the game's progress line with a 20 pt success check and the win line: the moves line ("7 moves – par 7", `result.score-card.moves-line`) on a level rated by moves, or the score line ("Score 1,840 – best 2,010", `result.score-card.score-line`) on a level rated by score. Line Siege is score-rated: parity compares its win with toybox-visual-parity's design-derived `s7-result-win--score` variant, picked from `parity/game-facts.json` (`winLine: 'score'`).
+5. Score panel: "Score" (17 Bold muted) · the value (44 display) · the gold small (`sm`) "New best!" sticker with the rating star (tilt +6 deg, slapped at 950 ms; ScorePanel sets the size and the tilt) at the end; then, over a 2 pt rule, the game's progress line with a 20 pt success check and the win line: the moves line ("7 moves – par 7", `result.score-card.moves-line`) on a level rated by moves, or the score line ("Score 1,840 – best 2,010", `result.score-card.score-line`) on a level rated by score. Line Siege is score-rated: parity compares its win with toybox-visual-parity's design-derived `s7-result-win--score` variant, picked from `parity/game-facts.json` (`winLine: 'score'`).
 6. grow.
 7. Hero key without a cap, forward at the end: "Next level".
 8. Two buttons (gap 12): Replay (`restore`) and Levels (`grid`).
@@ -126,14 +126,14 @@ Chosen states the design does not draw may also set: `result.daily-title`, `resu
 
 ## A Shell text the deck lacks: result.win.score-line
 
-The copy deck has only the moves line with a par. The score line of a score-rated win is written by hand in all four Shell catalogs (`packages/shell/src/i18n/catalogs/<lang>.json`, keys sorted), exactly as below; the design deck is not edited for it, so `copy-deck.mjs apply` never writes it, and `check-screens.mjs` fails `extra-key-catalog` while a catalog lacks it or differs. It uses the deck's own words for score and best; ask a native speaker to review fa and ckb. It replaces the retired `result.win.moves-count` ("12 moves"), which is gone from the catalogs and from check-screens' list.
+The copy deck has only the moves line with a par. The score line of a score-rated win is written by hand in all four Shell catalogs (`packages/shell/src/i18n/catalogs/<lang>.json`, keys sorted), exactly as below; the design deck is not edited for it, so `copy-deck.mjs apply` never writes it, and `check-screens.mjs` fails `extra-key-catalog` while a catalog lacks it or differs. It uses the deck's own words for score and best; the fa and ckb drafts go on the owner's own review list (an owner step in the report, not blocking). It replaces the retired `result.win.moves-count` ("12 moves"), which is gone from the catalogs and from check-screens' list.
 
 | Language | `result.win.score-line` |
 |---|---|
 | en | `Score {score, number} – best {bestScore, number}` |
 | de | `Punkte {score, number} – Rekord {bestScore, number}` |
-| fa (native review) | `امتیاز {score, number} – رکورد {bestScore, number}` |
-| ckb (native review) | `خاڵ {score, number} – باشترین {bestScore, number}` |
+| fa (draft, owner's review) | `امتیاز {score, number} – رکورد {bestScore, number}` |
+| ckb (draft, owner's review) | `خاڵ {score, number} – باشترین {bestScore, number}` |
 
 ## Reference images
 

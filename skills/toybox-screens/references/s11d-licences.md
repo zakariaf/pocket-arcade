@@ -24,8 +24,9 @@ Top bar "Licences" with Back. Body gap **18** (a tall frame; the body scrolls):
 
 1. Intro paragraph: "{gameName} is built with these open-source components, fonts and sounds…"
 2. Four groups (group tab + list): Fonts (`doc`), Open-source software (`grid`), Ads and purchase (`ad`), Sounds (`music`).
-   - A row with a description (Vazirmatn) is a column: name + version in Bold (isolated LTR), description 14, licence 14, and a quiet "Show licence text" nudge with a chevron at the end.
-   - Other rows: name (+ version) as the label, the licence under it, chevron; the row opens the licence text.
+   - A row with a description (Vazirmatn) is a column: name + version in Bold (isolated LTR), description 14, licence 14, and a quiet "Show licence text" nudge with a chevron at the end, centred in the column (`alignSelf: 'center'`).
+   - Other rows: the name in Bold (`isStrong`) as the label, the licence under it, chevron; the row opens the licence text.
+   - Versions: only the deck's Vazirmatn shows one ("Vazirmatn 33.003"). The design names the two other faces, Lilita One and Rubik, without a version, so `licence-entries.ts` gives them none.
    - Fonts: Vazirmatn 33.003, Lilita One 1.002, Rubik 2.300 (SIL Open Font License 1.1).
 
 ## States and variants
@@ -34,7 +35,7 @@ One state. A game appends its own credits after the Shell's entries: `creditRows
 
 ## Data the model supplies
 
-`LicencesModel` (in `licences-view.tsx`): `gameName`, `entries` (`shellLicenceEntries(t)` from `licence-entries.ts`, then the game's), `isReducedMotion`, `onBack`, `onShowText(key)`. Rows are keyed by the kebab-case component name (`licences.entry-row.react-native`). The Toybox `ListRow` has no licence line or nudge of its own, so each row passes them in its `below` slot: the licence (`<row>.licence`, muted) and, on the Vazirmatn column row, a `QuietButton` "Show licence text" (`<row>.show-text-button`); chevron rows are `end="chevron"` with `onPress`.
+`LicencesModel` (in `licences-view.tsx`): `gameName`, `entries` (`shellLicenceEntries(t)` from `licence-entries.ts`, then the game's), `isReducedMotion`, `onBack`, `onShowText(key)`. Rows are keyed by the kebab-case component name (`licences.entry-row.react-native`). Each row passes its licence as the row's description with its own map id (`description`, `descriptionTestID="<row>.licence"`), so the licence sits in the text column like any description. The Vazirmatn column row puts its licence line and the centred `QuietButton` "Show licence text" (`<row>.show-text-button`) in the row's `textExtra` slot, where each part keeps its own width. Never use the wrapping `below` slot for it: that adds the row's 12 pt gap, every row grows 10 pt, and the tall capture's scroll offsets stop matching the design. Chevron rows are `end="chevron"` with `onPress`.
 
 The template `use-licences-model.ts` (with its test) builds it: `[...shellLicenceEntries(t), ...creditRowsOf(useGameHost().credits)]`. The app bundles no licence documents and makes no request of its own, so `onShowText` hands the licence's public text to the browser (`licenceTextUrl` in settings-and-preferences' `config/external-links.ts`: the SPDX page, or the publisher's page for the Google SDK terms); a row without one (the game's own sounds) opens nothing (Chosen).
 
@@ -123,3 +124,4 @@ Open the image before building and compare the finished screen with it (toybox-v
 
 - Translating names or licence titles.
 - Forgetting Lilita One and Rubik under Fonts.
+- The licence line in `below`, regular-weight names, a nudge at the row start, or versions on Lilita One and Rubik: each moved or changed the rows against the design.

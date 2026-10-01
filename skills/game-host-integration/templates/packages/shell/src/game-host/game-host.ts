@@ -1,13 +1,14 @@
 // packages/shell/src/game-host/game-host.ts
 import { createElement } from 'react';
 
+import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
 import { createFullscreenGate } from '@e07/shell/game-host/fullscreen-gate.ts';
 import {
   EXAMPLE_RUN,
   createGameDebugControls,
   endStateOf,
 } from '@e07/shell/game-host/game-debug-controls.ts';
-import { hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
+import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
 import {
   entryFor,
   newSession,
@@ -23,8 +24,8 @@ import {
   isTutorialMoveAccepted,
 } from '@e07/shell/game-host/tutorial-script.ts';
 
+import type { HostCounter } from './host-counter.ts';
 import type { LevelPack } from '@e07/game-kit/contract/levels.ts';
-import type { MessageId } from '@e07/game-kit/contract/messages.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { CreditEntry } from '@e07/shell/art/credit-entry.ts';
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
@@ -107,9 +108,6 @@ export type GameHostDeps = {
   readonly writeRunEnd: (write: SectionWrite) => void;
 };
 
-/** One S10 statistics card: the counter's save key and the game's catalog key for its label. */
-export type HostCounter = { readonly id: string; readonly labelId: MessageId };
-
 /** One opened run: the type-erased handle for screens and its bound board. */
 export type OpenedSession = {
   readonly handle: SessionHandle;
@@ -133,7 +131,7 @@ export type GameHost = {
   readonly logo: LogoArt;
   /** The game's own S11d rows: the licences screen appends creditRowsOf(host.credits). */
   readonly credits: readonly CreditEntry[];
-  /** The game's statistics counters (S10 cards, Home): save key and label key, in game order. */
+  /** The game's statistics counters (S10 cards, Home): save key, label key, sum or max. */
   readonly counters: readonly HostCounter[];
   /** counters.map((counter) => counter.id): the keys in the save's stats.counters. */
   readonly counterIds: readonly string[];
@@ -141,6 +139,8 @@ export type GameHost = {
   readonly hasMusic: boolean;
   /** isScoreRatedOf(game): levels rated by score; the S7 win prints the score line, no par. */
   readonly isScoreRated: boolean;
+  /** hasHintsOf(game): a solver hint policy; the S5 top bar has a hint key only then. */
+  readonly hasHints: boolean;
   /** The tutorial level's coach steps (S13): one sentence and one pointer each, no game types. */
   readonly tutorialSteps: readonly TutorialCoachStep[];
   /** The game's level packs (S8): name key, first level, level count, stars to unlock. */
@@ -149,6 +149,8 @@ export type GameHost = {
   readonly howToPlayPages: readonly HowToPlayPage[];
   /** S13: the page's example state drawn by the game's own board; null without a picture factory. */
   readonly renderHowToPlayPicture: (pageIndex: number) => ReactNode;
+  /** S13: the picture's width / height (examplePictureAspectOf: 320 / 206 unless the board says). */
+  readonly howToPlayPictureAspect: number;
   readonly hasSavedRun: () => boolean;
   /** null when there is no such run: no saved run, an unknown level, a mode the game lacks. */
   readonly openSession: (open: SessionOpen) => OpenedSession | null;
@@ -262,9 +264,10 @@ type GameFacts = Omit<
   keyof TeachingFacts | 'hasSavedRun' | 'openSession' | 'lifecycle' | 'debugControls'
 >;
 
-/** What screens read about the game: names, art, counters, music and packs. */
+/** What screens read about the game: names, art, counters, music, score, hints and packs. */
 function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts {
-  const counters = game.stats.counters.map(({ id, labelId }) => ({ id, labelId }));
+  const { counters: stats } = game.stats;
+  const counters = stats.map(({ id, labelId, aggregate }) => ({ id, labelId, aggregate }));
   return {
     id: game.identity.id,
     nameId: game.identity.nameId,
@@ -276,7 +279,9 @@ function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts 
     counterIds: counters.map((counter) => counter.id),
     hasMusic: hasMusicOf(game),
     isScoreRated: isScoreRatedOf(game),
+    hasHints: hasHintsOf(game),
     packs: game.levels.packs,
+    howToPlayPictureAspect: examplePictureAspectOf(game.presentation.board),
   };
 }
 

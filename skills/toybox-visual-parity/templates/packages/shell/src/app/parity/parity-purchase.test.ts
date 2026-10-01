@@ -7,7 +7,7 @@ import { createParityPurchase } from './parity-purchase.ts';
 import type { ParityFrameKey } from './parity-plans.ts';
 import type { PurchaseEvent } from '@e07/shell/services/purchase/purchase-port.ts';
 
-const PRODUCT = 'com.example.linesiege.premium';
+const PRODUCT = 'io.applander.linesiege.premium';
 
 function portFor(frame: ParityFrameKey): ReturnType<typeof createParityPurchase> {
   return createParityPurchase({ productId: PRODUCT, plan: PARITY_PLANS[frame] });
