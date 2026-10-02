@@ -337,7 +337,7 @@ For this epic:
 ### E05-T13 · Simplify, code review, re-run the gates and merge
 - **Goal:** Close the epic as the owner's rule 4 asks: the simplify and code-review agents go over the whole branch, every confirmed finding is fixed test-first, the gates are green again, and the branch is merged with its evidence report.
 - **Skills:** `tdd-workflow`, `quality-gates`, `git-commits-and-reporting`, `troubleshooting-playbook`.
-- **Tests first:** Every finding that changes behaviour gets a failing test first that shows the problem (seen red), then the fix, in its own commit. A finding inside a copied template is fixed in the repo the same way and named in the report, so the skill's template can be corrected later (skill-library work is not part of this epic).
+- **Tests first:** Every finding that changes behaviour gets a failing test first that shows the problem (seen red), then the fix, in its own commit. A finding inside a copied template is fixed in the skill first (CLAUDE.md, "Skills": skill-maintenance, its own `fix(skills)` commit), then copied into the repo again in a commit that gives the reason, and named in the report.
 - **Build:** Follow "Close the epic" below, steps 1 to 5. The report's "Not tested or not verified" lists: the native build of the seven native packages (prebuild and Release simulator build, E10), the two `store-reloads` lines (E09), the consent moment and ATT on a device (the ads smoke test, E17), and the StoreKit Tier 2 and Tier 3 runs (E17). Its "Owner steps (not blocking)" names the owner's standing checks (the fa and ckb review, the play-test, the sound listening) and says this epic added nothing new to them.
 - **Done when:**
   - Every "Done when" of T01 to T12 passes again after the fixes.
