@@ -66,7 +66,8 @@ run(async () => {
       report.problem({ file: entry.rel, rule: 'conflict', message: entry.notes.join('; '), fix: `Compare it with the template, keep what the owner needs, then rerun with --replace ${entry.rel} (or edit it to match).` });
       continue;
     }
-    if (action !== 'same') console.log(`${options.write ? 'wrote' : 'plan '} ${action.padEnd(8)} ${entry.rel}`);
+    const notes = entry.notes.length ? ` (${entry.notes.join('; ')})` : '';
+    if (action !== 'same' || notes) console.log(`${options.write ? 'wrote' : 'plan '} ${action.padEnd(8)} ${entry.rel}${notes}`);
     if (options.write && action !== 'same') {
       const target = join(root, entry.rel);
       mkdirSync(dirname(target), { recursive: true });

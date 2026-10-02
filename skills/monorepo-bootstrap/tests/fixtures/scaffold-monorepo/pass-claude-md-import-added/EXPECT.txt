@@ -1,0 +1,1 @@
+plan  merge    CLAUDE.md (gains the @AGENTS.md import as its first line)

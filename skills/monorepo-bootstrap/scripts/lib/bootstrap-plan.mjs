@@ -233,6 +233,17 @@ export function mergeRootManifest(existingText, wantedText) {
   }
 }
 
+/**
+ * CLAUDE.md belongs to the owner and may carry project notes for Claude Code. The template's only
+ * demand is the import line, so an existing file that has it is kept as it is, and one without it
+ * gains it as its first line.
+ */
+export function mergeClaudeMd(existing, wanted) {
+  const importLine = wanted.trim();
+  if (existing.split('\n').some((line) => line.trim() === importLine)) return { content: existing, changed: false, conflicts: [], notes: [`kept: it already imports ${importLine}`] };
+  return { content: `${importLine}\n\n${existing}`, changed: true, conflicts: [], notes: [`gains the ${importLine} import as its first line`] };
+}
+
 /** What would happen to each file: create, same, merge or conflict. */
 export function buildPlan(root, vars) {
   return renderedFiles(root, vars).map(({ rel, content }) => {
@@ -242,9 +253,9 @@ export function buildPlan(root, vars) {
     if (sameContent(abs, content)) return { rel, content, action: 'same', notes: [] };
     if (Buffer.isBuffer(content)) return { rel, content, action: 'conflict', notes: ['exists with different bytes'] };
     const current = readFileSync(abs, 'utf8');
-    const merge = rel === '.gitignore' ? mergeGitignore(current, content) : rel === '.claude/settings.json' ? mergeSettings(current, content) : rel === 'package.json' ? mergeRootManifest(current, content) : null;
+    const merge = rel === '.gitignore' ? mergeGitignore(current, content) : rel === '.claude/settings.json' ? mergeSettings(current, content) : rel === 'package.json' ? mergeRootManifest(current, content) : rel === 'CLAUDE.md' ? mergeClaudeMd(current, content) : null;
     if (merge === null) return { rel, content, action: 'conflict', notes: ['exists with different content'] };
     if (merge.conflicts.length) return { rel, content: merge.content, action: 'conflict', notes: merge.conflicts };
-    return { rel, content: merge.content, action: merge.changed ? 'merge' : 'same', notes: [] };
+    return { rel, content: merge.content, action: merge.changed ? 'merge' : 'same', notes: merge.notes ?? [] };
   });
 }

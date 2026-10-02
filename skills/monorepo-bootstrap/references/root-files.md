@@ -132,7 +132,7 @@ These root files are shared byte for byte with the skills that maintain them (th
 
 ## AGENTS.md and CLAUDE.md
 
-`AGENTS.md` is the short session contract every agent reads: sources of truth (the skills, starting with `pocket-arcade-index`), the session-start ritual, how to work, commands, what the project does not use, when to stop and ask, safety of the Mac and accounts, commits and reporting. It replaces the Expo template's `AGENTS.md` (which says "Use Expo Router"). `CLAUDE.md` is the one line `@AGENTS.md`, so Claude Code imports it and nothing is written twice.
+`AGENTS.md` is the short session contract every agent reads: sources of truth (the skills, starting with `pocket-arcade-index`), the session-start ritual, how to work, commands, what the project does not use, when to stop and ask, safety of the Mac and accounts, commits and reporting. It replaces the Expo template's `AGENTS.md` (which says "Use Expo Router"). `CLAUDE.md` is the one line `@AGENTS.md`, so Claude Code imports it and nothing is written twice. The owner may keep project notes for Claude Code in `CLAUDE.md` (how epics are run, where things are). The generator keeps an existing `CLAUDE.md` that already has the `@AGENTS.md` line (it prints `same CLAUDE.md (kept: ...)`), and gives one without it that line as its first line (`merge`). It is never a conflict.
 
 ## Merging an existing repo (conflicts)
 
