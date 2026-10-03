@@ -11,9 +11,12 @@ describe('the largest realistic save', () => {
     expect(doc.run?.log).toHaveLength(200);
   });
 
+  // The save write budget (p95 under 5 ms) is measured on this document, so it must stay in the
+  // low tens of kilobytes: about 21,000 bytes today, under 32,000 with room for new sections.
   it('encodes to a slot row the save layer reads back', () => {
     const record = largestRealisticSaveRecord('line-siege');
     expect(record.payload.length).toBeGreaterThan(10_000);
+    expect(record.payload.length).toBeLessThan(32_000);
     expect(decodeSlot(record, 'line-siege')).toMatchObject({ kind: 'ok', migratedFrom: null });
   });
 });

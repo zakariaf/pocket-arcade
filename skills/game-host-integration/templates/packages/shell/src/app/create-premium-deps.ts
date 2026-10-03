@@ -30,11 +30,14 @@ export type PremiumInput = {
   readonly deviceLocales: readonly DeviceLocale[];
 };
 
-/** The save's premium section after a change (a revoke carries its date for the save guard). */
+/**
+ * The save's premium section after a change (a revoke carries its date for the save guard). False
+ * when the disk refused the write: the purchase then stays unfinished, so StoreKit delivers it again.
+ */
 export function persistPremiumIn(
   save: SaveService,
   clock: Pick<ClockPort, 'nowMs'>,
-): (change: PremiumChange) => void {
+): (change: PremiumChange) => boolean {
   return (change) => {
     const atMs = clock.nowMs();
     save.update(
@@ -46,6 +49,7 @@ export function persistPremiumIn(
       }),
       { refreshBackup: true },
     );
+    return !save.didLastWriteFail();
   };
 }
 

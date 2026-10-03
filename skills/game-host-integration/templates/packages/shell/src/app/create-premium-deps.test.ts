@@ -1,10 +1,13 @@
 // packages/shell/src/app/create-premium-deps.test.ts
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import { createFakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
+import { createFakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
+import { planLoad } from '@e07/shell/services/save/load-plan.ts';
+import { createSaveService } from '@e07/shell/services/save/save-service.ts';
 import { createShellStores } from '@e07/shell/stores/create-shell-stores.ts';
-import { createTestSave, TEST_CLOCK } from '@e07/shell/testing/create-test-save.ts';
+import { createTestSave, TEST_CLOCK, TEST_GAME_ID } from '@e07/shell/testing/create-test-save.ts';
 
-import { createPremiumDeps } from './create-premium-deps.ts';
+import { createPremiumDeps, persistPremiumIn } from './create-premium-deps.ts';
 
 import type { PremiumInput } from './create-premium-deps.ts';
 
@@ -48,6 +51,21 @@ describe('createPremiumDeps', () => {
     deps.persistPremium({ isPremium: true });
     deps.persistPremium({ isPremium: false, revokedAtMs: 5 });
     expect(input.save.doc().premium).toMatchObject({ owned: false, revokedAtMs: 5 });
+  });
+
+  // spec 8.9: "After a purchase, the Shell stores "Premium = yes" on the phone." A Premium change
+  // the disk refused reports false, so the purchase stays unfinished and StoreKit delivers it again.
+  it('reports a Premium change the disk refused as not saved, and a landed one as saved', () => {
+    const store = createFakeSaveStore();
+    const plan = planLoad({ current: null, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store, clock: TEST_CLOCK, errorLog, appVersion: '1.0.0', isStrict: true };
+    const save = createSaveService(deps, plan, 0);
+    save.applyLoadWrites();
+    const persistPremium = persistPremiumIn(save, TEST_CLOCK);
+    store.failNextWrite = true;
+    expect(persistPremium({ isPremium: true })).toBe(false);
+    expect(persistPremium({ isPremium: true })).toBe(true);
   });
 
   it('formats the price in the player language (System follows the phone) and records errors', () => {

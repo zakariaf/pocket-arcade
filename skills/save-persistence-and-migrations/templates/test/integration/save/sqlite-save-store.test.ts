@@ -13,6 +13,8 @@ import { createNodeSqliteSqlDriver } from './node-sqlite-sql-driver.ts';
 
 const META = { appVersion: '1.0.0', writtenAtMs: 1_790_000_000_000, writeCount: 1 };
 
+// spec 8.6: "Writes are "safe writes": write the new copy, then swap, so a crash mid-write
+// never corrupts the save. The previous good copy is kept as a backup."
 describe('sqlite-save-store', () => {
   let dir = '';
   beforeEach(() => {
@@ -125,6 +127,20 @@ describe('sqlite-save-store', () => {
       driver.get("SELECT COUNT(*) AS n FROM sqlite_master WHERE name = 'save_slots'", []),
     ).toStrictEqual({ n: 0 });
     expect(driver.get('PRAGMA journal_mode', [])).toStrictEqual({ journal_mode: 'delete' });
+    driver.close();
+  });
+
+  it('keeps only the newest 10 quarantined rows', () => {
+    const driver = createNodeSqliteSqlDriver(join(dir, 'save.db'));
+    const store = createSqliteSaveStore(driver);
+    store.write({ current: encodeSaveDoc(createDefaultSaveDoc('line-siege'), META) });
+    for (let atMs = 1; atMs <= 12; atMs += 1) store.quarantine('current', 'checksum', atMs);
+    expect(
+      driver.get(
+        'SELECT COUNT(*) AS n, MIN(quarantined_at) AS oldest, MAX(quarantined_at) AS newest FROM save_quarantine',
+        [],
+      ),
+    ).toStrictEqual({ n: 10, oldest: 3, newest: 12 });
     driver.close();
   });
 });

@@ -1,5 +1,8 @@
 // packages/shell/src/services/save/reset-progress.ts
-import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
+import {
+  createDefaultSaveDoc,
+  DEFAULT_STATS,
+} from '@e07/shell/services/save/schema/default-save-doc.ts';
 
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
@@ -22,5 +25,5 @@ export function resetAllProgress(doc: SaveDoc): SaveDoc {
 
 /** S10/S11 "Reset statistics": the stats section only. */
 export function resetStatistics(doc: SaveDoc): SaveDoc {
-  return { ...doc, stats: createDefaultSaveDoc(doc.gameId).stats };
+  return { ...doc, stats: DEFAULT_STATS };
 }

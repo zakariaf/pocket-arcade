@@ -19,7 +19,8 @@ const BOUGHT: StoreTransaction = {
   handle: null,
 };
 
-function setup(overrides: Partial<FakePurchaseScript> = {}) {
+/** `isSaved: false` is a save the store refused (save.didLastWriteFail() after the update). */
+function setup(overrides: Partial<FakePurchaseScript> = {}, isSaved = true) {
   const script: FakePurchaseScript = {
     isConnected: true,
     product: { productId: ID, displayPrice: '€1.99', price: 1.99, currency: 'EUR' },
@@ -34,8 +35,10 @@ function setup(overrides: Partial<FakePurchaseScript> = {}) {
     port,
     productId: ID,
     dispatch: (action: PremiumAction) => actions.push(action),
-    persistPremium: (change: PremiumChange) =>
-      script.calls.push(`persist:${String(change.isPremium)}`),
+    persistPremium: (change: PremiumChange) => {
+      script.calls.push(`persist:${String(change.isPremium)}`);
+      return isSaved;
+    },
     formatPrice: (product: { readonly displayPrice: string }) => product.displayPrice,
     onError: () => undefined,
   };
@@ -51,6 +54,21 @@ describe('premium service', () => {
     await flushMicrotasks();
     const tail = script.calls.slice(script.calls.indexOf('requestPurchase'));
     expect(tail).toStrictEqual(['requestPurchase', 'persist:true', 'finish:t1']);
+  });
+
+  // spec 8.9: "After a purchase, the Shell stores "Premium = yes" on the phone." A finished but
+  // unsaved purchase is lost for good; an unfinished one is delivered again at the next launch.
+  it('leaves a purchase the save refused unfinished, so StoreKit delivers it again', async () => {
+    const { script, port, actions, deps } = setup({}, false);
+    await startPremium(deps);
+    await buyPremium(deps);
+    port.emit({ type: 'transaction', transaction: BOUGHT });
+    await flushMicrotasks();
+    expect(script.calls.slice(script.calls.indexOf('requestPurchase'))).toStrictEqual([
+      'requestPurchase',
+      'persist:true',
+    ]);
+    expect(actions).toContainEqual({ type: 'premium-granted' });
   });
 
   it('maps an empty product list to "store unavailable"', async () => {

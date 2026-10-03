@@ -19,7 +19,7 @@ setModuleStubs({ 'expo-iap': join(dirname(fileURLToPath(import.meta.url)), 'lib'
 
 const SPEC = {
   name: 'check-premium-behaviour',
-  summary: "Loads the repo's Premium modules (Node type stripping) and checks every S12 state, the restore toasts, the entitlement-evidence rule, the service order (subscribe first; persist -> grant -> finish), restore and revocation, the store going unavailable offline, and the store price formatting.",
+  summary: "Loads the repo's Premium modules (Node type stripping) and checks every S12 state, the restore toasts, the entitlement-evidence rule, the service order (subscribe first; persist -> grant -> finish, never finish an unsaved purchase), restore and revocation, the store going unavailable offline, and the store price formatting.",
   usage: '[options] [repo-root]',
   options: {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -51,7 +51,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 /** A scripted PurchasePort plus deps that log every call in order. */
-function harness({ isConnected = true, product = PRODUCT, restoreResult = 'synced', transactions = [], connectThrows = false, readThrows = false, finishThrows = false } = {}) {
+function harness({ isConnected = true, product = PRODUCT, restoreResult = 'synced', transactions = [], connectThrows = false, readThrows = false, finishThrows = false, saveRefused = false } = {}) {
   const log = [];
   const listeners = new Set();
   const port = {
@@ -67,7 +67,7 @@ function harness({ isConnected = true, product = PRODUCT, restoreResult = 'synce
     port,
     productId: ID,
     dispatch: (action) => log.push(`dispatch:${action.type}${action.evidence ? `:${action.evidence}` : ''}${action.failure ? `:${action.failure}` : ''}`),
-    persistPremium: (change) => log.push(change.isPremium ? 'persist:true' : `persist:false@${change.revokedAtMs}`),
+    persistPremium: (change) => { log.push(change.isPremium ? 'persist:true' : `persist:false@${change.revokedAtMs}`); return !saveRefused; },
     formatPrice: (p) => p.displayPrice,
     onError: () => log.push('onError'),
   };
@@ -221,6 +221,11 @@ run(async () => {
       await service.processTransaction(h.deps, tx({ productId: 'io.applander.other.premium' }));
       return h.log;
     }, [], sfix);
+    await expect('service-order', FILES.service, 'an unsaved purchase is granted but never finished', async () => {
+      const h = harness({ saveRefused: true });
+      await service.processTransaction(h.deps, tx());
+      return h.log;
+    }, ['persist:true', 'dispatch:premium-granted'], 'persistPremium returns false when the disk refused the write (save.didLastWriteFail()); then return before finishQuietly so StoreKit delivers the purchase again (a finished but unsaved purchase is lost for good).');
     await expect('service-order', FILES.service, 'a failing finish is logged, Premium stays', async () => {
       const h = harness({ finishThrows: true });
       await service.processTransaction(h.deps, tx());

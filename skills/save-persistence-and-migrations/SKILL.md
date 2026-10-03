@@ -37,7 +37,7 @@ Everything the player owns is one versioned JSON document, validated on every lo
 - [ ] Every version above 1 has its step, its registration, its step test and both frozen fixtures with checksums; no shipped file was edited.
 - [ ] `load-plan`, `save-service`, `reset-progress`, `save-migrations`, `save-fixtures`, `hydrate-save`, `use-checkpoint-on-background` and `test/integration/save` tests pass; `tsc` is clean. The device-only files (`expo-sqlite-sql-driver.ts`, `peek-current-save.ts`) carry their `// device-only:` line.
 - [ ] Resets keep settings, first-run flags, ads and Premium, and refresh the backup.
-- [ ] A `save.db` whose `user_version` is newer than `DB_STRUCTURE_VERSION` opens read-only with the `newer-version` outcome; the integration test proves nothing is written.
+- [ ] A `save.db` whose `user_version` is newer than `DB_STRUCTURE_VERSION` opens read-only with the `newer-version` outcome; the integration tests prove nothing is written, not even an error log row.
 - [ ] After a write-path, schema or boot change: the kill test printed `RESULT: PASS`, or the report says it is owed.
 - [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-save-layer.mjs .` prints `RESULT: PASS`
 
