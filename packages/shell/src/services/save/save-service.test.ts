@@ -137,6 +137,93 @@ describe('createSaveService', () => {
     save.update(loud);
     expect(errorLog.entries().map((entry) => entry.source)).toStrictEqual(['save']);
   });
+
+  // spec 8.14: "The Shell keeps a small local error log (the debug menu can show it) and
+  // recovers where possible ... never a crash loop."
+  it('logs a refused write, keeps playing on the new document and reports it until a write lands', () => {
+    const { store, save, errors } = setup({ isStrict: true });
+    store.failNextWrite = true; // a full disk: SQLITE_FULL from the COMMIT
+    expect(() => {
+      save.update((doc) => ({ ...doc, settings: { ...doc.settings, theme: 'dark' } }));
+    }).not.toThrow();
+    expect(errors).toStrictEqual([new Error('simulated crash before COMMIT')]);
+    expect(save.doc().settings.theme).toBe('dark');
+    expect(save.didLastWriteFail()).toBe(true);
+    expect(store.read('current')?.writeCount).toBe(42);
+    save.update((doc) => doc);
+    expect(save.didLastWriteFail()).toBe(false);
+    expect(store.read('current')?.payload).toContain('"theme":"dark"');
+  });
+
+  it('keeps booting without a throw when the disk refuses the planned writes', () => {
+    const good = encodeSaveDoc(createDefaultSaveDoc(GAME), {
+      appVersion: '1.0.0',
+      writtenAtMs: 1,
+      writeCount: 7,
+    });
+    const plan = planLoad({
+      current: { ...good, payload: `${good.payload} ` },
+      backup: good,
+      gameId: GAME,
+    });
+    const errorLog = createFakeErrorLog();
+    const refusing = {
+      ...createFakeSaveStore(),
+      write: () => {
+        throw new Error('SQLITE_FULL');
+      },
+      quarantine: () => {
+        throw new Error('SQLITE_FULL');
+      },
+    };
+    const deps = { store: refusing, clock: CLOCK, errorLog, appVersion: '1.0.0', isStrict: true };
+    const save = createSaveService(deps, plan, 7);
+    expect(() => {
+      save.applyLoadWrites();
+    }).not.toThrow();
+    expect(errorLog.entries().map((entry) => entry.message)).toStrictEqual([
+      'SQLITE_FULL',
+      'SQLITE_FULL',
+    ]);
+    expect(save.doc()).toStrictEqual(createDefaultSaveDoc(GAME));
+    expect(save.didLastWriteFail()).toBe(true);
+  });
+
+  // N10: the quarantine copy is the only copy of a damaged save; nothing may overwrite it first.
+  it('keeps a damaged save until its quarantine copy lands', () => {
+    const good = encodeSaveDoc(createDefaultSaveDoc(GAME), {
+      appVersion: '1.0.0',
+      writtenAtMs: 1,
+      writeCount: 7,
+    });
+    const plan = planLoad({
+      current: { ...good, payload: `${good.payload} ` },
+      backup: good,
+      gameId: GAME,
+    });
+    let isDiskFull = true;
+    const written: unknown[] = [];
+    const store = {
+      ...createFakeSaveStore(),
+      write: (rows: unknown) => {
+        written.push(rows);
+      },
+      quarantine: () => {
+        if (isDiskFull) throw new Error('SQLITE_FULL');
+      },
+    };
+    const errorLog = createFakeErrorLog();
+    const deps = { store, clock: CLOCK, errorLog, appVersion: '1.0.0', isStrict: true };
+    const save = createSaveService(deps, plan, 7);
+    save.applyLoadWrites();
+    save.update((doc) => ({ ...doc, settings: { ...doc.settings, theme: 'dark' } }));
+    expect(written).toStrictEqual([]);
+    expect(save.didLastWriteFail()).toBe(true);
+    isDiskFull = false;
+    save.update((doc) => doc);
+    expect(written).toHaveLength(1);
+    expect(save.didLastWriteFail()).toBe(false);
+  });
 });
 
 const nullableMs = fc.option(fc.nat(), { nil: null });
