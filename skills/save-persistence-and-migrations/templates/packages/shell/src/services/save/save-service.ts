@@ -68,6 +68,8 @@ export function createSaveService(
   plan: LoadPlan,
   writeCountBase: number,
 ): SaveService {
+  // Capture only what the closures read, so the loaded document is not kept alive all session.
+  const { isReadOnly, writes } = plan;
   let doc = plan.doc;
   const persist = createWriter(deps, writeCountBase);
   return {
@@ -75,10 +77,10 @@ export function createSaveService(
     update: (recipe, options) => {
       const next = keepPremiumUnlessRevoked(doc, recipe(doc));
       // A rejected document never becomes the one in memory: the app keeps the last valid one.
-      if (plan.isReadOnly || persist(next, options?.refreshBackup === true)) doc = next;
+      if (isReadOnly || persist(next, options?.refreshBackup === true)) doc = next;
     },
     applyLoadWrites: () => {
-      for (const write of plan.writes) {
+      for (const write of writes) {
         if (write.kind === 'quarantine') {
           deps.store.quarantine(write.slot, write.reason, deps.clock.nowMs());
         } else {
@@ -89,6 +91,6 @@ export function createSaveService(
     checkpoint: () => {
       deps.store.checkpoint();
     },
-    isReadOnly: () => plan.isReadOnly,
+    isReadOnly: () => isReadOnly,
   };
 }
