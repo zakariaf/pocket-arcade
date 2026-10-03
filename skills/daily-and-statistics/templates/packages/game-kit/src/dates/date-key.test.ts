@@ -30,6 +30,16 @@ describe('date-key', () => {
     expect(dayNumber('26.09.2026')).toBeNaN();
   });
 
+  it('rejects text before or after a YYYY-MM-DD key', () => {
+    expect(dayNumber('x2026-09-26')).toBeNaN();
+    expect(dayNumber('2026-09-26x')).toBeNaN();
+  });
+
+  it('returns January keys in the new year, never as month 13 of the old one', () => {
+    expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
+    expect(fromDayNumber(dayNumber('2027-01-15'))).toBe('2027-01-15');
+  });
+
   it('returns every day number between 1900 and 2400 after a round trip', () => {
     fc.assert(
       fc.property(fc.integer({ min: -25_567, max: 157_000 }), (days) => {
