@@ -3,7 +3,7 @@
 // kills it with SIGKILL at growing delays while the startup writes run, then inspects the app's
 // save.db copy: both slots must decode and save_quarantine must be empty. Without --step-ms one
 // calibration launch first measures when the first save write lands, and the rounds spread over
-// 1.5 times that (lib/kill-plan.mjs), so kills hit the writes however slow the start-up is. Needs Xcode's simctl and a Release (test variant) build installed or passed with --app.
+// KILL_WINDOW_FACTOR times that (lib/kill-plan.mjs), so kills hit the writes however slow the start-up is. Needs Xcode's simctl and a Release (test variant) build installed or passed with --app.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --udid <id> --bundle-id <id> --game-id <id> [--app <path.app>] [--repo .]
 
 import { execFileSync } from 'node:child_process';
@@ -11,7 +11,7 @@ import { existsSync, statSync } from 'node:fs';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
-import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, killStepMs } from './lib/kill-plan.mjs';
+import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, KILL_WINDOW_FACTOR, killStepMs, MIN_STEP_MS } from './lib/kill-plan.mjs';
 import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
 
 const SPEC = {
@@ -28,15 +28,15 @@ const SPEC = {
     'bundle-id': { type: 'string', value: 'id', help: 'The app bundle id' },
     'game-id': { type: 'string', value: 'id', help: 'The gameId the save must carry' },
     kills: { type: 'string', default: '12', value: 'n', help: 'How many launch-and-kill rounds' },
-    'step-ms': { type: 'string', value: 'ms', help: 'Delay step: round i kills after i x step ms (default: calibrated, 1.5 x the first save write spread over the rounds, at least 80)' },
+    'step-ms': { type: 'string', value: 'ms', help: `Delay step: round i kills after i x step ms (default: calibrated, ${KILL_WINDOW_FACTOR} x the first save write spread over the rounds, at least ${MIN_STEP_MS})` },
     repo: { type: 'string', value: 'dir', help: "App repo root: also decode both slots with the app's own decodeSlot (schema and migrations)" },
     'dry-run': { type: 'boolean', help: 'Print the commands without running them (ends with exit 2, never PASS)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 0 },
   details: [
-    'Calibration (no --step-ms): one launch waits up to 20 s for the first save write (save.db-wal',
-    'growing after the launch), then the rounds spread over 1.5 x that time; no write is slot-missing.',
+    `Calibration (no --step-ms): one launch waits up to ${CALIBRATION_TIMEOUT_MS / 1000} s for the first save write (save.db-wal`,
+    `growing after the launch), then the rounds spread over ${KILL_WINDOW_FACTOR} x that time; no write is slot-missing.`,
     'Pass criteria: every round launched and was killed, then inspect finds both slots ok and',
     'save_quarantine empty (rules from inspect-save: slot-missing, checksum, json, quarantine, ...).',
     'The mid-level kill (play N moves, kill, relaunch, assert the paused Game screen) is a Maestro flow.',
@@ -129,7 +129,7 @@ function calibratedStep(udid, bundleId, { kills, givenStepMs, dryRun }, report) 
     stepMs: givenStepMs,
     measureFirstWrite: () => {
       if (dryRun) {
-        console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over 1.5 x it`);
+        console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over ${KILL_WINDOW_FACTOR} x it`);
         return undefined;
       }
       firstWriteMs = measureFirstWrite(udid, bundleId);
