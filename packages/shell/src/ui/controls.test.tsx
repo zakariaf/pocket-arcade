@@ -7,6 +7,7 @@ import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-han
 import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { ancestorStyle, iconsIn } from '@e07/shell/testing/rendered-parts.ts';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
 import { OptionCard } from './option-card.tsx';
@@ -25,35 +26,6 @@ jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
 }));
 
 const COLORS = TEST_PALETTE.standard.light;
-const HIDDEN = { includeHiddenElements: true } as const;
-
-type IconHost = {
-  readonly props: { readonly source?: { readonly uri?: string } };
-  readonly queryAll: (
-    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
-  ) => IconHost[];
-};
-
-/** The glyph names of the icons drawn inside a part, in order. */
-function iconsIn(testID: string): readonly string[] {
-  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
-  return part
-    .queryAll((node) => node.type === 'Image')
-    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
-}
-
-type HostNode = { readonly props: { readonly style?: unknown }; readonly parent: HostNode | null };
-
-/** The flattened style of the nearest ancestor of a part whose style passes `isWanted`. */
-function ancestorStyle(testID: string, isWanted: (style: ViewStyle) => boolean): ViewStyle {
-  let node: HostNode | null = (screen.getByTestId(testID) as unknown as HostNode).parent;
-  while (node !== null) {
-    const style = StyleSheet.flatten(node.props.style as ViewStyle | undefined) ?? {};
-    if (isWanted(style)) return style;
-    node = node.parent;
-  }
-  return {};
-}
 const THEMES = [
   { value: 'system', label: 'System' },
   { value: 'light', label: 'Light' },
