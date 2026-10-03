@@ -1,1 +1,4 @@
-{ "screens": [], "why": "Shell build in progress: no Shell app yet" }
+{
+  "screens": ["S1"],
+  "why": "Shell build in progress: splash, navigator and composition root (Shell step 7)"
+}
