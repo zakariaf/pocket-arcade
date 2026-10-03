@@ -16,6 +16,7 @@
     "expo": "57.0.25",
     "expo-sqlite": "57.0.3",
     "expo-tracking-transparency": "57.0.2",
+    "expo-font": "57.0.4",
     "expo-network": "57.0.2",
     "expo-constants": "57.0.19",
     "expo-haptics": "57.0.3",
