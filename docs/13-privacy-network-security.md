@@ -648,7 +648,8 @@ setInterval(() => {
 ```ts
 // packages/shell/src/config/privacy-manifest.ts
 // Aggregated required-reason APIs of every pod (checked by `npm run audit:privacy`, which
-// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here).
+// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here), the
+// development pods built from node_modules included (expo-file-system: 0A2A.1, 3B52.1, 85F4.1).
 export const PRIVACY_MANIFESTS = {
   // Our code neither tracks nor contacts a domain; GMA's own manifest declares its tracking
   // Device ID. No NSPrivacyTrackingDomains: iOS would block them when ATT is declined (FINAL H.1).
@@ -660,7 +661,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
-      NSPrivacyAccessedAPITypeReasons: ['C617.1'],
+      NSPrivacyAccessedAPITypeReasons: ['C617.1', '0A2A.1', '3B52.1'],
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
@@ -668,7 +669,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
-      NSPrivacyAccessedAPITypeReasons: ['E174.1'],
+      NSPrivacyAccessedAPITypeReasons: ['E174.1', '85F4.1'],
     },
   ],
 };
@@ -730,100 +731,9 @@ export function missingReasons(
 }
 ```
 
-```ts
-// packages/tooling/src/audit/audit-privacy.ts
-// `npm run audit:privacy [-- --app <game-id>]` after `npx expo prebuild --platform ios --clean`
-// (prebuild runs pod install). Without --app: every app that has ios/Pods. Fails when app.config
-// lacks a reason a pod declares, when a pod other than Google's declares tracking, or when no
-// app is prebuilt, or when the app's own manifest declares tracking (FINAL H.1). Also prints the
-// App Privacy questionnaire input.
-import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+`packages/tooling/src/audit/audit-privacy.ts` (`npm run audit:privacy [-- --app <game-id>]`, after `npx expo prebuild --platform ios --clean`) reads exactly the manifests CocoaPods puts into the app: the trunk pods' under `ios/Pods/<pod>/`, and the development pods' (`Podfile.lock`'s `EXTERNAL SOURCES` built from a local `:path` or `:podspec` in `node_modules` or the workspace). CocoaPods never copies a development pod into `ios/Pods`; it bundles the manifest from the pod's own folder, as `ios/Pods/Local Podspecs/<pod>.podspec.json` names it in `resource_bundles` or `resources`, so the audit resolves those names against the pod's `:path` or its `:podspec`'s folder (`localPodManifestPaths` in `privacy-manifest.ts`). It fails when app.config lacks a reason any of these pods declares, when a pod other than Google's two declares tracking or tracking domains, when the app's own manifest declares tracking or tracking domains (FINAL H.1), when a manifest a podspec names cannot be read, or when no app is prebuilt; it also prints the App Privacy questionnaire input. Reading `ios/Pods` alone missed seven development pods on line-siege (2026-10-04), and with them expo-file-system's three reasons above.
 
-import { mergeReasons, missingReasons, readManifest } from './privacy-manifest.ts';
-
-import type { PrivacyManifest } from './privacy-manifest.ts';
-
-// Pods allowed to declare tracking or collected data (the AdMob SDKs, spec N3).
-const TRACKING_ALLOWED = /\/(Google-Mobile-Ads-SDK|GoogleUserMessagingPlatform)\//;
-
-function podManifests(appDir: string): string[] {
-  const pods = join(appDir, 'ios', 'Pods');
-  return readdirSync(pods, { recursive: true, encoding: 'utf8' })
-    .filter((file) => file.endsWith('PrivacyInfo.xcprivacy'))
-    .map((file) => join(pods, file));
-}
-
-function appManifest(appDir: string): PrivacyManifest {
-  const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'public'], {
-    cwd: appDir,
-    encoding: 'utf8',
-  });
-  const config = JSON.parse(json) as { ios?: { privacyManifests?: PrivacyManifest } };
-  return config.ios?.privacyManifests ?? {};
-}
-
-function trackingViolations(paths: readonly string[]): string[] {
-  return paths
-    .filter((path) => !TRACKING_ALLOWED.test(path))
-    .filter((path) => {
-      const manifest = readManifest(path);
-      const domains = manifest.NSPrivacyTrackingDomains ?? [];
-      return manifest.NSPrivacyTracking === true || domains.length > 0;
-    });
-}
-
-// The app's own manifest describes our code, which neither tracks nor contacts a domain; tracking
-// domains listed here would also make iOS fail those requests for players who declined ATT.
-function appTrackingProblems(manifest: PrivacyManifest): string[] {
-  const domains = manifest.NSPrivacyTrackingDomains ?? [];
-  const isTracking = manifest.NSPrivacyTracking === true || domains.length > 0;
-  return isTracking ? ['app manifest declares tracking; only the GMA pod may (FINAL H.1)'] : [];
-}
-
-// Input for the App Store Connect "App Privacy" questionnaire (a human step).
-function collectedData(paths: readonly string[]): string[] {
-  return paths.flatMap((path) =>
-    (readManifest(path).NSPrivacyCollectedDataTypes ?? []).map((item) => {
-      const pod = path.split('/Pods/')[1]?.split('/')[0] ?? path;
-      const flags = `linked=${String(item.NSPrivacyCollectedDataTypeLinked)} tracking=${String(item.NSPrivacyCollectedDataTypeTracking)}`;
-      return `${pod}: ${item.NSPrivacyCollectedDataType.replace('NSPrivacyCollectedDataType', '')} ${flags}`;
-    }),
-  );
-}
-
-function auditApp(appDir: string): number {
-  const paths = podManifests(appDir);
-  const required = mergeReasons(paths.map(readManifest));
-  const ownManifest = appManifest(appDir);
-  const declared = mergeReasons([ownManifest]);
-  const problems = [
-    ...missingReasons(required, declared).map((gap) => `app.config lacks ${gap}`),
-    ...appTrackingProblems(ownManifest),
-    ...trackingViolations(paths).map((path) => `tracking declared outside the AdMob pods: ${path}`),
-  ];
-  for (const [category, reasons] of required)
-    console.error(`${category}: ${[...reasons].join(', ')}`);
-  for (const line of new Set(collectedData(paths))) console.error(`collected ${line}`);
-  for (const problem of problems) console.error(`FAIL ${problem}`);
-  console.error(
-    `${appDir}: ${String(paths.length)} pod manifests, ${String(problems.length)} problem(s)`,
-  );
-  return problems.length;
-}
-
-const appIndex = process.argv.indexOf('--app');
-const gameIds =
-  appIndex >= 0
-    ? [process.argv[appIndex + 1] ?? '']
-    : readdirSync('apps').filter((id) => existsSync(join('apps', id, 'ios', 'Pods')));
-if (gameIds.length === 0) console.error('audit:privacy: no prebuilt app (run npx expo prebuild)');
-const failures = gameIds.reduce((sum, id) => sum + auditApp(join('apps', id)), 0);
-process.exitCode = gameIds.length > 0 && failures === 0 ? 0 : 1;
-```
-
-Verified output on the SDK 57 test app (28 pod manifests): required reasons SystemBootTime `35F9.1`, UserDefaults `CA92.1`, DiskSpace `E174.1`, FileTimestamp `C617.1`; the app config of that spike lacked DiskSpace `E174.1`, and the script failed with exactly that gap. If Apple emails `ITMS-91053` (missing API declaration) after an upload, the same script shows which declaration is missing (`docs/14` failure playbook).
+Verified output on the SDK 57 test app (28 trunk pod manifests): required reasons SystemBootTime `35F9.1`, UserDefaults `CA92.1`, DiskSpace `E174.1`, FileTimestamp `C617.1` (line-siege on 2026-10-04, with the development pods: 35 manifests, plus FileTimestamp `0A2A.1`, `3B52.1` and DiskSpace `85F4.1`); the app config of that spike lacked DiskSpace `E174.1`, and the script failed with exactly that gap. If Apple emails `ITMS-91053` (missing API declaration) after an upload, the same script shows which declaration is missing (`docs/14` failure playbook).
 
 ### 3.4 App Privacy label guidance
 
