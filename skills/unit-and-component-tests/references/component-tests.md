@@ -130,6 +130,16 @@ expect(screen.queryByRole('button')).not.toBeOnTheScreen();
 
 Never `jest.mock` a store module and never build a module-level store: the store would outlive the test and leak state into the next one. A render-count check (React's `Profiler` with `onRender`) proves a component does not re-render on an unrelated store change.
 
+**Reset a module-level store in `beforeEach`, never in `afterEach`.** The few stores the Shell keeps at module level on purpose (`systemA11yStore`, the Zustand singleton fed by the phone's accessibility switches) outlive every test, so a test that changes one resets it. Jest runs the file's own `afterEach` before React Testing Library's cleanup unmounts what the test rendered, so a reset there publishes to a still-mounted hook outside `act()` and logs `An update to TestComponent inside a test was not wrapped in act(...)` in every run (verified: `use-reduce-motion-setting.test.ts`). Reset in `beforeEach`, when nothing is mounted yet:
+
+```ts
+beforeEach(() => {
+  systemA11yStore.setState({ isReduceMotionOn: false });
+});
+```
+
+Wrapping the reset in `act()` or silencing the warning hides the order problem; the troubleshooting catalogue lists it as `testing-store-reset-after-each`.
+
 ## Gestures, boards and direction
 
 - **Gestures** (React Native Gesture Handler 2.32): give the gesture `.withTestId('pan')`, import `fireGestureHandler` and `getByGestureTestId` from `react-native-gesture-handler/jest-utils`, then `await act(() => { fireGestureHandler(getByGestureTestId('pan'), [...]); })` (verified). The event list is `{ state: State.BEGAN }`, `{ state: State.ACTIVE, x, y }`, `{ state: State.END }` (`State` from `react-native-gesture-handler`); board gesture details belong to `board-gestures-and-input`.

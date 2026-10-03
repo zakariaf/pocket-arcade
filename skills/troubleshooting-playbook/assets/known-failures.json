@@ -1541,6 +1541,21 @@
       "skill": "unit-and-component-tests"
     },
     {
+      "id": "testing-store-reset-after-each",
+      "area": "testing",
+      "topic": "RNTL",
+      "symptom": "Every run logs 'An update to TestComponent inside a test was not wrapped in act(...)' from a hook or screen test whose afterEach resets a module-level store (a Zustand singleton such as systemA11yStore), although every RNTL call is awaited",
+      "cause": "Jest runs the test file's afterEach before React Testing Library's own cleanup unmounts what the test rendered, so the reset publishes to a still-mounted subscriber outside act()",
+      "fix": "Reset the module-level store in beforeEach instead of afterEach (the next test starts clean and nothing is mounted yet); never wrap the reset in act() or silence the warning. Rerun the file and npm run test:coverage until no act warning is left",
+      "match": [
+        "not wrapped in act\\(",
+        "afterEach.*(reset|setState)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "unit-and-component-tests"
+    },
+    {
       "id": "testing-router-pathname",
       "area": "testing",
       "topic": "RNTL",
