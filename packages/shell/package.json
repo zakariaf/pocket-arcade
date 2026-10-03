@@ -18,6 +18,7 @@
   "peerDependencies": {
     "@shopify/react-native-skia": "*",
     "expo": "*",
+    "expo-network": "*",
     "expo-sqlite": "*",
     "react": "*",
     "react-native": "*",
