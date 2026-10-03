@@ -1,0 +1,1 @@
+SKIP packages/shell/src/i18n/catalogs/en.json [F1 catalog-file] due at Shell step 6: packages/shell/src/i18n/catalogs/en.json not yet created

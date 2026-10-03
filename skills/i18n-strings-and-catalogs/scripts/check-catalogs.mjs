@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, join, relative, resolve } from 'node:path';
 
-import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
+import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, parseArgs, run, toPosix } from './check-lib.mjs';
 import { debugEnglishProblem, LANGUAGES, lineOfKey, lintMessage, parityProblems, requiredGameKeys, RULES, ruleLabel, SOURCE_LANGUAGE } from './lib/catalog-rules.mjs';
 
 const RULE_SUMMARIES = {
@@ -29,7 +29,7 @@ const RULE_SUMMARIES = {
   P3: 'same placeholders and types as en',
   P4: 'same =N plural branches as en',
   P5: 'debug.* texts (S15) equal en in de, fa and ckb',
-  F1: 'en/de/fa/ckb.json exist, flat objects of strings',
+  F1: 'en/de/fa/ckb.json exist, flat objects of strings (the Shell\'s four once verify-catalogs.ts exists)',
   G1: 'a game catalog holds <game-id>.name, <game-id>.win-title and <game-id>.tagline (the identity keys)',
 };
 
@@ -54,17 +54,24 @@ const SPEC = {
   ].join('\n'),
 };
 
+// Shell step 6 copies the project linter behind npm run i18n:verify, which reads the Shell
+// catalogs, and then generates them from the copy deck. Once the linter exists the four Shell
+// catalogs are due (a missing one is F1); before it, a Shell without them prints a not-yet-due SKIP.
+const VERIFY_CATALOGS = 'packages/tooling/src/i18n/verify-catalogs.ts';
+
 function discover(root) {
   const dirs = [];
+  let shellSkip = null;
   const appsDir = join(root, 'apps');
   const gameIds = existsSync(appsDir) ? readdirSync(appsDir).filter((id) => statSync(join(appsDir, id)).isDirectory()).sort() : [];
   const shellDir = join(root, 'packages', 'shell', 'src', 'i18n', 'catalogs');
-  if (existsSync(shellDir)) dirs.push({ dir: shellDir, namespace: { kind: 'shell', gameIds } });
+  if (existsSync(shellDir) || existsSync(join(root, VERIFY_CATALOGS))) dirs.push({ dir: shellDir, namespace: { kind: 'shell', gameIds } });
+  else if (existsSync(join(root, 'packages', 'shell'))) shellSkip = dueSkipReason(root, SHELL_DUE_TARGETS.catalogs);
   for (const gameId of gameIds) {
     const dir = join(appsDir, gameId, 'src', 'i18n');
     if (existsSync(dir) && readdirSync(dir).some((f) => f.endsWith('.json'))) dirs.push({ dir, namespace: { kind: 'game', gameId } });
   }
-  return dirs;
+  return { dirs, shellSkip };
 }
 
 function namespaceFor(dir, root) {
@@ -82,24 +89,29 @@ run(async () => {
   const rootArg = options.root ?? (positionals.length === 1 && isRepoRoot(positionals[0]) ? positionals[0] : '.');
   const folders = rootArg === positionals[0] && options.root === undefined ? [] : positionals;
   const root = resolve(rootArg);
-  const targets = folders.length > 0
-    ? folders.map((dir) => {
-        if (!existsSync(dir) || !statSync(dir).isDirectory()) fail(`nothing to check: catalog folder ${dir} does not exist`, 'Pass a folder that holds en.json, de.json, fa.json and ckb.json.');
-        return { dir: resolve(dir), namespace: namespaceFor(dir, root) };
-      })
+  const { dirs: targets, shellSkip } = folders.length > 0
+    ? {
+        dirs: folders.map((dir) => {
+          if (!existsSync(dir) || !statSync(dir).isDirectory()) fail(`nothing to check: catalog folder ${dir} does not exist`, 'Pass a folder that holds en.json, de.json, fa.json and ckb.json.');
+          return { dir: resolve(dir), namespace: namespaceFor(dir, root) };
+        }),
+        shellSkip: null,
+      }
     : discover(root);
   if (targets.length === 0) {
     fail(`nothing to check: no catalogs under ${rootArg} (looked for packages/shell/src/i18n/catalogs and apps/*/src/i18n)`, 'Run from the app repo root, or pass the repo root or a catalog folder.');
   }
   const report = createReporter({ name: 'check-catalogs', json: options.json });
   const shown = (file) => toPosix(relative(process.cwd(), file)) || basename(file);
+  if (shellSkip !== null) report.skip({ file: shown(join(root, SHELL_DUE_TARGETS.catalogs.file)), rule: ruleLabel('F1'), message: shellSkip });
   let checked = 0;
   for (const { dir, namespace } of targets) {
     const catalogs = {};
     for (const language of LANGUAGES) {
       const file = join(dir, `${language}.json`);
       if (!existsSync(file)) {
-        report.problem({ file: shown(file), line: 1, rule: ruleLabel('F1'), message: `${language}.json is missing`, fix: RULES.F1[1] });
+        const fix = namespace.kind === 'shell' ? `${RULES.F1[1]} Generate the Shell's from the copy deck: node copy-deck.mjs apply <repo-root> --all --extras.` : RULES.F1[1];
+        report.problem({ file: shown(file), line: 1, rule: ruleLabel('F1'), message: `${language}.json is missing`, fix });
         continue;
       }
       const text = readFileSync(file, 'utf8');

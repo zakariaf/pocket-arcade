@@ -1,0 +1,6 @@
+[F1 catalog-file]
+en.json is missing
+de.json is missing
+fa.json is missing
+ckb.json is missing
+Generate the Shell's from the copy deck
