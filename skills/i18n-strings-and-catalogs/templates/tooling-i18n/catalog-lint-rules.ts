@@ -13,9 +13,11 @@ import {
 
 import { walk } from './icu-walk.ts';
 
+import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { MessageFormatElement } from '@formatjs/icu-messageformat-parser';
 
-export type Language = 'en' | 'de' | 'fa' | 'ckb';
+export type { Language };
+
 // Shell keys must not start with a game id; game keys must start with their own.
 export type Namespace =
   | { readonly kind: 'shell'; readonly gameIds: readonly string[] }
