@@ -22,9 +22,9 @@ jest.mock('expo-constants', () => ({
       version: '1.0.0',
       extra: {
         adsMode: 'off',
-        game: jest.requireActual<{ TEST_GAME_EXTRA: unknown }>(
+        game: jest.requireActual<{ TALLY_GAME_EXTRA: unknown }>(
           '@e07/shell/testing/create-test-adapters.ts',
-        ).TEST_GAME_EXTRA,
+        ).TALLY_GAME_EXTRA,
       },
     },
   },
