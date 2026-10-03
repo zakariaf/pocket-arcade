@@ -439,11 +439,10 @@ import { join } from 'node:path';
 import { findBannedPackages, inventoryFromLockfile } from '@e07/tooling/deps/banned-packages.ts';
 
 import { readBundleModules } from './bundle-modules.ts';
+import { podAndConfigProblems } from './network-app-layers.ts';
 import { compareToBaseline } from './network-baseline.ts';
-import { configProblems } from './network-config-layer.ts';
 import { jsNetworkFindings } from './network-js-layer.ts';
 import { nativeModuleRoots, nativeNetworkFindings } from './network-native-layer.ts';
-import { podProblems } from './network-pods-layer.ts';
 import { storeBundleProblems } from './release-bundle-checks.ts';
 
 import type { Baseline } from './network-baseline.ts';
@@ -483,24 +482,21 @@ function jsProblems(outDir: string): string[] {
   ];
 }
 
+/** Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. */
 function nativeAndPodProblems(appDir: string): string[] {
   const native = compareToBaseline(
     nativeNetworkFindings(nativeModuleRoots(appDir)),
     readBaseline('native-baseline.json'),
   );
   const lock = join(appDir, 'ios', 'Podfile.lock');
-  if (!existsSync(lock))
-    return [...native, 'SKIPPED pods/config layers: run npx expo prebuild first'];
   const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
     cwd: appDir,
     env: STORE_ENV,
     encoding: 'utf8',
   });
-  return [
-    ...native,
-    ...podProblems(readFileSync(lock, 'utf8')),
-    ...configProblems(JSON.parse(json) as ExpoConfigLike),
-  ];
+  const podfileLock = existsSync(lock) ? readFileSync(lock, 'utf8') : null;
+  const config = JSON.parse(json) as ExpoConfigLike;
+  return [...native, ...podAndConfigProblems({ podfileLock, config })];
 }
 
 function auditApp(gameId: string): string[] {
@@ -526,7 +522,7 @@ console.error(`audit:network: ${String(failures.length)} failure(s)`);
 process.exitCode = failures.length === 0 ? 0 : 1;
 ```
 
-Run end to end on 2026-09-26 against the SDK 57 test app with the baselines above: layers B–D passed, layer E correctly failed on the app's missing `updates.enabled: false`, exit code 1. On Linux CI (no Pods) layers D and E print `SKIPPED`; `release:ios` always runs after prebuild, so they run there. `STALE` entries are reported without failing, so the baseline shrinks when a package leaves.
+Run end to end on 2026-09-26 against the SDK 57 test app with the baselines above: layers B–D passed, layer E correctly failed on the app's missing `updates.enabled: false`, exit code 1. The config layer (E) reads `npx expo config`, which needs no prebuild, so it runs on every call (`network-app-layers.ts`); only the pods layer (D) needs `ios/Podfile.lock`, and on Linux CI or a fresh clone it prints `SKIPPED pods layer: no ios/Podfile.lock (run npx expo prebuild first)`. Until 2026-10-04 both layers were skipped without the Podfile.lock. `release:ios` always runs after prebuild, so both run there. `STALE` entries are reported without failing, so the baseline shrinks when a package leaves.
 
 #### Layer F: runtime
 
