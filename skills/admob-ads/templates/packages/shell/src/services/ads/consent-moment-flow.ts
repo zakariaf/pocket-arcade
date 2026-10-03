@@ -7,6 +7,8 @@
 // it shows only over a banner screen. Never during the tutorial, offline, for Premium or with ads
 // off (the gate), and never over a level: the intro and the ATT prompt wait while no banner screen
 // is open. A parity capture of the S3 frame holds the intro and asks neither Google nor Apple.
+// The snapshot's canRequestAds turns true only once prepareAds has finished (ATT answered, SDK
+// initialised): banner slots read it, so no banner requests an ad while Apple's prompt is up.
 import { prepareAds, refreshConsentAtLaunch } from './ad-gate.ts';
 
 import type { AdGateDeps, AdGateInput, PrepareAdsDeps } from './ad-gate.ts';
@@ -14,7 +16,11 @@ import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/conse
 
 export type ConsentMomentSnapshot = {
   readonly isIntroShown: boolean;
-  /** The latest consent answer (null: never asked); banners re-render when it changes. */
+  /**
+   * Whether ads may be requested (null: never asked); banners re-render when it changes. It starts
+   * as the saved answer, turns false as soon as consent allows no ads, and turns true only after
+   * prepareAds finished this session (consent, the ATT answer and initialize, in that order).
+   */
   readonly canRequestAds: boolean | null;
 };
 
@@ -98,19 +104,17 @@ function trackingOverAdScreen(consent: ConsentPort, state: FlowState): ConsentPo
   };
 }
 
-export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMomentFlow {
-  const state: FlowState = {
-    ...{ phase: 'idle', openSlots: 0, isIntroWanted: false, wasAsked: false },
-    ...{ release: null, adScreenWaiters: [], input: null },
-    canRequestAds: deps.savedCanRequestAds,
-  };
-  const { publish, ...reads } = createPublisher(deps, state);
-  const gate: PrepareAdsDeps = {
+/** prepareAds' dependencies: Apple's prompt only over a banner screen, S3 through the snapshot. */
+function createGateDeps(parts: Pick<FlowParts, 'deps' | 'state' | 'publish'>): PrepareAdsDeps {
+  const { deps, state, publish } = parts;
+  return {
     ads: deps.ads,
     consent: trackingOverAdScreen(deps.consent, state),
     onConsent: (info: ConsentInfo) => {
       deps.onConsent(info);
-      state.canRequestAds = info.canRequestAds;
+      // A refusal closes the banners at once; a yes waits for the ATT answer and initialize.
+      if (info.canRequestAds) return;
+      state.canRequestAds = false;
       publish();
     },
     showIntro: () =>
@@ -121,6 +125,16 @@ export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMom
         publish();
       }),
   };
+}
+
+export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMomentFlow {
+  const state: FlowState = {
+    ...{ phase: 'idle', openSlots: 0, isIntroWanted: false, wasAsked: false },
+    ...{ release: null, adScreenWaiters: [], input: null },
+    canRequestAds: deps.savedCanRequestAds,
+  };
+  const { publish, ...reads } = createPublisher(deps, state);
+  const gate = createGateDeps({ deps, state, publish });
   /** Runs prepareAds while a banner screen is open; a closed gate (offline ...) stays idle. */
   const prepareIfDue = (): void => {
     const { input } = state;
@@ -129,6 +143,10 @@ export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMom
     prepareAds(gate, input).then(
       // Once the player saw the moment (or ads are ready) it never comes back this session.
       (isReady) => {
+        if (isReady) {
+          state.canRequestAds = true; // O1 / L10: consent, ATT answer and initialize are done
+          publish();
+        }
         state.phase = isReady || state.wasAsked ? 'done' : 'idle';
         // The facts changed while the gate decided (a first-run link ends the tutorial as Home
         // opens): decide again with the new ones, or the moment would wait for the next screen.

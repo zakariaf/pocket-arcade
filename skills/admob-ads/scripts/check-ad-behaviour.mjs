@@ -276,6 +276,16 @@ run(async () => {
     };
     await expect('consent-moment-flow', FILES.flow, 'the held S3 parity frame asks neither Google nor Apple', () => run({ isHeld: true }), [], fix);
     await expect('consent-moment-flow', FILES.flow, 'no ATT prompt while no banner screen is open (the player left for a level)', () => run({ isHeld: false, leaveFirst: true }), ['refresh'], fix);
+    await expect('consent-moment-flow', FILES.flow, 'banners are allowed only after the ATT answer and a finished initialize', async () => {
+      const calls = [];
+      const moment = flow.createConsentMomentFlow({ ads: fakeAds(calls), consent: fakeConsent(calls, granted, granted), isHeld: false, savedCanRequestAds: null, onConsent: () => undefined, onError: () => undefined });
+      const allowedAfter = [];
+      moment.subscribe(() => { if (moment.getSnapshot().canRequestAds === true) allowedAfter.push([...calls]); });
+      moment.updateInput(input);
+      moment.requestAdMoment();
+      for (let step = 0; step < 4; step += 1) await tick();
+      return allowedAfter;
+    }, [['refresh', 'attPrompt', 'initialize', 'initialized', 'preloadInterstitial', 'preloadRewarded']], 'Restore consent-moment-flow.ts: publish canRequestAds true only once prepareAds has finished (consent, the ATT answer, a finished initialize), never from the consent refresh; banner slots read it, so a banner would request an ad while Apple\'s prompt is up (O1, L10). A refusal is published at once.');
     await expect('consent-moment-flow', FILES.flow, 'facts that change while the gate decides are used (the tutorial ended as Home opened)', async () => {
       const calls = [];
       const denied = { canRequestAds: false, isPrivacyOptionsRequired: true };
@@ -410,14 +420,20 @@ run(async () => {
       return { afterError, again: port.rewardedStatus() };
     }, { afterError: 'unavailable', again: 'loading' }, statusFix);
 
-    await expect('adapter-banner', file, 'renderBanner element', () => {
-      const { port } = freshAdapter(adapter);
+    const bannerFix = 'renderBanner returns an element that draws createElement(BannerAd, { unitId: units.banner, size: BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER, onAdLoaded, onAdFailedToLoad }) only once initialize has finished (a component that reads the initialised flag with useSyncExternalStore and draws null before it): the native banner requests its ad as it mounts, and consent and the ATT answer come before initialize (O1, L10).';
+    const drawBanner = (port) => {
       const onLoaded = () => undefined;
       const onFailed = () => undefined;
-      const element = port.renderBanner({ onLoaded, onFailed });
+      let element = port.renderBanner({ onLoaded, onFailed });
+      // Render function components (the stub hooks read current values) down to the SDK's view.
+      for (let depth = 0; typeof element?.type === 'function' && element.type.name !== 'BannerAd' && depth < 5; depth += 1) {
+        element = element.type(element.props ?? {});
+      }
       const props = element?.props ?? {};
-      return { type: element?.type?.name, unitId: props.unitId, size: props.size, loaded: props.onAdLoaded === onLoaded, failed: props.onAdFailedToLoad === onFailed };
-    }, { type: 'BannerAd', unitId: UNITS.banner, size: 'LARGE_ANCHORED_ADAPTIVE_BANNER', loaded: true, failed: true }, 'renderBanner returns createElement(BannerAd, { unitId: units.banner, size: BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER, onAdLoaded, onAdFailedToLoad }).');
+      return { type: element?.type?.name ?? null, unitId: props.unitId, size: props.size, loaded: props.onAdLoaded === onLoaded, failed: props.onAdFailedToLoad === onFailed };
+    };
+    await expect('adapter-banner', file, 'no banner view before initialize', () => drawBanner(freshAdapter(adapter).port).type, null, bannerFix);
+    await expect('adapter-banner', file, 'renderBanner element after initialize', async () => drawBanner((await readyAdapter(adapter)).port), { type: 'BannerAd', unitId: UNITS.banner, size: 'LARGE_ANCHORED_ADAPTIVE_BANNER', loaded: true, failed: true }, bannerFix);
   }
 
   if (factory) {

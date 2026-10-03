@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/admob-ads-adapter.ts",
+      "find": "      createElement(ReadyBanner, {\n        unitId: options.units.banner,\n        isInitialized,\n        onLoaded,\n        onFailed,\n      }),",
+      "with": "      // planted: the native banner mounts (and requests its ad) before initialize\n      createElement(BannerAd, {\n        unitId: options.units.banner,\n        size: BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER,\n        onAdLoaded: onLoaded,\n        onAdFailedToLoad: onFailed,\n      }),"
+    }
+  }
+]
