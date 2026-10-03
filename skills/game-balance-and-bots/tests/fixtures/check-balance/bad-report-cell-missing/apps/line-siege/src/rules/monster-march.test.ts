@@ -127,3 +127,15 @@ describe('spawn', () => {
 });
 
 const GOLDEN_SEED_5_SPAWN = '{"id":2,"kind":"fast","lane":4,"row":0,"hp":6}';
+
+describe('spawn in the endless run', () => {
+  it('adds one health for every endlessHpEvery placements already made', () => {
+    const endless = knobsFor(100);
+    const placements = 2 * TUNING.endlessHpEvery;
+    const spawner = { monsters: [], nextId: 1, spawned: 0, rng: seedRng(1) };
+    const { monsters } = spawn(spawner, { placements, difficulty: 100 });
+    const hp = monsters[0]?.hp ?? 0;
+    expect(hp).toBeGreaterThanOrEqual(endless.hpMin + 2);
+    expect(hp).toBeLessThanOrEqual(endless.hpMax + 2);
+  });
+});

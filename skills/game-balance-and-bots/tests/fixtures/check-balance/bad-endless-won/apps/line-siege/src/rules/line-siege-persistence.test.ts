@@ -98,3 +98,21 @@ describe('LINE_SIEGE_PERSISTENCE', () => {
 });
 
 const GOLDEN_STATE_VERSION = 1;
+
+describe('parse ranges', () => {
+  const saved = (): Record<string, unknown> =>
+    JSON.parse(JSON.stringify(START)) as Record<string, unknown>;
+
+  it('drops a saved tray slot that names no piece', () => {
+    expect(parseState({ ...saved(), tray: [10, 2, 1] })).toBeNull();
+  });
+
+  it('drops a saved monster that already stands at the wall', () => {
+    const monsters = START.monsters.map((monster) => ({ ...monster, row: 6 }));
+    expect(parseState({ ...saved(), monsters })).toBeNull();
+  });
+
+  it('drops a logged placement anchored past the last board column', () => {
+    expect(parseMove({ kind: 'place-block', trayIndex: 0, col: 8, row: 0 })).toBeNull();
+  });
+});

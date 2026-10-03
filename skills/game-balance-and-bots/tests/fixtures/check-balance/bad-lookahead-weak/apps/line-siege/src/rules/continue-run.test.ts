@@ -10,7 +10,7 @@ import { create } from './create.ts';
 import { TUNING } from './line-siege-tuning.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
-import { SINGLE_BLOCK } from './pieces.ts';
+import { SINGLE_BLOCK, drawTray } from './pieces.ts';
 
 import type { Cell, LineSiegeState } from './line-siege-types.ts';
 
@@ -131,3 +131,34 @@ describe('fullestRows', () => {
 
 /** Rows 1-6 hold seven blocks each; rows 0 and 7 only four. */
 const GOLDEN_FULLEST_ROWS = [1, 2];
+
+describe('continueAfterLoss tray', () => {
+  it('keeps the redrawn tray as drawn when one of its blocks fits', () => {
+    const lost = { ...breached(), rng: seedRng(2) };
+    expect(continueAfterLoss(lost).state.tray).toStrictEqual(drawTray(seedRng(2)).tray);
+  });
+
+  it('swaps the single block into the first slot when no drawn block fits', () => {
+    const drawn = drawTray(seedRng(2)).tray;
+    expect(drawn).not.toContain(SINGLE_BLOCK);
+    const lost = { ...breached(), cells: oneHolePerRow(), tray: [SINGLE_BLOCK, null, null] };
+    const { state } = continueAfterLoss({ ...lost, rng: seedRng(2) });
+    expect(state.tray).toStrictEqual([SINGLE_BLOCK, ...drawn.slice(1)]);
+  });
+});
+
+describe('fullestRows order', () => {
+  it('returns the picked rows in board order, not in fullness order', () => {
+    const cells = Array.from({ length: SIZE * SIZE }, (_, index): Cell => {
+      const row = Math.floor(index / SIZE);
+      const col = index % SIZE;
+      return (row === 5 && col < 6) || (row === 2 && col < 5) ? 1 : 0;
+    });
+    expect(fullestRows(cells, 2)).toStrictEqual([2, 5]);
+  });
+
+  it('takes the lowest rows first when every row holds as many blocks', () => {
+    const empty = Array.from({ length: SIZE * SIZE }, (): Cell => 0);
+    expect(fullestRows(empty, 2)).toStrictEqual([0, 1]);
+  });
+});

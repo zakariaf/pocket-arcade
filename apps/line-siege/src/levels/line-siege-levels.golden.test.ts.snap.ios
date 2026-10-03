@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-09-28 1`] = `
+"seed 4013825362 difficulty 45 hearts 3 tray 6,2,1
+ .  .  .  . n4  .  . n4
+ .  .  .  .  . n6  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+.....#..
+.....#..
+###..###
+.....#..
+#..#.#..
+.##....#
+.#......
+.....#.."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
+"seed 2979146052 difficulty 45 hearts 3 tray 8,2,1
+ . n4 n5  .  .  .  .  .
+ .  .  . n8  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+...#..#.
+...#....
+...#....
+#####..#
+.....##.
+........
+...###..
+...##..."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
+"seed 3116568616 difficulty 45 hearts 3 tray 9,2,1
+ .  .  . n7 n6  .  .  .
+n7  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+.......#
+..#....#
+##.....#
+#.......
+#.......
+#......#
+##..####
+#......."
+`;
+
+exports[`level table goldens keeps the frozen board of level 1 1`] = `
+"seed 3394270732 difficulty 0 hearts 3 tray 8,2,1
+ . n4  . n3  .  .  .  .
+ .  .  .  .  .  .  . n8
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+.....#.#
+..#..#.#
+......##
+.......#
+..#.....
+........
+..######
+.#.....#
+{"kind":"score","thresholds":[0,150,180]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 30 1`] = `
+"seed 3903466576 difficulty 32 hearts 3 tray 0,2,1
+n6  .  .  .  .  .  . n5
+ .  .  .  .  .  . n6  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+........
+........
+#.....#.
+.#..#.#.
+...#.##.
+......#.
+####..##
+...#..#.
+{"kind":"score","thresholds":[0,140,168]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 31 1`] = `
+"seed 3767041599 difficulty 33 hearts 3 tray 0,2,1
+ . n4  .  .  .  . n4  .
+ .  .  .  .  .  .  . n7
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+....#...
+..##..#.
+.......#
+.......#
+..#....#
+..#....#
+.......#
+..######
+{"kind":"score","thresholds":[0,215,258]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 60 1`] = `
+"seed 3511272348 difficulty 65 hearts 3 tray 8,2,1
+ .  .  .  .  . n7  . n6
+ .  .  .  . n8  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+....#...
+.#..#...
+....#..#
+#..###..
+######..
+........
+........
+...##...
+{"kind":"score","thresholds":[0,220,264]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 61 1`] = `
+"seed 3967752014 difficulty 66 hearts 3 tray 3,2,1
+n7  .  .  . n5  .  .  .
+ .  .  .  .  . n7  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+.....#..
+...#.#..
+.....#.#
+.....###
+.....#..
+##..####
+........
+#......#
+{"kind":"score","thresholds":[0,215,258]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 90 1`] = `
+"seed 574145095 difficulty 99 hearts 3 tray 0,2,1
+n7  .  .  .  . n6  .  .
+ .  .  . n6  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+ .  .  .  .  .  .  .  .
+.#......
+#.......
+...##...
+...#...#
+.#.#....
+..##....
+..######
+...#....
+{"kind":"score","thresholds":[0,225,270]}"
+`;

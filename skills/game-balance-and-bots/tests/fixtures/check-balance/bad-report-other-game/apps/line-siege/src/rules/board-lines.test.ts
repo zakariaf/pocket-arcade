@@ -2,6 +2,7 @@
 import fc from 'fast-check';
 
 import { clearLines, coveredCells, fullLines } from './board-lines.ts';
+import { HORIZONTAL_TWO, pieceAt } from './pieces.ts';
 
 import type { Cell } from './line-siege-types.ts';
 
@@ -77,3 +78,10 @@ describe('board text golden', () => {
 });
 
 const GOLDEN_CROSS_CLEARED = '1'.padEnd(63, '0') + '1';
+
+describe('coveredCells at the start edge', () => {
+  it('returns null for an anchor before the first column instead of wrapping to the row above', () => {
+    const empty = Array.from({ length: 64 }, (): Cell => 0);
+    expect(coveredCells(empty, pieceAt(HORIZONTAL_TWO), { col: -1, row: 1 })).toBeNull();
+  });
+});

@@ -115,7 +115,7 @@ In the verification repo, line coverage was 97.8% while the mutation score was 7
 | A rules, policy or reducer module is finished | `npx stryker run --mutate <file>` | 20-30 s per file |
 | Nightly and before a release | `npm run test:mutation` | 1.5-2 min for a verification repo's logic set |
 
-Then: `node ${CLAUDE_SKILL_DIR}/scripts/check-mutation-report.mjs reports/stryker/mutation.json --changed <file>` lists every surviving or uncovered mutant of that file with its line and replacement, and fails when the overall score is under 75% or the changed file has a survivor.
+Then: `node ${CLAUDE_SKILL_DIR}/scripts/check-mutation-report.mjs reports/stryker/mutation.json --changed <file>` lists every surviving or uncovered mutant of that file with its line and replacement, and fails when the overall score is under 75% or the changed file has a survivor. A `--changed` file missing from the report fails (`changed-not-mutated`), except a types-only file (nothing left once the types are stripped, such as `<game-id>-types.ts`), which gets a SKIP line because Stryker has no mutant to make there.
 
 ## Reading the report and killing survivors
 

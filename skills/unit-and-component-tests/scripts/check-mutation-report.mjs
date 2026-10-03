@@ -5,6 +5,7 @@
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-mutation-report.mjs [report] --changed <file>
 
 import { existsSync, readFileSync } from 'node:fs';
+import { stripTypeScriptTypes } from 'node:module';
 
 import { createReporter, fail, parseArgs, requireFile, run } from './check-lib.mjs';
 
@@ -29,7 +30,8 @@ const SPEC = {
     '  mutation-score       the overall score is below the break threshold',
     '  survivor             a mutant in a --changed file survived (no test failed when the code changed)',
     '  no-coverage          a mutant in a --changed file was never run by any test',
-    '  changed-not-mutated  a --changed file is not in the report (run: npx stryker run --mutate <file>)',
+    '  changed-not-mutated  a --changed file is not in the report (run: npx stryker run --mutate <file>);',
+    '                       a types-only file (nothing left once the types are stripped) gets a SKIP line instead',
     '  allow-unknown        an --allow id matches no mutant in the report',
     '',
     'Other files get one note line each (counts and first line); --all lists every mutant, for the evidence report.',
@@ -50,6 +52,24 @@ function loadReport(path) {
     fail(`${path} has no "files" object; it is not a Stryker mutation report`, 'Point the script at reports/stryker/mutation.json.');
   }
   return report;
+}
+
+/**
+ * True when the file holds only types: once Node strips the TypeScript syntax, nothing but comments
+ * and whitespace is left, so Stryker has no mutant to make and leaves the file out of its report.
+ */
+function isTypesOnly(file) {
+  if (!existsSync(file)) return false;
+  const emit = process.emitWarning;
+  process.emitWarning = () => {};
+  try {
+    const code = stripTypeScriptTypes(readFileSync(file, 'utf8'));
+    return code.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, '').trim() === '';
+  } catch {
+    return false;
+  } finally {
+    process.emitWarning = emit;
+  }
 }
 
 const clean = (text) => String(text).replace(/\s+/g, ' ').trim().slice(0, 80);
@@ -95,7 +115,12 @@ run(async () => {
     if (summary.Survived + summary.NoCoverage > 0) report.note(`note ${file}:${summary.firstLine} ${summary.Survived} survived, ${summary.NoCoverage} without coverage (details: --changed ${file} or --all)`);
   }
   for (const file of changed) {
-    if (!(file in data.files)) report.problem({ file, line: 0, rule: 'changed-not-mutated', message: 'is not in the mutation report', fix: `Run npx stryker run --mutate ${file}, then rerun this check.` });
+    if (file in data.files) continue;
+    if (isTypesOnly(file)) {
+      report.skip({ file, rule: 'changed-not-mutated', message: 'holds only types: Stryker has nothing to mutate' });
+      continue;
+    }
+    report.problem({ file, line: 0, rule: 'changed-not-mutated', message: 'is not in the mutation report', fix: `Run npx stryker run --mutate ${file}, then rerun this check.` });
   }
   for (const id of allowed) {
     if (!seenIds.has(id)) report.problem({ file: path, line: 0, rule: 'allow-unknown', message: `--allow ${id} matches no mutant in the report`, fix: 'Pass the id shown in the survivor line, or drop the --allow.' });

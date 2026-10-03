@@ -109,3 +109,26 @@ describe('attack', () => {
 
 const GOLDEN_DOUBLE_CLEAR =
   'beam-fired monster-hit beam-fired monster-hit shockwave-sent monster-hit monster-defeated monster-defeated';
+
+describe('attack target choice', () => {
+  it('skips a monster with no health left when it aims a beam', () => {
+    const spent = monster(1, { lane: 2, row: 5, hp: 0 });
+    const alive = monster(2, { lane: 2, row: 1, hp: 9 });
+    const result = attack([spent, alive], { rows: [], cols: [2] });
+    expect(result.events[0]).toStrictEqual({ kind: 'beam-fired', lane: 2, targetId: 2 });
+  });
+
+  it('keeps the lower id first in line when a higher id stands on the same row', () => {
+    const first = monster(3, { lane: 1, row: 2, hp: 9 });
+    const second = monster(7, { lane: 1, row: 2, hp: 9 });
+    const result = attack([first, second], { rows: [], cols: [1] });
+    expect(result.events[0]).toStrictEqual({ kind: 'beam-fired', lane: 1, targetId: 3 });
+  });
+
+  it('prefers the monster nearer the wall over a lower id farther away', () => {
+    const near = monster(5, { lane: 1, row: 4, hp: 9 });
+    const far = monster(2, { lane: 1, row: 1, hp: 9 });
+    const result = attack([near, far], { rows: [], cols: [1] });
+    expect(result.events[0]).toStrictEqual({ kind: 'beam-fired', lane: 1, targetId: 5 });
+  });
+});
