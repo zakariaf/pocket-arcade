@@ -4,13 +4,17 @@ import type { StoreTransaction } from '@e07/shell/services/purchase/purchase-por
 // 'unknown' means "no evidence either way": the cached entitlement stays.
 export type Evidence = 'owned' | 'revoked' | 'unknown';
 
+// A verified purchase of this product that was never refunded: the one "owned" test.
+export function isOwnedPurchase(tx: StoreTransaction, productId: string): boolean {
+  return tx.productId === productId && tx.state === 'purchased' && tx.revocationDateMs === null;
+}
+
 export function entitlementEvidence(
   transactions: readonly StoreTransaction[],
   productId: string,
 ): Evidence {
+  if (transactions.some((tx) => isOwnedPurchase(tx, productId))) return 'owned';
   const premium = transactions.filter((tx) => tx.productId === productId);
-  if (premium.some((tx) => tx.state === 'purchased' && tx.revocationDateMs === null))
-    return 'owned';
   if (premium.some((tx) => tx.revocationDateMs !== null)) return 'revoked';
   return 'unknown'; // absence is NOT evidence: fresh purchases can be briefly missing
 }
