@@ -48,7 +48,8 @@ type Writer = {
   /**
    * Validates, encodes and writes; the write counter keeps rising across launches. Returns false
    * (after logging, or throwing in test builds) when the document is invalid and nothing was
-   * written; a refused write still returns true, so the session plays on in memory.
+   * written; a refused write still returns true, so the session plays on in memory. A backup
+   * refresh that did not land stays due: every later write includes the backup until one lands.
    */
   readonly persist: (next: SaveDoc, isBoth: boolean) => boolean;
   /** Copies a damaged slot to quarantine; a refused copy stays pending and blocks every write. */
@@ -83,6 +84,8 @@ function createQuarantineQueue(deps: SaveServiceDeps, attempt: Attempt) {
 function createWriter(deps: SaveServiceDeps, writeCountBase: number): Writer {
   let writeCount = writeCountBase;
   let didFail = false;
+  // N10: a run end, reset or Premium change must reach the backup even if its own write failed.
+  let isBackupDue = false;
   const attempt: Attempt = (write) => {
     try {
       write();
@@ -104,14 +107,18 @@ function createWriter(deps: SaveServiceDeps, writeCountBase: number): Writer {
       if (deps.isStrict) throw error;
       return false;
     }
+    isBackupDue = isBackupDue || isBoth;
     if (!quarantines.flush()) return true;
     writeCount += 1;
     const meta = { appVersion: deps.appVersion, writtenAtMs: deps.clock.nowMs(), writeCount };
     const record = encodeSaveDoc(checked.doc, meta);
     const isWritten = attempt(() => {
-      deps.store.write(isBoth ? { current: record, backup: record } : { current: record });
+      deps.store.write(isBackupDue ? { current: record, backup: record } : { current: record });
     });
-    if (isWritten) didFail = false;
+    if (isWritten) {
+      didFail = false;
+      isBackupDue = false;
+    }
     return true;
   };
   return { persist, quarantine: quarantines.add, didLastWriteFail: () => didFail };

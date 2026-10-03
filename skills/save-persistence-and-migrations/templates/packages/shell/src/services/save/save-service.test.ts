@@ -155,6 +155,22 @@ describe('createSaveService', () => {
     expect(store.read('current')?.payload).toContain('"theme":"dark"');
   });
 
+  // spec 8.6: "The previous good copy is kept as a backup. A damaged save falls back to it (S14)."
+  it('keeps a refused backup refresh due until a write with the backup lands', () => {
+    const { store, save } = setup({ isStrict: true });
+    store.failNextWrite = true;
+    save.update((doc) => ({ ...doc, settings: { ...doc.settings, theme: 'dark' } }), {
+      refreshBackup: true,
+    });
+    save.update((doc) => ({ ...doc, settings: { ...doc.settings, soundVolume: 40 } }));
+    expect(save.didLastWriteFail()).toBe(false);
+    expect(store.read('backup')?.payload).toBe(store.read('current')?.payload);
+    expect(store.read('backup')?.writeCount).toBe(44);
+    save.update((doc) => ({ ...doc, settings: { ...doc.settings, soundVolume: 50 } }));
+    expect(store.read('backup')?.writeCount).toBe(44);
+    expect(store.read('current')?.writeCount).toBe(45);
+  });
+
   it('keeps booting without a throw when the disk refuses the planned writes', () => {
     const good = encodeSaveDoc(createDefaultSaveDoc(GAME), {
       appVersion: '1.0.0',
@@ -223,6 +239,39 @@ describe('createSaveService', () => {
     save.update((doc) => doc);
     expect(written).toHaveLength(1);
     expect(save.didLastWriteFail()).toBe(false);
+  });
+
+  it('writes the backup the boot planned once a blocking quarantine copy lands', () => {
+    const good = encodeSaveDoc(createDefaultSaveDoc(GAME), {
+      appVersion: '1.0.0',
+      writtenAtMs: 1,
+      writeCount: 7,
+    });
+    const plan = planLoad({
+      current: { ...good, payload: `${good.payload} ` },
+      backup: good,
+      gameId: GAME,
+    });
+    let isDiskFull = true;
+    const store = createFakeSaveStore();
+    const deps = {
+      store: {
+        ...store,
+        quarantine: () => {
+          if (isDiskFull) throw new Error('SQLITE_FULL');
+        },
+      },
+      clock: CLOCK,
+      errorLog: createFakeErrorLog(),
+      appVersion: '1.0.0',
+      isStrict: true,
+    };
+    const save = createSaveService(deps, plan, 7);
+    save.applyLoadWrites();
+    isDiskFull = false;
+    save.update((doc) => ({ ...doc, settings: { ...doc.settings, theme: 'dark' } }));
+    expect(store.read('backup')?.writeCount).toBe(8);
+    expect(store.read('backup')?.payload).toContain('"theme":"dark"');
   });
 });
 
