@@ -989,7 +989,8 @@
           {
             "skill": "toybox-components",
             "paths": [
-              "packages/shell/src/ui/**"
+              "packages/shell/src/ui/**",
+              "packages/shell/src/testing/rendered-parts*"
             ]
           },
           {
@@ -1003,6 +1004,7 @@
               "packages/tooling/src/art/**",
               "packages/tooling/src/visual/**",
               "apps/line-siege/src/art/logo-art.ts",
+              "apps/line-siege/src/art/logo-art.test.ts",
               "apps/__GAME_ID__/src/art/game-art.ts"
             ]
           },
