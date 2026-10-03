@@ -43,6 +43,22 @@ describe('audio-api adapter (library mock)', () => {
     });
   });
 
+  // spec 8.7: "Audio follows the phone's silent switch where the platform allows, and never plays
+  // over the player's own music". The session takes effect only when it is set before the context.
+  it('sets the ambient session before the AudioContext exists', () => {
+    const api = jest.requireMock<{ AudioContext: new () => object }>('react-native-audio-api');
+    const order: string[] = [];
+    const libraryContext = api.AudioContext;
+    AudioManager.setAudioSessionOptions.mockImplementationOnce(() => order.push('session'));
+    const created = jest.spyOn(api, 'AudioContext').mockImplementation(() => {
+      order.push('context');
+      return Reflect.construct(libraryContext, []);
+    });
+    createAudioApiAudioAdapter({ reportError: jest.fn() }).load({});
+    created.mockRestore();
+    expect(order).toStrictEqual(['session', 'context']);
+  });
+
   it('stops cancelled cues and frees them, so the next move can schedule the sound again', () => {
     const start = jest.spyOn(AudioBufferSourceNode.prototype, 'start');
     const stop = jest.spyOn(AudioBufferSourceNode.prototype, 'stop');

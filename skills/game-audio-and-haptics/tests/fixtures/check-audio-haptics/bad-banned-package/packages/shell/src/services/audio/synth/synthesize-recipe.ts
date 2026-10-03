@@ -50,35 +50,53 @@ function envelope(i: number, shape: EnvelopeShape): number {
   return rise * left * left * tail;
 }
 
-export function synthesizeVoice(spec: VoiceSpec, sampleRate: number): Samples {
-  const shape = {
+function shapeOf(spec: VoiceSpec, sampleRate: number): EnvelopeShape {
+  return {
     total: Math.round((spec.durationMs / 1000) * sampleRate),
     attack: (spec.attackMs / 1000) * sampleRate,
     fade: (FADE_OUT_MS / 1000) * sampleRate,
   };
-  const out = new Float32Array(shape.total);
-  let rng = seedRng(spec.seed ?? 1);
-  let phase = 0;
-  for (let i = 0; i < shape.total; i += 1) {
-    phase += (spec.startHz + (spec.endHz - spec.startHz) * (i / shape.total)) / sampleRate;
-    const draw = nextU32(rng);
-    rng = draw.state;
-    out[i] =
-      oscillate(spec.wave, phase, draw.value / 2147483648 - 1) * spec.gain * envelope(i, shape);
-  }
-  return out;
 }
 
-/** Mixes all voices at their offsets; if layers sum above 0.9 the whole sound is scaled down. */
+/**
+ * The voice's samples in order, one call per sample index (0, 1, 2, ...): the pitch glide keeps
+ * its phase between calls, and only a noise voice draws from its seeded generator.
+ */
+function voiceSampler(spec: VoiceSpec, sampleRate: number): (i: number) => number {
+  const shape = shapeOf(spec, sampleRate);
+  let rng = seedRng(spec.seed ?? 1);
+  let phase = 0;
+  return (i) => {
+    phase += (spec.startHz + (spec.endHz - spec.startHz) * (i / shape.total)) / sampleRate;
+    let noise = 0;
+    if (spec.wave === 'noise') {
+      const draw = nextU32(rng);
+      rng = draw.state;
+      noise = draw.value / 2147483648 - 1;
+    }
+    return oscillate(spec.wave, phase, noise) * spec.gain * envelope(i, shape);
+  };
+}
+
+/**
+ * Mixes all voices at their offsets; if layers sum above 0.9 the whole sound is scaled down. Each
+ * voice sample is rounded to 32 bits before it is added, as a voice buffer of its own would hold it.
+ */
 export function synthesizeRecipe(recipe: SoundRecipe, sampleRate: number): Samples {
   const endMs = Math.max(...recipe.map((voice) => voice.offsetMs + voice.durationMs));
   const mix = new Float32Array(Math.round((endMs / 1000) * sampleRate));
   for (const voice of recipe) {
     const start = Math.round((voice.offsetMs / 1000) * sampleRate);
-    synthesizeVoice(voice, sampleRate).forEach((sample, i) => {
-      if (start + i < mix.length) mix[start + i] = (mix[start + i] ?? 0) + sample;
-    });
+    const end = Math.min(shapeOf(voice, sampleRate).total, mix.length - start);
+    const sampleAt = voiceSampler(voice, sampleRate);
+    for (let i = 0; i < end; i += 1) {
+      mix[start + i] = (mix[start + i] ?? 0) + Math.fround(sampleAt(i));
+    }
   }
-  const peak = mix.reduce((max, sample) => Math.max(max, Math.abs(sample)), 0);
-  return peak > PEAK_LIMIT ? mix.map((sample) => (sample * PEAK_LIMIT) / peak) : mix;
+  let peak = 0;
+  for (const sample of mix) peak = Math.max(peak, Math.abs(sample));
+  if (peak > PEAK_LIMIT) {
+    for (let i = 0; i < mix.length; i += 1) mix[i] = ((mix[i] ?? 0) * PEAK_LIMIT) / peak;
+  }
+  return mix;
 }
