@@ -32,7 +32,7 @@ import type { SqlDriver, SqlValue } from '@e07/shell/services/save/sql-driver.ts
 const mockStore = createFakeDebugStore();
 const mockGuard = { readPending: () => null, writePending: jest.fn() };
 jest.mock('@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts', () => ({
-  createSqliteKvDebugStoreAdapter: () => mockStore,
+  createSqliteKvDebugStoreAdapter: jest.fn(() => mockStore),
 }));
 jest.mock('@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts', () => ({
   createSqliteKvDirectionGuardAdapter: () => mockGuard,
@@ -47,6 +47,11 @@ let mockAdsMode: 'off' | 'test' = 'off';
 jest.mock('@e07/shell/services/ads/read-ads-extra.ts', () => ({
   readAdsExtra: () => ({ adsMode: mockAdsMode, adUnits: null }),
 }));
+
+type MockedKvAdapter = { readonly createSqliteKvDebugStoreAdapter: jest.Mock };
+const kvAdapter = jest.requireMock<MockedKvAdapter>(
+  '@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts',
+);
 
 type MockedConsentSdk = { readonly AdsConsent: { readonly reset: jest.Mock } };
 const consentSdk = jest.requireMock<MockedConsentSdk>('react-native-google-mobile-ads');
@@ -176,6 +181,12 @@ describe('createDebugParts', () => {
   it('builds no debug code without the test-build wrappers (a store build)', () => {
     const { parts } = setup(false);
     expect([parts.services, parts.links, parts.feedback]).toStrictEqual([null, null, null]);
+  });
+
+  it('opens the test-only key-value store once, for the debug services and the link handler', () => {
+    kvAdapter.createSqliteKvDebugStoreAdapter.mockClear();
+    setup();
+    expect(kvAdapter.createSqliteKvDebugStoreAdapter).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the date and the offline flag for the next run of the app', () => {
