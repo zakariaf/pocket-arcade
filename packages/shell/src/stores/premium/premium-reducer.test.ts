@@ -106,3 +106,16 @@ describe('premiumReducer maps every S12 state', () => {
     expect(run([...READY, { type: 'buy-tapped' }], true).flow.kind).toBe('ready');
   });
 });
+
+describe('premiumReducer debug switch', () => {
+  it('clears the restored toast as well as the thank-you when the debug switch sets Premium', () => {
+    const restored = run([
+      ...READY,
+      { type: 'restore-tapped' },
+      { type: 'restore-finished', evidence: 'owned' },
+    ]);
+    expect(restored.didJustRestore).toBe(true);
+    const switched = premiumReducer(restored, { type: 'debug-premium-set', isPremium: true });
+    expect([switched.didJustPurchase, switched.didJustRestore]).toStrictEqual([false, false]);
+  });
+});
