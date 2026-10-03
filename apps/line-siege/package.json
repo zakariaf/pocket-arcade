@@ -10,6 +10,7 @@
     "@e07/shell": "*",
     "@shopify/react-native-skia": "2.6.2",
     "expo": "~57.0.25",
+    "expo-iap": "5.8.0",
     "expo-network": "~57.0.2",
     "expo-sqlite": "~57.0.3",
     "expo-system-ui": "~57.0.4",
