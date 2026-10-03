@@ -136,8 +136,8 @@ For this epic:
 - **Skills:** `i18n-strings-and-catalogs`, `naming-conventions`, `premium-purchase`, `git-commits-and-reporting`, `tdd-workflow`.
 - **Tests first:** For data, the checkers are the tests; keep these red runs for the report:
   - `node skills/i18n-strings-and-catalogs/scripts/check-catalogs.mjs .` prints `[F1 catalog-file]` FAIL lines for the missing `en.json`, `de.json`, `fa.json` and `ckb.json`.
-  - `npm run i18n:verify` exits 1 for the Shell catalog folder.
-  - `node skills/i18n-strings-and-catalogs/scripts/copy-deck.mjs check . --all --extras` fails with `deck-key-missing` and `extra-key-missing` lines.
+  - `npm run i18n:verify` exits 1 for the Shell catalog folder (it stops at the missing `packages/shell/src/i18n/catalogs/en.json`).
+  - `node skills/i18n-strings-and-catalogs/scripts/copy-deck.mjs check . --all --extras` exits 2 with `ERROR [bad-input] nothing to check: no Shell catalogs in packages/shell/src/i18n/catalogs` (the skill's answer while no Shell catalog exists; exit 2 is never a pass).
 - **Build:**
   - Generate the catalogs: `node skills/i18n-strings-and-catalogs/scripts/copy-deck.mjs apply . --all --extras`. It writes `packages/shell/src/i18n/catalogs/{en,de,fa,ckb}.json`, keys sorted (about 299 keys per language). Never type or "improve" a text by hand: a wording change goes into the deck (or `assets/shell-extras.json`) with the owner first, then into the catalogs.
   - Read the diff for four facts: `consent.tracking.usage-description` has no brace or argument in any language; `result.win.score-line` is present and `result.win.moves-count` is absent; every `debug.*` text is the English text in de, fa and ckb; the German texts say "du" (they equal the deck, which is written that way).
