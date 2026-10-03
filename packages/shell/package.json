@@ -31,6 +31,7 @@
     "react-native-gesture-handler": "*",
     "react-native-google-mobile-ads": "*",
     "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
     "react-native-worklets": "*"
   }
 }
