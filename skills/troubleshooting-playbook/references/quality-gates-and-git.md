@@ -14,6 +14,7 @@ Failures of the gates themselves, lefthook, Claude Code hooks and commit rules. 
 - Reports
 - Test history
 - Commit rules
+- check:fast
 
 ## Commits
 
@@ -76,3 +77,9 @@ Failures of the gates themselves, lefthook, Claude Code hooks and commit rules. 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
 | `gates-perf-baseline-gated` | [gate-change-unneeded] a Gate-Change trailer but no gated file (the commit of perf-baselines/cold-start-sim-line-siege.json that e2e:ios asked for) | e2e-maestro's runner and rule 12 said to commit the cold-start baseline with a Gate-Change trailer, but round 4's quality-gates.json did not list perf-baselines/** as a gated path | perf-baselines/** is a gated path (the baseline sets the next runs' cold-start limit): commit it with Gate-Change: <why the baseline changed>; a baseline commit without the trailer fails gate-change-missing | verified | `quality-gates` |
+
+## check:fast
+
+| ID | Symptom | Cause | Fix | Status | Skill |
+|---|---|---|---|---|---|
+| `gates-eslint-cache-stale-type-error` | check:fast reports a type-aware ESLint error (no-unsafe-*, no-unnecessary-condition) that no longer matches the code, in a file that did not change | check:fast runs eslint --cache --cache-strategy content, which keys each result on the file's own content only: when a file it depends on changes (a type, the test-only pair), the cached type-aware result is replayed | Delete node_modules/.cache/eslint and rerun npm run -s check:fast; npm run lint (no cache) is the truth, and the next run rebuilds the cache | verified | `quality-gates` |

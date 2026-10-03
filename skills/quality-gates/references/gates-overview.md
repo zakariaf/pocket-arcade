@@ -106,7 +106,7 @@ Never make a step green early with `--passWithNoTests`, an ignore entry or a stu
 
 ## check:fast, the inner loop
 
-`check:fast` is the inner loop and the Stop hook's command: Prettier check, ESLint with a content-based cache in `node_modules/.cache/eslint/`, the full `typecheck` (incremental), and `jest --onlyChanged` (tests related to files changed since the last commit). It took 6.6-12 s on sample repos. The ESLint cache is safe because `lint` (no cache) runs again in `verify`.
+`check:fast` is the inner loop and the Stop hook's command: Prettier check, ESLint with a content-based cache in `node_modules/.cache/eslint/`, the full `typecheck` (incremental), and `jest --onlyChanged` (tests related to files changed since the last commit). It took 6.6-12 s on sample repos. The cache (`--cache-strategy content`) keys each result on the file's own content only, so when a file it depends on changes (a type, the test-only pair), it replays the old result. A stale pass is harmless, because `lint` (no cache) runs again in `verify`. A stale type-aware failure (a `no-unsafe-*` or `no-unnecessary-condition` error that no longer matches the code, seen when the test-only pair changed) blocks `check:fast` and the Stop hook: delete `node_modules/.cache/eslint/` and rerun; `npm run lint` is the truth (troubleshooting-playbook entry `gates-eslint-cache-stale-type-error`).
 
 Run it at the end of every slice and before saying any change is done. Run `npm run verify` before every push (the pre-push hook does it anyway).
 
