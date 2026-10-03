@@ -80,7 +80,7 @@ export function Chip({ text, testID }: ChipProps): ReactNode {
 }
 ```
 
-Rules this shows: the path comment on line 1; imports grouped (react-native, aliases, relative, then types); `readonly` props with a doc comment where the value is not obvious; `makeStyles((theme) => { const styles = StyleSheet.create({...}); return styles; })` for themed styles and module-level `StyleSheet.create` for the rest; the component's explicit `ReactNode` return type; the testID on the element the design measures and Maestro can see (the chip box, made one accessible text element; a testID on the inner text would measure only the words and fails `testid-on-inner-text`); logical keys only (`paddingInline`, `start`, `end`, `marginStart`, `borderTopStartRadius`), never left/right.
+Rules this shows: the path comment on line 1; imports grouped (react-native, aliases, relative, then types); `readonly` props with a doc comment where the value is not obvious; `makeStyles((theme) => { const styles = StyleSheet.create({...}); return styles; })` for themed styles and module-level `StyleSheet.create` for the rest; the component's explicit `ReactNode` return type; the testID on the element the design measures and Maestro can see (the chip box, made one accessible text element; a testID on the inner text would measure only the words and fails `testid-on-inner-text`); logical keys only (`paddingInline`, `start`, `end`, `marginStart`, `borderTopStartRadius`), never left/right. The props type starts as an object literal (`export type ChipProps = {`): `check-components` reads the required `testID` from it, so props that must come as a pair (TopBar's `onBack` with `backLabel`) join as a union after it (`= { ... } & BackKeyProps;`), never before it.
 
 ## Measurements: COMPONENT_SPECS
 

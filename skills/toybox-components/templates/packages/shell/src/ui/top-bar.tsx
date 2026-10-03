@@ -25,7 +25,7 @@ type BackKeyProps =
     }
   | { readonly onBack?: undefined; readonly backLabel?: undefined };
 
-export type TopBarProps = BackKeyProps & {
+export type TopBarProps = {
   /** `levels.top-bar`: parts `.back-button` and `.title`. */
   readonly testID: string;
   readonly isReducedMotion: boolean;
@@ -35,7 +35,7 @@ export type TopBarProps = BackKeyProps & {
   readonly start?: ReactNode;
   /** One end action at most: an IconButton or a sticker ("Test build"). */
   readonly end?: ReactNode;
-};
+} & BackKeyProps;
 
 const styles = StyleSheet.create({
   bar: {
