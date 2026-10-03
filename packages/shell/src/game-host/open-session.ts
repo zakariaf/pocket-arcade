@@ -78,9 +78,18 @@ export function newSession<T extends ShellGameTypes>(
 type Restored<T extends ShellGameTypes> = RestoredRun<T['state'], T['move'], T['event']>;
 
 /**
+ * A run restored from its snapshot alone: no undo history, and its log marked partial, so the run
+ * end never measures counters from it (spec S10), even when the snapshot is the start position.
+ */
+function withoutHistory<T extends ShellGameTypes>(restored: Restored<T>): Restored<T> {
+  if (restored.kind === 'dropped') return restored;
+  return { ...restored, hasHistory: false, session: { ...restored.session, hasPartialLog: true } };
+}
+
+/**
  * restoreRun that never throws (spec 8.14, no crash loop): a replay the game refuses (a changed
  * rule set throws RangeError on a logged move) is logged, and the snapshot, the truth, is restored
- * again without that log; a run that cannot be restored even then is dropped.
+ * again without that log (withoutHistory); a run that cannot be restored even then is dropped.
  */
 function restoreLogged<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
@@ -88,12 +97,15 @@ function restoreLogged<T extends ShellGameTypes>(
   errorLog: ErrorLogPort,
 ): Restored<T> {
   const rules = sessionRulesFor(game, saved.ref);
-  for (const attempt of [saved, { ...saved, log: [] }]) {
-    try {
-      return restoreRun(rules, game.persistence, attempt);
-    } catch (error) {
-      errorLog.record('save', error);
-    }
+  try {
+    return restoreRun(rules, game.persistence, saved);
+  } catch (error) {
+    errorLog.record('save', error);
+  }
+  try {
+    return withoutHistory(restoreRun(rules, game.persistence, { ...saved, log: [] }));
+  } catch (error) {
+    errorLog.record('save', error);
   }
   return { kind: 'dropped', reason: 'state-invalid' };
 }
