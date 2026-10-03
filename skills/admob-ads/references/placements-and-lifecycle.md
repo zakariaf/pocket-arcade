@@ -14,7 +14,7 @@
 
 ```ts
 export type AdsPort = {
-  readonly initialize: () => Promise<void>; // after consent: request configuration + initialize; idempotent
+  readonly initialize: () => Promise<void>; // after consent: request configuration + initialize; idempotent (overlapping calls share the one running initialisation, a failed one is tried again)
   readonly preloadInterstitial: () => void;
   readonly preloadRewarded: () => void;
   readonly rewardedStatus: () => RewardedStatus; // 'loading' | 'ready' | 'unavailable' (L11)
