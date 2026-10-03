@@ -142,6 +142,30 @@ function forText(stored: Measure, text: string): Measure {
   return stored.text === text ? stored : { ...EMPTY, text };
 }
 
+function isSameLines(a: readonly number[] | null, b: readonly number[]): boolean {
+  return a !== null && a.length === b.length && a.every((line, index) => line === b[index]);
+}
+
+/**
+ * The state after a text layout: a stale layout is dropped, any other one is stored and moves the
+ * search on. A layout that changes nothing (the same lines, the search not moved) keeps the stored
+ * state itself, so React skips the render.
+ */
+export function afterTextLayout(
+  previous: Measure,
+  text: string,
+  lineWidths: readonly number[],
+): Measure {
+  const current = forText(previous, text);
+  if (isStale(current, lineWidths)) return previous;
+  const next = advance({ ...current, lineWidths });
+  const isUnchanged =
+    current === previous &&
+    next.search === previous.search &&
+    isSameLines(previous.lineWidths, lineWidths);
+  return isUnchanged ? previous : next;
+}
+
 export function useBalancedWrap(
   isEnabled: boolean,
   text: string,
@@ -165,7 +189,7 @@ export function useBalancedWrap(
     },
     onTextLayout: (event) => {
       const lineWidths = event.nativeEvent.lines.map((line) => line.width);
-      if (!isStale(measure, lineWidths)) setMeasure(advance({ ...measure, lineWidths }));
+      setMeasure(afterTextLayout(measure, text, lineWidths));
     },
   };
 }
