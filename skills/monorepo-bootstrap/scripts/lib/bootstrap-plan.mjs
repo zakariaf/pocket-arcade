@@ -133,7 +133,10 @@ export function renderTemplate(repoRel, text, vars, preExisting) {
   }
   if (repoRel === 'eslint.config.mjs') {
     const globs = preExisting.map((entry) => `'${entry.isDir ? `${entry.name}/**` : entry.name}'`);
-    out = out.replace('const PRE_EXISTING = [];', `const PRE_EXISTING = [${globs.join(', ')}];`);
+    // Written as Prettier prints it (printWidth 100): one line when it fits, else one entry per line.
+    const oneLine = `const PRE_EXISTING = [${globs.join(', ')}];`;
+    const list = oneLine.length <= 100 ? oneLine : `const PRE_EXISTING = [\n${globs.map((glob) => `  ${glob},\n`).join('')}];`;
+    out = out.replace('const PRE_EXISTING = [];', list);
   }
   return out;
 }

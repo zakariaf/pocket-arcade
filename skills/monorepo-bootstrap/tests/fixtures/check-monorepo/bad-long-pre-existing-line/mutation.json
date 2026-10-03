@@ -1,0 +1,7 @@
+[
+  { "write": { "file": "research-notes/a.md", "content": "# A\n" } },
+  { "write": { "file": "slides-and-talks/a.md", "content": "# A\n" } },
+  { "write": { "file": "design-mockups/a.md", "content": "# A\n" } },
+  { "replace": { "file": "eslint.config.mjs", "find": "const PRE_EXISTING = ['handbook/**'];", "with": "const PRE_EXISTING = ['design-mockups/**', 'handbook/**', 'research-notes/**', 'slides-and-talks/**'];" } },
+  { "replace": { "file": ".prettierignore", "find": "handbook/\n", "with": "design-mockups/\nhandbook/\nresearch-notes/\nslides-and-talks/\n" } }
+]
