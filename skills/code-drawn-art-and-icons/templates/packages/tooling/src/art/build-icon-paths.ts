@@ -2,7 +2,8 @@
 // Turns the Toybox icon layers (icon-layers.json next to this file) into one nonzero fill path per
 // icon and writes packages/shell/src/ui/icons/icon-paths.ts.
 // Run from the repo root: node packages/tooling/src/art/build-icon-paths.ts [--check] (--help for more)
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 import { loadHeadlessSkia } from '@e07/tooling/visual/load-headless-skia.ts';
 
@@ -128,6 +129,8 @@ async function main(): Promise<void> {
     }
     return;
   }
+  // A fresh Shell has no ui/icons/ folder yet: the first run creates it.
+  mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, text);
   console.log(`wrote ${OUT} (${String(Object.keys(data.glyphs).length)} icons)`);
 }
