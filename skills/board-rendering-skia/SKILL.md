@@ -89,7 +89,7 @@ Every Pocket Arcade board is one Skia `<Canvas>` whose single `<Picture>` is rec
 | [examples/line-siege/](examples/line-siege/) | Line Siege v1's board, synced from the library's canonical copy (`board/`: lanes band, wall and hearts, board, tray, three monster kinds with shape cues, beam, shock and burst tracks, breaches, `drawFittedText` health, the selected-slot ring and hinted move, the drag lift, palettes and `board-contrast.json`, with tests; `rules/` types, tuning and pieces), its golden test and its 9 reviewed golden PNGs | Step 3, as the model to imitate |
 | `scripts/check-board-code.mjs` | Checks worklets, frame clock (`clock-runnable`: push, stop, resume and done through `board-clock-state`), worklets API, pure draw, Skia API, canvas, a11y, lifecycle, reduced-motion source | Step 8 and at the end |
 | `scripts/check-board-files.mjs` | Checks host files, the layout probe staying inside the board frame, board files, palettes, timeline and draw tests, goldens and baselines, 120 Hz, Jest golden project | Steps 2 and 8 and at the end |
-| `scripts/selftest.mjs` | Proves both checkers pass good fixtures and catch each planted bug | After changing a checker |
+| `scripts/selftest.mjs` | Proves both checkers pass good fixtures and catch each planted bug, and that the worklet boundary template requires the directive wherever `check-board-code.mjs` does | After changing a checker |
 | `scripts/lib/` | `source-scan.mjs`, the TypeScript source helpers the checkers share | When changing a checker |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |
