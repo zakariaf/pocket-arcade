@@ -99,6 +99,54 @@ describe('consent moment flow', () => {
     ]);
   });
 
+  // Spec S3 and owner decision O1 / L10: consent, then Apple's prompt, then ads. Banner slots read
+  // canRequestAds from this snapshot, so it turns true only once the ATT answer is in and the SDK
+  // is initialised: a banner mounted earlier would request an ad while the prompt is still up.
+  it('publishes canRequestAds only after the ATT answer and a finished initialize', async () => {
+    const calls: string[] = [];
+    const initializing: (() => void)[] = [];
+    const fakeAds = createFakeAds({
+      rewardedStatus: 'unavailable',
+      interstitialResult: 'unavailable',
+      rewardResult: 'unavailable',
+      calls,
+    });
+    const ads = {
+      ...fakeAds,
+      initialize: () =>
+        new Promise<void>((resolve) => {
+          calls.push('initialize');
+          initializing.push(resolve);
+        }),
+    };
+    const consent = createFakeConsent({
+      afterRefresh: GRANTED,
+      afterForm: GRANTED,
+      tracking: 'not-determined',
+      calls,
+    });
+    const flow = createConsentMomentFlow({
+      ...{ ads, consent, isHeld: false, savedCanRequestAds: null },
+      ...{ onConsent: () => undefined, onError: () => undefined },
+    });
+    const callsWhenAllowed: string[][] = [];
+    flow.subscribe(() => {
+      if (flow.getSnapshot().canRequestAds === true) callsWhenAllowed.push([...calls]);
+    });
+    flow.updateInput(AFTER_TUTORIAL);
+    flow.requestAdMoment();
+    await flushMicrotasks();
+    expect([calls, flow.getSnapshot().canRequestAds]).toStrictEqual([
+      ['refresh', 'requestTracking', 'initialize'],
+      null,
+    ]);
+    for (const finish of initializing) finish();
+    await flushMicrotasks();
+    expect(callsWhenAllowed).toStrictEqual([
+      ['refresh', 'requestTracking', 'initialize', 'preloadInterstitial', 'preloadRewarded'],
+    ]);
+  });
+
   it('waits while no banner screen is open, so the moment never covers a level', async () => {
     const { flow } = setup();
     flow.updateInput(AFTER_TUTORIAL);
