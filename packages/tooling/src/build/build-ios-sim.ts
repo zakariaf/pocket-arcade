@@ -141,10 +141,8 @@ function sleep(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-/** The perf-log payload, or null when the app has no perf log (store builds, early Shells). */
-function readPerfLog(simctl: Simctl, udid: string, bundleId: string): string | null {
-  const container = simctl(['get_app_container', udid, bundleId, 'data']).trim();
-  const database = join(container, 'Documents', 'SQLite', 'save.db');
+/** The perf-log payload in the app's save.db, or null without one (store builds, early Shells). */
+function readPerfLog(database: string): string | null {
   if (!existsSync(database)) {
     return null;
   }
@@ -271,7 +269,10 @@ async function main(): Promise<number> {
   bootForScreenshots(simctl, udid);
   installAndLaunch(simctl, udid, app);
   const out = screenshotPath(options);
-  const perfLog = (): string | null => readPerfLog(simctl, udid, app.bundleId);
+  // The data container stays put once installed: look it up once, not on every poll.
+  const container = simctl(['get_app_container', udid, app.bundleId, 'data']).trim();
+  const database = join(container, 'Documents', 'SQLite', 'save.db');
+  const perfLog = (): string | null => readPerfLog(database);
   const reason = waitAndScreenshot(simctl, { udid, perfLog }, out);
   console.log(
     `build:ios:sim: ${options.variant.appVariant}/${options.variant.adsMode} app ${app.path}`,
