@@ -3,11 +3,11 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { LANGUAGES } from '@e07/shell/i18n/languages.ts';
+
 import { debugEnglishProblems, lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
 
 import type { Language, Namespace } from './catalog-lint-rules.ts';
-
-const LANGUAGES: readonly Language[] = ['en', 'de', 'fa', 'ckb'];
 
 function readCatalog(dir: string, language: Language): Record<string, string> {
   const parsed: unknown = JSON.parse(readFileSync(join(dir, `${language}.json`), 'utf8'));
