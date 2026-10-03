@@ -1,6 +1,6 @@
 // packages/shell/src/config/with-shell.ts
 // The config composer: game.config.ts + build env in, complete ExpoConfig out. Runs in Node
-// (type stripping): relative imports with .ts extensions, erasable syntax, no RN imports.
+// (type stripping): relative or @e07/shell/ imports with .ts extensions, erasable syntax, no RN.
 // Every native setting comes only from this file and config plugins. This full version replaces the
 // bootstrap's phase-0 composer once every native module is installed (architecture-and-boundaries):
 // it adds the privacy manifest, the one plugin list (shell-plugins.ts) and the game's art. The swap
@@ -13,13 +13,11 @@ import { resolveBuildVariant } from './app-variant.ts';
 import { withGameArt } from './art-config.ts';
 import { toGameExtra } from './game-extra.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
-import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
+import { shellPlugins, SUPPORTED_LOCALES, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
 
 import type { BuildEnv } from './app-variant.ts';
-import type { GameConfig, LanguageCode } from './game-config.ts';
+import type { GameConfig } from './game-config.ts';
 import type { ExpoConfig } from 'expo/config';
-
-const LANGUAGES: readonly LanguageCode[] = ['en', 'de', 'fa', 'ckb'];
 
 /** The one app id of a game: io.applander.<game id without hyphens>, all lowercase (O4). */
 export function appIdOf(gameId: string): string {
@@ -39,7 +37,7 @@ function assertAppIds(game: GameConfig): void {
 
 function localizedNames(game: GameConfig): NonNullable<ExpoConfig['locales']> {
   return Object.fromEntries(
-    LANGUAGES.map((lang) => [
+    SUPPORTED_LOCALES.map((lang) => [
       lang,
       {
         ios: {
