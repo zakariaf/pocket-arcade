@@ -58,6 +58,27 @@ describe('RaisedSurface', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
+  it('goes flat and dashed when disabled, so the state never rests on colour alone', async () => {
+    await renderWithShell(
+      <RaisedSurface
+        label="Buy"
+        onPress={jest.fn()}
+        testID="premium.buy-button"
+        elevation={ELEVATION.hero}
+        radius={RADII.md}
+        fill="transparent"
+        isReducedMotion
+        isDisabled
+      >
+        <AppText text="Buy" variant="label" />
+      </RaisedSurface>,
+    );
+
+    // allow-style-assertion: the dashed edge and the sunk key are the disabled state's shape cues
+    expect(screen.getByText('Buy').parent).toHaveStyle({ borderStyle: 'dashed' });
+    expect(screen.getByTestId('premium.buy-button')).toHaveStyle({ top: ELEVATION.hero });
+  });
+
   it('reports busy and ignores presses while busy', async () => {
     const onPress = jest.fn();
     const user = userEvent.setup();
