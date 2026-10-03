@@ -1,0 +1,228 @@
+{
+  "schemaVersion": "1.0",
+  "thresholds": {
+    "high": 90,
+    "low": 80,
+    "break": 75
+  },
+  "projectRoot": "/repo",
+  "files": {
+    "packages/shell/src/services/ads/ad-policy.ts": {
+      "language": "typescript",
+      "source": "",
+      "mutants": [
+        {
+          "id": "1",
+          "mutatorName": "EqualityOperator",
+          "replacement": "last >= nowMs",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 56,
+              "column": 3
+            },
+            "end": {
+              "line": 56,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "2",
+          "mutatorName": "EqualityOperator",
+          "replacement": "context.levelsCompletedTotal <= config.minLevelsCompletedBeforeFirst",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 67,
+              "column": 3
+            },
+            "end": {
+              "line": 67,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "3",
+          "mutatorName": "BooleanLiteral",
+          "replacement": "true",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "4",
+          "mutatorName": "ConditionalExpression",
+          "replacement": "false",
+          "status": "Timeout",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 20,
+              "column": 3
+            },
+            "end": {
+              "line": 20,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "5",
+          "mutatorName": "ArrayDeclaration",
+          "replacement": "[]",
+          "status": "Ignored",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 3,
+              "column": 3
+            },
+            "end": {
+              "line": 3,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "6",
+          "mutatorName": "StringLiteral",
+          "replacement": "\"\"",
+          "status": "CompileError",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 8,
+              "column": 20
+            }
+          }
+        }
+      ]
+    },
+    "apps/demo/src/rules/list-moves.ts": {
+      "language": "typescript",
+      "source": "",
+      "mutants": [
+        {
+          "id": "10",
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "score - points",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 30,
+              "column": 3
+            },
+            "end": {
+              "line": 30,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "11",
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "anchor.col - dx",
+          "status": "Survived",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "12",
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 40,
+              "column": 3
+            },
+            "end": {
+              "line": 40,
+              "column": 20
+            }
+          }
+        },
+        {
+          "id": "13",
+          "mutatorName": "ConditionalExpression",
+          "replacement": "true",
+          "status": "Killed",
+          "static": false,
+          "coveredBy": [
+            "1"
+          ],
+          "location": {
+            "start": {
+              "line": 44,
+              "column": 3
+            },
+            "end": {
+              "line": 44,
+              "column": 20
+            }
+          }
+        }
+      ]
+    }
+  },
+  "testFiles": {},
+  "framework": {
+    "name": "StrykerJS",
+    "version": "10.0.0"
+  }
+}

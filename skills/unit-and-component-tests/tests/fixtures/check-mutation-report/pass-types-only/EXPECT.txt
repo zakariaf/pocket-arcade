@@ -1,0 +1,1 @@
+SKIP apps/toy/src/rules/toy-types.ts [changed-not-mutated] holds only types

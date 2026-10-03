@@ -1,0 +1,1 @@
+apps/toy/src/rules/toy-score.ts [changed-not-mutated] is not in the mutation report
