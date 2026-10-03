@@ -249,7 +249,8 @@ function teachingOf<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
   deps: GameHostDeps,
 ): TeachingFacts {
-  // Built once per app: the picture component closes over the typed module (the seam).
+  // One picture component per app, closing over the typed module (the seam); it builds its Skia
+  // kit only when S13 first draws a page, never here at boot.
   const picture = deps.createExamplePicture?.(game) ?? null;
   return {
     tutorialSteps: coachStepsOf(game.teaching.tutorial.steps),
