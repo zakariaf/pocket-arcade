@@ -518,7 +518,7 @@
         ]
       },
       "references/setup-ids-and-modes.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -526,7 +526,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "spec.txt",
@@ -548,7 +548,7 @@
         ]
       },
       "templates/packages/shell/src/config/ads-config.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -556,12 +556,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/ads-config.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -569,30 +569,30 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/app-variant.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/app-variant.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/skadnetwork-ids.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -600,7 +600,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -887,7 +887,7 @@
         ]
       },
       "templates/packages/tooling/src/ads/refresh-skadnetwork.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -895,7 +895,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       }
@@ -954,7 +954,7 @@
         ]
       },
       "references/app-wiring-and-variants.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -962,7 +962,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -1048,20 +1048,20 @@
         ]
       },
       "templates/app-variant.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/app-variant.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -1102,11 +1102,11 @@
         ]
       },
       "templates/metro.config.js": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -1165,11 +1165,11 @@
         ]
       },
       "templates/test-only.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -2971,7 +2971,7 @@
     },
     "e2e-maestro": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -2983,7 +2983,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -3010,7 +3010,7 @@
         ]
       },
       "references/debug-deep-link.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -3026,7 +3026,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -3057,7 +3057,7 @@
         ]
       },
       "references/runner-and-network.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -3069,7 +3069,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -3227,7 +3227,7 @@
         ]
       },
       "templates/packages/tooling/src/e2e/simulator.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -3235,7 +3235,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -3303,7 +3303,7 @@
         ]
       },
       "references/sdk-58-changes.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3319,12 +3319,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/upgrade-policy.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3332,7 +3332,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -3345,7 +3345,7 @@
         ]
       },
       "references/xcode-and-scene-support.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3353,7 +3353,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -3403,7 +3403,7 @@
         ]
       },
       "references/audio-architecture.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3431,7 +3431,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -5980,7 +5980,7 @@
     },
     "git-commits-and-reporting": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -5992,7 +5992,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6014,11 +6014,11 @@
         ]
       },
       "examples/owner-requests.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6057,7 +6057,7 @@
         ]
       },
       "references/commit-format.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6065,7 +6065,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -6095,7 +6095,7 @@
         ]
       },
       "references/stop-and-ask.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -6107,7 +6107,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6116,7 +6116,7 @@
         ]
       },
       "references/tags-and-releases.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6124,7 +6124,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6159,7 +6159,7 @@
         ]
       },
       "scripts/check-tags.mjs": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6167,7 +6167,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -6185,7 +6185,7 @@
         ]
       },
       "templates/evidence-release.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6193,7 +6193,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6224,11 +6224,11 @@
         ]
       },
       "templates/release-stop.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6745,7 +6745,7 @@
         ]
       },
       "templates/tooling-i18n/review-sheet.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6753,7 +6753,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -6773,11 +6773,11 @@
     },
     "ios-release-testflight": {
       "examples/release-messages.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -6786,7 +6786,7 @@
         ]
       },
       "references/app-store-connect-api.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/12-in-app-purchase.md",
@@ -6794,12 +6794,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/failure-playbook.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -6811,12 +6811,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/human-steps.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -6840,12 +6840,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/release-pipeline.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -6865,12 +6865,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/signing-and-keys.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
@@ -6878,12 +6878,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/app-variant.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6891,12 +6891,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/app-variant.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -6904,93 +6904,93 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/config/export-options-store.plist": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/config/export-options-test.plist": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-client.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-credentials.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-jwt.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-jwt.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/beta-notes.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/find-app.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/print-app-record.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/clock/system-clock.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -6998,12 +6998,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/ios/toolchain.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7011,12 +7011,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/ios/toolchain.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7024,185 +7024,185 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/build-number.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/build-number.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/bump-build-number.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/processing.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/processing.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-build.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-failures.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-failures.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-ios.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-options.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-options.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-preflight.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-runner.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/release-upload.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/store-gate.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/store-gate.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/what-to-test.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/release/what-to-test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       }
     },
     "ios-simulator-build": {
       "examples/variant-proof.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/build-variants.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7210,7 +7210,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -7219,7 +7219,7 @@
         ]
       },
       "references/environment-and-xcode.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7227,12 +7227,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/failures.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7252,12 +7252,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "references/simulator-commands.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7265,7 +7265,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7274,7 +7274,7 @@
         ]
       },
       "templates/apps/game/metro.config.js": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7282,12 +7282,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/app-env.d.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/04-code-style-and-limits.md",
@@ -7295,16 +7295,16 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/app/test-only-api.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7313,11 +7313,11 @@
         ]
       },
       "templates/packages/shell/src/app/test-only-entry.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7326,11 +7326,11 @@
         ]
       },
       "templates/packages/shell/src/app/test-only.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7339,7 +7339,7 @@
         ]
       },
       "templates/packages/shell/src/config/app-variant.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7347,12 +7347,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/shell/src/config/app-variant.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7360,16 +7360,16 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/build/build-ios-sim.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7378,11 +7378,11 @@
         ]
       },
       "templates/packages/tooling/src/build/sim-build-plan.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7391,11 +7391,11 @@
         ]
       },
       "templates/packages/tooling/src/build/sim-build-plan.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -7404,7 +7404,7 @@
         ]
       },
       "templates/packages/tooling/src/ios/simulators.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7412,12 +7412,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/ios/simulators.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7425,12 +7425,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/ios/toolchain.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7438,12 +7438,12 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/ios/toolchain.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7451,7 +7451,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       }
@@ -8376,7 +8376,7 @@
         ]
       },
       "references/toolchain-setup.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8384,7 +8384,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -8447,11 +8447,11 @@
         ]
       },
       "templates/repo/apps/__APP_ID__/metro.config.js": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -8501,7 +8501,7 @@
         ]
       },
       "templates/repo/dot-mise.toml": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8509,7 +8509,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -8523,7 +8523,7 @@
         ]
       },
       "templates/repo/dot-nvmrc": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -8531,7 +8531,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -8701,20 +8701,20 @@
         ]
       },
       "templates/repo/packages/shell/src/config/app-variant.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/repo/packages/shell/src/config/app-variant.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -9020,7 +9020,7 @@
         ]
       },
       "references/packages-scripts-env-and-tags.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -9028,7 +9028,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -9162,7 +9162,7 @@
     },
     "new-game-scaffold": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9170,7 +9170,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9183,7 +9183,7 @@
         ]
       },
       "examples/flock-tilt/en.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9191,7 +9191,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9200,7 +9200,7 @@
         ]
       },
       "examples/flock-tilt/game.config.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9208,7 +9208,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9217,7 +9217,7 @@
         ]
       },
       "examples/flock-tilt/scaffold-plan.txt": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9225,7 +9225,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9234,7 +9234,7 @@
         ]
       },
       "examples/owner-request.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9242,7 +9242,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9251,7 +9251,7 @@
         ]
       },
       "references/app-files.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9259,7 +9259,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "spec.txt",
@@ -9268,7 +9268,7 @@
         ]
       },
       "references/ids-and-names.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9276,7 +9276,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9289,7 +9289,7 @@
         ]
       },
       "references/new-game-checklist.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9297,7 +9297,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9310,7 +9310,7 @@
         ]
       },
       "templates/app/app.config.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9318,7 +9318,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9327,7 +9327,7 @@
         ]
       },
       "templates/app/dot-gitignore": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9335,7 +9335,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9344,7 +9344,7 @@
         ]
       },
       "templates/app/game.config.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9352,7 +9352,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9361,7 +9361,7 @@
         ]
       },
       "templates/app/index.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9369,7 +9369,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9378,7 +9378,7 @@
         ]
       },
       "templates/app/metro.config.js": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9386,7 +9386,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9395,7 +9395,7 @@
         ]
       },
       "templates/app/package.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9403,7 +9403,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9412,7 +9412,7 @@
         ]
       },
       "templates/app/src/i18n/ckb.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9420,7 +9420,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9429,7 +9429,7 @@
         ]
       },
       "templates/app/src/i18n/de.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9437,7 +9437,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9446,7 +9446,7 @@
         ]
       },
       "templates/app/src/i18n/en.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9454,7 +9454,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9463,7 +9463,7 @@
         ]
       },
       "templates/app/src/i18n/fa.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9471,7 +9471,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -9480,7 +9480,7 @@
         ]
       },
       "templates/app/tsconfig.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9488,7 +9488,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -10300,29 +10300,29 @@
         ]
       },
       "templates/packages/tooling/src/asc/asc-client.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-credentials.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
       "templates/packages/tooling/src/asc/asc-jwt.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -10354,11 +10354,11 @@
         ]
       },
       "templates/packages/tooling/src/clock/system-clock.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -10466,7 +10466,7 @@
         ]
       },
       "references/release-audit.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
@@ -10474,7 +10474,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
@@ -18320,7 +18320,7 @@
     },
     "troubleshooting-playbook": {
       "assets/known-failures.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -18380,7 +18380,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -18430,7 +18430,7 @@
         ]
       },
       "references/build-and-simulator.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -18470,7 +18470,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
@@ -18525,7 +18525,7 @@
         ]
       },
       "references/diagnosing-new-failures.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -18533,7 +18533,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -18563,7 +18563,7 @@
         ]
       },
       "references/open-risks.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -18599,7 +18599,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           },
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -18646,7 +18646,7 @@
         ]
       },
       "references/release-and-signing.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-04",
         "sources": [
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -18666,7 +18666,7 @@
           },
           {
             "path": "docs/14-ios-build-and-release.md",
-            "sha256": "685694a05f6512fac598e138a52076ef89d3f55516dc05cf8450bfe0a4bdae39"
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
           }
         ]
       },
