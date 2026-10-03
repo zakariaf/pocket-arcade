@@ -5,13 +5,14 @@ import { decodeSlot } from '@e07/shell/services/save/save-codec.ts';
 import { createSaveService } from '@e07/shell/services/save/save-service.ts';
 import { createSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
-function setup() {
+/** isStrict false: a store build, where an invalid document is logged and not written. */
+function setup(isStrict = true) {
   const store = createFakeSaveStore();
   const clock = { nowMs: () => 1_790_000_000_000, today: () => '2026-09-26' };
   const errorLog = { record: jest.fn(), entries: () => [] };
   const plan = planLoad({ current: null, backup: null, gameId: 'line-siege' });
   const save = createSaveService(
-    { store, clock, errorLog, appVersion: '1.0.0', isStrict: true },
+    { store, clock, errorLog, appVersion: '1.0.0', isStrict },
     plan,
     0,
   );
@@ -34,6 +35,20 @@ describe('settings store', () => {
     const { settings } = setup();
     settings.getState().dispatch({ type: 'set-sound', enabled: true, volume: 180 });
     expect(settings.getState().settings.soundVolume).toBe(100);
+  });
+
+  // N10: a document the save rejected never reaches the store. Were it published, every later
+  // change would be built on it and rejected too, and no setting would reach the disk again.
+  it('keeps the last valid settings when the save rejects a change, and saves the next one', () => {
+    const { store, settings } = setup(false);
+    settings.getState().dispatch({ type: 'set-sound', enabled: true, volume: Number.NaN });
+    expect(settings.getState().settings.soundVolume).toBe(80);
+    settings.getState().dispatch({ type: 'set-theme', theme: 'dark' });
+    const current = store.read('current');
+    if (current === null) throw new Error('current slot missing');
+    const decoded = decodeSlot(current, 'line-siege');
+    expect(decoded.kind === 'ok' && decoded.doc.settings.theme).toBe('dark');
+    expect(settings.getState().settings).toMatchObject({ theme: 'dark', soundVolume: 80 });
   });
 
   // spec S11: "Every change applies immediately; there is no Save button." Repeating the saved

@@ -17,7 +17,8 @@ export type SettingsStore = StoreApi<SettingsStoreState>;
 
 /**
  * Thin: reduce -> persist (sync, one transaction) -> publish. Hydrated once at boot. A reducer that
- * returns the same state (nothing changed) causes no write and no publish.
+ * returns the same state (nothing changed) causes no write and no publish. It publishes what the
+ * save holds after the write, so a document the save rejected never reaches the store.
  */
 export function createSettingsStore(save: SaveService): SettingsStore {
   const { settings, firstRun } = save.doc();
@@ -29,7 +30,8 @@ export function createSettingsStore(save: SaveService): SettingsStore {
       const next = settingsReducer(current, action);
       if (next === current) return; // nothing changed: no write, no re-render
       save.update((doc) => ({ ...doc, settings: next.settings, firstRun: next.firstRun }));
-      set(next);
+      const saved = save.doc();
+      set({ settings: saved.settings, firstRun: saved.firstRun });
     },
   }));
 }

@@ -20,7 +20,10 @@ export function statsSliceOf(doc: SaveDoc): StatsState {
   return { stats: doc.stats };
 }
 
-/** Thin: reduce -> persist (resets also refresh the backup) -> publish. */
+/**
+ * Thin: reduce -> persist (resets also refresh the backup) -> publish what the save holds, so a
+ * document the save rejected never reaches the store.
+ */
 export function createStatsStore(save: SaveService): StatsStore {
   return createStore<StatsStoreState>()((set, get) => ({
     ...statsSliceOf(save.doc()),
@@ -32,7 +35,7 @@ export function createStatsStore(save: SaveService): StatsStore {
       save.update((doc) => ({ ...doc, stats }), {
         refreshBackup: statsActionRefreshesBackup(action),
       });
-      set({ stats });
+      set(statsSliceOf(save.doc()));
     },
   }));
 }
