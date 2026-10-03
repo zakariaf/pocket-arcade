@@ -94,14 +94,23 @@ function regionHit(region: GridRegion, point: Point, slop: number): BoardTarget 
   return { regionId: region.id, col, row };
 }
 
-/** Canvas point → cell. `slop` (px) extends every region so edge taps still land. */
-export function hitTest(layout: BoardLayout, point: Point, slop = 0): BoardTarget | null {
-  const local = { x: layout.isMirrored ? layout.width - point.x : point.x, y: point.y };
+function firstHit(layout: BoardLayout, local: Point, slop: number): BoardTarget | null {
   for (const region of layout.regions) {
     const hit = regionHit(region, local, slop);
     if (hit !== null) return hit;
   }
   return null;
+}
+
+/**
+ * Canvas point → cell. `slop` (px) extends every region so edge taps still land, but a region the
+ * point is truly inside always wins over a neighbour reached only through the slop.
+ */
+export function hitTest(layout: BoardLayout, point: Point, slop = 0): BoardTarget | null {
+  const local = { x: layout.isMirrored ? layout.width - point.x : point.x, y: point.y };
+  const exact = firstHit(layout, local, 0);
+  if (exact !== null || slop <= 0) return exact;
+  return firstHit(layout, local, slop);
 }
 
 /** Structural equality for targets (hover changes are sent to JS only when this is false). */

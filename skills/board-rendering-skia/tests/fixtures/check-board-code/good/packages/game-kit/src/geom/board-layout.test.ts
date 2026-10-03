@@ -45,6 +45,28 @@ describe('board layout', () => {
     expect(cellRect(layout, { regionId: 'board', col: 0, row: 0 })?.x).toBe(300);
   });
 
+  it('prefers the region a tap is truly inside over a neighbour reached only through the slop (spec 10)', () => {
+    const layout: BoardLayout = {
+      width: 400,
+      height: 600,
+      isMirrored: false,
+      regions: [
+        { id: 'board', x: 0, y: 0, cell: 50, cols: 8, rows: 8 },
+        { id: 'tray', x: 0, y: 404, cell: 50, cols: 8, rows: 1 },
+      ],
+    };
+    expect(hitTest(layout, { x: 120, y: 405 }, 8)).toStrictEqual({
+      regionId: 'tray',
+      col: 2,
+      row: 0,
+    });
+    expect(hitTest(layout, { x: 120, y: 402 }, 8)).toStrictEqual({
+      regionId: 'board',
+      col: 2,
+      row: 7,
+    });
+  });
+
   it('keeps the whole grid inside the canvas', () => {
     const region = fitGrid({ box: { x: 0, y: 0, width: 390, height: 520 }, cols: 8, rows: 8 });
     expect(region.x + region.cell * 8).toBeLessThanOrEqual(390);
