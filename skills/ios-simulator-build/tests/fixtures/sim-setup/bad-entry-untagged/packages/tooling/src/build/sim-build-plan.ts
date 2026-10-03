@@ -88,6 +88,10 @@ function linkOf(flags: ReadonlyMap<string, string>, variant: BuildVariant): Link
   return { query, waitFor };
 }
 
+/** The bound maestro-args' maestroGlobalArgs enforces, checked here before the preflight and build. */
+const isDriverPort = (port: number): boolean =>
+  Number.isInteger(port) && port >= 1024 && port <= 65_535;
+
 /** Parses the CLI; the variant rules are the ones app.config.ts applies (forbidden pairs throw). */
 export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
   const flags = readFlags(argv);
@@ -106,7 +110,7 @@ export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
   const link = linkOf(flags, variant);
   const port = flags.get('--driver-port');
   const driverPort = port === undefined ? null : Number(port);
-  if (driverPort !== null && !(Number.isInteger(driverPort) && driverPort >= 1024)) {
+  if (driverPort !== null && !isDriverPort(driverPort)) {
     throw new Error(`--driver-port ${String(port)}: pass a port from 1024 to 65535`);
   }
   return { game, variant, purpose: flags.get('--sim') ?? 'smoke', link, driverPort };
@@ -293,18 +297,16 @@ export function moduleCachePathIn(pcmText: string, game: string): string | null 
  * that is not a JSON array of entries counts as no entry.
  */
 export function isColdStartLogged(perfLogPayload: string, sinceEpochMs?: number): boolean {
-  let entries: unknown;
   try {
-    entries = JSON.parse(perfLogPayload);
+    const entries: unknown = JSON.parse(perfLogPayload);
+    return Array.isArray(entries) && entries.some((entry) => isColdStartSince(entry, sinceEpochMs));
   } catch {
     return false;
   }
-  return Array.isArray(entries) && entries.some((entry) => isColdStartSince(entry, sinceEpochMs));
 }
 
 function isColdStartSince(entry: unknown, sinceEpochMs: number | undefined): boolean {
-  if (typeof entry !== 'object' || entry === null) return false;
-  const { kind, atEpochMs } = entry as { readonly kind?: unknown; readonly atEpochMs?: unknown };
+  const { kind, atEpochMs } = (entry ?? {}) as { kind?: unknown; atEpochMs?: unknown };
   if (kind !== 'cold-start') return false;
   return sinceEpochMs === undefined || (typeof atEpochMs === 'number' && atEpochMs >= sinceEpochMs);
 }

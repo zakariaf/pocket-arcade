@@ -158,6 +158,14 @@ describe('parseSimBuildArgs', () => {
     );
   });
 
+  it('rejects a --driver-port above 65535 while parsing, before the preflight and the build', () => {
+    const base = ['--app', 'line-siege', '--link', 'screen=home'];
+    expect(() => parseSimBuildArgs([...base, '--driver-port', '70000'])).toThrow(
+      '--driver-port 70000: pass a port from 1024 to 65535',
+    );
+    expect(parseSimBuildArgs([...base, '--driver-port', '65535']).driverPort).toBe(65_535);
+  });
+
   it('rejects an unknown flag', () => {
     expect(() => parseSimBuildArgs(['--app', 'line-siege', '--fast', 'yes'])).toThrow(
       'unexpected argument "--fast"',
