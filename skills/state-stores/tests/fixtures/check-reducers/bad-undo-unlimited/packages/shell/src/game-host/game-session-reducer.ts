@@ -1,17 +1,12 @@
 // packages/shell/src/game-host/game-session-reducer.ts
-import type { ApplyResult, Outcome } from '@e07/game-kit/contract/game-engine.ts';
+import type { ApplyResult } from '@e07/game-kit/contract/game-engine.ts';
 import type {
   GameSession,
   RunLogEntry,
   SessionAction,
   SessionRules,
   SessionStart,
-  SessionStatus,
 } from '@e07/shell/game-host/game-session-types.ts';
-
-function statusOf(outcome: Outcome): SessionStatus {
-  return outcome.kind === 'playing' ? 'playing' : outcome.kind;
-}
 
 export function startGameSession<TState, TMove, TEvent>(
   rules: SessionRules<TState, TMove, TEvent>,
@@ -24,7 +19,7 @@ export function startGameSession<TState, TMove, TEvent>(
     state,
     past: [],
     log: [],
-    status: statusOf(outcome),
+    status: outcome.kind,
     outcome,
     moveCount: 0,
     undoCount: 0,
@@ -46,7 +41,7 @@ function applied<TState, TMove, TEvent>(
     ...session,
     state: change.result.state,
     outcome,
-    status: statusOf(outcome),
+    status: outcome.kind,
     log: [...session.log, change.entry],
     lastEvents: change.result.events,
     eventSeq: session.eventSeq + 1,

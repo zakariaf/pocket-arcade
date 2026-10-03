@@ -33,7 +33,8 @@ export type ProgressAction =
   | { readonly type: 'use-free-hint'; readonly today: DateKey; readonly freePerDay: number }
   | { readonly type: 'record-upsell-shown'; readonly today: DateKey };
 
-const moreStars = (a: Stars, b: Stars): Stars => (a >= b ? a : b);
+/** The better of two star counts (the larger of two Stars is a Stars). */
+const moreStars = (a: Stars, b: Stars): Stars => Math.max(a, b) as Stars;
 
 function fewerMoves(a: number | null, b: number | null): number | null {
   if (a === null) return b;
