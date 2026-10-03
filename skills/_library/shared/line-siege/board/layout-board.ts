@@ -7,8 +7,15 @@ import type { LineSiegeView } from './to-view.ts';
 import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { LayoutInput } from '@e07/shell/game-host/board-types.ts';
 
-const PAD = 8;
+/**
+ * Inner padding of the canvas. S5 already sets the board 14 pt from the screen's sides, so this
+ * stays small: on a 390 pt phone the 362 pt canvas leaves 8 columns of 44 pt only with 4 pt here.
+ */
+const PAD = 4;
+/** The tray's share of the height in portrait, cut back when the board needs the room. */
 const TRAY_SHARE = 0.2;
+/** The tray never gets less than a 44 pt slot (spec S5) plus room for its selection ring. */
+const TRAY_MIN_PT = 52;
 const TRAY_SLOTS = 3;
 /** The wall between the lanes and the board is half a cell tall; the hearts sit on it. */
 export const WALL_CELLS = 0.5;
@@ -26,6 +33,19 @@ export function laneBandCells(laneRows: number): number {
 }
 
 /**
+ * The tray's height in portrait: its share of the canvas, cut back so the board can take the
+ * whole cell its width allows (the width is what limits a phone's board), never below TRAY_MIN_PT.
+ */
+function portraitTrayHeight(
+  inner: Rect,
+  grid: { readonly cols: number; readonly rows: number },
+): number {
+  const spare = inner.height - Math.floor(inner.width / grid.cols) * grid.rows;
+  const height = Math.max(TRAY_MIN_PT, Math.min(inner.height * TRAY_SHARE, spare));
+  return Math.min(inner.height, height);
+}
+
+/**
  * Lanes, the wall, the 8x8 board, then the 3-slot tray: the tray sits below in portrait and
  * beside the board when the canvas is wide. Only the board and the tray are tappable regions.
  */
@@ -38,15 +58,18 @@ export function layoutBoard(input: LayoutInput<LineSiegeView>): BoardLayout {
     width: input.width - 2 * PAD,
     height: input.height - 2 * PAD,
   };
-  const split = isWide ? inner.width * (1 - TRAY_SHARE) : inner.height * (1 - TRAY_SHARE);
+  const above = laneBandCells(view.laneRows) + WALL_CELLS;
+  const grid = { cols: view.size, rows: view.size + above };
+  const split = isWide
+    ? inner.width * (1 - TRAY_SHARE)
+    : inner.height - portraitTrayHeight(inner, grid);
   const stackBox = isWide
     ? { ...inner, width: split, height: inner.height - DRAG_LIFT_PT }
     : { ...inner, height: split };
   const trayBox = isWide
     ? { ...inner, x: inner.x + split, width: inner.width - split }
     : { ...inner, y: inner.y + split, height: inner.height - split };
-  const above = laneBandCells(view.laneRows) + WALL_CELLS;
-  const stack = fitGrid({ box: stackBox, cols: view.size, rows: view.size + above });
+  const stack = fitGrid({ box: stackBox, ...grid });
   const tray = fitGrid({
     box: trayBox,
     cols: isWide ? 1 : TRAY_SLOTS,

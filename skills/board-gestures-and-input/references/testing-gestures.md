@@ -32,7 +32,7 @@ Gesture tests render a small test host, not the Skia canvas (Skia's JSI module d
 | `stickCommand` property | `stick-command.test.ts` | dead zone, the four axes, and every command within 11.25° of the drag |
 | Gestures end to end | `use-board-gestures.test.tsx` | tap → cell with `selected: null`; drag → ONE drag-end; a lifted drag's hover and drop land on the same cell; swipe → ONE direction; hover reported on change only; long press → cell; stick writes each new command once and 0 on lift |
 | Legality | `apps/<game-id>/src/rules/intent-to-move.test.ts` | the game's intents map to moves `listMoves` lists, or `null` (also on a won and a lost state, and for taps inside `selectRegions`) |
-| Touch targets | `apps/<game-id>/src/board/hit-targets.test.ts` | smallest hit region ≥ 44 pt on a 402 × 874 pt phone; with a lift, every edge row reachable in portrait and wide layouts |
+| Touch targets | `apps/<game-id>/src/board/hit-targets.test.ts` | smallest hit region ≥ 44 pt on a 402 × 874 pt phone (Line Siege: also the S5 canvases of 390 × 844 and 393 × 852 pt phones, and the widest board a 375 × 667 pt phone allows); with a lift, every edge row reachable in portrait and wide layouts |
 | Drag lift | `apps/<game-id>/src/board/drag-lift.test.ts` (boards with `dragLiftPt`) | the board declares the lift, and the ghost is drawn exactly on the cell the block is placed on |
 | Layout round trip | `layout-board.test.ts` (rendering skill) | `hitTest(cellRect(c)) = c` at any size, mirrored or not |
 
