@@ -250,10 +250,6 @@ function makeHandle<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>):
   };
 }
 
-/**
- * One run's controller: reduce -> save -> publish through the session store, the run-end
- * record, hints, continue and leaving, behind a handle that names no game type.
- */
 /** Test builds only: ends the run at `state` through the one persist step, then publishes. */
 function endWithState<TState, TMove, TEvent>(
   parts: Parts<TState, TMove, TEvent>,
@@ -268,6 +264,10 @@ function endWithState<TState, TMove, TEvent>(
   return true;
 }
 
+/**
+ * One run's controller: reduce -> save -> publish through the session store, the run-end
+ * record, hints, continue and leaving, behind a handle that names no game type.
+ */
 export function createSessionController<TState, TMove, TEvent>(
   deps: ControllerDeps<TState, TMove, TEvent>,
   initial: Session<TState, TMove, TEvent>,
