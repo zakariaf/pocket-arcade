@@ -8,7 +8,13 @@
 // 7); DebugScreen and FontTestScreen stay
 // out while S15 is outside shell-slice.json. Every member here has an export of the same name in the entry
 // (check-sim-setup's entry-api-match rule): a member without one is undefined at run time.
+import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
+import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
+
 /** Everything that exists only in test builds (debug menu S15, harness hooks). */
 export type TestOnlyApi = {
   readonly TEST_BUILD_SENTINEL: string;
+  // Perf layer (performance-budgets): createDebugParts makes the cold-start log with it.
+  /** The perf log in the save database (table perf_log): Home's cold-start mark, the frame recorder. */
+  readonly createPerfLog: (driver: SqlDriver) => PerfLog;
 };
