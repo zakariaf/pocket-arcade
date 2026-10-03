@@ -54,6 +54,7 @@ export function OptionCard(props: OptionCardProps): ReactNode {
   return (
     <RaisedSurface
       label={props.label}
+      {...(props.language === undefined ? {} : { labelLanguage: props.language })}
       onPress={props.onSelect}
       testID={props.testID}
       accessibilityRole="radio"

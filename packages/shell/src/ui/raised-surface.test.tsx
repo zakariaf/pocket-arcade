@@ -58,6 +58,27 @@ describe('RaisedSurface', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
+  it('reads a label in its own language on the element VoiceOver focuses (spec S2, 8.11)', async () => {
+    await renderWithShell(
+      <RaisedSurface
+        label="فارسی"
+        labelLanguage="fa"
+        accessibilityRole="radio"
+        isSelected={false}
+        onPress={jest.fn()}
+        testID="language-choice.language-row.fa"
+        elevation={ELEVATION.control}
+        radius={RADII.md}
+        fill="transparent"
+        isReducedMotion
+      >
+        <AppText text="فارسی" variant="label" language="fa" />
+      </RaisedSurface>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'فارسی' })).toHaveProp('accessibilityLanguage', 'fa');
+  });
+
   it('goes flat and dashed when disabled, so the state never rests on colour alone', async () => {
     await renderWithShell(
       <RaisedSurface

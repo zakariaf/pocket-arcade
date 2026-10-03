@@ -218,6 +218,25 @@ describe('ListGroup and ListRow', () => {
     expect(screen.getByRole('radio', { name: /Deutsch/ })).toBeSelected();
   });
 
+  it('lets VoiceOver read an autonym row in its own voice on the focused row (spec S11a, N6)', async () => {
+    await renderWithShell(
+      <List testID="settings-language.list">
+        <ListRow
+          label="فارسی"
+          labelLanguage="fa"
+          end="radio"
+          isSelected={false}
+          onPress={jest.fn()}
+          testID="settings-language.language-row.fa"
+          isFirst
+          isReducedMotion={false}
+        />
+      </List>,
+    );
+
+    expect(screen.getByRole('radio', { name: /فارسی/ })).toHaveProp('accessibilityLanguage', 'fa');
+  });
+
   it('plays the tap feedback on a button row but leaves a switch row to its handler', async () => {
     const calls: string[] = [];
     const user = userEvent.setup();

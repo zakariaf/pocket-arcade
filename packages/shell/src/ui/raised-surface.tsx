@@ -13,6 +13,7 @@ import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { EASING, MOTION_MS, PRESS_SQUASH, RELEASE_SPRING } from '@e07/shell/theme/motion.ts';
 import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 
+import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';
 import type { AccessibilityRole, PressableProps, StyleProp, ViewStyle } from 'react-native';
 
@@ -21,6 +22,11 @@ export type PressSquash = { readonly x: number; readonly y: number };
 export type RaisedSurfaceProps = {
   /** Translated; also the accessibility label. */
   readonly label: string;
+  /**
+   * The label's own language when it is not the UI's (an autonym, S2): set on the focused element,
+   * so VoiceOver reads "فارسی" with a Persian voice. The inner AppText's language is never read.
+   */
+  readonly labelLanguage?: Language;
   /** The key's action; the tap feedback (sound) runs first, except for a switch (its handler plays the toggle feedback). */
   readonly onPress: () => void;
   readonly testID: string;
@@ -117,6 +123,7 @@ function faceStylesOf(
 function a11yProps(props: RaisedSurfaceProps, isInactive: boolean): PressableProps {
   return {
     accessibilityLabel: props.label,
+    ...(props.labelLanguage === undefined ? {} : { accessibilityLanguage: props.labelLanguage }),
     ...(props.accessibilityActions === undefined
       ? {}
       : { accessibilityActions: props.accessibilityActions }),

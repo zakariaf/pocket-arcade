@@ -59,7 +59,7 @@ export type ListRowProps = {
   readonly isFirst?: boolean;
   /** Wrap rows put this under the label at full width (a segmented control). */
   readonly below?: ReactNode;
-  /** Autonym rows use their own script. */
+  /** Autonym rows use their own script, and VoiceOver reads the focused row in that language. */
   readonly labelLanguage?: Language;
   /**
    * The label's own direction when it is not the layout's: S15's English labels in an RTL layout
@@ -207,6 +207,8 @@ export function ListRow(props: ListRowProps): ReactNode {
     <Pressable
       // No accessibilityLabel: VoiceOver reads the row's texts (label, description, value) in order.
       accessibilityRole={role}
+      // The row is the element VoiceOver focuses: an autonym row (S11a) is read in its own voice.
+      {...(props.labelLanguage === undefined ? {} : { accessibilityLanguage: props.labelLanguage })}
       {...(props.hint === undefined ? {} : { accessibilityHint: props.hint })}
       accessibilityState={stateOf(props)}
       onPress={() => {

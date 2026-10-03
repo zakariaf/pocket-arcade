@@ -198,6 +198,23 @@ describe('OptionCard', () => {
   });
 });
 
+describe('OptionCard language', () => {
+  it('lets VoiceOver read the autonym in its own voice on the focused card (spec S2, N6)', async () => {
+    await renderWithShell(
+      <OptionCard
+        label="فارسی"
+        language="fa"
+        isSelected={false}
+        onSelect={jest.fn()}
+        testID="language-choice.language-row.fa"
+        isReducedMotion={false}
+      />,
+    );
+
+    expect(screen.getByRole('radio', { name: 'فارسی' })).toHaveProp('accessibilityLanguage', 'fa');
+  });
+});
+
 describe('OptionCard alignment', () => {
   it('sets an autonym of the other direction at the end of its row, next to the mark (S2)', async () => {
     await renderWithShell(
