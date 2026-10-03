@@ -169,7 +169,7 @@ node -e "const f=new Intl.DateTimeFormat(process.argv[1],{day:'numeric',month:'s
 | P3 | Same placeholders with the same types as en | de, fa, ckb | `placeholders differ from en: …` |
 | P4 | Same `=N` branches as en | de, fa, ckb | `plural {n} has exact branches […] but en has […]` |
 | P5 | `debug-english`: every `debug.*` text equals its en text (S15 stays English, L13) | de, fa, ckb | `debug.title: the debug menu (S15) stays English in every language, but fa says "…" where en says "Debug menu"` |
-| F1 | Four files, each a flat object of strings | all | `ckb.json is missing` |
+| F1 | Four files, each a flat object of strings; the Shell's four are due once `packages/tooling/src/i18n/verify-catalogs.ts` exists (Shell step 6), a not-yet-due SKIP before | all | `ckb.json is missing` |
 | G1 | A game catalog holds `<game-id>.name`, `<game-id>.win-title` and `<game-id>.tagline`, the three keys the Shell reads through `GameIdentity.nameId`, `winTitleId` and `taglineId` (S1, S4, S7, S10, S11b) | game catalogs | `missing required game key "line-siege.win-title" (the Shell reads it through the identity)` |
 
 ## What FormatJS verify does and does not catch

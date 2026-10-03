@@ -9,9 +9,11 @@
 //     records the current fa texts (or only the named keys) as reviewed, after the owner's answers
 //     are applied to the copy deck and the catalogs
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+
+import { SHELL_CATALOGS, catalogDirs } from './catalog-dirs.ts';
 
 export const REVIEW_LANGUAGES = ['fa', 'ckb'] as const;
 export type ReviewLanguage = (typeof REVIEW_LANGUAGES)[number];
@@ -34,7 +36,6 @@ export type ReviewInput = {
 };
 
 export const REVIEW_STATE_FILE = 'packages/shell/src/i18n/review-state.json';
-const SHELL_CATALOGS = 'packages/shell/src/i18n/catalogs';
 const REPORT_DIR = 'reports/i18n';
 const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
 const EMPTY_STATE: ReviewState = { fa: {}, ckb: {} };
@@ -143,17 +144,15 @@ function readJson(path: string): unknown {
 function readCatalogs(root: string): { readonly catalogs: Catalogs; readonly gameIds: string[] } {
   if (!existsSync(join(root, SHELL_CATALOGS, 'en.json')))
     throw new Error(`review-sheet: no Shell catalogs in ${SHELL_CATALOGS}`);
-  const apps = join(root, 'apps');
-  const gameIds = existsSync(apps)
-    ? readdirSync(apps)
-        .filter((id) => existsSync(join(apps, id, 'src', 'i18n', 'en.json')))
-        .sort()
-    : [];
-  const dirs = [join(root, SHELL_CATALOGS), ...gameIds.map((id) => join(apps, id, 'src', 'i18n'))];
+  // A game folder joins once its English catalog exists; a new game's empty folder waits.
+  const dirs = catalogDirs(root).filter(({ dir }) => existsSync(join(dir, 'en.json')));
+  const gameIds = dirs.flatMap(({ namespace }) =>
+    namespace.kind === 'game' ? [namespace.gameId] : [],
+  );
   const merged = (language: string): Catalog =>
     Object.assign(
       {},
-      ...dirs.map((dir) => readJson(join(dir, `${language}.json`)) as Catalog),
+      ...dirs.map(({ dir }) => readJson(join(dir, `${language}.json`)) as Catalog),
     ) as Catalog;
   return { catalogs: { en: merged('en'), fa: merged('fa'), ckb: merged('ckb') }, gameIds };
 }

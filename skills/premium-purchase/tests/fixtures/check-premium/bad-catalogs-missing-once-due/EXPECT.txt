@@ -1,0 +1,2 @@
+[catalog-keys]
+the Shell catalogs are missing

@@ -3,11 +3,11 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { LANGUAGES } from '@e07/shell/i18n/languages.ts';
+
 import { debugEnglishProblems, lintMessage, missingGameKeys } from './catalog-lint-rules.ts';
 
 import type { Language, Namespace } from './catalog-lint-rules.ts';
-
-const LANGUAGES: readonly Language[] = ['en', 'de', 'fa', 'ckb'];
 
 function readCatalog(dir: string, language: Language): Record<string, string> {
   const parsed: unknown = JSON.parse(readFileSync(join(dir, `${language}.json`), 'utf8'));
@@ -27,7 +27,7 @@ export function lintDirectory(dir: string, namespace: Namespace): string[] {
   const report: string[] = [];
   const en = readCatalog(dir, 'en');
   for (const language of LANGUAGES) {
-    const catalog = readCatalog(dir, language);
+    const catalog = language === 'en' ? en : readCatalog(dir, language);
     report.push(...sortProblem(dir, language, Object.keys(catalog)));
     for (const problem of debugEnglishProblems(en, catalog, language)) {
       report.push(`${dir}/${language}.json  ${problem}`);

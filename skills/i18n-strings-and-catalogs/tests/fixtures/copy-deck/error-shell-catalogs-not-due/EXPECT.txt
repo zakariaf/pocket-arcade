@@ -1,0 +1,2 @@
+nothing to check: no Shell catalogs in packages/shell/src/i18n/catalogs
+due at Shell step 6: packages/tooling/src/i18n/verify-catalogs.ts not yet created

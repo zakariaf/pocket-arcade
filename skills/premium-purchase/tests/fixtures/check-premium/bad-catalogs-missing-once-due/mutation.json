@@ -1,0 +1,5 @@
+[
+  {
+    "delete": "packages/shell/src/i18n/catalogs"
+  }
+]

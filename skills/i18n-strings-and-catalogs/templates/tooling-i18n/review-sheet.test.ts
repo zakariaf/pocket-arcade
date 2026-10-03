@@ -173,6 +173,12 @@ describe('runReviewSheet', () => {
     expect(output.at(-1)).toBe('review-sheet: every fa and ckb text has been reviewed');
   });
 
+  it('skips a new game whose catalogs are not written yet', () => {
+    mkdirSync(path.join(root, 'apps/new-game/src/i18n'), { recursive: true });
+    expect(runReviewSheet(root, ['--release'])).toBe(0);
+    expect(read('reports/i18n/review-fa.csv')).toContain('"line-siege.name","Line Siege"');
+  });
+
   it('exits 2 for bad input and never for texts that wait', () => {
     expect(runReviewSheet(root, ['--mark-reviewed', 'de', '--date', '2026-10-02'])).toBe(2);
     expect(runReviewSheet(root, ['--mark-reviewed', 'fa'])).toBe(2);

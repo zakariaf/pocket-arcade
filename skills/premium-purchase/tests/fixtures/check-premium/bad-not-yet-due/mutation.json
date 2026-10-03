@@ -3,7 +3,7 @@
     "delete": "packages/shell/src/config/shell-plugins.ts"
   },
   {
-    "delete": "packages/shell/src/i18n/catalogs/en.json"
+    "delete": "packages/tooling/src/i18n/verify-catalogs.ts"
   },
   {
     "json": {

@@ -136,7 +136,7 @@ For this epic:
 - **Skills:** `i18n-strings-and-catalogs`, `naming-conventions`, `premium-purchase`, `git-commits-and-reporting`, `tdd-workflow`.
 - **Tests first:** For data, the checkers are the tests; keep these red runs for the report:
   - `node skills/i18n-strings-and-catalogs/scripts/check-catalogs.mjs .` prints `[F1 catalog-file]` FAIL lines for the missing `en.json`, `de.json`, `fa.json` and `ckb.json`.
-  - `npm run i18n:verify` exits 1 for the Shell catalog folder.
+  - `npm run i18n:verify` exits 1 for the Shell catalog folder (it stops at the missing `packages/shell/src/i18n/catalogs/en.json`).
   - `node skills/i18n-strings-and-catalogs/scripts/copy-deck.mjs check . --all --extras` fails with `deck-key-missing` and `extra-key-missing` lines.
 - **Build:**
   - Generate the catalogs: `node skills/i18n-strings-and-catalogs/scripts/copy-deck.mjs apply . --all --extras`. It writes `packages/shell/src/i18n/catalogs/{en,de,fa,ckb}.json`, keys sorted (about 299 keys per language). Never type or "improve" a text by hand: a wording change goes into the deck (or `assets/shell-extras.json`) with the owner first, then into the catalogs.

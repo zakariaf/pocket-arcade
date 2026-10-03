@@ -1,0 +1,3 @@
+[deck-key-missing]
+pause.resume-button: the design shows this text (screen S6) but the catalog lacks it
+packages/shell/src/i18n/catalogs/ckb.json:1

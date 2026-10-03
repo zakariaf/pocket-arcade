@@ -32,7 +32,7 @@ const SPEC = {
     'Facts (version, allowlists, keys, test IDs) come from assets/premium-facts.json; typed-price skips',
     'i18n/, testing/ and typedPriceAllowedIn (the parity harness\'s fixture store, test builds only).',
     'Not yet due (SKIP lines, a pass): plugin-entry until packages/shell/src/config/shell-plugins.ts exists',
-    '(Shell step 8), catalog-keys until packages/shell/src/i18n/catalogs/en.json exists (Shell step 6).',
+    '(Shell step 8), catalog-keys until the catalog linter packages/tooling/src/i18n/verify-catalogs.ts exists (Shell step 6).',
     'The repo scan skips REPO_SCAN_IGNORES (the in-repo skills/ library, .claude/, node_modules, Pods,',
     '.expo and each app\'s generated ios/, android/, build/, out/) and dist/, coverage/, reports/, tools/.',
   ].join('\n'),
@@ -160,10 +160,11 @@ function checkProductIds(root, report) {
 }
 
 function checkCatalogs(root, report) {
-  // The Shell catalogs arrive at Shell step 6 (the boot and i18n step): not due before.
-  const catalogsDue = dueSkipReason(root, SHELL_DUE_TARGETS.catalogs);
+  // The Shell catalogs are due once their linter exists (Shell step 6, the i18n step): from then on a
+  // missing catalog is a problem, before it the rule is not yet due.
+  const catalogsDue = dueSkipReason(root, SHELL_DUE_TARGETS.catalogLinter);
   if (catalogsDue !== null) {
-    report.skip({ file: SHELL_DUE_TARGETS.catalogs.file, rule: 'catalog-keys', message: catalogsDue });
+    report.skip({ file: SHELL_DUE_TARGETS.catalogLinter.file, rule: 'catalog-keys', message: catalogsDue });
     return;
   }
   const dir = join(root, FACTS.catalogDir);
