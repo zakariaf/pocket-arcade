@@ -15,6 +15,7 @@ import {
   judgeMismatches,
   parseDoctor,
   parseInstallCheck,
+  parsePublishTimes,
   youngPatchWarnings,
   type VersionMismatch,
 } from './expo-patch-age.ts';
@@ -22,11 +23,15 @@ import { checkReleaseAgeExcludes } from './release-age-excludes.ts';
 
 const NO_PENDING = 'No packages with unreviewed install scripts.';
 
-type Run = { readonly ok: boolean; readonly output: string };
+type Run = { readonly ok: boolean; readonly output: string; readonly stdout: string };
 
 function run(command: string, args: readonly string[], cwd: string): Run {
   const result = spawnSync(command, args, { cwd, encoding: 'utf8' });
-  return { ok: result.status === 0, output: `${result.stdout}${result.stderr}` };
+  return {
+    ok: result.status === 0,
+    output: `${result.stdout}${result.stderr}`,
+    stdout: result.stdout,
+  };
 }
 
 /** App folders only: macOS drops .DS_Store files next to them. */
@@ -69,7 +74,7 @@ const publishTimes = new Map<string, Readonly<Record<string, string>>>();
 function publishedAt(name: string, version: string): string | null {
   if (!publishTimes.has(name)) {
     const result = run('npm', ['view', name, 'time', '--json'], '.');
-    publishTimes.set(name, result.ok ? (JSON.parse(result.output) as Record<string, string>) : {});
+    publishTimes.set(name, result.ok ? parsePublishTimes(result.stdout) : {});
   }
   return publishTimes.get(name)?.[version] ?? null;
 }

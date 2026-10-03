@@ -121,7 +121,8 @@ export function fillTemplate(text, values) {
   return Object.entries(values).reduce((out, [key, value]) => out.replaceAll(key, String(value)), text);
 }
 
-const PRINT_WIDTH = 100;
+/** Prettier's printWidth in the template .prettierrc.json; generated files are written to fit it. */
+export const PRINT_WIDTH = 100;
 
 /**
  * appName as Prettier prints it: one line when it fits in 100 columns, otherwise one language per

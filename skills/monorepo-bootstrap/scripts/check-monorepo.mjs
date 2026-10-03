@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { FONT_FILES, LANGUAGES } from './lib/app-files.mjs';
+import { FONT_FILES, LANGUAGES, PRINT_WIDTH } from './lib/app-files.mjs';
 import { bundleIdFor, premiumIdFor, TEMPLATES, preExistingEntries } from './lib/bootstrap-plan.mjs';
 import { EXACT_VERSION, lineMatching, npmrcExcludeProblems, npmrcPolicyOverrides, readJsonFile, readTextFile, workspaceFolders } from './lib/repo-read.mjs';
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
@@ -200,6 +200,8 @@ function checkIgnoresAndFormat(ctx, add) {
   if (eslint !== null) {
     if (!/noInlineConfig:\s*true/.test(eslint)) add('eslint.config.mjs', 1, 'lint-ignore', 'does not switch inline eslint-disable comments off (noInlineConfig: true)', 'Restore block 0 of the config.');
     for (const glob of ["'skills/**'", "'.claude/**'"]) if (!eslint.includes(glob)) add('eslint.config.mjs', 1, 'lint-ignore', `globalIgnores lacks ${glob}`, `Add ${glob} to globalIgnores.`);
+    const preLine = eslint.split('\n').find((line) => line.startsWith('const PRE_EXISTING = ['));
+    if (preLine !== undefined && preLine.length > PRINT_WIDTH) add('eslint.config.mjs', lineMatching(eslint, /PRE_EXISTING = /), 'format-width', `the PRE_EXISTING line is ${preLine.length} characters, over Prettier's printWidth ${PRINT_WIDTH}, so format:check fails on a fresh bootstrap`, 'Regenerate eslint.config.mjs with scaffold-monorepo.mjs --replace eslint.config.mjs --write (it writes one entry per line when the list is long).');
   }
   for (const entry of preExistingEntries(ctx.root)) {
     const line = entry.isDir ? `${entry.name}/` : entry.name;

@@ -32,7 +32,8 @@ Proves the privacy promise of every game: our own code makes no network requests
 6. Layer F: make sure the E2E smoke flow ends with "network attempts: 0" and the socket sampler report is empty (Release, test variant, `ADS_MODE=off`).
 7. For a release, follow [references/release-audit.md](references/release-audit.md): the store export through `audit-bundle.mjs`, then the unzipped IPA through `node ${CLAUDE_SKILL_DIR}/scripts/audit-app-bundle.mjs --app <Payload/App.app> --variant store --ads-mode live --game <game-id>`. A keyless rehearsal on an archive built with `CODE_SIGNING_ALLOWED=NO` adds `--unsigned` (it prints `REHEARSAL: not a release gate` and is never release evidence); a store/off rehearsal also needs `--game` and reads the live AdMob ids from `apps/<game>/game.config.ts`, so before owner steps G3 and G5 it ends with the two link lines (G3), the four AdMob lines (G5), `OWNER STEPS PENDING: G3, G5` and `RESULT: FAIL`, the expected result (release-audit reference, "The keyless rehearsal").
 8. Check secrets hygiene with [references/secrets-and-supply-chain.md](references/secrets-and-supply-chain.md) (key location and mode, deny rules, `.gitignore`); on any leak, stop and walk the owner through the leak response.
-9. Report to the owner in plain words (model: [examples/audit-run.md](examples/audit-run.md)): what passed, any baseline change waiting for approval, and the App Privacy input.
+9. After editing any template of this skill, run `node ${CLAUDE_SKILL_DIR}/scripts/check-template-format.mjs ${CLAUDE_SKILL_DIR}/templates` (once per machine first `npm ci --prefix ${CLAUDE_SKILL_DIR}/scripts`): a template that is not Prettier-clean turns the repo's `format:check` red when copied.
+10. Report to the owner in plain words (model: [examples/audit-run.md](examples/audit-run.md)): what passed, any baseline change waiting for approval, and the App Privacy input.
 
 ## Definition of done
 

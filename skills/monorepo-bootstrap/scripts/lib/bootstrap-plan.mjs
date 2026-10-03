@@ -6,7 +6,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { BUNDLE_PREFIX, bundleIdFor, FONT_FILES, LANGUAGES, PILOT, premiumIdFor, renderGameConfig } from './app-files.mjs';
+import { BUNDLE_PREFIX, bundleIdFor, FONT_FILES, LANGUAGES, PILOT, premiumIdFor, PRINT_WIDTH, renderGameConfig } from './app-files.mjs';
 
 export { bundleIdFor, premiumIdFor };
 
@@ -133,7 +133,10 @@ export function renderTemplate(repoRel, text, vars, preExisting) {
   }
   if (repoRel === 'eslint.config.mjs') {
     const globs = preExisting.map((entry) => `'${entry.isDir ? `${entry.name}/**` : entry.name}'`);
-    out = out.replace('const PRE_EXISTING = [];', `const PRE_EXISTING = [${globs.join(', ')}];`);
+    // Written as Prettier prints it: one line when it fits, else one entry per line.
+    const oneLine = `const PRE_EXISTING = [${globs.join(', ')}];`;
+    const list = oneLine.length <= PRINT_WIDTH ? oneLine : `const PRE_EXISTING = [\n${globs.map((glob) => `  ${glob},\n`).join('')}];`;
+    out = out.replace('const PRE_EXISTING = [];', list);
   }
   return out;
 }
