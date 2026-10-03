@@ -31,6 +31,12 @@ export type BoardClock<TView> = {
   readonly resume: () => void;
   /** JS, test builds: one trace entry with the clock's last seq and run (no-op without a trace). */
   readonly trace: (label: BoardClockLabel) => void;
+  /**
+   * JS: a draw() error from the picture (BoardCanvas's onDrawError). Routed like a frame error:
+   * the clock halts and the first error of the run reaches the host's onFailure, once (an error
+   * from the first record, before the board's effect has run, is reported when it runs).
+   */
+  readonly fail: (message: string) => void;
 };
 
 /** A JS-side trace entry: the UI's numbers for frames, the last pushed scene's for the rest. */
@@ -66,32 +72,64 @@ type ClockDriver = Pick<BoardClock<unknown>, 'stop' | 'resume' | 'trace'> & {
   readonly push: Push;
   /** The frame runner's done message: stops the clock only for the run that is still current. */
   readonly onDone: (doneRun: number, seq: number) => void;
-  /** A draw or frame error: halt, then the host pauses the run. */
+  /** A draw or frame error: halt, then the host pauses the run (once per run, kept until connect). */
   readonly onError: (message: string) => void;
 };
+
+/** The parts the driver reaches once useBoardClock's effect has run (null before). */
+type DriverLink = {
+  readonly parts: () => DriverParts | null;
+  readonly connect: (parts: DriverParts) => void;
+  /** Reports to the host now, or on connect when the board has not connected yet. */
+  readonly reportError: (message: string) => void;
+};
+
+/**
+ * A draw() can throw on the first record, before useBoardClock's effect has connected the parts:
+ * the halted run's error then waits here and is reported on connect, never lost.
+ */
+function createDriverLink(): DriverLink {
+  let parts: DriverParts | null = null;
+  let pending: string | null = null;
+  return {
+    parts: () => parts,
+    connect: (next) => {
+      parts = next;
+      if (pending === null) return;
+      const message = pending;
+      pending = null;
+      next.onError(message);
+    },
+    reportError: (message) => {
+      if (parts === null) pending = message;
+      else parts.onError(message);
+    },
+  };
+}
+
+type RunCell = Pick<SharedValue<number>, 'set'>;
 
 /**
  * JS keeps its own record of the clock and never reads the scene shared value back. Created once
  * per board (useState), so onDone and onError keep their identity inside the frame callback.
  */
-function createClockDriver(initial: SceneHead, run: Pick<SharedValue<number>, 'set'>): ClockDriver {
+export function createClockDriver(initial: SceneHead, run: RunCell): ClockDriver {
   let control = initialClockControl(initial);
-  let parts: DriverParts | null = null;
+  const link = createDriverLink();
   const trace = (label: BoardClockLabel, sample: Partial<ClockTraceSample> = {}): void => {
     const base = { seq: control.seq, endMs: control.endMs, run: control.run };
-    parts?.sink?.(label, { ...base, startAt: null, elapsedMs: null, ...sample });
+    link.parts()?.sink?.(label, { ...base, startAt: null, elapsedMs: null, ...sample });
   };
   // The one place the frame callback is switched: the run reaches the UI before the frame does.
-  const apply = (step: ClockStep, label: BoardClockLabel | null): void => {
+  const apply = (step: ClockStep, label: BoardClockLabel | null): ClockStep => {
     control = step.control;
     if (step.setActive === true) run.set(step.control.run);
-    if (step.setActive !== null) parts?.frame.setActive(step.setActive);
+    if (step.setActive !== null) link.parts()?.frame.setActive(step.setActive);
     if (label !== null) trace(label);
+    return step;
   };
   return {
-    connect: (next) => {
-      parts = next;
-    },
+    connect: link.connect,
     push: (next) => {
       apply(pushScene(control, next), null);
       trace('push', { startAt: next.startAt, elapsedMs: 0 });
@@ -110,8 +148,7 @@ function createClockDriver(initial: SceneHead, run: Pick<SharedValue<number>, 's
       if (step.isApplied || isStale) trace('done', { seq, run: doneRun, isStale });
     },
     onError: (message) => {
-      apply(haltClock(control), null);
-      parts?.onError(message);
+      if (apply(haltClock(control), null).isApplied) link.reportError(message);
     },
   };
 }
@@ -155,5 +192,6 @@ export function useBoardClock<TView>(
     stop: driver.stop,
     resume: driver.resume,
     trace: driver.trace,
+    fail: driver.onError,
   };
 }

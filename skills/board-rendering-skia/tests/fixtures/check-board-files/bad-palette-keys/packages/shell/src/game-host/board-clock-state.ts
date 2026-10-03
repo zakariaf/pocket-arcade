@@ -29,6 +29,8 @@ export type ClockControl = {
   readonly isRunnable: boolean;
   /** Whether the frame callback is meant to run. */
   readonly isActive: boolean;
+  /** The run a draw or frame error halted: later errors of that run are not reported again. */
+  readonly failedRun?: number;
 };
 
 /** One decision: the next record and what to do with the frame callback (null: leave it). */
@@ -83,10 +85,17 @@ export function resumeClock(control: ClockControl): ClockStep {
   };
 }
 
-/** A draw or frame error: stop until the next push or resume (the host pauses the run). */
+/**
+ * A draw or frame error: stop until the next push or resume (the host pauses the run). Only the
+ * first error of a run is applied and reported: the picture is re-recorded on every pointer move
+ * and every frame already in flight, so a throwing draw() would otherwise report 60 to 120 times a
+ * second. A push or a resume starts a new run, whose first error is reported again.
+ */
 export function haltClock(control: ClockControl): ClockStep {
+  if (control.failedRun === control.run) return { control, setActive: null, isApplied: false };
+  const run = control.run + 1;
   return {
-    control: { ...control, run: control.run + 1, isActive: false },
+    control: { ...control, run, isActive: false, failedRun: run },
     setActive: false,
     isApplied: true,
   };

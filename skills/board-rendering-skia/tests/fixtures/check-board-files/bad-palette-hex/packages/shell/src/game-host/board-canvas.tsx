@@ -35,6 +35,7 @@ export type BoardCanvasProps<TState, TView, TToken extends string> = {
   readonly onHover: (target: BoardTarget | null) => void;
   /** A tap outside every region: the host drops its tap-then-tap selection. */
   readonly onMiss?: () => void;
+  /** The clock's fail: it halts the clock and reports the first error of a run once. */
   readonly onDrawError: (message: string) => void;
   /** Test builds with the debug link's boardLayout=1 only: publish game.board-layout for flows. */
   readonly isLayoutProbeOn?: boolean;
@@ -44,6 +45,9 @@ export function BoardCanvas<TState, TView, TToken extends string>(
   props: BoardCanvasProps<TState, TView, TToken>,
 ): React.JSX.Element {
   const { board, clock, colors, kit, highlight, onDrawError } = props;
+  // The worklets below capture only the two worklet functions they call, not the whole board
+  // (whose describe, toView, targetsOfMove and buildPaths would be copied to the UI runtime).
+  const { layout: layoutBoard, draw } = board;
   // One recorder per canvas, reused every frame; created in render, never at import time.
   const [recorder] = useState(() => Skia.PictureRecorder());
   const isMirrored = props.isRtl && board.isMirroredInRtl;
@@ -53,7 +57,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
     const { width, height } = size.get();
     return width === 0
       ? EMPTY_LAYOUT
-      : board.layout({ width, height, view: clock.scene.get().view, isMirrored });
+      : layoutBoard({ width, height, view: clock.scene.get().view, isMirrored });
   });
   const { gesture, pointer } = useBoardGestures(layout, {
     panMode: props.panMode,
@@ -75,7 +79,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
       highlight,
       colors,
       kit,
-      draw: board.draw,
+      draw,
       onError: reportDrawError,
     }),
   );

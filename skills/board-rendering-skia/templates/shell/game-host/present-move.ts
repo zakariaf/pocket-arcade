@@ -14,7 +14,7 @@ export type PresenterDeps<TState, TEvent, TView> = {
   /** 'reduced' when the Reduce motion setting is on (defaults to the OS setting). */
   readonly motion: Motion;
   readonly clock: Pick<BoardClock<TView>, 'push'>;
-  readonly cues: CueScheduler;
+  readonly cues: Pick<CueScheduler, 'cancel' | 'schedule'>;
 };
 
 /** What the GameSession store publishes after it applied AND saved a move. */

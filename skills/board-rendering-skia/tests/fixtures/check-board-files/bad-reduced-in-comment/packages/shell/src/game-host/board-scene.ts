@@ -28,6 +28,18 @@ export function makeScene<TView>(
   return { seq, view, tracks, endMs: timelineEndMs(tracks), startAt: NOT_STARTED };
 }
 
+/**
+ * Elapsed time for drawing. A just-pushed scene draws its first frame (t = 0).
+ * Declared before tickClock, which calls it: the Worklets plugin turns each function into a
+ * value captured where it is declared, so a call to a function declared below it is undefined.
+ */
+export function sceneElapsedMs(
+  scene: Pick<BoardScene<unknown>, 'startAt'>,
+  nowTimestamp: number,
+): number {
+  return scene.startAt === NOT_STARTED ? 0 : Math.max(0, nowTimestamp - scene.startAt);
+}
+
 export type ClockTick = {
   readonly startAt: number;
   readonly elapsedMs: number;
@@ -44,16 +56,8 @@ export function tickClock(
   timestamp: number,
 ): ClockTick {
   const startAt = scene.startAt === NOT_STARTED ? timestamp : scene.startAt;
-  const elapsedMs = Math.max(0, timestamp - startAt);
+  const elapsedMs = sceneElapsedMs(scene, timestamp);
   return { startAt, elapsedMs, isDone: elapsedMs >= scene.endMs };
-}
-
-/** Elapsed time for drawing. A just-pushed scene draws its first frame (t = 0). */
-export function sceneElapsedMs(
-  scene: Pick<BoardScene<unknown>, 'startAt'>,
-  nowTimestamp: number,
-): number {
-  return scene.startAt === NOT_STARTED ? 0 : Math.max(0, nowTimestamp - scene.startAt);
 }
 
 /** JS side: is the last pushed scene still playing? (Input policy 'queue' waits for false.) */

@@ -89,7 +89,7 @@ The clock test (template `board-scene.test.ts`) replays fake `FrameInfo` sequenc
 | `stop()` (lifecycle `onPause`) | `stopClock` | new `run`, not runnable, callback off: every `done` already on its way is void |
 | `resume()` (lifecycle `onResume`) | `resumeClock` | new `run`, runnable, callback **always** on, even when the scene has ended: at least one frame is recorded after the board is visible again, so the canvas never keeps a picture recorded while it was covered; an interrupted timeline jumps to its end, a held scene starts |
 | `onDone(run, seq)` (from the UI) | `finishRun` | stops only when `run` is the current run; anything else is stale and changes nothing |
-| `onError(message)` | `haltClock` | callback off until the next push or resume; the host pauses the run |
+| `onError(message)` (a frame error from the UI) and `fail(message)` (a `draw()` error from the picture: `BoardCanvas`'s `onDrawError` is the clock's `fail`, never the host's `onFailure`) | `haltClock` | callback off until the next push or resume; only the first error of a run is applied and reaches the host's `onFailure` (which pauses the run), because the picture re-records on every pointer move and a throwing `draw()` would otherwise report 60 to 120 times a second. An error from the first record, before `useBoardClock`'s effect has connected the driver (a layout before `onSize`, a restored state `draw()` cannot show), is kept and reported on connect, so it is never lost (`use-board-clock.test.ts`) |
 
 Before every `setActive(true)` the driver writes the new run into the `run` shared value, so the frame that starts names the run it belongs to. The invariant (D63), proven by `board-clock-state.test.ts` and by `board-clock-traces.test.ts`, which replays the two device traces below: (1) a scene pushed while the board is not runnable is held with `startAt` `NOT_STARTED` and starts on the first frame after the board is runnable; (2) every return to runnable records at least one frame after the board is visible; (3) a stale `onDone` never stops a newer scene. `check-board-code.mjs` rule `clock-runnable` fails a `use-board-clock.ts` that does not route push, stop, resume and done through these functions, switches the callback with a literal `setActive(true|false)`, or reads `scene.get()` on the JS thread (fixture `bad-clock-push-while-paused`: the round-4 hook).
 
@@ -120,13 +120,13 @@ The fix (these templates): the run token. `finishRun` compares the done message'
 1. `cues.cancel()`: drop the previous move's unfired sounds and haptics.
 2. `tracks = buildTimeline(events, motion)`.
 3. `clock.push(makeScene(seq, toView(state), tracks))`: the new scene replaces a running one. Because the view is the final state, that is a clean fast-forward.
-4. `cues.schedule(tracks)`.
+4. `cues.schedule(tracks)`: played now while the board may run; while it may not (an ad, the background, blur) the cues are held exactly as `pushScene` holds the scene, and play on the lifecycle's resume, when the clock starts that scene. Without this, a move saved under a full-screen ad (the rewarded continue) played its sounds under the ad and its animation silently afterwards.
 
 Input policy per game: `fast-forward` (default: a move arriving mid-animation replaces the scene) or `queue` (when the animation carries information the player needs first, the Game screen waits for `isSceneAnimating(scene, now) === false` before accepting input).
 
 ## Cues: sound and haptics on the timeline
 
-`createCueScheduler(audio, haptics)`: sounds go to `audio.play(id, startMs)` (scheduled on the audio clock), haptics fire immediately for `startMs <= 0` and through `setTimeout(…, startMs)` otherwise; `cancel()` clears the timers and calls `audio.cancelPending()`. The ports (`AudioPort`, `HapticsPort`) belong to the audio skill; the template test uses inline fakes.
+`createCueScheduler(audio, haptics)`: sounds go to `audio.play(id, startMs)` (scheduled on the audio clock), haptics fire immediately for `startMs <= 0` and through `setTimeout(…, startMs)` otherwise; `cancel()` clears the timers, calls `audio.cancelPending()` and forgets the latest cues (a fast-forward or leaving the screen). `GameBoardHost` calls `pause()` from the lifecycle's `onPause` (after `clock.stop()`) and `resume()` from its `onResume` (after `clock.resume()`). Cues scheduled before the lifecycle's first decision (the scene pushed at mount) or while the board may not run are held, as the clock holds their scene; `pause()` drops what has not fired; `resume()` plays the held cues once. A scene that had started is never replayed (the clock jumps it to its end on resume), so a board mounted under a full-screen ad plays its mount cues once, when the ad closes, never under it. The ports (`AudioPort`, `HapticsPort`) belong to the audio skill; the template test uses inline fakes.
 
 ## Stopping: idle, background, ads, focus
 

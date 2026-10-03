@@ -19,6 +19,20 @@ describe('worklet boundary', () => {
     expect(checkFile('packages/game-kit/src/geom/bad.ts', read)).toHaveLength(1);
   });
 
+  it.each([
+    'board-scene',
+    'board-clock-state',
+    'run-board-frame',
+    'record-board',
+    'describe-error',
+    'draw-centered-text',
+  ])('requires the file-level directive in the Shell board module %s.ts', (name) => {
+    const file = `packages/shell/src/game-host/${name}.ts`;
+    expect(checkFile(file, () => 'export const frame = 1;\n')).toStrictEqual([
+      { file, problem: "missing file-level 'worklet'; directive" },
+    ]);
+  });
+
   it('finds no violations in this repository', () => {
     expect(checkRepo()).toStrictEqual([]);
   });

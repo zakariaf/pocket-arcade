@@ -8,9 +8,10 @@ import { dirname, join, normalize, relative } from 'node:path';
 
 const ROOT = process.cwd();
 const ALLOWED_PACKAGES = new Set(['react-native-worklets']);
-/** Folders whose modules must be UI-thread modules (tests excluded). */
+/** Folders and Shell board modules that must be UI-thread modules (tests excluded). */
 const REQUIRED = [
   /^packages\/game-kit\/src\/(rng|geom|timeline)\/[^/]+\.ts$/,
+  /^packages\/shell\/src\/game-host\/(board-scene|board-clock-state|run-board-frame|record-board|describe-error|draw-centered-text)\.ts$/,
   /^apps\/[^/]+\/src\/board\/(draw|layout)[^/]*\.ts$/,
   /^apps\/[^/]+\/src\/sim\/.+\.ts$/,
 ];
@@ -37,10 +38,11 @@ export function resolveSpecifier(fromFile: string, specifier: string): string | 
 export function checkFile(file: string, read: (path: string) => string): readonly Violation[] {
   const source = read(file);
   const violations: Violation[] = [];
-  if (REQUIRED.some((pattern) => pattern.test(file)) && !isWorkletSource(source)) {
+  const isWorklet = isWorkletSource(source);
+  if (REQUIRED.some((pattern) => pattern.test(file)) && !isWorklet) {
     violations.push({ file, problem: "missing file-level 'worklet'; directive" });
   }
-  if (!isWorkletSource(source)) return violations;
+  if (!isWorklet) return violations;
   for (const [, specifier = ''] of source.matchAll(VALUE_IMPORT)) {
     const target = resolveSpecifier(file, specifier);
     if (target === null) {
