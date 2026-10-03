@@ -72,7 +72,7 @@ The other games have no logo yet. Draw one with the same recipe, then show it to
 1. One object that says what the toy is (a wall, a sheep, a robot), seen from the front or slightly tilted, filling about 80 % of the 48 grid; keep 2 units clear at the edges.
 2. White bodies with toy-ink edges (`w`), ink details as 2.6 lines (`kl`) or solid ink (`k`), one or two pop accents (`p` or `pl`). No text, no gradients, no more than about eight layers.
 3. It sits on the game's accent, so avoid large accent-coloured areas; the pop accent must read against the accent tile.
-4. Write it as `apps/<game>/src/art/logo-art.ts` (`export const LOGO_ART: LogoArt = { layers: [...] }`), render the S1 tile and the icons with `render-art.ts`, and look at them at 1024 and 256 px.
+4. Write it as `apps/<game>/src/art/logo-art.ts` (`export const LOGO_ART: LogoArt = { layers: [...] }`) with its test `logo-art.test.ts` beside it (the `__GAME_ID__` template checks rules 1 and 2; add one `it` that pins the paint order), render the S1 tile and the icons with `render-art.ts`, and look at them at 1024 and 256 px.
 
 ## The logo tile per place
 

@@ -159,6 +159,7 @@ It writes every absent plan file, never overwrites one, prints `keep <file>` for
 | `sim/` | real-time games only | realtime-game-loop |
 | `theme/palette.ts` | the UI palette | toybox-design-system |
 | `art/logo-art.ts` | `LOGO_ART`: logo, app icon and splash | code-drawn-art-and-icons |
+| `art/logo-art.test.ts` | the logo's test, committed with it: the logo recipe's rules and the pinned paint order | code-drawn-art-and-icons |
 | `art/game-art.ts` | `GAME_ART` (`presentation.art`): board palettes, `logo: LOGO_ART`, the game's own S11d credits | code-drawn-art-and-icons |
 | `sounds/sound-bank.ts` | the sound bank (every sound generated, so no sound credits) | game-audio-and-haptics |
 | `tutorial/<id>-teaching.ts`, `index.ts`, `<id>-types.ts`, `contract.test.ts` | teaching, assembly, the types bag, the contract test | game-host-integration |
