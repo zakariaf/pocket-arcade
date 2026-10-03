@@ -1374,7 +1374,7 @@ Notes on the shape:
 - `settings.language: null` means "System" and `digits: 'automatic' | 'latin' | 'local'` are docs/10's names (`languageFromRawSave`, `localeTagFor`).
 - `ads.history` is docs/11's `AdHistory`; `ads.consent` mirrors the last `ConsentInfo`, so the Settings privacy row and `canRequestAds` are known synchronously at startup, before the consent refresh resolves. The offline fallback itself is UMP's cached `AdsConsent.getConsentInfo()` inside docs/11's adapter.
 - `premium` is docs/12's entitlement section; a pending Ask-to-Buy is not persisted because StoreKit re-delivers it at launch (docs/12).
-- Size: the full fixture (90-level progress, 60 daily results, a 200-move log) stays in the low tens of kilobytes; the spec budget is a p95 write under 5 ms (FINAL D.47), measured by docs/15's perf test.
+- Size: the largest realistic save (90-level progress, 60 daily results, a 200-move run log: the document of docs/15's save benchmark) stays in the low tens of kilobytes; the spec budget is a p95 write under 5 ms (FINAL D.47), measured by docs/15's perf test. The v1 full fixture is smaller on purpose: it fills every section with a few entries, so it pins the shape, not the size.
 - Settings booleans keep data names (`soundEnabled`, `colorBlind`); code that destructures them renames to `is…` (docs/03 rule 6). Volumes are integer percent here; docs/09's `AudioSettings` takes 0–1, so the glue passes `volume / 100`.
 
 ### 6.3 SQL: tables and pragmas

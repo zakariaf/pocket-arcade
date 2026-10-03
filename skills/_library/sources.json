@@ -2606,11 +2606,11 @@
     },
     "daily-and-statistics": {
       "examples/stats-cards.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2619,7 +2619,7 @@
         ]
       },
       "examples/stats-cards.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -2627,7 +2627,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2636,7 +2636,7 @@
         ]
       },
       "references/daily-challenge.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -2648,7 +2648,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -2665,7 +2665,7 @@
         ]
       },
       "references/statistics.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -2681,7 +2681,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -2694,29 +2694,29 @@
         ]
       },
       "templates/packages/game-kit/src/dates/daily-seed.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/game-kit/src/dates/date-key.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/game-kit/src/dates/date-key.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -2725,128 +2725,128 @@
         ]
       },
       "templates/packages/shell/src/app/use-today.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/daily/daily-summary.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/daily/daily-summary.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/daily/use-daily-summary.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/daily/use-daily-summary.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/stats/stats-summary.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/stats/stats-summary.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/screens/stats/use-stats-summary.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/daily-model.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/daily-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/run-end.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/run-end.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-model.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       }
@@ -4377,7 +4377,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -4471,7 +4471,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -4496,7 +4496,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -4601,7 +4601,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host-context.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4609,7 +4609,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4618,7 +4618,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4626,7 +4626,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4635,7 +4635,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4643,7 +4643,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4652,11 +4652,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/hud-model.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4673,11 +4673,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/hud-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4694,7 +4694,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/measure-counters.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4702,7 +4702,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4711,7 +4711,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/measure-counters.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4719,7 +4719,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4728,7 +4728,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/open-session.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4736,7 +4736,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4745,7 +4745,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/open-session.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4753,7 +4753,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4762,7 +4762,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/play-clock.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4770,7 +4770,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4779,7 +4779,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/play-clock.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4787,7 +4787,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4796,11 +4796,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/result-model-of.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4817,11 +4817,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/result-model-of.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4838,7 +4838,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/run-summary.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4846,7 +4846,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4855,7 +4855,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/run-summary.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4863,7 +4863,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4872,7 +4872,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4880,7 +4880,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4889,7 +4889,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-view.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4897,7 +4897,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4915,11 +4915,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/top-bar-model.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4936,11 +4936,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/top-bar-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -4957,7 +4957,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/use-game-session-controls.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4965,7 +4965,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4974,7 +4974,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/use-game-session-controls.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -4982,7 +4982,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -4995,7 +4995,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -5012,7 +5012,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -5025,7 +5025,7 @@
         ]
       },
       "templates/packages/shell/src/testing/tally-game.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -5033,7 +5033,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       }
@@ -5182,7 +5182,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6257,11 +6257,11 @@
         ]
       },
       "references/data-goldens.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -6274,7 +6274,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7232,7 +7232,7 @@
         ]
       },
       "references/failures.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -7248,7 +7248,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/14-ios-build-and-release.md",
@@ -7466,7 +7466,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7491,7 +7491,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7525,11 +7525,11 @@
         ]
       },
       "references/goldens-and-quality.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7546,7 +7546,7 @@
         ]
       },
       "references/levels-model.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -7554,7 +7554,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -7592,7 +7592,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7613,7 +7613,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7634,7 +7634,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7655,7 +7655,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7676,7 +7676,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7697,7 +7697,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7718,7 +7718,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7739,7 +7739,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7760,7 +7760,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7781,7 +7781,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7802,7 +7802,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7823,7 +7823,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7844,7 +7844,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7865,7 +7865,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7886,7 +7886,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7907,7 +7907,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7928,7 +7928,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7949,7 +7949,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7970,7 +7970,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -7991,7 +7991,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8012,7 +8012,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8033,7 +8033,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8054,7 +8054,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8075,7 +8075,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8096,7 +8096,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8117,7 +8117,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8138,7 +8138,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8159,7 +8159,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8180,7 +8180,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8201,7 +8201,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8222,7 +8222,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8243,7 +8243,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8264,7 +8264,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -8285,7 +8285,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -9048,20 +9048,20 @@
     },
     "navigation-and-routing": {
       "references/navigator-code.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "references/routes-and-flows.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -9070,92 +9070,92 @@
         ]
       },
       "templates/debug-route.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/game-screen-back.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/game-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/navigation-root.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/navigation-theme.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/react-navigation.d.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/root-stack.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/route-guards.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/route-guards.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/route-params.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       }
@@ -9815,7 +9815,7 @@
         ]
       },
       "references/open-decisions.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -9823,7 +9823,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/99-final-decisions.md",
@@ -10212,11 +10212,11 @@
         ]
       },
       "templates/packages/shell/src/stores/premium/premium-nudge.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/12-in-app-purchase.md",
@@ -10229,11 +10229,11 @@
         ]
       },
       "templates/packages/shell/src/stores/premium/premium-nudge.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/12-in-app-purchase.md",
@@ -11361,7 +11361,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -11898,110 +11898,110 @@
     },
     "save-persistence-and-migrations": {
       "examples/save-v2/packages/shell/src/services/save/fixtures/fixture-checksums.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/fixtures/save-fixtures.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/fixtures/save-v2.full.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/fixtures/save-v2.minimal.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/migrations/save-migrations.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/migrations/v1-to-v2.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/migrations/v1-to-v2.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/schema/default-save-doc.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/schema/save-doc-v2.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/schema/save-doc.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/save-v2/packages/shell/src/services/save/schema/save-sections-v2.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "references/boot-and-kill-test.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -12010,11 +12010,11 @@
         ]
       },
       "references/migrations-and-fixtures.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -12023,11 +12023,11 @@
         ]
       },
       "references/save-document.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -12036,11 +12036,11 @@
         ]
       },
       "references/write-path.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -12049,299 +12049,299 @@
         ]
       },
       "templates/packages/shell/src/app/hydrate-save.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/app/use-checkpoint-on-background.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/clock/system-clock-adapter.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/error-log/sqlite-error-log-adapter.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/checksum.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/expo-sqlite-sql-driver.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/fake-save-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/fixtures/fixture-checksums.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/fixtures/save-fixtures.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/fixtures/save-v1.full.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/fixtures/save-v1.minimal.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/load-plan.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/load-plan.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/migrations/save-migrations.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/migrations/save-migrations.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/peek-current-save.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/reset-progress.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/reset-progress.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/save-codec.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/save-db-schema.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/save-service.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/save-service.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/save-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/default-save-doc.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/save-doc-v1.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/save-doc.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/save-primitives.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/save-run-v1.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/schema/save-sections-v1.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/sql-driver.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/services/save/sqlite-save-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/test/integration/save/node-sqlite-sql-driver.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/test/integration/save/sqlite-save-store.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       }
@@ -12373,7 +12373,7 @@
         ]
       },
       "references/settings-model.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -12381,7 +12381,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12410,11 +12410,11 @@
         ]
       },
       "templates/connect-audio-settings.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12423,11 +12423,11 @@
         ]
       },
       "templates/connect-audio-settings.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12436,11 +12436,11 @@
         ]
       },
       "templates/language-change.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -12449,11 +12449,11 @@
         ]
       },
       "templates/language-change.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -12462,11 +12462,11 @@
         ]
       },
       "templates/localized-root.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -12475,11 +12475,11 @@
         ]
       },
       "templates/localized-root.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/10-i18n-and-rtl.md",
@@ -12488,11 +12488,11 @@
         ]
       },
       "templates/settings-preference-actions.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12513,11 +12513,11 @@
         ]
       },
       "templates/settings-preference-actions.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12538,29 +12538,29 @@
         ]
       },
       "templates/settings-reducer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/settings-reducer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/settings-rows.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12581,11 +12581,11 @@
         ]
       },
       "templates/settings-rows.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12606,29 +12606,29 @@
         ]
       },
       "templates/settings-selectors.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/settings-store.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/settings-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
@@ -12660,11 +12660,11 @@
         ]
       },
       "templates/use-settings-context.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12685,11 +12685,11 @@
         ]
       },
       "templates/use-settings-model.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -12710,11 +12710,11 @@
         ]
       },
       "templates/use-settings-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/09-sound-haptics-art.md",
@@ -13024,20 +13024,20 @@
     },
     "state-stores": {
       "examples/use-display-settings.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "examples/use-hint-button.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
@@ -13050,7 +13050,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -13063,11 +13063,11 @@
         ]
       },
       "references/store-pattern.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "spec.txt",
@@ -13076,281 +13076,281 @@
         ]
       },
       "scripts/check-stores.mjs": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/app/stores-context.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/game-session-reducer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/game-session-reducer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/game-session-store.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/game-session-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/game-session-types.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/run-writer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/run-writer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/saved-run.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/game-host/saved-run.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/create-shell-stores.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/progress-reducer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/progress-reducer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/progress-selectors.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/progress-store.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/progress-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/settings-reducer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/settings-reducer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/settings-selectors.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/settings-store.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/settings-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-reducer.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-reducer.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-selectors.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-store.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/stats-store.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/update-and-publish.test.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/stores/update-and-publish.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/testing/counter-game.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
       "templates/packages/shell/src/testing/create-test-save.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       }
@@ -15657,7 +15657,7 @@
         ]
       },
       "references/s05-game.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15669,7 +15669,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15686,7 +15686,7 @@
         ]
       },
       "references/s06-pause.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15698,7 +15698,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15807,7 +15807,7 @@
         ]
       },
       "references/s11-settings.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15819,7 +15819,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15832,7 +15832,7 @@
         ]
       },
       "references/s11a-language.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15844,7 +15844,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15857,7 +15857,7 @@
         ]
       },
       "references/s11b-about.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15869,7 +15869,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15882,7 +15882,7 @@
         ]
       },
       "references/s11c-privacy-policy.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15894,7 +15894,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -15907,7 +15907,7 @@
         ]
       },
       "references/s11d-licences.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -15919,7 +15919,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16133,7 +16133,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-top-bar.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16141,7 +16141,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16154,7 +16154,7 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-top-bar.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16162,7 +16162,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16328,7 +16328,7 @@
         ]
       },
       "templates/packages/shell/src/screens/debug/debug-rows.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16336,7 +16336,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16349,7 +16349,7 @@
         ]
       },
       "templates/packages/shell/src/screens/debug/debug-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16357,7 +16357,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16370,7 +16370,7 @@
         ]
       },
       "templates/packages/shell/src/screens/debug/debug-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16378,7 +16378,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16391,7 +16391,7 @@
         ]
       },
       "templates/packages/shell/src/screens/debug/debug-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16399,7 +16399,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16603,7 +16603,7 @@
         ]
       },
       "templates/packages/shell/src/screens/game/game-layout.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16611,7 +16611,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16944,7 +16944,7 @@
         ]
       },
       "templates/packages/shell/src/screens/pause/pause-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16952,7 +16952,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16965,7 +16965,7 @@
         ]
       },
       "templates/packages/shell/src/screens/pause/pause-overlay.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16973,7 +16973,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -16986,7 +16986,7 @@
         ]
       },
       "templates/packages/shell/src/screens/pause/pause-toggles.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -16994,7 +16994,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17007,7 +17007,7 @@
         ]
       },
       "templates/packages/shell/src/screens/pause/pause-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17015,7 +17015,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17028,7 +17028,7 @@
         ]
       },
       "templates/packages/shell/src/screens/pause/pause-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17036,7 +17036,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17259,7 +17259,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/continue-offer.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17267,7 +17267,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17280,7 +17280,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-daily-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17288,7 +17288,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17301,7 +17301,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-endless-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17309,7 +17309,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17322,7 +17322,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-lose-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17330,7 +17330,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17343,7 +17343,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-model.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17351,7 +17351,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17364,7 +17364,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-overlay.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17372,7 +17372,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17385,7 +17385,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-overlay.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17393,7 +17393,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17406,7 +17406,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-win-actions.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17414,7 +17414,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17427,7 +17427,7 @@
         ]
       },
       "templates/packages/shell/src/screens/result/result-win-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17435,7 +17435,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17465,7 +17465,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/about/about-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17473,7 +17473,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17486,7 +17486,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/about/about-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17494,7 +17494,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17507,7 +17507,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/about/about-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17515,7 +17515,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17528,7 +17528,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/language/language-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17536,7 +17536,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17549,7 +17549,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/language/language-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17557,7 +17557,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17570,7 +17570,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/language/language-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17578,7 +17578,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17591,7 +17591,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/licences/licence-entries.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17599,7 +17599,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17612,7 +17612,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/licences/licences-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17620,7 +17620,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17633,7 +17633,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/licences/licences-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17641,7 +17641,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17654,7 +17654,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/licences/licences-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17662,7 +17662,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17675,7 +17675,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/privacy/privacy-policy-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17683,7 +17683,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17696,7 +17696,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/privacy/privacy-policy-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17704,7 +17704,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17717,7 +17717,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/privacy/privacy-policy-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17725,7 +17725,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17738,7 +17738,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-choice-row.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17746,7 +17746,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17759,7 +17759,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-extras.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17767,7 +17767,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17780,7 +17780,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-footer.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17788,7 +17788,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17801,7 +17801,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-row-bindings.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17809,7 +17809,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17822,7 +17822,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-row-specs.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17830,7 +17830,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17843,7 +17843,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-row.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17851,7 +17851,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17864,7 +17864,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-screen.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17872,7 +17872,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17885,7 +17885,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-view.test.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17893,7 +17893,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17906,7 +17906,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-view.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17914,7 +17914,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -17927,7 +17927,7 @@
         ]
       },
       "templates/packages/shell/src/screens/settings/settings-volume-row.tsx": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -17935,7 +17935,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/18-design-system-toybox.md",
@@ -18340,7 +18340,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -18422,7 +18422,7 @@
         ]
       },
       "references/build-and-simulator.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -18442,7 +18442,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -18567,7 +18567,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -18671,7 +18671,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/08-game-engine.md",
@@ -18688,7 +18688,7 @@
         ]
       },
       "references/state-persistence-navigation.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-03",
         "sources": [
           {
             "path": "docs/00-README.md",
@@ -18696,7 +18696,7 @@
           },
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           }
         ]
       },
@@ -19104,7 +19104,7 @@
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
-            "sha256": "eb31574b8de82c8ffd0136169250edd7ed94e57eeb7c4ad61fb23127c001cd00"
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
           },
           {
             "path": "docs/07-testing-and-tdd.md",
