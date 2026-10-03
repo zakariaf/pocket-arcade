@@ -178,6 +178,22 @@ describe('engineContractProblems', () => {
     ).toStrictEqual([]);
   });
 
+  it('checks the state the last allowed move produced, not only the states before it', () => {
+    const lastMove = { ...inputWith(ENGINE), starts: [{ seed: 1, difficulty: 0 }], maxMoves: 5 };
+    const endless = { kind: 'endless', difficulty: 100 } as const;
+    expect(engineContractProblems({ ...lastMove, intents: () => [], endless })).toStrictEqual([
+      'seed 1 difficulty 100: the endless run was won (score 4); an endless run only ever ends lost',
+    ]);
+    const lingering: typeof ENGINE = {
+      ...ENGINE,
+      listMoves: (state) =>
+        ENGINE.outcome(state).kind === 'won' ? [{ kind: 'add', col: 0 }] : ENGINE.listMoves(state),
+    };
+    expect(
+      engineContractProblems({ ...lastMove, engine: lingering, intents: () => [] }),
+    ).toStrictEqual(['seed 1 difficulty 0: listMoves has 1 moves while outcome is won']);
+  });
+
   it('reports a lose reason outside the game catalog', () => {
     const early: typeof ENGINE = {
       ...ENGINE,

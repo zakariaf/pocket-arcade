@@ -106,32 +106,47 @@ function stepProblems<TState, TMove, TEvent>(
   return { next: result.state, problems };
 }
 
-/** Plays one seeded random game and returns the moves it made. */
+/** Checks one reached state (outcome, endless rule, intents) and returns its legal moves. */
+function checkState<TState, TMove, TEvent>(
+  walk: Walk<TState, TMove, TEvent>,
+  start: ContractStart,
+  state: TState,
+): readonly TMove[] {
+  const { engine, gameId } = walk.input;
+  const moves = engine.listMoves(state);
+  const outcome = engine.outcome(state);
+  const problem =
+    outcomeProblem(outcome, moves.length, gameId) ?? endlessProblem(walk.endless, start, outcome);
+  if (problem !== null) walk.problems.push(problem);
+  walk.problems.push(...intentProblems(walk, state, moves));
+  return moves;
+}
+
+/**
+ * Plays one seeded random game and returns the moves it made. Every reached state is checked,
+ * the one the last allowed move produced included.
+ */
 function playOnce<TState, TMove, TEvent>(
   walk: Walk<TState, TMove, TEvent>,
   start: ContractStart,
 ): TMove[] {
-  const { engine, maxMoves, gameId } = walk.input;
+  const { engine, maxMoves } = walk.input;
   let state = engine.create(start.seed, start.difficulty);
   let rng: RngState = seedRng(start.seed ^ 0x2545f491);
   const line: TMove[] = [];
   walk.problems.push(...jsonShapeProblems(state));
   while (line.length < maxMoves && walk.problems.length === 0) {
-    const moves = engine.listMoves(state);
-    const outcome = engine.outcome(state);
-    const problem =
-      outcomeProblem(outcome, moves.length, gameId) ?? endlessProblem(walk.endless, start, outcome);
-    if (problem !== null) walk.problems.push(problem);
-    walk.problems.push(...intentProblems(walk, state, moves));
+    const moves = checkState(walk, start, state);
     const pick = nextInt(rng, Math.max(moves.length, 1));
     const move = moves[pick.value];
-    if (move === undefined) break;
+    if (move === undefined) return line;
     rng = pick.state;
     const step = stepProblems(walk, state, move);
     walk.problems.push(...step.problems);
     state = step.next;
     line.push(move);
   }
+  if (walk.problems.length === 0) checkState(walk, start, state);
   return line;
 }
 
