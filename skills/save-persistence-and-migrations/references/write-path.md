@@ -191,7 +191,7 @@ Both are written with `refreshBackup: true`, so a later backup restore cannot un
 
 ## The error log
 
-`sqlite-error-log-adapter.ts` implements the error log port (`error-log-port.ts`, shipped with its fake `fake-error-log.ts`) on the `error_log` table: `record(source, error)` inserts and trims to the newest 200 rows and never throws; `entries()` returns the newest rows for the debug menu, or none when the table is missing or unreadable (a save.db from a newer app). Nothing leaves the device (N2). On a first launch the table exists only after the save DDL ran, so the composition root logs boot problems after `hydrateSave`.
+`sqlite-error-log-adapter.ts` implements the error log port (`error-log-port.ts`, shipped with its fake `fake-error-log.ts`) on the `error_log` table: `record(source, error)` inserts and trims to the newest 200 rows and never throws; on a save.db whose `user_version` is newer than `DB_STRUCTURE_VERSION` it does nothing (no insert, no trim: a newer app's tables are never touched, like the save store's read-only store; `test/integration/save/sqlite-error-log-adapter.test.ts` proves it on a `user_version = 2` file); `entries()` returns the newest rows for the debug menu, or none when the table is missing or unreadable (a save.db from a newer app). Nothing leaves the device (N2). On a first launch the table exists only after the save DDL ran, so the composition root logs boot problems after `hydrateSave`.
 
 ## What check-save-layer reports
 

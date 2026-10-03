@@ -1,4 +1,6 @@
 // packages/shell/src/services/error-log/sqlite-error-log-adapter.ts
+import { DB_STRUCTURE_VERSION } from '@e07/shell/services/save/save-db-schema.ts';
+
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type {
   ErrorLogEntry,
@@ -16,16 +18,26 @@ function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+/** save.db's tables come from a newer app: never write into them (N10, like the save store). */
+function isNewerStructure(driver: SqlDriver): boolean {
+  const version = driver.get('PRAGMA user_version', [])?.['user_version'];
+  return typeof version === 'number' && version > DB_STRUCTURE_VERSION;
+}
+
 function isEntry(value: unknown): value is ErrorLogEntry {
   return typeof value === 'object' && value !== null && 'atMs' in value && 'source' in value;
 }
 
-/** Ring buffer in save.db's error_log table (newest 200 rows); never leaves the device (N2). */
+/**
+ * Ring buffer in save.db's error_log table (newest 200 rows); never leaves the device (N2).
+ * A save.db from a newer app is read only: `record` does nothing there.
+ */
 export function createSqliteErrorLogAdapter(
   driver: SqlDriver,
   clock: Pick<ClockPort, 'nowMs'>,
 ): ErrorLogPort {
   const insert = (source: ErrorSource, error: unknown): void => {
+    if (isNewerStructure(driver)) return;
     driver.run('INSERT INTO error_log (at_ms, area, message, details) VALUES (?, ?, ?, NULL)', [
       clock.nowMs(),
       source,
