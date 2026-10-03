@@ -15,14 +15,19 @@ export type SettingsStoreState = SettingsState & {
 
 export type SettingsStore = StoreApi<SettingsStoreState>;
 
-/** Thin: reduce -> persist (sync, one transaction) -> publish. Hydrated once at boot. */
+/**
+ * Thin: reduce -> persist (sync, one transaction) -> publish. Hydrated once at boot. A reducer that
+ * returns the same state (nothing changed) causes no write and no publish.
+ */
 export function createSettingsStore(save: SaveService): SettingsStore {
   const { settings, firstRun } = save.doc();
   return createStore<SettingsStoreState>()((set, get) => ({
     settings,
     firstRun,
     dispatch: (action) => {
-      const next = settingsReducer(get(), action);
+      const current = get();
+      const next = settingsReducer(current, action);
+      if (next === current) return; // nothing changed: no write, no re-render
       save.update((doc) => ({ ...doc, settings: next.settings, firstRun: next.firstRun }));
       set(next);
     },
