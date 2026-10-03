@@ -21,7 +21,8 @@ const SPEC = {
     remove: { type: 'boolean', help: 'Plan the removal of the package instead' },
     online: { type: 'boolean', help: 'Run npm view for the publish date, licence and scripts (network)' },
     'npm-view': { type: 'string', value: 'file', help: 'Use a saved `npm view <pkg>@<v> version time license scripts --json` output instead of the network' },
-    today: { type: 'string', value: 'YYYY-MM-DD', help: 'Date for the 7-day age check (default: today, UTC)' },
+    today: { type: 'string', value: 'YYYY-MM-DD', help: 'Date for the dated excludes, and the age check at its 00:00 UTC (default: today, UTC)' },
+    now: { type: 'string', value: 'ISO time', help: 'Moment of the 7-day age check, as npm measures it (default: --today 00:00 UTC, else the current time)' },
   },
   positionals: { min: 1, max: 1 },
   details: [
@@ -77,16 +78,20 @@ function activeExcludes(npmrc, today) {
 }
 
 function checkFacts(facts, request, row, context, add) {
-  const { today, npmrc } = context;
+  const { today, nowMs, npmrc } = context;
   const published = facts.time?.[request.version];
   if (published) {
-    const ageDays = Math.floor((Date.parse(`${today}T00:00:00Z`) - Date.parse(published)) / DAY_MS);
-    console.log(`age      ${request.name}@${request.version} was published ${published.slice(0, 10)} (${ageDays} days before ${today})`);
+    // npm measures min-release-age from the moment of the install, not from the start of the day.
+    const ageMs = nowMs - Date.parse(published);
+    const ageDays = Math.floor(ageMs / DAY_MS);
+    const isTooYoung = ageMs < 7 * DAY_MS;
+    console.log(`age      ${request.name}@${request.version} was published ${published.slice(0, 10)} (${ageDays} days before ${new Date(nowMs).toISOString().slice(0, 16)}Z)`);
     const covered = activeExcludes(npmrc, today).find((entry) => entry.regex.test(request.name));
-    if (ageDays < 7 && covered) console.log(`covered  by the dated exclude ${covered.pattern} (block expires ${covered.expires})`);
-    if (ageDays < 7 && !covered) {
-      const expires = new Date(Date.parse(published) + 7 * DAY_MS).toISOString().slice(0, 10);
-      add('npm registry', 0, 'too-young', `${request.name}@${request.version} is ${ageDays} days old; min-release-age=7 will refuse it`, `Wait until ${expires}, or (only for a needed fix, with the owner) add "# exclude-block expires=${expires} reason=<link>" with min-release-age-exclude[]=${request.name} to .npmrc.`);
+    if (isTooYoung && covered) console.log(`covered  by the dated exclude ${covered.pattern} (block expires ${covered.expires})`);
+    if (isTooYoung && !covered) {
+      const oldEnough = new Date(Date.parse(published) + 7 * DAY_MS).toISOString();
+      const expires = oldEnough.slice(0, 10);
+      add('npm registry', 0, 'too-young', `${request.name}@${request.version} is ${ageDays} days old; min-release-age=7 will refuse it`, `Wait until ${oldEnough.slice(0, 16)}Z, or (only for a needed fix, with the owner) add "# exclude-block expires=${expires} reason=<link>" with min-release-age-exclude[]=${request.name} to .npmrc.`);
     }
   }
   const shipped = row ? ['apps', 'shell'].includes(row.where) : true;
@@ -201,6 +206,8 @@ run(async () => {
   if (!existsSync(join(root, 'package.json'))) fail(`nothing to check: ${options.root} has no package.json`, 'Point --root at the repo root.');
   const today = options.today ?? todayUtc();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) fail(`--today "${today}" is not YYYY-MM-DD`, 'Pass a date such as 2026-09-28.');
+  const nowMs = options.now === undefined ? (options.today === undefined ? Date.now() : Date.parse(`${today}T00:00:00Z`)) : Date.parse(options.now);
+  if (Number.isNaN(nowMs)) fail(`--now "${options.now}" is not an ISO time`, 'Pass a time such as 2026-10-03T10:25:00Z.');
   const request = parseRequest(positionals[0]);
   const policy = loadPolicy();
   const repo = readRepo(root);
@@ -213,6 +220,6 @@ run(async () => {
   const row = planAdd(repo, policy, request, add);
   const facts = npmFacts(options, request.name, request.version ?? row?.version ?? 'latest');
   // Without a version (a package outside the table), npm's latest is the one to age-check.
-  if (facts) checkFacts(facts, { name: request.name, version: request.version ?? row?.version ?? facts.version }, row, { today, npmrc: repo.npmrc }, add);
+  if (facts) checkFacts(facts, { name: request.name, version: request.version ?? row?.version ?? facts.version }, row, { today, nowMs, npmrc: repo.npmrc }, add);
   return report.finish({ checked: 1, unit: 'requests' });
 });
