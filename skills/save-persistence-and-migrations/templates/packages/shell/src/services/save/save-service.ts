@@ -4,7 +4,7 @@ import { encodeSaveDoc, validateSaveDoc } from '@e07/shell/services/save/save-co
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { LoadPlan } from '@e07/shell/services/save/load-plan.ts';
-import type { SaveStore } from '@e07/shell/services/save/save-store.ts';
+import type { SaveStore, SlotName } from '@e07/shell/services/save/save-store.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
 /** Premium only turns off with an explicit revocation date (never by reset or absence). */
@@ -36,18 +36,67 @@ export type SaveService = {
   readonly applyLoadWrites: () => void;
   readonly checkpoint: () => void;
   readonly isReadOnly: () => boolean;
+  /**
+   * true after the store refused the last write (SQLITE_FULL, I/O error): the error is in the
+   * error log and the session plays on in memory; false again once a write lands. The UI may read
+   * it to say progress is not being saved.
+   */
+  readonly didLastWriteFail: () => boolean;
 };
 
+type Writer = {
+  /**
+   * Validates, encodes and writes; the write counter keeps rising across launches. Returns false
+   * (after logging, or throwing in test builds) when the document is invalid and nothing was
+   * written; a refused write still returns true, so the session plays on in memory.
+   */
+  readonly persist: (next: SaveDoc, isBoth: boolean) => boolean;
+  /** Copies a damaged slot to quarantine; a refused copy stays pending and blocks every write. */
+  readonly quarantine: (slot: SlotName, reason: string) => void;
+  readonly didLastWriteFail: () => boolean;
+};
+
+type Attempt = (write: () => void) => boolean;
+
 /**
- * Validates, encodes and writes; the write counter keeps rising across launches. Returns false
- * (after logging, or throwing in test builds) when the document is invalid and nothing was written.
+ * N10: a quarantine copy is the only copy of a damaged slot, so no slot is written while one is
+ * still pending. flush() retries every pending copy and is true when none is left.
  */
-function createWriter(
-  deps: SaveServiceDeps,
-  writeCountBase: number,
-): (next: SaveDoc, isBoth: boolean) => boolean {
+function createQuarantineQueue(deps: SaveServiceDeps, attempt: Attempt) {
+  let pending: readonly { readonly slot: SlotName; readonly reason: string }[] = [];
+  const flush = (): boolean => {
+    pending = pending.filter(
+      (copy) =>
+        !attempt(() => {
+          deps.store.quarantine(copy.slot, copy.reason, deps.clock.nowMs());
+        }),
+    );
+    return pending.length === 0;
+  };
+  const add = (slot: SlotName, reason: string): void => {
+    pending = [...pending, { slot, reason }];
+    flush();
+  };
+  return { flush, add };
+}
+
+function createWriter(deps: SaveServiceDeps, writeCountBase: number): Writer {
   let writeCount = writeCountBase;
-  return (next, isBoth) => {
+  let didFail = false;
+  const attempt: Attempt = (write) => {
+    try {
+      write();
+      return true;
+    } catch (error) {
+      // Spec 8.14: never a crash loop. Boot writes run on every launch, so a throw here would
+      // stop every launch on a full disk; the next write that lands clears the flag.
+      didFail = true;
+      deps.errorLog.record('save', error);
+      return false;
+    }
+  };
+  const quarantines = createQuarantineQueue(deps, attempt);
+  const persist = (next: SaveDoc, isBoth: boolean): boolean => {
     const checked = validateSaveDoc(next);
     if ('error' in checked) {
       const error = new Error(`invalid save document not written: ${checked.error}`);
@@ -55,12 +104,17 @@ function createWriter(
       if (deps.isStrict) throw error;
       return false;
     }
+    if (!quarantines.flush()) return true;
     writeCount += 1;
     const meta = { appVersion: deps.appVersion, writtenAtMs: deps.clock.nowMs(), writeCount };
     const record = encodeSaveDoc(checked.doc, meta);
-    deps.store.write(isBoth ? { current: record, backup: record } : { current: record });
+    const isWritten = attempt(() => {
+      deps.store.write(isBoth ? { current: record, backup: record } : { current: record });
+    });
+    if (isWritten) didFail = false;
     return true;
   };
+  return { persist, quarantine: quarantines.add, didLastWriteFail: () => didFail };
 }
 
 export function createSaveService(
@@ -71,7 +125,7 @@ export function createSaveService(
   // Capture only what the closures read, so the loaded document is not kept alive all session.
   const { isReadOnly, writes } = plan;
   let doc = plan.doc;
-  const persist = createWriter(deps, writeCountBase);
+  const { persist, quarantine, didLastWriteFail } = createWriter(deps, writeCountBase);
   return {
     doc: () => doc,
     update: (recipe, options) => {
@@ -82,7 +136,7 @@ export function createSaveService(
     applyLoadWrites: () => {
       for (const write of writes) {
         if (write.kind === 'quarantine') {
-          deps.store.quarantine(write.slot, write.reason, deps.clock.nowMs());
+          quarantine(write.slot, write.reason);
         } else {
           persist(doc, true);
         }
@@ -92,5 +146,6 @@ export function createSaveService(
       deps.store.checkpoint();
     },
     isReadOnly: () => isReadOnly,
+    didLastWriteFail,
   };
 }
