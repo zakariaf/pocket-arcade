@@ -35,6 +35,7 @@ export type BoardCanvasProps<TState, TView, TToken extends string> = {
   readonly onHover: (target: BoardTarget | null) => void;
   /** A tap outside every region: the host drops its tap-then-tap selection. */
   readonly onMiss?: () => void;
+  /** The clock's fail: it halts the clock and reports the first error of a run once. */
   readonly onDrawError: (message: string) => void;
   /** Test builds with the debug link's boardLayout=1 only: publish game.board-layout for flows. */
   readonly isLayoutProbeOn?: boolean;
