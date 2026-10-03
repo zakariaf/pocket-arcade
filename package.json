@@ -21,6 +21,7 @@
     "expo-haptics": "57.0.3",
     "expo-iap": "5.8.0",
     "react-native-google-mobile-ads": "17.2.0",
+    "react-native-audio-api": "0.13.6",
     "react-native-gesture-handler": "2.32.0",
     "react-native-reanimated": "4.5.1",
     "react-native-worklets": "0.10.1",

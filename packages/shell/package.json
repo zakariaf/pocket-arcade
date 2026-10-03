@@ -26,6 +26,7 @@
     "expo-tracking-transparency": "*",
     "react": "*",
     "react-native": "*",
+    "react-native-audio-api": "*",
     "react-native-gesture-handler": "*",
     "react-native-google-mobile-ads": "*",
     "react-native-reanimated": "*",
