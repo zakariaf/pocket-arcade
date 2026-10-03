@@ -10,9 +10,9 @@ import {
 } from '@e07/shell/game-host/game-debug-controls.ts';
 import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
 import {
+  createResumer,
   entryFor,
   newSession,
-  resumeSession,
   sessionRulesFor,
 } from '@e07/shell/game-host/open-session.ts';
 import { createRunTracker } from '@e07/shell/game-host/run-tracker.ts';
@@ -165,6 +165,15 @@ export type GameHost = {
 
 type Session<T extends ShellGameTypes> = GameSession<T['state'], T['move'], T['event']>;
 
+type Opener<T extends ShellGameTypes> = {
+  readonly game: ShellGameModule<T>;
+  readonly deps: GameHostDeps;
+  readonly lifecycle: FullscreenGate;
+  readonly runs: RunTracker<T>;
+  /** The saved run for open({ start: 'resume' }): checked at boot, replayed once (createResumer). */
+  readonly resume: () => Session<T> | null;
+};
+
 const UINT32_RANGE = 4_294_967_296;
 
 /** Endless runs get a fresh uint32 seed from the clock (or the test build's debug seed). */
@@ -172,33 +181,28 @@ function clockSeed(clock: ClockPort, override?: () => number | null): () => numb
   return () => override?.() ?? Math.floor(clock.nowMs()) % UINT32_RANGE;
 }
 
-/** A new run is written at once (so Home can offer Continue); a resumed run is validated. */
+/** A new run is written at once (so Home can offer Continue); a saved run is resumed checked. */
 function firstSession<T extends ShellGameTypes>(
-  game: ShellGameModule<T>,
-  deps: GameHostDeps,
+  opener: Opener<T>,
   open: SessionOpen,
 ): Session<T> | null {
-  if (open.start === 'new') {
-    const session = newSession(game, open.ref, clockSeed(deps.clock, deps.seedOverride));
-    if (session !== null) {
-      writeRun({ save: deps.save, persistence: game.persistence }, session, true);
-    }
-    return session;
+  if (open.start === 'resume') return opener.resume();
+  const { game, deps } = opener;
+  const session = newSession(game, open.ref, clockSeed(deps.clock, deps.seedOverride));
+  if (session !== null) {
+    writeRun({ save: deps.save, persistence: game.persistence }, session, true);
   }
-  const saved = deps.save.doc().run;
-  const session = saved === null ? null : resumeSession(game, saved, deps.errorLog);
-  if (saved !== null && session === null) deps.save.update((doc) => ({ ...doc, run: null }));
   return session;
 }
 
 /** A new level-1 run standing at a staged example state (the debug controls' openExample). */
 function exampleSession<T extends ShellGameTypes>(
-  game: ShellGameModule<T>,
-  deps: GameHostDeps,
+  opener: Opener<T>,
   state: T['state'],
 ): Session<T> | null {
-  const fresh = firstSession(game, deps, EXAMPLE_RUN);
+  const fresh = firstSession(opener, EXAMPLE_RUN);
   if (fresh === null) return null;
+  const { game, deps } = opener;
   const outcome = game.engine.outcome(state);
   const status: SessionStatus = outcome.kind === 'playing' ? 'playing' : outcome.kind;
   const session = { ...fresh, state, outcome, status };
@@ -284,13 +288,6 @@ function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts 
   };
 }
 
-type Opener<T extends ShellGameTypes> = {
-  readonly game: ShellGameModule<T>;
-  readonly deps: GameHostDeps;
-  readonly lifecycle: FullscreenGate;
-  readonly runs: RunTracker<T>;
-};
-
 /** Opens a run (or the staged example), binds its board and tracks it for the debug controls. */
 function openRun<T extends ShellGameTypes>(
   opener: Opener<T>,
@@ -299,7 +296,7 @@ function openRun<T extends ShellGameTypes>(
   const { game, deps, lifecycle, runs } = opener;
   const example = runs.take(open);
   const session =
-    example === null ? firstSession(game, deps, open) : exampleSession(game, deps, example.state);
+    example === null ? firstSession(opener, open) : exampleSession(opener, example.state);
   if (session === null) return null;
   const controller = controllerFor(game, deps, session);
   const handle = runs.track(controller);
@@ -314,11 +311,7 @@ export function createGameHost<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
   deps: GameHostDeps,
 ): GameHost {
-  const saved = deps.save.doc().run;
-  // At boot: validate the saved run with the game's own parsers; drop only the run if invalid.
-  if (saved !== null && resumeSession(game, saved, deps.errorLog) === null) {
-    deps.save.update((doc) => ({ ...doc, run: null }));
-  }
+  const resume = createResumer(game, deps);
   const lifecycle = createFullscreenGate();
   const runs = createRunTracker<T>();
   const openGame = deps.openGame;
@@ -327,7 +320,7 @@ export function createGameHost<T extends ShellGameTypes>(
     ...factsOf(game),
     ...teachingOf(game, deps),
     hasSavedRun: () => deps.save.doc().run !== null,
-    openSession: (open) => openRun({ game, deps, lifecycle, runs }, open),
+    openSession: (open) => openRun({ game, deps, lifecycle, runs, resume }, open),
     lifecycle,
     debugControls: () => controls,
   };
