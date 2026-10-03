@@ -26,7 +26,7 @@ export const HOST_FILES = {
   'session-view.ts': ['SessionView', 'SessionCommand', 'SessionHandle', 'ContinueState', 'continueStateOf'],
   'play-clock.ts': ['createPlayClock', 'PlayClock', 'MAX_PLAY_DELTA_MS'],
   'run-summary.ts': ['summarizeRun', 'runEndOf', 'RunSummary', 'RunEndContext'],
-  'measure-counters.ts': ['measureCounters'],
+  'measure-counters.ts': ['measureCounters', 'noCounters'],
   'hud-model.ts': ['hudView', 'HudView', 'GoalLine', 'MODE_LABEL_KEYS'],
   'top-bar-model.ts': ['topBarPropsOf', 'modeTextOf', 'progressTextOf', 'RunText', 'TopBarInput'],
   'result-model-of.ts': ['resultModelOf', 'ResultInput', 'ResultExtras', 'ResultGame'],
@@ -406,6 +406,9 @@ export function checkHostWiring(repo, report) {
   const summary = code(text(repo, summaryRel));
   if (summary !== '' && !/starsFor\s*\(\s*rule\s*,/.test(functionBody(summary, 'starsOf'))) {
     report.problem({ file: summaryRel, line: 1, rule: 'stars-from-table', message: 'stars are not rated with starsFor on the level\'s table rule', fix: 'Spec 8.1: stars come from the level entry\'s StarRule through starsFor (par or score thresholds).' });
+  }
+  if (summary !== '' && !/try\s*\{\s*return\s+measureCounters\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*context\.errorLog\.record\s*\([\s\S]*?noCounters\s*\(/.test(functionBody(summary, 'countersOf'))) {
+    report.problem({ file: summaryRel, line: 1, rule: 'run-end-never-throws', message: 'the run end measures its counters unguarded: a kept move line that no longer replays from create throws, so the run is never recorded and S7 never shows', fix: 'countersOf(session, context): try { return measureCounters(context.rules, session, context.counters); } catch (error) { context.errorLog.record(\'save\', error); return noCounters(context.counters); } (spec 8.14 and S7).' });
   }
   checkScoreLine(repo, summary, report);
   const factsRel = `${HOST}/game-facts.ts`;

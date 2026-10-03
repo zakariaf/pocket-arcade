@@ -1,0 +1,3 @@
+[run-end-never-throws]
+packages/shell/src/game-host/run-summary.ts
+the run end measures its counters unguarded

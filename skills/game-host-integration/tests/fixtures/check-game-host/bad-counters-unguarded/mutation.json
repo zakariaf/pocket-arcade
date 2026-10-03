@@ -1,0 +1,2 @@
+[{ "replace": { "file": "packages/shell/src/game-host/run-summary.ts", "find": "    counters: countersOf(session, context),", "with": "    counters: measureCounters(context.rules, session, context.counters)," } },
+ { "replace": { "file": "packages/shell/src/game-host/run-summary.ts", "find": "  try {\n    return measureCounters(context.rules, session, context.counters);\n  } catch (error) {\n    context.errorLog.record('save', error);\n    return noCounters(context.counters);\n  }\n", "with": "  return measureCounters(context.rules, session, context.counters);\n" } }]

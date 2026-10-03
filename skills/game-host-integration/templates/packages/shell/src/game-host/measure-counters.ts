@@ -27,6 +27,14 @@ function fold<TEvent>(
   return next;
 }
 
+/**
+ * Every counter at 0 (its aggregate kept): what a run end records when its kept move line cannot
+ * be replayed from create(seed, difficulty), so nothing about its counters is knowable.
+ */
+export function noCounters<TEvent>(counters: readonly CounterSpec<TEvent>[]): CounterTally {
+  return fold({}, counters, []);
+}
+
 /** Re-applies one saved log entry: a move, or the game's one-time continue. */
 function replayEntry<TState, TMove, TEvent>(
   rules: SessionRules<TState, TMove, TEvent>,
@@ -48,7 +56,7 @@ export function measureCounters<TState, TMove, TEvent>(
   counters: readonly CounterSpec<TEvent>[],
 ): CounterTally {
   let state = rules.create(session.seed, session.difficulty);
-  let tally = fold({}, counters, []);
+  let tally = noCounters(counters);
   for (const entry of session.log) {
     const result = replayEntry(rules, state, entry);
     tally = fold(tally, counters, result.events);

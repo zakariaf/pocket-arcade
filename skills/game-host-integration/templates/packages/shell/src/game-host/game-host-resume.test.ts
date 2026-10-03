@@ -123,4 +123,23 @@ describe('createGameHost resume', () => {
     expect(resumed?.handle.getView()).toMatchObject({ status: 'paused', canUndo: false });
     expect(test.save.doc().run?.state).toStrictEqual({ count: 8, target: 10 });
   });
+  it('records the run end after a mismatched restore and shows its result (spec S7, 8.14)', () => {
+    const test = createTestSave();
+    saveOlderRun(test);
+    const deps = depsFor(test);
+    const resumed = createGameHost(STRICT_TALLY, deps).openSession({ start: 'resume' });
+    resumed?.handle.send({ type: 'resume' });
+    // 2 -> 10 in four moves: the kept line [2, 2, 2, 2] cannot replay from create (target 4).
+    expect(() => {
+      addTwos(resumed?.handle, 4);
+    }).not.toThrow();
+    expect(resumed?.handle.getView()).toMatchObject({
+      status: 'won',
+      summary: { isWon: true, score: 100 },
+    });
+    expect(test.save.doc().run).toBeNull();
+    expect(test.save.doc().progress.levels['1']).toMatchObject({ bestScore: 100 });
+    expect(test.save.doc().stats.counters).toStrictEqual({ adds: 0, 'biggest-add': 0 });
+    expect(deps.errorLog.record).toHaveBeenCalledWith('save', new RangeError('past the target'));
+  });
 });
