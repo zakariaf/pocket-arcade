@@ -8,6 +8,7 @@
 // 7); DebugScreen and FontTestScreen stay
 // out while S15 is outside shell-slice.json. Every member here has an export of the same name in the entry
 // (check-sim-setup's entry-api-match rule): a member without one is undefined at run time.
+import type { DebugLinkDeps, DebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
 import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { DebugPerfActions, DebugPerfDeps } from '@e07/shell/screens/debug/debug-perf.ts';
@@ -32,6 +33,8 @@ export type TestOnlyApi = {
   readonly createSqliteKvDebugStoreAdapter: () => DebugStore;
   /** The only way the debug switches and the debug link reach the connectivity, Premium and consent services. */
   readonly createDebugServices: (deps: DebugServiceDeps) => DebugServices;
+  /** <scheme>://debug/setup?...: started once the navigator is ready (start(Linking)). */
+  readonly createDebugLinkHandler: (deps: DebugLinkDeps) => DebugLinkHandler;
   /**
    * admob-ads' consent debug tools: createDebugParts gives the debug services resetConsent for the
    * debug link's geo=eea|other (only with ads on: an ADS_MODE=off build never calls Google's UMP).

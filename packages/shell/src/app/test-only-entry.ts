@@ -9,6 +9,8 @@
 // outside shell-slice.json. Every export has a TestOnlyApi member of the same name, and every member
 // an export (check-sim-setup: entry-api-match).
 /** @public */
+export { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
+/** @public */
 export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
 /** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
