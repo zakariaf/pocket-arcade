@@ -1,6 +1,7 @@
 // packages/shell/src/services/purchase/premium-service.ts
 import {
   entitlementEvidence,
+  isOwnedPurchase,
   latestRevocationMs,
 } from '@e07/shell/stores/premium/entitlement-evidence.ts';
 
@@ -33,11 +34,7 @@ export type PremiumServiceDeps = {
 type Applied = { readonly evidence: Evidence; readonly unfinished: readonly StoreTransaction[] };
 
 function isUnfinishedPurchaseOf(productId: string): (tx: StoreTransaction) => boolean {
-  return (tx) =>
-    tx.productId === productId &&
-    tx.isUnfinished === true &&
-    tx.state === 'purchased' &&
-    tx.revocationDateMs === null;
+  return (tx) => tx.isUnfinished === true && isOwnedPurchase(tx, productId);
 }
 
 // Saves explicit evidence only ('unknown' changes nothing) and returns it.
