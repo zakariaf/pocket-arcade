@@ -103,12 +103,13 @@ export function GameBoardHost<TState, TEvent, TView, TToken extends string>(
     isFullscreenAdShowing: props.isFullscreenAdShowing,
     onPause: () => {
       clock.stop();
-      cues.cancel();
+      cues.pause();
       audio.suspend().catch(props.reportError);
     },
     onResume: () => {
       audio.resume().catch(props.reportError);
       clock.resume();
+      cues.resume();
     },
     onFlags: (next) => {
       flags.current = next;

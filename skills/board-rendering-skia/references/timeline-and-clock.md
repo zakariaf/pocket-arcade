@@ -120,13 +120,13 @@ The fix (these templates): the run token. `finishRun` compares the done message'
 1. `cues.cancel()`: drop the previous move's unfired sounds and haptics.
 2. `tracks = buildTimeline(events, motion)`.
 3. `clock.push(makeScene(seq, toView(state), tracks))`: the new scene replaces a running one. Because the view is the final state, that is a clean fast-forward.
-4. `cues.schedule(tracks)`.
+4. `cues.schedule(tracks)`: played now while the board may run; while it may not (an ad, the background, blur) the cues are held exactly as `pushScene` holds the scene, and play on the lifecycle's resume, when the clock starts that scene. Without this, a move saved under a full-screen ad (the rewarded continue) played its sounds under the ad and its animation silently afterwards.
 
 Input policy per game: `fast-forward` (default: a move arriving mid-animation replaces the scene) or `queue` (when the animation carries information the player needs first, the Game screen waits for `isSceneAnimating(scene, now) === false` before accepting input).
 
 ## Cues: sound and haptics on the timeline
 
-`createCueScheduler(audio, haptics)`: sounds go to `audio.play(id, startMs)` (scheduled on the audio clock), haptics fire immediately for `startMs <= 0` and through `setTimeout(…, startMs)` otherwise; `cancel()` clears the timers and calls `audio.cancelPending()`. The ports (`AudioPort`, `HapticsPort`) belong to the audio skill; the template test uses inline fakes.
+`createCueScheduler(audio, haptics)`: sounds go to `audio.play(id, startMs)` (scheduled on the audio clock), haptics fire immediately for `startMs <= 0` and through `setTimeout(…, startMs)` otherwise; `cancel()` clears the timers, calls `audio.cancelPending()` and forgets the latest cues (a fast-forward or leaving the screen). `GameBoardHost` calls `pause()` from the lifecycle's `onPause` (after `clock.stop()`) and `resume()` from its `onResume` (after `clock.resume()`). Cues scheduled before the lifecycle's first decision (the scene pushed at mount) or while the board may not run are held, as the clock holds their scene; `pause()` drops what has not fired; `resume()` plays the held cues once. A scene that had started is never replayed (the clock jumps it to its end on resume), so a board mounted under a full-screen ad plays its mount cues once, when the ad closes, never under it. The ports (`AudioPort`, `HapticsPort`) belong to the audio skill; the template test uses inline fakes.
 
 ## Stopping: idle, background, ads, focus
 

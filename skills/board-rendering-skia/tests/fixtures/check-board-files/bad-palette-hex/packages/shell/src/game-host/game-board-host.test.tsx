@@ -139,10 +139,10 @@ describe('GameBoardHost', () => {
     expect(mockLog).toStrictEqual([
       'cancel',
       'push 1 1',
-      'play place',
       'trace runnable',
       'audio-resume',
       'resume',
+      'play place',
       'cancel',
       'push 2 5',
       'play place',
@@ -164,6 +164,46 @@ describe('GameBoardHost', () => {
     mockLog.length = 0;
     await view.rerender(<GameBoardHost {...props(first, { isFullscreenAdShowing: true })} />);
     expect(mockLog).toStrictEqual(['trace runnable', 'stop', 'cancel', 'suspend']);
+  });
+
+  it('holds the cues of a move saved while the board may not run until it may run again', async () => {
+    const first = { seq: 1, state: { score: 1 }, events: [] };
+    const continued = { seq: 2, state: { score: 5 }, events: [{ kind: 'scored' as const }] };
+    const view = await render(<GameBoardHost {...props(first)} />);
+    await view.rerender(<GameBoardHost {...props(first, { isFullscreenAdShowing: true })} />);
+    mockLog.length = 0;
+    await view.rerender(<GameBoardHost {...props(continued, { isFullscreenAdShowing: true })} />);
+    expect(mockLog).toStrictEqual(['cancel', 'push 2 5']);
+    await view.rerender(<GameBoardHost {...props(continued)} />);
+    expect(mockLog).toStrictEqual([
+      'cancel',
+      'push 2 5',
+      'trace runnable',
+      'audio-resume',
+      'resume',
+      'play place',
+    ]);
+  });
+
+  it('plays the cues of a board mounted under a full-screen ad once, when the ad closes', async () => {
+    const first = { seq: 1, state: { score: 1 }, events: [] };
+    const view = await render(<GameBoardHost {...props(first, { isFullscreenAdShowing: true })} />);
+    expect(mockLog).toStrictEqual([
+      'cancel',
+      'push 1 1',
+      'trace runnable',
+      'stop',
+      'cancel',
+      'suspend',
+    ]);
+    await view.rerender(<GameBoardHost {...props(first)} />);
+    expect(mockLog.filter((entry) => entry === 'play place')).toStrictEqual(['play place']);
+    expect(mockLog.slice(-4)).toStrictEqual([
+      'trace runnable',
+      'audio-resume',
+      'resume',
+      'play place',
+    ]);
   });
 
   it('routes a draw error through the clock, which halts and reports it once (not per re-record)', async () => {

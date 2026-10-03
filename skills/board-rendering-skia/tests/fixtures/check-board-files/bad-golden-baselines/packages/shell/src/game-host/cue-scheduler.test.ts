@@ -44,7 +44,9 @@ describe('cue scheduler', () => {
 
   it('schedules sounds on the audio clock and haptics at the track start', () => {
     const ports = fakePorts();
-    createCueScheduler(ports.audio, ports.haptics).schedule([cued(0), cued(120)]);
+    const cues = createCueScheduler(ports.audio, ports.haptics);
+    cues.resume();
+    cues.schedule([cued(0), cued(120)]);
     expect(ports.calls).toStrictEqual([
       { kind: 'play', soundId: 'beam', delayMs: 0 },
       { kind: 'play', soundId: 'beam', delayMs: 120 },
@@ -57,10 +59,55 @@ describe('cue scheduler', () => {
   it('drops pending cues on cancel (fast-forward, pause, leaving the screen)', () => {
     const ports = fakePorts();
     const cues = createCueScheduler(ports.audio, ports.haptics);
+    cues.resume();
     cues.schedule([cued(200)]);
     cues.cancel();
     jest.advanceTimersByTime(500);
     expect(ports.played).toStrictEqual([]);
     expect(ports.calls.at(-1)).toStrictEqual({ kind: 'cancel-pending' });
+  });
+
+  it('holds the cues of a scene scheduled while the board may not run, and plays them on resume', () => {
+    const ports = fakePorts();
+    const cues = createCueScheduler(ports.audio, ports.haptics);
+    cues.resume();
+    cues.pause();
+    cues.schedule([cued(0), cued(120)]);
+    expect(ports.calls).toStrictEqual([{ kind: 'cancel-pending' }]);
+    expect(ports.played).toStrictEqual([]);
+    cues.resume();
+    expect(ports.calls.slice(1)).toStrictEqual([
+      { kind: 'play', soundId: 'beam', delayMs: 0 },
+      { kind: 'play', soundId: 'beam', delayMs: 120 },
+    ]);
+    jest.advanceTimersByTime(120);
+    expect(ports.played).toStrictEqual(['medium', 'medium']);
+  });
+
+  it('holds the cues of a scene scheduled before the lifecycle decides, and plays them once on the first resume', () => {
+    const ports = fakePorts();
+    const cues = createCueScheduler(ports.audio, ports.haptics);
+    // Mounted under a full-screen ad: the clock holds the mount scene until the first resume.
+    cues.schedule([cued(0)]);
+    cues.pause();
+    expect(ports.calls).toStrictEqual([{ kind: 'cancel-pending' }]);
+    expect(ports.played).toStrictEqual([]);
+    cues.resume();
+    expect(ports.calls.slice(1)).toStrictEqual([{ kind: 'play', soundId: 'beam', delayMs: 0 }]);
+    expect(ports.played).toStrictEqual(['medium']);
+  });
+
+  it('replays neither the cues of a scene that had started nor those of a cancelled one', () => {
+    const ports = fakePorts();
+    const cues = createCueScheduler(ports.audio, ports.haptics);
+    cues.resume();
+    cues.schedule([cued(0)]);
+    cues.pause();
+    cues.resume();
+    cues.pause();
+    cues.schedule([cued(0)]);
+    cues.cancel();
+    cues.resume();
+    expect(ports.calls.filter((call) => call.kind === 'play')).toHaveLength(1);
   });
 });
