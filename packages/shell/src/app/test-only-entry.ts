@@ -11,6 +11,8 @@
 /** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
 /** @public */
+export { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
+/** @public */
 export { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 /** @public */
 export { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';

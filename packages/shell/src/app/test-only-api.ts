@@ -9,6 +9,7 @@
 // out while S15 is outside shell-slice.json. Every member here has an export of the same name in the entry
 // (check-sim-setup's entry-api-match rule): a member without one is undefined at run time.
 import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
+import type { NetworkAttempt, NetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
@@ -21,6 +22,11 @@ export type TestOnlyApi = {
   readonly createSimulatedClock: (real: ClockPort) => SimulatedClock;
   /** The composition root wraps the real ConnectivityPort in it, so "Simulate offline" reaches every subscriber. */
   readonly createSimulatedConnectivity: (real: ConnectivityPort) => SimulatedConnectivity;
+  /** Blocks and counts JS fetch, XHR and WebSocket attempts (createDebugParts installs it first). */
+  readonly installNetworkGuard: (
+    scope: object,
+    onAttempt: (attempt: NetworkAttempt) => void,
+  ) => NetworkGuard;
   readonly TEST_BUILD_SENTINEL: string;
   // Perf layer (performance-budgets): createDebugParts makes the cold-start log with it.
   /** The perf log in the save database (table perf_log): Home's cold-start mark, the frame recorder. */
