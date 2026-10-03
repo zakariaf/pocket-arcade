@@ -20,6 +20,7 @@ import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
+import type { RenderKit } from '@e07/shell/game-host/board-types.ts';
 import type { ExamplePictureFactory, ExamplePictureProps } from '@e07/shell/game-host/game-host.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 import type { ComponentType, ReactNode } from 'react';
@@ -35,18 +36,32 @@ const styles = StyleSheet.create({ fill: { flex: 1 }, picture: { alignSelf: 'str
 
 type Size = { readonly width: number; readonly height: number };
 
+/**
+ * The unit paths and scratch paints (as the board host does per run), built on the JS thread when
+ * S13 first draws a picture and kept for the life of the app: never at boot, where the host is
+ * created for every cold start.
+ */
+function lazyKitOf<T extends ShellGameTypes>(game: ShellGameModule<T>): () => RenderKit {
+  const board = game.presentation.board;
+  let kit: RenderKit | null = null;
+  return () => {
+    kit ??= makeBoardKit(Skia, {
+      paths: board.buildPaths(Skia),
+      numberTypeface: Skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE),
+      numberSize: NUMBER_SIZE,
+    });
+    return kit;
+  };
+}
+
 function examplePictureFor<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
 ): ComponentType<ExamplePictureProps> {
   const board = game.presentation.board;
   const aspectRatio = examplePictureAspectOf(board);
-  // Once per app, on the JS thread: unit paths and scratch paints (as the board host does per run).
-  const kit = makeBoardKit(Skia, {
-    paths: board.buildPaths(Skia),
-    numberTypeface: Skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE),
-    numberSize: NUMBER_SIZE,
-  });
+  const kitOf = lazyKitOf(game);
   return function ExamplePicture({ pageIndex }: ExamplePictureProps): ReactNode {
+    const kit = kitOf();
     const theme = useTheme();
     const t = useT();
     const format = {
