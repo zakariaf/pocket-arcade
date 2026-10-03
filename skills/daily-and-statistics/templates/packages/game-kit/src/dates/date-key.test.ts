@@ -30,10 +30,34 @@ describe('date-key', () => {
     expect(dayNumber('26.09.2026')).toBeNaN();
   });
 
+  it('rejects text before or after a YYYY-MM-DD key', () => {
+    expect(dayNumber('x2026-09-26')).toBeNaN();
+    expect(dayNumber('2026-09-26x')).toBeNaN();
+  });
+
+  it('returns January keys in the new year, never as month 13 of the old one', () => {
+    expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
+    expect(fromDayNumber(dayNumber('2027-01-15'))).toBe('2027-01-15');
+  });
+
   it('returns every day number between 1900 and 2400 after a round trip', () => {
     fc.assert(
       fc.property(fc.integer({ min: -25_567, max: 157_000 }), (days) => {
         expect(dayNumber(fromDayNumber(days))).toBe(days);
+      }),
+      { numRuns: 2000 },
+    );
+  });
+
+  it('returns only real calendar dates: month 01-12 and a day that month has', () => {
+    const isLeap = (year: number): boolean =>
+      (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    fc.assert(
+      fc.property(fc.integer({ min: -25_567, max: 157_000 }), (days) => {
+        const [year = 0, month = 0, day = 0] = fromDayNumber(days).split('-').map(Number);
+        const monthLength = (DAYS_IN_MONTH[month - 1] ?? 0) + (month === 2 && isLeap(year) ? 1 : 0);
+        expect(month >= 1 && month <= 12 && day >= 1 && day <= monthLength).toBe(true);
       }),
       { numRuns: 2000 },
     );
