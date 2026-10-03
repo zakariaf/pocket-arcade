@@ -1,6 +1,7 @@
 // packages/shell/src/config/privacy-manifest.ts
 // Aggregated required-reason APIs of every pod (checked by `npm run audit:privacy`, which
-// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here).
+// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here), the
+// development pods built from node_modules included (expo-file-system: 0A2A.1, 3B52.1, 85F4.1).
 // NSPrivacyTracking stays false and no NSPrivacyTrackingDomains are listed: our code tracks nothing,
 // and Apple fails requests to listed domains for players who decline App Tracking Transparency,
 // which would stop their ads. Google's own pods declare the tracking (Device ID); the app asks ATT
@@ -14,7 +15,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
-      NSPrivacyAccessedAPITypeReasons: ['C617.1'],
+      NSPrivacyAccessedAPITypeReasons: ['C617.1', '0A2A.1', '3B52.1'],
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
@@ -22,7 +23,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
-      NSPrivacyAccessedAPITypeReasons: ['E174.1'],
+      NSPrivacyAccessedAPITypeReasons: ['E174.1', '85F4.1'],
     },
   ],
 };
