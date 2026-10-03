@@ -7,5 +7,6 @@
   { "from": "tooling-deps/src/clock/system-clock.ts", "to": "templates/packages/tooling/src/clock/system-clock.ts" },
   { "from": "repo-templates/packages/shell/e2e/subflows/debug-setup.yaml", "to": "templates/packages/shell/e2e/subflows/debug-setup.yaml" },
   { "from": "repo-templates/packages/tooling/src/e2e/maestro-args.ts", "to": "templates/packages/tooling/src/e2e/maestro-args.ts" },
-  { "from": "repo-templates/packages/tooling/src/e2e/maestro-args.test.ts", "to": "templates/packages/tooling/src/e2e/maestro-args.test.ts" }
+  { "from": "repo-templates/packages/tooling/src/e2e/maestro-args.test.ts", "to": "templates/packages/tooling/src/e2e/maestro-args.test.ts" },
+  { "from": "repo-templates/packages/shell/src/services/purchase/premium-service.test.ts", "to": "templates/packages/shell/src/services/purchase/premium-service.test.ts" }
 ]

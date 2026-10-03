@@ -13,5 +13,7 @@
   { "from": "repo-templates/__mocks__/expo-iap.ts", "to": "templates/__mocks__/expo-iap.ts" },
   { "from": "repo-templates/__mocks__/react-native-google-mobile-ads.ts", "to": "templates/__mocks__/react-native-google-mobile-ads.ts" },
   { "from": "repo-templates/__mocks__/expo-tracking-transparency.ts", "to": "templates/__mocks__/expo-tracking-transparency.ts" },
-  { "from": "repo-templates/packages/game-kit/src/testing/play-choices.ts", "to": "templates/packages/game-kit/src/testing/play-choices.ts" }
+  { "from": "repo-templates/packages/game-kit/src/testing/play-choices.ts", "to": "templates/packages/game-kit/src/testing/play-choices.ts" },
+  { "from": "repo-templates/packages/shell/src/services/purchase/premium-service.test.ts", "to": "examples/premium-service.test.ts" },
+  { "from": "repo-templates/packages/shell/src/services/consent/admob-consent-adapter.test.ts", "to": "examples/admob-consent-adapter.test.ts" }
 ]
