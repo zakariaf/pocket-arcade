@@ -65,3 +65,15 @@ describe('LINE_SIEGE_LEVEL_PLAN', () => {
     expect(LINE_SIEGE_LEVEL_PLAN.levelsPerPack).toBe(30);
   });
 });
+
+describe('LINE_SIEGE_LEVEL_PLAN minimum', () => {
+  const start = create(1, 0);
+  const witness = LINE_SIEGE_SOLVER.solve(start, WITNESS_MAX_NODES);
+  if (witness.kind !== 'solved') throw new Error('seed 1 is witnessed at difficulty 0');
+
+  it('accepts a level the witness wins in exactly the minimum number of placements', () => {
+    const candidate = { level: 1, seed: 1, difficulty: 0, start, ...witness };
+    const rated = LINE_SIEGE_LEVEL_PLAN.rate({ ...candidate, par: MIN_WITNESS_PLACEMENTS });
+    expect(rated).toStrictEqual({ kind: 'score', thresholds: [0, 170, 204] });
+  });
+});
