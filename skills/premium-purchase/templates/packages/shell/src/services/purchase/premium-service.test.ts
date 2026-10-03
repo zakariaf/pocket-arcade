@@ -98,3 +98,45 @@ describe('premium service', () => {
     expect(script.calls).toContain('persist:false');
   });
 });
+
+// spec 8.9: "After a purchase, the Shell stores "Premium = yes" on the phone." Play Billing never
+// delivers an unacknowledged purchase to the listener again and Google refunds it after 3 days,
+// so the re-check and the restore finish it once Premium is saved.
+describe('premium service with an unfinished purchase', () => {
+  const UNFINISHED: StoreTransaction = { ...BOUGHT, isUnfinished: true };
+
+  it('finishes it once the launch re-check has saved Premium', async () => {
+    const { script, deps } = setup({ transactions: [UNFINISHED] });
+    await startPremium(deps);
+    expect(script.calls.slice(script.calls.indexOf('readTransactions'))).toStrictEqual([
+      'readTransactions',
+      'persist:true',
+      'finish:t1',
+    ]);
+  });
+
+  it('finishes it once a restore has saved Premium', async () => {
+    const { script, actions, deps } = setup({ transactions: [UNFINISHED] });
+    await restorePremium(deps);
+    expect(script.calls).toStrictEqual([
+      'restore',
+      'readTransactions',
+      'persist:true',
+      'finish:t1',
+    ]);
+    expect(actions.at(-1)).toStrictEqual({ type: 'restore-finished', evidence: 'owned' });
+  });
+
+  it('leaves it unfinished while its save is refused', async () => {
+    const { script, deps } = setup({ transactions: [UNFINISHED] }, false);
+    await startPremium(deps);
+    expect(script.calls).not.toContain('finish:t1');
+  });
+
+  it('leaves alone a purchase the store already holds as finished', async () => {
+    const { script, deps } = setup({ transactions: [BOUGHT] });
+    await startPremium(deps);
+    await restorePremium(deps);
+    expect(script.calls).not.toContain('finish:t1');
+  });
+});

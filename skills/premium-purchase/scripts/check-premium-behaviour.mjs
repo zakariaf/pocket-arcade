@@ -226,6 +226,22 @@ run(async () => {
       await service.processTransaction(h.deps, tx());
       return h.log;
     }, ['persist:true', 'dispatch:premium-granted'], 'persistPremium returns false when the change did not reach the disk (save.update answered false); then return before finishQuietly so StoreKit delivers the purchase again (a finished but unsaved purchase is lost for good).');
+    const ufix = 'Play Billing never delivers an unacknowledged purchase again and Google refunds it after 3 days: recheckPremium and restorePremium finish every owned transaction marked isUnfinished, after persistPremium returned true (and never one the store already holds as finished).';
+    await expect('service-order', FILES.service, 'the re-check finishes an unfinished purchase once saved', async () => {
+      const h = harness({ transactions: [tx({ isUnfinished: true })] });
+      await service.recheckPremium(h.deps);
+      return h.log;
+    }, ['readTransactions', 'persist:true', 'dispatch:entitlements-checked:owned', 'finish:t1'], ufix);
+    await expect('service-order', FILES.service, 'a restore finishes an unfinished purchase once saved', async () => {
+      const h = harness({ transactions: [tx({ isUnfinished: true })] });
+      await service.restorePremium(h.deps);
+      return h.log;
+    }, ['dispatch:restore-tapped', 'restore', 'readTransactions', 'persist:true', 'dispatch:restore-finished:owned', 'finish:t1'], ufix);
+    await expect('service-order', FILES.service, 'the re-check leaves an unfinished purchase alone while its save is refused', async () => {
+      const h = harness({ transactions: [tx({ isUnfinished: true })], saveRefused: true });
+      await service.recheckPremium(h.deps);
+      return h.log;
+    }, ['readTransactions', 'persist:true', 'dispatch:entitlements-checked:owned'], ufix);
     await expect('service-order', FILES.service, 'a failing finish is logged, Premium stays', async () => {
       const h = harness({ finishThrows: true });
       await service.processTransaction(h.deps, tx());
@@ -402,6 +418,15 @@ run(async () => {
       ],
       calls: ['getAvailablePurchases:{"onlyIncludeActiveItemsIOS":false}'],
     }, tfix);
+    await expect('adapter-transactions', file, 'an unacknowledged Android purchase is marked unfinished', async () => {
+      const android = (overrides) => ({ id: 'a1', productId: ID, transactionId: 'GPA.1', purchaseState: 'purchased', platform: 'android', purchaseToken: 'token', ...overrides });
+      iapStub.reset({ getAvailablePurchases: [android({ isAcknowledgedAndroid: false }), android({ id: 'a2', transactionId: 'GPA.2', isAcknowledgedAndroid: true })] });
+      const list = await adapter.createExpoIapPurchaseAdapter().readTransactions();
+      return list.map(({ handle, ...rest }) => rest);
+    }, [
+      { productId: ID, transactionId: 'GPA.1', state: 'purchased', revocationDateMs: null, isUnfinished: true },
+      { productId: ID, transactionId: 'GPA.2', state: 'purchased', revocationDateMs: null },
+    ], 'Map isAcknowledgedAndroid === false to isUnfinished: true (absent otherwise): the re-check finishes it once Premium is saved, before Google refunds it after 3 days.');
     await expect('adapter-transactions', file, 'listener purchases', async () => {
       iapStub.reset();
       const port = adapter.createExpoIapPurchaseAdapter();

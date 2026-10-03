@@ -9,7 +9,7 @@ Makes each game sell its single non-consumable "Premium" honestly and with no se
 
 ## Rules that must hold
 
-1. **Save Premium before finishing: `persistPremium({ isPremium: true })` (synchronous) -> dispatch `premium-granted` -> `finish(tx)`.** Never finish first, never auto-finish, and never finish when `persistPremium` returns `false` (the change did not reach the disk: `save.update` answered `false` for a refused write, a rejected document, a pending quarantine copy or a newer app's read-only save). *Why:* StoreKit re-delivers unfinished transactions; a finished-but-unsaved purchase is lost for good.
+1. **Save Premium before finishing: `persistPremium({ isPremium: true })` (synchronous) -> dispatch `premium-granted` -> `finish(tx)`.** Never finish first, never auto-finish, and never finish when `persistPremium` returns `false` (the change did not reach the disk: `save.update` answered `false` for a refused write, a rejected document, a pending quarantine copy or a newer app's read-only save). On Android an unfinished purchase is never delivered again and Google refunds it after 3 days, so `recheckPremium` and `restorePremium` finish every owned transaction marked `isUnfinished` (the adapter's `isAcknowledgedAndroid === false`) once `persistPremium` returned `true`. *Why:* StoreKit re-delivers unfinished transactions; a finished-but-unsaved purchase is lost for good, and an unacknowledged Android one is refunded.
 2. **Revoke only on explicit evidence:** a verified Premium transaction with a revocation date and no newer valid one. Absence, errors and offline keep the cached Premium; a revocation is saved with its `revokedAtMs`. *Why:* a fresh purchase can be briefly missing from StoreKit, and the save guard ignores a revoke without a date.
 3. **Listen first:** `startPremium` subscribes to purchase events before `initConnection`, then loads the price, then re-checks silently (`Transaction.all`, `onlyIncludeActiveItemsIOS: false`). *Why:* StoreKit replays unfinished and approved Ask-to-Buy transactions right after connecting, and only `Transaction.all` shows refunds.
 4. **Every handler is idempotent;** a failure counts only while a purchase is in flight. *Why:* iOS reports one failure twice (rejection and listener) and re-delivers owned purchases on relaunch.
@@ -92,7 +92,7 @@ Makes each game sell its single non-consumable "Premium" honestly and with no se
 | `scripts/lib/load-ts.mjs` | Imports repo TypeScript modules with the `@e07/*` aliases and the module stand-ins | Read only to change a checker |
 | `scripts/lib/stubs/expo-iap.mjs` | Scripted Node stand-in for expo-iap 5.8.0 used by the behaviour check (update `ErrorCode` on an upgrade) | Read only to change a checker |
 | `scripts/lib/assemble-fixtures.mjs` | Builds each self-test case from templates + base repo + `mutation.json` | Read only to add a self-test case |
-| `scripts/selftest.mjs` | Proves both checkers on the clean repo and 55 planted problems | After changing a checker, a template or a fixture |
+| `scripts/selftest.mjs` | Proves both checkers on the clean repo and 57 planted problems | After changing a checker, a template or a fixture |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files copied into this skill | When adding a shared file |
 | `tests/fixtures/` | `base-repo/` plus one `mutation.json` and `EXPECT.txt` per case, per checker | When adding a rule |

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "  const unfinished = isSaved ? transactions.filter(isUnfinishedPurchaseOf(deps.productId)) : [];\n",
+      "with": "  const unfinished = isSaved ? [] : transactions.filter(isUnfinishedPurchaseOf(deps.productId));\n"
+    }
+  }
+]

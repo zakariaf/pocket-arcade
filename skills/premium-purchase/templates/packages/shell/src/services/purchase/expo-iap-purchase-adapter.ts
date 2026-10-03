@@ -49,12 +49,16 @@ function failureEvent(error: unknown): PurchaseEvent {
 function toTransaction(purchase: Purchase): StoreTransaction | null {
   if (purchase.purchaseState === 'unknown') return null;
   const revoked = 'revocationDateIOS' in purchase ? purchase.revocationDateIOS : null;
+  // Android: Play Billing holds it unacknowledged (Google refunds it after 3 days).
+  const isUnacknowledged =
+    'isAcknowledgedAndroid' in purchase && purchase.isAcknowledgedAndroid === false;
   return {
     productId: purchase.productId,
     transactionId: purchase.transactionId ?? purchase.id,
     state: purchase.purchaseState,
     revocationDateMs: revoked ?? null,
     handle: purchase,
+    ...(isUnacknowledged ? { isUnfinished: true } : {}),
   };
 }
 

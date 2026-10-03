@@ -72,6 +72,7 @@ export type StoreTransaction = {
   readonly state: 'purchased' | 'pending';
   readonly revocationDateMs: number | null; // refund / Family Sharing revocation evidence
   readonly handle: unknown; // opaque; given back to finish()
+  readonly isUnfinished?: true; // Android: not yet acknowledged (isAcknowledgedAndroid === false)
 };
 
 export type PurchaseFailure = 'cancelled' | 'deferred' | 'already-owned' | 'unavailable' | 'failed';
@@ -98,7 +99,7 @@ export type PurchasePort = {
 `expo-iap-purchase-adapter.ts` is the only file that imports `expo-iap`. Facts behind it (5.8.0 source, openiap-apple, and the harness):
 
 - `fetchProducts({ skus: [id], type: 'in-app' })` returns `[]` instead of throwing when StoreKit cannot resolve the product: `fetchProduct` returns `null`, which the flow shows as "store unavailable", never as an error dialog.
-- `getAvailablePurchases()` defaults to `onlyIncludeActiveItemsIOS: true` (`Transaction.currentEntitlements`); the adapter passes `false` to read `Transaction.all`, which still contains refunded purchases with `revocationDateIOS`.
+- `getAvailablePurchases()` defaults to `onlyIncludeActiveItemsIOS: true` (`Transaction.currentEntitlements`); the adapter passes `false` to read `Transaction.all`, which still contains refunded purchases with `revocationDateIOS`. On Android the same call returns the owned purchases with `isAcknowledgedAndroid`; the adapter marks one that is `false` as `isUnfinished: true` (and leaves the field out otherwise). Play Billing never delivers an unacknowledged purchase to `purchaseUpdatedListener` again, and Google refunds it after 3 days, so the service's re-check finishes it (`finishTransaction`, which acknowledges a non-consumable) once Premium is saved; iOS replays unfinished transactions through the listener at every launch instead.
 - `restorePurchases()` returns `void` (it runs `AppStore.sync()` and then reads purchases); it throws `ErrorCode.SyncError` when the sync does not complete (cancelled Apple Account prompt, offline). The adapter maps that to `'sync-failed'`, and the service then reads the transactions itself.
 - `requestPurchase({ request: { apple: { sku }, google: { skus: [sku] } }, type: 'in-app' })`; a rejection is emitted as a failure event (it may duplicate the listener's).
 - `finishTransaction({ purchase, isConsumable: false })`.

@@ -1,0 +1,2 @@
+[adapter-transactions]
+an unacknowledged Android purchase is marked unfinished
