@@ -22,13 +22,13 @@ function lenientSave() {
   const deps = { store, clock: TEST_CLOCK, errorLog: createFakeErrorLog(), appVersion: '1.0.0' };
   const save = createSaveService({ ...deps, isStrict: false }, plan, 0);
   save.applyLoadWrites();
-  const onDisk = () => {
+  const readDiskDoc = () => {
     const record = store.read('current');
     const decoded = record === null ? null : decodeSlot(record, TEST_GAME_ID);
     if (decoded?.kind !== 'ok') throw new Error('current slot does not decode');
     return decoded.doc;
   };
-  return { save, onDisk };
+  return { save, readDiskDoc };
 }
 
 describe('progress store', () => {
@@ -58,13 +58,13 @@ describe('progress store', () => {
   // N10: a document the save rejected never reaches the store. Were it published, every later
   // change would be built on it and rejected too, and no progress would reach the disk again.
   it('keeps the last valid progress when the save rejects a change, and saves the next one', () => {
-    const { save, onDisk } = lenientSave();
+    const { save, readDiskDoc } = lenientSave();
     const progress = createProgressStore(save);
     const today = TEST_CLOCK.today();
     progress.getState().dispatch({ type: 'record-endless-score', score: 1.5 });
     expect(progress.getState().progress.endlessBest).toBe(0);
     progress.getState().dispatch({ type: 'use-free-hint', today, freePerDay: 1 });
-    expect(onDisk().hints.freeUsed).toBe(1);
+    expect(readDiskDoc().hints.freeUsed).toBe(1);
     expect(selectFreeHintsLeft(progress.getState(), today, 1)).toBe(0);
   });
 
