@@ -15,7 +15,7 @@ check-sdk-trigger: 2 trigger conditions and packages checked, 0 problems
 RESULT: PASS
 ```
 
-`RESULT: PASS` here means "no move is due": staying is the correct, finished outcome (exit 0). A younger release prints its day instead, for example `wait     [target-age] expo 58.0.2 was published 2026-10-30; it is not 7 days old on 2026-11-02 ...; possible from 2026-11-07`.
+`RESULT: PASS` here means "no move is due": staying is the correct, finished outcome (exit 0). A younger release prints the moment it turns 7 days old instead, for example `wait     [target-age] expo 58.0.2 was published 2026-10-30T09:00Z; it is not 7 days old at 2026-11-02T12:00Z ...; possible from 2026-11-06T09:00Z`.
 
 Message (only when the owner asked, or once a month):
 

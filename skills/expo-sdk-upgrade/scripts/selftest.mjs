@@ -23,7 +23,7 @@ const sdk57 = suite('check-sdk-alignment-57', 'base-sdk57');
 const readiness = suite('check-sdk-alignment-readiness', 'base-sdk57');
 const sdk58 = suite('check-sdk-alignment-58', 'base-sdk58');
 const trigger = suite('check-sdk-trigger', 'base-sdk57', 'trigger-facts');
-const triggerArgs = (dir) => [dir, '--facts', join(dir, 'facts.json'), '--today', '2026-11-02'];
+const triggerArgs = (dir) => [dir, '--facts', join(dir, 'facts.json'), '--now', '2026-11-02T12:00:00Z'];
 
 try {
   await runSelftest(import.meta.url, [
