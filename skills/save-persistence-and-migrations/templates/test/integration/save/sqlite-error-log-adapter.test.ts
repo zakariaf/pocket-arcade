@@ -8,6 +8,8 @@ import { createSqliteSaveStore } from '@e07/shell/services/save/sqlite-save-stor
 
 import { createNodeSqliteSqlDriver } from './node-sqlite-sql-driver.ts';
 
+// spec 8.14: "No crash reporting service (N2). The Shell keeps a small local error log (the
+// debug menu can show it) and recovers where possible ... never a crash loop."
 describe('sqlite-error-log-adapter', () => {
   let dir = '';
   beforeEach(() => {

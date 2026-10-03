@@ -1,8 +1,14 @@
 // packages/shell/src/services/save/save-service.test.ts
+import fc from 'fast-check';
+
+import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import { createFakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
 import { planLoad } from '@e07/shell/services/save/load-plan.ts';
 import { encodeSaveDoc } from '@e07/shell/services/save/save-codec.ts';
-import { createSaveService } from '@e07/shell/services/save/save-service.ts';
+import {
+  createSaveService,
+  keepPremiumUnlessRevoked,
+} from '@e07/shell/services/save/save-service.ts';
 import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 
 import type { LoadPlan } from '@e07/shell/services/save/load-plan.ts';
@@ -32,6 +38,9 @@ const loud = (doc: SaveDoc): SaveDoc => ({
 });
 
 describe('createSaveService', () => {
+  // spec 8.6: "Saved after every move and every settings change. Writes are "safe writes":
+  // write the new copy, then swap, so a crash mid-write never corrupts the save." N10:
+  // "Losing a player's progress is the worst bug the Shell can have."
   it('keeps the write counter rising from the highest count found at load', () => {
     const { store } = setup({ isStrict: true });
     expect(store.read('current')?.writeCount).toBe(42);
@@ -109,5 +118,47 @@ describe('createSaveService', () => {
     expect(store.quarantined).toStrictEqual([{ slot: 'current', reason: 'checksum' }]);
     expect(store.read('current')?.payload).toBe(good.payload);
     expect(checkpoint).toHaveBeenCalledTimes(1);
+  });
+
+  it('records a rejected document under the save area in store builds', () => {
+    const errorLog = createFakeErrorLog();
+    const deps = {
+      store: createFakeSaveStore(),
+      clock: CLOCK,
+      errorLog,
+      appVersion: '1.0.0',
+      isStrict: false,
+    };
+    const save = createSaveService(
+      deps,
+      planLoad({ current: null, backup: null, gameId: GAME }),
+      0,
+    );
+    save.update(loud);
+    expect(errorLog.entries().map((entry) => entry.source)).toStrictEqual(['save']);
+  });
+});
+
+const nullableMs = fc.option(fc.nat(), { nil: null });
+const premiumArb = fc.record({
+  owned: fc.boolean(),
+  ownedSinceMs: nullableMs,
+  lastCheckedAtMs: nullableMs,
+  revokedAtMs: nullableMs,
+});
+
+describe('keepPremiumUnlessRevoked', () => {
+  it('keeps owned Premium for any change that brings no revocation date', () => {
+    fc.assert(
+      fc.property(premiumArb, premiumArb, (before, after) => {
+        const doc = createDefaultSaveDoc(GAME);
+        const previous = { ...doc, premium: before };
+        const next = { ...doc, premium: after };
+        const kept = keepPremiumUnlessRevoked(previous, next);
+        const isGuarded = before.owned && !after.owned && after.revokedAtMs === null;
+
+        expect(kept).toStrictEqual(isGuarded ? previous : next);
+      }),
+    );
   });
 });

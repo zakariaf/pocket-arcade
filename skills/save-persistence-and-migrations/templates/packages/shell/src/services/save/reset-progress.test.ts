@@ -24,6 +24,8 @@ function fullFixture(): SaveDoc {
 }
 
 describe('resetAllProgress', () => {
+  // spec S11: "Reset all progress (confirm by typing or holding the button for 2 seconds).
+  // Deletes levels, stars, daily results and statistics. Keeps Premium, language and settings."
   it('keeps premium, settings, first-run flags and ads; clears everything else', () => {
     const doc = fullFixture();
     const reset = resetAllProgress(doc);
@@ -35,6 +37,18 @@ describe('resetAllProgress', () => {
     expect(reset.run).toBeNull();
     expect(reset.daily.results).toStrictEqual({});
     expect(reset.stats).toStrictEqual(DEFAULT_STATS);
+  });
+
+  it('clears the hint allowance, the upsell line and the whole daily section', () => {
+    const reset = resetAllProgress(fullFixture());
+    expect(reset.hints).toStrictEqual({ freeDate: null, freeUsed: 0 });
+    expect(reset.upsell).toStrictEqual({ lastShownOn: null });
+    expect(reset.daily).toStrictEqual({
+      results: {},
+      completed: 0,
+      streak: { lastDate: null, length: 0 },
+      bestStreak: 0,
+    });
   });
 });
 
