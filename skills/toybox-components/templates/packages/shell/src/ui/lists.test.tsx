@@ -7,6 +7,7 @@ import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
+import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { AppText } from './app-text.tsx';
 import { Chip } from './chip.tsx';
@@ -24,6 +25,29 @@ import { SubRow } from './sub-row.tsx';
 import type { ReactNode } from 'react';
 
 const COLORS = TEST_PALETTE.standard.light;
+
+// Each icon image carries its glyph name, so a test can tell one icon from another (the root mock
+// gives every icon the same image).
+jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
+  getIconUri: (name: string) => `icon:${name}`,
+}));
+
+const HIDDEN = { includeHiddenElements: true } as const;
+
+type IconHost = {
+  readonly props: { readonly source?: { readonly uri?: string } };
+  readonly queryAll: (
+    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
+  ) => IconHost[];
+};
+
+/** The glyph names of the icons drawn inside a part, in order. */
+function iconsIn(testID: string): readonly string[] {
+  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
+  return part
+    .queryAll((node) => node.type === 'Image')
+    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
+}
 
 /** S11's "Remove ads" row: a strong (Bold, normal ink) label. */
 function StrongRow(): ReactNode {
@@ -107,6 +131,39 @@ describe('ListGroup and ListRow', () => {
       color: COLORS.textMuted,
     });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('ends a link row with its chevron and gives a danger row a danger icon tile', async () => {
+    await renderWithShell(
+      <List testID="settings.data-list">
+        <ListRow
+          label="Language"
+          value="System (English)"
+          end="chevron"
+          icon="globe"
+          onPress={jest.fn()}
+          testID="settings.language-row"
+          isFirst
+          isReducedMotion={false}
+        />
+        <ListRow
+          label="Reset all progress"
+          end="chevron"
+          icon="trash"
+          isDanger
+          onPress={jest.fn()}
+          testID="settings.reset-progress-row"
+          isReducedMotion={false}
+        />
+      </List>,
+    );
+
+    expect(iconsIn('settings.language-row')).toStrictEqual(['globe', 'chevron']);
+    expect(iconsIn('settings.reset-progress-row')).toStrictEqual(['trash', 'chevron']);
+    expect(screen.getByTestId('settings.reset-progress-row.icon', HIDDEN)).toHaveStyle({
+      backgroundColor: SHELL_COLORS.light.dangerFill,
+      borderColor: COLORS.danger,
+    });
   });
 
   it('draws a strong row label in Bold ink at the row line height', async () => {

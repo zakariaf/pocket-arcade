@@ -4,18 +4,44 @@ import { PixelRatio, StyleSheet } from 'react-native';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
+import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { ArtTile } from './art-tile.tsx';
+import { COMPONENT_SPECS } from './component-specs.ts';
 import { Confetti } from './confetti.tsx';
 import { LevelTile } from './level-tile.tsx';
 import { PremiumArt } from './premium-art.tsx';
 import { RatingStars } from './rating-stars.tsx';
 import { ResultStars } from './result-stars.tsx';
 import { Sticker } from './sticker.tsx';
+import { dieCutRing } from './toybox-styles.ts';
 
 import type { ViewStyle } from 'react-native';
 
 const COLORS = TEST_PALETTE.standard.light;
+
+// Each icon image carries its glyph name, so a test can tell one icon from another (the root mock
+// gives every icon the same image).
+jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
+  getIconUri: (name: string) => `icon:${name}`,
+}));
+
+const HIDDEN = { includeHiddenElements: true } as const;
+
+type IconHost = {
+  readonly props: { readonly source?: { readonly uri?: string } };
+  readonly queryAll: (
+    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
+  ) => IconHost[];
+};
+
+/** The glyph names of the icons drawn inside a part, in order. */
+function iconsIn(testID: string): readonly string[] {
+  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
+  return part
+    .queryAll((node) => node.type === 'Image')
+    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
+}
 
 type HostNode = { readonly props: { readonly style?: unknown }; readonly parent: HostNode | null };
 
@@ -138,6 +164,23 @@ describe('LevelTile', () => {
       color: COLORS.textMuted,
     });
   });
+
+  it('draws a locked tile dashed, with a padlock where the stars go', async () => {
+    await renderWithShell(
+      <LevelTile
+        numberText="13"
+        state={{ kind: 'locked' }}
+        label="Level 13, locked"
+        onPress={jest.fn()}
+        testID="levels.level-tile.13"
+        width={52}
+        isReducedMotion
+      />,
+    );
+
+    expect(boxStyleAbove('levels.level-tile.13.number').borderStyle).toBe('dashed');
+    expect(iconsIn('levels.level-tile.13')).toStrictEqual(['lock']);
+  });
 });
 
 describe('Stars', () => {
@@ -157,6 +200,14 @@ describe('Stars', () => {
 });
 
 describe('Stickers and art', () => {
+  it('cuts every sticker out with the white die-cut ring', async () => {
+    await renderWithShell(<Sticker text="Premium" icon="crown" testID="home.premium-badge" />);
+
+    expect(screen.getByTestId('home.premium-badge')).toHaveStyle(
+      dieCutRing(COMPONENT_SPECS.sticker.ring, SHELL_COLORS.light.cut),
+    );
+  });
+
   it('prints sticker text in toy ink, white on the ink paper', async () => {
     await renderWithShell(
       <>
