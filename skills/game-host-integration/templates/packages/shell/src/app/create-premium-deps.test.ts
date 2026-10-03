@@ -108,6 +108,32 @@ describe('createPremiumDeps', () => {
     expect(persistPremiumIn(save, { nowMs: () => -1 })({ isPremium: true })).toBe(false);
   });
 
+  // spec 8.9: "the Shell quietly re-checks the purchase with the store at app start and updates
+  // the stored status". The re-check runs at launch, every foreground and reconnect: a status the
+  // save already holds is not written to both slots again, and still counts as saved.
+  it('writes neither slot when the save already holds Premium, and reports it as saved', () => {
+    const test = createTestSave();
+    const persistPremium = persistPremiumIn(test.save, TEST_CLOCK);
+    persistPremium({ isPremium: true });
+    const current = test.store.slots.get('current');
+    const backup = test.store.slots.get('backup');
+    expect(persistPremium({ isPremium: true })).toBe(true);
+    expect(test.store.slots.get('current')).toBe(current);
+    expect(test.store.slots.get('backup')).toBe(backup);
+  });
+
+  it('writes neither slot when the save already holds the same revocation', () => {
+    const test = createTestSave();
+    const persistPremium = persistPremiumIn(test.save, TEST_CLOCK);
+    persistPremium({ isPremium: true });
+    persistPremium({ isPremium: false, revokedAtMs: 5 });
+    const current = test.store.slots.get('current');
+    expect(persistPremium({ isPremium: false, revokedAtMs: 5 })).toBe(true);
+    expect(test.store.slots.get('current')).toBe(current);
+    persistPremium({ isPremium: false, revokedAtMs: 6 });
+    expect(test.save.doc().premium.revokedAtMs).toBe(6);
+  });
+
   it('formats the price in the player language (System follows the phone) and records errors', () => {
     const input = inputFor();
     const deps = createPremiumDeps(input);

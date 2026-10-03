@@ -24,7 +24,13 @@ const premiumDeps: PremiumServiceDeps = {
   persistPremium: (change) => {
     // One synchronous, validated write of the premium section, backup refreshed (a Premium change).
     // Returns false when the change did not reach the disk (save.update's answer): processTransaction
-    // then leaves the purchase unfinished.
+    // then leaves the purchase unfinished. The re-check runs at launch, every foreground and
+    // reconnect: a change the save already holds is on disk, so it writes nothing and answers true.
+    const held = save.doc().premium;
+    const isHeld = change.isPremium
+      ? held.owned && held.ownedSinceMs !== null && held.revokedAtMs === null
+      : !held.owned && held.revokedAtMs === change.revokedAtMs;
+    if (isHeld) return true;
     const atMs = clock.nowMs();
     return save.update(
       (doc) => ({
@@ -51,7 +57,7 @@ const premiumDeps: PremiumServiceDeps = {
 startPremium(premiumDeps).catch(premiumDeps.onError); // subscribe -> connect -> price -> silent re-check
 ```
 
-`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". It returns `false` when the change did not reach the disk (a full disk, a rejected document, a pending quarantine copy, or a save from a newer app, which is never written), and the purchase then stays unfinished so StoreKit delivers it again. A revoke carries `revokedAtMs`, or the save service's premium guard undoes it; a purchase clears `revokedAtMs` to `null`, because the guard reads only that date and an old refund date would let a later change without a date turn Premium off.
+`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". It returns `false` when the change did not reach the disk (a full disk, a rejected document, a pending quarantine copy, or a save from a newer app, which is never written), and the purchase then stays unfinished so StoreKit delivers it again. A revoke carries `revokedAtMs`, or the save service's premium guard undoes it; a purchase clears `revokedAtMs` to `null`, because the guard reads only that date and an old refund date would let a later change without a date turn Premium off. A change the save already holds (Premium owned since a date and never refunded, or the same revocation date) writes nothing and answers `true`, because the re-check repeats it at launch, every foreground and every reconnect.
 
 ## 3. Keep it fresh
 

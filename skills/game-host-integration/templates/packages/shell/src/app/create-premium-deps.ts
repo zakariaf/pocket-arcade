@@ -17,6 +17,7 @@ import type {
 } from '@e07/shell/services/purchase/premium-service.ts';
 import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
+import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
 export type PremiumInput = {
   readonly save: SaveService;
@@ -30,17 +31,26 @@ export type PremiumInput = {
   readonly deviceLocales: readonly DeviceLocale[];
 };
 
+/** True when the save already holds the change, so writing it again would change nothing. */
+function holdsChange(premium: SaveDoc['premium'], change: PremiumChange): boolean {
+  return change.isPremium
+    ? premium.owned && premium.ownedSinceMs !== null && premium.revokedAtMs === null
+    : !premium.owned && premium.revokedAtMs === change.revokedAtMs;
+}
+
 /**
  * The save's premium section after a change (a revoke carries its date for the save guard). False
  * when the change did not reach the disk (save.update's answer: a refused write, a rejected
  * document, a pending quarantine copy, or a newer app's read-only save): the purchase then stays
- * unfinished, so the store delivers it again.
+ * unfinished, so the store delivers it again. The re-check runs at launch, every foreground and
+ * reconnect: a change the save already holds is on disk already, so it writes nothing and is true.
  */
 export function persistPremiumIn(
   save: SaveService,
   clock: Pick<ClockPort, 'nowMs'>,
 ): (change: PremiumChange) => boolean {
   return (change) => {
+    if (holdsChange(save.doc().premium, change)) return true;
     const atMs = clock.nowMs();
     return save.update(
       (doc) => ({
