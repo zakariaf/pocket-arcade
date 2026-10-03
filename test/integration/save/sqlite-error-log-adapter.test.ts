@@ -56,4 +56,26 @@ describe('sqlite-error-log-adapter', () => {
     expect(log.entries()).toStrictEqual([]);
     driver.close();
   });
+
+  // N10: "a save from a newer app version is never touched."
+  it('writes nothing into a save.db whose tables come from a newer app', () => {
+    const driver = createNodeSqliteSqlDriver(join(dir, 'save.db'));
+    createSqliteSaveStore(driver);
+    for (let index = 1; index <= 200; index += 1) {
+      driver.run('INSERT INTO error_log (at_ms, area, message) VALUES (?, ?, ?)', [
+        index,
+        'boot',
+        `newer ${String(index)}`,
+      ]);
+    }
+    driver.exec('PRAGMA user_version = 2');
+    const log = createSqliteErrorLogAdapter(driver, { nowMs: () => 999 });
+    log.record('save', new Error('should not be written'));
+
+    expect(
+      driver.get('SELECT COUNT(*) AS n, MIN(id) AS low, MAX(at_ms) AS last FROM error_log', []),
+    ).toStrictEqual({ n: 200, low: 1, last: 200 });
+    expect(log.entries()[0]?.message).toBe('newer 200');
+    driver.close();
+  });
 });
