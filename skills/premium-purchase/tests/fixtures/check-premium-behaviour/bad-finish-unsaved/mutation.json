@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/premium-service.ts",
+      "find": "  if (!isSaved) return;\n",
+      "with": ""
+    }
+  }
+]

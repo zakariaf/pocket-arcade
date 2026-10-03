@@ -23,6 +23,7 @@ const premiumDeps: PremiumServiceDeps = {
   dispatch: stores.premium.getState().dispatch,
   persistPremium: (change) => {
     // One synchronous, validated write of the premium section, backup refreshed (a Premium change).
+    // Returns false when the disk refused it: processTransaction then leaves the purchase unfinished.
     const atMs = clock.nowMs();
     save.update(
       (doc) => ({
@@ -33,6 +34,7 @@ const premiumDeps: PremiumServiceDeps = {
       }),
       { refreshBackup: true },
     );
+    return !save.didLastWriteFail();
   },
   formatPrice: (product) => formatStorePrice(product, localeTagFor(language, digits)),
   onError: (error) => {
@@ -44,7 +46,7 @@ const premiumDeps: PremiumServiceDeps = {
 startPremium(premiumDeps).catch(premiumDeps.onError); // subscribe -> connect -> price -> silent re-check
 ```
 
-`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". A revoke carries `revokedAtMs`, or the save service's premium guard undoes it.
+`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". It returns `false` when the write did not land (a full disk), and the purchase then stays unfinished so StoreKit delivers it again. A revoke carries `revokedAtMs`, or the save service's premium guard undoes it.
 
 ## 3. Keep it fresh
 

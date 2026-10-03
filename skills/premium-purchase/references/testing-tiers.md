@@ -23,7 +23,7 @@ The reducer, the evidence rule, the service and the price formatter are tested w
 | `stores/premium/premium-store.test.ts` | the store starts from the saved entitlement, publishes reducer results and never writes the save itself |
 | `stores/premium/premium-notice.test.ts` | the four restore toasts, and the restored toast shows once |
 | `stores/premium/entitlement-evidence.test.ts` | absence -> `unknown`; refund -> `revoked`; newer purchase after a refund -> `owned`; other products ignored; latest revocation date |
-| `services/purchase/premium-service.test.ts` | Premium is persisted before the transaction is finished; an empty product list -> store unavailable; a failed sync is "couldn't restore"; the launch re-check keeps Premium without transactions; a refunded transaction revokes |
+| `services/purchase/premium-service.test.ts` | Premium is persisted before the transaction is finished, and a purchase the save refused is granted but left unfinished; an empty product list -> store unavailable; a failed sync is "couldn't restore"; the launch re-check keeps Premium without transactions; a refunded transaction revokes |
 | `services/purchase/connectivity-gated-purchase.test.ts` | offline nothing reaches StoreKit and S12 becomes "store unavailable"; online every call passes through; `shouldReloadStore` never reloads during a purchase or restore |
 | `services/purchase/format-store-price.test.ts` | the four locale outputs and the `displayPrice` fallbacks |
 | `packages/tooling/src/asc/premium-iap-payloads.test.ts` | the App Store Connect request bodies and price-point ranking |

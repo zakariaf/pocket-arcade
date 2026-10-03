@@ -47,7 +47,7 @@ describe('withConnectivity', () => {
       port,
       productId: ID,
       dispatch: (action) => actions.push(action),
-      persistPremium: () => undefined,
+      persistPremium: () => true,
       formatPrice: (product) => product.displayPrice,
       onError: () => undefined,
     });

@@ -22,8 +22,9 @@ export type PremiumServiceDeps = {
   readonly port: PurchasePort;
   readonly productId: string; // from game config, e.g. '<bundleId>.premium'
   readonly dispatch: (action: PremiumAction) => void;
-  // Synchronous SQLite write into the premium section ("Reset all progress" keeps it).
-  readonly persistPremium: (change: PremiumChange) => void;
+  // Synchronous SQLite write into the premium section ("Reset all progress" keeps it). Returns
+  // false when the change did not reach the disk (save.didLastWriteFail() after the update).
+  readonly persistPremium: (change: PremiumChange) => boolean;
   readonly formatPrice: (product: StoreProduct) => string;
   readonly onError: (error: unknown) => void; // ErrorLogPort
 };
@@ -74,8 +75,10 @@ export async function processTransaction(
     await finishQuietly(deps, tx);
     return;
   }
-  deps.persistPremium({ isPremium: true }); // 1. the save is written (sync) ...
+  const isSaved = deps.persistPremium({ isPremium: true }); // 1. the save is written (sync) ...
   deps.dispatch({ type: 'premium-granted' }); // 2. ads vanish everywhere at once ...
+  // A refused save keeps it unfinished: StoreKit delivers it again and the save is retried then.
+  if (!isSaved) return;
   await finishQuietly(deps, tx); // 3. ... and only then StoreKit may forget the transaction.
 }
 
