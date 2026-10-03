@@ -30,6 +30,7 @@ function controllerFor(extra: Partial<Deps> = {}) {
     counters: TALLY_GAME.stats.counters,
     entry: entryFor(TALLY_GAME, LEVEL_1),
     table: TALLY_GAME.levels.table,
+    errorLog: { record: () => undefined, entries: () => [] },
     engine: TALLY_GAME.engine,
     gameRules: TALLY_GAME.rules,
     persistence: TALLY_GAME.persistence,

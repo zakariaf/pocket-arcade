@@ -32,6 +32,7 @@ function contextFor(ref: RunRef) {
     counters: TALLY_GAME.stats.counters,
     entry: entryFor(TALLY_GAME, ref),
     table: TALLY_GAME.levels.table,
+    errorLog: { record: () => undefined, entries: () => [] },
   };
 }
 

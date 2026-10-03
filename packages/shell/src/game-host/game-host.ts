@@ -229,6 +229,7 @@ function controllerFor<T extends ShellGameTypes>(
     counters: game.stats.counters,
     entry: entryFor(game, session.ref),
     table: game.levels.table,
+    errorLog: deps.errorLog,
     engine: game.engine,
     gameRules: game.rules,
     persistence: game.persistence,
