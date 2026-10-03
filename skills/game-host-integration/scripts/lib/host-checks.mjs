@@ -85,6 +85,7 @@ export const ROOT_FILES = [
   'create-premium-deps.ts',
   'connect-premium-reloads.ts',
   'shell-app.tsx',
+  'leave-run-after-crash.ts',
   'shell-features.tsx',
   'shell-navigator.tsx',
 ];
@@ -230,6 +231,10 @@ export function checkRootFiles(repo, report) {
   const model = code(text(repo, `${TUTORIAL_DIR}/use-tutorial-model.ts`));
   if (model !== '' && !(/kind:\s*'tutorial'/.test(model) && /useGameSessionControls\s*\(/.test(model) && /'finish-tutorial'/.test(model))) {
     report.problem({ file: `${TUTORIAL_DIR}/use-tutorial-model.ts`, line: 1, rule: 'tutorial-screen', message: "the Tutorial model does not open the { kind: 'tutorial' } run with useGameSessionControls and end it with finish-tutorial", fix: 'Restore templates/packages/shell/src/screens/first-run/use-tutorial-model.ts: the tutorial is the game host\'s scripted run, and finish-tutorial is what moves the FirstRun group on to Home.' });
+  }
+  const shellApp = code(text(repo, `${app}/shell-app.tsx`));
+  if (shellApp !== '' && !/onGoHome\s*=\s*\{\s*\(\)\s*=>\s*\{\s*leaveRunAfterCrash\s*\(\s*hydrated\.save\s*\)/.test(shellApp)) {
+    report.problem({ file: `${app}/shell-app.tsx`, line: 1, rule: 'crash-leaves-run', message: 'the crash screen\'s Back to Home leaves the saved run resuming on launch, so every relaunch reopens the run that crashed', fix: 'onGoHome={() => { leaveRunAfterCrash(hydrated.save); setHasCrashed(true); reset(); }} (app/leave-run-after-crash.ts: resumeOnLaunch false, spec 8.14 never a crash loop).' });
   }
   return wanted.length;
 }
