@@ -16,6 +16,7 @@ import { createNavigationContainerRef } from '@react-navigation/native';
 import { Linking } from 'react-native';
 
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
+import { levelCountOf } from '@e07/shell/app/use-game-extra.ts';
 import { readLayoutDirection, restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { readAdsExtra } from '@e07/shell/services/ads/read-ads-extra.ts';
 import { createSqliteKvDirectionGuardAdapter } from '@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts';
@@ -25,6 +26,7 @@ import type { DebugLinkHandler, LinkSource } from '@e07/shell/app/debug-link-han
 import type { DebugGameControls } from '@e07/shell/app/debug-link-routes.ts';
 import type { TestOnlyApi } from '@e07/shell/app/test-only-api.ts';
 import type { GameExtra } from '@e07/shell/config/game-extra.ts';
+import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
@@ -82,6 +84,8 @@ type TestBuild = {
   readonly api: TestOnlyApi;
   readonly connectivity: SimulatedConnectivity;
   readonly clock: SimulatedClock;
+  /** The test-only key-value store, opened once: the debug services' flags and the link handler. */
+  readonly store: DebugStore;
 };
 
 function createServices(build: TestBuild, input: DebugPartsInput): DebugServices {
@@ -93,7 +97,7 @@ function createServices(build: TestBuild, input: DebugPartsInput): DebugServices
     connectivity: build.connectivity,
     clock: build.clock,
     // The flags a direction reload or a kill interrupted come back here, before the first render.
-    store: build.api.createSqliteKvDebugStoreAdapter(),
+    store: build.store,
     // geo=eea|other starts Google's answer over; an ADS_MODE=off build never calls UMP.
     resetConsent:
       adsMode === 'off' ? null : build.api.createAdmobConsentDebugAdapter().resetConsent,
@@ -117,13 +121,13 @@ function createLinks(
   const guard = createSqliteKvDirectionGuardAdapter();
   return build.api.createDebugLinkHandler({
     services: input.debug,
-    store: build.api.createSqliteKvDebugStoreAdapter(),
+    store: build.store,
     readSave: input.save.doc,
     writeSave: (write) => {
       updateAndPublish(input.save, input.stores, write);
     },
     today: build.clock.today,
-    levelCount: input.extra.levels.packCount * input.extra.levels.levelsPerPack,
+    levelCount: levelCountOf(input.extra),
     layoutDirection: readLayoutDirection(),
     restart: async (direction) => {
       await input.audio.dispose();
@@ -178,7 +182,12 @@ export function createDebugParts(input: DebugPartsInput): DebugParts {
     return { services: null, links: null, navigationRef, feedback: null };
   }
   guardNetwork(TEST_ONLY, input.errorLog);
-  const build = { api: TEST_ONLY, connectivity, clock };
+  const build = {
+    api: TEST_ONLY,
+    connectivity,
+    clock,
+    store: TEST_ONLY.createSqliteKvDebugStoreAdapter(),
+  };
   const services = createServices(build, input);
   const links = createLinks(build, { ...input, debug: services }, navigationRef);
   // At once, not from onReady: a link sent while the app starts would otherwise be lost.
