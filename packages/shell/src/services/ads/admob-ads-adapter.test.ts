@@ -14,7 +14,9 @@ type MockAd = {
   readonly addAdEventListener: jest.Mock<() => void, [string, Listener]>;
 };
 type AdFactory = { readonly createForAdRequest: jest.Mock<MockAd, [string]> };
+type MockedMobileAds = jest.Mock<{ readonly initialize: jest.Mock }, []>;
 type MockedSdk = {
+  readonly default: MockedMobileAds;
   readonly InterstitialAd: AdFactory;
   readonly RewardedAd: AdFactory;
   readonly AdEventType: { readonly CLOSED: string; readonly ERROR: string };
@@ -100,6 +102,34 @@ describe('createAdmobAdsAdapter', () => {
 
     await expect(ads.showRewarded()).resolves.toBe('unavailable');
     expect(ads.rewardedStatus()).toBe('loading');
+  });
+});
+
+// spec 8.8: an ad may show only with "consent handled"; prepareAds initialises the SDK once
+// consent allows it, and a second caller (a reconnect, a banner screen) may ask while the first
+// initialisation is still running: both wait for the one initialisation.
+describe('initialize', () => {
+  it('initialises the SDK once when two calls overlap', async () => {
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const { initialize } = sdk.default();
+    await Promise.all([ads.initialize(), ads.initialize()]);
+    expect(initialize).toHaveBeenCalledTimes(1);
+  });
+
+  it('initialises once across calls made one after the other', async () => {
+    const ads = await initializedAds();
+    const { initialize } = sdk.default();
+    await ads.initialize();
+    expect(initialize).toHaveBeenCalledTimes(1);
+  });
+
+  it('tries again after a failed initialisation', async () => {
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const { initialize } = sdk.default();
+    initialize.mockRejectedValueOnce(new Error('offline'));
+    await expect(ads.initialize()).rejects.toThrow('offline');
+    await ads.initialize();
+    expect(initialize).toHaveBeenCalledTimes(2);
   });
 });
 

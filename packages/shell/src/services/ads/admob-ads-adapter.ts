@@ -142,12 +142,27 @@ function preloadRewarded(
   ad.load();
 }
 
-async function initializeOnce(isInitialized: Cell<boolean>): Promise<void> {
-  if (isInitialized.get()) return;
+async function initializeSdk(isInitialized: Cell<boolean>): Promise<void> {
   // D8: general audience, not child-directed -> no ageRestrictedTreatment signal.
   await mobileAds().setRequestConfiguration({ maxAdContentRating: MaxAdContentRating.PG });
   await mobileAds().initialize();
   isInitialized.set(true);
+}
+
+// One initialisation: a caller that arrives while it runs (or after) shares its promise; a
+// failed one is forgotten, so the next caller tries again.
+function initializeOnce(
+  running: Cell<Promise<void> | null>,
+  isInitialized: Cell<boolean>,
+): Promise<void> {
+  const current = running.get();
+  if (current !== null) return current;
+  const started = initializeSdk(isInitialized);
+  running.set(started);
+  started.catch(() => {
+    running.set(null);
+  });
+  return started;
 }
 
 /** 'unavailable' until the first preload after initialize; listeners hear every change. */
@@ -176,10 +191,11 @@ export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {
   const interstitial = cell<InterstitialAd | null>(null);
   const rewarded = cell<RewardedAd | null>(null);
   const isInitialized = cell(false);
+  const initialization = cell<Promise<void> | null>(null);
   const loading = { options, isInitialized };
   const status = createStatusCell();
   return {
-    initialize: () => initializeOnce(isInitialized),
+    initialize: () => initializeOnce(initialization, isInitialized),
     preloadInterstitial: () => {
       preloadInterstitial(interstitial, loading);
     },
