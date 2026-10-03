@@ -37,6 +37,7 @@ const SPEC = {
 };
 
 const DAY_MS = 86_400_000;
+const MINUTE_MS = 60_000;
 /** The .npmrc min-release-age (days) this plan checks against: the policy's own value. */
 const RELEASE_AGE_DAYS = Number(NPMRC_POLICY['min-release-age']);
 const REGEX_SPECIAL = /[.+?^${}()|[\]\\/]/g;
@@ -91,7 +92,9 @@ function checkFacts(facts, request, row, context, add) {
     const covered = activeExcludes(npmrc, today).find((entry) => entry.regex.test(request.name));
     if (isTooYoung && covered) console.log(`covered  by the dated exclude ${covered.pattern} (block expires ${covered.expires})`);
     if (isTooYoung && !covered) {
-      const oldEnough = new Date(Date.parse(published) + RELEASE_AGE_DAYS * DAY_MS).toISOString();
+      // Rounded up to the minute: the printed moment is never earlier than npm's.
+      const oldEnoughMs = Math.ceil((Date.parse(published) + RELEASE_AGE_DAYS * DAY_MS) / MINUTE_MS) * MINUTE_MS;
+      const oldEnough = new Date(oldEnoughMs).toISOString();
       const expires = oldEnough.slice(0, 10);
       add('npm registry', 0, 'too-young', `${request.name}@${request.version} is ${ageDays} days old; min-release-age=${RELEASE_AGE_DAYS} will refuse it`, `Wait until ${oldEnough.slice(0, 16)}Z, or (only for a needed fix, with the owner) add "# exclude-block expires=${expires} reason=<link>" with min-release-age-exclude[]=${request.name} to .npmrc.`);
     }
