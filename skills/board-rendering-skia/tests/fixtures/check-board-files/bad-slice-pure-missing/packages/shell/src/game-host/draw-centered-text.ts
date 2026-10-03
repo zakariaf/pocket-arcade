@@ -45,33 +45,36 @@ export type FittedText = {
 /** Digits sit about this share of the font size above their baseline's centre line. */
 const DIGIT_CENTRE = 0.36;
 
-/**
- * The scale (at most 1) that fits the text's measured glyph width and the font's size into
- * maxShare of the rect. Pure, so it is tested without Skia.
- */
-export function fittedScale(font: SkFont, label: FittedText): number {
+/** The scale (at most 1) that fits a measured width and a font size into maxShare of the rect. */
+function scaleToFit(width: number, size: number, label: FittedText): number {
   const share = label.maxShare ?? 0.8;
-  const width = textWidth(font, label.text);
-  const size = font.getSize();
   const byWidth = width > 0 ? (label.rect.width * share) / width : 1;
   const byHeight = size > 0 ? (label.rect.height * share) / size : 1;
   return Math.max(0, Math.min(1, byWidth, byHeight));
 }
 
 /**
+ * The scale (at most 1) that fits the text's measured glyph width and the font's size into
+ * maxShare of the rect. Pure, so it is tested without Skia.
+ */
+export function fittedScale(font: SkFont, label: FittedText): number {
+  return scaleToFit(textWidth(font, label.text), font.getSize(), label);
+}
+
+/**
  * Draws digits centred in a small shape, shrunk (never grown) so they fill at most maxShare of its
- * width and height: the kit has one number size, and a half-cell monster is smaller than it.
+ * width and height: the kit has one number size, and a half-cell monster is smaller than it. The
+ * text is measured once, for the scale and for the centring.
  */
 export function drawFittedText(canvas: SkCanvas, label: FittedText, style: TextStyle): void {
-  const scale = fittedScale(style.font, label);
+  const width = textWidth(style.font, label.text);
+  const size = style.font.getSize();
+  const scale = scaleToFit(width, size, label);
   if (scale <= 0) return;
   const { rect } = label;
   canvas.save();
-  canvas.translate(
-    rect.x + rect.width / 2,
-    rect.y + rect.height / 2 + style.font.getSize() * scale * DIGIT_CENTRE,
-  );
+  canvas.translate(rect.x + rect.width / 2, rect.y + rect.height / 2 + size * scale * DIGIT_CENTRE);
   canvas.scale(scale, scale);
-  drawCenteredText(canvas, { text: label.text, cx: 0, y: 0 }, style);
+  canvas.drawText(label.text, 0 - width / 2, 0, style.paint, style.font);
   canvas.restore();
 }

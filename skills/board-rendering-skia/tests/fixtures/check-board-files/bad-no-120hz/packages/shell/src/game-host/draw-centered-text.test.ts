@@ -83,6 +83,15 @@ describe('drawFittedText', () => {
     expect(calls[3]).toStrictEqual(['drawText', '9', -4, 0, PAINT, font]);
   });
 
+  it('measures the text once, for both the scale and the centring', () => {
+    const { canvas } = recordingCanvas();
+    const font = stubFont();
+    const getGlyphIDs = jest.spyOn(font, 'getGlyphIDs');
+    const rect = { x: 10, y: 20, width: 40, height: 10 };
+    drawFittedText(canvas, { text: '12', rect }, { font, paint: PAINT });
+    expect(getGlyphIDs).toHaveBeenCalledTimes(1);
+  });
+
   it('draws nothing into an empty rect', () => {
     const { canvas, calls } = recordingCanvas();
     const rect = { x: 0, y: 0, width: 0, height: 0 };
