@@ -18,6 +18,7 @@
     "expo-tracking-transparency": "57.0.2",
     "expo-network": "57.0.2",
     "expo-constants": "57.0.19",
+    "expo-haptics": "57.0.3",
     "expo-iap": "5.8.0",
     "react-native-google-mobile-ads": "17.2.0",
     "react-native-gesture-handler": "2.32.0",

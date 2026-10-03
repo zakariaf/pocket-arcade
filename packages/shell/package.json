@@ -19,6 +19,7 @@
     "@shopify/react-native-skia": "*",
     "expo": "*",
     "expo-constants": "*",
+    "expo-haptics": "*",
     "expo-iap": "*",
     "expo-network": "*",
     "expo-sqlite": "*",
