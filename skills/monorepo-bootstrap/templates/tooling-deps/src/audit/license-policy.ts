@@ -16,17 +16,49 @@ export type LicenseException = { readonly license: string; readonly reason: stri
 
 /**
  * True when an SPDX expression is acceptable: an OR needs one allowed side, an AND needs both.
- * Parentheses are not nested in any npm package we ship, so one level is enough.
+ * AND binds tighter than OR and parentheses group, as SPDX defines; a malformed expression is
+ * never allowed.
  */
 export function isAllowedLicense(expression: string): boolean {
-  const cleaned = expression.replace(/[()]/gu, '').trim();
-  if (cleaned.includes(' OR ')) {
-    return cleaned.split(' OR ').some((part) => isAllowedLicense(part));
+  const tokens = expression.replace(/[()]/gu, ' $& ').trim().split(/\s+/u);
+  let next = 0;
+  const peek = (): string | undefined => tokens[next];
+  const take = (): string | undefined => tokens[next++];
+
+  function parseOr(): boolean | null {
+    let isAllowed = parseAnd();
+    while (isAllowed !== null && peek() === 'OR') {
+      take();
+      const isRightAllowed = parseAnd();
+      isAllowed = isRightAllowed === null ? null : isAllowed || isRightAllowed;
+    }
+    return isAllowed;
   }
-  if (cleaned.includes(' AND ')) {
-    return cleaned.split(' AND ').every((part) => isAllowedLicense(part));
+
+  function parseAnd(): boolean | null {
+    let isAllowed = parseTerm();
+    while (isAllowed !== null && peek() === 'AND') {
+      take();
+      const isRightAllowed = parseTerm();
+      isAllowed = isRightAllowed === null ? null : isAllowed && isRightAllowed;
+    }
+    return isAllowed;
   }
-  return ALLOWED_LICENSES.some((allowed) => allowed === cleaned);
+
+  function parseTerm(): boolean | null {
+    const token = take();
+    if (token === '(') {
+      const isInnerAllowed = parseOr();
+      return take() === ')' ? isInnerAllowed : null;
+    }
+    if (token === undefined || token === ')' || token === 'AND' || token === 'OR') {
+      return null;
+    }
+    return ALLOWED_LICENSES.some((allowed) => allowed === token);
+  }
+
+  const isWhole = parseOr();
+  return isWhole === true && next === tokens.length;
 }
 
 /** Maps a bundled source path to the package root that owns it, or null for our own code. */

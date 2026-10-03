@@ -13,6 +13,21 @@ describe('isAllowedLicense', () => {
   it('requires both sides of an AND expression', () => {
     expect(isAllowedLicense('MIT AND CC-BY-4.0')).toBe(false);
   });
+
+  it('keeps the grouping of parentheses: an AND outside a group binds the whole group', () => {
+    expect(isAllowedLicense('(MIT OR GPL-3.0) AND GPL-2.0')).toBe(false);
+    expect(isAllowedLicense('(MIT OR GPL-3.0) AND ISC')).toBe(true);
+  });
+
+  it('binds AND tighter than OR, as SPDX does', () => {
+    expect(isAllowedLicense('GPL-2.0 AND MIT OR ISC')).toBe(true);
+    expect(isAllowedLicense('MIT OR GPL-2.0 AND GPL-3.0')).toBe(true);
+    expect(isAllowedLicense('GPL-2.0 OR GPL-3.0 AND MIT')).toBe(false);
+  });
+
+  it('rejects an expression with unbalanced parentheses', () => {
+    expect(isAllowedLicense('(MIT OR ISC')).toBe(false);
+  });
 });
 
 describe('packageRootOf', () => {
