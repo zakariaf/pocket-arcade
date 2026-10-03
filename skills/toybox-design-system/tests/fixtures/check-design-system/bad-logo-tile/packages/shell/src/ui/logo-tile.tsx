@@ -1,5 +1,5 @@
 // packages/shell/src/ui/logo-tile.tsx
-import { Canvas, Group, Path } from '@shopify/react-native-skia';
+import { Canvas, Group } from '@shopify/react-native-skia';
 import { StyleSheet, View } from 'react-native';
 
 import { LOGO_TILE } from '@e07/shell/art/draw-logo.ts';
@@ -8,9 +8,10 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { STROKE } from '@e07/shell/theme/tokens.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
+import { picturePath } from './picture-path.tsx';
 import { dieCutRing } from './toybox-styles.ts';
 
-import type { LogoArt, LogoOp } from '@e07/shell/art/logo-art.ts';
+import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { ReactNode } from 'react';
 import type { ViewStyle } from 'react-native';
@@ -67,32 +68,6 @@ function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
   };
 }
 
-/** One paint operation as Skia elements (a plain function, not a component). */
-function logoPath(op: LogoOp, key: string): ReactNode {
-  const path = (
-    <Path
-      key={key}
-      path={op.d}
-      color={op.color}
-      style={op.style}
-      strokeWidth={op.width}
-      strokeCap={op.cap}
-      strokeJoin="round"
-    />
-  );
-  if (op.rotate === undefined) return path;
-  const radians = (op.rotate.deg * Math.PI) / 180;
-  return (
-    <Group
-      key={key}
-      transform={[{ rotate: radians }]}
-      origin={{ x: op.rotate.cx, y: op.rotate.cy }}
-    >
-      {path}
-    </Group>
-  );
-}
-
 /** The game's logo in its accent tile: a Skia canvas (never mirrored), decorative for VoiceOver. */
 export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const theme = useTheme();
@@ -110,7 +85,9 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
       <Canvas style={{ width: artSize, height: artSize }}>
         <Group transform={[{ scale: artSize / LOGO_GRID }]}>
           {/* Layers never reorder, so the draw position is a stable key. */}
-          {ops.map((op, index) => logoPath(op, `${String(index)}-${op.style}`))}
+          {ops.map((op, index) =>
+            picturePath({ ...op, join: 'round' }, `${String(index)}-${op.style}`),
+          )}
         </Group>
       </Canvas>
     </View>
