@@ -11,6 +11,35 @@ import {
 } from './line-siege-level-plan.ts';
 import { LINE_SIEGE_SOLVER, WITNESS_MAX_NODES } from './line-siege-solver.ts';
 
+import type { LineSiegeState } from '@e07/line-siege/rules/line-siege-types.ts';
+
+type WitnessRun = ReturnType<typeof LINE_SIEGE_SOLVER.solve>;
+type SeedOneWitness = { readonly start: LineSiegeState; readonly witness: WitnessRun };
+
+let seedOneWitness: SeedOneWitness | undefined;
+
+/**
+ * Seed 1 at difficulty 0 and the witness's run on it, solved once per file on first use inside an
+ * example, so a broken witness fails examples instead of the file's collection.
+ */
+function seedOne(): SeedOneWitness {
+  if (seedOneWitness === undefined) {
+    const start = create(1, 0);
+    seedOneWitness = { start, witness: LINE_SIEGE_SOLVER.solve(start, WITNESS_MAX_NODES) };
+  }
+  return seedOneWitness;
+}
+
+/** The witness's win on seed 1 and the level candidate it makes; throws when it did not win. */
+function witnessedSeedOne(): {
+  readonly witness: Extract<WitnessRun, { kind: 'solved' }>;
+  readonly candidate: Parameters<typeof LINE_SIEGE_LEVEL_PLAN.rate>[0];
+} {
+  const { start, witness } = seedOne();
+  if (witness.kind !== 'solved') throw new Error('seed 1 is witnessed at difficulty 0');
+  return { witness, candidate: { level: 1, seed: 1, difficulty: 0, start, ...witness } };
+}
+
 const LEVELS = Array.from({ length: 3 * LEVELS_PER_PACK }, (_, index) => index + 1);
 
 describe('difficultyFor', () => {
@@ -38,12 +67,12 @@ describe('scoreThresholds', () => {
 });
 
 describe('LINE_SIEGE_LEVEL_PLAN', () => {
-  const start = create(1, 0);
-  const witness = LINE_SIEGE_SOLVER.solve(start, WITNESS_MAX_NODES);
-  if (witness.kind !== 'solved') throw new Error('seed 1 is witnessed at difficulty 0');
-  const candidate = { level: 1, seed: 1, difficulty: 0, start, ...witness };
+  it('has a witness that wins seed 1 at difficulty 0', () => {
+    expect(seedOne().witness.kind).toBe('solved');
+  });
 
   it("rates a witnessed level by score, from the witness bot's final score", () => {
+    const { witness, candidate } = witnessedSeedOne();
     expect(witness.final.score).toBe(170);
     expect(LINE_SIEGE_LEVEL_PLAN.rate(candidate)).toStrictEqual({
       kind: 'score',
@@ -52,6 +81,7 @@ describe('LINE_SIEGE_LEVEL_PLAN', () => {
   });
 
   it('rejects a level the witness wins too quickly to teach anything', () => {
+    const { candidate } = witnessedSeedOne();
     const par = MIN_WITNESS_PLACEMENTS - 1;
     expect(LINE_SIEGE_LEVEL_PLAN.rate({ ...candidate, par })).toBeNull();
   });
@@ -67,12 +97,8 @@ describe('LINE_SIEGE_LEVEL_PLAN', () => {
 });
 
 describe('LINE_SIEGE_LEVEL_PLAN minimum', () => {
-  const start = create(1, 0);
-  const witness = LINE_SIEGE_SOLVER.solve(start, WITNESS_MAX_NODES);
-  if (witness.kind !== 'solved') throw new Error('seed 1 is witnessed at difficulty 0');
-
   it('accepts a level the witness wins in exactly the minimum number of placements', () => {
-    const candidate = { level: 1, seed: 1, difficulty: 0, start, ...witness };
+    const { candidate } = witnessedSeedOne();
     const rated = LINE_SIEGE_LEVEL_PLAN.rate({ ...candidate, par: MIN_WITNESS_PLACEMENTS });
     expect(rated).toStrictEqual({ kind: 'score', thresholds: [0, 170, 204] });
   });
