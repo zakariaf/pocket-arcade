@@ -1,26 +1,10 @@
 // packages/tooling/src/i18n/verify-catalogs.ts
 // `npm run i18n:verify`: FormatJS parity check + our catalog linter, for the Shell and every game.
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { catalogDirs } from './catalog-dirs.ts';
 import { lintDirectory } from './catalog-lint.ts';
-
-import type { Namespace } from './catalog-lint-rules.ts';
-
-type CatalogDir = { readonly dir: string; readonly namespace: Namespace };
-
-// The game id is the app folder name (apps/<game-id>), which is also the key prefix.
-function catalogDirs(root: string): CatalogDir[] {
-  const apps = join(root, 'apps');
-  const gameIds = existsSync(apps) ? readdirSync(apps) : [];
-  const games = gameIds
-    .map((gameId) => ({ gameId, dir: join(apps, gameId, 'src', 'i18n') }))
-    .filter(({ dir }) => existsSync(dir))
-    .map(({ gameId, dir }) => ({ dir, namespace: { kind: 'game', gameId } as const }));
-  const shellDir = join(root, 'packages', 'shell', 'src', 'i18n', 'catalogs');
-  return [{ dir: shellDir, namespace: { kind: 'shell', gameIds } }, ...games];
-}
 
 // Exits non-zero on a missing/extra key or a placeholder/structure mismatch. Runs the installed
 // binary directly: npx would add about 0.4 s per catalog folder.
