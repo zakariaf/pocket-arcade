@@ -223,7 +223,8 @@ For this epic:
   - `packages/shell/src/ui/logo-tile.test.tsx` (component): the accent tile is painted at its variant size, tilted and hidden from VoiceOver; the sizes match the Toybox sizes for every place the tile appears.
   - `packages/shell/src/ui/empty-stats-picture.test.tsx` and `packages/shell/src/ui/hazard-strip.test.tsx` (component): 190 × 150 proportions and hidden from VoiceOver; the stripes are drawn once the strip knows its width.
   - `packages/shell/src/config/art-config.test.ts` (unit): `withArt` points the icons at the three generated PNGs and appends the splash plugin with light and dark grounds; `withGameArt` uses the grounds `render-art.ts` recorded and leaves a game without generated art unchanged.
-  - The pilot logo is data, and its test is the checker: before the copy, `check-icons-and-logos.mjs .` fails `[logo-missing]`; after it, the `logo-shape` (48 grid, the six roles `p`, `w`, `w0`, `k`, `kl`, `pl`) and `logo-mismatch` (equal to the Toybox Line Siege logo) rules pass.
+  - `apps/line-siege/src/art/logo-art.test.ts` (unit): the logo draws the pop beam on the tower, the white wall and its ink bricks in that order, and no layer is rotated (spec 8.12, N9); red step: a stub `LOGO_ART` with one rotated ink layer. tdd-workflow's `check-test-edits` fails a `feat` commit whose code has no test (`code-without-test`), so the logo data commits with this test.
+  - The checker proves the logo against Toybox: before the copy, `check-icons-and-logos.mjs .` fails `[logo-missing]`; after it, the `logo-shape` (48 grid, the six roles `p`, `w`, `w0`, `k`, `kl`, `pl`) and `logo-mismatch` (equal to the Toybox Line Siege logo) rules pass.
 - **Build:**
   1. Copy from `skills/code-drawn-art-and-icons/templates/packages/shell/src/art/` to `packages/shell/src/art/`: `logo-art.ts`, `draw-logo.ts`, `picture-ops.ts`, `credit-entry.ts`, `credit-rows.ts`, with their unit and golden tests. Not `game-art.ts`: it imports `PaletteSet` from `game-host/board-kit.ts` and lands with the board in E08.
   2. Copy from `templates/packages/shell/src/ui/`: `logo-tile.tsx`, `picture-path.tsx`, `empty-stats-picture.tsx`, `hazard-strip.tsx`, with their tests.
@@ -231,7 +232,7 @@ For this epic:
   4. Copy `templates/packages/tooling/src/art/render-art.ts` to `packages/tooling/src/art/`. Do not run it yet: `expo-splash-screen` must be installed first (E10).
   5. Copy `templates/apps/line-siege/src/art/logo-art.ts` to `apps/line-siege/src/art/logo-art.ts` (the Toybox logo exactly). Read it next to `skills/code-drawn-art-and-icons/assets/reference/logos-design.png`.
   6. `game-host/sprite-cache.ts` with its golden test and `apps/line-siege/src/art/game-art.ts` wait for E08.
-  7. Commits: `feat(shell): add the logo tile and shell pictures`, `feat(shell): add the art config`, `feat(line-siege): add the toybox logo` (bodies: Spec N9, 8.12).
+  7. Commits: `feat(shell): add the logo tile and shell pictures`, `feat(shell): add the art config`, `feat(line-siege): add the toybox logo` (with its test) (bodies: Spec N9, 8.12).
 - **Done when:**
   - `npx tsc --noEmit -p packages/shell`, `npx tsc --noEmit -p packages/tooling` and `npx tsc --noEmit -p apps/line-siege` pass.
   - `npx jest packages/shell/src/art packages/shell/src/ui packages/shell/src/config --ci --selectProjects unit` and `npx jest packages/shell/src/art packages/shell/src/ui --ci --selectProjects golden` pass.

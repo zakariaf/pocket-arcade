@@ -39,6 +39,7 @@ Tests also need the Shell test wrapper: `packages/shell/src/testing/render-with-
 | `use-hold-to-confirm.ts` | `useHoldToConfirm(onConfirm, frozenProgress?)` and `HOLD_TO_CONFIRM_MS` (2000, `ReduceMotion.Never`; `frozenProgress` holds a static fill for the parity capture), tested by `use-hold-to-confirm.test.ts` |
 | `text-metrics.ts` | `lineMetricsOf(family, size)` and `chromeBaseline(family, size, lineHeight)`: where Chrome puts a line's text (rounded hhea ascent and descent of the five Toybox faces), tested by `text-metrics.test.ts` |
 | `use-chrome-baseline.ts` | `useChromeBaseline(variant)`: the design's baseline of a type style in the current language (StatList rows), tested by `use-chrome-baseline.test.tsx` |
+| `../testing/rendered-parts.ts` | `packages/shell/src/testing/rendered-parts.ts`, the test helper the component tests share: `HIDDEN` (query option for parts hidden from VoiceOver), `iconsIn(testID)` (the glyph names drawn inside a part, in order) and `ancestorStyle(testID, isWanted)` (the flattened style of the nearest ancestor that passes a test), tested by `rendered-parts.test.tsx` |
 
 ## The 53 components
 

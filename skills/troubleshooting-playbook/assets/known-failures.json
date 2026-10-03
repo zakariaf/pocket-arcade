@@ -1541,6 +1541,21 @@
       "skill": "unit-and-component-tests"
     },
     {
+      "id": "testing-store-reset-after-each",
+      "area": "testing",
+      "topic": "RNTL",
+      "symptom": "Every run logs 'An update to TestComponent inside a test was not wrapped in act(...)' from a hook or screen test whose afterEach resets a module-level store (a Zustand singleton such as systemA11yStore), although every RNTL call is awaited",
+      "cause": "Jest runs the test file's afterEach before React Testing Library's own cleanup unmounts what the test rendered, so the reset publishes to a still-mounted subscriber outside act()",
+      "fix": "Reset the module-level store in beforeEach instead of afterEach (the next test starts clean and nothing is mounted yet); never wrap the reset in act() or silence the warning. Rerun the file and npm run test:coverage until no act warning is left",
+      "match": [
+        "not wrapped in act\\(",
+        "afterEach.*(reset|setState)"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "unit-and-component-tests"
+    },
+    {
       "id": "testing-router-pathname",
       "area": "testing",
       "topic": "RNTL",
@@ -4379,7 +4394,7 @@
       "topic": "Tests",
       "symptom": "Use toBe when expecting primitive literals (jest/prefer-to-be) in a filled logic.test.ts",
       "cause": "The pinned example returns a number, string or boolean literal, and toStrictEqual is rejected for those",
-      "fix": "Fill the template's __EQUALITY_MATCHER__ with toBe for a primitive and toStrictEqual for an object or array",
+      "fix": "Fill the template's `__EQUALITY_MATCHER__` with toBe for a primitive and toStrictEqual for an object or array",
       "match": [
         "jest/prefer-to-be"
       ],
@@ -4393,7 +4408,7 @@
       "topic": "ESLint config",
       "symptom": "Prettier or ESLint fails on folders that were in the repo before the monorepo (the owner's handbook, design and research folders)",
       "cause": "An older .prettierignore ignored only the docs folder and skills/, and PRE_EXISTING in eslint.config.mjs was left empty",
-      "fix": "Use the current .prettierignore (adds .claude/ and the __PRE_EXISTING__ list) and fill PRE_EXISTING in eslint.config.mjs; check-configs reports ignore-pre-existing",
+      "fix": "Use the current .prettierignore (adds .claude/ and the `__PRE_EXISTING__` list) and fill PRE_EXISTING in eslint.config.mjs; check-configs reports ignore-pre-existing",
       "match": [],
       "status": "verified",
       "owner": false,
@@ -4403,7 +4418,7 @@
       "id": "lint-prettier-filled-template",
       "area": "lint",
       "topic": "TypeScript",
-      "symptom": "prettier --check fails on a template right after its __PLACEHOLDERS__ were filled",
+      "symptom": "prettier --check fails on a template right after its __PLACEHOLDER__ tokens were filled",
       "cause": "Filled values change line lengths, so the wrapping no longer matches Prettier",
       "fix": "Run npx prettier --write on the filled files before lint and commit",
       "match": [],
@@ -5966,7 +5981,7 @@
       "topic": "Purchases",
       "symptom": "The StoreKit harness fails most flows at once (5 of 7), LogBox covers the app, and the perf log lists a blocked websocket or fetch to ws://localhost:<port>/hot or http://localhost:<port>/ in the Debug build",
       "cause": "The test build installs the JS network guard, which blocked the Debug build's own Metro on loopback (the bundle and the HMR websocket); the harness is the only Debug build that runs with the guard",
-      "fix": "Copy e2e-maestro's current packages/shell/src/screens/debug/network-guard.ts (and its test): isDevLoopback lets only a __DEV__ build reach localhost, 127.0.0.1 or [::1]; a Release build still blocks everything. Rebuild the harness and rerun it",
+      "fix": "Copy e2e-maestro's current packages/shell/src/screens/debug/network-guard.ts (and its test): isDevLoopback lets only a `__DEV__` build reach localhost, 127.0.0.1 or [::1]; a Release build still blocks everything. Rebuild the harness and rerun it",
       "match": [
         "ws://localhost:\\d+/hot",
         "blocked (websocket|fetch).*localhost",

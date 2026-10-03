@@ -34,6 +34,11 @@ export const TEXT_PAIRS = [
   ['onPrimary', 'primary', 4.5],
   ['onPop', 'pop', 4.5],
   ['danger', 'surface', 4.5],
+  // Components also draw danger on sunken (a pressed danger row) and on dangerFill (the hold fill,
+  // destructive icon tiles), and body text on dangerFill (the Premium error panel): O5, 4.5:1.
+  ['danger', 'sunken', 4.5],
+  ['danger', 'dangerFill', 4.5],
+  ['text', 'dangerFill', 4.5],
   ['border', 'background', 3],
   ['border', 'surface', 3],
   ['focus', 'background', 3],
@@ -78,8 +83,12 @@ export function schemeProblems(scheme, colors, fields, tokens) {
     }
   }
   if (problems.length > 0) return problems;
+  // dangerFill is a Shell colour of the scheme, not a palette field; without the token file the
+  // dangerFill pairs are left to the app's toybox-palette-checks test.
+  const paint = tokens ? { ...colors, dangerFill: tokens.color.shell[scheme].dangerFill } : colors;
   for (const [fg, bg, min] of TEXT_PAIRS) {
-    const value = contrast(colors[fg], colors[bg]);
+    if (paint[fg] === undefined || paint[bg] === undefined) continue;
+    const value = contrast(paint[fg], paint[bg]);
     if (value < min) problems.push({ rule: 'palette-contrast', message: `${scheme}: ${fg} on ${bg} is ${value.toFixed(2)}:1, needs ${min}:1` });
   }
   for (const [fill, base] of FILLS) {

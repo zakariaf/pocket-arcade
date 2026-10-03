@@ -50,7 +50,7 @@ Level tiles and stars, the three top bars and the banner band, and everything th
 
 **Templates:** `top-bar.tsx` (`TopBar`), `brand-lock.tsx` (`BrandLock`), `game-top-bar.tsx` (`GameTopBar`).
 
-**Top bar** (every second-level screen): min 66 tall, padding 4 / 16 / 8, gap 12, centred vertically: back icon button (48, flips in RTL, label "Back") · title (`topBarTitle` 27 display, flex 1, a header) · optional end action (one icon button, or a sticker such as the S15 "Test build" badge). Parts: `.back-button`, `.title` (`levels.top-bar.back-button`).
+**Top bar** (every second-level screen): min 66 tall, padding 4 / 16 / 8, gap 12, centred vertically: back icon button (48, flips in RTL, label "Back") · title (`topBarTitle` 27 display, flex 1, a header) · optional end action (one icon button, or a sticker such as the S15 "Test build" badge). Parts: `.back-button`, `.title` (`levels.top-bar.back-button`). `onBack` and `backLabel` are one pair in `TopBarProps` (a union): a back key without its translated name does not compile, so VoiceOver never meets an unnamed back button.
 
 *Measurements* (`topBar`): minHeight 66 · gap 12 · back iconButton 48.
 

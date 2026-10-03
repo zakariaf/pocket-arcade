@@ -129,6 +129,7 @@ export const PITFALLS = [
   { id: 'state-countdown-utc', detect: (ctx) => grep(ctx, ['packages/shell/src/screens/**/*.{ts,tsx}'], /%\s*86_?400_?000\b/, 'epoch time modulo a day is UTC midnight, not the player\'s: use useNextDayCountdown()', { tests: false }) },
   // ---- repo holding the skills folder
   { id: 'deps-knip-skills-folder', detect: (ctx) => skillsNotIgnored(ctx, 'knip.json', /["']skills\/\*\*["']/, 'knip.json does not ignore skills/**: knip reads the skill templates and fixtures') },
+  { id: 'testing-store-reset-after-each', detect: (ctx) => grep(ctx, CODE.filter((glob) => !glob.endsWith('index.ts')), /\bafterEach\(\s*(?:async\s*)?\(\)\s*=>\s*(?:\{(?:(?!\}\);)[\s\S])*?)?[\w.]*\.setState\(/, 'resets a store in afterEach, before React Testing Library unmounts: the update reaches a mounted subscriber outside act(); reset it in beforeEach') },
   { id: 'testing-duplicate-manual-mock', detect: (ctx) => skillsNotIgnored(ctx, 'jest.config.js', /\bskills\b/, "jest.config.js does not ignore skills/: Jest indexes the skills' __mocks__ (duplicate manual mock)") },
   { id: 'gates-commit-msg-enobufs', detect: (ctx) => filesMatching(ctx, ['packages/tooling/**/check-commit-message.ts']).filter((rel) => /\bspawnSync\s*\(/.test(ctx.read(rel)) && !/\bmaxBuffer\b/.test(ctx.read(rel))).map((rel) => ({ file: rel, line: 1, message: 'spawnSync without maxBuffer: a commit that stages skills/ fails with ENOBUFS' })) },
 ];

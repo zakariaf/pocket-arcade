@@ -19,3 +19,5 @@ packages/shell/src/app/create-shell-parts.ts:5
 [services-att-prompt]
 packages/shell/src/app/ask-tracking-early.ts:2
 imports expo-tracking-transparency outside the consent adapter
+[testing-store-reset-after-each]
+packages/shell/src/app/use-reduce-motion-setting.test.ts:8

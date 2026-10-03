@@ -74,3 +74,4 @@ e2e:ios: network: the app opened non-loopback sockets (spec N3)
 Assertion is false: ".*save p95 [0-9].*", id: debug.perf-summary is visible
 Assertion is false: id: result.endless-title is visible
 Exception in thread "main" UnknownFailure(errorResponse=Request for viewHierarchy failed, code: 500, body: )
+An update to TestComponent inside a test was not wrapped in act(...).

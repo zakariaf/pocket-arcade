@@ -13,20 +13,29 @@ const BAR = COMPONENT_SPECS.topBar;
 const TOP_PADDING = 4;
 const BOTTOM_PADDING = 8;
 
+/**
+ * The back key and its name come as one pair: a back key without a label would be an unnamed
+ * button for VoiceOver (spec 8.11), so `onBack` without `backLabel` does not compile.
+ */
+type BackKeyProps =
+  | {
+      readonly onBack: () => void;
+      /** Translated "Back". */
+      readonly backLabel: string;
+    }
+  | { readonly onBack?: undefined; readonly backLabel?: undefined };
+
 export type TopBarProps = {
   /** `levels.top-bar`: parts `.back-button` and `.title`. */
   readonly testID: string;
   readonly isReducedMotion: boolean;
   /** Translated screen title (second-level screens). */
   readonly title?: string;
-  readonly onBack?: () => void;
-  /** Translated "Back". */
-  readonly backLabel?: string;
   /** Home only: a slot (the BrandLock) that replaces back and title. */
   readonly start?: ReactNode;
   /** One end action at most: an IconButton or a sticker ("Test build"). */
   readonly end?: ReactNode;
-};
+} & BackKeyProps;
 
 const styles = StyleSheet.create({
   bar: {
@@ -48,7 +57,7 @@ function startSlot(props: TopBarProps): ReactNode {
       {props.onBack === undefined ? null : (
         <IconButton
           icon="back"
-          label={props.backLabel ?? ''}
+          label={props.backLabel}
           onPress={props.onBack}
           testID={`${props.testID}.back-button`}
           isReducedMotion={props.isReducedMotion}

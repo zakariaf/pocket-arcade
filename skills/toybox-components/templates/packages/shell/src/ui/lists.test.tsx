@@ -6,7 +6,9 @@ import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx
 import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { HIDDEN, iconsIn } from '@e07/shell/testing/rendered-parts.ts';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
+import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { AppText } from './app-text.tsx';
 import { Chip } from './chip.tsx';
@@ -24,6 +26,12 @@ import { SubRow } from './sub-row.tsx';
 import type { ReactNode } from 'react';
 
 const COLORS = TEST_PALETTE.standard.light;
+
+// Each icon image carries its glyph name, so a test can tell one icon from another (the root mock
+// gives every icon the same image).
+jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
+  getIconUri: (name: string) => `icon:${name}`,
+}));
 
 /** S11's "Remove ads" row: a strong (Bold, normal ink) label. */
 function StrongRow(): ReactNode {
@@ -109,6 +117,39 @@ describe('ListGroup and ListRow', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
+  it('ends a link row with its chevron and gives a danger row a danger icon tile', async () => {
+    await renderWithShell(
+      <List testID="settings.data-list">
+        <ListRow
+          label="Language"
+          value="System (English)"
+          end="chevron"
+          icon="globe"
+          onPress={jest.fn()}
+          testID="settings.language-row"
+          isFirst
+          isReducedMotion={false}
+        />
+        <ListRow
+          label="Reset all progress"
+          end="chevron"
+          icon="trash"
+          isDanger
+          onPress={jest.fn()}
+          testID="settings.reset-progress-row"
+          isReducedMotion={false}
+        />
+      </List>,
+    );
+
+    expect(iconsIn('settings.language-row')).toStrictEqual(['globe', 'chevron']);
+    expect(iconsIn('settings.reset-progress-row')).toStrictEqual(['trash', 'chevron']);
+    expect(screen.getByTestId('settings.reset-progress-row.icon', HIDDEN)).toHaveStyle({
+      backgroundColor: SHELL_COLORS.light.dangerFill,
+      borderColor: COLORS.danger,
+    });
+  });
+
   it('draws a strong row label in Bold ink at the row line height', async () => {
     await renderWithShell(<StrongRow />);
 
@@ -175,6 +216,25 @@ describe('ListGroup and ListRow', () => {
     );
 
     expect(screen.getByRole('radio', { name: /Deutsch/ })).toBeSelected();
+  });
+
+  it('lets VoiceOver read an autonym row in its own voice on the focused row (spec S11a, N6)', async () => {
+    await renderWithShell(
+      <List testID="settings-language.list">
+        <ListRow
+          label="فارسی"
+          labelLanguage="fa"
+          end="radio"
+          isSelected={false}
+          onPress={jest.fn()}
+          testID="settings-language.language-row.fa"
+          isFirst
+          isReducedMotion={false}
+        />
+      </List>,
+    );
+
+    expect(screen.getByRole('radio', { name: /فارسی/ })).toHaveProp('accessibilityLanguage', 'fa');
   });
 
   it('plays the tap feedback on a button row but leaves a switch row to its handler', async () => {
