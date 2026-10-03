@@ -13,12 +13,17 @@ export const MIN_STEP_MS = 80;
 export const CALIBRATION_TIMEOUT_MS = 20_000;
 
 /**
- * The delay step between kill rounds: the given --step-ms when there is one, else the step that
- * spreads `kills` rounds over KILL_WINDOW_FACTOR x the measured first write (never under 80 ms).
+ * The delay step between kill rounds, the one place that decides it. A given --step-ms wins and
+ * `measureFirstWrite` is never called (no calibration launch). Otherwise it times one launch and
+ * returns the ms to the first save write: the step then spreads `kills` rounds over
+ * KILL_WINDOW_FACTOR x that, never under MIN_STEP_MS. It returns `undefined` when nothing was
+ * measured (a dry run: MIN_STEP_MS) and null when the app never wrote (the step is then null).
  */
-export function killStepMs({ kills, stepMs, firstWriteMs }) {
+export function killStepMs({ kills, stepMs, measureFirstWrite }) {
   if (stepMs !== undefined) return stepMs;
-  if (firstWriteMs === null || firstWriteMs === undefined) return MIN_STEP_MS;
+  const firstWriteMs = measureFirstWrite();
+  if (firstWriteMs === null) return null;
+  if (firstWriteMs === undefined) return MIN_STEP_MS;
   return Math.max(MIN_STEP_MS, Math.ceil((firstWriteMs * KILL_WINDOW_FACTOR) / kills));
 }
 

@@ -121,20 +121,26 @@ async function loadDecoder(repo, gameId) {
   return (record) => codec.decodeSlot(record, gameId);
 }
 
-/** The step to use: --step-ms, or one calibrated from a first launch (null: the app never wrote). */
+/** The step to use (lib/kill-plan.mjs decides): --step-ms, or one calibrated from a first launch (null: the app never wrote). */
 function calibratedStep(udid, bundleId, { kills, givenStepMs, dryRun }, report) {
-  if (givenStepMs !== undefined) return givenStepMs;
-  if (dryRun) {
-    console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over 1.5 x it`);
-    return killStepMs({ kills, stepMs: undefined, firstWriteMs: null });
-  }
-  const firstWriteMs = measureFirstWrite(udid, bundleId);
-  if (firstWriteMs === null) {
+  let firstWriteMs;
+  const stepMs = killStepMs({
+    kills,
+    stepMs: givenStepMs,
+    measureFirstWrite: () => {
+      if (dryRun) {
+        console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over 1.5 x it`);
+        return undefined;
+      }
+      firstWriteMs = measureFirstWrite(udid, bundleId);
+      return firstWriteMs;
+    },
+  });
+  if (stepMs === null) {
     report.problem({ file: bundleId, rule: 'slot-missing', message: `no save write within ${CALIBRATION_TIMEOUT_MS} ms of an undisturbed launch`, fix: 'The app never finished a first write: check boot order (hydrate before the first render) and that save.db opens in WAL mode.' });
     return null;
   }
-  const stepMs = killStepMs({ kills, stepMs: undefined, firstWriteMs });
-  console.log(`calibration: first save write ${firstWriteMs} ms after launch; kill step ${stepMs} ms (rounds up to ${stepMs * kills} ms)`);
+  if (firstWriteMs !== undefined) console.log(`calibration: first save write ${firstWriteMs} ms after launch; kill step ${stepMs} ms (rounds up to ${stepMs * kills} ms)`);
   return stepMs;
 }
 

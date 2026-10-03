@@ -23,11 +23,18 @@ const templates = join(skill, 'templates');
 // A Shell boot stand-in (start-shell.ts, Shell step 7): with it the boot save files are due.
 const support = join(skill, 'tests', 'fixtures', 'support');
 
+function noCalibrationLaunch() {
+  throw new Error('kill-plan: a calibration launch ran although --step-ms was given');
+}
+
 const KILL_PLAN_CASES = [
   // The measured Line Siege start-up: the first write 1,070 ms after launch; 12 rounds reach 1,608.
-  ['calibrated step covers a slow first write', killStepMs({ kills: 12, stepMs: undefined, firstWriteMs: 1070 }), 134],
-  ['a fast start-up keeps the 80 ms floor', killStepMs({ kills: 12, stepMs: undefined, firstWriteMs: 300 }), 80],
-  ['an explicit --step-ms wins', killStepMs({ kills: 12, stepMs: 200, firstWriteMs: 1070 }), 200],
+  ['calibrated step covers a slow first write', killStepMs({ kills: 12, stepMs: undefined, measureFirstWrite: () => 1070 }), 134],
+  ['a fast start-up keeps the 80 ms floor', killStepMs({ kills: 12, stepMs: undefined, measureFirstWrite: () => 300 }), 80],
+  ['an explicit --step-ms wins', killStepMs({ kills: 12, stepMs: 200, measureFirstWrite: () => 1070 }), 200],
+  ['an explicit --step-ms runs no calibration launch', killStepMs({ kills: 12, stepMs: 200, measureFirstWrite: noCalibrationLaunch }), 200],
+  ['an unmeasured first write (dry run) keeps the 80 ms floor', killStepMs({ kills: 12, stepMs: undefined, measureFirstWrite: () => undefined }), 80],
+  ['no first write within the timeout gives no step', killStepMs({ kills: 12, stepMs: undefined, measureFirstWrite: () => null }), null],
   ['an empty WAL is no write', isWriteAfterLaunch({ size: 0, mtimeMs: 2000 }, 1000), false],
   ['a WAL from before the launch is no write', isWriteAfterLaunch({ size: 4096, mtimeMs: 900 }, 1000), false],
   ['a WAL written after the launch is the first write', isWriteAfterLaunch({ size: 4096, mtimeMs: 1500 }, 1000), true],
