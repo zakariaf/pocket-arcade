@@ -7,6 +7,8 @@
 // expo-tracking-transparency plugin's userTrackingPermission (Info.plist, en) and withShell's
 // locales.<lang>.ios.NSUserTrackingUsageDescription (InfoPlist.strings). It has one source: the
 // AdMob plugin's own userTrackingUsageDescription stays unset.
+import { LANGUAGES } from '@e07/shell/i18n/languages.ts';
+
 export type PluginEntry = string | readonly [string, unknown];
 type LocaleEntry = { readonly ios?: Readonly<Record<string, unknown>> };
 export type ExpoConfigLike = {
@@ -21,7 +23,7 @@ export type ExpoConfigLike = {
 };
 
 /** The app languages; each carries the tracking prompt text. */
-export const ATT_LANGUAGES = ['en', 'de', 'fa', 'ckb'] as const;
+export const ATT_LANGUAGES = LANGUAGES;
 const ATT_KEY = 'NSUserTrackingUsageDescription';
 
 const nameOf = (entry: PluginEntry): string => (typeof entry === 'string' ? entry : entry[0]);
