@@ -7,11 +7,10 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 
 import { createReporter, fail, parseArgs, requireDir, requireFile, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
-import { inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
+import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
 
 const SPEC = {
   name: 'inspect-save',
@@ -47,7 +46,7 @@ function simulatorDatabase(udid, bundleId) {
   } catch (error) {
     fail(`xcrun simctl get_app_container failed: ${String(error.message).split('\n')[0]}`, 'Boot the simulator, install the app, and check the UDID and bundle id (xcrun simctl list devices).');
   }
-  const path = join(container, 'Documents', 'SQLite', 'save.db');
+  const path = appSaveDbPath(container);
   if (!existsSync(path)) fail(`no save.db in ${path}`, 'Launch the app once so it writes its first save.');
   return path;
 }

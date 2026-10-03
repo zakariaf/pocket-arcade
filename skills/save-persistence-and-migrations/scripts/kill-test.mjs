@@ -8,12 +8,11 @@
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, statSync } from 'node:fs';
-import { join } from 'node:path';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, killStepMs } from './lib/kill-plan.mjs';
-import { inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
+import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
 
 const SPEC = {
   name: 'kill-test',
@@ -106,7 +105,7 @@ function measureFirstWrite(udid, bundleId) {
   const launchedAtMs = Date.now();
   simctl(['launch', udid, bundleId]);
   const startedMs = Date.now();
-  const wal = join(simctl(['get_app_container', udid, bundleId, 'data']), 'Documents', 'SQLite', 'save.db-wal');
+  const wal = `${appSaveDbPath(simctl(['get_app_container', udid, bundleId, 'data']))}-wal`;
   while (Date.now() - startedMs < CALIBRATION_TIMEOUT_MS) {
     const stat = existsSync(wal) ? statSync(wal) : null;
     if (isWriteAfterLaunch(stat, launchedAtMs)) return Date.now() - startedMs;
@@ -166,7 +165,7 @@ run(async () => {
     }
     simctl(['terminate', udid, options['bundle-id']], { allowFail: true });
     const container = simctl(['get_app_container', udid, options['bundle-id'], 'data']);
-    inspectAppDatabase(DatabaseSync, join(container, 'Documents', 'SQLite', 'save.db'), { gameId: options['game-id'], decode }, report);
+    inspectAppDatabase(DatabaseSync, appSaveDbPath(container), { gameId: options['game-id'], decode }, report);
   } finally {
     // A simulator this run created is always removed, also when a step failed.
     if (options.create && !dryRun) {

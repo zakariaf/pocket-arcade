@@ -15,6 +15,11 @@ export function fnv1a32(text) {
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
+/** The app's save.db inside its simulator data container (expo-sqlite's default folder). */
+export function appSaveDbPath(container) {
+  return join(container, 'Documents', 'SQLite', 'save.db');
+}
+
 export async function openSqlite() {
   try {
     return (await import('node:sqlite')).DatabaseSync;
