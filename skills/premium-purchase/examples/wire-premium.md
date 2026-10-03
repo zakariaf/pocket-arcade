@@ -30,7 +30,12 @@ const premiumDeps: PremiumServiceDeps = {
       (doc) => ({
         ...doc,
         premium: change.isPremium
-          ? { ...doc.premium, owned: true, ownedSinceMs: doc.premium.ownedSinceMs ?? atMs }
+          ? {
+              ...doc.premium,
+              owned: true,
+              ownedSinceMs: doc.premium.ownedSinceMs ?? atMs,
+              revokedAtMs: null, // a purchase clears an old refund date (the save guard reads it)
+            }
           : { ...doc.premium, owned: false, revokedAtMs: change.revokedAtMs },
       }),
       { refreshBackup: true },
@@ -46,7 +51,7 @@ const premiumDeps: PremiumServiceDeps = {
 startPremium(premiumDeps).catch(premiumDeps.onError); // subscribe -> connect -> price -> silent re-check
 ```
 
-`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". It returns `false` when the change did not reach the disk (a full disk, a rejected document, a pending quarantine copy, or a save from a newer app, which is never written), and the purchase then stays unfinished so StoreKit delivers it again. A revoke carries `revokedAtMs`, or the save service's premium guard undoes it.
+`persistPremium` is the only writer of the save's `premium` section: synchronous, with `refreshBackup: true`, and never touched by "Reset all progress". It returns `false` when the change did not reach the disk (a full disk, a rejected document, a pending quarantine copy, or a save from a newer app, which is never written), and the purchase then stays unfinished so StoreKit delivers it again. A revoke carries `revokedAtMs`, or the save service's premium guard undoes it; a purchase clears `revokedAtMs` to `null`, because the guard reads only that date and an old refund date would let a later change without a date turn Premium off.
 
 ## 3. Keep it fresh
 

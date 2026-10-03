@@ -45,8 +45,15 @@ export function persistPremiumIn(
     return save.update(
       (doc) => ({
         ...doc,
+        // A purchase clears an old refund date: the save guard reads revokedAtMs, so a date kept
+        // from an earlier refund would let a later change without one turn Premium off.
         premium: change.isPremium
-          ? { ...doc.premium, owned: true, ownedSinceMs: doc.premium.ownedSinceMs ?? atMs }
+          ? {
+              ...doc.premium,
+              owned: true,
+              ownedSinceMs: doc.premium.ownedSinceMs ?? atMs,
+              revokedAtMs: null,
+            }
           : { ...doc.premium, owned: false, revokedAtMs: change.revokedAtMs },
       }),
       { refreshBackup: true },

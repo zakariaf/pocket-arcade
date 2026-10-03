@@ -55,6 +55,19 @@ describe('createPremiumDeps', () => {
     expect(input.save.doc().premium).toMatchObject({ owned: false, revokedAtMs: 5 });
   });
 
+  // spec 8.9: "Premium is revoked only on an explicit, verified revocation". The save guard reads
+  // revokedAtMs, so a purchase after a refund must clear the old date.
+  it('clears an old refund date when Premium is bought again, so a later change cannot drop it', () => {
+    const input = inputFor();
+    const deps = createPremiumDeps(input);
+    deps.persistPremium({ isPremium: true });
+    deps.persistPremium({ isPremium: false, revokedAtMs: 5 });
+    deps.persistPremium({ isPremium: true });
+    expect(input.save.doc().premium).toMatchObject({ owned: true, revokedAtMs: null });
+    input.save.update((doc) => ({ ...doc, premium: { ...doc.premium, owned: false } }));
+    expect(input.save.doc().premium.owned).toBe(true);
+  });
+
   // spec 8.9: "After a purchase, the Shell stores "Premium = yes" on the phone." A Premium change
   // the disk refused reports false, so the purchase stays unfinished and StoreKit delivers it again.
   it('reports a Premium change the disk refused as not saved, and a landed one as saved', () => {
