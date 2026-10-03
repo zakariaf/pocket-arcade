@@ -16,7 +16,7 @@ import {
   sessionRulesFor,
 } from '@e07/shell/game-host/open-session.ts';
 import { createRunTracker } from '@e07/shell/game-host/run-tracker.ts';
-import { toSavedRun } from '@e07/shell/game-host/saved-run.ts';
+import { writeRun } from '@e07/shell/game-host/run-writer.ts';
 import { createSessionController } from '@e07/shell/game-host/session-controller.ts';
 import {
   coachStepsOf,
@@ -181,8 +181,7 @@ function firstSession<T extends ShellGameTypes>(
   if (open.start === 'new') {
     const session = newSession(game, open.ref, clockSeed(deps.clock, deps.seedOverride));
     if (session !== null) {
-      const run = toSavedRun(session, game.persistence.stateVersion, true);
-      deps.save.update((doc) => ({ ...doc, run }));
+      writeRun({ save: deps.save, persistence: game.persistence }, session, true);
     }
     return session;
   }
@@ -203,8 +202,7 @@ function exampleSession<T extends ShellGameTypes>(
   const outcome = game.engine.outcome(state);
   const status: SessionStatus = outcome.kind === 'playing' ? 'playing' : outcome.kind;
   const session = { ...fresh, state, outcome, status };
-  const run = toSavedRun(session, game.persistence.stateVersion, true);
-  deps.save.update((doc) => ({ ...doc, run }));
+  writeRun({ save: deps.save, persistence: game.persistence }, session, true);
   return session;
 }
 

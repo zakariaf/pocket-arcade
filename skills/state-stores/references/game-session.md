@@ -110,7 +110,7 @@ const store = createGameSessionStore({
 | Run ends (won or lost; for a daily, the first finished attempt) | `run: null` plus level result, statistics, daily result and ad history, in ONE update | yes |
 | Restart level | `run` for the new session | no |
 
-`shouldWriteRun(action, savePolicy, status)` encodes the first rows: `pause` always writes; a `save-points` game writes nothing per move; won and lost sessions are left to the run-end write; `resume` and `add-play-time` alone never write. The run-end write happens before the result screen (S7: "stars and statistics are saved BEFORE this screen appears") and before the result animation.
+Every row but the run end writes through one function, `writeRun({ save, persistence }, session, shouldResumeOnLaunch)` (`run-writer.ts`): the run writer, `writeRunForHome`, a new run, an example run and a loss that still offers its continue. Never write `toSavedRun` into the save by hand. `shouldWriteRun(action, savePolicy, status)` encodes the first rows: `pause` always writes; a `save-points` game writes nothing per move; won and lost sessions are left to the run-end write; `resume` and `add-play-time` alone never write. The run-end write happens before the result screen (S7: "stars and statistics are saved BEFORE this screen appears") and before the result animation.
 
 ## Saved run: write and restore
 
@@ -133,7 +133,7 @@ restoreRun(rules, persistence, saved):
 
 - Property: after any legal move sequence, undoing k moves (within the undo policy) equals the state k moves earlier.
 - Property: replaying the saved log from `create(seed, difficulty)` reproduces the snapshot (`restoreRun(...).hasHistory` is true).
-- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss, restore paused with history, snapshot kept when the replay disagrees, dropped runs, `shouldWriteRun` for every action and policy, `createRunWriter` writes the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
+- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss, restore paused with history, snapshot kept when the replay disagrees, dropped runs, `shouldWriteRun` for every action and policy, `writeRun` and `createRunWriter` write the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
 
 ## Files
 
@@ -143,5 +143,5 @@ restoreRun(rules, persistence, saved):
 | `packages/shell/src/game-host/game-session-reducer.ts` | `startGameSession`, `canUndo`, `gameSessionReducer` |
 | `packages/shell/src/game-host/game-session-store.ts` | `createGameSessionStore`, `useGameSession` |
 | `packages/shell/src/game-host/saved-run.ts` | `toSavedRun`, `restoreRun` |
-| `packages/shell/src/game-host/run-writer.ts` | `shouldWriteRun`, `createRunWriter`, `writeRunForHome` |
+| `packages/shell/src/game-host/run-writer.ts` | `writeRun`, `shouldWriteRun`, `createRunWriter`, `writeRunForHome` |
 | `packages/shell/src/testing/counter-game.ts` | tiny rules and persistence for tests |

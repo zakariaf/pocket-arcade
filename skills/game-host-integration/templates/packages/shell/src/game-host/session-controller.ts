@@ -4,8 +4,7 @@ import { createStore } from 'zustand/vanilla';
 import { createGameSessionStore } from '@e07/shell/game-host/game-session-store.ts';
 import { createPlayClock } from '@e07/shell/game-host/play-clock.ts';
 import { runEndOf, summarizeRun } from '@e07/shell/game-host/run-summary.ts';
-import { createRunWriter, writeRunForHome } from '@e07/shell/game-host/run-writer.ts';
-import { toSavedRun } from '@e07/shell/game-host/saved-run.ts';
+import { createRunWriter, writeRun, writeRunForHome } from '@e07/shell/game-host/run-writer.ts';
 import { sessionViewOf } from '@e07/shell/game-host/session-view-of.ts';
 import { continueStateOf } from '@e07/shell/game-host/session-view.ts';
 import { playUiFeedback } from '@e07/shell/services/audio/ui-feedback.ts';
@@ -129,8 +128,7 @@ function makePersist<TState, TMove, TEvent>(
     }
     if (isContinueOffered(deps, session)) {
       // A loss the player may still rescue: keep the run (resumable, shown lost) until they decide.
-      const run = toSavedRun(session, deps.persistence.stateVersion, true);
-      deps.save.update((doc) => ({ ...doc, run }));
+      writeRun(deps, session, true);
     } else {
       extras.setState({ summary: recordEnd(deps, session), hint: null });
     }

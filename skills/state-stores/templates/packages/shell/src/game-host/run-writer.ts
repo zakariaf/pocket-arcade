@@ -33,6 +33,25 @@ export function shouldWriteRun(
   return TURN_ACTIONS.has(action.type);
 }
 
+/** Where a run is written: the save, and the game's persistence (its state version). */
+export type RunTarget<TState, TMove> = {
+  readonly save: SaveService;
+  readonly persistence: PersistenceSpec<TState, TMove>;
+};
+
+/**
+ * The one writer of the save's `run` section (current slot only): every new, changed, offered or
+ * left run goes through it. shouldResumeOnLaunch false: a relaunch lands on Home, not on the run.
+ */
+export function writeRun<TState, TMove, TEvent>(
+  target: RunTarget<TState, TMove>,
+  session: GameSession<TState, TMove, TEvent>,
+  shouldResumeOnLaunch: boolean,
+): void {
+  const run = toSavedRun(session, target.persistence.stateVersion, shouldResumeOnLaunch);
+  target.save.update((doc) => ({ ...doc, run }));
+}
+
 /** The persist callback for createGameSessionStore: the run is on disk before it animates. */
 export function createRunWriter<TState, TMove, TEvent>(
   save: SaveService,
@@ -40,8 +59,7 @@ export function createRunWriter<TState, TMove, TEvent>(
 ): PersistSession<TState, TMove, TEvent> {
   return (session, action) => {
     if (!shouldWriteRun(action, persistence.savePolicy, session.status)) return;
-    const run = toSavedRun(session, persistence.stateVersion, true);
-    save.update((doc) => ({ ...doc, run }));
+    writeRun({ save, persistence }, session, true);
   };
 }
 
@@ -51,6 +69,5 @@ export function writeRunForHome<TState, TMove, TEvent>(
   persistence: PersistenceSpec<TState, TMove>,
   session: GameSession<TState, TMove, TEvent>,
 ): void {
-  const run = toSavedRun(session, persistence.stateVersion, false);
-  save.update((doc) => ({ ...doc, run }));
+  writeRun({ save, persistence }, session, false);
 }
