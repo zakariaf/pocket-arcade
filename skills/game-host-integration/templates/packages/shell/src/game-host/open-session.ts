@@ -5,6 +5,7 @@ import { restoreRun } from '@e07/shell/game-host/saved-run.ts';
 
 import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
 import type { GameSession, SessionRules } from '@e07/shell/game-host/game-session-types.ts';
+import type { RestoredRun } from '@e07/shell/game-host/saved-run.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
@@ -74,17 +75,40 @@ export function newSession<T extends ShellGameTypes>(
   return startGameSession(sessionRulesFor(game, ref), { ref, ...start });
 }
 
+type Restored<T extends ShellGameTypes> = RestoredRun<T['state'], T['move'], T['event']>;
+
+/**
+ * restoreRun that never throws (spec 8.14, no crash loop): a replay the game refuses (a changed
+ * rule set throws RangeError on a logged move) is logged, and the snapshot, the truth, is restored
+ * again without that log; a run that cannot be restored even then is dropped.
+ */
+function restoreLogged<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  saved: SaveRun,
+  errorLog: ErrorLogPort,
+): Restored<T> {
+  const rules = sessionRulesFor(game, saved.ref);
+  for (const attempt of [saved, { ...saved, log: [] }]) {
+    try {
+      return restoreRun(rules, game.persistence, attempt);
+    } catch (error) {
+      errorLog.record('save', error);
+    }
+  }
+  return { kind: 'dropped', reason: 'state-invalid' };
+}
+
 /**
  * The saved run, validated by the game's own parsers and replayed for its undo history. A run
  * the game cannot read is dropped alone (spec 8.6, S14); a replay that does not reproduce the
- * snapshot keeps the position, drops the undo history and is written to the error log.
+ * snapshot, or throws, keeps the position, drops the undo history and is written to the error log.
  */
 export function resumeSession<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
   saved: SaveRun,
   errorLog: ErrorLogPort,
 ): Session<T> | null {
-  const restored = restoreRun(sessionRulesFor(game, saved.ref), game.persistence, saved);
+  const restored = restoreLogged(game, saved, errorLog);
   if (restored.kind === 'dropped') {
     errorLog.record('save', new Error(`saved run dropped: ${restored.reason}`));
     return null;

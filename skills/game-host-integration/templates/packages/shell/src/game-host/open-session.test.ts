@@ -105,4 +105,55 @@ describe('resumeSession', () => {
       'saved run replay differs from its snapshot; undo history dropped',
     ]);
   });
+
+  it('keeps the position when the replay throws, never crashing the boot (spec 8.14, N10)', () => {
+    // spec 8.14: "recovers where possible ... never a crash loop": a changed rule set refuses a
+    // logged move (RangeError); the snapshot is the truth, so only the undo history goes.
+    const refusing: typeof TALLY_GAME = {
+      ...TALLY_GAME,
+      engine: {
+        ...TALLY_GAME.engine,
+        applyMove: () => {
+          throw new RangeError('illegal move');
+        },
+      },
+    };
+    const session = newSession(refusing, ref, SEED);
+    if (session === null) throw new Error('no session');
+    const log = errorLog();
+    const saved = {
+      ...toSavedRun(session, 1, true),
+      state: { count: 1, target: 4 },
+      log: [{ kind: 'move', move: { kind: 'add', amount: 1 } }] as const,
+    };
+    let resumed: ReturnType<typeof resumeSession> = null;
+    expect(() => {
+      resumed = resumeSession(refusing, saved, log.port);
+    }).not.toThrow();
+    expect(resumed).toMatchObject({ state: { count: 1, target: 4 }, past: [], log: [] });
+    expect(log.recorded).toStrictEqual([
+      'illegal move',
+      'saved run replay differs from its snapshot; undo history dropped',
+    ]);
+  });
+  it('drops the run alone when even its snapshot cannot be restored, never throwing', () => {
+    const session = newSession(TALLY_GAME, ref, SEED);
+    if (session === null) throw new Error('no session');
+    const broken: typeof TALLY_GAME = {
+      ...TALLY_GAME,
+      engine: {
+        ...TALLY_GAME.engine,
+        create: () => {
+          throw new RangeError('unknown seed');
+        },
+      },
+    };
+    const log = errorLog();
+    expect(resumeSession(broken, toSavedRun(session, 1, true), log.port)).toBeNull();
+    expect(log.recorded).toStrictEqual([
+      'unknown seed',
+      'unknown seed',
+      'saved run dropped: state-invalid',
+    ]);
+  });
 });

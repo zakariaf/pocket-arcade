@@ -364,6 +364,13 @@ const RESUME_WIRING = [
     fix: 'const session = resumeSession(game, saved, deps.errorLog); if (session === null) deps.save.update((doc) => ({ ...doc, run: null })).',
   },
   {
+    fn: 'restoreLogged',
+    pattern: /try\s*\{\s*return\s+restoreRun\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*errorLog\.record\s*\(/,
+    rule: 'saved-run-validated',
+    message: 'a saved run whose replay throws (a changed rule set refusing a logged move) crashes every boot: restoreRun is not guarded',
+    fix: 'restoreLogged: try restoreRun(rules, game.persistence, attempt) for the saved run, then for { ...saved, log: [] }, recording each error; drop the run only when both throw (spec 8.14, never a crash loop).',
+  },
+  {
     fn: 'createResumer',
     pattern: /doc\(\)\.run\s*===/,
     rule: 'saved-run-validated',
