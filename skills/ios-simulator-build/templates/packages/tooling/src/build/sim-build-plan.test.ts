@@ -262,6 +262,19 @@ describe('readyReason', () => {
     );
   });
 
+  it("ignores a cold-start entry an earlier run wrote before this launch, and a feedback entry's label", () => {
+    // A rebuilt test app keeps its data container: the last run's entry is still in the log.
+    const old = '[{"kind":"cold-start","label":"home","atEpochMs":1000,"data":{}}]';
+    const since = { launchedAtEpochMs: 2000, screenUnchanged: true };
+    expect(readyReason({ attempt: 1, perfLog: old, ...since })).toBeNull();
+    expect(readyReason({ attempt: 16, perfLog: old, ...since })).toBe('stable-screen');
+    const fresh = '[{"kind":"cold-start","label":"home","atEpochMs":2500,"data":{}}]';
+    expect(readyReason({ attempt: 1, perfLog: fresh, ...since })).toBe('perf-log');
+    const feedback = '[{"kind":"feedback","label":"cold-start","atEpochMs":2500,"data":{}}]';
+    expect(readyReason({ attempt: 1, perfLog: feedback, ...since })).toBeNull();
+    expect(readyReason({ attempt: 1, perfLog: 'not json', ...since })).toBeNull();
+  });
+
   it('falls back to a stable screen after 3 s when there is no perf log', () => {
     expect(readyReason({ attempt: 2, perfLog: null, screenUnchanged: true })).toBeNull();
     expect(readyReason({ attempt: 6, perfLog: null, screenUnchanged: true })).toBe('stable-screen');

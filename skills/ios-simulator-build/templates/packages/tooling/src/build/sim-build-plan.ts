@@ -286,12 +286,33 @@ export function moduleCachePathIn(pcmText: string, game: string): string | null 
   return pattern.exec(pcmText)?.[0] ?? null;
 }
 
-/** Test builds write a cold-start entry to the perf log once Home is interactive. */
-export function isColdStartLogged(perfLogPayload: string): boolean {
-  return perfLogPayload.includes('cold-start');
+/**
+ * Test builds write a cold-start entry to the perf log once Home is interactive. The log lives in
+ * the data container, which survives a reinstall: with this launch's time, only an entry written
+ * at or after it counts (an earlier run's entry would declare a black screen ready). A payload
+ * that is not a JSON array of entries counts as no entry.
+ */
+export function isColdStartLogged(perfLogPayload: string, sinceEpochMs?: number): boolean {
+  let entries: unknown;
+  try {
+    entries = JSON.parse(perfLogPayload);
+  } catch {
+    return false;
+  }
+  return Array.isArray(entries) && entries.some((entry) => isColdStartSince(entry, sinceEpochMs));
 }
 
-export type ReadyProbe = {
+function isColdStartSince(entry: unknown, sinceEpochMs: number | undefined): boolean {
+  if (typeof entry !== 'object' || entry === null) return false;
+  const { kind, atEpochMs } = entry as { readonly kind?: unknown; readonly atEpochMs?: unknown };
+  if (kind !== 'cold-start') return false;
+  return sinceEpochMs === undefined || (typeof atEpochMs === 'number' && atEpochMs >= sinceEpochMs);
+}
+
+/** When this run launched the app (taken before the install): only later entries count. */
+export type ReadyProbeSince = { readonly launchedAtEpochMs?: number };
+
+export type ReadyProbe = ReadyProbeSince & {
   readonly attempt: number;
   readonly perfLog: string | null;
   readonly screenUnchanged: boolean;
@@ -308,12 +329,12 @@ const MIN_ATTEMPTS_FOR_STABLE_SCREEN = 6;
 const MIN_ATTEMPTS_WITHOUT_COLD_START = 16;
 
 /**
- * Ready when the perf log has Home's cold-start entry; otherwise when two screenshots in a row are
- * identical at least 3 s after launch (no perf log: store builds, early Shells) or 8 s after launch
- * (a perf log without the entry: the first screen is not Home).
+ * Ready when the perf log has Home's cold-start entry from this launch; otherwise when two
+ * screenshots in a row are identical at least 3 s after launch (no perf log: store builds, early
+ * Shells) or 8 s after launch (a perf log without that entry: the first screen is not Home).
  */
 export function readyReason(probe: ReadyProbe): 'perf-log' | 'stable-screen' | null {
-  if (probe.perfLog !== null && isColdStartLogged(probe.perfLog)) {
+  if (probe.perfLog !== null && isColdStartLogged(probe.perfLog, probe.launchedAtEpochMs)) {
     return 'perf-log';
   }
   const minAttempts =

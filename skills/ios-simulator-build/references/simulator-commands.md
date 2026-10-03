@@ -110,9 +110,9 @@ Never a fixed `sleep`: builds and Macs vary. The script polls every 500 ms for a
    sqlite3 "$DATA/Documents/SQLite/save.db" "SELECT payload FROM perf_log WHERE id = 1"
    ```
 
-   Ready when the payload contains `cold-start`.
+   Ready when the payload (a JSON array of perf entries) holds an entry with `kind` `cold-start` whose `atEpochMs` is at or after this run's launch time. The script takes that time (`nowEpochSeconds() * 1000`, from the one tooling clock module) right before `installAndLaunch` and passes it in every probe (`ReadyProbe.launchedAtEpochMs`). The data container, and so the perf log, survives a reinstall: an entry an earlier run wrote would otherwise declare a black or crashed launch ready on the first poll. A payload that is not JSON, or a `cold-start` text in another entry's label, never counts.
 2. **No perf log** (store builds never have one, and early Shells may not write it yet): ready when two screenshots in a row are byte-identical, and at least 3 s have passed since launch. Screenshots of the same screen are pixel-identical (verified, even across a reboot), so identical bytes mean the screen has settled.
-3. **A perf log without the entry**: a test build makes its perf log at every launch (`createDebugParts`), but only Home marks the cold start, and a fresh install opens the first-run screens (seen 2026-09-30: the first build with the perf layer timed out on the language choice). Ready on the same still-screen rule after at least 8 s.
+3. **A perf log without an entry from this launch** (none at all, or only older ones): a test build makes its perf log at every launch (`createDebugParts`), but only Home marks the cold start, and a fresh install opens the first-run screens (seen 2026-09-30: the first build with the perf layer timed out on the language choice). Ready on the same still-screen rule after at least 8 s. `--link`'s second screenshot reads no perf log (`perfLog: () => null`): the launch's entry is already there, so only a still screen counts.
 
 App code cannot log to the console (lint bans it outside tooling), which is why the ready signal is data, not a log line. If the app is not ready after 30 s, the run fails and names the last screenshot: look at it.
 
