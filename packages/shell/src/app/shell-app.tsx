@@ -2,6 +2,7 @@
 import { useState } from 'react';
 
 import { CrashScreen } from '@e07/shell/app/crash-screen.tsx';
+import { leaveRunAfterCrash } from '@e07/shell/app/leave-run-after-crash.ts';
 import { LocalizedRoot } from '@e07/shell/app/localized-root.tsx';
 import { ServicesProvider } from '@e07/shell/app/services-context.tsx';
 import { ShellFeatures } from '@e07/shell/app/shell-features.tsx';
@@ -54,7 +55,8 @@ export type ShellAppProps = { readonly parts: ShellParts };
  */
 export function ShellApp({ parts }: ShellAppProps): ReactNode {
   const { hydrated, host, services } = parts;
-  // After the crash dialog's "Back to Home" the navigator restarts at Home, never in the run.
+  // After the crash dialog's "Back to Home" the navigator restarts at Home, never in the run, and
+  // the saved run no longer resumes on launch, so a relaunch cannot reopen it (spec 8.14).
   const [hasCrashed, setHasCrashed] = useState(false);
   useCheckpointOnBackground(hydrated.save);
   useAudioLifecycle({
@@ -67,6 +69,7 @@ export function ShellApp({ parts }: ShellAppProps): ReactNode {
   const renderCrash = (reset: () => void): ReactNode => (
     <CrashScreen
       onGoHome={() => {
+        leaveRunAfterCrash(hydrated.save);
         setHasCrashed(true);
         reset();
       }}
