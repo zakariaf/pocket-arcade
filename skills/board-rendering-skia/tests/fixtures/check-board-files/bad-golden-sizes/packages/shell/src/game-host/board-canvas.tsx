@@ -44,6 +44,9 @@ export function BoardCanvas<TState, TView, TToken extends string>(
   props: BoardCanvasProps<TState, TView, TToken>,
 ): React.JSX.Element {
   const { board, clock, colors, kit, highlight, onDrawError } = props;
+  // The worklets below capture only the two worklet functions they call, not the whole board
+  // (whose describe, toView, targetsOfMove and buildPaths would be copied to the UI runtime).
+  const { layout: layoutBoard, draw } = board;
   // One recorder per canvas, reused every frame; created in render, never at import time.
   const [recorder] = useState(() => Skia.PictureRecorder());
   const isMirrored = props.isRtl && board.isMirroredInRtl;
@@ -53,7 +56,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
     const { width, height } = size.get();
     return width === 0
       ? EMPTY_LAYOUT
-      : board.layout({ width, height, view: clock.scene.get().view, isMirrored });
+      : layoutBoard({ width, height, view: clock.scene.get().view, isMirrored });
   });
   const { gesture, pointer } = useBoardGestures(layout, {
     panMode: props.panMode,
@@ -75,7 +78,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
       highlight,
       colors,
       kit,
-      draw: board.draw,
+      draw,
       onError: reportDrawError,
     }),
   );
