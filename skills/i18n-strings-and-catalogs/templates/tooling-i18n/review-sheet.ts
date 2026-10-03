@@ -144,7 +144,8 @@ function readJson(path: string): unknown {
 function readCatalogs(root: string): { readonly catalogs: Catalogs; readonly gameIds: string[] } {
   if (!existsSync(join(root, SHELL_CATALOGS, 'en.json')))
     throw new Error(`review-sheet: no Shell catalogs in ${SHELL_CATALOGS}`);
-  const dirs = catalogDirs(root);
+  // A game folder joins once its English catalog exists; a new game's empty folder waits.
+  const dirs = catalogDirs(root).filter(({ dir }) => existsSync(join(dir, 'en.json')));
   const gameIds = dirs.flatMap(({ namespace }) =>
     namespace.kind === 'game' ? [namespace.gameId] : [],
   );
