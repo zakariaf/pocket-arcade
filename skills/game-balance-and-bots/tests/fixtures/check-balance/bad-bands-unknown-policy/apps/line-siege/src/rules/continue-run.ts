@@ -18,10 +18,8 @@ export function fullestRows(cells: readonly Cell[], count: number): number[] {
   const filled = (row: number): number =>
     cells.slice(row * SIZE, (row + 1) * SIZE).filter((cell) => cell === 1).length;
   const rows = Array.from({ length: SIZE }, (_, row) => row);
-  const ranked = [...rows].sort((a, b) => {
-    const byFill = filled(b) - filled(a);
-    return byFill === 0 ? a - b : byFill;
-  });
+  // Array.prototype.sort is stable, so on a tie the lower row (listed first) stays first.
+  const ranked = [...rows].sort((a, b) => filled(b) - filled(a));
   return ranked.slice(0, count).sort((a, b) => a - b);
 }
 
