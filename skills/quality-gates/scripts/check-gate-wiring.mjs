@@ -26,7 +26,8 @@ const SPEC = {
     '  gate-file-missing       a gate file or a tooling file this skill ships is missing',
     '  script-target           a canonical npm script runs a file that does not exist. A target a later Shell',
     '                          build step creates prints a not-yet-due SKIP instead (dueSkipReason): i18n:verify',
-    '                          (step 6), audit:network, audit:privacy and build:ios:sim (step 8), e2e:ios and',
+    '                          (step 6, SHELL_DUE_TARGETS.catalogLinter), audit:network, audit:privacy and',
+    '                          build:ios:sim (step 8), e2e:ios and',
     '                          screenshots:ios (step 10, SHELL_DUE_TARGETS.e2e), release:ios (step 11,',
     '                          SHELL_DUE_TARGETS.release); every other target (verify, audit:licenses, new-game)',
     '                          exists from Shell step 1 and is a problem when missing',
@@ -83,7 +84,7 @@ const GATE_FILES = ['package.json', 'lefthook.yml', 'quality-gates.json', '.clau
  * canonical script is written at Shell step 1 and must exist.
  */
 const DUE_SCRIPT_TARGETS = [
-  { target: { file: 'packages/tooling/src/i18n/verify-catalogs.ts', step: 6 }, owner: 'i18n-strings-and-catalogs' },
+  { target: SHELL_DUE_TARGETS.catalogLinter, owner: 'i18n-strings-and-catalogs' },
   { target: { file: 'packages/tooling/src/audit/audit-network.ts', step: 8 }, owner: 'privacy-and-network-audit' },
   { target: { file: 'packages/tooling/src/audit/audit-privacy.ts', step: 8 }, owner: 'privacy-and-network-audit' },
   { target: { file: 'packages/tooling/src/build/build-ios-sim.ts', step: 8 }, owner: 'ios-simulator-build' },

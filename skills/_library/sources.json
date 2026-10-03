@@ -12741,7 +12741,7 @@
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           },
           {
             "path": "skills/_library/check-staleness.mjs",
@@ -12758,7 +12758,7 @@
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           },
           {
             "path": "skills/_library/validate-skills.mjs",
@@ -12775,7 +12775,7 @@
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           }
         ]
       },
@@ -12788,7 +12788,7 @@
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           }
         ]
       },
@@ -12797,7 +12797,7 @@
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           },
           {
             "path": "skills/_library/check-staleness.mjs",
@@ -12834,11 +12834,19 @@
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "3b61daedbecffaeceb3ccbe32528a97d9c07a491d15b38c4c11b3a101f75df95"
+            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
           },
           {
             "path": "skills/_library/shared/scripts/check-lib.mjs",
-            "sha256": "a8d8228a48e6d95b6158a8e20e36500d24342213cfad864fb1c1bcc2af1e01d8"
+            "sha256": "5ed696bb748474e95ac74b765ca99218c3b43e5f1cb0f4a32ca4c08642d75d6d"
+          },
+          {
+            "path": "skills/_library/skill-template/SKILL.md",
+            "sha256": "d8c712b963f654f235bc0ee5b964ea8c44ee90923bc139565aeb440962a287e3"
+          },
+          {
+            "path": "skills/_library/validate-skills.mjs",
+            "sha256": "d6c712d7792a117f4c90b78e726e934472da0769dc4ac647add1f3f5bde3b1da"
           }
         ]
       },

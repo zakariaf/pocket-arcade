@@ -150,7 +150,9 @@ test('check-lib: dueSkipReason and SHELL_DUE_TARGETS', () => {
   try {
     assert.ok(Object.isFrozen(SHELL_DUE_TARGETS) && Object.values(SHELL_DUE_TARGETS).every(Object.isFrozen));
     assert.deepEqual(SHELL_DUE_TARGETS.plugins, { file: 'packages/shell/src/config/shell-plugins.ts', step: 8 });
-    assert.deepEqual(SHELL_DUE_TARGETS.catalogs, { file: 'packages/shell/src/i18n/catalogs/en.json', step: 6 });
+    // The catalog linter behind npm run i18n:verify (Shell step 6): once it exists the Shell's four catalogs
+    // are due, so a missing catalog is a problem rather than the trigger that skips its own check.
+    assert.deepEqual(SHELL_DUE_TARGETS.catalogLinter, { file: 'packages/tooling/src/i18n/verify-catalogs.ts', step: 6 });
     // start-shell.ts lands at Shell step 7 with the composition root (it imports createShellApp and the
     // startup splash), together with the two save boot files, the splash and the JS half of app/perf/.
     assert.deepEqual(SHELL_DUE_TARGETS.boot, { file: 'packages/shell/src/app/start-shell.ts', step: 7 });
@@ -158,7 +160,7 @@ test('check-lib: dueSkipReason and SHELL_DUE_TARGETS', () => {
     // release pipeline (step 11), so e2e:ios and release:ios SKIP until their step and are strict after it.
     assert.deepEqual(SHELL_DUE_TARGETS.e2e, { file: 'packages/tooling/src/e2e/run-e2e-ios.ts', step: 10 });
     assert.deepEqual(SHELL_DUE_TARGETS.release, { file: 'packages/tooling/src/release/release-ios.ts', step: 11 });
-    assert.deepEqual(Object.keys(SHELL_DUE_TARGETS).sort(), ['boot', 'catalogs', 'e2e', 'plugins', 'release']);
+    assert.deepEqual(Object.keys(SHELL_DUE_TARGETS).sort(), ['boot', 'catalogLinter', 'e2e', 'plugins', 'release']);
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.e2e), 'due at Shell step 10: packages/tooling/src/e2e/run-e2e-ios.ts not yet created');
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.release), 'due at Shell step 11: packages/tooling/src/release/release-ios.ts not yet created');
     // Missing: the rule is not yet due, with the step and the file in the reason.
@@ -168,7 +170,7 @@ test('check-lib: dueSkipReason and SHELL_DUE_TARGETS', () => {
     // Present: the rule is strict from now on.
     write(join(dir, 'packages', 'shell', 'src', 'config', 'shell-plugins.ts'), 'export const SHELL_PLUGINS = [];\n');
     assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.plugins), null);
-    assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.catalogs), 'due at Shell step 6: packages/shell/src/i18n/catalogs/en.json not yet created');
+    assert.equal(dueSkipReason(dir, SHELL_DUE_TARGETS.catalogLinter), 'due at Shell step 6: packages/tooling/src/i18n/verify-catalogs.ts not yet created');
     // A folder at the path counts as created (a mirrored folder target).
     mkdirSync(join(dir, 'packages', 'shell', 'src', 'app', 'perf'), { recursive: true });
     assert.equal(dueSkipReason(dir, { file: 'packages/shell/src/app/perf', step: 8 }), null);

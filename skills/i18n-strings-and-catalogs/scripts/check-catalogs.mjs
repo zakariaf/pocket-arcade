@@ -57,16 +57,14 @@ const SPEC = {
 // Shell step 6 copies the project linter behind npm run i18n:verify, which reads the Shell
 // catalogs, and then generates them from the copy deck. Once the linter exists the four Shell
 // catalogs are due (a missing one is F1); before it, a Shell without them prints a not-yet-due SKIP.
-const VERIFY_CATALOGS = 'packages/tooling/src/i18n/verify-catalogs.ts';
-
 function discover(root) {
   const dirs = [];
-  let shellSkip = null;
   const appsDir = join(root, 'apps');
   const gameIds = existsSync(appsDir) ? readdirSync(appsDir).filter((id) => statSync(join(appsDir, id)).isDirectory()).sort() : [];
   const shellDir = join(root, 'packages', 'shell', 'src', 'i18n', 'catalogs');
-  if (existsSync(shellDir) || existsSync(join(root, VERIFY_CATALOGS))) dirs.push({ dir: shellDir, namespace: { kind: 'shell', gameIds } });
-  else if (existsSync(join(root, 'packages', 'shell'))) shellSkip = dueSkipReason(root, SHELL_DUE_TARGETS.catalogs);
+  const linterDue = dueSkipReason(root, SHELL_DUE_TARGETS.catalogLinter);
+  if (existsSync(shellDir) || linterDue === null) dirs.push({ dir: shellDir, namespace: { kind: 'shell', gameIds } });
+  const shellSkip = dirs.length === 0 && existsSync(join(root, 'packages', 'shell')) ? linterDue : null;
   for (const gameId of gameIds) {
     const dir = join(appsDir, gameId, 'src', 'i18n');
     if (existsSync(dir) && readdirSync(dir).some((f) => f.endsWith('.json'))) dirs.push({ dir, namespace: { kind: 'game', gameId } });
@@ -89,21 +87,18 @@ run(async () => {
   const rootArg = options.root ?? (positionals.length === 1 && isRepoRoot(positionals[0]) ? positionals[0] : '.');
   const folders = rootArg === positionals[0] && options.root === undefined ? [] : positionals;
   const root = resolve(rootArg);
-  const { dirs: targets, shellSkip } = folders.length > 0
-    ? {
-        dirs: folders.map((dir) => {
-          if (!existsSync(dir) || !statSync(dir).isDirectory()) fail(`nothing to check: catalog folder ${dir} does not exist`, 'Pass a folder that holds en.json, de.json, fa.json and ckb.json.');
-          return { dir: resolve(dir), namespace: namespaceFor(dir, root) };
-        }),
-        shellSkip: null,
-      }
-    : discover(root);
+  const discovered = folders.length > 0 ? null : discover(root);
+  const targets = discovered?.dirs ?? folders.map((dir) => {
+    if (!existsSync(dir) || !statSync(dir).isDirectory()) fail(`nothing to check: catalog folder ${dir} does not exist`, 'Pass a folder that holds en.json, de.json, fa.json and ckb.json.');
+    return { dir: resolve(dir), namespace: namespaceFor(dir, root) };
+  });
+  const shellSkip = discovered?.shellSkip ?? null;
   if (targets.length === 0) {
     fail(`nothing to check: no catalogs under ${rootArg} (looked for packages/shell/src/i18n/catalogs and apps/*/src/i18n)`, 'Run from the app repo root, or pass the repo root or a catalog folder.');
   }
   const report = createReporter({ name: 'check-catalogs', json: options.json });
   const shown = (file) => toPosix(relative(process.cwd(), file)) || basename(file);
-  if (shellSkip !== null) report.skip({ file: shown(join(root, SHELL_DUE_TARGETS.catalogs.file)), rule: ruleLabel('F1'), message: shellSkip });
+  if (shellSkip !== null) report.skip({ file: shown(join(root, SHELL_DUE_TARGETS.catalogLinter.file)), rule: ruleLabel('F1'), message: shellSkip });
   let checked = 0;
   for (const { dir, namespace } of targets) {
     const catalogs = {};
