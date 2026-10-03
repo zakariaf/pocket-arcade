@@ -160,7 +160,7 @@ The host files come in two stages. The **pure/golden stage** compiles with game-
 |---|---|---|
 | `board-types.ts`, `board-kit.ts`, `board-scene.ts`, `describe-error.ts`, `present-move.ts`, `cue-scheduler.ts`, `use-game-lifecycle.ts`, `draw-centered-text.ts`, `record-board.ts`, `run-board-frame.ts` | pure/golden | each has a unit test (`*.test.ts`) |
 | `paint-board-png.ts` | pure/golden | `device-only` marker: covered by the pixel goldens |
-| `use-board-clock.ts` | pure/golden | `device-only` marker: covered by the simulator kill test and the e2e level flow |
+| `use-board-clock.ts` | pure/golden | `device-only` marker: the hook is covered by the simulator kill test and the e2e level flow; its JS driver (`createClockDriver`) has a unit test (`use-board-clock.test.ts`) |
 | `game-board-host.tsx`, `board-canvas.tsx`, `board-layout-probe.tsx` | Shell (S5) | each has a render test through `renderWithShell` |
 | `packages/shell/src/app/use-is-app-active.ts` | pure/golden | its unit test |
 
