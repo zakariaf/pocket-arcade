@@ -71,3 +71,30 @@ describe('progressReducer', () => {
     );
   });
 });
+
+// spec 8.4 (best results kept) and 8.5 ("Hint budget: 1 free hint per day").
+describe('progressReducer boundaries', () => {
+  it('keeps three stars when a later win earns fewer', () => {
+    const best = { ...WIN, stars: 3 } as const;
+    const progress = recordLevelResult(recordLevelResult(START.progress, best), WIN);
+    expect(progress.levels['3']?.stars).toBe(3);
+  });
+
+  it('changes nothing for an endless score equal to the best', () => {
+    const best = progressReducer(START, { type: 'record-endless-score', score: 500 });
+    expect(progressReducer(best, { type: 'record-endless-score', score: 500 })).toBe(best);
+  });
+
+  it('counts every free hint of the same day up to the allowance', () => {
+    const use = { type: 'use-free-hint', today: '2026-09-26', freePerDay: 2 } as const;
+    const twice = progressReducer(progressReducer(START, use), use);
+    expect(twice.hints).toStrictEqual({ freeDate: '2026-09-26', freeUsed: 2 });
+    expect(progressReducer(twice, use)).toBe(twice);
+  });
+
+  it('spends no hint when more were used than the allowance gives', () => {
+    const over = { ...START, hints: { freeDate: '2026-09-26', freeUsed: 3 } };
+    const use = { type: 'use-free-hint', today: '2026-09-26', freePerDay: 1 } as const;
+    expect(progressReducer(over, use)).toBe(over);
+  });
+});

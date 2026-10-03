@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { bareVersion, declared, excludePattern, installed, isAllowedLicense, loadPolicy, readRepo, todayUtc } from './lib/policy.mjs';
+import { NPMRC_POLICY, bareVersion, declared, excludePattern, installed, isAllowedLicense, loadPolicy, readRepo } from './lib/policy.mjs';
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 
 const SPEC = {
@@ -21,7 +21,8 @@ const SPEC = {
     remove: { type: 'boolean', help: 'Plan the removal of the package instead' },
     online: { type: 'boolean', help: 'Run npm view for the publish date, licence and scripts (network)' },
     'npm-view': { type: 'string', value: 'file', help: 'Use a saved `npm view <pkg>@<v> version time license scripts --json` output instead of the network' },
-    today: { type: 'string', value: 'YYYY-MM-DD', help: 'Date for the 7-day age check (default: today, UTC)' },
+    now: { type: 'string', value: 'ISO time', help: 'Moment of the release-age check, as npm measures it (default: the current time)' },
+    today: { type: 'string', value: 'YYYY-MM-DD', help: 'Only names the day for the dated excludes (default: the UTC day of --now); never moves the age check' },
   },
   positionals: { min: 1, max: 1 },
   details: [
@@ -36,6 +37,9 @@ const SPEC = {
 };
 
 const DAY_MS = 86_400_000;
+const MINUTE_MS = 60_000;
+/** The .npmrc min-release-age (days) this plan checks against: the policy's own value. */
+const RELEASE_AGE_DAYS = Number(NPMRC_POLICY['min-release-age']);
 const REGEX_SPECIAL = /[.+?^${}()|[\]\\/]/g;
 
 function parseRequest(text) {
@@ -77,16 +81,22 @@ function activeExcludes(npmrc, today) {
 }
 
 function checkFacts(facts, request, row, context, add) {
-  const { today, npmrc } = context;
+  const { today, nowMs, npmrc } = context;
   const published = facts.time?.[request.version];
   if (published) {
-    const ageDays = Math.floor((Date.parse(`${today}T00:00:00Z`) - Date.parse(published)) / DAY_MS);
-    console.log(`age      ${request.name}@${request.version} was published ${published.slice(0, 10)} (${ageDays} days before ${today})`);
+    // npm measures min-release-age from the moment of the install, not from the start of the day.
+    const ageMs = nowMs - Date.parse(published);
+    const ageDays = Math.floor(ageMs / DAY_MS);
+    const isTooYoung = ageMs < RELEASE_AGE_DAYS * DAY_MS;
+    console.log(`age      ${request.name}@${request.version} was published ${published.slice(0, 10)} (${ageDays} days before ${new Date(nowMs).toISOString().slice(0, 16)}Z)`);
     const covered = activeExcludes(npmrc, today).find((entry) => entry.regex.test(request.name));
-    if (ageDays < 7 && covered) console.log(`covered  by the dated exclude ${covered.pattern} (block expires ${covered.expires})`);
-    if (ageDays < 7 && !covered) {
-      const expires = new Date(Date.parse(published) + 7 * DAY_MS).toISOString().slice(0, 10);
-      add('npm registry', 0, 'too-young', `${request.name}@${request.version} is ${ageDays} days old; min-release-age=7 will refuse it`, `Wait until ${expires}, or (only for a needed fix, with the owner) add "# exclude-block expires=${expires} reason=<link>" with min-release-age-exclude[]=${request.name} to .npmrc.`);
+    if (isTooYoung && covered) console.log(`covered  by the dated exclude ${covered.pattern} (block expires ${covered.expires})`);
+    if (isTooYoung && !covered) {
+      // Rounded up to the minute: the printed moment is never earlier than npm's.
+      const oldEnoughMs = Math.ceil((Date.parse(published) + RELEASE_AGE_DAYS * DAY_MS) / MINUTE_MS) * MINUTE_MS;
+      const oldEnough = new Date(oldEnoughMs).toISOString();
+      const expires = oldEnough.slice(0, 10);
+      add('npm registry', 0, 'too-young', `${request.name}@${request.version} is ${ageDays} days old; min-release-age=${RELEASE_AGE_DAYS} will refuse it`, `Wait until ${oldEnough.slice(0, 16)}Z, or (only for a needed fix, with the owner) add "# exclude-block expires=${expires} reason=<link>" with min-release-age-exclude[]=${request.name} to .npmrc.`);
     }
   }
   const shipped = row ? ['apps', 'shell'].includes(row.where) : true;
@@ -199,7 +209,11 @@ run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const root = requireDir(options.root, 'repo root');
   if (!existsSync(join(root, 'package.json'))) fail(`nothing to check: ${options.root} has no package.json`, 'Point --root at the repo root.');
-  const today = options.today ?? todayUtc();
+  // One rule for the age: the moment is --now (default: the current time), as npm measures it;
+  // --today only names the day the dated excludes are read for, and defaults to that moment's day.
+  const nowMs = options.now === undefined ? Date.now() : Date.parse(options.now);
+  if (Number.isNaN(nowMs)) fail(`--now "${options.now}" is not an ISO time`, 'Pass a time such as 2026-10-03T10:25:00Z.');
+  const today = options.today ?? new Date(nowMs).toISOString().slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) fail(`--today "${today}" is not YYYY-MM-DD`, 'Pass a date such as 2026-09-28.');
   const request = parseRequest(positionals[0]);
   const policy = loadPolicy();
@@ -213,6 +227,6 @@ run(async () => {
   const row = planAdd(repo, policy, request, add);
   const facts = npmFacts(options, request.name, request.version ?? row?.version ?? 'latest');
   // Without a version (a package outside the table), npm's latest is the one to age-check.
-  if (facts) checkFacts(facts, { name: request.name, version: request.version ?? row?.version ?? facts.version }, row, { today, npmrc: repo.npmrc }, add);
+  if (facts) checkFacts(facts, { name: request.name, version: request.version ?? row?.version ?? facts.version }, row, { today, nowMs, npmrc: repo.npmrc }, add);
   return report.finish({ checked: 1, unit: 'requests' });
 });

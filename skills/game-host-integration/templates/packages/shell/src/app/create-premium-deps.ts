@@ -17,6 +17,7 @@ import type {
 } from '@e07/shell/services/purchase/premium-service.ts';
 import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
+import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
 export type PremiumInput = {
   readonly save: SaveService;
@@ -30,26 +31,53 @@ export type PremiumInput = {
   readonly deviceLocales: readonly DeviceLocale[];
 };
 
+/** True when the save already holds the change, so writing it again would change nothing. */
+function holdsChange(premium: SaveDoc['premium'], change: PremiumChange): boolean {
+  return change.isPremium
+    ? premium.owned && premium.ownedSinceMs !== null && premium.revokedAtMs === null
+    : !premium.owned && premium.revokedAtMs === change.revokedAtMs;
+}
+
+/**
+ * True when the document in memory is the one on disk. A refused write and one a pending
+ * quarantine copy held back both leave didLastWriteFail() true, and a newer app's read-only save
+ * is never written: in each, memory may hold a change the disk does not (N10).
+ */
+function isMemoryOnDisk(save: SaveService): boolean {
+  return !save.isReadOnly() && !save.didLastWriteFail();
+}
+
 /**
  * The save's premium section after a change (a revoke carries its date for the save guard). False
- * when the disk refused the write: the purchase then stays unfinished, so StoreKit delivers it again.
+ * when the change did not reach the disk (save.update's answer: a refused write, a rejected
+ * document, a pending quarantine copy, or a newer app's read-only save): the purchase then stays
+ * unfinished, so the store delivers it again. The re-check runs at launch, every foreground and
+ * reconnect: a change the save already holds, in a document that is on disk, writes nothing and
+ * is true; one held only in memory is written again and answers as save.update does.
  */
 export function persistPremiumIn(
   save: SaveService,
   clock: Pick<ClockPort, 'nowMs'>,
 ): (change: PremiumChange) => boolean {
   return (change) => {
+    if (isMemoryOnDisk(save) && holdsChange(save.doc().premium, change)) return true;
     const atMs = clock.nowMs();
-    save.update(
+    return save.update(
       (doc) => ({
         ...doc,
+        // A purchase clears an old refund date: the save guard reads revokedAtMs, so a date kept
+        // from an earlier refund would let a later change without one turn Premium off.
         premium: change.isPremium
-          ? { ...doc.premium, owned: true, ownedSinceMs: doc.premium.ownedSinceMs ?? atMs }
+          ? {
+              ...doc.premium,
+              owned: true,
+              ownedSinceMs: doc.premium.ownedSinceMs ?? atMs,
+              revokedAtMs: null,
+            }
           : { ...doc.premium, owned: false, revokedAtMs: change.revokedAtMs },
       }),
       { refreshBackup: true },
     );
-    return !save.didLastWriteFail();
   };
 }
 

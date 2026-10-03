@@ -118,6 +118,7 @@ export type StoreTransaction = {
   readonly state: 'purchased' | 'pending';
   readonly revocationDateMs: number | null; // refund / Family Sharing revocation evidence
   readonly handle: unknown; // opaque; given back to finish()
+  readonly isUnfinished?: true; // Android: not yet acknowledged; the re-check finishes it once saved
 };
 
 export type PurchaseFailure = 'cancelled' | 'deferred' | 'already-owned' | 'unavailable' | 'failed';

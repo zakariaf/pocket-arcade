@@ -2,7 +2,7 @@
 // With admob-consent-adapter.ts, the ONLY files allowed to import react-native-google-mobile-ads.
 // Deliberate: classic create/load/show API behind AdsPort. Do not "upgrade" to the v17 hooks or
 // pools: the Shell preloads at quiet moments and applies frequency caps in pure code (ad-policy.ts).
-import { createElement } from 'react';
+import { createElement, useSyncExternalStore } from 'react';
 import mobileAds, {
   AdEventType,
   BannerAd,
@@ -17,10 +17,12 @@ import mobileAds, {
 import type {
   AdsPort,
   AdUnitIds,
+  BannerSlotProps,
   FullscreenResult,
   RewardedStatus,
   RewardResult,
 } from './ads-port.ts';
+import type { ReactNode } from 'react';
 import type { AdErrorPayload } from 'react-native-google-mobile-ads';
 
 export type AdFailure = Error & AdErrorPayload;
@@ -37,8 +39,8 @@ export const ADMOB_TEST_UNITS: AdUnitIds = {
 };
 
 type Cell<T> = { readonly get: () => T; readonly set: (value: T) => void };
-/** The rewarded status with its listeners (AdsPort.subscribeRewardedStatus). */
-type StatusCell = Cell<RewardedStatus> & {
+/** A cell whose listeners hear every change (useSyncExternalStore's subscribe). */
+type WatchedCell<T> = Cell<T> & {
   readonly subscribe: (listener: () => void) => () => void;
 };
 
@@ -76,7 +78,10 @@ function showInterstitial(slot: Cell<InterstitialAd | null>): Promise<Fullscreen
   });
 }
 
-function showRewarded(slot: Cell<RewardedAd | null>, status: StatusCell): Promise<RewardResult> {
+function showRewarded(
+  slot: Cell<RewardedAd | null>,
+  status: WatchedCell<RewardedStatus>,
+): Promise<RewardResult> {
   const ad = slot.get();
   if (ad?.loaded !== true) return Promise.resolve('unavailable');
   slot.set(null);
@@ -105,6 +110,26 @@ function showRewarded(slot: Cell<RewardedAd | null>, status: StatusCell): Promis
 
 type Loading = { readonly options: AdmobAdsOptions; readonly isInitialized: Cell<boolean> };
 
+type ReadyBannerProps = BannerSlotProps & {
+  readonly unitId: string;
+  readonly isInitialized: WatchedCell<boolean>;
+};
+
+/**
+ * O1 / L10: the native banner requests its ad as it mounts, so it mounts only after initialize
+ * (consent and the ATT answer come before it); the slot re-renders when initialize finishes.
+ */
+function ReadyBanner({ unitId, isInitialized, onLoaded, onFailed }: ReadyBannerProps): ReactNode {
+  const isReady = useSyncExternalStore(isInitialized.subscribe, isInitialized.get);
+  if (!isReady) return null;
+  return createElement(BannerAd, {
+    unitId,
+    size: BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER,
+    onAdLoaded: onLoaded,
+    onAdFailedToLoad: onFailed,
+  });
+}
+
 // Ads load only after initialize (which follows consent): an earlier preload starts nothing.
 function preloadInterstitial(slot: Cell<InterstitialAd | null>, loading: Loading): void {
   const { options } = loading;
@@ -123,7 +148,7 @@ function preloadInterstitial(slot: Cell<InterstitialAd | null>, loading: Loading
 function preloadRewarded(
   slot: Cell<RewardedAd | null>,
   loading: Loading,
-  status: StatusCell,
+  status: WatchedCell<RewardedStatus>,
 ): void {
   const { options } = loading;
   if (!loading.isInitialized.get() || slot.get() !== null) return;
@@ -142,23 +167,38 @@ function preloadRewarded(
   ad.load();
 }
 
-async function initializeOnce(isInitialized: Cell<boolean>): Promise<void> {
-  if (isInitialized.get()) return;
+async function initializeSdk(isInitialized: Cell<boolean>): Promise<void> {
   // D8: general audience, not child-directed -> no ageRestrictedTreatment signal.
   await mobileAds().setRequestConfiguration({ maxAdContentRating: MaxAdContentRating.PG });
   await mobileAds().initialize();
   isInitialized.set(true);
 }
 
-/** 'unavailable' until the first preload after initialize; listeners hear every change. */
-function createStatusCell(): StatusCell {
-  let status: RewardedStatus = 'unavailable';
+// One initialisation: a caller that arrives while it runs (or after) shares its promise; a
+// failed one is forgotten, so the next caller tries again.
+function initializeOnce(
+  running: Cell<Promise<void> | null>,
+  isInitialized: Cell<boolean>,
+): Promise<void> {
+  const current = running.get();
+  if (current !== null) return current;
+  const started = initializeSdk(isInitialized);
+  running.set(started);
+  started.catch(() => {
+    running.set(null);
+  });
+  return started;
+}
+
+/** A cell that tells its listeners about every change (and nothing for a repeated value). */
+function watchedCell<T>(initial: T): WatchedCell<T> {
+  let value = initial;
   const listeners = new Set<() => void>();
   return {
-    get: () => status,
+    get: () => value,
     set: (next) => {
-      if (next === status) return;
-      status = next;
+      if (next === value) return;
+      value = next;
       listeners.forEach((listener) => {
         listener();
       });
@@ -175,11 +215,13 @@ function createStatusCell(): StatusCell {
 export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {
   const interstitial = cell<InterstitialAd | null>(null);
   const rewarded = cell<RewardedAd | null>(null);
-  const isInitialized = cell(false);
+  const isInitialized = watchedCell(false);
+  const initialization = cell<Promise<void> | null>(null);
   const loading = { options, isInitialized };
-  const status = createStatusCell();
+  // 'unavailable' until the first preload after initialize.
+  const status = watchedCell<RewardedStatus>('unavailable');
   return {
-    initialize: () => initializeOnce(isInitialized),
+    initialize: () => initializeOnce(initialization, isInitialized),
     preloadInterstitial: () => {
       preloadInterstitial(interstitial, loading);
     },
@@ -191,11 +233,11 @@ export function createAdmobAdsAdapter(options: AdmobAdsOptions): AdsPort {
     showInterstitial: () => showInterstitial(interstitial),
     showRewarded: () => showRewarded(rewarded, status),
     renderBanner: ({ onLoaded, onFailed }) =>
-      createElement(BannerAd, {
+      createElement(ReadyBanner, {
         unitId: options.units.banner,
-        size: BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER,
-        onAdLoaded: onLoaded,
-        onAdFailedToLoad: onFailed,
+        isInitialized,
+        onLoaded,
+        onFailed,
       }),
   };
 }

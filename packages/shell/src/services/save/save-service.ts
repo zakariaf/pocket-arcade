@@ -28,11 +28,16 @@ export type SaveServiceDeps = {
 /** The single writer of the save document. Stores call update(); nothing else writes. */
 export type SaveService = {
   readonly doc: () => SaveDoc;
-  /** Validate -> write `current` in one transaction. With refreshBackup: `backup` too. */
+  /**
+   * Validate -> write `current` in one transaction. With refreshBackup: `backup` too. True when
+   * the change reached the disk; false when it did not: a save from a newer app (read-only), a
+   * rejected document, a write the store refused or one a pending quarantine copy held back. A
+   * caller that must not go on before the change is on disk (finishing a purchase) reads it.
+   */
   readonly update: (
     recipe: (doc: SaveDoc) => SaveDoc,
     options?: { readonly refreshBackup: boolean },
-  ) => void;
+  ) => boolean;
   readonly applyLoadWrites: () => void;
   readonly checkpoint: () => void;
   readonly isReadOnly: () => boolean;
@@ -44,14 +49,20 @@ export type SaveService = {
   readonly didLastWriteFail: () => boolean;
 };
 
+/**
+ * What became of one write: 'rejected' (invalid, nothing written, logged or thrown in test
+ * builds), 'held' (a pending quarantine copy blocks every write), 'refused' (the store threw;
+ * logged) or 'written'. Only a rejected document is kept out of memory.
+ */
+type PersistResult = 'rejected' | 'held' | 'refused' | 'written';
+
 type Writer = {
   /**
-   * Validates, encodes and writes; the write counter keeps rising across launches. Returns false
-   * (after logging, or throwing in test builds) when the document is invalid and nothing was
-   * written; a refused write still returns true, so the session plays on in memory. A backup
-   * refresh that did not land stays due: every later write includes the backup until one lands.
+   * Validates, encodes and writes; the write counter keeps rising across launches. A held or
+   * refused write keeps the session playing on in memory. A backup refresh that did not land
+   * stays due: every later write includes the backup until one lands.
    */
-  readonly persist: (next: SaveDoc, isBoth: boolean) => boolean;
+  readonly persist: (next: SaveDoc, isBoth: boolean) => PersistResult;
   /** Copies a damaged slot to quarantine; a refused copy stays pending and blocks every write. */
   readonly quarantine: (slot: SlotName, reason: string) => void;
   readonly didLastWriteFail: () => boolean;
@@ -99,27 +110,26 @@ function createWriter(deps: SaveServiceDeps, writeCountBase: number): Writer {
     }
   };
   const quarantines = createQuarantineQueue(deps, attempt);
-  const persist = (next: SaveDoc, isBoth: boolean): boolean => {
+  const persist = (next: SaveDoc, isBoth: boolean): PersistResult => {
     const checked = validateSaveDoc(next);
     if ('error' in checked) {
       const error = new Error(`invalid save document not written: ${checked.error}`);
       deps.errorLog.record('save', error);
       if (deps.isStrict) throw error;
-      return false;
+      return 'rejected';
     }
     isBackupDue = isBackupDue || isBoth;
-    if (!quarantines.flush()) return true;
+    if (!quarantines.flush()) return 'held';
     writeCount += 1;
     const meta = { appVersion: deps.appVersion, writtenAtMs: deps.clock.nowMs(), writeCount };
     const record = encodeSaveDoc(checked.doc, meta);
     const isWritten = attempt(() => {
       deps.store.write(isBackupDue ? { current: record, backup: record } : { current: record });
     });
-    if (isWritten) {
-      didFail = false;
-      isBackupDue = false;
-    }
-    return true;
+    if (!isWritten) return 'refused';
+    didFail = false;
+    isBackupDue = false;
+    return 'written';
   };
   return { persist, quarantine: quarantines.add, didLastWriteFail: () => didFail };
 }
@@ -137,8 +147,14 @@ export function createSaveService(
     doc: () => doc,
     update: (recipe, options) => {
       const next = keepPremiumUnlessRevoked(doc, recipe(doc));
+      if (isReadOnly) {
+        doc = next; // a newer app's save plays on in memory and is never written
+        return false;
+      }
+      const result = persist(next, options?.refreshBackup === true);
       // A rejected document never becomes the one in memory: the app keeps the last valid one.
-      if (isReadOnly || persist(next, options?.refreshBackup === true)) doc = next;
+      if (result !== 'rejected') doc = next;
+      return result === 'written';
     },
     applyLoadWrites: () => {
       for (const write of writes) {

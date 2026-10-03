@@ -1,5 +1,5 @@
 // packages/shell/src/stores/premium/entitlement-evidence.test.ts
-import { entitlementEvidence } from './entitlement-evidence.ts';
+import { entitlementEvidence, isOwnedPurchase } from './entitlement-evidence.ts';
 
 import type { StoreTransaction } from '@e07/shell/services/purchase/purchase-port.ts';
 
@@ -24,5 +24,16 @@ describe('entitlementEvidence', () => {
 
   it('ignores other products', () => {
     expect(entitlementEvidence([{ ...tx('3', null), productId: 'other' }], ID)).toBe('unknown');
+  });
+});
+
+describe('isOwnedPurchase', () => {
+  it('owns only a purchased, never refunded transaction of this product', () => {
+    expect([
+      isOwnedPurchase(tx('1', null), ID),
+      isOwnedPurchase(tx('2', 1_700_000_000_000), ID),
+      isOwnedPurchase({ ...tx('3', null), state: 'pending' }, ID),
+      isOwnedPurchase({ ...tx('4', null), productId: 'other' }, ID),
+    ]).toStrictEqual([true, false, false, false]);
   });
 });

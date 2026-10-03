@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/consent-moment-flow.ts",
+      "find": "      if (info.canRequestAds) return;\n      state.canRequestAds = false;\n      publish();",
+      "with": "      state.canRequestAds = info.canRequestAds; // planted: a yes opens the banners before ATT and initialize\n      publish();"
+    }
+  }
+]

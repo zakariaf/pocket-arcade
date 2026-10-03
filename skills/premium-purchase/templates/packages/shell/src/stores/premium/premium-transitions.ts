@@ -44,10 +44,12 @@ export function onRestoreFinished(
   return { ...state, flow };
 }
 
-// Silent re-check at launch/foreground: only explicit evidence changes the entitlement.
+// Silent re-check at launch, foreground and reconnect: only explicit evidence changes the
+// entitlement, and a check that changes nothing returns the same state (the store publishes nothing).
 export function onEntitlementsChecked(state: PremiumState, evidence: Evidence): PremiumState {
-  if (evidence === 'owned') return { ...state, isPremium: true };
-  if (evidence === 'revoked') return { ...state, isPremium: false, didJustPurchase: false };
+  if (evidence === 'owned') return state.isPremium ? state : { ...state, isPremium: true };
+  if (evidence === 'revoked' && (state.isPremium || state.didJustPurchase))
+    return { ...state, isPremium: false, didJustPurchase: false };
   return state;
 }
 

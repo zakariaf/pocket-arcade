@@ -1,6 +1,10 @@
 // packages/shell/src/services/ads/admob-ads-adapter.test.ts — drives the ads adapter against the root
 // __mocks__. Lint bans importing the SDK outside the adapters, so the test reads the mock with
 // jest.requireMock (after an explicit jest.mock, so it is the instance the adapter imported).
+// no-shell-context: the banner element comes from the adapter alone and reads no Shell state.
+import { act, render } from '@testing-library/react-native';
+import { createElement, Fragment } from 'react';
+
 import { createAdmobAdsAdapter } from './admob-ads-adapter.ts';
 
 import type { AdUnitIds } from './ads-port.ts';
@@ -14,7 +18,11 @@ type MockAd = {
   readonly addAdEventListener: jest.Mock<() => void, [string, Listener]>;
 };
 type AdFactory = { readonly createForAdRequest: jest.Mock<MockAd, [string]> };
+type MockedMobileAds = jest.Mock<{ readonly initialize: jest.Mock }, []>;
+type BannerComponent = (props: { readonly unitId: string }) => null;
 type MockedSdk = {
+  readonly default: MockedMobileAds;
+  readonly BannerAd: BannerComponent;
   readonly InterstitialAd: AdFactory;
   readonly RewardedAd: AdFactory;
   readonly AdEventType: { readonly CLOSED: string; readonly ERROR: string };
@@ -100,6 +108,49 @@ describe('createAdmobAdsAdapter', () => {
 
     await expect(ads.showRewarded()).resolves.toBe('unavailable');
     expect(ads.rewardedStatus()).toBe('loading');
+  });
+});
+
+// Spec S3 and owner decision O1 / L10: no ad request before consent, the ATT answer and
+// initialize. A banner slot may be allowed before that (the saved answer of the last session), so
+// the native banner view, which requests its ad as it mounts, waits for the initialisation.
+describe('renderBanner', () => {
+  it('mounts no native banner before initialize, and mounts it once initialize has finished', async () => {
+    const banner = jest.spyOn(sdk, 'BannerAd');
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const view = ads.renderBanner({ onLoaded: jest.fn(), onFailed: jest.fn() });
+    await render(createElement(Fragment, null, view));
+    expect(banner).not.toHaveBeenCalled();
+    await act(() => ads.initialize());
+    expect(banner.mock.calls.at(-1)?.[0]).toMatchObject({ unitId: UNITS.banner });
+  });
+});
+
+// spec 8.8: an ad may show only with "consent handled"; prepareAds initialises the SDK once
+// consent allows it, and a second caller (a reconnect, a banner screen) may ask while the first
+// initialisation is still running: both wait for the one initialisation.
+describe('initialize', () => {
+  it('initialises the SDK once when two calls overlap', async () => {
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const { initialize } = sdk.default();
+    await Promise.all([ads.initialize(), ads.initialize()]);
+    expect(initialize).toHaveBeenCalledTimes(1);
+  });
+
+  it('initialises once across calls made one after the other', async () => {
+    const ads = await initializedAds();
+    const { initialize } = sdk.default();
+    await ads.initialize();
+    expect(initialize).toHaveBeenCalledTimes(1);
+  });
+
+  it('tries again after a failed initialisation', async () => {
+    const ads = createAdmobAdsAdapter({ units: UNITS, onAdError: jest.fn() });
+    const { initialize } = sdk.default();
+    initialize.mockRejectedValueOnce(new Error('offline'));
+    await expect(ads.initialize()).rejects.toThrow('offline');
+    await ads.initialize();
+    expect(initialize).toHaveBeenCalledTimes(2);
   });
 });
 

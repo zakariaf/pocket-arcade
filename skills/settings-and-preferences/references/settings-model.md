@@ -83,7 +83,7 @@ export const DEFAULT_SETTINGS: SaveSettings = {
 
 ## Actions and the store
 
-`packages/shell/src/stores/settings-reducer.ts` (template) is pure; `settings-store.ts` reduces, persists with `save.update` (sync, one transaction), then publishes with `set`. Persisting before publishing means the screen never shows a value that is not on disk.
+`packages/shell/src/stores/settings-reducer.ts` (template) is pure; `settings-store.ts` reduces, persists with `save.update` (sync, one transaction), then publishes with `set` what `save.doc()` holds. Persisting before publishing means the screen never shows a value that is not on disk, and publishing from the save means a document it rejected never reaches the store.
 
 | Action | Payload | Changes |
 |---|---|---|

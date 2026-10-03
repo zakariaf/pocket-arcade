@@ -72,6 +72,37 @@ describe('settingsReducer', () => {
     expect(once.firstRun.tutorialDone).toBe(true);
   });
 
+  // spec S11: "Every change applies immediately; there is no Save button." A change that repeats
+  // what is saved is no change: the reducer hands back the same state, so the store neither
+  // writes nor publishes.
+  it('returns the same state when a change repeats the saved values', () => {
+    const chosen = settingsReducer(FRESH, { type: 'set-language', language: 'de' });
+    const tutored = settingsReducer(FRESH, { type: 'finish-tutorial' });
+    const { soundVolume, theme } = DEFAULT_SETTINGS;
+    const repeats = [
+      settingsReducer(chosen, { type: 'set-language', language: 'de' }) === chosen,
+      settingsReducer(tutored, { type: 'finish-tutorial' }) === tutored,
+      settingsReducer(FRESH, { type: 'set-theme', theme }) === FRESH,
+      settingsReducer(FRESH, {
+        type: 'set-sound',
+        enabled: DEFAULT_SETTINGS.soundEnabled,
+        volume: soundVolume + 0.2,
+      }) === FRESH,
+    ];
+    expect(repeats).toStrictEqual([true, true, true, true]);
+  });
+
+  it('changes the state when only one of two patched fields differs', () => {
+    const isEnabled = DEFAULT_SETTINGS.soundEnabled;
+    const next = settingsReducer(FRESH, { type: 'set-sound', enabled: isEnabled, volume: 30 });
+    expect(next.settings.soundVolume).toBe(30);
+  });
+
+  it('marks the language choice as made when System is chosen on the first launch', () => {
+    const next = settingsReducer(FRESH, { type: 'set-language', language: null });
+    expect(next.firstRun.languageChosen).toBe(true);
+  });
+
   it('leaves the received state untouched', () => {
     const frozen = Object.freeze({ ...FRESH, settings: Object.freeze({ ...DEFAULT_SETTINGS }) });
     expect(() => settingsReducer(frozen, { type: 'set-theme', theme: 'light' })).not.toThrow();

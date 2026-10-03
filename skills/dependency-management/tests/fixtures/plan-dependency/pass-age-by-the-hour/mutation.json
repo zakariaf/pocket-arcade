@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".npmrc",
+      "find": "min-release-age-exclude[]=react-native-google-mobile-ads\n",
+      "with": ""
+    }
+  }
+]

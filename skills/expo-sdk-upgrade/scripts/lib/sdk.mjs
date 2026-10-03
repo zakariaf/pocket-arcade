@@ -112,23 +112,32 @@ export function moduleMapFor(root, sdk) {
   return { map: null, source: null };
 }
 
-/** Whole days from an ISO timestamp to the start of `todayIso` (UTC). */
-export function ageDays(publishedIso, todayIso) {
-  return Math.floor((Date.parse(`${todayIso}T00:00:00Z`) - Date.parse(publishedIso)) / DAY_MS);
+/**
+ * The release age the repo's .npmrc pins (min-release-age=7, dependency-management's policy). One
+ * rule for every age here: measured from a moment (`nowMs`, by default the current time), as npm
+ * measures it at install time, never from the start of a day.
+ */
+export const RELEASE_AGE_DAYS = 7;
+
+/** Whole days from an ISO timestamp to the moment `nowMs`. */
+export function ageDays(publishedIso, nowMs) {
+  return Math.floor((nowMs - Date.parse(publishedIso)) / DAY_MS);
 }
+
+const MINUTE_MS = 60_000;
 
 /**
- * The first UTC day that starts at least `days` days after `publishedIso`: from that day on, a
- * `min-release-age=<days>` install accepts the release all day long.
+ * The moment (ISO, to the minute) a release turns `days` days old: npm accepts it from then on.
+ * Rounded up to the next whole minute, so the printed moment is never earlier than the real one
+ * (published 18:00:30 prints 18:01, not 18:00, when npm would still refuse it).
  */
-export function firstDayAtAge(publishedIso, days) {
-  const ready = Date.parse(publishedIso) + days * DAY_MS;
-  return new Date(Math.ceil(ready / DAY_MS) * DAY_MS).toISOString().slice(0, 10);
+export function oldEnoughAt(publishedIso, days) {
+  const atMs = Date.parse(publishedIso) + days * DAY_MS;
+  return `${new Date(Math.ceil(atMs / MINUTE_MS) * MINUTE_MS).toISOString().slice(0, 16)}Z`;
 }
 
-/** True when the release is at least `days` days old for the whole of `todayIso`. */
-export const isOldEnough = (publishedIso, todayIso, days) => todayIso >= firstDayAtAge(publishedIso, days);
+/** True when the release is at least `days` days old at the moment `nowMs`. */
+export const isOldEnough = (publishedIso, nowMs, days) => nowMs - Date.parse(publishedIso) >= days * DAY_MS;
 
-export function todayUtc() {
-  return new Date().toISOString().slice(0, 10);
-}
+/** A moment as ISO to the minute, as the wait lines print it. */
+export const minuteOf = (nowMs) => `${new Date(nowMs).toISOString().slice(0, 16)}Z`;

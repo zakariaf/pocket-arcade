@@ -53,7 +53,7 @@ export function createProgressStore(save: SaveService): ProgressStore {
       if (next === current) return;                    //    nothing changed: no write, no render
       const { progress, daily, hints, upsell } = next;
       save.update((doc) => ({ ...doc, progress, daily, hints, upsell }));  // 2. persist
-      set({ progress, daily, hints, upsell });                             // 3. publish
+      set(progressSliceOf(save.doc()));                                    // 3. publish the saved
     },
   }));
 }
@@ -67,7 +67,7 @@ Why each part:
 
 - **A factory, never a module-level store.** Tests create fresh stores per test over an in-memory save; a singleton leaks state between tests and between app starts (a direction reload re-runs module code).
 - **`createStore` from `zustand/vanilla` plus `useStore(store, selector)`.** Services (ads, Premium listeners) read the same stores outside React with `getState()`. `create` from `zustand` makes a hook-store singleton, so it is not used.
-- **Persist before publish.** `save.update` validates and commits one SQLite transaction synchronously; when it returns, the change is on disk. Publishing second means a screen never shows a value that is not saved. If the write throws, nothing is published.
+- **Persist before publish.** `save.update` validates and commits one SQLite transaction synchronously; when it returns, the change is on disk. Publishing second means a screen never shows a value that is not saved. If the write throws, nothing is published. Publish the sections from `save.doc()`, never the reducer's `next`: a document the save rejected (it failed validation) is not kept by the save, and a store that published it would build every later change on it, so each later write would be rejected too (N10).
 - **Write only your own sections.** Each store's recipe spreads `doc` and replaces only its sections, so two stores never overwrite each other.
 - **Skip no-op writes.** A reducer returns the same object when nothing changes (a second free hint the same day, a lower endless score); the store then neither writes nor re-renders.
 - **Resets refresh the backup.** Every stats action is a reset, so the stats store passes `{ refreshBackup: true }`: a later backup restore cannot bring old numbers back. Per-change settings and progress writes touch the `current` slot only.

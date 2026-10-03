@@ -16,7 +16,7 @@ import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-import { appsSdk, bare, depsOf, firstDayAtAge, isOldEnough, loadSdkLines, majorOf, readRepo, todayUtc } from './lib/sdk.mjs';
+import { RELEASE_AGE_DAYS, appsSdk, bare, depsOf, isOldEnough, loadSdkLines, majorOf, minuteOf, oldEnoughAt, readRepo } from './lib/sdk.mjs';
 import { createReporter, fail, parseArgs, requireDir, requireFile, run } from './check-lib.mjs';
 
 const SPEC = {
@@ -29,7 +29,7 @@ const SPEC = {
     online: { type: 'boolean', help: 'Read dist-tags, publish times and the target module map from npm (network)' },
     facts: { type: 'string', value: 'file', help: 'Use a saved facts file instead of the network (see --save-facts)' },
     'save-facts': { type: 'string', value: 'file', help: 'With --online: also write the facts to this file (evidence for the report)' },
-    today: { type: 'string', value: 'YYYY-MM-DD', help: 'Date for the 7-day checks (default: today, UTC)' },
+    now: { type: 'string', value: 'ISO time', help: 'Moment of the 7-day checks, as npm measures the release age (default: the current time)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
@@ -108,22 +108,24 @@ function wanted(repo, facts) {
 }
 
 /**
- * Every unmet trigger condition as { rule, message, until } (until = the first day it can hold, or
+ * Every unmet trigger condition as { rule, message, until } (until = the first moment it can hold, or
  * null when nobody can say). An empty list means the trigger holds.
  */
 function waitReasons(repo, facts, context) {
-  const { target, version, today } = context;
+  const { target, version, nowMs } = context;
+  const at = minuteOf(nowMs);
+  const days = RELEASE_AGE_DAYS;
   const tags = facts.distTags ?? {};
   if (!version) return [{ rule: 'target-stable', message: `SDK ${target} is not stable yet: expo "latest" is ${tags.latest ?? 'unknown'}${tags.next ? ` (next: ${tags.next})` : ''}; betas, previews and "next" releases are never adopted`, until: null }];
   const reasons = [];
   const published = facts.expoTimes?.[version];
   if (!published) reasons.push({ rule: 'target-age', message: `no publish time for expo ${version} (rerun with --online, or add expoTimes to the facts file)`, until: null });
-  else if (!isOldEnough(published, today, 7)) reasons.push({ rule: 'target-age', message: `expo ${version} was published ${published.slice(0, 10)}; it is not 7 days old on ${today} (never add an exclude for an SDK move)`, until: firstDayAtAge(published, 7) });
+  else if (!isOldEnough(published, nowMs, days)) reasons.push({ rule: 'target-age', message: `expo ${version} was published ${published.slice(0, 16)}Z; it is not ${days} days old at ${at} (never add an exclude for an SDK move)`, until: oldEnoughAt(published, days) });
   if (!facts.moduleMap) reasons.push({ rule: 'package-missing', message: `no module map for expo ${version} (rerun with --online, or add moduleMap, its bundledNativeModules.json, to the facts file)`, until: null });
   for (const [name, want] of facts.moduleMap ? wanted(repo, facts) : []) {
     const time = facts.packageTimes?.[name]?.[want];
     if (!time) reasons.push({ rule: 'package-missing', message: `SDK ${target} expects ${name} ${want}, which npm does not list; an SDK is adopted only when every package it needs is out`, until: null });
-    else if (!isOldEnough(time, today, 7)) reasons.push({ rule: 'package-age', message: `${name} ${want} was published ${time.slice(0, 10)}; it is not 7 days old on ${today}`, until: firstDayAtAge(time, 7) });
+    else if (!isOldEnough(time, nowMs, days)) reasons.push({ rule: 'package-age', message: `${name} ${want} was published ${time.slice(0, 16)}Z; it is not ${days} days old at ${at}`, until: oldEnoughAt(time, days) });
   }
   return reasons;
 }
@@ -155,8 +157,8 @@ function printPlan(repo, facts, lines, context) {
 function printWait(reasons, sdk) {
   for (const reason of reasons) console.log(`wait     [${reason.rule}] ${reason.message}${reason.until ? `; possible from ${reason.until}` : ''}`);
   const open = reasons.some((reason) => reason.until === null);
-  const latestDay = reasons.map((reason) => reason.until).filter(Boolean).sort().at(-1);
-  const when = open ? 'check again at the next session start' : `the trigger can hold from ${latestDay}; check again then`;
+  const latest = reasons.map((reason) => reason.until).filter(Boolean).sort().at(-1);
+  const when = open ? 'check again at the next session start' : `the trigger can hold from ${latest}; check again then`;
   console.log(`verdict  no upgrade due: stay on SDK ${sdk}; ${when}`);
 }
 
@@ -170,8 +172,8 @@ run(async () => {
   if (sdk === null) fail('no app declares an "expo" dependency', 'Pass the monorepo root.');
   const target = options.target === undefined ? sdk + 1 : Number(options.target);
   if (!(target > sdk)) fail(`the apps are already on SDK ${sdk}; --target ${options.target} is not later`, `Pass --target ${sdk + 1} for the next move, or leave --target out.`);
-  const today = options.today ?? todayUtc();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) fail(`--today "${today}" is not YYYY-MM-DD`, 'Pass a date such as 2026-11-02.');
+  const nowMs = options.now === undefined ? Date.now() : Date.parse(options.now);
+  if (Number.isNaN(nowMs)) fail(`--now "${options.now}" is not an ISO time`, 'Pass a time such as 2026-11-02T12:00:00Z.');
   const facts = options.facts ? JSON.parse(readFileSync(requireFile(options.facts, 'facts file'), 'utf8')) : onlineFacts(repo, target);
   if (options.online && options['save-facts']) {
     // reports/ is gitignored and may not exist yet in a fresh clone.
@@ -190,7 +192,7 @@ run(async () => {
     report.problem({ file: 'apps/*/package.json', line: 0, rule: 'upgrade-due', message: `expo "latest" is ${tags.latest}, past SDK ${target}, and the facts hold no "sdk-${target}" dist-tag: the apps on SDK ${sdk} are overdue for a move`, fix: `Rerun with --online (npm keeps an "sdk-${target}" tag for every SDK), then move one SDK at a time.` });
     return report.finish({ checked: 1, unit: 'trigger conditions and packages' });
   }
-  const reasons = waitReasons(repo, facts, { target, version, today });
+  const reasons = waitReasons(repo, facts, { target, version, nowMs });
   if (reasons.length > 0) {
     printWait(reasons, sdk);
     return report.finish({ checked: 2 + checks.length, unit: 'trigger conditions and packages' });

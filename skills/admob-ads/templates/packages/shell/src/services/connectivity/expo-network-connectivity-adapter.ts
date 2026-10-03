@@ -10,6 +10,8 @@ const isUsable = (state: NetworkState): boolean =>
 
 export function createExpoNetworkConnectivityAdapter(): ConnectivityPort {
   let isOnline = false;
+  // The first read can answer after a listener event; that event is newer, so the read is dropped.
+  let hasHeardChange = false;
   const listeners = new Set<(isOnline: boolean) => void>();
   const report = (isNowOnline: boolean): void => {
     isOnline = isNowOnline;
@@ -17,15 +19,18 @@ export function createExpoNetworkConnectivityAdapter(): ConnectivityPort {
       listener(isNowOnline);
     });
   };
-  const update = (state: NetworkState): void => {
-    report(isUsable(state));
-  };
   getNetworkStateAsync()
-    .then(update)
+    .then((state) => {
+      if (!hasHeardChange) report(isUsable(state));
+    })
     .catch(() => {
-      report(false); // unknown network state counts as offline (no ad, no store; spec 4.1)
+      // Unknown network state counts as offline (no ad, no store; spec 4.1).
+      if (!hasHeardChange) report(false);
     });
-  addNetworkStateListener(update);
+  addNetworkStateListener((state) => {
+    hasHeardChange = true;
+    report(isUsable(state));
+  });
   return {
     isOnline: () => isOnline,
     subscribe: (listener) => {

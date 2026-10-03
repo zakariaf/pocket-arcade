@@ -13,6 +13,10 @@ export type StoreTransaction = {
   readonly state: 'purchased' | 'pending';
   readonly revocationDateMs: number | null; // refund / Family Sharing revocation evidence
   readonly handle: unknown; // opaque; given back to finish()
+  // Android only: a purchase Play Billing still holds unacknowledged. It is never delivered to the
+  // listener again and Google refunds it after 3 days, so the re-check finishes it once Premium is
+  // saved. (iOS replays unfinished transactions through the listener at every launch instead.)
+  readonly isUnfinished?: true;
 };
 
 export type PurchaseFailure = 'cancelled' | 'deferred' | 'already-owned' | 'unavailable' | 'failed';

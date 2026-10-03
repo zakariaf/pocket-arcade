@@ -14,7 +14,7 @@
 
 ```ts
 export type AdsPort = {
-  readonly initialize: () => Promise<void>; // after consent: request configuration + initialize; idempotent
+  readonly initialize: () => Promise<void>; // after consent: request configuration + initialize; idempotent (overlapping calls share the one running initialisation, a failed one is tried again)
   readonly preloadInterstitial: () => void;
   readonly preloadRewarded: () => void;
   readonly rewardedStatus: () => RewardedStatus; // 'loading' | 'ready' | 'unavailable' (L11)
@@ -52,6 +52,7 @@ Facts behind `admob-ads-adapter.ts` (read in the 17.2.0 source and the library's
 - `isAllowed` always comes from `shouldShowBanner(config, context, '<screen>')`: inline as above, or, when the view takes a view model (the screen work's `home-view.tsx` passes `model.banner.isAllowed && !model.isPremium`), computed with `shouldShowBanner` in the model hook. `check-ads.mjs` accepts both and fails when no runtime code asks the policy for that screen.
 - The Toybox banner band: in the design, the `*.banner-ad` element is a full-width band (402 x 66 on the 402 pt reference phone: `paddingBlock` 6, 2 pt dashed `adLine` rules top and bottom, `adBackground` fill, the ad centred), not the bare ad. Pass that style as `loadedStyle`: `const bannerBandStyle = useBannerBandStyle();` from the Toybox components' `ui/use-banner-band-style.ts` (its values come from the banner-slot spec). The slot applies it only after `onLoaded`, so an empty or failed slot still takes no space. Never wrap the slot in a component that renders nothing until an ad has loaded: the native banner has to be mounted to load at all.
 - `ui/ad-banner-slot.tsx` is presentational and never imports `services/` (the UI boundary rule), so the screen passes `ads.renderBanner` in.
+- The adapter's `renderBanner` returns a small component (`ReadyBanner`) that reads the initialised flag with `useSyncExternalStore` and draws `BannerAd` only once `initialize` has finished: the native view requests its ad as it mounts, and a slot can be allowed earlier (the saved consent answer of the last session), so without it a banner could ask for an ad before consent and the ATT answer (O1, L10). The slot re-renders when `initialize` finishes; `check-ad-behaviour` proves no banner view before it (`adapter-banner`).
 - The slot has zero height until `onLoaded` fires, and collapses again on `onFailed`: a failed or offline load leaves no empty box (spec S4) and no message.
 - `isAllowed` is recomputed from the stores on every render, so buying Premium, going offline or withdrawing consent removes the banner at once.
 - Place it below the screen's scroll content and above the bottom safe-area inset, never overlapping controls.

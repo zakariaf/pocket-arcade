@@ -1,0 +1,2 @@
+[adapter-banner]
+no banner view before initialize

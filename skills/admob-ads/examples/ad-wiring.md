@@ -67,7 +67,7 @@ prepareAds({ ads, consent, onConsent, showIntro }, input);
 //   -> initialize -> preload: ads serve whatever the ATT answer, without the IDFA unless authorized
 ```
 
-The flow holds the ATT request until a banner screen is open, like the intro, so Apple's prompt never covers a level. `onConsent` saves `canRequestAds` and `isPrivacyOptionsRequired` in the save's ads section (for the next launch and the Settings row) and updates the flow's live answer, which `useAdContext` reads, so the Home banner appears as soon as the form allows it.
+The flow holds the ATT request until a banner screen is open, like the intro, so Apple's prompt never covers a level. `onConsent` saves `canRequestAds` and `isPrivacyOptionsRequired` in the save's ads section (for the next launch and the Settings row) and updates the flow's live answer, which `useAdContext` reads: a refusal at once, a yes only after the ATT answer and a finished `initialize`, so the Home banner appears as soon as ads may load and never while Apple's prompt is up.
 
 Home, Levels and Statistics end with the slot. The screen views (from the screen work) take it from their view model, so the model hook computes the flag with the policy:
 

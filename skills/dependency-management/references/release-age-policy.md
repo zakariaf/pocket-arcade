@@ -63,7 +63,7 @@ Several verified versions were younger than 7 days on 2026-09-26: `expo` 57.0.25
 
 Only for a fix the project needs before the release is 7 days old, and only with the owner's agreement:
 
-1. `node ${CLAUDE_SKILL_DIR}/scripts/plan-dependency.mjs <pkg>@<version> --root . --online` shows the publish date and the day it turns 7.
+1. `node ${CLAUDE_SKILL_DIR}/scripts/plan-dependency.mjs <pkg>@<version> --root . --online` shows the publish date and the moment it turns 7 days old (npm measures the age from the moment of the install, and so does the plan. One rule: the age moment is `--now <ISO time>`, by default the current time; `--today <date>` only names the day the dated excludes are read for, by default the UTC day of that moment, and never moves the age check. The 7 is the policy's own `min-release-age` value. expo-sdk-upgrade's trigger check measures its 7 days the same way).
 2. Copy `templates/npmrc-exclude-block.txt`, fill `__EXPIRES__` with publish date + 7 days, `__REASON__` with the issue link or changelog line, and `__PACKAGE__` with the exact name (add a separate line per extra name or glob, as few as possible). Paste it at the end of `.npmrc`, separated by one blank line (a blank line ends a block).
 3. Install, then commit with a body that says why and a `Gate-Change:` trailer (`.npmrc` is a gated path).
 

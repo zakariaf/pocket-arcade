@@ -9,7 +9,7 @@ Makes each game sell its single non-consumable "Premium" honestly and with no se
 
 ## Rules that must hold
 
-1. **Save Premium before finishing: `persistPremium({ isPremium: true })` (synchronous) -> dispatch `premium-granted` -> `finish(tx)`.** Never finish first, never auto-finish, and never finish when `persistPremium` returns `false` (the disk refused the write: `save.didLastWriteFail()`). *Why:* StoreKit re-delivers unfinished transactions; a finished-but-unsaved purchase is lost for good.
+1. **Save Premium before finishing: `persistPremium({ isPremium: true })` (synchronous) -> dispatch `premium-granted` -> `finish(tx)`.** Never finish first, never auto-finish, and never finish when `persistPremium` returns `false` (the change did not reach the disk: `save.update` answered `false` for a refused write, a rejected document, a pending quarantine copy or a newer app's read-only save). On Android an unfinished purchase is never delivered again and Google refunds it after 3 days, so `recheckPremium` and `restorePremium` finish every owned transaction marked `isUnfinished` (the adapter's `isAcknowledgedAndroid === false`) once `persistPremium` returned `true`. *Why:* StoreKit re-delivers unfinished transactions; a finished-but-unsaved purchase is lost for good, and an unacknowledged Android one is refunded.
 2. **Revoke only on explicit evidence:** a verified Premium transaction with a revocation date and no newer valid one. Absence, errors and offline keep the cached Premium; a revocation is saved with its `revokedAtMs`. *Why:* a fresh purchase can be briefly missing from StoreKit, and the save guard ignores a revoke without a date.
 3. **Listen first:** `startPremium` subscribes to purchase events before `initConnection`, then loads the price, then re-checks silently (`Transaction.all`, `onlyIncludeActiveItemsIOS: false`). *Why:* StoreKit replays unfinished and approved Ask-to-Buy transactions right after connecting, and only `Transaction.all` shows refunds.
 4. **Every handler is idempotent;** a failure counts only while a purchase is in flight. *Why:* iOS reports one failure twice (rejection and listener) and re-delivers owned purchases on relaunch.
@@ -76,7 +76,7 @@ Makes each game sell its single non-consumable "Premium" honestly and with no se
 | [references/testing-tiers.md](references/testing-tiers.md) | Tier 1 tests, the verified StoreKit harness, its files, scenarios, commands and gotchas, Tier 3 steps | Workflow steps 5 and 7 |
 | [references/app-store-connect.md](references/app-store-connect.md) | Product rules, the EUR 1.99 price (O2), Family Sharing off (O3), the ASC API script, remaining steps, human steps, Android later | Workflow step 8 |
 | [examples/wire-premium.md](examples/wire-premium.md) | The complete wiring for the pilot game | Workflow step 3, as the model |
-| `templates/packages/shell/src/services/purchase/` | Port, expo-iap adapter, fake, connectivity gate `withConnectivity` (+ test), service (+ test), store flow with `shouldReloadStore`, price formatter (+ test) | Workflow step 2 |
+| `templates/packages/shell/src/services/purchase/` | Port, expo-iap adapter, fake, connectivity gate `withConnectivity` (+ test), service (+ test; the test is synced from the library, the same file as unit-and-component-tests' example: do not edit here), store flow with `shouldReloadStore`, price formatter (+ test) | Workflow step 2 |
 | `templates/packages/shell/src/stores/premium/` | State, transitions, reducer (+ test), view, notice (+ test), Result-screen nudge (+ test), evidence (+ test), Zustand store | Workflow step 2 |
 | `templates/__mocks__/expo-iap.ts` | Jest root mock (real `ErrorCode`, no banned APIs) | Workflow step 2 |
 | `templates/packages/tooling/src/storekit/` | `Premium.storekit.template` (EUR 1.99, Family Sharing off), `storekit-harness.entitlements`, `ArmTests.swift`, `add-harness.rb`, `storekit-harness.ts` (explicit `--device`, its own driver port for each flow, its own Metro port), `busy-note.ts` with its test (the log line that names a busy Mac) | Workflow step 7 |
@@ -92,7 +92,7 @@ Makes each game sell its single non-consumable "Premium" honestly and with no se
 | `scripts/lib/load-ts.mjs` | Imports repo TypeScript modules with the `@e07/*` aliases and the module stand-ins | Read only to change a checker |
 | `scripts/lib/stubs/expo-iap.mjs` | Scripted Node stand-in for expo-iap 5.8.0 used by the behaviour check (update `ErrorCode` on an upgrade) | Read only to change a checker |
 | `scripts/lib/assemble-fixtures.mjs` | Builds each self-test case from templates + base repo + `mutation.json` | Read only to add a self-test case |
-| `scripts/selftest.mjs` | Proves both checkers on the clean repo and 55 planted problems | After changing a checker, a template or a fixture |
+| `scripts/selftest.mjs` | Proves both checkers on the clean repo and 57 planted problems | After changing a checker, a template or a fixture |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files copied into this skill | When adding a shared file |
 | `tests/fixtures/` | `base-repo/` plus one `mutation.json` and `EXPECT.txt` per case, per checker | When adding a rule |

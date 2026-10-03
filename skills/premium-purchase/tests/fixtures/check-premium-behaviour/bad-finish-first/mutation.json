@@ -2,7 +2,7 @@
   {
     "replace": {
       "file": "packages/shell/src/services/purchase/premium-service.ts",
-      "find": "  const isSaved = deps.persistPremium({ isPremium: true }); // 1. the save is written (sync) ...\n  deps.dispatch({ type: 'premium-granted' }); // 2. ads vanish everywhere at once ...\n  // A refused save keeps it unfinished: StoreKit delivers it again and the save is retried then.\n  if (!isSaved) return;\n  await finishQuietly(deps, tx); // 3. ... and only then StoreKit may forget the transaction.",
+      "find": "  const isSaved = deps.persistPremium({ isPremium: true }); // 1. the save is written (sync) ...\n  deps.dispatch({ type: 'premium-granted' }); // 2. ads vanish everywhere at once ...\n  // A refused save keeps it unfinished: StoreKit delivers it again and the save is retried then\n  // (Android does not deliver it again: the next re-check finishes it once Premium is saved).\n  if (!isSaved) return;\n  await finishQuietly(deps, tx); // 3. ... and only then StoreKit may forget the transaction.",
       "with": "  await finishQuietly(deps, tx);\n  deps.persistPremium({ isPremium: true });\n  deps.dispatch({ type: 'premium-granted' });"
     }
   }
