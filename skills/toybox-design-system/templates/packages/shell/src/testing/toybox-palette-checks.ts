@@ -1,10 +1,13 @@
 // packages/shell/src/testing/toybox-palette-checks.ts
 import { contrastRatio } from '@e07/shell/theme/contrast.ts';
+import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import type { ColorScheme, ColorTokens, Palette } from '@e07/shell/theme/theme-types.ts';
 
 type Token = keyof ColorTokens;
-type Pair = readonly [Token, Token, number];
+/** The palette's tokens plus the Shell's dangerFill of the same scheme (no game repaints it). */
+type Paint = ColorTokens & { readonly dangerFill: string };
+type Pair = readonly [keyof Paint, keyof Paint, number];
 
 /** WCAG 2.2 AA where Toybox puts text (4.5:1) and its outlines, focus ring and hollow stars (3:1). */
 const PAIRS: readonly Pair[] = [
@@ -16,8 +19,13 @@ const PAIRS: readonly Pair[] = [
   ['textMuted', 'sunken', 4.5],
   ['onPrimary', 'primary', 4.5],
   ['onPop', 'pop', 4.5],
-  // Danger text sits only on surface in Toybox (on the light ground it would fail).
+  // Danger text sits only on surface in Toybox (on the light ground it would fail), and the
+  // components draw it on sunken (a pressed danger row) and dangerFill (the hold-to-confirm fill,
+  // destructive icon tiles); body text sits on dangerFill in the Premium error panel. O5: 4.5:1.
   ['danger', 'surface', 4.5],
+  ['danger', 'sunken', 4.5],
+  ['danger', 'dangerFill', 4.5],
+  ['text', 'dangerFill', 4.5],
   ['border', 'background', 3],
   ['border', 'surface', 3],
   ['focus', 'background', 3],
@@ -47,7 +55,7 @@ const LIGHT_INK: Readonly<Partial<Record<Token, string>>> = {
 const ratio = (a: string, b: string): number => contrastRatio(a, b);
 const fixed = (value: number): string => value.toFixed(2);
 
-function contrastProblems(where: string, tokens: ColorTokens): string[] {
+function contrastProblems(where: string, tokens: Paint): string[] {
   const problems = PAIRS.filter(([fg, bg, min]) => ratio(tokens[fg], tokens[bg]) < min).map(
     ([fg, bg, min]) =>
       `${where}: ${fg} on ${bg} is ${fixed(ratio(tokens[fg], tokens[bg]))}:1 < ${String(min)}:1`,
@@ -71,7 +79,8 @@ export function checkToyboxPalette(palette: Palette): readonly string[] {
   const problems: string[] = [];
   for (const scheme of ['light', 'dark'] as const) {
     const tokens = palette.standard[scheme];
-    problems.push(...contrastProblems(`standard.${scheme}`, tokens));
+    const paint = { ...tokens, dangerFill: SHELL_COLORS[scheme].dangerFill };
+    problems.push(...contrastProblems(`standard.${scheme}`, paint));
     problems.push(...inkProblems(scheme, tokens));
     if (palette.colorBlind[scheme] !== tokens) {
       problems.push(`colorBlind.${scheme}: must be the same object as standard.${scheme}`);

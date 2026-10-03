@@ -22,6 +22,7 @@ All values are WCAG 2.2 ratios (relative-luminance formula, sRGB threshold 0.040
 | Text on accent (4.5) | 5.87 | 6.59 | 6.89 | 7.79 | 6.49 | 8.30 |
 | Text on pop (4.5) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 |
 | Danger text on surface (4.5) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 |
+| Danger text on sunken, pressed danger row (4.5) | 4.68 | 6.51 | 4.75 | 5.52 | 4.80 | 6.06 |
 | Danger text on ground (4.5) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 |
 | Danger label and icons on dangerFill, hold (4.5; a text pair in check-contrast) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
 | Body text on dangerFill, error note (4.5) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 |
@@ -54,7 +55,7 @@ All values are WCAG 2.2 ratios (relative-luminance formula, sRGB threshold 0.040
 - **Dark outline vs accent / pop fills is low (1.1 to 2.0:1)**, but there the fills themselves stand 6.6 to 12:1 off the ground.
 - **Surface vs ground is 1.25 to 1.45:1 in every paint:** panels, lists and keys are delimited by their ink outline, never by their fill (rule 3).
 - **Dark hard shadows are faint (1.2 to 1.3:1)**: depth cues, not boundaries.
-- **Danger text on the light ground fails (3.8 to 4.3:1):** Toybox never puts danger text on the ground; it is always on a surface (4.8 to 5.7:1). Rule: danger text only on `surface`.
+- **Danger text on the light ground fails (3.8 to 4.3:1):** Toybox never puts danger text on the ground; it is always on a surface (4.8 to 5.7:1), on `sunken` when a danger row is pressed (4.68 to 6.51:1) or on `dangerFill` (4.52 to 5.83:1). Rule: danger text only on `surface`, `sunken` or `dangerFill`, each checked at 4.5:1 by `palette-contrast` and the app's `toybox-palette-checks.ts`.
 - **The danger label during hold-to-confirm** stays on the key while `dangerFill` grows under it. The light `dangerFill` is `#FFDCDF` (owner decision O5, 2026-09-30), so the label reads at 4.52:1 on the fill and 5.53 to 5.68:1 on the surface: 4.5:1 or more in every fill state. accessibility's `check-contrast.mjs` checks danger, text and muted text on `dangerFill` as 4.5 text pairs in both schemes, with no exception.
 - **Focus** is at least 3.6:1 against every ground and 4.4:1 against the sunken locked tile.
 
@@ -65,7 +66,7 @@ All values are WCAG 2.2 ratios (relative-luminance formula, sRGB threshold 0.040
 | Rule id | Holds when |
 |---|---|
 | `palette-hex` | all 16 fields are uppercase `#RRGGBB` |
-| `palette-contrast` | text, textMuted on background, surface and sunken at 4.5:1; onPrimary on primary and onPop on pop at 4.5:1; danger on surface at 4.5:1; border on background and surface at 3:1; focus on background and sunken at 3:1; starOff on surface at 3:1 |
+| `palette-contrast` | text, textMuted on background, surface and sunken at 4.5:1; onPrimary on primary and onPop on pop at 4.5:1; danger on surface, sunken and dangerFill and text on dangerFill at 4.5:1 (dangerFill is the scheme's Shell colour, from the token file); border on background and surface at 3:1; focus on background and sunken at 3:1; starOff on surface at 3:1 |
 | `palette-fill` | primary, pop and starOn each stand 3:1 either off the border (light paints) or off what they sit on (background, surface; dark paints) |
 | `palette-one-ink` | in light: text, border, shadow, onPrimary, onPop, icon = `#1D1B3A`; textMuted, starOff = `#43406A` |
 | `palette-shell-constant` | danger, focus and starOn equal the Shell constants of the scheme |

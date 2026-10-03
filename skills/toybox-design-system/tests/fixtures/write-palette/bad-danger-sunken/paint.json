@@ -1,0 +1,36 @@
+{
+  "names": {
+    "light": {
+      "ground": "Rose wash",
+      "surface": "Petal",
+      "accent": "Berry",
+      "pop": "Mint"
+    },
+    "dark": {
+      "ground": "Rose night",
+      "surface": "Plum lid",
+      "ink": "Moonlight",
+      "inkSoft": "Mauve",
+      "accent": "Glow berry",
+      "pop": "Night mint"
+    }
+  },
+  "light": {
+    "ground": "#A5DAF3",
+    "surface": "#F8FBFF",
+    "sunken": "#C8E2EE",
+    "accent": "#FF6B4A",
+    "pop": "#FFD23F"
+  },
+  "dark": {
+    "ground": "#2A1731",
+    "surface": "#3D2447",
+    "sunken": "#331D3C",
+    "ink": "#FFF2F8",
+    "inkSoft": "#E0B8CF",
+    "outline": "#FFE3F0",
+    "shadow": "#0F0712",
+    "accent": "#FF8FB1",
+    "pop": "#8BEBCB"
+  }
+}

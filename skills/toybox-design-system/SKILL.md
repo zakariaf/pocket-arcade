@@ -19,7 +19,7 @@ Makes every Pocket Arcade Shell screen speak Toybox: one typed theme module hold
 8. **Every app bundles the five Toybox fonts and three OFL texts, byte for byte.** A missing or different file falls back to the system font and breaks the look and the S11d licence list.
 9. **Motion follows the Toybox table, with its reduce-motion alternative.** 70 ms press, spring back with `RELEASE_SPRING` (mass 1, not Reanimated's default 4); no squash, loops or slaps when reduce motion is on; the 2 s hold-to-confirm timer never shortens.
 10. **Shape before colour.** Every state keeps its non-colour cue (check or dash, dashed edge and padlock, filled vs hollow star); that is why the colour-blind palette may equal the standard one.
-11. **Danger text sits only on `surface` or `dangerFill`** (5.5 and 4.52:1 in light; on the light ground it is 3.8:1). The light `dangerFill` is `#FFDCDF` (owner decision O5), so the hold label passes in every fill state. Destructive controls keep the surface fill and turn text, icon and edge `danger`; they never use accent.
+11. **Danger text sits only on `surface`, `sunken` (a pressed danger row) or `dangerFill`** (5.5, 4.68 and 4.52:1 in light; on the light ground it is 3.8:1); the palette rules check all three, and body text on `dangerFill`. The light `dangerFill` is `#FFDCDF` (owner decision O5), so the hold label passes in every fill state. Destructive controls keep the surface fill and turn text, icon and edge `danger`; they never use accent.
 
 ## Workflow
 
