@@ -57,21 +57,23 @@ It lives in game-kit (pure) because the engine's `intentToMove` receives it. Kin
 `packages/game-kit/src/geom/board-layout.ts` (a `'worklet'` module the rendering skill provides) holds the layout both sides share:
 
 ```ts
-/** Canvas point → cell. `slop` (px) extends every region so edge taps still land. */
+/**
+ * Canvas point → cell. `slop` (px) extends every region so edge taps still land. A region the
+ * point is truly inside always wins; otherwise the nearest region whose slop reaches the point.
+ */
 export function hitTest(layout: BoardLayout, point: Point, slop = 0): BoardTarget | null {
-  const local = { x: layout.isMirrored ? layout.width - point.x : point.x, y: point.y };
-  for (const region of layout.regions) {
-    const hit = regionHit(region, local, slop);   // inside region ± slop → clamped { regionId, col, row }
-    if (hit !== null) return hit;
-  }
-  return null;
+  const exact = firstHit(layout, point, 0);         // inside a region → clamped { regionId, col, row }
+  if (exact !== null || slop <= 0) return exact;
+  return nearestSlopHit(layout, point, slop);       // inside region ± slop, nearest drawn region first
 }
 export function isSameTarget(a: BoardTarget | null, b: BoardTarget | null): boolean { /* structural */ }
 ```
 
+`regionHit` tests each region where it is drawn: a mirrored region is mirrored as a rectangle (`width - x - regionWidth`), exactly as `cellRect` draws it, so a cell's left edge belongs to that cell in both directions. Never mirror the touch point instead (`width - point.x`): that flips the half-open cell intervals and puts every drawn left edge on the neighbouring column.
+
 - The gesture hook reads the layout from a shared value (`layout.get()`), the same value the picture uses, so what you see is what you touch at any canvas size.
 - Regions exist only for tappable areas (board, tray, button strip); a point outside every region (± slop) gives `null`: no intent is sent, and a tap there calls the optional `onMiss` handler (the host drops its tap-then-tap selection).
-- `HIT_SLOP = 8` pt extends every region so taps on the outer edge still land.
+- `HIT_SLOP = 8` pt extends every region so taps on the outer edge still land. A region the point is truly inside always wins over a neighbour reached only through the slop, and a point inside no region goes to the nearest region whose slop reaches it (the board and the tray may sit closer than 8 pt).
 - Mirroring is applied inside `hitTest` from `layout.isMirrored`; gesture code never branches on direction.
 
 ## Gesture composition and thresholds

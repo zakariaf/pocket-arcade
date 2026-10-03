@@ -80,6 +80,20 @@ export function cellRect(layout: BoardLayout, target: BoardTarget): Rect | null 
 type Point = { readonly x: number; readonly y: number };
 type Probe = { readonly point: Point; readonly slop: number };
 
+/** The x where a region is drawn: a mirrored region is mirrored as a rectangle, as cellRect does. */
+function drawnLeft(layout: BoardLayout, region: GridRegion): number {
+  const width = region.cols * region.cell;
+  return layout.isMirrored ? layout.width - region.x - width : region.x;
+}
+
+/** Squared distance from a point to the rectangle a region is drawn in (0 inside it). */
+function drawnDistance(layout: BoardLayout, region: GridRegion, point: Point): number {
+  const left = drawnLeft(layout, region);
+  const dx = Math.max(left - point.x, 0, point.x - (left + region.cols * region.cell));
+  const dy = Math.max(region.y - point.y, 0, point.y - (region.y + region.rows * region.cell));
+  return dx * dx + dy * dy;
+}
+
 /**
  * Hit-tests the region where it is drawn: a mirrored region is mirrored as a rectangle (as
  * cellRect does), so a cell's left edge belongs to that cell in both directions.
@@ -89,7 +103,7 @@ function regionHit(layout: BoardLayout, region: GridRegion, probe: Probe): Board
   const { x, y } = probe.point;
   const width = region.cols * region.cell;
   const height = region.rows * region.cell;
-  const left = layout.isMirrored ? layout.width - region.x - width : region.x;
+  const left = drawnLeft(layout, region);
   const isInside =
     x >= left - slop &&
     x < left + width + slop &&
@@ -110,14 +124,29 @@ function firstHit(layout: BoardLayout, point: Point, slop: number): BoardTarget 
   return null;
 }
 
+/** Among the regions whose slop reaches the point, the one drawn nearest to it (first on a tie). */
+function nearestSlopHit(layout: BoardLayout, point: Point, slop: number): BoardTarget | null {
+  let nearest: BoardTarget | null = null;
+  let nearestDistance = Number.POSITIVE_INFINITY;
+  for (const region of layout.regions) {
+    const hit = regionHit(layout, region, { point, slop });
+    const distance = hit === null ? nearestDistance : drawnDistance(layout, region, point);
+    if (distance < nearestDistance) {
+      nearest = hit;
+      nearestDistance = distance;
+    }
+  }
+  return nearest;
+}
+
 /**
- * Canvas point → cell. `slop` (px) extends every region so edge taps still land, but a region the
- * point is truly inside always wins over a neighbour reached only through the slop.
+ * Canvas point → cell. `slop` (px) extends every region so edge taps still land. A region the
+ * point is truly inside always wins; otherwise the nearest region whose slop reaches the point.
  */
 export function hitTest(layout: BoardLayout, point: Point, slop = 0): BoardTarget | null {
   const exact = firstHit(layout, point, 0);
   if (exact !== null || slop <= 0) return exact;
-  return firstHit(layout, point, slop);
+  return nearestSlopHit(layout, point, slop);
 }
 
 /** Structural equality for targets (hover changes are sent to JS only when this is false). */
