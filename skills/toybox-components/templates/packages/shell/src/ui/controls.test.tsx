@@ -18,7 +18,29 @@ import { Toggle } from './toggle.tsx';
 
 import type { ViewStyle } from 'react-native';
 
+// Each icon image carries its glyph name, so a test can tell a check from a dash (the root mock
+// gives every icon the same image).
+jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
+  getIconUri: (name: string) => `icon:${name}`,
+}));
+
 const COLORS = TEST_PALETTE.standard.light;
+const HIDDEN = { includeHiddenElements: true } as const;
+
+type IconHost = {
+  readonly props: { readonly source?: { readonly uri?: string } };
+  readonly queryAll: (
+    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
+  ) => IconHost[];
+};
+
+/** The glyph names of the icons drawn inside a part, in order. */
+function iconsIn(testID: string): readonly string[] {
+  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
+  return part
+    .queryAll((node) => node.type === 'Image')
+    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
+}
 
 type HostNode = { readonly props: { readonly style?: unknown }; readonly parent: HostNode | null };
 
@@ -62,6 +84,24 @@ describe('SegmentedControl', () => {
       color: COLORS.onPrimary,
     });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('carries the check only on the chosen segment', async () => {
+    await renderWithShell(
+      <SegmentedControl
+        segments={THEMES}
+        selected="system"
+        onSelect={jest.fn()}
+        label="Theme"
+        testID="settings.theme-control"
+        segmentTestIDBase="settings.theme-segment"
+        isReducedMotion={false}
+      />,
+    );
+
+    expect(iconsIn('settings.theme-segment.system')).toStrictEqual(['check']);
+    expect(iconsIn('settings.theme-segment.light')).toStrictEqual([]);
+    expect(iconsIn('settings.theme-segment.dark')).toStrictEqual([]);
   });
 
   it('keeps the mockup gaps: check to label 3 pt, label line to preview line 1 pt', async () => {
@@ -152,6 +192,18 @@ describe('Toggle', () => {
     });
     expect(screen.queryByTestId('settings.music-switch.toggle')).not.toBeOnTheScreen();
   });
+
+  it('shows a check knob when on and a dash knob when off, so the state never rests on colour', async () => {
+    await renderWithShell(
+      <>
+        <Toggle isOn isReducedMotion testID="settings.sound-switch.toggle" />
+        <Toggle isOn={false} isReducedMotion testID="settings.music-switch.toggle" />
+      </>,
+    );
+
+    expect(iconsIn('settings.sound-switch.toggle')).toStrictEqual(['check']);
+    expect(iconsIn('settings.music-switch.toggle')).toStrictEqual(['dash']);
+  });
 });
 
 describe('OptionCard', () => {
@@ -237,6 +289,20 @@ describe('ProgressBar and Slider', () => {
     await fireEvent(slider, 'accessibilityAction', { nativeEvent: { actionName: 'decrement' } });
 
     expect(onChange.mock.calls).toStrictEqual([[0.8], [0.6]]);
+  });
+
+  it('fills from the start edge up to its value', async () => {
+    await renderWithShell(
+      <Slider
+        value={0.7}
+        onChange={jest.fn()}
+        label="Volume"
+        testID="settings.sound-volume-slider"
+      />,
+    );
+
+    // allow-style-assertion: the fill is a share of the track laid from the start edge (mirrors in RTL)
+    expect(screen.getByTestId('settings.sound-volume-slider.fill')).toHaveStyle({ width: '70%' });
   });
 
   it('follows a sideways drag across its width', async () => {
