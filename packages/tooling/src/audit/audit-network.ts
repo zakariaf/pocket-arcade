@@ -1,8 +1,8 @@
 // packages/tooling/src/audit/audit-network.ts
 // `npm run audit:network`: spec N3 layers B-E for every app (layer A is ESLint, layer F runs in
 // E2E) plus the banned-package check. Exports each app as a STORE bundle into
-// dist-audit/<game-id>/ (also read by audit:licenses). Pod and config layers need
-// `npx expo prebuild` first; otherwise skipped.
+// dist-audit/<game-id>/ (also read by audit:licenses). The config layer runs on every call; the
+// pods layer needs `npx expo prebuild` first (ios/Podfile.lock), otherwise a SKIPPED line.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,11 +10,10 @@ import { join } from 'node:path';
 import { findBannedPackages, inventoryFromLockfile } from '@e07/tooling/deps/banned-packages.ts';
 
 import { readBundleModules } from './bundle-modules.ts';
+import { podAndConfigProblems } from './network-app-layers.ts';
 import { compareToBaseline } from './network-baseline.ts';
-import { configProblems } from './network-config-layer.ts';
 import { jsNetworkFindings } from './network-js-layer.ts';
 import { nativeModuleRoots, nativeNetworkFindings } from './network-native-layer.ts';
-import { podProblems } from './network-pods-layer.ts';
 import { storeBundleProblems } from './release-bundle-checks.ts';
 
 import type { Baseline } from './network-baseline.ts';
@@ -54,24 +53,21 @@ function jsProblems(outDir: string): string[] {
   ];
 }
 
+/** Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. */
 function nativeAndPodProblems(appDir: string): string[] {
   const native = compareToBaseline(
     nativeNetworkFindings(nativeModuleRoots(appDir)),
     readBaseline('native-baseline.json'),
   );
   const lock = join(appDir, 'ios', 'Podfile.lock');
-  if (!existsSync(lock))
-    return [...native, 'SKIPPED pods/config layers: run npx expo prebuild first'];
   const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
     cwd: appDir,
     env: STORE_ENV,
     encoding: 'utf8',
   });
-  return [
-    ...native,
-    ...podProblems(readFileSync(lock, 'utf8')),
-    ...configProblems(JSON.parse(json) as ExpoConfigLike),
-  ];
+  const podfileLock = existsSync(lock) ? readFileSync(lock, 'utf8') : null;
+  const config = JSON.parse(json) as ExpoConfigLike;
+  return [...native, ...podAndConfigProblems({ podfileLock, config })];
 }
 
 function auditApp(gameId: string): string[] {
