@@ -232,7 +232,7 @@ For this epic:
   - `ios/toolchain.test.ts`: `pickXcode` picks the app whose version matches, not the one named `Xcode.app`, and refuses a missing version. `assertXcodeVersion` accepts only 26.6. `toolEnv` sets `DEVELOPER_DIR`, `EXPO_NO_TELEMETRY` and `CI`.
   - `ios/simulators.test.ts`: names are `e07-<purpose>` in kebab-case; a simulator is found by name on the pinned iOS 26.5 runtime, and an existing one is reused.
   - `e2e/maestro-args.test.ts`: the device UDID and a driver port go before the command; "booted", a name, a list of devices or a port outside 1024-65535 are refused; `freeDriverPort` returns a free port.
-  - Before evidence: `node skills/ios-simulator-build/scripts/check-sim-setup.mjs .` fails `npm-script` because the target of `build:ios:sim` is missing.
+  - Before evidence: `node skills/quality-gates/scripts/check-gate-wiring.mjs .` still prints the `build:ios:sim` script-target line, because its target `packages/tooling/src/build/build-ios-sim.ts` is missing (`check-sim-setup`'s `npm-script` rule compares only the script text, so it passes before and after).
 - **Build:**
   - Copy `packages/tooling/src/build/sim-build-plan.ts` and `build-ios-sim.ts`, `packages/tooling/src/ios/toolchain.ts` and `simulators.ts`, and `packages/tooling/src/e2e/maestro-args.ts` over the stubs.
   - Do not copy this skill's `test-only*.ts`, `app-env.d.ts` or `app-variant*.ts`. They have been in the repo since E01, E06 and E09, and the test-only pair has grown members that a copy would drop.
