@@ -14,6 +14,7 @@ import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { ConsentMoment } from './consent-moment.tsx';
 
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
+import type { ConsentInfo } from '@e07/shell/services/consent/consent-port.ts';
 import type { ReactNode } from 'react';
 
 // A test build with test ads (TEST_EXPO_CONSTANTS: ADS_MODE=test, the game's ads on).
@@ -31,7 +32,12 @@ function MockHome(): ReactNode {
   return <AppText testID="probe.banner" text={banner.isAllowed ? 'banner' : 'no banner'} />;
 }
 
-type Options = { readonly isHeld?: boolean; readonly debug?: DebugServices | null };
+type Options = {
+  readonly isHeld?: boolean;
+  readonly debug?: DebugServices | null;
+  /** The answer a previous launch saved (the save's ads.consent). */
+  readonly savedConsent?: ConsentInfo;
+};
 
 /**
  * A player past the tutorial, online, in a region where Google's form is required, on an iPhone
@@ -43,7 +49,9 @@ async function renderMoment(options: Options = {}) {
   save.update((doc) => ({
     ...doc,
     firstRun: { ...doc.firstRun, languageChosen: true, tutorialDone: true },
+    ads: { ...doc.ads, consent: options.savedConsent ?? doc.ads.consent },
   }));
+  const update = jest.spyOn(save, 'update');
   const services = {
     save,
     clock: TEST_CLOCK,
@@ -69,7 +77,7 @@ async function renderMoment(options: Options = {}) {
     { services },
   );
   await act(flushMicrotasks);
-  return { calls, save };
+  return { calls, save, update };
 }
 
 describe('ConsentMoment', () => {
@@ -108,5 +116,13 @@ describe('ConsentMoment', () => {
     const { calls } = await renderMoment({ debug });
     expect(screen.queryByTestId('consent.screen')).toBeNull();
     expect(calls).toStrictEqual([]);
+  });
+
+  it("writes nothing when Google's answer at launch is the one already saved (spec 8.8)", async () => {
+    const savedConsent = { canRequestAds: false, isPrivacyOptionsRequired: true };
+    const { calls, save, update } = await renderMoment({ savedConsent });
+    expect(calls).toStrictEqual(['refresh']);
+    expect(save.doc().ads.consent).toStrictEqual(savedConsent);
+    expect(update).not.toHaveBeenCalled();
   });
 });
