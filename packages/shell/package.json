@@ -18,12 +18,14 @@
   "peerDependencies": {
     "@shopify/react-native-skia": "*",
     "expo": "*",
+    "expo-constants": "*",
     "expo-iap": "*",
     "expo-network": "*",
     "expo-sqlite": "*",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
+    "react-native-google-mobile-ads": "*",
     "react-native-reanimated": "*",
     "react-native-worklets": "*"
   }
