@@ -49,6 +49,20 @@ describe('date-key', () => {
     );
   });
 
+  it('returns only real calendar dates: month 01-12 and a day that month has', () => {
+    const isLeap = (year: number): boolean =>
+      (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    fc.assert(
+      fc.property(fc.integer({ min: -25_567, max: 157_000 }), (days) => {
+        const [year = 0, month = 0, day = 0] = fromDayNumber(days).split('-').map(Number);
+        const monthLength = (DAYS_IN_MONTH[month - 1] ?? 0) + (month === 2 && isLeap(year) ? 1 : 0);
+        expect(month >= 1 && month <= 12 && day >= 1 && day <= monthLength).toBe(true);
+      }),
+      { numRuns: 2000 },
+    );
+  });
+
   it('pins the daily seed (compatibility contract: same level for every player)', () => {
     expect(dailySeed('2026-09-26', 17)).toBe(2_599_028_541);
     expect(dailySeed('2026-09-27', 17)).toBe(2_582_250_922);
