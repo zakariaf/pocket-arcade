@@ -55,4 +55,8 @@ describe('SOUND_BANK', () => {
       'shock',
     ]);
   });
+
+  it('keeps every sound an effect, so Line Siege has no music and hides the Music rows (spec 8.7, lead decision L1)', () => {
+    expect(Object.values(SOUND_BANK).filter((spec) => spec.category !== 'sfx')).toStrictEqual([]);
+  });
 });
