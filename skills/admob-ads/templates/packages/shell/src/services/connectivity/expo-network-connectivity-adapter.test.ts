@@ -50,6 +50,38 @@ describe('createExpoNetworkConnectivityAdapter', () => {
     expect([connectivity.isOnline(), seen]).toStrictEqual([false, [false]]);
   });
 
+  // spec 4.1 and S12: offline means no ad and "store unavailable". The first read can answer after
+  // a newer change reached the listener; that older answer must not overwrite the newer one.
+  it('keeps a listener event that arrived before the first read answered', async () => {
+    const firstRead: ((state: NetworkState) => void)[] = [];
+    network.getNetworkStateAsync.mockReturnValueOnce(
+      new Promise<NetworkState>((resolve) => firstRead.push(resolve)),
+    );
+    const connectivity = createExpoNetworkConnectivityAdapter();
+    const seen: boolean[] = [];
+    connectivity.subscribe((isOnline) => seen.push(isOnline));
+    lastListener()(ONLINE);
+    for (const answer of firstRead) answer({ isConnected: false });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect([connectivity.isOnline(), seen]).toStrictEqual([true, [true]]);
+  });
+
+  it('keeps a listener event when the first read fails after it', async () => {
+    const firstRead: ((error: Error) => void)[] = [];
+    network.getNetworkStateAsync.mockReturnValueOnce(
+      new Promise<NetworkState>((_resolve, reject) => firstRead.push(reject)),
+    );
+    const connectivity = createExpoNetworkConnectivityAdapter();
+    lastListener()(ONLINE);
+    for (const fail of firstRead) fail(new Error('no permission'));
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(connectivity.isOnline()).toBe(true);
+  });
+
   it('stops calling a listener after it unsubscribes', () => {
     network.getNetworkStateAsync.mockResolvedValueOnce(ONLINE);
     const connectivity = createExpoNetworkConnectivityAdapter();
