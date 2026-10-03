@@ -103,27 +103,30 @@ export async function processTransaction(
   await finishQuietly(deps, tx); // 3. ... and only then StoreKit may forget the transaction.
 }
 
-const SYNC_FAILED = 'sync-failed';
+// A restore's answer: what applyEvidence saved, or 'sync-failed' with nothing to finish.
+type Restored = {
+  readonly evidence: Evidence | 'sync-failed';
+  readonly unfinished: readonly StoreTransaction[];
+};
 
-async function syncAndReadEvidence(
-  deps: PremiumServiceDeps,
-): Promise<Applied | typeof SYNC_FAILED> {
-  if ((await deps.port.restore()) === SYNC_FAILED) return SYNC_FAILED;
+const NOT_SYNCED: Restored = { evidence: 'sync-failed', unfinished: [] };
+
+async function syncAndReadEvidence(deps: PremiumServiceDeps): Promise<Restored> {
+  if ((await deps.port.restore()) === 'sync-failed') return NOT_SYNCED;
   try {
     return applyEvidence(deps, await deps.port.readTransactions());
   } catch (error) {
     deps.onError(error);
-    return SYNC_FAILED;
+    return NOT_SYNCED;
   }
 }
 
 // S12 and Settings "Restore purchase": AppStore.sync(), then read the verified transactions.
 export async function restorePremium(deps: PremiumServiceDeps): Promise<void> {
   deps.dispatch({ type: 'restore-tapped' });
-  const applied = await syncAndReadEvidence(deps);
-  const evidence = applied === SYNC_FAILED ? SYNC_FAILED : applied.evidence;
+  const { evidence, unfinished } = await syncAndReadEvidence(deps);
   deps.dispatch({ type: 'restore-finished', evidence });
-  if (applied !== SYNC_FAILED) await finishAll(deps, applied.unfinished);
+  await finishAll(deps, unfinished);
 }
 
 export async function processPurchaseEvent(
