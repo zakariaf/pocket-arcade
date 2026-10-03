@@ -35,4 +35,16 @@ describe('settings store', () => {
     settings.getState().dispatch({ type: 'set-sound', enabled: true, volume: 180 });
     expect(settings.getState().settings.soundVolume).toBe(100);
   });
+
+  // spec S11: "Every change applies immediately; there is no Save button." Repeating the saved
+  // value is no change: nothing is written and no screen re-renders.
+  it('writes and publishes nothing when a change repeats the saved value', () => {
+    const { store, settings } = setup();
+    const current = store.read('current');
+    const listener = jest.fn();
+    settings.subscribe(listener);
+    settings.getState().dispatch({ type: 'set-theme', theme: 'system' });
+    expect(store.read('current')).toBe(current);
+    expect(listener).not.toHaveBeenCalled();
+  });
 });
