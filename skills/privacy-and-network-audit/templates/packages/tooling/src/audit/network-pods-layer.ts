@@ -16,6 +16,25 @@ export function trunkPods(podfileLock: string): string[] {
     .filter((name): name is string => name !== undefined);
 }
 
+/**
+ * Podfile.lock's "EXTERNAL SOURCES:": every pod not taken from the trunk, with its source keys
+ * ("  Name:" then "    :path: \"../node_modules/x\"", :podspec, :git, :http, :tag...).
+ */
+export function externalSources(
+  podfileLock: string,
+): Map<string, Readonly<Record<string, string>>> {
+  const section = podfileLock.split('\nEXTERNAL SOURCES:\n')[1]?.split('\n\n')[0] ?? '';
+  const sources = new Map<string, Record<string, string>>();
+  let current: Record<string, string> = {};
+  for (const line of section.split('\n')) {
+    const pod = /^ {2}"?([^"\s]+?)"?:$/.exec(line)?.[1];
+    if (pod !== undefined) sources.set(pod, (current = {}));
+    const key = /^ {4}:(\w+): "?([^"]*)"?$/.exec(line);
+    if (key?.[1] !== undefined) current[key[1]] = key[2] ?? '';
+  }
+  return sources;
+}
+
 export function podProblems(podfileLock: string): string[] {
   return trunkPods(podfileLock)
     .filter((pod) => !VENDOR_POD_ALLOWLIST.has(pod))

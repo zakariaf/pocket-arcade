@@ -2,36 +2,46 @@
 // `npm run audit:privacy [-- --app <game-id>]` after `npx expo prebuild --platform ios --clean`
 // (prebuild runs pod install). Without --app: every app that has ios/Pods. Fails when app.config
 // lacks a reason a pod declares, when a pod other than Google's declares tracking, when the app's
-// own manifest declares tracking or tracking domains, or when no app is prebuilt. Also prints the
-// App Privacy questionnaire input, with the tracking answers: Device ID is collected, linked and
-// used for tracking by the third-party ads SDK, and the app asks App Tracking Transparency first
-// (owner decision O1).
+// own manifest declares tracking or tracking domains, or when no app is prebuilt. It reads the
+// manifests of the trunk pods (ios/Pods) and of the development pods (built from node_modules or
+// the workspace and bundled from their own folder): exactly what CocoaPods puts into the app.
+// Also prints the App Privacy questionnaire input, with the tracking answers: Device ID is
+// collected, linked and used for tracking by the third-party ads SDK, and the app asks App
+// Tracking Transparency first (owner decision O1).
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
-  appTrackingProblems,
+  localPodManifestPaths,
   mergeReasons,
-  missingReasons,
+  privacyProblems,
   readManifest,
   trackingAnswers,
 } from './privacy-manifest.ts';
 
-import type { PrivacyManifest } from './privacy-manifest.ts';
+import type { PodManifest, PrivacyManifest } from './privacy-manifest.ts';
 
-// Pods allowed to declare tracking or collected data (the AdMob SDKs, spec N3).
-const TRACKING_ALLOWED = /\/(Google-Mobile-Ads-SDK|GoogleUserMessagingPlatform)\//;
-
-type PodManifest = { readonly path: string; readonly manifest: PrivacyManifest };
-
-// Each pod manifest is read (one plutil run) once; the checks below share the parsed copies.
-function podManifests(appDir: string): PodManifest[] {
-  const pods = join(appDir, 'ios', 'Pods');
-  return readdirSync(pods, { recursive: true, encoding: 'utf8' })
+/**
+ * Each pod manifest is read (one plutil run) once; the checks below share the parsed copies.
+ * Trunk pods' manifests sit in ios/Pods/<pod>/; development pods' (EXTERNAL SOURCES with a local
+ * :path or :podspec) stay in their own folder, where their Local Podspecs entry names them.
+ */
+function podManifests(appDir: string): { pods: PodManifest[]; unreadable: string[] } {
+  const ios = join(appDir, 'ios');
+  const pods = join(ios, 'Pods');
+  const trunk = readdirSync(pods, { recursive: true, encoding: 'utf8' })
     .filter((file) => file.endsWith('PrivacyInfo.xcprivacy'))
-    .map((file) => join(pods, file))
-    .map((path) => ({ path, manifest: readManifest(path) }));
+    .map((file) => ({ pod: file.split('/')[0] ?? file, path: join(pods, file) }));
+  const local = localPodManifestPaths(ios);
+  const unreadable = local
+    .filter(({ path }) => !existsSync(path))
+    .map(({ pod, path }) => `pod ${pod} bundles ${path}, which the audit cannot read`);
+  const found = [...trunk, ...local.filter(({ path }) => existsSync(path))];
+  return {
+    pods: found.map((entry) => ({ ...entry, manifest: readManifest(entry.path) })),
+    unreadable,
+  };
 }
 
 function appManifest(appDir: string): PrivacyManifest {
@@ -43,24 +53,11 @@ function appManifest(appDir: string): PrivacyManifest {
   return config.ios?.privacyManifests ?? {};
 }
 
-function trackingViolations(pods: readonly PodManifest[]): string[] {
-  return pods
-    .filter(({ path }) => !TRACKING_ALLOWED.test(path))
-    .filter(({ manifest }) => {
-      const domains = manifest.NSPrivacyTrackingDomains ?? [];
-      return manifest.NSPrivacyTracking === true || domains.length > 0;
-    })
-    .map(({ path }) => path);
-}
-
 type Collected = Parameters<typeof trackingAnswers>[0][number];
 
 function collectedItems(pods: readonly PodManifest[]): Collected[] {
-  return pods.flatMap(({ path, manifest }) =>
-    (manifest.NSPrivacyCollectedDataTypes ?? []).map((item) => ({
-      pod: path.split('/Pods/')[1]?.split('/')[0] ?? path,
-      item,
-    })),
+  return pods.flatMap(({ pod, manifest }) =>
+    (manifest.NSPrivacyCollectedDataTypes ?? []).map((item) => ({ pod, item })),
   );
 }
 
@@ -73,15 +70,9 @@ function collectedData(items: readonly Collected[]): string[] {
 }
 
 function auditApp(appDir: string): number {
-  const pods = podManifests(appDir);
+  const { pods, unreadable } = podManifests(appDir);
   const required = mergeReasons(pods.map(({ manifest }) => manifest));
-  const app = appManifest(appDir);
-  const declared = mergeReasons([app]);
-  const problems = [
-    ...missingReasons(required, declared).map((gap) => `app.config lacks ${gap}`),
-    ...trackingViolations(pods).map((path) => `tracking declared outside the AdMob pods: ${path}`),
-    ...appTrackingProblems(app),
-  ];
+  const problems = [...privacyProblems(pods, appManifest(appDir)), ...unreadable];
   for (const [category, reasons] of required)
     console.error(`${category}: ${[...reasons].join(', ')}`);
   const items = collectedItems(pods);
