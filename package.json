@@ -61,6 +61,7 @@
     "new-game": "node packages/tooling/src/scaffold/new-game.ts"
   },
   "devDependencies": {
+    "@formatjs/cli": "6.16.32",
     "@react-native/eslint-plugin": "0.86.3",
     "@react-native/jest-preset": "0.86.3",
     "@stryker-mutator/core": "10.0.0",

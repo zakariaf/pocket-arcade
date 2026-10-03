@@ -5,5 +5,8 @@
   "type": "module",
   "exports": {
     "./*": "./src/*"
+  },
+  "devDependencies": {
+    "@formatjs/icu-messageformat-parser": "3.5.20"
   }
 }
