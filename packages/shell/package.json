@@ -27,6 +27,7 @@
     "expo-iap": "*",
     "expo-localization": "*",
     "expo-network": "*",
+    "expo-splash-screen": "*",
     "expo-sqlite": "*",
     "expo-tracking-transparency": "*",
     "react": "*",
