@@ -23,11 +23,15 @@ import type { PrivacyManifest } from './privacy-manifest.ts';
 // Pods allowed to declare tracking or collected data (the AdMob SDKs, spec N3).
 const TRACKING_ALLOWED = /\/(Google-Mobile-Ads-SDK|GoogleUserMessagingPlatform)\//;
 
-function podManifests(appDir: string): string[] {
+type PodManifest = { readonly path: string; readonly manifest: PrivacyManifest };
+
+// Each pod manifest is read (one plutil run) once; the checks below share the parsed copies.
+function podManifests(appDir: string): PodManifest[] {
   const pods = join(appDir, 'ios', 'Pods');
   return readdirSync(pods, { recursive: true, encoding: 'utf8' })
     .filter((file) => file.endsWith('PrivacyInfo.xcprivacy'))
-    .map((file) => join(pods, file));
+    .map((file) => join(pods, file))
+    .map((path) => ({ path, manifest: readManifest(path) }));
 }
 
 function appManifest(appDir: string): PrivacyManifest {
@@ -39,21 +43,21 @@ function appManifest(appDir: string): PrivacyManifest {
   return config.ios?.privacyManifests ?? {};
 }
 
-function trackingViolations(paths: readonly string[]): string[] {
-  return paths
-    .filter((path) => !TRACKING_ALLOWED.test(path))
-    .filter((path) => {
-      const manifest = readManifest(path);
+function trackingViolations(pods: readonly PodManifest[]): string[] {
+  return pods
+    .filter(({ path }) => !TRACKING_ALLOWED.test(path))
+    .filter(({ manifest }) => {
       const domains = manifest.NSPrivacyTrackingDomains ?? [];
       return manifest.NSPrivacyTracking === true || domains.length > 0;
-    });
+    })
+    .map(({ path }) => path);
 }
 
 type Collected = Parameters<typeof trackingAnswers>[0][number];
 
-function collectedItems(paths: readonly string[]): Collected[] {
-  return paths.flatMap((path) =>
-    (readManifest(path).NSPrivacyCollectedDataTypes ?? []).map((item) => ({
+function collectedItems(pods: readonly PodManifest[]): Collected[] {
+  return pods.flatMap(({ path, manifest }) =>
+    (manifest.NSPrivacyCollectedDataTypes ?? []).map((item) => ({
       pod: path.split('/Pods/')[1]?.split('/')[0] ?? path,
       item,
     })),
@@ -69,23 +73,23 @@ function collectedData(items: readonly Collected[]): string[] {
 }
 
 function auditApp(appDir: string): number {
-  const paths = podManifests(appDir);
-  const required = mergeReasons(paths.map(readManifest));
+  const pods = podManifests(appDir);
+  const required = mergeReasons(pods.map(({ manifest }) => manifest));
   const app = appManifest(appDir);
   const declared = mergeReasons([app]);
   const problems = [
     ...missingReasons(required, declared).map((gap) => `app.config lacks ${gap}`),
-    ...trackingViolations(paths).map((path) => `tracking declared outside the AdMob pods: ${path}`),
+    ...trackingViolations(pods).map((path) => `tracking declared outside the AdMob pods: ${path}`),
     ...appTrackingProblems(app),
   ];
   for (const [category, reasons] of required)
     console.error(`${category}: ${[...reasons].join(', ')}`);
-  const items = collectedItems(paths);
+  const items = collectedItems(pods);
   for (const line of new Set(collectedData(items))) console.error(`collected ${line}`);
   for (const line of new Set(trackingAnswers(items))) console.error(line);
   for (const problem of problems) console.error(`FAIL ${problem}`);
   console.error(
-    `${appDir}: ${String(paths.length)} pod manifests, ${String(problems.length)} problem(s)`,
+    `${appDir}: ${String(pods.length)} pod manifests, ${String(problems.length)} problem(s)`,
   );
   return problems.length;
 }
