@@ -119,3 +119,19 @@ describe('premiumReducer debug switch', () => {
     expect([switched.didJustPurchase, switched.didJustRestore]).toStrictEqual([false, false]);
   });
 });
+
+// spec 8.9: "When online, the Shell quietly re-checks the purchase with the store at app start and
+// updates the stored status". It runs at launch, every foreground and reconnect, so a re-check that
+// changes nothing hands back the same state and the store publishes nothing.
+describe('premiumReducer silent re-check', () => {
+  it('returns the same state when the re-check confirms the Premium it already shows', () => {
+    const owned = run(READY, true);
+    expect(premiumReducer(owned, { type: 'entitlements-checked', evidence: 'owned' })).toBe(owned);
+  });
+
+  it('returns the same state when the re-check confirms a revocation it already shows', () => {
+    const notOwned = run(READY);
+    const checked = premiumReducer(notOwned, { type: 'entitlements-checked', evidence: 'revoked' });
+    expect(checked).toBe(notOwned);
+  });
+});
