@@ -1,9 +1,8 @@
 // packages/shell/src/game-host/sprite-cache.ts
 // Sprites drawn in code are pre-rendered ONCE per theme into one image, then blitted with
 // drawImageRect or <Atlas>. The cache key covers everything that changes the pixels.
-import type { SkCanvas, SkImage, SkRect, Skia } from '@shopify/react-native-skia';
-
-type SkiaApi = typeof Skia;
+import type { SkiaApi } from './board-types.ts';
+import type { SkCanvas, SkImage, SkRect } from '@shopify/react-native-skia';
 
 export type SpriteSpec = {
   readonly id: string;
