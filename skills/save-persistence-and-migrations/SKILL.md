@@ -70,8 +70,9 @@ Everything the player owns is one versioned JSON document, validated on every lo
 | `examples/save-v2/` | A complete v1-to-v2 change (schema, step, step test, defaults, fixtures, checksums) | Workflow step 4 |
 | `scripts/check-save-layer.mjs` | Static checker for the save layer, schemas, migration chain, fixture checksums and the newer-`save.db` boot path | Workflow step 8, and at the end |
 | `scripts/inspect-save.mjs` | Health check of a save.db, a .sql dump, or the simulator app's file | Workflow step 7, and when a save looks wrong |
-| `scripts/kill-test.mjs` | Simulator kill test: launch, SIGKILL at growing delays, inspect | Workflow step 7 |
+| `scripts/kill-test.mjs` | Simulator kill test: a calibration launch times the first save write, then launch and SIGKILL at growing delays over 1.5 x that, inspect | Workflow step 7 |
 | `scripts/lib/save-db.mjs` | Stages a copy of save.db and judges its health (used by both scripts above) | Never by hand |
+| `scripts/lib/kill-plan.mjs` | The kill test's timing: the calibrated step and the first-write test (proven by the self-test) | Never by hand |
 | `scripts/lib/app-modules.mjs` | Imports the app's TypeScript modules for `inspect-save --deep` | Never by hand |
 | `scripts/lib/fixture-tree.mjs` | Builds the self-test trees (templates plus one planted bug) | Never by hand |
 | `scripts/selftest.mjs` | Proves check-save-layer and inspect-save pass good input and catch every planted bug | After changing a checker or a template |

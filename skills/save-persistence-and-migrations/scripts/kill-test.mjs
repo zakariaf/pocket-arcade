@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 // kill-test.mjs: the simulator kill test for the save path. It launches the installed app and
-// kills it with SIGKILL at growing delays while the startup writes run (0.08 s, 0.16 s ... by
-// default), then inspects the app's save.db copy: both slots must decode and save_quarantine must
-// be empty. Needs Xcode's simctl and a Release (test variant) build installed or passed with --app.
+// kills it with SIGKILL at growing delays while the startup writes run, then inspects the app's
+// save.db copy: both slots must decode and save_quarantine must be empty. Without --step-ms one
+// calibration launch first measures when the first save write lands, and the rounds spread over
+// 1.5 times that (lib/kill-plan.mjs), so kills hit the writes however slow the start-up is. Needs Xcode's simctl and a Release (test variant) build installed or passed with --app.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --udid <id> --bundle-id <id> --game-id <id> [--app <path.app>] [--repo .]
 
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
+import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, killStepMs } from './lib/kill-plan.mjs';
 import { inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
 
 const SPEC = {
@@ -27,13 +29,15 @@ const SPEC = {
     'bundle-id': { type: 'string', value: 'id', help: 'The app bundle id' },
     'game-id': { type: 'string', value: 'id', help: 'The gameId the save must carry' },
     kills: { type: 'string', default: '12', value: 'n', help: 'How many launch-and-kill rounds' },
-    'step-ms': { type: 'string', default: '80', value: 'ms', help: 'Delay step: round i kills after i x step ms' },
+    'step-ms': { type: 'string', value: 'ms', help: 'Delay step: round i kills after i x step ms (default: calibrated, 1.5 x the first save write spread over the rounds, at least 80)' },
     repo: { type: 'string', value: 'dir', help: "App repo root: also decode both slots with the app's own decodeSlot (schema and migrations)" },
     'dry-run': { type: 'boolean', help: 'Print the commands without running them (ends with exit 2, never PASS)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 0 },
   details: [
+    'Calibration (no --step-ms): one launch waits up to 20 s for the first save write (save.db-wal',
+    'growing after the launch), then the rounds spread over 1.5 x that time; no write is slot-missing.',
     'Pass criteria: every round launched and was killed, then inspect finds both slots ok and',
     'save_quarantine empty (rules from inspect-save: slot-missing, checksum, json, quarantine, ...).',
     'The mid-level kill (play N moves, kill, relaunch, assert the paused Game screen) is a Maestro flow.',
@@ -96,11 +100,43 @@ function killRounds(udid, bundleId, { kills, stepMs, dryRun }) {
   sleepMs(500);
 }
 
+/** Launches once without killing and returns the ms from launch to the first save write, or null. */
+function measureFirstWrite(udid, bundleId) {
+  simctl(['terminate', udid, bundleId], { allowFail: true });
+  const launchedAtMs = Date.now();
+  simctl(['launch', udid, bundleId]);
+  const startedMs = Date.now();
+  const wal = join(simctl(['get_app_container', udid, bundleId, 'data']), 'Documents', 'SQLite', 'save.db-wal');
+  while (Date.now() - startedMs < CALIBRATION_TIMEOUT_MS) {
+    const stat = existsSync(wal) ? statSync(wal) : null;
+    if (isWriteAfterLaunch(stat, launchedAtMs)) return Date.now() - startedMs;
+    sleepMs(10);
+  }
+  return null;
+}
+
 async function loadDecoder(repo, gameId) {
   if (repo === undefined) return undefined;
   const app = enableAppImports(requireDir(repo, 'app repo root'));
   const codec = await app.load('packages/shell/src/services/save/save-codec.ts');
   return (record) => codec.decodeSlot(record, gameId);
+}
+
+/** The step to use: --step-ms, or one calibrated from a first launch (null: the app never wrote). */
+function calibratedStep(udid, bundleId, { kills, givenStepMs, dryRun }, report) {
+  if (givenStepMs !== undefined) return givenStepMs;
+  if (dryRun) {
+    console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over 1.5 x it`);
+    return killStepMs({ kills, stepMs: undefined, firstWriteMs: null });
+  }
+  const firstWriteMs = measureFirstWrite(udid, bundleId);
+  if (firstWriteMs === null) {
+    report.problem({ file: bundleId, rule: 'slot-missing', message: `no save write within ${CALIBRATION_TIMEOUT_MS} ms of an undisturbed launch`, fix: 'The app never finished a first write: check boot order (hydrate before the first render) and that save.db opens in WAL mode.' });
+    return null;
+  }
+  const stepMs = killStepMs({ kills, stepMs: undefined, firstWriteMs });
+  console.log(`calibration: first save write ${firstWriteMs} ms after launch; kill step ${stepMs} ms (rounds up to ${stepMs * kills} ms)`);
+  return stepMs;
 }
 
 run(async () => {
@@ -110,8 +146,8 @@ run(async () => {
   if (options.create && options.app === undefined) fail('--create makes an empty simulator: pass --app <path/to/App.app> too', 'Build the Release test-variant simulator app first, then pass its .app path.');
   if (options.app !== undefined && !options['dry-run'] && !existsSync(options.app)) fail(`no app at ${options.app}`, 'Build the Release (test variant) simulator app first.');
   const kills = Number(options.kills);
-  const stepMs = Number(options['step-ms']);
-  if (!Number.isInteger(kills) || kills < 1 || !Number.isInteger(stepMs) || stepMs < 1) fail('--kills and --step-ms must be positive whole numbers');
+  const givenStepMs = options['step-ms'] === undefined ? undefined : Number(options['step-ms']);
+  if (!Number.isInteger(kills) || kills < 1 || (givenStepMs !== undefined && (!Number.isInteger(givenStepMs) || givenStepMs < 1))) fail('--kills and --step-ms must be positive whole numbers');
   const DatabaseSync = await openSqlite();
   if (DatabaseSync === null) fail('node:sqlite is not available in this Node', 'Use Node 22.13 or newer.');
   const dryRun = options['dry-run'];
@@ -120,6 +156,8 @@ run(async () => {
   const report = createReporter({ name: 'kill-test', json: options.json });
   try {
     prepareSimulator(udid, options);
+    const stepMs = calibratedStep(udid, options['bundle-id'], { kills, givenStepMs, dryRun }, report);
+    if (stepMs === null) return report.finish({ checked: 0, unit: 'kill rounds' });
     killRounds(udid, options['bundle-id'], { kills, stepMs, dryRun });
     if (dryRun) {
       console.log('would inspect Documents/SQLite/save.db of the app container');
