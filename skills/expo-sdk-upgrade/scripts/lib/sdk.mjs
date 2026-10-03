@@ -124,9 +124,16 @@ export function ageDays(publishedIso, nowMs) {
   return Math.floor((nowMs - Date.parse(publishedIso)) / DAY_MS);
 }
 
-/** The moment (ISO, to the minute) a release turns `days` days old: npm accepts it from then on. */
+const MINUTE_MS = 60_000;
+
+/**
+ * The moment (ISO, to the minute) a release turns `days` days old: npm accepts it from then on.
+ * Rounded up to the next whole minute, so the printed moment is never earlier than the real one
+ * (published 18:00:30 prints 18:01, not 18:00, when npm would still refuse it).
+ */
 export function oldEnoughAt(publishedIso, days) {
-  return `${new Date(Date.parse(publishedIso) + days * DAY_MS).toISOString().slice(0, 16)}Z`;
+  const atMs = Date.parse(publishedIso) + days * DAY_MS;
+  return `${new Date(Math.ceil(atMs / MINUTE_MS) * MINUTE_MS).toISOString().slice(0, 16)}Z`;
 }
 
 /** True when the release is at least `days` days old at the moment `nowMs`. */
