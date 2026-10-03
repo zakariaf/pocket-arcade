@@ -31,6 +31,11 @@ export type BoardClock<TView> = {
   readonly resume: () => void;
   /** JS, test builds: one trace entry with the clock's last seq and run (no-op without a trace). */
   readonly trace: (label: BoardClockLabel) => void;
+  /**
+   * JS: a draw() error from the picture (BoardCanvas's onDrawError). Routed like a frame error:
+   * the clock halts and the first error of the run reaches the host's onFailure, once.
+   */
+  readonly fail: (message: string) => void;
 };
 
 /** A JS-side trace entry: the UI's numbers for frames, the last pushed scene's for the rest. */
@@ -66,7 +71,7 @@ type ClockDriver = Pick<BoardClock<unknown>, 'stop' | 'resume' | 'trace'> & {
   readonly push: Push;
   /** The frame runner's done message: stops the clock only for the run that is still current. */
   readonly onDone: (doneRun: number, seq: number) => void;
-  /** A draw or frame error: halt, then the host pauses the run. */
+  /** A draw or frame error: halt, then the host pauses the run (once per run). */
   readonly onError: (message: string) => void;
 };
 
@@ -82,11 +87,12 @@ function createClockDriver(initial: SceneHead, run: Pick<SharedValue<number>, 's
     parts?.sink?.(label, { ...base, startAt: null, elapsedMs: null, ...sample });
   };
   // The one place the frame callback is switched: the run reaches the UI before the frame does.
-  const apply = (step: ClockStep, label: BoardClockLabel | null): void => {
+  const apply = (step: ClockStep, label: BoardClockLabel | null): ClockStep => {
     control = step.control;
     if (step.setActive === true) run.set(step.control.run);
     if (step.setActive !== null) parts?.frame.setActive(step.setActive);
     if (label !== null) trace(label);
+    return step;
   };
   return {
     connect: (next) => {
@@ -110,8 +116,7 @@ function createClockDriver(initial: SceneHead, run: Pick<SharedValue<number>, 's
       if (step.isApplied || isStale) trace('done', { seq, run: doneRun, isStale });
     },
     onError: (message) => {
-      apply(haltClock(control), null);
-      parts?.onError(message);
+      if (apply(haltClock(control), null).isApplied) parts?.onError(message);
     },
   };
 }
@@ -155,5 +160,6 @@ export function useBoardClock<TView>(
     stop: driver.stop,
     resume: driver.resume,
     trace: driver.trace,
+    fail: driver.onError,
   };
 }

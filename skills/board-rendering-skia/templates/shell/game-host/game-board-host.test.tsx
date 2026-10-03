@@ -19,13 +19,17 @@ type Event = { readonly kind: 'scored' };
 type View = { readonly scoreText: string };
 
 const mockLog: string[] = [];
-const mockCanvasProps: { highlight?: BoardHighlight; accessibilityLabel?: string }[] = [];
+const mockCanvasProps: {
+  highlight?: BoardHighlight;
+  accessibilityLabel?: string;
+  onDrawError?: (message: string) => void;
+}[] = [];
 const mockApp = { isActive: true };
 /** The trace sink the host handed the clock (test builds with boardLayout=1). */
 const mockClockOptions: { trace?: ((label: string, sample: object) => void) | null } = {};
 
 jest.mock('./board-canvas.tsx', () => {
-  const recordProps = (props: { highlight: BoardHighlight; accessibilityLabel: string }): null => {
+  const recordProps = (props: (typeof mockCanvasProps)[number]): null => {
     mockCanvasProps.push(props);
     return null;
   };
@@ -50,6 +54,9 @@ jest.mock('./use-board-clock.ts', () => ({
       },
       trace: (label: string) => {
         mockLog.push(`trace ${label}`);
+      },
+      fail: (message: string) => {
+        mockLog.push(`fail ${message}`);
       },
     };
   },
@@ -157,6 +164,17 @@ describe('GameBoardHost', () => {
     mockLog.length = 0;
     await view.rerender(<GameBoardHost {...props(first, { isFullscreenAdShowing: true })} />);
     expect(mockLog).toStrictEqual(['trace runnable', 'stop', 'cancel', 'suspend']);
+  });
+
+  it('routes a draw error through the clock, which halts and reports it once (not per re-record)', async () => {
+    const onFailure = jest.fn();
+    await render(
+      <GameBoardHost {...props({ seq: 1, state: { score: 1 }, events: [] }, { onFailure })} />,
+    );
+    mockLog.length = 0;
+    mockCanvasProps.at(-1)?.onDrawError?.('draw failed');
+    expect(mockLog).toStrictEqual(['fail draw failed']);
+    expect(onFailure).not.toHaveBeenCalled();
   });
 
   it('traces the clock with the lifecycle facts only when a trace is given', async () => {

@@ -128,7 +128,7 @@ export function GameBoardHost<TState, TEvent, TView, TToken extends string>(
       onIntent={props.onIntent}
       onHover={props.onHover}
       {...(props.onMiss === undefined ? {} : { onMiss: props.onMiss })}
-      onDrawError={props.onFailure}
+      onDrawError={clock.fail}
       isLayoutProbeOn={props.isLayoutProbeOn === true}
     />
   );

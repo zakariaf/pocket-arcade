@@ -76,6 +76,19 @@ describe('board clock decisions', () => {
     expect(halted).toMatchObject({ setActive: false, control: { isRunnable: true } });
     expect(pushScene(halted.control, NEXT)).toMatchObject({ setActive: true });
   });
+
+  it('applies only the first error of a run, so a draw() throwing on every pointer move pauses the run once', () => {
+    const halted = haltClock(RUNNING);
+    expect(haltClock(halted.control)).toStrictEqual({
+      control: halted.control,
+      setActive: null,
+      isApplied: false,
+    });
+    const pushed = pushScene(halted.control, NEXT).control;
+    expect(haltClock(pushed)).toMatchObject({ setActive: false, isApplied: true });
+    const resumed = resumeClock(halted.control).control;
+    expect(haltClock(resumed)).toMatchObject({ setActive: false, isApplied: true });
+  });
 });
 
 describe('traceFrameStep', () => {
