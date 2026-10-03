@@ -118,6 +118,15 @@ describe('summarizeRun', () => {
     );
   });
 
+  it('shows no new best for a daily replay, which saves nothing (spec S9)', () => {
+    // spec S9: "Replays are allowed for fun, but do not change the day's result."
+    const daily: RunRef = { kind: 'daily', date: '2026-09-28' };
+    const played28 = { won: false, score: 0, moves: 9, playMs: 5_000 };
+    const before = { ...BEFORE, daily: { ...BEFORE.daily, results: { '2026-09-28': played28 } } };
+    const replay = summarizeRun(played(daily, [2, 2, 1]), contextFor(daily), before);
+    expect(replay).toMatchObject({ isWon: true, score: 50, isNewBest: false });
+  });
+
   it('counts an endless loss above the best as a new best', () => {
     const endless: RunRef = { kind: 'endless' };
     const lost = played(endless, [2, 2, 2, 2, 1, 2]);

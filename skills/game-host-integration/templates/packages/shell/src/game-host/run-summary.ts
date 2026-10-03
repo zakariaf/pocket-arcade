@@ -65,7 +65,8 @@ function isAboveBest(before: SaveDoc, ref: RunRef, score: number): boolean {
     case 'endless':
       return score > before.progress.endlessBest;
     case 'daily':
-      return score > before.stats.bestScore.daily;
+      // Spec S9: a replay (its date already recorded) saves nothing, so it is never a new best.
+      return !(ref.date in before.daily.results) && score > before.stats.bestScore.daily;
     case 'tutorial':
       return false;
   }
