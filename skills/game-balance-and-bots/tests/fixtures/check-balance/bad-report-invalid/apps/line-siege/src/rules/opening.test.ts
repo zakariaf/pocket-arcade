@@ -5,7 +5,7 @@ import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { fullLines } from './board-lines.ts';
 import { TUNING } from './line-siege-tuning.ts';
-import { drawOpening, openingCells, openingMonsters, scatter } from './opening.ts';
+import { SCATTER_TRIES, drawOpening, openingCells, openingMonsters, scatter } from './opening.ts';
 
 import type { Cell } from './line-siege-types.ts';
 
@@ -68,7 +68,7 @@ describe('scatter limits', () => {
   it('gives up after its tries on a board with no free cell, drawing exactly that often', () => {
     const full = Array.from({ length: SIZE * SIZE }, (): Cell => 1);
     let rng = seedRng(5);
-    for (let tries = 0; tries < 300; tries += 1) rng = nextInt(rng, SIZE * SIZE).state;
+    for (let tries = 0; tries < SCATTER_TRIES; tries += 1) rng = nextInt(rng, SIZE * SIZE).state;
     expect(scatter(full, opening, seedRng(5))).toStrictEqual({ cells: full, rng });
   });
 

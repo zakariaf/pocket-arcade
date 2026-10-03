@@ -12,7 +12,8 @@ import type { Cell, Monster } from './line-siege-types.ts';
 import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 
 const SIZE = TUNING.boardSize;
-const SCATTER_TRIES = 300;
+/** Cells scatter draws at most before it stops adding loose opening blocks. */
+export const SCATTER_TRIES = 300;
 
 type Draw = { readonly value: number; readonly rng: RngState };
 
