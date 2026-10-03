@@ -83,6 +83,71 @@ describe('createPremiumDeps', () => {
     expect(persistPremium({ isPremium: true })).toBe(true);
   });
 
+  // N10 and spec 8.9: a refused purchase write still changes the document in memory, so the
+  // re-check that follows sees Premium there; it must write again, never answer "saved" while the
+  // disk holds no Premium (the purchase would then be finished and lost on the next launch).
+  it('reports a re-check as not saved while the disk keeps refusing the change held in memory', () => {
+    const store = createFakeSaveStore();
+    const plan = planLoad({ current: null, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store, clock: TEST_CLOCK, errorLog, appVersion: '1.0.0', isStrict: true };
+    const save = createSaveService(deps, plan, 0);
+    save.applyLoadWrites();
+    const persistPremium = persistPremiumIn(save, TEST_CLOCK);
+    store.failNextWrite = true;
+    expect(persistPremium({ isPremium: true })).toBe(false);
+    store.failNextWrite = true;
+    expect(persistPremium({ isPremium: true })).toBe(false);
+    expect(errorLog.entries()).toHaveLength(2);
+  });
+
+  it('reports a re-check as not saved while a pending quarantine copy holds every write', () => {
+    const damaged = {
+      ...encodeSaveDoc(createDefaultSaveDoc(TEST_GAME_ID), {
+        appVersion: '1.0.0',
+        writtenAtMs: 1,
+        writeCount: 3,
+      }),
+      checksum: 'damaged',
+    };
+    const fake = createFakeSaveStore();
+    const store = {
+      ...fake,
+      quarantine: () => {
+        throw new Error('disk full');
+      },
+    };
+    const plan = planLoad({ current: damaged, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store, clock: TEST_CLOCK, errorLog, appVersion: '1.0.0', isStrict: true };
+    const save = createSaveService(deps, plan, 0);
+    save.applyLoadWrites();
+    const persistPremium = persistPremiumIn(save, TEST_CLOCK);
+    expect(persistPremium({ isPremium: true })).toBe(false);
+    expect(save.doc().premium.owned).toBe(true);
+    expect(persistPremium({ isPremium: true })).toBe(false);
+    expect(fake.slots.size).toBe(0);
+  });
+
+  it('reports a re-check on a save from a newer app as not saved once Premium is in memory', () => {
+    const newer = {
+      ...encodeSaveDoc(createDefaultSaveDoc(TEST_GAME_ID), {
+        appVersion: '9.0.0',
+        writtenAtMs: 1,
+        writeCount: 7,
+      }),
+      schemaVersion: 99,
+    };
+    const plan = planLoad({ current: newer, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store: createFakeSaveStore(), clock: TEST_CLOCK, errorLog, appVersion: '1.0.0' };
+    const save = createSaveService({ ...deps, isStrict: true }, plan, 0);
+    const persistPremium = persistPremiumIn(save, TEST_CLOCK);
+    persistPremium({ isPremium: true });
+    expect(save.doc().premium.owned).toBe(true);
+    expect(persistPremium({ isPremium: true })).toBe(false);
+  });
+
   it('reports a Premium change on a save from a newer app as not saved, which is never written', () => {
     const newer = {
       ...encodeSaveDoc(createDefaultSaveDoc(TEST_GAME_ID), {

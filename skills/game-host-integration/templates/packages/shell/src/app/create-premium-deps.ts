@@ -39,18 +39,28 @@ function holdsChange(premium: SaveDoc['premium'], change: PremiumChange): boolea
 }
 
 /**
+ * True when the document in memory is the one on disk. A refused write and one a pending
+ * quarantine copy held back both leave didLastWriteFail() true, and a newer app's read-only save
+ * is never written: in each, memory may hold a change the disk does not (N10).
+ */
+function isMemoryOnDisk(save: SaveService): boolean {
+  return !save.isReadOnly() && !save.didLastWriteFail();
+}
+
+/**
  * The save's premium section after a change (a revoke carries its date for the save guard). False
  * when the change did not reach the disk (save.update's answer: a refused write, a rejected
  * document, a pending quarantine copy, or a newer app's read-only save): the purchase then stays
  * unfinished, so the store delivers it again. The re-check runs at launch, every foreground and
- * reconnect: a change the save already holds is on disk already, so it writes nothing and is true.
+ * reconnect: a change the save already holds, in a document that is on disk, writes nothing and
+ * is true; one held only in memory is written again and answers as save.update does.
  */
 export function persistPremiumIn(
   save: SaveService,
   clock: Pick<ClockPort, 'nowMs'>,
 ): (change: PremiumChange) => boolean {
   return (change) => {
-    if (holdsChange(save.doc().premium, change)) return true;
+    if (isMemoryOnDisk(save) && holdsChange(save.doc().premium, change)) return true;
     const atMs = clock.nowMs();
     return save.update(
       (doc) => ({
