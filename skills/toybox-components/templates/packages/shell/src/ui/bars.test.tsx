@@ -9,6 +9,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { BannerBand } from './banner-band.tsx';
 import { BrandLock } from './brand-lock.tsx';
 import { GameTopBar } from './game-top-bar.tsx';
+import { IconButton } from './icon-button.tsx';
 import { TopBar } from './top-bar.tsx';
 
 import type { ViewStyle } from 'react-native';
@@ -49,6 +50,32 @@ describe('TopBar', () => {
     await user.press(screen.getByRole('button', { name: 'Back' }));
     expect(onBack).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('settings.top-bar.back-button')).toBeOnTheScreen();
+  });
+
+  it('keeps the back key at the start and its one action at the end', async () => {
+    await renderWithShell(
+      <TopBar
+        testID="levels.top-bar"
+        title="Levels"
+        onBack={jest.fn()}
+        backLabel="Back"
+        isReducedMotion
+        end={
+          <IconButton
+            icon="info"
+            label="How to play"
+            onPress={jest.fn()}
+            testID="levels.how-to-button"
+            isReducedMotion
+          />
+        }
+      />,
+    );
+
+    expect(
+      screen.getAllByRole('button').map((key) => key.props['accessibilityLabel']),
+    ).toStrictEqual(['Back', 'How to play']);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
   it('puts the brand lock at the start on Home instead of a back key', async () => {
