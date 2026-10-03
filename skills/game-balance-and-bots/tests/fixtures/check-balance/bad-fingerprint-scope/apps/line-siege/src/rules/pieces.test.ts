@@ -43,3 +43,9 @@ describe('drawTray', () => {
 });
 
 const GOLDEN_SEED_7_TRAY = '[1,1,0]';
+
+describe('pieceAt errors', () => {
+  it('names the missing piece index in its error', () => {
+    expect(() => pieceAt(PIECES.length)).toThrow(`no piece ${String(PIECES.length)}`);
+  });
+});

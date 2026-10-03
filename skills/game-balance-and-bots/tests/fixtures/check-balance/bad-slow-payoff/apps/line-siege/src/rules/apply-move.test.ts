@@ -210,3 +210,42 @@ const GOLDEN_SEED_3_EVENTS = [
   'block-placed',
   'block-placed row-cleared shockwave-sent monster-hit monster-hit monster-hit monster-hit score-added monster-moved monster-moved monster-moved monster-moved monster-moved',
 ].join(' ');
+
+describe('applyMove edge turns', () => {
+  it('names the illegal move in its error', () => {
+    const move: LineSiegeMove = { kind: 'place-block', trayIndex: 0, col: 7, row: 7 };
+    expect(() => applyMove(OPENING, move)).toThrow(`illegal move ${JSON.stringify(move)}`);
+  });
+
+  it('spawns no monster once the march has taken the last heart', () => {
+    const due = {
+      ...OPENING,
+      hearts: 1,
+      placements: knobsFor(0).marchEvery - 1,
+      monsters: [{ id: 2, kind: 'normal' as const, lane: 6, row: TUNING.laneRows - 1, hp: 3 }],
+    };
+    const { state, events } = applyMove(due, { kind: 'place-block', trayIndex: 0, col: 3, row: 0 });
+    expect(events.map((event) => event.kind)).not.toContain('monster-spawned');
+    expect(state.monsters).toStrictEqual([]);
+    expect(outcome(state)).toStrictEqual({
+      kind: 'lost',
+      reasonKey: 'line-siege.lose.broke-through',
+    });
+  });
+
+  it('scores a row and a column cleared by one block as a combo of two lines', () => {
+    const cells = OPENING.cells.map((cell, index) => {
+      const col = index % TUNING.boardSize;
+      const row = Math.floor(index / TUNING.boardSize);
+      if (col === 7 && row === 3) return 0;
+      return col === 7 || row === 3 ? 1 : cell;
+    });
+    const crossing = { ...OPENING, cells, tray: [0, 2, 1] };
+    const { events } = applyMove(crossing, { kind: 'place-block', trayIndex: 0, col: 7, row: 3 });
+    expect(events.filter((event) => event.kind.endsWith('-cleared'))).toHaveLength(2);
+    expect(events).toContainEqual(GOLDEN_CROSSING_SCORE);
+  });
+});
+
+/** Two lines at once score 2 x 2 x 10 = 40, plus 25 for the weak monster the beam defeats. */
+const GOLDEN_CROSSING_SCORE = { kind: 'score-added', points: 65, total: 65 };

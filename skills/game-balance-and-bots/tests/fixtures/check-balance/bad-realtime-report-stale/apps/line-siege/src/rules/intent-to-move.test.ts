@@ -120,3 +120,9 @@ describe('intentToMove', () => {
     );
   });
 });
+
+describe('intentToMove from the board', () => {
+  it('ignores a drag that starts on a board cell whose column and row add up to a slot', () => {
+    expect(intentToMove(STATE, { kind: 'drag-end', from: cell(0, 1), to: cell(7, 3) })).toBeNull();
+  });
+});
