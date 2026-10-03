@@ -15,7 +15,7 @@ What training data gets wrong about Skia 2.6.2, Reanimated 4.5.1, Worklets 0.10.
 - **Closures are copies.** Values captured by a worklet are copied when it is first scheduled; later reassignments on JS are invisible. Anything that changes goes through a shared value.
 - **Skia host objects are shared, not copied.** Paints, fonts, paths, paragraphs, pictures and the recorder captured in the kit are fine.
 - **No third-party code on the UI thread** (Worklets Bundle Mode is not enabled), no promises, no `await`, no `setTimeout` in worklets.
-- **Not hoisted.** Helper worklets must exist before they run; module-level functions satisfy that automatically.
+- **Not hoisted.** Helper worklets must exist before they run. In a `'worklet'` file the plugin turns each top-level function into a value created where it is declared, so a function that calls another function of the same file must be declared below it: with `tickClock` above the `sceneElapsedMs` it calls, every `board-scene.test.ts` case threw `TypeError: sceneElapsedMs is not a function` (Jest with the Worklets plugin, 2026-10-03). Imported helpers are always ready.
 - **Frame callbacks.** `useFrameCallback((info) => { runBoardFrame(wiring, info.timestamp); }, false)`: start inactive, keep the body ONE call into a runner that holds the `try/catch`.
 - **UI → JS** only with `scheduleOnRN(fn, ...args)`; the callback must itself be a worklet when it runs on the UI thread (see `reportDrawError` in `board-canvas.tsx`, which has an inline `'worklet'` directive).
 - **Shared values** only with `.get()` / `.set()`; for typed arrays mutated in place on the UI thread, call `sv.modify()` afterwards so listeners re-run.
