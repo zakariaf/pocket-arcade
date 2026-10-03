@@ -12,6 +12,7 @@ import { GameTopBar } from './game-top-bar.tsx';
 import { IconButton } from './icon-button.tsx';
 import { TopBar } from './top-bar.tsx';
 
+import type { TopBarProps } from './top-bar.tsx';
 import type { ViewStyle } from 'react-native';
 
 /** The Home frame's window (iPhone 16 Pro, 402 pt): the banner slot is that wide. */
@@ -19,6 +20,13 @@ const WINDOW_WIDTH = 402;
 const MARGIN_KEYS = ['margin', 'marginHorizontal', 'marginInline'] as const;
 
 type HostNode = { readonly props: { readonly style?: unknown } };
+
+// spec 8.11: screen readers can use every button, so a back key never ships without its name.
+// The props type takes onBack and backLabel only as a pair; tsc checks these two verdicts.
+type BackOnly = { testID: string; isReducedMotion: boolean; onBack: () => void };
+type BackPair = BackOnly & { backLabel: string };
+const BACK_WITHOUT_LABEL: BackOnly extends TopBarProps ? 'compiles' : 'rejected' = 'rejected';
+const BACK_WITH_LABEL: BackPair extends TopBarProps ? 'compiles' : 'rejected' = 'compiles';
 
 /** Where a stretched block lands in its parent: its start offset and width from its margins. */
 function bandSpan(node: unknown, parentWidth: number): { start: number; width: number } {
@@ -33,6 +41,10 @@ function bandSpan(node: unknown, parentWidth: number): { start: number; width: n
 }
 
 describe('TopBar', () => {
+  it('takes a back key only together with its label (spec 8.11)', () => {
+    expect([BACK_WITHOUT_LABEL, BACK_WITH_LABEL]).toStrictEqual(['rejected', 'compiles']);
+  });
+
   it('shows a back key and a heading title', async () => {
     const onBack = jest.fn();
     const user = userEvent.setup();
