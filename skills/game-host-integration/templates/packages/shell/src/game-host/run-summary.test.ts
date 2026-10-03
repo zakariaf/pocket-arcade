@@ -32,6 +32,7 @@ function contextFor(ref: RunRef) {
     counters: TALLY_GAME.stats.counters,
     entry: entryFor(TALLY_GAME, ref),
     table: TALLY_GAME.levels.table,
+    errorLog: { record: () => undefined, entries: () => [] },
   };
 }
 
@@ -117,6 +118,15 @@ describe('summarizeRun', () => {
     );
   });
 
+  it('shows no new best for a daily replay, which saves nothing (spec S9)', () => {
+    // spec S9: "Replays are allowed for fun, but do not change the day's result."
+    const daily: RunRef = { kind: 'daily', date: '2026-09-28' };
+    const played28 = { won: false, score: 0, moves: 9, playMs: 5_000 };
+    const before = { ...BEFORE, daily: { ...BEFORE.daily, results: { '2026-09-28': played28 } } };
+    const replay = summarizeRun(played(daily, [2, 2, 1]), contextFor(daily), before);
+    expect(replay).toMatchObject({ isWon: true, score: 50, isNewBest: false });
+  });
+
   it('counts an endless loss above the best as a new best', () => {
     const endless: RunRef = { kind: 'endless' };
     const lost = played(endless, [2, 2, 2, 2, 1, 2]);
@@ -148,6 +158,15 @@ describe('runEndOf', () => {
       mode: 'level',
       level: 1,
       stars: 3,
+    });
+  });
+
+  it('counts nothing for a run whose log does not start at create (spec S10)', () => {
+    const session: Tally = { ...played(LEVEL_1, [2, 2]), hasPartialLog: true };
+    const summary = summarizeRun(session, contextFor(LEVEL_1), BEFORE);
+    expect(runEndOf(session, summary, contextFor(LEVEL_1)).counters).toStrictEqual({
+      adds: { value: 0, aggregate: 'sum' },
+      'biggest-add': { value: 0, aggregate: 'max' },
     });
   });
 

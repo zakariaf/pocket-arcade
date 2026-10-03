@@ -1,0 +1,3 @@
+[crash-leaves-run]
+packages/shell/src/app/shell-app.tsx
+every relaunch reopens the run that crashed

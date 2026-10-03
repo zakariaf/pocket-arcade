@@ -1,0 +1,3 @@
+[counters-partial-log]
+packages/shell/src/game-host/run-summary.ts
+a run restored without its history measures its counters from create(seed)

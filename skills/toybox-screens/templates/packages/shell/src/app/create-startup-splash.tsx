@@ -11,7 +11,7 @@ import { useStore } from 'zustand';
 
 import { GameStartupSplash } from '@e07/shell/app/game-startup-splash.tsx';
 import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
-import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
+import { isParityMotionFrozen } from '@e07/shell/app/use-reduce-motion.ts';
 import { DirectionProvider } from '@e07/shell/i18n/direction-context.tsx';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
 import { directionOf } from '@e07/shell/i18n/languages.ts';
@@ -39,14 +39,6 @@ export type StartupSplashInput = {
   readonly restart: () => Promise<void>;
 };
 
-/**
- * A parity capture of S1 (test builds) holds the loader still, as useReduceMotion() does on every
- * other screen: this root has no settings store, so it reads the same TEST_ONLY switch directly.
- */
-function isParityMotionFrozen(): boolean {
-  return TEST_ONLY?.isParityMotionFrozen() === true;
-}
-
 /** The window's first metrics; unknown only off-device (Jest), where no insets apply. */
 const WINDOW_METRICS = initialWindowMetrics ?? {
   frame: { x: 0, y: 0, width: 0, height: 0 },
@@ -65,6 +57,8 @@ export function createStartupSplash(input: StartupSplashInput): ComponentType {
   const direction = directionOf(language);
   return function RestartSplash(): ReactNode {
     const isSystemReduceMotionOn = useStore(systemA11yStore, (state) => state.isReduceMotionOn);
+    // A parity capture of S1 holds the loader still, as useReduceMotion() does on every other
+    // screen; this root has no settings store, so it reads the frozen-motion switch alone.
     const isReducedMotion = isSystemReduceMotionOn || isParityMotionFrozen();
     // Allowed effect: one call into an external system after mount (the reload).
     useEffect(() => {

@@ -24,3 +24,6 @@ ApiKey_*
 *.ipa
 .env*
 .claude/settings.local.json
+.claude/workflows/
+# Parity captures, reports and sheets (toybox-visual-parity; rebuilt on demand)
+.parity/

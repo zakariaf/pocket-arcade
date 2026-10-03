@@ -14,6 +14,6 @@ export function useGameExtra(): GameExtra {
 }
 
 /** Every level the game ships ("Play – Level 13" never goes past the last one). */
-export function levelCountOf(extra: GameExtra): number {
+export function levelCountOf(extra: Pick<GameExtra, 'levels'>): number {
   return extra.levels.packCount * extra.levels.levelsPerPack;
 }

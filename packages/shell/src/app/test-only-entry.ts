@@ -8,6 +8,63 @@
 // (the Shell core's members join at step 7); DebugScreen and FontTestScreen stay out while S15 is
 // outside shell-slice.json. Every export has a TestOnlyApi member of the same name, and every member
 // an export (check-sim-setup: entry-api-match).
+/** @public */
+export { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
+/** @public */
+export { createParityAds } from '@e07/shell/app/parity/parity-ads.tsx';
+/** @public */
+export { parityDoc } from '@e07/shell/app/parity/parity-doc.ts';
+/** @public */
+export { createParityErrorRoot } from '@e07/shell/app/parity/parity-error-view.tsx';
+/** @public */
+export { createParityPurchase } from '@e07/shell/app/parity/parity-purchase.ts';
+/** @public */
+export { ParityFrameRoot } from '@e07/shell/app/parity/parity-root.tsx';
+export {
+  /** @public */
+  isParityBoardProbeOn,
+  /** @public */
+  isParityMotionFrozen,
+  /** @public */
+  parityBuildNumber,
+  /** @public */
+  parityFrameState,
+  /** @public */
+  parityGameFixture,
+  /** @public */
+  startParitySession,
+} from '@e07/shell/app/parity/parity-session.ts';
+export {
+  /** @public */
+  isHeldParityStart,
+  /** @public */
+  parityInitialState,
+} from '@e07/shell/app/parity/parity-start.ts';
+/** @public */
+export { readParityRequest } from '@e07/shell/app/parity/read-parity-request.ts';
+/** @public */
+export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
+/** @public */
+export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
+export {
+  /** @public */
+  recordAudioFeedback,
+  /** @public */
+  recordHapticsFeedback,
+} from '@e07/shell/services/audio/recording-feedback.ts';
+/** @public */
+export { createDebugServices } from '@e07/shell/screens/debug/debug-services.ts';
+/** @public */
+export { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
+/** @public */
+export { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
+/** @public */
+export { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+/** @public */
+export { createAdmobConsentDebugAdapter } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
+/** @public */
+export { createSqliteKvDebugStoreAdapter } from '@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts';
+
 /**
  * The store-artifact gate (check-sim-app / the release gate) greps bundles for this string.
  * @public

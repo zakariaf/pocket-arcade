@@ -1,0 +1,16 @@
+[
+ {
+  "replace": {
+   "file": "packages/shell/src/game-host/run-summary.ts",
+   "find": "    counters: countersOf(session, context),",
+   "with": "    counters: measureCounters(context.rules, session, context.counters),"
+  }
+ },
+ {
+  "replace": {
+   "file": "packages/shell/src/game-host/run-summary.ts",
+   "find": "  try {\n    const measured = measureCounters(context.rules, session, context.counters);\n    return session.hasPartialLog === true ? noCounters(context.counters) : measured;\n  } catch (error) {\n    context.errorLog.record('save', error);\n    return noCounters(context.counters);\n  }\n",
+   "with": "  const measured = measureCounters(context.rules, session, context.counters);\n  return session.hasPartialLog === true ? noCounters(context.counters) : measured;\n"
+  }
+ }
+]

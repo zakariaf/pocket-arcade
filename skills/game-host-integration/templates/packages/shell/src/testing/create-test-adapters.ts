@@ -11,6 +11,7 @@ import { withConnectivity } from '@e07/shell/services/purchase/connectivity-gate
 import { createFakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
 import { createFakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
 import { TEST_CLOCK } from '@e07/shell/testing/create-test-save.ts';
+import { TEST_GAME_EXTRA } from '@e07/shell/testing/test-game-extra.ts';
 
 import type { DebugParts } from '@e07/shell/app/create-debug-parts.ts';
 import type { ShellAdapters } from '@e07/shell/app/create-shell-parts.ts';
@@ -20,23 +21,19 @@ import type { FakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.
 import type { FakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
 import type { FakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
 
-/** expo.extra.game of a test app whose id is the tally game's. */
-export const TEST_GAME_EXTRA: GameExtra = {
+/**
+ * expo.extra.game of a test app whose id is the tally game's: the pilot's config (TEST_GAME_EXTRA)
+ * with the tally game's id, product, one pack of three levels, one free hint a day and its links.
+ */
+export const TALLY_GAME_EXTRA: GameExtra = {
+  ...TEST_GAME_EXTRA,
   id: 'tally',
   premiumProductId: 'io.applander.tally.premium',
-  adPolicy: {
-    isAdsEnabled: true,
-    minLevelsCompletedBeforeFirst: 3,
-    minMsBetweenInterstitials: 180_000,
-    minLevelsCompletedBetween: 2,
-  },
-  modes: { daily: true, endless: true },
   levels: { packCount: 1, levelsPerPack: 3 },
   hints: { freePerDay: 1 },
-  isContinueAllowed: true,
   links: {
+    ...TEST_GAME_EXTRA.links,
     privacyPolicy: { host: 'example.com', path: '/tally/privacy' },
-    supportEmail: 'support@example.com',
   },
 };
 
@@ -106,6 +103,6 @@ export function createTestAdapters(options: TestAdapterOptions = {}): TestAdapte
     // A store build's debug parts: the tests that need S15's services build their own.
     createDebugParts: options.createDebugParts ?? storeBuildDebugParts,
     // ADS_MODE=off, as in every E2E build: the consent port asks neither Google UMP nor Apple ATT.
-    config: { game: TEST_GAME_EXTRA, ads: { adsMode: 'off', adUnits: null }, appVersion: '1.0.0' },
+    config: { game: TALLY_GAME_EXTRA, ads: { adsMode: 'off', adUnits: null }, appVersion: '1.0.0' },
   };
 }

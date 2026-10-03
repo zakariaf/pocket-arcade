@@ -1,0 +1,9 @@
+[
+ {
+  "replace": {
+   "file": "packages/shell/src/game-host/open-session.ts",
+   "find": "  try {\n    return restoreRun(rules, game.persistence, saved);\n  } catch (error) {\n    errorLog.record('save', error);\n  }\n  try {\n    return withoutHistory(restoreRun(rules, game.persistence, { ...saved, log: [] }));\n  } catch (error) {\n    errorLog.record('save', error);\n  }\n  return { kind: 'dropped', reason: 'state-invalid' };\n",
+   "with": "  errorLog.entries();\n  return restoreRun(rules, game.persistence, saved);\n"
+  }
+ }
+]

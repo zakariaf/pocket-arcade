@@ -2,13 +2,15 @@
 import { nextLevel } from '@e07/game-kit/levels/pack-progress.ts';
 import { starsFor } from '@e07/game-kit/levels/star-rating.ts';
 import { isScoreRule } from '@e07/shell/game-host/game-facts.ts';
-import { measureCounters } from '@e07/shell/game-host/measure-counters.ts';
+import { measureCounters, noCounters } from '@e07/shell/game-host/measure-counters.ts';
 
 import type { Hud } from '@e07/game-kit/contract/game-rules.ts';
 import type { LevelEntry, StarRule } from '@e07/game-kit/contract/levels.ts';
 import type { CounterSpec } from '@e07/game-kit/contract/stats.ts';
 import type { RatedRun, StarCount } from '@e07/game-kit/levels/star-rating.ts';
 import type { GameSession, SessionRules } from '@e07/shell/game-host/game-session-types.ts';
+import type { CounterTally } from '@e07/shell/game-host/measure-counters.ts';
+import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { RunRef, SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { RunEnd } from '@e07/shell/stores/run-end.ts';
 
@@ -42,6 +44,8 @@ export type RunEndContext<TState, TMove, TEvent> = {
   /** The level's table entry (stars rule and par); null for other runs. */
   readonly entry: LevelEntry | null;
   readonly table: readonly LevelEntry[];
+  /** Where a move line that no longer replays is reported (the counters then measure nothing). */
+  readonly errorLog: ErrorLogPort;
 };
 
 type Finished<TState, TMove, TEvent> = GameSession<TState, TMove, TEvent>;
@@ -61,7 +65,8 @@ function isAboveBest(before: SaveDoc, ref: RunRef, score: number): boolean {
     case 'endless':
       return score > before.progress.endlessBest;
     case 'daily':
-      return score > before.stats.bestScore.daily;
+      // Spec S9: a replay (its date already recorded) saves nothing, so it is never a new best.
+      return !(ref.date in before.daily.results) && score > before.stats.bestScore.daily;
     case 'tutorial':
       return false;
   }
@@ -119,6 +124,26 @@ export function summarizeRun<TState, TMove, TEvent>(
   };
 }
 
+/**
+ * The run's counters, never throwing (spec 8.14 and S7: a run end is always recorded and shown).
+ * A run restored without its history (hasPartialLog) counts nothing (spec S10): its log starts at
+ * the snapshot, so a replay from create would invent counts even when every move is legal there;
+ * the line is still replayed so a move the game refuses reaches the error log. A kept line that
+ * no longer replays (a changed rule set refuses a move) is logged and counts nothing too.
+ */
+function countersOf<TState, TMove, TEvent>(
+  session: Finished<TState, TMove, TEvent>,
+  context: RunEndContext<TState, TMove, TEvent>,
+): CounterTally {
+  try {
+    const measured = measureCounters(context.rules, session, context.counters);
+    return session.hasPartialLog === true ? noCounters(context.counters) : measured;
+  } catch (error) {
+    context.errorLog.record('save', error);
+    return noCounters(context.counters);
+  }
+}
+
 /** The run-end record the Shell's applyRunEnd writes in ONE save update (progress, daily, stats). */
 export function runEndOf<TState, TMove, TEvent>(
   session: Finished<TState, TMove, TEvent>,
@@ -130,7 +155,7 @@ export function runEndOf<TState, TMove, TEvent>(
     score: summary.score,
     moves: summary.moves,
     playMs: summary.playMs,
-    counters: measureCounters(context.rules, session, context.counters),
+    counters: countersOf(session, context),
   };
   const { ref } = session;
   switch (ref.kind) {

@@ -21,12 +21,12 @@ export const HOST_FILES = {
   'run-tracker.ts': ['createRunTracker', 'RunTracker'],
   'session-view-of.ts': ['sessionViewOf', 'ViewFixture', 'ViewExtras', 'ViewDeps'],
   'game-host-context.tsx': ['GameHostProvider', 'useGameHost'],
-  'open-session.ts': ['sessionRulesFor', 'entryFor', 'startFor', 'newSession', 'resumeSession', 'SessionOpen'],
+  'open-session.ts': ['sessionRulesFor', 'entryFor', 'startFor', 'newSession', 'resumeSession', 'createResumer', 'SessionOpen'],
   'session-controller.ts': ['createSessionController', 'SessionController', 'ControllerDeps'],
   'session-view.ts': ['SessionView', 'SessionCommand', 'SessionHandle', 'ContinueState', 'continueStateOf'],
   'play-clock.ts': ['createPlayClock', 'PlayClock', 'MAX_PLAY_DELTA_MS'],
   'run-summary.ts': ['summarizeRun', 'runEndOf', 'RunSummary', 'RunEndContext'],
-  'measure-counters.ts': ['measureCounters'],
+  'measure-counters.ts': ['measureCounters', 'noCounters'],
   'hud-model.ts': ['hudView', 'HudView', 'GoalLine', 'MODE_LABEL_KEYS'],
   'top-bar-model.ts': ['topBarPropsOf', 'modeTextOf', 'progressTextOf', 'RunText', 'TopBarInput'],
   'result-model-of.ts': ['resultModelOf', 'ResultInput', 'ResultExtras', 'ResultGame'],
@@ -85,6 +85,7 @@ export const ROOT_FILES = [
   'create-premium-deps.ts',
   'connect-premium-reloads.ts',
   'shell-app.tsx',
+  'leave-run-after-crash.ts',
   'shell-features.tsx',
   'shell-navigator.tsx',
 ];
@@ -231,6 +232,10 @@ export function checkRootFiles(repo, report) {
   if (model !== '' && !(/kind:\s*'tutorial'/.test(model) && /useGameSessionControls\s*\(/.test(model) && /'finish-tutorial'/.test(model))) {
     report.problem({ file: `${TUTORIAL_DIR}/use-tutorial-model.ts`, line: 1, rule: 'tutorial-screen', message: "the Tutorial model does not open the { kind: 'tutorial' } run with useGameSessionControls and end it with finish-tutorial", fix: 'Restore templates/packages/shell/src/screens/first-run/use-tutorial-model.ts: the tutorial is the game host\'s scripted run, and finish-tutorial is what moves the FirstRun group on to Home.' });
   }
+  const shellApp = code(text(repo, `${app}/shell-app.tsx`));
+  if (shellApp !== '' && !/onGoHome\s*=\s*\{\s*\(\)\s*=>\s*\{\s*leaveRunAfterCrash\s*\(\s*hydrated\.save\s*\)/.test(shellApp)) {
+    report.problem({ file: `${app}/shell-app.tsx`, line: 1, rule: 'crash-leaves-run', message: 'the crash screen\'s Back to Home leaves the saved run resuming on launch, so every relaunch reopens the run that crashed', fix: 'onGoHome={() => { leaveRunAfterCrash(hydrated.save); setHasCrashed(true); reset(); }} (app/leave-run-after-crash.ts: resumeOnLaunch false, spec 8.14 never a crash loop).' });
+  }
   return wanted.length;
 }
 
@@ -305,10 +310,10 @@ const WIRING = [
 const HOST_WIRING = [
   {
     fn: 'createGameHost',
-    pattern: /resumeSession\s*\([\s\S]*?\)\s*===\s*null[\s\S]*?run:\s*null/,
+    pattern: /createResumer\s*\(\s*game\s*,\s*deps\s*\)/,
     rule: 'saved-run-validated',
-    message: 'createGameHost does not validate the saved run at boot (resumeSession, then drop only an unreadable run)',
-    fix: 'At boot: if resumeSession(game, saved, errorLog) === null, save.update((doc) => ({ ...doc, run: null })); the stores and the resume state then start from that document.',
+    message: 'createGameHost does not validate the saved run at boot (createResumer(game, deps): resumeSession, then drop only an unreadable run)',
+    fix: 'At boot: const resume = createResumer(game, deps) (open-session.ts) checks the saved run and drops only an unreadable one; the stores and the resume state then start from that document.',
   },
   {
     fn: 'createGameHost',
@@ -347,10 +352,42 @@ const HOST_WIRING = [
   },
   {
     fn: 'firstSession',
-    pattern: /resumeSession\s*\(/,
+    pattern: /\bresume\s*\(\s*\)/,
     rule: 'saved-run-validated',
-    message: 'a resumed run is not rebuilt with resumeSession (the game\'s parsers and the replay check)',
-    fix: 'Open { start: \'resume\' } with resumeSession(game, saved, deps.errorLog); drop the run when it returns null.',
+    message: 'a resumed run does not come from the host\'s resumer (checked at boot, rebuilt with resumeSession once the save moved on)',
+    fix: 'Open { start: \'resume\' } with opener.resume(), the createResumer(game, deps) the host made at boot.',
+  },
+];
+
+/** Spec 8.6: the saved run is checked by the game's parsers, and the boot check is never stale. */
+const RESUME_WIRING = [
+  {
+    fn: 'checkSavedRun',
+    pattern: /resumeSession\s*\([\s\S]*?===\s*null[\s\S]*?run:\s*null/,
+    rule: 'saved-run-validated',
+    message: 'checkSavedRun does not rebuild the saved run with resumeSession and drop only an unreadable run',
+    fix: 'const session = resumeSession(game, saved, deps.errorLog); if (session === null) deps.save.update((doc) => ({ ...doc, run: null })).',
+  },
+  {
+    fn: 'restoreLogged',
+    pattern: /try\s*\{\s*return\s+restoreRun\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*errorLog\.record\s*\(/,
+    rule: 'saved-run-validated',
+    message: 'a saved run whose replay throws (a changed rule set refusing a logged move) crashes every boot: restoreRun is not guarded',
+    fix: 'restoreLogged: try restoreRun(rules, game.persistence, saved), then withoutHistory(restoreRun(..., { ...saved, log: [] })), recording each error; drop the run only when both throw (spec 8.14, never a crash loop).',
+  },
+  {
+    fn: 'withoutHistory',
+    pattern: /hasPartialLog\s*:\s*true/,
+    rule: 'counters-partial-log',
+    message: 'a run restored from its snapshot alone after a refused replay is not marked hasPartialLog, so its run end measures counters from create(seed)',
+    fix: 'restoreLogged retries with withoutHistory(restoreRun(rules, game.persistence, { ...saved, log: [] })), which sets hasHistory: false and session.hasPartialLog: true (spec S10).',
+  },
+  {
+    fn: 'createResumer',
+    pattern: /doc\(\)\.run\s*===/,
+    rule: 'saved-run-validated',
+    message: 'createResumer hands the session checked at boot to a resume without checking that the save still holds that run',
+    fix: 'Hand the boot session to the first resume only while deps.save.doc().run === the run checked at boot; otherwise call checkSavedRun again (a stale session would resume a run the player has replaced).',
   },
 ];
 
@@ -370,10 +407,24 @@ export function checkHostWiring(repo, report) {
       report.problem({ file: hostRel, line: 1, rule: item.rule, message: item.message, fix: item.fix });
     }
   }
+  const openRel = `${HOST}/open-session.ts`;
+  const opener = code(text(repo, openRel));
+  if (opener !== '') {
+    for (const item of RESUME_WIRING.filter((entry) => !entry.pattern.test(functionBody(opener, entry.fn)))) {
+      report.problem({ file: openRel, line: 1, rule: item.rule, message: item.message, fix: item.fix });
+    }
+  }
   const summaryRel = `${HOST}/run-summary.ts`;
   const summary = code(text(repo, summaryRel));
   if (summary !== '' && !/starsFor\s*\(\s*rule\s*,/.test(functionBody(summary, 'starsOf'))) {
     report.problem({ file: summaryRel, line: 1, rule: 'stars-from-table', message: 'stars are not rated with starsFor on the level\'s table rule', fix: 'Spec 8.1: stars come from the level entry\'s StarRule through starsFor (par or score thresholds).' });
+  }
+  const counters = summary === '' ? '' : functionBody(summary, 'countersOf');
+  if (summary !== '' && !/try\s*\{[^}]*?measureCounters\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*context\.errorLog\.record\s*\([\s\S]*?noCounters\s*\(/.test(counters)) {
+    report.problem({ file: summaryRel, line: 1, rule: 'run-end-never-throws', message: 'the run end measures its counters unguarded: a kept move line that no longer replays from create throws, so the run is never recorded and S7 never shows', fix: 'countersOf(session, context): try { const measured = measureCounters(context.rules, session, context.counters); ... } catch (error) { context.errorLog.record(\'save\', error); return noCounters(context.counters); } (spec 8.14 and S7).' });
+  }
+  if (summary !== '' && !/session\.hasPartialLog\s*===\s*true\s*\?\s*noCounters\s*\(/.test(counters)) {
+    report.problem({ file: summaryRel, line: 1, rule: 'counters-partial-log', message: 'a run restored without its history measures its counters from create(seed): its log starts at the snapshot, so moves legal from the start write invented counts into S10 for good', fix: 'In countersOf: return session.hasPartialLog === true ? noCounters(context.counters) : measured; (restoreRun and restoreLogged mark such a run; spec S10).' });
   }
   checkScoreLine(repo, summary, report);
   const factsRel = `${HOST}/game-facts.ts`;

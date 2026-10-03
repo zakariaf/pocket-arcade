@@ -95,9 +95,29 @@ function currentState<TState, TMove>(
     : persistence.migrateState(saved.state, saved.stateVersion);
 }
 
+type History<TState, TMove> = Pick<
+  GameSession<TState, TMove, never>,
+  'past' | 'log' | 'hasPartialLog'
+>;
+
+/**
+ * The undo history a replay rebuilt when it reproduces the snapshot; otherwise none, and the log
+ * marked partial (hasPartialLog): it restarts at the snapshot, so its counters are unknowable.
+ */
+function historyOf<TState, TMove>(
+  state: TState,
+  log: readonly RunLogEntry<TMove>[] | null,
+  replayed: { readonly past: readonly TState[]; readonly final: TState } | null,
+): History<TState, TMove> {
+  if (log !== null && replayed !== null && JSON.stringify(replayed.final) === JSON.stringify(state))
+    return { past: replayed.past, log };
+  return { past: [], log: [], hasPartialLog: true };
+}
+
 /**
  * Saved run -> paused session. The snapshot is the truth; replay only rebuilds undo
- * history and must reproduce the snapshot exactly (the determinism policy makes it so).
+ * history and must reproduce the snapshot exactly (the determinism policy makes it so). A run
+ * restored without its history is marked hasPartialLog: its log restarts at the snapshot.
  */
 export function restoreRun<TState, TMove, TEvent>(
   rules: SessionRules<TState, TMove, TEvent>,
@@ -105,22 +125,19 @@ export function restoreRun<TState, TMove, TEvent>(
   saved: SaveRun,
 ): RestoredRun<TState, TMove, TEvent> {
   const state = currentState(persistence, saved);
+  const isSameVersion = saved.stateVersion === persistence.stateVersion;
   if (state === null) {
-    const isSameVersion = saved.stateVersion === persistence.stateVersion;
     return { kind: 'dropped', reason: isSameVersion ? 'state-invalid' : 'state-not-migratable' };
   }
-  const isSameVersion = saved.stateVersion === persistence.stateVersion;
   const log = isSameVersion ? parseLog(persistence, saved) : null;
-  const replayed = log === null ? null : replay(rules, saved, log);
-  const hasHistory = replayed !== null && JSON.stringify(replayed.final) === JSON.stringify(state);
+  const history = historyOf(state, log, log === null ? null : replay(rules, saved, log));
   const outcome = rules.outcome(state);
   const session: GameSession<TState, TMove, TEvent> = {
     ref: saved.ref,
     seed: saved.seed,
     difficulty: saved.difficulty,
     state,
-    past: hasHistory ? replayed.past : [],
-    log: hasHistory && log !== null ? log : [],
+    ...history,
     status: outcome.kind === 'playing' ? 'paused' : outcome.kind,
     outcome,
     moveCount: saved.moveCount,
@@ -131,5 +148,5 @@ export function restoreRun<TState, TMove, TEvent>(
     lastEvents: [],
     eventSeq: 0,
   };
-  return { kind: 'restored', session, hasHistory };
+  return { kind: 'restored', session, hasHistory: history.hasPartialLog !== true };
 }

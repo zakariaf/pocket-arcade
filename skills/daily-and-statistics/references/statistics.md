@@ -77,7 +77,7 @@ type CounterSpec<TEvent> = { id: string /* kebab-case, stable forever: a save ke
 measureRunCounters(counters, eventsPerMove)   // per counter: 'sum' of the per-move values, or the 'max'
 ```
 
-Counters are measured at run end by replaying the run's FINAL move line (the saved `log` from `create(seed, difficulty)`, collecting each move's events) and calling each `measure`: undone moves are not in the line, so they never count, and a kill mid-run loses nothing because the log is saved. A counter id is a key in the save document: never rename it (a rename is a save-format change).
+Counters are measured at run end by replaying the run's FINAL move line (the saved `log` from `create(seed, difficulty)`, collecting each move's events) and calling each `measure`: undone moves are not in the line, so they never count, and a kill mid-run loses nothing because the log is saved. A run restored without its history (the game host marks it `hasPartialLog`: its log starts at the snapshot, not at `create`) records every counter as 0, because a replay from `create` would invent counts. A counter id is a key in the save document: never rename it (a rename is a save-format change).
 
 ## The run-end write
 

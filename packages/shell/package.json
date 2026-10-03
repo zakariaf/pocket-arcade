@@ -17,11 +17,14 @@
     "zustand": "5.0.15"
   },
   "peerDependencies": {
+    "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
     "@shopify/react-native-skia": "*",
     "expo": "*",
     "expo-constants": "*",
     "expo-haptics": "*",
     "expo-iap": "*",
+    "expo-localization": "*",
     "expo-network": "*",
     "expo-sqlite": "*",
     "expo-tracking-transparency": "*",
@@ -32,6 +35,7 @@
     "react-native-google-mobile-ads": "*",
     "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
+    "react-native-screens": "*",
     "react-native-worklets": "*"
   }
 }

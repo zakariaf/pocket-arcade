@@ -36,9 +36,19 @@ export type ConsentMomentOptions = {
   readonly debug: DebugServices | null;
 };
 
-/** The last consent answer, kept in the save's ads section for the next launch and Settings. */
+/**
+ * The last consent answer, kept in the save's ads section for the next launch and Settings. The
+ * same answer as the saved one (most launches) writes nothing.
+ */
 function saveConsent(save: SaveService, info: ConsentInfo): void {
   const { canRequestAds, isPrivacyOptionsRequired } = info;
+  const saved = save.doc().ads.consent;
+  if (
+    saved.canRequestAds === canRequestAds &&
+    saved.isPrivacyOptionsRequired === isPrivacyOptionsRequired
+  ) {
+    return;
+  }
   save.update((doc) => ({
     ...doc,
     ads: { ...doc.ads, consent: { canRequestAds, isPrivacyOptionsRequired } },

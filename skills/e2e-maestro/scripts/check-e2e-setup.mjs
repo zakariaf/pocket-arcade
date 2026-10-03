@@ -338,7 +338,10 @@ function checkPersistence(root, report) {
   const kv = codeOf(root, KV_STORE);
   if (exists(root, KV_STORE) && !(/['"]expo-sqlite\/kv-store['"]/.test(kv) && /\bgetItemSync\s*\(/.test(kv) && /\bsetItemSync\s*\(/.test(kv))) problem(KV_STORE, 'does not use the synchronous expo-sqlite/kv-store calls (getItemSync, setItemSync)', 'Restore the template: the flags must be back before the first render, so an async read is too late.');
   const parts = codeOf(root, PARTS);
-  if (exists(root, PARTS) && [...parts.matchAll(/\bstore\s*:\s*[\w.?]*createSqliteKvDebugStoreAdapter\s*\(/g)].length < 2) problem(PARTS, 'does not give both the debug services and the link handler the test-only key-value store', 'Restore createDebugParts from the template: store: build.api.createSqliteKvDebugStoreAdapter() for both.');
+  const opened = [...parts.matchAll(/\bcreateSqliteKvDebugStoreAdapter\s*\(/g)].length;
+  const given = [...parts.matchAll(/\bstore\s*:\s*(?:build\.store\b|build\.api\.createSqliteKvDebugStoreAdapter\s*\()/g)].length;
+  if (exists(root, PARTS) && given < 2) problem(PARTS, 'does not give both the debug services and the link handler the test-only key-value store', 'Restore createDebugParts from the template: open it once into build.store, then store: build.store for both.');
+  else if (exists(root, PARTS) && opened !== 1) problem(PARTS, `opens the test-only key-value store ${opened} times instead of once`, 'Restore createDebugParts from the template: build.store = TEST_ONLY.createSqliteKvDebugStoreAdapter() once, then store: build.store for the debug services and the link handler.');
   if (exists(root, ENTRY) && !/\bcreateSqliteKvDebugStoreAdapter\b/.test(codeOf(root, ENTRY))) problem(ENTRY, 'does not export createSqliteKvDebugStoreAdapter', "Add /** @public */ export { createSqliteKvDebugStoreAdapter } from '@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts' and its TestOnlyApi field.");
 }
 

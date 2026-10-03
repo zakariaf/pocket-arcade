@@ -1,0 +1,175 @@
+// packages/shell/src/game-host/open-session.ts
+import { dailyStart } from '@e07/game-kit/levels/daily-start.ts';
+import { startGameSession } from '@e07/shell/game-host/game-session-reducer.ts';
+import { restoreRun } from '@e07/shell/game-host/saved-run.ts';
+
+import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
+import type { GameSession, SessionRules } from '@e07/shell/game-host/game-session-types.ts';
+import type { RestoredRun } from '@e07/shell/game-host/saved-run.ts';
+import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
+import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
+import type { SaveService } from '@e07/shell/services/save/save-service.ts';
+import type { RunRef, SaveRun } from '@e07/shell/services/save/schema/save-doc.ts';
+
+/** How the Game screen opens a run: the same shape as the Game route params. */
+export type SessionOpen =
+  { readonly start: 'resume' } | { readonly start: 'new'; readonly ref: RunRef };
+
+type Rules<T extends ShellGameTypes> = SessionRules<T['state'], T['move'], T['event']>;
+type Session<T extends ShellGameTypes> = GameSession<T['state'], T['move'], T['event']>;
+
+/** The reducer's view of the game; a tutorial run starts from the scripted tutorial state. */
+export function sessionRulesFor<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  ref: RunRef,
+): Rules<T> {
+  const { create, applyMove, outcome } = game.engine;
+  const { undo, continueRun } = game.rules;
+  const tutorialStart = game.teaching.tutorial.start;
+  return {
+    create: ref.kind === 'tutorial' ? () => tutorialStart : create,
+    applyMove,
+    outcome,
+    undo,
+    continueRun,
+  };
+}
+
+/** The table entry of a level run (seed, difficulty, stars); null for every other kind. */
+export function entryFor<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  ref: RunRef,
+): LevelEntry | null {
+  if (ref.kind !== 'level') return null;
+  return game.levels.table.find((entry) => entry.level === ref.level) ?? null;
+}
+
+/** Seed and difficulty of a new run, or null when the game has no such run. */
+export function startFor<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  ref: RunRef,
+  newSeed: () => number,
+): { readonly seed: number; readonly difficulty: number } | null {
+  switch (ref.kind) {
+    case 'level':
+      return entryFor(game, ref);
+    case 'daily':
+      return dailyStart(game.levels, ref.date);
+    case 'endless':
+      return game.levels.endless.kind === 'endless'
+        ? { seed: newSeed(), difficulty: game.levels.endless.difficulty }
+        : null;
+    case 'tutorial':
+      return { seed: 0, difficulty: 0 };
+  }
+}
+
+/** A new run for `ref` (spec S5, S8, S9); null for a level or mode the game does not have. */
+export function newSession<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  ref: RunRef,
+  newSeed: () => number,
+): Session<T> | null {
+  const start = startFor(game, ref, newSeed);
+  if (start === null) return null;
+  return startGameSession(sessionRulesFor(game, ref), { ref, ...start });
+}
+
+type Restored<T extends ShellGameTypes> = RestoredRun<T['state'], T['move'], T['event']>;
+
+/**
+ * A run restored from its snapshot alone: no undo history, and its log marked partial, so the run
+ * end never measures counters from it (spec S10), even when the snapshot is the start position.
+ */
+function withoutHistory<T extends ShellGameTypes>(restored: Restored<T>): Restored<T> {
+  if (restored.kind === 'dropped') return restored;
+  return { ...restored, hasHistory: false, session: { ...restored.session, hasPartialLog: true } };
+}
+
+/**
+ * restoreRun that never throws (spec 8.14, no crash loop): a replay the game refuses (a changed
+ * rule set throws RangeError on a logged move) is logged, and the snapshot, the truth, is restored
+ * again without that log (withoutHistory); a run that cannot be restored even then is dropped.
+ */
+function restoreLogged<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  saved: SaveRun,
+  errorLog: ErrorLogPort,
+): Restored<T> {
+  const rules = sessionRulesFor(game, saved.ref);
+  try {
+    return restoreRun(rules, game.persistence, saved);
+  } catch (error) {
+    errorLog.record('save', error);
+  }
+  try {
+    return withoutHistory(restoreRun(rules, game.persistence, { ...saved, log: [] }));
+  } catch (error) {
+    errorLog.record('save', error);
+  }
+  return { kind: 'dropped', reason: 'state-invalid' };
+}
+
+/**
+ * The saved run, validated by the game's own parsers and replayed for its undo history. A run
+ * the game cannot read is dropped alone (spec 8.6, S14); a replay that does not reproduce the
+ * snapshot, or throws, keeps the position, drops the undo history and is written to the error log.
+ */
+export function resumeSession<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  saved: SaveRun,
+  errorLog: ErrorLogPort,
+): Session<T> | null {
+  const restored = restoreLogged(game, saved, errorLog);
+  if (restored.kind === 'dropped') {
+    errorLog.record('save', new Error(`saved run dropped: ${restored.reason}`));
+    return null;
+  }
+  if (!restored.hasHistory && saved.log.length > 0) {
+    errorLog.record(
+      'save',
+      new Error('saved run replay differs from its snapshot; undo history dropped'),
+    );
+  }
+  return restored.session;
+}
+
+/** What checking the saved run needs: the save it lives in and the log a dropped run goes to. */
+type SavedRunDeps = { readonly save: SaveService; readonly errorLog: ErrorLogPort };
+
+/**
+ * The saved run as a session, checked by the game's own parsers (spec 8.6, S14): an unreadable run
+ * is dropped alone, everything else in the save stays.
+ */
+function checkSavedRun<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  deps: SavedRunDeps,
+): Session<T> | null {
+  const saved = deps.save.doc().run;
+  if (saved === null) return null;
+  const session = resumeSession(game, saved, deps.errorLog);
+  if (session === null) deps.save.update((doc) => ({ ...doc, run: null }));
+  return session;
+}
+
+/**
+ * Checks the saved run at boot, before any screen can offer it, and hands that session to the
+ * first resume while the save still holds the same run, so a long run is replayed once, not twice.
+ * A later resume, or a run that changed since boot, is checked again.
+ */
+export function createResumer<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  deps: SavedRunDeps,
+): () => Session<T> | null {
+  const run = deps.save.doc().run;
+  let boot: { readonly run: SaveRun; readonly session: Session<T> } | null = null;
+  const session = checkSavedRun(game, deps);
+  if (run !== null && session !== null) boot = { run, session };
+  return () => {
+    const kept = boot;
+    boot = null;
+    return kept !== null && deps.save.doc().run === kept.run
+      ? kept.session
+      : checkSavedRun(game, deps);
+  };
+}

@@ -6537,6 +6537,23 @@
       "skill": "quality-gates"
     },
     {
+      "id": "gates-eslint-cache-stale-type-error",
+      "area": "gates",
+      "topic": "check:fast",
+      "symptom": "check:fast reports a type-aware ESLint error (no-unsafe-*, no-unnecessary-condition) that no longer matches the code, in a file that did not change",
+      "cause": "check:fast runs eslint --cache --cache-strategy content, which keys each result on the file's own content only: when a file it depends on changes (a type, the test-only pair), the cached type-aware result is replayed",
+      "fix": "Delete node_modules/.cache/eslint and rerun npm run -s check:fast; npm run lint (no cache) is the truth, and the next run rebuilds the cache",
+      "match": [
+        "no longer matches the code",
+        "stale eslint cache",
+        "node_modules/.cache/eslint",
+        "eslint cache stale"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "quality-gates"
+    },
+    {
       "id": "i18n-debug-text-translated",
       "area": "i18n",
       "topic": "Catalogs",

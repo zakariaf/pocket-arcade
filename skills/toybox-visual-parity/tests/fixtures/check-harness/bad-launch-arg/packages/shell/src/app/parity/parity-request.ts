@@ -9,12 +9,15 @@
 // prove a hierarchy dump came from this launch and not from another session's simulator. An
 // unknown or malformed parameter is an error, never ignored: a capture of the wrong state would
 // compare the wrong screen with the reference.
+import { isLanguage } from '@e07/shell/i18n/languages.ts';
+import { isDateKey } from '@e07/shell/screens/debug/debug-overrides.ts';
+
 import { PARITY_PLANS, isParityFrameKey } from './parity-plans.ts';
 
 import type { ParityFrameKey, ParityPlan } from './parity-plans.ts';
+import type { Language } from '@e07/shell/i18n/languages.ts';
 
 export type ParityTheme = 'light' | 'dark';
-export type ParityLanguage = 'en' | 'de' | 'fa' | 'ckb';
 
 export type ParityRequest = {
   readonly frame: ParityFrameKey;
@@ -22,7 +25,7 @@ export type ParityRequest = {
    * the harness only through TEST_ONLY never imports parity-plans.ts itself. */
   readonly plan: ParityPlan;
   readonly theme: ParityTheme;
-  readonly lang: ParityLanguage;
+  readonly lang: Language;
   /** Design game id (lineSiege, flockTilt, scrapShove): the fixture values follow it. */
   readonly game: string;
   /** The FakeClock date, YYYY-MM-DD. */
@@ -46,27 +49,8 @@ type FieldCheck = {
   readonly message: string;
 };
 
-const DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
-
 function isTheme(value: string): value is ParityTheme {
   return value === 'light' || value === 'dark';
-}
-
-function isLanguage(value: string): value is ParityLanguage {
-  return value === 'en' || value === 'de' || value === 'fa' || value === 'ckb';
-}
-
-function daysInMonth(year: number, month: number): number {
-  if (month === 2) return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 29 : 28;
-  return [4, 6, 9, 11].includes(month) ? 30 : 31;
-}
-
-/** A real calendar date in YYYY-MM-DD (plain arithmetic: runtime code never builds a Date). */
-function isCalendarDate(value: string): boolean {
-  const match = DATE.exec(value);
-  if (match === null) return false;
-  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
-  return month >= 1 && month <= 12 && day >= 1 && day <= daysInMonth(year, month);
 }
 
 const FIELDS: readonly FieldCheck[] = [
@@ -79,7 +63,7 @@ const FIELDS: readonly FieldCheck[] = [
     isValid: (value) => /^[a-z][A-Za-z0-9]*$/.test(value),
     message: 'must be a camelCase game id',
   },
-  { key: 'date', required: true, isValid: isCalendarDate, message: 'must be a real YYYY-MM-DD' },
+  { key: 'date', required: true, isValid: isDateKey, message: 'must be a real YYYY-MM-DD' },
   {
     key: 'animations',
     required: true,

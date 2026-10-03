@@ -35,7 +35,7 @@ S1 is one of the few centred screens (with the S7 chip, stars and titles).
 
 ## States and variants
 
-One state. Under Reduce motion the loader blocks stand still, and so do they during a parity capture: the restart root has no settings store, so `createStartupSplash` ORs the phone's Reduce motion (`systemA11yStore`) with `TEST_ONLY?.isParityMotionFrozen()`, the same frozen-motion switch `useReduceMotion()` reads on every other screen. A splash that reads only the phone's switch keeps hopping in a capture, and the frame never holds still (check-screens `splash-held`).
+One state. Under Reduce motion the loader blocks stand still, and so do they during a parity capture: the restart root has no settings store, so `createStartupSplash` ORs the phone's Reduce motion (`systemA11yStore`) with `isParityMotionFrozen()` imported from `app/use-reduce-motion.ts`, the same frozen-motion switch `useReduceMotion()` reads on every other screen (that file imports nothing that opens or writes, so the splash may load it before the direction check). A splash that reads only the phone's switch keeps hopping in a capture, and the frame never holds still (check-screens `splash-held`).
 
 ## Data the model supplies
 

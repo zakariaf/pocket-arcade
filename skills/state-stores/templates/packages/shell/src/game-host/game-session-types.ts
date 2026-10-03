@@ -17,6 +17,12 @@ export type GameSession<TState, TMove, TEvent> = {
   /** States before each undoable move (memory only; rebuilt from `log` after a relaunch). */
   readonly past: readonly TState[];
   readonly log: readonly RunLogEntry<TMove>[];
+  /**
+   * Set when the run was restored without its history (the replay differed from the snapshot or
+   * was refused): `log` then starts at the snapshot, not at create(seed), so its counters cannot
+   * be measured (spec S10). Memory only, never saved: the next boot's replay mismatches again.
+   */
+  readonly hasPartialLog?: true;
   readonly status: SessionStatus;
   readonly outcome: Outcome;
   readonly moveCount: number;

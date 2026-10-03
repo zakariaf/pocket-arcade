@@ -1,0 +1,66 @@
+// packages/shell/src/navigation/root-stack.tsx
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { NotBuiltScreen } from '@e07/shell/navigation/not-built-screen.tsx';
+import {
+  useIsFirstRun,
+  useIsMainApp,
+  useIsTestBuild,
+  useNeedsLanguageChoice,
+} from '@e07/shell/navigation/route-guards.ts';
+import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
+
+import type { GameParams } from '@e07/shell/navigation/route-params.ts';
+
+/**
+ * The ONE navigator (S2-S15). S1 is the native splash, S3 is Google's consent form,
+ * S6 Pause and S7 Result are overlays inside Game, S14 dialogs render above the navigator.
+ * Group order matters: the first screen that renders is the initial route (Home in Main).
+ * The variable is camelCase on purpose: the naming rule rejects a PascalCase non-component.
+ *
+ * Partial Shell (shell-slice.json at the repo root): keep every group, route and option below, so
+ * RootParamList stays complete. Point each route whose screen is outside the slice at
+ * NotBuiltScreen from '@e07/shell/navigation/not-built-screen.tsx' (Levels: NotBuiltScreen, or
+ * { screen: NotBuiltScreen, options } where the route has options; the Game route keeps its params
+ * type with { screen: NotBuiltScreen<GameParams>, options }) and drop that screen's import;
+ * LanguageChoice when S2 is outside it, and Debug and FontTest when S15 is (the test-only pair then
+ * leaves out DebugScreen and FontTestScreen). Tutorial always keeps TutorialScreen: it is part of
+ * every Shell app (a first launch reaches Home through it). Swap the real screen back in when the
+ * screen joins the slice; check-navigation.mjs fails a slice screen left on the stand-in.
+ */
+export const rootStack = createNativeStackNavigator({
+  screenOptions: { headerShown: false },
+  groups: {
+    FirstRun: {
+      if: useIsFirstRun,
+      screens: {
+        LanguageChoice: { screen: NotBuiltScreen, if: useNeedsLanguageChoice },
+        Tutorial: { screen: TutorialScreen, options: { gestureEnabled: false } },
+      },
+    },
+    Main: {
+      if: useIsMainApp,
+      screens: {
+        Home: NotBuiltScreen,
+        Game: {
+          screen: NotBuiltScreen<GameParams>,
+          options: { gestureEnabled: false, fullScreenGestureEnabled: false },
+        },
+        Levels: NotBuiltScreen,
+        Daily: NotBuiltScreen,
+        Stats: NotBuiltScreen,
+        Settings: NotBuiltScreen,
+        SettingsLanguage: NotBuiltScreen,
+        About: NotBuiltScreen,
+        PrivacyPolicy: NotBuiltScreen,
+        Licences: NotBuiltScreen,
+        Premium: NotBuiltScreen,
+        HowToPlay: NotBuiltScreen,
+      },
+    },
+    Debug: {
+      if: useIsTestBuild,
+      screens: { Debug: NotBuiltScreen, FontTest: NotBuiltScreen },
+    },
+  },
+});

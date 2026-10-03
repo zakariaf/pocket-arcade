@@ -2,7 +2,7 @@
 import { gameSessionReducer, startGameSession } from '@e07/shell/game-host/game-session-reducer.ts';
 import { COUNTER_RULES, COUNTER_START } from '@e07/shell/testing/counter-game.ts';
 
-import { measureCounters } from './measure-counters.ts';
+import { measureCounters, noCounters } from './measure-counters.ts';
 
 import type { CounterSpec } from '@e07/game-kit/contract/stats.ts';
 
@@ -59,6 +59,15 @@ describe('measureCounters', () => {
     const rules = { ...COUNTER_RULES, continueRun: { kind: 'none' } } as const;
     const session = { seed: 2, difficulty: 0, log: [{ kind: 'continue' }] } as const;
     expect(measureCounters(rules, session, COUNTERS)).toStrictEqual({
+      moves: { value: 0, aggregate: 'sum' },
+      rescues: { value: 0, aggregate: 'max' },
+    });
+  });
+});
+
+describe('noCounters', () => {
+  it('measures every counter as 0 for a run whose kept line cannot be replayed', () => {
+    expect(noCounters(COUNTERS)).toStrictEqual({
       moves: { value: 0, aggregate: 'sum' },
       rescues: { value: 0, aggregate: 'max' },
     });

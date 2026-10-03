@@ -17,6 +17,7 @@ import type { DebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 import type { DebugGameControls } from '@e07/shell/app/debug-link-routes.ts';
 import type { TestOnlyApi } from '@e07/shell/app/test-only-api.ts';
 import type { GameExtra } from '@e07/shell/config/game-extra.ts';
+import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
@@ -55,6 +56,8 @@ type TestBuild = {
   readonly api: TestOnlyApi;
   readonly connectivity: SimulatedConnectivity;
   readonly clock: SimulatedClock;
+  /** The test-only key-value store, opened once: the debug services' flags and the link handler. */
+  readonly store: DebugStore;
 };
 
 function createServices(build: TestBuild, input: DebugPartsInput): DebugServices {
@@ -62,7 +65,7 @@ function createServices(build: TestBuild, input: DebugPartsInput): DebugServices
     connectivity: build.connectivity,
     clock: build.clock,
     // The flags a direction reload or a kill interrupted come back here, before the first render.
-    store: build.api.createSqliteKvDebugStoreAdapter(),
+    store: build.store,
     persistPremium: input.premiumDeps.persistPremium,
     dispatchPremium: input.premiumDeps.dispatch,
     nowMs: build.clock.nowMs,
@@ -81,7 +84,7 @@ function createLinks(
   const guard = createSqliteKvDirectionGuardAdapter();
   return build.api.createDebugLinkHandler({
     services: input.debug,
-    store: build.api.createSqliteKvDebugStoreAdapter(),
+    store: build.store,
     readSave: input.save.doc,
     writeSave: (recipe) => {
       updateAndPublish(input.save, input.stores, { recipe, refreshBackup: false });
@@ -111,7 +114,7 @@ export function createDebugParts(input: DebugPartsInput): DebugParts {
   if (TEST_ONLY === null || connectivity === null || clock === null) {
     return { services: null, links: null, navigationRef };
   }
-  const build = { api: TEST_ONLY, connectivity, clock };
+  const build = { api: TEST_ONLY, connectivity, clock, store: TEST_ONLY.createSqliteKvDebugStoreAdapter() };
   const services = createServices(build, input);
   const links = createLinks(build, { ...input, debug: services }, navigationRef);
   return { services, links, navigationRef };

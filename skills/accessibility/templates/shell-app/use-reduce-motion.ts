@@ -18,8 +18,12 @@ type ParityMotionApi = {
   readonly isParityMotionFrozen?: () => boolean;
 };
 
-/** Read at call time: TEST_ONLY is still being built while the test-only entry loads. */
-function isParityMotionFrozen(): boolean {
+/**
+ * True while a parity capture holds every animation still (test builds only). Read at call time:
+ * TEST_ONLY is still being built while the test-only entry loads. The S1 restart splash, which has
+ * no settings store, reads this switch directly.
+ */
+export function isParityMotionFrozen(): boolean {
   const api: ParityMotionApi | null = TEST_ONLY;
   return api?.isParityMotionFrozen?.() === true;
 }

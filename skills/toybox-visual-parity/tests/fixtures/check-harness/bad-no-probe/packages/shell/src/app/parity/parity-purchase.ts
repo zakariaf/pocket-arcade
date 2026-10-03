@@ -5,6 +5,7 @@
 // behaviour each S12 state card draws. The Premium screen's model presses Buy or Restore itself
 // on the states that need it (parityFrameState()); this port only answers.
 import { localeTagFor } from '@e07/shell/i18n/digits.ts';
+import { formatStorePrice } from '@e07/shell/services/purchase/format-store-price.ts';
 
 import { PARITY_FIXTURE } from './parity-fixture.ts';
 
@@ -30,12 +31,9 @@ function pending<T>(): Promise<T> {
 }
 
 function productOf(productId: string, store: ParityFixture['store']): StoreProduct {
+  const product = { productId, displayPrice: '', price: store.price, currency: store.currency };
   // The store-formatted fallback, built like StoreKit's; the Shell formats per language anyway.
-  const displayPrice = new Intl.NumberFormat(localeTagFor('en', 'latin'), {
-    style: 'currency',
-    currency: store.currency,
-  }).format(store.price);
-  return { productId, displayPrice, price: store.price, currency: store.currency };
+  return { ...product, displayPrice: formatStorePrice(product, localeTagFor('en', 'latin')) };
 }
 
 function transactionOf(productId: string, state: StoreTransaction['state']): StoreTransaction {
