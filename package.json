@@ -83,6 +83,7 @@
   "allowScripts": {
     "lefthook@2.1.14": true,
     "unrs-resolver@1.12.2": true,
-    "@shopify/react-native-skia@2.6.2": true
+    "@shopify/react-native-skia@2.6.2": true,
+    "fsevents@2.3.3": true
   }
 }
