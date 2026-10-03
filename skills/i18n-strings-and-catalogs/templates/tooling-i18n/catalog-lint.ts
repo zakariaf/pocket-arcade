@@ -27,7 +27,7 @@ export function lintDirectory(dir: string, namespace: Namespace): string[] {
   const report: string[] = [];
   const en = readCatalog(dir, 'en');
   for (const language of LANGUAGES) {
-    const catalog = readCatalog(dir, language);
+    const catalog = language === 'en' ? en : readCatalog(dir, language);
     report.push(...sortProblem(dir, language, Object.keys(catalog)));
     for (const problem of debugEnglishProblems(en, catalog, language)) {
       report.push(`${dir}/${language}.json  ${problem}`);
