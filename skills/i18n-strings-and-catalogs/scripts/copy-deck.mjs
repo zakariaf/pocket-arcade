@@ -333,10 +333,16 @@ run(async () => {
   }
 
   // check
+  // The Shell catalogs are due once their linter exists (Shell step 6): missing ones then count as
+  // empty, so every selected text is reported missing (with no selection, every deck and extra text).
+  // Before that step a repo without them has nothing to check (exit 2) unless --game names a game.
   const sDir = shellDir(root);
   const catalogsExist = LANGUAGES.some((lang) => existsSync(join(sDir, `${lang}.json`)));
-  if (!catalogsExist && !options.game) fail(`nothing to check: no Shell catalogs in ${shown(sDir)}`, 'Run from the app repo root or pass it (node copy-deck.mjs check <repo-root> ...); create the catalogs with: node copy-deck.mjs apply <repo-root> --all');
-  const { shell, game, notes } = hasSelection ? select(deck, options) : { shell: [], game: [], notes: [] };
+  const notDue = dueSkipReason(root, SHELL_DUE_TARGETS.catalogLinter);
+  const checksShell = catalogsExist || notDue === null;
+  if (!checksShell && !options.game) fail(`nothing to check: no Shell catalogs in ${shown(sDir)} (${notDue})`, 'Run from the app repo root or pass it (node copy-deck.mjs check <repo-root> ...); create the catalogs with: node copy-deck.mjs apply <repo-root> --all --extras');
+  const selection = hasSelection ? options : catalogsExist ? null : { ...options, all: true, extras: true };
+  const { shell, game, notes } = selection ? select(deck, selection) : { shell: [], game: [], notes: [] };
   let compared = 0;
   const DECK_RULES = {
     missing: 'deck-key-missing',
@@ -368,7 +374,7 @@ run(async () => {
       }
     }
   };
-  if (catalogsExist) {
+  if (checksShell) {
     const en = readCatalog(join(sDir, 'en.json')).data;
     const selected = new Set(shell.map((e) => e.key));
     const deckTexts = new Map(Object.keys(deck.strings).filter((key) => Object.hasOwn(en, key) || selected.has(key)).map((key) => [key, deck.strings[key]]));
