@@ -2023,7 +2023,7 @@
         "proof": "`check-icons-and-logos.mjs .` and `check-app-art.mjs . --app <id>` (code-drawn-art-and-icons) and `check-sound-banks.mjs .` (game-audio-and-haptics) print RESULT: PASS"
       },
       {
-        "step": "Assemble src/index.ts as the game's module, the 3-line index.ts, the contract test and the debug-controls test test/integration/game-host/<id>-debug-controls.test.ts (game-host-integration's __GAME_ID__ template: playTo and openExample on the real module)",
+        "step": "Assemble src/index.ts as the game's module, the 3-line index.ts, the contract test and the debug-controls test test/integration/game-host/<id>-debug-controls.test.ts (game-host-integration's `__GAME_ID__` template: playTo and openExample on the real module)",
         "skills": [
           "game-host-integration",
           "realtime-game-loop"
