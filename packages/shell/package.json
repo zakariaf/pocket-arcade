@@ -22,6 +22,7 @@
     "expo-iap": "*",
     "expo-network": "*",
     "expo-sqlite": "*",
+    "expo-tracking-transparency": "*",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
