@@ -22,7 +22,10 @@ export function progressSliceOf(doc: SaveDoc): ProgressState {
   return { progress, daily, hints, upsell };
 }
 
-/** Thin: reduce -> persist (sync, one transaction) -> publish. Hydrated once at boot. */
+/**
+ * Thin: reduce -> persist (sync, one transaction) -> publish. Hydrated once at boot. It publishes
+ * what the save holds after the write, so a document the save rejected never reaches the store.
+ */
 export function createProgressStore(save: SaveService): ProgressStore {
   return createStore<ProgressStoreState>()((set, get) => ({
     ...progressSliceOf(save.doc()),
@@ -32,7 +35,7 @@ export function createProgressStore(save: SaveService): ProgressStore {
       if (next === current) return; // nothing changed: no write, no re-render
       const { progress, daily, hints, upsell } = next;
       save.update((doc) => ({ ...doc, progress, daily, hints, upsell }));
-      set({ progress, daily, hints, upsell });
+      set(progressSliceOf(save.doc()));
     },
   }));
 }
