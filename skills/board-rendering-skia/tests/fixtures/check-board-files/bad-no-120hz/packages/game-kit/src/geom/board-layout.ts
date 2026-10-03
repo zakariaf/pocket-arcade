@@ -78,25 +78,33 @@ export function cellRect(layout: BoardLayout, target: BoardTarget): Rect | null 
 }
 
 type Point = { readonly x: number; readonly y: number };
+type Probe = { readonly point: Point; readonly slop: number };
 
-function regionHit(region: GridRegion, point: Point, slop: number): BoardTarget | null {
-  const { x, y } = point;
+/**
+ * Hit-tests the region where it is drawn: a mirrored region is mirrored as a rectangle (as
+ * cellRect does), so a cell's left edge belongs to that cell in both directions.
+ */
+function regionHit(layout: BoardLayout, region: GridRegion, probe: Probe): BoardTarget | null {
+  const { slop } = probe;
+  const { x, y } = probe.point;
   const width = region.cols * region.cell;
   const height = region.rows * region.cell;
+  const left = layout.isMirrored ? layout.width - region.x - width : region.x;
   const isInside =
-    x >= region.x - slop &&
-    x < region.x + width + slop &&
+    x >= left - slop &&
+    x < left + width + slop &&
     y >= region.y - slop &&
     y < region.y + height + slop;
   if (!isInside || region.cell <= 0) return null;
-  const col = Math.min(region.cols - 1, Math.max(0, Math.floor((x - region.x) / region.cell)));
+  const drawnCol = Math.min(region.cols - 1, Math.max(0, Math.floor((x - left) / region.cell)));
+  const col = layout.isMirrored ? region.cols - 1 - drawnCol : drawnCol;
   const row = Math.min(region.rows - 1, Math.max(0, Math.floor((y - region.y) / region.cell)));
   return { regionId: region.id, col, row };
 }
 
-function firstHit(layout: BoardLayout, local: Point, slop: number): BoardTarget | null {
+function firstHit(layout: BoardLayout, point: Point, slop: number): BoardTarget | null {
   for (const region of layout.regions) {
-    const hit = regionHit(region, local, slop);
+    const hit = regionHit(layout, region, { point, slop });
     if (hit !== null) return hit;
   }
   return null;
@@ -107,10 +115,9 @@ function firstHit(layout: BoardLayout, local: Point, slop: number): BoardTarget 
  * point is truly inside always wins over a neighbour reached only through the slop.
  */
 export function hitTest(layout: BoardLayout, point: Point, slop = 0): BoardTarget | null {
-  const local = { x: layout.isMirrored ? layout.width - point.x : point.x, y: point.y };
-  const exact = firstHit(layout, local, 0);
+  const exact = firstHit(layout, point, 0);
   if (exact !== null || slop <= 0) return exact;
-  return firstHit(layout, local, slop);
+  return firstHit(layout, point, slop);
 }
 
 /** Structural equality for targets (hover changes are sent to JS only when this is false). */

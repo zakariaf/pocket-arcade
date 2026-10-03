@@ -45,6 +45,15 @@ describe('board layout', () => {
     expect(cellRect(layout, { regionId: 'board', col: 0, row: 0 })?.x).toBe(300);
   });
 
+  it('hits a mirrored cell on the same half-open edges it is drawn with (spec 10, 7.5)', () => {
+    const layout = gridLayout({ width: 400, height: 400 }, { cols: 4, rows: 4 }, true);
+    const rect = cellRect(layout, { regionId: 'board', col: 0, row: 0 });
+    expect(rect).toStrictEqual({ x: 300, y: 0, width: 100, height: 100 });
+    expect(hitTest(layout, { x: 300, y: 0 })).toStrictEqual({ regionId: 'board', col: 0, row: 0 });
+    expect(hitTest(layout, { x: 200, y: 0 })).toStrictEqual({ regionId: 'board', col: 1, row: 0 });
+    expect(hitTest(layout, { x: 400, y: 0 })).toBeNull();
+  });
+
   it('prefers the region a tap is truly inside over a neighbour reached only through the slop (spec 10)', () => {
     const layout: BoardLayout = {
       width: 400,
