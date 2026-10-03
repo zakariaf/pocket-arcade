@@ -162,12 +162,13 @@ function waitAndScreenshot(
   out: string,
 ): string {
   mkdirSync(dirname(out), { recursive: true });
-  let previous = '';
+  let previous: Buffer | null = null;
   for (let attempt = 1; attempt <= READY_MAX_ATTEMPTS; attempt += 1) {
     sleep(READY_POLL_MS);
     simctl(['io', target.udid, 'screenshot', out]);
-    const current = readFileSync(out).toString('base64');
-    const probe = { attempt, perfLog: target.perfLog(), screenUnchanged: current === previous };
+    const current = readFileSync(out);
+    const isSame = previous?.equals(current) ?? false;
+    const probe = { attempt, perfLog: target.perfLog(), screenUnchanged: isSame };
     const reason = readyReason(probe);
     if (reason !== null) {
       simctl(['io', target.udid, 'screenshot', out]);
