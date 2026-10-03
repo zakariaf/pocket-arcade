@@ -59,6 +59,7 @@
     "@stryker-mutator/core": "10.0.0",
     "@stryker-mutator/jest-runner": "10.0.0",
     "@stryker-mutator/typescript-checker": "10.0.0",
+    "@testing-library/react-native": "14.0.1",
     "@types/jest": "29.5.14",
     "@types/node": "26.4.1",
     "@types/react": "19.2.18",
@@ -79,6 +80,7 @@
     "knip": "6.38.0",
     "lefthook": "2.1.14",
     "prettier": "3.9.9",
+    "test-renderer": "1.2.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1"
   },
