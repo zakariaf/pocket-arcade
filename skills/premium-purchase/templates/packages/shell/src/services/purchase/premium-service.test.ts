@@ -19,7 +19,7 @@ const BOUGHT: StoreTransaction = {
   handle: null,
 };
 
-/** `isSaved: false` is a save the store refused (save.didLastWriteFail() after the update). */
+/** `isSaved: false` is a change that did not reach the disk (save.update answered false). */
 function setup(overrides: Partial<FakePurchaseScript> = {}, isSaved = true) {
   const script: FakePurchaseScript = {
     isConnected: true,

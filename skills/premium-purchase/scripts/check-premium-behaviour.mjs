@@ -225,7 +225,7 @@ run(async () => {
       const h = harness({ saveRefused: true });
       await service.processTransaction(h.deps, tx());
       return h.log;
-    }, ['persist:true', 'dispatch:premium-granted'], 'persistPremium returns false when the disk refused the write (save.didLastWriteFail()); then return before finishQuietly so StoreKit delivers the purchase again (a finished but unsaved purchase is lost for good).');
+    }, ['persist:true', 'dispatch:premium-granted'], 'persistPremium returns false when the change did not reach the disk (save.update answered false); then return before finishQuietly so StoreKit delivers the purchase again (a finished but unsaved purchase is lost for good).');
     await expect('service-order', FILES.service, 'a failing finish is logged, Premium stays', async () => {
       const h = harness({ finishThrows: true });
       await service.processTransaction(h.deps, tx());

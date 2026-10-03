@@ -32,7 +32,9 @@ export type PremiumInput = {
 
 /**
  * The save's premium section after a change (a revoke carries its date for the save guard). False
- * when the disk refused the write: the purchase then stays unfinished, so StoreKit delivers it again.
+ * when the change did not reach the disk (save.update's answer: a refused write, a rejected
+ * document, a pending quarantine copy, or a newer app's read-only save): the purchase then stays
+ * unfinished, so the store delivers it again.
  */
 export function persistPremiumIn(
   save: SaveService,
@@ -40,7 +42,7 @@ export function persistPremiumIn(
 ): (change: PremiumChange) => boolean {
   return (change) => {
     const atMs = clock.nowMs();
-    save.update(
+    return save.update(
       (doc) => ({
         ...doc,
         premium: change.isPremium
@@ -49,7 +51,6 @@ export function persistPremiumIn(
       }),
       { refreshBackup: true },
     );
-    return !save.didLastWriteFail();
   };
 }
 

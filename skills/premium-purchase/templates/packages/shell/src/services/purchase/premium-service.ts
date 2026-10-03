@@ -23,7 +23,7 @@ export type PremiumServiceDeps = {
   readonly productId: string; // from game config, e.g. '<bundleId>.premium'
   readonly dispatch: (action: PremiumAction) => void;
   // Synchronous SQLite write into the premium section ("Reset all progress" keeps it). Returns
-  // false when the change did not reach the disk (save.didLastWriteFail() after the update).
+  // false when the change did not reach the disk (save.update's answer).
   readonly persistPremium: (change: PremiumChange) => boolean;
   readonly formatPrice: (product: StoreProduct) => string;
   readonly onError: (error: unknown) => void; // ErrorLogPort

@@ -298,3 +298,71 @@ describe('keepPremiumUnlessRevoked', () => {
     );
   });
 });
+
+// spec 8.9: "After a purchase, the Shell stores "Premium = yes" on the phone." A caller that must
+// not go on before the change is on disk (a Premium purchase is finished only after its save)
+// reads update's answer.
+describe('createSaveService update result', () => {
+  const dark = (doc: SaveDoc): SaveDoc => ({
+    ...doc,
+    settings: { ...doc.settings, theme: 'dark' },
+  });
+
+  it('answers true once the change has reached the disk', () => {
+    const { save } = setup({ isStrict: true });
+    expect(save.update(dark)).toBe(true);
+    expect(save.update(dark, { refreshBackup: true })).toBe(true);
+  });
+
+  it('answers false for a write the store refused', () => {
+    const { store, save } = setup({ isStrict: true });
+    store.failNextWrite = true;
+    expect(save.update(dark)).toBe(false);
+    expect(save.update(dark)).toBe(true);
+  });
+
+  it('answers false for a document rejected in a store build', () => {
+    const { save } = setup({ isStrict: false });
+    expect(save.update(loud)).toBe(false);
+  });
+
+  it('answers false for a save from a newer app, which is never written', () => {
+    const newer = {
+      ...encodeSaveDoc(createDefaultSaveDoc(GAME), {
+        appVersion: '9',
+        writtenAtMs: 1,
+        writeCount: 7,
+      }),
+      schemaVersion: 99,
+    };
+    const plan = planLoad({ current: newer, backup: null, gameId: GAME });
+    const { save } = setup({ isStrict: true, plan });
+    expect(save.update(dark)).toBe(false);
+  });
+
+  it('answers false while a pending quarantine copy holds the write back', () => {
+    const good = encodeSaveDoc(createDefaultSaveDoc(GAME), {
+      appVersion: '1.0.0',
+      writtenAtMs: 1,
+      writeCount: 7,
+    });
+    const plan = planLoad({
+      current: { ...good, payload: `${good.payload} ` },
+      backup: good,
+      gameId: GAME,
+    });
+    let isDiskFull = true;
+    const store = {
+      ...createFakeSaveStore(),
+      quarantine: () => {
+        if (isDiskFull) throw new Error('SQLITE_FULL');
+      },
+    };
+    const deps = { store, clock: CLOCK, errorLog: createFakeErrorLog(), appVersion: '1.0.0' };
+    const save = createSaveService({ ...deps, isStrict: true }, plan, 7);
+    save.applyLoadWrites();
+    expect(save.update(dark)).toBe(false);
+    isDiskFull = false;
+    expect(save.update(dark)).toBe(true);
+  });
+});

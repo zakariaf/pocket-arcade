@@ -3,7 +3,9 @@ import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log
 import { createFakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
 import { createFakeSaveStore } from '@e07/shell/services/save/fake-save-store.ts';
 import { planLoad } from '@e07/shell/services/save/load-plan.ts';
+import { encodeSaveDoc } from '@e07/shell/services/save/save-codec.ts';
 import { createSaveService } from '@e07/shell/services/save/save-service.ts';
+import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 import { createShellStores } from '@e07/shell/stores/create-shell-stores.ts';
 import { createTestSave, TEST_CLOCK, TEST_GAME_ID } from '@e07/shell/testing/create-test-save.ts';
 
@@ -66,6 +68,31 @@ describe('createPremiumDeps', () => {
     store.failNextWrite = true;
     expect(persistPremium({ isPremium: true })).toBe(false);
     expect(persistPremium({ isPremium: true })).toBe(true);
+  });
+
+  it('reports a Premium change on a save from a newer app as not saved, which is never written', () => {
+    const newer = {
+      ...encodeSaveDoc(createDefaultSaveDoc(TEST_GAME_ID), {
+        appVersion: '9.0.0',
+        writtenAtMs: 1,
+        writeCount: 7,
+      }),
+      schemaVersion: 99,
+    };
+    const plan = planLoad({ current: newer, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store: createFakeSaveStore(), clock: TEST_CLOCK, errorLog, appVersion: '1.0.0' };
+    const save = createSaveService({ ...deps, isStrict: true }, plan, 0);
+    expect(persistPremiumIn(save, TEST_CLOCK)({ isPremium: true })).toBe(false);
+  });
+
+  it('reports a Premium change the save rejected as not saved', () => {
+    const plan = planLoad({ current: null, backup: null, gameId: TEST_GAME_ID });
+    const errorLog = createFakeErrorLog();
+    const deps = { store: createFakeSaveStore(), clock: TEST_CLOCK, errorLog, appVersion: '1.0.0' };
+    const save = createSaveService({ ...deps, isStrict: false }, plan, 0);
+    save.applyLoadWrites();
+    expect(persistPremiumIn(save, { nowMs: () => -1 })({ isPremium: true })).toBe(false);
   });
 
   it('formats the price in the player language (System follows the phone) and records errors', () => {
