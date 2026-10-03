@@ -37,6 +37,15 @@ describe('saved run', () => {
     expect(restored.hasHistory).toBe(false);
   });
 
+  it('marks a run restored without its history, and only that run (spec S10 counters)', () => {
+    const mismatched = { ...toSavedRun(played([3]), 1, true), state: { n: 7 } };
+    const partial = restoreRun(COUNTER_RULES, COUNTER_PERSISTENCE, mismatched);
+    const full = restoreRun(COUNTER_RULES, COUNTER_PERSISTENCE, toSavedRun(played([3]), 1, true));
+    if (partial.kind !== 'restored' || full.kind !== 'restored') throw new Error('not restored');
+    expect(partial.session.hasPartialLog).toBe(true);
+    expect(full.session.hasPartialLog).toBeUndefined();
+  });
+
   it('drops a run whose state the game cannot parse', () => {
     const saved = { ...toSavedRun(played([3]), 1, true), state: 'garbage' };
     expect(restoreRun(COUNTER_RULES, COUNTER_PERSISTENCE, saved)).toStrictEqual({

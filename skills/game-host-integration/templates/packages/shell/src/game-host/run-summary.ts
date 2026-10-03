@@ -126,15 +126,18 @@ export function summarizeRun<TState, TMove, TEvent>(
 
 /**
  * The run's counters, never throwing (spec 8.14 and S7: a run end is always recorded and shown).
- * A kept line that no longer replays from create (a run restored without its history continues
- * from the snapshot; a changed rule set refuses a move) is logged and counts nothing.
+ * A run restored without its history (hasPartialLog) counts nothing (spec S10): its log starts at
+ * the snapshot, so a replay from create would invent counts even when every move is legal there;
+ * the line is still replayed so a move the game refuses reaches the error log. A kept line that
+ * no longer replays (a changed rule set refuses a move) is logged and counts nothing too.
  */
 function countersOf<TState, TMove, TEvent>(
   session: Finished<TState, TMove, TEvent>,
   context: RunEndContext<TState, TMove, TEvent>,
 ): CounterTally {
   try {
-    return measureCounters(context.rules, session, context.counters);
+    const measured = measureCounters(context.rules, session, context.counters);
+    return session.hasPartialLog === true ? noCounters(context.counters) : measured;
   } catch (error) {
     context.errorLog.record('save', error);
     return noCounters(context.counters);

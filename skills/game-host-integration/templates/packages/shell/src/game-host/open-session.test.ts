@@ -136,6 +136,30 @@ describe('resumeSession', () => {
       'saved run replay differs from its snapshot; undo history dropped',
     ]);
   });
+  it('marks a run restored without its log after a refused replay (spec S10 counters)', () => {
+    // The snapshot is the start position, so the empty log replays to it; the moves the player
+    // kept before it are still unknown, so the run end must not measure counters.
+    const refusing: typeof TALLY_GAME = {
+      ...TALLY_GAME,
+      engine: {
+        ...TALLY_GAME.engine,
+        applyMove: () => {
+          throw new RangeError('illegal move');
+        },
+      },
+    };
+    const session = newSession(refusing, ref, SEED);
+    if (session === null) throw new Error('no session');
+    const saved = {
+      ...toSavedRun(session, 1, true),
+      log: [{ kind: 'move', move: { kind: 'add', amount: 1 } }] as const,
+    };
+    expect(resumeSession(refusing, saved, errorLog().port)).toMatchObject({
+      state: { count: 0, target: 4 },
+      hasPartialLog: true,
+    });
+  });
+
   it('drops the run alone when even its snapshot cannot be restored, never throwing', () => {
     const session = newSession(TALLY_GAME, ref, SEED);
     if (session === null) throw new Error('no session');

@@ -373,7 +373,14 @@ const RESUME_WIRING = [
     pattern: /try\s*\{\s*return\s+restoreRun\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*errorLog\.record\s*\(/,
     rule: 'saved-run-validated',
     message: 'a saved run whose replay throws (a changed rule set refusing a logged move) crashes every boot: restoreRun is not guarded',
-    fix: 'restoreLogged: try restoreRun(rules, game.persistence, attempt) for the saved run, then for { ...saved, log: [] }, recording each error; drop the run only when both throw (spec 8.14, never a crash loop).',
+    fix: 'restoreLogged: try restoreRun(rules, game.persistence, saved), then withoutHistory(restoreRun(..., { ...saved, log: [] })), recording each error; drop the run only when both throw (spec 8.14, never a crash loop).',
+  },
+  {
+    fn: 'withoutHistory',
+    pattern: /hasPartialLog\s*:\s*true/,
+    rule: 'counters-partial-log',
+    message: 'a run restored from its snapshot alone after a refused replay is not marked hasPartialLog, so its run end measures counters from create(seed)',
+    fix: 'restoreLogged retries with withoutHistory(restoreRun(rules, game.persistence, { ...saved, log: [] })), which sets hasHistory: false and session.hasPartialLog: true (spec S10).',
   },
   {
     fn: 'createResumer',
@@ -412,8 +419,12 @@ export function checkHostWiring(repo, report) {
   if (summary !== '' && !/starsFor\s*\(\s*rule\s*,/.test(functionBody(summary, 'starsOf'))) {
     report.problem({ file: summaryRel, line: 1, rule: 'stars-from-table', message: 'stars are not rated with starsFor on the level\'s table rule', fix: 'Spec 8.1: stars come from the level entry\'s StarRule through starsFor (par or score thresholds).' });
   }
-  if (summary !== '' && !/try\s*\{\s*return\s+measureCounters\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*context\.errorLog\.record\s*\([\s\S]*?noCounters\s*\(/.test(functionBody(summary, 'countersOf'))) {
-    report.problem({ file: summaryRel, line: 1, rule: 'run-end-never-throws', message: 'the run end measures its counters unguarded: a kept move line that no longer replays from create throws, so the run is never recorded and S7 never shows', fix: 'countersOf(session, context): try { return measureCounters(context.rules, session, context.counters); } catch (error) { context.errorLog.record(\'save\', error); return noCounters(context.counters); } (spec 8.14 and S7).' });
+  const counters = summary === '' ? '' : functionBody(summary, 'countersOf');
+  if (summary !== '' && !/try\s*\{[^}]*?measureCounters\s*\([\s\S]*?catch\s*\(\s*error\s*\)\s*\{\s*context\.errorLog\.record\s*\([\s\S]*?noCounters\s*\(/.test(counters)) {
+    report.problem({ file: summaryRel, line: 1, rule: 'run-end-never-throws', message: 'the run end measures its counters unguarded: a kept move line that no longer replays from create throws, so the run is never recorded and S7 never shows', fix: 'countersOf(session, context): try { const measured = measureCounters(context.rules, session, context.counters); ... } catch (error) { context.errorLog.record(\'save\', error); return noCounters(context.counters); } (spec 8.14 and S7).' });
+  }
+  if (summary !== '' && !/session\.hasPartialLog\s*===\s*true\s*\?\s*noCounters\s*\(/.test(counters)) {
+    report.problem({ file: summaryRel, line: 1, rule: 'counters-partial-log', message: 'a run restored without its history measures its counters from create(seed): its log starts at the snapshot, so moves legal from the start write invented counts into S10 for good', fix: 'In countersOf: return session.hasPartialLog === true ? noCounters(context.counters) : measured; (restoreRun and restoreLogged mark such a run; spec S10).' });
   }
   checkScoreLine(repo, summary, report);
   const factsRel = `${HOST}/game-facts.ts`;

@@ -161,6 +161,15 @@ describe('runEndOf', () => {
     });
   });
 
+  it('counts nothing for a run whose log does not start at create (spec S10)', () => {
+    const session: Tally = { ...played(LEVEL_1, [2, 2]), hasPartialLog: true };
+    const summary = summarizeRun(session, contextFor(LEVEL_1), BEFORE);
+    expect(runEndOf(session, summary, contextFor(LEVEL_1)).counters).toStrictEqual({
+      adds: { value: 0, aggregate: 'sum' },
+      'biggest-add': { value: 0, aggregate: 'max' },
+    });
+  });
+
   it('records daily, endless and tutorial runs under their own modes', () => {
     const refs: readonly RunRef[] = [
       { kind: 'daily', date: '2026-09-28' },

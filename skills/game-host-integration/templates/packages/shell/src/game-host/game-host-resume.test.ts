@@ -142,4 +142,31 @@ describe('createGameHost resume', () => {
     expect(test.save.doc().stats.counters).toStrictEqual({ adds: 0, 'biggest-add': 0 });
     expect(deps.errorLog.record).toHaveBeenCalledWith('save', new RangeError('past the target'));
   });
+
+  it('counts no statistics for moves played on after a restore without history (spec S10)', () => {
+    // Spec S10 counters measure the run's kept line from create(seed); after a mismatched restore
+    // the log restarts at the snapshot, and these moves are legal from create too, so a replay
+    // would invent counts. 2 -> 10 in four moves of 2 wins level 1 (target 10 on disk).
+    const test = createTestSave();
+    saveOlderRun(test);
+    const resumed = createGameHost(TALLY_GAME, depsFor(test)).openSession({ start: 'resume' });
+    resumed?.handle.send({ type: 'resume' });
+    addTwos(resumed?.handle, 4);
+    expect(resumed?.handle.getView()).toMatchObject({ status: 'won' });
+    expect(test.save.doc().stats.counters).toStrictEqual({ adds: 0, 'biggest-add': 0 });
+  });
+
+  it('counts no statistics either when that run is finished after a relaunch (spec S10)', () => {
+    const test = createTestSave();
+    saveOlderRun(test);
+    const first = createGameHost(TALLY_GAME, depsFor(test)).openSession({ start: 'resume' });
+    first?.handle.send({ type: 'resume' });
+    addTwos(first?.handle, 1);
+    // Relaunch: the saved log [2] replays from create to { 2, 4 }, not the snapshot { 4, 10 }.
+    const relaunched = createGameHost(TALLY_GAME, depsFor(test)).openSession({ start: 'resume' });
+    relaunched?.handle.send({ type: 'resume' });
+    addTwos(relaunched?.handle, 3);
+    expect(relaunched?.handle.getView()).toMatchObject({ status: 'won' });
+    expect(test.save.doc().stats.counters).toStrictEqual({ adds: 0, 'biggest-add': 0 });
+  });
 });

@@ -49,6 +49,7 @@ type GameSession<TState, TMove, TEvent> = {
   state: TState;
   past: readonly TState[];  // states before each undoable move (memory only)
   log: readonly RunLogEntry<TMove>[];
+  hasPartialLog?: true;     // restored without its history: log starts at the snapshot (memory only)
   status: SessionStatus; outcome: Outcome;
   moveCount: number; undoCount: number; hintsUsed: number; continuesUsed: number; playMs: number;
   lastEvents: readonly TEvent[]; eventSeq: number;  // the board host animates when eventSeq changes
@@ -125,7 +126,7 @@ restoreRun(rules, persistence, saved):
 ```
 
 - The snapshot is the truth. `restoreRun` parses the state (`parseState` for the same `stateVersion`, `migrateState` for an older one); `null` drops the run alone, never the save.
-- With the same `stateVersion`, the log is parsed (`parseMove`) and replayed from `create(seed, difficulty)` to rebuild `past`. If the replay does not reproduce the snapshot exactly (a determinism bug, or rules changed without a `stateVersion` bump), the snapshot is kept, only the undo history is dropped (`hasHistory: false`), and the host logs it to the error log (source `'save'`). The player keeps their position.
+- With the same `stateVersion`, the log is parsed (`parseMove`) and replayed from `create(seed, difficulty)` to rebuild `past`. If the replay does not reproduce the snapshot exactly (a determinism bug, or rules changed without a `stateVersion` bump), the snapshot is kept, only the undo history is dropped (`hasHistory: false`), the session is marked `hasPartialLog: true` (its log now starts at the snapshot, so the run end measures no counters from it), and the host logs it to the error log (source `'save'`). The player keeps their position. The marker is never saved (`toSavedRun` lists its fields); after a relaunch the replay mismatches again and sets it again, so the save format does not change.
 - A restored run that is still playing starts `paused`: relaunching inside a level shows the Pause menu (spec S5), never a running game.
 - `resumeOnLaunch: true` makes the boot land on Game (paused) above Home; `false` (Pause, then Home) lands on Home with "Continue - Level 12".
 
@@ -133,7 +134,7 @@ restoreRun(rules, persistence, saved):
 
 - Property: after any legal move sequence, undoing k moves (within the undo policy) equals the state k moves earlier.
 - Property: replaying the saved log from `create(seed, difficulty)` reproduces the snapshot (`restoreRun(...).hasHistory` is true).
-- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss, restore paused with history, snapshot kept when the replay disagrees, dropped runs, `shouldWriteRun` for every action and policy, `writeRun` and `createRunWriter` write the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
+- The Shell's own tests (templates) cover the reducer with the counter game: a move is recorded, undo stops at `perLevel`, a paused run ignores moves, exactly one continue after a loss, restore paused with history, snapshot kept when the replay disagrees (and marked `hasPartialLog`, a full restore never), dropped runs, `shouldWriteRun` for every action and policy, `writeRun` and `createRunWriter` write the current slot only, and Pause-then-Home keeps the run with `resumeOnLaunch: false`.
 
 ## Files
 

@@ -1,0 +1,9 @@
+[
+ {
+  "replace": {
+   "file": "packages/shell/src/game-host/run-summary.ts",
+   "find": "    return session.hasPartialLog === true ? noCounters(context.counters) : measured;\n",
+   "with": "    return measured;\n"
+  }
+ }
+]

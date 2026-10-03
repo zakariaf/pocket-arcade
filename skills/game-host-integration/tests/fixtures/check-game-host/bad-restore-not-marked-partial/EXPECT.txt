@@ -1,0 +1,3 @@
+[counters-partial-log]
+packages/shell/src/game-host/open-session.ts
+is not marked hasPartialLog

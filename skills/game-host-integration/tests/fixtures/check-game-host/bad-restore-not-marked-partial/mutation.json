@@ -1,0 +1,9 @@
+[
+ {
+  "replace": {
+   "file": "packages/shell/src/game-host/open-session.ts",
+   "find": "  return { ...restored, hasHistory: false, session: { ...restored.session, hasPartialLog: true } };\n",
+   "with": "  return { ...restored, hasHistory: false };\n"
+  }
+ }
+]
