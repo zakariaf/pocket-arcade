@@ -10,6 +10,10 @@
 // an export (check-sim-setup: entry-api-match).
 /** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
+/** @public */
+export { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
+/** @public */
+export { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
 
 /**
  * The store-artifact gate (check-sim-app / the release gate) greps bundles for this string.
