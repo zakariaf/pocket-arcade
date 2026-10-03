@@ -26,7 +26,9 @@ describe('resolveReduceMotion', () => {
 });
 
 describe('useReduceMotionSetting', () => {
-  afterEach(() => {
+  // Before each test, not after: an afterEach store reset still reaches the mounted hook (React
+  // Testing Library unmounts after the test's own afterEach) and logs an act(...) warning.
+  beforeEach(() => {
     systemA11yStore.setState({ isReduceMotionOn: false });
   });
 
