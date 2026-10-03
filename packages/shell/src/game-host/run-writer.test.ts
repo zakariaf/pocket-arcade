@@ -4,6 +4,7 @@ import { createGameSessionStore } from '@e07/shell/game-host/game-session-store.
 import {
   createRunWriter,
   shouldWriteRun,
+  writeRun,
   writeRunForHome,
 } from '@e07/shell/game-host/run-writer.ts';
 import {
@@ -63,5 +64,18 @@ describe('createRunWriter', () => {
     const session = startGameSession(COUNTER_RULES, COUNTER_START);
     writeRunForHome(save, COUNTER_PERSISTENCE, session);
     expect(readSlot('current').run?.resumeOnLaunch).toBe(false);
+  });
+});
+
+describe('writeRun', () => {
+  it('writes the session as the saved run with its resume flag, to the current slot only', () => {
+    const { save, readSlot } = createTestSave();
+    const session = { ...startGameSession(COUNTER_RULES, COUNTER_START), moveCount: 2 };
+    writeRun({ save, persistence: COUNTER_PERSISTENCE }, session, true);
+    const run = readSlot('current').run;
+    expect(run?.state).toStrictEqual({ n: 2 });
+    expect(run?.moveCount).toBe(2);
+    expect(run?.resumeOnLaunch).toBe(true);
+    expect(readSlot('backup').run).toBeNull();
   });
 });
