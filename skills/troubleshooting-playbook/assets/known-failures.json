@@ -2577,6 +2577,20 @@
       "skill": "save-persistence-and-migrations"
     },
     {
+      "id": "state-kill-test-before-first-write",
+      "area": "state",
+      "topic": "Save file",
+      "symptom": "kill-test.mjs ends slot-missing: no save.db after the kill rounds, though a normal launch writes save.db",
+      "cause": "The app opens save.db about 1,000 ms after simctl launch returns (Release, simulator); a fixed 80 ... 960 ms kill window kills every launch before the first write",
+      "fix": "Run kill-test.mjs without --step-ms: it calibrates on one undisturbed launch and spreads the rounds over 1.5 x the first write; an older copy of the script needs re-copying from save-persistence-and-migrations",
+      "match": [
+        "no save\\.db after the kill rounds"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "save-persistence-and-migrations"
+    },
+    {
       "id": "state-newer-db-crash",
       "area": "state",
       "topic": "Save file",
