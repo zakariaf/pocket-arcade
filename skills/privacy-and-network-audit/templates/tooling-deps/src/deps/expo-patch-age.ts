@@ -38,6 +38,21 @@ function numbers(version: string): readonly number[] {
   return bare(version).split('-')[0]?.split('.').map(Number) ?? [];
 }
 
+/**
+ * The version times of `npm view <name> time --json` (stdout only). Output that is not one JSON
+ * object (an npm notice, a broken pipe) gives no times, so the caller reports the version as unknown.
+ */
+export function parsePublishTimes(stdout: string): Readonly<Record<string, string>> {
+  try {
+    const parsed: unknown = JSON.parse(stdout);
+    return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+      ? (parsed as Record<string, string>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 /** True when expected is a later patch of the same major.minor line as found. */
 export function isPatchMove(found: string, expected: string): boolean {
   const [foundMajor, foundMinor, foundPatch] = numbers(found);

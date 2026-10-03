@@ -5,6 +5,7 @@ import {
   judgeMismatches,
   parseDoctor,
   parseInstallCheck,
+  parsePublishTimes,
   youngPatchWarnings,
   type PublishTimes,
 } from './expo-patch-age.ts';
@@ -141,5 +142,18 @@ describe('youngPatchWarnings', () => {
         'and fails from 2026-10-07 on (then run npx expo install expo@~57.0.26 in every app and ' +
         'move its versions-table row and any root override in the same commit)',
     ]);
+  });
+});
+
+describe('parsePublishTimes', () => {
+  it('reads the version times of npm view <name> time --json', () => {
+    expect(parsePublishTimes('{"57.0.26":"2026-09-29T10:00:00.000Z"}')).toStrictEqual({
+      '57.0.26': '2026-09-29T10:00:00.000Z',
+    });
+  });
+
+  it('returns no times for output that is not a JSON object, never throwing', () => {
+    expect(parsePublishTimes('npm notice New minor version of npm available!')).toStrictEqual({});
+    expect(parsePublishTimes('["57.0.26"]')).toStrictEqual({});
   });
 });
