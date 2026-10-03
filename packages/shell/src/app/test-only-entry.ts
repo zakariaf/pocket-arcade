@@ -9,13 +9,27 @@
 // outside shell-slice.json. Every export has a TestOnlyApi member of the same name, and every member
 // an export (check-sim-setup: entry-api-match).
 /** @public */
+export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
+/** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';
+export {
+  /** @public */
+  recordAudioFeedback,
+  /** @public */
+  recordHapticsFeedback,
+} from '@e07/shell/services/audio/recording-feedback.ts';
+/** @public */
+export { createDebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 /** @public */
 export { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 /** @public */
 export { createSimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 /** @public */
 export { createSimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+/** @public */
+export { createAdmobConsentDebugAdapter } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
+/** @public */
+export { createSqliteKvDebugStoreAdapter } from '@e07/shell/services/save/sqlite-kv-debug-store-adapter.ts';
 
 /**
  * The store-artifact gate (check-sim-app / the release gate) greps bundles for this string.

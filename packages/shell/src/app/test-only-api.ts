@@ -9,11 +9,17 @@
 // out while S15 is outside shell-slice.json. Every member here has an export of the same name in the entry
 // (check-sim-setup's entry-api-match rule): a member without one is undefined at run time.
 import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
+import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
+import type { DebugPerfActions, DebugPerfDeps } from '@e07/shell/screens/debug/debug-perf.ts';
+import type { DebugServiceDeps, DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { NetworkAttempt, NetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+import type { AudioPort } from '@e07/shell/services/audio/audio-port.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ConnectivityPort } from '@e07/shell/services/connectivity/connectivity-port.ts';
+import type { ConsentDebugTools } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
+import type { HapticsPort } from '@e07/shell/services/haptics/haptics-port.ts';
 import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
 
 /** Everything that exists only in test builds (debug menu S15, harness hooks). */
@@ -22,6 +28,15 @@ export type TestOnlyApi = {
   readonly createSimulatedClock: (real: ClockPort) => SimulatedClock;
   /** The composition root wraps the real ConnectivityPort in it, so "Simulate offline" reaches every subscriber. */
   readonly createSimulatedConnectivity: (real: ConnectivityPort) => SimulatedConnectivity;
+  /** The test-only key-value store the debug flags and the pending debug screen survive reloads in. */
+  readonly createSqliteKvDebugStoreAdapter: () => DebugStore;
+  /** The only way the debug switches and the debug link reach the connectivity, Premium and consent services. */
+  readonly createDebugServices: (deps: DebugServiceDeps) => DebugServices;
+  /**
+   * admob-ads' consent debug tools: createDebugParts gives the debug services resetConsent for the
+   * debug link's geo=eea|other (only with ads on: an ADS_MODE=off build never calls Google's UMP).
+   */
+  readonly createAdmobConsentDebugAdapter: () => ConsentDebugTools;
   /** Blocks and counts JS fetch, XHR and WebSocket attempts (createDebugParts installs it first). */
   readonly installNetworkGuard: (
     scope: object,
@@ -31,4 +46,17 @@ export type TestOnlyApi = {
   // Perf layer (performance-budgets): createDebugParts makes the cold-start log with it.
   /** The perf log in the save database (table perf_log): Home's cold-start mark, the frame recorder. */
   readonly createPerfLog: (driver: SqlDriver) => PerfLog;
+  /**
+   * S15's Performance section (record frame times, share the report, run the save benchmark):
+   * createDebugParts builds it once over DebugServices' perf log; use-debug-model reads it there.
+   */
+  readonly createDebugPerfActions: (deps: DebugPerfDeps) => DebugPerfActions;
+  /**
+   * E2E feedback evidence: createDebugParts wraps the app's AudioPort and HapticsPort, so every
+   * sound and pulse asked for appends { kind: 'feedback', label: <sound id or haptic cue> } to the
+   * perf log, which e2e:ios reads after the level-1 flow (feedback.json). Each call is passed on
+   * to the real port unchanged.
+   */
+  readonly recordAudioFeedback: (audio: AudioPort, deps: DebugPerfDeps) => AudioPort;
+  readonly recordHapticsFeedback: (haptics: HapticsPort, deps: DebugPerfDeps) => HapticsPort;
 };
