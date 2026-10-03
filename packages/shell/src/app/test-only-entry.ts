@@ -11,6 +11,38 @@
 /** @public */
 export { createDebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 /** @public */
+export { createParityAds } from '@e07/shell/app/parity/parity-ads.tsx';
+/** @public */
+export { parityDoc } from '@e07/shell/app/parity/parity-doc.ts';
+/** @public */
+export { createParityErrorRoot } from '@e07/shell/app/parity/parity-error-view.tsx';
+/** @public */
+export { createParityPurchase } from '@e07/shell/app/parity/parity-purchase.ts';
+/** @public */
+export { ParityFrameRoot } from '@e07/shell/app/parity/parity-root.tsx';
+export {
+  /** @public */
+  isParityBoardProbeOn,
+  /** @public */
+  isParityMotionFrozen,
+  /** @public */
+  parityBuildNumber,
+  /** @public */
+  parityFrameState,
+  /** @public */
+  parityGameFixture,
+  /** @public */
+  startParitySession,
+} from '@e07/shell/app/parity/parity-session.ts';
+export {
+  /** @public */
+  isHeldParityStart,
+  /** @public */
+  parityInitialState,
+} from '@e07/shell/app/parity/parity-start.ts';
+/** @public */
+export { readParityRequest } from '@e07/shell/app/parity/read-parity-request.ts';
+/** @public */
 export { createDebugPerfActions } from '@e07/shell/app/perf/debug-perf-actions.ts';
 /** @public */
 export { createPerfLog } from '@e07/shell/app/perf/perf-log.ts';

@@ -9,19 +9,31 @@
 // out while S15 is outside shell-slice.json. Every member here has an export of the same name in the entry
 // (check-sim-setup's entry-api-match rule): a member without one is undefined at run time.
 import type { DebugLinkDeps, DebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
+import type { ParityDocInput } from '@e07/shell/app/parity/parity-doc.ts';
+import type { ParityPlan, ParityState } from '@e07/shell/app/parity/parity-plans.ts';
+import type { ParityPurchaseInput } from '@e07/shell/app/parity/parity-purchase.ts';
+import type { ParityParseResult, ParityRequest } from '@e07/shell/app/parity/parity-request.ts';
+import type { ParityFrameRootProps } from '@e07/shell/app/parity/parity-root.tsx';
+import type { parityGameFixture } from '@e07/shell/app/parity/parity-session.ts';
 import type { PerfLog } from '@e07/shell/app/perf/perf-log.ts';
+import type { ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { DebugPerfActions, DebugPerfDeps } from '@e07/shell/screens/debug/debug-perf.ts';
 import type { DebugServiceDeps, DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { NetworkAttempt, NetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
 import type { SimulatedConnectivity } from '@e07/shell/screens/debug/simulated-connectivity.ts';
+import type { AdsPort } from '@e07/shell/services/ads/ads-port.ts';
 import type { AudioPort } from '@e07/shell/services/audio/audio-port.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ConnectivityPort } from '@e07/shell/services/connectivity/connectivity-port.ts';
 import type { ConsentDebugTools } from '@e07/shell/services/consent/admob-consent-debug-adapter.ts';
 import type { HapticsPort } from '@e07/shell/services/haptics/haptics-port.ts';
+import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
+import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
+import type { InitialState } from '@react-navigation/native';
+import type { ComponentType } from 'react';
 
 /** Everything that exists only in test builds (debug menu S15, harness hooks). */
 export type TestOnlyApi = {
@@ -46,6 +58,29 @@ export type TestOnlyApi = {
     onAttempt: (attempt: NetworkAttempt) => void,
   ) => NetworkGuard;
   readonly TEST_BUILD_SENTINEL: string;
+  // Parity harness (toybox-visual-parity): parity-startup.tsx reaches the first nine.
+  /** The -parity launch argument of this launch: null for a normal start. */
+  readonly readParityRequest: () => ParityParseResult | null;
+  readonly startParitySession: (request: ParityRequest) => void;
+  readonly createParityErrorRoot: (message: string) => ComponentType;
+  readonly parityDoc: <T extends ShellGameTypes>(input: ParityDocInput<T>) => SaveDoc;
+  readonly createParityAds: () => AdsPort;
+  readonly createParityPurchase: (input: ParityPurchaseInput) => PurchasePort;
+  readonly parityInitialState: (plan: ParityPlan) => InitialState | undefined;
+  readonly isHeldParityStart: (plan: ParityPlan) => boolean;
+  readonly ParityFrameRoot: ComponentType<ParityFrameRootProps>;
+  /** Model hooks: the fixture's build number (version text) and the frame state to open once. */
+  readonly parityBuildNumber: () => string | null;
+  readonly parityFrameState: () => ParityState | null;
+  /**
+   * animations=off: every decorative loop and entrance holds still at rest (use-reduce-motion.ts
+   * returns true while this does; the saved Reduce motion setting is untouched).
+   */
+  readonly isParityMotionFrozen: () => boolean;
+  /** probe=board: the launch that only reports the board rectangle (game.board-layout), no frame state. */
+  readonly isParityBoardProbeOn: () => boolean;
+  /** The design's numbers for S5-S7 (level 12, score 1,840, stars 3 ...); null on a normal launch. */
+  readonly parityGameFixture: typeof parityGameFixture;
   // Perf layer (performance-budgets): createDebugParts makes the cold-start log with it.
   /** The perf log in the save database (table perf_log): Home's cold-start mark, the frame recorder. */
   readonly createPerfLog: (driver: SqlDriver) => PerfLog;
