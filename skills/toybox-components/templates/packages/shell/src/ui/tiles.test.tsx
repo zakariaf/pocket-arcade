@@ -1,8 +1,9 @@
 // packages/shell/src/ui/tiles.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
-import { PixelRatio, StyleSheet } from 'react-native';
+import { PixelRatio } from 'react-native';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { ancestorStyle, iconsIn } from '@e07/shell/testing/rendered-parts.ts';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
@@ -26,34 +27,12 @@ jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
   getIconUri: (name: string) => `icon:${name}`,
 }));
 
-const HIDDEN = { includeHiddenElements: true } as const;
-
-type IconHost = {
-  readonly props: { readonly source?: { readonly uri?: string } };
-  readonly queryAll: (
-    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
-  ) => IconHost[];
-};
-
-/** The glyph names of the icons drawn inside a part, in order. */
-function iconsIn(testID: string): readonly string[] {
-  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
-  return part
-    .queryAll((node) => node.type === 'Image')
-    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
-}
-
-type HostNode = { readonly props: { readonly style?: unknown }; readonly parent: HostNode | null };
-
 /** The flattened style of the nearest ancestor of a part that sets a height or minimum height. */
 function boxStyleAbove(testID: string): ViewStyle {
-  let node: HostNode | null = (screen.getByTestId(testID) as unknown as HostNode).parent;
-  while (node !== null) {
-    const style = StyleSheet.flatten(node.props.style as ViewStyle | undefined) ?? {};
-    if (style.minHeight !== undefined || style.height !== undefined) return style;
-    node = node.parent;
-  }
-  return {};
+  return ancestorStyle(
+    testID,
+    (style) => style.minHeight !== undefined || style.height !== undefined,
+  );
 }
 
 describe('LevelTile', () => {

@@ -6,6 +6,7 @@ import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx
 import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { HIDDEN, iconsIn } from '@e07/shell/testing/rendered-parts.ts';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
@@ -31,23 +32,6 @@ const COLORS = TEST_PALETTE.standard.light;
 jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
   getIconUri: (name: string) => `icon:${name}`,
 }));
-
-const HIDDEN = { includeHiddenElements: true } as const;
-
-type IconHost = {
-  readonly props: { readonly source?: { readonly uri?: string } };
-  readonly queryAll: (
-    isWanted: (node: IconHost & { readonly type: unknown }) => boolean,
-  ) => IconHost[];
-};
-
-/** The glyph names of the icons drawn inside a part, in order. */
-function iconsIn(testID: string): readonly string[] {
-  const part = screen.getByTestId(testID, HIDDEN) as unknown as IconHost;
-  return part
-    .queryAll((node) => node.type === 'Image')
-    .map((node) => node.props.source?.uri?.replace('icon:', '') ?? '');
-}
 
 /** S11's "Remove ads" row: a strong (Bold, normal ink) label. */
 function StrongRow(): ReactNode {

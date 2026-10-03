@@ -147,6 +147,7 @@ it('names an icon-only key and reports presses', async () => {
 ```
 
 - Query by role and name first, testID for parts; decorative parts need `{ includeHiddenElements: true }`.
+- Read parts and shape cues with the shared helper `packages/shell/src/testing/rendered-parts.ts`, never a pasted copy: `HIDDEN` for decorative parts, `iconsIn(testID)` for the glyphs a part draws (`['check']`, `['trash', 'chevron']`, `['lock']`) and `ancestorStyle(testID, isWanted)` for the box around a part (a face's `minHeight` or dashed edge). `iconsIn` reads each glyph's name from the image source, so a file that calls it mocks the icon rasteriser itself, at the top of the file (`jest.mock` is hoisted per file, so it cannot live in the helper): `` jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({ getIconUri: (name: string) => `icon:${name}` })); ``.
 - Check one or two load-bearing measurements with `toHaveStyle` (`{ width: 38 }`, `{ borderStyle: 'dashed' }`) and paint against `TEST_PALETTE.standard.light` or `SHELL_COLORS.light`, not literals.
 - `fireEvent` is async in RNTL 14: `await fireEvent(el, 'accessibilityAction', { nativeEvent: { actionName: 'increment' } })`.
 - Animations do not run in Jest; a component that waits for a drop-in is transparent at first (query with hidden elements).
