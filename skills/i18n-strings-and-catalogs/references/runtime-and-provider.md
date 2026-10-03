@@ -61,7 +61,7 @@ packages/shell/src/i18n/
   language-context.tsx  format-date.ts  game-message-text.ts
   direction*.ts  fonts.ts  use-localized-text-style.ts   # layout direction and fonts (RTL work)
 apps/<game-id>/src/i18n/en.json de.json fa.json ckb.json   # game texts, keys "<game-id>.*" (keys.ts only if used)
-packages/tooling/src/i18n/verify-catalogs.ts catalog-lint.ts catalog-lint-rules.ts icu-walk.ts
+packages/tooling/src/i18n/verify-catalogs.ts catalog-dirs.ts catalog-lint.ts catalog-lint-rules.ts icu-walk.ts review-sheet.ts
 ```
 
 `react-intl` is imported only inside `packages/shell/src/i18n/` (an ESLint `no-restricted-imports` entry enforces it). Everything else uses `useT()` / `<T>`.
