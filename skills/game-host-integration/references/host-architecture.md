@@ -72,7 +72,7 @@ This skill's files, each with a test unless marked device-only:
 | `game-host/run-tracker.ts` | `createRunTracker`: the active run for the debug controls and the example staged for the next level-1 run |
 | `game-host/session-view-of.ts` | `sessionViewOf`: the plain-data `SessionView` of one run, with a test build's `ViewFixture` over it |
 | `game-host/game-host-context.tsx` | `GameHostProvider` and `useGameHost()` (dependency injection only) |
-| `game-host/open-session.ts` | Seed and difficulty of a new run per mode; the tutorial start; resuming and validating a saved run |
+| `game-host/open-session.ts` | Seed and difficulty of a new run per mode; the tutorial start; resuming and validating a saved run (`createResumer`: checked at boot, replayed once) |
 | `game-host/session-controller.ts` | One run: reduce, save, publish; hints; the pending loss and the continue; leaving; the run-end record; the tutorial's accepted moves |
 | `game-host/session-view.ts` | `SessionView`, `SessionCommand`, `SessionHandle`, `continueStateOf` |
 | `game-host/play-clock.ts` | Play time between commands, only while playing, clamped per step |

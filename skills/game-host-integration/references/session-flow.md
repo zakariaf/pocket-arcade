@@ -43,7 +43,7 @@ A run is identified by its `RunRef` (the save document's type): `{ kind: 'level'
 - The move log is replayed from `create(seed, difficulty)` to rebuild the undo history. If the replay does not reproduce the saved snapshot exactly (a determinism bug, or a rules change without a `stateVersion` bump), the snapshot wins, the undo history is dropped, and the error log says so. The player keeps their position.
 - A resumed run that is still playing starts **paused** (spec S5: coming back shows Pause, never a running game). A run saved while lost with the continue offered reopens on the lose screen with the offer.
 
-At boot, `createGameHost` runs the same validation once and clears an unreadable run before the stores and the resume state are created, so a relaunch never tries to resume a run that cannot be read.
+At boot, `createGameHost` runs the same validation once through `createResumer(game, deps)` (`open-session.ts`) and clears an unreadable run before the stores and the resume state are created, so a relaunch never tries to resume a run that cannot be read. The resumer keeps the session the boot check rebuilt and hands it to the first `{ start: 'resume' }` while `save.doc().run` is still the same object, so a long run is replayed once from boot to the first resume (`game-host-resume.test.ts` counts the `applyMove` calls); a later resume, or a run that changed since boot, is checked again (`checkSavedRun`).
 
 ## When the run is written
 
@@ -180,6 +180,7 @@ Turn-based games (about 24 of 26) save after every move: `persistence.savePolicy
 | `use-board-selection.test.tsx` | tap-then-tap through the real session: select and toggle (announced), place with the next tap, clear on undo and on a restarted run, the bought hint outlined |
 | `tutorial-script.test.ts` | a scripted step accepts only its move, `'any-move'` steps and the free play after the script accept any, moves compare by value, the coach steps drop the typed moves |
 | `open-session.test.ts` | seeds and difficulties per kind; the tutorial start; resume paused; dropped and replay-mismatch runs logged |
+| `game-host-resume.test.ts` | a saved run is replayed once from boot to its first resume; a run that changed since boot is resumed from the save, not from the boot check |
 | `run-summary.test.ts` | stars at and above par, no next level after the last, lose reasons, new bests per mode (an endless loss above the best is a new best), the level best after the save (a win below the saved best keeps the old best), run-end records per mode |
 | `measure-counters.test.ts` | counters over the kept line, undone moves ignored, the continue replayed |
 | `run-end-policy.test.ts`, `stranded-loss.test.ts` | L11: which lost runs are stranded; on the tally game an endless loss with a hidden offer is finished once, its endless best saved and its result shown with "New best!", a level loss counted once, the streak and the ad history saved before the Result |

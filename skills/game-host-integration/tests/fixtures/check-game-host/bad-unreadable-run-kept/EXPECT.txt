@@ -1,0 +1,3 @@
+[saved-run-validated]
+packages/shell/src/game-host/open-session.ts
+checkSavedRun does not rebuild the saved run with resumeSession and drop only an unreadable run

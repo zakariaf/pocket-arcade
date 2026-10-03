@@ -7,6 +7,7 @@ import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
 import type { GameSession, SessionRules } from '@e07/shell/game-host/game-session-types.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
+import type { SaveService } from '@e07/shell/services/save/save-service.ts';
 import type { RunRef, SaveRun } from '@e07/shell/services/save/schema/save-doc.ts';
 
 /** How the Game screen opens a run: the same shape as the Game route params. */
@@ -95,4 +96,44 @@ export function resumeSession<T extends ShellGameTypes>(
     );
   }
   return restored.session;
+}
+
+/** What checking the saved run needs: the save it lives in and the log a dropped run goes to. */
+type SavedRunDeps = { readonly save: SaveService; readonly errorLog: ErrorLogPort };
+
+/**
+ * The saved run as a session, checked by the game's own parsers (spec 8.6, S14): an unreadable run
+ * is dropped alone, everything else in the save stays.
+ */
+function checkSavedRun<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  deps: SavedRunDeps,
+): Session<T> | null {
+  const saved = deps.save.doc().run;
+  if (saved === null) return null;
+  const session = resumeSession(game, saved, deps.errorLog);
+  if (session === null) deps.save.update((doc) => ({ ...doc, run: null }));
+  return session;
+}
+
+/**
+ * Checks the saved run at boot, before any screen can offer it, and hands that session to the
+ * first resume while the save still holds the same run, so a long run is replayed once, not twice.
+ * A later resume, or a run that changed since boot, is checked again.
+ */
+export function createResumer<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  deps: SavedRunDeps,
+): () => Session<T> | null {
+  const run = deps.save.doc().run;
+  let boot: { readonly run: SaveRun; readonly session: Session<T> } | null = null;
+  const session = checkSavedRun(game, deps);
+  if (run !== null && session !== null) boot = { run, session };
+  return () => {
+    const kept = boot;
+    boot = null;
+    return kept !== null && deps.save.doc().run === kept.run
+      ? kept.session
+      : checkSavedRun(game, deps);
+  };
 }

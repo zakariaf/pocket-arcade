@@ -21,7 +21,7 @@ export const HOST_FILES = {
   'run-tracker.ts': ['createRunTracker', 'RunTracker'],
   'session-view-of.ts': ['sessionViewOf', 'ViewFixture', 'ViewExtras', 'ViewDeps'],
   'game-host-context.tsx': ['GameHostProvider', 'useGameHost'],
-  'open-session.ts': ['sessionRulesFor', 'entryFor', 'startFor', 'newSession', 'resumeSession', 'SessionOpen'],
+  'open-session.ts': ['sessionRulesFor', 'entryFor', 'startFor', 'newSession', 'resumeSession', 'createResumer', 'SessionOpen'],
   'session-controller.ts': ['createSessionController', 'SessionController', 'ControllerDeps'],
   'session-view.ts': ['SessionView', 'SessionCommand', 'SessionHandle', 'ContinueState', 'continueStateOf'],
   'play-clock.ts': ['createPlayClock', 'PlayClock', 'MAX_PLAY_DELTA_MS'],
@@ -305,10 +305,10 @@ const WIRING = [
 const HOST_WIRING = [
   {
     fn: 'createGameHost',
-    pattern: /resumeSession\s*\([\s\S]*?\)\s*===\s*null[\s\S]*?run:\s*null/,
+    pattern: /createResumer\s*\(\s*game\s*,\s*deps\s*\)/,
     rule: 'saved-run-validated',
-    message: 'createGameHost does not validate the saved run at boot (resumeSession, then drop only an unreadable run)',
-    fix: 'At boot: if resumeSession(game, saved, errorLog) === null, save.update((doc) => ({ ...doc, run: null })); the stores and the resume state then start from that document.',
+    message: 'createGameHost does not validate the saved run at boot (createResumer(game, deps): resumeSession, then drop only an unreadable run)',
+    fix: 'At boot: const resume = createResumer(game, deps) (open-session.ts) checks the saved run and drops only an unreadable one; the stores and the resume state then start from that document.',
   },
   {
     fn: 'createGameHost',
@@ -347,10 +347,28 @@ const HOST_WIRING = [
   },
   {
     fn: 'firstSession',
-    pattern: /resumeSession\s*\(/,
+    pattern: /\bresume\s*\(\s*\)/,
     rule: 'saved-run-validated',
-    message: 'a resumed run is not rebuilt with resumeSession (the game\'s parsers and the replay check)',
-    fix: 'Open { start: \'resume\' } with resumeSession(game, saved, deps.errorLog); drop the run when it returns null.',
+    message: 'a resumed run does not come from the host\'s resumer (checked at boot, rebuilt with resumeSession once the save moved on)',
+    fix: 'Open { start: \'resume\' } with opener.resume(), the createResumer(game, deps) the host made at boot.',
+  },
+];
+
+/** Spec 8.6: the saved run is checked by the game's parsers, and the boot check is never stale. */
+const RESUME_WIRING = [
+  {
+    fn: 'checkSavedRun',
+    pattern: /resumeSession\s*\([\s\S]*?===\s*null[\s\S]*?run:\s*null/,
+    rule: 'saved-run-validated',
+    message: 'checkSavedRun does not rebuild the saved run with resumeSession and drop only an unreadable run',
+    fix: 'const session = resumeSession(game, saved, deps.errorLog); if (session === null) deps.save.update((doc) => ({ ...doc, run: null })).',
+  },
+  {
+    fn: 'createResumer',
+    pattern: /doc\(\)\.run\s*===/,
+    rule: 'saved-run-validated',
+    message: 'createResumer hands the session checked at boot to a resume without checking that the save still holds that run',
+    fix: 'Hand the boot session to the first resume only while deps.save.doc().run === the run checked at boot; otherwise call checkSavedRun again (a stale session would resume a run the player has replaced).',
   },
 ];
 
@@ -368,6 +386,13 @@ export function checkHostWiring(repo, report) {
   if (host !== '') {
     for (const item of HOST_WIRING.filter((entry) => !entry.pattern.test(functionBody(host, entry.fn)))) {
       report.problem({ file: hostRel, line: 1, rule: item.rule, message: item.message, fix: item.fix });
+    }
+  }
+  const openRel = `${HOST}/open-session.ts`;
+  const opener = code(text(repo, openRel));
+  if (opener !== '') {
+    for (const item of RESUME_WIRING.filter((entry) => !entry.pattern.test(functionBody(opener, entry.fn)))) {
+      report.problem({ file: openRel, line: 1, rule: item.rule, message: item.message, fix: item.fix });
     }
   }
   const summaryRel = `${HOST}/run-summary.ts`;

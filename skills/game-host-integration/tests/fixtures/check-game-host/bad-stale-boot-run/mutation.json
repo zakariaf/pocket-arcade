@@ -1,0 +1,1 @@
+[{ "replace": { "file": "packages/shell/src/game-host/open-session.ts", "find": "    return kept !== null && deps.save.doc().run === kept.run\n", "with": "    return kept !== null\n" } }]
