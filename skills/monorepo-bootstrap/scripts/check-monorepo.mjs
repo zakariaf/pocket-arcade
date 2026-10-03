@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { FONT_FILES, LANGUAGES } from './lib/app-files.mjs';
+import { FONT_FILES, LANGUAGES, PRINT_WIDTH } from './lib/app-files.mjs';
 import { bundleIdFor, premiumIdFor, TEMPLATES, preExistingEntries } from './lib/bootstrap-plan.mjs';
 import { EXACT_VERSION, lineMatching, npmrcExcludeProblems, npmrcPolicyOverrides, readJsonFile, readTextFile, workspaceFolders } from './lib/repo-read.mjs';
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
@@ -181,9 +181,6 @@ function checkNpmrcAndNode(ctx, add) {
   const major = Number((nvmrc ?? mise ?? '').split('.')[0]);
   if ((nvmrc !== undefined || mise !== undefined) && !(major >= 22)) add('.nvmrc', 1, 'node-pin', `Node "${nvmrc ?? mise}" is below 22.18 (app.config.ts needs type stripping)`, 'Pin Node 26.4.0 (or the newest 26.x LTS that is at least 7 days old).');
 }
-
-/** Prettier's printWidth in the template .prettierrc.json. */
-const PRINT_WIDTH = 100;
 
 function checkIgnoresAndFormat(ctx, add) {
   const gitignore = ctx.text('.gitignore');
