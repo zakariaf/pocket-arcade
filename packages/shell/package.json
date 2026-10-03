@@ -18,6 +18,7 @@
   },
   "peerDependencies": {
     "@react-navigation/native": "*",
+    "@react-navigation/native-stack": "*",
     "@shopify/react-native-skia": "*",
     "expo": "*",
     "expo-constants": "*",
@@ -33,6 +34,7 @@
     "react-native-google-mobile-ads": "*",
     "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
+    "react-native-screens": "*",
     "react-native-worklets": "*"
   }
 }
