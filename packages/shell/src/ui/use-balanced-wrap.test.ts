@@ -1,6 +1,6 @@
 // packages/shell/src/ui/use-balanced-wrap.test.ts
 // device-only half: the layout events come from iOS; the search itself is pure and tested here.
-import { advance, firstSearch, isStale, nextSearch } from './use-balanced-wrap.ts';
+import { advance, afterTextLayout, firstSearch, isStale, nextSearch } from './use-balanced-wrap.ts';
 
 describe('balanced wrap search (CSS text-wrap: balance)', () => {
   it('leaves one-line text alone', () => {
@@ -96,5 +96,50 @@ describe('isStale (a late text layout from a wider pad)', () => {
 
   it('keeps every layout before the width is known', () => {
     expect(isStale({ ...probing, width: 0 }, [900])).toBe(false);
+  });
+});
+
+describe('afterTextLayout (the state after a text layout)', () => {
+  it('keeps the stored state when a layout repeats the lines of a finished search', () => {
+    const settled = afterTextLayout(
+      { text: 't', width: 316, lineWidths: null, search: null },
+      't',
+      [200],
+    );
+    expect(settled.search?.isDone).toBe(true);
+    expect(afterTextLayout(settled, 't', [200])).toBe(settled);
+  });
+
+  it('keeps the stored state when a layout before the width repeats its lines', () => {
+    const waiting = afterTextLayout(
+      { text: 't', width: 0, lineWidths: null, search: null },
+      't',
+      [305, 56],
+    );
+    expect(afterTextLayout(waiting, 't', [305, 56])).toBe(waiting);
+  });
+
+  it('stores new lines, and moves an unfinished search on', () => {
+    const waiting = afterTextLayout(
+      { text: 't', width: 0, lineWidths: null, search: null },
+      't',
+      [305, 56],
+    );
+    expect(waiting.lineWidths).toStrictEqual([305, 56]);
+    const probing = advance({ ...waiting, width: 316 });
+    const room = 316 - (probing.search?.pad ?? 0);
+    const next = afterTextLayout(probing, 't', [room - 10, room - 40]);
+    expect(next.search?.steps).toBe(1);
+  });
+
+  it('starts again for a new text and drops a stale layout', () => {
+    const probing = advance({ text: 't', width: 316, lineWidths: [305, 56], search: null });
+    expect(afterTextLayout(probing, 't', [305, 56])).toBe(probing);
+    expect(afterTextLayout(probing, 'u', [120])).toStrictEqual({
+      text: 'u',
+      width: 0,
+      lineWidths: [120],
+      search: null,
+    });
   });
 });
