@@ -1,19 +1,14 @@
 // packages/shell/src/screens/game/use-run-text.ts
 // How the Game screen and Pause turn run data into text: the Shell's t(), numbers in the chosen
 // digits, and the game's own messages through gameMessageText.
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 
 import type { RunText } from '@e07/shell/game-host/top-bar-model.ts';
 
 export function useRunText(): RunText {
   const t = useT();
-  const digits = useSettingsStore(selectDigits);
-  const formatNumber = createNumberFormatter(localeTagFor(useLanguage(), digits));
+  const formatNumber = useNumberFormatter();
   return { t, formatNumber, gameText: (message) => gameMessageText(t, message) };
 }

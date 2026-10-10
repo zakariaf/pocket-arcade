@@ -10,14 +10,10 @@ import { IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
 import { recordBoard } from '@e07/shell/game-host/record-board.ts';
 import { exampleHighlightOf } from '@e07/shell/game-host/tutorial-script.ts';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import type { RenderKit } from '@e07/shell/game-host/board-types.ts';
@@ -64,11 +60,7 @@ function examplePictureFor<T extends ShellGameTypes>(
     const kit = kitOf();
     const theme = useTheme();
     const t = useT();
-    const format = {
-      formatNumber: createNumberFormatter(
-        localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
-      ),
-    };
+    const format = { formatNumber: useNumberFormatter() };
     const isMirrored = useDirection() === 'rtl' && board.isMirroredInRtl;
     const [size, setSize] = useState<Size>({ width: 0, height: 0 });
     const page = game.teaching.howToPlay[pageIndex];

@@ -1048,6 +1048,7 @@
               "packages/shell/src/app/start-shell.ts",
               "packages/shell/src/app/restart-after-audio*",
               "packages/shell/src/i18n/direction-context.tsx",
+              "packages/shell/src/i18n/use-number-formatter*",
               "packages/shell/src/game-host/board-direction-view*"
             ]
           },

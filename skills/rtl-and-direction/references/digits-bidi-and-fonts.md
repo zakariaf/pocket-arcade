@@ -36,6 +36,8 @@ const formatNumber = createNumberFormatter(localeTagFor(language, digits));
 const numberText = formatNumber(12); // "۱۲" in fa, "12" in en
 ```
 
+In a component or model hook, read it through `useNumberFormatter()` (and `usePercentFormatter()`) from `i18n/use-number-formatter.ts`: it takes the language from `useLanguage()` and the Numbers setting from the settings store, and `create-number-formatter.ts` keeps one formatter per locale tag, so a screen that asks on every render builds no new `Intl.NumberFormat`. The plain factories stay for code outside React (board labels drawn with an explicit language and digits, the store price).
+
 A rate shown as a bare percentage (the S10 win rate, "62%" in en, "۶۲٪" in fa and ckb) uses the percent formatter from the same module, never a catalog sentence and never a hand-glued sign:
 
 ```ts

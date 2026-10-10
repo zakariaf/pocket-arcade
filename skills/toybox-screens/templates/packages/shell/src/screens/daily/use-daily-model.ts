@@ -6,21 +6,17 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import {
   formatMonthShort,
   formatWeekdayDayMonth,
   formatWeekdayLetter,
   formatWeekdayName,
 } from '@e07/shell/i18n/format-date.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { useDailySummary } from '@e07/shell/screens/daily/use-daily-summary.ts';
 import { useNextDayCountdown } from '@e07/shell/screens/daily/use-next-day-countdown.ts';
 import { usePlayRun } from '@e07/shell/screens/home/use-play-run.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import type { DailyModel } from './daily-model.ts';
 
@@ -45,9 +41,7 @@ export function useDailyModel(): DailyModel {
   // The countdown ticks only while today's result shows on a focused S9 (never under Game).
   const isFocused = useIsFocused();
   const countdown = useNextDayCountdown(summary.todayResult !== null && isFocused);
-  const formatNumber = createNumberFormatter(
-    localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
-  );
+  const formatNumber = useNumberFormatter();
   const { today } = summary;
   const playToday = usePlayToday();
   return {
