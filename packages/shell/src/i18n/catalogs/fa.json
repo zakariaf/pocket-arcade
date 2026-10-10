@@ -279,6 +279,7 @@
   "stats.empty.body": "یک مرحله بازی کنید تا آمارتان اینجا دیده شود.",
   "stats.empty.play-button": "یک مرحله بازی کنید",
   "stats.empty.title": "هنوز آماری نیست",
+  "stats.game.best-of-value": "×{value, number}",
   "stats.game.title": "آمار {gameName}",
   "stats.levels.completed": "مراحل تمام‌شده",
   "stats.levels.stars": "ستاره‌های به‌دست‌آمده",

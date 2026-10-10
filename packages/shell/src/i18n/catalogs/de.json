@@ -279,6 +279,7 @@
   "stats.empty.body": "Spiel ein Level, dann siehst du hier deine Statistik.",
   "stats.empty.play-button": "Level spielen",
   "stats.empty.title": "Noch keine Statistik",
+  "stats.game.best-of-value": "×{value, number}",
   "stats.game.title": "Statistik zu {gameName}",
   "stats.levels.completed": "Geschaffte Levels",
   "stats.levels.stars": "Gesammelte Sterne",

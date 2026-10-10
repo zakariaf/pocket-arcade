@@ -279,6 +279,7 @@
   "stats.empty.body": "Play a level to see your stats here.",
   "stats.empty.play-button": "Play a level",
   "stats.empty.title": "No stats yet",
+  "stats.game.best-of-value": "×{value, number}",
   "stats.game.title": "{gameName} stats",
   "stats.levels.completed": "Levels completed",
   "stats.levels.stars": "Stars earned",

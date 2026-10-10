@@ -90,6 +90,17 @@ describe('useStatsModel', () => {
     ]);
   });
 
+  it('shows a best-of counter nobody reached yet as 0, never ×0 (spec S10)', async () => {
+    const save = playedSave();
+    save.update((doc) => ({ ...doc, stats: { ...doc.stats, counters: { adds: 7 } } }));
+    const { result } = await statsModel(save);
+
+    expect(result.current.snapshot.gameStats.map((stat) => stat.valueText)).toStrictEqual([
+      '7',
+      '0',
+    ]);
+  });
+
   it('shows the empty state to a new player, without a best level score', async () => {
     const { result } = await statsModel(createTestSave().save);
     expect(result.current.isEmpty).toBe(true);
