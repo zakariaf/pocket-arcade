@@ -87,6 +87,7 @@ export function LanguageChoiceView({ model }: LanguageChoiceViewProps): ReactNod
         <Button
           testID="language-choice.continue-button"
           label={model.tSelected('language-choice.continue-button')}
+          labelLanguage={model.selected}
           onPress={model.onContinue}
           kind="primary"
           size="hero"
