@@ -1,7 +1,13 @@
 // packages/shell/src/game-host/game-facts.test.ts
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
 
-import { hasHintsOf, hasMusicOf, isScoreRatedOf, isScoreRule } from './game-facts.ts';
+import {
+  hasHintsOf,
+  hasMusicOf,
+  isScoreRatedOf,
+  isScoreRule,
+  musicSoundIdOf,
+} from './game-facts.ts';
 
 const THEME = { category: 'music', recipe: [], isLoop: true } as const;
 const TAP = { category: 'sfx', recipe: [] } as const;
@@ -23,6 +29,12 @@ describe('game facts', () => {
     expect(hasMusicOf(TALLY_GAME)).toBe(false);
     expect(hasMusicOf(tallyWith({ sounds: { tap: TAP } }))).toBe(false);
     expect(hasMusicOf(tallyWith({ sounds: { tap: TAP, theme: THEME } }))).toBe(true);
+  });
+
+  it('names the one sound of category music that Home starts (spec 8.7), or null', () => {
+    expect(musicSoundIdOf(TALLY_GAME)).toBeNull();
+    expect(musicSoundIdOf(tallyWith({ sounds: { tap: TAP } }))).toBeNull();
+    expect(musicSoundIdOf(tallyWith({ sounds: { tap: TAP, theme: THEME } }))).toBe('theme');
   });
 
   it('calls a game score-rated when every level has a score rule (the S7 score line)', () => {

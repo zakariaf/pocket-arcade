@@ -8,7 +8,12 @@ import {
   createGameDebugControls,
   endStateOf,
 } from '@e07/shell/game-host/game-debug-controls.ts';
-import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
+import {
+  hasHintsOf,
+  hasMusicOf,
+  isScoreRatedOf,
+  musicSoundIdOf,
+} from '@e07/shell/game-host/game-facts.ts';
 import {
   createResumer,
   entryFor,
@@ -137,6 +142,8 @@ export type GameHost = {
   readonly counterIds: readonly string[];
   /** hasMusicOf(game): a 'music' sound in the bank; S6 and S11 show the Music rows only then. */
   readonly hasMusic: boolean;
+  /** musicSoundIdOf(game): the bank id of that music sound, null without one; Home starts it. */
+  readonly musicSoundId: string | null;
   /** isScoreRatedOf(game): levels rated by score; the S7 win prints the score line, no par. */
   readonly isScoreRated: boolean;
   /** hasHintsOf(game): a solver hint policy; the S5 top bar has a hint key only then. */
@@ -282,6 +289,7 @@ function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts 
     counters,
     counterIds: counters.map((counter) => counter.id),
     hasMusic: hasMusicOf(game),
+    musicSoundId: musicSoundIdOf(game),
     isScoreRated: isScoreRatedOf(game),
     hasHints: hasHintsOf(game),
     packs: game.levels.packs,
