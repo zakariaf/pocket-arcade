@@ -134,14 +134,15 @@ Google draws the form; the Shell shows its own moment right before it, so the pl
 | A banner screen (Home, Levels, Statistics) is open and `prepareAds` has not run in this session | `prepareAds` with the intro step (the consent moment) | shows S3, then Google's form where required (first time: right after the tutorial, on Home), then Apple's ATT prompt while not-determined, then initialises and preloads |
 | Connectivity changes to online, the tutorial ends or Premium ends while a banner screen is open | `prepareAds` (the flow retries on the new facts) | the deferred S3 of the spec's offline rules |
 | Premium becomes true | nothing | ads stop at once through the ad policy; the SDK stays initialised but idle |
-| Settings > Ad privacy choices | `consent.showPrivacyOptions()` then `onConsent` | may turn ads off (`canRequestAds` false) |
+| Settings > Ad privacy choices | the consent moment's `reopenPrivacyOptions` (`consent.showPrivacyOptions()` then `onConsent`) | a no turns ads off at once; a yes after a refusal prepares ads again at the next banner screen (ATT, `initialize`), no relaunch |
 
 Never call the form or the ATT prompt on app start, during a level, or from a `useEffect` that runs before the tutorial is finished. Settings has no ATT row: the player changes the answer in iOS Settings > Privacy & Security > Tracking.
 
 ## The "Ad privacy choices" row
 
 - Visible only when `isPrivacyOptionsRequired` (from the latest `onConsent`) is true; hidden otherwise, never greyed out. Google requires a visible entry point wherever privacy options are required.
-- Its handler calls `consent.showPrivacyOptions()` and passes the result to `onConsent`, which may turn ads off (`canRequestAds: false`): banners, interstitials and rewarded buttons then disappear through the ad policy.
+- Its handler goes through the consent moment: `ConsentMoment` provides `AdPrivacyChoicesContext` (`useOptionalAdPrivacyChoices()` in `app/consent-moment-context.tsx`), whose function is the flow's `reopenPrivacyOptions`. It calls `consent.showPrivacyOptions()`, saves the answer (`onConsent`), and then either closes the banners at once (`canRequestAds: false`: banners, interstitials and rewarded buttons disappear through the ad policy) or, for a yes after a refusal, sets the finished flow back to idle so the next banner screen runs `prepareAds` again (the refresh now allows ads, so no intro and no form; Apple's prompt while not-determined, then `initialize`): the banners come back in the same session. Calling the port directly from Settings left them off until the next launch, because the moment publishes `canRequestAds: true` only from `prepareAds`. Without the provider (hook tests) the handler falls back to the port alone.
+- `consent-moment-flow.test.ts` ("Ad privacy choices") proves both answers, `consent-moment.test.tsx` that the moment hands Settings the choices and saves the answer, and toybox-screens' `use-settings-extras.test.tsx` that the row goes through the moment.
 - Test ID `settings.ad-privacy-row` (with `.icon`, `.label`, `.description` children, as in the Toybox screen map). Copy keys: `settings.ad-privacy.label` ("Ad privacy choices"), `settings.ad-privacy.description`. The optional pre-form explainer uses `consent.intro.*`. The row's look belongs to the S11 screen work; this skill owns only when it is visible and what its handler calls.
 
 ## Test-only consent tools (the debug geography)

@@ -2,9 +2,11 @@
 // S11's SettingsExtras: the store price (premium store), the version line ("1.0.0 (8)":
 // readVersionText, expo-constants' version and ios.buildNumber), the screens the rows open
 // (use-settings-routes.ts), the hand-offs (use-settings-links.ts), Restore purchase, the consent
-// form, and the two S14 reset dialogs. Every handler stays synchronous (promises end in .catch).
+// form (through the consent moment, which saves the answer and turns the banners on or off at
+// once), and the two S14 reset dialogs. Every handler stays synchronous (promises end in .catch).
 // A parity capture of s14-reset-all-progress (test builds) opens Reset all progress over S11 the
 // way the row does, with the hold frozen at 46 % as the design draws it.
+import { useOptionalAdPrivacyChoices } from '@e07/shell/app/consent-moment-context.tsx';
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
 import { usePremiumScreenDeps } from '@e07/shell/app/premium-screen-deps-context.tsx';
 import { readVersionText } from '@e07/shell/app/read-version-text.ts';
@@ -35,9 +37,23 @@ function useResetProgressDialog(): () => void {
   };
 }
 
+/** Ad privacy choices: through the consent moment; without it (hook tests), the port alone. */
+function useAdPrivacyChoices(): () => void {
+  const { consent, errorLog } = useServices();
+  const reopenThroughMoment = useOptionalAdPrivacyChoices();
+  return () => {
+    if (reopenThroughMoment !== null) {
+      reopenThroughMoment();
+      return;
+    }
+    consent.showPrivacyOptions().catch((error: unknown) => {
+      errorLog.record('ads', error);
+    });
+  };
+}
+
 export function useSettingsExtras(): SettingsExtras {
   const openDialog = useOpenDialog();
-  const { consent, errorLog } = useServices();
   const { service } = usePremiumScreenDeps();
   const resets = useSettingsResets();
   const onResetProgress = useResetProgressDialog();
@@ -50,11 +66,7 @@ export function useSettingsExtras(): SettingsExtras {
     onRestorePurchase: () => {
       restorePremium(service).catch(service.onError);
     },
-    onOpenAdPrivacy: () => {
-      consent.showPrivacyOptions().catch((error: unknown) => {
-        errorLog.record('ads', error);
-      });
-    },
+    onOpenAdPrivacy: useAdPrivacyChoices(),
     onResetStats: () => {
       openDialog({ kind: 'reset-stats', onConfirm: resets.onConfirmResetStats });
     },

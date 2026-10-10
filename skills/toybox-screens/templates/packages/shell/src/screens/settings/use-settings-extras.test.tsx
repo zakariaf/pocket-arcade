@@ -1,6 +1,7 @@
 // packages/shell/src/screens/settings/use-settings-extras.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
 
+import { AdPrivacyChoicesContext } from '@e07/shell/app/consent-moment-context.tsx';
 import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
 import { endParitySession, startParitySession } from '@e07/shell/app/parity/parity-session.ts';
 import { restorePremium } from '@e07/shell/services/purchase/premium-service.ts';
@@ -10,6 +11,7 @@ import { useSettingsExtras } from './use-settings-extras.ts';
 
 import type { DialogRequest } from '@e07/shell/screens/dialogs/dialog-request.ts';
 import type { ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
+import type { ReactNode } from 'react';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -115,5 +117,31 @@ describe('useSettingsExtras', () => {
     } finally {
       endParitySession();
     }
+  });
+
+  // Spec S11 and 8.8: the answer goes through the consent moment, which saves it and turns the
+  // banners on or off in this session (a yes after a refusal needs no relaunch).
+  it("reopens Google's choices through the consent moment when the app provides it", async () => {
+    const reopen = jest.fn();
+    const consent: ConsentPort = {
+      refresh: () => Promise.resolve(INFO),
+      showFormIfRequired: () => Promise.resolve(INFO),
+      showPrivacyOptions: jest.fn(() => Promise.resolve(INFO)),
+      requestTracking: () => Promise.resolve('not-determined' as const),
+    };
+    const shell = createHostWrapper({ services: { consent } });
+    function WithMoment({ children }: { readonly children: ReactNode }): ReactNode {
+      return (
+        <shell.wrapper>
+          <AdPrivacyChoicesContext value={reopen}>{children}</AdPrivacyChoicesContext>
+        </shell.wrapper>
+      );
+    }
+    const { result } = await renderHook(() => useSettingsExtras(), { wrapper: WithMoment });
+    result.current.onOpenAdPrivacy();
+    expect([
+      reopen.mock.calls.length,
+      jest.mocked(consent.showPrivacyOptions).mock.calls.length,
+    ]).toStrictEqual([1, 0]);
   });
 });

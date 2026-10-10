@@ -26,6 +26,8 @@ export type ConsentMomentModel = {
   readonly isIntroShown: boolean;
   /** consent.continue-button: Google's form opens next. */
   readonly onContinue: () => void;
+  /** S11's Ad privacy choices: Google's options, the answer saved and published. */
+  readonly onOpenPrivacyOptions: () => void;
   readonly isReducedMotion: boolean;
 };
 
@@ -97,6 +99,7 @@ export function useConsentMoment(options: ConsentMomentOptions): ConsentMomentMo
     value: { requestAdMoment: flow.requestAdMoment, canRequestAds: snapshot.canRequestAds },
     isIntroShown: snapshot.isIntroShown,
     onContinue: flow.continueToForm,
+    onOpenPrivacyOptions: flow.reopenPrivacyOptions,
     isReducedMotion: useReduceMotion(),
   };
 }
