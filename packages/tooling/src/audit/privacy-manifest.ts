@@ -1,7 +1,7 @@
 // packages/tooling/src/audit/privacy-manifest.ts
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, globSync, readFileSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 
 import { externalSources } from './network-pods-layer.ts';
 
@@ -125,18 +125,44 @@ type PodspecJson = {
   readonly subspecs?: readonly unknown[];
 };
 
-/**
- * The privacy manifests a podspec (Pods/Local Podspecs/<pod>.podspec.json) bundles, relative to
- * the pod's root: its resource_bundles and resources that end in .xcprivacy, at the top level, for
- * iOS and in every subspec. This is what CocoaPods copies into the app.
- */
-export function podspecPrivacyFiles(podspec: unknown): string[] {
+/** A podspec's resource_bundles and resources, at the top level, for iOS and in every subspec. */
+function podspecResources(podspec: unknown): string[] {
   if (typeof podspec !== 'object' || podspec === null) return [];
   const spec = podspec as PodspecJson;
-  const own = [...Object.values(spec.resource_bundles ?? {}), spec.resources ?? []]
-    .flat()
-    .filter((path) => path.endsWith('.xcprivacy'));
-  return [...own, ...[spec.ios, ...(spec.subspecs ?? [])].flatMap(podspecPrivacyFiles)];
+  const own = [...Object.values(spec.resource_bundles ?? {}), spec.resources ?? []].flat();
+  return [...own, ...[spec.ios, ...(spec.subspecs ?? [])].flatMap(podspecResources)];
+}
+
+/** A development pod and its root folder, where CocoaPods expands its resource patterns. */
+export type PodFolder = { readonly pod: string; readonly root: string };
+
+/** The characters that make a podspec resource a glob pattern for CocoaPods (Ruby's Dir.glob). */
+const GLOB_MAGIC = /[*?[{]/;
+
+function privacyFilesOf(resource: string, folder: PodFolder | undefined): string[] {
+  if (!GLOB_MAGIC.test(resource)) return resource.endsWith('.xcprivacy') ? [resource] : [];
+  if (folder === undefined || !existsSync(folder.root)) {
+    const why =
+      folder === undefined ? 'no pod folder given' : `its folder ${folder.root} is missing`;
+    const pod = folder?.pod ?? '(unknown)';
+    throw new Error(`pod ${pod}: cannot expand the resource pattern "${resource}" (${why})`);
+  }
+  return globSync(resource, { cwd: folder.root })
+    .filter((file) => basename(file) === 'PrivacyInfo.xcprivacy')
+    .sort();
+}
+
+/**
+ * The privacy manifests a podspec (Pods/Local Podspecs/<pod>.podspec.json) bundles, relative to
+ * the pod's root. CocoaPods reads every resource_bundles and resources entry as a glob pattern: a
+ * pattern ("ios/Resources/*", "*.{xcprivacy,bundle}" or a recursive "**" one) is expanded in the
+ * pod's folder and only its PrivacyInfo.xcprivacy matches are kept; a plain path is kept when it
+ * ends in .xcprivacy (the audit reports it when it cannot read it). A pattern that cannot be
+ * expanded (no folder, or a missing one) throws, naming the pod. This is what CocoaPods copies.
+ */
+export function podspecPrivacyFiles(podspec: unknown, folder?: PodFolder): string[] {
+  const files = podspecResources(podspec).flatMap((resource) => privacyFilesOf(resource, folder));
+  return [...new Set(files)];
 }
 
 /** A development pod's root, relative to ios/: its :path, or the folder of a local :podspec. */
@@ -157,7 +183,8 @@ export function localPodManifestPaths(iosDir: string): { pod: string; path: stri
     const root = localPodRoot(source);
     const spec = join(iosDir, 'Pods', 'Local Podspecs', `${pod}.podspec.json`);
     if (root === null || !existsSync(spec)) return [];
-    const files = podspecPrivacyFiles(JSON.parse(readFileSync(spec, 'utf8')) as unknown);
+    const podspec = JSON.parse(readFileSync(spec, 'utf8')) as unknown;
+    const files = podspecPrivacyFiles(podspec, { pod, root: join(iosDir, root) });
     return files.map((file) => ({ pod, path: join(iosDir, root, file) }));
   });
 }
