@@ -144,4 +144,20 @@ describe('useSettingsExtras', () => {
       jest.mocked(consent.showPrivacyOptions).mock.calls.length,
     ]).toStrictEqual([1, 0]);
   });
+
+  // Spec S11 and 8.8: the row's answer must go through the consent moment (saved, the banners on
+  // or off at once); without the moment the row fails loudly instead of dropping the answer.
+  it('throws without the consent moment to reopen the choices through', async () => {
+    const shell = createHostWrapper();
+    function WithoutMoment({ children }: { readonly children: ReactNode }): ReactNode {
+      return (
+        <shell.wrapper>
+          <AdPrivacyChoicesContext value={null}>{children}</AdPrivacyChoicesContext>
+        </shell.wrapper>
+      );
+    }
+    await expect(renderHook(() => useSettingsExtras(), { wrapper: WithoutMoment })).rejects.toThrow(
+      'consent moment',
+    );
+  });
 });
