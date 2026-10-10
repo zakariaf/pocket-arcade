@@ -44,6 +44,7 @@ const probeStack = createNativeStackNavigator({
 const Navigation = createStaticNavigation(probeStack);
 
 describe('route guards', () => {
+  // Spec S1: then goes to S2 on first launch, otherwise straight to Home.
   it('starts a first launch on the language choice', async () => {
     await renderWithShell(<Navigation />);
     expect(screen.getByTestId('language-choice.screen')).toBeOnTheScreen();
@@ -57,6 +58,7 @@ describe('route guards', () => {
     expect(screen.getByTestId('tutorial.screen')).toBeOnTheScreen();
   });
 
+  // Spec S1: then goes to S2 on first launch, otherwise straight to Home.
   it('lands on Home when the tutorial is finished', async () => {
     const { stores } = await renderWithShell(<Navigation />);
     await act(() => {

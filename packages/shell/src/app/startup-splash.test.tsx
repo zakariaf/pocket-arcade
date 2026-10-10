@@ -29,4 +29,37 @@ describe('StartupSplash', () => {
     expect(screen.getByTestId('splash.loader')).toHaveAccessibleName(/Loading/);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+
+  // Spec S1: covers the load time with the game's logo; the loader names the game for VoiceOver.
+  it('tells VoiceOver which game is loading (spec S1)', async () => {
+    await renderWithShell(
+      <StartupSplash
+        logo={LOGO}
+        gameName="Line Siege"
+        tagline="Hold the wall."
+        isReducedMotion={false}
+      />,
+    );
+
+    // t() isolates the name with FSI and PDI, so the label is matched loosely around it.
+    expect(screen.getByTestId('splash.loader')).toHaveAccessibleName(/^Loading .*Line Siege.*…$/);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('says Loading in Persian with the game name kept in Latin letters', async () => {
+    await renderWithShell(
+      <StartupSplash
+        logo={LOGO}
+        gameName="Line Siege"
+        tagline="Hold the wall."
+        isReducedMotion={false}
+      />,
+      { language: 'fa' },
+    );
+
+    expect(screen.getByTestId('splash.loader')).toHaveAccessibleName(
+      /^در حال بارگذاری .*Line Siege.*…$/,
+    );
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });

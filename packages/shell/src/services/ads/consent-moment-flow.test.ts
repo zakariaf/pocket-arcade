@@ -147,6 +147,7 @@ describe('consent moment flow', () => {
     ]);
   });
 
+  // Spec S1 and N8: no ad on launch, ever; the moment waits for a banner screen.
   it('waits while no banner screen is open, so the moment never covers a level', async () => {
     const { flow } = setup();
     flow.updateInput(AFTER_TUTORIAL);

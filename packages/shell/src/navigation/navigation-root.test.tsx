@@ -104,6 +104,7 @@ function stackAnimations(): unknown[] {
 }
 
 describe('NavigationRoot', () => {
+  // Spec S1: then goes to S2 on first launch, otherwise straight to Home.
   it('opens the first-run group on a first launch and Home once it is finished', async () => {
     const stores = await mountRoot({ isFirstRunDone: false });
     expect(screen.getByTestId('probe.Tutorial')).toBeOnTheScreen();
