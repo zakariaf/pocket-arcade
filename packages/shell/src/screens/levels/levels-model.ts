@@ -34,6 +34,7 @@ export type LevelsModel = {
   readonly packs: readonly LevelPackModel[];
   /** The locked tile just tapped: focus ring plus the "finish level n" toast. */
   readonly focusedLevel: number | null;
+  /** Reduce motion, a parity capture, or Levels covered by another screen: no flag bob. */
   readonly isReducedMotion: boolean;
   readonly banner: Pick<AdBannerSlotProps, 'renderBanner' | 'isAllowed'>;
   readonly onBack: () => void;
