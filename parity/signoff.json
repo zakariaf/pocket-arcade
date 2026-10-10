@@ -2202,6 +2202,766 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b94445c69beed2a31f6cf256d55e13ff9fe43f224de196678dd1009be4362fb7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "2c918aeeebceffa15979cb2e1cf13f3b2d532188d072982a50fb58153de255ee",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "83734af2100c9e7ff702813e63c1529e162b10af211fc181f8622e0d1b701906",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "87ae441aebfb0e7b1195a2a6a5fadc4277bb0f1149fd530dd3f56115d371a6f0",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5fb018aa43c9f88f818ae98435bcc9ddbda927f604f15d575057b44f413e3421",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "271eba939ab762fe5dd975defbd04be139020d99949be6cc963bb2f075966a0e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e369fe673627fa99b9a754f8f8542eb8a685b741fde326f9d750ce4552343d9a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "705b54d5b9fc22afb39622bb226040ed5609a2d95274a6064c7582d7280f0ebb",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "90413b6fa978ac5020ffd5f08ff26d92caa36c29c5379d6ac7b998d1e6e4816f",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "87b4e5b7970bccd5c3f3d9e9b7ebc227164926bdcfbd20210e65a15e4c435ca3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ce8747fa75c7c28f73afa08948bc3a9a7a33d4d08176d575a4d39e5207682953",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4b7e88ab26fabb77477e0a02fcb804da2762b18649f71aa24eb1cf65abcc1b33",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "bd5e4cb54668c6b16231f371ef85b1ed035dd6e20bb9610c85afff9013d7c98c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4917a9ac55d92286e509fa38f3fa1abac3f299242f7e5d3757447ae53087b022",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "269e1374b5092a2cc37560ad3af77c59a096bc78609f851aabf91a1aa8161133",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "f1bdce1a87aca0a034780dbab821963d8b717c917fd9f2d6ef8e62f2d11e136a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f236e8db621de7ca46eccc688f4066dab76af10bbad460c7b94ab039057c735d",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0a9f8d435c0545d55f4ad54a75ffb82fbee2fedf8023105d6c16893684d34dc7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "078786667aad3264a0036f4fe70c161816c5287b908fa665732b4af7feb3fe80",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0df91e4ee581f0affa91efb049b1a70c3112952c6f6137e934b7e4b2bacad8d3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8a259e8047d235ad1544cee7e951da54ce00d32f67cc8e2e8d66998bc847796c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0c5216650d34e9b81796dfd235bc1c0b6f964d8b3931593c15654db9dd579d4a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "61c303b74204ce7ccf55e471bf60d99b16a0c1568cf2c3e84d4c027c9914489e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "328a2d417fd29cc54c23d5c85171edfd958ef10ca5a762c7aa020a1df21ce592",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "243cb173480787c1fd276d337cf406987602e046e76241607b2f39f29d26696a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "07491414f6098f359d3efe03c74efff472994e60386606a75a1a75fc5026d2fd",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b4ebfe4405c91ba7b28f4e4d0583fbcf6c7bb8c3a036bc3111da572db1df7a55",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "601e9e363cf000491a1ac9c3b2b96e03e605e5185408f402de26aec049b45d38",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "fba2d811582624c5aac74fe18f37984917115433dc6fdfc797f0522b1b83a149",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "798a318ea146a02b951e4de7386f3272f5a98ef4f957bf0d3dc5ebe0ae09352c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d7f0df58861c6abf2c2b207ab7f747567a10cedfaa34f34e31ea6718e3c49389",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ef118334cb6ca0aaf3b7110ed554c909f80b906025205f26ef506b01427ab0b4",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "41b550893b674346ddbee2bcbac43e6b069b8462570aee72921bdcd4cb7857b1",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3ffa45ed62408e6fffe1a7088c3438ef1dff74036005d77d36f2da8589eaa214",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8c1fe23f35907a970825cc920d5cab352e965de80d1719febc9e21ca91f3808b",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "44f4865d1ea9b381a82f29cfb2d8d16dc205f74394438390850c758608e55eec",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
     }
   ]
 }
