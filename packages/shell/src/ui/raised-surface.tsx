@@ -86,6 +86,11 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    // A solid-edged face is painted in its edge colour and its fill lies on top, inside the edge:
+    // a fill under the edge bleeds a pale hairline past the antialiased rounded edge onto the hard
+    // shadow (seen on every S2 card corner in light mode).
+    facePlate: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 },
+    edgePaint: { backgroundColor: theme.colors.border },
     faceDisabled: {
       backgroundColor: theme.colors.sunken,
       borderColor: theme.colors.textMuted,
@@ -118,6 +123,37 @@ function faceStylesOf(
     props.isStretched === true && styles.stretched,
     props.faceStyle,
   ];
+}
+
+/** A caller's edge style (a locked level tile's dashed edge) wins over the disabled key's dashes. */
+function edgeStyleOf(props: RaisedSurfaceProps, isDisabled: boolean): ViewStyle['borderStyle'] {
+  return StyleSheet.flatten(props.faceStyle)?.borderStyle ?? (isDisabled ? 'dashed' : undefined);
+}
+
+/**
+ * The key's face. A solid edge is painted as an edge-colour plate with the fill laid inside it; a
+ * dashed edge (disabled keys, locked tiles) keeps its fill under the dashes.
+ */
+function faceOf(props: RaisedSurfaceProps, styles: Styles, isDisabled: boolean): ReactNode {
+  const faceStyle = faceStylesOf(props, styles, isDisabled);
+  const edgeStyle = edgeStyleOf(props, isDisabled);
+  if (edgeStyle !== undefined && edgeStyle !== 'solid') {
+    return <View style={faceStyle}>{props.children}</View>;
+  }
+  const edge = props.edgeWidth ?? STROKE.bold;
+  const edgePaint =
+    props.edgeColor === undefined ? styles.edgePaint : { backgroundColor: props.edgeColor };
+  return (
+    <View style={[faceStyle, edgePaint]}>
+      <View
+        style={[
+          styles.facePlate,
+          { borderRadius: Math.max(0, props.radius - edge), backgroundColor: props.fill },
+        ]}
+      />
+      {props.children}
+    </View>
+  );
 }
 
 function a11yProps(props: RaisedSurfaceProps, isInactive: boolean): PressableProps {
@@ -200,7 +236,7 @@ export function RaisedSurface(props: RaisedSurfaceProps): ReactNode {
         <Animated.View
           style={[styles.shadow, styles.shadowPaint, { borderRadius: props.radius }, shadowStyle]}
         />
-        <View style={faceStylesOf(props, styles, isDisabled)}>{props.children}</View>
+        {faceOf(props, styles, isDisabled)}
       </Animated.View>
     </Pressable>
   );

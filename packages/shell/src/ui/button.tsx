@@ -14,6 +14,7 @@ import { RaisedSurface } from './raised-surface.tsx';
 
 import type { KindPaint, RaisedKind } from './button-paint.ts';
 import type { IconName } from './icons/icon-paths.ts';
+import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 
@@ -25,6 +26,11 @@ export type ButtonKind = RaisedKind | 'quiet';
 export type ButtonProps = {
   /** Translated; also the accessibility label. */
   readonly label: string;
+  /**
+   * Raised keys: the label's own language when it is not the UI's (S2's Continue, in the language
+   * being chosen): its script's font, and VoiceOver's voice on the key (as OptionCard's autonyms).
+   */
+  readonly labelLanguage?: Language;
   readonly onPress: () => void;
   readonly testID: string;
   /** From useReduceMotion() in the screen model. */
@@ -144,6 +150,7 @@ export function Button(props: ButtonProps): ReactNode {
   return (
     <RaisedSurface
       label={props.label}
+      {...(props.labelLanguage === undefined ? {} : { labelLanguage: props.labelLanguage })}
       onPress={props.onPress}
       testID={props.testID}
       elevation={layout.elevation}
@@ -166,6 +173,7 @@ export function Button(props: ButtonProps): ReactNode {
           variant={layout.variant}
           tone={paint.tone}
           align={layout.align}
+          {...(props.labelLanguage === undefined ? {} : { language: props.labelLanguage })}
         />
       </View>
       {endSlot(props, paint)}

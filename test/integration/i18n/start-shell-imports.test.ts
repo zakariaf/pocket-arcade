@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 
 describe('start-shell.ts', () => {
+  // Spec S1: loads the save, settings and language (the language machinery comes first).
   it('imports the Intl polyfills before any other module', () => {
     const source = readFileSync('packages/shell/src/app/start-shell.ts', 'utf8');
     const firstImport = source.split('\n').find((line) => line.startsWith('import '));

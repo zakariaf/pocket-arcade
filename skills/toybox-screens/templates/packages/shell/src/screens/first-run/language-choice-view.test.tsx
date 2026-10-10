@@ -56,4 +56,14 @@ describe('LanguageChoiceView', () => {
     expect(model.onContinue).toHaveBeenCalledTimes(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+
+  it('voices Continue in the language being chosen on an English screen', async () => {
+    await renderWithShell(
+      <LanguageChoiceView model={modelWith({ selected: 'fa', tSelected: () => 'ادامه' })} />,
+    );
+
+    // The font that follows labelLanguage is pinned in button.test.tsx; here the view passes it.
+    expect(screen.getByRole('button', { name: 'ادامه' })).toHaveProp('accessibilityLanguage', 'fa');
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });

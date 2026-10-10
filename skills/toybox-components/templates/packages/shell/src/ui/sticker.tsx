@@ -156,6 +156,7 @@ export function Sticker(props: StickerProps): ReactNode {
   return (
     <Animated.View
       testID={props.testID}
+      shouldRasterizeIOS
       accessible
       accessibilityRole="text"
       accessibilityLabel={props.text}

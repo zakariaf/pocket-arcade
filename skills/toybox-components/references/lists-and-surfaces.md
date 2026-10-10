@@ -104,6 +104,8 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 **Today tag** (S9 week strip): 11 Bold toy ink on gold, padding 1 × 5, radius 5, 1 pt toy-ink edge (token 1.5, as rendered), tilt −4°, no ring (drawn inside `WeekStrip`).
 
+**Tilted edges:** the paper sets `shouldRasterizeIOS`. Fabric draws a border from an image it stretches with nearest filtering, so the 2 pt edge of a tilted sticker steps at device pixels (the S2 Phone language sticker and the globe tile on the device, 2026-10-10); a rasterized layer is drawn flat and resampled smoothly when it is turned, as Chrome draws it, and its text stays sharp at the device scale. Every tilted printed part with an edge does the same (art tile, logo tile).
+
 **Accessibility:** a sticker is one text element: the paper carries the testID, `accessible`, `accessibilityRole="text"` and the text as its label, so VoiceOver reads it where it sits and Maestro measures the whole tilted sticker. **Do:** reserve stickers for news. **Don't:** tilt more than 8°; mirror the tilt in RTL (Chosen: the same angle in both directions); put a sticker on a raised key.
 
 **Centring a sticker or a chip.** Both hug their text: each sets `alignSelf: 'flex-start'` on itself, and a child's `alignSelf` wins over its parent's `alignItems`. So a wrapper with `alignItems: 'center'` leaves the sticker or chip at the start edge (the S7 win sticker and mode chip sat at the start on the device while the design centres both). Centre one with a row wrapper: `{ flexDirection: 'row', justifyContent: 'center' }` around the component. The components take no alignment prop; the screen that places them decides.
@@ -118,7 +120,7 @@ As rendered (mockup overrides in `write-component-specs.mjs`): the token file sa
 
 **Templates:** `art-tile.tsx` (`ArtTile`: paints pop, gold, danger; sizes regular 64, dialog 56, summary 52), `premium-art.tsx` (`PremiumArt`).
 
-**Art tile:** a 64 × 64 "boxed toy": radius 16, 3 pt toy-ink edge, `pop` fill (or gold), toy-ink 36 pt icon, 4 pt white ring, tilt −5°. Leads S2 (globe), S3 (gold shield) and dialogs (globe, gold restore; reset: 56 pt, `dangerFill` fill, `danger` icon). S11c uses a 52 pt gold shield. Decorative (hidden from VoiceOver).
+**Art tile:** a 64 × 64 "boxed toy": radius 16, 3 pt toy-ink edge, `pop` fill (or gold), toy-ink 36 pt icon, 4 pt white ring, tilt −5°. Leads S2 (globe), S3 (gold shield) and dialogs (globe, gold restore; reset: 56 pt, `dangerFill` fill, `danger` icon). S11c uses a 52 pt gold shield. Decorative (hidden from VoiceOver). Its tilted View sets `shouldRasterizeIOS`, so its edge and ring are resampled smoothly instead of stepping (see Sticker, "Tilted edges").
 
 *Measurements* (`art`): size 64 · radius 16 · border 3 · ring 4 · rotate -5 · icon 36.
 

@@ -8,6 +8,7 @@ import {
   useIsTestBuild,
   useNeedsLanguageChoice,
 } from '@e07/shell/navigation/route-guards.ts';
+import { LanguageChoiceScreen } from '@e07/shell/screens/first-run/language-choice-screen.tsx';
 import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
 
 import type { GameParams } from '@e07/shell/navigation/route-params.ts';
@@ -34,7 +35,7 @@ export const rootStack = createNativeStackNavigator({
     FirstRun: {
       if: useIsFirstRun,
       screens: {
-        LanguageChoice: { screen: NotBuiltScreen, if: useNeedsLanguageChoice },
+        LanguageChoice: { screen: LanguageChoiceScreen, if: useNeedsLanguageChoice },
         Tutorial: { screen: TutorialScreen, options: { gestureEnabled: false } },
       },
     },

@@ -1,4 +1,4 @@
 {
-  "screens": ["S1"],
-  "why": "Shell build in progress: splash, navigator and composition root (Shell step 7)"
+  "screens": ["S1", "S2", "S3"],
+  "why": "Shell build in progress: first-run screens S1 Splash, S2 Language choice and S3 Ad consent and tracking (Shell step 9)"
 }

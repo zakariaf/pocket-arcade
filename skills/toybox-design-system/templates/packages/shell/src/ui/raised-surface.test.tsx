@@ -1,13 +1,17 @@
 // packages/shell/src/ui/raised-surface.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
-import { ELEVATION, RADII } from '@e07/shell/theme/tokens.ts';
+import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
+import { ELEVATION, RADII, STROKE } from '@e07/shell/theme/tokens.ts';
 
 import { AppText } from './app-text.tsx';
 import { RaisedSurface } from './raised-surface.tsx';
+
+import type { StyleProp, ViewStyle } from 'react-native';
 
 describe('RaisedSurface', () => {
   it('is a named button that reports presses', async () => {
@@ -183,6 +187,45 @@ describe('RaisedSurface', () => {
     expect(screen.getByTestId('settings.theme-segment.dark')).toHaveStyle({ top: ELEVATION.tile });
     expect(screen.getByTestId('settings.theme-segment.light')).not.toHaveStyle({
       top: ELEVATION.tile,
+    });
+  });
+
+  it('lays its fill inside a solid edge on an edge-colour face, so no fill bleeds past the corners', async () => {
+    const colors = TEST_PALETTE.standard.light;
+    await renderWithShell(
+      <RaisedSurface
+        label="Continue"
+        onPress={jest.fn()}
+        testID="language-choice.continue-button"
+        elevation={ELEVATION.hero}
+        radius={RADII.md}
+        fill={colors.primary}
+        isReducedMotion
+      >
+        <AppText text="Continue" variant="label" />
+      </RaisedSurface>,
+    );
+
+    // A fill under the edge bleeds a pale hairline past the antialiased rounded corner onto the
+    // dark hard shadow (seen on the S2 cards on the device), so the face is the edge colour and
+    // the fill is a plate inside the edge.
+    const face = screen.getByText('Continue').parent;
+    // allow-style-assertion: the paint order is the fix; only the styles show it in Jest
+    expect(face).toHaveStyle({ backgroundColor: colors.border });
+    const plates =
+      face?.queryAll(
+        (node) =>
+          node.type === 'View' &&
+          StyleSheet.flatten(node.props['style'] as StyleProp<ViewStyle>)?.position === 'absolute',
+      ) ?? [];
+    expect(plates).toHaveLength(1);
+    expect(plates[0]).toHaveStyle({
+      top: 0,
+      bottom: 0,
+      start: 0,
+      end: 0,
+      borderRadius: RADII.md - STROKE.bold,
+      backgroundColor: colors.primary,
     });
   });
 

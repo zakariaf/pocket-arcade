@@ -106,6 +106,7 @@ describe('ad gate', () => {
     expect(calls).toStrictEqual([]);
   });
 
+  // Spec S1 and N8: no ad on launch, ever.
   it('refreshes consent info at launch without showing any form', async () => {
     const { calls, seen, deps } = setup(GRANTED);
     await refreshConsentAtLaunch(deps, { ...AFTER_TUTORIAL, isTutorialDone: false });
@@ -113,6 +114,7 @@ describe('ad gate', () => {
     expect(seen).toStrictEqual([DENIED]);
   });
 
+  // Spec S1 and N8: no ad on launch, ever.
   it('asks nothing at launch for Premium or with ads off', async () => {
     const { calls, deps } = setup(GRANTED);
     await refreshConsentAtLaunch(deps, { ...AFTER_TUTORIAL, isPremium: true });

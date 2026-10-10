@@ -41,6 +41,7 @@ function killedInALevel(isResumedOnLaunch: boolean): SaveDoc {
 }
 
 describe('hydrateSave', () => {
+  // Spec S1: loads the save, settings and language.
   it('starts a first launch from a fresh document written to both slots, with no resume', () => {
     const { store, hydrated } = hydrate();
     expect(hydrated.outcome).toStrictEqual({ kind: 'fresh' });
@@ -49,6 +50,7 @@ describe('hydrateSave', () => {
     expect(hydrated.initialState).toBeUndefined();
   });
 
+  // Spec S1: loads the save, settings and language.
   it('loads the document a previous launch wrote, synchronously', () => {
     const first = hydrate();
     first.hydrated.save.update((doc) => ({
