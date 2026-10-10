@@ -3,11 +3,13 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { ancestorStyle } from '@e07/shell/testing/rendered-parts.ts';
 
 import { PremiumPage } from './premium-page.tsx';
 
 import type { PremiumModel } from './premium-model.ts';
 import type { PremiumView } from '@e07/shell/stores/premium/premium-view.ts';
+import type { ViewStyle } from 'react-native';
 
 function modelWith(view: PremiumView, overrides: Partial<PremiumModel> = {}): PremiumModel {
   return {
@@ -252,4 +254,30 @@ describe('PremiumPage, spec S12 states', () => {
       expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
     },
   );
+});
+
+describe("PremiumPage, the design's restore card", () => {
+  // allow-style-assertion: the toast stack's backdrop is the contract here; without it the Buy key and the small print showed through the 10 pt gaps of the restore card.
+  const isDock = (style: ViewStyle): boolean => style.position === 'absolute';
+
+  it('lays the four stacked toasts on the ground, so the page under them never shows between them (spec S12)', async () => {
+    await renderWithShell(
+      <PremiumPage model={modelWith('ready', { isRestoreToastStack: true })} />,
+    );
+
+    const ground = ancestorStyle(
+      'premium.restoring-toast',
+      (style) => style.flex === 1 && style.backgroundColor !== undefined,
+    ).backgroundColor;
+    expect(ground).toBeDefined();
+    expect(ancestorStyle('premium.restoring-toast', isDock).backgroundColor).toBe(ground);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('gives a single toast no backdrop, so nothing shows while it drops in', async () => {
+    await renderWithShell(<PremiumPage model={modelWith('restore-empty')} />);
+
+    expect(ancestorStyle('premium.restore-empty-toast', isDock).backgroundColor).toBeUndefined();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });

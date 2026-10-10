@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { LAYOUT } from '@e07/shell/theme/tokens.ts';
+import { useTheme } from '@e07/shell/theme/use-theme.ts';
 import { COMPONENT_SPECS } from '@e07/shell/ui/component-specs.ts';
 import { Toast } from '@e07/shell/ui/toast.tsx';
 
@@ -26,14 +27,17 @@ const styles = StyleSheet.create({
 /**
  * The restore outcome as one toast: restoring (busy), restored, nothing found, failed. The model
  * hook announces it to VoiceOver and clears "Purchase restored" after NOTICE_MS. The design's
- * restore card (a parity frame) stacks all four, 10 pt apart.
+ * restore card (a parity frame) stacks all four, 10 pt apart, on the ground as the card draws them:
+ * the page under the stack (the Buy key, its shadow, the small print) never shows through the
+ * gaps. A single toast gets no backdrop: it would show as a block while the toast drops in.
  */
 export function PremiumToast({ model }: PremiumToastProps): ReactNode {
   const t = useT();
+  const { colors } = useTheme();
   const specs = premiumToastsFor(model);
   if (specs.length === 0) return null;
   return (
-    <View style={styles.dock}>
+    <View style={[styles.dock, specs.length > 1 && { backgroundColor: colors.background }]}>
       {specs.map((spec) => (
         <Toast
           key={spec.testID}
