@@ -1,5 +1,6 @@
 // packages/shell/src/ui/logo-tile.test.tsx
 import { screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
@@ -8,6 +9,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { LOGO_TILE_VARIANTS, LogoTile } from './logo-tile.tsx';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 const LOGO: LogoArt = {
   layers: [
@@ -93,6 +95,31 @@ describe('LogoTile', () => {
     expect(rotation?.props['origin']).toStrictEqual({ x: 12, y: 12 });
     expect(rotation?.props['transform']).toStrictEqual([{ rotate: Math.PI / 2 }]);
     expect(rotation?.queryAll((node) => node.type === 'SkiaPath')).toHaveLength(1);
+  });
+
+  it('lays the die-cut ring under the tile as a white plate, so a tilted edge leaves no seam', async () => {
+    await renderWithShell(<LogoTile logo={LOGO} variant="splash" testID="splash.logo" />);
+
+    const { size, ring } = LOGO_TILE_VARIANTS.splash;
+    const tile = screen.getByTestId('splash.logo', { includeHiddenElements: true });
+    expect(
+      StyleSheet.flatten(tile.props['style'] as StyleProp<ViewStyle>)?.boxShadow,
+    ).toBeUndefined();
+    const plates = screen.container.queryAll(
+      (node) =>
+        node.type === 'View' &&
+        StyleSheet.flatten(node.props['style'] as StyleProp<ViewStyle>)?.width === size + ring * 2,
+    );
+    expect(plates).toHaveLength(1);
+    expect(plates[0]).toHaveStyle({
+      position: 'absolute',
+      top: -ring,
+      start: -ring,
+      height: size + ring * 2,
+      borderRadius: size * 0.24 + ring,
+      backgroundColor: SHELL_COLORS.light.cut,
+      transform: [{ rotate: '-6deg' }, { translateY: 0 }],
+    });
   });
 
   it('matches the Toybox sizes for every place it appears', () => {

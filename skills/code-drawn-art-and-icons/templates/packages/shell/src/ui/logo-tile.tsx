@@ -9,7 +9,6 @@ import { STROKE } from '@e07/shell/theme/tokens.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { picturePath } from './picture-path.tsx';
-import { dieCutRing } from './toybox-styles.ts';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
@@ -54,6 +53,10 @@ export type LogoTileProps = {
 
 const styles = StyleSheet.create({ tile: { alignItems: 'center', justifyContent: 'center' } });
 
+function tiltOf(spec: VariantSpec): NonNullable<ViewStyle['transform']> {
+  return [{ rotate: `${String(spec.rotateDeg)}deg` }, { translateY: spec.translateY }];
+}
+
 function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
   const shell = SHELL_COLORS[theme.scheme];
   return {
@@ -63,8 +66,25 @@ function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
     borderWidth: spec.edgeWidth,
     borderColor: spec.isCut ? shell.toyInk : theme.colors.border,
     backgroundColor: theme.colors.primary,
-    transform: [{ rotate: `${String(spec.rotateDeg)}deg` }, { translateY: spec.translateY }],
-    ...(spec.ring > 0 ? dieCutRing(spec.ring, shell.cut) : {}),
+    transform: tiltOf(spec),
+  };
+}
+
+/**
+ * The die-cut ring as a filled plate under the whole tile (CSS box-shadow spread). A spread shadow
+ * outside the tile's edge leaves two antialiased edges meeting on a tilted tile, and the ground
+ * shows through between them as a dotted hairline; under a plate the edge blends into white.
+ */
+function ringStyle(theme: Theme, spec: VariantSpec): ViewStyle {
+  return {
+    position: 'absolute',
+    top: -spec.ring,
+    start: -spec.ring,
+    width: spec.size + spec.ring * 2,
+    height: spec.size + spec.ring * 2,
+    borderRadius: spec.size * LOGO_TILE.radiusRatio + spec.ring,
+    backgroundColor: SHELL_COLORS[theme.scheme].cut,
+    transform: tiltOf(spec),
   };
 }
 
@@ -75,7 +95,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const spec = LOGO_TILE_VARIANTS[variant];
   const artSize = (spec.size - spec.edgeWidth * 2) * LOGO_TILE.artScale;
   const ops = logoOps(logo, { pop: theme.colors.pop, toyInk: shell.toyInk, white: shell.cut });
-  return (
+  const tile = (
     <View
       style={[styles.tile, tileStyle(theme, spec)]}
       accessibilityElementsHidden
@@ -90,6 +110,13 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
           )}
         </Group>
       </Canvas>
+    </View>
+  );
+  if (spec.ring === 0) return tile;
+  return (
+    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <View style={ringStyle(theme, spec)} />
+      {tile}
     </View>
   );
 }
