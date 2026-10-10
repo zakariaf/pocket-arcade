@@ -18,6 +18,7 @@ import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { useDailySummary } from '@e07/shell/screens/daily/use-daily-summary.ts';
 import { useNextDayCountdown } from '@e07/shell/screens/daily/use-next-day-countdown.ts';
+import { usePlayRun } from '@e07/shell/screens/home/use-play-run.ts';
 import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
@@ -25,19 +26,15 @@ import type { DailyModel } from './daily-model.ts';
 
 /**
  * Play and Replay: today's challenge, the day read from the clock when the key is pressed (S9: the
- * day changes at local midnight, also while S9 stays open). The save holds one run: today's saved
- * daily resumes, as Home's daily key does, and is never replaced by a new one (N10, 8.6). The first
+ * day changes at local midnight, also while S9 stays open), through usePlayRun: today's saved daily
+ * resumes, as Home's daily key does, and is never replaced by a new one (N10, 8.6). The first
  * finished attempt of the day counts; a replay never changes it (the game host).
  */
 function usePlayToday(): () => void {
-  const navigation = useNavigation();
-  const { save, clock } = useServices();
+  const playRun = usePlayRun();
+  const { clock } = useServices();
   return () => {
-    const date = clock.today();
-    const saved = save.doc().run?.ref;
-    if (saved?.kind === 'daily' && saved.date === date) {
-      navigation.navigate('Game', { start: 'resume' });
-    } else navigation.navigate('Game', { start: 'new', ref: { kind: 'daily', date } });
+    playRun({ kind: 'daily', date: clock.today() });
   };
 }
 
