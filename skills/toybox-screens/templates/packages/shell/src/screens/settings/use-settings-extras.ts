@@ -25,9 +25,8 @@ import type { SettingsExtras } from './settings-extras.ts';
 const PARITY_HELD_PROGRESS = 0.46;
 
 /** "Reset all progress": the row opens it; its parity frame opens it held. */
-function useResetProgressDialog(): () => void {
+function useResetProgressDialog(onConfirm: () => void): () => void {
   const openDialog = useOpenDialog();
-  const { onConfirmResetProgress: onConfirm } = useSettingsResets();
   useParityOpener('reset-progress-dialog-held', () => {
     openDialog({ kind: 'reset-progress', onConfirm, frozenProgress: PARITY_HELD_PROGRESS });
   });
@@ -55,7 +54,7 @@ export function useSettingsExtras(): SettingsExtras {
   const openDialog = useOpenDialog();
   const { service } = usePremiumScreenDeps();
   const resets = useSettingsResets();
-  const onResetProgress = useResetProgressDialog();
+  const onResetProgress = useResetProgressDialog(resets.onConfirmResetProgress);
   const versionText = readVersionText();
   return {
     removeAdsPriceText: usePremiumStore((state) => priceOf(state.flow)),
