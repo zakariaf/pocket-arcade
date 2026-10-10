@@ -2,7 +2,10 @@
 // S7's buttons (spec S7, 8.8, 8.10): Next level, Replay and Try again start the next run inside the
 // same Game screen, AFTER a due interstitial (never before the player has seen the result); the
 // ad history is saved so the caps survive a kill. Levels and Home record a pending loss (finish)
-// and leave. Continue is sent only once it is paid for.
+// and leave. Continue is sent only once it is paid for. One of them runs at a time: a double tap
+// while the interstitial is awaited starts one run and saves the ad history once.
+import { useRef } from 'react';
+
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useAdContext, useAdPolicyConfig } from '@e07/shell/app/use-ad-context.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
@@ -67,13 +70,20 @@ export function useResultActions(input: ResultActionsInput): ResultActions {
   const { errorLog } = useServices();
   const summary = controls.view?.summary ?? null;
   const afterInterstitial = useAfterInterstitial(summary?.isWon === true ? 'win' : 'lose');
+  // Set from the first Next, Replay or Try again until its run has started: the taps that follow
+  // (before the screen re-renders, or while the ad covers it) change nothing.
+  const isStarting = useRef(false);
   const startAfterAd = (ref: RunRef): void => {
+    if (isStarting.current) return;
+    isStarting.current = true;
     onLeaveResult();
     afterInterstitial(() => {
+      isStarting.current = false;
       controls.startRun(ref);
     });
   };
   const leave = (go: () => void) => (): void => {
+    if (isStarting.current) return;
     onLeaveResult();
     controls.send({ type: 'finish' });
     go();
