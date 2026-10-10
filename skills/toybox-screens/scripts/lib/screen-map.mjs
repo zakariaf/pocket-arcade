@@ -133,6 +133,7 @@ export const BORROWS = {
   ],
   S11b: [
     borrow('screens/settings/settings-extras.ts', 'toybox-screens'),
+    borrow('screens/settings/use-settings-routes.ts', 'toybox-screens'),
     borrow('screens/settings/use-settings-links.ts', 'toybox-screens', 'screens/settings/use-settings-links.test.tsx'),
   ],
   S15: [borrow('screens/debug/use-debug-model.ts', 'e2e-maestro', 'screens/debug/use-debug-model.test.tsx')],

@@ -35,7 +35,7 @@ Everything a Pocket Arcade screen shares: where each screen's code lives, the To
 | S10 | Statistics | route `Stats` | `packages/shell/src/screens/stats/` | [s10-statistics.md](s10-statistics.md) | `screens/home/use-level-play.ts`: toybox-screens; `stores/settings-resets.ts` (+ test), `stores/use-settings-resets.ts` (+ test): settings-and-preferences; `app/use-today.ts`, and in its folder `stats-summary.ts` (+ test), `use-stats-summary.ts` (+ test): daily-and-statistics |
 | S11 | Settings | route `Settings` | `packages/shell/src/screens/settings/` (files, not subfolders) | [s11-settings.md](s11-settings.md) | `app/use-parity-opener.ts` (+ test): toybox-screens; in its folder `settings-rows.ts`, `settings-preference-actions.ts`, `use-settings-model.ts`, `use-settings-context.ts` (each + test): settings-and-preferences; `stores/settings-resets.ts` (+ test) and `stores/use-settings-resets.ts` (with S10): settings-and-preferences |
 | S11a | Language | route `SettingsLanguage` | `packages/shell/src/screens/settings/language/` | [s11a-language.md](s11a-language.md) | `app/use-direction-restart.ts` (+ test), `app/use-parity-opener.ts` (+ test): toybox-screens; in its folder `language-change.ts` (+ test): settings-and-preferences |
-| S11b | About and credits | route `About` | `packages/shell/src/screens/settings/about/` | [s11b-about.md](s11b-about.md) | S11's `screens/settings/settings-extras.ts` and `use-settings-links.ts` (+ test): toybox-screens |
+| S11b | About and credits | route `About` | `packages/shell/src/screens/settings/about/` | [s11b-about.md](s11b-about.md) | S11's `screens/settings/settings-extras.ts`, `use-settings-routes.ts` and `use-settings-links.ts` (+ test): toybox-screens |
 | S11c | Privacy policy | route `PrivacyPolicy` | `packages/shell/src/screens/settings/privacy/` | [s11c-privacy-policy.md](s11c-privacy-policy.md) | — |
 | S11d | Licences | route `Licences` | `packages/shell/src/screens/settings/licences/` | [s11d-licences.md](s11d-licences.md) | — |
 | S12 | Premium | route `Premium` | `packages/shell/src/screens/premium/` | [s12-premium.md](s12-premium.md) | — |
@@ -137,7 +137,7 @@ Every screen is three small pieces (templates show each one):
 | S10 | `use-stats-model.ts` (+ `stats-snapshot-of.ts`) | `useStatsSummary()` with `useGameExtra()` and `useGameHost().counters` (save key and label), `useBannerSlot('stats')`, the reset-statistics dialog, `useLevelPlay()` |
 | S11 | `use-settings-extras.ts` (+ `use-settings-routes.ts`, `use-settings-links.ts`) next to `useSettingsModel(useSettingsContext())` | the premium store's price, `readVersionText()`, navigation, the consent port, Restore, the reset dialogs, Rate and Contact hand-offs; Music rows from `useGameHost().hasMusic` |
 | S11a | `use-settings-language-model.ts` | the settings store, `planLanguageChange`, the restart-to-apply dialog |
-| S11b | `use-about-model.ts` | `useGameHost()`, `readVersionText()`, `useGameExtra().links.supportEmail`, Contact |
+| S11b | `use-about-model.ts` | `useGameHost()`, `readVersionText()`, `useGameExtra().links.supportEmail`, Contact, Back and Licences from S11's `useSettingsRoutes()` |
 | S11c | `use-privacy-policy-model.ts` | the game name, the support address, the policy's last-change date |
 | S11d | `use-licences-model.ts` | `shellLicenceEntries(t)` then `creditRowsOf(host.credits)`; the licence text hand-off |
 | S12 | `use-premium-model.ts` | the premium store and service (`PremiumScreenDepsProvider`), connectivity |
