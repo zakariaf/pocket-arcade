@@ -169,4 +169,27 @@ describe('createGameHost resume', () => {
     expect(relaunched?.handle.getView()).toMatchObject({ status: 'won' });
     expect(test.save.doc().stats.counters).toStrictEqual({ adds: 0, 'biggest-add': 0 });
   });
+  it('records a loss still waiting for its continue before a new run replaces it (N10)', () => {
+    const test = createTestSave();
+    const level = createGameHost(TALLY_GAME, depsFor(test)).openSession({
+      start: 'new',
+      ref: LEVEL_1,
+    });
+    // 2 + 1 + 2 goes past the target 4: lost, with the continue still on offer (not recorded).
+    addTwos(level?.handle, 1);
+    addOnes(level?.handle, 1);
+    addTwos(level?.handle, 1);
+    expect([test.save.doc().run?.ref, test.save.doc().stats.losses]).toStrictEqual([LEVEL_1, 0]);
+
+    // After a relaunch the player starts another mode: the save holds one run, so the pending
+    // loss is counted first (statistics, streaks, bests), never thrown away with the slot.
+    const relaunched = createGameHost(TALLY_GAME, depsFor(test));
+    relaunched.openSession({ start: 'new', ref: { kind: 'endless' } });
+    expect(test.save.doc().stats).toMatchObject({ gamesPlayed: 1, losses: 1 });
+    expect(test.save.doc().run?.ref).toStrictEqual({ kind: 'endless' });
+
+    // A run still being played is replaced without a record, as from Levels or Next level.
+    relaunched.openSession({ start: 'new', ref: LEVEL_1 });
+    expect(test.save.doc().stats.gamesPlayed).toBe(1);
+  });
 });
