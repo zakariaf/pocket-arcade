@@ -92,7 +92,10 @@ function readStars(value: string): DebugLinkRequest | null {
 
 const READERS: Readonly<Record<string, Reader>> = {
   lang: (value) => (isLanguage(value) ? { lang: value } : null),
-  digits: (value) => (DIGITS[value] === undefined ? null : { digits: DIGITS[value] }),
+  digits: (value) => {
+    const digits = Object.hasOwn(DIGITS, value) ? DIGITS[value] : undefined;
+    return digits === undefined ? null : { digits };
+  },
   theme: oneOf(['system', 'light', 'dark'], (theme) => ({ theme })),
   seed: (value) => {
     const seed = integer(value, 0, MAX_UINT32);
@@ -136,7 +139,7 @@ function readQuery(query: string): DebugLinkParse {
     if (name === null || value === null) {
       return { kind: 'error', message: `"${pair}" has a broken %-escape` };
     }
-    const reader = READERS[name];
+    const reader = Object.hasOwn(READERS, name) ? READERS[name] : undefined;
     if (reader === undefined)
       return { kind: 'error', message: `unknown debug parameter "${name}"` };
     if (seen.has(name)) return { kind: 'error', message: `debug parameter "${name}" is repeated` };
