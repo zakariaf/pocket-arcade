@@ -154,6 +154,26 @@ describe('useHomeModel', () => {
     });
   });
 
+  it("plays the day's daily the clock says when the key is pressed, past midnight on an open Home", async () => {
+    // Spec S9: the day changes at local midnight; Home may stay open across it without re-rendering.
+    const clock = createFakeClock({ nowMs: 1_790_510_400_000, today: '2026-09-26' });
+    const shell = createHostWrapper({
+      services: {
+        clock,
+        save: createTestSave(clock).save,
+        ads: ADS,
+        connectivity: createFakeConnectivity(true),
+      },
+    });
+    const { result } = await renderHook(() => useHomeModel(), { wrapper: shell.wrapper });
+    clock.setToday('2026-09-27');
+    result.current.actions.onPlayDaily();
+    expect(mockNavigate).toHaveBeenLastCalledWith('Game', {
+      start: 'new',
+      ref: { kind: 'daily', date: '2026-09-27' },
+    });
+  });
+
   it('keeps the banner closed offline', async () => {
     const { model } = await homeModel(seasonedSave(), false);
     expect(model.banner.isAllowed).toBe(false);

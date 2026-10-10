@@ -6,7 +6,8 @@
 //   endless              useGameExtra().modes.endless and the progress store's best
 //   daily card           useDailySummary() (daily-and-statistics) and the Shell date formatter
 //   actions              useHomeActions(): every key, the daily card's body (opens S9 Daily) and
-//                        its Play key (today's run), exactly as navigation-and-routing's table says
+//                        its Play key (today's run, the day read when pressed), exactly as
+//                        navigation-and-routing's table says
 //   banner               useBannerSlot('home') (admob-ads: Premium, online, consent, tutorial, levels)
 //   cold start           useColdStartMark(perf log of a test build's debug services, else null)
 //   music                useHomeMusic(): the game's music while the Music setting is on (8.7)
@@ -68,6 +69,6 @@ export function useHomeModel(): HomeModel {
     },
     bestEndlessScore: useProgressStore(selectEndlessBest),
     banner: useBannerSlot('home'),
-    actions: useHomeActions(onPlay, daily.today),
+    actions: useHomeActions(onPlay),
   };
 }
