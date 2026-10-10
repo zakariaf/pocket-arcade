@@ -43,7 +43,7 @@ Only numbers that cannot be derived are stored. `DEFAULT_STATS` (every count 0, 
 |---|---|
 | games played, wins, win rate, total play time | `stats.gamesPlayed`, `stats.wins`, `wins / gamesPlayed` (0 when no game), `stats.playMs` |
 | levels completed, stars earned / total, 3-star levels | derived from `progress.levels` and the game's level count (`levels.table.length`, 3 stars each) |
-| best score per mode | `stats.bestScore.{level,daily,endless}`; the Endless row is `max(bestScore.endless, progress.endlessBest)` and exists only for games with Endless |
+| best score per mode | `stats.bestScore.{level,daily,endless}`, all three from the stats section only, so "Reset statistics" zeroes every mode; the Endless row exists only for games with Endless and never reads `progress.endlessBest` (Home's and the result's best, which that reset keeps) |
 | best level result | derived: the level with the highest `bestScore` (ties: the lower level) |
 | longest win streak | `stats.longestWinStreak` |
 | daily completed, current streak, best streak | `daily.completed`, `currentDailyStreak(daily, today)`, `daily.bestStreak` |
@@ -190,6 +190,7 @@ Card order and layout (Toybox S10): Overview (2 columns), Levels (3 columns), Be
 | `stats-counts`, `stats-streak`, `stats-best`, `stats-days`, `stats-counters` | `recordFinishedRun` and `measureRunCounters` |
 | `run-end-record` | every row of the run-end table |
 | `view-daily`, `view-stats` | the S9 and S10 summaries, including `daily.completed` and ISO weekdays |
+| `view-stats-best` | the Best rows read the stats section only: after "Reset statistics" the Endless best is 0 like the Levels and Daily bests |
 | `wall-clock` | `Date`, `Math.random`, `Intl.DateTimeFormat`, `toLocale*` in daily and statistics code |
 | `today-cached` | today kept in `useState`, `useRef` or a module constant |
 | `day-maths-in-ui` | streak or date arithmetic in a screen file (other than `*-summary.ts`) instead of the summary |
