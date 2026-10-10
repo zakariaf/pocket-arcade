@@ -58,7 +58,7 @@ export function StatsView({ model }: StatsViewProps): ReactNode {
               isBlock
               isReducedMotion={model.isReducedMotion}
             />
-            <StatsLocalNote hasIcon />
+            <StatsLocalNote />
           </>
         )}
       </ScreenBody>
