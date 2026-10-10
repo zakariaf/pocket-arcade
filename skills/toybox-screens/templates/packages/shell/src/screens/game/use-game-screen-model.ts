@@ -125,21 +125,19 @@ export function useGameScreenModel(
     controls,
     nav,
     payForContinue: perks.payForContinue,
-    onLeaveResult: extras.markNudgeSeen,
+    // Only the win result draws the Premium nudge (ResultWinActions), so only leaving it uses up
+    // today's nudge (spec S7, S12: at most once a day); a lose, daily or endless result does not.
+    onLeaveResult: () => {
+      if (result?.kind === 'win') extras.markNudgeSeen();
+    },
   });
   const topBar = useTopBar({ controls, perks, text, hasHints: game.hasHints, isReducedMotion });
   useFinishStrandedLoss(controls, perks.continueOffer);
   const { view } = controls;
-  if (view === null) return { topBar, result: null };
   const { continueOffer } = perks;
-  const result = resultModelOf({
-    view,
-    game,
-    text,
-    actions,
-    continueOffer,
-    isReducedMotion,
-    extras,
-  });
+  const result =
+    view === null
+      ? null
+      : resultModelOf({ view, game, text, actions, continueOffer, isReducedMotion, extras });
   return { topBar, result };
 }

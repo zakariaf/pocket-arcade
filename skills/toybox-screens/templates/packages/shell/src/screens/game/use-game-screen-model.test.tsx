@@ -279,4 +279,19 @@ describe('useGameScreenModel', () => {
     expect(finishes()).toBe(1);
     expect(shell.save.doc().stats.gamesPlayed).toBe(1);
   });
+  it("uses up the day's Premium nudge only when leaving the win result that drew it (S7, S12)", async () => {
+    const leaveVia = async (cols: readonly number[]) => {
+      const screen = await gameScreen({ adsMode: 'off' });
+      screen.shell.stores.premium.getState().dispatch({ type: 'price-loaded', price: '€1.99' });
+      await screen.tapAll(cols);
+      const shown = screen.result.current.model.result;
+      await act(() => {
+        shown?.actions.onLevels();
+      });
+      return { kind: shown?.kind, lastShownOn: screen.shell.save.doc().upsell.lastShownOn };
+    };
+    // Only the win draws the nudge (ResultWinActions): a lose result leaves today's nudge unused.
+    expect(await leaveVia([1, 0, 1])).toStrictEqual({ kind: 'lose', lastShownOn: null });
+    expect(await leaveVia([1, 1])).toStrictEqual({ kind: 'win', lastShownOn: '2026-09-26' });
+  });
 });
