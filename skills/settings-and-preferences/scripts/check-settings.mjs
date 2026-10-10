@@ -43,9 +43,11 @@ const SPEC = {
     '  settings-schema        the newest SETTINGS_V<n> has exactly the 11 fields with their validators',
     '  settings-default       DEFAULT_SETTINGS holds the agreed first-launch values (music off, System everywhere)',
     '  reducer-action         settings-reducer.ts handles every settings action; volumes are clamped',
-    '  persist-then-publish   the store calls save.update before set, so the screen never shows an unsaved value',
+    '  persist-then-publish   the store calls save.update before its first set(...) (set(next) or the sections save.doc()',
+    '                         holds after the write), so the screen never shows an unsaved value',
     '  row-dispatch           screens/settings dispatches every preference action (set-language also from first-run)',
-    '  setting-effect         code outside the settings screen, stores and save reads every field (the setting does something)',
+    '  setting-effect         code outside the settings screen, stores and save reads every field (the setting does something);',
+    '                         hintsDuringPlay, whose effect lands with S11, prints SKIP while S11 is outside shell-slice.json',
     '  volume-scale           code that reads soundVolume or musicVolume divides by 100 (the save keeps percent)',
     '  reset-keeps-settings   resetAllProgress never replaces settings, firstRun or premium',
     '  reset-publish          both resets are written through updateAndPublish (one write, backup refreshed, every',
@@ -68,7 +70,7 @@ const FIELDS = {
   theme: { schema: PICK(['system', 'light', 'dark']), text: "v.picklist(['system', 'light', 'dark'])", default: "'system'", effect: /\bselectThemePreference\b|\bsettings\.theme\b/ },
   colorBlind: { schema: /^v\.boolean\(\)$/, text: 'v.boolean()', default: 'false', effect: /\bselectIsColorBlind\b|\bcolorBlind\b/ },
   reduceMotion: { schema: PICK(['system', 'on', 'off']), text: "v.picklist(['system', 'on', 'off'])", default: "'system'", effect: /\bselectReduceMotionPreference\b|\bsettings\.reduceMotion\b/ },
-  hintsDuringPlay: { schema: /^v\.boolean\(\)$/, text: 'v.boolean()', default: 'true', effect: /\bselectHintsDuringPlay\b|\bhintsDuringPlay\b/ },
+  hintsDuringPlay: { schema: /^v\.boolean\(\)$/, text: 'v.boolean()', default: 'true', effect: /\bselectHintsDuringPlay\b|\bhintsDuringPlay\b/, dueWith: ['S11'] },
 };
 const ACTIONS = ['set-language', 'set-digits', 'set-sound', 'set-music', 'set-vibration', 'set-theme', 'set-color-blind', 'set-reduce-motion', 'set-hints-during-play', 'finish-tutorial'];
 const ROW_ACTIONS = ACTIONS.filter((action) => action !== 'finish-tutorial' && action !== 'set-language');
@@ -159,10 +161,12 @@ function checkStore(ctx, src, label) {
     return;
   }
   const source = read(store);
+  // The first publish is any set(...) call: set(next), or the template's set({ ... }) of what
+  // save.doc() holds after the write (state-stores rule 2). It must come after save.update.
   const update = source.search(/save\.update\s*\(/);
-  const publish = source.search(/\bset\s*\(\s*next/);
+  const publish = source.search(/\bset\s*\(/);
   if (update === -1 || publish === -1 || update > publish) {
-    ctx.problem({ file: `${label}/stores/settings-store.ts`, line: update === -1 ? 1 : lineOf(source, update), rule: 'persist-then-publish', message: 'dispatch does not call save.update before set(next)', fix: 'Reduce, then save.update(...) (sync, one transaction), then set(next).' });
+    ctx.problem({ file: `${label}/stores/settings-store.ts`, line: update === -1 ? 1 : lineOf(source, update), rule: 'persist-then-publish', message: 'dispatch does not call save.update before it publishes with set(...)', fix: 'Reduce, then save.update(...) (sync, one transaction), then set(...) with what save.doc() holds (templates/settings-store.ts).' });
   }
   ctx.checked += 1;
 }
@@ -193,7 +197,10 @@ function checkRowsAndEffects(ctx, files, label) {
   const effects = files.filter((file) => !NOT_EFFECT.some((pattern) => pattern.test(file.rel)));
   for (const [key, field] of Object.entries(FIELDS)) {
     if (!effects.some((file) => field.effect.test(file.text))) {
-      ctx.problem({ file: `${label}`, line: 1, rule: 'setting-effect', message: `nothing outside the settings screen reads ${key}: the setting has no effect`, fix: `Apply it where references/settings-model.md says (the "${key}" row of the effects table).` });
+      const problem = { file: `${label}`, line: 1, rule: 'setting-effect', message: `nothing outside the settings screen reads ${key}: the setting has no effect`, fix: `Apply it where references/settings-model.md says (the "${key}" row of the effects table).` };
+      // An effect that lands with a screen (hints: use-hints-during-play.ts with S11) is due with it.
+      if (field.dueWith === undefined) ctx.problem(problem);
+      else dueProblem(ctx, field.dueWith, problem);
     }
   }
   for (const file of effects) {
