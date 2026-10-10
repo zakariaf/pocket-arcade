@@ -13,6 +13,7 @@ import { LanguageChoiceScreen } from '@e07/shell/screens/first-run/language-choi
 import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
 import { GameScreen } from '@e07/shell/screens/game/game-screen.tsx';
 import { HomeScreen } from '@e07/shell/screens/home/home-screen.tsx';
+import { HowToPlayScreen } from '@e07/shell/screens/how-to-play/how-to-play-screen.tsx';
 import { LevelsScreen } from '@e07/shell/screens/levels/levels-screen.tsx';
 import { PremiumScreen } from '@e07/shell/screens/premium/premium-screen.tsx';
 import { AboutScreen } from '@e07/shell/screens/settings/about/about-screen.tsx';
@@ -65,7 +66,7 @@ export const rootStack = createNativeStackNavigator({
         PrivacyPolicy: PrivacyPolicyScreen,
         Licences: LicencesScreen,
         Premium: PremiumScreen,
-        HowToPlay: NotBuiltScreen,
+        HowToPlay: HowToPlayScreen,
       },
     },
     Debug: {
