@@ -9736,6 +9736,56 @@
         ]
       }
     },
+    "pocket-arcade-index": {
+      "SKILL.md": {
+        "recorded": "2026-10-10",
+        "sources": [
+          {
+            "path": "docs/17-claude-code-playbook.md",
+            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "docs/99-final-decisions.md",
+            "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          }
+        ]
+      },
+      "assets/index.json": {
+        "recorded": "2026-10-10",
+        "sources": [
+          {
+            "path": "docs/17-claude-code-playbook.md",
+            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "docs/99-final-decisions.md",
+            "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          }
+        ]
+      },
+      "references/build-orders.md": {
+        "recorded": "2026-10-10",
+        "sources": [
+          {
+            "path": "docs/17-claude-code-playbook.md",
+            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "docs/99-final-decisions.md",
+            "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          }
+        ]
+      },
+      "references/loading-and-reporting.md": {
+        "recorded": "2026-10-10",
+        "sources": [
+          {
+            "path": "docs/17-claude-code-playbook.md",
+            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          }
+        ]
+      }
+    },
     "pocket-arcade-product-spec": {
       "SKILL.md": {
         "recorded": "2026-10-01",
