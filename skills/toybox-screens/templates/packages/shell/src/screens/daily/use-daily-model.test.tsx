@@ -3,6 +3,8 @@ import { renderHook } from '@testing-library/react-native';
 
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
+import { createHostWrapper } from '@e07/shell/testing/create-host-wrapper.tsx';
+import { createTestSave } from '@e07/shell/testing/create-test-save.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { useDailyModel } from './use-daily-model.ts';
@@ -51,5 +53,36 @@ describe('useDailyModel', () => {
       ['Game', today],
     ]);
     expect(mockGoBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("resumes today's saved daily from Play, and starts it over another day's run (N10)", async () => {
+    mockNavigate.mockClear();
+    const clock = createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' });
+    const shell = createHostWrapper({ services: { clock, save: createTestSave(clock).save } });
+    const { result } = await renderHook(() => useDailyModel(), { wrapper: shell.wrapper });
+
+    shell.host.openSession({ start: 'new', ref: { kind: 'daily', date: '2026-09-26' } });
+    result.current.onPlay();
+    shell.host.openSession({ start: 'new', ref: { kind: 'daily', date: '2026-09-25' } });
+    result.current.onPlay();
+
+    expect(mockNavigate.mock.calls).toStrictEqual([
+      ['Game', { start: 'resume' }],
+      ['Game', { start: 'new', ref: { kind: 'daily', date: '2026-09-26' } }],
+    ]);
+  });
+
+  it('plays the day the clock says when Play is pressed, past midnight on an open S9', async () => {
+    mockNavigate.mockClear();
+    const clock = createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' });
+    const { wrapper } = createShellWrapper({ services: { clock } });
+    const { result } = await renderHook(() => useDailyModel(), { wrapper });
+
+    clock.advance(12 * 3_600_000 + 60_000);
+    result.current.onPlay();
+
+    expect(mockNavigate.mock.calls).toStrictEqual([
+      ['Game', { start: 'new', ref: { kind: 'daily', date: '2026-09-27' } }],
+    ]);
   });
 });

@@ -126,7 +126,7 @@ Groups switch by their if-hooks, never by `navigate`: a hook reads the settings 
 | Home | Endless card | `navigate('Game', { start: 'resume' })` when an endless run is saved, else `navigate('Game', { start: 'new', ref: { kind: 'endless' } })` |
 | Home | Levels / Statistics / How to play / Premium / settings gear | `navigate('Levels')`, `navigate('Stats')`, `navigate('HowToPlay')`, `navigate('Premium')`, `navigate('Settings')` |
 | Levels | tap an unlocked tile | `navigate('Game', { start: 'new', ref: { kind: 'level', level } })` |
-| Daily | Play | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })` |
+| Daily | Play, and Replay once today is done | `navigate('Game', { start: 'resume' })` when today's daily run is saved, else `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })`, the day read when the key is pressed (as Home's daily Play key) |
 | Stats (empty) | Play a level | `navigate('Game', …)` as Home's Play |
 | Settings | Language / About / Privacy policy / Licences / Remove ads | `navigate('SettingsLanguage')`, `navigate('About')`, `navigate('PrivacyPolicy')`, `navigate('Licences')`, `navigate('Premium')` |
 | About | Licences | `navigate('Licences')` |

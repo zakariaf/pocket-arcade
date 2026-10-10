@@ -4,6 +4,7 @@
 // and the Game route for today's challenge. DailyView only draws what this returns.
 import { useNavigation } from '@react-navigation/native';
 
+import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
 import { localeTagFor } from '@e07/shell/i18n/digits.ts';
@@ -22,6 +23,24 @@ import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import type { DailyModel } from './daily-model.ts';
 
+/**
+ * Play and Replay: today's challenge, the day read from the clock when the key is pressed (S9: the
+ * day changes at local midnight, also while S9 stays open). The save holds one run: today's saved
+ * daily resumes, as Home's daily key does, and is never replaced by a new one (N10, 8.6). The first
+ * finished attempt of the day counts; a replay never changes it (the game host).
+ */
+function usePlayToday(): () => void {
+  const navigation = useNavigation();
+  const { save, clock } = useServices();
+  return () => {
+    const date = clock.today();
+    const saved = save.doc().run?.ref;
+    if (saved?.kind === 'daily' && saved.date === date) {
+      navigation.navigate('Game', { start: 'resume' });
+    } else navigation.navigate('Game', { start: 'new', ref: { kind: 'daily', date } });
+  };
+}
+
 export function useDailyModel(): DailyModel {
   const t = useT();
   const navigation = useNavigation();
@@ -31,10 +50,7 @@ export function useDailyModel(): DailyModel {
     localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
   );
   const { today } = summary;
-  // The first finished attempt of the day counts; a replay never changes it (the game host).
-  const playToday = (): void => {
-    navigation.navigate('Game', { start: 'new', ref: { kind: 'daily', date: today } });
-  };
+  const playToday = usePlayToday();
   return {
     monthText: formatMonthShort(today, t),
     dayText: formatNumber(Number(today.slice(8, 10))),
