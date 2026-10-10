@@ -1,8 +1,10 @@
 // packages/shell/src/screens/home/use-level-play.ts
 // Home's Play key, which S10's empty state repeats: "Continue – Level 12" while a level run is
 // saved (save.doc().run?.ref of kind 'level'; the game host writes a new run at once), else
-// "Play – Level 13", the first level never won (the level count from useGameExtra()).
-import { useNavigation } from '@react-navigation/native';
+// "Play – Level 13", the first level never won (the level count from useGameExtra()). The run is
+// read from the save on every render, and the screen re-renders when it gains focus again: the
+// Game screen that covered it is where a run starts or ends.
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { levelCountOf, useGameExtra } from '@e07/shell/app/use-game-extra.ts';
@@ -26,6 +28,7 @@ function savedLevelOf(doc: SaveDoc): number | null {
 
 export function useLevelPlay(): LevelPlay {
   const navigation = useNavigation();
+  useIsFocused(); // subscribes to focus: Home is covered while the Game screen writes the run
   const { save } = useServices();
   const levelCount = levelCountOf(useGameExtra());
   const nextLevel = useProgressStore((state) => selectNextLevel(state, levelCount));
