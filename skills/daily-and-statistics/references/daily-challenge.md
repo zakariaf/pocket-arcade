@@ -98,7 +98,7 @@ A game with `levels.daily.kind === 'none'` shows no daily card and no Daily rout
 
 ## Day boundaries: "today" is read, never cached
 
-`useToday()` (template `app/use-today.ts`) returns `clock.today()` on every render, re-renders when the screen gains focus (`useIsFocused`) and when the app comes back to the foreground (`AppState` through `useSyncExternalStore`). Never keep today in `useState`, `useRef` or a module constant; `check-daily-stats` reports it (`today-cached`). Handlers read `clock.today()` again when they run.
+`useToday()` (template `app/use-today.ts`) returns `clock.today()` on every render, re-renders when the screen gains focus (`useIsFocused`), when the app comes back to the foreground (`AppState` through `useSyncExternalStore`) and at each local midnight while the screen stays open (a timer of `ClockPort.msUntilNextLocalDay()` in the same subscription, re-armed after it fires), so Home's daily card never shows yesterday. Never keep today in `useState`, `useRef` or a module constant; `check-daily-stats` reports it (`today-cached`). Handlers read `clock.today()` again when they run.
 
 ## The daily section and its model
 
