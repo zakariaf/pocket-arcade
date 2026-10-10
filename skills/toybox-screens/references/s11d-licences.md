@@ -43,7 +43,7 @@ The template `use-licences-model.ts` (with its test) builds it: `[...shellLicenc
 
 Copy each file from `templates/` to the same path in the app repo; the code lives in `packages/shell/src/screens/settings/licences/`.
 
-- `packages/shell/src/screens/settings/licences/licence-entries.ts`
+- `packages/shell/src/screens/settings/licences/licence-entries.ts` and its test (the pure Shell rows with pinned values: group order, the fonts, the nine software and three ads-and-purchase rows, one sounds row, kebab keys, names and licences never translated)
 - `packages/shell/src/screens/settings/licences/licences-view.tsx`
 - `packages/shell/src/screens/settings/licences/licences-screen.tsx`
 - `packages/shell/src/screens/settings/licences/licences-view.test.tsx`
