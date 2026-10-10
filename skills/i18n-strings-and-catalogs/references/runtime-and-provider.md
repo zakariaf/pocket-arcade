@@ -134,7 +134,7 @@ react-intl calls `onError` and shows the key. In the app `onError` goes to the e
 | polyfills | `intl-status.test.ts` | polyfills active; `۱٬۲۳۴٫۵` for ckb; fa `one` holds 0 |
 | `resolveLanguage` | `resolve-language.test.ts` | saved wins; ckb, `ku-Arab`, prs, `ku-Latn`->next, `kmr`->en, empty->en; `phoneLanguageOf` reads `ku-Arab` as ckb; autonyms pinned |
 | `t()` | `create-t.test.ts` | the plural table; `=0` over fa `one`; Latin digits; percent; FSI/PDI; number to a text placeholder reported |
-| dates | `format-date.test.ts` | `formatDayMonth` in all four languages; the month, weekday name, weekday letter and weekday-day-month helpers (the weekday number is game-kit's `isoWeekday` from `dates/date-key.ts`, tested there) |
+| dates | `format-date.test.ts` | `formatDayMonth` in all four languages, `formatDayMonthYear` in en and fa (no isolate inside); the month, weekday name, weekday letter and weekday-day-month helpers (the weekday number is game-kit's `isoWeekday` from `dates/date-key.ts`, tested there) |
 | game texts | `game-message-text.test.ts` | a game `Message` in en/de/fa with its plural and digits; a bare id |
 | `<T>` | `t.test.tsx` | English text; fa text with `writingDirection: 'rtl'`, start alignment, `Vazirmatn-Bold` |
 | linter | `catalog-lint-rules.test.ts` | the rules fire; the debug menu exemption |
