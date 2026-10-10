@@ -68,4 +68,36 @@ describe('route guards', () => {
     expect(screen.getByTestId('home.screen')).toBeOnTheScreen();
     expect(screen.queryByTestId('tutorial.screen')).not.toBeOnTheScreen();
   });
+
+  // Spec S2: Continue on a language that reads the other way restarts the app once. Until the
+  // reload the language choice stays: the tutorial never mounts in the old direction.
+  it('keeps the language choice on screen while its direction restart runs (spec S2)', async () => {
+    const { stores } = await renderWithShell(<Navigation />);
+    await act(() => {
+      stores.restart.getState().begin('rtl');
+      stores.settings.getState().dispatch({ type: 'set-language', language: 'fa' });
+    });
+    expect(screen.getByTestId('language-choice.screen')).toBeOnTheScreen();
+    expect(screen.queryByTestId('tutorial.screen')).not.toBeOnTheScreen();
+
+    await act(() => {
+      stores.restart.getState().cancel();
+    });
+    expect(screen.getByTestId('tutorial.screen')).toBeOnTheScreen();
+  });
+
+  // Spec S2: a restart that failed keeps the language choice on screen, so Continue can try
+  // again; the tutorial never mounts in the old direction.
+  it('keeps the language choice on screen after its direction restart failed (spec S2)', async () => {
+    const { stores } = await renderWithShell(<Navigation />);
+    await act(() => {
+      stores.restart.getState().begin('rtl');
+      stores.settings.getState().dispatch({ type: 'set-language', language: 'fa' });
+    });
+    await act(() => {
+      stores.restart.getState().fail();
+    });
+    expect(screen.getByTestId('language-choice.screen')).toBeOnTheScreen();
+    expect(screen.queryByTestId('tutorial.screen')).not.toBeOnTheScreen();
+  });
 });

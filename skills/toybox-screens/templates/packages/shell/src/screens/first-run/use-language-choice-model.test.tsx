@@ -1,15 +1,17 @@
 // packages/shell/src/screens/first-run/use-language-choice-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
-import { getLocales } from 'expo-localization';
 
 import { restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
+import { selectIsRestartHeld } from '@e07/shell/stores/restart-store.ts';
+import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
-import { phoneLanguageOf, useLanguageChoiceModel } from './use-language-choice-model.ts';
+import { useLanguageChoiceModel } from './use-language-choice-model.ts';
 
-jest.mock('expo-localization', () => ({ getLocales: jest.fn() }));
+import type { DeviceLocale } from '@e07/shell/i18n/resolve-language.ts';
+
 jest.mock('@e07/shell/i18n/direction.ts', () => ({
   readLayoutDirection: () => 'ltr',
   restartForDirection: jest.fn(() => Promise.resolve()),
@@ -20,9 +22,9 @@ jest.mock('@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts', () =>
 
 const GERMAN_PHONE = [{ languageCode: 'de', languageScriptCode: null }];
 
-async function languageChoice(locales: readonly object[]) {
-  jest.mocked(getLocales).mockReturnValue(locales as ReturnType<typeof getLocales>);
+async function languageChoice(locales: readonly DeviceLocale[]) {
   const shell = createShellWrapper({
+    deviceLocales: locales,
     services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
   });
   const view = await renderHook(() => useLanguageChoiceModel(), { wrapper: shell.wrapper });
@@ -65,7 +67,73 @@ describe('useLanguageChoiceModel', () => {
     expect(jest.mocked(restartForDirection)).toHaveBeenCalledWith('rtl', expect.anything());
   });
 
-  it('reads Sorani from a Kurdish locale written in Arabic script', () => {
-    expect(phoneLanguageOf([{ languageCode: 'ku', languageScriptCode: 'Arab' }])).toBe('ckb');
+  // Spec S2: Continue is the one tap. While its restart runs S2 stays on screen, and another
+  // choice saves nothing, so the saved language and the reload's direction always agree.
+  it('saves nothing and restarts nothing more while its restart is pending', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    await act(() => {
+      result.current.onSelect('de');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    expect([
+      stores.settings.getState().settings.language,
+      result.current.selected,
+      jest.mocked(restartForDirection).mock.calls.length,
+    ]).toStrictEqual(['fa', 'fa', 1]);
+  });
+
+  // Spec S2: a restart that failed keeps S2 on screen and Continue tries again; a language that
+  // needs no restart lets the player go on in the current layout.
+  it('keeps S2 after a failed restart: Continue tries again, or goes on without a flip', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    const isHeldAfterFailure = selectIsRestartHeld(stores.restart.getState());
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    expect([isHeldAfterFailure, jest.mocked(restartForDirection).mock.calls.length]).toStrictEqual([
+      true,
+      2,
+    ]);
+  });
+
+  it('lets the player go on after a failed restart with a language of the current direction', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    await act(() => {
+      result.current.onSelect('en');
+    });
+    await act(() => {
+      result.current.onContinue();
+    });
+    expect([
+      stores.settings.getState().settings.language,
+      selectIsRestartHeld(stores.restart.getState()),
+    ]).toStrictEqual(['en', false]);
   });
 });

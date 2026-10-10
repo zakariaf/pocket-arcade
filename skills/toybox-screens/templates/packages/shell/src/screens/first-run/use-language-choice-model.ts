@@ -1,35 +1,44 @@
 // packages/shell/src/screens/first-run/use-language-choice-model.ts
-// S2's model hook. The phone's languages come from expo-localization (read on mount); tapping a
-// row only previews it (Continue reads in that language); Continue saves the language and
-// firstRun.languageChosen in one set-language action, and when the chosen language reads the
-// other way it restarts in the new direction (the Continue tap is the one tap). The FirstRun
-// group then opens the tutorial by itself: this hook never navigates.
-import { getLocales } from 'expo-localization';
+// S2's model hook. The phone's languages come from the composition root (useDeviceLocales);
+// tapping a row only previews it (Continue reads in that language); Continue saves the language
+// and firstRun.languageChosen in one set-language action, and when the chosen language reads the
+// other way it restarts in the new direction (the Continue tap is the one tap). S11a's planner
+// (planLanguageChange and restartDirectionOf, settings-and-preferences) decides both, so S2 and
+// S11a share one restart rule. While that restart is pending S2 saves and restarts nothing more
+// (the saved language and the reload agree); after a failed one S2 stays, Continue tries again,
+// and a language that needs no flip lets go of it. The FirstRun group then opens the tutorial by
+// itself: this hook never navigates.
 import { useState } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
+import { useStores } from '@e07/shell/app/stores-context.tsx';
 import { useDirectionRestart } from '@e07/shell/app/use-direction-restart.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { createLanguageT } from '@e07/shell/i18n/create-language-t.ts';
+import { useDeviceLocales } from '@e07/shell/i18n/device-locales-context.tsx';
 import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
-import { directionOf } from '@e07/shell/i18n/languages.ts';
 import { phoneLanguageOf } from '@e07/shell/i18n/resolve-language.ts';
+import {
+  planLanguageChange,
+  restartDirectionOf,
+} from '@e07/shell/screens/settings/language/language-change.ts';
+import { selectIsRestartPending } from '@e07/shell/stores/restart-store.ts';
 import { selectDigits, selectDispatch } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import type { LanguageChoiceModel } from './language-choice-view.tsx';
 import type { Language } from '@e07/shell/i18n/languages.ts';
 
-// The phone-language rule is the boot's own (resolveLanguage); its test reaches it through S2's model.
-export { phoneLanguageOf } from '@e07/shell/i18n/resolve-language.ts';
-
 export function useLanguageChoiceModel(): LanguageChoiceModel {
-  const [phoneLanguage] = useState(() => phoneLanguageOf(getLocales()));
+  const deviceLocales = useDeviceLocales();
+  const phoneLanguage = phoneLanguageOf(deviceLocales);
   const [selected, setSelected] = useState<Language>(phoneLanguage ?? 'en');
   const digits = useSettingsStore(selectDigits);
   const dispatch = useSettingsStore(selectDispatch);
   const restart = useDirectionRestart();
   const { errorLog } = useServices();
+  const { restart: restartStore } = useStores();
+  const isRestartPending = (): boolean => selectIsRestartPending(restartStore.getState());
   return {
     selected,
     phoneLanguage,
@@ -37,11 +46,20 @@ export function useLanguageChoiceModel(): LanguageChoiceModel {
       errorLog.record('i18n', error);
     }),
     isReducedMotion: useReduceMotion(),
-    onSelect: setSelected,
+    onSelect: (language) => {
+      if (!isRestartPending()) setSelected(language);
+    },
     onContinue: () => {
-      dispatch({ type: 'set-language', language: selected });
-      const direction = directionOf(selected);
-      if (direction !== readLayoutDirection()) restart(direction);
+      if (isRestartPending()) return;
+      const change = planLanguageChange({
+        next: selected,
+        deviceLocales,
+        layoutDirection: readLayoutDirection(),
+      });
+      dispatch(change.action);
+      const direction = restartDirectionOf(change);
+      if (direction === null) restartStore.getState().cancel();
+      else restart(direction);
     },
   };
 }

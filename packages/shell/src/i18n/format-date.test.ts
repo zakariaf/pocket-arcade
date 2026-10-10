@@ -6,6 +6,7 @@ import { createT } from './create-t.ts';
 import { localeTagFor } from './digits.ts';
 import {
   formatDayMonth,
+  formatDayMonthYear,
   formatMonthShort,
   formatWeekdayDayMonth,
   formatWeekdayLetter,
@@ -57,6 +58,16 @@ describe('formatDayMonth', () => {
         `روزانه – ${FSI}۲۶ سپتامبر${PDI}`,
       );
     });
+  });
+});
+
+// Spec S11c: the policy's last change, "27 Sep 2026", as one run of the player's language.
+describe('formatDayMonthYear', () => {
+  it.each([
+    ['en', '27 Sep 2026'],
+    ['fa', '۲۷ سپتامبر ۲۰۲۶'],
+  ] as const)('formats 2026-09-27 in %s with no isolate inside', (language, expected) => {
+    expect(formatDayMonthYear('2026-09-27', tFor(language))).toBe(expected);
   });
 });
 

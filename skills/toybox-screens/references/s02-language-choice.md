@@ -20,7 +20,7 @@ S2 lets a Persian or Sorani speaker whose phone is set to English switch at once
 - The phone's language is pre-selected when it is one of the four; otherwise English.
 - One big Continue button, **in the selected language**: the view passes `labelLanguage={model.selected}`, so the label takes that language's font and VoiceOver its voice even on a screen in another language.
 - One tap and done; it can be changed any time in Settings.
-- After Continue, the first launch goes to the tutorial level (S13), not to Home: dispatch `set-language` and let the FirstRun group's `if` hooks move on (never `navigate`). A direction flip restarts the app on the same tap.
+- After Continue, the first launch goes to the tutorial level (S13), not to Home: dispatch `set-language` and let the FirstRun group's `if` hooks move on (never `navigate`). A direction flip restarts the app on the same tap. While that restart is pending, S2 saves and restarts nothing more (rows and Continue do nothing), so the saved language and the reload agree; if it fails, S2 stays (the tutorial never mounts in the old direction), Continue tries again, and a language that needs no flip goes on.
 
 ## Layout, top to bottom
 
@@ -37,7 +37,7 @@ The selected option moves with each tap; the Continue label follows the selected
 
 ## Data the model supplies
 
-`LanguageChoiceModel`: `selected`, `phoneLanguage` (null when the phone's language is not one of the four), `tSelected` (t() in the selected language), `isReducedMotion`, `onSelect`, `onContinue`. The template `use-language-choice-model.ts` (with its test) builds it: the phone's languages from expo-localization's `getLocales()` (the first one the app speaks, else English preselected), `tSelected` from `createLanguageT(selected, digits, onError)` (`i18n/create-language-t.ts`: the Shell catalogs in the chosen language), a tap only previews; Continue dispatches `set-language` (which also sets `firstRun.languageChosen`) and, when the chosen language reads the other way than `readLayoutDirection()`, calls `useDirectionRestart()` (audio disposed, then the reload). The FirstRun group then opens the tutorial; the hook never navigates.
+`LanguageChoiceModel`: `selected`, `phoneLanguage` (null when the phone's language is not one of the four), `tSelected` (t() in the selected language), `isReducedMotion`, `onSelect`, `onContinue`. The template `use-language-choice-model.ts` (with its test) builds it: the phone's languages from `useDeviceLocales()` (the composition root read them once; the first one the app speaks, else English preselected), `tSelected` from `createLanguageT(selected, digits, onError)` (`i18n/create-language-t.ts`: the Shell catalogs in the chosen language), a tap only previews; Continue dispatches the `set-language` action of `planLanguageChange` (settings-and-preferences' `language-change.ts`; it also sets `firstRun.languageChosen`) and, when `restartDirectionOf` says the chosen language reads the other way than `readLayoutDirection()` (the one rule S11a uses too), calls `useDirectionRestart()` (audio disposed, then the reload; it holds the restart pending in the Shell's `restart` store, so the FirstRun guard keeps S2 on screen until the reload). The FirstRun group then opens the tutorial; the hook never navigates.
 
 ## Templates
 

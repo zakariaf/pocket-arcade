@@ -1,6 +1,7 @@
 // packages/shell/src/stores/create-shell-stores.ts
 import { createPremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
 import { createProgressStore } from '@e07/shell/stores/progress-store.ts';
+import { createRestartStore } from '@e07/shell/stores/restart-store.ts';
 import { createSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { createStatsStore } from '@e07/shell/stores/stats-store.ts';
 
@@ -17,5 +18,6 @@ export function createShellStores(save: SaveService): ShellStores {
     progress: createProgressStore(save),
     stats: createStatsStore(save),
     premium: createPremiumStore(save),
+    restart: createRestartStore(),
   };
 }

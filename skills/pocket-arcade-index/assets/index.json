@@ -1034,6 +1034,7 @@
             "skill": "i18n-strings-and-catalogs",
             "paths": [
               "packages/shell/src/i18n/i18n-provider.tsx",
+              "packages/shell/src/i18n/device-locales-context.tsx",
               "packages/shell/src/i18n/language-context.tsx",
               "packages/shell/src/i18n/t-bridge.tsx",
               "packages/shell/src/i18n/t-context.ts",
@@ -1138,6 +1139,7 @@
               "packages/shell/src/app/startup-splash*",
               "packages/shell/src/app/use-game-extra*",
               "packages/shell/src/app/use-is-online*",
+              "packages/shell/src/app/use-open-external*",
               "packages/shell/src/screens/consent/**",
               "packages/shell/src/screens/dialogs/**",
               "packages/shell/src/screens/game/game-layout*",
@@ -1336,6 +1338,13 @@
                 ]
               },
               {
+                "skill": "settings-and-preferences",
+                "paths": [
+                  "packages/shell/src/screens/settings/language/language-change*"
+                ],
+                "note": "S2's Continue plans the language change with S11a's planner (planLanguageChange, restartDirectionOf): one restart rule"
+              },
+              {
                 "skill": "toybox-visual-parity",
                 "paths": [
                   "parity/**"
@@ -1452,8 +1461,8 @@
               {
                 "skill": "settings-and-preferences",
                 "paths": [
-                  "packages/shell/src/screens/settings/settings-resets*",
-                  "packages/shell/src/screens/settings/use-settings-resets.ts"
+                  "packages/shell/src/stores/settings-resets*",
+                  "packages/shell/src/stores/use-settings-resets*"
                 ]
               }
             ]
@@ -1768,8 +1777,8 @@
           "skill": "unit-and-component-tests"
         },
         {
-          "files": "packages/shell/src/app/use-is-online.ts, use-game-extra.ts, read-version-text.ts, premium-screen-deps-context.tsx, game-startup-splash.tsx and crash-screen.tsx, packages/shell/src/ui/screen-body.tsx and packages/shell/src/testing/test-game-extra.ts, with their tests",
-          "part": "the screens' app helpers the root and the providers import: connectivity, the game extra, the version text, Premium's dependencies, the game's startup splash and the crash screen",
+          "files": "packages/shell/src/app/use-is-online.ts, use-open-external.ts, use-game-extra.ts, read-version-text.ts, premium-screen-deps-context.tsx, game-startup-splash.tsx and crash-screen.tsx, packages/shell/src/ui/screen-body.tsx and packages/shell/src/testing/test-game-extra.ts, with their tests",
+          "part": "the screens' app helpers the root and the providers import: connectivity, the hand-off to another app, the game extra, the version text, Premium's dependencies, the game's startup splash and the crash screen",
           "skill": "toybox-screens"
         },
         {

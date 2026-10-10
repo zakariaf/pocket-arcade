@@ -15,7 +15,7 @@ import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { useNumberFormatter, usePercentFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { useLevelPlay } from '@e07/shell/screens/home/use-level-play.ts';
-import { useSettingsResets } from '@e07/shell/screens/settings/use-settings-resets.ts';
+import { useSettingsResets } from '@e07/shell/stores/use-settings-resets.ts';
 
 import { statsSnapshotOf } from './stats-snapshot-of.ts';
 import { useStatsSummary } from './use-stats-summary.ts';

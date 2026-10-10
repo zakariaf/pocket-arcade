@@ -19,8 +19,11 @@ const OVER_TEMPLATES = {
   'bad-rate-outline-star': ['--screen', 'S11'],
   'bad-debug-perf-row-missing': ['--screen', 'S15'],
   'bad-borrowed-missing': ['--screen', 'S6'],
+  'bad-borrowed-resets-old-place': ['--screen', 'S10'],
   'bad-continue-offer-hidden-while-loading': ['--screen', 'S7'],
   'bad-loss-not-finished': ['--screen', 'S5'],
+  // S11b passes SubPage a wrong testIDBase: its screen and top-bar ids are missing.
+  'bad-subpage-base': ['--screen', 'S11b'],
 };
 
 await runSelftest(import.meta.url, [

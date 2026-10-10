@@ -44,11 +44,18 @@ const LINK_TARGETS = {
   licences: 'onOpenLicences',
   rate: 'onRate',
   contact: 'onContact',
-} as const;
+} as const satisfies Partial<Record<SettingsRowId, keyof SettingsExtras>>;
+
+type LinkRowId = keyof typeof LINK_TARGETS;
+
+function isLinkRow(id: SettingsRowId): id is LinkRowId {
+  return Object.hasOwn(LINK_TARGETS, id);
+}
 
 /** What each row shows and does. Segmented, volume and Premium-active rows bind in their own components. */
 export function bindSettingsRow(id: SettingsRowId, input: BindingInput): SettingsRowBinding {
   const { model, extras } = input;
+  if (isLinkRow(id)) return { onPress: extras[LINK_TARGETS[id]] };
   const { settings, actions } = model;
   switch (id) {
     case 'language':
@@ -67,16 +74,6 @@ export function bindSettingsRow(id: SettingsRowId, input: BindingInput): Setting
       return toggle(settings.hintsDuringPlay, actions.onToggleHints);
     case 'remove-ads':
       return removeAds(input);
-    case 'restore-purchase':
-    case 'ad-privacy':
-    case 'privacy-policy':
-    case 'reset-stats':
-    case 'reset-progress':
-    case 'about':
-    case 'licences':
-    case 'rate':
-    case 'contact':
-      return { onPress: extras[LINK_TARGETS[id]] };
     case 'numbers':
     case 'theme':
     case 'sound-volume':

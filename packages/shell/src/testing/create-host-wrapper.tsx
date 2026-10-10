@@ -5,7 +5,9 @@
 // in the app; a run end is saved and then published to the section stores (updateAndPublish, as
 // the composition root does), so S7's endless best and streak read the new values. The Shell clock
 // is TEST_CLOCK (2026-09-26) unless the test passes services.clock. Pass `host` for what a test
-// changes (hasMusic, credits, how-to-play pages).
+// changes (hasMusic, credits, how-to-play pages). S11's Ad privacy choices come from the consent
+// moment in the app; here a stand-in opens Google's options through the test's consent port.
+import { AdPrivacyChoicesContext } from '@e07/shell/app/consent-moment-context.tsx';
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createGameHost } from '@e07/shell/game-host/game-host.ts';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
@@ -13,9 +15,10 @@ import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
 import { updateAndPublish } from '@e07/shell/stores/update-and-publish.ts';
 import { createTestSave, TEST_CLOCK } from '@e07/shell/testing/create-test-save.ts';
-import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
+import { createShellWrapper, createTestServices } from '@e07/shell/testing/render-with-shell.tsx';
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
 
+import type { Services } from '@e07/shell/app/services-context.tsx';
 import type { GameHost, GameHostDeps } from '@e07/shell/game-host/game-host.ts';
 import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { Catalog } from '@e07/shell/i18n/messages.ts';
@@ -86,6 +89,19 @@ function hostDepsFor(save: SaveService, clock: ClockPort, stores: SectionStores)
   };
 }
 
+/**
+ * Stands in for the consent moment's Ad privacy choices (ShellFeatures in the app): Google's
+ * options through the test's consent port, a failure logged.
+ */
+function adPrivacyChoicesStandIn(services: Partial<Services> = {}): () => void {
+  const { consent, errorLog } = createTestServices(services);
+  return () => {
+    consent.showPrivacyOptions().catch((error: unknown) => {
+      errorLog.record('ads', error);
+    });
+  };
+}
+
 /** The provider tree for renderHook(): the Shell's providers, the game catalogs, the game host. */
 export function createHostWrapper(options: HostWrapperOptions = {}): HostWrapper {
   const clock = options.services?.clock ?? TEST_CLOCK;
@@ -98,6 +114,7 @@ export function createHostWrapper(options: HostWrapperOptions = {}): HostWrapper
   const language = options.language ?? 'en';
   const digits = shell.stores.settings.getState().settings.digits;
   const ShellRoot = shell.wrapper;
+  const reopenAdPrivacy = adPrivacyChoicesStandIn(options.services);
   function HostRoot({ children }: { readonly children: ReactNode }): ReactNode {
     return (
       <ShellRoot>
@@ -107,7 +124,9 @@ export function createHostWrapper(options: HostWrapperOptions = {}): HostWrapper
           gameCatalogs={TALLY_CATALOGS}
           onError={failOnMissingMessage}
         >
-          <GameHostProvider host={host}>{children}</GameHostProvider>
+          <GameHostProvider host={host}>
+            <AdPrivacyChoicesContext value={reopenAdPrivacy}>{children}</AdPrivacyChoicesContext>
+          </GameHostProvider>
         </I18nProvider>
       </ShellRoot>
     );

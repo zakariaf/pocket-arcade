@@ -298,7 +298,8 @@ export type ErrorSource =
   | 'global-handler'
   | 'boot'
   | 'i18n'
-  | 'network';
+  | 'network'
+  | 'hand-off';
 
 export type ErrorLogEntry = {
   readonly atMs: number;

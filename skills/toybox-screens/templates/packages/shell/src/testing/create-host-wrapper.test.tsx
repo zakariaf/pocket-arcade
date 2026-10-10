@@ -1,10 +1,12 @@
 // packages/shell/src/testing/create-host-wrapper.test.tsx
 import { renderHook } from '@testing-library/react-native';
 
+import { useOptionalAdPrivacyChoices } from '@e07/shell/app/consent-moment-context.tsx';
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { createFakeConsent } from '@e07/shell/services/consent/fake-consent.ts';
 
 import { createHostWrapper, TALLY_TEXTS } from './create-host-wrapper.tsx';
 import { TALLY_GAME } from './tally-game.ts';
@@ -79,5 +81,19 @@ describe('createHostWrapper', () => {
     expect(best).toBeGreaterThan(0);
     expect(shell.stores.progress.getState().progress.endlessBest).toBe(best);
     expect(shell.stores.stats.getState().stats.gamesPlayed).toBe(1);
+  });
+
+  // S11's Ad privacy choices come from the consent moment (ShellFeatures); model-hook tests get a
+  // stand-in that opens Google's options through the test's consent port.
+  it("stands in for the consent moment's Ad privacy choices, through the consent port", async () => {
+    const calls: string[] = [];
+    const info = { canRequestAds: true, isPrivacyOptionsRequired: true };
+    const consent = createFakeConsent({ afterRefresh: info, afterForm: info, calls });
+    const shell = createHostWrapper({ services: { consent } });
+    const { result } = await renderHook(() => useOptionalAdPrivacyChoices(), {
+      wrapper: shell.wrapper,
+    });
+    result.current?.();
+    expect(calls).toStrictEqual(['showPrivacyOptions']);
   });
 });

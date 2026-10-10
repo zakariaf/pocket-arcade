@@ -1,5 +1,6 @@
 // packages/shell/src/navigation/route-guards.ts
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
+import { selectIsRestartHeld, useRestartStore } from '@e07/shell/stores/restart-store.ts';
 import {
   selectIsFirstRun,
   selectNeedsLanguageChoice,
@@ -20,9 +21,15 @@ export function useIsMainApp(): boolean {
   return !useSettingsStore(selectIsFirstRun);
 }
 
-/** S2 only until a language is chosen; a relaunch after a direction reload opens Tutorial. */
+/**
+ * S2 until a language is chosen, and while the direction restart that choice started is pending
+ * or has failed (the tutorial never mounts in the old direction; Continue tries again); a
+ * relaunch after the reload opens Tutorial.
+ */
 export function useNeedsLanguageChoice(): boolean {
-  return useSettingsStore(selectNeedsLanguageChoice);
+  const isChoiceNeeded = useSettingsStore(selectNeedsLanguageChoice);
+  const isRestartHeld = useRestartStore(selectIsRestartHeld);
+  return isChoiceNeeded || isRestartHeld;
 }
 
 /** Debug group (S15): test builds only. TEST_ONLY drives behaviour, never code inclusion. */

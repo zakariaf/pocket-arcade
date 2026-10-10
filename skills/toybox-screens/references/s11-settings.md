@@ -67,7 +67,7 @@ Footer (column, start-aligned, gap 4, 14 muted, padding 0 / 4 / 8): an 18 pt che
 | `onBack`, `onOpenLanguage`, `onOpenAbout`, `onOpenLicences`, `onOpenPrivacyPolicy`, `onOpenPremium` | `use-settings-routes.ts`: `navigation.goBack()` and `navigate('SettingsLanguage' \| 'About' \| 'Licences' \| 'PrivacyPolicy' \| 'Premium')`; in a partial Shell a route outside the slice shows `NotBuiltScreen`, never a no-op |
 | `onRate`, `onContact` | `use-settings-links.ts`: `Linking.openURL` with `storeReviewUrl(extra.appStoreId)` (nothing until the game has an App Store id) and `supportMailUrl(extra.links.supportEmail, versionText)` from `config/external-links.ts` (settings-and-preferences; the one file allowed to hold URLs); a failed hand-off is logged |
 | `onRestorePurchase` | `restorePremium(usePremiumScreenDeps().service).catch(service.onError)` |
-| `onOpenAdPrivacy` | the consent port's `showPrivacyOptions()` (the row shows only where privacy options are required) |
+| `onOpenAdPrivacy` | the consent moment's privacy choices (`useOptionalAdPrivacyChoices()`, admob-ads: Google's `showPrivacyOptions()`, the answer saved, a yes after a refusal shows banners again without a relaunch); there is no fallback: without the moment's provider the hook throws (a bare port call would drop the answer), and hook tests get `create-host-wrapper.tsx`'s stand-in, which opens Google's options through the test's consent port. The row shows only where privacy options are required |
 | `onResetStats`, `onResetProgress` | `useOpenDialog()({ kind: 'reset-stats' \| 'reset-progress', onConfirm })` with `useSettingsResets()`'s `onConfirmResetStats` / `onConfirmResetProgress` (one `updateAndPublish` each); a parity capture of `s14-reset-all-progress` opens the reset-progress request once with `frozenProgress: 0.46` (`useParityOpener`) |
 
 The route file is `const model = useSettingsModel(useSettingsContext()); const extras = useSettingsExtras(); return <SettingsView model={model} extras={extras} />`. Keep every handler synchronous (end promises with `.catch`).
@@ -85,12 +85,13 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/settings/settings-row-specs.ts`
 - `packages/shell/src/screens/settings/settings-row.tsx`
 - `packages/shell/src/screens/settings/settings-view.tsx`
+- `packages/shell/src/screens/settings/sub-page.tsx` and `sub-page.test.tsx`: `SubPage`, the frame S11 and S11a to S11d share (`ScreenFrame` under the home indicator, `TopBar` with the title and Back, `ScreenBody` with the page's gap); its `testIDBase` gives `<base>.screen` and `<base>.top-bar` (with `.back-button` and `.title`), and check-screens derives those ids from it
 - `packages/shell/src/screens/settings/settings-volume-row.tsx`
 - `packages/shell/src/screens/settings/settings-screen.tsx`
 - `packages/shell/src/screens/settings/use-settings-extras.ts`, `use-settings-routes.ts`, `use-settings-links.ts`, with `use-settings-extras.test.tsx` and `use-settings-links.test.tsx`
 - `packages/shell/src/app/read-version-text.ts` and its test
 - `packages/shell/src/screens/settings/settings-view.test.tsx`
-- From settings-and-preferences: `use-settings-model.ts`, `use-settings-context.ts`, `settings-rows.ts`, `settings-preference-actions.ts`, `use-settings-resets.ts` and `config/external-links.ts`, with their tests
+- From settings-and-preferences: `use-settings-model.ts`, `use-settings-context.ts`, `settings-rows.ts`, `settings-preference-actions.ts`, `stores/use-settings-resets.ts` and `config/external-links.ts`, with their tests
 
 ## testIDs
 

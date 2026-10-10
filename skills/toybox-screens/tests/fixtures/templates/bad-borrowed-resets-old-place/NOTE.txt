@@ -1,0 +1,4 @@
+S10 Statistics built from the templates, with the reset hook still in its old place,
+screens/settings/use-settings-resets.ts. Since E14 the resets are a cross-section store write in
+stores/ (settings-resets.ts and use-settings-resets.ts), and S10's model imports them from there:
+check-screens --screen S10 must name the missing stores/ file and its owner.

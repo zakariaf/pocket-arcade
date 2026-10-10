@@ -1,6 +1,7 @@
 // packages/shell/src/app/localized-root.test.tsx
 import { act, screen } from '@testing-library/react-native';
 
+import { useDeviceLocales } from '@e07/shell/i18n/device-locales-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
@@ -47,5 +48,21 @@ describe('LocalizedRoot', () => {
       stores.settings.getState().dispatch({ type: 'set-digits', digits: 'latin' });
     });
     expect(screen.getByTestId('probe.stars')).toHaveTextContent('12 / 90');
+  });
+
+  // Spec S11a and 7.2: "System" resolves against the phone's languages, which the composition
+  // root reads once; the screens get them here, never from expo-localization themselves.
+  it("hands the phone's languages to the screens", async () => {
+    const germanPhone = [{ languageCode: 'de', languageScriptCode: null }];
+    function LocalesProbe(): ReactNode {
+      const [first] = useDeviceLocales();
+      return <AppText text={first?.languageCode ?? 'none'} testID="probe.locale" />;
+    }
+    await renderWithShell(
+      <LocalizedRoot deviceLocales={germanPhone} gameCatalogs={NO_GAME} onError={throwError}>
+        <LocalesProbe />
+      </LocalizedRoot>,
+    );
+    expect(screen.getByTestId('probe.locale')).toHaveTextContent('de');
   });
 });

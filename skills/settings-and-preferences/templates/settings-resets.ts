@@ -1,4 +1,4 @@
-// packages/shell/src/screens/settings/settings-resets.ts
+// packages/shell/src/stores/settings-resets.ts
 // The two S11 data resets, run when their S14 dialog is confirmed. Each is ONE validated write
 // through updateAndPublish with the backup refreshed (a backup restore can never undo a reset),
 // after which every section store re-reads the document, so Home, Levels, Daily and Statistics

@@ -6,5 +6,6 @@ use-debug-model.ts from e2e-maestro), so the route files' model-hook rules can p
 It also holds stand-ins for the files the screens borrow from other skills (check-screens rule
 borrowed-file, the BORROWS table in scripts/lib/screen-map.mjs), each with its test where the real
 file has one: app/use-today.ts and the daily and stats summaries (daily-and-statistics), and
-settings-preference-actions.ts, settings-resets.ts, use-settings-resets.ts, settings-rows.test.ts and
-language/language-change.ts (settings-and-preferences).
+settings-preference-actions.ts, settings-rows.test.ts and language/language-change.ts (whose stand-in
+keeps S11a's settings.language.system key: the System row's label comes from its systemLabel), and
+stores/settings-resets.ts with stores/use-settings-resets.ts (settings-and-preferences).

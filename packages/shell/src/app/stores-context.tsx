@@ -3,6 +3,7 @@ import { createContext, use } from 'react';
 
 import type { PremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
 import type { ProgressStore } from '@e07/shell/stores/progress-store.ts';
+import type { RestartStore } from '@e07/shell/stores/restart-store.ts';
 import type { SettingsStore } from '@e07/shell/stores/settings-store.ts';
 import type { StatsStore } from '@e07/shell/stores/stats-store.ts';
 import type { JSX, ReactNode } from 'react';
@@ -16,6 +17,8 @@ export type ShellStores = {
   readonly progress: ProgressStore;
   readonly stats: StatsStore;
   readonly premium: PremiumStore;
+  /** Not saved: the direction reload a screen has started (S2 Continue, S14 Restart now). */
+  readonly restart: RestartStore;
 };
 
 const StoresContext = createContext<ShellStores | null>(null);

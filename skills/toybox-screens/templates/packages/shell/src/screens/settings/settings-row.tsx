@@ -79,23 +79,16 @@ export function SettingsRow({ id, model, extras, isFirst }: SettingsRowProps): R
   const t = useT();
   const spec = SETTINGS_ROW_SPECS[id];
   if (id === 'numbers' || id === 'theme') {
-    return (
-      <SettingsChoiceRow
-        choice={id}
-        model={model}
-        isFirst={isFirst}
-        isReducedMotion={model.isReducedMotion}
-      />
-    );
+    return <SettingsChoiceRow choice={id} model={model} isFirst={isFirst} />;
   }
   if (id === 'sound-volume' || id === 'music-volume')
     return <SettingsVolumeRow channel={id} model={model} />;
-  if (spec.kind === 'premium-active') {
+  if (id === 'premium-active') {
     return (
       <View style={styles.premium}>
         <Sticker
-          testID="settings.premium-active"
-          text={t('premium.active')}
+          testID={SETTINGS_ROW_TEST_IDS[id]}
+          text={t(spec.labelKey)}
           icon="crown"
           tiltDeg={-3}
         />

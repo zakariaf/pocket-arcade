@@ -39,10 +39,12 @@ RNTL 14 adopts React 19's async rendering: `render()`, `rerender()`, `unmount()`
 4. the Shell `I18nProvider` with the real Shell catalogs (a missing message throws) and a `DirectionProvider`;
 5. the Shell `ThemeProvider` over `TEST_PALETTE`, so `settings.theme` and `settings.colorBlind` pick the theme;
 6. `ServicesProvider` with only the ports the test passes: any other port throws on first use and names itself (`renderWithShell: pass services.purchase (read .fetchProduct)`).
+   Inside it, `DeviceLocalesContext` with the `deviceLocales` option, as `LocalizedRoot` provides the phone's languages in the app.
 
 | Option | Default | Effect |
 |---|---|---|
 | `language` | `'en'` | the `I18nProvider` language |
+| `deviceLocales` | an English phone (`[{ languageCode: 'en', languageScriptCode: null }]`) | the phone's languages screens read with `useDeviceLocales()` (what "System" resolves against) |
 | `direction` | the language's own (`fa`, `ckb`: `'rtl'`) | the `DirectionProvider` value |
 | `palette` | `TEST_PALETTE` | the colours `ThemeProvider` picks from |
 | `settings` | the default settings | a `Partial<SaveSettings>` written into the save before the stores exist |

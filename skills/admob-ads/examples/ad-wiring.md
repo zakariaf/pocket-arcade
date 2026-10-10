@@ -130,7 +130,7 @@ const handleWatchAdPress = (): void => {
 
 ## 6. Settings row
 
-Show "Ad privacy choices" only while `isPrivacyOptionsRequired` is true; its press handler runs `consent.showPrivacyOptions()` and passes the result to `saveConsentFacts`.
+Show "Ad privacy choices" only while `isPrivacyOptionsRequired` is true; its press handler calls `useOptionalAdPrivacyChoices()` (the consent moment's `reopenPrivacyOptions`: `consent.showPrivacyOptions()`, the answer saved, banners closed at once on a no and prepared again at the next banner screen on a yes).
 
 ## 7. Prove it
 

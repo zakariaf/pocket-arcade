@@ -16,9 +16,6 @@ const mockGoBack = jest.fn();
 const mockOpenDialog = jest.fn<undefined, [DialogRequest]>();
 jest.mock('@react-navigation/native', () => ({ useNavigation: () => ({ goBack: mockGoBack }) }));
 jest.mock('@e07/shell/app/dialog-context.tsx', () => ({ useOpenDialog: () => mockOpenDialog }));
-jest.mock('expo-localization', () => ({
-  getLocales: () => [{ languageCode: 'de', languageScriptCode: null }],
-}));
 jest.mock('@e07/shell/i18n/direction.ts', () => ({
   readLayoutDirection: () => 'ltr',
   restartForDirection: jest.fn(() => Promise.resolve()),
@@ -29,6 +26,7 @@ jest.mock('@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts', () =>
 
 async function languageModel() {
   const shell = createShellWrapper({
+    deviceLocales: [{ languageCode: 'de', languageScriptCode: null }],
     services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
   });
   const view = await renderHook(() => useSettingsLanguageModel(), { wrapper: shell.wrapper });
@@ -86,5 +84,27 @@ describe('useSettingsLanguageModel', () => {
     } finally {
       endParitySession();
     }
+  });
+
+  // Spec S11 and 7.2: once Restart is tapped the reload is under way; a row tapped meanwhile
+  // saves nothing, so the saved language and the reload's direction always agree.
+  it('saves nothing while a restart is pending', async () => {
+    const { result, stores } = await languageModel();
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    const [request] = mockOpenDialog.mock.calls.at(-1) ?? [];
+    if (request?.kind !== 'restart-to-apply') throw new Error('no restart dialog');
+    await act(async () => {
+      request.onRestart();
+      await Promise.resolve();
+    });
+    await act(() => {
+      result.current.onSelect('de');
+    });
+    expect([stores.settings.getState().settings.language, mockOpenDialog.mock.calls.length]).toStrictEqual([
+      'fa',
+      1,
+    ]);
   });
 });

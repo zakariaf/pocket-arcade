@@ -6,11 +6,10 @@
 // hydrated.outcome, or null after the crash screen's "Back to Home" so a remounted tree never asks
 // twice.
 import { useEffect, useEffectEvent } from 'react';
-import { Linking } from 'react-native';
 
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
 import { readGameExtra } from '@e07/shell/app/read-game-extra.ts';
-import { useServices } from '@e07/shell/app/services-context.tsx';
+import { useOpenExternal } from '@e07/shell/app/use-open-external.ts';
 import { storePageUrl } from '@e07/shell/config/external-links.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
@@ -45,15 +44,11 @@ export type LoadOutcomeOpenerProps = {
 /** Opens the outcome's dialog once, when the navigator's first screen mounts; draws nothing. */
 export function LoadOutcomeOpener({ outcome }: LoadOutcomeOpenerProps): ReactNode {
   const openDialog = useOpenDialog();
-  const { errorLog } = useServices();
+  const open = useOpenExternal();
   const t = useT();
   const { nameId } = useGameHost();
   const handleUpdate = (): void => {
-    const url = storePageUrl(readGameExtra().appStoreId);
-    if (url === null) return;
-    Linking.openURL(url).catch((error: unknown) => {
-      errorLog.record('boot', error);
-    });
+    open(storePageUrl(readGameExtra().appStoreId));
   };
   const openOnce = useEffectEvent(() => {
     const request = loadOutcomeRequest(outcome, () => ({

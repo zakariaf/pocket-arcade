@@ -44,4 +44,29 @@ describe('useLicencesModel', () => {
       '/licenses/OFL-1.1.html',
     ]);
   });
+
+  // Two credits whose names give one key, and a credit named like a Shell row, each keep a row of
+  // their own: unique keys and testIDs, and "Show licence text" opens that row's licence.
+  it('keys every row once and opens the licence of the row pressed', async () => {
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+    const credits = [
+      { ...WORD_LIST, kind: 'sound', name: 'Kenney Sounds', license: 'CC0-1.0' },
+      { ...WORD_LIST, kind: 'sound', name: 'Kenney sounds!', license: 'MIT' },
+      { ...WORD_LIST, kind: 'sound', name: 'Sounds', license: 'Apache-2.0' },
+    ] as const;
+    const shell = createHostWrapper({ host: { credits } });
+    const { result } = await renderHook(() => useLicencesModel(), { wrapper: shell.wrapper });
+    const keys = result.current.entries.map((entry) => entry.key);
+
+    result.current.onShowText('game-kenney-sounds-2');
+    result.current.onShowText('game-sounds-2');
+    expect([keys.slice(-4), new Set(keys).size === keys.length]).toStrictEqual([
+      ['game-sounds', 'game-kenney-sounds', 'game-kenney-sounds-2', 'game-sounds-2'],
+      true,
+    ]);
+    expect(openUrl.mock.calls.map(([url]) => new URL(url).pathname)).toStrictEqual([
+      '/licenses/MIT.html',
+      '/licenses/Apache-2.0.html',
+    ]);
+  });
 });

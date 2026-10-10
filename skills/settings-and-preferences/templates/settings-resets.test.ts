@@ -1,4 +1,4 @@
-// packages/shell/src/screens/settings/settings-resets.test.ts
+// packages/shell/src/stores/settings-resets.test.ts
 import { createShellStores } from '@e07/shell/stores/create-shell-stores.ts';
 import { recordLevelResult } from '@e07/shell/stores/progress-reducer.ts';
 import { updateAndPublish } from '@e07/shell/stores/update-and-publish.ts';

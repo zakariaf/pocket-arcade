@@ -1,0 +1,3 @@
+missing-testid
+about.screen
+about.top-bar.back-button

@@ -9,9 +9,12 @@
 // is open. A parity capture of the S3 frame holds the intro and asks neither Google nor Apple.
 // The snapshot's canRequestAds turns true only once prepareAds has finished (ATT answered, SDK
 // initialised): banner slots read it, so no banner requests an ad while Apple's prompt is up.
+// A withdrawn consent always wins: a no given through Ad privacy choices while prepareAds still
+// runs stops it before Apple's prompt, initialize and the preloads, and keeps the banners off.
 import { prepareAds, refreshConsentAtLaunch } from './ad-gate.ts';
 
 import type { AdGateDeps, AdGateInput, PrepareAdsDeps } from './ad-gate.ts';
+import type { AdsPort } from './ads-port.ts';
 import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
 
 export type ConsentMomentSnapshot = {
@@ -44,6 +47,12 @@ export type ConsentMomentFlow = {
   readonly refreshAtLaunch: () => void;
   /** Continue on the intro: Google's form opens next (a held parity frame ignores it). */
   readonly continueToForm: () => void;
+  /**
+   * S11's Ad privacy choices: Google's privacy options, the answer saved. A yes after a refusal
+   * prepares ads again at the next banner screen (Apple's prompt, initialize), and a no closes the
+   * banners at once: no relaunch either way.
+   */
+  readonly reopenPrivacyOptions: () => void;
 };
 
 type Phase = 'idle' | 'preparing' | 'done';
@@ -60,6 +69,8 @@ type FlowState = {
   adScreenWaiters: (() => void)[];
   input: AdGateInput | null;
   canRequestAds: boolean | null;
+  /** The latest consent answer of this session allows no ads (read again before every step). */
+  isConsentRefused: boolean;
 };
 
 type Publisher = Pick<ConsentMomentFlow, 'subscribe' | 'getSnapshot'> & {
@@ -99,7 +110,22 @@ function trackingOverAdScreen(consent: ConsentPort, state: FlowState): ConsentPo
       if (state.openSlots === 0) {
         await new Promise<void>((resolve) => state.adScreenWaiters.push(resolve));
       }
-      return consent.requestTracking();
+      // A no given while the prompt waited (Ad privacy choices on S11): Apple is not asked.
+      return state.isConsentRefused ? 'unavailable' : consent.requestTracking();
+    },
+  };
+}
+
+/** initialize and the preloads only while the latest answer still allows ads. */
+function adsWhileConsented(ads: AdsPort, state: FlowState): AdsPort {
+  return {
+    ...ads,
+    initialize: () => (state.isConsentRefused ? Promise.resolve() : ads.initialize()),
+    preloadInterstitial: () => {
+      if (!state.isConsentRefused) ads.preloadInterstitial();
+    },
+    preloadRewarded: () => {
+      if (!state.isConsentRefused) ads.preloadRewarded();
     },
   };
 }
@@ -108,10 +134,11 @@ function trackingOverAdScreen(consent: ConsentPort, state: FlowState): ConsentPo
 function createGateDeps(parts: Pick<FlowParts, 'deps' | 'state' | 'publish'>): PrepareAdsDeps {
   const { deps, state, publish } = parts;
   return {
-    ads: deps.ads,
+    ads: adsWhileConsented(deps.ads, state),
     consent: trackingOverAdScreen(deps.consent, state),
     onConsent: (info: ConsentInfo) => {
       deps.onConsent(info);
+      state.isConsentRefused = !info.canRequestAds;
       // A refusal closes the banners at once; a yes waits for the ATT answer and initialize.
       if (info.canRequestAds) return;
       state.canRequestAds = false;
@@ -131,7 +158,7 @@ export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMom
   const state: FlowState = {
     ...{ phase: 'idle', openSlots: 0, isIntroWanted: false, wasAsked: false },
     ...{ release: null, adScreenWaiters: [], input: null },
-    canRequestAds: deps.savedCanRequestAds,
+    ...{ canRequestAds: deps.savedCanRequestAds, isConsentRefused: false },
   };
   const { publish, ...reads } = createPublisher(deps, state);
   const gate = createGateDeps({ deps, state, publish });
@@ -143,7 +170,8 @@ export function createConsentMomentFlow(deps: ConsentMomentFlowDeps): ConsentMom
     prepareAds(gate, input).then(
       // Once the player saw the moment (or ads are ready) it never comes back this session.
       (isReady) => {
-        if (isReady) {
+        // Consent read again: a no given meanwhile wins (a later yes prepares ads again).
+        if (isReady && !state.isConsentRefused) {
           state.canRequestAds = true; // O1 / L10: consent, ATT answer and initialize are done
           publish();
         }
@@ -198,6 +226,14 @@ function createFlowApi(parts: FlowParts): ConsentMomentFlow {
       state.release?.();
       state.release = null;
       publish();
+    },
+    reopenPrivacyOptions: () => {
+      parts.gate.consent.showPrivacyOptions().then((info) => {
+        parts.gate.onConsent(info);
+        if (!info.canRequestAds || state.canRequestAds === true || state.phase !== 'done') return;
+        state.phase = 'idle';
+        prepareIfDue();
+      }, deps.onError);
     },
   };
 }

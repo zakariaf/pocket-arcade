@@ -47,6 +47,23 @@ describe('useDirectionRestart', () => {
     expect(jest.mocked(restartForDirection)).toHaveBeenCalledTimes(1);
   });
 
+  it('starts one restart for taps from two screens at once (two hook instances)', async () => {
+    const audio = createFakeAudio();
+    const { wrapper } = createShellWrapper({ services: { audio, errorLog: createFakeErrorLog() } });
+    const { result } = await renderHook(() => [useDirectionRestart(), useDirectionRestart()], {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current[0]?.('rtl');
+      result.current[1]?.('rtl');
+      await Promise.resolve();
+    });
+
+    expect(audio.calls).toStrictEqual([{ kind: 'dispose' }]);
+    expect(jest.mocked(restartForDirection)).toHaveBeenCalledTimes(1);
+  });
+
   it('lets the player try again after a restart that failed', async () => {
     const errorLog = createFakeErrorLog();
     const { wrapper } = createShellWrapper({ services: { audio: createFakeAudio(), errorLog } });
@@ -78,5 +95,58 @@ describe('useDirectionRestart', () => {
     });
 
     expect(errorLog.entries().map((entry) => entry.message)).toStrictEqual(['busy']);
+  });
+
+  // Spec S2 and S11: the screen the player is on stays until the reload (the route guards read
+  // the pending restart); a restart that failed lets go of it, so the app goes on as before.
+  it('holds the restart pending from the tap until the reload', async () => {
+    const shell = createShellWrapper({
+      services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
+    });
+    const { result } = await renderHook(() => useDirectionRestart(), { wrapper: shell.wrapper });
+    const pendingAtReload: (string | null)[] = [];
+    jest.mocked(restartForDirection).mockImplementationOnce(() => {
+      pendingAtReload.push(shell.stores.restart.getState().pendingDirection);
+      return Promise.resolve();
+    });
+
+    await act(async () => {
+      result.current('rtl');
+      await flushMicrotasks();
+    });
+    expect([pendingAtReload, shell.stores.restart.getState().pendingDirection]).toStrictEqual([
+      ['rtl'],
+      'rtl',
+    ]);
+  });
+
+  it('drops the pending restart when the restart fails', async () => {
+    const shell = createShellWrapper({
+      services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
+    });
+    const { result } = await renderHook(() => useDirectionRestart(), { wrapper: shell.wrapper });
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+
+    await act(async () => {
+      result.current('rtl');
+      await flushMicrotasks();
+    });
+    expect(shell.stores.restart.getState().pendingDirection).toBeNull();
+  });
+
+  // Spec S2: a failed restart keeps holding the screen that started it, so S2 stays and its
+  // Continue tries again instead of the tutorial mounting in the old direction.
+  it('keeps holding the screen that started a restart that failed', async () => {
+    const shell = createShellWrapper({
+      services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
+    });
+    const { result } = await renderHook(() => useDirectionRestart(), { wrapper: shell.wrapper });
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+
+    await act(async () => {
+      result.current('rtl');
+      await flushMicrotasks();
+    });
+    expect(shell.stores.restart.getState().failedDirection).toBe('rtl');
   });
 });
