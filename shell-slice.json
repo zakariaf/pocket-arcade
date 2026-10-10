@@ -13,7 +13,8 @@
     "S11",
     "S11a",
     "S11b",
-    "S11c"
+    "S11c",
+    "S11d"
   ],
-  "why": "Shell build in progress: first-run screens S1 Splash, S2 Language choice and S3 Ad consent and tracking, S4 Home, S5 Game, S6 Pause, S7 Result, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings, S11a Language, S11b About and credits and S11c Privacy policy (Shell step 9)"
+  "why": "Shell build in progress: first-run screens S1 Splash, S2 Language choice and S3 Ad consent and tracking, S4 Home, S5 Game, S6 Pause, S7 Result, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings, S11a Language, S11b About and credits, S11c Privacy policy and S11d Licences (Shell step 9)"
 }

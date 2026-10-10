@@ -16,6 +16,7 @@ import { HomeScreen } from '@e07/shell/screens/home/home-screen.tsx';
 import { LevelsScreen } from '@e07/shell/screens/levels/levels-screen.tsx';
 import { AboutScreen } from '@e07/shell/screens/settings/about/about-screen.tsx';
 import { SettingsLanguageScreen } from '@e07/shell/screens/settings/language/language-screen.tsx';
+import { LicencesScreen } from '@e07/shell/screens/settings/licences/licences-screen.tsx';
 import { PrivacyPolicyScreen } from '@e07/shell/screens/settings/privacy/privacy-policy-screen.tsx';
 import { SettingsScreen } from '@e07/shell/screens/settings/settings-screen.tsx';
 import { StatsScreen } from '@e07/shell/screens/stats/stats-screen.tsx';
@@ -61,7 +62,7 @@ export const rootStack = createNativeStackNavigator({
         SettingsLanguage: SettingsLanguageScreen,
         About: AboutScreen,
         PrivacyPolicy: PrivacyPolicyScreen,
-        Licences: NotBuiltScreen,
+        Licences: LicencesScreen,
         Premium: NotBuiltScreen,
         HowToPlay: NotBuiltScreen,
       },

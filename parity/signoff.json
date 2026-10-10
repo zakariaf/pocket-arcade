@@ -1962,6 +1962,246 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "479f90d834d36a1b66bbfde71020db19f9628e62b66ca57d99866e9434579d35",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 392,
+      "sheetSha256": "e2d9d909f2e944d1dc8c61b6626443ae1c702d7aa1c18600708f7aadf01f4835",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 660,
+      "sheetSha256": "d6b1b0b821b0f2ed354f7917fd24eb33b006fdc979e4fd336355a2696819bf6a",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "48ab8df89af6d4c8a7edf45764ac00a27a2cc2393377f10f526d6e8f7e021ff0",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "9af59841250a8e5a66a14ad7c86b3aa88ead003a72cdb40e30c47ed35588df99",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 761,
+      "sheetSha256": "556c06cdd9e561d026a9d2063ff5571a52e3f97678abd9de703f085a173954c5",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "9a11bb58e959eff70c30ad2391d3a4ab859c4382fef76e4bec91a4bc25f5c094",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 392,
+      "sheetSha256": "35d331629aefabbbe6354675622827ce3b6a9d0d633e3e290860ca3c9e34e3f9",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 660,
+      "sheetSha256": "f2eba0d43ba27ff78dc40b4b3eb19fa7fa9e697478432f19b6f581d248a3d4c4",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "cec52d84d0166f41edb2d41c645076f958b0afa2b24a3b39d62f60efcc4ebd89",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "654fbfac3a2ba675cef469dc3d5ff38feaa09287b314ecbeab1b4271a0b5b9a7",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 761,
+      "sheetSha256": "f781647a72cc7f27fd431f390aff609a3f1b9cb3959ea88b5f02a0ae69dce1b4",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }
