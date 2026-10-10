@@ -21,6 +21,7 @@ export type LevelsViewProps = { readonly model: LevelsModel };
 const styles = StyleSheet.create({
   area: { flex: 1 },
   // The design's toast: absolute, 352 pt below the top of the scrolling body (.lv-toast top 352).
+  // It stays up over the lower rows, so it lets every tap through to the tiles under it.
   toast: { position: 'absolute', top: 352, start: LAYOUT.screenGutter, end: LAYOUT.screenGutter },
   // The banner closes the body's column: pushed to the bottom while the packs fit, one block gap
   // after them otherwise, and full bleed across the body's 20 pt gutters (the design's .body).
@@ -72,7 +73,7 @@ export function LevelsView({ model }: LevelsViewProps): ReactNode {
           </View>
         </ScreenBody>
         {model.focusedLevel === null ? null : (
-          <View style={styles.toast}>
+          <View style={styles.toast} pointerEvents="none">
             <Toast
               testID="levels.locked-toast"
               icon="lock"
