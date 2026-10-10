@@ -172,6 +172,7 @@ Every Shell app still has the **Shell core**, whatever the slice, because the co
 | `screens/result/result-model.ts` | S7 | game-host-integration's `resultModelOf` returns it |
 | `screens/debug/debug-rows.ts` | S15 | e2e-maestro's `debug-actions.ts` (the debug kit every test build has) imports its action types |
 | `app/use-is-online.ts` (+ test), `app/use-game-extra.ts` (+ test) | every screen | admob-ads' `app/use-ad-context.ts` and `app/use-consent-moment.ts` read connectivity and the game's config |
+| `app/use-open-external.ts` (+ test) | S11, S11b, S11d | game-host-integration's `app/load-outcome-opener.tsx` opens the store page through it (S14's "Update"); S11's Rate and Contact and S11d's licence texts use the same hand-off |
 | `app/read-version-text.ts` (+ test) | S11, S11b | self-contained with its own test, so it lands with the core and About and Settings find it |
 | `ui/screen-body.tsx` (+ test) | every screen | the consent intro and the parity harness's root draw the common body |
 | `testing/test-game-extra.ts` (+ test) | (tests) | the step-7 tests of `use-ad-context`, `use-game-extra`, `read-version-text`, `shell-features`, `consent-moment` and `load-outcome-opener` mock `expo-constants` with it |

@@ -308,7 +308,7 @@ Where each import of the root comes from. Every `@e07/` file that a template in 
 | 7 | settings-and-preferences | `app/connect-audio-settings.ts`, `app/create-shell-haptics.ts`, `app/localized-root.tsx`, `config/external-links.ts` |
 | 7 | toybox-components | `ui/button.tsx` |
 | 7 | toybox-design-system | `app/press-feedback-context.tsx`, `theme/theme-set.ts`, `theme/use-theme.ts`, `ui/app-text.tsx` |
-| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `screens/dialogs/dialog-request.ts` |
+| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `app/use-open-external.ts`, `screens/dialogs/dialog-request.ts` |
 | 7 | unit-and-component-tests | `testing/render-with-shell.tsx` |
 
 In a partial Shell (`shell-slice.json`) the root is the same, and so is the **Shell core** it imports, whatever the slice: screens outside the slice have no route or view files, but these files are always there, because the composition root and startup import them (D36):

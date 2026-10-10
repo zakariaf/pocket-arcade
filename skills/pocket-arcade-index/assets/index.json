@@ -1139,6 +1139,7 @@
               "packages/shell/src/app/startup-splash*",
               "packages/shell/src/app/use-game-extra*",
               "packages/shell/src/app/use-is-online*",
+              "packages/shell/src/app/use-open-external*",
               "packages/shell/src/screens/consent/**",
               "packages/shell/src/screens/dialogs/**",
               "packages/shell/src/screens/game/game-layout*",
@@ -1769,8 +1770,8 @@
           "skill": "unit-and-component-tests"
         },
         {
-          "files": "packages/shell/src/app/use-is-online.ts, use-game-extra.ts, read-version-text.ts, premium-screen-deps-context.tsx, game-startup-splash.tsx and crash-screen.tsx, packages/shell/src/ui/screen-body.tsx and packages/shell/src/testing/test-game-extra.ts, with their tests",
-          "part": "the screens' app helpers the root and the providers import: connectivity, the game extra, the version text, Premium's dependencies, the game's startup splash and the crash screen",
+          "files": "packages/shell/src/app/use-is-online.ts, use-open-external.ts, use-game-extra.ts, read-version-text.ts, premium-screen-deps-context.tsx, game-startup-splash.tsx and crash-screen.tsx, packages/shell/src/ui/screen-body.tsx and packages/shell/src/testing/test-game-extra.ts, with their tests",
+          "part": "the screens' app helpers the root and the providers import: connectivity, the hand-off to another app, the game extra, the version text, Premium's dependencies, the game's startup splash and the crash screen",
           "skill": "toybox-screens"
         },
         {
