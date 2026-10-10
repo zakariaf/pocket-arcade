@@ -53,7 +53,7 @@ function playedSave(): SaveService {
       losses: 1,
       playMs: 8_040_000,
       days: { '2026-09-26': { games: 3, playMs: 8_040_000 } },
-      counters: { adds: 7 },
+      counters: { adds: 7, 'biggest-add': 4 },
     },
   }));
   return save;
@@ -81,7 +81,18 @@ describe('useStatsModel', () => {
     });
     expect(snapshot.gameStats).toStrictEqual([
       { key: 'adds', label: 'Adds', valueText: '7' },
-      { key: 'biggest-add', label: 'Biggest add', valueText: '×0' },
+      { key: 'biggest-add', label: 'Biggest add', valueText: '×4' },
+    ]);
+  });
+
+  it('shows a best-of counter nobody reached yet as 0, never ×0 (spec S10)', async () => {
+    const save = playedSave();
+    save.update((doc) => ({ ...doc, stats: { ...doc.stats, counters: { adds: 7 } } }));
+    const { result } = await statsModel(save);
+
+    expect(result.current.snapshot.gameStats.map((stat) => stat.valueText)).toStrictEqual([
+      '7',
+      '0',
     ]);
   });
 

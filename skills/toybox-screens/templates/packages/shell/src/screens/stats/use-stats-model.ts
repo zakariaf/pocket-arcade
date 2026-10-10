@@ -41,6 +41,7 @@ export function useStatsModel(): StatsModel {
     snapshot: statsSnapshotOf(summary, host.counters, {
       formatNumber,
       labelOf: (counter) => gameMessageText(t, { id: counter.labelId }),
+      bestOfText: (value) => t('stats.game.best-of-value', { value }),
       weekdayOf: (date) => formatWeekdayLabels(date, t),
     }),
     gameName: gameMessageText(t, { id: host.nameId }),

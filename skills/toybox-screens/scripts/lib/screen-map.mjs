@@ -180,6 +180,14 @@ export const SHELL_EXTRA_KEYS = {
     fa: '{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}',
     ckb: '{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}',
   },
+  // S10 game card: a best-of counter's value (aggregate 'max'), the design's multiplier ×6. A
+  // counter not reached yet shows the plain number 0 instead.
+  'stats.game.best-of-value': {
+    en: '×{value, number}',
+    de: '×{value, number}',
+    fa: '×{value, number}',
+    ckb: '×{value, number}',
+  },
   // S15 debug menu, test builds: the Performance group under the design's rows. English in all four
   // catalogs, like every debug text (no review needed).
   ...Object.fromEntries(

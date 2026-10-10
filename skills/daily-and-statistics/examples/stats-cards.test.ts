@@ -83,4 +83,11 @@ describe('stats cards', () => {
       },
     ]);
   });
+
+  it('shows a best-of counter nobody reached yet as the plain 0, never as a multiplier', () => {
+    const [cell] = gameCells(view, [
+      { id: 'longest-chain', labelId: 'line-siege.stat.longest-chain', aggregate: 'max' },
+    ]);
+    expect(cell?.value).toStrictEqual({ kind: 'count', value: 0 });
+  });
 });
