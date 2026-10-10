@@ -19,3 +19,15 @@ describe('CrashScreen', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
+
+describe('CrashScreen, its one way out (spec 8.14)', () => {
+  it('offers exactly one control, "Back to Home"', async () => {
+    await renderWithShell(<CrashScreen onGoHome={jest.fn()} />);
+
+    expect(screen.getAllByRole('button').map((button) => button.props['testID'])).toStrictEqual([
+      'crash.home-button',
+    ]);
+    expect(screen.getByRole('button', { name: 'Back to Home' })).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});

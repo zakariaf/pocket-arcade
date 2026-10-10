@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import { createTestAdapters } from '@e07/shell/testing/create-test-adapters.ts';
+import { createTestSave } from '@e07/shell/testing/create-test-save.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TALLY_GAME } from '@e07/shell/testing/tally-game.ts';
 
@@ -13,6 +14,7 @@ import { DialogProvider } from './dialog-context.tsx';
 import { LoadOutcomeOpener, loadOutcomeRequest } from './load-outcome-opener.tsx';
 
 import type { LoadOutcome } from '@e07/shell/services/save/load-plan.ts';
+import type { ReactNode } from 'react';
 
 // renderWithShell has no game catalogs: the game's name is the only game text this dialog reads.
 jest.mock('@e07/shell/i18n/game-message-text.ts', () => ({ gameMessageText: () => 'Tally' }));
@@ -94,5 +96,54 @@ describe('LoadOutcomeOpener', () => {
     await renderOutcome({ kind: 'loaded' });
     expect(screen.queryByTestId('save-restored-dialog.ok-button')).toBeNull();
     expect(screen.queryByTestId('newer-save-dialog.update-button')).toBeNull();
+  });
+});
+
+function OutcomeTree({ outcome }: { readonly outcome: LoadOutcome }): ReactNode {
+  const { host } = createShellParts(
+    { game: TALLY_GAME, language: 'en', directionPlan: 'keep' },
+    createTestAdapters(),
+  );
+  return (
+    <GameHostProvider host={host}>
+      <DialogProvider>
+        <LoadOutcomeOpener outcome={outcome} />
+      </DialogProvider>
+    </GameHostProvider>
+  );
+}
+
+describe('LoadOutcomeOpener and the save it found (spec 8.6, S14, 15.6)', () => {
+  it.each(['later-button', 'update-button'])(
+    'keeps a newer save untouched: nothing is written when the dialog opens or after its %s (spec 8.6)',
+    async (button) => {
+      jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+      const { save, store } = createTestSave();
+      const write = jest.spyOn(store, 'write');
+      await renderWithShell(<OutcomeTree outcome={{ kind: 'newer-version', found: 9 }} />, {
+        services: { errorLog: createFakeErrorLog(), save },
+      });
+
+      await screen.findByTestId('newer-save-dialog.update-button');
+      expect(write).not.toHaveBeenCalled();
+      await fireEvent.press(screen.getByTestId(`newer-save-dialog.${button}`));
+      expect(write).not.toHaveBeenCalled();
+    },
+  );
+
+  it('shows "Progress restored" once: OK closes it and the next render does not open it again (spec S14, 15.6)', async () => {
+    const outcome: LoadOutcome = { kind: 'restored-from-backup', reason: 'bad json' };
+    const view = await renderWithShell(<OutcomeTree outcome={outcome} />, {
+      services: { errorLog: createFakeErrorLog() },
+    });
+
+    expect(
+      await screen.findByText('Your progress couldn’t be loaded. A backup copy was restored.'),
+    ).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('save-restored-dialog.ok-button'));
+    expect(screen.queryByTestId('save-restored-dialog.ok-button')).toBeNull();
+
+    await view.rerender(<OutcomeTree outcome={outcome} />);
+    expect(screen.queryByTestId('save-restored-dialog.ok-button')).toBeNull();
   });
 });
