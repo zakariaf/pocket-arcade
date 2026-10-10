@@ -1,5 +1,6 @@
 // packages/shell/src/screens/how-to-play/how-to-play-view.tsx
 import { StyleSheet, View } from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
@@ -11,6 +12,9 @@ import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
 import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
+import { usePageSwipe } from './use-page-swipe.ts';
+
+import type { PageStep } from './page-step-for-swipe.ts';
 import type { ReactNode } from 'react';
 
 export type HowToPlayModel = {
@@ -52,13 +56,21 @@ const styles = StyleSheet.create({
 
 /**
  * S13 How to play: the goal, the stage with the step picture, "Step 2 / 4" and the pager dots,
- * the step sentence, Previous / Next, and "Play the tutorial again". Swipes mirror in RTL.
+ * the step sentence, Previous / Next, and "Play the tutorial again". A horizontal swipe over the
+ * stage turns the page; the next page lies at the reading end, so the swipe mirrors in RTL (7.5).
  */
 export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
   const t = useT();
   const total = model.steps.length;
   const stepText = model.steps[model.stepIndex] ?? '';
   const isLast = model.stepIndex >= total - 1;
+  // A swipe turns the page like Previous and Next, and never past the first or last page: only
+  // the "Got it" key leaves the screen.
+  const handlePageStep = (step: PageStep): void => {
+    if (step === 1 && !isLast) model.onNext();
+    if (step === -1 && model.stepIndex > 0) model.onPrevious();
+  };
+  const swipe = usePageSwipe(handlePageStep);
   return (
     <ScreenFrame testID="how-to-play.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
       <TopBar
@@ -70,18 +82,22 @@ export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
       />
       <ScreenBody isUnderHomeIndicator>
         <AppText text={model.goal} tone="muted" testID="how-to-play.goal" />
-        <HowToStage testID="how-to-play.stage">
-          {/* The picture is one labelled image for VoiceOver: the step sentence describes it. */}
-          <View
-            accessible
-            accessibilityRole="image"
-            accessibilityLabel={stepText}
-            testID="how-to-play.picture"
-            style={[styles.picture, { aspectRatio: model.pictureAspect }]}
-          >
-            {model.renderPicture(model.stepIndex)}
+        <GestureDetector gesture={swipe}>
+          <View collapsable={false}>
+            <HowToStage testID="how-to-play.stage">
+              {/* The picture is one labelled image for VoiceOver: the step sentence describes it. */}
+              <View
+                accessible
+                accessibilityRole="image"
+                accessibilityLabel={stepText}
+                testID="how-to-play.picture"
+                style={[styles.picture, { aspectRatio: model.pictureAspect }]}
+              >
+                {model.renderPicture(model.stepIndex)}
+              </View>
+            </HowToStage>
           </View>
-        </HowToStage>
+        </GestureDetector>
         <View style={styles.pager} testID="how-to-play.pager">
           <Chip
             testID="how-to-play.step-chip"
