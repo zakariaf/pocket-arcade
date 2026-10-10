@@ -1312,6 +1312,326 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "7d450cb7e2258f8d4aa5f9edc829d673c1ba0c326fe5c2b8576879de25919a99",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1056,
+      "sheetSha256": "14a97bb93f75161910be68a0106765e11736ae24e73bd64b3f00a83be227bc4b",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1086,
+      "sheetSha256": "31e9385b02488440c169c4b58e5726d705a9433bc0eb4a36871d18f69df6882c",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 459,
+      "sheetSha256": "07779e3972ad2e91440c12d36a61a9c9f6ec72876c3c945bf3e75a5c6ba5278a",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "08b403aebf6e2789049d94f8d001532a21cc907331dc5a76507d59755682176d",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 1042,
+      "sheetSha256": "866be25e9bafd7353e5dcc0310719d7a54a5d7d98e1c7a469183338e33d93922",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 1110,
+      "sheetSha256": "ab6e07326027278a744c031a252f4d555b680c2738eba3381636adeaf6e14844",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "cec7e5e08f5061ad10c849e18422f9c3c5fd3a29d61c06bdf7adb89ddbaf7f97",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f85ba3cad785cca407381357fada1c390c9fe18ba15a75b499f0c03362b6901e",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 1056,
+      "sheetSha256": "7f47415aab18ec25b43d0b3c88ae6ac0244a78a6c6dd8005a138b6bdd854d468",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 1086,
+      "sheetSha256": "01d89121937f30dae2a58e78ca29fae218d5f01c6b5bf8ace1572b0aa4e41c7f",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 459,
+      "sheetSha256": "dd9733ed38e09b1e04d6abd4cd7d2599338e63c0551c64c7b73355a66a2f08a4",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "fdca4b05e379bee90c5db39eaa677e9546a6f657df3e2ae060c3112b3525df76",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 1042,
+      "sheetSha256": "e59d931a11150ada910321a12a72c0d9dbac0595702e6f4113949868ed485083",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 1110,
+      "sheetSha256": "687c7109c4442fd476a78575f9645e3aab7886e7dd08710ce1e1d8944149db1b",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "dafc6ba952ae83a80c063fd60502557586a4a07dfc5feff386c9aaa570e1dc9a",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }

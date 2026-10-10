@@ -14,6 +14,7 @@ import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx
 import { GameScreen } from '@e07/shell/screens/game/game-screen.tsx';
 import { HomeScreen } from '@e07/shell/screens/home/home-screen.tsx';
 import { LevelsScreen } from '@e07/shell/screens/levels/levels-screen.tsx';
+import { SettingsScreen } from '@e07/shell/screens/settings/settings-screen.tsx';
 import { StatsScreen } from '@e07/shell/screens/stats/stats-screen.tsx';
 
 /**
@@ -53,7 +54,7 @@ export const rootStack = createNativeStackNavigator({
         Levels: LevelsScreen,
         Daily: DailyScreen,
         Stats: StatsScreen,
-        Settings: NotBuiltScreen,
+        Settings: SettingsScreen,
         SettingsLanguage: NotBuiltScreen,
         About: NotBuiltScreen,
         PrivacyPolicy: NotBuiltScreen,
