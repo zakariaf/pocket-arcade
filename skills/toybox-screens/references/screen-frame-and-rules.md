@@ -128,7 +128,7 @@ Every screen is three small pieces (templates show each one):
 
 | Screen | Model hook (template) | What it reads |
 |---|---|---|
-| S2 | `use-language-choice-model.ts` | the phone's languages (expo-localization), the settings store; `createLanguageT` for Continue; `useDirectionRestart` when the direction flips |
+| S2 | `use-language-choice-model.ts` | the phone's languages (`useDeviceLocales()`), the settings store; `createLanguageT` for Continue; `useDirectionRestart` when the direction flips |
 | S4 | `use-home-model.ts` (+ `use-home-actions.ts`, `use-level-play.ts`) | `useGameHost()` (logo, name, tagline), `useGameExtra()` (level count, Endless), `save.doc().run?.ref` of kind `level` (Continue), the progress and premium stores, `useDailySummary()`, `useBannerSlot('home')`, the test build's perf log for the cold-start mark |
 | S5 | `use-game-screen-model.ts` (+ `use-run-text.ts`, `use-perk-payment.ts`, `use-result-actions.ts`, `use-result-extras.ts`) | the Game screen's controls, `useGameHost()`, `useGameExtra().hints.freePerDay`, the ads port and policy, the progress and premium stores, `useReduceMotion()` |
 | S6 | `use-pause-model.ts` | the Game screen's controls (`session`: the run's ref and move count, `startRun`), the settings store and its actions, `useGameHost().hasMusic`, haptics support, `useOpenDialog()` |

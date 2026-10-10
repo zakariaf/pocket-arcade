@@ -104,7 +104,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - Copy from `react-components-and-hooks`: `packages/shell/src/app/**`, `packages/shell/src/ui/**`.
 - Copy from `accessibility`: `packages/shell/src/app/use-announce*`, `packages/shell/src/testing/**`, `packages/shell/src/theme/cvd.ts`, `test/integration/a11y/__GAME_ID__-palette.test.ts`.
 - Copy from `unit-and-component-tests`: `packages/shell/src/testing/render-with-shell*`.
-- Copy from `i18n-strings-and-catalogs`: `packages/shell/src/i18n/i18n-provider.tsx`, `packages/shell/src/i18n/language-context.tsx`, `packages/shell/src/i18n/t-bridge.tsx`, `packages/shell/src/i18n/t-context.ts`, `packages/shell/src/i18n/t.tsx`, `packages/shell/src/i18n/t.test.tsx`, `test/integration/i18n/**`.
+- Copy from `i18n-strings-and-catalogs`: `packages/shell/src/i18n/i18n-provider.tsx`, `packages/shell/src/i18n/device-locales-context.tsx`, `packages/shell/src/i18n/language-context.tsx`, `packages/shell/src/i18n/t-bridge.tsx`, `packages/shell/src/i18n/t-context.ts`, `packages/shell/src/i18n/t.tsx`, `packages/shell/src/i18n/t.test.tsx`, `test/integration/i18n/**`.
 - Copy from `rtl-and-direction`: `packages/shell/src/app/start-shell.ts`, `packages/shell/src/app/restart-after-audio*`, `packages/shell/src/i18n/direction-context.tsx`, `packages/shell/src/i18n/use-number-formatter*`, `packages/shell/src/game-host/board-direction-view*`.
 - Copy from `settings-and-preferences`: `packages/shell/src/app/connect-audio-settings*`, `packages/shell/src/app/create-shell-haptics*`, `packages/shell/src/app/localized-root*`, `packages/shell/src/config/external-links*`.
 - Copy from `daily-and-statistics`: `packages/shell/src/stores/**`.

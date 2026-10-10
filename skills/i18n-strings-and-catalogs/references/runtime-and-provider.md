@@ -31,7 +31,7 @@ Each package is installed in the Shell build step that brings its first importer
 | `react-intl` | 12.1.3 exact | Shell runtime | `npm install -E` (not in the Expo map) | 6, the i18n step (`create-t.ts` and the i18n tests) |
 | `@formatjs/cli` | 6.16.32 exact | root dev | npm, exact (for `formatjs verify`) | 6 (`npm run i18n:verify`) |
 | `@formatjs/icu-messageformat-parser` | 3.5.20 exact | `@e07/tooling` dev | npm, exact (the project linter imports it) | 6 (`packages/tooling/src/i18n/`) |
-| `expo-localization` | ~57.0.2 | the app, with the Shell peer | `npx expo install expo-localization` in the app | 7, with its first importer, the composition root's `app/device-adapters.ts` (then `start-shell.ts` and the language screens); nothing at step 6 imports it |
+| `expo-localization` | ~57.0.2 | the app, with the Shell peer | `npx expo install expo-localization` in the app | 7, with its first importer, the composition root's `app/device-adapters.ts` (then `start-shell.ts`; the language screens read the phone's languages through `useDeviceLocales()`, never from expo-localization); nothing at step 6 imports it |
 
 Re-verify before relying on a number: `npm view react-intl version`, `npm view @formatjs/intl-pluralrules version` (and the other polyfills), `npx expo install --check` in each app.
 
@@ -58,7 +58,7 @@ packages/shell/src/i18n/
   intl-polyfills.ts  intl-status.ts
   languages.ts  resolve-language.ts  digits.ts
   bidi.ts  messages.ts  create-t.ts  t-context.ts  t-bridge.tsx  i18n-provider.tsx  t.tsx
-  language-context.tsx  format-date.ts  game-message-text.ts
+  language-context.tsx  device-locales-context.tsx  format-date.ts  game-message-text.ts
   direction*.ts  fonts.ts  use-localized-text-style.ts   # layout direction and fonts (RTL work)
 apps/<game-id>/src/i18n/en.json de.json fa.json ckb.json   # game texts, keys "<game-id>.*" (keys.ts only if used)
 packages/tooling/src/i18n/verify-catalogs.ts catalog-dirs.ts catalog-lint.ts catalog-lint-rules.ts icu-walk.ts review-sheet.ts
@@ -72,7 +72,7 @@ The folder fills in three Shell build steps, because a template and its test lan
 |---|---|
 | 1 (bootstrap) | `intl-polyfills.ts`, `intl-status.ts` with its test, and the Jest `setupFiles` line |
 | 6 (the i18n step) | the four catalogs (`copy-deck.mjs apply`), `languages.ts`, `resolve-language.ts`, `digits.ts`, `bidi.ts`, `messages.ts`, `create-t.ts`, `format-date.ts`, `game-message-text.ts` with their tests, and all of `packages/tooling/src/i18n/` (the linter, `verify-catalogs.ts`, the review sheet) |
-| 7 (the boot and the composition root) | `t.tsx` with `t.test.tsx` (it renders through `renderWithShell` and the Toybox text), `i18n-provider.tsx`, `t-bridge.tsx`, `t-context.ts` and `language-context.tsx` (no test of their own: the step-7 component tests cover them, and nothing at step 6 imports them), and `test/integration/i18n/start-shell-imports.test.ts` (it reads `start-shell.ts`) |
+| 7 (the boot and the composition root) | `t.tsx` with `t.test.tsx` (it renders through `renderWithShell` and the Toybox text), `i18n-provider.tsx`, `t-bridge.tsx`, `t-context.ts`, `language-context.tsx` and `device-locales-context.tsx` (no test of their own: the step-7 component tests cover them, and nothing at step 6 imports them), and `test/integration/i18n/start-shell-imports.test.ts` (it reads `start-shell.ts`) |
 
 Copying the step-7 files at step 6 leaves functions no step-6 test calls, so `npm run test:coverage` falls under its function threshold. `check-i18n-code.mjs` follows the same split: before `start-shell.ts` exists its `polyfill-first` and `i18n-runtime` rules print a not-yet-due SKIP line each, and from step 7 on `i18n-runtime` fails on any of the step-7 files that is missing.
 
@@ -80,6 +80,7 @@ Copying the step-7 files at step 6 leaves functions no step-6 test calls, so `np
 
 - `resolveLanguage(saved, getLocales())`: the saved choice first (`settings.language`, `null` = "System"); then the first device locale that is ckb (or `ku` in Arabic script), fa or prs (Dari), de, en; otherwise en. `ku`/`kmr` in Latin script never map to ckb.
 - The same resolver runs for S2's pre-selection and for the "System" row in Settings.
+- The phone's languages are read once: the composition root's `app/device-adapters.ts` calls `getLocales()`, `LocalizedRoot` resolves the language with it and provides the list as `DeviceLocalesContext` (`i18n/device-locales-context.tsx`), and S2 and S11a read it with `useDeviceLocales()`. No screen imports expo-localization, so no screen test mocks it: `renderWithShell` provides an English phone, and a test seeds another with its `deviceLocales` option.
 - The `expo-localization` config plugin entry is `['expo-localization', { supportedLocales: { ios: LOCALES, android: LOCALES } }]` with `LOCALES = ['en', 'de', 'fa', 'ckb']`, and **nothing else**. `supportsRTL`/`forcesRTL` would re-derive the layout direction from the device language at every launch and undo an in-app Persian choice on an English phone. `supportedLocales` writes `CFBundleLocalizations`, so iOS Settings lists our four languages per app.
 - `LANGUAGE_AUTONYMS` (English, Deutsch, فارسی, کوردیی ناوەندی) are code, not catalog text; translators never change them, and a unit test pins them.
 
@@ -131,7 +132,7 @@ react-intl calls `onError` and shows the key. In the app `onError` goes to the e
 | Unit | Test (template) | Asserts |
 |---|---|---|
 | polyfills | `intl-status.test.ts` | polyfills active; `۱٬۲۳۴٫۵` for ckb; fa `one` holds 0 |
-| `resolveLanguage` | `resolve-language.test.ts` | saved wins; ckb, `ku-Arab`, prs, `ku-Latn`->next, `kmr`->en, empty->en; autonyms pinned |
+| `resolveLanguage` | `resolve-language.test.ts` | saved wins; ckb, `ku-Arab`, prs, `ku-Latn`->next, `kmr`->en, empty->en; `phoneLanguageOf` reads `ku-Arab` as ckb; autonyms pinned |
 | `t()` | `create-t.test.ts` | the plural table; `=0` over fa `one`; Latin digits; percent; FSI/PDI; number to a text placeholder reported |
 | dates | `format-date.test.ts` | `formatDayMonth` in all four languages; the month, weekday name, weekday letter and weekday-day-month helpers (the weekday number is game-kit's `isoWeekday` from `dates/date-key.ts`, tested there) |
 | game texts | `game-message-text.test.ts` | a game `Message` in en/de/fa with its plural and digits; a bare id |

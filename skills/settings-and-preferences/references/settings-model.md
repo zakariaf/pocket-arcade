@@ -143,7 +143,7 @@ Each setting must change something outside the Settings screen. The checker look
 
 | Field | Who applies it | How | When it takes effect |
 |---|---|---|---|
-| `language` | `app/localized-root.tsx` | `resolveLanguage(saved, getLocales())` → `I18nProvider language` | at once for text; a direction flip needs the restart (below) |
+| `language` | `app/localized-root.tsx` | `resolveLanguage(saved, deviceLocales)` → `I18nProvider language` (the phone's languages from the composition root, also provided to the screens as `useDeviceLocales()`) | at once for text; a direction flip needs the restart (below) |
 | `digits` | `app/localized-root.tsx` | `I18nProvider digits` → `localeTagFor(language, digits)` (`fa-u-nu-arabext` / `-latn`) | at once, every number |
 | `theme` | `theme/theme-provider.tsx` | `resolveColorScheme(preference, useColorScheme())`; mirrors into `Appearance.setColorScheme(… 'unspecified')` so alerts and native forms match | at once |
 | `colorBlind` | `theme/theme-provider.tsx` (Shell mode) and the board renderer (board palette) | theme `mode: 'colorBlind'`; boards pick their colour-blind board palette | at once |

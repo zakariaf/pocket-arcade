@@ -16,9 +16,6 @@ const mockGoBack = jest.fn();
 const mockOpenDialog = jest.fn<undefined, [DialogRequest]>();
 jest.mock('@react-navigation/native', () => ({ useNavigation: () => ({ goBack: mockGoBack }) }));
 jest.mock('@e07/shell/app/dialog-context.tsx', () => ({ useOpenDialog: () => mockOpenDialog }));
-jest.mock('expo-localization', () => ({
-  getLocales: () => [{ languageCode: 'de', languageScriptCode: null }],
-}));
 jest.mock('@e07/shell/i18n/direction.ts', () => ({
   readLayoutDirection: () => 'ltr',
   restartForDirection: jest.fn(() => Promise.resolve()),
@@ -29,6 +26,7 @@ jest.mock('@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts', () =>
 
 async function languageModel() {
   const shell = createShellWrapper({
+    deviceLocales: [{ languageCode: 'de', languageScriptCode: null }],
     services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
   });
   const view = await renderHook(() => useSettingsLanguageModel(), { wrapper: shell.wrapper });

@@ -4,14 +4,14 @@
 // the S14 "Restart to apply" dialog opens: Restart disposes audio and reloads in the new
 // direction, Later keeps the old layout until the next launch. A parity capture of
 // s14-restart-to-apply (test builds) opens the same dialog over S11a, with no language saved.
+// System resolves against the phone's languages the composition root read (useDeviceLocales).
 import { useNavigation } from '@react-navigation/native';
-import { getLocales } from 'expo-localization';
-import { useState } from 'react';
 
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
 import { useDirectionRestart } from '@e07/shell/app/use-direction-restart.ts';
 import { useParityOpener } from '@e07/shell/app/use-parity-opener.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
+import { useDeviceLocales } from '@e07/shell/i18n/device-locales-context.tsx';
 import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
 import { directionOf } from '@e07/shell/i18n/languages.ts';
 import { resolveLanguage } from '@e07/shell/i18n/resolve-language.ts';
@@ -46,7 +46,7 @@ export function useSettingsLanguageModel(): SettingsLanguageModel {
   const selected = useSettingsStore(selectLanguage);
   const dispatch = useSettingsStore(selectDispatch);
   const openRestart = useRestartDialog();
-  const [deviceLocales] = useState(() => getLocales());
+  const deviceLocales = useDeviceLocales();
   return {
     selected,
     systemLanguage: resolveLanguage(null, deviceLocales),

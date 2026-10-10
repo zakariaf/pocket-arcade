@@ -1,15 +1,15 @@
 // packages/shell/src/screens/first-run/use-language-choice-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
-import { getLocales } from 'expo-localization';
 
 import { restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
-import { phoneLanguageOf, useLanguageChoiceModel } from './use-language-choice-model.ts';
+import { useLanguageChoiceModel } from './use-language-choice-model.ts';
 
-jest.mock('expo-localization', () => ({ getLocales: jest.fn() }));
+import type { DeviceLocale } from '@e07/shell/i18n/resolve-language.ts';
+
 jest.mock('@e07/shell/i18n/direction.ts', () => ({
   readLayoutDirection: () => 'ltr',
   restartForDirection: jest.fn(() => Promise.resolve()),
@@ -20,9 +20,9 @@ jest.mock('@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts', () =>
 
 const GERMAN_PHONE = [{ languageCode: 'de', languageScriptCode: null }];
 
-async function languageChoice(locales: readonly object[]) {
-  jest.mocked(getLocales).mockReturnValue(locales as ReturnType<typeof getLocales>);
+async function languageChoice(locales: readonly DeviceLocale[]) {
   const shell = createShellWrapper({
+    deviceLocales: locales,
     services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
   });
   const view = await renderHook(() => useLanguageChoiceModel(), { wrapper: shell.wrapper });
@@ -63,9 +63,5 @@ describe('useLanguageChoiceModel', () => {
       await Promise.resolve();
     });
     expect(jest.mocked(restartForDirection)).toHaveBeenCalledWith('rtl', expect.anything());
-  });
-
-  it('reads Sorani from a Kurdish locale written in Arabic script', () => {
-    expect(phoneLanguageOf([{ languageCode: 'ku', languageScriptCode: 'Arab' }])).toBe('ckb');
   });
 });

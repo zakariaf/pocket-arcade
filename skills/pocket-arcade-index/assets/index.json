@@ -1034,6 +1034,7 @@
             "skill": "i18n-strings-and-catalogs",
             "paths": [
               "packages/shell/src/i18n/i18n-provider.tsx",
+              "packages/shell/src/i18n/device-locales-context.tsx",
               "packages/shell/src/i18n/language-context.tsx",
               "packages/shell/src/i18n/t-bridge.tsx",
               "packages/shell/src/i18n/t-context.ts",
