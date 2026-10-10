@@ -27,6 +27,8 @@ export type GameSessionControls = {
    * navigation). A loss still waiting for its continue is recorded first.
    */
   readonly startRun: (ref: RunRef) => void;
+  /** A paid hint would show a move now: the Game screen asks before the player pays (spec 8.5). */
+  readonly canHint: () => boolean;
 };
 
 const noSubscription = (): (() => void) => () => undefined;
@@ -85,5 +87,6 @@ export function useGameSessionControls(params: GameParams): GameSessionControls 
       send({ type: 'finish' });
       setOpened(host.openSession({ start: 'new', ref }));
     },
+    canHint: () => opened?.canHint() ?? false,
   };
 }
