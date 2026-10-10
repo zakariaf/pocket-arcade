@@ -3,7 +3,9 @@
 // same Game screen, AFTER a due interstitial (never before the player has seen the result); the
 // ad history is saved so the caps survive a kill. Levels and Home record a pending loss (finish)
 // and leave. Continue is sent only once it is paid for. One of them runs at a time: a double tap
-// while the interstitial is awaited starts one run and saves the ad history once.
+// while the interstitial is awaited starts one run and saves the ad history once, and while the
+// continue is being paid for (the rewarded ad not yet on screen) no other key records or replaces
+// the loss the continue is about to rescue (N10).
 import { useRef } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
@@ -55,13 +57,40 @@ function useAfterInterstitial(outcome: LevelOutcome): (then: () => void) => void
   };
 }
 
+/** One result action at a time: begin() is false while another one runs. */
+type ActionGuard = { readonly begin: () => boolean; readonly end: () => void };
+
+/**
+ * Set from the first Next, Replay, Try again, Levels, Home or Continue until its run has started
+ * or the continue's payment has settled: the taps that follow (before the screen re-renders, or
+ * while an ad covers it) change nothing.
+ */
+function useActionGuard(): ActionGuard {
+  const isBusy = useRef(false);
+  return {
+    begin: () => {
+      if (isBusy.current) return false;
+      isBusy.current = true;
+      return true;
+    },
+    end: () => {
+      isBusy.current = false;
+    },
+  };
+}
+
 /** Continue: pay first (rewarded ad, or free for Premium), then send it to the run. */
-function continueWhenPaid(input: ResultActionsInput, errorLog: ErrorLogPort): () => void {
+function continueWhenPaid(
+  input: ResultActionsInput,
+  errorLog: ErrorLogPort,
+  guard: ActionGuard,
+): () => void {
   const send = (): void => {
     input.controls.send({ type: 'continue' });
   };
   return () => {
-    sendWhenPaid(input.payForContinue, send, errorLog);
+    if (!guard.begin()) return;
+    sendWhenPaid(() => input.payForContinue().finally(guard.end), send, errorLog);
   };
 }
 
@@ -70,20 +99,17 @@ export function useResultActions(input: ResultActionsInput): ResultActions {
   const { errorLog } = useServices();
   const summary = controls.view?.summary ?? null;
   const afterInterstitial = useAfterInterstitial(summary?.isWon === true ? 'win' : 'lose');
-  // Set from the first Next, Replay or Try again until its run has started: the taps that follow
-  // (before the screen re-renders, or while the ad covers it) change nothing.
-  const isStarting = useRef(false);
+  const guard = useActionGuard();
   const startAfterAd = (ref: RunRef): void => {
-    if (isStarting.current) return;
-    isStarting.current = true;
+    if (!guard.begin()) return;
     onLeaveResult();
     afterInterstitial(() => {
-      isStarting.current = false;
+      guard.end();
       controls.startRun(ref);
     });
   };
   const leave = (go: () => void) => (): void => {
-    if (isStarting.current) return;
+    if (!guard.begin()) return;
     onLeaveResult();
     controls.send({ type: 'finish' });
     go();
@@ -103,7 +129,7 @@ export function useResultActions(input: ResultActionsInput): ResultActions {
     onTryAgain: restart,
     onLevels: leave(nav.onLevels),
     onHome: leave(nav.onHome),
-    onContinue: continueWhenPaid(input, errorLog),
+    onContinue: continueWhenPaid(input, errorLog, guard),
     onOpenPremium: nav.onOpenPremium,
   };
 }
