@@ -23,3 +23,13 @@ export function focusRing(color: string): ViewStyle {
     outlineColor: color,
   };
 }
+
+/**
+ * Spread on the View of every printed part that tilts (stickers, the level flag, the Today tag,
+ * art and logo tiles, the calendar, Premium art, confetti): `<View {...TILTED_LAYER} style={...}>`.
+ * Fabric draws a border from an image it stretches with nearest filtering, so a turned edge, and an
+ * inner border such as the calendar's month band, steps at device pixels; a rasterized layer is
+ * resampled smoothly when it turns, as Chrome draws the references. A tilt that animates (the
+ * sticker's slap) spreads it too and turns in its animated style.
+ */
+export const TILTED_LAYER = { shouldRasterizeIOS: true } as const;

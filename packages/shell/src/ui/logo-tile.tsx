@@ -9,6 +9,7 @@ import { STROKE } from '@e07/shell/theme/tokens.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { picturePath } from './picture-path.tsx';
+import { TILTED_LAYER } from './toybox-styles.ts';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
@@ -104,7 +105,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const tile = (
     <View
       style={[styles.tile, tileStyle(theme, spec)]}
-      shouldRasterizeIOS
+      {...TILTED_LAYER}
       {...(spec.ring === 0 ? HIDDEN : {})}
       {...(testID === undefined ? {} : { testID })}
     >
@@ -121,7 +122,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   if (spec.ring === 0) return tile;
   return (
     <View {...HIDDEN}>
-      <View style={ringStyle(theme, spec)} shouldRasterizeIOS />
+      <View style={ringStyle(theme, spec)} {...TILTED_LAYER} />
       {tile}
     </View>
   );
