@@ -1,11 +1,14 @@
 // packages/shell/src/screens/stats/stats-summary.ts
-import { addDays, isoWeekday } from '@e07/game-kit/dates/date-key.ts';
-import { currentDailyStreak } from '@e07/shell/stores/daily-model.ts';
+import { isoWeekday } from '@e07/game-kit/dates/date-key.ts';
+import { countdownOf, MINUTE_MS } from '@e07/shell/screens/daily/daily-summary.ts';
+import { currentDailyStreak, lastSevenDates } from '@e07/shell/stores/daily-model.ts';
 
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
+import type { Countdown } from '@e07/shell/screens/daily/daily-summary.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
-export type Duration = { readonly hours: number; readonly minutes: number };
+/** Whole hours and minutes: the same shape as S9's countdown. */
+export type Duration = Countdown;
 
 export type StatsSummaryInput = {
   readonly stats: SaveDoc['stats'];
@@ -63,13 +66,9 @@ export type StatsSummary = {
   readonly counters: readonly { readonly id: string; readonly value: number }[];
 };
 
-const MINUTE_MS = 60_000;
-const HOUR_MS = 60 * MINUTE_MS;
-
 /** "2 h 14 min": whole hours and remaining whole minutes (the message picks the pattern). */
 export function splitDuration(ms: number): Duration {
-  const hours = Math.floor(ms / HOUR_MS);
-  return { hours, minutes: Math.floor((ms - hours * HOUR_MS) / MINUTE_MS) };
+  return countdownOf(Math.floor(ms / MINUTE_MS));
 }
 
 function levelsCard(progress: SaveDoc['progress'], levelCount: number): StatsSummary['levels'] {
@@ -96,10 +95,11 @@ function bestLevel(progress: SaveDoc['progress']): StatsSummary['best']['bestLev
 }
 
 function weekBars(stats: SaveDoc['stats'], today: DateKey): StatsSummary['week'] {
-  const days = [6, 5, 4, 3, 2, 1, 0].map((back) => {
-    const date = addDays(today, -back);
-    return { date, weekday: isoWeekday(date), games: stats.days[date]?.games ?? 0 };
-  });
+  const days = lastSevenDates(today).map((date) => ({
+    date,
+    weekday: isoWeekday(date),
+    games: stats.days[date]?.games ?? 0,
+  }));
   return { days, max: Math.max(1, ...days.map((day) => day.games)) };
 }
 

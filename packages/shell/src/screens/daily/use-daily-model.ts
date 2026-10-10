@@ -7,10 +7,10 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import {
+  dayOf,
   formatMonthShort,
   formatWeekdayDayMonth,
-  formatWeekdayLetter,
-  formatWeekdayName,
+  formatWeekdayLabels,
 } from '@e07/shell/i18n/format-date.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
@@ -46,15 +46,14 @@ export function useDailyModel(): DailyModel {
   const playToday = usePlayToday();
   return {
     monthText: formatMonthShort(today, t),
-    dayText: formatNumber(Number(today.slice(8, 10))),
+    dayText: formatNumber(dayOf(today)),
     dateText: formatWeekdayDayMonth(today, t),
     todayResult:
       summary.todayResult === null ? null : { score: summary.todayResult.score, ...countdown },
     currentStreak: summary.currentStreak,
     bestStreak: summary.bestStreak,
     week: summary.week.map((day) => ({
-      letter: formatWeekdayLetter(day.date, t),
-      weekdayName: formatWeekdayName(day.date, t),
+      ...formatWeekdayLabels(day.date, t),
       state: day.mark,
       isToday: day.isToday,
     })),
