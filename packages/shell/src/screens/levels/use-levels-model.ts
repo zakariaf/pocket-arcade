@@ -11,16 +11,12 @@ import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { usePlayRun } from '@e07/shell/screens/home/use-play-run.ts';
 import { selectLevels } from '@e07/shell/stores/progress-selectors.ts';
 import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import { levelPacksOf, starsByLevelOf } from './levels-model-of.ts';
 
@@ -40,9 +36,7 @@ export function useLevelsModel(): LevelsModel {
   const playRun = usePlayRun();
   const { packs } = useGameHost();
   const levels = useProgressStore(selectLevels);
-  const formatNumber = createNumberFormatter(
-    localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
-  );
+  const formatNumber = useNumberFormatter();
   const packModels = levelPacksOf({
     packs,
     stars: starsByLevelOf(levels),
