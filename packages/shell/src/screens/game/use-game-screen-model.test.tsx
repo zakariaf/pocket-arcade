@@ -279,4 +279,11 @@ describe('useGameScreenModel', () => {
     expect(finishes()).toBe(1);
     expect(shell.save.doc().stats.gamesPlayed).toBe(1);
   });
+  it('has the loss counted in the stats store when the recorded lose result appears (S7)', async () => {
+    const { result, shell, tapAll } = await gameScreen({ adsMode: 'off' });
+    await tapAll([1, 0, 1]);
+
+    expect(result.current.model.result).toMatchObject({ kind: 'lose', continueOffer: null });
+    expect(shell.stores.stats.getState().stats).toMatchObject({ gamesPlayed: 1, losses: 1 });
+  });
 });

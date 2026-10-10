@@ -1,5 +1,5 @@
 // packages/shell/src/screens/result/result-overlay.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
+import { screen, userEvent, within } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -320,5 +320,78 @@ describe('ResultOverlay', () => {
       });
       expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
     }
+  });
+
+  it("prints Line Siege's score line, never a moves line or a par (L3)", async () => {
+    await renderWithShell(
+      <ResultOverlay model={{ ...WIN, movesCount: 12, par: null, score: 1840, bestScore: 1840 }} />,
+    );
+
+    expect(screen.getByTestId('result.score-card.score-line')).toHaveTextContent(
+      'Score 1,840 – best 1,840',
+    );
+    expect(screen.queryByTestId('result.score-card.moves-line')).toBeNull();
+    expect(screen.queryByText(/par/i)).toBeNull();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it("shows the game's lose reason, and no offer box when no continue can come (8.10, L11)", async () => {
+    await renderWithShell(<ResultOverlay model={{ ...LOSE, continueOffer: null }} />);
+
+    expect(
+      screen.getByTestId('result.reason-card.label', { includeHiddenElements: true }),
+    ).toHaveTextContent('The monsters broke through');
+    expect(screen.queryByTestId('result.continue-offer')).toBeNull();
+    expect(screen.getByTestId('result.try-again-button')).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws no Premium nudge without a nudge price (owners, or the day used up)', async () => {
+    await renderWithShell(<ResultOverlay model={{ ...WIN, nudgePriceText: null }} />);
+
+    expect(screen.queryByTestId('result.premium-button')).toBeNull();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it.each([
+    ['win', WIN],
+    ['lose', LOSE],
+    ['daily', DAILY],
+    ['endless', ENDLESS],
+  ] as const)('keeps VoiceOver inside the %s result', async (_kind, model) => {
+    await renderWithShell(<ResultOverlay model={model} />);
+
+    // The modal root is the overlay around result.screen (the parity marker sits beside it).
+    const modal = screen.container.queryAll(
+      (node) => node.props['accessibilityViewIsModal'] === true,
+    );
+    expect(modal).toHaveLength(1);
+    const [root] = modal;
+    expect(root === undefined ? null : within(root).getByTestId('result.screen')).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('shows Persian digits in the score, the score line and the mode chip (fa)', async () => {
+    // The model formats the mode chip and the score in the chosen digits; the view the score line.
+    const model: WinResult = {
+      ...WIN,
+      modeText: 'مرحلهٔ ۱۲',
+      scoreText: '۱٬۸۴۰',
+      par: null,
+      score: 1840,
+      bestScore: 1840,
+    };
+    await renderWithShell(<ResultOverlay model={model} />, { language: 'fa', direction: 'rtl' });
+
+    expect(
+      screen.getByTestId('result.mode-chip', { includeHiddenElements: true }),
+    ).toHaveTextContent('مرحلهٔ ۱۲');
+    expect(
+      screen.getByTestId('result.score-card.value', { includeHiddenElements: true }),
+    ).toHaveTextContent('۱٬۸۴۰');
+    expect(
+      screen.getByTestId('result.score-card.score-line', { includeHiddenElements: true }),
+    ).toHaveTextContent(/۱٬۸۴۰.*۱٬۸۴۰/);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
