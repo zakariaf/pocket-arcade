@@ -15,9 +15,10 @@
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { Linking } from 'react-native';
 
+import { restartAfterAudio } from '@e07/shell/app/restart-after-audio.ts';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { levelCountOf } from '@e07/shell/app/use-game-extra.ts';
-import { readLayoutDirection, restartForDirection } from '@e07/shell/i18n/direction.ts';
+import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
 import { readAdsExtra } from '@e07/shell/services/ads/read-ads-extra.ts';
 import { createSqliteKvDirectionGuardAdapter } from '@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts';
 import { updateAndPublish } from '@e07/shell/stores/update-and-publish.ts';
@@ -119,6 +120,9 @@ function createLinks(
   navigationRef: DebugParts['navigationRef'],
 ): DebugLinkHandler {
   const guard = createSqliteKvDirectionGuardAdapter();
+  const recordBootError = (error: unknown): void => {
+    input.errorLog.record('boot', error);
+  };
   return build.api.createDebugLinkHandler({
     services: input.debug,
     store: build.store,
@@ -129,10 +133,8 @@ function createLinks(
     today: build.clock.today,
     levelCount: levelCountOf(input.extra),
     layoutDirection: readLayoutDirection(),
-    restart: async (direction) => {
-      await input.audio.dispose();
-      await restartForDirection(direction, guard);
-    },
+    restart: (direction) =>
+      restartAfterAudio({ audio: input.audio, guard, onDisposeError: recordBootError }, direction),
     openRoute: (route) => {
       if (route.name === 'Game') navigationRef.navigate(route.name, route.params);
       else navigationRef.navigate(route.name);
