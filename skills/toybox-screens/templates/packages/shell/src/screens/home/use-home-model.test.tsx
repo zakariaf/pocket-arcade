@@ -7,6 +7,7 @@ import { endParitySession, startParitySession } from '@e07/shell/app/parity/pari
 import { useColdStartMark } from '@e07/shell/app/perf/use-cold-start-mark.ts';
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
+import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
 import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-connectivity.ts';
 import { createHostWrapper } from '@e07/shell/testing/create-host-wrapper.tsx';
 import { createTestSave } from '@e07/shell/testing/create-test-save.ts';
@@ -118,6 +119,26 @@ describe('useHomeModel', () => {
     expect(mockNavigate).toHaveBeenLastCalledWith('Game', {
       start: 'new',
       ref: { kind: 'daily', date: '2026-09-26' },
+    });
+  });
+
+  it("plays the day's daily the clock says when the key is pressed, past midnight on an open Home", async () => {
+    // Spec S9: the day changes at local midnight; Home may stay open across it without re-rendering.
+    const clock = createFakeClock({ nowMs: 1_790_510_400_000, today: '2026-09-26' });
+    const shell = createHostWrapper({
+      services: {
+        clock,
+        save: createTestSave(clock).save,
+        ads: ADS,
+        connectivity: createFakeConnectivity(true),
+      },
+    });
+    const { result } = await renderHook(() => useHomeModel(), { wrapper: shell.wrapper });
+    clock.setToday('2026-09-27');
+    result.current.actions.onPlayDaily();
+    expect(mockNavigate).toHaveBeenLastCalledWith('Game', {
+      start: 'new',
+      ref: { kind: 'daily', date: '2026-09-27' },
     });
   });
 
