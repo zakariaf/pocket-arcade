@@ -24,15 +24,19 @@ export function languageFromDeviceLocale(locale: DeviceLocale): Language | null 
   return Object.hasOwn(BY_CODE, code) ? (BY_CODE[code] ?? null) : null;
 }
 
+/** The first of the phone's languages that the app speaks, or null (S2 then preselects English). */
+export function phoneLanguageOf(deviceLocales: readonly DeviceLocale[]): Language | null {
+  for (const locale of deviceLocales) {
+    const language = languageFromDeviceLocale(locale);
+    if (language !== null) return language;
+  }
+  return null;
+}
+
 // Saved choice wins, then the first supported device language, then English.
 export function resolveLanguage(
   saved: Language | null,
   deviceLocales: readonly DeviceLocale[],
 ): Language {
-  if (saved !== null) return saved;
-  for (const locale of deviceLocales) {
-    const language = languageFromDeviceLocale(locale);
-    if (language !== null) return language;
-  }
-  return 'en';
+  return saved ?? phoneLanguageOf(deviceLocales) ?? 'en';
 }
