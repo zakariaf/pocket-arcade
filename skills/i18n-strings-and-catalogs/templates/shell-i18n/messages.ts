@@ -3,7 +3,9 @@ import ckb from './catalogs/ckb.json';
 import de from './catalogs/de.json';
 import en from './catalogs/en.json';
 import fa from './catalogs/fa.json';
+import { localeTagFor } from './digits.ts';
 
+import type { DigitStyle } from './digits.ts';
 import type { Language } from './languages.ts';
 
 export type Catalog = Readonly<Record<string, string>>;
@@ -27,4 +29,28 @@ export function messagesFor(
   gameCatalogs: Readonly<Record<Language, Catalog>>,
 ): Catalog {
   return { ...SHELL_CATALOGS[language], ...gameCatalogs[language] };
+}
+
+export type IntlConfigInput = {
+  readonly language: Language;
+  readonly digits: DigitStyle;
+  readonly gameCatalogs: Readonly<Record<Language, Catalog>>;
+  readonly onError: (error: Error) => void;
+};
+
+/** The react-intl config of one language: the app's IntlProvider and S2's preview t() share it. */
+export type IntlConfigOf = {
+  readonly locale: string;
+  readonly messages: Catalog;
+  readonly defaultLocale: 'en';
+  readonly onError: (error: Error) => void;
+};
+
+export function intlConfigOf(input: IntlConfigInput): IntlConfigOf {
+  return {
+    locale: localeTagFor(input.language, input.digits),
+    messages: messagesFor(input.language, input.gameCatalogs),
+    defaultLocale: 'en',
+    onError: input.onError,
+  };
 }

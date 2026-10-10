@@ -104,7 +104,7 @@ ckb's CLDR default is Arabic-Indic `٠١٢`; the product wants Persian-style `۰
 </I18nProvider>
 ```
 
-- `I18nProvider` = react-intl's `IntlProvider` (locale tag, merged Shell + game messages, `defaultLocale="en"`) + `LanguageContext` + `TBridge`, which puts `t()` into `TContext`.
+- `I18nProvider` = react-intl's `IntlProvider` (locale tag, merged Shell + game messages, `defaultLocale="en"`, all from `intlConfigOf()` in `messages.ts`, which S2's preview `createLanguageT` builds its `createIntl` from too) + `LanguageContext` + `TBridge`, which puts `t()` into `TContext`.
 - `t(key, values)` wraps `formatMessage`. It adds two things: FSI/PDI isolation of `*Name`/`*Text` values, and a report through `onError` when a number is passed to a text placeholder.
 - In JSX use `<T id="…" values={…} variant="…" />`; `T` renders `AppText`, so direction, alignment, script font and the 200 % text cap come with it.
 - Where a string is needed (accessibility labels, `AppText` with extra layout, Skia paragraphs, props of UI components), call `const t = useT()` in the screen or its model hook and pass `t('…')`. Components receive translated strings; they never build them.
