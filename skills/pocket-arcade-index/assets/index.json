@@ -1453,7 +1453,7 @@
                 "skill": "settings-and-preferences",
                 "paths": [
                   "packages/shell/src/stores/settings-resets*",
-                  "packages/shell/src/stores/use-settings-resets.ts"
+                  "packages/shell/src/stores/use-settings-resets*"
                 ]
               }
             ]

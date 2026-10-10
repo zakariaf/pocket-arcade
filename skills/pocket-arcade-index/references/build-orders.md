@@ -162,7 +162,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - **S10**
   - Copy from `toybox-screens`: `packages/shell/src/screens/stats/**`.
   - Copy from `daily-and-statistics`: `packages/shell/src/screens/stats/**`.
-  - Copy from `settings-and-preferences`: `packages/shell/src/stores/settings-resets*`, `packages/shell/src/stores/use-settings-resets.ts`.
+  - Copy from `settings-and-preferences`: `packages/shell/src/stores/settings-resets*`, `packages/shell/src/stores/use-settings-resets*`.
 - **S11**
   - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`.
   - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/*`, `packages/shell/src/game-host/use-hints-during-play*`.
