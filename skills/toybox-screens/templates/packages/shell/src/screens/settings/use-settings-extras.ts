@@ -10,7 +10,6 @@ import { useOptionalAdPrivacyChoices } from '@e07/shell/app/consent-moment-conte
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
 import { usePremiumScreenDeps } from '@e07/shell/app/premium-screen-deps-context.tsx';
 import { readVersionText } from '@e07/shell/app/read-version-text.ts';
-import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useParityOpener } from '@e07/shell/app/use-parity-opener.ts';
 import { restorePremium } from '@e07/shell/services/purchase/premium-service.ts';
 import { priceOf } from '@e07/shell/stores/premium/premium-state.ts';
@@ -37,19 +36,19 @@ function useResetProgressDialog(): () => void {
   };
 }
 
-/** Ad privacy choices: through the consent moment; without it (hook tests), the port alone. */
+/**
+ * Ad privacy choices, only through the consent moment (ShellFeatures), which saves the answer and
+ * turns the banners on or off at once; hook tests get create-host-wrapper's stand-in. Without it
+ * the screen fails loudly: a bare consent port would drop the answer.
+ */
 function useAdPrivacyChoices(): () => void {
-  const { consent, errorLog } = useServices();
-  const reopenThroughMoment = useOptionalAdPrivacyChoices();
-  return () => {
-    if (reopenThroughMoment !== null) {
-      reopenThroughMoment();
-      return;
-    }
-    consent.showPrivacyOptions().catch((error: unknown) => {
-      errorLog.record('ads', error);
-    });
-  };
+  const reopen = useOptionalAdPrivacyChoices();
+  if (reopen === null) {
+    throw new Error(
+      'S11 Ad privacy choices needs the consent moment: render it inside <ConsentMoment> or a wrapper that provides AdPrivacyChoicesContext',
+    );
+  }
+  return reopen;
 }
 
 export function useSettingsExtras(): SettingsExtras {

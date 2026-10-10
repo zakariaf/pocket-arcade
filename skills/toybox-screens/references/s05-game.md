@@ -93,7 +93,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/game/game-moves-probe.tsx` and its test
 - `packages/shell/src/screens/game/game-layout.tsx` and its test
 - `packages/shell/src/game-host/game-top-bar.tsx` and its test
-- `packages/shell/src/testing/create-host-wrapper.tsx`: the hook tests' wrapper; `TALLY_TEXTS` holds a text for every message id the tally test game names (its test reads them from the module), so a hook test that reaches S7 never throws `MISSING_TRANSLATION`
+- `packages/shell/src/testing/create-host-wrapper.tsx`: the hook tests' wrapper; `TALLY_TEXTS` holds a text for every message id the tally test game names (its test reads them from the module), so a hook test that reaches S7 never throws `MISSING_TRANSLATION`; it also provides `AdPrivacyChoicesContext` with a stand-in for the consent moment (Google's options through the test's consent port), since S11's Ad privacy choices has no fallback
 
 The route also needs S6 (`screens/pause/`) and S7 (`screens/result/`), game-host-integration's session controls, top-bar model and `resultModelOf`, and admob-ads' `perkOffer`, `earnRewardedPerk` and `showInterstitialIfDue`.
 
