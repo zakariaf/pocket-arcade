@@ -13,22 +13,15 @@ import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { createLanguageT } from '@e07/shell/i18n/create-language-t.ts';
 import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
 import { directionOf } from '@e07/shell/i18n/languages.ts';
-import { languageFromDeviceLocale } from '@e07/shell/i18n/resolve-language.ts';
+import { phoneLanguageOf } from '@e07/shell/i18n/resolve-language.ts';
 import { selectDigits, selectDispatch } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import type { LanguageChoiceModel } from './language-choice-view.tsx';
 import type { Language } from '@e07/shell/i18n/languages.ts';
-import type { DeviceLocale } from '@e07/shell/i18n/resolve-language.ts';
 
-/** The first of the phone's languages that the app speaks, or null (then English is preselected). */
-export function phoneLanguageOf(locales: readonly DeviceLocale[]): Language | null {
-  for (const locale of locales) {
-    const language = languageFromDeviceLocale(locale);
-    if (language !== null) return language;
-  }
-  return null;
-}
+// The phone-language rule is the boot's own (resolveLanguage); its test reaches it through S2's model.
+export { phoneLanguageOf } from '@e07/shell/i18n/resolve-language.ts';
 
 export function useLanguageChoiceModel(): LanguageChoiceModel {
   const [phoneLanguage] = useState(() => phoneLanguageOf(getLocales()));
