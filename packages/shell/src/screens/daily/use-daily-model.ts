@@ -1,8 +1,8 @@
 // packages/shell/src/screens/daily/use-daily-model.ts
 // S9's model hook: the daily summary (daily-and-statistics), the next-day countdown (read on every
-// render, so it keeps ticking once today is done), the date texts from the Shell's date formatter
-// and the Game route for today's challenge. DailyView only draws what this returns.
-import { useNavigation } from '@react-navigation/native';
+// render, ticking only while today's result shows on a focused S9), the date texts from the Shell's
+// date formatter and the Game route for today's challenge. DailyView only draws what this returns.
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
@@ -42,7 +42,9 @@ export function useDailyModel(): DailyModel {
   const t = useT();
   const navigation = useNavigation();
   const summary = useDailySummary();
-  const countdown = useNextDayCountdown();
+  // The countdown ticks only while today's result shows on a focused S9 (never under Game).
+  const isFocused = useIsFocused();
+  const countdown = useNextDayCountdown(summary.todayResult !== null && isFocused);
   const formatNumber = createNumberFormatter(
     localeTagFor(useLanguage(), useSettingsStore(selectDigits)),
   );

@@ -207,6 +207,20 @@ describe('useDailyModel', () => {
       expect(result.current.todayResult).toMatchObject({ hours: 2, minutes: 55 });
     });
 
+    it("ticks no countdown clock until today's result shows, then one", async () => {
+      const interval = jest.spyOn(globalThis, 'setInterval');
+      try {
+        const { finishDaily } = await dailyHook(noonClock());
+        expect(interval).not.toHaveBeenCalled();
+
+        await finishDaily('2026-09-26', 1840);
+
+        expect(interval).toHaveBeenCalledTimes(1);
+      } finally {
+        interval.mockRestore();
+      }
+    });
+
     it('writes the day of the month in Persian digits in fa (spec 7.3)', async () => {
       const clock = createFakeClock({ nowMs: 1_790_510_400_000, today: '2026-09-27' });
       const { result } = await dailyHook(clock, { language: 'fa' });
