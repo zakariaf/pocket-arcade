@@ -88,6 +88,12 @@ function ringStyle(theme: Theme, spec: VariantSpec): ViewStyle {
   };
 }
 
+/** Hides the outermost view, and with it everything inside, from VoiceOver. */
+const HIDDEN = {
+  accessibilityElementsHidden: true,
+  importantForAccessibility: 'no-hide-descendants',
+} as const;
+
 /** The game's logo in its accent tile: a Skia canvas (never mirrored), decorative for VoiceOver. */
 export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const theme = useTheme();
@@ -99,8 +105,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
     <View
       style={[styles.tile, tileStyle(theme, spec)]}
       shouldRasterizeIOS
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
+      {...(spec.ring === 0 ? HIDDEN : {})}
       {...(testID === undefined ? {} : { testID })}
     >
       <Canvas style={{ width: artSize, height: artSize }}>
@@ -115,7 +120,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   );
   if (spec.ring === 0) return tile;
   return (
-    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <View {...HIDDEN}>
       <View style={ringStyle(theme, spec)} shouldRasterizeIOS />
       {tile}
     </View>
