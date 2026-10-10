@@ -110,7 +110,7 @@ Contrast: the 17 pt Bold danger label stays on the key while the fill grows unde
 
 *Measurements* (`toast`): paddingBlock 12 · paddingInline 14 · radius 12 · gap 10 · icon 20 · stackGap 10.
 
-**Position and life** (Chosen): above the banner band, 14 pt over the bottom of the body; it leaves after about 3 s (the screen owns the timer). S12 restore results stack toasts with gap 10 (`ToastStack`). The S8 locked-tile toast follows its design instead: absolute, 352 pt below the top of the scrolling body, over the last rows of the pack (the mockup's `.lv-toast{top:352px}`).
+**Position and life** (Chosen): above the banner band, 14 pt over the bottom of the body; it leaves after about 3 s (the screen owns the timer). S12 restore results stack toasts with gap 10 (`ToastStack`). The S8 locked-tile toast follows its design instead: absolute, 352 pt below the top of the scrolling body, over the last rows of the pack (the mockup's `.lv-toast{top:352px}`). A toast never takes a tap: one that floats over pressable parts (the S8 toast stays up over the tiles) sits in a wrapper with `pointerEvents="none"`, so the parts under it keep working.
 
 **Accessibility:** role `alert` with a polite live region, and the screen also announces the text (`AccessibilityInfo.announceForAccessibility` through the app's announce hook): iOS does not read live regions. ids: `levels.level-tile.locked-toast`, `premium.restoring-toast`, `premium.restore-success-toast`, `premium.restore-empty-toast`, `premium.restore-failed-toast`.
 

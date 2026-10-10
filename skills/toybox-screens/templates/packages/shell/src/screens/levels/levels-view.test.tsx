@@ -115,4 +115,15 @@ describe('LevelsView', () => {
     );
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+
+  it('lets taps through the toast to the tiles it covers while it stays up', async () => {
+    const model = modelWith({ focusedLevel: 4 });
+    const user = userEvent.setup();
+    await renderWithShell(<LevelsView model={model} />);
+
+    expect(screen.getByTestId('levels.locked-toast').parent?.props['pointerEvents']).toBe('none');
+    await user.press(screen.getByRole('button', { name: 'Level 3: no stars yet' }));
+    expect(model.onPlayLevel).toHaveBeenCalledWith(3);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });
