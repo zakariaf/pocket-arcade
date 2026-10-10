@@ -15,7 +15,7 @@ const VIEW: SoundGroupView = {
   volumeLabel: 'Volume',
   vibrationLabel: 'Vibration',
   isSoundOn: false,
-  soundVolume: 0.6,
+  soundVolume: 60, // integer percent, as the save keeps it
   isVibrationOn: true,
 };
 
@@ -42,13 +42,15 @@ describe('SoundGroup', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
+  // The real onChangeSoundVolume (settings-preference-actions.ts) takes the save's integer
+  // percent; the Slider works in 0..1, so the group converts both ways.
   it('steps the volume by 10 % and greys its fill while the sound is off', async () => {
     const handlers = actions();
     await renderWithShell(<SoundGroup view={VIEW} actions={handlers} isReducedMotion />);
 
     const slider = screen.getByRole('adjustable', { name: 'Volume' });
     await fireEvent(slider, 'accessibilityAction', { nativeEvent: { actionName: 'increment' } });
-    expect(handlers.onChangeSoundVolume).toHaveBeenCalledWith(0.7);
+    expect(handlers.onChangeSoundVolume).toHaveBeenCalledWith(70);
     // allow-style-assertion: the muted fill is the only cue that the volume applies to nothing yet.
     expect(screen.getByTestId('settings.sound-volume-slider.fill')).toHaveStyle({
       backgroundColor: TEST_PALETTE.standard.light.textMuted,

@@ -4,6 +4,7 @@ import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { Slider } from '@e07/shell/ui/slider.tsx';
 import { SubRow } from '@e07/shell/ui/sub-row.tsx';
 
+import type { SoundActions } from './settings-preference-actions.ts';
 import type { ReactNode } from 'react';
 
 /** Everything is already translated or derived by the screen model (use-settings-model.ts). */
@@ -13,15 +14,16 @@ export type SoundGroupView = {
   readonly volumeLabel: string;
   readonly vibrationLabel: string;
   readonly isSoundOn: boolean;
+  /** Integer percent 0..100, as the save keeps it. */
   readonly soundVolume: number;
   readonly isVibrationOn: boolean;
 };
 
-export type SoundGroupActions = {
-  readonly onToggleSound: () => void;
-  readonly onChangeSoundVolume: (value: number) => void;
-  readonly onToggleVibration: () => void;
-};
+/** The screen model's own handlers: onChangeSoundVolume takes integer percent. */
+export type SoundGroupActions = Pick<
+  SoundActions,
+  'onToggleSound' | 'onChangeSoundVolume' | 'onToggleVibration'
+>;
 
 export type SoundGroupProps = {
   readonly view: SoundGroupView;
@@ -29,8 +31,19 @@ export type SoundGroupProps = {
   readonly isReducedMotion: boolean;
 };
 
-/** S11 "Sound and feel": a folder tab over a flat list of switch rows and a volume sub-row. */
+/** The save keeps integer percent; the Toybox Slider works in 0..1. */
+const PERCENT = 100;
+
+/**
+ * S11 "Sound and feel": a folder tab over a flat list of switch rows and a volume sub-row. The
+ * Slider reports 0..1; the group turns it into percent and dispatches only when the percent
+ * changes (as SettingsVolumeRow does).
+ */
 export function SoundGroup({ view, actions, isReducedMotion }: SoundGroupProps): ReactNode {
+  const handleVolume = (ratio: number): void => {
+    const percent = Math.round(ratio * PERCENT);
+    if (percent !== view.soundVolume) actions.onChangeSoundVolume(percent);
+  };
   return (
     <ListGroup title={view.title} icon="sound" testID="settings.group.sound">
       <ListRow
@@ -45,8 +58,8 @@ export function SoundGroup({ view, actions, isReducedMotion }: SoundGroupProps):
       />
       <SubRow label={view.volumeLabel} testID="settings.sound-volume-row">
         <Slider
-          value={view.soundVolume}
-          onChange={actions.onChangeSoundVolume}
+          value={view.soundVolume / PERCENT}
+          onChange={handleVolume}
           label={view.volumeLabel}
           testID="settings.sound-volume-slider"
           isOff={!view.isSoundOn}
