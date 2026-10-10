@@ -235,4 +235,14 @@ describe('HomeView', () => {
     ).toBe(screen.getByTestId('home.daily-card'));
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+  it('names the daily card in one catalog sentence: the Persian comma in fa, ckb (N12)', async () => {
+    const model = modelWith({
+      daily: { dateText: 'یکشنبه، ۲۷ سپتامبر', streakDays: 5, isDoneToday: false },
+    });
+    await renderWithShell(<HomeView model={model} />, { language: 'fa', direction: 'rtl' });
+    expect(
+      screen.getByRole('button', { name: 'چالش روزانه، یکشنبه، ۲۷ سپتامبر، ۵ روز پیاپی' }),
+    ).toBe(screen.getByTestId('home.daily-card'));
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });

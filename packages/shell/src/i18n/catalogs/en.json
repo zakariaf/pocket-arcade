@@ -129,6 +129,7 @@
   "game-screen.mode.level": "Level {level, number}",
   "game-screen.progress.moves-par": "Moves {moves, number} / Par {par, number}",
   "game-screen.undo-button.a11y-label": "Undo",
+  "home.daily-card.a11y-label": "{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}",
   "home.endless-card.description": "Play until you lose, then beat your best.",
   "home.endless-card.label": "Endless – Best {bestScore, number}",
   "home.play-button.continue": "Continue – Level {level, number}",

@@ -129,6 +129,7 @@
   "game-screen.mode.level": "Level {level, number}",
   "game-screen.progress.moves-par": "Züge {moves, number} / Par {par, number}",
   "game-screen.undo-button.a11y-label": "Rückgängig",
+  "home.daily-card.a11y-label": "{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}",
   "home.endless-card.description": "Spiel, bis du verlierst – und knack dann deinen Rekord.",
   "home.endless-card.label": "Endlos – Rekord {bestScore, number}",
   "home.play-button.continue": "Weiterspielen – Level {level, number}",
