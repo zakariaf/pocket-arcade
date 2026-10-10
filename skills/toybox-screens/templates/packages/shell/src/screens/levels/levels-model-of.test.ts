@@ -66,6 +66,18 @@ describe('levelPacksOf', () => {
     expect(packs[2]?.missingStars).toBe(6);
   });
 
+  it('keeps one current level per pack: the first open unfinished one (spec S8)', () => {
+    // Level 3 won while level 2 was not (an old save): 2 is current, 4 opens only after 2 is won.
+    const packs = levelPacksOf(input({ 1: 3, 3: 2 }));
+
+    expect(packs[0]?.tiles.map((tile) => tile.state)).toStrictEqual([
+      { kind: 'completed', stars: 3 },
+      { kind: 'current' },
+      { kind: 'completed', stars: 2 },
+      { kind: 'locked' },
+    ]);
+  });
+
   it('reads the best stars of each won level from the save', () => {
     const won = { bestScore: 10, bestMoves: null, completions: 1, firstCompletedOn: '2026-09-20' };
     expect(starsByLevelOf({ '1': { ...won, stars: 2 }, '12': { ...won, stars: 3 } })).toStrictEqual(

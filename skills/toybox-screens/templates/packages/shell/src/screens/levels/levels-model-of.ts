@@ -40,12 +40,24 @@ function wonStars(stars: number): 1 | 2 | 3 {
   return stars >= 2 ? 2 : 1;
 }
 
-function tileOf(level: number, input: LevelsInput): LevelTileModel {
-  const stars = input.stars[level] ?? 0;
-  const numberText = input.formatNumber(level);
-  if (stars > 0) return { level, numberText, state: { kind: 'completed', stars: wonStars(stars) } };
-  const isOpen = isLevelUnlocked(input.packs, input.stars, level);
-  return { level, numberText, state: { kind: isOpen ? 'current' : 'locked' } };
+/**
+ * A won level shows its stars; the first open unfinished level of the pack is the one `current`
+ * tile; every other unfinished level is locked. An old save can hold a won level after an unwon
+ * one (20 won, 19 not): 19 is current, and 21 stays locked until 19 is won (spec S8, one after
+ * another), so a pack never shows two flags.
+ */
+function tilesOf(levels: readonly number[], input: LevelsInput): LevelTileModel[] {
+  let hasCurrent = false;
+  return levels.map((level) => {
+    const stars = input.stars[level] ?? 0;
+    const numberText = input.formatNumber(level);
+    if (stars > 0) {
+      return { level, numberText, state: { kind: 'completed', stars: wonStars(stars) } };
+    }
+    const isCurrent = !hasCurrent && isLevelUnlocked(input.packs, input.stars, level);
+    hasCurrent ||= isCurrent;
+    return { level, numberText, state: { kind: isCurrent ? 'current' : 'locked' } };
+  });
 }
 
 function packOf(pack: LevelPack, index: number, input: LevelsInput): LevelPackModel {
@@ -63,7 +75,7 @@ function packOf(pack: LevelPack, index: number, input: LevelsInput): LevelPackMo
     isLocked,
     unlockStars: pack.starsToUnlock,
     missingStars: starsMissing(pack, input.stars),
-    tiles: isLocked ? [] : levels.map((level) => tileOf(level, input)),
+    tiles: isLocked ? [] : tilesOf(levels, input),
   };
 }
 
