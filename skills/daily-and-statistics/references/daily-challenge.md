@@ -117,7 +117,7 @@ daily: {
 recordDailyResult(daily, date, result)   // the FIRST finished attempt of `date` counts; a replay returns `daily` itself
 currentDailyStreak(daily, today)         // streak.length if lastDate is today or yesterday, else 0
 isDailyDone(daily, today)                // today in results
-lastSevenDates(today)                    // today-6 ... today, oldest first (DAYS_SHOWN = 7; S10's bars use it too)
+lastSevenDates(today)                    // today-6 ... today, oldest first (DAYS_SHOWN = 7, its one definition; S10's bars use it too, and both titles count the days they get)
 lastSevenDays(daily, today)              // [{ date, isDone }] for today-6 ... today, oldest first
 DAILY_KEEP_DAYS = 60
 ```
@@ -194,7 +194,7 @@ useNextDayCountdown(isShown = true): Countdown
 | `daily.current-streak-card.value` | `daily.streak.days` (`daysCount`) | `summary.currentStreak` |
 | `daily.best-streak-card.value` | `daily.streak.days` | `summary.bestStreak` |
 | `daily.streak-rule` | `daily.streak.rule` | |
-| `daily.week-card.title` | `daily.week.title` (`daysCount: 7`) | |
+| `daily.week-card.title` | `daily.week.title` (`daysCount`: the strip's length, 7 from `lastSevenDates`) | |
 | `daily.week-day.<n>` (`.letter`, `.mark`); `<n>` is the position, 1 = the oldest day, 7 = today | letter `date.weekday-strip.<weekday>` (the day's ISO weekday); mark a11y `daily.week.day-done.a11y-label` / `daily.week.day-missed.a11y-label` / `daily.today.label` | `summary.week[i]` |
 | `daily.week-day.7.today-tag` | `daily.today.label` sticker | `isToday` (always the last column) |
 | `daily.week-card.legend.done` / `.missed` | `daily.week.done` / `daily.week.missed` | |
