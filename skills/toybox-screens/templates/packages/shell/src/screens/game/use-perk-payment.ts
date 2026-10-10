@@ -5,8 +5,9 @@
 // continue's offer (S7 draws the ad key busy), and 'hidden' always means it cannot be had (L11);
 // the hint perk is the ads layer's useHintPerk(today), whose free hints follow game.config.ts
 // hints.freePerDay (1 with solver hints, 0 without); a free hint for a non-Premium player spends
-// that daily allowance; a watched ad counts only when the reward was earned.
-import { useSyncExternalStore } from 'react';
+// that daily allowance; a watched ad counts only when the reward was earned. One payment runs at a
+// time: a second tap before the first settles pays nothing and sends nothing.
+import { useRef, useSyncExternalStore } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useAdContext, useAdPolicyConfig, useHintPerk } from '@e07/shell/app/use-ad-context.ts';
@@ -48,6 +49,23 @@ export function sendWhenPaid(
     });
 }
 
+/**
+ * A double tap reaches the handlers before the screen re-renders, so both see the same offer: the
+ * first payment runs, and any other started before it settles resolves false at once.
+ */
+function useOnePaymentAtATime(): (payment: () => Promise<boolean>) => Promise<boolean> {
+  const isPaying = useRef(false);
+  return async (payment) => {
+    if (isPaying.current) return false;
+    isPaying.current = true;
+    try {
+      return await payment();
+    } finally {
+      isPaying.current = false;
+    }
+  };
+}
+
 export function usePerkPayment(view: SessionView | null): PerkPayment {
   const { ads } = useServices();
   const { lifecycle } = useGameHost();
@@ -72,15 +90,17 @@ export function usePerkPayment(view: SessionView | null): PerkPayment {
     if (offer === 'free') return true;
     return offer === 'watch-ad' ? earnRewardedPerk({ ads, lifecycle }) : false;
   };
+  const payOnce = useOnePaymentAtATime();
   return {
     hintOffer,
     continueOffer,
-    payForHint: () => {
-      if (hintOffer === 'free' && !request.context.isPremium) {
-        dispatch({ type: 'use-free-hint', today, freePerDay });
-      }
-      return pay(hintOffer);
-    },
-    payForContinue: () => pay(continueOffer),
+    payForHint: () =>
+      payOnce(() => {
+        if (hintOffer === 'free' && !request.context.isPremium) {
+          dispatch({ type: 'use-free-hint', today, freePerDay });
+        }
+        return pay(hintOffer);
+      }),
+    payForContinue: () => payOnce(() => pay(continueOffer)),
   };
 }

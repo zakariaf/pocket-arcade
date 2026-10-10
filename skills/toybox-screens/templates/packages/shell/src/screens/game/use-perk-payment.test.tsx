@@ -117,6 +117,18 @@ describe('usePerkPayment', () => {
     expect(result.current.perks.hintOffer).toBe('hidden');
   });
 
+  it('pays for one perk at a time: a second tap while the first is paid pays nothing', async () => {
+    const { result, shell } = await perkPayment({ freePerDay: 2 });
+    let paid: readonly boolean[] = [];
+    await act(async () => {
+      // Two taps before the screen re-renders: both see the same 'free' offer.
+      const { payForHint } = result.current.perks;
+      paid = await Promise.all([payForHint(), payForHint()]);
+    });
+    expect(paid).toStrictEqual([true, false]);
+    expect(shell.save.doc().hints.freeUsed).toBe(1);
+  });
+
   it('gives no free hint in a game whose config says 0', async () => {
     const { result, shell } = await perkPayment({ freePerDay: 0 });
     expect(result.current.perks.hintOffer).toBe('hidden');
