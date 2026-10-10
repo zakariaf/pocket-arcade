@@ -5860,6 +5860,23 @@
       "skill": "e2e-maestro"
     },
     {
+      "id": "parity-app-aborted-coreaudio-under-load",
+      "area": "parity",
+      "topic": "App capture",
+      "symptom": "capture-app stops with \"hierarchy from another simulator\" although the session's own simulator and port were used; rejected.hier.json lists SpringBoard's icons, and the simulator log shows \"Cleanup: RPC timeout. Apparently deadlocked. Aborting now.\"",
+      "cause": "The app was not running: it aborted (SIGABRT in AURemoteIO::Cleanup from AVAudioEngine mainMixerNode, react-native-audio-api's AudioEngine) about 10 s after launch, because coreaudiod's RPC timed out while the Mac was saturated (npm run verify or a coverage run on every core); the launch nonce never reached the dump",
+      "fix": "Read rejected.hier.json first: SpringBoard ids mean the app died, not another simulator. Find the crash in ~/Library/Logs/DiagnosticReports/<App>-*.ips; for this abort, run the captures on an idle Mac (never beside verify or a Jest coverage run) and capture again with the same build",
+      "match": [
+        "Apparently deadlocked",
+        "RPC timeout",
+        "AURemoteIO::Cleanup",
+        "hierarchy from another simulator"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
       "id": "testing-maestro-evalscript-colon",
       "area": "testing",
       "topic": "Maestro",
