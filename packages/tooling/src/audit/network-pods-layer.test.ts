@@ -97,6 +97,19 @@ describe('pods outside the trunk (EXTERNAL SOURCES, layer D)', () => {
     ]);
   });
 
+  it("fails a :path that is the repo's parent folder itself or an absolute path", () => {
+    const lock = external([
+      '  Parent:',
+      '    :path: "../../../.."',
+      '  Absolute:',
+      '    :path: "/opt/vendor/kit/ios"',
+    ]);
+    expect(podProblems(lock)).toStrictEqual([
+      'pod Parent comes from a :path source (../../../..), not the CocoaPods trunk or a folder in the repo',
+      'pod Absolute comes from a :path source (/opt/vendor/kit/ios), not the CocoaPods trunk or a folder in the repo',
+    ]);
+  });
+
   it('lets an allowlisted vendor pod come from any source', () => {
     const lock = external(['  openiap:', '    :git: https://github.com/hyochan/openiap.git']);
     expect(podProblems(lock)).toStrictEqual([]);
