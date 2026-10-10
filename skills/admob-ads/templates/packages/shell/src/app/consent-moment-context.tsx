@@ -10,6 +10,12 @@ export type ConsentMomentValue = {
   readonly requestAdMoment: () => () => void;
   /** The latest consent answer (null: never asked). */
   readonly canRequestAds: boolean | null;
+  /**
+   * S11's "Ad privacy choices" row: Google's latest privacy-options answer (launch refresh, form
+   * or the options themselves), so the row appears or goes while Settings is open. ConsentMoment
+   * always sets it; a hand-made value without it (hook tests) means the saved answer.
+   */
+  readonly isPrivacyOptionsRequired?: boolean;
 };
 
 export const ConsentMomentContext = createContext<ConsentMomentValue | null>(null);

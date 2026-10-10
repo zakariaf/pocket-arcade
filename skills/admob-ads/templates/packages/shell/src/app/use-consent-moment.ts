@@ -18,6 +18,7 @@ import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import type { ConsentMomentValue } from '@e07/shell/app/consent-moment-context.tsx';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { AdGateInput } from '@e07/shell/services/ads/ad-gate.ts';
+import type { ConsentMomentFlow } from '@e07/shell/services/ads/consent-moment-flow.ts';
 import type { ConsentInfo } from '@e07/shell/services/consent/consent-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
 
@@ -68,23 +69,39 @@ function useAdGateInput(debug: DebugServices | null): AdGateInput {
   };
 }
 
-export function useConsentMoment(options: ConsentMomentOptions): ConsentMomentModel {
+type MomentFlow = {
+  readonly flow: ConsentMomentFlow;
+  /** The privacy row's fact, live: every answer the flow saves is published to Settings too. */
+  readonly isPrivacyOptionsRequired: boolean;
+};
+
+/** One flow per app; each consent answer is saved, logged failures never shown. */
+function useMomentFlow(isHeld: boolean): MomentFlow {
   const { ads, consent, save, errorLog } = useServices();
-  const input = useAdGateInput(options.debug);
+  const [isPrivacyOptionsRequired, setPrivacyOptionsRequired] = useState(
+    () => save.doc().ads.consent.isPrivacyOptionsRequired,
+  );
   const [flow] = useState(() =>
     createConsentMomentFlow({
       ads,
       consent,
-      isHeld: options.isHeld,
+      isHeld,
       savedCanRequestAds: save.doc().ads.consent.canRequestAds,
       onConsent: (info) => {
         saveConsent(save, info);
+        setPrivacyOptionsRequired(info.isPrivacyOptionsRequired);
       },
       onError: (error) => {
         errorLog.record('ads', error);
       },
     }),
   );
+  return { flow, isPrivacyOptionsRequired };
+}
+
+export function useConsentMoment(options: ConsentMomentOptions): ConsentMomentModel {
+  const input = useAdGateInput(options.debug);
+  const { flow, isPrivacyOptionsRequired } = useMomentFlow(options.isHeld);
   const snapshot = useSyncExternalStore(flow.subscribe, flow.getSnapshot);
   const { isPremium, isAdsEnabled, isTutorialDone, isOnline } = input;
   // Allowed effect: hands the gate's facts to an external flow (online again retries the moment).
@@ -96,7 +113,11 @@ export function useConsentMoment(options: ConsentMomentOptions): ConsentMomentMo
     flow.refreshAtLaunch();
   }, [flow]);
   return {
-    value: { requestAdMoment: flow.requestAdMoment, canRequestAds: snapshot.canRequestAds },
+    value: {
+      requestAdMoment: flow.requestAdMoment,
+      canRequestAds: snapshot.canRequestAds,
+      isPrivacyOptionsRequired,
+    },
     isIntroShown: snapshot.isIntroShown,
     onContinue: flow.continueToForm,
     onOpenPrivacyOptions: flow.reopenPrivacyOptions,
