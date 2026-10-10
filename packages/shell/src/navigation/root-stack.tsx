@@ -10,9 +10,8 @@ import {
 } from '@e07/shell/navigation/route-guards.ts';
 import { LanguageChoiceScreen } from '@e07/shell/screens/first-run/language-choice-screen.tsx';
 import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
+import { GameScreen } from '@e07/shell/screens/game/game-screen.tsx';
 import { HomeScreen } from '@e07/shell/screens/home/home-screen.tsx';
-
-import type { GameParams } from '@e07/shell/navigation/route-params.ts';
 
 /**
  * The ONE navigator (S2-S15). S1 is the native splash, S3 is Google's consent form,
@@ -45,7 +44,7 @@ export const rootStack = createNativeStackNavigator({
       screens: {
         Home: HomeScreen,
         Game: {
-          screen: NotBuiltScreen<GameParams>,
+          screen: GameScreen,
           options: { gestureEnabled: false, fullScreenGestureEnabled: false },
         },
         Levels: NotBuiltScreen,
