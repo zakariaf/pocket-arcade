@@ -43,8 +43,8 @@ const SPEC = {
     '  settings-schema        the newest SETTINGS_V<n> has exactly the 11 fields with their validators',
     '  settings-default       DEFAULT_SETTINGS holds the agreed first-launch values (music off, System everywhere)',
     '  reducer-action         settings-reducer.ts handles every settings action; volumes are clamped',
-    '  persist-then-publish   the store calls save.update before its first set(...) (set(next) or the sections save.doc()',
-    '                         holds after the write), so the screen never shows an unsaved value',
+    '  persist-then-publish   inside dispatch, save.update comes before the first set(...) (set(next) or the sections',
+    '                         save.doc() holds after the write), so the screen never shows an unsaved value',
     '  row-dispatch           screens/settings dispatches every preference action (set-language also from first-run)',
     '  setting-effect         code outside the settings screen, stores and save reads every field (the setting does something);',
     '                         hintsDuringPlay, whose effect lands with S11, prints SKIP while S11 is outside shell-slice.json',
@@ -161,14 +161,31 @@ function checkStore(ctx, src, label) {
     return;
   }
   const source = read(store);
-  // The first publish is any set(...) call: set(next), or the template's set({ ... }) of what
+  // Only dispatch's own body counts: another action may save or publish above it. Inside it, the
+  // first publish is any set(...) call: set(next), or the template's set({ ... }) of what
   // save.doc() holds after the write (state-stores rule 2). It must come after save.update.
-  const update = source.search(/save\.update\s*\(/);
-  const publish = source.search(/\bset\s*\(/);
+  const body = dispatchBody(source);
+  const update = body === null ? -1 : body.text.search(/save\.update\s*\(/);
+  const publish = body === null ? -1 : body.text.search(/\bset\s*\(/);
   if (update === -1 || publish === -1 || update > publish) {
-    ctx.problem({ file: `${label}/stores/settings-store.ts`, line: update === -1 ? 1 : lineOf(source, update), rule: 'persist-then-publish', message: 'dispatch does not call save.update before it publishes with set(...)', fix: 'Reduce, then save.update(...) (sync, one transaction), then set(...) with what save.doc() holds (templates/settings-store.ts).' });
+    const at = body === null ? -1 : body.start + (update === -1 ? 0 : update);
+    ctx.problem({ file: `${label}/stores/settings-store.ts`, line: at === -1 ? 1 : lineOf(source, at), rule: 'persist-then-publish', message: body === null ? 'the store has no dispatch action' : 'dispatch does not call save.update before it publishes with set(...)', fix: 'Reduce, then save.update(...) (sync, one transaction), then set(...) with what save.doc() holds (templates/settings-store.ts).' });
   }
   ctx.checked += 1;
+}
+
+/** The body of the store's `dispatch: (action) => { ... }` (its text and offset), or null. */
+function dispatchBody(source) {
+  const head = /\bdispatch\s*:\s*(?:async\s*)?\([^)]*\)\s*(?::[^=]*)?=>\s*\{/.exec(source);
+  if (head === null) return null;
+  const start = head.index + head[0].length;
+  let depth = 1;
+  for (let at = start; at < source.length; at += 1) {
+    if (source[at] === '{') depth += 1;
+    else if (source[at] === '}') depth -= 1;
+    if (depth === 0) return { start, text: source.slice(start, at) };
+  }
+  return { start, text: source.slice(start) };
 }
 
 function sourceFiles(src) {
