@@ -237,7 +237,14 @@ function run<TState, TMove, TEvent>(
   }
 }
 
+/**
+ * The handle screens send commands through. N10: once finish has recorded or replaced the run, or
+ * the run is recorded, a late command (a rewarded continue or hint that pays out after the player
+ * left, a stale tap) is dropped, so the old run never writes itself back over the save or a newer
+ * run, and is never counted twice.
+ */
 function makeHandle<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): SessionHandle {
+  let isClosed = false;
   let cachedFor: readonly [unknown, unknown] | null = null;
   let cached: SessionView | null = null;
   return {
@@ -259,6 +266,8 @@ function makeHandle<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>):
       };
     },
     send: (command) => {
+      if (isClosed || parts.extras.getState().summary !== null) return;
+      isClosed = command.type === 'finish';
       run(parts, command);
     },
   };
