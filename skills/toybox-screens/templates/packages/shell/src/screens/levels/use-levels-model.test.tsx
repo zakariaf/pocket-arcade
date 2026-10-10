@@ -12,8 +12,11 @@ import { useLevelsModel } from './use-levels-model.ts';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
+/** Levels is focused unless a test covers it with the Game screen. */
+const mockFocus = { isFocused: true };
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack }),
+  useIsFocused: () => mockFocus.isFocused,
 }));
 jest.mock(
   'expo-constants',
@@ -99,6 +102,19 @@ describe('useLevelsModel', () => {
       ['Game', { start: 'resume' }],
       ['Game', { start: 'new', ref: { kind: 'level', level: 2 } }],
     ]);
+  });
+
+  it("holds the current tile's flag still while the Game screen covers Levels", async () => {
+    const { result: focused } = await levelsModel();
+    mockFocus.isFocused = false;
+    try {
+      const { result: covered } = await levelsModel();
+
+      expect(focused.current.isReducedMotion).toBe(false);
+      expect(covered.current.isReducedMotion).toBe(true);
+    } finally {
+      mockFocus.isFocused = true;
+    }
   });
 
   it('opens with the first locked tile tapped in the parity frame that shows it', async () => {

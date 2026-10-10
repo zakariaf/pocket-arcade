@@ -4,7 +4,7 @@
 // and the banner through useBannerSlot('levels'). A parity capture of the "locked tile tapped" frame
 // (test builds) opens with the first locked tile tapped, through the same state a tap sets. An open
 // tile plays its level through usePlayRun: the saved run of that level resumes (N10).
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
@@ -35,6 +35,8 @@ export function firstLockedLevelOf(packs: readonly LevelPackModel[]): number | n
 export function useLevelsModel(): LevelsModel {
   const t = useT();
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const isReduceMotionOn = useReduceMotion();
   const playRun = usePlayRun();
   const { packs } = useGameHost();
   const levels = useProgressStore(selectLevels);
@@ -55,8 +57,9 @@ export function useLevelsModel(): LevelsModel {
   return {
     packs: packModels,
     focusedLevel,
-    // Also true during a parity capture (useReduceMotion): the current tile's flag bob holds still.
-    isReducedMotion: useReduceMotion(),
+    // Also true during a parity capture (useReduceMotion): the current tile's flag bob holds still,
+    // and while the Game screen covers Levels, so no endless bob runs on a screen nobody sees.
+    isReducedMotion: isReduceMotionOn || !isFocused,
     banner: useBannerSlot('levels'),
     onBack: () => {
       navigation.goBack();
