@@ -8,6 +8,7 @@ import {
   useIsTestBuild,
   useNeedsLanguageChoice,
 } from '@e07/shell/navigation/route-guards.ts';
+import { DailyScreen } from '@e07/shell/screens/daily/daily-screen.tsx';
 import { LanguageChoiceScreen } from '@e07/shell/screens/first-run/language-choice-screen.tsx';
 import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
 import { GameScreen } from '@e07/shell/screens/game/game-screen.tsx';
@@ -49,7 +50,7 @@ export const rootStack = createNativeStackNavigator({
           options: { gestureEnabled: false, fullScreenGestureEnabled: false },
         },
         Levels: LevelsScreen,
-        Daily: NotBuiltScreen,
+        Daily: DailyScreen,
         Stats: NotBuiltScreen,
         Settings: NotBuiltScreen,
         SettingsLanguage: NotBuiltScreen,
