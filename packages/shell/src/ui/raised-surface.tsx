@@ -90,6 +90,7 @@ const useStyles = makeStyles((theme) => {
     // a fill under the edge bleeds a pale hairline past the antialiased rounded edge onto the hard
     // shadow (seen on every S2 card corner in light mode).
     facePlate: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 },
+    edgePaint: { backgroundColor: theme.colors.border },
     faceDisabled: {
       backgroundColor: theme.colors.sunken,
       borderColor: theme.colors.textMuted,
@@ -124,31 +125,33 @@ function faceStylesOf(
   ];
 }
 
+/** A caller's edge style (a locked level tile's dashed edge) wins over the disabled key's dashes. */
+function edgeStyleOf(props: RaisedSurfaceProps, isDisabled: boolean): ViewStyle['borderStyle'] {
+  return StyleSheet.flatten(props.faceStyle)?.borderStyle ?? (isDisabled ? 'dashed' : undefined);
+}
+
 /**
  * The key's face. A solid edge is painted as an edge-colour plate with the fill laid inside it; a
  * dashed edge (disabled keys, locked tiles) keeps its fill under the dashes.
  */
-function faceOf(faceStyle: StyleProp<ViewStyle>, plate: ViewStyle, children: ReactNode): ReactNode {
-  const style: ViewStyle = StyleSheet.flatten(faceStyle) ?? {};
-  const isSolidEdge = style.borderStyle === undefined || style.borderStyle === 'solid';
-  if (!isSolidEdge) return <View style={faceStyle}>{children}</View>;
-  const edge = style.borderWidth ?? 0;
-  const radius = typeof style.borderRadius === 'number' ? style.borderRadius : 0;
-  const plateStyle = [plate, { borderRadius: Math.max(0, radius - edge) }];
+function faceOf(props: RaisedSurfaceProps, styles: Styles, isDisabled: boolean): ReactNode {
+  const faceStyle = faceStylesOf(props, styles, isDisabled);
+  const edgeStyle = edgeStyleOf(props, isDisabled);
+  if (edgeStyle !== undefined && edgeStyle !== 'solid') {
+    return <View style={faceStyle}>{props.children}</View>;
+  }
+  const edge = props.edgeWidth ?? STROKE.bold;
+  const edgePaint =
+    props.edgeColor === undefined ? styles.edgePaint : { backgroundColor: props.edgeColor };
   return (
-    <View
-      style={[
-        faceStyle,
-        style.borderColor === undefined ? null : { backgroundColor: style.borderColor },
-      ]}
-    >
+    <View style={[faceStyle, edgePaint]}>
       <View
         style={[
-          plateStyle,
-          style.backgroundColor === undefined ? null : { backgroundColor: style.backgroundColor },
+          styles.facePlate,
+          { borderRadius: Math.max(0, props.radius - edge), backgroundColor: props.fill },
         ]}
       />
-      {children}
+      {props.children}
     </View>
   );
 }
@@ -233,7 +236,7 @@ export function RaisedSurface(props: RaisedSurfaceProps): ReactNode {
         <Animated.View
           style={[styles.shadow, styles.shadowPaint, { borderRadius: props.radius }, shadowStyle]}
         />
-        {faceOf(faceStylesOf(props, styles, isDisabled), styles.facePlate, props.children)}
+        {faceOf(props, styles, isDisabled)}
       </Animated.View>
     </Pressable>
   );
