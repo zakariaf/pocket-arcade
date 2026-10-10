@@ -26,7 +26,7 @@ S7 Result shows how a run ended, drawn over the finished board inside the Game s
 
 ## Layout, top to bottom
 
-The Result covers the whole screen: `GameLayout` draws it beside the Game screen's safe-area frame, so its own `ScreenFrame` is inset once (inside the Game frame it sat 59 pt low with its bottom keys clipped). Its frame leaves the bottom edge out (`UNDER_HOME_INDICATOR_EDGES`) and its `ScreenBody` runs under the home indicator (`isUnderHomeIndicator`), ending with max(34, inset): every key stays where the reference draws it (the last one ends 34 pt above the bottom, 840 of 874) and the last key's 5-6 pt hard shadow is drawn inside the scroll view. With the default edges the body ended at the safe area with 0 pt of padding, and the ScrollView clipped the shadow of the Replay / Levels row whenever the Premium nudge was absent (Premium owners, the day's nudge already shown, every test build).
+The Result covers the whole screen: `GameLayout` draws it beside the Game screen's safe-area frame, so its own `ScreenFrame` is inset once (inside the Game frame it sat 59 pt low with its bottom keys clipped). Its frame leaves the bottom edge out (`UNDER_HOME_INDICATOR_EDGES`) and its `ScreenBody` runs under the home indicator (`isUnderHomeIndicator`), ending with max(34, inset): every key stays where the reference draws it (the last one ends 34 pt above the bottom, 840 of 874) and the last key's 5-6 pt hard shadow is drawn inside the scroll view. The four result views share that frame through `ResultFrame` (`result-frame.tsx`): `result.screen`, the body under the home indicator, the centred mode chip first, then the view's own blocks, a grow spacer and its `keys` (the lose result adds a grow spacer above its blocks with `isCentred`); `newBestOf(isNewBest, t)` gives ScorePanel its New best text. With the default edges the body ended at the safe area with 0 pt of padding, and the ScrollView clipped the shadow of the Replay / Levels row whenever the Premium nudge was absent (Premium owners, the day's nudge already shown, every test build).
 
 Chip and Sticker align themselves to the start (`alignSelf: 'flex-start'`), which beats a wrapper's `alignItems: 'center'`: every centred chip or sticker (the mode chip in all four views, the win sticker, the daily streak sticker) sits in a `{ flexDirection: 'row', justifyContent: 'center' }` wrapper. Only a centred row centres them (they were left-aligned on the device).
 
@@ -77,6 +77,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 
 - `packages/shell/src/screens/result/result-model.ts`
 - `packages/shell/src/screens/result/continue-offer.tsx`
+- `packages/shell/src/screens/result/result-frame.tsx`
 - `packages/shell/src/screens/result/result-daily-view.tsx`
 - `packages/shell/src/screens/result/result-endless-view.tsx`
 - `packages/shell/src/screens/result/result-lose-view.tsx`
