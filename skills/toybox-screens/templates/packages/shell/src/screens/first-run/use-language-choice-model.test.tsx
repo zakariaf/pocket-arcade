@@ -4,6 +4,7 @@ import { act, renderHook } from '@testing-library/react-native';
 import { restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
+import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { useLanguageChoiceModel } from './use-language-choice-model.ts';
@@ -63,5 +64,30 @@ describe('useLanguageChoiceModel', () => {
       await Promise.resolve();
     });
     expect(jest.mocked(restartForDirection)).toHaveBeenCalledWith('rtl', expect.anything());
+  });
+
+  // Spec S2: Continue is the one tap. While its restart runs S2 stays on screen, and another
+  // choice saves nothing, so the saved language and the reload's direction always agree.
+  it('saves nothing and restarts nothing more while its restart is pending', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    await act(() => {
+      result.current.onSelect('de');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    expect([
+      stores.settings.getState().settings.language,
+      result.current.selected,
+      jest.mocked(restartForDirection).mock.calls.length,
+    ]).toStrictEqual(['fa', 'fa', 1]);
   });
 });

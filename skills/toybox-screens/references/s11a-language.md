@@ -17,7 +17,7 @@ S11a lets the player pick System or one of the four languages.
 ## What the product requires
 
 - Language: System / English / Deutsch / فارسی / کوردیی ناوەندی.
-- The text switches at once. A change of direction (for example English to Persian) shows "Restart to apply" (S14) and restarts with one tap; the save is untouched either way.
+- The text switches at once. A change of direction (for example English to Persian) shows "Restart to apply" (S14) and restarts with one tap; the save is untouched either way. Once Restart is tapped, a row saves nothing more until the reload.
 
 ## Layout, top to bottom
 
