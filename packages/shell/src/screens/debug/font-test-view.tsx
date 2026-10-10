@@ -17,8 +17,9 @@ const styles = StyleSheet.create({ row: { gap: 4 } });
 /**
  * S15's font test page (test builds only; the design draws no page): each Toybox type role and
  * component text style, named, then drawn in en, de, fa and ckb with the fonts and line heights
- * the app uses. Look for clipped marks (the madda, the hamza seats), wrong line boxes and a
- * fallback font. Back is the stack's edge swipe.
+ * the app uses: a short sample, then every letter and digit of the language (spec 7.6). Look for
+ * clipped marks (the madda, the hamza seats), wrong line boxes and a fallback font. Back is the
+ * stack's edge swipe.
  */
 export function FontTestView({ model }: FontTestViewProps): ReactNode {
   return (
@@ -33,6 +34,14 @@ export function FontTestView({ model }: FontTestViewProps): ReactNode {
                 text={sample.text}
                 variant={row.variant}
                 language={sample.language}
+              />
+            ))}
+            {row.alphabets.map((alphabet) => (
+              <AppText
+                key={`alphabet-${alphabet.language}`}
+                text={alphabet.text}
+                variant={row.variant}
+                language={alphabet.language}
               />
             ))}
           </View>
