@@ -1,6 +1,7 @@
 // packages/shell/src/screens/home/home-daily-card.tsx
 import { StyleSheet, View } from 'react-native';
 
+import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { SPACING } from '@e07/shell/theme/tokens.ts';
@@ -78,8 +79,17 @@ export function HomeDailyCard({
   const title = t('daily.title');
   const streak = t('daily.streak.count', { daysCount: daily.streakDays });
   const doneText = t('daily.today.done');
-  const openLabel = [title, daily.dateText, streak, ...(daily.isDoneToday ? [doneText] : [])].join(
-    ', ',
+  // One catalog sentence of the card's own texts (N12): each language orders and separates them
+  // (", " in en and de, "، " in fa and ckb). VoiceOver only speaks it, so the bidi isolates t()
+  // puts around each text are dropped, and the date goes in without its own (nested-isolates).
+  const openLabel = stripIsolates(
+    t('home.daily-card.a11y-label', {
+      status: daily.isDoneToday ? 'done' : 'open',
+      titleText: title,
+      dateText: stripIsolates(daily.dateText),
+      streakText: streak,
+      doneText,
+    }),
   );
   const handleOpenAction = (event: AccessibilityActionEvent): void => {
     if (event.nativeEvent.actionName === 'activate') onOpenDaily();

@@ -27,7 +27,7 @@ Everything about the text itself: where catalogs live, how keys are named, how p
 - **English is the source.** A key exists in en.json first; de, fa and ckb have exactly the same keys.
 - **Keys are sorted alphabetically** (JavaScript default sort) in every file, so diffs stay small. `copy-deck.mjs apply` writes sorted files; Prettier keeps the JSON shape (2-space indent).
 - The game-id prefix makes a Shell/game key collision impossible: Shell keys never start with a game id, game keys always start with their own.
-- The Shell's catalogs are the copy deck's `strings` (289 keys: every Shell screen S1-S15 and the system dialog text `consent.tracking.usage-description`) plus the ten Shell texts the deck lacks (`assets/shell-extras.json`). Create them with `copy-deck.mjs apply --all --extras`; a game's catalogs with `copy-deck.mjs apply --game <game-id>`.
+- The Shell's catalogs are the copy deck's `strings` (289 keys: every Shell screen S1-S15 and the system dialog text `consent.tracking.usage-description`) plus the eleven Shell texts the deck lacks (`assets/shell-extras.json`). Create them with `copy-deck.mjs apply --all --extras`; a game's catalogs with `copy-deck.mjs apply --game <game-id>`.
 
 ## Key grammar
 

@@ -10,7 +10,7 @@ Every word a player sees comes from a catalog key in English, German, Persian an
 ## Rules that must hold
 
 1. **Render every visible string through `t()` or `<T>` from a catalog key.** No literals in JSX, in text or accessibility props, or in `Alert`. Why: the product ships in four languages from day one; a literal is English on every phone.
-2. **Take Shell and game texts from the copy deck with `copy-deck.mjs`, never by retyping; the ten Shell texts the deck lacks come from `assets/shell-extras.json` the same way (`--extras`).** A wording change goes into the deck (or that table) first, then into the catalogs. Why: the design mockup renders the deck; a catalog that drifts from it no longer matches its design screenshot, and retyping loses ’, –, ZWNJ and Sorani letters.
+2. **Take Shell and game texts from the copy deck with `copy-deck.mjs`, never by retyping; the eleven Shell texts the deck lacks come from `assets/shell-extras.json` the same way (`--extras`).** A wording change goes into the deck (or that table) first, then into the catalogs. Why: the design mockup renders the deck; a catalog that drifts from it no longer matches its design screenshot, and retyping loses ’, –, ZWNJ and Sorani letters.
 3. **Keep four flat catalogs per folder, English as the source, keys sorted.** Shell: `packages/shell/src/i18n/catalogs/{en,de,fa,ckb}.json`; game: `apps/<game-id>/src/i18n/`, every key starting with the game id. Why: stable diffs, and no Shell/game key collision.
 4. **Name keys `<area>.<element>[.<variant>]` (2-5 kebab segments) and write them as literals or in typed tables.** Game texts reach the Shell as the module's plain `MessageId`s and become text only through `gameMessageText(t, message)`. Why: only visible keys can be type-checked and linted; semantic keys survive rewording.
 5. **Type every number in a message:** `{x, number}`, `{x, number, ::percent}` or a plural `#`. A plain `{x}` is only for free text named `*Name`/`*Text`. Why: a plain argument prints Latin digits in every language.
@@ -91,7 +91,7 @@ Every word a player sees comes from a catalog key in English, German, Persian an
 | `scripts/selftest.mjs` | Proves every checker passes its good fixture and catches each planted bug | After changing a script or fixture |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/copy-deck.json` | The copy deck: every Shell and game text in en, de, fa, ckb, per screen (synced; do not edit here) | Through `copy-deck.mjs`; read `meta` for samples and render notes |
-| `assets/shell-extras.json` | The ten Shell texts the deck lacks (score line, Undo and Hint labels, tap-then-tap announcements, the debug menu's five Performance texts, English in all four) in four languages, and the retired Shell keys; read by `copy-deck.mjs --extras` | Workflow steps 1 and 4; change only with the owner |
+| `assets/shell-extras.json` | The eleven Shell texts the deck lacks (score line, Undo and Hint labels, Home's daily card label, tap-then-tap announcements, the debug menu's five Performance texts, English in all four) in four languages, and the retired Shell keys; read by `copy-deck.mjs --extras` | Workflow steps 1 and 4; change only with the owner |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |
 | `tests/fixtures/` | Good and planted-bad inputs for the self-test, one folder per checker | When adding a rule |
 

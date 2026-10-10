@@ -36,7 +36,7 @@ S4 Home is the one-tap start and the door to everything else.
 2. Hero key with a `play` cap: `home.play-button.continue` or `home.play-button.play`.
 3. Daily panel (flat, padding 14 / 14 / 16, gap 12): header row (gap 12, top-aligned) of the `calendar` icon tile → text column (heading 21 "Daily challenge", the date muted, **title/date gap 1**: the reference puts the date 1 pt under the title; a gap of 2 pushed every block below it down 1.5 pt) → small gold streak sticker (chain, tilt +4 deg, 2 pt top margin); then a secondary block button with a `play` icon. Once today is played, the button becomes a row with a 20 pt success check and "Done – come back tomorrow" (`home.daily-card.done`, Chosen).
 
-   **Two controls on one card (L7).** `HomeDailyCard` draws the card as a plain `View` with the panel's padding plus its 2 pt edge (so every part sits where the flat Panel put it). Its bottom layer is the card surface: a `RaisedSurface` absolutely filling the card (`position: 'absolute'`, all four edges 0) with the panel's look (elevation 0, the panel radius and edge width, `colors.surface`, a zero squash, so a press never moves or scales it). It is the accessible opener: `testID="home.daily-card"`, role button, `accessibilityLabel` joining the visible title, date and streak (and the done text once today is played), `onPress={onOpenDaily}`, and the `activate` accessibility action for VoiceOver's double tap. The header row and the done row sit above it as siblings with `pointerEvents="none"`, `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`: a touch on them falls through to the surface, and VoiceOver hears them only in the surface's label (the map makes them crop-only, `coveredBy` `home.daily-card`). The Play key `home.daily-card.play-button` is its own sibling above the surface, never a child of it, so VoiceOver finds exactly two daily elements: the card and its Play key. A raw `Pressable` is not allowed in a screen (ESLint), which is why the surface is the Toybox `RaisedSurface`, and `Panel` stays for cards that are never pressed.
+   **Two controls on one card (L7).** `HomeDailyCard` draws the card as a plain `View` with the panel's padding plus its 2 pt edge (so every part sits where the flat Panel put it). Its bottom layer is the card surface: a `RaisedSurface` absolutely filling the card (`position: 'absolute'`, all four edges 0) with the panel's look (elevation 0, the panel radius and edge width, `colors.surface`, a zero squash, so a press never moves or scales it). It is the accessible opener: `testID="home.daily-card"`, role button, `accessibilityLabel` = `home.daily-card.a11y-label`, one catalog sentence of the visible title, date and streak (and the done text once today is played, `status: 'done'`), so each language orders and separates them (", " in en and de, "، " in fa and ckb, N12); VoiceOver only speaks it, so the label is passed through `stripIsolates`, `onPress={onOpenDaily}`, and the `activate` accessibility action for VoiceOver's double tap. The header row and the done row sit above it as siblings with `pointerEvents="none"`, `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`: a touch on them falls through to the surface, and VoiceOver hears them only in the surface's label (the map makes them crop-only, `coveredBy` `home.daily-card`). The Play key `home.daily-card.play-button` is its own sibling above the surface, never a child of it, so VoiceOver finds exactly two daily elements: the card and its Play key. A raw `Pressable` is not allowed in a screen (ESLint), which is why the surface is the Toybox `RaisedSurface`, and `Panel` stays for cards that are never pressed.
 
    Maestro taps an element's centre. The card's centre lies above the Play key as long as the header row is taller than 45 pt (English: 47.5 pt, so 1.3 pt above the key; Persian: 6.5 pt), so `tapOn: home.daily-card` opens S9 and never plays. Keep the header's layout; a shorter header moves the centre onto the Play key.
 4. Endless row button (only games with Endless): secondary, accent icon tile `endless`, label with the best score, description, chevron.
@@ -102,7 +102,7 @@ Exactly these, from the shared screen map (`assets/screen-testids.json`). Set th
 | `home.settings-button` | IconButton (gear) | button | a11y `common.settings` |  |  |
 | `home.tagline` | Sticker (pop, -2 deg) | text | `games.<id>.tagline` |  |  |
 | `home.play-button` | Button (primary hero, play cap) | button | `home.play-button.continue` |  |  |
-| `home.daily-card` | Pressable (card surface: the `RaisedSurface` filling the daily panel under its content) | button | a11y label: title, date, streak |  | opens S9 |
+| `home.daily-card` | Pressable (card surface: the `RaisedSurface` filling the daily panel under its content) | button | a11y `home.daily-card.a11y-label` (title, date, streak) |  | opens S9 |
 | `home.daily-card.icon` | IconTile (pop, calendar) | none |  | crop-only, hidden |  |
 | `home.daily-card.title` | AppText | header | `daily.title` | crop-only, hidden, covered by the card |  |
 | `home.daily-card.date` | AppText | text | `date.weekday-day-month` | crop-only, hidden, covered by the card |  |
@@ -137,6 +137,12 @@ Chosen states the design does not draw may also set: `home.daily-card.done`, `ho
 | `common.how-to-play` | How to play |
 | `home.premium-button.label` | Premium |
 | `home.premium-button.hint` | Remove ads |
+
+The design has no copy key for the daily card's VoiceOver label. It is a Shell text written by hand into the four Shell catalogs (keys sorted, exactly as below; the fa and ckb drafts go on the owner's own review list, never waited for); check-screens accepts it as a copy key and fails S4 while a catalog lacks it (`extra-key-catalog`).
+
+| Key | en, de | fa, ckb |
+|---|---|---|
+| `home.daily-card.a11y-label` | {status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}} | {status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}} |
 
 ## Reference images
 
