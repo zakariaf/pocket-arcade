@@ -5,8 +5,9 @@
 // other way it restarts in the new direction (the Continue tap is the one tap). S11a's planner
 // (planLanguageChange and restartDirectionOf, settings-and-preferences) decides both, so S2 and
 // S11a share one restart rule. While that restart is pending S2 saves and restarts nothing more
-// (the saved language and the reload agree). The FirstRun group then opens the tutorial by itself:
-// this hook never navigates.
+// (the saved language and the reload agree); after a failed one S2 stays, Continue tries again,
+// and a language that needs no flip lets go of it. The FirstRun group then opens the tutorial by
+// itself: this hook never navigates.
 import { useState } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
@@ -57,7 +58,8 @@ export function useLanguageChoiceModel(): LanguageChoiceModel {
       });
       dispatch(change.action);
       const direction = restartDirectionOf(change);
-      if (direction !== null) restart(direction);
+      if (direction === null) restartStore.getState().cancel();
+      else restart(direction);
     },
   };
 }

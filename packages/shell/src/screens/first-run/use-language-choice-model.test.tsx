@@ -4,6 +4,7 @@ import { act, renderHook } from '@testing-library/react-native';
 import { restartForDirection } from '@e07/shell/i18n/direction.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
+import { selectIsRestartHeld } from '@e07/shell/stores/restart-store.ts';
 import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 
@@ -140,5 +141,50 @@ describe('useLanguageChoiceModel', () => {
       result.current.selected,
       jest.mocked(restartForDirection).mock.calls.length,
     ]).toStrictEqual(['fa', 'fa', 1]);
+  });
+
+  // Spec S2: a restart that failed keeps S2 on screen and Continue tries again; a language that
+  // needs no restart lets the player go on in the current layout.
+  it('keeps S2 after a failed restart: Continue tries again, or goes on without a flip', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    const isHeldAfterFailure = selectIsRestartHeld(stores.restart.getState());
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    expect([isHeldAfterFailure, jest.mocked(restartForDirection).mock.calls.length]).toStrictEqual([
+      true,
+      2,
+    ]);
+  });
+
+  it('lets the player go on after a failed restart with a language of the current direction', async () => {
+    const { result, stores } = await languageChoice(GERMAN_PHONE);
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+    await act(() => {
+      result.current.onSelect('fa');
+    });
+    await act(async () => {
+      result.current.onContinue();
+      await flushMicrotasks();
+    });
+    await act(() => {
+      result.current.onSelect('en');
+    });
+    await act(() => {
+      result.current.onContinue();
+    });
+    expect([
+      stores.settings.getState().settings.language,
+      selectIsRestartHeld(stores.restart.getState()),
+    ]).toStrictEqual(['en', false]);
   });
 });

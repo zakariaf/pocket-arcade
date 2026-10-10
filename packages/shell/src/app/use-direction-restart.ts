@@ -3,7 +3,8 @@
 // the save is already written, then restartAfterAudio disposes audio, writes the guard, forces
 // the direction and reloads; a failed dispose or restart lands in the error log. The restart
 // store alone blocks a second reload (a double tap, or a tap on another screen's instance of this
-// hook); a restart that failed lets go of it. Call the returned function only from a handler.
+// hook); a restart that failed lets go of the reload but keeps holding the screen, so S2 stays
+// and its Continue tries again. Call the returned function only from a handler.
 import { restartAfterAudio } from '@e07/shell/app/restart-after-audio.ts';
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useStores } from '@e07/shell/app/stores-context.tsx';
@@ -24,7 +25,7 @@ export function useDirectionRestart(): (direction: Direction) => void {
     const guard = createSqliteKvDirectionGuardAdapter();
     restartAfterAudio({ audio, guard, onDisposeError: record }, direction).catch(
       (error: unknown) => {
-        pending.getState().cancel();
+        pending.getState().fail();
         record(error);
       },
     );

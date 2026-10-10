@@ -134,4 +134,20 @@ describe('useDirectionRestart', () => {
     });
     expect(shell.stores.restart.getState().pendingDirection).toBeNull();
   });
+
+  // Spec S2: a failed restart keeps holding the screen that started it, so S2 stays and its
+  // Continue tries again instead of the tutorial mounting in the old direction.
+  it('keeps holding the screen that started a restart that failed', async () => {
+    const shell = createShellWrapper({
+      services: { audio: createFakeAudio(), errorLog: createFakeErrorLog() },
+    });
+    const { result } = await renderHook(() => useDirectionRestart(), { wrapper: shell.wrapper });
+    jest.mocked(restartForDirection).mockRejectedValueOnce(new Error('reload refused'));
+
+    await act(async () => {
+      result.current('rtl');
+      await flushMicrotasks();
+    });
+    expect(shell.stores.restart.getState().failedDirection).toBe('rtl');
+  });
 });

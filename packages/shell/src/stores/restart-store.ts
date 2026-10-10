@@ -4,8 +4,10 @@
 // screen the player is on stays while audio is disposed and the reload starts: without it, S2's
 // saved language would mount the tutorial in the old direction for that window. It is also the one
 // guard against a second reload: begin() refuses while a restart is pending, whichever screen or
-// hook instance taps. A restart that fails cancels it, so the player may try again. It holds one
-// value, so it has no reducer, and nothing writes the save.
+// hook instance taps. A restart that fails lets go of the reload but keeps holding the screen
+// (S2 stays, so its Continue tries again, and the tutorial never mounts in the old direction);
+// a retry or a cancel (a choice that needs no restart) ends that. It holds two values and no
+// rules worth a reducer, and nothing writes the save.
 import { useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 
@@ -21,9 +23,15 @@ import type { StoreApi } from 'zustand/vanilla';
 export type RestartDirection = 'ltr' | 'rtl';
 
 export type RestartState = {
+  /** The reload under way, from the tap until the app reloads. */
   readonly pendingDirection: RestartDirection | null;
+  /** The reload that failed: its screen stays held until a retry or a cancel. */
+  readonly failedDirection: RestartDirection | null;
   /** Holds the restart; false (and nothing changes) while another one is already pending. */
   readonly begin: (direction: RestartDirection) => boolean;
+  /** The reload failed: a retry may begin, and the screen that started it stays held. */
+  readonly fail: () => void;
+  /** Lets go of the screen: no reload pending or failed. */
   readonly cancel: () => void;
 };
 
@@ -32,15 +40,24 @@ export type RestartStore = StoreApi<RestartState>;
 export function createRestartStore(): RestartStore {
   return createStore<RestartState>()((set, get) => ({
     pendingDirection: null,
+    failedDirection: null,
     begin: (direction) => {
       if (get().pendingDirection !== null) return false;
-      set({ pendingDirection: direction });
+      set({ pendingDirection: direction, failedDirection: null });
       return true;
     },
+    fail: () => {
+      set({ pendingDirection: null, failedDirection: get().pendingDirection });
+    },
     cancel: () => {
-      set({ pendingDirection: null });
+      set({ pendingDirection: null, failedDirection: null });
     },
   }));
+}
+
+/** A restart is pending or failed: the screen that started it stays on screen. */
+export function selectIsRestartHeld(state: RestartState): boolean {
+  return state.pendingDirection !== null || state.failedDirection !== null;
 }
 
 export function selectIsRestartPending(state: RestartState): boolean {
