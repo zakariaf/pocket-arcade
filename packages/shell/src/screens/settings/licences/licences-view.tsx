@@ -3,13 +3,11 @@ import { StyleSheet, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { SubPage } from '@e07/shell/screens/settings/sub-page.tsx';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { ListGroup } from '@e07/shell/ui/list-group.tsx';
 import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { QuietButton } from '@e07/shell/ui/quiet-button.tsx';
-import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
-import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import type { LicenceEntry, LicenceGroupId } from './licence-entries.ts';
 import type { TFunction } from '@e07/shell/i18n/create-t.ts';
@@ -100,39 +98,37 @@ function entryProps(
 export function LicencesView({ model }: LicencesViewProps): ReactNode {
   const t = useT();
   return (
-    <ScreenFrame testID="licences.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
-      <TopBar
-        testID="licences.top-bar"
-        title={t('settings.licences.label')}
-        backLabel={t('common.back')}
-        onBack={model.onBack}
-        isReducedMotion={model.isReducedMotion}
-      />
-      <ScreenBody gap="long" isUnderHomeIndicator>
-        <AppText text={t('licences.intro', { gameName: model.gameName })} testID="licences.intro" />
-        {GROUPS.map((group) => (
-          <ListGroup
-            key={group.id}
-            testID={`licences.group.${group.id}`}
-            title={t(group.titleKey)}
-            icon={group.icon}
-          >
-            {model.entries
-              .filter((entry) => entry.group === group.id)
-              .map((entry, index) => (
-                <ListRow
-                  key={entry.key}
-                  testID={`licences.entry-row.${entry.key}`}
-                  label={nameOf(entry)}
-                  isStrong
-                  isFirst={index === 0}
-                  isReducedMotion={model.isReducedMotion}
-                  {...entryProps(entry, model, t)}
-                />
-              ))}
-          </ListGroup>
-        ))}
-      </ScreenBody>
-    </ScreenFrame>
+    <SubPage
+      testIDBase="licences"
+      title={t('settings.licences.label')}
+      backLabel={t('common.back')}
+      onBack={model.onBack}
+      isReducedMotion={model.isReducedMotion}
+      gap="long"
+    >
+      <AppText text={t('licences.intro', { gameName: model.gameName })} testID="licences.intro" />
+      {GROUPS.map((group) => (
+        <ListGroup
+          key={group.id}
+          testID={`licences.group.${group.id}`}
+          title={t(group.titleKey)}
+          icon={group.icon}
+        >
+          {model.entries
+            .filter((entry) => entry.group === group.id)
+            .map((entry, index) => (
+              <ListRow
+                key={entry.key}
+                testID={`licences.entry-row.${entry.key}`}
+                label={nameOf(entry)}
+                isStrong
+                isFirst={index === 0}
+                isReducedMotion={model.isReducedMotion}
+                {...entryProps(entry, model, t)}
+              />
+            ))}
+        </ListGroup>
+      ))}
+    </SubPage>
   );
 }
