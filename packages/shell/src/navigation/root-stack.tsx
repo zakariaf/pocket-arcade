@@ -10,6 +10,7 @@ import {
 } from '@e07/shell/navigation/route-guards.ts';
 import { LanguageChoiceScreen } from '@e07/shell/screens/first-run/language-choice-screen.tsx';
 import { TutorialScreen } from '@e07/shell/screens/first-run/tutorial-screen.tsx';
+import { HomeScreen } from '@e07/shell/screens/home/home-screen.tsx';
 
 import type { GameParams } from '@e07/shell/navigation/route-params.ts';
 
@@ -42,7 +43,7 @@ export const rootStack = createNativeStackNavigator({
     Main: {
       if: useIsMainApp,
       screens: {
-        Home: NotBuiltScreen,
+        Home: HomeScreen,
         Game: {
           screen: NotBuiltScreen<GameParams>,
           options: { gestureEnabled: false, fullScreenGestureEnabled: false },
