@@ -732,6 +732,162 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f02176f146076592b304507b2c5642f01d2908b45f62a50717c5faaf654c2d9d",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "fda2b0a4676441c9183efdb0bbd2ab1f11785c67d0d9ec2713bbd6343919f645",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b118fdc6323a54992de8a552f667e486c26b64e157f942626673767497834b65",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "de4867805a98da943833716469e14f31230b5923b497b20e283fc45049d62fd5",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }
