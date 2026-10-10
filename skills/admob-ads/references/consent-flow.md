@@ -134,7 +134,7 @@ Google draws the form; the Shell shows its own moment right before it, so the pl
 | A banner screen (Home, Levels, Statistics) is open and `prepareAds` has not run in this session | `prepareAds` with the intro step (the consent moment) | shows S3, then Google's form where required (first time: right after the tutorial, on Home), then Apple's ATT prompt while not-determined, then initialises and preloads |
 | Connectivity changes to online, the tutorial ends or Premium ends while a banner screen is open | `prepareAds` (the flow retries on the new facts) | the deferred S3 of the spec's offline rules |
 | Premium becomes true | nothing | ads stop at once through the ad policy; the SDK stays initialised but idle |
-| Settings > Ad privacy choices | the consent moment's `reopenPrivacyOptions` (`consent.showPrivacyOptions()` then `onConsent`) | a no turns ads off at once; a yes after a refusal prepares ads again at the next banner screen (ATT, `initialize`), no relaunch |
+| Settings > Ad privacy choices | the consent moment's `reopenPrivacyOptions` (`consent.showPrivacyOptions()` then `onConsent`) | a no turns ads off at once and always wins: given while `prepareAds` still runs (Apple's prompt waiting for a banner screen), it stops the prompt, `initialize` and the preloads, and the finished moment publishes no `canRequestAds: true`; a yes after a refusal prepares ads again at the next banner screen (ATT, `initialize`), no relaunch |
 
 Never call the form or the ATT prompt on app start, during a level, or from a `useEffect` that runs before the tutorial is finished. Settings has no ATT row: the player changes the answer in iOS Settings > Privacy & Security > Tracking.
 

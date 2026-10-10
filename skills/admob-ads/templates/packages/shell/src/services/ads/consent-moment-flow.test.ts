@@ -148,6 +148,7 @@ describe('consent moment flow', () => {
     ]);
   });
 
+  // Spec S1 and N8: no ad on launch, ever; the moment waits for a banner screen.
   it('waits while no banner screen is open, so the moment never covers a level', async () => {
     const { flow } = setup();
     flow.updateInput(AFTER_TUTORIAL);
@@ -357,5 +358,31 @@ describe('consent moment flow, Ad privacy choices', () => {
     flow.reopenPrivacyOptions();
     await flushMicrotasks();
     expect([saved.at(-1), flow.getSnapshot().canRequestAds]).toStrictEqual([DENIED, false]);
+  });
+
+  // A withdrawn consent always wins: a no given while the moment still runs (Apple's prompt waits
+  // for a banner screen while the player is on S11) is never overwritten when it finishes.
+  it('keeps the banners off when the choices withdraw consent while the moment still runs', async () => {
+    const { flow, calls, script } = adPrivacySetup(GRANTED);
+    flow.updateInput(AFTER_TUTORIAL);
+    const leaveHome = flow.requestAdMoment();
+    leaveHome(); // to S11 before Apple's prompt: the moment waits for a banner screen
+    await flushMicrotasks();
+    flow.reopenPrivacyOptions(); // afterForm DENIED: the player says no
+    await flushMicrotasks();
+
+    flow.requestAdMoment(); // back on Home: the moment finishes
+    await flushMicrotasks();
+    expect([calls, flow.getSnapshot().canRequestAds]).toStrictEqual([
+      ['refresh', 'showPrivacyOptions'],
+      false,
+    ]);
+
+    // A later yes prepares ads again, so the no did not close them for the session.
+    script.afterRefresh = GRANTED;
+    script.afterForm = GRANTED;
+    flow.reopenPrivacyOptions();
+    await flushMicrotasks();
+    expect(flow.getSnapshot().canRequestAds).toBe(true);
   });
 });
