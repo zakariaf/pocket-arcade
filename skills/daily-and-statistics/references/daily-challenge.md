@@ -117,6 +117,7 @@ daily: {
 recordDailyResult(daily, date, result)   // the FIRST finished attempt of `date` counts; a replay returns `daily` itself
 currentDailyStreak(daily, today)         // streak.length if lastDate is today or yesterday, else 0
 isDailyDone(daily, today)                // today in results
+lastSevenDates(today)                    // today-6 ... today, oldest first (DAYS_SHOWN = 7; S10's bars use it too)
 lastSevenDays(daily, today)              // [{ date, isDone }] for today-6 ... today, oldest first
 DAILY_KEEP_DAYS = 60
 ```

@@ -120,6 +120,7 @@ buildStatsSummary({ stats, progress, daily, today, levelCount, hasEndless, count
 //   week: { days: [{ date, weekday, games }] /* 7, oldest first */, max /* >= 1 */ },
 //   counters: [{ id, value }] }
 splitDuration(ms)   // whole hours and remaining whole minutes: 8_040_000 -> { hours: 2, minutes: 14 }
+                    // (countdownOf(floor(ms / MINUTE_MS)) from daily-summary.ts; Duration = Countdown)
 // packages/shell/src/screens/stats/use-stats-summary.ts
 useStatsSummary({ levelCount, hasEndless, counterIds })   // useToday() + section-reference selectors
 ```

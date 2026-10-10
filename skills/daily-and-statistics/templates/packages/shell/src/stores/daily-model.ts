@@ -56,13 +56,18 @@ export function isDailyDone(daily: DailySection, today: DateKey): boolean {
   return today in daily.results;
 }
 
+/** The days S9's week strip and S10's bar chart show: the last seven, today included. */
+const DAYS_SHOWN = 7;
+
+/** The last DAYS_SHOWN date keys, oldest first and today last (S9's strip, S10's bars). */
+export function lastSevenDates(today: DateKey): readonly DateKey[] {
+  return Array.from({ length: DAYS_SHOWN }, (_, index) => addDays(today, index + 1 - DAYS_SHOWN));
+}
+
 /** Oldest first. The strip is laid out with flexDirection 'row', so RTL mirrors it. */
 export function lastSevenDays(
   daily: DailySection,
   today: DateKey,
 ): readonly { readonly date: DateKey; readonly isDone: boolean }[] {
-  return [6, 5, 4, 3, 2, 1, 0].map((back) => {
-    const date = addDays(today, -back);
-    return { date, isDone: date in daily.results };
-  });
+  return lastSevenDates(today).map((date) => ({ date, isDone: date in daily.results }));
 }

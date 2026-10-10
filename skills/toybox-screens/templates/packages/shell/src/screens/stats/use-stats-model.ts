@@ -10,7 +10,7 @@ import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { levelCountOf, useGameExtra } from '@e07/shell/app/use-game-extra.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
-import { formatWeekdayLetter, formatWeekdayName } from '@e07/shell/i18n/format-date.ts';
+import { formatWeekdayLabels } from '@e07/shell/i18n/format-date.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { useNumberFormatter, usePercentFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
@@ -41,10 +41,7 @@ export function useStatsModel(): StatsModel {
     snapshot: statsSnapshotOf(summary, host.counters, {
       formatNumber,
       labelOf: (counter) => gameMessageText(t, { id: counter.labelId }),
-      weekdayOf: (date) => ({
-        letter: formatWeekdayLetter(date, t),
-        weekdayName: formatWeekdayName(date, t),
-      }),
+      weekdayOf: (date) => formatWeekdayLabels(date, t),
     }),
     gameName: gameMessageText(t, { id: host.nameId }),
     logo: host.logo,
