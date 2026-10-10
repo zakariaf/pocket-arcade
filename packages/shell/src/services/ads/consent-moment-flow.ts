@@ -44,6 +44,12 @@ export type ConsentMomentFlow = {
   readonly refreshAtLaunch: () => void;
   /** Continue on the intro: Google's form opens next (a held parity frame ignores it). */
   readonly continueToForm: () => void;
+  /**
+   * S11's Ad privacy choices: Google's privacy options, the answer saved. A yes after a refusal
+   * prepares ads again at the next banner screen (Apple's prompt, initialize), and a no closes the
+   * banners at once: no relaunch either way.
+   */
+  readonly reopenPrivacyOptions: () => void;
 };
 
 type Phase = 'idle' | 'preparing' | 'done';
@@ -198,6 +204,14 @@ function createFlowApi(parts: FlowParts): ConsentMomentFlow {
       state.release?.();
       state.release = null;
       publish();
+    },
+    reopenPrivacyOptions: () => {
+      parts.gate.consent.showPrivacyOptions().then((info) => {
+        parts.gate.onConsent(info);
+        if (!info.canRequestAds || state.canRequestAds === true || state.phase !== 'done') return;
+        state.phase = 'idle';
+        prepareIfDue();
+      }, deps.onError);
     },
   };
 }

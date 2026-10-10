@@ -8,6 +8,7 @@ import { createFakeAds } from './fake-ads.ts';
 import type { AdGateInput } from './ad-gate.ts';
 import type { ConsentMomentFlow } from './consent-moment-flow.ts';
 import type { ConsentInfo, ConsentPort } from '@e07/shell/services/consent/consent-port.ts';
+import type { FakeConsentScript } from '@e07/shell/services/consent/fake-consent.ts';
 
 const GRANTED: ConsentInfo = { canRequestAds: true, isPrivacyOptionsRequired: true };
 const DENIED: ConsentInfo = { canRequestAds: false, isPrivacyOptionsRequired: true };
@@ -283,5 +284,79 @@ describe('consent moment flow', () => {
     flow.continueToForm();
     await flushMicrotasks();
     expect(heard).not.toHaveBeenCalled();
+  });
+});
+
+// Spec S11 (Ad privacy choices reopens Google's consent step) and 8.8: a yes given in Settings
+// after a refusal turns the banners on in this session, without a relaunch.
+describe('consent moment flow, Ad privacy choices', () => {
+  function adPrivacySetup(afterRefresh: ConsentInfo) {
+    const calls: string[] = [];
+    const saved: ConsentInfo[] = [];
+    const script: FakeConsentScript = {
+      ...{ afterRefresh, afterForm: DENIED, tracking: 'not-determined', calls },
+    };
+    const flow = createConsentMomentFlow({
+      ads: createFakeAds({
+        rewardedStatus: 'unavailable',
+        interstitialResult: 'unavailable',
+        rewardResult: 'unavailable',
+        calls,
+      }),
+      consent: createFakeConsent(script),
+      isHeld: false,
+      savedCanRequestAds: null,
+      onConsent: (info) => {
+        saved.push(info);
+      },
+      onError: () => undefined,
+    });
+    return { flow, calls, saved, script };
+  }
+
+  /** The launch's moment on Home: the intro, Google's form, then the player leaves Home. */
+  async function answerAtLaunch(flow: ConsentMomentFlow): Promise<void> {
+    flow.updateInput(AFTER_TUTORIAL);
+    const release = flow.requestAdMoment();
+    await flushMicrotasks();
+    flow.continueToForm();
+    await flushMicrotasks();
+    release();
+  }
+
+  it('saves a yes given after a refusal and turns the banners on back on a banner screen', async () => {
+    const { flow, calls, saved, script } = adPrivacySetup(DENIED);
+    await answerAtLaunch(flow);
+    expect(flow.getSnapshot()).toStrictEqual({ isIntroShown: false, canRequestAds: false });
+
+    // On S11 the player reopens Google's choices and allows ads.
+    script.afterRefresh = GRANTED;
+    script.afterForm = GRANTED;
+    flow.reopenPrivacyOptions();
+    await flushMicrotasks();
+    expect(saved.at(-1)).toStrictEqual(GRANTED);
+
+    // Back on Home: Apple's prompt and initialize run over the banner screen, then banners show.
+    flow.requestAdMoment();
+    await flushMicrotasks();
+    expect(calls.slice(2)).toStrictEqual([
+      'showPrivacyOptions',
+      'refresh',
+      'requestTracking',
+      'initialize',
+      'preloadInterstitial',
+      'preloadRewarded',
+    ]);
+    expect(flow.getSnapshot()).toStrictEqual({ isIntroShown: false, canRequestAds: true });
+  });
+
+  it('closes the banners at once when the choices withdraw consent', async () => {
+    const { flow, saved } = adPrivacySetup(GRANTED);
+    await answerAtLaunch(flow);
+    expect(flow.getSnapshot().canRequestAds).toBe(true);
+
+    flow.reopenPrivacyOptions();
+    await flushMicrotasks();
+    expect([saved.at(-1), flow.getSnapshot().canRequestAds]).toStrictEqual([DENIED, false]);
   });
 });

@@ -1,6 +1,7 @@
 // packages/shell/src/app/consent-moment.test.tsx
 import { act, screen, userEvent } from '@testing-library/react-native';
 
+import { useOptionalAdPrivacyChoices } from '@e07/shell/app/consent-moment-context.tsx';
 import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
 import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-connectivity.ts';
@@ -124,5 +125,40 @@ describe('ConsentMoment', () => {
     expect(calls).toStrictEqual(['refresh']);
     expect(save.doc().ads.consent).toStrictEqual(savedConsent);
     expect(update).not.toHaveBeenCalled();
+  });
+
+  it("hands Settings its Ad privacy choices: Google's options open and the answer is saved", async () => {
+    const calls: string[] = [];
+    const { save } = createTestSave();
+    const reopened: (() => void)[] = [];
+    function MockAdPrivacyRow(): ReactNode {
+      const reopen = useOptionalAdPrivacyChoices();
+      if (reopen !== null) reopened.push(reopen);
+      return null;
+    }
+    const consent = createFakeConsent({
+      afterRefresh: { canRequestAds: false, isPrivacyOptionsRequired: true },
+      afterForm: { canRequestAds: true, isPrivacyOptionsRequired: true },
+      calls,
+    });
+    const ads = createFakeAds({
+      rewardedStatus: 'unavailable',
+      interstitialResult: 'unavailable',
+      rewardResult: 'unavailable',
+      calls,
+    });
+    await renderWithShell(
+      <ConsentMoment isHeld={false} debug={null}>
+        <MockAdPrivacyRow />
+      </ConsentMoment>,
+      { services: { save, consent, ads, connectivity: createFakeConnectivity(true) } },
+    );
+
+    await act(() => {
+      reopened.at(-1)?.();
+    });
+    await act(flushMicrotasks);
+    expect(calls).toContain('showPrivacyOptions');
+    expect(save.doc().ads.consent.canRequestAds).toBe(true);
   });
 });
