@@ -4,7 +4,7 @@ import { Button } from '@e07/shell/ui/button.tsx';
 import { EmptyState } from '@e07/shell/ui/empty-state.tsx';
 import { EmptyStatsPicture } from '@e07/shell/ui/empty-stats-picture.tsx';
 
-import { StatsLocalNote } from './stats-local-note.tsx';
+import { StatsLocalCaption } from './stats-local-caption.tsx';
 
 import type { ReactNode } from 'react';
 
@@ -37,7 +37,7 @@ export function StatsEmptyState({ onPlay, isReducedMotion }: StatsEmptyStateProp
           isReducedMotion={isReducedMotion}
         />
       }
-      footer={<StatsLocalNote />}
+      footer={<StatsLocalCaption />}
     />
   );
 }

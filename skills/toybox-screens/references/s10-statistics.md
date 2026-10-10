@@ -54,7 +54,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/stats/stat-panel.tsx`
 - `packages/shell/src/screens/stats/stats-cells.ts`
 - `packages/shell/src/screens/stats/stats-empty-state.tsx`
-- `packages/shell/src/screens/stats/stats-local-note.tsx`
+- `packages/shell/src/screens/stats/stats-local-note.tsx` (the padlock row under the panels) and `stats-local-caption.tsx` (the bare caption on the empty page)
 - `packages/shell/src/screens/stats/stats-panels.tsx`
 - `packages/shell/src/screens/stats/stats-view.tsx`
 - `packages/shell/src/screens/stats/stats-screen.tsx`

@@ -3,14 +3,13 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
-import { LevelTile } from '@e07/shell/ui/level-tile.tsx';
 import { ProgressBar } from '@e07/shell/ui/progress-bar.tsx';
 import { RatingStar } from '@e07/shell/ui/rating-star.tsx';
 
+import { PackTile } from './pack-tile.tsx';
 import { LEVEL_COLUMN_GAP, tileWidthFor } from './tile-width.ts';
 
 import type { LevelPackModel, LevelTileModel } from './levels-model.ts';
-import type { TFunction } from '@e07/shell/i18n/create-t.ts';
 import type { ReactNode } from 'react';
 
 export type PackSectionProps = {
@@ -41,15 +40,6 @@ const styles = StyleSheet.create({
   },
   tiles: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 10, columnGap: LEVEL_COLUMN_GAP },
 });
-
-/** The tile's VoiceOver label: "Level 12: 2 stars", "Level 13: no stars yet", "Level 14, locked". */
-function tileLabel(t: TFunction, tile: LevelTileModel): string {
-  if (tile.state.kind === 'locked') {
-    return t('levels.level-tile.locked.a11y-label', { level: tile.level });
-  }
-  const stars = tile.state.kind === 'completed' ? tile.state.stars : 0;
-  return t('levels.level-tile.a11y-label', { level: tile.level, starsCount: stars });
-}
 
 /** S8 pack: heading and level count, the stars progress line, then the 6-column level grid. */
 export function PackSection({
@@ -93,21 +83,13 @@ export function PackSection({
       </View>
       <View style={styles.tiles} testID={`${id}.tiles`}>
         {pack.tiles.map((tile) => (
-          <LevelTile
+          <PackTile
             key={tile.level}
-            testID={`levels.level-tile.${String(tile.level)}`}
-            numberText={tile.numberText}
-            state={tile.state}
-            label={tileLabel(t, tile)}
-            {...(tile.state.kind === 'locked'
-              ? { hint: t('levels.level-tile.locked.a11y-hint') }
-              : {})}
-            onPress={() => {
-              onPressTile(tile);
-            }}
+            tile={tile}
             width={tileWidth}
             isFocused={tile.level === focusedLevel}
             isReducedMotion={isReducedMotion}
+            onPressTile={onPressTile}
           />
         ))}
       </View>

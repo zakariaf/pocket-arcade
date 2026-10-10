@@ -26,7 +26,7 @@ Level tiles and stars, the three top bars and the banner band, and everything th
 
 **States** (`state` is a union, so impossible combinations cannot be written):
 - `{ kind: 'completed', stars: 1 | 2 | 3 }`: filled mini stars (`starOn`, `border` edge) then hollow ones (`starOff`).
-- `{ kind: 'current' }` (the next level): `accent` fill, `onAccent` number and hollow stars, 3 pt edge, bobs (translateY 0 → −3 → 0, 1.6 s loop ease-in-out; no loop under reduce motion); a **flag** at the top-end corner: 24 × 24, radius 7, gold, 2 pt toy-ink edge, 2.5 pt white ring, tilt +8°, offset −11 top / −9 end, 12 pt `play` icon.
+- `{ kind: 'current' }` (the next level): `accent` fill, `onAccent` number and hollow stars, 3 pt edge, bobs (translateY 0 → −3 → 0, 1.6 s loop ease-in-out; no loop under reduce motion; only this tile sits in `LevelTileBob`, the one wrapper with a Reanimated value, while every other tile sits in a plain View); a **flag** at the top-end corner: 24 × 24, radius 7, gold, 2 pt toy-ink edge, 2.5 pt white ring, tilt +8°, offset −11 top / −9 end, 12 pt `play` icon.
 - `{ kind: 'locked' }`: `sunken` fill, dashed `inkSoft` edge, `inkSoft` number and a 16 pt `lock` instead of stars, no shadow, pushed in (`isPushedIn`: the tile sits 3 pt lower by layout, `top: 3` on its Pressable, never by a transform, so Maestro and the parity bounds measure the sunk tile). It stays pressable: tapping it shows the focus ring (`isFocused`: 3 pt `focus` outline, 2 pt gap) and the screen's toast "Unlock this one by finishing level n."
 - Pressed (the transient press only): translateY 3, scale 1.04 × 0.94, shadow 0.
 
