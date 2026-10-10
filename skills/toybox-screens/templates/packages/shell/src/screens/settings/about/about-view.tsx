@@ -2,15 +2,13 @@
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { SubPage } from '@e07/shell/screens/settings/sub-page.tsx';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { Chip } from '@e07/shell/ui/chip.tsx';
 import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { List } from '@e07/shell/ui/list.tsx';
 import { LogoTile } from '@e07/shell/ui/logo-tile.tsx';
 import { Panel } from '@e07/shell/ui/panel.tsx';
-import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
-import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import { AboutFacts } from './about-facts.tsx';
 
@@ -47,64 +45,61 @@ const styles = StyleSheet.create({
 export function AboutView({ model }: AboutViewProps): ReactNode {
   const t = useT();
   return (
-    <ScreenFrame testID="about.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
-      <TopBar
-        testID="about.top-bar"
-        title={t('settings.about.label')}
-        backLabel={t('common.back')}
-        onBack={model.onBack}
-        isReducedMotion={model.isReducedMotion}
-      />
-      <ScreenBody isUnderHomeIndicator>
-        <View style={styles.header} testID="about.header">
-          <LogoTile testID="about.logo" logo={model.logo} variant="about" />
-          <View style={styles.identity}>
-            <AppText
-              text={model.gameName}
-              variant="gameNameAbout"
-              isHeader
-              testID="about.game-name"
-            />
-            <AppText text={model.tagline} tone="muted" testID="about.tagline" />
-            <Chip
-              testID="about.version-chip"
-              text={t('about.version', { versionText: model.versionText })}
-            />
-          </View>
-        </View>
-        <AboutFacts isReducedMotion={model.isReducedMotion} />
-        <Panel testID="about.support-card" gap={SUPPORT_GAP}>
+    <SubPage
+      testIDBase="about"
+      title={t('settings.about.label')}
+      backLabel={t('common.back')}
+      onBack={model.onBack}
+      isReducedMotion={model.isReducedMotion}
+    >
+      <View style={styles.header} testID="about.header">
+        <LogoTile testID="about.logo" logo={model.logo} variant="about" />
+        <View style={styles.identity}>
           <AppText
-            text={t('about.support.label')}
-            variant="heading"
+            text={model.gameName}
+            variant="gameNameAbout"
             isHeader
-            testID="about.support-card.title"
+            testID="about.game-name"
           />
-          <AppText
-            text={t('about.support.body', { emailText: model.emailText })}
-            testID="about.support-card.body"
+          <AppText text={model.tagline} tone="muted" testID="about.tagline" />
+          <Chip
+            testID="about.version-chip"
+            text={t('about.version', { versionText: model.versionText })}
           />
-        </Panel>
-        <List testID="about.links-list">
-          <ListRow
-            testID="about.contact-row"
-            icon="mail"
-            label={t('settings.contact.label')}
-            end="chevron"
-            onPress={model.onContact}
-            isFirst
-            isReducedMotion={model.isReducedMotion}
-          />
-          <ListRow
-            testID="about.licences-row"
-            icon="doc"
-            label={t('settings.licences.label')}
-            end="chevron"
-            onPress={model.onOpenLicences}
-            isReducedMotion={model.isReducedMotion}
-          />
-        </List>
-      </ScreenBody>
-    </ScreenFrame>
+        </View>
+      </View>
+      <AboutFacts isReducedMotion={model.isReducedMotion} />
+      <Panel testID="about.support-card" gap={SUPPORT_GAP}>
+        <AppText
+          text={t('about.support.label')}
+          variant="heading"
+          isHeader
+          testID="about.support-card.title"
+        />
+        <AppText
+          text={t('about.support.body', { emailText: model.emailText })}
+          testID="about.support-card.body"
+        />
+      </Panel>
+      <List testID="about.links-list">
+        <ListRow
+          testID="about.contact-row"
+          icon="mail"
+          label={t('settings.contact.label')}
+          end="chevron"
+          onPress={model.onContact}
+          isFirst
+          isReducedMotion={model.isReducedMotion}
+        />
+        <ListRow
+          testID="about.licences-row"
+          icon="doc"
+          label={t('settings.licences.label')}
+          end="chevron"
+          onPress={model.onOpenLicences}
+          isReducedMotion={model.isReducedMotion}
+        />
+      </List>
+    </SubPage>
   );
 }

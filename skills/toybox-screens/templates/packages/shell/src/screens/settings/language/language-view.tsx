@@ -2,12 +2,10 @@
 import { LANGUAGE_AUTONYMS, LANGUAGES } from '@e07/shell/i18n/languages.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { systemLabel } from '@e07/shell/screens/settings/language/language-change.ts';
+import { SubPage } from '@e07/shell/screens/settings/sub-page.tsx';
 import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { List } from '@e07/shell/ui/list.tsx';
 import { NotePanel } from '@e07/shell/ui/note-panel.tsx';
-import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
-import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 
 import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';
@@ -32,50 +30,47 @@ export type SettingsLanguageViewProps = { readonly model: SettingsLanguageModel 
 export function SettingsLanguageView({ model }: SettingsLanguageViewProps): ReactNode {
   const t = useT();
   return (
-    <ScreenFrame testID="settings-language.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
-      <TopBar
-        testID="settings-language.top-bar"
-        title={t('language.title')}
-        backLabel={t('common.back')}
-        onBack={model.onBack}
-        isReducedMotion={model.isReducedMotion}
-      />
-      <ScreenBody isUnderHomeIndicator>
-        <List testID="settings-language.list">
+    <SubPage
+      testIDBase="settings-language"
+      title={t('language.title')}
+      backLabel={t('common.back')}
+      onBack={model.onBack}
+      isReducedMotion={model.isReducedMotion}
+    >
+      <List testID="settings-language.list">
+        <ListRow
+          testID="settings-language.language-row.system"
+          label={systemLabel(t, model.systemLanguage)}
+          description={t('language.system.description')}
+          end="radio"
+          isSelected={model.selected === null}
+          onPress={() => {
+            model.onSelect(null);
+          }}
+          isFirst
+          isReducedMotion={model.isReducedMotion}
+        />
+        {LANGUAGES.map((language) => (
           <ListRow
-            testID="settings-language.language-row.system"
-            label={systemLabel(t, model.systemLanguage)}
-            description={t('language.system.description')}
+            key={language}
+            testID={`settings-language.language-row.${language}`}
+            label={LANGUAGE_AUTONYMS[language]}
+            labelLanguage={language}
             end="radio"
-            isSelected={model.selected === null}
+            isSelected={model.selected === language}
             onPress={() => {
-              model.onSelect(null);
+              model.onSelect(language);
             }}
-            isFirst
             isReducedMotion={model.isReducedMotion}
           />
-          {LANGUAGES.map((language) => (
-            <ListRow
-              key={language}
-              testID={`settings-language.language-row.${language}`}
-              label={LANGUAGE_AUTONYMS[language]}
-              labelLanguage={language}
-              end="radio"
-              isSelected={model.selected === language}
-              onPress={() => {
-                model.onSelect(language);
-              }}
-              isReducedMotion={model.isReducedMotion}
-            />
-          ))}
-        </List>
-        <NotePanel
-          testID="settings-language.direction-note"
-          icon="globe"
-          iconTile="pop"
-          text={t('language.direction-note')}
-        />
-      </ScreenBody>
-    </ScreenFrame>
+        ))}
+      </List>
+      <NotePanel
+        testID="settings-language.direction-note"
+        icon="globe"
+        iconTile="pop"
+        text={t('language.direction-note')}
+      />
+    </SubPage>
   );
 }

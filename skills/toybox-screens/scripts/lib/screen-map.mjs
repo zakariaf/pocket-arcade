@@ -71,6 +71,8 @@ export const MODEL_HOOK_ROUTES = {
 const borrow = (file, owner, test = null) => ({ file: `${SHELL}/${file}`, owner, test: test === null ? null : `${SHELL}/${test}` });
 const PARITY_OPENER = borrow('app/use-parity-opener.ts', 'toybox-screens', 'app/use-parity-opener.test.tsx');
 const DIRECTION_RESTART = borrow('app/use-direction-restart.ts', 'toybox-screens', 'app/use-direction-restart.test.tsx');
+/** S11's page frame, which S11a to S11d draw too. */
+const SUB_PAGE = borrow('screens/settings/sub-page.tsx', 'toybox-screens', 'screens/settings/sub-page.test.tsx');
 /** S2's Continue and S11a's rows share its restart rule; S11's System label comes from it too. */
 const LANGUAGE_CHANGE = borrow('screens/settings/language/language-change.ts', 'settings-and-preferences', 'screens/settings/language/language-change.test.ts');
 const PAIR_LAYOUT = borrow('ui/use-pair-layout.ts', 'toybox-screens');
@@ -133,12 +135,15 @@ export const BORROWS = {
     ...RESETS,
     LANGUAGE_CHANGE,
   ],
-  S11a: [DIRECTION_RESTART, PARITY_OPENER, LANGUAGE_CHANGE],
+  S11a: [DIRECTION_RESTART, PARITY_OPENER, LANGUAGE_CHANGE, SUB_PAGE],
   S11b: [
     borrow('screens/settings/settings-extras.ts', 'toybox-screens'),
     borrow('screens/settings/use-settings-routes.ts', 'toybox-screens'),
     borrow('screens/settings/use-settings-links.ts', 'toybox-screens', 'screens/settings/use-settings-links.test.tsx'),
+    SUB_PAGE,
   ],
+  S11c: [SUB_PAGE],
+  S11d: [SUB_PAGE],
   S15: [borrow('screens/debug/use-debug-model.ts', 'e2e-maestro', 'screens/debug/use-debug-model.test.tsx')],
 };
 
@@ -244,6 +249,8 @@ export const DERIVED_PARTS = {
  */
 export const COMPONENT_IDS = {
   TopBar: { testID: { parts: ['back-button', 'title'] } },
+  // S11's own page frame (screens/settings/sub-page.tsx), shared by S11 and S11a to S11d.
+  SubPage: { testIDBase: { parts: ['screen', 'top-bar', 'top-bar.back-button', 'top-bar.title'] } },
   ListGroup: { testID: { parts: ['tab', 'list'] } },
   ListRow: { testID: { parts: ['icon', 'label', 'description', 'value', 'toggle', 'radio'] } },
   SubRow: { testID: { parts: ['label'] } },

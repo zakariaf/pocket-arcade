@@ -85,6 +85,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/settings/settings-row-specs.ts`
 - `packages/shell/src/screens/settings/settings-row.tsx`
 - `packages/shell/src/screens/settings/settings-view.tsx`
+- `packages/shell/src/screens/settings/sub-page.tsx` and `sub-page.test.tsx`: `SubPage`, the frame S11 and S11a to S11d share (`ScreenFrame` under the home indicator, `TopBar` with the title and Back, `ScreenBody` with the page's gap); its `testIDBase` gives `<base>.screen` and `<base>.top-bar` (with `.back-button` and `.title`), and check-screens derives those ids from it
 - `packages/shell/src/screens/settings/settings-volume-row.tsx`
 - `packages/shell/src/screens/settings/settings-screen.tsx`
 - `packages/shell/src/screens/settings/use-settings-extras.ts`, `use-settings-routes.ts`, `use-settings-links.ts`, with `use-settings-extras.test.tsx` and `use-settings-links.test.tsx`
