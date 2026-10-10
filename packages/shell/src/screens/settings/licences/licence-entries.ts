@@ -71,3 +71,20 @@ export function shellLicenceEntries(t: TFunction): LicenceEntry[] {
     },
   ];
 }
+
+/**
+ * Every row under a key of its own, in order: a game's credit keys come from their names, so two
+ * names can share one, a non-Latin name gives "game-" and a credit called "Sounds" the Shell's
+ * "game-sounds". A repeated key is numbered from 2 ("game-sounds-2"), so each row's testID and
+ * "Show licence text" name exactly that row.
+ */
+export function withUniqueKeys(entries: readonly LicenceEntry[]): LicenceEntry[] {
+  const used = new Set<string>();
+  return entries.map((entry) => {
+    const base = entry.key.replace(/-+$/, '');
+    let key = base;
+    for (let count = 2; used.has(key); count += 1) key = `${base}-${String(count)}`;
+    used.add(key);
+    return key === entry.key ? entry : { ...entry, key };
+  });
+}

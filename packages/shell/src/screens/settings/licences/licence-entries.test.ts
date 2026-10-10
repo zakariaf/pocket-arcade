@@ -1,8 +1,9 @@
 // packages/shell/src/screens/settings/licences/licence-entries.test.ts
 import fc from 'fast-check';
 
-import { shellLicenceEntries } from './licence-entries.ts';
+import { shellLicenceEntries, withUniqueKeys } from './licence-entries.ts';
 
+import type { LicenceEntry } from './licence-entries.ts';
 import type { TFunction } from '@e07/shell/i18n/create-t.ts';
 
 /** Returns each message key as its text, so a translated field shows its key. */
@@ -92,6 +93,48 @@ describe('shellLicenceEntries', () => {
     fc.assert(
       fc.property(fc.string(), (text) => {
         expect(untranslated(() => text)).toStrictEqual(expected);
+      }),
+    );
+  });
+});
+
+// A game's credit keys come from their names (creditRowsOf), so two names can give one key, a
+// non-Latin name an empty one ("game-"), and a credit called "Sounds" the Shell's "game-sounds".
+// Each row's testID and its "Show licence text" must still name exactly that row.
+describe('withUniqueKeys', () => {
+  function entryKeyed(key: string): LicenceEntry {
+    return { key, group: 'software', name: key, licence: 'MIT' };
+  }
+
+  it('numbers a repeated key from 2 and gives an empty name a key of its own', () => {
+    const keys = withUniqueKeys(
+      [
+        'game-sounds',
+        'game-kenney-sounds',
+        'game-kenney-sounds',
+        'game-',
+        'game-',
+        'game-sounds',
+      ].map(entryKeyed),
+    ).map((entry) => entry.key);
+    expect(keys).toStrictEqual([
+      'game-sounds',
+      'game-kenney-sounds',
+      'game-kenney-sounds-2',
+      'game',
+      'game-2',
+      'game-sounds-2',
+    ]);
+  });
+
+  it('keeps every row, in order, under a kebab-case key used once', () => {
+    fc.assert(
+      fc.property(fc.array(fc.constantFrom('game-', 'game-a', 'game-a-2', 'b', 'b-2')), (raw) => {
+        const entries = withUniqueKeys(raw.map(entryKeyed));
+        const keys = entries.map((entry) => entry.key);
+        expect(entries.map((entry) => entry.name)).toStrictEqual(raw);
+        expect(new Set(keys).size).toBe(keys.length);
+        expect(keys.filter((key) => !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(key))).toStrictEqual([]);
       }),
     );
   });
