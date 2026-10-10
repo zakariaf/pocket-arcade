@@ -5,6 +5,7 @@ import { DebugServicesProvider } from '@e07/shell/app/debug-services-context.tsx
 import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
 import { endParitySession, startParitySession } from '@e07/shell/app/parity/parity-session.ts';
 import { useColdStartMark } from '@e07/shell/app/perf/use-cold-start-mark.ts';
+import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
 import { createFakeClock } from '@e07/shell/services/clock/fake-clock.ts';
@@ -263,5 +264,23 @@ describe('useHomeModel', () => {
     const { result } = await homeHook({ services: { save: seasonedSave() }, language: 'fa' });
 
     expect(stripIsolates(result.current.daily.dateText)).toBe('شنبه، ۲۶ سپتامبر');
+  });
+  it('offers Continue for a level run paused and left through Pause Home (spec S6)', async () => {
+    const save = seasonedSave();
+    const { shell } = await homeHook({ services: { save } });
+    const { result: controls } = await renderHook(
+      () => useGameSessionControls({ start: 'new', ref: { kind: 'level', level: 2 } }),
+      { wrapper: shell.wrapper },
+    );
+    await act(() => {
+      controls.current.pause();
+    });
+    await act(() => {
+      controls.current.leaveToHome();
+    });
+    const { result } = await homeHook({ services: { save } });
+
+    expect(save.doc().run?.ref).toStrictEqual({ kind: 'level', level: 2 });
+    expect(result.current.play).toStrictEqual({ isContinue: true, level: 2 });
   });
 });

@@ -1,11 +1,12 @@
 // packages/shell/src/screens/pause/use-pause-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
 
+import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { createFakeAudio } from '@e07/shell/services/audio/fake-audio.ts';
 import { createFakeHaptics } from '@e07/shell/services/haptics/fake-haptics.ts';
 import { createHostWrapper } from '@e07/shell/testing/create-host-wrapper.tsx';
 
-import { usePauseModel } from './use-pause-model.ts';
+import { RESTART_WITHOUT_ASKING_MOVES, usePauseModel } from './use-pause-model.ts';
 
 import type { PauseSession } from './pause-model.ts';
 import type { HostWrapper } from '@e07/shell/testing/create-host-wrapper.tsx';
@@ -18,6 +19,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('@e07/shell/app/dialog-context.tsx', () => ({ useOpenDialog: () => mockOpenDialog }));
 
 type Setup = {
+  readonly language?: 'en' | 'fa';
   readonly hasMusic?: boolean;
   readonly canVibrate?: boolean;
   readonly moves?: number;
@@ -40,15 +42,18 @@ function pausedRun(shell: HostWrapper, moves: number): PauseSession & { startRun
   return { view: opened.handle.getView(), startRun: jest.fn() };
 }
 
-async function pauseModel({ hasMusic = false, canVibrate = true, moves = 1 }: Setup = {}) {
+async function pauseModel({
+  language = 'en',
+  hasMusic = false,
+  canVibrate = true,
+  moves = 1,
+}: Setup = {}) {
   const audio = createFakeAudio();
-  const shell = createHostWrapper({
-    host: { hasMusic },
-    services: { audio, haptics: createFakeHaptics(canVibrate) },
-  });
+  const haptics = createFakeHaptics(canVibrate);
+  const shell = createHostWrapper({ language, host: { hasMusic }, services: { audio, haptics } });
   const session = pausedRun(shell, moves);
   const view = await renderHook(() => usePauseModel(session), { wrapper: shell.wrapper });
-  return { ...view, session, audio, shell };
+  return { ...view, session, audio, haptics, shell };
 }
 
 describe('usePauseModel', () => {
@@ -92,5 +97,42 @@ describe('usePauseModel', () => {
     const { result } = await pauseModel();
     result.current.onHowToPlay();
     expect(mockNavigate).toHaveBeenCalledWith('HowToPlay');
+  });
+  it('draws no Vibration key on a device without haptics (an iPad)', async () => {
+    const { result } = await pauseModel({ canVibrate: false });
+    expect(result.current.vibration).toBeNull();
+    expect(result.current.sound.isOn).toBe(true);
+  });
+
+  it('restarts at once at exactly three moves and asks first at four (spec S6)', async () => {
+    expect(RESTART_WITHOUT_ASKING_MOVES).toBe(3);
+    mockOpenDialog.mockClear();
+    const three = await pauseModel({ moves: 3 });
+    three.result.current.onRestart();
+    expect(three.session.startRun).toHaveBeenCalledTimes(1);
+    expect(mockOpenDialog).not.toHaveBeenCalled();
+
+    const four = await pauseModel({ moves: 4 });
+    four.result.current.onRestart();
+    expect(four.session.startRun).not.toHaveBeenCalled();
+    expect(mockOpenDialog).toHaveBeenCalledTimes(1);
+  });
+
+  it('plays the toggle sound and a selection pulse once per toggle key, never more', async () => {
+    const { result, audio, haptics } = await pauseModel({ hasMusic: true });
+    for (const key of ['sound', 'music', 'vibration'] as const) {
+      await act(() => {
+        result.current[key]?.onToggle();
+      });
+    }
+    const toggles = audio.calls.filter(
+      (call) => call.kind === 'play' && call.soundId === 'ui.toggle',
+    );
+    expect(toggles).toHaveLength(3);
+    expect(haptics.played).toStrictEqual(['selection', 'selection', 'selection']);
+  });
+  it('names the run in Persian digits for a Persian player', async () => {
+    const { result } = await pauseModel({ language: 'fa' });
+    expect(stripIsolates(result.current.modeText)).toBe('مرحلهٔ ۲');
   });
 });
