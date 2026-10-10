@@ -1,0 +1,7 @@
+{
+  "name": "@e07/tap-flip",
+  "private": true,
+  "dependencies": {
+    "react-native-gesture-handler": "~2.32.0"
+  }
+}

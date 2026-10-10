@@ -23,7 +23,7 @@ const SPEC = {
     'Rules:',
     '  input-file-missing     the input kit exists: input-intent.ts, classify-swipe.ts, stick-command.ts, pan-intent.ts, use-board-gestures.ts (+ test), board-gesture-probe.tsx',
     '  input-worklet          classify-swipe.ts, stick-command.ts and pan-intent.ts (called from gesture worklets) start with \'worklet\'; and import values only from \'worklet\' modules',
-    '  gesture-one-file       board gesture builders and hooks appear only in packages/shell/src/game-host/use-board-gestures.ts (ui/ controls such as the Slider excepted)',
+    '  gesture-one-file       board gesture builders and hooks appear only in packages/shell/src/game-host/use-board-gestures.ts (ui/ controls such as the Slider and S13\'s page swipe, screens/how-to-play/use-page-swipe.ts, excepted)',
     '  gesture-test-id        every board gesture builder has .withTestId(\'board.<kind>\')',
     '  intent-on-update       onUpdate/onChange never emit an intent (one intent per gesture, on start or end)',
     '  hit-test-slop          hitTest(...) reads the shared board layout and passes HIT_SLOP',
@@ -43,6 +43,8 @@ const SPEC = {
 };
 
 const GESTURE_FILE = 'packages/shell/src/game-host/use-board-gestures.ts';
+/** S13 How to play turns its pages with one horizontal swipe over the stage: a page, not a board. */
+const PAGE_SWIPE_FILE = 'packages/shell/src/screens/how-to-play/use-page-swipe.ts';
 const INPUT_FILES = [
   'packages/game-kit/src/contract/input-intent.ts',
   'packages/game-kit/src/geom/classify-swipe.ts',
@@ -67,9 +69,10 @@ function checkEverywhere(root, files, report) {
     if (rel === GESTURE_FILE || isTestFile(rel)) continue;
     const source = read(root, rel);
     const code = maskComments(source);
-    // The Shell's ui/ controls (the Settings volume Slider) are not boards: they own their gesture.
-    const isUiControl = rel.startsWith('packages/shell/src/ui/');
-    for (const re of isUiControl ? [] : [BUILDERS, V3_HOOKS]) {
+    // The Shell's ui/ controls (the Settings volume Slider) and S13's page swipe are not boards:
+    // they own their gesture.
+    const ownsGesture = rel.startsWith('packages/shell/src/ui/') || rel === PAGE_SWIPE_FILE;
+    for (const re of ownsGesture ? [] : [BUILDERS, V3_HOOKS]) {
       for (const match of code.matchAll(re)) report.problem({ file: rel, line: lineOf(code, match.index), rule: 'gesture-one-file', message: `builds a gesture outside use-board-gestures.ts (${match[0].replace(/\s*\($/, '')})`, fix: 'Add the gesture to packages/shell/src/game-host/use-board-gestures.ts (the only gesture file) and consume its intents.' });
     }
     if (rel.endsWith('.tsx')) checkDetectorChildren(rel, code, report);

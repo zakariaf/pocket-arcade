@@ -93,6 +93,12 @@ const CASES = [
     write(d, `apps/${GAME}/src/board/tap-layer.tsx`, `// apps/${GAME}/src/board/tap-layer.tsx\nimport { Gesture, GestureDetector } from 'react-native-gesture-handler';\n\nimport type { ReactNode } from 'react';\n\nconst tap = Gesture.Tap();\n\nexport function TapLayer(props: { readonly children: ReactNode }): ReactNode {\n  return <GestureDetector gesture={tap}>{props.children}</GestureDetector>;\n}\n`);
     return ['gesture-one-file', 'tap-layer.tsx:6', 'Gesture.Tap'];
   }],
+  ['gesture-in-screen', (d) => {
+    // Only S13's page swipe (screens/how-to-play/use-page-swipe.ts) and ui/ controls own a gesture;
+    // any other screen file that builds one is a second gesture path.
+    write(d, 'packages/shell/src/screens/home/use-home-swipe.ts', "// packages/shell/src/screens/home/use-home-swipe.ts\nimport { Gesture } from 'react-native-gesture-handler';\n\nimport type { PanGesture } from 'react-native-gesture-handler';\n\nexport function useHomeSwipe(): PanGesture {\n  return Gesture.Pan().withTestId('home.swipe');\n}\n");
+    return ['gesture-one-file', 'use-home-swipe.ts:7', 'Gesture.Pan'];
+  }],
   ['hit-test-no-slop', (d) => {
     edit(d, GESTURES, 'const target = hitTest(layout.get(), event, HIT_SLOP);\n      // The host', 'const target = hitTest(layout.get(), event);\n      // The host');
     return ['hit-test-slop', `use-board-gestures.ts:${lineOf(d, GESTURES, 'const target = hitTest(layout.get(), event);')}`];
