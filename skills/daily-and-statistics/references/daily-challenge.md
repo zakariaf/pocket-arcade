@@ -162,11 +162,14 @@ S9 shows `daily.next-in` ("Next challenge in {hours} h {minutes} min") after tod
 
 ```ts
 // packages/shell/src/screens/daily/daily-summary.ts (pure)
-splitCountdown(ms): Countdown   // { hours, minutes }; minutes rounded UP: 11_100_000 -> 3 h 5 min,
-                                // 30_000 -> 0 h 1 min (never "0 h 0 min" before midnight)
+minutesLeftOf(ms): number        // whole minutes, rounded UP once, never below 0
+countdownOf(minutes): Countdown  // { hours, minutes }
+splitCountdown(ms): Countdown    // countdownOf(minutesLeftOf(ms)): 11_100_000 -> 3 h 5 min,
+                                 // 30_000 -> 0 h 1 min (never "0 h 0 min" before midnight)
 // packages/shell/src/screens/daily/use-next-day-countdown.ts
-useNextDayCountdown(): Countdown // useSyncExternalStore over a 15 s interval and AppState changes;
-                                 // the snapshot is whole minutes, so it re-renders once a minute
+useNextDayCountdown(): Countdown // useSyncExternalStore over a 15 s interval and use-today.ts's
+                                 // subscribeToAppState; the snapshot is minutesLeftOf(...), whole
+                                 // minutes, so it re-renders once a minute
 ```
 
 - The screen's `use-daily-model.ts` calls `useNextDayCountdown()` on every render and fills `todayResult.hours` and `.minutes` from it only when `summary.todayResult !== null`; `daily-view.tsx` formats them with the catalog message (digits from the chosen numbering system).

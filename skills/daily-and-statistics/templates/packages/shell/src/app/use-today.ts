@@ -7,7 +7,8 @@ import { useServices } from '@e07/shell/app/services-context.tsx';
 
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 
-function subscribeToAppState(onChange: () => void): () => void {
+/** useSyncExternalStore's subscribe: runs onChange whenever the app changes state (foreground). */
+export function subscribeToAppState(onChange: () => void): () => void {
   const subscription = AppState.addEventListener('change', onChange);
   return () => {
     subscription.remove();

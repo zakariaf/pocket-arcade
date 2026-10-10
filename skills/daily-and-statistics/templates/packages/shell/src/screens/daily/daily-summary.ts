@@ -34,12 +34,21 @@ export type Countdown = { readonly hours: number; readonly minutes: number };
 const MINUTE_MS = 60_000;
 
 /**
- * Pure: ClockPort.msUntilNextLocalDay() -> whole hours and minutes, rounded UP to the minute,
- * so the line never reads "0 h 0 min" while today is still running (11_100_000 -> 3 h 5 min).
+ * Pure: ClockPort.msUntilNextLocalDay() -> whole minutes left, rounded UP (never below 0), so the
+ * line never reads "0 h 0 min" while today is still running.
  */
+export function minutesLeftOf(msUntilNextDay: number): number {
+  return Math.max(0, Math.ceil(msUntilNextDay / MINUTE_MS));
+}
+
+/** Pure: whole minutes left -> whole hours and minutes. */
+export function countdownOf(minutesLeft: number): Countdown {
+  return { hours: Math.floor(minutesLeft / 60), minutes: minutesLeft % 60 };
+}
+
+/** Pure: ClockPort.msUntilNextLocalDay() -> the countdown (11_100_000 -> 3 h 5 min). */
 export function splitCountdown(msUntilNextDay: number): Countdown {
-  const totalMinutes = Math.max(0, Math.ceil(msUntilNextDay / MINUTE_MS));
-  return { hours: Math.floor(totalMinutes / 60), minutes: totalMinutes % 60 };
+  return countdownOf(minutesLeftOf(msUntilNextDay));
 }
 
 function markOf(isDone: boolean, isToday: boolean): DailyMark {
