@@ -129,6 +129,7 @@
   "game-screen.mode.level": "ئاستی {level, number}",
   "game-screen.progress.moves-par": "جووڵە {moves, number} / ئامانج {par, number}",
   "game-screen.undo-button.a11y-label": "گەڕانەوە",
+  "home.daily-card.a11y-label": "{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}",
   "home.endless-card.description": "یاری بکە تا دەدۆڕێیت، پاشان باشترینەکەت تێبپەڕێنە.",
   "home.endless-card.label": "بێکۆتا – باشترین {bestScore, number}",
   "home.play-button.continue": "بەردەوامبوون – ئاستی {level, number}",

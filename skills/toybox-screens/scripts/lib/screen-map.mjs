@@ -172,6 +172,14 @@ export const SHELL_EXTRA_KEYS = {
   // S5 top bar: the undo and hint keys' VoiceOver labels (topBarPropsOf labels).
   'game-screen.undo-button.a11y-label': { en: 'Undo', de: 'Rückgängig', fa: 'واگرد', ckb: 'گەڕانەوە' },
   'game-screen.hint-button.a11y-label': { en: 'Hint', de: 'Tipp', fa: 'راهنمایی', ckb: 'ئاماژە' },
+  // S4 daily card: the card surface's VoiceOver label, one sentence of the card's own texts (N12:
+  // the order and the comma are each language's; status 'done' once today is played).
+  'home.daily-card.a11y-label': {
+    en: '{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}',
+    de: '{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}',
+    fa: '{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}',
+    ckb: '{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}',
+  },
   // S15 debug menu, test builds: the Performance group under the design's rows. English in all four
   // catalogs, like every debug text (no review needed).
   ...Object.fromEntries(

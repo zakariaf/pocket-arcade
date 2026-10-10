@@ -11,28 +11,16 @@ import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { modeTextOf } from '@e07/shell/game-host/top-bar-model.ts';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
-import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
-import { useT } from '@e07/shell/i18n/t-context.ts';
+import { useRunText } from '@e07/shell/screens/game/use-run-text.ts';
 import { createPreferenceActions } from '@e07/shell/screens/settings/settings-preference-actions.ts';
 import { playUiFeedback } from '@e07/shell/services/audio/ui-feedback.ts';
 import { selectDispatch, selectSettings } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import type { PauseModel, PauseSession } from './pause-model.ts';
-import type { RunText } from '@e07/shell/game-host/top-bar-model.ts';
 
 /** Chosen: up to this many moves, Restart level restarts at once; after them it asks first. */
 export const RESTART_WITHOUT_ASKING_MOVES = 3;
-
-function useRunText(): RunText {
-  const t = useT();
-  const digits = useSettingsStore((state) => state.settings.digits);
-  const formatNumber = createNumberFormatter(localeTagFor(useLanguage(), digits));
-  return { t, formatNumber, gameText: (message) => gameMessageText(t, message) };
-}
 
 function useRestart(session: PauseSession): () => void {
   const openDialog = useOpenDialog();

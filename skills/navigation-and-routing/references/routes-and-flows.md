@@ -120,10 +120,10 @@ Groups switch by their if-hooks, never by `navigate`: a hook reads the settings 
 | From | Action | Call |
 |---|---|---|
 | any top bar | Back | `navigation.goBack()` |
-| Home | Play / Continue | `navigate('Game', { start: 'resume' })` when a run is saved, else `navigate('Game', { start: 'new', ref })` |
+| Home | Play / Continue | `navigate('Game', { start: 'resume' })` when a level run is saved, else `navigate('Game', { start: 'new', ref })` |
 | Home | Daily card body (`home.daily-card`) | `navigate('Daily')`: opens S9 Daily challenge, also once today is done (L7) |
-| Home | Daily card Play key (`home.daily-card.play-button`) | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })`: today's run, without S9 |
-| Home | Endless card | `navigate('Game', { start: 'new', ref: { kind: 'endless' } })` |
+| Home | Daily card Play key (`home.daily-card.play-button`) | `navigate('Game', { start: 'resume' })` when today's daily run is saved, else `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })`: today's run, without S9 |
+| Home | Endless card | `navigate('Game', { start: 'resume' })` when an endless run is saved, else `navigate('Game', { start: 'new', ref: { kind: 'endless' } })` |
 | Home | Levels / Statistics / How to play / Premium / settings gear | `navigate('Levels')`, `navigate('Stats')`, `navigate('HowToPlay')`, `navigate('Premium')`, `navigate('Settings')` |
 | Levels | tap an unlocked tile | `navigate('Game', { start: 'new', ref: { kind: 'level', level } })` |
 | Daily | Play | `navigate('Game', { start: 'new', ref: { kind: 'daily', date } })` |

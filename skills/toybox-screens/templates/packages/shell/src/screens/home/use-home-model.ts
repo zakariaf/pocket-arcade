@@ -6,9 +6,11 @@
 //   endless              useGameExtra().modes.endless and the progress store's best
 //   daily card           useDailySummary() (daily-and-statistics) and the Shell date formatter
 //   actions              useHomeActions(): every key, the daily card's body (opens S9 Daily) and
-//                        its Play key (today's run), exactly as navigation-and-routing's table says
+//                        its Play key (today's run, the day read when pressed), exactly as
+//                        navigation-and-routing's table says
 //   banner               useBannerSlot('home') (admob-ads: Premium, online, consent, tutorial, levels)
 //   cold start           useColdStartMark(perf log of a test build's debug services, else null)
+//   music                useHomeMusic(): the game's music while the Music setting is on (8.7)
 //   parity frame         s14-progress-restored opens the "Progress restored" dialog over Home
 import { useOptionalDebugServices } from '@e07/shell/app/debug-services-context.tsx';
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
@@ -27,16 +29,19 @@ import { selectEndlessBest } from '@e07/shell/stores/progress-selectors.ts';
 import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
 
 import { useHomeActions } from './use-home-actions.ts';
+import { useHomeMusic } from './use-home-music.ts';
 import { useLevelPlay } from './use-level-play.ts';
 
 import type { HomeModel } from './home-model.ts';
 
 /**
  * Home's first frame with real data ends the cold start (store builds have no debug services and
- * mark nothing); a parity capture of s14-progress-restored opens that dialog over Home.
+ * mark nothing); a game with music starts it here while Music is on; a parity capture of
+ * s14-progress-restored opens that dialog over Home.
  */
 function useHomeMoments(): void {
   useColdStartMark(useOptionalDebugServices()?.perfLog ?? null);
+  useHomeMusic();
   const openDialog = useOpenDialog();
   useParityOpener('save-restored-dialog', () => {
     openDialog({ kind: 'save-restored' });
@@ -64,6 +69,6 @@ export function useHomeModel(): HomeModel {
     },
     bestEndlessScore: useProgressStore(selectEndlessBest),
     banner: useBannerSlot('home'),
-    actions: useHomeActions(onPlay, daily.today),
+    actions: useHomeActions(onPlay),
   };
 }

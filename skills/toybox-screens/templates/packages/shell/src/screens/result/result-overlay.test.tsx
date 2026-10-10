@@ -17,6 +17,32 @@ import type {
   WinResult,
 } from './result-model.ts';
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
+import type { ResultStarsProps } from '@e07/shell/ui/result-stars.tsx';
+import type { StickerProps } from '@e07/shell/ui/sticker.tsx';
+import type { ReactNode } from 'react';
+
+/** The isReducedMotion each ResultStars and Sticker was last drawn with, by testID. */
+const mockMotion = new Map<string, unknown>();
+jest.mock('@e07/shell/ui/result-stars.tsx', () => {
+  const actual = jest.requireActual<Record<string, (props: ResultStarsProps) => ReactNode>>(
+    '@e07/shell/ui/result-stars.tsx',
+  );
+  function MockResultStars(props: ResultStarsProps): ReactNode {
+    mockMotion.set('stars', props.isReducedMotion);
+    return actual['ResultStars']?.(props) ?? null;
+  }
+  return { ResultStars: MockResultStars };
+});
+jest.mock('@e07/shell/ui/sticker.tsx', () => {
+  const actual = jest.requireActual<Record<string, (props: StickerProps) => ReactNode>>(
+    '@e07/shell/ui/sticker.tsx',
+  );
+  function MockSticker(props: StickerProps): ReactNode {
+    mockMotion.set(props.testID, props.isReducedMotion);
+    return actual['Sticker']?.(props) ?? null;
+  }
+  return { ...actual, Sticker: MockSticker };
+});
 
 const LOGO: LogoArt = { layers: [{ role: 'p', d: 'M22 2.5H26V17.5H22Z' }] };
 
@@ -279,5 +305,20 @@ describe('ResultOverlay', () => {
     expect(screen.getByTestId('result.endless-title')).toBeOnTheScreen();
     expect(screen.getByText('Best 4,210')).toBeOnTheScreen();
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('hands Reduce motion to the stars and the stickers (spec 8.11)', async () => {
+    for (const isReducedMotion of [true, false]) {
+      mockMotion.clear();
+      const view = await renderWithShell(<ResultOverlay model={{ ...WIN, isReducedMotion }} />);
+      await view.rerender(<ResultOverlay model={{ ...DAILY, isReducedMotion }} />);
+      expect(Object.fromEntries(mockMotion)).toStrictEqual({
+        stars: isReducedMotion,
+        'result.win-sticker': isReducedMotion,
+        'result.score-card.new-best': isReducedMotion,
+        'result.streak-sticker': isReducedMotion,
+      });
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    }
   });
 });

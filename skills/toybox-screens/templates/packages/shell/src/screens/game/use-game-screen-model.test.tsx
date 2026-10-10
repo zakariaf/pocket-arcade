@@ -157,6 +157,26 @@ describe('useGameScreenModel', () => {
     expect(result.current.model.topBar?.hint).toBeNull();
   });
 
+  it('pays nothing for a hint the run cannot give: one already shows (spec 8.5)', async () => {
+    const { result, shell, script } = await gameScreen({
+      rewardedStatus: 'ready',
+      canRequestAds: true,
+    });
+    const pressHint = async (): Promise<void> => {
+      await act(async () => {
+        result.current.model.topBar?.hint?.onPress();
+        await flushMicrotasks();
+      });
+    };
+    await pressHint();
+    expect(result.current.controls.view?.isHintShown).toBe(true);
+    // The free hint is spent and a rewarded ad is ready, so the key stays (disabled while the
+    // hint shows); a press that still arrives must not cost the player an ad.
+    await pressHint();
+    expect(script.calls).not.toContain('showRewarded');
+    expect(shell.save.doc().run?.hintsUsed).toBe(1);
+  });
+
   it('draws no hint key for a game without solver hints, even with a free hint left (L8)', async () => {
     // The tally run supports hints and the config gives a free one, so only the fact hides the key.
     const { result } = await gameScreen({ hasHints: false });
@@ -278,5 +298,20 @@ describe('useGameScreenModel', () => {
     await setStatus('loading');
     expect(finishes()).toBe(1);
     expect(shell.save.doc().stats.gamesPlayed).toBe(1);
+  });
+  it("uses up the day's Premium nudge only when leaving the win result that drew it (S7, S12)", async () => {
+    const leaveVia = async (cols: readonly number[]) => {
+      const screen = await gameScreen({ adsMode: 'off' });
+      screen.shell.stores.premium.getState().dispatch({ type: 'price-loaded', price: '€1.99' });
+      await screen.tapAll(cols);
+      const shown = screen.result.current.model.result;
+      await act(() => {
+        shown?.actions.onLevels();
+      });
+      return { kind: shown?.kind, lastShownOn: screen.shell.save.doc().upsell.lastShownOn };
+    };
+    // Only the win draws the nudge (ResultWinActions): a lose result leaves today's nudge unused.
+    expect(await leaveVia([1, 0, 1])).toStrictEqual({ kind: 'lose', lastShownOn: null });
+    expect(await leaveVia([1, 1])).toStrictEqual({ kind: 'win', lastShownOn: '2026-09-26' });
   });
 });

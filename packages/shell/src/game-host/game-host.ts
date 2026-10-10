@@ -8,8 +8,14 @@ import {
   createGameDebugControls,
   endStateOf,
 } from '@e07/shell/game-host/game-debug-controls.ts';
-import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
 import {
+  hasHintsOf,
+  hasMusicOf,
+  isScoreRatedOf,
+  musicSoundIdOf,
+} from '@e07/shell/game-host/game-facts.ts';
+import {
+  clockSeed,
   createResumer,
   entryFor,
   newSession,
@@ -112,6 +118,8 @@ export type GameHostDeps = {
 export type OpenedSession = {
   readonly handle: SessionHandle;
   readonly BoardHost: ComponentType<BoardHostProps>;
+  /** A paid hint would show a move now (the Game screen asks before the player pays). */
+  readonly canHint: () => boolean;
 };
 
 /**
@@ -137,6 +145,8 @@ export type GameHost = {
   readonly counterIds: readonly string[];
   /** hasMusicOf(game): a 'music' sound in the bank; S6 and S11 show the Music rows only then. */
   readonly hasMusic: boolean;
+  /** musicSoundIdOf(game): the bank id of that music sound, null without one; Home starts it. */
+  readonly musicSoundId: string | null;
   /** isScoreRatedOf(game): levels rated by score; the S7 win prints the score line, no par. */
   readonly isScoreRated: boolean;
   /** hasHintsOf(game): a solver hint policy; the S5 top bar has a hint key only then. */
@@ -174,20 +184,20 @@ type Opener<T extends ShellGameTypes> = {
   readonly resume: () => Session<T> | null;
 };
 
-const UINT32_RANGE = 4_294_967_296;
-
-/** Endless runs get a fresh uint32 seed from the clock (or the test build's debug seed). */
-function clockSeed(clock: ClockPort, override?: () => number | null): () => number {
-  return () => override?.() ?? Math.floor(clock.nowMs()) % UINT32_RANGE;
-}
-
-/** A new run is written at once (so Home can offer Continue); a saved run is resumed checked. */
+/**
+ * A new run is written at once (so Home can offer Continue); a saved run is resumed checked. The
+ * save holds one run, so a new run replaces it: a loss still waiting for its continue is recorded
+ * first (statistics, streak, bests: N10), never thrown away with the slot; a run still being
+ * played is replaced as from Levels or Next level.
+ */
 function firstSession<T extends ShellGameTypes>(
   opener: Opener<T>,
   open: SessionOpen,
 ): Session<T> | null {
   if (open.start === 'resume') return opener.resume();
   const { game, deps } = opener;
+  const saved = deps.save.doc().run === null ? null : opener.resume();
+  if (saved?.status === 'lost') controllerFor(game, deps, saved).handle.send({ type: 'finish' });
   const session = newSession(game, open.ref, clockSeed(deps.clock, deps.seedOverride));
   if (session !== null) {
     writeRun({ save: deps.save, persistence: game.persistence }, session, true);
@@ -282,6 +292,7 @@ function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts 
     counters,
     counterIds: counters.map((counter) => counter.id),
     hasMusic: hasMusicOf(game),
+    musicSoundId: musicSoundIdOf(game),
     isScoreRated: isScoreRatedOf(game),
     hasHints: hasHintsOf(game),
     packs: game.levels.packs,
@@ -305,7 +316,8 @@ function openRun<T extends ShellGameTypes>(
   if (example !== null && example.endsAs !== null) {
     controller.endWith(endStateOf(game, example.endsAs));
   }
-  return { handle, BoardHost: deps.createBoardHost({ game, controller, lifecycle }) };
+  const board = deps.createBoardHost({ game, controller, lifecycle });
+  return { handle, BoardHost: board, canHint: controller.canHint };
 }
 
 export function createGameHost<T extends ShellGameTypes>(

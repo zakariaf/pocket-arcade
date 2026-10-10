@@ -13,7 +13,7 @@ import { resultModelOf } from '@e07/shell/game-host/result-model-of.ts';
 import { isLossStranded } from '@e07/shell/game-host/run-end-policy.ts';
 import { topBarPropsOf } from '@e07/shell/game-host/top-bar-model.ts';
 
-import { usePerkPayment } from './use-perk-payment.ts';
+import { sendWhenPaid, usePerkPayment } from './use-perk-payment.ts';
 import { useResultActions } from './use-result-actions.ts';
 import { useResultExtras } from './use-result-extras.ts';
 import { useRunText } from './use-run-text.ts';
@@ -54,15 +54,6 @@ type TopBarInput = {
   readonly isReducedMotion: boolean;
 };
 
-/** Sends a paid perk to the run only once the payment resolved true. */
-function sendWhenPaid(pay: () => Promise<boolean>, send: () => void, report: (e: unknown) => void) {
-  pay()
-    .then((isPaid) => {
-      if (isPaid) send();
-    })
-    .catch(report);
-}
-
 function useTopBar({
   controls,
   perks,
@@ -73,9 +64,6 @@ function useTopBar({
   const { errorLog } = useServices();
   const { view } = controls;
   if (view === null) return null;
-  const report = (error: unknown): void => {
-    errorLog.record('ads', error);
-  };
   const props = topBarPropsOf({
     view,
     hintOffer: perks.hintOffer,
@@ -89,12 +77,14 @@ function useTopBar({
       controls.send({ type: 'undo' });
     },
     onHint: () => {
+      // Pay only for a hint the run can give (none shows yet, the solver has a move: spec 8.5).
+      if (!controls.canHint()) return;
       sendWhenPaid(
         perks.payForHint,
         () => {
           controls.send({ type: 'hint' });
         },
-        report,
+        errorLog,
       );
     },
     onPause: controls.pause,
@@ -137,21 +127,19 @@ export function useGameScreenModel(
     controls,
     nav,
     payForContinue: perks.payForContinue,
-    onLeaveResult: extras.markNudgeSeen,
+    // Only the win result draws the Premium nudge (ResultWinActions), so only leaving it uses up
+    // today's nudge (spec S7, S12: at most once a day); a lose, daily or endless result does not.
+    onLeaveResult: () => {
+      if (result?.kind === 'win') extras.markNudgeSeen();
+    },
   });
   const topBar = useTopBar({ controls, perks, text, hasHints: game.hasHints, isReducedMotion });
   useFinishStrandedLoss(controls, perks.continueOffer);
   const { view } = controls;
-  if (view === null) return { topBar, result: null };
   const { continueOffer } = perks;
-  const result = resultModelOf({
-    view,
-    game,
-    text,
-    actions,
-    continueOffer,
-    isReducedMotion,
-    extras,
-  });
+  const result =
+    view === null
+      ? null
+      : resultModelOf({ view, game, text, actions, continueOffer, isReducedMotion, extras });
   return { topBar, result };
 }

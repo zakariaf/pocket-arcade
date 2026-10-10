@@ -275,7 +275,7 @@
   },
   "npmScripts": {
     "verify": "node packages/tooling/src/quality/run-verify.ts",
-    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 0 --cache --cache-strategy content --cache-location node_modules/.cache/eslint/ && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
+    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 0 && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
     "format:check": "prettier --check . --log-level warn",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit -p tsconfig.json && for project in packages/* apps/*; do tsc --noEmit -p \"$project\" || exit 1; done",

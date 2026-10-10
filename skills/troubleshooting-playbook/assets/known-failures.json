@@ -5860,6 +5860,23 @@
       "skill": "e2e-maestro"
     },
     {
+      "id": "parity-app-aborted-coreaudio-under-load",
+      "area": "parity",
+      "topic": "App capture",
+      "symptom": "capture-app stops with \"hierarchy from another simulator\" although the session's own simulator and port were used; rejected.hier.json lists SpringBoard's icons, and the simulator log shows \"Cleanup: RPC timeout. Apparently deadlocked. Aborting now.\"",
+      "cause": "The app was not running: it aborted (SIGABRT in AURemoteIO::Cleanup from AVAudioEngine mainMixerNode, react-native-audio-api's AudioEngine) about 10 s after launch, because coreaudiod's RPC timed out while the Mac was saturated (npm run verify or a coverage run on every core); the launch nonce never reached the dump",
+      "fix": "Read rejected.hier.json first: SpringBoard ids mean the app died, not another simulator. Find the crash in ~/Library/Logs/DiagnosticReports/<App>-*.ips; for this abort, run the captures on an idle Mac (never beside verify or a Jest coverage run) and capture again with the same build",
+      "match": [
+        "Apparently deadlocked",
+        "RPC timeout",
+        "AURemoteIO::Cleanup",
+        "hierarchy from another simulator"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-visual-parity"
+    },
+    {
       "id": "testing-maestro-evalscript-colon",
       "area": "testing",
       "topic": "Maestro",
@@ -6554,9 +6571,9 @@
       "id": "gates-eslint-cache-stale-type-error",
       "area": "gates",
       "topic": "check:fast",
-      "symptom": "check:fast reports a type-aware ESLint error (no-unsafe-*, no-unnecessary-condition) that no longer matches the code, in a file that did not change",
-      "cause": "check:fast runs eslint --cache --cache-strategy content, which keys each result on the file's own content only: when a file it depends on changes (a type, the test-only pair), the cached type-aware result is replayed",
-      "fix": "Delete node_modules/.cache/eslint and rerun npm run -s check:fast; npm run lint (no cache) is the truth, and the next run rebuilds the cache",
+      "symptom": "check:fast reports an ESLint error (import/no-unresolved, no-unsafe-*, no-unnecessary-condition) that no longer matches the code, in a file that did not change: a test written before its module keeps failing after the module exists",
+      "cause": "An older check:fast ran eslint --cache --cache-strategy content, which keys each result on the file's own content only: when a file it depends on changes (a new module, a type, the test-only pair), the cached result is replayed",
+      "fix": "Restore check:fast from quality-gates' templates/package-scripts.json (it lints uncached since 2026-10-10; check-gate-wiring rule eslint-cache), delete node_modules/.cache/eslint and rerun npm run -s check:fast",
       "match": [
         "no longer matches the code",
         "stale eslint cache",

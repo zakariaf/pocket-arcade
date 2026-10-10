@@ -4,7 +4,7 @@
   "scripts": {
     "prepare": "lefthook install",
     "verify": "npm run -s format:check && npm run -s lint && npm run -s typecheck && npm run -s i18n:verify && npm run -s knip && node packages/tooling/src/quality/check-quality-gates.ts && npm run -s test:coverage && npm run -s test:sim && npm run -s audit:network && npm run -s audit:licenses && node packages/tooling/src/deps/check-deps.ts",
-    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 0 --cache --cache-strategy content --cache-location node_modules/.cache/eslint/ && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
+    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 0 && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
     "format": "prettier --write . --log-level warn",
     "format:check": "prettier --check . --log-level warn",
     "lint": "eslint . --max-warnings 0",

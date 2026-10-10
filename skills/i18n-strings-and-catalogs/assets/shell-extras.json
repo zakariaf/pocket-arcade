@@ -67,6 +67,13 @@
       "fa": "واگرد",
       "ckb": "گەڕانەوە"
     },
+    "home.daily-card.a11y-label": {
+      "owner": "toybox-screens (S4 daily card: the VoiceOver label of the card surface home.daily-card, one sentence of the card's own texts: titleText daily.title, dateText the formatted date, streakText daily.streak.count and, once today is done (status done), doneText daily.today.done)",
+      "en": "{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}",
+      "de": "{status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}}",
+      "fa": "{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}",
+      "ckb": "{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}"
+    },
     "result.win.score-line": {
       "owner": "toybox-screens (S7 win line of a score-rated level: the score and the level's best after this run)",
       "en": "Score {score, number} – best {bestScore, number}",

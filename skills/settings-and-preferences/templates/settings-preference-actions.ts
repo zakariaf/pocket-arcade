@@ -32,13 +32,19 @@ export type DisplayActions = {
 
 export type PreferenceActions = SoundActions & DisplayActions;
 
-/** Toggles keep the volume; sliders keep the on/off state. Volumes are integer percent. */
-function createSoundActions({ settings, dispatch, onToggled }: PreferenceInput): SoundActions {
-  const { soundEnabled: isSoundOn, soundVolume, musicEnabled: isMusicOn, musicVolume } = settings;
-  const flip = (action: SettingsAction): void => {
+/** A switch flip: dispatch, then the toggle feedback (so "Sound off" is already silent). */
+function flipperOf({ dispatch, onToggled }: PreferenceInput): (action: SettingsAction) => void {
+  return (action) => {
     dispatch(action);
     onToggled();
   };
+}
+
+/** Toggles keep the volume; sliders keep the on/off state. Volumes are integer percent. */
+function createSoundActions(input: PreferenceInput): SoundActions {
+  const { settings, dispatch } = input;
+  const { soundEnabled: isSoundOn, soundVolume, musicEnabled: isMusicOn, musicVolume } = settings;
+  const flip = flipperOf(input);
   return {
     onToggleSound: () => {
       flip({ type: 'set-sound', enabled: !isSoundOn, volume: soundVolume });
@@ -60,11 +66,8 @@ function createSoundActions({ settings, dispatch, onToggled }: PreferenceInput):
 
 /** Reduce motion is stored as 'system' | 'on' | 'off'; the toggle writes the opposite of what it shows. */
 function createDisplayActions(input: PreferenceInput): DisplayActions {
-  const { settings, isReduceMotionOn, dispatch, onToggled } = input;
-  const flip = (action: SettingsAction): void => {
-    dispatch(action);
-    onToggled();
-  };
+  const { settings, isReduceMotionOn, dispatch } = input;
+  const flip = flipperOf(input);
   return {
     // Segments are RaisedSurface keys: their press already plays the tap feedback.
     onSelectDigits: (digits) => {

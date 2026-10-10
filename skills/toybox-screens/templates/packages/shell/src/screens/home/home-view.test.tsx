@@ -178,8 +178,25 @@ describe('HomeView', () => {
     const [face] = surface.queryAll(
       (node) => (styleOf(node) as { borderWidth?: unknown }).borderWidth !== undefined,
     );
+    // RaisedSurface paints a solid edge as an edge-colour plate with the fill laid inside it (no
+    // pale hairline at the rounded corners), so the Panel's fill is the plate's, inside the edge.
+    const [plate] =
+      face?.queryAll(
+        (node) =>
+          node !== face && (styleOf(node) as { backgroundColor?: unknown }).backgroundColor !== undefined,
+      ) ?? [];
     const card = surface.parent;
-    expect(face === undefined ? {} : pick(styleOf(face), LOOK)).toStrictEqual(pick(panel, LOOK));
+    const { borderColor, backgroundColor, borderRadius, borderWidth } = panel as Record<
+      string,
+      unknown
+    >;
+    expect({
+      face: face === undefined ? {} : pick(styleOf(face), LOOK),
+      plate: plate === undefined ? {} : pick(styleOf(plate), ['backgroundColor', 'borderRadius']),
+    }).toStrictEqual({
+      face: { ...pick(panel, LOOK), backgroundColor: borderColor },
+      plate: { backgroundColor, borderRadius: Number(borderRadius) - Number(borderWidth) },
+    });
     // The card's padding keeps the edge the surface draws: the parts sit where the Panel put them.
     const edge = (panel as { borderWidth: number }).borderWidth;
     const { paddingTop, paddingInline, paddingBottom } = panel as Record<string, number>;
@@ -201,6 +218,16 @@ describe('HomeView', () => {
     await user.press(screen.getByTestId('home.play-button'));
 
     expect(model.actions.onPlay).toHaveBeenCalledTimes(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+  it('names the daily card in one catalog sentence: the Persian comma in fa, ckb (N12)', async () => {
+    const model = modelWith({
+      daily: { dateText: 'یکشنبه، ۲۷ سپتامبر', streakDays: 5, isDoneToday: false },
+    });
+    await renderWithShell(<HomeView model={model} />, { language: 'fa', direction: 'rtl' });
+    expect(
+      screen.getByRole('button', { name: 'چالش روزانه، یکشنبه، ۲۷ سپتامبر، ۵ روز پیاپی' }),
+    ).toBe(screen.getByTestId('home.daily-card'));
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

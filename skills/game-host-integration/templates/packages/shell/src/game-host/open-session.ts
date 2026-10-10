@@ -7,6 +7,7 @@ import type { LevelEntry } from '@e07/game-kit/contract/levels.ts';
 import type { GameSession, SessionRules } from '@e07/shell/game-host/game-session-types.ts';
 import type { RestoredRun } from '@e07/shell/game-host/saved-run.ts';
 import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
+import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
 import type { RunRef, SaveRun } from '@e07/shell/services/save/schema/save-doc.ts';
@@ -62,6 +63,13 @@ export function startFor<T extends ShellGameTypes>(
     case 'tutorial':
       return { seed: 0, difficulty: 0 };
   }
+}
+
+const UINT32_RANGE = 4_294_967_296;
+
+/** Endless runs get a fresh uint32 seed from the clock (or the test build's debug seed). */
+export function clockSeed(clock: ClockPort, override?: () => number | null): () => number {
+  return () => override?.() ?? Math.floor(clock.nowMs()) % UINT32_RANGE;
 }
 
 /** A new run for `ref` (spec S5, S8, S9); null for a level or mode the game does not have. */

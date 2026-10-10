@@ -129,6 +129,7 @@
   "game-screen.mode.level": "مرحلهٔ {level, number}",
   "game-screen.progress.moves-par": "حرکت {moves, number} / هدف {par, number}",
   "game-screen.undo-button.a11y-label": "واگرد",
+  "home.daily-card.a11y-label": "{status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}}",
   "home.endless-card.description": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردتان را بشکنید.",
   "home.endless-card.label": "بی‌پایان – رکورد {bestScore, number}",
   "home.play-button.continue": "ادامه – مرحلهٔ {level, number}",

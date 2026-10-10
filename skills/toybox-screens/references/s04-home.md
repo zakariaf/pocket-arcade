@@ -36,7 +36,7 @@ S4 Home is the one-tap start and the door to everything else.
 2. Hero key with a `play` cap: `home.play-button.continue` or `home.play-button.play`.
 3. Daily panel (flat, padding 14 / 14 / 16, gap 12): header row (gap 12, top-aligned) of the `calendar` icon tile → text column (heading 21 "Daily challenge", the date muted, **title/date gap 1**: the reference puts the date 1 pt under the title; a gap of 2 pushed every block below it down 1.5 pt) → small gold streak sticker (chain, tilt +4 deg, 2 pt top margin); then a secondary block button with a `play` icon. Once today is played, the button becomes a row with a 20 pt success check and "Done – come back tomorrow" (`home.daily-card.done`, Chosen).
 
-   **Two controls on one card (L7).** `HomeDailyCard` draws the card as a plain `View` with the panel's padding plus its 2 pt edge (so every part sits where the flat Panel put it). Its bottom layer is the card surface: a `RaisedSurface` absolutely filling the card (`position: 'absolute'`, all four edges 0) with the panel's look (elevation 0, the panel radius and edge width, `colors.surface`, a zero squash, so a press never moves or scales it). It is the accessible opener: `testID="home.daily-card"`, role button, `accessibilityLabel` joining the visible title, date and streak (and the done text once today is played), `onPress={onOpenDaily}`, and the `activate` accessibility action for VoiceOver's double tap. The header row and the done row sit above it as siblings with `pointerEvents="none"`, `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`: a touch on them falls through to the surface, and VoiceOver hears them only in the surface's label (the map makes them crop-only, `coveredBy` `home.daily-card`). The Play key `home.daily-card.play-button` is its own sibling above the surface, never a child of it, so VoiceOver finds exactly two daily elements: the card and its Play key. A raw `Pressable` is not allowed in a screen (ESLint), which is why the surface is the Toybox `RaisedSurface`, and `Panel` stays for cards that are never pressed.
+   **Two controls on one card (L7).** `HomeDailyCard` draws the card as a plain `View` with the panel's padding plus its 2 pt edge (so every part sits where the flat Panel put it). Its bottom layer is the card surface: a `RaisedSurface` absolutely filling the card (`position: 'absolute'`, all four edges 0) with the panel's look (elevation 0, the panel radius and edge width, `colors.surface`, a zero squash, so a press never moves or scales it). It is the accessible opener: `testID="home.daily-card"`, role button, `accessibilityLabel` = `home.daily-card.a11y-label`, one catalog sentence of the visible title, date and streak (and the done text once today is played, `status: 'done'`), so each language orders and separates them (", " in en and de, "، " in fa and ckb, N12); VoiceOver only speaks it, so the label is passed through `stripIsolates`, `onPress={onOpenDaily}`, and the `activate` accessibility action for VoiceOver's double tap. The header row and the done row sit above it as siblings with `pointerEvents="none"`, `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`: a touch on them falls through to the surface, and VoiceOver hears them only in the surface's label (the map makes them crop-only, `coveredBy` `home.daily-card`). The Play key `home.daily-card.play-button` is its own sibling above the surface, never a child of it, so VoiceOver finds exactly two daily elements: the card and its Play key. A raw `Pressable` is not allowed in a screen (ESLint), which is why the surface is the Toybox `RaisedSurface`, and `Panel` stays for cards that are never pressed.
 
    Maestro taps an element's centre. The card's centre lies above the Play key as long as the header row is taller than 45 pt (English: 47.5 pt, so 1.3 pt above the key; Persian: 6.5 pt), so `tapOn: home.daily-card` opens S9 and never plays. Keep the header's layout; a shorter header moves the centre onto the Play key.
 4. Endless row button (only games with Endless): secondary, accent icon tile `endless`, label with the best score, description, chevron.
@@ -54,7 +54,7 @@ S4 Home is the one-tap start and the door to everything else.
 
 ## Data the model supplies
 
-`HomeModel` (`home-model.ts`), built by the template `use-home-model.ts` (copy it with `use-home-actions.ts`, `use-level-play.ts` and `use-home-model.test.tsx`). Every input and where it comes from:
+`HomeModel` (`home-model.ts`), built by the template `use-home-model.ts` (copy it with `use-home-actions.ts`, `use-level-play.ts`, `use-home-music.ts` and their tests). Every input and where it comes from:
 
 | Field | Source |
 |---|---|
@@ -68,8 +68,9 @@ S4 Home is the one-tap start and the door to everything else.
 | `bestEndlessScore` | the progress store (`selectEndlessBest`) |
 | `banner` | `useBannerSlot('home')` (admob-ads' `app/use-ad-context.ts`): the ads port's `renderBanner` and `shouldShowBanner(config, useAdContext('home'), 'home')`, where the context is Premium, `useIsOnline()`, the saved consent answer, the tutorial done and the levels won |
 | (cold start) | not a field: `useColdStartMark(useOptionalDebugServices()?.perfLog ?? null)` (performance-budgets' `app/perf/use-cold-start-mark.ts`) marks Home's first frame with real data into a test build's perf log, which the E2E evidence run reads; store builds have no debug services and pass null, so nothing is measured or stored |
+| (music) | not a field: `useHomeMusic()` (`use-home-music.ts`, called once from `use-home-model.ts`) starts the game's music sound (`useGameHost().musicSoundId`, null without music) with `AudioPort.startMusic` while the Music setting is on, and stops it at once when Music is switched off (spec S4 and 8.7: music is off by default, never over the player's own music). Line Siege has no music, so its Home starts none. Home stays mounted under the Game route, so playing starts no second voice; no state, no navigation |
 | (parity) | not a field: a parity capture of `s14-progress-restored` opens `{ kind: 'save-restored' }` over Home once (`useParityOpener`, the dialog host's `useOpenDialog()`) |
-| `actions` | `useHomeActions(onPlay, today)`: exactly navigation-and-routing's table (Game with `{ start: 'resume' }` or a new level, daily or endless run; Daily from the card body, `onOpenDaily`; the card's Play key, `onPlayDaily`, starts today's daily run; Settings, Levels, Stats, HowToPlay, Premium). In a partial Shell a route outside the slice shows `NotBuiltScreen`; never write a no-op handler | `HomeTopBar` puts the Toybox `BrandLock` (`testID="home.brand-lock"`, `nameTestID="home.game-name"`, the `LogoTile` as `logo`, the Premium sticker as `badge`) at the start of the `TopBar`.
+| `actions` | `useHomeActions(onPlay)`: exactly navigation-and-routing's table (Game with `{ start: 'resume' }` or a new level, daily or endless run; Daily from the card body, `onOpenDaily`; the card's Play key, `onPlayDaily`, starts today's daily run, the day read from `clock.today()` when the key is pressed (daily-and-statistics rule 3), never the day Home last rendered; the Play key and the Endless row resume the saved run when it is that same run (today's daily, the endless run), because the save holds one run and a new one replaces it (N10); Settings, Levels, Stats, HowToPlay, Premium). In a partial Shell a route outside the slice shows `NotBuiltScreen`; never write a no-op handler | `HomeTopBar` puts the Toybox `BrandLock` (`testID="home.brand-lock"`, `nameTestID="home.game-name"`, the `LogoTile` as `logo`, the Premium sticker as `badge`) at the start of the `TopBar`.
 
 ## Templates
 
@@ -77,6 +78,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 
 - `packages/shell/src/screens/home/home-model.ts`
 - `packages/shell/src/screens/home/use-home-model.ts`, `use-home-actions.ts`, `use-level-play.ts` and `use-home-model.test.tsx`
+- `packages/shell/src/screens/home/use-home-music.ts` and `use-home-music.test.tsx` (the game's music on Home; the test uses game-audio-and-haptics' fake audio port and the tally game with one looping `music` sound)
 - `packages/shell/src/app/use-game-extra.ts`, `use-is-online.ts`, `use-parity-opener.ts` (with tests), admob-ads' `app/use-ad-context.ts`, performance-budgets' `app/perf/use-cold-start-mark.ts` and e2e-maestro's `app/debug-services-context.tsx` (the perf log arrives on `DebugServices.perfLog`)
 - `packages/shell/src/screens/home/home-daily-card.tsx`
 - `packages/shell/src/screens/home/home-keys.tsx`
@@ -100,7 +102,7 @@ Exactly these, from the shared screen map (`assets/screen-testids.json`). Set th
 | `home.settings-button` | IconButton (gear) | button | a11y `common.settings` |  |  |
 | `home.tagline` | Sticker (pop, -2 deg) | text | `games.<id>.tagline` |  |  |
 | `home.play-button` | Button (primary hero, play cap) | button | `home.play-button.continue` |  |  |
-| `home.daily-card` | Pressable (card surface: the `RaisedSurface` filling the daily panel under its content) | button | a11y label: title, date, streak |  | opens S9 |
+| `home.daily-card` | Pressable (card surface: the `RaisedSurface` filling the daily panel under its content) | button | a11y `home.daily-card.a11y-label` (title, date, streak) |  | opens S9 |
 | `home.daily-card.icon` | IconTile (pop, calendar) | none |  | crop-only, hidden |  |
 | `home.daily-card.title` | AppText | header | `daily.title` | crop-only, hidden, covered by the card |  |
 | `home.daily-card.date` | AppText | text | `date.weekday-day-month` | crop-only, hidden, covered by the card |  |
@@ -135,6 +137,12 @@ Chosen states the design does not draw may also set: `home.daily-card.done`, `ho
 | `common.how-to-play` | How to play |
 | `home.premium-button.label` | Premium |
 | `home.premium-button.hint` | Remove ads |
+
+The design has no copy key for the daily card's VoiceOver label. It is a Shell text written by hand into the four Shell catalogs (keys sorted, exactly as below; the fa and ckb drafts go on the owner's own review list, never waited for); check-screens accepts it as a copy key and fails S4 while a catalog lacks it (`extra-key-catalog`).
+
+| Key | en, de | fa, ckb |
+|---|---|---|
+| `home.daily-card.a11y-label` | {status, select, done {{titleText}, {dateText}, {streakText}, {doneText}} other {{titleText}, {dateText}, {streakText}}} | {status, select, done {{titleText}، {dateText}، {streakText}، {doneText}} other {{titleText}، {dateText}، {streakText}}} |
 
 ## Reference images
 

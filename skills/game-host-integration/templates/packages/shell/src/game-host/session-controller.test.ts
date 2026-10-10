@@ -90,6 +90,51 @@ describe('createSessionController', () => {
     expect(order).toStrictEqual([]);
   });
 
+  it('takes no command once finish ended or replaced the run, so nothing writes the save (N10)', () => {
+    const { save } = createTestSave();
+    const writeRunEnd: Deps['writeRunEnd'] = (write) => {
+      save.update(write.recipe, { refreshBackup: write.refreshBackup });
+    };
+    const lost = controllerFor({ save, writeRunEnd }).controller;
+    for (const col of [1, 0, 1]) lost.handle.send(tap(col));
+    lost.handle.send({ type: 'finish' });
+    expect([save.doc().run, save.doc().stats.losses]).toStrictEqual([null, 1]);
+    // A rewarded continue that pays out after the player left the lose screen changes nothing.
+    lost.handle.send({ type: 'continue' });
+    expect([lost.handle.getView().status, save.doc().run, save.doc().stats.losses]).toStrictEqual([
+      'lost',
+      null,
+      1,
+    ]);
+
+    // A run still being played, replaced (Restart level, Try again): a late hint or move is dropped.
+    const replaced = controllerFor({ save, writeRunEnd }).controller;
+    replaced.handle.send(tap(0));
+    replaced.handle.send({ type: 'finish' });
+    const afterFinish = save.doc();
+    replaced.handle.send({ type: 'hint' });
+    replaced.handle.send(tap(0));
+    expect(save.doc()).toBe(afterFinish);
+  });
+
+  it('says whether a hint can be given before anyone pays for it (spec 8.5)', () => {
+    const { controller } = controllerFor();
+    expect(controller.canHint()).toBe(true);
+    controller.handle.send({ type: 'hint' });
+    // One shows already: a second would be paid for and show nothing new.
+    expect(controller.canHint()).toBe(false);
+    for (const col of [1, 0, 1]) controller.handle.send(tap(col));
+    expect([controller.handle.getView().status, controller.canHint()]).toStrictEqual([
+      'lost',
+      false,
+    ]);
+    // A solver that has no move for the position: nothing to pay for.
+    const stuck = controllerFor({
+      gameRules: { ...TALLY_GAME.rules, hints: { kind: 'solver', suggest: () => null } },
+    });
+    expect(stuck.controller.canHint()).toBe(false);
+  });
+
   it('highlights the hinted move only for the position it was asked for', () => {
     const { controller } = controllerFor();
     controller.handle.send({ type: 'hint' });
