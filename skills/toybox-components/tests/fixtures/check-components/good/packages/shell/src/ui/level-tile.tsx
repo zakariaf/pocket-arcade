@@ -151,5 +151,5 @@ export function LevelTile(props: LevelTileProps): ReactNode {
     </RaisedSurface>
   );
   if (!isCurrent) return <View>{tile}</View>;
-  return <LevelTileBob isOn={!props.isReducedMotion}>{tile}</LevelTileBob>;
+  return <LevelTileBob isReducedMotion={props.isReducedMotion}>{tile}</LevelTileBob>;
 }

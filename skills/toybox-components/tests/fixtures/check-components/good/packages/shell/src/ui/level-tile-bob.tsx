@@ -19,8 +19,8 @@ import type { ReactNode } from 'react';
 const BOB_HALF = { duration: MOTION_MS.bob / 2, easing: Easing.bezier(...EASING.easeInOut) };
 
 export type LevelTileBobProps = {
-  /** False under Reduce motion, in a parity capture and while Levels is covered: no bob. */
-  readonly isOn: boolean;
+  /** True under Reduce motion, in a parity capture and while Levels is covered: no bob. */
+  readonly isReducedMotion: boolean;
   readonly children: ReactNode;
 };
 
@@ -41,8 +41,8 @@ function useBob(isOn: boolean): ReturnType<typeof useAnimatedStyle> {
   return useAnimatedStyle(() => ({ transform: [{ translateY: offset.get() }] }));
 }
 
-/** Bobs its child (the current LevelTile) while `isOn`; holds it at rest otherwise. */
-export function LevelTileBob({ isOn, children }: LevelTileBobProps): ReactNode {
-  const bob = useBob(isOn);
+/** Bobs its child (the current LevelTile); holds it at rest under `isReducedMotion`. */
+export function LevelTileBob({ isReducedMotion, children }: LevelTileBobProps): ReactNode {
+  const bob = useBob(!isReducedMotion);
   return <Animated.View style={bob}>{children}</Animated.View>;
 }
