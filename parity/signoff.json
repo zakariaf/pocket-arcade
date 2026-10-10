@@ -1,4 +1,105 @@
 {
   "version": 1,
-  "entries": []
+  "entries": [
+    {
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e55c0db87b1e327fedd9da7e38d79b9902325ee37c66bfa6f134d3fd4ecf2f57",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "n/a",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "tilted logo tile: a dotted hairline of the ground showed between its edge and the white die-cut ring (dark), blue specks along the ink edge (light); the ring is now a white plate under the tile (LogoTile fix)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "6a9178106008b873f90a04a9dab25738cfa1abb61329ab00687edfd7b81ab435",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "n/a",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "tilted logo tile: a dotted hairline of the ground showed between its edge and the white die-cut ring (dark), blue specks along the ink edge (light); the ring is now a white plate under the tile (LogoTile fix)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "db6568543872dca1a10407c52e6811db6e396fa819816129a767582c3a83aa10",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "n/a",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "tilted logo tile: a dotted hairline of the ground showed between its edge and the white die-cut ring (dark), blue specks along the ink edge (light); the ring is now a white plate under the tile (LogoTile fix)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "2048a85eeea1f0cdab315202577b8a98fdd06c777bf7e358091178954c55fe96",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "n/a",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "tilted logo tile: a dotted hairline of the ground showed between its edge and the white die-cut ring (dark), blue specks along the ink edge (light); the ring is now a white plate under the tile (LogoTile fix)",
+          "status": "fixed"
+        }
+      ]
+    }
+  ]
 }
