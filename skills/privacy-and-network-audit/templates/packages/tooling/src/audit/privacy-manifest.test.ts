@@ -149,6 +149,52 @@ describe("development pods' manifests (built from a local :path or :podspec)", (
     ]);
   });
 
+  const globPod = (folder: string, podspec: object): void => {
+    const lock = [
+      'PODS:',
+      '',
+      'EXTERNAL SOURCES:',
+      '  GlobKit:',
+      `    :path: "../../../${folder}"`,
+      '',
+    ];
+    write('apps/game/ios/Podfile.lock', lock.join('\n'));
+    write('apps/game/ios/Pods/Local Podspecs/GlobKit.podspec.json', JSON.stringify(podspec));
+  };
+
+  it('expands resource globs from the pod root as CocoaPods does, keeping PrivacyInfo.xcprivacy', () => {
+    for (const file of [
+      'ios/Resources/PrivacyInfo.xcprivacy',
+      'ios/Resources/icon.png',
+      'PrivacyInfo.xcprivacy',
+      'Kit.bundle/Info.plist',
+      'ios/Deep/Nested/PrivacyInfo.xcprivacy',
+    ])
+      write(`node_modules/glob-kit/${file}`, '<plist/>');
+    globPod('node_modules/glob-kit', {
+      name: 'GlobKit',
+      resource_bundles: { GlobKit_privacy: ['ios/Resources/*'] },
+      resources: '*.{xcprivacy,bundle}',
+      ios: { resource_bundles: { Deep: 'ios/**/*.xcprivacy' } },
+    });
+    const kit = join(repo, 'node_modules/glob-kit');
+    expect(localPodManifestPaths(join(repo, 'apps/game/ios'))).toStrictEqual([
+      { pod: 'GlobKit', path: join(kit, 'ios/Resources/PrivacyInfo.xcprivacy') },
+      { pod: 'GlobKit', path: join(kit, 'PrivacyInfo.xcprivacy') },
+      { pod: 'GlobKit', path: join(kit, 'ios/Deep/Nested/PrivacyInfo.xcprivacy') },
+    ]);
+  });
+
+  it('fails naming the pod when a resource glob cannot be expanded', () => {
+    globPod('node_modules/missing-kit', { name: 'GlobKit', resources: ['ios/*'] });
+    expect(() => localPodManifestPaths(join(repo, 'apps/game/ios'))).toThrow(
+      'pod GlobKit: cannot expand the resource pattern "ios/*" (its folder',
+    );
+    expect(() => podspecPrivacyFiles({ resources: 'ios/*' })).toThrow(
+      'pod (unknown): cannot expand the resource pattern "ios/*" (no pod folder given)',
+    );
+  });
+
   it('fails on a reason only a local pod declares, and on tracking outside the AdMob pods', () => {
     const diskSpace = {
       NSPrivacyAccessedAPITypes: [
