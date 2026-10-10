@@ -99,7 +99,7 @@ function gameFixtureOf(
   fixture: ParityFixture,
 ): ParityGameFixture | null {
   const frame = fixture.gameFrame;
-  const game = frame.games[request.game];
+  const game = Object.hasOwn(frame.games, request.game) ? frame.games[request.game] : undefined;
   if (game === undefined) return null;
   return {
     designGame: request.game,
