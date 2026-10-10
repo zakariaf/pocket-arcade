@@ -79,8 +79,8 @@ const DAILY_SUMMARY = [
 ];
 const PREFERENCE_ACTIONS = borrow('screens/settings/settings-preference-actions.ts', 'settings-and-preferences', 'screens/settings/settings-preference-actions.test.ts');
 const RESETS = [
-  borrow('screens/settings/settings-resets.ts', 'settings-and-preferences', 'screens/settings/settings-resets.test.ts'),
-  borrow('screens/settings/use-settings-resets.ts', 'settings-and-preferences'),
+  borrow('stores/settings-resets.ts', 'settings-and-preferences', 'stores/settings-resets.test.ts'),
+  borrow('stores/use-settings-resets.ts', 'settings-and-preferences'),
 ];
 
 /**

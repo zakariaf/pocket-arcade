@@ -1,0 +1,2 @@
+[borrowed-file]
+S10 imports packages/shell/src/stores/use-settings-resets.ts (settings-and-preferences), which is missing

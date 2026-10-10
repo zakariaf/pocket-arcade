@@ -90,7 +90,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/settings/use-settings-extras.ts`, `use-settings-routes.ts`, `use-settings-links.ts`, with `use-settings-extras.test.tsx` and `use-settings-links.test.tsx`
 - `packages/shell/src/app/read-version-text.ts` and its test
 - `packages/shell/src/screens/settings/settings-view.test.tsx`
-- From settings-and-preferences: `use-settings-model.ts`, `use-settings-context.ts`, `settings-rows.ts`, `settings-preference-actions.ts`, `use-settings-resets.ts` and `config/external-links.ts`, with their tests
+- From settings-and-preferences: `use-settings-model.ts`, `use-settings-context.ts`, `settings-rows.ts`, `settings-preference-actions.ts`, `stores/use-settings-resets.ts` and `config/external-links.ts`, with their tests
 
 ## testIDs
 

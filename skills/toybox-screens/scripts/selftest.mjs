@@ -19,6 +19,7 @@ const OVER_TEMPLATES = {
   'bad-rate-outline-star': ['--screen', 'S11'],
   'bad-debug-perf-row-missing': ['--screen', 'S15'],
   'bad-borrowed-missing': ['--screen', 'S6'],
+  'bad-borrowed-resets-old-place': ['--screen', 'S10'],
   'bad-continue-offer-hidden-while-loading': ['--screen', 'S7'],
   'bad-loss-not-finished': ['--screen', 'S5'],
 };

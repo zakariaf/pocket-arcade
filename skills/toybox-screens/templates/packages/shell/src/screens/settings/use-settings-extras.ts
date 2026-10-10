@@ -15,9 +15,9 @@ import { useParityOpener } from '@e07/shell/app/use-parity-opener.ts';
 import { restorePremium } from '@e07/shell/services/purchase/premium-service.ts';
 import { priceOf } from '@e07/shell/stores/premium/premium-state.ts';
 import { usePremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
+import { useSettingsResets } from '@e07/shell/stores/use-settings-resets.ts';
 
 import { useSettingsLinks } from './use-settings-links.ts';
-import { useSettingsResets } from './use-settings-resets.ts';
 import { useSettingsRoutes } from './use-settings-routes.ts';
 
 import type { SettingsExtras } from './settings-extras.ts';
