@@ -86,6 +86,10 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    // A solid-edged face is painted in its edge colour and its fill lies on top, inside the edge:
+    // a fill under the edge bleeds a pale hairline past the antialiased rounded edge onto the hard
+    // shadow (seen on every S2 card corner in light mode).
+    facePlate: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 },
     faceDisabled: {
       backgroundColor: theme.colors.sunken,
       borderColor: theme.colors.textMuted,
@@ -118,6 +122,35 @@ function faceStylesOf(
     props.isStretched === true && styles.stretched,
     props.faceStyle,
   ];
+}
+
+/**
+ * The key's face. A solid edge is painted as an edge-colour plate with the fill laid inside it; a
+ * dashed edge (disabled keys, locked tiles) keeps its fill under the dashes.
+ */
+function faceOf(faceStyle: StyleProp<ViewStyle>, plate: ViewStyle, children: ReactNode): ReactNode {
+  const style: ViewStyle = StyleSheet.flatten(faceStyle) ?? {};
+  const isSolidEdge = style.borderStyle === undefined || style.borderStyle === 'solid';
+  if (!isSolidEdge) return <View style={faceStyle}>{children}</View>;
+  const edge = style.borderWidth ?? 0;
+  const radius = typeof style.borderRadius === 'number' ? style.borderRadius : 0;
+  const plateStyle = [plate, { borderRadius: Math.max(0, radius - edge) }];
+  return (
+    <View
+      style={[
+        faceStyle,
+        style.borderColor === undefined ? null : { backgroundColor: style.borderColor },
+      ]}
+    >
+      <View
+        style={[
+          plateStyle,
+          style.backgroundColor === undefined ? null : { backgroundColor: style.backgroundColor },
+        ]}
+      />
+      {children}
+    </View>
+  );
 }
 
 function a11yProps(props: RaisedSurfaceProps, isInactive: boolean): PressableProps {
@@ -200,7 +233,7 @@ export function RaisedSurface(props: RaisedSurfaceProps): ReactNode {
         <Animated.View
           style={[styles.shadow, styles.shadowPaint, { borderRadius: props.radius }, shadowStyle]}
         />
-        <View style={faceStylesOf(props, styles, isDisabled)}>{props.children}</View>
+        {faceOf(faceStylesOf(props, styles, isDisabled), styles.facePlate, props.children)}
       </Animated.View>
     </Pressable>
   );
