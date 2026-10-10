@@ -51,7 +51,8 @@ function foreignSource(source: Readonly<Record<string, string>>): [string, strin
   const value = source[key];
   if (value === undefined) return null;
   const inRepo = posix.normalize(posix.join(IOS_DIR_IN_REPO, value));
-  const isInside = !value.includes('://') && !posix.isAbsolute(value) && !inRepo.startsWith('../');
+  const isOutside = inRepo === '..' || inRepo.startsWith('../');
+  const isInside = !value.includes('://') && !posix.isAbsolute(value) && !isOutside;
   return isInside ? null : [key, value];
 }
 
