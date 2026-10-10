@@ -11,11 +11,11 @@ import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 import type { ScreenBodyGap } from '@e07/shell/ui/screen-body.tsx';
 import type { ReactNode } from 'react';
 
-export type SubPageTestIDBase =
+export type SubPageScope =
   'settings' | 'settings-language' | 'about' | 'privacy-policy' | 'licences';
 
 export type SubPageProps = {
-  readonly testIDBase: SubPageTestIDBase;
+  readonly testIDBase: SubPageScope;
   /** Translated page title. */
   readonly title: string;
   /** Translated "Back" (common.back). */
