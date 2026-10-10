@@ -4,11 +4,13 @@
 // and firstRun.languageChosen in one set-language action, and when the chosen language reads the
 // other way it restarts in the new direction (the Continue tap is the one tap). S11a's planner
 // (planLanguageChange and restartDirectionOf, settings-and-preferences) decides both, so S2 and
-// S11a share one restart rule. The FirstRun group then opens the tutorial by itself: this hook
-// never navigates.
+// S11a share one restart rule. While that restart is pending S2 saves and restarts nothing more
+// (the saved language and the reload agree). The FirstRun group then opens the tutorial by itself:
+// this hook never navigates.
 import { useState } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
+import { useStores } from '@e07/shell/app/stores-context.tsx';
 import { useDirectionRestart } from '@e07/shell/app/use-direction-restart.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { createLanguageT } from '@e07/shell/i18n/create-language-t.ts';
@@ -19,6 +21,7 @@ import {
   planLanguageChange,
   restartDirectionOf,
 } from '@e07/shell/screens/settings/language/language-change.ts';
+import { selectIsRestartPending } from '@e07/shell/stores/restart-store.ts';
 import { selectDigits, selectDispatch } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
@@ -33,6 +36,8 @@ export function useLanguageChoiceModel(): LanguageChoiceModel {
   const dispatch = useSettingsStore(selectDispatch);
   const restart = useDirectionRestart();
   const { errorLog } = useServices();
+  const { restart: restartStore } = useStores();
+  const isRestartPending = (): boolean => selectIsRestartPending(restartStore.getState());
   return {
     selected,
     phoneLanguage,
@@ -40,8 +45,11 @@ export function useLanguageChoiceModel(): LanguageChoiceModel {
       errorLog.record('i18n', error);
     }),
     isReducedMotion: useReduceMotion(),
-    onSelect: setSelected,
+    onSelect: (language) => {
+      if (!isRestartPending()) setSelected(language);
+    },
     onContinue: () => {
+      if (isRestartPending()) return;
       const change = planLanguageChange({
         next: selected,
         deviceLocales,

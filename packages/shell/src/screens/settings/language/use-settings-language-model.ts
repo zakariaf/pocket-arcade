@@ -6,15 +6,18 @@
 // direction, Later keeps the old layout until the next launch. A parity capture of
 // s14-restart-to-apply (test builds) opens the same dialog over S11a, with no language saved.
 // System resolves against the phone's languages the composition root read (useDeviceLocales).
+// Once Restart is tapped a row saves nothing more, so the saved language and the reload agree.
 import { useNavigation } from '@react-navigation/native';
 
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
+import { useStores } from '@e07/shell/app/stores-context.tsx';
 import { useDirectionRestart } from '@e07/shell/app/use-direction-restart.ts';
 import { useParityOpener } from '@e07/shell/app/use-parity-opener.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useDeviceLocales } from '@e07/shell/i18n/device-locales-context.tsx';
 import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
 import { resolveLanguage } from '@e07/shell/i18n/resolve-language.ts';
+import { selectIsRestartPending } from '@e07/shell/stores/restart-store.ts';
 import { selectDispatch, selectLanguage } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
@@ -47,10 +50,12 @@ export function useSettingsLanguageModel(): SettingsLanguageModel {
   const dispatch = useSettingsStore(selectDispatch);
   const openRestart = useRestartDialog();
   const deviceLocales = useDeviceLocales();
+  const { restart: restartStore } = useStores();
   return {
     selected,
     systemLanguage: resolveLanguage(null, deviceLocales),
     onSelect: (next) => {
+      if (selectIsRestartPending(restartStore.getState())) return;
       const change = planLanguageChange({
         next,
         deviceLocales,
