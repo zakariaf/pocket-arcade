@@ -5,7 +5,7 @@ import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 
 import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
-import { TILTED_LAYER } from './toybox-styles.ts';
+import { tiltedLayer } from './toybox-styles.ts';
 
 import type { ReactNode } from 'react';
 
@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => {
       borderRadius: CAL.radius,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
-      transform: [{ rotate: `${String(CAL.rotate)}deg` }],
     },
     month: {
       alignItems: 'center',
@@ -54,8 +53,7 @@ export function CalendarTile({ monthText, dayText, testID }: CalendarTileProps):
   const styles = useStyles();
   return (
     <View
-      {...TILTED_LAYER}
-      style={styles.tile}
+      {...tiltedLayer(CAL.rotate, styles.tile)}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       testID={testID}

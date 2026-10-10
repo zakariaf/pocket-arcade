@@ -9,7 +9,7 @@ import { STROKE } from '@e07/shell/theme/tokens.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { picturePath } from './picture-path.tsx';
-import { TILTED_LAYER } from './toybox-styles.ts';
+import { tiltedLayer } from './toybox-styles.ts';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
@@ -54,10 +54,6 @@ export type LogoTileProps = {
 
 const styles = StyleSheet.create({ tile: { alignItems: 'center', justifyContent: 'center' } });
 
-function tiltOf(spec: VariantSpec): NonNullable<ViewStyle['transform']> {
-  return [{ rotate: `${String(spec.rotateDeg)}deg` }, { translateY: spec.translateY }];
-}
-
 function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
   const shell = SHELL_COLORS[theme.scheme];
   return {
@@ -67,7 +63,6 @@ function tileStyle(theme: Theme, spec: VariantSpec): ViewStyle {
     borderWidth: spec.edgeWidth,
     borderColor: spec.isCut ? shell.toyInk : theme.colors.border,
     backgroundColor: theme.colors.primary,
-    transform: tiltOf(spec),
   };
 }
 
@@ -85,7 +80,6 @@ function ringStyle(theme: Theme, spec: VariantSpec): ViewStyle {
     height: spec.size + spec.ring * 2,
     borderRadius: spec.size * LOGO_TILE.radiusRatio + spec.ring,
     backgroundColor: SHELL_COLORS[theme.scheme].cut,
-    transform: tiltOf(spec),
   };
 }
 
@@ -102,10 +96,11 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const spec = LOGO_TILE_VARIANTS[variant];
   const artSize = (spec.size - spec.edgeWidth * 2) * LOGO_TILE.artScale;
   const ops = logoOps(logo, { pop: theme.colors.pop, toyInk: shell.toyInk, white: shell.cut });
+  // Rotate first, then the lift, as the mockup's CSS applies them (rotate() translateY()).
+  const lift = [{ translateY: spec.translateY }];
   const tile = (
     <View
-      style={[styles.tile, tileStyle(theme, spec)]}
-      {...TILTED_LAYER}
+      {...tiltedLayer(spec.rotateDeg, [styles.tile, tileStyle(theme, spec)], lift)}
       {...(spec.ring === 0 ? HIDDEN : {})}
       {...(testID === undefined ? {} : { testID })}
     >
@@ -122,7 +117,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   if (spec.ring === 0) return tile;
   return (
     <View {...HIDDEN}>
-      <View style={ringStyle(theme, spec)} {...TILTED_LAYER} />
+      <View {...tiltedLayer(spec.rotateDeg, ringStyle(theme, spec), lift)} />
       {tile}
     </View>
   );

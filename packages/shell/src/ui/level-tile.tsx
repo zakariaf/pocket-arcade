@@ -11,7 +11,7 @@ import { Icon } from './icons/icon.tsx';
 import { LevelTileBob } from './level-tile-bob.tsx';
 import { RaisedSurface } from './raised-surface.tsx';
 import { RatingStars } from './rating-stars.tsx';
-import { dieCutRing, focusRing, TILTED_LAYER } from './toybox-styles.ts';
+import { dieCutRing, focusRing, tiltedLayer } from './toybox-styles.ts';
 
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { ReactNode } from 'react';
@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
     borderWidth: FLAG.border,
     alignItems: 'center',
     justifyContent: 'center',
-    transform: [{ rotate: `${String(FLAG.rotate)}deg` }],
   },
 });
 
@@ -91,12 +90,11 @@ function flag(theme: Theme, testID: string): ReactNode {
   const shell = SHELL_COLORS[theme.scheme];
   return (
     <View
-      {...TILTED_LAYER}
-      style={[
+      {...tiltedLayer(FLAG.rotate, [
         styles.flag,
         { backgroundColor: shell.gold, borderColor: shell.toyInk },
         dieCutRing(FLAG.ring, shell.cut),
-      ]}
+      ])}
       testID={testID}
     >
       <Icon name="play" color={shell.toyInk} size={FLAG.icon} />

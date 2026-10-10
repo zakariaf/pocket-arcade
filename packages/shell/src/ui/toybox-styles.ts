@@ -1,5 +1,5 @@
 // packages/shell/src/ui/toybox-styles.ts
-import type { ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 /** CSS `box-shadow: 0 <offset>px 0 <color>`: Toybox's hard shadow, no blur. For parts that never move. */
 export function hardShadow(offset: number, color: string): ViewStyle {
@@ -25,11 +25,34 @@ export function focusRing(color: string): ViewStyle {
 }
 
 /**
- * Spread on the View of every printed part that tilts (stickers, the level flag, the Today tag,
- * art and logo tiles, the calendar, Premium art, confetti): `<View {...TILTED_LAYER} style={...}>`.
- * Fabric draws a border from an image it stretches with nearest filtering, so a turned edge, and an
- * inner border such as the calendar's month band, steps at device pixels; a rasterized layer is
- * resampled smoothly when it turns, as Chrome draws the references. A tilt that animates (the
- * sticker's slap) spreads it too and turns in its animated style.
+ * The raster half of the tilt primitive. Fabric draws a border from an image it stretches with
+ * nearest filtering, so a turned edge, and an inner border such as the calendar's month band, steps
+ * at device pixels; a rasterized layer is resampled smoothly when it turns, as Chrome draws the
+ * references. Static tilts get it from tiltedLayer; only a tilt that animates (the sticker's slap)
+ * spreads it itself, and turns with tilt() in its animated style.
  */
 export const TILTED_LAYER = { shouldRasterizeIOS: true } as const;
+
+/** One entry of a transform list (rotate, translateY, scale ...). */
+export type TransformEntry = Exclude<NonNullable<ViewStyle['transform']>, string>[number];
+
+/** A turn of `deg` degrees as a transform entry. A worklet, so an animated tilt turns with it too. */
+export function tilt(deg: number): TransformEntry {
+  'worklet';
+  return { rotate: `${String(deg)}deg` };
+}
+
+/**
+ * The tilt primitive: spread on the View of every printed part that turns (the level flag, the
+ * Today tag, art and logo tiles, the calendar, Premium art, confetti):
+ * `<View {...tiltedLayer(deg, styles.part)} testID=...>`. It owns both halves: the turn (after the
+ * part's own style, then any `after` transforms, as CSS `rotate() translateY()`) and the one
+ * rasterized layer that turns smoothly.
+ */
+export function tiltedLayer(
+  deg: number,
+  style?: StyleProp<ViewStyle>,
+  after: readonly TransformEntry[] = [],
+): { readonly shouldRasterizeIOS: true; readonly style: StyleProp<ViewStyle> } {
+  return { ...TILTED_LAYER, style: [style, { transform: [tilt(deg), ...after] }] };
+}
