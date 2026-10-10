@@ -57,7 +57,7 @@ One React Navigation 7 static native stack. Route names are PascalCase; params a
 | Spec | Route | Group | Params | Notes |
 |---|---|---|---|---|
 | S1 Splash | none | | | native splash while the Shell hydrates synchronously |
-| S2 First-run language | `LanguageChoice` | FirstRun | none | shown until a language is chosen, and while the direction restart that choice started is pending (`if: useNeedsLanguageChoice`) |
+| S2 First-run language | `LanguageChoice` | FirstRun | none | shown until a language is chosen, and while the direction restart that choice started is pending or has failed (`if: useNeedsLanguageChoice`) |
 | S13 Tutorial level | `Tutorial` | FirstRun | none | the Game screen body in tutorial mode; `gestureEnabled: false`. "Play the tutorial again" (S13 How to play) opens `Game` with `{ start: 'new', ref: { kind: 'tutorial' } }`, because FirstRun is gone after the first run |
 | S3 Ad consent | none | | | where Google's consent is required, the Shell's intro, then Google's UMP form; then, on iOS, Apple's tracking prompt while not answered (on its own, without the intro, when it is the only step due; lead decision L10); presented through the consent port |
 | S4 Home | `Home` | Main | none | root of the main app: the first Main screen |
@@ -95,7 +95,7 @@ Depth from Home never exceeds 2: every Main route is pushed from Home or from on
 
 | Group | `if` hook (route-guards.ts) | True when | Screens |
 |---|---|---|---|
-| FirstRun | `useIsFirstRun` | `!firstRun.tutorialDone` | `LanguageChoice` (own `if: useNeedsLanguageChoice`: `!firstRun.languageChosen` or a pending restart in the `restart` store), `Tutorial` |
+| FirstRun | `useIsFirstRun` | `!firstRun.tutorialDone` | `LanguageChoice` (own `if: useNeedsLanguageChoice`: `!firstRun.languageChosen` or a pending or failed restart in the `restart` store, `selectIsRestartHeld`), `Tutorial` |
 | Main | `useIsMainApp` | `firstRun.tutorialDone` | `Home` first, then the rest |
 | Debug | `useIsTestBuild` | `TEST_ONLY !== null` (test builds) | `Debug`, `FontTest` |
 
@@ -103,7 +103,7 @@ Groups switch by their if-hooks, never by `navigate`: a hook reads the settings 
 
 ## Flows
 
-**First launch.** `LanguageChoice` (S2) dispatches `set-language` (which also sets `firstRun.languageChosen`). If the direction flips (English to Persian or Sorani, or back), the i18n layer's `restartForDirection` runs on the same Continue tap (through `useDirectionRestart`, which holds the restart pending in the Shell's unsaved `restart` store, so `LanguageChoice` stays on screen until the reload instead of the tutorial mounting in the old direction; a failed restart cancels it and the tutorial opens); after the reload `LanguageChoice`'s `if` is false and the FirstRun group opens `Tutorial`. The tutorial's last step dispatches `finish-tutorial`; `useIsFirstRun` turns false, the navigator re-renders with the Main group only, and React Navigation lands on `Home`. Home then prepares ads, which shows S3 where required.
+**First launch.** `LanguageChoice` (S2) dispatches `set-language` (which also sets `firstRun.languageChosen`). If the direction flips (English to Persian or Sorani, or back), the i18n layer's `restartForDirection` runs on the same Continue tap (through `useDirectionRestart`, which holds the restart pending in the Shell's unsaved `restart` store, so `LanguageChoice` stays on screen until the reload instead of the tutorial mounting in the old direction; a failed restart keeps `LanguageChoice` on screen, its Continue tries again, and a language that needs no flip lets go of it); after the reload `LanguageChoice`'s `if` is false and the FirstRun group opens `Tutorial`. The tutorial's last step dispatches `finish-tutorial`; `useIsFirstRun` turns false, the navigator re-renders with the Main group only, and React Navigation lands on `Home`. Home then prepares ads, which shows S3 where required.
 
 **The Tutorial route.** `screens/first-run/tutorial-screen.tsx` exports `TutorialScreen` (root-stack imports it; game-host-integration ships it with its `use-tutorial-model.ts`; it is part of every Shell app, so the route points at it even in a partial Shell without S13). It is the Game screen body opened with `{ start: 'new', ref: { kind: 'tutorial' } }` (the game host's scripted teaching run), its root carries `testID="tutorial.screen"` and its Skip control `tutorial.skip-button` (the map's Chosen ids; Skip appears from the second step, spec S13). Back never leaves it (`gestureEnabled: false`, the same prevent-remove rule as Game); its Pause has no Home button (Chosen: the FirstRun group has no Home to go back to). Finishing the last step or Skip dispatches `finish-tutorial`; the groups then switch to Main and React Navigation lands on Home. Never `navigate('Home')` from it.
 

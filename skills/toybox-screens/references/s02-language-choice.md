@@ -20,7 +20,7 @@ S2 lets a Persian or Sorani speaker whose phone is set to English switch at once
 - The phone's language is pre-selected when it is one of the four; otherwise English.
 - One big Continue button, **in the selected language**: the view passes `labelLanguage={model.selected}`, so the label takes that language's font and VoiceOver its voice even on a screen in another language.
 - One tap and done; it can be changed any time in Settings.
-- After Continue, the first launch goes to the tutorial level (S13), not to Home: dispatch `set-language` and let the FirstRun group's `if` hooks move on (never `navigate`). A direction flip restarts the app on the same tap. While that restart is pending, S2 saves and restarts nothing more (rows and Continue do nothing), so the saved language and the reload agree.
+- After Continue, the first launch goes to the tutorial level (S13), not to Home: dispatch `set-language` and let the FirstRun group's `if` hooks move on (never `navigate`). A direction flip restarts the app on the same tap. While that restart is pending, S2 saves and restarts nothing more (rows and Continue do nothing), so the saved language and the reload agree; if it fails, S2 stays (the tutorial never mounts in the old direction), Continue tries again, and a language that needs no flip goes on.
 
 ## Layout, top to bottom
 

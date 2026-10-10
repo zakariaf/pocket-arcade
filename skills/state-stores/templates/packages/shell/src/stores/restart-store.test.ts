@@ -1,5 +1,9 @@
 // packages/shell/src/stores/restart-store.test.ts
-import { createRestartStore, selectIsRestartPending } from './restart-store.ts';
+import {
+  createRestartStore,
+  selectIsRestartHeld,
+  selectIsRestartPending,
+} from './restart-store.ts';
 
 // Spec S2 and S11: a choice that flips the direction restarts the app once. Between the tap and
 // the reload the Shell holds that restart (never saved), so the route guards keep the screen the
@@ -39,6 +43,30 @@ describe('createRestartStore', () => {
       didRetryStart,
       store.getState().pendingDirection,
     ]).toStrictEqual([true, false, true, 'ltr']);
+  });
+
+  // A restart that failed keeps holding the screen that started it (S2 stays, the tutorial never
+  // mounts in the old direction) without blocking a retry; a retry or a cancel lets go of it.
+  it('holds a failed restart until a retry or a cancel', () => {
+    const store = createRestartStore();
+    store.getState().begin('rtl');
+    store.getState().fail();
+    const afterFailure = [
+      store.getState().pendingDirection,
+      store.getState().failedDirection,
+      selectIsRestartPending(store.getState()),
+      selectIsRestartHeld(store.getState()),
+    ];
+    const didRetryStart = store.getState().begin('rtl');
+    const afterRetry = [store.getState().pendingDirection, store.getState().failedDirection];
+    store.getState().fail();
+    store.getState().cancel();
+    expect([
+      afterFailure,
+      didRetryStart,
+      afterRetry,
+      selectIsRestartHeld(store.getState()),
+    ]).toStrictEqual([[null, 'rtl', false, true], true, ['rtl', null], false]);
   });
 
   it('gives every app start its own store', () => {
