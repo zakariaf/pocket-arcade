@@ -1,5 +1,5 @@
 // packages/shell/src/ui/toybox-styles.test.ts
-import { dieCutRing, focusRing, hardShadow } from './toybox-styles.ts';
+import { dieCutRing, focusRing, hardShadow, TILTED_LAYER } from './toybox-styles.ts';
 
 describe('toybox styles', () => {
   it('draws hard shadows straight down with no blur', () => {
@@ -21,5 +21,12 @@ describe('toybox styles', () => {
       outlineOffset: 2,
       outlineColor: '#C8157A',
     });
+  });
+
+  it('rasterizes a tilted printed part, so iOS turns its edges smooth', () => {
+    // Fabric draws a border from an image it stretches with nearest filtering: a turned edge, and an
+    // inner border such as the calendar's month band, steps at device pixels unless the layer is
+    // rasterized and resampled as one picture (as Chrome draws the references).
+    expect(TILTED_LAYER).toStrictEqual({ shouldRasterizeIOS: true });
   });
 });

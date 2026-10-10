@@ -7,7 +7,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
-import { dieCutRing } from './toybox-styles.ts';
+import { dieCutRing, TILTED_LAYER } from './toybox-styles.ts';
 
 import type { ReactNode } from 'react';
 
@@ -40,6 +40,7 @@ export function PremiumArt({ testID }: PremiumArtProps): ReactNode {
   const theme = useTheme();
   return (
     <View
+      {...TILTED_LAYER}
       style={styles.art}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"

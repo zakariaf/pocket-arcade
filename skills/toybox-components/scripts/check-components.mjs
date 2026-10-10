@@ -67,6 +67,10 @@ const SPEC = {
     '                         the face edges (position absolute, top, bottom, start and end 0, row)',
     '  confetti-ltr           the Confetti band lacks direction: \'ltr\': its pieces (placed with start: x) mirror in',
     '                         right-to-left languages, while the design scatters them from the left in every language',
+    '  tilt-raster            a printed part that tilts (sticker, flag, Today tag, art and logo tiles, calendar,',
+    '                         Premium art, confetti) does not spread TILTED_LAYER (toybox-styles.ts), or a ui/ file sets',
+    '                         shouldRasterizeIOS by hand: an unrasterized turned View steps its edges and inner',
+    '                         borders at device pixels (the S9 calendar\'s month band); result stars pop upright',
     '',
     'Example: node check-components.mjs .   (from the app repo root)',
   ].join('\n'),
@@ -260,6 +264,21 @@ function checkDeviceRules(report, root) {
   }
 }
 
+/** Tilted parts whose turn is not a printed tilt: Skia paths turn inside a canvas, the result stars pop upright. */
+const TILT_RASTER_EXEMPT = new Set(['picture-path.tsx', 'result-stars.tsx']);
+const TILT_RASTER_FIX = "Spread {...TILTED_LAYER} from './toybox-styles.ts' on the View that turns, as the template does.";
+
+/** A printed part that tilts is one rasterized layer, through the one primitive (TILTED_LAYER). */
+function checkTiltRaster(report, file, text, name, catalogue) {
+  if (name !== 'toybox-styles.ts') {
+    scan(report, file, text, 'tilt-raster', /\bshouldRasterizeIOS\b/g, { message: () => 'a layer rasterized by hand instead of through the one tilt primitive', fix: TILT_RASTER_FIX });
+  }
+  if (!catalogue.allowTilt.includes(name) || TILT_RASTER_EXEMPT.has(name) || /\.\.\.TILTED_LAYER\b/.test(text)) return;
+  const at = text.search(/\brotate\s*:/);
+  if (at < 0) return;
+  report.problem({ file, line: lineOf(text, at), rule: 'tilt-raster', message: "a tilted printed part is not one rasterized layer, so iOS steps its turned edges and inner borders at device pixels (the S9 calendar's month band)", fix: TILT_RASTER_FIX });
+}
+
 function checkUiRules(report, file, source, catalogue) {
   const text = masked(source);
   const name = file.slice(UI_DIR.length + 1);
@@ -278,6 +297,7 @@ function checkUiRules(report, file, source, catalogue) {
   if (!catalogue.allowTilt.includes(name)) {
     scan(report, file, text, 'tilt-outside-printed', /\brotate\s*:/g, { message: () => 'a tilted Shell part that is not printed', fix: 'Only stickers, flags, art and logo tiles, the calendar and result stars tilt; keys, panels and rows stay square.' });
   }
+  checkTiltRaster(report, file, text, name, catalogue);
   if (!SHADOW_ALLOWED.has(name) && catalogue.components.some((entry) => entry.file === name)) {
     scan(report, file, text, 'flat-part-shadow', /\bhardShadow\s*\(/g, { message: () => 'a static hard shadow on a part that lies flat', fix: 'Panels, lists, rows, chips, toasts and stickers have no shadow; raised means pressable (RaisedSurface).' });
   }
