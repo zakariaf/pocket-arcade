@@ -2,7 +2,7 @@
 import fc from 'fast-check';
 
 import { LANGUAGE_AUTONYMS, LANGUAGES } from './languages.ts';
-import { resolveLanguage } from './resolve-language.ts';
+import { phoneLanguageOf, resolveLanguage } from './resolve-language.ts';
 
 import type { DeviceLocale } from './resolve-language.ts';
 
@@ -53,6 +53,14 @@ describe('resolveLanguage', () => {
         expect(resolveLanguage(saved, locales)).toBe(saved);
       }),
     );
+  });
+});
+
+// Spec 7.2 and S2: the phone's own language, the one S2 preselects (null when the app does not
+// speak it). A Kurdish phone written in Arabic script speaks Sorani.
+describe('phoneLanguageOf', () => {
+  it('reads Sorani from a Kurdish locale written in Arabic script', () => {
+    expect(phoneLanguageOf([{ languageCode: 'ku', languageScriptCode: 'Arab' }])).toBe('ckb');
   });
 });
 

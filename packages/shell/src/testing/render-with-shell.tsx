@@ -8,6 +8,7 @@ import { render } from '@testing-library/react-native';
 
 import { ServicesProvider } from '@e07/shell/app/services-context.tsx';
 import { StoresProvider } from '@e07/shell/app/stores-context.tsx';
+import { DeviceLocalesContext } from '@e07/shell/i18n/device-locales-context.tsx';
 import { DirectionProvider } from '@e07/shell/i18n/direction-context.tsx';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
 import { directionOf } from '@e07/shell/i18n/languages.ts';
@@ -24,6 +25,7 @@ import type { Services } from '@e07/shell/app/services-context.tsx';
 import type { ShellStores } from '@e07/shell/app/stores-context.tsx';
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type { Catalog } from '@e07/shell/i18n/messages.ts';
+import type { DeviceLocale } from '@e07/shell/i18n/resolve-language.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
@@ -35,6 +37,8 @@ import type { ReactElement, ReactNode } from 'react';
 export type RenderWithShellOptions = {
   /** The UI language (what resolveLanguage picked at boot). Default 'en'. */
   readonly language?: Language;
+  /** The phone's languages (useDeviceLocales, what System resolves against). Default: English. */
+  readonly deviceLocales?: readonly DeviceLocale[];
   /** The layout direction. Default: the language's own (fa and ckb are 'rtl'). */
   readonly direction?: Direction;
   /** Theme colours. Scheme and mode follow settings.theme and settings.colorBlind. */
@@ -56,6 +60,7 @@ export type ShellWrapper = {
 export type ShellRenderResult = RenderResult & { readonly stores: ShellStores };
 
 const NO_GAME: Readonly<Record<Language, Catalog>> = { en: {}, de: {}, fa: {}, ckb: {} };
+const ENGLISH_PHONE: readonly DeviceLocale[] = [{ languageCode: 'en', languageScriptCode: null }];
 /** 2026-09-26 12:00 UTC, 12 h before midnight. The save's clock unless the test passes services.clock. */
 const TEST_CLOCK: ClockPort = {
   nowMs: () => 1_790_424_000_000,
@@ -147,7 +152,11 @@ export function createShellWrapper(options: RenderWithShellOptions = {}): ShellW
       <DirectionProvider direction={options.direction ?? directionOf(language)}>
         <StoresProvider stores={stores}>
           <ThemeProvider themes={themes}>
-            <ServicesProvider services={services}>{children}</ServicesProvider>
+            <ServicesProvider services={services}>
+              <DeviceLocalesContext value={options.deviceLocales ?? ENGLISH_PHONE}>
+                {children}
+              </DeviceLocalesContext>
+            </ServicesProvider>
           </ThemeProvider>
         </StoresProvider>
       </DirectionProvider>

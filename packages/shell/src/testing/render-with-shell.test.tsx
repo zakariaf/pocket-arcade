@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { isolate } from '@e07/shell/i18n/bidi.ts';
+import { useDeviceLocales } from '@e07/shell/i18n/device-locales-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { createFakePurchase } from '@e07/shell/services/purchase/fake-purchase.ts';
 import { usePremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
@@ -137,5 +138,19 @@ describe('renderWithShell', () => {
     );
 
     expect(screen.getByRole('image', { name: 'Board' })).toBeOnTheScreen();
+  });
+
+  it("gives the screens an English phone's languages, or the ones the test seeds", async () => {
+    function LocalesProbe(): ReactNode {
+      const codes = useDeviceLocales().map((locale) => locale.languageCode ?? '?');
+      return <AppText text={codes.join(' ')} testID="probe.locales" />;
+    }
+    await renderWithShell(<LocalesProbe />);
+    expect(screen.getByTestId('probe.locales')).toHaveTextContent('en');
+    await screen.unmount();
+
+    const kurdishPhone = [{ languageCode: 'ku', languageScriptCode: 'Arab' }];
+    await renderWithShell(<LocalesProbe />, { deviceLocales: kurdishPhone });
+    expect(screen.getByTestId('probe.locales')).toHaveTextContent('ku');
   });
 });
