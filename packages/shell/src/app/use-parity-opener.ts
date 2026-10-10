@@ -6,8 +6,10 @@ import { useEffect, useEffectEvent, useState } from 'react';
 
 import { TEST_ONLY } from './test-only.ts';
 
+import type { ParityState } from './parity/parity-plans.ts';
+
 /** `state` is a parity frame state ('save-restored-dialog', 'restart-dialog' ...). */
-export function useParityOpener(state: string, open: () => void): void {
+export function useParityOpener(state: ParityState, open: () => void): void {
   const [isDue] = useState(() => TEST_ONLY?.parityFrameState() === state);
   const openOnce = useEffectEvent(open);
   useEffect(() => {
