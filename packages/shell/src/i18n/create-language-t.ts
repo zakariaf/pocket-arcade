@@ -5,8 +5,7 @@
 import { createIntl, createIntlCache } from 'react-intl';
 
 import { createT } from './create-t.ts';
-import { localeTagFor } from './digits.ts';
-import { messagesFor } from './messages.ts';
+import { intlConfigOf } from './messages.ts';
 
 import type { TFunction } from './create-t.ts';
 import type { DigitStyle } from './digits.ts';
@@ -22,12 +21,7 @@ export function createLanguageT(
   onError: (error: Error) => void,
 ): TFunction {
   const intl = createIntl(
-    {
-      locale: localeTagFor(language, digits),
-      messages: messagesFor(language, NO_GAME),
-      defaultLocale: 'en',
-      onError,
-    },
+    intlConfigOf({ language, digits, gameCatalogs: NO_GAME, onError }),
     CACHE,
   );
   return createT({ intl, onError });
