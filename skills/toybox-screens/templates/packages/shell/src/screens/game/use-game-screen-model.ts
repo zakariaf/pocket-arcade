@@ -13,7 +13,7 @@ import { resultModelOf } from '@e07/shell/game-host/result-model-of.ts';
 import { isLossStranded } from '@e07/shell/game-host/run-end-policy.ts';
 import { topBarPropsOf } from '@e07/shell/game-host/top-bar-model.ts';
 
-import { usePerkPayment } from './use-perk-payment.ts';
+import { sendWhenPaid, usePerkPayment } from './use-perk-payment.ts';
 import { useResultActions } from './use-result-actions.ts';
 import { useResultExtras } from './use-result-extras.ts';
 import { useRunText } from './use-run-text.ts';
@@ -54,15 +54,6 @@ type TopBarInput = {
   readonly isReducedMotion: boolean;
 };
 
-/** Sends a paid perk to the run only once the payment resolved true. */
-function sendWhenPaid(pay: () => Promise<boolean>, send: () => void, report: (e: unknown) => void) {
-  pay()
-    .then((isPaid) => {
-      if (isPaid) send();
-    })
-    .catch(report);
-}
-
 function useTopBar({
   controls,
   perks,
@@ -73,9 +64,6 @@ function useTopBar({
   const { errorLog } = useServices();
   const { view } = controls;
   if (view === null) return null;
-  const report = (error: unknown): void => {
-    errorLog.record('ads', error);
-  };
   const props = topBarPropsOf({
     view,
     hintOffer: perks.hintOffer,
@@ -94,7 +82,7 @@ function useTopBar({
         () => {
           controls.send({ type: 'hint' });
         },
-        report,
+        errorLog,
       );
     },
     onPause: controls.pause,

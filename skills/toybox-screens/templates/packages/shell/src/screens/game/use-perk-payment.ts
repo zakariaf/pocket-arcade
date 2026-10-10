@@ -20,6 +20,7 @@ import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
 
 import type { SessionView } from '@e07/shell/game-host/session-view.ts';
 import type { PerkOffer } from '@e07/shell/services/ads/perk-offer.ts';
+import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 
 export type PerkPayment = {
   readonly hintOffer: PerkOffer;
@@ -28,6 +29,24 @@ export type PerkPayment = {
   readonly payForHint: () => Promise<boolean>;
   readonly payForContinue: () => Promise<boolean>;
 };
+
+/**
+ * Sends a perk to the run only once its payment resolved true (a hint from the top bar, a continue
+ * from S7); a failed payment is recorded as an 'ads' error, never shown (ads are silent).
+ */
+export function sendWhenPaid(
+  pay: () => Promise<boolean>,
+  send: () => void,
+  errorLog: ErrorLogPort,
+): void {
+  pay()
+    .then((isPaid) => {
+      if (isPaid) send();
+    })
+    .catch((error: unknown) => {
+      errorLog.record('ads', error);
+    });
+}
 
 export function usePerkPayment(view: SessionView | null): PerkPayment {
   const { ads } = useServices();

@@ -8,9 +8,12 @@ import { useAdContext, useAdPolicyConfig } from '@e07/shell/app/use-ad-context.t
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { showInterstitialIfDue } from '@e07/shell/services/ads/ad-moments.ts';
 
+import { sendWhenPaid } from './use-perk-payment.ts';
+
 import type { GameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import type { ResultActions } from '@e07/shell/screens/result/result-model.ts';
 import type { LevelOutcome } from '@e07/shell/services/ads/ad-policy.ts';
+import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { RunRef } from '@e07/shell/services/save/schema/save-doc.ts';
 
 export type ResultActionsInput = {
@@ -50,14 +53,12 @@ function useAfterInterstitial(outcome: LevelOutcome): (then: () => void) => void
 }
 
 /** Continue: pay first (rewarded ad, or free for Premium), then send it to the run. */
-function continueWhenPaid(input: ResultActionsInput, report: (error: unknown) => void): () => void {
+function continueWhenPaid(input: ResultActionsInput, errorLog: ErrorLogPort): () => void {
+  const send = (): void => {
+    input.controls.send({ type: 'continue' });
+  };
   return () => {
-    input
-      .payForContinue()
-      .then((isPaid) => {
-        if (isPaid) input.controls.send({ type: 'continue' });
-      })
-      .catch(report);
+    sendWhenPaid(input.payForContinue, send, errorLog);
   };
 }
 
@@ -92,9 +93,7 @@ export function useResultActions(input: ResultActionsInput): ResultActions {
     onTryAgain: restart,
     onLevels: leave(nav.onLevels),
     onHome: leave(nav.onHome),
-    onContinue: continueWhenPaid(input, (error) => {
-      errorLog.record('ads', error);
-    }),
+    onContinue: continueWhenPaid(input, errorLog),
     onOpenPremium: nav.onOpenPremium,
   };
 }

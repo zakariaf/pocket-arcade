@@ -6,14 +6,13 @@ import { useEffect } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
-import { selectSettings } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 export function useHomeMusic(): void {
   const { audio } = useServices();
   // null exactly when the game has no music (GameHost.hasMusic false, Line Siege).
   const { musicSoundId } = useGameHost();
-  const isMusicOn = useSettingsStore(selectSettings).musicEnabled;
+  const isMusicOn = useSettingsStore((state) => state.settings.musicEnabled);
   useEffect(() => {
     if (musicSoundId === null || !isMusicOn) return undefined;
     audio.startMusic(musicSoundId);
