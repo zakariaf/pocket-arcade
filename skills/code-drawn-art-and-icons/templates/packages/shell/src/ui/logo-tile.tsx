@@ -98,6 +98,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   const tile = (
     <View
       style={[styles.tile, tileStyle(theme, spec)]}
+      shouldRasterizeIOS
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       {...(testID === undefined ? {} : { testID })}
@@ -115,7 +116,7 @@ export function LogoTile({ logo, variant, testID }: LogoTileProps): ReactNode {
   if (spec.ring === 0) return tile;
   return (
     <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <View style={ringStyle(theme, spec)} />
+      <View style={ringStyle(theme, spec)} shouldRasterizeIOS />
       {tile}
     </View>
   );

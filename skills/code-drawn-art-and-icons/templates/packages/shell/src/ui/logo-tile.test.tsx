@@ -122,6 +122,16 @@ describe('LogoTile', () => {
     });
   });
 
+  it('rasterizes the tilted tile and its ring plate, so iOS draws their tilted edges smooth', async () => {
+    await renderWithShell(<LogoTile logo={LOGO} variant="splash" testID="splash.logo" />);
+
+    // Fabric draws a border from an image it stretches with nearest filtering, so a tilted edge
+    // steps at device pixels; a rasterized layer is resampled smoothly when it is turned.
+    const tile = screen.getByTestId('splash.logo', { includeHiddenElements: true });
+    expect(tile).toHaveProp('shouldRasterizeIOS', true);
+    expect(tile.parent?.children[0]).toHaveProp('shouldRasterizeIOS', true);
+  });
+
   it('matches the Toybox sizes for every place it appears', () => {
     const sizes = Object.values(LOGO_TILE_VARIANTS).map((spec) => spec.size);
 
