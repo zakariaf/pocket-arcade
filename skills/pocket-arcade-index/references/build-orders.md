@@ -130,7 +130,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 
 - Copy from `architecture-and-boundaries`: `packages/shell/src/config/with-shell*`, `packages/shell/src/config/shell-plugins*`, replacing the earlier copy of the same path. Swap: the final with-shell.ts and its test replace the bootstrap's phase-0 pair (commit trailer Spec-Change: with-shell final composer (phase 0 placeholder replaced)).
 - Copy from `performance-budgets`: `packages/shell/ios/**`.
-- Copy from `privacy-and-network-audit`: `packages/shell/src/config/privacy-manifest.ts`, `packages/tooling/src/audit/**`, `packages/tooling/network-audit/**`.
+- Copy from `privacy-and-network-audit`: `packages/shell/src/config/privacy-manifest*`, `packages/tooling/src/audit/**`, `packages/tooling/network-audit/**`.
 - Copy from `ios-simulator-build`: `packages/tooling/src/build/**`, `packages/tooling/src/ios/**`, `packages/tooling/src/e2e/maestro-args*`.
 - Install `expo-font` (apps/line-siege): run `plan-dependency.mjs expo-font` (dependency-management) and its printed commands.
 - Install `expo-splash-screen` (apps/line-siege): run `plan-dependency.mjs expo-splash-screen` (dependency-management) and its printed commands.

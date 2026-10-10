@@ -1265,7 +1265,7 @@
           {
             "skill": "privacy-and-network-audit",
             "paths": [
-              "packages/shell/src/config/privacy-manifest.ts",
+              "packages/shell/src/config/privacy-manifest*",
               "packages/tooling/src/audit/**",
               "packages/tooling/network-audit/**"
             ]
