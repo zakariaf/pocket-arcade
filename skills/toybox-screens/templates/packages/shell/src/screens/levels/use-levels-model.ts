@@ -2,7 +2,8 @@
 // S8's model hook: the game's packs from the host, the stars from the progress store, the level
 // numbers in the chosen digits, the tapped locked tile (local UI state: its focus ring and toast)
 // and the banner through useBannerSlot('levels'). A parity capture of the "locked tile tapped" frame
-// (test builds) opens with the first locked tile tapped, through the same state a tap sets.
+// (test builds) opens with the first locked tile tapped, through the same state a tap sets. An open
+// tile plays its level through usePlayRun: the saved run of that level resumes (N10).
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 
@@ -15,6 +16,7 @@ import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { usePlayRun } from '@e07/shell/screens/home/use-play-run.ts';
 import { selectLevels } from '@e07/shell/stores/progress-selectors.ts';
 import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
 import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
@@ -33,6 +35,7 @@ export function firstLockedLevelOf(packs: readonly LevelPackModel[]): number | n
 export function useLevelsModel(): LevelsModel {
   const t = useT();
   const navigation = useNavigation();
+  const playRun = usePlayRun();
   const { packs } = useGameHost();
   const levels = useProgressStore(selectLevels);
   const formatNumber = createNumberFormatter(
@@ -60,7 +63,7 @@ export function useLevelsModel(): LevelsModel {
     },
     onPlayLevel: (level) => {
       setFocusedLevel(null);
-      navigation.navigate('Game', { start: 'new', ref: { kind: 'level', level } });
+      playRun({ kind: 'level', level });
     },
     onTapLockedLevel: setFocusedLevel,
   };

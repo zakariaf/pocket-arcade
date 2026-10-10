@@ -79,6 +79,28 @@ describe('useLevelsModel', () => {
     expect(mockGoBack).toHaveBeenCalledTimes(1);
   });
 
+  it('resumes the saved level from its tile instead of starting it over (N10, spec 8.6)', async () => {
+    mockNavigate.mockClear();
+    const { save } = createTestSave();
+    const shell = createHostWrapper({
+      services: { save, ads: ADS, connectivity: createFakeConnectivity(false) },
+    });
+    shell.host.openSession({ start: 'new', ref: { kind: 'level', level: 1 } });
+    const { result } = await renderHook(() => useLevelsModel(), { wrapper: shell.wrapper });
+
+    await act(() => {
+      result.current.onPlayLevel(1);
+    });
+    await act(() => {
+      result.current.onPlayLevel(2);
+    });
+
+    expect(mockNavigate.mock.calls).toStrictEqual([
+      ['Game', { start: 'resume' }],
+      ['Game', { start: 'new', ref: { kind: 'level', level: 2 } }],
+    ]);
+  });
+
   it('opens with the first locked tile tapped in the parity frame that shows it', async () => {
     startParitySession({
       frame: 's8-levels',

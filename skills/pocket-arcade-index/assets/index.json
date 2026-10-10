@@ -1805,6 +1805,7 @@
                   "packages/shell/src/screens/pause/**",
                   "packages/shell/src/screens/result/**",
                   "packages/shell/src/screens/levels/**",
+                  "packages/shell/src/screens/home/use-play-run*",
                   "packages/shell/src/screens/debug/**",
                   "packages/shell/src/app/use-parity-opener*",
                   "packages/shell/src/ui/use-pair-layout.ts"

@@ -4,19 +4,21 @@
 // "Play – Level 13", the first level never won (the level count from useGameExtra()). The run is
 // read from the save on every render, and the screen re-renders when it gains focus again: the
 // Game screen that covered it is where a run starts or ends.
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { levelCountOf, useGameExtra } from '@e07/shell/app/use-game-extra.ts';
 import { selectNextLevel } from '@e07/shell/stores/progress-selectors.ts';
 import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
 
+import { usePlayRun } from './use-play-run.ts';
+
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 
 export type LevelPlay = {
   readonly isContinue: boolean;
   readonly level: number;
-  /** navigate('Game', { start: 'resume' }) for a saved level run, else a new run of `level`. */
+  /** usePlayRun for `level`: the saved level run resumes, else a new run of the next level. */
   readonly onPlay: () => void;
 };
 
@@ -27,7 +29,7 @@ function savedLevelOf(doc: SaveDoc): number | null {
 }
 
 export function useLevelPlay(): LevelPlay {
-  const navigation = useNavigation();
+  const playRun = usePlayRun();
   useIsFocused(); // subscribes to focus: Home is covered while the Game screen writes the run
   const { save } = useServices();
   const levelCount = levelCountOf(useGameExtra());
@@ -38,8 +40,7 @@ export function useLevelPlay(): LevelPlay {
     isContinue: savedLevel !== null,
     level,
     onPlay: () => {
-      if (savedLevel !== null) navigation.navigate('Game', { start: 'resume' });
-      else navigation.navigate('Game', { start: 'new', ref: { kind: 'level', level } });
+      playRun({ kind: 'level', level });
     },
   };
 }

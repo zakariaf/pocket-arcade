@@ -243,7 +243,7 @@ What each step of this order copies and installs (the same contract as the Shell
 
 Step 1:
 
-- Copy from `toybox-screens`: `packages/shell/src/screens/game/**`, `packages/shell/src/screens/pause/**`, `packages/shell/src/screens/result/**`, `packages/shell/src/screens/levels/**`, `packages/shell/src/screens/debug/**`, `packages/shell/src/app/use-parity-opener*`, `packages/shell/src/ui/use-pair-layout.ts`.
+- Copy from `toybox-screens`: `packages/shell/src/screens/game/**`, `packages/shell/src/screens/pause/**`, `packages/shell/src/screens/result/**`, `packages/shell/src/screens/levels/**`, `packages/shell/src/screens/home/use-play-run*`, `packages/shell/src/screens/debug/**`, `packages/shell/src/app/use-parity-opener*`, `packages/shell/src/ui/use-pair-layout.ts`.
 - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/settings-preference-actions*`.
 - Copy from `daily-and-statistics`: `packages/shell/src/app/use-today.ts`.
 - Copy from `state-stores`: `packages/shell/src/screens/game/use-hint-button.ts`.
