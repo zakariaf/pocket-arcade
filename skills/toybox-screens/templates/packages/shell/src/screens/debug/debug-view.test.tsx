@@ -2,6 +2,7 @@
 import { screen, userEvent } from '@testing-library/react-native';
 import { PixelRatio } from 'react-native';
 
+import enCatalog from '@e07/shell/i18n/catalogs/en.json';
 import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -219,6 +220,21 @@ describe('DebugView', () => {
     await view.rerender(<DebugView model={modelWith(refused)} />);
     expect(screen.getByRole('alert')).toHaveTextContent(refused.error);
     expect(screen.getByTestId('debug.import-save-error')).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
+describe('DebugView in Sorani (L13)', () => {
+  it('draws all fourteen labels in English in ckb, each an LTR paragraph at the row start (spec S15, 7.4, L13)', async () => {
+    await renderWithShell(<DebugView model={modelWith()} />, { language: 'ckb' });
+
+    expect(DEBUG_ROWS).toHaveLength(14);
+    for (const row of DEBUG_ROWS) {
+      const label = screen.getByTestId(`${row.testID}.label`);
+      expect(label).toHaveTextContent(enCatalog[row.labelKey]);
+      // allow-style-assertion: every S15 label is an LTR paragraph at the row start (L13), in ckb too.
+      expect(label).toHaveStyle({ writingDirection: 'ltr', textAlign: TEXT_ALIGN.start });
+    }
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
