@@ -3,11 +3,7 @@
 // (the progress store), with game-kit's unlock rules (pack-progress.ts): packs open by stars
 // collected in total, and inside an open pack levels open one after another. Every open pack is a
 // grid; only the first locked pack follows, as the dashed panel ("Unlocks at 45 stars").
-import {
-  isLevelUnlocked,
-  isPackUnlocked,
-  starsMissing,
-} from '@e07/game-kit/levels/pack-progress.ts';
+import { totalStars } from '@e07/game-kit/levels/pack-progress.ts';
 
 import type { LevelPackModel, LevelTileModel } from './levels-model.ts';
 import type { LevelPack } from '@e07/game-kit/contract/levels.ts';
@@ -41,47 +37,52 @@ function wonStars(stars: number): 1 | 2 | 3 {
 }
 
 /**
- * A won level shows its stars; the first open unfinished level of the pack is the one `current`
- * tile; every other unfinished level is locked. An old save can hold a won level after an unwon
- * one (20 won, 19 not): 19 is current, and 21 stays locked until 19 is won (spec S8, one after
- * another), so a pack never shows two flags.
+ * A won level shows its stars; the first unfinished level of an open pack is its one `current`
+ * tile (pack-progress's isLevelUnlocked: the pack's first level, or the one after a won level, and
+ * the first unfinished level is always one of those); every other unfinished level is locked. An
+ * old save can hold a won level after an unwon one (20 won, 19 not): 19 is current, and 21 stays
+ * locked until 19 is won (spec S8, one after another), so a pack never shows two flags.
  */
 function tilesOf(levels: readonly number[], input: LevelsInput): LevelTileModel[] {
-  let hasCurrent = false;
+  const current = levels.find((level) => (input.stars[level] ?? 0) === 0);
   return levels.map((level) => {
     const stars = input.stars[level] ?? 0;
     const numberText = input.formatNumber(level);
     if (stars > 0) {
       return { level, numberText, state: { kind: 'completed', stars: wonStars(stars) } };
     }
-    const isCurrent = !hasCurrent && isLevelUnlocked(input.packs, input.stars, level);
-    hasCurrent ||= isCurrent;
-    return { level, numberText, state: { kind: isCurrent ? 'current' : 'locked' } };
+    return { level, numberText, state: { kind: level === current ? 'current' : 'locked' } };
   });
 }
 
-function packOf(pack: LevelPack, index: number, input: LevelsInput): LevelPackModel {
+/** The input plus every star won so far (pack-progress's totalStars, counted once for all packs). */
+type PackInput = LevelsInput & { readonly collected: number };
+
+/** One pack: it opens at its starsToUnlock (isPackUnlocked), and missingStars is starsMissing. */
+function packOf(pack: LevelPack, index: number, input: PackInput): LevelPackModel {
   const levels = levelsOf(pack);
   const earnedStars = levels.reduce((total, level) => total + (input.stars[level] ?? 0), 0);
-  const totalStars = pack.levelCount * 3;
-  const isLocked = !isPackUnlocked(pack, input.stars);
+  const packStars = pack.levelCount * 3;
+  const missingStars = Math.max(0, pack.starsToUnlock - input.collected);
+  const isLocked = missingStars > 0;
   return {
     number: index + 1,
     name: input.nameOf(pack),
     levelsCount: pack.levelCount,
     earnedStars,
-    totalStars,
-    progress: totalStars === 0 ? 0 : earnedStars / totalStars,
+    totalStars: packStars,
+    progress: packStars === 0 ? 0 : earnedStars / packStars,
     isLocked,
     unlockStars: pack.starsToUnlock,
-    missingStars: starsMissing(pack, input.stars),
+    missingStars,
     tiles: isLocked ? [] : tilesOf(levels, input),
   };
 }
 
 /** Every open pack, then the first locked one (the later locked packs stay hidden). */
 export function levelPacksOf(input: LevelsInput): LevelPackModel[] {
-  const all = input.packs.map((pack, index) => packOf(pack, index, input));
+  const packInput = { ...input, collected: totalStars(input.stars) };
+  const all = input.packs.map((pack, index) => packOf(pack, index, packInput));
   const firstLocked = all.findIndex((pack) => pack.isLocked);
   return firstLocked === -1
     ? all
