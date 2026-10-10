@@ -1,0 +1,1 @@
+[setting-effect] nothing outside the settings screen reads hintsDuringPlay

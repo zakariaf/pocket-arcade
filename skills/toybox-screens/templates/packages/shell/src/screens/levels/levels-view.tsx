@@ -10,6 +10,7 @@ import { Toast } from '@e07/shell/ui/toast.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 import { useBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
 
+import { unlockingLevelOf } from './levels-model-of.ts';
 import { LockedPackPanel } from './locked-pack-panel.tsx';
 import { PackSection } from './pack-section.tsx';
 
@@ -21,6 +22,7 @@ export type LevelsViewProps = { readonly model: LevelsModel };
 const styles = StyleSheet.create({
   area: { flex: 1 },
   // The design's toast: absolute, 352 pt below the top of the scrolling body (.lv-toast top 352).
+  // It stays up over the lower rows, so it lets every tap through to the tiles under it.
   toast: { position: 'absolute', top: 352, start: LAYOUT.screenGutter, end: LAYOUT.screenGutter },
   // The banner closes the body's column: pushed to the bottom while the packs fit, one block gap
   // after them otherwise, and full bleed across the body's 20 pt gutters (the design's .body).
@@ -29,7 +31,8 @@ const styles = StyleSheet.create({
 
 /**
  * S8 Levels: top bar, the scrolling packs (open packs as grids, the next locked pack as a
- * dashed panel), the "finish level n" toast for a tapped locked tile, the banner at the bottom.
+ * dashed panel), the "finish level n" toast for a tapped locked tile (n: its pack's current
+ * level), the banner at the bottom.
  */
 export function LevelsView({ model }: LevelsViewProps): ReactNode {
   const t = useT();
@@ -72,11 +75,13 @@ export function LevelsView({ model }: LevelsViewProps): ReactNode {
           </View>
         </ScreenBody>
         {model.focusedLevel === null ? null : (
-          <View style={styles.toast}>
+          <View style={styles.toast} pointerEvents="none">
             <Toast
               testID="levels.locked-toast"
               icon="lock"
-              text={t('levels.level-tile.locked-toast', { previousLevel: model.focusedLevel - 1 })}
+              text={t('levels.level-tile.locked-toast', {
+                previousLevel: unlockingLevelOf(model.packs, model.focusedLevel),
+              })}
               isReducedMotion={model.isReducedMotion}
             />
           </View>

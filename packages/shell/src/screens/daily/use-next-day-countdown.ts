@@ -19,14 +19,20 @@ function subscribeToTicks(onChange: () => void): () => void {
   };
 }
 
+/** While no countdown is on screen nothing ticks: no interval and no AppState listener. */
+function subscribeToNothing(): () => void {
+  return () => undefined;
+}
+
 /**
  * S9's "Next challenge in {h} h {m} min" after today's game: the time left until local
  * midnight, from ClockPort.msUntilNextLocalDay() (never Date in a screen). The snapshot is
- * whole minutes, so it only changes once a minute and React re-renders only then.
+ * whole minutes, so it only changes once a minute and React re-renders only then. It ticks only
+ * while `isShown` (today's result on a focused S9); otherwise it is read on each render alone.
  */
-export function useNextDayCountdown(): Countdown {
+export function useNextDayCountdown(isShown = true): Countdown {
   const { clock } = useServices();
-  const minutesLeft = useSyncExternalStore(subscribeToTicks, () =>
+  const minutesLeft = useSyncExternalStore(isShown ? subscribeToTicks : subscribeToNothing, () =>
     minutesLeftOf(clock.msUntilNextLocalDay()),
   );
   return countdownOf(minutesLeft);

@@ -1048,6 +1048,7 @@
               "packages/shell/src/app/start-shell.ts",
               "packages/shell/src/app/restart-after-audio*",
               "packages/shell/src/i18n/direction-context.tsx",
+              "packages/shell/src/i18n/use-number-formatter*",
               "packages/shell/src/game-host/board-direction-view*"
             ]
           },
@@ -1264,7 +1265,7 @@
           {
             "skill": "privacy-and-network-audit",
             "paths": [
-              "packages/shell/src/config/privacy-manifest.ts",
+              "packages/shell/src/config/privacy-manifest*",
               "packages/tooling/src/audit/**",
               "packages/tooling/network-audit/**"
             ]
@@ -1805,6 +1806,7 @@
                   "packages/shell/src/screens/pause/**",
                   "packages/shell/src/screens/result/**",
                   "packages/shell/src/screens/levels/**",
+                  "packages/shell/src/screens/home/use-play-run*",
                   "packages/shell/src/screens/debug/**",
                   "packages/shell/src/app/use-parity-opener*",
                   "packages/shell/src/ui/use-pair-layout.ts"

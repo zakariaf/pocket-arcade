@@ -1,0 +1,5 @@
+[tilt-raster]
+packages/shell/src/ui/calendar-tile.tsx:
+is not one rasterized layer
+packages/shell/src/ui/art-tile.tsx:
+rasterized by hand instead of through the one tilt primitive

@@ -115,4 +115,25 @@ describe('LevelsView', () => {
     );
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
+
+  it("names the pack's current level for a locked tile further down, not the tile before it", async () => {
+    const pack = { ...OPEN_PACK, tiles: [...OPEN_PACK.tiles, tile(5, { kind: 'locked' })] };
+    await renderWithShell(<LevelsView model={modelWith({ packs: [pack], focusedLevel: 5 })} />);
+
+    expect(screen.getByTestId('levels.locked-toast')).toHaveTextContent(
+      'Unlock this one by finishing level 3.',
+    );
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('lets taps through the toast to the tiles it covers while it stays up', async () => {
+    const model = modelWith({ focusedLevel: 4 });
+    const user = userEvent.setup();
+    await renderWithShell(<LevelsView model={model} />);
+
+    expect(screen.getByTestId('levels.locked-toast').parent?.props['pointerEvents']).toBe('none');
+    await user.press(screen.getByRole('button', { name: 'Level 3: no stars yet' }));
+    expect(model.onPlayLevel).toHaveBeenCalledWith(3);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
 });

@@ -1,19 +1,20 @@
 // packages/shell/src/screens/stats/stats-snapshot-of.ts
 // Pure: daily-and-statistics' StatsSummary as the numbers S10 draws. The game's counters keep the
 // game's order and labels (useGameHost().counters: save key and catalog key); the best level score
-// stays null until a level is won, so its row is left out (never "Level 0: 0").
+// stays null until a level is won, so its row is left out (never "Level 0: 0"). A best-of counter
+// reads as its catalog multiplier (stats.game.best-of-value, the design's ×6), and as the plain 0
+// until it is reached (never "×0").
 import type { GameStat, StatsSnapshot, StatsWeekDay } from './stats-model.ts';
 import type { StatsSummary } from './stats-summary.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 import type { HostCounter } from '@e07/shell/game-host/host-counter.ts';
 
-/** U+00D7 MULTIPLICATION SIGN: the same glyph in every language. */
-const TIMES = '\u00D7';
-
 export type SnapshotText = {
   readonly formatNumber: (value: number) => string;
   /** The counter's label: gameMessageText(t, { id: labelId }). */
   readonly labelOf: (counter: HostCounter) => string;
+  /** A reached best-of counter's value: t('stats.game.best-of-value', { value }), "×6". */
+  readonly bestOfText: (value: number) => string;
   /** date.weekday-strip.<n> and date.weekday.<n> of a day (the Shell date formatter). */
   readonly weekdayOf: (date: DateKey) => Pick<StatsWeekDay, 'letter' | 'weekdayName'>;
 };
@@ -25,9 +26,10 @@ function gameStatsOf(
 ): GameStat[] {
   return counters.map((counter) => {
     const value = summary.counters.find((entry) => entry.id === counter.id)?.value ?? 0;
-    // A best-of counter reads as a multiplier (the design's ×6); a running total as a plain number.
-    const number = text.formatNumber(value);
-    const valueText = counter.aggregate === 'max' ? `${TIMES}${number}` : number;
+    // A reached best-of counter reads as a multiplier (the design's ×6); a running total, and a
+    // best-of nobody reached yet, as the plain number.
+    const isBestOf = counter.aggregate === 'max' && value > 0;
+    const valueText = isBestOf ? text.bestOfText(value) : text.formatNumber(value);
     return { key: counter.id, label: text.labelOf(counter), valueText };
   });
 }

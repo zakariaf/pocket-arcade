@@ -6,7 +6,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
-import { dieCutRing } from './toybox-styles.ts';
+import { dieCutRing, tiltedLayer } from './toybox-styles.ts';
 
 import type { IconName } from './icons/icon-paths.ts';
 import type { ReactNode } from 'react';
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: ART.radius,
     borderWidth: ART.border,
-    transform: [{ rotate: `${String(ART.rotate)}deg` }],
   },
 });
 
@@ -46,12 +45,11 @@ export function ArtTile({
   const side = SIZE[size];
   return (
     <View
-      style={[
+      {...tiltedLayer(ART.rotate, [
         styles.tile,
         { width: side, height: side, backgroundColor: fills[paint], borderColor: shell.toyInk },
         dieCutRing(ART.ring, shell.cut),
-      ]}
-      shouldRasterizeIOS
+      ])}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       {...(testID === undefined ? {} : { testID })}

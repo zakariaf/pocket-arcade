@@ -80,6 +80,13 @@
       "de": "Punkte {score, number} – Rekord {bestScore, number}",
       "fa": "امتیاز {score, number} – رکورد {bestScore, number}",
       "ckb": "خاڵ {score, number} – باشترین {bestScore, number}"
+    },
+    "stats.game.best-of-value": {
+      "owner": "toybox-screens (S10 game card: the value of a best-of counter, aggregate 'max', such as Line Siege's biggest combo; the design draws it as a multiplier, ×6; a counter not reached yet shows the plain number 0 instead)",
+      "en": "×{value, number}",
+      "de": "×{value, number}",
+      "fa": "×{value, number}",
+      "ckb": "×{value, number}"
     }
   }
 }

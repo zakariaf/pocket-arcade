@@ -29,7 +29,7 @@ Top bar "Statistics" with Back. Body gap **16**; each panel has a header (icon t
 3. Best (the gold rating star, `'rating-star'`, the design's `star(true)`; not the ink `star-filled` icon): a stat list: the Bold sub-heading "Best score"; Levels, Daily and Endless (only games with Endless) values (22 display, end-aligned); best level score "Level 9: 2,310"; longest win streak. 2 pt rules between rows.
 4. Daily challenge (`calendar`): 3 columns: completed, current streak, best streak.
 5. Last 7 days (`stats`): subtitle "Games played per day" (14 muted) → bar chart (8 top margin): seven columns, 124 pt plot on a 3 pt baseline, value (13 Bold) over a 26 pt accent bar (height = value / max x 92, top radius 5), the day letter 6 below; zero days show only "0".
-6. The game's panel: logo tile 36 + "{gameName} stats" → 3 columns of the game's own counters. A counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) reads as a multiplier, "×6" (`stats-snapshot-of.ts` prefixes ×); a running total (`'sum'`) is the plain number.
+6. The game's panel: logo tile 36 + "{gameName} stats" → 3 columns of the game's own counters. A counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) reads as a multiplier, "×6" (`stats-snapshot-of.ts` asks the model's `bestOfText`, the Shell text `stats.game.best-of-value`, "×{value, number}", so the sign is a catalog text in all four languages, N12); until it is reached it shows the plain number 0 (never "×0"), like the other S10 values nobody reached yet; a running total (`'sum'`) is the plain number.
 
 Then a danger block button with `trash`: "Reset statistics" → the local note: a row with a 24 pt `lock` icon, a 6 pt gap and "Stored only on this phone." (caption, muted); the element `stats.local-note` is the whole row, padlock included (`StatsLocalNote hasIcon`) → the banner, pinned under the scroll. With a banner slot the body ends one block gap above the band (`ScreenBody isAboveBanner`: `paddingBottom` is the body's gap, as the design's band is the body's last flex item); without one (Premium) the body runs under the home indicator.
 
@@ -54,7 +54,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/stats/stat-panel.tsx`
 - `packages/shell/src/screens/stats/stats-cells.ts`
 - `packages/shell/src/screens/stats/stats-empty-state.tsx`
-- `packages/shell/src/screens/stats/stats-local-note.tsx`
+- `packages/shell/src/screens/stats/stats-local-note.tsx` (the padlock row under the panels) and `stats-local-caption.tsx` (the bare caption on the empty page)
 - `packages/shell/src/screens/stats/stats-panels.tsx`
 - `packages/shell/src/screens/stats/stats-view.tsx`
 - `packages/shell/src/screens/stats/stats-screen.tsx`

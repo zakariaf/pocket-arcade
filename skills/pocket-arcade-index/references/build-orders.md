@@ -105,7 +105,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - Copy from `accessibility`: `packages/shell/src/app/use-announce*`, `packages/shell/src/testing/**`, `packages/shell/src/theme/cvd.ts`, `test/integration/a11y/__GAME_ID__-palette.test.ts`.
 - Copy from `unit-and-component-tests`: `packages/shell/src/testing/render-with-shell*`.
 - Copy from `i18n-strings-and-catalogs`: `packages/shell/src/i18n/i18n-provider.tsx`, `packages/shell/src/i18n/language-context.tsx`, `packages/shell/src/i18n/t-bridge.tsx`, `packages/shell/src/i18n/t-context.ts`, `packages/shell/src/i18n/t.tsx`, `packages/shell/src/i18n/t.test.tsx`, `test/integration/i18n/**`.
-- Copy from `rtl-and-direction`: `packages/shell/src/app/start-shell.ts`, `packages/shell/src/app/restart-after-audio*`, `packages/shell/src/i18n/direction-context.tsx`, `packages/shell/src/game-host/board-direction-view*`.
+- Copy from `rtl-and-direction`: `packages/shell/src/app/start-shell.ts`, `packages/shell/src/app/restart-after-audio*`, `packages/shell/src/i18n/direction-context.tsx`, `packages/shell/src/i18n/use-number-formatter*`, `packages/shell/src/game-host/board-direction-view*`.
 - Copy from `settings-and-preferences`: `packages/shell/src/app/connect-audio-settings*`, `packages/shell/src/app/create-shell-haptics*`, `packages/shell/src/app/localized-root*`, `packages/shell/src/config/external-links*`.
 - Copy from `daily-and-statistics`: `packages/shell/src/stores/**`.
 - Copy from `game-host-integration`: `packages/shell/src/app/**`, `packages/shell/src/game-host/**`, `packages/shell/src/screens/first-run/**`, `packages/shell/src/testing/**`, `apps/line-siege/src/**`, `apps/__GAME_ID__/src/contract.test.ts`, `test/integration/game-host/__GAME_ID__-debug-controls.test.ts` (not `packages/shell/src/app/shell-app.test.tsx`).
@@ -130,7 +130,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 
 - Copy from `architecture-and-boundaries`: `packages/shell/src/config/with-shell*`, `packages/shell/src/config/shell-plugins*`, replacing the earlier copy of the same path. Swap: the final with-shell.ts and its test replace the bootstrap's phase-0 pair (commit trailer Spec-Change: with-shell final composer (phase 0 placeholder replaced)).
 - Copy from `performance-budgets`: `packages/shell/ios/**`.
-- Copy from `privacy-and-network-audit`: `packages/shell/src/config/privacy-manifest.ts`, `packages/tooling/src/audit/**`, `packages/tooling/network-audit/**`.
+- Copy from `privacy-and-network-audit`: `packages/shell/src/config/privacy-manifest*`, `packages/tooling/src/audit/**`, `packages/tooling/network-audit/**`.
 - Copy from `ios-simulator-build`: `packages/tooling/src/build/**`, `packages/tooling/src/ios/**`, `packages/tooling/src/e2e/maestro-args*`.
 - Install `expo-font` (apps/line-siege): run `plan-dependency.mjs expo-font` (dependency-management) and its printed commands.
 - Install `expo-splash-screen` (apps/line-siege): run `plan-dependency.mjs expo-splash-screen` (dependency-management) and its printed commands.
@@ -243,7 +243,7 @@ What each step of this order copies and installs (the same contract as the Shell
 
 Step 1:
 
-- Copy from `toybox-screens`: `packages/shell/src/screens/game/**`, `packages/shell/src/screens/pause/**`, `packages/shell/src/screens/result/**`, `packages/shell/src/screens/levels/**`, `packages/shell/src/screens/debug/**`, `packages/shell/src/app/use-parity-opener*`, `packages/shell/src/ui/use-pair-layout.ts`.
+- Copy from `toybox-screens`: `packages/shell/src/screens/game/**`, `packages/shell/src/screens/pause/**`, `packages/shell/src/screens/result/**`, `packages/shell/src/screens/levels/**`, `packages/shell/src/screens/home/use-play-run*`, `packages/shell/src/screens/debug/**`, `packages/shell/src/app/use-parity-opener*`, `packages/shell/src/ui/use-pair-layout.ts`.
 - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/settings-preference-actions*`.
 - Copy from `daily-and-statistics`: `packages/shell/src/app/use-today.ts`.
 - Copy from `state-stores`: `packages/shell/src/screens/game/use-hint-button.ts`.

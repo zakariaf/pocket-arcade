@@ -88,6 +88,10 @@
     {
       "file": "use-chrome-baseline.ts",
       "what": "useChromeBaseline(variant): the design's baseline of a text style in the current language (StatList rows)"
+    },
+    {
+      "file": "level-tile-bob.tsx",
+      "what": "LevelTileBob: the current level tile's endless bob, the only tile wrapper that holds a Reanimated value (LevelTile puts every other tile in a plain View)"
     }
   ],
   "components": [

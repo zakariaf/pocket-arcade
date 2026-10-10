@@ -10,6 +10,7 @@ const TEXT: SnapshotText = {
   formatNumber: (value) => `n${String(value)}`,
   labelOf: (counter) => `label:${counter.labelId}`,
   weekdayOf: (date) => ({ letter: date.slice(8), weekdayName: date }),
+  bestOfText: (value) => `×${String(value)}`,
 };
 const COUNTERS = [
   { id: 'monsters-defeated', labelId: 'line-siege.stats.monsters-defeated' },
@@ -59,17 +60,18 @@ describe('statsSnapshotOf', () => {
     ]);
   });
 
-  it('marks a best-of counter (aggregate max) with a times sign, as the design draws ×6', () => {
+  it('writes a best-of counter through its catalog text, and 0 before it is reached (N12)', () => {
     const counters = [
       { id: 'biggest-combo', labelId: 'line-siege.stats.biggest-combo', aggregate: 'max' as const },
+      { id: 'longest-chain', labelId: 'line-siege.stats.longest-chain', aggregate: 'max' as const },
     ];
     const snapshot = statsSnapshotOf(
-      summaryOf({ counters: { 'biggest-combo': 6 } }, ['biggest-combo']),
+      summaryOf({ counters: { 'biggest-combo': 6 } }, ['biggest-combo', 'longest-chain']),
       counters,
-      TEXT,
+      { ...TEXT, bestOfText: (value) => `best-of:${String(value)}` },
     );
 
-    expect(snapshot.gameStats[0]?.valueText).toBe('×n6');
+    expect(snapshot.gameStats.map((stat) => stat.valueText)).toStrictEqual(['best-of:6', 'n0']);
   });
 
   it('leaves out Endless and the best level score until they exist, and names seven days', () => {

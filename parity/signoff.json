@@ -336,70 +336,10 @@
     {
       "game": "lineSiege",
       "frame": "s4-home",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "0f46146c53d36632904fa0418dce2d020e424b7a494006320213450e93ccf2ff",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s4-home",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "91130a9f6647e126586ffc070a2f42d9c0515bfcbb685a708b1670cbe532b14a",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s4-home",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "c335f899415ed7d8d68281b859b2a2c4e95410bbe510080898c1962df15ada43",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "e2a3abbb1b7924f0b3cf4cb4005f0db606987850f7793e90aeacbf5efbc6f947",
       "date": "2026-10-10",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -437,29 +377,9 @@
       "game": "lineSiege",
       "frame": "s4-home-premium",
       "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "fa54651cffd0ed83022af3d37872afdac2d42b5758269a784d73d4941f083172",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "735a51f7c5a5983993a8f6c18d754246ff6bb818e1a5632d99c03657b5b1c743",
+      "sheetSha256": "5fb7ed3899e90903004ce6c59ae020d94cd33879c19b5a465046bffbd379cf3c",
       "date": "2026-10-10",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -517,26 +437,6 @@
       "game": "lineSiege",
       "frame": "s6-pause",
       "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "5eb30e64eb2506ab98d5d71600c2b02d25a42dadcf69753f68b81503bbf50243",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s6-pause",
-      "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "dd7dc90e046e73aa03c47fcf57e0ebf382466cc272c24b60bfa6c596300d47d4",
@@ -557,49 +457,9 @@
       "game": "lineSiege",
       "frame": "s7-result-win",
       "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "029bf65bdfae502315f2e25d20eefa5216a2126d9633b0381c88f1cf28b44455",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s7-result-win",
-      "theme": "light",
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "622c7c607e94cc442c6b95d55c3408bfac5a3b94507e8f06c7ba032247f50453",
-      "date": "2026-10-10",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s7-result-win",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "4d870e518f1b3bd73b8f768a930255c30a25b58e0fc4067ab65043b0ffbde9cb",
       "date": "2026-10-10",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -729,6 +589,726 @@
       "differences": [
         {
           "what": "result.continue-offer's dashed edge: iOS draws longer dashes with another corner phase than Chrome (structure gate); the pre-listed platform waiver in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "9d22d5d0890debf069b56cb075fc0f74f2b8ee59089cae55a040de12745547bf",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "daily.week-day.1.mark, daily.week-day.7.mark and daily.week-card: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye page)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f4dda991a74c769e7be0ba47ad7e10ea5c5a8ef84969a9c535af4352f80d723b",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "daily.week-day.1.mark, daily.week-day.7.mark and daily.week-card: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye page)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "eaae612a5bc41929ecadcdbfc7852b5f0c91e5a7c7cc9791e6e95e65758f3dfe",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "daily.week-day.1.mark, daily.week-day.7.mark and daily.week-card: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye page)",
+          "status": "waived"
+        },
+        {
+          "what": "daily.today-card.calendar.month: the tilted Persian month name on the band (text-ink gate in dark fa); the pre-listed platform waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ea88910309a5cbaa929573a372ac2668375bce716bc8d346dbee93dc4fff36f8",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 374,
+      "sheetSha256": "184d32b45a00899c1fc1169bc99ed913a5a4f0e2f79c2e4daac3fc660371dfdb",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 786,
+      "sheetSha256": "3a4a72d541719ac52ac19dc9b3f62c5ac43abc8d0aab63075c57c6d566a2b9c2",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "a4d91acaae66384684a4dc312d6cd85e46392ba31b519baec375bad6d34e4910",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "7115fdcd076943453f911f5a85daead38b4bef6dc28d34986d8084dd61431a17",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 852,
+      "sheetSha256": "871db6b78347cfae80852c0f46a6f61dadefc588792846cab67982f69e307792",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ae262a6d83b5d008321f63219a08d82960c39d2eecf1698230ea3182214bae5f",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 374,
+      "sheetSha256": "bade7196a5db7bdeb93f8faeb395736864fd62bf8072d22dd48bd2f66d3f85ea",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 786,
+      "sheetSha256": "018c96fcc195d21a1ac04aad4184239d4b7a9e949d8d6bea00fa747bab0db4a3",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "07add797729a4e5576630bc8c0fb6b3bbb1a48e3ec5b5b62b69e3c049ba09978",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "2a77fa157c1432e71e4c9e661f10f2eb62d2c6cab3016a7866c1f5c6369cb5d8",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 852,
+      "sheetSha256": "7195e2cb8ef90aedb21211afa7c42f4cc6d82ed8519b1becb50ab600aac94d20",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c6fb239c666799ff4a146bf875918931ef682a7b50dc8bcf3e0a31138427fda2",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "b4e3d7f62ba8365f752a70649a6a2fa25bbee68a629ac52ff2b45b1b84744773",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ee1dfd0d08a0b823480404c164455d996694ee0007ab2842c879a41b84bf9588",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ec9bab73bff6d80488ba0922d4ebc2c64e44038d5ede99ad0b88730e4f01c7a8",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c1d74cc7cd09dc0d12c412ebf1ee8d324edf0d7d4603fbd2b723bed8797b1fb2",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c335f899415ed7d8d68281b859b2a2c4e95410bbe510080898c1962df15ada43",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e2a3abbb1b7924f0b3cf4cb4005f0db606987850f7793e90aeacbf5efbc6f947",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "fa54651cffd0ed83022af3d37872afdac2d42b5758269a784d73d4941f083172",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d1c82a21cefe74c700916e1de8278a5f8bc11e65a539b8bab7f8a361fc7e190d",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "029bf65bdfae502315f2e25d20eefa5216a2126d9633b0381c88f1cf28b44455",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "4d870e518f1b3bd73b8f768a930255c30a25b58e0fc4067ab65043b0ffbde9cb",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c71df4fad5791f6a18d7dbea170c705d0b56592f155dd98cffdcbb6bc36461fe",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c14776c0f721f00dff72d1bb0f9d6f54e3d0e9d6ec6f2ed3bbd89c3cd2280d11",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "499b826bd04528159c58aad618f8ad1f91c14df81cea6656e3247e57bdec6da8",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "118a84c7e23b75d3b054407045461db3c5039b4124f9d224036f95883bd6242b",
+      "date": "2026-10-10",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "levels.level-tile.14 to .30 and levels.pack.2: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye pages)",
+          "status": "waived"
+        },
+        {
+          "what": "levels.level-tile.13: the design draws the tapped tile frozen mid-press (scaled 1.04 x 0.94); the app shows it at rest with its focus ring (bounds and structure gates); the pre-listed design-artefact waiver",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ac4d2798b92c89938fc0044121c84ddfdc00e04c2a9337d297ef026aaacf35ea",
+      "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "daily.week-day.1.mark, daily.week-day.7.mark and daily.week-card: iOS draws the dashed edges with longer dashes and another corner phase than Chrome (structure gate); the pre-listed platform waivers in parity/waivers.json, only the dash phase differs (eye page)",
           "status": "waived"
         }
       ]

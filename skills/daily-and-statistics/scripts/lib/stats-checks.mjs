@@ -125,4 +125,17 @@ export const STATS_CHECKS = [
       deepStrictEqual(view.counters, [{ id: 'beams-fired', value: 12 }]);
     },
   },
+  {
+    rule: 'view-stats-best', fn: 'buildStatsSummary', needs: ['statsSummary'], name: 'S10 Best rows read the stats section only, so Reset statistics zeroes every mode',
+    fix: 'best.levelScore, dailyScore and endlessScore = stats.bestScore.{level,daily,endless}; never max() with progress.endlessBest, which Reset statistics keeps.',
+    run: ({ statsSummary }, { deepStrictEqual }) => {
+      const base = { levelCount: 90, hasEndless: true, counterIds: [], today: TODAY, daily: DOC().daily };
+      const afterReset = statsSummary.buildStatsSummary({ ...base, stats: { ...EMPTY_STATS(), gamesPlayed: 1, wins: 1, bestScore: { level: 300, daily: 0, endless: 0 } }, progress: { levels: {}, endlessBest: 4210 } });
+      deepStrictEqual(
+        [afterReset.best.levelScore, afterReset.best.dailyScore, afterReset.best.endlessScore],
+        [300, 0, 0],
+        'after Reset statistics the Endless best is 0 like the other modes (progress.endlessBest 4210 is kept for Home)',
+      );
+    },
+  },
 ];

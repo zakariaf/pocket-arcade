@@ -43,7 +43,7 @@ Only numbers that cannot be derived are stored. `DEFAULT_STATS` (every count 0, 
 |---|---|
 | games played, wins, win rate, total play time | `stats.gamesPlayed`, `stats.wins`, `wins / gamesPlayed` (0 when no game), `stats.playMs` |
 | levels completed, stars earned / total, 3-star levels | derived from `progress.levels` and the game's level count (`levels.table.length`, 3 stars each) |
-| best score per mode | `stats.bestScore.{level,daily,endless}`; the Endless row is `max(bestScore.endless, progress.endlessBest)` and exists only for games with Endless |
+| best score per mode | `stats.bestScore.{level,daily,endless}`, all three from the stats section only, so "Reset statistics" zeroes every mode; the Endless row exists only for games with Endless and never reads `progress.endlessBest` (Home's and the result's best, which that reset keeps) |
 | best level result | derived: the level with the highest `bestScore` (ties: the lower level) |
 | longest win streak | `stats.longestWinStreak` |
 | daily completed, current streak, best streak | `daily.completed`, `currentDailyStreak(daily, today)`, `daily.bestStreak` |
@@ -120,6 +120,7 @@ buildStatsSummary({ stats, progress, daily, today, levelCount, hasEndless, count
 //   week: { days: [{ date, weekday, games }] /* 7, oldest first */, max /* >= 1 */ },
 //   counters: [{ id, value }] }
 splitDuration(ms)   // whole hours and remaining whole minutes: 8_040_000 -> { hours: 2, minutes: 14 }
+                    // (countdownOf(floor(ms / MINUTE_MS)) from daily-summary.ts; Duration = Countdown)
 // packages/shell/src/screens/stats/use-stats-summary.ts
 useStatsSummary({ levelCount, hasEndless, counterIds })   // useToday() + section-reference selectors
 ```
@@ -142,7 +143,7 @@ The names are `…-summary.ts` on purpose: the screen files in the same folder a
 | `bestWinStreak` | `best.longestWinStreak` |
 | `dailyCompleted`, `currentStreak`, `bestStreak` | `daily.completed`, `daily.currentStreak`, `daily.bestStreak` |
 | `week[i]` (`letter`, `weekdayName`, `games`; the bar component numbers the bars by position) | `week.days[i]`: `date.weekday-strip.<weekday>`, `date.weekday.<weekday>`, `games` |
-| `gameStats[i]` (`key`, `label`, `valueText`) | `counters[i]`: `id`, the game's counter label, the value in the chosen digits; a counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) gets the multiplication sign, "×6", and a `'sum'` counter is the plain number |
+| `gameStats[i]` (`key`, `label`, `valueText`) | `counters[i]`: `id`, the game's counter label, the value in the chosen digits; a counter whose `aggregate` is `'max'` (a best-of, such as the biggest combo) reads as a multiplier, "×6", through the Shell text `stats.game.best-of-value` ("×{value, number}"), and as the plain 0 until it is reached; a `'sum'` counter is the plain number |
 
 ## S10 elements and their data
 
@@ -166,7 +167,7 @@ The names are `…-summary.ts` on purpose: the screen files in the same folder a
 | `stats.week-card.title`, `.subtitle` | `daily.week.title` (`daysCount: 7`), `stats.week.subtitle` | |
 | `stats.week-bar.<n>` (`.value`, `.bar`, `.day`); `<n>` is the position, 1 = today minus 6 days, 7 = today | value (plain number), day letter `date.weekday-strip.<weekday>` (the day's ISO weekday), a11y `stats.week.bar.a11y-label` (`weekdayName` = `date.weekday.<weekday>`, `gamesCount`) | `week.days[i]` |
 | `stats.game-card.title` | `stats.game.title` (`gameName`), logo tile | |
-| `stats.game-card.<counter-id>` | the game's counter label; the value is "×6" for a best-of counter (`aggregate: 'max'`) and the plain number for a running total (`'sum'`) | `counters[i]` with the host counter's `aggregate` |
+| `stats.game-card.<counter-id>` | the game's counter label; the value is "×6" for a reached best-of counter (`aggregate: 'max'`, the Shell text `stats.game.best-of-value`) and the plain number for a running total (`'sum'`) or a best-of still at 0 | `counters[i]` with the host counter's `aggregate` |
 | `stats.reset-button` | `stats.reset-button` (danger, trash icon), opens the S14 dialog | |
 | `stats.local-note` | `stats.local-note`: on the cards page a row with a 24 pt lock icon (the element is the whole row); on the empty page the bare caption | |
 
@@ -189,6 +190,7 @@ Card order and layout (Toybox S10): Overview (2 columns), Levels (3 columns), Be
 | `stats-counts`, `stats-streak`, `stats-best`, `stats-days`, `stats-counters` | `recordFinishedRun` and `measureRunCounters` |
 | `run-end-record` | every row of the run-end table |
 | `view-daily`, `view-stats` | the S9 and S10 summaries, including `daily.completed` and ISO weekdays |
+| `view-stats-best` | the Best rows read the stats section only: after "Reset statistics" the Endless best is 0 like the Levels and Daily bests |
 | `wall-clock` | `Date`, `Math.random`, `Intl.DateTimeFormat`, `toLocale*` in daily and statistics code |
 | `today-cached` | today kept in `useState`, `useRef` or a module constant |
 | `day-maths-in-ui` | streak or date arithmetic in a screen file (other than `*-summary.ts`) instead of the summary |

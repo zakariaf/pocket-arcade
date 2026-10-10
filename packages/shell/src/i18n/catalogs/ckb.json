@@ -279,6 +279,7 @@
   "stats.empty.body": "ئاستێک یاری بکە بۆ ئەوەی ئامارەکانت لێرە ببینیت.",
   "stats.empty.play-button": "ئاستێک یاری بکە",
   "stats.empty.title": "هێشتا ئامار نییە",
+  "stats.game.best-of-value": "×{value, number}",
   "stats.game.title": "ئاماری {gameName}",
   "stats.levels.completed": "ئاستە تەواوکراوەکان",
   "stats.levels.stars": "ئەستێرە بەدەستهاتووەکان",

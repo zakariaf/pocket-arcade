@@ -38,7 +38,7 @@ const SPEC = {
   details: [
     'Behaviour rules: missing-module, module-load, date-math, seed-golden, daily-first-attempt,',
     'daily-streak, daily-clock-back, daily-prune, daily-week, stats-counts, stats-streak, stats-best,',
-    'stats-days, stats-counters, run-end-record, view-daily, view-countdown, view-stats.',
+    'stats-days, stats-counters, run-end-record, view-daily, view-countdown, view-stats, view-stats-best.',
     'Static rules:',
     '  clock-countdown   ClockPort (clock-port.ts), the system adapter or the fake lacks msUntilNextLocalDay',
     '  wall-clock        Date / Math.random / Intl.DateTimeFormat / toLocale* in daily or statistics code',

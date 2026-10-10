@@ -6,6 +6,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
+import { tiltedLayer } from './toybox-styles.ts';
 import { WeekMark } from './week-mark.tsx';
 
 import type { WeekMarkState } from './week-mark.tsx';
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
     paddingInline: TAG.paddingInline,
     borderRadius: TAG.radius,
     borderWidth: TAG.border,
-    transform: [{ rotate: `${String(TAG.rotate)}deg` }],
   },
 });
 
@@ -63,7 +63,7 @@ function dayColumn(day: WeekDay, id: string, tag: TodayTag): ReactNode {
       <WeekMark state={day.state} size="regular" label={day.label} testID={`${id}.mark`} />
       {day.isToday ? (
         <View style={styles.tagRoom}>
-          <View style={[styles.tag, tag.paint]} testID={`${id}.today-tag`}>
+          <View {...tiltedLayer(TAG.rotate, [styles.tag, tag.paint])} testID={`${id}.today-tag`}>
             <AppText text={tag.text} variant="weekTodayTag" tone="toyInk" />
           </View>
         </View>

@@ -31,7 +31,7 @@ export type DailySummary = {
 /** "Next challenge in {hours} h {minutes} min" (daily.next-in), shown after today's game. */
 export type Countdown = { readonly hours: number; readonly minutes: number };
 
-const MINUTE_MS = 60_000;
+export const MINUTE_MS = 60_000;
 
 /**
  * Pure: ClockPort.msUntilNextLocalDay() -> whole minutes left, rounded UP (never below 0), so the

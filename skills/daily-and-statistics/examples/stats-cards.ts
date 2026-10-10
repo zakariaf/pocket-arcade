@@ -4,8 +4,9 @@
 // the screen formats it (chosen digits; stats.duration, stats.levels.stars-value, daily.streak.days).
 // Two values are bare, as the design draws them: the win rate is the percentage alone ("62%", from
 // createPercentFormatter, under the label stats.overview.win-rate; never the sentence stats.win-rate,
-// "Win rate 62%"), and a best-of game counter (aggregate 'max') reads as a multiplier ("×6"), while
-// a running total ('sum') is the plain number. When the Toybox screen templates are in the repo,
+// "Win rate 62%"), and a best-of game counter (aggregate 'max') reads as a multiplier ("×6", the
+// Shell text stats.game.best-of-value) once reached, while a running total ('sum'), and a best-of
+// still at 0, is the plain number. When the Toybox screen templates are in the repo,
 // their stats-cells.ts and stats-snapshot-of.ts do this job; this example shows which summary field
 // feeds which testID and message.
 import type { StatsSummary } from '@e07/shell/screens/stats/stats-summary.ts';
@@ -14,7 +15,7 @@ export type StatValue =
   | { readonly kind: 'count'; readonly value: number }
   /** A 0..1 rate shown as the bare percentage ("62%"), never inside the stats.win-rate sentence. */
   | { readonly kind: 'percent'; readonly rate: number }
-  /** A best-of counter (aggregate 'max'), shown with the multiplication sign ("×6"). */
+  /** A reached best-of counter (aggregate 'max'): stats.game.best-of-value, "×6". */
   | { readonly kind: 'multiplier'; readonly value: number }
   | { readonly kind: 'duration'; readonly hours: number; readonly minutes: number }
   | { readonly kind: 'stars'; readonly earned: number; readonly total: number }
@@ -107,7 +108,8 @@ export type GameCounterMeta = {
 
 /**
  * The game's card (3 columns): one cell per counter in game order. A best-of ('max') is a
- * multiplier ("Biggest combo ×6"); a running total ('sum') the plain number ("Monsters defeated 42").
+ * multiplier ("Biggest combo ×6") once reached and the plain 0 before; a running total ('sum') the
+ * plain number ("Monsters defeated 42").
  */
 export function gameCells(
   view: StatsSummary,
@@ -118,7 +120,8 @@ export function gameCells(
     return {
       testID: `stats.game-card.${counter.id}`,
       labelKey: counter.labelId,
-      value: counter.aggregate === 'max' ? { kind: 'multiplier', value } : count(value),
+      value:
+        counter.aggregate === 'max' && value > 0 ? { kind: 'multiplier', value } : count(value),
     };
   });
 }

@@ -49,4 +49,19 @@ describe('useNextDayCountdown', () => {
     });
     expect(result.current).toStrictEqual({ hours: 0, minutes: 1 });
   });
+
+  it('ticks no clock while its countdown is not on screen', async () => {
+    const clock = createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' });
+    const wrapper = ({ children }: { readonly children: ReactNode }): ReactNode => (
+      <ServicesProvider services={servicesWith(clock)}>{children}</ServicesProvider>
+    );
+    const interval = jest.spyOn(globalThis, 'setInterval');
+    try {
+      await renderHook(() => useNextDayCountdown(false), { wrapper });
+
+      expect(interval).not.toHaveBeenCalled();
+    } finally {
+      interval.mockRestore();
+    }
+  });
 });

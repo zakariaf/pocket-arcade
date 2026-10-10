@@ -8,6 +8,7 @@ import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { ArtTile } from './art-tile.tsx';
+import { CalendarTile } from './calendar-tile.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Confetti } from './confetti.tsx';
 import { LevelTile } from './level-tile.tsx';
@@ -16,6 +17,7 @@ import { RatingStars } from './rating-stars.tsx';
 import { ResultStars } from './result-stars.tsx';
 import { Sticker } from './sticker.tsx';
 import { dieCutRing } from './toybox-styles.ts';
+import { WeekStrip } from './week-strip.tsx';
 
 import type { ViewStyle } from 'react-native';
 
@@ -257,6 +259,46 @@ describe('Stickers and art', () => {
       'shouldRasterizeIOS',
       true,
     );
+  });
+
+  it('rasterizes every other tilted printed part: flag, Today tag, calendar, Premium art, confetti', async () => {
+    const hidden = { includeHiddenElements: true } as const;
+    await renderWithShell(
+      <>
+        <LevelTile
+          numberText="12"
+          state={{ kind: 'current' }}
+          label="Level 12: no stars yet"
+          onPress={jest.fn()}
+          testID="levels.level-tile.12"
+          isReducedMotion
+          width={54}
+        />
+        <WeekStrip
+          testID="daily.week-strip"
+          dayTestIDBase="daily.week-day"
+          days={[{ letter: 'Sun', state: 'today', isToday: true, label: 'Today' }]}
+          todayTagText="Today"
+        />
+        <CalendarTile monthText="Sep" dayText="27" testID="daily.today-card.calendar" />
+        <PremiumArt testID="premium.art" />
+        <Confetti isReducedMotion isHiddenBySetting={false} testID="premium.confetti" />
+      </>,
+    );
+
+    // The S9 calendar's month band border stepped at device pixels under its -3 deg tilt until the
+    // whole tile was one rasterized layer (TILTED_LAYER).
+    for (const testID of [
+      'levels.level-tile.12.flag',
+      'daily.week-day.1.today-tag',
+      'daily.today-card.calendar',
+      'premium.art',
+    ]) {
+      expect(screen.getByTestId(testID, hidden)).toHaveProp('shouldRasterizeIOS', true);
+    }
+    const pieces = screen.getByTestId('premium.confetti', hidden).children;
+    expect(pieces.length).toBeGreaterThan(0);
+    for (const piece of pieces) expect(piece).toHaveProp('shouldRasterizeIOS', true);
   });
 
   it('keeps art tiles, Premium art and confetti decorative', async () => {

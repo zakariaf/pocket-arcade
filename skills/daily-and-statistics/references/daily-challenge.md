@@ -117,6 +117,7 @@ daily: {
 recordDailyResult(daily, date, result)   // the FIRST finished attempt of `date` counts; a replay returns `daily` itself
 currentDailyStreak(daily, today)         // streak.length if lastDate is today or yesterday, else 0
 isDailyDone(daily, today)                // today in results
+lastSevenDates(today)                    // today-6 ... today, oldest first (DAYS_SHOWN = 7, its one definition; S10's bars use it too, and both titles count the days they get)
 lastSevenDays(daily, today)              // [{ date, isDone }] for today-6 ... today, oldest first
 DAILY_KEEP_DAYS = 60
 ```
@@ -152,7 +153,7 @@ The names are `…-summary.ts` on purpose: the screen files are `daily-view.tsx`
 | `DailyModel` field (screen) | From the summary |
 |---|---|
 | `monthText`, `dayText`, `dateText` | `summary.today` through the catalogs (`date.month-short.<m>`, the day number in the chosen digits, `date.weekday-day-month` with `date.weekday.<isoWeekday(today)>`) |
-| `todayResult` (`score`, `hours`, `minutes`) | `const countdown = useNextDayCountdown()` on every render (a hook never sits behind a condition), then `summary.todayResult === null ? null : { score: summary.todayResult.score, ...countdown }` (the countdown below) |
+| `todayResult` (`score`, `hours`, `minutes`) | `const countdown = useNextDayCountdown(isShown)` on every render, ticking only while today's result shows on a focused S9 (a hook never sits behind a condition), then `summary.todayResult === null ? null : { score: summary.todayResult.score, ...countdown }` (the countdown below) |
 | `currentStreak`, `bestStreak` | `summary.currentStreak`, `summary.bestStreak` |
 | `week[i]` (`letter`, `weekdayName`, `state`, `isToday`; the strip numbers the columns by position) | `summary.week[i]`: `date.weekday-strip.<weekday>`, `date.weekday.<weekday>`, `mark`, `isToday` |
 
@@ -167,12 +168,13 @@ countdownOf(minutes): Countdown  // { hours, minutes }
 splitCountdown(ms): Countdown    // countdownOf(minutesLeftOf(ms)): 11_100_000 -> 3 h 5 min,
                                  // 30_000 -> 0 h 1 min (never "0 h 0 min" before midnight)
 // packages/shell/src/screens/daily/use-next-day-countdown.ts
-useNextDayCountdown(): Countdown // useSyncExternalStore over a 15 s interval and use-today.ts's
-                                 // subscribeToAppState; the snapshot is minutesLeftOf(...), whole
-                                 // minutes, so it re-renders once a minute
+useNextDayCountdown(isShown = true): Countdown
+                                 // useSyncExternalStore over a 15 s interval and use-today.ts's
+                                 // subscribeToAppState, subscribed only while isShown; the snapshot
+                                 // is minutesLeftOf(...), whole minutes, so it re-renders once a minute
 ```
 
-- The screen's `use-daily-model.ts` calls `useNextDayCountdown()` on every render and fills `todayResult.hours` and `.minutes` from it only when `summary.todayResult !== null`; `daily-view.tsx` formats them with the catalog message (digits from the chosen numbering system).
+- The screen's `use-daily-model.ts` calls `useNextDayCountdown(summary.todayResult !== null && useIsFocused())` on every render (the hook never sits behind a condition; its ticks do: no interval and no AppState listener before today's game or while the Game screen covers S9) and fills `todayResult.hours` and `.minutes` from it only when `summary.todayResult !== null`; `daily-view.tsx` formats them with the catalog message (digits from the chosen numbering system).
 - When the countdown reaches midnight, `useToday()` gives the new day on the next render (AppState or focus), `summary.isDone` turns false and the line disappears with the play button back.
 - Never compute it in a screen: `new Date()` is banned there (`wall-clock`), and `86_400_000 - nowMs() % 86_400_000` is UTC midnight, not the player's (`day-maths-in-ui` reports `nowMs()`, `msUntilNextLocalDay()` and `86_400_000` in daily, stats and home screens; only `use-next-day-countdown.ts` reads the port).
 - `check-daily-stats` runs `splitCountdown` (`view-countdown`) and fails when `clock-port.ts`, the system adapter or the fake lacks `msUntilNextLocalDay` (`clock-countdown`).
@@ -192,7 +194,7 @@ useNextDayCountdown(): Countdown // useSyncExternalStore over a 15 s interval an
 | `daily.current-streak-card.value` | `daily.streak.days` (`daysCount`) | `summary.currentStreak` |
 | `daily.best-streak-card.value` | `daily.streak.days` | `summary.bestStreak` |
 | `daily.streak-rule` | `daily.streak.rule` | |
-| `daily.week-card.title` | `daily.week.title` (`daysCount: 7`) | |
+| `daily.week-card.title` | `daily.week.title` (`daysCount`: the strip's length, 7 from `lastSevenDates`) | |
 | `daily.week-day.<n>` (`.letter`, `.mark`); `<n>` is the position, 1 = the oldest day, 7 = today | letter `date.weekday-strip.<weekday>` (the day's ISO weekday); mark a11y `daily.week.day-done.a11y-label` / `daily.week.day-missed.a11y-label` / `daily.today.label` | `summary.week[i]` |
 | `daily.week-day.7.today-tag` | `daily.today.label` sticker | `isToday` (always the last column) |
 | `daily.week-card.legend.done` / `.missed` | `daily.week.done` / `daily.week.missed` | |

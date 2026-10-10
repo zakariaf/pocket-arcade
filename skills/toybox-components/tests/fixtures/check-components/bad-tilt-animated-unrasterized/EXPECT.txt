@@ -1,0 +1,3 @@
+[tilt-raster]
+packages/shell/src/ui/sticker.tsx:
+an animated tilt is not one rasterized layer

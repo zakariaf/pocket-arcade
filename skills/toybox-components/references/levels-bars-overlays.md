@@ -26,7 +26,7 @@ Level tiles and stars, the three top bars and the banner band, and everything th
 
 **States** (`state` is a union, so impossible combinations cannot be written):
 - `{ kind: 'completed', stars: 1 | 2 | 3 }`: filled mini stars (`starOn`, `border` edge) then hollow ones (`starOff`).
-- `{ kind: 'current' }` (the next level): `accent` fill, `onAccent` number and hollow stars, 3 pt edge, bobs (translateY 0 → −3 → 0, 1.6 s loop ease-in-out; no loop under reduce motion); a **flag** at the top-end corner: 24 × 24, radius 7, gold, 2 pt toy-ink edge, 2.5 pt white ring, tilt +8°, offset −11 top / −9 end, 12 pt `play` icon.
+- `{ kind: 'current' }` (the next level): `accent` fill, `onAccent` number and hollow stars, 3 pt edge, bobs (translateY 0 → −3 → 0, 1.6 s loop ease-in-out; no loop under reduce motion; only this tile sits in `LevelTileBob`, the one wrapper with a Reanimated value, while every other tile sits in a plain View); a **flag** at the top-end corner: 24 × 24, radius 7, gold, 2 pt toy-ink edge, 2.5 pt white ring, tilt +8°, offset −11 top / −9 end, 12 pt `play` icon.
 - `{ kind: 'locked' }`: `sunken` fill, dashed `inkSoft` edge, `inkSoft` number and a 16 pt `lock` instead of stars, no shadow, pushed in (`isPushedIn`: the tile sits 3 pt lower by layout, `top: 3` on its Pressable, never by a transform, so Maestro and the parity bounds measure the sunk tile). It stays pressable: tapping it shows the focus ring (`isFocused`: 3 pt `focus` outline, 2 pt gap) and the screen's toast "Unlock this one by finishing level n."
 - Pressed (the transient press only): translateY 3, scale 1.04 × 0.94, shadow 0.
 
@@ -110,7 +110,7 @@ Contrast: the 17 pt Bold danger label stays on the key while the fill grows unde
 
 *Measurements* (`toast`): paddingBlock 12 · paddingInline 14 · radius 12 · gap 10 · icon 20 · stackGap 10.
 
-**Position and life** (Chosen): above the banner band, 14 pt over the bottom of the body; it leaves after about 3 s (the screen owns the timer). S12 restore results stack toasts with gap 10 (`ToastStack`). The S8 locked-tile toast follows its design instead: absolute, 352 pt below the top of the scrolling body, over the last rows of the pack (the mockup's `.lv-toast{top:352px}`).
+**Position and life** (Chosen): above the banner band, 14 pt over the bottom of the body; it leaves after about 3 s (the screen owns the timer). S12 restore results stack toasts with gap 10 (`ToastStack`). The S8 locked-tile toast follows its design instead: absolute, 352 pt below the top of the scrolling body, over the last rows of the pack (the mockup's `.lv-toast{top:352px}`). A toast never takes a tap: one that floats over pressable parts (the S8 toast stays up over the tiles) sits in a wrapper with `pointerEvents="none"`, so the parts under it keep working.
 
 **Accessibility:** role `alert` with a polite live region, and the screen also announces the text (`AccessibilityInfo.announceForAccessibility` through the app's announce hook): iOS does not read live regions. ids: `levels.level-tile.locked-toast`, `premium.restoring-toast`, `premium.restore-success-toast`, `premium.restore-empty-toast`, `premium.restore-failed-toast`.
 

@@ -49,7 +49,8 @@ function monthOf(date: DateKey): number {
   return Number(date.slice(5, 7));
 }
 
-function dayOf(date: DateKey): number {
+/** '2026-09-26' -> 26: the day of the month (S9's calendar tile formats it in the chosen digits). */
+export function dayOf(date: DateKey): number {
   return Number(date.slice(8, 10));
 }
 
@@ -66,6 +67,14 @@ export function formatWeekdayName(date: DateKey, t: TFunction): string {
 // '2026-09-26' -> the week strip's column head ("Sa" in en, one letter in fa/ckb).
 export function formatWeekdayLetter(date: DateKey, t: TFunction): string {
   return t(WEEKDAY_STRIP_KEYS[isoWeekday(date) - 1] ?? 'date.weekday-strip.1');
+}
+
+/** S9's week strip and S10's bars: a day's column letter and its VoiceOver name together. */
+export function formatWeekdayLabels(
+  date: DateKey,
+  t: TFunction,
+): { readonly letter: string; readonly weekdayName: string } {
+  return { letter: formatWeekdayLetter(date, t), weekdayName: formatWeekdayName(date, t) };
 }
 
 // '2026-09-26' -> "26 Sep" / "26. Sept." / "۲۶ سپتامبر" / "۲۶ی ئەیلوول" (catalog + digits).

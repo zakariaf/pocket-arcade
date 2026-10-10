@@ -37,7 +37,8 @@ const SPEC = {
     '  press-outside-raised   Pressable, Touchable* or a gesture-handler button outside raised-surface, quiet-button and list-row',
     '  pressed-opacity        a pressed style fades with opacity (pressed style, pressed && {opacity}, opacity: pressed ? ...)',
     '  no-hitslop             hitSlop anywhere in app code (make the box 44 pt instead)',
-    '  tilt-outside-printed   rotate in Shell UI outside stickers, flags, art, logos, calendar and stars',
+    '  tilt-outside-printed   rotate, tilt() or tiltedLayer() in Shell UI outside stickers, flags, art, logos, calendar',
+    '                         and stars',
     '  measurement-literal    a numeric size literal inside a component StyleSheet',
     '  flat-part-shadow       hardShadow on a part that lies flat (panels, lists, rows, chips, toasts, stickers)',
     '  hold-reduce-motion     the hold-to-confirm timer lacks reduceMotion: ReduceMotion.Never',
@@ -67,6 +68,12 @@ const SPEC = {
     '                         the face edges (position absolute, top, bottom, start and end 0, row)',
     '  confetti-ltr           the Confetti band lacks direction: \'ltr\': its pieces (placed with start: x) mirror in',
     '                         right-to-left languages, while the design scatters them from the left in every language',
+    '  tilt-raster            a printed part turns outside the one tilt primitive (toybox-styles.ts): a rotate or',
+    '                         shouldRasterizeIOS written by hand, an animated tilt() without TILTED_LAYER, or',
+    '                         TILTED_LAYER without an animated tilt(); static parts spread tiltedLayer(deg, style),',
+    '                         which owns the turn and the rasterized layer (an unrasterized turned View steps its',
+    '                         edges and inner borders at device pixels, the S9 calendar\'s month band); result',
+    '                         stars pop upright and Skia paths turn inside their canvas',
     '',
     'Example: node check-components.mjs .   (from the app repo root)',
   ].join('\n'),
@@ -260,6 +267,26 @@ function checkDeviceRules(report, root) {
   }
 }
 
+/** Tilted parts whose turn is not a printed tilt: Skia paths turn inside a canvas, the result stars pop upright. */
+const TILT_RASTER_EXEMPT = new Set(['picture-path.tsx', 'result-stars.tsx']);
+const TILT_PRIMITIVE = 'toybox-styles.ts';
+const TILT_RASTER_FIX = "Turn the part through the one tilt primitive in './toybox-styles.ts': spread {...tiltedLayer(deg, style)} on the View that turns; a tilt that animates turns with tilt(deg) in its animated style and spreads {...TILTED_LAYER} (as the templates do).";
+
+/** A printed part that tilts is one rasterized layer, turned only through the tilt primitive (tiltedLayer, or tilt with TILTED_LAYER). */
+function checkTiltRaster(report, file, text, name) {
+  if (name === TILT_PRIMITIVE || TILT_RASTER_EXEMPT.has(name)) return;
+  scan(report, file, text, 'tilt-raster', /\bshouldRasterizeIOS\b/g, { message: () => 'a layer rasterized by hand instead of through the one tilt primitive', fix: TILT_RASTER_FIX });
+  scan(report, file, text, 'tilt-raster', /\brotate\s*:/g, { message: () => "a turn written by hand is not one rasterized layer through the tilt primitive, so iOS steps its turned edges and inner borders at device pixels (the S9 calendar's month band)", fix: TILT_RASTER_FIX });
+  const animated = /\btilt\s*\(/.exec(text);
+  const raster = /\.\.\.TILTED_LAYER\b/.exec(text);
+  if (animated && !raster) {
+    report.problem({ file, line: lineOf(text, animated.index), rule: 'tilt-raster', message: 'an animated tilt is not one rasterized layer: tilt() turns a View that does not spread TILTED_LAYER', fix: TILT_RASTER_FIX });
+  }
+  if (raster && !animated) {
+    report.problem({ file, line: lineOf(text, raster.index), rule: 'tilt-raster', message: 'TILTED_LAYER spread by hand next to a static turn: tiltedLayer(deg, style) owns both halves', fix: TILT_RASTER_FIX });
+  }
+}
+
 function checkUiRules(report, file, source, catalogue) {
   const text = masked(source);
   const name = file.slice(UI_DIR.length + 1);
@@ -275,9 +302,10 @@ function checkUiRules(report, file, source, catalogue) {
     report.problem({ file, rule: 'hold-reduce-motion', message: 'the hold timer would finish instantly under Reduce motion', fix: 'Pass reduceMotion: ReduceMotion.Never to the hold withTiming: it is a safety timer, not decoration.' });
   }
   if (!isUi || name.startsWith('icons/')) return;
-  if (!catalogue.allowTilt.includes(name)) {
-    scan(report, file, text, 'tilt-outside-printed', /\brotate\s*:/g, { message: () => 'a tilted Shell part that is not printed', fix: 'Only stickers, flags, art and logo tiles, the calendar and result stars tilt; keys, panels and rows stay square.' });
+  if (!catalogue.allowTilt.includes(name) && name !== TILT_PRIMITIVE) {
+    scan(report, file, text, 'tilt-outside-printed', /\brotate\s*:|\btilt(?:edLayer)?\s*\(/g, { message: () => 'a tilted Shell part that is not printed', fix: 'Only stickers, flags, art and logo tiles, the calendar and result stars tilt; keys, panels and rows stay square.' });
   }
+  checkTiltRaster(report, file, text, name);
   if (!SHADOW_ALLOWED.has(name) && catalogue.components.some((entry) => entry.file === name)) {
     scan(report, file, text, 'flat-part-shadow', /\bhardShadow\s*\(/g, { message: () => 'a static hard shadow on a part that lies flat', fix: 'Panels, lists, rows, chips, toasts and stickers have no shadow; raised means pressable (RaisedSurface).' });
   }

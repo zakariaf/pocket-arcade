@@ -1,6 +1,6 @@
 // packages/shell/src/screens/levels/levels-model-of.test.ts
 // no-shell-context: pure pack and tile rules.
-import { levelPacksOf, starsByLevelOf } from './levels-model-of.ts';
+import { levelPacksOf, starsByLevelOf, unlockingLevelOf } from './levels-model-of.ts';
 
 import type { LevelsInput } from './levels-model-of.ts';
 import type { LevelPack } from '@e07/game-kit/contract/levels.ts';
@@ -66,6 +66,18 @@ describe('levelPacksOf', () => {
     expect(packs[2]?.missingStars).toBe(6);
   });
 
+  it('keeps one current level per pack: the first open unfinished one (spec S8)', () => {
+    // Level 3 won while level 2 was not (an old save): 2 is current, 4 opens only after 2 is won.
+    const packs = levelPacksOf(input({ 1: 3, 3: 2 }));
+
+    expect(packs[0]?.tiles.map((tile) => tile.state)).toStrictEqual([
+      { kind: 'completed', stars: 3 },
+      { kind: 'current' },
+      { kind: 'completed', stars: 2 },
+      { kind: 'locked' },
+    ]);
+  });
+
   it('reads the best stars of each won level from the save', () => {
     const won = { bestScore: 10, bestMoves: null, completions: 1, firstCompletedOn: '2026-09-20' };
     expect(starsByLevelOf({ '1': { ...won, stars: 2 }, '12': { ...won, stars: 3 } })).toStrictEqual(
@@ -74,5 +86,19 @@ describe('levelPacksOf', () => {
         12: 3,
       },
     );
+  });
+});
+
+describe('unlockingLevelOf', () => {
+  it("names the open pack's current level for any locked tile of that pack (spec S8)", () => {
+    // Level 1 won: pack 1 has 2 current, 3 and 4 locked; pack 2 stays locked (3 of 6 stars).
+    const onePack = levelPacksOf(input({ 1: 3 }));
+    // Levels 1 and 2 won: 6 stars open pack 2, whose current level is 5.
+    const twoPacks = levelPacksOf(input({ 1: 3, 2: 3 }));
+
+    expect(unlockingLevelOf(onePack, 3)).toBe(2);
+    expect(unlockingLevelOf(onePack, 4)).toBe(2);
+    expect(unlockingLevelOf(twoPacks, 4)).toBe(3);
+    expect(unlockingLevelOf(twoPacks, 8)).toBe(5);
   });
 });
