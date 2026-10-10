@@ -135,6 +135,25 @@ describe('useHomeModel', () => {
     expect(mockNavigate).toHaveBeenLastCalledWith('Game', { start: 'resume' });
   });
 
+  it("resumes a saved run from its own key: today's daily from the card, endless from its row", async () => {
+    // N10, 8.6: the save holds one run; opening a new one over it would throw that run away.
+    const save = seasonedSave();
+    const first = await homeModel(save);
+    first.shell.host.openSession({ start: 'new', ref: { kind: 'daily', date: '2026-09-26' } });
+    (await homeModel(save)).model.actions.onPlayDaily();
+    expect(mockNavigate).toHaveBeenLastCalledWith('Game', { start: 'resume' });
+
+    first.shell.host.openSession({ start: 'new', ref: { kind: 'endless' } });
+    (await homeModel(save)).model.actions.onPlayEndless();
+    expect(mockNavigate).toHaveBeenLastCalledWith('Game', { start: 'resume' });
+    // The saved endless run is not today's daily: the card's key starts the daily.
+    (await homeModel(save)).model.actions.onPlayDaily();
+    expect(mockNavigate).toHaveBeenLastCalledWith('Game', {
+      start: 'new',
+      ref: { kind: 'daily', date: '2026-09-26' },
+    });
+  });
+
   it('keeps the banner closed offline', async () => {
     const { model } = await homeModel(seasonedSave(), false);
     expect(model.banner.isAllowed).toBe(false);
