@@ -41,6 +41,12 @@ describe('resolveLanguage', () => {
     );
   });
 
+  it('falls back to English for a device code named like a built-in object key (spec 7.2)', () => {
+    for (const code of ['__proto__', 'constructor', 'toString', 'hasOwnProperty']) {
+      expect(resolveLanguage(null, [device(code)])).toBe('en');
+    }
+  });
+
   it('returns any saved language unchanged (spec 7.2)', () => {
     fc.assert(
       fc.property(fc.constantFrom(...LANGUAGES), fc.array(ANY_DEVICE_LOCALE), (saved, locales) => {

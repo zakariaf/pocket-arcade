@@ -142,6 +142,19 @@ describe('parityDoc', () => {
     expect(save.doc().run).toBeNull();
   });
 
+  it.each(['constructor', 'toString', 'hasOwnProperty', '__proto__'])(
+    'shows no counters for a design game named like a built-in object key (%s)',
+    (game) => {
+      const { save } = createTestSave();
+      const request = { ...requestFor('s10-statistics'), game };
+
+      const doc = parityDoc({ base: save.doc(), game: GAME, request });
+
+      expect(doc.stats.counters).toStrictEqual({});
+      expect(Object.getPrototypeOf(doc.stats.counters)).toBe(Object.prototype);
+    },
+  );
+
   it('shows the counters of the game the capture asked for', () => {
     const { save } = createTestSave();
     const request = { ...requestFor('s10-statistics'), game: 'flockTilt' };

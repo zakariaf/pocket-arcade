@@ -2,7 +2,7 @@
   {
     "replace": {
       "file": "packages/shell/src/config/privacy-manifest.ts",
-      "find": "      NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',\n      NSPrivacyAccessedAPITypeReasons: ['E174.1'],",
+      "find": "      NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',\n      NSPrivacyAccessedAPITypeReasons: ['E174.1', '85F4.1'],",
       "with": "      NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',\n      NSPrivacyAccessedAPITypeReasons: [],"
     }
   }

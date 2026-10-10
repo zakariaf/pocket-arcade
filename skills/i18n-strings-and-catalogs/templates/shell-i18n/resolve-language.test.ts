@@ -25,6 +25,15 @@ describe('resolveLanguage', () => {
   });
 });
 
+describe('resolveLanguage for built-in object keys', () => {
+  it('falls back to English for a device code named like a built-in object key (spec 7.2)', () => {
+    for (const code of ['__proto__', 'constructor', 'toString', 'hasOwnProperty']) {
+      expect(resolveLanguage(null, [device(code)])).toBe('en');
+    }
+  });
+
+});
+
 describe('LANGUAGE_AUTONYMS', () => {
   it('pins each language name in its own script (never translated)', () => {
     expect(LANGUAGE_AUTONYMS).toStrictEqual({

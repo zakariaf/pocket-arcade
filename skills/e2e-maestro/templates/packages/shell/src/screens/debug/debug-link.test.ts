@@ -74,6 +74,18 @@ describe('parseDebugLink', () => {
     expect(parseDebugLink(`${LINK}?${query}`)).toStrictEqual({ kind: 'error', message });
   });
 
+  it.each([
+    ['__proto__=x', 'unknown debug parameter "__proto__"'],
+    ['hasOwnProperty=1', 'unknown debug parameter "hasOwnProperty"'],
+    ['constructor=x', 'unknown debug parameter "constructor"'],
+    ['toString=1', 'unknown debug parameter "toString"'],
+    ['digits=toString', 'debug parameter digits="toString" is not allowed'],
+    ['digits=__proto__', 'debug parameter digits="__proto__" is not allowed'],
+    ['digits=constructor', 'debug parameter digits="constructor" is not allowed'],
+  ])('refuses the built-in object key in %s like any unknown name or value', (query, message) => {
+    expect(parseDebugLink(`${LINK}?${query}`)).toStrictEqual({ kind: 'error', message });
+  });
+
   it('leaves every other link alone', () => {
     expect(parseDebugLink('e07-line-siege://levels')).toStrictEqual({ kind: 'not-debug' });
     expect(parseDebugLink('e07-line-siege://settings/debug/setup')).toStrictEqual({

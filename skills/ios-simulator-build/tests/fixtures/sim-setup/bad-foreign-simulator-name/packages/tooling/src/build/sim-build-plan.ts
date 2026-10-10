@@ -88,6 +88,10 @@ function linkOf(flags: ReadonlyMap<string, string>, variant: BuildVariant): Link
   return { query, waitFor };
 }
 
+/** The bound maestro-args' maestroGlobalArgs enforces, checked here before the preflight and build. */
+const isDriverPort = (port: number): boolean =>
+  Number.isInteger(port) && port >= 1024 && port <= 65_535;
+
 /** Parses the CLI; the variant rules are the ones app.config.ts applies (forbidden pairs throw). */
 export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
   const flags = readFlags(argv);
@@ -106,7 +110,7 @@ export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
   const link = linkOf(flags, variant);
   const port = flags.get('--driver-port');
   const driverPort = port === undefined ? null : Number(port);
-  if (driverPort !== null && !(Number.isInteger(driverPort) && driverPort >= 1024)) {
+  if (driverPort !== null && !isDriverPort(driverPort)) {
     throw new Error(`--driver-port ${String(port)}: pass a port from 1024 to 65535`);
   }
   return { game, variant, purpose: flags.get('--sim') ?? 'smoke', link, driverPort };
@@ -286,12 +290,31 @@ export function moduleCachePathIn(pcmText: string, game: string): string | null 
   return pattern.exec(pcmText)?.[0] ?? null;
 }
 
-/** Test builds write a cold-start entry to the perf log once Home is interactive. */
-export function isColdStartLogged(perfLogPayload: string): boolean {
-  return perfLogPayload.includes('cold-start');
+/**
+ * Test builds write a cold-start entry to the perf log once Home is interactive. The log lives in
+ * the data container, which survives a reinstall: with this launch's time, only an entry written
+ * at or after it counts (an earlier run's entry would declare a black screen ready). A payload
+ * that is not a JSON array of entries counts as no entry.
+ */
+export function isColdStartLogged(perfLogPayload: string, sinceEpochMs?: number): boolean {
+  try {
+    const entries: unknown = JSON.parse(perfLogPayload);
+    return Array.isArray(entries) && entries.some((entry) => isColdStartSince(entry, sinceEpochMs));
+  } catch {
+    return false;
+  }
 }
 
-export type ReadyProbe = {
+function isColdStartSince(entry: unknown, sinceEpochMs: number | undefined): boolean {
+  const { kind, atEpochMs } = (entry ?? {}) as { kind?: unknown; atEpochMs?: unknown };
+  if (kind !== 'cold-start') return false;
+  return sinceEpochMs === undefined || (typeof atEpochMs === 'number' && atEpochMs >= sinceEpochMs);
+}
+
+/** When this run launched the app (taken before the install): only later entries count. */
+export type ReadyProbeSince = { readonly launchedAtEpochMs?: number };
+
+export type ReadyProbe = ReadyProbeSince & {
   readonly attempt: number;
   readonly perfLog: string | null;
   readonly screenUnchanged: boolean;
@@ -308,12 +331,12 @@ const MIN_ATTEMPTS_FOR_STABLE_SCREEN = 6;
 const MIN_ATTEMPTS_WITHOUT_COLD_START = 16;
 
 /**
- * Ready when the perf log has Home's cold-start entry; otherwise when two screenshots in a row are
- * identical at least 3 s after launch (no perf log: store builds, early Shells) or 8 s after launch
- * (a perf log without the entry: the first screen is not Home).
+ * Ready when the perf log has Home's cold-start entry from this launch; otherwise when two
+ * screenshots in a row are identical at least 3 s after launch (no perf log: store builds, early
+ * Shells) or 8 s after launch (a perf log without that entry: the first screen is not Home).
  */
 export function readyReason(probe: ReadyProbe): 'perf-log' | 'stable-screen' | null {
-  if (probe.perfLog !== null && isColdStartLogged(probe.perfLog)) {
+  if (probe.perfLog !== null && isColdStartLogged(probe.perfLog, probe.launchedAtEpochMs)) {
     return 'perf-log';
   }
   const minAttempts =

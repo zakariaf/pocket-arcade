@@ -7,6 +7,7 @@ import ckb from '@e07/shell/i18n/catalogs/ckb.json' with { type: 'json' };
 import de from '@e07/shell/i18n/catalogs/de.json' with { type: 'json' };
 import en from '@e07/shell/i18n/catalogs/en.json' with { type: 'json' };
 import fa from '@e07/shell/i18n/catalogs/fa.json' with { type: 'json' };
+import { LANGUAGES } from '@e07/shell/i18n/languages.ts';
 
 import { admobPluginOptions } from './ads-config.ts';
 import { AUDIO_API_PLUGIN } from './audio-config.ts';
@@ -19,7 +20,7 @@ import type { ExpoConfig } from 'expo/config';
 export type PluginEntry = NonNullable<ExpoConfig['plugins']>[number];
 
 /** The four app languages, so iOS lists them in Settings > App > Language. */
-export const SUPPORTED_LOCALES: readonly LanguageCode[] = ['en', 'de', 'fa', 'ckb'];
+export const SUPPORTED_LOCALES: readonly LanguageCode[] = LANGUAGES;
 
 const TRACKING_KEY = 'consent.tracking.usage-description';
 

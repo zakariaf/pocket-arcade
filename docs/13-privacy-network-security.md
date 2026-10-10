@@ -319,12 +319,16 @@ Result on the same app (14 native modules): `react-native` {urlSession, webSocke
 
 #### Layer D: vendor pods
 
-`Podfile.lock` separates pods built from `node_modules` (`EXTERNAL SOURCES`) from pods downloaded from the CocoaPods trunk (`SPEC REPOS: trunk:`). Only the second kind can bring an unreviewed binary SDK.
+`Podfile.lock` separates pods downloaded from the CocoaPods trunk (`SPEC REPOS: trunk:`) from pods taken from anywhere else (`EXTERNAL SOURCES`). A trunk pod must be on the allowlist. An external pod passes only when its `:path` or `:podspec` is a folder in the repo (an autolinked npm or workspace module, whose code layer C scans, or prebuild's generated code); a `:git`, `:http` or remote `:podspec` source, or a `:path` outside the repo, fails unless the pod is on the allowlist, because no other layer reads its code (added 2026-10-04; line-siege's 104 external pods all pass).
 
 ```ts
 // packages/tooling/src/audit/network-pods-layer.ts
 // Layer D: vendor pods (downloaded from the CocoaPods trunk, i.e. not built from node_modules)
-// must be on the allowlist, and only Google's pods may declare tracking in their manifests.
+// must be on the allowlist, and only Google's pods may declare tracking in their manifests. A pod
+// from EXTERNAL SOURCES passes only when it is built from a folder in the repo (an autolinked npm
+// or workspace module, whose code layer C scans): a :git, :http or remote :podspec source, or a
+// :path outside the repo, is a binary or source no other layer reads.
+import { posix } from 'node:path';
 export const VENDOR_POD_ALLOWLIST: ReadonlySet<string> = new Set([
   'Google-Mobile-Ads-SDK', // react-native-google-mobile-ads (spec N3 (a))
   'GoogleUserMessagingPlatform', // UMP consent, same component
@@ -340,10 +344,57 @@ export function trunkPods(podfileLock: string): string[] {
     .filter((name): name is string => name !== undefined);
 }
 
+/**
+ * Podfile.lock's "EXTERNAL SOURCES:": every pod not taken from the trunk, with its source keys
+ * ("  Name:" then "    :path: \"../node_modules/x\"", :podspec, :git, :http, :tag...).
+ */
+export function externalSources(
+  podfileLock: string,
+): Map<string, Readonly<Record<string, string>>> {
+  const section = podfileLock.split('\nEXTERNAL SOURCES:\n')[1]?.split('\n\n')[0] ?? '';
+  const sources = new Map<string, Record<string, string>>();
+  let current: Record<string, string> = {};
+  for (const line of section.split('\n')) {
+    const pod = /^ {2}"?([^"\s]+?)"?:$/.exec(line)?.[1];
+    if (pod !== undefined) sources.set(pod, (current = {}));
+    const key = /^ {4}:(\w+): "?([^"]*)"?$/.exec(line);
+    if (key?.[1] !== undefined) current[key[1]] = key[2] ?? '';
+  }
+  return sources;
+}
+
+/** Where apps/<game>/ios sits in the repo: Podfile.lock's :path and :podspec are relative to it. */
+const IOS_DIR_IN_REPO = 'apps/game/ios';
+const REMOTE_KEYS = ['git', 'http'] as const;
+
+/** The source of an external pod that is neither the trunk nor a folder in the repo, or null. */
+function foreignSource(source: Readonly<Record<string, string>>): [string, string] | null {
+  const remote = REMOTE_KEYS.find((key) => source[key] !== undefined);
+  if (remote !== undefined) return [remote, source[remote] ?? ''];
+  const key = source['path'] === undefined ? 'podspec' : 'path';
+  const value = source[key];
+  if (value === undefined) return null;
+  const inRepo = posix.normalize(posix.join(IOS_DIR_IN_REPO, value));
+  const isInside = !value.includes('://') && !posix.isAbsolute(value) && !inRepo.startsWith('../');
+  return isInside ? null : [key, value];
+}
+
+function externalPodProblems(podfileLock: string): string[] {
+  return [...externalSources(podfileLock)].flatMap(([pod, source]) => {
+    const foreign = VENDOR_POD_ALLOWLIST.has(pod) ? null : foreignSource(source);
+    if (foreign === null) return [];
+    const [kind, value] = foreign;
+    return [
+      `pod ${pod} comes from a :${kind} source (${value}), not the CocoaPods trunk or a folder in the repo`,
+    ];
+  });
+}
+
 export function podProblems(podfileLock: string): string[] {
-  return trunkPods(podfileLock)
+  const trunk = trunkPods(podfileLock)
     .filter((pod) => !VENDOR_POD_ALLOWLIST.has(pod))
     .map((pod) => `vendor pod ${pod} is not on the N3 allowlist`);
+  return [...trunk, ...externalPodProblems(podfileLock)];
 }
 ```
 
@@ -439,11 +490,10 @@ import { join } from 'node:path';
 import { findBannedPackages, inventoryFromLockfile } from '@e07/tooling/deps/banned-packages.ts';
 
 import { readBundleModules } from './bundle-modules.ts';
+import { podAndConfigProblems } from './network-app-layers.ts';
 import { compareToBaseline } from './network-baseline.ts';
-import { configProblems } from './network-config-layer.ts';
 import { jsNetworkFindings } from './network-js-layer.ts';
 import { nativeModuleRoots, nativeNetworkFindings } from './network-native-layer.ts';
-import { podProblems } from './network-pods-layer.ts';
 import { storeBundleProblems } from './release-bundle-checks.ts';
 
 import type { Baseline } from './network-baseline.ts';
@@ -483,24 +533,21 @@ function jsProblems(outDir: string): string[] {
   ];
 }
 
+/** Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. */
 function nativeAndPodProblems(appDir: string): string[] {
   const native = compareToBaseline(
     nativeNetworkFindings(nativeModuleRoots(appDir)),
     readBaseline('native-baseline.json'),
   );
   const lock = join(appDir, 'ios', 'Podfile.lock');
-  if (!existsSync(lock))
-    return [...native, 'SKIPPED pods/config layers: run npx expo prebuild first'];
   const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
     cwd: appDir,
     env: STORE_ENV,
     encoding: 'utf8',
   });
-  return [
-    ...native,
-    ...podProblems(readFileSync(lock, 'utf8')),
-    ...configProblems(JSON.parse(json) as ExpoConfigLike),
-  ];
+  const podfileLock = existsSync(lock) ? readFileSync(lock, 'utf8') : null;
+  const config = JSON.parse(json) as ExpoConfigLike;
+  return [...native, ...podAndConfigProblems({ podfileLock, config })];
 }
 
 function auditApp(gameId: string): string[] {
@@ -526,7 +573,7 @@ console.error(`audit:network: ${String(failures.length)} failure(s)`);
 process.exitCode = failures.length === 0 ? 0 : 1;
 ```
 
-Run end to end on 2026-09-26 against the SDK 57 test app with the baselines above: layers B–D passed, layer E correctly failed on the app's missing `updates.enabled: false`, exit code 1. On Linux CI (no Pods) layers D and E print `SKIPPED`; `release:ios` always runs after prebuild, so they run there. `STALE` entries are reported without failing, so the baseline shrinks when a package leaves.
+Run end to end on 2026-09-26 against the SDK 57 test app with the baselines above: layers B–D passed, layer E correctly failed on the app's missing `updates.enabled: false`, exit code 1. The config layer (E) reads `npx expo config`, which needs no prebuild, so it runs on every call (`network-app-layers.ts`); only the pods layer (D) needs `ios/Podfile.lock`, and on Linux CI or a fresh clone it prints `SKIPPED pods layer: no ios/Podfile.lock (run npx expo prebuild first)`. Until 2026-10-04 both layers were skipped without the Podfile.lock. `release:ios` always runs after prebuild, so both run there. `STALE` entries are reported without failing, so the baseline shrinks when a package leaves.
 
 #### Layer F: runtime
 
@@ -648,7 +695,8 @@ setInterval(() => {
 ```ts
 // packages/shell/src/config/privacy-manifest.ts
 // Aggregated required-reason APIs of every pod (checked by `npm run audit:privacy`, which
-// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here).
+// fails when a pod's PrivacyInfo.xcprivacy declares a category/reason missing here), the
+// development pods built from node_modules included (expo-file-system: 0A2A.1, 3B52.1, 85F4.1).
 export const PRIVACY_MANIFESTS = {
   // Our code neither tracks nor contacts a domain; GMA's own manifest declares its tracking
   // Device ID. No NSPrivacyTrackingDomains: iOS would block them when ATT is declined (FINAL H.1).
@@ -660,7 +708,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
-      NSPrivacyAccessedAPITypeReasons: ['C617.1'],
+      NSPrivacyAccessedAPITypeReasons: ['C617.1', '0A2A.1', '3B52.1'],
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
@@ -668,7 +716,7 @@ export const PRIVACY_MANIFESTS = {
     },
     {
       NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryDiskSpace',
-      NSPrivacyAccessedAPITypeReasons: ['E174.1'],
+      NSPrivacyAccessedAPITypeReasons: ['E174.1', '85F4.1'],
     },
   ],
 };
@@ -730,100 +778,9 @@ export function missingReasons(
 }
 ```
 
-```ts
-// packages/tooling/src/audit/audit-privacy.ts
-// `npm run audit:privacy [-- --app <game-id>]` after `npx expo prebuild --platform ios --clean`
-// (prebuild runs pod install). Without --app: every app that has ios/Pods. Fails when app.config
-// lacks a reason a pod declares, when a pod other than Google's declares tracking, or when no
-// app is prebuilt, or when the app's own manifest declares tracking (FINAL H.1). Also prints the
-// App Privacy questionnaire input.
-import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+`packages/tooling/src/audit/audit-privacy.ts` (`npm run audit:privacy [-- --app <game-id>]`, after `npx expo prebuild --platform ios --clean`) reads exactly the manifests CocoaPods puts into the app: the trunk pods' under `ios/Pods/<pod>/`, and the development pods' (`Podfile.lock`'s `EXTERNAL SOURCES` built from a local `:path` or `:podspec` in `node_modules` or the workspace). CocoaPods never copies a development pod into `ios/Pods`; it bundles the manifest from the pod's own folder, as `ios/Pods/Local Podspecs/<pod>.podspec.json` names it in `resource_bundles` or `resources`, so the audit resolves those names against the pod's `:path` or its `:podspec`'s folder (`localPodManifestPaths` in `privacy-manifest.ts`). It fails when app.config lacks a reason any of these pods declares, when a pod other than Google's two declares tracking or tracking domains, when the app's own manifest declares tracking or tracking domains (FINAL H.1), when a manifest a podspec names cannot be read, or when no app is prebuilt; it also prints the App Privacy questionnaire input. Reading `ios/Pods` alone missed seven development pods on line-siege (2026-10-04), and with them expo-file-system's three reasons above.
 
-import { mergeReasons, missingReasons, readManifest } from './privacy-manifest.ts';
-
-import type { PrivacyManifest } from './privacy-manifest.ts';
-
-// Pods allowed to declare tracking or collected data (the AdMob SDKs, spec N3).
-const TRACKING_ALLOWED = /\/(Google-Mobile-Ads-SDK|GoogleUserMessagingPlatform)\//;
-
-function podManifests(appDir: string): string[] {
-  const pods = join(appDir, 'ios', 'Pods');
-  return readdirSync(pods, { recursive: true, encoding: 'utf8' })
-    .filter((file) => file.endsWith('PrivacyInfo.xcprivacy'))
-    .map((file) => join(pods, file));
-}
-
-function appManifest(appDir: string): PrivacyManifest {
-  const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'public'], {
-    cwd: appDir,
-    encoding: 'utf8',
-  });
-  const config = JSON.parse(json) as { ios?: { privacyManifests?: PrivacyManifest } };
-  return config.ios?.privacyManifests ?? {};
-}
-
-function trackingViolations(paths: readonly string[]): string[] {
-  return paths
-    .filter((path) => !TRACKING_ALLOWED.test(path))
-    .filter((path) => {
-      const manifest = readManifest(path);
-      const domains = manifest.NSPrivacyTrackingDomains ?? [];
-      return manifest.NSPrivacyTracking === true || domains.length > 0;
-    });
-}
-
-// The app's own manifest describes our code, which neither tracks nor contacts a domain; tracking
-// domains listed here would also make iOS fail those requests for players who declined ATT.
-function appTrackingProblems(manifest: PrivacyManifest): string[] {
-  const domains = manifest.NSPrivacyTrackingDomains ?? [];
-  const isTracking = manifest.NSPrivacyTracking === true || domains.length > 0;
-  return isTracking ? ['app manifest declares tracking; only the GMA pod may (FINAL H.1)'] : [];
-}
-
-// Input for the App Store Connect "App Privacy" questionnaire (a human step).
-function collectedData(paths: readonly string[]): string[] {
-  return paths.flatMap((path) =>
-    (readManifest(path).NSPrivacyCollectedDataTypes ?? []).map((item) => {
-      const pod = path.split('/Pods/')[1]?.split('/')[0] ?? path;
-      const flags = `linked=${String(item.NSPrivacyCollectedDataTypeLinked)} tracking=${String(item.NSPrivacyCollectedDataTypeTracking)}`;
-      return `${pod}: ${item.NSPrivacyCollectedDataType.replace('NSPrivacyCollectedDataType', '')} ${flags}`;
-    }),
-  );
-}
-
-function auditApp(appDir: string): number {
-  const paths = podManifests(appDir);
-  const required = mergeReasons(paths.map(readManifest));
-  const ownManifest = appManifest(appDir);
-  const declared = mergeReasons([ownManifest]);
-  const problems = [
-    ...missingReasons(required, declared).map((gap) => `app.config lacks ${gap}`),
-    ...appTrackingProblems(ownManifest),
-    ...trackingViolations(paths).map((path) => `tracking declared outside the AdMob pods: ${path}`),
-  ];
-  for (const [category, reasons] of required)
-    console.error(`${category}: ${[...reasons].join(', ')}`);
-  for (const line of new Set(collectedData(paths))) console.error(`collected ${line}`);
-  for (const problem of problems) console.error(`FAIL ${problem}`);
-  console.error(
-    `${appDir}: ${String(paths.length)} pod manifests, ${String(problems.length)} problem(s)`,
-  );
-  return problems.length;
-}
-
-const appIndex = process.argv.indexOf('--app');
-const gameIds =
-  appIndex >= 0
-    ? [process.argv[appIndex + 1] ?? '']
-    : readdirSync('apps').filter((id) => existsSync(join('apps', id, 'ios', 'Pods')));
-if (gameIds.length === 0) console.error('audit:privacy: no prebuilt app (run npx expo prebuild)');
-const failures = gameIds.reduce((sum, id) => sum + auditApp(join('apps', id)), 0);
-process.exitCode = gameIds.length > 0 && failures === 0 ? 0 : 1;
-```
-
-Verified output on the SDK 57 test app (28 pod manifests): required reasons SystemBootTime `35F9.1`, UserDefaults `CA92.1`, DiskSpace `E174.1`, FileTimestamp `C617.1`; the app config of that spike lacked DiskSpace `E174.1`, and the script failed with exactly that gap. If Apple emails `ITMS-91053` (missing API declaration) after an upload, the same script shows which declaration is missing (`docs/14` failure playbook).
+Verified output on the SDK 57 test app (28 trunk pod manifests): required reasons SystemBootTime `35F9.1`, UserDefaults `CA92.1`, DiskSpace `E174.1`, FileTimestamp `C617.1` (line-siege on 2026-10-04, with the development pods: 35 manifests, plus FileTimestamp `0A2A.1`, `3B52.1` and DiskSpace `85F4.1`); the app config of that spike lacked DiskSpace `E174.1`, and the script failed with exactly that gap. If Apple emails `ITMS-91053` (missing API declaration) after an upload, the same script shows which declaration is missing (`docs/14` failure playbook).
 
 ### 3.4 App Privacy label guidance
 

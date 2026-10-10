@@ -113,6 +113,14 @@ describe('the parity session', () => {
     expect(parityGameFixture({ isScoreRated: false }, PARITY_FIXTURE)).toBeNull();
   });
 
+  it.each(['constructor', 'toString', 'hasOwnProperty', '__proto__'])(
+    'has no game numbers for a design game named like a built-in object key (%s)',
+    (game) => {
+      startParitySession({ ...PAUSE_REQUEST, game });
+      expect(parityGameFixture()).toBeNull();
+    },
+  );
+
   it('knows the params of every design game', () => {
     startParitySession({ ...PAUSE_REQUEST, game: 'flockTilt' });
     expect(parityGameFixture()?.progress.mid).toStrictEqual({ penned: 2, total: 4 });

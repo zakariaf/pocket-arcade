@@ -60,7 +60,10 @@ function runOf<T extends ShellGameTypes>(
 
 /** The demo player's statistics, with the counters of the game this launch shows. */
 function statsOf(request: ParityRequest, fixture: ParityFixture): SaveDoc['stats'] {
-  return { ...fixture.stats, counters: fixture.counters[request.game] ?? {} };
+  const counters = Object.hasOwn(fixture.counters, request.game)
+    ? fixture.counters[request.game]
+    : undefined;
+  return { ...fixture.stats, counters: counters ?? {} };
 }
 
 /** Progress, run, daily and statistics: the demo player, or a player with nothing yet. */

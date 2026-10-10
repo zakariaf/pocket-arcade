@@ -42,8 +42,10 @@ import {
   SIM_BUILD_USAGE,
   variantEnv,
   xcodebuildSimArgs,
+  type ReadyProbeSince,
   type SimBuildOptions,
 } from '@e07/tooling/build/sim-build-plan.ts';
+import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
   bootForScreenshots,
@@ -141,13 +143,9 @@ function sleep(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-/** The perf-log payload, or null when the app has no perf log (store builds, early Shells). */
-function readPerfLog(simctl: Simctl, udid: string, bundleId: string): string | null {
-  const container = simctl(['get_app_container', udid, bundleId, 'data']).trim();
-  const database = join(container, 'Documents', 'SQLite', 'save.db');
-  if (!existsSync(database)) {
-    return null;
-  }
+/** The perf-log payload in the app's save.db, or null without one (store builds, early Shells). */
+function readPerfLog(database: string): string | null {
+  if (!existsSync(database)) return null;
   const result = spawnSync('sqlite3', [database, 'SELECT payload FROM perf_log WHERE id = 1'], {
     encoding: 'utf8',
   });
@@ -156,20 +154,22 @@ function readPerfLog(simctl: Simctl, udid: string, bundleId: string): string | n
 
 /**
  * Polls every 500 ms (never a fixed sleep), then keeps the last screenshot. perfLog() null waits
- * for a still screen (at least 3 s, two identical screenshots in a row).
+ * for a still screen (at least 3 s, two identical screenshots in a row). launchedAtEpochMs: only
+ * a cold-start entry from this launch counts (the log survives a reinstall).
  */
 function waitAndScreenshot(
   simctl: Simctl,
-  target: { readonly udid: string; readonly perfLog: () => string | null },
+  target: { readonly udid: string; readonly perfLog: () => string | null } & ReadyProbeSince,
   out: string,
 ): string {
   mkdirSync(dirname(out), { recursive: true });
-  let previous = '';
+  let previous: Buffer | null = null;
   for (let attempt = 1; attempt <= READY_MAX_ATTEMPTS; attempt += 1) {
     sleep(READY_POLL_MS);
     simctl(['io', target.udid, 'screenshot', out]);
-    const current = readFileSync(out).toString('base64');
-    const probe = { attempt, perfLog: target.perfLog(), screenUnchanged: current === previous };
+    const current = readFileSync(out);
+    const isSame = previous?.equals(current) ?? false;
+    const probe = { ...target, attempt, perfLog: target.perfLog(), screenUnchanged: isSame };
     const reason = readyReason(probe);
     if (reason !== null) {
       simctl(['io', target.udid, 'screenshot', out]);
@@ -269,10 +269,15 @@ async function main(): Promise<number> {
   const udid = ensureSimulator(simctl, options.purpose, DEFAULT_DEVICE_TYPE);
   const app = buildApp(options, { appDir, env }, udid);
   bootForScreenshots(simctl, udid);
+  // The data container (and its perf log) survives the reinstall: only entries after this count.
+  const launchedAtEpochMs = nowEpochSeconds() * 1000;
   installAndLaunch(simctl, udid, app);
   const out = screenshotPath(options);
-  const perfLog = (): string | null => readPerfLog(simctl, udid, app.bundleId);
-  const reason = waitAndScreenshot(simctl, { udid, perfLog }, out);
+  // The data container stays put once installed: look it up once, not on every poll.
+  const container = simctl(['get_app_container', udid, app.bundleId, 'data']).trim();
+  const database = join(container, 'Documents', 'SQLite', 'save.db');
+  const perfLog = (): string | null => readPerfLog(database);
+  const reason = waitAndScreenshot(simctl, { udid, perfLog, launchedAtEpochMs }, out);
   console.log(
     `build:ios:sim: ${options.variant.appVariant}/${options.variant.adsMode} app ${app.path}`,
   );

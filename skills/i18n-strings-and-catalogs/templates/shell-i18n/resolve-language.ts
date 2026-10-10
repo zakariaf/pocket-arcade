@@ -20,7 +20,8 @@ const BY_CODE: Readonly<Record<string, Language>> = {
 export function languageFromDeviceLocale(locale: DeviceLocale): Language | null {
   const code = locale.languageCode?.toLowerCase() ?? '';
   if (code === 'ku') return locale.languageScriptCode === 'Arab' ? 'ckb' : null;
-  return BY_CODE[code] ?? null;
+  // Own keys only: a device code such as '__proto__' must never reach Object.prototype.
+  return Object.hasOwn(BY_CODE, code) ? (BY_CODE[code] ?? null) : null;
 }
 
 // Saved choice wins, then the first supported device language, then English.
