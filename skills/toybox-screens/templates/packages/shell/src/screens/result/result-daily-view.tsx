@@ -48,6 +48,7 @@ export function ResultDailyView({ model }: ResultDailyViewProps): ReactNode {
             text={t('daily.streak.count', { daysCount: model.streakDays })}
             icon="chain"
             tiltDeg={-3}
+            isReducedMotion={model.isReducedMotion}
           />
         </View>
         <ScorePanel
