@@ -54,7 +54,7 @@ S4 Home is the one-tap start and the door to everything else.
 
 ## Data the model supplies
 
-`HomeModel` (`home-model.ts`), built by the template `use-home-model.ts` (copy it with `use-home-actions.ts`, `use-level-play.ts` and `use-home-model.test.tsx`). Every input and where it comes from:
+`HomeModel` (`home-model.ts`), built by the template `use-home-model.ts` (copy it with `use-home-actions.ts`, `use-level-play.ts`, `use-home-music.ts` and their tests). Every input and where it comes from:
 
 | Field | Source |
 |---|---|
@@ -68,6 +68,7 @@ S4 Home is the one-tap start and the door to everything else.
 | `bestEndlessScore` | the progress store (`selectEndlessBest`) |
 | `banner` | `useBannerSlot('home')` (admob-ads' `app/use-ad-context.ts`): the ads port's `renderBanner` and `shouldShowBanner(config, useAdContext('home'), 'home')`, where the context is Premium, `useIsOnline()`, the saved consent answer, the tutorial done and the levels won |
 | (cold start) | not a field: `useColdStartMark(useOptionalDebugServices()?.perfLog ?? null)` (performance-budgets' `app/perf/use-cold-start-mark.ts`) marks Home's first frame with real data into a test build's perf log, which the E2E evidence run reads; store builds have no debug services and pass null, so nothing is measured or stored |
+| (music) | not a field: `useHomeMusic()` (`use-home-music.ts`, called once from `use-home-model.ts`) starts the game's music sound (`useGameHost().musicSoundId`, null without music) with `AudioPort.startMusic` while the Music setting is on, and stops it at once when Music is switched off (spec S4 and 8.7: music is off by default, never over the player's own music). Line Siege has no music, so its Home starts none. Home stays mounted under the Game route, so playing starts no second voice; no state, no navigation |
 | (parity) | not a field: a parity capture of `s14-progress-restored` opens `{ kind: 'save-restored' }` over Home once (`useParityOpener`, the dialog host's `useOpenDialog()`) |
 | `actions` | `useHomeActions(onPlay, today)`: exactly navigation-and-routing's table (Game with `{ start: 'resume' }` or a new level, daily or endless run; Daily from the card body, `onOpenDaily`; the card's Play key, `onPlayDaily`, starts today's daily run; Settings, Levels, Stats, HowToPlay, Premium). In a partial Shell a route outside the slice shows `NotBuiltScreen`; never write a no-op handler | `HomeTopBar` puts the Toybox `BrandLock` (`testID="home.brand-lock"`, `nameTestID="home.game-name"`, the `LogoTile` as `logo`, the Premium sticker as `badge`) at the start of the `TopBar`.
 
@@ -77,6 +78,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 
 - `packages/shell/src/screens/home/home-model.ts`
 - `packages/shell/src/screens/home/use-home-model.ts`, `use-home-actions.ts`, `use-level-play.ts` and `use-home-model.test.tsx`
+- `packages/shell/src/screens/home/use-home-music.ts` and `use-home-music.test.tsx` (the game's music on Home; the test uses game-audio-and-haptics' fake audio port and the tally game with one looping `music` sound)
 - `packages/shell/src/app/use-game-extra.ts`, `use-is-online.ts`, `use-parity-opener.ts` (with tests), admob-ads' `app/use-ad-context.ts`, performance-budgets' `app/perf/use-cold-start-mark.ts` and e2e-maestro's `app/debug-services-context.tsx` (the perf log arrives on `DebugServices.perfLog`)
 - `packages/shell/src/screens/home/home-daily-card.tsx`
 - `packages/shell/src/screens/home/home-keys.tsx`
