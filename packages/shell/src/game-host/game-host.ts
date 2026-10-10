@@ -15,6 +15,7 @@ import {
   musicSoundIdOf,
 } from '@e07/shell/game-host/game-facts.ts';
 import {
+  clockSeed,
   createResumer,
   entryFor,
   newSession,
@@ -183,20 +184,20 @@ type Opener<T extends ShellGameTypes> = {
   readonly resume: () => Session<T> | null;
 };
 
-const UINT32_RANGE = 4_294_967_296;
-
-/** Endless runs get a fresh uint32 seed from the clock (or the test build's debug seed). */
-function clockSeed(clock: ClockPort, override?: () => number | null): () => number {
-  return () => override?.() ?? Math.floor(clock.nowMs()) % UINT32_RANGE;
-}
-
-/** A new run is written at once (so Home can offer Continue); a saved run is resumed checked. */
+/**
+ * A new run is written at once (so Home can offer Continue); a saved run is resumed checked. The
+ * save holds one run, so a new run replaces it: a loss still waiting for its continue is recorded
+ * first (statistics, streak, bests: N10), never thrown away with the slot; a run still being
+ * played is replaced as from Levels or Next level.
+ */
 function firstSession<T extends ShellGameTypes>(
   opener: Opener<T>,
   open: SessionOpen,
 ): Session<T> | null {
   if (open.start === 'resume') return opener.resume();
   const { game, deps } = opener;
+  const saved = deps.save.doc().run === null ? null : opener.resume();
+  if (saved?.status === 'lost') controllerFor(game, deps, saved).handle.send({ type: 'finish' });
   const session = newSession(game, open.ref, clockSeed(deps.clock, deps.seedOverride));
   if (session !== null) {
     writeRun({ save: deps.save, persistence: game.persistence }, session, true);
