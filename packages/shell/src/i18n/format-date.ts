@@ -1,6 +1,8 @@
 // packages/shell/src/i18n/format-date.ts
 import { isoWeekday } from '@e07/game-kit/dates/date-key.ts';
 
+import { stripIsolates } from './bidi.ts';
+
 import type { TFunction } from './create-t.ts';
 import type { ShellMessageKey } from './messages.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
@@ -92,4 +94,18 @@ export function formatWeekdayDayMonth(date: DateKey, t: TFunction): string {
     day: dayOf(date),
     monthName: formatMonthShort(date, t),
   });
+}
+
+// '2026-09-27' -> "27 Sep 2026" (S11c's privacy.updated sentence, which isolates it as dateText).
+// The month (a *Name placeholder) comes back isolated too; nested, that isolate hid the only strong
+// letter from the outer one, which then ran left to right ("۲۰۲۶ سپتامبر ۲۷" in fa). A date is one
+// run of its language: the inner isolate is dropped here.
+export function formatDayMonthYear(date: DateKey, t: TFunction): string {
+  return stripIsolates(
+    t('date.day-month-year', {
+      day: dayOf(date),
+      monthName: formatMonthShort(date, t),
+      year: Number(date.slice(0, 4)),
+    }),
+  );
 }
