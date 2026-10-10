@@ -9,7 +9,7 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 
 ## Rules that must hold
 
-1. **One store per domain (settings, progress, stats, premium), made by a `create<Domain>Store(save)` factory and created once in `createShellStores(save)`.** No module-level stores and no `create` from `zustand`: tests need fresh stores per test, and a direction reload re-runs module code.
+1. **One store per domain (settings, progress, stats, premium), made by a `create<Domain>Store(save)` factory and created once in `createShellStores(save)`.** No module-level stores and no `create` from `zustand`: tests need fresh stores per test, and a direction reload re-runs module code. Beside them `createShellStores` makes the one store that is never saved, `restart` (`createRestartStore()` in `stores/restart-store.ts`): the direction reload a screen has started, held from the tap until the reload so the route guards keep that screen (a pending reload must never outlive the reload, so it has no save section and no reducer).
 2. **Every `dispatch` reduces, persists, then publishes:** `next = reducer(get(), action)`; if the reducer can return the same object (a refused or no-op action), stop there; `save.update(recipe)` with only this store's sections; then `set(...)` from `save.doc()` (never `next`). The screen never shows a value that is not on disk, a failed write publishes nothing, and a rejected document never reaches the store, where it would spoil every later write.
 3. **All logic sits in pure reducers with imperative kebab-case actions** (`set-theme`, `record-level-result`, `use-free-hint`, `reset-statistics`). Reducers import no runtime code, never mutate, never read `Date` or randomness; "today" arrives in the action. Pure reducers are tested without React and replay the same everywhere.
 4. **A selector returns a primitive or a reference already in the state. One that builds an object or array is wrapped in `useShallow` from `zustand/shallow`; no store hook is called without a selector.** In Zustand 5 a new reference per call loops ("Maximum update depth exceeded"), and the v4 equality argument is gone.
@@ -38,7 +38,7 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 
 ## Definition of done
 
-- [ ] `ShellStores` holds settings, progress, stats and premium; only `createShellStores` calls the domain factories.
+- [ ] `ShellStores` holds settings, progress, stats, premium and the unsaved `restart` store; only `createShellStores` calls the store factories.
 - [ ] Each `dispatch` writes only its own sections through `save.update`, then calls `set`; a reducer that returns the same object (refused action) causes no write.
 - [ ] Every action name is an imperative kebab-case verb; time is passed in actions.
 - [ ] Every selector call returns a primitive or state reference, or goes through `useShallow`.
@@ -66,7 +66,7 @@ App state lives in four thin Zustand 5 stores over pure reducers, created from t
 |---|---|---|
 | [references/store-pattern.md](references/store-pattern.md) | Domains, the reduce-persist-publish pattern, actions, reducers, cross-section writes, selectors and useShallow, Premium store, tests, checker rules | Workflow step 1, and on any store change |
 | [references/game-session.md](references/game-session.md) | GameSession types, what each action does, run store, when the run is written, saved run restore, game property tests | Workflow steps 1 and 7 |
-| `templates/packages/shell/src/stores/` | `settings-*`, `progress-*`, `stats-*` reducers, selectors, stores and tests; `create-shell-stores.ts`; `update-and-publish.ts` (+ test) | Workflow steps 3 to 6 |
+| `templates/packages/shell/src/stores/` | `settings-*`, `progress-*`, `stats-*` reducers, selectors, stores and tests; `create-shell-stores.ts`; `update-and-publish.ts` (+ test); `restart-store.ts` (+ test: the unsaved restart store) | Workflow steps 3 to 6 |
 | `templates/packages/shell/src/app/stores-context.tsx` | `ShellStores`, `StoresProvider`, `useStores` | Workflow step 3 |
 | `templates/packages/shell/src/game-host/` | Session types, reducer, per-run store, saved run, run writer, and their tests | Workflow step 7 |
 | `templates/packages/shell/src/testing/` | `create-test-save.ts` (boot-like in-memory save) and `counter-game.ts` (tiny rules for session tests) | Workflow steps 4 and 7 |
