@@ -142,6 +142,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - Nothing to copy before the screens below.
 - **S2**
   - Copy from `toybox-screens`: `packages/shell/src/screens/first-run/language-choice*`, `packages/shell/src/screens/first-run/use-language-choice-model*`, `packages/shell/src/app/use-direction-restart*`, `packages/shell/src/app/use-parity-opener*`, `packages/shell/src/i18n/create-language-t*`.
+  - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/language/language-change*`. S2's Continue plans the language change with S11a's planner (planLanguageChange, restartDirectionOf): one restart rule.
   - Copy from `toybox-visual-parity`: `parity/**`. The parity ledger (signoff.json), the pre-listed platform waivers and the pilot's game facts, copied before the first sign-off; parity/waivers.json and parity/game-facts.json are gated paths, so this commit carries a Gate-Change: trailer.
 - **S3**: nothing new to copy (its files arrived with an earlier step or screen); route it, then match it to its design
 - **S4**

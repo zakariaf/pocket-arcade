@@ -71,6 +71,8 @@ export const MODEL_HOOK_ROUTES = {
 const borrow = (file, owner, test = null) => ({ file: `${SHELL}/${file}`, owner, test: test === null ? null : `${SHELL}/${test}` });
 const PARITY_OPENER = borrow('app/use-parity-opener.ts', 'toybox-screens', 'app/use-parity-opener.test.tsx');
 const DIRECTION_RESTART = borrow('app/use-direction-restart.ts', 'toybox-screens', 'app/use-direction-restart.test.tsx');
+/** S2's Continue and S11a's rows share its restart rule; S11's System label comes from it too. */
+const LANGUAGE_CHANGE = borrow('screens/settings/language/language-change.ts', 'settings-and-preferences', 'screens/settings/language/language-change.test.ts');
 const PAIR_LAYOUT = borrow('ui/use-pair-layout.ts', 'toybox-screens');
 const TODAY = borrow('app/use-today.ts', 'daily-and-statistics');
 const DAILY_SUMMARY = [
@@ -94,7 +96,11 @@ const RESETS = [
  * "The screens and where they live", prints the same lists.
  */
 export const BORROWS = {
-  S2: [DIRECTION_RESTART, borrow('i18n/create-language-t.ts', 'toybox-screens', 'i18n/create-language-t.test.ts')],
+  S2: [
+    DIRECTION_RESTART,
+    borrow('i18n/create-language-t.ts', 'toybox-screens', 'i18n/create-language-t.test.ts'),
+    LANGUAGE_CHANGE,
+  ],
   S4: [PARITY_OPENER, PAIR_LAYOUT, TODAY, ...DAILY_SUMMARY],
   // game-screen.tsx draws S6 Pause and S7 Result: S5, S6 and S7 land together.
   S5: [
@@ -125,12 +131,9 @@ export const BORROWS = {
     borrow('screens/settings/use-settings-model.ts', 'settings-and-preferences', 'screens/settings/use-settings-model.test.tsx'),
     borrow('screens/settings/use-settings-context.ts', 'settings-and-preferences', 'screens/settings/use-settings-context.test.tsx'),
     ...RESETS,
+    LANGUAGE_CHANGE,
   ],
-  S11a: [
-    DIRECTION_RESTART,
-    PARITY_OPENER,
-    borrow('screens/settings/language/language-change.ts', 'settings-and-preferences', 'screens/settings/language/language-change.test.ts'),
-  ],
+  S11a: [DIRECTION_RESTART, PARITY_OPENER, LANGUAGE_CHANGE],
   S11b: [
     borrow('screens/settings/settings-extras.ts', 'toybox-screens'),
     borrow('screens/settings/use-settings-routes.ts', 'toybox-screens'),

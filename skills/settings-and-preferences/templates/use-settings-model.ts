@@ -9,6 +9,7 @@ import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { LANGUAGE_AUTONYMS } from '@e07/shell/i18n/languages.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { systemLabel } from '@e07/shell/screens/settings/language/language-change.ts';
 import { playUiFeedback } from '@e07/shell/services/audio/ui-feedback.ts';
 import { selectDispatch, selectSettings } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
@@ -56,9 +57,7 @@ export function useSettingsModel(context: SettingsContext): SettingsModel {
   const isReducedMotion = useReduceMotion();
   const services = useServices();
   const languageValue =
-    settings.language === null
-      ? t('settings.language.system', { languageName: LANGUAGE_AUTONYMS[language] })
-      : LANGUAGE_AUTONYMS[settings.language];
+    settings.language === null ? systemLabel(t, language) : LANGUAGE_AUTONYMS[settings.language];
   return {
     settings,
     isReduceMotionOn,

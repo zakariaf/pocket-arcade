@@ -1338,6 +1338,13 @@
                 ]
               },
               {
+                "skill": "settings-and-preferences",
+                "paths": [
+                  "packages/shell/src/screens/settings/language/language-change*"
+                ],
+                "note": "S2's Continue plans the language change with S11a's planner (planLanguageChange, restartDirectionOf): one restart rule"
+              },
+              {
                 "skill": "toybox-visual-parity",
                 "paths": [
                   "parity/**"
