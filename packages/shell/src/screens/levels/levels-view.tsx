@@ -10,6 +10,7 @@ import { Toast } from '@e07/shell/ui/toast.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
 import { useBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
 
+import { unlockingLevelOf } from './levels-model-of.ts';
 import { LockedPackPanel } from './locked-pack-panel.tsx';
 import { PackSection } from './pack-section.tsx';
 
@@ -30,7 +31,8 @@ const styles = StyleSheet.create({
 
 /**
  * S8 Levels: top bar, the scrolling packs (open packs as grids, the next locked pack as a
- * dashed panel), the "finish level n" toast for a tapped locked tile, the banner at the bottom.
+ * dashed panel), the "finish level n" toast for a tapped locked tile (n: its pack's current
+ * level), the banner at the bottom.
  */
 export function LevelsView({ model }: LevelsViewProps): ReactNode {
   const t = useT();
@@ -77,7 +79,9 @@ export function LevelsView({ model }: LevelsViewProps): ReactNode {
             <Toast
               testID="levels.locked-toast"
               icon="lock"
-              text={t('levels.level-tile.locked-toast', { previousLevel: model.focusedLevel - 1 })}
+              text={t('levels.level-tile.locked-toast', {
+                previousLevel: unlockingLevelOf(model.packs, model.focusedLevel),
+              })}
               isReducedMotion={model.isReducedMotion}
             />
           </View>

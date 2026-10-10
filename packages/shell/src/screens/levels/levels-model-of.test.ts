@@ -4,7 +4,7 @@ import { defaultStarsToUnlock } from '@e07/game-kit/levels/pack-progress.ts';
 import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
 import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 
-import { levelPacksOf, starsByLevelOf } from './levels-model-of.ts';
+import { levelPacksOf, starsByLevelOf, unlockingLevelOf } from './levels-model-of.ts';
 
 import type { LevelsInput } from './levels-model-of.ts';
 import type { LevelPack } from '@e07/game-kit/contract/levels.ts';
@@ -150,5 +150,19 @@ describe('levelPacksOf', () => {
 
     expect(packs[0]?.tiles.map((tile) => tile.numberText)).toStrictEqual(['۱', '۲', '۳', '۴']);
     expect(persian(12)).toBe('۱۲');
+  });
+});
+
+describe('unlockingLevelOf', () => {
+  it("names the open pack's current level for any locked tile of that pack (spec S8)", () => {
+    // Level 1 won: pack 1 has 2 current, 3 and 4 locked; pack 2 stays locked (3 of 6 stars).
+    const onePack = levelPacksOf(input({ 1: 3 }));
+    // Levels 1 and 2 won: 6 stars open pack 2, whose current level is 5.
+    const twoPacks = levelPacksOf(input({ 1: 3, 2: 3 }));
+
+    expect(unlockingLevelOf(onePack, 3)).toBe(2);
+    expect(unlockingLevelOf(onePack, 4)).toBe(2);
+    expect(unlockingLevelOf(twoPacks, 4)).toBe(3);
+    expect(unlockingLevelOf(twoPacks, 8)).toBe(5);
   });
 });

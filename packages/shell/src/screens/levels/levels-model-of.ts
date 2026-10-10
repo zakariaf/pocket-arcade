@@ -88,3 +88,14 @@ export function levelPacksOf(input: LevelsInput): LevelPackModel[] {
     ? all
     : all.filter((pack, index) => !pack.isLocked || index === firstLocked);
 }
+
+/**
+ * The level a tapped locked tile waits for: its open pack's current level (the toast's "finish
+ * level n"). Locked tiles sit only in open packs, after their pack's one current tile, so that
+ * level opens them one after another; the tile before is often locked or won itself.
+ */
+export function unlockingLevelOf(packs: readonly LevelPackModel[], level: number): number {
+  const pack = packs.find((candidate) => candidate.tiles.some((tile) => tile.level === level));
+  const current = pack?.tiles.find((tile) => tile.state.kind === 'current');
+  return current?.level ?? level - 1;
+}
