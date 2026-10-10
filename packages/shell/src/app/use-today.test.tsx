@@ -64,4 +64,25 @@ describe('useToday', () => {
     });
     expect(result.current).toBe('2026-09-27');
   });
+  it('reads the day again at local midnight while the screen stays open (spec S9)', async () => {
+    jest.useFakeTimers();
+    try {
+      const clock = createFakeClock({
+        nowMs: 1_790_424_000_000,
+        today: '2026-09-26',
+        msUntilNextLocalDay: 60_000,
+      });
+      const { result } = await renderToday(clock);
+      expect(result.current).toBe('2026-09-26');
+
+      // A minute later the fake clock crosses midnight; nothing else re-renders the screen.
+      await act(() => {
+        clock.advance(60_000);
+        jest.advanceTimersByTime(60_000);
+      });
+      expect(result.current).toBe('2026-09-27');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
 });
