@@ -16,7 +16,6 @@ import type { ReactNode } from 'react';
 
 export type StatsPanelsProps = { readonly model: StatsModel };
 
-const DAYS_SHOWN = 7;
 /** The chart sits 8 pt under the week panel's subtitle. */
 const CHART_MARGIN_TOP = 8;
 
@@ -74,7 +73,7 @@ export function StatsPanels({ model }: StatsPanelsProps): ReactNode {
       <StatPanel
         testID="stats.week-card"
         leading={{ kind: 'icon', icon: 'stats' }}
-        title={t('daily.week.title', { daysCount: DAYS_SHOWN })}
+        title={t('daily.week.title', { daysCount: bars.length })}
       >
         <AppText
           text={t('stats.week.subtitle')}

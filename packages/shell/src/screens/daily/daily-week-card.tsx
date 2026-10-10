@@ -14,8 +14,6 @@ import type { ReactNode } from 'react';
 
 export type DailyWeekCardProps = { readonly week: readonly WeekDayModel[] };
 
-const DAYS_SHOWN = 7;
-
 /** The strip sits 12 pt under the heading; WeekLegend brings its own 14 pt top margin. */
 const STRIP_MARGIN_TOP = 12;
 
@@ -43,7 +41,7 @@ export function DailyWeekCard({ week }: DailyWeekCardProps): ReactNode {
   return (
     <Panel testID="daily.week-card" gap={0}>
       <AppText
-        text={t('daily.week.title', { daysCount: DAYS_SHOWN })}
+        text={t('daily.week.title', { daysCount: week.length })}
         variant="heading"
         isHeader
         testID="daily.week-card.title"
