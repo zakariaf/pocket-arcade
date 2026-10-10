@@ -34,9 +34,9 @@ All scripts live in the root `package.json` and run from the repo root. The exac
 |---|---|---|
 | `prepare` | installs the git hooks (`lefthook install`); npm runs it after `npm install` / `npm ci` | a git repo |
 | `verify` | `node packages/tooling/src/quality/run-verify.ts`: every gate except end-to-end and mutation, cheapest first, stopping at the first failure; reads `shell-slice.json` | network (dependency checks) |
-| `check:fast` | Prettier check, ESLint (cached), every `tsc` project, tests related to uncommitted changes | a git repo |
+| `check:fast` | Prettier check, ESLint (uncached), every `tsc` project, tests related to uncommitted changes | a git repo |
 | `format` / `format:check` | Prettier write / check on the whole repo | |
-| `lint` | ESLint on the whole repo with `--max-warnings 0`, no cache (type-aware results can go stale in a cache) | |
+| `lint` | ESLint on the whole repo with `--max-warnings 0`, no cache (cached results go stale across files) | |
 | `typecheck` | root `tsconfig.json`, then `tsc -p` for every `packages/*` and `apps/*` | |
 | `test` | all Jest projects (`unit`, `golden`); `--ci` never writes snapshots | |
 | `test:golden` | only the `golden` project | |
@@ -106,7 +106,7 @@ Never make a step green early with `--passWithNoTests`, an ignore entry or a stu
 
 ## check:fast, the inner loop
 
-`check:fast` is the inner loop and the Stop hook's command: Prettier check, ESLint with a content-based cache in `node_modules/.cache/eslint/`, the full `typecheck` (incremental), and `jest --onlyChanged` (tests related to files changed since the last commit). It took 6.6-12 s on sample repos. The cache (`--cache-strategy content`) keys each result on the file's own content only, so when a file it depends on changes (a type, the test-only pair), it replays the old result. A stale pass is harmless, because `lint` (no cache) runs again in `verify`. A stale type-aware failure (a `no-unsafe-*` or `no-unnecessary-condition` error that no longer matches the code, seen when the test-only pair changed) blocks `check:fast` and the Stop hook: delete `node_modules/.cache/eslint/` and rerun; `npm run lint` is the truth (troubleshooting-playbook entry `gates-eslint-cache-stale-type-error`).
+`check:fast` is the inner loop and the Stop hook's command: Prettier check, ESLint on the whole repo without a cache, the full `typecheck` (incremental), and `jest --onlyChanged` (tests related to files changed since the last commit). ESLint runs uncached on purpose (about 40 s on the pilot repo): its cache keys each result on the linted file alone, never on the files it imports or the types it reads, so a cached result replays after a dependency changed. On 2026-10-10 a test written before its module kept failing `import/no-unresolved` and type-aware rules after the module existed, until `node_modules/.cache/eslint/` was deleted. `check-gate-wiring.mjs` fails any root script that runs eslint with `--cache` (rule `eslint-cache`); a repo that still has the old cached `check:fast` restores it from `templates/package-scripts.json` with a `Gate-Change:` trailer and deletes the cache folder (troubleshooting-playbook entry `gates-eslint-cache-stale-type-error`).
 
 Run it at the end of every slice and before saying any change is done. Run `npm run verify` before every push (the pre-push hook does it anyway).
 

@@ -4,7 +4,7 @@
   "scripts": {
     "prepare": "lefthook install",
     "verify": "node packages/tooling/src/quality/run-verify.ts",
-    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 10 --cache --cache-strategy content --cache-location node_modules/.cache/eslint/ && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
+    "check:fast": "prettier --check . --log-level warn && eslint . --max-warnings 10 && npm run -s typecheck && jest --ci --onlyChanged --passWithNoTests",
     "format": "prettier --write . --log-level warn",
     "format:check": "prettier --check . --log-level warn",
     "lint": "eslint . --max-warnings 0",

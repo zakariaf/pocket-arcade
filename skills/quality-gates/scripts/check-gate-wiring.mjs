@@ -32,6 +32,9 @@ const SPEC = {
     '                          SHELL_DUE_TARGETS.release); every other target (verify, audit:licenses, new-game)',
     '                          exists from Shell step 1 and is a problem when missing',
     '  npm-script              a canonical npm script is missing or differs from the baseline',
+    '  eslint-cache            a root npm script runs eslint with --cache: the cache keys each result on the',
+    '                          file alone, so a test written before its module replays import/no-unresolved',
+    '                          and type-aware errors after the module appears (lint the whole repo uncached)',
     '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry',
     '  claude-settings         .claude/settings.json lost a deny/ask rule, a hook, or allows a bypass',
     '  lefthook                a pre-commit, commit-msg or pre-push job is missing, changed or skipped',
@@ -114,6 +117,23 @@ function checkScripts(root, report) {
     const actual = pkg.scripts?.[name];
     if (actual === undefined) report.problem({ file: 'package.json', line: 1, rule: 'npm-script', message: `script "${name}" is missing`, fix: `Add "${name}": ${JSON.stringify(command)}.` });
     else if (actual !== command) report.problem({ file: 'package.json', line: 1, rule: 'npm-script', message: `script "${name}" is ${JSON.stringify(actual)}`, fix: `Restore it to ${JSON.stringify(command)} (the guardrail compares it byte for byte).` });
+  }
+}
+
+/**
+ * eslint-cache: no root script runs ESLint with --cache. ESLint keys a cached result on the linted
+ * file's own content (or metadata) only, never on the files it imports or the types it reads, so a
+ * result replays after a dependency changed: a test written before its module kept failing
+ * import/no-unresolved and type-aware rules after the module existed (E12, 2026-10-10).
+ */
+function checkEslintCache(root, report) {
+  const pkg = tryJson(root, 'package.json', report);
+  for (const [name, command] of Object.entries(pkg?.scripts ?? {})) {
+    if (typeof command !== 'string') continue;
+    const runsCachedEslint = command
+      .split(/&&|\|\||;/)
+      .some((part) => /(^|\s)eslint(\s|$)/.test(part) && /\s--cache(\s|=|$)/.test(part));
+    if (runsCachedEslint) report.problem({ file: 'package.json', line: 1, rule: 'eslint-cache', message: `script "${name}" runs eslint with --cache, which replays stale cross-file results`, fix: 'Run eslint without --cache (the baseline check:fast lints the whole repo uncached); delete node_modules/.cache/eslint/.' });
   }
 }
 
@@ -302,6 +322,7 @@ run(async () => {
   }
   if (present.has('package.json')) {
     checkScripts(root, report);
+    checkEslintCache(root, report);
     checked += checkScriptTargets(root, pending, report);
   }
   if (present.has('quality-gates.json')) checkQualityGates(root, report);
