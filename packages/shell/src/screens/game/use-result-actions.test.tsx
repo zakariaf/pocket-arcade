@@ -112,6 +112,36 @@ describe('useResultActions', () => {
     expect(result.current.controls.status).toBe('playing');
   });
 
+  it('takes no other key while the continue is being paid for: the loss stays open (N10)', async () => {
+    const { result, save, nav, play, payForContinue } = await resultActions();
+    await play([1, 0, 1]);
+    let payOut: (isPaid: boolean) => void = () => undefined;
+    payForContinue.mockImplementation(
+      () =>
+        new Promise<boolean>((resolve) => {
+          payOut = resolve;
+        }),
+    );
+    await act(() => {
+      result.current.actions.onContinue();
+    });
+    // Home, Levels and Try again tapped before the rewarded ad covers the screen.
+    await act(async () => {
+      result.current.actions.onHome();
+      result.current.actions.onLevels();
+      result.current.actions.onTryAgain();
+      await flushMicrotasks();
+    });
+    expect([nav.onHome.mock.calls.length, nav.onLevels.mock.calls.length]).toStrictEqual([0, 0]);
+    expect(save.doc().stats.losses).toBe(0);
+
+    await act(async () => {
+      payOut(true);
+      await flushMicrotasks();
+    });
+    expect(result.current.controls.status).toBe('playing');
+  });
+
   it('leaves to Levels from Next level after the last level, recording the run first', async () => {
     const { result, nav, play } = await resultActions({ level: 3 });
     await play([1, 1, 1]);
