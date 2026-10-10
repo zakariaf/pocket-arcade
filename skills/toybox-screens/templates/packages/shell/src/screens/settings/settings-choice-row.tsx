@@ -17,73 +17,81 @@ export type SettingsChoiceRowProps = {
   readonly choice: 'numbers' | 'theme';
   readonly model: SettingsModel;
   readonly isFirst: boolean;
-  readonly isReducedMotion: boolean;
+};
+
+/** One choice's segmented control: what differs between Numbers and Theme. */
+type ChoiceControl<TValue extends string> = {
+  readonly testID: string;
+  readonly segmentTestIDBase: string;
+  readonly segments: readonly Segment<TValue>[];
+  readonly selected: TValue;
+  readonly onSelect: (value: TValue) => void;
 };
 
 /**
  * Numbers: Automatic / Latin / Local, each with a live preview of 123 in that digit style.
  * SegmentedControl derives settings.numbers-segment.<value> (.label, .preview) from its base.
  */
-function digitSegments(model: SettingsModel, t: TFunction): Segment<DigitStyle>[] {
+function digitControl(model: SettingsModel, t: TFunction): ChoiceControl<DigitStyle> {
   const previews = model.digitPreviews;
-  return [
-    {
-      value: 'automatic',
-      label: t('settings.numbers.automatic'),
-      preview: previews.automatic,
-    },
-    {
-      value: 'latin',
-      label: t('settings.numbers.latin'),
-      preview: previews.latin,
-    },
-    {
-      value: 'local',
-      label: t('settings.numbers.local'),
-      preview: previews.local,
-    },
-  ];
+  return {
+    testID: 'settings.numbers-control',
+    segmentTestIDBase: 'settings.numbers-segment',
+    segments: [
+      { value: 'automatic', label: t('settings.numbers.automatic'), preview: previews.automatic },
+      { value: 'latin', label: t('settings.numbers.latin'), preview: previews.latin },
+      { value: 'local', label: t('settings.numbers.local'), preview: previews.local },
+    ],
+    selected: model.settings.digits,
+    onSelect: model.actions.onSelectDigits,
+  };
 }
 
 /** Theme: System / Light / Dark. */
-function themeSegments(t: TFunction): Segment<ThemePreference>[] {
-  return [
-    { value: 'system', label: t('settings.theme.system') },
-    { value: 'light', label: t('settings.theme.light') },
-    { value: 'dark', label: t('settings.theme.dark') },
-  ];
+function themeControl(model: SettingsModel, t: TFunction): ChoiceControl<ThemePreference> {
+  return {
+    testID: 'settings.theme-control',
+    segmentTestIDBase: 'settings.theme-segment',
+    segments: [
+      { value: 'system', label: t('settings.theme.system') },
+      { value: 'light', label: t('settings.theme.light') },
+      { value: 'dark', label: t('settings.theme.dark') },
+    ],
+    selected: model.settings.theme,
+    onSelect: model.actions.onSelectTheme,
+  };
+}
+
+/** The one segmented control of a wrap row, in the row (no frame of its own). */
+function renderControl<TValue extends string>(
+  control: ChoiceControl<TValue>,
+  label: string,
+  isReducedMotion: boolean,
+): ReactNode {
+  return (
+    <SegmentedControl
+      testID={control.testID}
+      segmentTestIDBase={control.segmentTestIDBase}
+      label={label}
+      segments={control.segments}
+      selected={control.selected}
+      onSelect={control.onSelect}
+      isReducedMotion={isReducedMotion}
+      isInRow
+    />
+  );
 }
 
 /** S11 wrap row: icon and label on top, the segmented control on a full-width line under them. */
-export function SettingsChoiceRow(props: SettingsChoiceRowProps): ReactNode {
-  const { choice, model, isFirst, isReducedMotion } = props;
+export function SettingsChoiceRow({ choice, model, isFirst }: SettingsChoiceRowProps): ReactNode {
   const t = useT();
   const spec = SETTINGS_ROW_SPECS[choice];
   const label = t(spec.labelKey);
+  const { isReducedMotion } = model;
   const control =
-    choice === 'numbers' ? (
-      <SegmentedControl
-        testID="settings.numbers-control"
-        segmentTestIDBase="settings.numbers-segment"
-        label={label}
-        segments={digitSegments(model, t)}
-        selected={model.settings.digits}
-        onSelect={model.actions.onSelectDigits}
-        isReducedMotion={isReducedMotion}
-        isInRow
-      />
-    ) : (
-      <SegmentedControl
-        testID="settings.theme-control"
-        segmentTestIDBase="settings.theme-segment"
-        label={label}
-        segments={themeSegments(t)}
-        selected={model.settings.theme}
-        onSelect={model.actions.onSelectTheme}
-        isReducedMotion={isReducedMotion}
-        isInRow
-      />
-    );
+    choice === 'numbers'
+      ? renderControl(digitControl(model, t), label, isReducedMotion)
+      : renderControl(themeControl(model, t), label, isReducedMotion);
   return (
     <ListRow
       testID={SETTINGS_ROW_TEST_IDS[choice]}
