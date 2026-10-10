@@ -238,6 +238,27 @@ describe('Stickers and art', () => {
     });
   });
 
+  it('rasterizes tilted stickers and art tiles, so iOS draws their tilted edges smooth', async () => {
+    await renderWithShell(
+      <>
+        <Sticker text="Phone language" size="sm" tiltDeg={3} testID="language-choice.phone-badge" />
+        <ArtTile icon="globe" testID="language-choice.art" />
+      </>,
+    );
+
+    // Fabric draws a border from an image it stretches with nearest filtering, so a tilted edge
+    // steps at device pixels (the S2 globe tile on the device); a rasterized layer is resampled
+    // smoothly when it is turned, as Chrome draws it.
+    expect(screen.getByTestId('language-choice.phone-badge')).toHaveProp(
+      'shouldRasterizeIOS',
+      true,
+    );
+    expect(screen.getByTestId('language-choice.art', { includeHiddenElements: true })).toHaveProp(
+      'shouldRasterizeIOS',
+      true,
+    );
+  });
+
   it('keeps art tiles, Premium art and confetti decorative', async () => {
     await renderWithShell(
       <>

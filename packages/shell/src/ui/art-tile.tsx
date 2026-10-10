@@ -51,6 +51,7 @@ export function ArtTile({
         { width: side, height: side, backgroundColor: fills[paint], borderColor: shell.toyInk },
         dieCutRing(ART.ring, shell.cut),
       ]}
+      shouldRasterizeIOS
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       {...(testID === undefined ? {} : { testID })}
