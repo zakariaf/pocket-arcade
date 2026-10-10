@@ -1,6 +1,8 @@
 // packages/shell/src/screens/how-to-play/how-to-play-view.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
+import { act, screen, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
+import { State } from 'react-native-gesture-handler';
+import { fireGestureHandler, getByGestureTestId } from 'react-native-gesture-handler/jest-utils';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -75,6 +77,78 @@ describe('HowToPlayView', () => {
 
     await view.rerender(<HowToPlayView model={modelWith({ stepIndex: 0 })} />);
     expect(screen.getByTestId('how-to-play.previous-button')).toBeDisabled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
+/** A quick horizontal fling of dx points over the stage (negative: to the left). */
+function fling(dx: number): Parameters<typeof fireGestureHandler>[1] {
+  const end = { x: 200 + dx, y: 300, translationX: dx, translationY: 0 };
+  return [
+    { state: State.BEGAN, x: 200, y: 300, translationX: 0, translationY: 0 },
+    { state: State.ACTIVE, x: 200 + dx / 2, y: 300, translationX: dx / 2, translationY: 0 },
+    { state: State.ACTIVE, ...end },
+    { state: State.END, ...end, velocityX: dx * 10, velocityY: 0 },
+  ];
+}
+
+async function flingOver(dx: number): Promise<void> {
+  await act(() => {
+    fireGestureHandler(getByGestureTestId('page-swipe'), fling(dx));
+  });
+}
+
+describe('HowToPlayView paged by swipe (spec S13, 7.5)', () => {
+  it.each([
+    ['en', -120],
+    ['fa', 120],
+  ] as const)(
+    'shows the next page on a fling toward the reading end in %s (spec S13, 7.5)',
+    async (language, dx) => {
+      const model = modelWith({ stepIndex: 1 });
+      await renderWithShell(<HowToPlayView model={model} />, { language });
+
+      await flingOver(dx);
+
+      expect(model.onNext).toHaveBeenCalledTimes(1);
+      expect(model.onPrevious).not.toHaveBeenCalled();
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    },
+  );
+
+  it.each([
+    ['en', 120],
+    ['fa', -120],
+  ] as const)(
+    'shows the previous page on a fling toward the reading start in %s (spec 7.5)',
+    async (language, dx) => {
+      const model = modelWith({ stepIndex: 2 });
+      await renderWithShell(<HowToPlayView model={model} />, { language });
+
+      await flingOver(dx);
+
+      expect(model.onPrevious).toHaveBeenCalledTimes(1);
+      expect(model.onNext).not.toHaveBeenCalled();
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    },
+  );
+
+  it('changes nothing on a backward fling on the first page or a forward fling on the last, and only Got it leaves', async () => {
+    const first = modelWith({ stepIndex: 0 });
+    const view = await renderWithShell(<HowToPlayView model={first} />);
+    await flingOver(120);
+    for (const handler of [first.onPrevious, first.onNext, first.onDone, first.onBack])
+      expect(handler).not.toHaveBeenCalled();
+
+    const last = modelWith({ stepIndex: 3 });
+    await view.rerender(<HowToPlayView model={last} />);
+    await flingOver(-120);
+    for (const handler of [last.onPrevious, last.onNext, last.onDone, last.onBack])
+      expect(handler).not.toHaveBeenCalled();
+
+    const user = userEvent.setup();
+    await user.press(screen.getByRole('button', { name: 'Got it' }));
+    expect(last.onDone).toHaveBeenCalledTimes(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

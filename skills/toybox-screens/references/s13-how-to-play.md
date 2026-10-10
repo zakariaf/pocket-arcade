@@ -34,7 +34,7 @@ Top bar "How to play" with Back. The body runs under the home indicator (`Screen
 
 ## States and variants
 
-Previous is disabled on the first step. On the last step Next reads "Got it" and returns (Chosen). Swipes move between steps and mirror in RTL.
+Previous is disabled on the first step. On the last step Next reads "Got it" and returns (Chosen). A horizontal swipe over the stage moves between steps and mirrors in RTL (spec S13 and 7.5): the next page lies at the reading end, so a left swipe brings it in left to right and a right swipe in right to left. The finger stays physical: `use-page-swipe.ts` builds one pan (`.withTestId('page-swipe')`, a vertical drag fails it so the body still scrolls), classifies its release with game-kit's `classifySwipe` on the UI thread and reaches JS only through `scheduleOnRN`; the pure `page-step-for-swipe.ts` turns the physical swipe into +1 or -1 for `useDirection()`. The view sends +1 to `onNext` and -1 to `onPrevious` only inside the pages: a swipe never passes the first or last page, and only "Got it" leaves the screen. The stage sits in the `GestureDetector` inside a plain `View` (`collapsable={false}`); no pressable is under the detector.
 
 ## Data the model supplies
 
@@ -52,6 +52,8 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/how-to-play/how-to-play-screen.tsx`
 - `packages/shell/src/screens/how-to-play/how-to-play-view.test.tsx`
 - `packages/shell/src/screens/how-to-play/use-how-to-play-model.ts` and its test
+- `packages/shell/src/screens/how-to-play/page-step-for-swipe.ts` and its test (pure: a physical swipe and the layout direction to a page step)
+- `packages/shell/src/screens/how-to-play/use-page-swipe.ts` and its test (the pan over the stage; board-gestures-and-input's checker accepts this one file as a non-board gesture)
 
 ## testIDs
 
