@@ -1,6 +1,7 @@
 // packages/shell/src/screens/settings/language/language-view.tsx
 import { LANGUAGE_AUTONYMS, LANGUAGES } from '@e07/shell/i18n/languages.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { systemLabel } from '@e07/shell/screens/settings/language/language-change.ts';
 import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { List } from '@e07/shell/ui/list.tsx';
 import { NotePanel } from '@e07/shell/ui/note-panel.tsx';
@@ -43,9 +44,7 @@ export function SettingsLanguageView({ model }: SettingsLanguageViewProps): Reac
         <List testID="settings-language.list">
           <ListRow
             testID="settings-language.language-row.system"
-            label={t('settings.language.system', {
-              languageName: LANGUAGE_AUTONYMS[model.systemLanguage],
-            })}
+            label={systemLabel(t, model.systemLanguage)}
             description={t('language.system.description')}
             end="radio"
             isSelected={model.selected === null}
