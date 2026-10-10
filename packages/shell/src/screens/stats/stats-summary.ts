@@ -118,9 +118,9 @@ export function buildStatsSummary(input: StatsSummaryInput): StatsSummary {
     best: {
       levelScore: stats.bestScore.level,
       dailyScore: stats.bestScore.daily,
-      endlessScore: input.hasEndless
-        ? Math.max(stats.bestScore.endless, progress.endlessBest)
-        : null,
+      // The stats section only, like the Levels and Daily rows: Reset statistics zeroes all three
+      // (progress.endlessBest is Home's and the result's best, which that reset keeps).
+      endlessScore: input.hasEndless ? stats.bestScore.endless : null,
       bestLevel: bestLevel(progress),
       longestWinStreak: stats.longestWinStreak,
     },

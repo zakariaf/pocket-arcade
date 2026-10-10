@@ -1,5 +1,6 @@
 // packages/shell/src/screens/stats/stats-summary.test.ts
 import { PARITY_FIXTURE } from '@e07/shell/app/parity/parity-fixture.ts';
+import { resetStatistics } from '@e07/shell/services/save/reset-progress.ts';
 import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 import { applyRunEnd } from '@e07/shell/stores/run-end.ts';
 
@@ -80,6 +81,23 @@ describe('buildStatsSummary', () => {
       today: TODAY,
     });
     expect(view.best.endlessScore).toBeNull();
+  });
+
+  it('reads every Best score from the statistics, so Reset statistics zeroes Endless too', () => {
+    const before = played([
+      { ...BASE, mode: 'endless', isWon: false, score: 4210 },
+      { ...BASE, mode: 'level', level: 1, stars: 3, score: 500 },
+      { ...BASE, mode: 'daily', date: TODAY, score: 900 },
+    ]);
+    const after = applyRunEnd(
+      resetStatistics(before),
+      { ...BASE, mode: 'level', level: 2, stars: 2, score: 300 },
+      TODAY,
+    );
+    const view = viewOf(after);
+
+    expect(after.progress.endlessBest).toBe(4210);
+    expect(view.best).toMatchObject({ levelScore: 300, dailyScore: 0, endlessScore: 0 });
   });
 
   it('splits play time into whole hours and minutes', () => {
