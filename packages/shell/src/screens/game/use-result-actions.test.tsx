@@ -97,6 +97,21 @@ describe('useResultActions', () => {
     expect(result.current.controls.view?.ref).toStrictEqual({ kind: 'level', level: 1 });
   });
 
+  it('starts one run for a double tap on Replay while the interstitial is awaited (8.8)', async () => {
+    const { result, script, onLeaveResult, play } = await resultActions();
+    await play([1, 1]);
+    await act(async () => {
+      // Two taps before the screen re-renders: both reach the same handler.
+      const { onReplay } = result.current.actions;
+      onReplay();
+      onReplay();
+      await flushMicrotasks();
+    });
+    expect(script.calls.filter((call) => call === 'showInterstitial')).toHaveLength(1);
+    expect(onLeaveResult).toHaveBeenCalledTimes(1);
+    expect(result.current.controls.status).toBe('playing');
+  });
+
   it('leaves to Levels from Next level after the last level, recording the run first', async () => {
     const { result, nav, play } = await resultActions({ level: 3 });
     await play([1, 1, 1]);
