@@ -47,6 +47,23 @@ describe('useDirectionRestart', () => {
     expect(jest.mocked(restartForDirection)).toHaveBeenCalledTimes(1);
   });
 
+  it('starts one restart for taps from two screens at once (two hook instances)', async () => {
+    const audio = createFakeAudio();
+    const { wrapper } = createShellWrapper({ services: { audio, errorLog: createFakeErrorLog() } });
+    const { result } = await renderHook(() => [useDirectionRestart(), useDirectionRestart()], {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current[0]?.('rtl');
+      result.current[1]?.('rtl');
+      await Promise.resolve();
+    });
+
+    expect(audio.calls).toStrictEqual([{ kind: 'dispose' }]);
+    expect(jest.mocked(restartForDirection)).toHaveBeenCalledTimes(1);
+  });
+
   it('lets the player try again after a restart that failed', async () => {
     const errorLog = createFakeErrorLog();
     const { wrapper } = createShellWrapper({ services: { audio: createFakeAudio(), errorLog } });

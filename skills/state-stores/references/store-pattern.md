@@ -23,7 +23,7 @@ How Pocket Arcade holds app state: four thin Zustand 5 stores over pure reducers
 |---|---|---|---|
 | Navigation | React Navigation's state (one native stack) | no; rebuilt at launch, a run in progress is reopened from the save | "Settings is on top of Home" |
 | App state | four Zustand stores: settings, progress, stats, premium | yes, as sections of the one save document | theme, stars, streak, Premium |
-| A started direction reload | the `restart` store (`stores/restart-store.ts`, `pendingDirection`) | no; it lives from the tap (S2 Continue, the S14 "Restart now") until the reload, and a failed restart cancels it | S2 stays on screen while audio is disposed and the app reloads |
+| A started direction reload | the `restart` store (`stores/restart-store.ts`, `pendingDirection`) | no; it lives from the tap (S2 Continue, the S14 "Restart now") until the reload, `begin()` refuses (returns false) while one is pending, so no hook keeps a guard of its own, and a failed restart cancels it | S2 stays on screen while audio is disposed and the app reloads |
 | A run (one level, daily, endless or tutorial) | a per-run vanilla Zustand store holding a `GameSession` | yes, as the save document's `run` section | board state, undo history, move count |
 
 The save document is the single source of truth for everything persisted. Stores are hydrated from it once at startup and write back through `SaveService.update`; nothing else touches SQLite. Zustand's `persist` middleware, AsyncStorage and MMKV are never used: a second persistence path would have its own version number and no migration.
