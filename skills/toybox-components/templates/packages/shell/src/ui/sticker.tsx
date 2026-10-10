@@ -19,7 +19,7 @@ import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 import { RatingStar } from './rating-star.tsx';
-import { dieCutRing, TILTED_LAYER } from './toybox-styles.ts';
+import { dieCutRing, tilt, TILTED_LAYER } from './toybox-styles.ts';
 
 import type { IconName } from './icons/icon-paths.ts';
 import type { Direction } from '@e07/shell/i18n/languages.ts';
@@ -133,7 +133,7 @@ function useSlap(tiltDeg: number, props: StickerProps): ReturnType<typeof useAni
       : interpolate(t, [0, 1], [tiltDeg + fromExtraRotateDeg, tiltDeg]);
     return {
       opacity: Math.min(1, t * 2),
-      transform: [{ rotate: `${String(rotate)}deg` }, { scale }],
+      transform: [tilt(rotate), { scale }],
     };
   });
 }

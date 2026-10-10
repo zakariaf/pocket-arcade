@@ -14,7 +14,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { COMPONENT_SPECS } from './component-specs.ts';
-import { TILTED_LAYER } from './toybox-styles.ts';
+import { tiltedLayer } from './toybox-styles.ts';
 
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { ReactNode } from 'react';
@@ -96,18 +96,16 @@ export function Confetti(props: ConfettiProps): ReactNode {
     >
       {PIECES.map((piece) => (
         <View
-          {...TILTED_LAYER}
-          key={`${String(piece.x)}-${String(piece.y)}`}
-          style={[
+          {...tiltedLayer(piece.deg, [
             styles.piece,
             {
               start: piece.x,
               top: piece.y,
               backgroundColor: paintOf(theme, piece.paint),
               borderColor: SHELL_COLORS[theme.scheme].toyInk,
-              transform: [{ rotate: `${String(piece.deg)}deg` }],
             },
-          ]}
+          ])}
+          key={`${String(piece.x)}-${String(piece.y)}`}
         />
       ))}
     </Animated.View>
