@@ -142,3 +142,25 @@ describe('Button', () => {
     expect(label.parent?.children.find((child) => child !== label)).toHaveStyle({ height: 2 });
   });
 });
+
+describe('Button label language', () => {
+  // Spec S2: Continue is written in the language being chosen, which need not be the screen's.
+  it("draws and voices a label in its own language when it is not the screen's (S2)", async () => {
+    await renderWithShell(
+      <Button
+        label="ادامه"
+        labelLanguage="fa"
+        onPress={jest.fn()}
+        testID="language-choice.continue-button"
+        kind="primary"
+        size="hero"
+        iconEnd="forward"
+        isReducedMotion={false}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'ادامه' })).toHaveProp('accessibilityLanguage', 'fa');
+    expect(screen.getByText('ادامه')).toHaveStyle({ fontFamily: 'Vazirmatn-Bold' });
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});

@@ -18,7 +18,7 @@ S2 lets a Persian or Sorani speaker whose phone is set to English switch at once
 
 - First launch only. The four languages, each written in its own script: English, Deutsch, فارسی, کوردیی ناوەندی.
 - The phone's language is pre-selected when it is one of the four; otherwise English.
-- One big Continue button, **in the selected language**.
+- One big Continue button, **in the selected language**: the view passes `labelLanguage={model.selected}`, so the label takes that language's font and VoiceOver its voice even on a screen in another language.
 - One tap and done; it can be changed any time in Settings.
 - After Continue, the first launch goes to the tutorial level (S13), not to Home: dispatch `set-language` and let the FirstRun group's `if` hooks move on (never `navigate`). A direction flip restarts the app on the same tap.
 
