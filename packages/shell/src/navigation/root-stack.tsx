@@ -1,7 +1,8 @@
 // packages/shell/src/navigation/root-stack.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { NotBuiltScreen } from '@e07/shell/navigation/not-built-screen.tsx';
+import { DebugRoute } from '@e07/shell/navigation/debug-route.tsx';
+import { FontTestRoute } from '@e07/shell/navigation/font-test-route.tsx';
 import {
   useIsFirstRun,
   useIsMainApp,
@@ -71,7 +72,7 @@ export const rootStack = createNativeStackNavigator({
     },
     Debug: {
       if: useIsTestBuild,
-      screens: { Debug: NotBuiltScreen, FontTest: NotBuiltScreen },
+      screens: { Debug: DebugRoute, FontTest: FontTestRoute },
     },
   },
 });

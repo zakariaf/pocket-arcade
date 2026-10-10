@@ -17,7 +17,8 @@
     "S11d",
     "S12",
     "S13",
-    "S14"
+    "S14",
+    "S15"
   ],
-  "why": "Shell build in progress: first-run screens S1 Splash, S2 Language choice and S3 Ad consent and tracking, S4 Home, S5 Game, S6 Pause, S7 Result, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings, S11a Language, S11b About and credits, S11c Privacy policy, S11d Licences, S12 Premium, S13 How to play and S14 Dialogs (Shell step 9)"
+  "why": "Shell build in progress: first-run screens S1 Splash, S2 Language choice and S3 Ad consent and tracking, S4 Home, S5 Game, S6 Pause, S7 Result, S8 Levels, S9 Daily challenge, S10 Statistics, S11 Settings, S11a Language, S11b About and credits, S11c Privacy policy, S11d Licences, S12 Premium, S13 How to play, S14 Dialogs and S15 Debug menu (Shell step 9)"
 }

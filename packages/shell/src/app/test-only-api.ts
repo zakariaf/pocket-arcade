@@ -37,6 +37,9 @@ import type { ComponentType } from 'react';
 
 /** Everything that exists only in test builds (debug menu S15, harness hooks). */
 export type TestOnlyApi = {
+  readonly DebugScreen: ComponentType;
+  /** S15's font test page (every type role in en, de, fa and ckb); the Debug group's FontTest route. */
+  readonly FontTestScreen: ComponentType;
   /** The composition root wraps the real ClockPort in it, so "Set date" moves today() app-wide. */
   readonly createSimulatedClock: (real: ClockPort) => SimulatedClock;
   /** The composition root wraps the real ConnectivityPort in it, so "Simulate offline" reaches every subscriber. */
