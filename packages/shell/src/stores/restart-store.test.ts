@@ -25,6 +25,22 @@ describe('createRestartStore', () => {
     expect(store.getState().pendingDirection).toBeNull();
   });
 
+  // A second screen's tap (another hook instance) never starts a second reload: the store alone
+  // decides, so begin() answers whether this tap started the restart.
+  it('refuses a second restart while one is pending, and allows one after a cancel', () => {
+    const store = createRestartStore();
+    const didFirstStart = store.getState().begin('rtl');
+    const didSecondStart = store.getState().begin('ltr');
+    store.getState().cancel();
+    const didRetryStart = store.getState().begin('ltr');
+    expect([
+      didFirstStart,
+      didSecondStart,
+      didRetryStart,
+      store.getState().pendingDirection,
+    ]).toStrictEqual([true, false, true, 'ltr']);
+  });
+
   it('gives every app start its own store', () => {
     const first = createRestartStore();
     first.getState().begin('ltr');
