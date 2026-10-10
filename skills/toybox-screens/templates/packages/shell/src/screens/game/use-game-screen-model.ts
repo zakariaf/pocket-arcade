@@ -77,6 +77,8 @@ function useTopBar({
       controls.send({ type: 'undo' });
     },
     onHint: () => {
+      // Pay only for a hint the run can give (none shows yet, the solver has a move: spec 8.5).
+      if (!controls.canHint()) return;
       sendWhenPaid(
         perks.payForHint,
         () => {

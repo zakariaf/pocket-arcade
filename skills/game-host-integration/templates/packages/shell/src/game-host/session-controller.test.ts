@@ -90,6 +90,24 @@ describe('createSessionController', () => {
     expect(order).toStrictEqual([]);
   });
 
+  it('says whether a hint can be given before anyone pays for it (spec 8.5)', () => {
+    const { controller } = controllerFor();
+    expect(controller.canHint()).toBe(true);
+    controller.handle.send({ type: 'hint' });
+    // One shows already: a second would be paid for and show nothing new.
+    expect(controller.canHint()).toBe(false);
+    for (const col of [1, 0, 1]) controller.handle.send(tap(col));
+    expect([controller.handle.getView().status, controller.canHint()]).toStrictEqual([
+      'lost',
+      false,
+    ]);
+    // A solver that has no move for the position: nothing to pay for.
+    const stuck = controllerFor({
+      gameRules: { ...TALLY_GAME.rules, hints: { kind: 'solver', suggest: () => null } },
+    });
+    expect(stuck.controller.canHint()).toBe(false);
+  });
+
   it('highlights the hinted move only for the position it was asked for', () => {
     const { controller } = controllerFor();
     controller.handle.send({ type: 'hint' });

@@ -59,6 +59,8 @@ export type SessionController<TState, TMove, TEvent> = {
   readonly store: GameSessionStore<TState, TMove, TEvent>;
   /** The move to highlight for the current position, or null (the board host reads it). */
   readonly hintedMove: () => TMove | null;
+  /** A hint can be given now (asked before paying for one): see hintToGive. */
+  readonly canHint: () => boolean;
   /**
    * Test builds (the host's debug controls): the run jumps to `state`, an example win or loss, and
    * ends through the same persist step as a deciding move. False (nothing changes) when the run
@@ -151,12 +153,24 @@ function endedAt<TState, TMove, TEvent>(
   return { ...session, state, outcome, status: outcome.kind, past: [], lastEvents: [], eventSeq };
 }
 
-function showHint<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
-  const { session, dispatch } = parts.store.getState();
+/**
+ * The move a hint would show now, or null: no solver hints, the run is not playing, a hint for
+ * this position shows already, or the solver has no move. The Game screen asks it (canHint)
+ * before anyone pays, so a paid hint is never one the run cannot give (spec 8.5).
+ */
+function hintToGive<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): TMove | null {
+  const { session } = parts.store.getState();
   const hints = parts.deps.gameRules.hints;
-  if (hints.kind !== 'solver' || session.status !== 'playing') return;
-  const move = hints.suggest(session.state);
+  if (hints.kind !== 'solver' || session.status !== 'playing') return null;
+  const shown = parts.extras.getState().hint;
+  if (shown !== null && shown.atSeq === session.eventSeq) return null;
+  return hints.suggest(session.state);
+}
+
+function showHint<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
+  const move = hintToGive(parts);
   if (move === null) return;
+  const { session, dispatch } = parts.store.getState();
   parts.extras.setState({ hint: { move, atSeq: session.eventSeq } });
   dispatch({ type: 'use-hint' });
 }
@@ -288,6 +302,7 @@ export function createSessionController<TState, TMove, TEvent>(
     handle: makeHandle(parts),
     store,
     hintedMove,
+    canHint: () => hintToGive(parts) !== null,
     endWith: (state) => endWithState(parts, persist, state),
     showFixture: (fixture) => {
       extras.setState({ fixture: { ...extras.getState().fixture, ...fixture } });

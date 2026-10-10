@@ -117,6 +117,8 @@ export type GameHostDeps = {
 export type OpenedSession = {
   readonly handle: SessionHandle;
   readonly BoardHost: ComponentType<BoardHostProps>;
+  /** A paid hint would show a move now (the Game screen asks before the player pays). */
+  readonly canHint: () => boolean;
 };
 
 /**
@@ -313,7 +315,8 @@ function openRun<T extends ShellGameTypes>(
   if (example !== null && example.endsAs !== null) {
     controller.endWith(endStateOf(game, example.endsAs));
   }
-  return { handle, BoardHost: deps.createBoardHost({ game, controller, lifecycle }) };
+  const board = deps.createBoardHost({ game, controller, lifecycle });
+  return { handle, BoardHost: board, canHint: controller.canHint };
 }
 
 export function createGameHost<T extends ShellGameTypes>(
