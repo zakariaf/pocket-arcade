@@ -1,8 +1,10 @@
 // packages/shell/src/screens/levels/use-levels-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
+import { AccessibilityInfo } from 'react-native';
 
 import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
 import { endParitySession, startParitySession } from '@e07/shell/app/parity/parity-session.ts';
+import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
 import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
 import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-connectivity.ts';
@@ -138,6 +140,48 @@ describe('useLevelsModel', () => {
       expect(result.current.isReducedMotion).toBe(true);
     } finally {
       endParitySession();
+    }
+  });
+
+  it('announces how to open a tapped locked tile, again when another tap changes it (iOS)', async () => {
+    // Two open packs: 1 won, 2 current, 3 locked; then 4 current, 5 and 6 locked.
+    const twoPacks: readonly LevelPack[] = [
+      { id: 'first', nameId: 'tally.pack.first', firstLevel: 1, levelCount: 3, starsToUnlock: 0 },
+      { id: 'second', nameId: 'tally.pack.first', firstLevel: 4, levelCount: 3, starsToUnlock: 0 },
+    ];
+    const won = {
+      stars: 3,
+      bestScore: 30,
+      bestMoves: 2,
+      completions: 1,
+      firstCompletedOn: '2026-09-25',
+    } as const;
+    const { save } = createTestSave();
+    save.update((doc) => ({ ...doc, progress: { ...doc.progress, levels: { '1': won } } }));
+    const shell = createHostWrapper({
+      host: { packs: twoPacks },
+      services: { save, ads: ADS, connectivity: createFakeConnectivity(false) },
+    });
+    const speak = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
+    try {
+      const { result } = await renderHook(() => useLevelsModel(), { wrapper: shell.wrapper });
+      await act(() => {
+        systemA11yStore.setState({ isScreenReaderOn: true });
+      });
+      await act(() => {
+        result.current.onTapLockedLevel(3);
+      });
+      await act(() => {
+        result.current.onTapLockedLevel(6);
+      });
+
+      expect(speak.mock.calls).toStrictEqual([
+        ['Unlock this one by finishing level 2.'],
+        ['Unlock this one by finishing level 4.'],
+      ]);
+    } finally {
+      systemA11yStore.setState({ isScreenReaderOn: false });
+      speak.mockRestore();
     }
   });
 
