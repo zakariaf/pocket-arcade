@@ -3,11 +3,13 @@ import { screen, userEvent } from '@testing-library/react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { ancestorStyle } from '@e07/shell/testing/rendered-parts.ts';
 
 import { PremiumPage } from './premium-page.tsx';
 
 import type { PremiumModel } from './premium-model.ts';
 import type { PremiumView } from '@e07/shell/stores/premium/premium-view.ts';
+import type { ViewStyle } from 'react-native';
 
 function modelWith(view: PremiumView, overrides: Partial<PremiumModel> = {}): PremiumModel {
   return {
@@ -172,6 +174,110 @@ describe('PremiumPage', () => {
       'premium.restore-failed-toast',
     ])
       expect(screen.getByTestId(testID)).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
+const ALL_VIEWS: readonly PremiumView[] = [
+  'ready',
+  'loading-price',
+  'store-unavailable',
+  'purchase-in-progress',
+  'pending',
+  'success',
+  'error',
+  'already-owned',
+  'restoring',
+  'restore-empty',
+  'restore-failed',
+];
+
+describe('PremiumPage, spec S12 states', () => {
+  it('asks for a connection, offers "Remove ads" with no price and locks both keys when the store is unavailable (spec S12)', async () => {
+    await renderWithShell(<PremiumPage model={modelWith('store-unavailable')} />);
+
+    expect(screen.getByText('Connect to the internet to buy or restore.')).toBeOnTheScreen();
+    const buy = screen.getByTestId('premium.buy-button');
+    expect(buy).toHaveTextContent('Remove ads');
+    expect(screen.queryByText(/1\.99/)).toBeNull();
+    expect(buy).toBeDisabled();
+    expect(screen.getByTestId('premium.restore-button')).toBeDisabled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('says the purchase waits for approval and keeps Restore usable while pending (spec S12)', async () => {
+    await renderWithShell(<PremiumPage model={modelWith('pending')} />);
+
+    expect(screen.getByText('Waiting for approval – you can keep playing.')).toBeOnTheScreen();
+    expect(
+      screen.getByText('Premium turns on by itself as soon as the purchase is approved.'),
+    ).toBeOnTheScreen();
+    expect(screen.getByTestId('premium.restore-button')).toBeEnabled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('says nobody was charged and buys again from Try again after an error (spec S12)', async () => {
+    const model = modelWith('error');
+    const user = userEvent.setup();
+    await renderWithShell(<PremiumPage model={model} />);
+
+    expect(
+      screen.getByText('The purchase couldn’t be completed. You were not charged.'),
+    ).toBeOnTheScreen();
+    await user.press(screen.getByTestId('premium.try-again-button'));
+    expect(model.onTryAgain).toHaveBeenCalledTimes(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('shows "Premium – active", thanks the player and offers only Restore when Premium is owned (spec S12)', async () => {
+    const model = modelWith('already-owned');
+    const user = userEvent.setup();
+    await renderWithShell(<PremiumPage model={model} />);
+
+    expect(screen.getByText('Premium – active')).toBeOnTheScreen();
+    expect(screen.getByText(/^Thanks for supporting ⁨?Line Siege⁩?!$/)).toBeOnTheScreen();
+    expect(screen.queryByTestId('premium.buy-button')).toBeNull();
+    await user.press(screen.getByTestId('premium.restore-button'));
+    expect(model.onRestore).toHaveBeenCalledTimes(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it.each(ALL_VIEWS)(
+    'draws no banner slot in the %s state (spec 8.8: no banner on S12)',
+    async (view) => {
+      await renderWithShell(<PremiumPage model={modelWith(view)} />);
+
+      expect(
+        screen.getByTestId('premium.screen', { includeHiddenElements: true }),
+      ).toBeOnTheScreen();
+      expect(screen.queryAllByTestId(/banner/, { includeHiddenElements: true })).toStrictEqual([]);
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    },
+  );
+});
+
+describe("PremiumPage, the design's restore card", () => {
+  // allow-style-assertion: the toast stack's backdrop is the contract here; without it the Buy key and the small print showed through the 10 pt gaps of the restore card.
+  const isDock = (style: ViewStyle): boolean => style.position === 'absolute';
+
+  it('lays the four stacked toasts on the ground, so the page under them never shows between them (spec S12)', async () => {
+    await renderWithShell(
+      <PremiumPage model={modelWith('ready', { isRestoreToastStack: true })} />,
+    );
+
+    const ground = ancestorStyle(
+      'premium.restoring-toast',
+      (style) => style.flex === 1 && style.backgroundColor !== undefined,
+    ).backgroundColor;
+    expect(ground).toBeDefined();
+    expect(ancestorStyle('premium.restoring-toast', isDock).backgroundColor).toBe(ground);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('gives a single toast no backdrop, so nothing shows while it drops in', async () => {
+    await renderWithShell(<PremiumPage model={modelWith('restore-empty')} />);
+
+    expect(ancestorStyle('premium.restore-empty-toast', isDock).backgroundColor).toBeUndefined();
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

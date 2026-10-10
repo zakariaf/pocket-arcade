@@ -48,7 +48,7 @@ Top bar "Premium" with Back (in every state). The body runs under the home indic
 
 ## States and variants
 
-The state comes from the premium store's `premiumView()` (premium-purchase owns it); each non-ready state has a marker View (`premium.state.loading` …) that E2E flows wait for. The restore card of the design shows four toasts at once; the app shows one at a time, except in the parity capture of that card, where the model sets `isRestoreToastStack` and `PremiumToast` stacks all four (restoring, restored, nothing found, failed; 10 pt apart, the Toybox toast stack gap).
+The state comes from the premium store's `premiumView()` (premium-purchase owns it); each non-ready state has a marker View (`premium.state.loading` …) that E2E flows wait for. The restore card of the design shows four toasts at once; the app shows one at a time, except in the parity capture of that card, where the model sets `isRestoreToastStack` and `PremiumToast` stacks all four (restoring, restored, nothing found, failed; 10 pt apart, the Toybox toast stack gap) on the ground (`theme.colors.background` behind the stack), as the card draws them: without it the Buy key, its hard shadow and, in fa, the small print showed through the gaps. A single toast keeps no backdrop (it would show as a block while the toast drops in).
 
 ## Data the model supplies
 
