@@ -152,7 +152,7 @@ The names are `…-summary.ts` on purpose: the screen files are `daily-view.tsx`
 | `DailyModel` field (screen) | From the summary |
 |---|---|
 | `monthText`, `dayText`, `dateText` | `summary.today` through the catalogs (`date.month-short.<m>`, the day number in the chosen digits, `date.weekday-day-month` with `date.weekday.<isoWeekday(today)>`) |
-| `todayResult` (`score`, `hours`, `minutes`) | `const countdown = useNextDayCountdown()` on every render (a hook never sits behind a condition), then `summary.todayResult === null ? null : { score: summary.todayResult.score, ...countdown }` (the countdown below) |
+| `todayResult` (`score`, `hours`, `minutes`) | `const countdown = useNextDayCountdown(isShown)` on every render, ticking only while today's result shows on a focused S9 (a hook never sits behind a condition), then `summary.todayResult === null ? null : { score: summary.todayResult.score, ...countdown }` (the countdown below) |
 | `currentStreak`, `bestStreak` | `summary.currentStreak`, `summary.bestStreak` |
 | `week[i]` (`letter`, `weekdayName`, `state`, `isToday`; the strip numbers the columns by position) | `summary.week[i]`: `date.weekday-strip.<weekday>`, `date.weekday.<weekday>`, `mark`, `isToday` |
 
@@ -167,12 +167,13 @@ countdownOf(minutes): Countdown  // { hours, minutes }
 splitCountdown(ms): Countdown    // countdownOf(minutesLeftOf(ms)): 11_100_000 -> 3 h 5 min,
                                  // 30_000 -> 0 h 1 min (never "0 h 0 min" before midnight)
 // packages/shell/src/screens/daily/use-next-day-countdown.ts
-useNextDayCountdown(): Countdown // useSyncExternalStore over a 15 s interval and use-today.ts's
-                                 // subscribeToAppState; the snapshot is minutesLeftOf(...), whole
-                                 // minutes, so it re-renders once a minute
+useNextDayCountdown(isShown = true): Countdown
+                                 // useSyncExternalStore over a 15 s interval and use-today.ts's
+                                 // subscribeToAppState, subscribed only while isShown; the snapshot
+                                 // is minutesLeftOf(...), whole minutes, so it re-renders once a minute
 ```
 
-- The screen's `use-daily-model.ts` calls `useNextDayCountdown()` on every render and fills `todayResult.hours` and `.minutes` from it only when `summary.todayResult !== null`; `daily-view.tsx` formats them with the catalog message (digits from the chosen numbering system).
+- The screen's `use-daily-model.ts` calls `useNextDayCountdown(summary.todayResult !== null && useIsFocused())` on every render (the hook never sits behind a condition; its ticks do: no interval and no AppState listener before today's game or while the Game screen covers S9) and fills `todayResult.hours` and `.minutes` from it only when `summary.todayResult !== null`; `daily-view.tsx` formats them with the catalog message (digits from the chosen numbering system).
 - When the countdown reaches midnight, `useToday()` gives the new day on the next render (AppState or focus), `summary.isDone` turns false and the line disappears with the play button back.
 - Never compute it in a screen: `new Date()` is banned there (`wall-clock`), and `86_400_000 - nowMs() % 86_400_000` is UTC midnight, not the player's (`day-maths-in-ui` reports `nowMs()`, `msUntilNextLocalDay()` and `86_400_000` in daily, stats and home screens; only `use-next-day-countdown.ts` reads the port).
 - `check-daily-stats` runs `splitCountdown` (`view-countdown`) and fails when `clock-port.ts`, the system adapter or the fake lacks `msUntilNextLocalDay` (`clock-countdown`).

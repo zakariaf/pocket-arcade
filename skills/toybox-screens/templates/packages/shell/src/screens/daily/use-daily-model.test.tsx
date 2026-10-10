@@ -72,6 +72,19 @@ describe('useDailyModel', () => {
     ]);
   });
 
+  it("ticks no countdown clock before today's game: it shows only with today's result", async () => {
+    const interval = jest.spyOn(globalThis, 'setInterval');
+    try {
+      const clock = createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' });
+      const shell = createHostWrapper({ services: { clock, save: createTestSave(clock).save } });
+      await renderHook(() => useDailyModel(), { wrapper: shell.wrapper });
+
+      expect(interval).not.toHaveBeenCalled();
+    } finally {
+      interval.mockRestore();
+    }
+  });
+
   it('plays the day the clock says when Play is pressed, past midnight on an open S9', async () => {
     mockNavigate.mockClear();
     const clock = createFakeClock({ nowMs: 1_790_424_000_000, today: '2026-09-26' });
