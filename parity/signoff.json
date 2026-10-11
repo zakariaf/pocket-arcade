@@ -399,8 +399,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "a268a47c02ce262fe206fe93fb567f9575e2ef8c29cdf04fc6e2757b11ac233a",
-      "date": "2026-10-10",
+      "sheetSha256": "5d641a69d0527818051f79256f37f9236affe0b30ad6c440b37fcc94167822c5",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -411,7 +411,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
     },
     {
       "game": "lineSiege",
@@ -419,8 +424,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "27a9d617ce9d0b2d7bf793295dabe8603b1ef519735783c1d0aed144d3005ba2",
-      "date": "2026-10-10",
+      "sheetSha256": "c2f85b6866f254b47e680cda32e8527c23d2cfa6564c55a0ce8270d387655a6b",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -431,7 +436,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
     },
     {
       "game": "lineSiege",
@@ -439,8 +449,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "dd7dc90e046e73aa03c47fcf57e0ebf382466cc272c24b60bfa6c596300d47d4",
-      "date": "2026-10-10",
+      "sheetSha256": "29022aacaf4b99f7375c19ad4a9b3da591359bacede87fda8f768321195f2588",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1078,8 +1088,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d1c82a21cefe74c700916e1de8278a5f8bc11e65a539b8bab7f8a361fc7e190d",
-      "date": "2026-10-10",
+      "sheetSha256": "abfa4183f6cf4ba1b60deec1fed590728725d0a54edeb178e2def2d4deefc9b7",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
