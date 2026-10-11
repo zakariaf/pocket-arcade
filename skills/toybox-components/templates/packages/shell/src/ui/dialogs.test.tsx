@@ -15,8 +15,19 @@ import { ToastStack } from './toast-stack.tsx';
 import { Toast } from './toast.tsx';
 
 import type { StyleProp, ViewStyle } from 'react-native';
+import type { TestInstance } from 'test-renderer';
 
 const HIDDEN = { includeHiddenElements: true } as const;
+
+/** The absolute plates beside a card under its parent: where its hard shadow is drawn. */
+function shadowPlatesOf(card: TestInstance): TestInstance[] {
+  return (card.parent?.children ?? []).filter(
+    (node): node is TestInstance =>
+      typeof node !== 'string' &&
+      node !== card &&
+      StyleSheet.flatten(node.props['style'] as StyleProp<ViewStyle>)?.position === 'absolute',
+  );
+}
 const SHELL = SHELL_COLORS.light;
 const COLORS = TEST_PALETTE.standard.light;
 
@@ -55,11 +66,23 @@ describe('DialogCard', () => {
 
     expect(screen.getByRole('header', { name: 'Reset all progress?' })).toBeOnTheScreen();
     expect(screen.getByTestId('reset-progress-dialog.body')).toBeOnTheScreen();
-    expect(screen.getByTestId('reset-progress-dialog.card')).toHaveStyle({
+    // The static 8 pt hard shadow in shadow ink, drawn as a plate under the card (as the keys
+    // draw theirs): a CSS boxShadow is clipped at the card's antialiased curve and left a light
+    // seam at its bottom corners on iOS (E15's S14 sign-off).
+    const card = screen.getByTestId('reset-progress-dialog.card');
+    expect(card).toHaveStyle({ borderRadius: 22 });
+    expect(
+      StyleSheet.flatten(card.props['style'] as StyleProp<ViewStyle>)?.boxShadow,
+    ).toBeUndefined();
+    expect(shadowPlatesOf(card)).toHaveLength(1);
+    expect(shadowPlatesOf(card)[0]).toHaveStyle({
+      position: 'absolute',
+      top: 8,
+      bottom: -8,
+      start: 0,
+      end: 0,
       borderRadius: 22,
-      boxShadow: [
-        { offsetX: 0, offsetY: 8, blurRadius: 0, spreadDistance: 0, color: COLORS.shadow },
-      ],
+      backgroundColor: COLORS.shadow,
     });
     expect(screen.getByTestId('reset-progress-dialog.scrim')).toHaveStyle({
       backgroundColor: SHELL.scrim,

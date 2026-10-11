@@ -93,7 +93,7 @@ Rules this shows: the path comment on line 1; imports grouped (react-native, ali
 
 - Colours only from `theme.colors` (game paint) and `SHELL_COLORS[theme.scheme]` (gold, cut, toyInk, dangerFill, line, scrim, toast and ad colours). No literals.
 - Text only through `AppText` with a type role or component style (`variant`) and a `tone` (`default`, `muted`, `onPrimary`, `onPop`, `danger`, `success`, `toyInk`, `onInk`, `toast`). No `fontSize`, no `fontWeight`.
-- Raised = pressable. A static hard shadow (`hardShadow(offset, color)`) exists only on the dialog card (8), the toggle knob (2) and the slider thumb (3); everything that informs lies flat (`flat-part-shadow`).
+- Raised = pressable. A static hard shadow exists only on the dialog card (8, drawn as a shadow-ink plate under the card, like the keys' shadow: a CSS boxShadow is clipped at the card's antialiased curve and leaves a light seam at its bottom corners on iOS), the toggle knob (2) and the slider thumb (3) (`hardShadow(offset, color)`); everything that informs lies flat (`flat-part-shadow`).
 - Printed parts (stickers, flags, art tiles, logo tiles, the calendar, result stars, confetti) may tilt and wear the white `dieCutRing`; keys, panels and rows stay square (`tilt-outside-printed`).
 - Radii from the specs; never a pill or a circle (14 is the largest control radius).
 
