@@ -1,0 +1,25 @@
+# packages/shell/e2e/subflows/close-test-ad.yaml — closes Google's full-screen test ad (admob-ads'
+# hand-run ads smoke flows, ADS_MODE=test builds only). POINT is the close key's point, top right
+# ('94%,9%' for the interstitial, '95%,9%' for the rewarded ad): Google's UI has no testID.
+appId: ${APP_ID}
+---
+- waitForAnimationToEnd
+# system-ui: the test ad's close key, top right (Google's UI, no testID).
+- tapOn:
+    point: '${POINT}'
+# system-ui: a tap before the close key is ready leaves the ad on screen: wait, tap again.
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '${POINT}'
+# system-ui: the test ad's "Test mode" label, once more (Google's UI, not app text).
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '${POINT}'

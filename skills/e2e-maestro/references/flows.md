@@ -112,6 +112,7 @@ One link per setup is enough, also right after `launchApp: { clearState: true }`
 | `debug-setup.yaml` | waits for a screen or dialog root, applies a debug query (accepting Apple's "Open in “<app name>”?" alert, guarded on its title), waits for an id (a shared file, synced from the library; do not edit here). Tools open debug links through it too, never with `simctl openurl`, whose prompt nobody accepts | `QUERY`, `WAIT_FOR` |
 | `assert-no-network.yaml` | opens the debug screen, scrolls down to `debug.network-attempts` (drawn under S15's fourteen rows, below the fold on a phone) and asserts it shows `0` | none |
 | `shoot-screen.yaml` | opens one screen (`screen=${SCREEN}`), waits for the id in `ROOT`, waits for animations to end, takes a screenshot named `${SCREEN}` | `SCREEN`, `ROOT` (`home.screen`; the game states `game-start` and `game-middle` show `game.screen`, `result-win` and `result-lose` show `result.screen`) |
+| `win-and-next.yaml` | wins the level on screen through the game host (`action=win-level`, waiting for `result.next-button`), taps Result's Next and waits up to 30 s for the id in `NEXT_ROOT` (`game.screen`, or `game.board-frame` in a `boardLayout=1` run); flow 05's ten levels and admob-ads' interstitial flow use it |
 
 ## The Shell's flows
 
