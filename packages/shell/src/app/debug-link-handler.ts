@@ -44,7 +44,7 @@ export type DebugLinkDeps = {
   /** readLayoutDirection() of this JS run, and the reload (restartForDirection after audio). */
   readonly layoutDirection: Direction;
   readonly restart: (direction: Direction) => Promise<void>;
-  /** navigationRef.navigate for the route (the navigator must be ready). */
+  /** openDebugRoute: the route on a fixed stack, the first route alone or with it on top. */
   readonly openRoute: (route: DebugRoute) => void;
   /** Calls back once, on the navigator's next state change (the group switch a write started). */
   readonly onNextNavigationState: (callback: () => void) => void;

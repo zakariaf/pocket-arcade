@@ -149,18 +149,13 @@ tags: [shell, offline]
 - assertVisible:
     id: 'levels.level-tile.10'
     text: '.*[^0-9][1-3] .*'
+# screen= lands on a fixed stack (Home, then Levels): Back returns to Home, not the finished level.
 - tapOn:
     id: 'levels.top-bar.back-button'
-# The link pushed Levels above the finished level, so Back returns to its Result; Home comes by link.
 - extendedWaitUntil:
     visible:
-      id: 'result.screen'
+      id: 'home.screen'
     timeout: 10000
-- runFlow:
-    file: ../../subflows/debug-setup.yaml
-    env:
-      QUERY: 'screen=home'
-      WAIT_FOR: 'home.screen'
 # Daily, from Home's card (L7): the card body opens S9, its Play key plays today's daily.
 - tapOn:
     id: 'home.daily-card'
