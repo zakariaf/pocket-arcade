@@ -65,7 +65,7 @@ This epic is Shell step 11 (the audits and the release pipeline) and Shell step 
   - from premium-purchase: `packages/tooling/src/storekit/**`, `src/asc/**` and `packages/shell/e2e/storekit/**` (T07).
 - **The pre-release checks, in order.**
   - Every frame is matched to its design in de and ckb, and again in en and fa on the release candidate (T03, T04).
-  - The font test page shows every letter and digit in every font (T05). The template page misses two of the Sorani letters spec 7.6 names, so this is fixed test first.
+  - The font test page shows every letter and digit in every font (T05). Its alphabets (`FONT_TEST_ALPHABETS`, with the Sorani-only ڕ ڵ ۆ ێ ە ڤ) and their spec 7.6 test came from toybox-screens' template in `4ad83298`, so T05 proves them on screen.
   - The screenshot matrix runs at 200 % text (T05).
   - The SKAdNetwork list is checked and the six ads smoke flows run by hand. They are spec 15.4's evidence for consent before the first ad and for Apple's tracking prompt (T06).
   - The StoreKit harness runs in the release-day order: the E2E evidence run, the harness, delete its simulator, then a clean prebuild (15.5, T07).
@@ -94,7 +94,7 @@ Not in this epic:
 - The Android port of the Shell and Line Siege (E18).
 - Game 2 and every later game: one epic each, E19 (Flock Tilt) to E43 (Halo Drift), in catalogue order, each starting from `npm run new-game` as T09 proves.
 - Acting on the owner's own checks (the play-test with the Tier 3 purchase test, the fa and ckb review, the sound previews, the VoiceOver pass, the device perf report). They are listed here; their answers become test-first fixes whenever they arrive.
-- Changing the skills. A template gap found here (the font test samples) is fixed in the repo and named in the report, so that the skill library can be updated.
+- Changing the skills, except where real work shows a skill is wrong (CLAUDE.md: the skill is fixed first, then copied into the repo, and the report names it).
 
 ## Final state
 
@@ -103,7 +103,7 @@ Not in this epic:
 - [ ] Every frame matches its design in all four languages.
   - `node skills/toybox-visual-parity/scripts/check-signoff.mjs --all --langs en,fa,de,ckb --reference .parity/design` prints `RESULT: PASS`. This covers all 32 frames in light and dark × en, fa, de and ckb at every scroll offset, S15 included.
   - `node skills/toybox-screens/scripts/check-screens.mjs . --all` prints `RESULT: PASS`.
-- [ ] The font test page shows every letter and digit (spec 7.6). `npx jest packages/shell/src/screens/debug --ci --selectProjects unit` passes with the new letter test. Its screenshots in en and fa, light and dark, are in `reports/font-test/`, and each one was opened and read.
+- [ ] The font test page shows every letter and digit (spec 7.6). `npx jest packages/shell/src/screens/debug --ci --selectProjects unit` passes with the spec 7.6 alphabet test. Its screenshots in en and fa, light and dark, are in `reports/font-test/`, and each one was opened and read.
 - [ ] Text at 200 % is stable and was read. `npm run screenshots:ios -- --app line-siege --text-size accessibility-extra-extra-extra-large --sim e17-shots` prints `176 screenshots, 0 changed`, and its baselines are committed with a `Gate-Change:` trailer.
 - [ ] Ads are ready for a release.
   - `node packages/tooling/src/ads/refresh-skadnetwork.ts --check` exits 0.
@@ -369,23 +369,16 @@ Long runs (parity, the matrix, the E2E run, the harness, Stryker) run in the bac
 
 - **Goal:** Two checks from the spec that are due before each release.
   - Spec 7.6: the S15 font test page renders every letter and digit in every font, including the Sorani-only ڕ ڵ ۆ ێ ە ڤ. It is checked in screenshots before each release.
-    - The template's samples carry the glyphs that break first. They do not hold every letter, and the ckb sample lacks ە and ڤ.
-    - The spec owns this requirement, so the page is completed test first, and the report names the gap in the toybox-screens template.
+    - The samples (`FONT_TEST_SAMPLES`) carry the glyphs that break first; the alphabets (`FONT_TEST_ALPHABETS`) hold every letter and digit of each language. Both are drawn in every row.
+    - The alphabets and their test came from toybox-screens' template (skill fix `1f02f5f8`, repo commit `4ad83298`), so this task checks them on screen.
   - Spec 8.11: text grows to 200 % and reflows instead of being cut off. The whole matrix is captured at the largest accessibility size and read by eye.
 - **Skills:** `toybox-screens`, `accessibility`, `e2e-maestro`, `ios-simulator-build`, `i18n-strings-and-catalogs`, `golden-tests`, `toybox-visual-parity`, `pocket-arcade-product-spec`, `tdd-workflow`, `git-commits-and-reporting`.
 - **Tests first:**
-  - Add to `packages/shell/src/screens/debug/font-test-samples.test.ts` the case "every sample holds every letter and digit of its language (spec 7.6)". Each language's sample in `FONT_TEST_SAMPLES` must contain:
-    - en: a to z, A to Z and 0 to 9;
-    - de: the same, plus ä ö ü Ä Ö Ü ß;
-    - fa: ا ب پ ت ث ج چ ح خ د ذ ر ز ژ س ش ص ض ط ظ ع غ ف ق ک گ ل م ن و ه ی, plus آ, the hamza seats ئ أ ؤ ء, and ۰ to ۹;
-    - ckb: ئ ا ب پ ت ج چ ح خ د ر ڕ ز ژ س ش ع غ ف ڤ ق ک گ ل ڵ م ن ه ە و ۆ ی ێ, and ٠ to ٩.
-  - Run `npx jest packages/shell/src/screens/debug --ci --selectProjects unit`. It must fail, naming the missing letters (ckb at least ە and ڤ). The existing tests stay unchanged and green: the fix lengthens each sample's text and never changes the count of four samples.
+  - The letter test is already in `packages/shell/src/screens/debug/font-test-samples.test.ts` ("the font test page alphabets (spec 7.6)", from toybox-screens' template): each alphabet in `FONT_TEST_ALPHABETS` holds en a to z, A to Z and 0 to 9; de the same plus ä ö ü Ä Ö Ü ß; fa every Persian letter, آ, the hamza seats ئ أ ؤ ء and ۰ to ۹; ckb every Sorani letter with ڕ ڵ ۆ ێ ە ڤ and ٠ to ٩. Run `npx jest packages/shell/src/screens/debug --ci --selectProjects unit` and keep it green; the on-screen check is Build steps 2 to 4.
   - The 200 % red: the first capture has no baselines for the large-text sets, so every row reports a missing baseline.
   - A 200 % defect (a cut-off label, an overlap, a row that does not stack) first becomes a failing component test, as accessibility's testing reference shows: render at a large font scale, then assert that the row stacks or that the sentence has no `numberOfLines`. Then fix it.
 - **Build:**
-  1. Extend each sample's text in `packages/shell/src/screens/debug/font-test-samples.ts` with its alphabet and digits, keeping the glyph phrases that are already there. The test must turn green.
-     - Commit `fix(shell): show every letter and digit on the font test page`. The body quotes spec 7.6, printed with `node skills/pocket-arcade-product-spec/scripts/spec-lookup.mjs 7.6`.
-     - Debug texts are not on the fa and ckb review sheet (L13), and this page is test-only.
+  1. Run the debug Jest tests above (spec 7.6, printed with `node skills/pocket-arcade-product-spec/scripts/spec-lookup.mjs 7.6`). Debug texts are not on the fa and ckb review sheet (L13), and this page is test-only.
   2. Build and open the font page:
      - Build with `npm run build:ios:sim -- --app line-siege --variant test --ads off --sim e17-fonts`.
      - Write a throwaway flow, `reports/font-test/font-test.yaml`. `reports/` is gitignored, and the flow never goes under `packages/shell/e2e/`. The flow:
@@ -634,7 +627,7 @@ Long runs (parity, the matrix, the E2E run, the harness, Stryker) run in the bac
     - the outcome in players' words: Line Siege is checked in all four languages, its ads and Premium were tested the way Apple and Google test them, and it is ready for TestFlight;
     - the Checks lines, including a "Design match" line: 32 frames in en, de, fa and ckb, light and dark, with the waiver count, from `parity/signoff.json`;
     - "Please look at": the dark ckb sheet of `s4-home`, a 200 % contact sheet, and the font page in fa;
-    - the "Exit test (spec 15)" block from T09, and the template gap of T05 under Details;
+    - the "Exit test (spec 15)" block from T09, and the font test page screenshots of T05 under Details;
     - "Owner steps (not blocking)": fa and ckb, the play-test, the sound previews, and G3 and G5 with the steps still open from T01;
     - "Not tested or not verified": the upload (T11), the real purchase sheet, restore after reinstall, VoiceOver, and device performance.
 - **Done when:**
