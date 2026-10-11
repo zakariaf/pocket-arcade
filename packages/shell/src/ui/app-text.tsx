@@ -1,5 +1,6 @@
 // packages/shell/src/ui/app-text.tsx
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { PixelRatio, Text, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
@@ -168,7 +169,51 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
   return style.face === 'display' && BALANCED_VARIANTS.has(variant);
 }
 
+/**
+ * Room under a guarded text's last line. React Native lays frames out in float32 and draws a text
+ * in its frame minus its pads; far down a scrolled page (S15's font page) the 11/3 and 1/3 pt pads
+ * of a Persian title left a box 1.6e-4 pt shorter than the four lines it measured, so TextKit
+ * dropped the fourth line and piled its letters onto the third (spec 7.6). Once the text has laid
+ * out, its box is one pixel taller than its lines (minHeight) and the margin below gives that pixel
+ * back, so the element keeps the design's line box.
+ */
+type GuardRoom = { readonly minHeight: number; readonly marginBottom: number };
+
+function guardRoomOf(guard: OverflowGuard, lineHeight: number, lines: number): GuardRoom {
+  const pixel = 1 / PixelRatio.get();
+  return {
+    minHeight: lines * lineHeight + guard.paddingTop + guard.paddingBottom + pixel,
+    marginBottom: guard.marginVertical - pixel,
+  };
+}
+
 type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
+
+type GuardParts = {
+  readonly guard: OverflowGuard | null;
+  readonly room: GuardRoom | null;
+  readonly listeners: LineListeners;
+};
+
+/** The guard, its room once the line count is known, and the listeners that learn that count. */
+function useOverflowGuard(localized: TextStyle, listeners: LineListeners): GuardParts {
+  const [lines, setLines] = useState(0);
+  const guard = overflowGuardOf(localized);
+  // Only a guarded text listens for its line count.
+  if (guard === null) return { guard, room: null, listeners };
+  const { onLineCount, onTextLines } = listeners;
+  return {
+    guard,
+    room: lines === 0 ? null : guardRoomOf(guard, localized.lineHeight ?? 0, lines),
+    listeners: {
+      onLineCount: (count) => {
+        setLines(count);
+        onLineCount?.(count);
+      },
+      ...(onTextLines === undefined ? {} : { onTextLines }),
+    },
+  };
+}
 
 function layoutProps(balance: BalancedWrap, listeners: LineListeners): TextProps {
   const { onLineCount, onTextLines } = listeners;
@@ -199,15 +244,15 @@ export function AppText(props: AppTextProps): ReactNode {
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
   const shown = style.face === 'brand' ? isolate(props.text) : props.text;
-  const guard = overflowGuardOf(localized);
+  const { guard, room, listeners } = useOverflowGuard(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (
     <Text
-      style={[localized, decoration, figures, color, balance.style, guard]}
+      style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={2}
       {...textProps(guard === null ? props : rest)}
-      {...layoutProps(balance, props)}
+      {...layoutProps(balance, listeners)}
     >
       {shown}
     </Text>

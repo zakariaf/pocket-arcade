@@ -76,6 +76,29 @@ describe('AppText', () => {
     expect(screen.getByTestId('stats.overview-card.games-played.value')).toHaveTextContent('۵۸');
   });
 
+  it('gives a guarded text one pixel of room under its last line (spec 7.6)', async () => {
+    await renderWithShell(<AppText text="ا ب پ ت ث ج" variant="title" testID="premium.title" />, {
+      language: 'fa',
+    });
+
+    // Spec 7.6: every letter is drawn. The guard's 11/3 and 1/3 pt pads come off the frame in
+    // float32, and far down a scrolled page the drawn box came out 1.6e-4 pt shorter than the
+    // four lines it measured, so TextKit dropped the last line and piled it onto the third. One
+    // pixel more box (cancelled below) keeps every line inside it.
+    const text = screen.getByText('ا ب پ ت ث ج');
+    await fireEvent(text, 'textLayout', {
+      nativeEvent: { lines: [{ width: 300 }, { width: 290 }, { width: 300 }, { width: 280 }] },
+    });
+    const style = StyleSheet.flatten(screen.getByText('ا ب پ ت ث ج').props['style']);
+    // In pixels at 3x: four 131 px lines, the 11 px and 1 px pads, one pixel of room; the margin
+    // below gives that pixel back, so the element keeps its line box.
+    expect({
+      minHeight: Math.round(Number(style.minHeight) * 3),
+      marginBottom: Math.round(Number(style.marginBottom) * 3),
+    }).toStrictEqual({ minHeight: 4 * 131 + 11 + 1 + 1, marginBottom: -(6 + 1) });
+    expect(style).toMatchObject({ lineHeight: 131 / 3, marginVertical: -2 });
+  });
+
   it('draws Latin numbers without the overflow guard', async () => {
     await renderWithShell(<AppText text="58" variant="number" testID="stats.value" />);
 
