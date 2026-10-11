@@ -239,6 +239,23 @@ export async function measureMemory(
   return judgeMemory(bytes, budgets);
 }
 
+/**
+ * The memory step's Maestro arguments: the smoke flows, its own output folder and the app, without
+ * quarantined flows, like the flows and large-text steps (check-flows never lets a smoke flow be
+ * quarantined, so this only keeps the three steps alike).
+ */
+export function memoryFlowArgs(flows: readonly string[], dir: string, app: AppInfo): string[] {
+  return [
+    'test',
+    ...flows,
+    '--test-output-dir',
+    dir,
+    '--exclude-tags',
+    'quarantine',
+    ...appEnv(app),
+  ];
+}
+
 /** The memory step's operations on this simulator and app. */
 function simulatorMemoryOps(input: PerfStepInput): MemoryOps {
   const { game, device, app, out } = input;
@@ -248,8 +265,7 @@ function simulatorMemoryOps(input: PerfStepInput): MemoryOps {
   const readLog = perfLogReader(sim, app);
   return {
     smokeFlows: () => globSync(`apps/${game}/e2e/flows/smoke/*.yaml`).sort(),
-    runFlows: (flows, dir) =>
-      runMaestro(device, ['test', ...flows, '--test-output-dir', dir, ...appEnv(app)]),
+    runFlows: (flows, dir) => runMaestro(device, memoryFlowArgs(flows, dir, app)),
     recordFeedback: (flows) => {
       const evidence = feedbackEvidenceOf(readLog(), flows);
       writeFileSync(join(out, 'feedback.json'), feedbackFileText(evidence));
