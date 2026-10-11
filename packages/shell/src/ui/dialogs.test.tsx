@@ -1,5 +1,6 @@
 // packages/shell/src/ui/dialogs.test.tsx
 import { fireEvent, screen, userEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
@@ -12,6 +13,8 @@ import { HoldButton } from './hold-button.tsx';
 import { Scrim } from './scrim.tsx';
 import { ToastStack } from './toast-stack.tsx';
 import { Toast } from './toast.tsx';
+
+import type { StyleProp, ViewStyle } from 'react-native';
 
 const HIDDEN = { includeHiddenElements: true } as const;
 const SHELL = SHELL_COLORS.light;
@@ -65,6 +68,32 @@ describe('DialogCard', () => {
     expect(screen.getByTestId('reset-progress-dialog.buttons')).toBeOnTheScreen();
     await user.press(screen.getByRole('button', { name: 'Cancel' }));
     expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('paints the card in its edge colour with the surface laid inside the edge, so no pale hairline shows at the rounded corners', async () => {
+    await renderWithShell(
+      <DialogCard testIDBase="save-restored-dialog" title="Progress restored">
+        <Button
+          label="OK"
+          onPress={jest.fn()}
+          testID="save-restored-dialog.ok-button"
+          isReducedMotion
+        />
+      </DialogCard>,
+    );
+
+    // A fill under the edge bled a 1/3 pt pale seam past the antialiased corners onto the hard
+    // shadow (E15's S14 sign-off, light mode): the card is an EdgedFace, like every key's face.
+    const card = screen.getByTestId('save-restored-dialog.card');
+    // allow-style-assertion: the paint order is the fix; only the styles show it in Jest
+    expect(card).toHaveStyle({ backgroundColor: COLORS.border, borderColor: COLORS.border });
+    const [plate] = card.queryAll(
+      (node) =>
+        node.type === 'View' &&
+        StyleSheet.flatten(node.props['style'] as StyleProp<ViewStyle>)?.position === 'absolute' &&
+        node.parent === card,
+    );
+    expect(plate).toHaveStyle({ borderRadius: 19, backgroundColor: COLORS.surface });
   });
 
   it('makes the scrim the modal root, so its testID stays in the accessibility tree', async () => {
