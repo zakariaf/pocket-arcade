@@ -49,6 +49,8 @@ const SPEC = {
     '  large-text-missing   a11y flows exist but large-text/<phone|tablet>-<en|fa>/junit.xml is missing',
     '  large-text-failed    an a11y flow failed at 200 % text',
     '  screenshot-changed   (--screenshots) a screenshot differs from its baseline, changed size or has no baseline',
+    '  screenshot-capture-failed (--screenshots) a combination captured nothing usable (a simulator that did not',
+    '                       boot, a Maestro run that failed): its summary.json row has kind capture-failed',
     '  matrix-incomplete    (--screenshots) a device/language/theme set has fewer screenshots than the others',
   ].join('\n'),
 };
@@ -234,7 +236,13 @@ function checkScreenshots(root, reports, report) {
   const perSet = new Map();
   let changed = 0;
   const fresh = [];
+  let failed = 0;
   for (const row of rows) {
+    if (row.result?.kind === 'capture-failed') {
+      failed += 1;
+      report.problem({ file: row.result.outDir ?? rel, line: 0, rule: 'screenshot-capture-failed', message: `${row.label}: ${row.result.message}`, fix: 'Open the Maestro log in that folder, fix the step that failed (the simulator boot, a flow step), and rerun that device and language; the other combinations of the run are in summary.json.' });
+      continue;
+    }
     const set = String(row.label ?? '').split('/').slice(0, 2).join('/');
     perSet.set(set, (perSet.get(set) ?? 0) + 1);
     if (row.result === 'baseline-written') {
@@ -250,7 +258,7 @@ function checkScreenshots(root, reports, report) {
   const most = Math.max(0, ...perSet.values());
   for (const [set, count] of perSet) if (count < most) report.problem({ file: rel, line: 0, rule: 'matrix-incomplete', message: `${set} has ${count} screenshots, other sets have ${most}`, fix: `Look at the Maestro log under reports/screenshots/raw/${set}/ for the step that failed, fix it, and rerun that device and language.` });
   if (fresh.length > 0) report.note(`note: ${fresh.length} new baseline(s) written; open each one with the Read tool before committing (first: ${fresh[0]})`);
-  report.note(`evidence: Screenshots: ${rows.length} captured in ${perSet.size} sets, ${changed} changed (reports/screenshots/index.html)`);
+  report.note(`evidence: Screenshots: ${rows.length - failed} captured in ${perSet.size} sets, ${changed} changed${failed === 0 ? '' : `, ${failed} combinations failed`} (reports/screenshots/index.html)`);
   return rows.length;
 }
 

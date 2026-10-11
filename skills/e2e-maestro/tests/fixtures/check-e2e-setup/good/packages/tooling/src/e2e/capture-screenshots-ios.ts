@@ -4,18 +4,21 @@
 // e07-<purpose>-tablet instead of the shared e07-shots-phone and e07-shots-tablet: screenshots-cli.ts)
 // 4 languages x light/dark x phone/tablet. Maestro captures (it waits for the UI to settle); comparePng
 // checks each PNG against apps/<game>/e2e/baselines/<device>/<lang>-<theme>[-<text size>]/<screen>.png.
-// Every capture names its simulator's UDID and a driver port of its own (runMaestro).
+// Every capture names its simulator's UDID and a driver port of its own (runMaestro). A combination
+// that fails is recorded and the next one still runs (screenshot-matrix.ts): summary.json and the
+// gallery are always written, and the run exits 1 with the list of failed combinations; a bad
+// command line or a missing build exits 2 with the message and no stack.
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
-  isChanged,
-  NEW_BASELINE,
-  writeGallery,
-  type GalleryRow,
-} from '@e07/tooling/e2e/write-gallery.ts';
+  captureEach,
+  captureFailureRow,
+  matrixOutcome,
+} from '@e07/tooling/e2e/screenshot-matrix.ts';
+import { NEW_BASELINE, writeGallery, type GalleryRow } from '@e07/tooling/e2e/write-gallery.ts';
 import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 
 import { parseScreenshotsCli, SCREENSHOTS_USAGE, shotSimulatorName } from './screenshots-cli.ts';
@@ -57,8 +60,12 @@ function comboDir(cli: Cli, combo: Combo): string {
   return join(combo.device, `${combo.lang}-${combo.theme}${suffix}`);
 }
 
+const rawDir = (cli: Cli, combo: Combo): string =>
+  join('reports', 'screenshots', 'raw', comboDir(cli, combo));
+
+/** One combination's screenshots; a Maestro run that fails throws (its job's capture-failed row). */
 async function capture(cli: Cli, device: MaestroDevice, combo: Combo): Promise<string[]> {
-  const outDir = join('reports', 'screenshots', 'raw', comboDir(cli, combo));
+  const outDir = rawDir(cli, combo);
   const vars = {
     APP_ID: cli.app.id,
     APP_SCHEME: cli.app.scheme,
@@ -110,27 +117,55 @@ function parseCli(): Cli | number {
   };
 }
 
-async function runDevice(
-  cli: Cli,
-  simctl: Simctl,
-  device: 'phone' | 'tablet',
-): Promise<GalleryRow[]> {
+const combosOf = (cli: Cli, device: 'phone' | 'tablet'): Combo[] =>
+  (['light', 'dark'] as const).flatMap((theme) =>
+    cli.langs.map((lang) => ({ device, lang, theme })),
+  );
+
+/** The combination's job: its label and folders, and its capture once `run` gets the simulator. */
+function jobOf(cli: Cli, combo: Combo, run: () => Promise<GalleryRow[]>) {
+  const relativeDir = comboDir(cli, combo);
+  const baselineDir = join('apps', cli.game, 'e2e', 'baselines', relativeDir);
+  return { label: relativeDir, outDir: rawDir(cli, combo), baselineDir, run };
+}
+
+/** A simulator that never got ready: each of its combinations fails with that error. */
+async function startDevice(cli: Cli, simctl: Simctl, device: 'phone' | 'tablet') {
   const udid = startSimulator(simctl, shotSimulatorName(device, cli.sim), MODELS[device]);
   const sim = { simctl, udid };
   waitForBoot(sim);
   prepareSimulator(sim, cli.app, cli.textSize);
   // One driver port for every capture on this simulator: the session's own, else one free port.
-  const maestroDevice = { udid, driverPort: cli.driverPort ?? (await freeDriverPort()) };
-  const rows: GalleryRow[] = [];
-  for (const theme of ['light', 'dark'] as const) {
-    setAppearance(sim, theme);
-    for (const lang of cli.langs) {
-      const combo = { device, lang, theme };
-      const shots = await capture(cli, maestroDevice, combo);
-      rows.push(...shots.map((actual) => check(cli, combo, actual)));
-    }
+  return { sim, maestroDevice: { udid, driverPort: cli.driverPort ?? (await freeDriverPort()) } };
+}
+
+async function runDevice(
+  cli: Cli,
+  simctl: Simctl,
+  device: 'phone' | 'tablet',
+): Promise<GalleryRow[]> {
+  const combos = combosOf(cli, device);
+  let started: Awaited<ReturnType<typeof startDevice>>;
+  try {
+    started = await startDevice(cli, simctl, device);
+  } catch (error: unknown) {
+    return combos.map((combo) =>
+      captureFailureRow(
+        jobOf(cli, combo, () => Promise.resolve([])),
+        error,
+      ),
+    );
   }
-  return rows;
+  const { sim, maestroDevice } = started;
+  return captureEach(
+    combos.map((combo) =>
+      jobOf(cli, combo, async () => {
+        setAppearance(sim, combo.theme);
+        const shots = await capture(cli, maestroDevice, combo);
+        return shots.map((actual) => check(cli, combo, actual));
+      }),
+    ),
+  );
 }
 
 async function main(): Promise<number> {
@@ -144,12 +179,21 @@ async function main(): Promise<number> {
   const rows: GalleryRow[] = [];
   for (const device of cli.devices) rows.push(...(await runDevice(cli, simctl, device)));
   const summary = join('reports', 'screenshots', 'summary.json');
+  mkdirSync(join('reports', 'screenshots'), { recursive: true });
   writeFileSync(summary, `${JSON.stringify(rows, null, 2)}\n`);
-  const changed = rows.filter(({ result }) => isChanged(result));
-  console.warn(
-    `${String(rows.length)} screenshots, ${String(changed.length)} changed; gallery: ${writeGallery(rows)}`,
-  );
-  return changed.length === 0 ? 0 : 1;
+  const outcome = matrixOutcome(rows);
+  const [counts, ...failures] = outcome.lines;
+  console.warn(`${counts ?? ''}; gallery: ${writeGallery(rows)}`);
+  for (const failure of failures) console.error(`screenshots:ios: ${failure}`);
+  return outcome.exitCode;
 }
 
-process.exitCode = await main();
+main()
+  .then((code) => {
+    process.exitCode = code;
+  })
+  .catch((error: unknown) => {
+    // A missing or ads-on build, or no Maestro: the message alone, like a usage error.
+    console.error(`screenshots:ios: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 2;
+  });

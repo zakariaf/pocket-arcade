@@ -1,0 +1,1 @@
+[screenshot-capture-failed] phone/fa-dark: screenshots: maestro exited 1, see reports/screenshots/raw/phone/fa-dark
