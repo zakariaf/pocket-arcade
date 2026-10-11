@@ -192,18 +192,36 @@ function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number):
 type LineBox = { readonly pads: number; readonly lineHeight: number };
 
 /**
- * The lines a laid-out box holds, or 0 when the box says nothing about the text. The line report
- * is laid out in the same short box, so it lost the dropped line too (two lines of the ad chip came
- * back as one); the box still measures their height, a hair short, and rounds to the true count. A
- * box one pixel over whole lines is the room set on it, which only says what the room was.
+ * The lines a laid-out box holds, or null when the box is the room set on it (whole lines plus one
+ * pixel), which says nothing new. The line report is laid out in the same short box, so it lost
+ * the dropped line too (two lines of the ad chip came back as one); the box still measures their
+ * height, a hair short, and rounds to the true count.
  */
-function boxLinesOf(height: number, box: LineBox): number {
+function boxLinesOf(height: number, box: LineBox): number | null {
   const pixel = 1 / PixelRatio.get();
-  if (box.lineHeight === 0) return 0;
+  if (box.lineHeight === 0) return null;
   const content = height - box.pads;
   const lines = Math.round(content / box.lineHeight);
-  const isRoom = Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4;
-  return isRoom ? 0 : lines;
+  return Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4 ? null : lines;
+}
+
+/** What a text learned from its layouts: the reported lines and the box's lines when more. */
+type Measured = { readonly text: string; readonly lines: number; readonly boxLines: number };
+
+/**
+ * A box that holds more lines than the report becomes the count; a box no taller than the report
+ * clears it (a longer layout that the report saw too, such as a balanced wrap's probe), and the
+ * room's own box keeps it, so the room never shrinks under its text. A report that reaches the
+ * count clears it, so a longer box that came before its own report never stays.
+ */
+function afterBox(measured: Measured, held: number | null): Measured {
+  if (held === null) return measured;
+  return { ...measured, boxLines: held > measured.lines ? held : 0 };
+}
+
+/** A report that reaches the box's count has caught up with it: the report counts again. */
+function afterReport(measured: Measured, lines: number): Measured {
+  return { ...measured, lines, boxLines: lines >= measured.boxLines ? 0 : measured.boxLines };
 }
 
 type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
@@ -215,32 +233,34 @@ type RoomParts = {
   readonly onBoxLayout: (event: LayoutChangeEvent) => void;
 };
 
-/**
- * The guard, the room once the line count is known, and the listeners that learn that count: the
- * line report, or the last box's lines when that box holds more (React Native reports the lines
- * again whenever they change, so the report catches up once the room is set).
- */
+/** The guard, the room once the line count is known, and the listeners that learn that count. */
 function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
-  const [lines, setLines] = useState(0);
-  const [boxHeight, setBoxHeight] = useState(0);
+  const { text, onLineCount, onTextLines } = props;
+  const [stored, setMeasured] = useState<Measured>({ text, lines: 0, boxLines: 0 });
+  // A new text starts from nothing.
+  const measured = stored.text === text ? stored : { text, lines: 0, boxLines: 0 };
   const guard = overflowGuardOf(localized);
-  const lineHeight = localized.lineHeight ?? 0;
-  const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
-  const reported = Math.min(lines, props.numberOfLines ?? lines);
-  const count = Math.max(reported, boxLinesOf(boxHeight, { pads, lineHeight }));
-  const { onLineCount, onTextLines } = props;
+  const box = {
+    pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
+    lineHeight: localized.lineHeight ?? 0,
+  };
+  const reported = Math.min(measured.lines, props.numberOfLines ?? measured.lines);
+  const count = Math.max(reported, measured.boxLines);
+  const forText = (previous: Measured): Measured =>
+    previous.text === text ? previous : { text, lines: 0, boxLines: 0 };
   return {
     guard,
-    room: count === 0 ? null : roomOf(guard, lineHeight, count),
+    room: count === 0 ? null : roomOf(guard, box.lineHeight, count),
     listeners: {
-      onLineCount: (lineCount) => {
-        setLines(lineCount);
-        onLineCount?.(lineCount);
+      onLineCount: (lines) => {
+        setMeasured((previous) => afterReport(forText(previous), lines));
+        onLineCount?.(lines);
       },
       ...(onTextLines === undefined ? {} : { onTextLines }),
     },
     onBoxLayout: (event) => {
-      setBoxHeight(event.nativeEvent.layout.height);
+      const held = boxLinesOf(event.nativeEvent.layout.height, box);
+      setMeasured((previous) => afterBox(forText(previous), held));
     },
   };
 }
