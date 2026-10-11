@@ -7,6 +7,7 @@ import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 import { RaisedSurface } from './raised-surface.tsx';
+import { useWindowClass } from './use-window-class.ts';
 
 import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';
@@ -40,6 +41,10 @@ export type SegmentedControlProps<TValue extends string> = {
 
 const styles = StyleSheet.create({
   group: { flexDirection: 'row', gap: SEG.gap, alignSelf: 'stretch' },
+  // At 200 % text the segments stack, each as wide as the group: in a third of the row a label
+  // split inside a word ("Autom / atic"). No flex 1 there: in a column it is a zero basis.
+  stacked: { flexDirection: 'column', gap: SEG.gap, alignSelf: 'stretch' },
+  stackedCell: { alignSelf: 'stretch' },
   // Each segment shares the row's width and stretches, face too, to the tallest segment (a
   // two-line German "Automatisch" beside one-line Lateinisch and Lokal).
   cell: { flex: 1 },
@@ -114,9 +119,10 @@ export function SegmentedControl<TValue extends string>(
   props: SegmentedControlProps<TValue>,
 ): ReactNode {
   const theme = useTheme();
+  const { isLargeText } = useWindowClass();
   return (
     <View
-      style={styles.group}
+      style={isLargeText ? styles.stacked : styles.group}
       accessibilityRole="radiogroup"
       accessibilityLabel={props.label}
       testID={props.testID}
@@ -143,7 +149,7 @@ export function SegmentedControl<TValue extends string>(
             fill={isSelected ? theme.colors.primary : theme.colors.surface}
             isReducedMotion={props.isReducedMotion}
             faceStyle={styles.face}
-            layoutStyle={styles.cell}
+            layoutStyle={isLargeText ? styles.stackedCell : styles.cell}
             isStretched
           >
             {segmentFace(props, segment, ink)}
