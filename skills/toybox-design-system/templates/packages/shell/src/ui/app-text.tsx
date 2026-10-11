@@ -187,20 +187,34 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
  * line: its letters were piled onto the line before or ran off the edge (spec 7.6). Once the text
  * has laid out, its box is one pixel taller than its lines (minHeight) and the margin below gives
  * that pixel back, so the element keeps its line box. A text cut to numberOfLines counts only those.
+ * iOS lays some boxes out a pixel above their lines (a 59/3 pt stat-list key came out 20 pt): that
+ * surplus, read from the text's first box, stays in the room, so the element keeps the box iOS
+ * laid out (without it every S10 best-scores row came out a pixel short of the design).
  */
 type TextRoom = { readonly minHeight: number; readonly marginBottom: number };
 
-function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number): TextRoom {
+/** A text's vertical metrics: its pads (the guard's), its line height and its first box's surplus. */
+type LineBox = { readonly pads: number; readonly lineHeight: number; readonly surplus: number };
+
+function roomOf(guard: OverflowGuard | null, box: LineBox, lines: number): TextRoom {
   const pixel = 1 / PixelRatio.get();
-  const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
   return {
-    minHeight: lines * lineHeight + pads + pixel,
+    minHeight: lines * box.lineHeight + box.pads + box.surplus + pixel,
     marginBottom: (guard?.marginVertical ?? 0) - pixel,
   };
 }
 
-/** A text's vertical metrics: its pads (the guard's) and its line height. */
-type LineBox = { readonly pads: number; readonly lineHeight: number };
+/**
+ * How far a box iOS laid out reaches past its whole lines: a pixel at most, none when it is short
+ * (the float32 frames far down a page) or within float noise of its lines.
+ */
+function surplusOf(height: number, box: LineBox): number {
+  const pixel = 1 / PixelRatio.get();
+  if (box.lineHeight === 0) return 0;
+  const content = height - box.pads;
+  const surplus = content - Math.round(content / box.lineHeight) * box.lineHeight;
+  return surplus < pixel / 4 ? 0 : Math.min(surplus, pixel);
+}
 
 /**
  * The lines a laid-out box holds, or null when the box is the room set on it (whole lines plus one
@@ -211,13 +225,23 @@ type LineBox = { readonly pads: number; readonly lineHeight: number };
 function boxLinesOf(height: number, box: LineBox): number | null {
   const pixel = 1 / PixelRatio.get();
   if (box.lineHeight === 0) return null;
-  const content = height - box.pads;
+  const content = height - box.pads - box.surplus;
   const lines = Math.round(content / box.lineHeight);
   return Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4 ? null : lines;
 }
 
-/** What a text learned from its layouts: the reported lines and the box's lines when more. */
-type Measured = { readonly text: string; readonly lines: number; readonly boxLines: number };
+/**
+ * What a text learned from its layouts: the reported lines, the box's lines when more, and the
+ * surplus of its first box (laid out before any room: the room waits for a line count).
+ */
+type Measured = {
+  readonly text: string;
+  readonly lines: number;
+  readonly boxLines: number;
+  readonly surplus: number | null;
+};
+
+const freshMeasure = (text: string): Measured => ({ text, lines: 0, boxLines: 0, surplus: null });
 
 /**
  * A box that holds more lines than the report becomes the count; a box no taller than the report
@@ -247,23 +271,24 @@ type RoomParts = {
 /** The guard, the room once the line count is known, and the listeners that learn that count. */
 function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   const { text, onLineCount, onTextLines } = props;
-  const [stored, setMeasured] = useState<Measured>({ text, lines: 0, boxLines: 0 });
+  const [stored, setMeasured] = useState<Measured>(() => freshMeasure(text));
   // A new text starts from nothing.
-  const measured = stored.text === text ? stored : { text, lines: 0, boxLines: 0 };
+  const measured = stored.text === text ? stored : freshMeasure(text);
   const guard = overflowGuardOf(localized);
   // iOS lays each line at the line height times the text size (200 % at most): a box and a room
   // counted in the 1x line read one 200 % line as two.
   const box = {
     pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
     lineHeight: (localized.lineHeight ?? 0) * useTextScale(),
+    surplus: measured.surplus ?? 0,
   };
   const reported = Math.min(measured.lines, props.numberOfLines ?? measured.lines);
   const count = Math.max(reported, measured.boxLines);
   const forText = (previous: Measured): Measured =>
-    previous.text === text ? previous : { text, lines: 0, boxLines: 0 };
+    previous.text === text ? previous : freshMeasure(text);
   return {
     guard,
-    room: count === 0 ? null : roomOf(guard, box.lineHeight, count),
+    room: count === 0 ? null : roomOf(guard, box, count),
     listeners: {
       onLineCount: (lines) => {
         setMeasured((previous) => afterReport(forText(previous), lines));
@@ -272,8 +297,13 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
       ...(onTextLines === undefined ? {} : { onTextLines }),
     },
     onBoxLayout: (event) => {
-      const held = boxLinesOf(event.nativeEvent.layout.height, box);
-      setMeasured((previous) => afterBox(forText(previous), held));
+      const { height } = event.nativeEvent.layout;
+      const held = boxLinesOf(height, box);
+      setMeasured((previous) => {
+        const current = forText(previous);
+        const surplus = current.surplus ?? surplusOf(height, box);
+        return afterBox(current.surplus === surplus ? current : { ...current, surplus }, held);
+      });
     },
   };
 }
