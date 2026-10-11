@@ -229,6 +229,25 @@ describe('AppText', () => {
     expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
   });
 
+  it('keeps its laid-out box in the layout when iOS rounds it a pixel above its lines (S10)', async () => {
+    // iOS laid the 59/3 pt line of a stat-list key out 20 pt tall. A room of lines + 1 px given
+    // back below left the key 19 2/3 pt: every S10 best-scores row came out a pixel short and the
+    // card 2 pt short of the design. The room keeps the box iOS laid out and adds its pixel to it.
+    await renderWithShell(<AppText text="Levels" variant="statListKey" testID="stats.key" />);
+    await fireEvent(screen.getByTestId('stats.key'), 'textLayout', {
+      nativeEvent: { lines: [{ width: 44 }] },
+    });
+    await fireEvent(screen.getByTestId('stats.key'), 'layout', {
+      nativeEvent: { layout: { x: 0, y: 0, width: 44, height: 20 } },
+    });
+
+    const style = StyleSheet.flatten(screen.getByTestId('stats.key').props['style']);
+    expect({
+      minHeight: Math.round(Number(style.minHeight) * 3),
+      marginBottom: Math.round(Number(style.marginBottom) * 3),
+    }).toStrictEqual({ minHeight: 60 + 1, marginBottom: -1 });
+  });
+
   it('counts its lines in the line height of its text size, up to 200 % (spec 8.11)', async () => {
     // Accessibility XXXL sends fontScale 3.571; the text stops at 2x, its line too (67/3 -> 134/3).
     mockWindow.current = { width: 402, height: 874, fontScale: 3.571, scale: 3 };
