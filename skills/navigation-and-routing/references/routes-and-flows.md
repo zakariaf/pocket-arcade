@@ -149,6 +149,7 @@ Navigation calls live in screens and their `use-<screen>-model.ts` hooks, never 
 - `gestureEnabled: false` (and `fullScreenGestureEnabled: false`) on `Game` and `Tutorial`: the iOS edge swipe is off.
 - `usePreventRemove(isRunLive, …)` while the run is `playing` or `paused`: Back while playing opens Pause; Back in Pause resumes.
 - Leaving is only the Pause "Home" button: it sets `isLeavingRef`, saves the run with `resumeOnLaunch: false` (`controls.leaveToHome()`), then dispatches `popTo('Home')`; the prevent-remove callback sees the ref and re-dispatches the intercepted action.
+- A test build's debug link leaves a live run the same way before it resets the stack: e2e-maestro's `resetToFirstRoute` calls the test build's live-run exit (`DebugParts.liveRunExit`, game-host's `live-run-exit.ts`; `ShellNavigator` provides it through `LiveRunExitContext`, a store build has none), the Game screen's registered leave (`useLiveRunExit`: sets `isLeavingRef`, `controls.leaveToHome()`), then resets, so its screen opens on a fixed stack even while a run is on screen. Any other reset is guarded like Back (it pauses or resumes): one leave rule, the ref.
 - A won or lost run is not live, so Back from the Result overlay leaves normally.
 - The app going to the background pauses the session (the game host's lifecycle hook), so a return shows Pause.
 - `usePreventRemove` cannot see app kills: the save after every move is the real guarantee.

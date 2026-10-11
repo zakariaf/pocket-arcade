@@ -3,6 +3,7 @@ import { StackActions, useNavigation, usePreventRemove } from '@react-navigation
 import { useEffect, useRef } from 'react';
 
 import { GameTopBar } from '@e07/shell/game-host/game-top-bar.tsx';
+import { useLiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import { usePauseOnBackground } from '@e07/shell/game-host/use-pause-on-background.ts';
 import { PauseOverlay } from '@e07/shell/screens/pause/pause-overlay.tsx';
@@ -22,8 +23,9 @@ export type GameScreenProps = StaticScreenProps<GameParams>;
  * S5 with the game host wired in (spec S5, S6, S7): the run opens from the route params, the board
  * host fills GameLayout's board area under the top bar, Pause and Result are overlays so the board
  * stays mounted, and the run pauses when the app leaves the foreground. Back never leaves a live
- * run (it opens Pause, and Back in Pause resumes); only Pause -> Home does. A finished run leaves
- * normally; with no run to open the screen goes back to Home.
+ * run (it opens Pause, and Back in Pause resumes): a removal goes on only once the screen has left
+ * the run itself, through Pause -> Home or, in a test build, the debug link's reset
+ * (useLiveRunExit). A finished run leaves normally; with no run to open the screen goes back to Home.
  */
 export function GameScreen({ route }: GameScreenProps): ReactNode {
   const navigation = useNavigation();
@@ -44,6 +46,12 @@ export function GameScreen({ route }: GameScreenProps): ReactNode {
     },
   });
 
+  const leaveRun = (): void => {
+    isLeavingRef.current = true;
+    controls.leaveToHome();
+  };
+  useLiveRunExit(isRunLive ? leaveRun : null);
+
   usePreventRemove(isRunLive, ({ data }) => {
     if (isLeavingRef.current) {
       navigation.dispatch(data.action);
@@ -59,8 +67,7 @@ export function GameScreen({ route }: GameScreenProps): ReactNode {
   }, [status, navigation]);
 
   const handleHome = (): void => {
-    isLeavingRef.current = true;
-    controls.leaveToHome();
+    leaveRun();
     navigation.dispatch(StackActions.popTo('Home'));
   };
 

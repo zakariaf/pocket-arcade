@@ -302,6 +302,30 @@ describe('createDebugParts', () => {
     expect(reset).toHaveBeenCalledTimes(1);
   });
 
+  it('leaves a live run through its own exit before a link resets the stack (spec S5, S6)', () => {
+    const { parts } = setup();
+    const ref = parts.navigationRef;
+    const calls: string[] = [];
+    const state = {
+      routes: [
+        { key: 'Home-1', name: 'Home' },
+        { key: 'Game-2', name: 'Game' },
+      ],
+    } as unknown as NavigationState;
+    jest.spyOn(ref, 'isReady').mockReturnValue(true);
+    jest.spyOn(ref, 'getRootState').mockReturnValue(state);
+    jest.spyOn(ref, 'reset').mockImplementation(() => {
+      calls.push('reset');
+    });
+    parts.liveRunExit?.register(() => calls.push('leave'));
+    parts.links?.handleUrl(`${LINK}?screen=settings`);
+    expect(calls).toStrictEqual(['leave', 'reset']);
+  });
+
+  it('makes no live-run exit in a store build', () => {
+    expect(setup(false).parts.liveRunExit).toBeUndefined();
+  });
+
   it('logs a bad link as a boot error and opens S15', () => {
     const { parts, navigate, errorLog } = setup();
     parts.links?.handleUrl(`${LINK}?screen=nowhere`);

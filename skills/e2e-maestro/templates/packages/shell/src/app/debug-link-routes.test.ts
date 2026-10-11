@@ -1,9 +1,16 @@
 // packages/shell/src/app/debug-link-routes.test.ts
 import { createNavigationContainerRef } from '@react-navigation/native';
 
+import { createLiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 
-import { debugRouteFor, isGameExample, nextLevelOf, openDebugRoute } from './debug-link-routes.ts';
+import {
+  debugRouteFor,
+  isGameExample,
+  nextLevelOf,
+  openDebugRoute,
+  resetToFirstRoute,
+} from './debug-link-routes.ts';
 
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { NavigationState, ParamListBase } from '@react-navigation/native';
@@ -96,5 +103,37 @@ describe('openDebugRoute', () => {
     const { navigation, calls } = readyNavigator();
     openDebugRoute(navigation, { name: 'Debug' }, 'on-top');
     expect(calls).toStrictEqual([['navigate', 'Debug']]);
+  });
+});
+
+describe('resetToFirstRoute (spec S5 and S6: only Pause -> Home leaves a live run)', () => {
+  it("leaves the open Game screen's live run first, as Pause -> Home does, then resets", () => {
+    const navigation = createNavigationContainerRef<ParamListBase>();
+    const calls: unknown[] = [];
+    const state = {
+      routes: [
+        { key: 'Home-1', name: 'Home' },
+        { key: 'Game-2', name: 'Game' },
+      ],
+    };
+    jest.spyOn(navigation, 'isReady').mockReturnValue(true);
+    jest.spyOn(navigation, 'getRootState').mockReturnValue(state as unknown as NavigationState);
+    jest.spyOn(navigation, 'reset').mockImplementation(() => {
+      calls.push('reset');
+    });
+    const exit = createLiveRunExit();
+    exit.register(() => calls.push('leave'));
+    expect(resetToFirstRoute(navigation, exit)).toBe('Home');
+    expect(calls).toStrictEqual(['leave', 'reset']);
+  });
+
+  it('leaves no run while the navigator is not ready (nothing is reset)', () => {
+    const navigation = createNavigationContainerRef<ParamListBase>();
+    const calls: string[] = [];
+    jest.spyOn(navigation, 'isReady').mockReturnValue(false);
+    const exit = createLiveRunExit();
+    exit.register(() => calls.push('leave'));
+    expect(resetToFirstRoute(navigation, exit)).toBeNull();
+    expect(calls).toStrictEqual([]);
   });
 });

@@ -11,6 +11,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { act, render, screen, userEvent } from '@testing-library/react-native';
 import { View } from 'react-native';
 
+import { resetToFirstRoute } from '@e07/shell/app/debug-link-routes.ts';
+import { createLiveRunExit, LiveRunExitContext } from '@e07/shell/game-host/live-run-exit.ts';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 
 import { GameScreen } from './game-screen.tsx';
@@ -149,6 +151,32 @@ describe('GameScreen back handling', () => {
     await user.press(screen.getByTestId('pause.home-button'));
     expect(currentRouteName(ref)).toBe('Home');
     expect(mockSessionStore.getState().homeCalls).toBe(1);
+  });
+
+  it('leaves a live run like Pause Home when a test build debug link resets the stack', async () => {
+    // A test build's debug parts make the exit and ShellNavigator provides it; a store build has none.
+    const exit = createLiveRunExit();
+    const ref = createNavigationContainerRef<ParamListBase>();
+    await render(
+      <LiveRunExitContext value={exit}>
+        <Navigation ref={ref} initialState={INITIAL} />
+      </LiveRunExitContext>,
+    );
+    await act(() => {
+      resetToFirstRoute(ref, exit);
+    });
+    expect(currentRouteName(ref)).toBe('Home');
+    expect(mockSessionStore.getState().homeCalls).toBe(1);
+  });
+
+  it('keeps a live run when any other stack reset would remove it, as Back does', async () => {
+    const ref = await openGame();
+    const homeKey = ref.getRootState()?.routes[0]?.key ?? 'home';
+    await act(() => {
+      ref.reset({ index: 0, routes: [{ key: homeKey, name: 'Home' }] });
+    });
+    expect(currentRouteName(ref)).toBe('Game');
+    expect(mockSessionStore.getState()).toStrictEqual({ status: 'paused', homeCalls: 0 });
   });
 
   it('lets a finished run leave normally', async () => {
