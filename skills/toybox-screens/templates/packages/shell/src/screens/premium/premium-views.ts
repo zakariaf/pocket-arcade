@@ -11,8 +11,12 @@ export type PremiumOfferView = 'ready' | 'restoring' | 'restore-empty' | 'restor
 /** Every other view draws its own state body under its state marker. */
 export type PremiumStateView = Exclude<PremiumView, PremiumOfferView>;
 
-/** buy: the price key (crown cap); loading and purchasing: busy; unavailable: disabled. */
-export type PremiumHeroKind = 'buy' | 'loading' | 'purchasing' | 'unavailable' | 'try-again';
+/**
+ * buy: the price key (crown cap), disabled without the store's price; buy-locked: the same key
+ * locked while a restore runs; loading and purchasing: busy; unavailable: disabled.
+ */
+export type PremiumHeroKind =
+  'buy' | 'buy-locked' | 'loading' | 'purchasing' | 'unavailable' | 'try-again';
 
 /** quiet: the centred link; locked: that link disabled; block: the owner's key; null: none. */
 export type PremiumRestoreKind = 'quiet' | 'locked' | 'block';
@@ -31,7 +35,7 @@ export const PREMIUM_VIEWS: { readonly [TView in PremiumView]: PremiumViewSpec<T
   ready: { marker: null, hero: 'buy', restore: 'quiet', hasSmallPrint: true, toast: null },
   restoring: {
     marker: null,
-    hero: 'buy',
+    hero: 'buy-locked',
     restore: 'locked',
     hasSmallPrint: true,
     toast: 'restoring',

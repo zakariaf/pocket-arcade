@@ -153,6 +153,19 @@ describe('PremiumPage', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
+  it('locks Buy while a restore runs, and offers no Buy without the store price (spec S12)', async () => {
+    const view = await renderWithShell(<PremiumPage model={modelWith('restoring')} />);
+    expect(screen.getByTestId('premium.buy-button')).toBeDisabled();
+
+    await view.rerender(<PremiumPage model={modelWith('restore-empty', { priceText: null })} />);
+    expect(screen.getByTestId('premium.buy-button')).toBeDisabled();
+    expect(screen.getByText('Remove ads')).toBeOnTheScreen();
+
+    await view.rerender(<PremiumPage model={modelWith('restore-empty')} />);
+    expect(screen.getByTestId('premium.buy-button')).toBeEnabled();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
   it('confirms a restore with a toast', async () => {
     await renderWithShell(
       <PremiumPage model={modelWith('already-owned', { hasJustRestored: true })} />,
