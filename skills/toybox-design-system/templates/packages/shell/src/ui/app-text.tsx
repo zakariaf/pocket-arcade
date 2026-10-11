@@ -170,41 +170,41 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
 }
 
 /**
- * Room under a guarded text's last line. React Native lays frames out in float32 and draws a text
- * in its frame minus its pads; far down a scrolled page (S15's font page) the 11/3 and 1/3 pt pads
- * of a Persian title left a box 1.6e-4 pt shorter than the four lines it measured, so TextKit
- * dropped the fourth line and piled its letters onto the third (spec 7.6). Once the text has laid
- * out, its box is one pixel taller than its lines (minHeight) and the margin below gives that pixel
- * back, so the element keeps the design's line box.
+ * Room under a text's last line. React Native lays frames out in float32 and draws a text in its
+ * frame (minus any pads); far down a scrolled page (S15's font page) a box came out a hair shorter
+ * than the lines it measured (174.66650 pt for four 131/3 pt lines), so TextKit dropped the last
+ * line: its letters were piled onto the line before or ran off the edge (spec 7.6). Once the text
+ * has laid out, its box is one pixel taller than its lines (minHeight) and the margin below gives
+ * that pixel back, so the element keeps its line box. A text cut to numberOfLines counts only those.
  */
-type GuardRoom = { readonly minHeight: number; readonly marginBottom: number };
+type TextRoom = { readonly minHeight: number; readonly marginBottom: number };
 
-function guardRoomOf(guard: OverflowGuard, lineHeight: number, lines: number): GuardRoom {
+function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number): TextRoom {
   const pixel = 1 / PixelRatio.get();
+  const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
   return {
-    minHeight: lines * lineHeight + guard.paddingTop + guard.paddingBottom + pixel,
-    marginBottom: guard.marginVertical - pixel,
+    minHeight: lines * lineHeight + pads + pixel,
+    marginBottom: (guard?.marginVertical ?? 0) - pixel,
   };
 }
 
 type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
 
-type GuardParts = {
+type RoomParts = {
   readonly guard: OverflowGuard | null;
-  readonly room: GuardRoom | null;
+  readonly room: TextRoom | null;
   readonly listeners: LineListeners;
 };
 
-/** The guard, its room once the line count is known, and the listeners that learn that count. */
-function useOverflowGuard(localized: TextStyle, listeners: LineListeners): GuardParts {
+/** The guard, the room once the line count is known, and the listeners that learn that count. */
+function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   const [lines, setLines] = useState(0);
   const guard = overflowGuardOf(localized);
-  // Only a guarded text listens for its line count.
-  if (guard === null) return { guard, room: null, listeners };
-  const { onLineCount, onTextLines } = listeners;
+  const shown = Math.min(lines, props.numberOfLines ?? lines);
+  const { onLineCount, onTextLines } = props;
   return {
     guard,
-    room: lines === 0 ? null : guardRoomOf(guard, localized.lineHeight ?? 0, lines),
+    room: shown === 0 ? null : roomOf(guard, localized.lineHeight ?? 0, shown),
     listeners: {
       onLineCount: (count) => {
         setLines(count);
@@ -244,7 +244,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
   const shown = style.face === 'brand' ? isolate(props.text) : props.text;
-  const { guard, room, listeners } = useOverflowGuard(localized, props);
+  const { guard, room, listeners } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (
