@@ -130,13 +130,21 @@ function testFlows(run: E2eRun, flows: readonly string[], dir: string): Promise<
   ]);
 }
 
-/** Adds the benchmark call's test case to reports/e2e/<game-id>/junit.xml (one report for the step). */
-function mergeBenchmarkJunit(out: string, dir: string): void {
+/**
+ * Adds the benchmark call's test case to reports/e2e/<game-id>/junit.xml (one report for the step);
+ * a report that cannot be merged is a failure of the step, never a crash of the run.
+ */
+function mergeBenchmarkJunit(out: string, dir: string): string | null {
   const extra = join(dir, 'junit.xml');
-  if (!existsSync(extra)) return; // Maestro wrote no report: its exit code already fails the step
+  if (!existsSync(extra)) return null; // Maestro wrote no report: its exit code already fails the step
   const junit = join(out, 'junit.xml');
   const main = existsSync(junit) ? readFileSync(junit, 'utf8') : '';
-  writeFileSync(junit, mergeJunitReports(main, readFileSync(extra, 'utf8')));
+  try {
+    writeFileSync(junit, mergeJunitReports(main, readFileSync(extra, 'utf8')));
+    return null;
+  } catch (error: unknown) {
+    return `flows: ${error instanceof Error ? error.message : String(error)} (see ${dir})`;
+  }
 }
 
 /**
@@ -153,14 +161,18 @@ async function runFlows(run: E2eRun): Promise<string[]> {
   ].sort();
   const { others, benchmark } = flowCallsOf(flows, cli.rest);
   const statuses = others.length === 0 ? [] : [await testFlows(run, others, out)];
+  let mergeFailure: string | null = null;
   if (benchmark !== null) {
     const dir = join(out, 'save-benchmark-flow');
     statuses.push(await testFlows(run, [benchmark], dir));
     recordSaveBenchmark({ sim: { simctl, udid }, app, out }, [benchmark]);
-    mergeBenchmarkJunit(out, dir);
+    mergeFailure = mergeBenchmarkJunit(out, dir);
   }
   const failed = statuses.filter((status) => status !== 0);
-  return failed.map((status) => `flows: maestro test exited ${String(status)}, see ${out}`);
+  return [
+    ...failed.map((status) => `flows: maestro test exited ${String(status)}, see ${out}`),
+    ...(mergeFailure === null ? [] : [mergeFailure]),
+  ];
 }
 
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
