@@ -1,6 +1,6 @@
 // packages/shell/src/ui/app-text.tsx
 import { useState } from 'react';
-import { PixelRatio, Text, View } from 'react-native';
+import { PixelRatio, Text, useWindowDimensions, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
@@ -146,6 +146,17 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   return { paddingTop: margin + half, paddingBottom: margin - half, marginVertical: -margin };
 }
 
+/** Text grows with Dynamic Type up to 200 % and no further (spec 8.11): maxFontSizeMultiplier. */
+export const MAX_TEXT_SCALE = 2;
+
+/**
+ * The factor iOS draws text at: the phone's text size, capped at 200 %. React Native scales the
+ * font size and the line height by it, so a part measured against a text line scales with it.
+ */
+export function useTextScale(): number {
+  return Math.min(useWindowDimensions().fontScale, MAX_TEXT_SCALE);
+}
+
 /**
  * The variants the design sets with `.d` (CSS text-wrap: balance): the display, title and heading
  * roles, the top bar and dialog titles, the group tab and the score and streak values. Its other
@@ -240,9 +251,11 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   // A new text starts from nothing.
   const measured = stored.text === text ? stored : { text, lines: 0, boxLines: 0 };
   const guard = overflowGuardOf(localized);
+  // iOS lays each line at the line height times the text size (200 % at most): a box and a room
+  // counted in the 1x line read one 200 % line as two.
   const box = {
     pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
-    lineHeight: localized.lineHeight ?? 0,
+    lineHeight: (localized.lineHeight ?? 0) * useTextScale(),
   };
   const reported = Math.min(measured.lines, props.numberOfLines ?? measured.lines);
   const count = Math.max(reported, measured.boxLines);
@@ -307,7 +320,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const text = (
     <Text
       style={[localized, decoration, figures, color, balance.style, guard, room]}
-      maxFontSizeMultiplier={2}
+      maxFontSizeMultiplier={MAX_TEXT_SCALE}
       {...textProps(guard === null ? props : rest)}
       {...layoutProps(balance, listeners, onBoxLayout)}
     >

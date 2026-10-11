@@ -9,6 +9,19 @@ import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
 import { AppText } from './app-text.tsx';
 
+import type { useWindowDimensions } from 'react-native';
+
+type WindowMetrics = ReturnType<typeof useWindowDimensions>;
+
+/** The window the text sees: text size 1 normally, the largest accessibility size in one case. */
+const mockWindow: { current: WindowMetrics } = {
+  current: { width: 402, height: 874, fontScale: 1, scale: 3 },
+};
+jest.mock('react-native/Libraries/Utilities/useWindowDimensions', () => ({
+  __esModule: true,
+  default: () => mockWindow.current,
+}));
+
 describe('AppText', () => {
   // The parity device (iPhone 16 Pro) draws 3 pixels per point; line heights sit on that grid.
   beforeEach(() => {
@@ -214,6 +227,42 @@ describe('AppText', () => {
 
     const style = StyleSheet.flatten(screen.getByTestId('home.title').props['style']);
     expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
+  });
+
+  it('counts its lines in the line height of its text size, up to 200 % (spec 8.11)', async () => {
+    // Accessibility XXXL sends fontScale 3.571; the text stops at 2x, its line too (67/3 -> 134/3).
+    mockWindow.current = { width: 402, height: 874, fontScale: 3.571, scale: 3 };
+    try {
+      await renderWithShell(<AppText text="Die Monster sind durchgebrochen" testID="x.note" />);
+      const line = 134 / 3;
+      const lines = (count: number): unknown => ({
+        nativeEvent: { lines: Array.from({ length: count }, () => ({ width: 300 })) },
+      });
+      const box = (height: number): unknown => ({
+        nativeEvent: { layout: { x: 0, y: 0, width: 400, height } },
+      });
+      const note = (): ReturnType<typeof screen.getByTestId> => screen.getByTestId('x.note');
+      await fireEvent(note(), 'textLayout', lines(2));
+      await fireEvent(note(), 'layout', box(2 * line));
+
+      // A balanced wrap's three-line probe, then two lines again. Counted in the 1x line, the
+      // three-line box read as six lines and the S7 note kept a third, empty line at 200 %.
+      await act(() => {
+        const handlers = note().props as {
+          onTextLayout: (event: unknown) => void;
+          onLayout: (event: unknown) => void;
+        };
+        handlers.onTextLayout(lines(3));
+        handlers.onLayout(box(3 * line));
+      });
+      await fireEvent(note(), 'textLayout', lines(2));
+      await fireEvent(note(), 'layout', box(3 * line + 1 / 3));
+
+      const style = StyleSheet.flatten(note().props['style']);
+      expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 134 + 1);
+    } finally {
+      mockWindow.current = { width: 402, height: 874, fontScale: 1, scale: 3 };
+    }
   });
 
   it('draws Latin numbers without the overflow guard', async () => {
