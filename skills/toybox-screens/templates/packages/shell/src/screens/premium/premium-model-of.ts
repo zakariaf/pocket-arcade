@@ -18,6 +18,8 @@ export type PremiumModelInput = {
   readonly isReducedMotion: boolean;
   /** The saved Reduce motion choice (useReduceMotionSetting): it hides the success confetti. */
   readonly isConfettiHidden: boolean;
+  /** The design's restore card (a parity frame): the four restore outcomes stacked; default false. */
+  readonly isRestoreToastStack?: boolean;
   readonly onBack: () => void;
 };
 
@@ -33,7 +35,7 @@ export function premiumModelOf(input: PremiumModelInput): PremiumModel {
   return {
     view: premiumView(state),
     hasJustRestored: state.didJustRestore,
-    isRestoreToastStack: false,
+    isRestoreToastStack: input.isRestoreToastStack ?? false,
     priceText: priceOf(state.flow),
     gameName: input.gameName,
     isReducedMotion: input.isReducedMotion,

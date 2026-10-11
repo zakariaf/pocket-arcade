@@ -4,6 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { Button } from '@e07/shell/ui/button.tsx';
 
+import { PREMIUM_VIEWS } from './premium-views.ts';
+
 import type { PremiumModel } from './premium-model.ts';
 import type { ReactNode } from 'react';
 
@@ -17,9 +19,9 @@ const styles = StyleSheet.create({ quiet: { alignSelf: 'center' } });
  */
 export function PremiumRestore({ model }: PremiumRestoreProps): ReactNode {
   const t = useT();
-  const { view } = model;
-  if (view === 'success') return null;
-  if (view === 'already-owned') {
+  const restore = PREMIUM_VIEWS[model.view].restore;
+  if (restore === null) return null;
+  if (restore === 'block') {
     return (
       <Button
         testID="premium.restore-button"
@@ -31,8 +33,6 @@ export function PremiumRestore({ model }: PremiumRestoreProps): ReactNode {
       />
     );
   }
-  const isLocked =
-    view === 'store-unavailable' || view === 'purchase-in-progress' || view === 'restoring';
   return (
     <View style={styles.quiet}>
       <Button
@@ -41,7 +41,7 @@ export function PremiumRestore({ model }: PremiumRestoreProps): ReactNode {
         onPress={model.onRestore}
         kind="quiet"
         icon="restore"
-        isDisabled={isLocked}
+        isDisabled={restore === 'locked'}
         isReducedMotion={model.isReducedMotion}
       />
     </View>

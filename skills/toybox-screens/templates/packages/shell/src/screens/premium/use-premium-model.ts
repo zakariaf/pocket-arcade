@@ -95,6 +95,7 @@ export function usePremiumModel(): PremiumModel {
     gameName: gameMessageText(t, deps.gameName),
     isReducedMotion: useReduceMotion(),
     isConfettiHidden: useReduceMotionSetting(),
+    isRestoreToastStack: frameState === 'premium-restore-toasts',
     onBack: () => {
       navigation.goBack();
     },
@@ -106,5 +107,5 @@ export function usePremiumModel(): PremiumModel {
   const isHeld = frameState !== null;
   useClearNotice(model.view === 'success' && !isHeld, deps.service.dispatch, THANKS_SHOWN);
   useClearNotice(model.hasJustRestored && !isHeld, deps.service.dispatch, RESTORE_NOTICE_SHOWN);
-  return { ...model, isRestoreToastStack: frameState === 'premium-restore-toasts' };
+  return model;
 }
