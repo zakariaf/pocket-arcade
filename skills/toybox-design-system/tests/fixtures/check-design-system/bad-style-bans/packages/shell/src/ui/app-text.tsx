@@ -129,6 +129,30 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   return { paddingTop: margin + half, paddingBottom: margin - half, marginVertical: -margin };
 }
 
+/**
+ * The variants the design sets with `.d` (CSS text-wrap: balance): the display, title, number and
+ * heading roles, the top bar and dialog titles, the group tab and the score and streak values. Its
+ * other Lilita One parts (a key label, .btn .bl; stickers, level numbers, stat values, the
+ * calendar) carry no `.d`, so Chrome wraps them greedily and so does the app.
+ */
+const BALANCED_VARIANTS: ReadonlySet<TypeVariant> = new Set<TypeVariant>([
+  'display',
+  'title',
+  'number',
+  'heading',
+  'topBarTitle',
+  'dialogTitle',
+  'groupTab',
+  'scoreValue',
+  'streakValue',
+  'gameTopBarScore',
+]);
+
+/** Display text balances only in the variants the design marks .d. */
+function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
+  return style.face === 'display' && BALANCED_VARIANTS.has(variant);
+}
+
 function layoutProps(balance: BalancedWrap, onLineCount?: (lines: number) => void): TextProps {
   const onTextLayout: TextProps['onTextLayout'] =
     onLineCount === undefined
@@ -146,10 +170,11 @@ function layoutProps(balance: BalancedWrap, onLineCount?: (lines: number) => voi
 /** The only component that renders text: role or style, script font, direction, 200% cap. */
 export function AppText(props: AppTextProps): ReactNode {
   const theme = useTheme();
-  const style = typeStyleOf(props.variant ?? 'body');
+  const variant = props.variant ?? 'body';
+  const style = typeStyleOf(variant);
   const localized = useLocalizedTextStyle(localizedOptions(style, props));
-  // Display text wraps balanced, as the design's .d (text-wrap: balance).
-  const balance = useBalancedWrap(style.face === 'display', props.text, props.align ?? 'start');
+  // Display text wraps balanced where the design sets .d (text-wrap: balance).
+  const balance = useBalancedWrap(isBalancedOf(style, variant), props.text, props.align ?? 'start');
   const decoration = style.isUnderlined === true ? UNDERLINE : null;
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
