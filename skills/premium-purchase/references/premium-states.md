@@ -39,13 +39,13 @@ All paths are under `packages/shell/src/`. The store does not write the save: th
 |---|---|
 | `connect-started` | flow -> `loading` |
 | `store-unavailable` | flow -> `unavailable` |
-| `price-loaded` | `loading` -> `ready` with the price; ignored in any other flow |
-| `buy-tapped` | -> `purchasing`, only from `ready`, `failed`, `restore-empty`, `restore-failed`, with a price, and not Premium |
+| `price-loaded` | `loading` -> `ready` with the price; a restore flow without a price (`restoring`, `restore-empty`, `restore-failed`: a restore tapped while the price loaded) keeps it, so BUY shows it afterwards; ignored in any other flow (a late price after `unavailable` changes nothing) |
+| `buy-tapped` | -> `purchasing`, only when `canBuyPremium(state)`: from `ready`, `failed`, `restore-empty`, `restore-failed`, with a price, and not Premium. The S12 Buy key reads the same predicate (disabled otherwise, and its handler calls `buyPremium` only when it holds), so no tap reaches `requestPurchase` for a purchase the flow would not track |
 | `purchase-failed` | only while `purchasing` (duplicates are no-ops): cancelled -> `ready`; deferred -> `pending`; already-owned -> `restoring` (the service runs restore); unavailable -> `unavailable`; failed -> `failed` |
 | `purchase-pending` | `purchasing` -> `pending` |
-| `premium-granted` | dispatched after the save was written: `isPremium` true; `didJustPurchase` true only when the flow was `purchasing` or `pending` (a purchase delivered at launch shows no thank-you out of context) |
-| `restore-tapped` | -> `restoring` |
-| `restore-finished` | `sync-failed` -> `restore-failed`; `owned` -> Premium on + `didJustRestore` (and `didJustPurchase` cleared: a restore shows the "restored" toast, never the thank-you); `revoked` -> Premium off; `unknown` -> `restore-empty` (only after a successful sync, and only when not Premium) |
+| `premium-granted` | dispatched after the save was written: `isPremium` true; `didJustPurchase` true only when the flow was `purchasing`, `pending` or a restore started from `pending` (a purchase delivered at launch shows no thank-you out of context) |
+| `restore-tapped` | -> `restoring`; from `pending` (Ask to Buy) it marks `isAwaitingApproval`, so the approval stays outstanding |
+| `restore-finished` | after a restore started from `pending`: `owned` as below, anything else back to `pending` (BUY never reopens while approval is outstanding); otherwise `sync-failed` -> `restore-failed`; `owned` -> Premium on + `didJustRestore` (and `didJustPurchase` cleared: a restore shows the "restored" toast, never the thank-you); `revoked` -> Premium off; `unknown` -> `restore-empty` (only after a successful sync, and only when not Premium) |
 | `entitlements-checked` | silent re-check: `owned` -> Premium on; `revoked` -> Premium off; `unknown` -> nothing changes; a check that changes nothing returns the same state object, so the store publishes nothing |
 | `thanks-shown` / `restore-notice-shown` | clear the one-shot flags |
 | `debug-premium-set` | test builds only (debug switch "Premium on (no purchase)", debug link `premium=0|1`): sets `isPremium` and clears both one-shot flags. The debug handler first writes the save (`persistPremium({ isPremium: true })`, or `{ isPremium: false, revokedAtMs: clock.nowMs() }` so the save guard accepts it), then dispatches; it never touches StoreKit. Tier 2 flows 01, 03 and 05 rely on it |

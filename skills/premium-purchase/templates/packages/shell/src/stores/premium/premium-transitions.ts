@@ -24,11 +24,37 @@ export function onPurchaseFailed(state: PremiumState, failure: PurchaseFailure):
   }
 }
 
+// The store's price: it opens the page, and a price that arrives during a restore started while it
+// loaded (or right after that restore) is kept, so BUY can show it; a late one after "unavailable"
+// is ignored.
+export function onPriceLoaded(state: PremiumState, price: string): PremiumState {
+  const { flow } = state;
+  if (flow.kind === 'loading') return { ...state, flow: { kind: 'ready', price } };
+  const isRestore =
+    flow.kind === 'restoring' || flow.kind === 'restore-empty' || flow.kind === 'restore-failed';
+  return isRestore && flow.price === null ? { ...state, flow: { ...flow, price } } : state;
+}
+
+// A restore during Ask to Buy (spec S12 Pending) keeps the approval outstanding: it comes back to
+// "waiting for approval" unless it finds the purchase, so BUY never opens a second purchase.
+export function onRestoreTapped(state: PremiumState): PremiumState {
+  const { flow } = state;
+  if (flow.kind === 'pending')
+    return { ...state, flow: { kind: 'restoring', price: flow.price, isAwaitingApproval: true } };
+  return { ...state, flow: { kind: 'restoring', price: priceOf(flow) } };
+}
+
+function isAwaitingApproval(state: PremiumState): boolean {
+  return state.flow.kind === 'restoring' && state.flow.isAwaitingApproval === true;
+}
+
 export function onRestoreFinished(
   state: PremiumState,
   evidence: Evidence | 'sync-failed',
 ): PremiumState {
   const price = priceOf(state.flow);
+  if (isAwaitingApproval(state) && evidence !== 'owned' && price !== null)
+    return { ...state, flow: { kind: 'pending', price } };
   if (evidence === 'sync-failed') return { ...state, flow: { kind: 'restore-failed', price } };
   if (evidence === 'owned') {
     // A restore is not a purchase: the "restored" toast, never the thank-you animation.
@@ -54,7 +80,8 @@ export function onEntitlementsChecked(state: PremiumState, evidence: Evidence): 
 }
 
 export function onGranted(state: PremiumState): PremiumState {
-  const wasBuying = state.flow.kind === 'purchasing' || state.flow.kind === 'pending';
+  const wasBuying =
+    state.flow.kind === 'purchasing' || state.flow.kind === 'pending' || isAwaitingApproval(state);
   return {
     ...state,
     isPremium: true,
