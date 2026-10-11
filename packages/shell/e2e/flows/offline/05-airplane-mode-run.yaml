@@ -33,108 +33,46 @@ tags: [shell, offline]
       WAIT_FOR: 'home.screen'
 - assertNotVisible:
     id: 'home.banner-ad'
-# Ten levels in a row, each won through the game host (written out: repeat is not a verified command).
+# Ten levels in a row, each won through the game host (written out: repeat is not a verified command);
+# win-and-next wins one and opens the next.
 - tapOn:
     id: 'home.play-button'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
-    file: ../../subflows/debug-setup.yaml
+    file: ../../subflows/win-and-next.yaml
     env:
-      QUERY: 'action=win-level'
-      WAIT_FOR: 'result.screen'
-- tapOn:
-    id: 'result.next-button'
-- extendedWaitUntil:
-    visible:
-      id: 'game.screen'
-    timeout: 10000
+      NEXT_ROOT: 'game.screen'
 - runFlow:
     file: ../../subflows/debug-setup.yaml
     env:
