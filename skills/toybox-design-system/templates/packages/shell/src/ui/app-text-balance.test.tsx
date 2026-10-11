@@ -80,6 +80,30 @@ describe('AppText balanced display text (the design .d: text-wrap balance)', () 
     expect(StyleSheet.flatten(value.props['style'] as TextStyle)?.paddingEnd).toBeUndefined();
   });
 
+  it('keeps every word whole: a probe that splits one has failed (spec 8.11)', async () => {
+    // At 200 % text the de S7 lose title needs two lines. A narrower probe kept two lines only by
+    // breaking "Diesmal" inside it (iOS wraps a word wider than its line letter by letter), and the
+    // search kept that width: "Diesm / al nicht". CSS balance never breaks a word.
+    await renderWithShell(
+      <AppText text="Diesmal nicht" variant="display" align="center" testID="result.title" />,
+    );
+    const title = (): ReturnType<typeof screen.getByTestId> => screen.getByTestId('result.title');
+    const lines = (...parts: readonly (readonly [string, number])[]): unknown => ({
+      nativeEvent: { lines: parts.map(([text, width]) => ({ text, width })) },
+    });
+    await fireEvent(title(), 'layout', { nativeEvent: { layout: { width: 380, height: 180 } } });
+    await fireEvent(title(), 'textLayout', lines(['Diesmal ', 270], ['nicht', 170]));
+    // The first probe: floor(min((220 + 380) / 2, 269.5)) = 269, a 111 pt pad split on both sides.
+    expect(title()).toHaveStyle({ paddingHorizontal: 111 / 2 });
+
+    await fireEvent(title(), 'textLayout', lines(['Diesm', 190], ['al nicht', 260]));
+    await fireEvent(title(), 'textLayout', lines(['Diesmal ', 270], ['nicht', 170]));
+
+    expect(
+      StyleSheet.flatten(title().props['style'] as TextStyle)?.paddingHorizontal,
+    ).toBeUndefined();
+  });
+
   it('leaves body text greedy', async () => {
     await renderWithShell(<AppText text="Body text" testID="x.body" />);
     const body = screen.getByTestId('x.body');
