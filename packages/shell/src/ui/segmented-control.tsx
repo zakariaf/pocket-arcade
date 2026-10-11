@@ -40,6 +40,8 @@ export type SegmentedControlProps<TValue extends string> = {
 
 const styles = StyleSheet.create({
   group: { flexDirection: 'row', gap: SEG.gap, alignSelf: 'stretch' },
+  // Each segment shares the row's width and stretches, face too, to the tallest segment (a
+  // two-line German "Automatisch" beside one-line Lateinisch and Lokal).
   cell: { flex: 1 },
   // faceGap (1, label line to preview line) and labelColumnGap (3, check to label) are mockup
   // overrides the token file lacks; write-component-specs.mjs adds them to the specs.
@@ -142,6 +144,7 @@ export function SegmentedControl<TValue extends string>(
             isReducedMotion={props.isReducedMotion}
             faceStyle={styles.face}
             layoutStyle={styles.cell}
+            isStretched
           >
             {segmentFace(props, segment, ink)}
           </RaisedSurface>
