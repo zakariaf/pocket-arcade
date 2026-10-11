@@ -56,8 +56,8 @@ async function setup(options: RenderWithShellOptions = {}, port: PurchasePort | 
       <PremiumScreenDepsProvider deps={deps}>{children}</PremiumScreenDepsProvider>
     </Shell>
   );
-  const { result } = await renderHook(() => usePremiumModel(), { wrapper });
-  return { result, stores: shell.stores, service: deps.service };
+  const { result, unmount } = await renderHook(() => usePremiumModel(), { wrapper });
+  return { result, unmount, stores: shell.stores, service: deps.service, wrapper };
 }
 
 describe('usePremiumModel', () => {
@@ -100,6 +100,42 @@ describe('usePremiumModel', () => {
     });
 
     expect(result.current.view).toBe('already-owned');
+  });
+
+  it('uses up the thank-you and the restored toast when the player leaves before NOTICE_MS', async () => {
+    // A notice seen once never shows again on a later visit (spec S12: one thank-you animation).
+    const bought = await setup();
+    await act(() => {
+      const { dispatch } = bought.stores.premium.getState();
+      dispatch({ type: 'price-loaded', price: '€1.99' });
+      dispatch({ type: 'buy-tapped' });
+      dispatch({ type: 'premium-granted' });
+    });
+    expect(bought.result.current.view).toBe('success');
+    await bought.unmount();
+    expect(bought.stores.premium.getState().didJustPurchase).toBe(false);
+
+    const restored = await setup();
+    await act(() => {
+      const { dispatch } = restored.stores.premium.getState();
+      dispatch({ type: 'restore-tapped' });
+      dispatch({ type: 'restore-finished', evidence: 'owned' });
+    });
+    expect(restored.result.current.hasJustRestored).toBe(true);
+    await restored.unmount();
+    expect(restored.stores.premium.getState().didJustRestore).toBe(false);
+  });
+
+  it('opens without the toast of a restore that ended while it was closed (spec S12)', async () => {
+    const first = await setup();
+    await first.unmount();
+    await act(() => {
+      const { dispatch } = first.stores.premium.getState();
+      dispatch({ type: 'restore-tapped' });
+      dispatch({ type: 'restore-finished', evidence: 'owned' });
+    });
+    const { result } = await renderHook(() => usePremiumModel(), { wrapper: first.wrapper });
+    expect(result.current.hasJustRestored).toBe(false);
   });
 });
 

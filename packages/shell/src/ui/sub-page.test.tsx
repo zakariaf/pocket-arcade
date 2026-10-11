@@ -1,4 +1,4 @@
-// packages/shell/src/screens/settings/sub-page.test.tsx
+// packages/shell/src/ui/sub-page.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';

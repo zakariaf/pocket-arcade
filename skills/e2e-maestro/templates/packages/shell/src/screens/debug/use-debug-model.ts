@@ -9,7 +9,7 @@
 // debug.perf-summary), all through services.perf over the perf log.
 // S15 is a design frame like every other (lead decision L12): its labels stay English in every
 // language (L13, the debug.* catalog texts), while its numbers and dates follow the language's digits
-// as the design draws them (Persian ۱۲ and ۰ in fa): createNumberFormatter, never String(n). A parity
+// as the design draws them (Persian ۱۲ and ۰ in fa): useNumberFormatter, never String(n). A parity
 // capture of s15-debug-menu opens its frame state 'debug-ads-always-test' once, through the
 // "Always show test ads" switch's own handler (debug ads override 'always-test'). S15 is reached only
 // through the test-only entry, so it reads parityFrameState() from app/parity/parity-session.ts:
@@ -23,17 +23,14 @@ import { parityFrameState } from '@e07/shell/app/parity/parity-session.ts';
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { levelCountOf, useGameExtra } from '@e07/shell/app/use-game-extra.ts';
 import { useReduceMotionSetting } from '@e07/shell/app/use-reduce-motion-setting.ts';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { formatWeekdayDayMonth } from '@e07/shell/i18n/format-date.ts';
 import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { usePremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
 import { selectNextLevel } from '@e07/shell/stores/progress-selectors.ts';
 import { useProgressStore } from '@e07/shell/stores/progress-store.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 
 import { runDebugAction } from './debug-actions.ts';
 import { perfSummaryOf, perfSummaryText } from './debug-perf.ts';
@@ -42,55 +39,30 @@ import { localeValue, networkAttemptsOf } from './debug-tools.ts';
 
 import type { DebugAction, DebugSwitch } from './debug-rows.ts';
 import type { DebugServices } from './debug-services.ts';
-import type { DebugModel } from './debug-view.tsx';
+import type { DebugImportField, DebugModel, DebugPerf } from './debug-view.tsx';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
-import type { DebugImportResult } from '@e07/shell/app/debug-link-handler.ts';
+import type { DebugImportResult, DebugLinkHandler } from '@e07/shell/app/debug-link-handler.ts';
 import type { PerfEntry } from '@e07/shell/app/perf/perf-log.ts';
+import type { Services } from '@e07/shell/app/services-context.tsx';
 import type { NumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
 import type { ClockPort } from '@e07/shell/services/clock/clock-port.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 
-/** "Import save from text": the paste field the Import save row opens. */
-export type DebugImportField = {
-  readonly isOpen: boolean;
-  readonly text: string;
-  /** Why the last import failed, as one sentence, or null. */
-  readonly error: string | null;
-  readonly onChangeText: (text: string) => void;
-  /** Imports the pasted text; closes the field when it worked. */
-  readonly onSubmit: () => void;
-  readonly onCancel: () => void;
-};
-
-/** S15's Performance section (test builds): frame recording, the report, the save benchmark. */
-export type DebugPerfModel = {
-  /** debug.perf-record-switch: frame times are recorded into the perf log while it is on. */
-  readonly isRecording: boolean;
-  readonly onToggleRecording: () => void;
-  /** debug.perf-share-row: the iOS share sheet with the perf log as JSON (nothing is sent). */
-  readonly onShare: () => void;
-  /** debug.perf-benchmark-row: 300 save writes into a scratch database, one save-benchmark entry. */
-  readonly onRunBenchmark: () => void;
-  /** PerfLog.entries().length: the count S15's debug.perf.summary text names. */
-  readonly entriesCount: number;
-  /** debug.perf-summary: "cold 3 · 1049 ms · save p95 0.41 ms". */
-  readonly summary: string;
-};
-
-/** DebugModel plus the JS network guard's counter (debug.network-attempts, flows assert "0"). */
+/**
+ * What S15's view draws (the network counter, the Import save field and the Performance section
+ * are DebugModel's), plus the two tools a flow reaches without a row.
+ */
 export type DebugScreenModel = DebugModel & {
-  readonly networkAttempts: string;
-  readonly importField: DebugImportField;
   /** A save exported as text (Export save), read through the save codec, then one write. */
   readonly importSave: (text: string) => DebugImportResult;
   /** The font test page (the FontTest route of the Debug group). */
   readonly openFontTest: () => void;
-  readonly perf: DebugPerfModel;
 };
 
 type ImportFieldState = {
   readonly field: DebugImportField;
-  readonly open: () => void;
+  /** The Import save row: opens the field, or cancels it when it is open. */
+  readonly toggle: () => void;
 };
 
 /** S15's "Always show test ads" switch (debug ads override 'always-test'). */
@@ -134,17 +106,16 @@ function useFrameStateOnce(open: () => void): void {
   }, [isDue]);
 }
 
-/** Numbers in the language's digits and the digit setting (Persian ۱۲ in fa), as the design draws S15. */
-function useFormatNumber(): NumberFormatter {
-  return createNumberFormatter(localeTagFor(useLanguage(), useSettingsStore(selectDigits)));
-}
-
 /** "en · ltr · 123": the language, the layout direction and 123 in the digit setting. */
 function useLocaleValue(formatNumber: NumberFormatter): string {
   return localeValue(useLanguage(), useDirection(), formatNumber(123));
 }
 
-/** The paste field: open, typed text, the last error, and the submit through importSave. */
+/**
+ * The paste field: open, typed text, the last error, and the submit through importSave. Its row
+ * toggles it: pressed again it cancels (onCancel), dropping the pasted text, since the S15
+ * reference draws no Cancel key and the field must never close only through a good import.
+ */
 function useImportField(importSave: (text: string) => DebugImportResult): ImportFieldState {
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState('');
@@ -159,10 +130,14 @@ function useImportField(importSave: (text: string) => DebugImportResult): Import
     if (result.kind === 'imported') close();
     else setError(result.message);
   };
-  const open = (): void => {
-    setIsOpen(true);
+  const toggle = (): void => {
+    if (isOpen) close();
+    else setIsOpen(true);
   };
-  return { open, field: { isOpen, text, error, onChangeText: setText, onSubmit, onCancel: close } };
+  return {
+    toggle,
+    field: { isOpen, text, error, onChangeText: setText, onSubmit, onCancel: close },
+  };
 }
 
 type ActionHooks = {
@@ -171,11 +146,17 @@ type ActionHooks = {
   readonly openFontTest: () => void;
 };
 
+/** The app's own services the debug tools run with, read once by useDebugModel. */
+type DebugDeps = {
+  readonly services: DebugServices;
+  readonly links: DebugLinkHandler;
+  readonly app: Services;
+};
+
 /** The chevron rows: each runs one tool of debug-actions.ts with the app's own services. */
-function useDebugActions(hooks: ActionHooks): (action: DebugAction) => void {
-  const services = useDebugServices();
-  const links = useDebugLinks();
-  const { clock, errorLog, save } = useServices();
+function useDebugActions(debug: DebugDeps, hooks: ActionHooks): (action: DebugAction) => void {
+  const { services, links } = debug;
+  const { clock, errorLog, save } = debug.app;
   const { levels } = useGameExtra();
   const deps = { services, links, sheets: DEBUG_SHEETS, save, errorLog, levels, ...hooks };
   return (action) => {
@@ -223,7 +204,8 @@ export function readDebugState(
 /** The value column of the rows (next level, simulated day, locale, error count), in the language's digits. */
 function useValues(state: DebugState): DebugModel['values'] {
   const t = useT();
-  const formatNumber = useFormatNumber();
+  // The language's digits and the digit setting (Persian ۱۲ in fa), as the design draws S15.
+  const formatNumber = useNumberFormatter();
   const levelCount = levelCountOf(useGameExtra());
   const nextLevel = useProgressStore((progress) => selectNextLevel(progress, levelCount));
   return {
@@ -237,7 +219,7 @@ function useValues(state: DebugState): DebugModel['values'] {
 type PerfHooks = { readonly onChanged: () => void; readonly errorLog: ErrorLogPort };
 
 /** The Performance section over services.perf; a failed share goes to the error log. */
-function perfModelOf(services: DebugServices, state: DebugState, hooks: PerfHooks): DebugPerfModel {
+function perfModelOf(services: DebugServices, state: DebugState, hooks: PerfHooks): DebugPerf {
   const { perf } = services;
   return {
     isRecording: state.isRecording,
@@ -263,7 +245,8 @@ export function useDebugModel(): DebugScreenModel {
   const navigation = useNavigation();
   const services = useDebugServices();
   const links = useDebugLinks();
-  const { errorLog, clock } = useServices();
+  const app = useServices();
+  const { errorLog, clock } = app;
   // Debug flags, the simulated date and the logs live outside the stores: a change re-renders by
   // hand, and the new version makes readDebugState read them again.
   const [version, refresh] = useReducer((count: number) => count + 1, 0);
@@ -290,7 +273,10 @@ export function useDebugModel(): DebugScreenModel {
     onBack: () => {
       navigation.goBack();
     },
-    onAction: useDebugActions({ onChanged: refresh, openImport: imports.open, openFontTest }),
+    onAction: useDebugActions(
+      { services, links, app },
+      { onChanged: refresh, openImport: imports.toggle, openFontTest },
+    ),
     onToggle,
     importField: imports.field,
     importSave,

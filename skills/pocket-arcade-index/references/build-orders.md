@@ -98,7 +98,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 
 ### Step 7
 
-- Copy from `toybox-design-system`: `packages/shell/src/theme/**`, `packages/shell/src/testing/**`, `packages/shell/src/ui/app-text*`, `packages/shell/src/ui/raised-surface*`, `packages/shell/src/ui/toybox-styles*`, `packages/shell/src/ui/use-balanced-wrap*`, `packages/shell/src/app/press-feedback-context*`, `packages/shell/src/i18n/use-localized-text-style*`, `apps/line-siege/src/theme/**`, `test/integration/toybox-palettes.test.ts`.
+- Copy from `toybox-design-system`: `packages/shell/src/theme/**`, `packages/shell/src/testing/**`, `packages/shell/src/ui/app-text*`, `packages/shell/src/ui/raised-surface*`, `packages/shell/src/ui/edged-face*`, `packages/shell/src/ui/toybox-styles*`, `packages/shell/src/ui/use-balanced-wrap*`, `packages/shell/src/app/press-feedback-context*`, `packages/shell/src/i18n/use-localized-text-style*`, `apps/line-siege/src/theme/**`, `test/integration/toybox-palettes.test.ts`.
 - Copy from `toybox-components`: `packages/shell/src/ui/**`, `packages/shell/src/testing/rendered-parts*`.
 - Copy from `code-drawn-art-and-icons`: `packages/shell/src/art/**`, `packages/shell/src/config/art-config*`, `packages/shell/src/config/splash-grounds.ts`, `packages/shell/src/game-host/sprite-cache*`, `packages/shell/src/ui/**`, `packages/tooling/src/art/**`, `packages/tooling/src/visual/**`, `apps/line-siege/src/art/logo-art.ts`, `apps/line-siege/src/art/logo-art.test.ts`, `apps/__GAME_ID__/src/art/game-art.ts`.
 - Copy from `react-components-and-hooks`: `packages/shell/src/app/**`, `packages/shell/src/ui/**`.
@@ -165,7 +165,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
   - Copy from `daily-and-statistics`: `packages/shell/src/screens/stats/**`.
   - Copy from `settings-and-preferences`: `packages/shell/src/stores/settings-resets*`, `packages/shell/src/stores/use-settings-resets*`.
 - **S11**
-  - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`.
+  - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`, `packages/shell/src/ui/sub-page*`.
   - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/*`, `packages/shell/src/game-host/use-hints-during-play*`.
   - Copy from `toybox-components`: `packages/shell/src/screens/settings/sound-group*`.
   - Copy from `state-stores`: `packages/shell/src/screens/settings/use-display-settings.ts`.
@@ -182,7 +182,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - **S12**
   - Copy from `toybox-screens`: `packages/shell/src/screens/premium/**`.
 - **S13**
-  - Copy from `toybox-screens`: `packages/shell/src/screens/how-to-play/**`.
+  - Copy from `toybox-screens`: `packages/shell/src/screens/how-to-play/**`, `packages/shell/src/ui/use-page-swipe*`, `packages/shell/src/ui/page-step-for-swipe*`.
 - **S14**: nothing new to copy (its files arrived with an earlier step or screen); route it, then match it to its design
 - **S15**
   - Copy from `toybox-screens`: `packages/shell/src/screens/debug/**`.

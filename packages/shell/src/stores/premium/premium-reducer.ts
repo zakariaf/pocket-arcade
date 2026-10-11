@@ -3,17 +3,30 @@ import { priceOf } from './premium-state.ts';
 import {
   onEntitlementsChecked,
   onGranted,
+  onPriceLoaded,
   onPurchaseFailed,
   onRestoreFinished,
+  onRestoreOutcomeCleared,
+  onRestoreTapped,
 } from './premium-transitions.ts';
 
 import type { PremiumAction, PremiumState } from './premium-state.ts';
 
 const CAN_BUY = new Set(['ready', 'failed', 'restore-empty', 'restore-failed']);
 
+/**
+ * BUY may start a purchase (spec S12): not Premium, a price from the store, and a page that sells
+ * (never while loading, buying, waiting for approval or restoring). The reducer refuses every
+ * other buy-tapped, and the S12 Buy key reads the same rule, so no tap ever reaches the store port
+ * for a purchase the flow would not track.
+ */
+export function canBuyPremium(state: PremiumState): boolean {
+  return !state.isPremium && priceOf(state.flow) !== null && CAN_BUY.has(state.flow.kind);
+}
+
 function onBuyTapped(state: PremiumState): PremiumState {
   const price = priceOf(state.flow);
-  if (state.isPremium || price === null || !CAN_BUY.has(state.flow.kind)) return state;
+  if (price === null || !canBuyPremium(state)) return state;
   return { ...state, flow: { kind: 'purchasing', price } };
 }
 
@@ -24,9 +37,7 @@ export function premiumReducer(state: PremiumState, action: PremiumAction): Prem
     case 'store-unavailable':
       return { ...state, flow: { kind: 'unavailable' } };
     case 'price-loaded':
-      return state.flow.kind === 'loading'
-        ? { ...state, flow: { kind: 'ready', price: action.price } }
-        : state;
+      return onPriceLoaded(state, action.price);
     case 'buy-tapped':
       return onBuyTapped(state);
     case 'purchase-failed':
@@ -38,7 +49,7 @@ export function premiumReducer(state: PremiumState, action: PremiumAction): Prem
     case 'premium-granted':
       return onGranted(state);
     case 'restore-tapped':
-      return { ...state, flow: { kind: 'restoring', price: priceOf(state.flow) } };
+      return onRestoreTapped(state);
     case 'restore-finished':
       return onRestoreFinished(state, action.evidence);
     case 'entitlements-checked':
@@ -47,6 +58,8 @@ export function premiumReducer(state: PremiumState, action: PremiumAction): Prem
       return { ...state, didJustPurchase: false };
     case 'restore-notice-shown':
       return { ...state, didJustRestore: false };
+    case 'restore-outcome-cleared':
+      return onRestoreOutcomeCleared(state);
     case 'debug-premium-set':
       return {
         ...state,

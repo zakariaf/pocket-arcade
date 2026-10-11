@@ -221,6 +221,16 @@ describe('useDebugModel', () => {
     expect(result.current.importField).toMatchObject({ isOpen: false, text: '', error: null });
   });
 
+  it('closes the Import save field when its row is pressed again, dropping the pasted text', async () => {
+    const { result } = await setup();
+    for (const text of [null, '{"hello": 1}', null])
+      await act(() => {
+        if (text === null) result.current.onAction('import-save');
+        else result.current.importField.onChangeText(text);
+      });
+    expect(result.current.importField).toMatchObject({ isOpen: false, text: '', error: null });
+  });
+
   it('opens the font test page from its row', async () => {
     const { result } = await setup();
     result.current.onAction('font-test');

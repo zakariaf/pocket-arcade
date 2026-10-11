@@ -53,7 +53,11 @@ export {
   recordHapticsFeedback,
 } from '@e07/shell/services/audio/recording-feedback.ts';
 /** @public */
+export { DebugScreen } from '@e07/shell/screens/debug/debug-screen.tsx';
+/** @public */
 export { createDebugServices } from '@e07/shell/screens/debug/debug-services.ts';
+/** @public */
+export { FontTestScreen } from '@e07/shell/screens/debug/font-test-screen.tsx';
 /** @public */
 export { installNetworkGuard } from '@e07/shell/screens/debug/network-guard.ts';
 /** @public */

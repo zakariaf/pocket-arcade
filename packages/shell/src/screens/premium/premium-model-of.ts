@@ -1,0 +1,53 @@
+// packages/shell/src/screens/premium/premium-model-of.ts
+// Pure: the PremiumModel S12 draws, from the premium store's state and the Premium service. Buy,
+// Try again and Restore run the service (it dispatches every step); failures go to its onError.
+import { restorePremium } from '@e07/shell/services/purchase/premium-service.ts';
+import { buyPremium } from '@e07/shell/services/purchase/premium-store-flow.ts';
+import { canBuyPremium } from '@e07/shell/stores/premium/premium-reducer.ts';
+import { priceOf } from '@e07/shell/stores/premium/premium-state.ts';
+import { premiumView } from '@e07/shell/stores/premium/premium-view.ts';
+
+import type { PremiumModel } from './premium-model.ts';
+import type { PremiumServiceDeps } from '@e07/shell/services/purchase/premium-service.ts';
+import type { PremiumState } from '@e07/shell/stores/premium/premium-state.ts';
+
+export type PremiumModelInput = {
+  readonly state: PremiumState;
+  readonly service: PremiumServiceDeps;
+  /** Already translated (gameMessageText). */
+  readonly gameName: string;
+  readonly isReducedMotion: boolean;
+  /** The saved Reduce motion choice (useReduceMotionSetting): it hides the success confetti. */
+  readonly isConfettiHidden: boolean;
+  /** The design's restore card (a parity frame): the four restore outcomes stacked; default false. */
+  readonly isRestoreToastStack?: boolean;
+  readonly onBack: () => void;
+};
+
+export function premiumModelOf(input: PremiumModelInput): PremiumModel {
+  const { state, service } = input;
+  // Handlers stay synchronous: the promise ends in the service's own error sink.
+  // Only a tap the flow accepts reaches the store (canBuyPremium, the reducer's own rule): a tap
+  // while restoring, waiting for approval or without a price never starts an untracked purchase.
+  const handleBuy = (): void => {
+    if (canBuyPremium(state)) buyPremium(service).catch(service.onError);
+  };
+  // A restore already running answers this tap too (the owner's Restore key stays enabled).
+  const handleRestore = (): void => {
+    if (state.flow.kind !== 'restoring') restorePremium(service).catch(service.onError);
+  };
+  return {
+    view: premiumView(state),
+    hasJustRestored: state.didJustRestore,
+    isRestoreToastStack: input.isRestoreToastStack ?? false,
+    priceText: priceOf(state.flow),
+    gameName: input.gameName,
+    isReducedMotion: input.isReducedMotion,
+    isConfettiHidden: input.isConfettiHidden,
+    onBack: input.onBack,
+    onBuy: handleBuy,
+    onRestore: handleRestore,
+    // "Try again" after an error is a new purchase request.
+    onTryAgain: handleBuy,
+  };
+}

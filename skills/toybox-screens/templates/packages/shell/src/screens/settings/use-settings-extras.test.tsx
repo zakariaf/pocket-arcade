@@ -83,6 +83,15 @@ describe('useSettingsExtras', () => {
     expect(consent.requestTracking).not.toHaveBeenCalled();
   });
 
+  it('ignores Restore purchase while a restore runs, so Ask to Buy keeps waiting (spec S12 Pending)', async () => {
+    jest.mocked(restorePremium).mockClear();
+    const shell = createHostWrapper();
+    shell.stores.premium.getState().dispatch({ type: 'restore-tapped' });
+    const { result } = await renderHook(() => useSettingsExtras(), { wrapper: shell.wrapper });
+    result.current.onRestorePurchase();
+    expect(jest.mocked(restorePremium)).not.toHaveBeenCalled();
+  });
+
   it('asks before each reset, and the reset reaches the stores', async () => {
     const { extras, shell } = await settingsExtras();
     extras.onResetStats();

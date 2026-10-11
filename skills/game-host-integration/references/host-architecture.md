@@ -82,6 +82,7 @@ This skill's files, each with a test unless marked device-only:
 | `game-host/hud-model.ts` | The top bar as data: mode, goal line ("Moves / Par" or the game's line), score |
 | `game-host/top-bar-model.ts` | `GameTopBarProps` for the Toybox top bar; mode and goal texts (S5) |
 | `game-host/result-model-of.ts` | The Toybox `ResultModel` for S7 (win title and logo from the host, par `null` for score-rated levels) |
+| `game-host/tutorial-beside-run.ts` | N10: `isTutorialBesideRun(save, ref)` (a tutorial opened while the save holds a run of another kind) and `runWritesOf`, the writers such a tutorial's controller gets (they write nothing), so a tutorial replay never replaces the saved run |
 | `game-host/tutorial-script.ts` | The game's teaching for the Shell: `isTutorialMoveAccepted`, `coachStepsOf`, `howToPlayPagesOf` (steps and pages without their typed moves and states), `pointerTargets`, `exampleHighlightOf` |
 | `game-host/board-host-model.ts` | The board host's pure parts: one `MoveResult` per `eventSeq`, the motion, intent and failure handlers, `routeIntent` (tap-then-tap), `hintedTargetsOf`, `highlightOf` |
 | `game-host/use-board-selection.ts` | `useBoardSelection`: the selection as board-host state, its VoiceOver news, the highlight |
@@ -176,6 +177,7 @@ export type GameHost = {
   readonly renderHowToPlayPicture: (pageIndex: number) => ReactNode; // S13: the page's example, drawn by the board
   readonly howToPlayPictureAspect: number;     // S13: width / height of the picture (320 / 206 unless the board says)
   readonly hasSavedRun: () => boolean;         // Home: Continue or Play
+  readonly tutorialRunCount: () => number;     // S13 numbers its tutorial replay with it
   readonly openSession: (open: SessionOpen) => OpenedSession | null;
   readonly lifecycle: FullscreenGate;          // runFullscreenAd(host.lifecycle, show)
   readonly debugControls: () => GameDebugControls; // test builds, through createDebugParts only

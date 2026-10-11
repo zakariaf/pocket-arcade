@@ -1,21 +1,20 @@
-// packages/shell/src/screens/settings/sub-page.tsx
-// The frame S11 and its pages S11a to S11d share: the screen scrolls on under the home indicator
-// (UNDER_HOME_INDICATOR_EDGES and isUnderHomeIndicator), a top bar with the title and Back, then
-// the common body with the page's block gap. testIDBase gives the design's <base>.screen and
-// <base>.top-bar (whose parts .back-button and .title the TopBar derives); check-screens knows
-// those four ids from the testIDBase a view passes (COMPONENT_IDS.SubPage).
-import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
-import { TopBar } from '@e07/shell/ui/top-bar.tsx';
+// packages/shell/src/ui/sub-page.tsx
+// The frame of a page with a top bar and Back (S11, its pages S11a to S11d, and S13 How to play):
+// the screen scrolls on under the home indicator (UNDER_HOME_INDICATOR_EDGES and
+// isUnderHomeIndicator), a top bar with the title and Back, then the common body with the page's
+// block gap. testIDBase gives the design's <base>.screen and <base>.top-bar (whose parts
+// .back-button and .title the TopBar derives); check-screens knows those four ids from the
+// testIDBase a view passes (COMPONENT_IDS.SubPage).
+import { ScreenBody } from './screen-body.tsx';
+import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from './screen-frame.tsx';
+import { TopBar } from './top-bar.tsx';
 
-import type { ScreenBodyGap } from '@e07/shell/ui/screen-body.tsx';
+import type { ScreenBodyGap } from './screen-body.tsx';
 import type { ReactNode } from 'react';
 
-export type SubPageScope =
-  'settings' | 'settings-language' | 'about' | 'privacy-policy' | 'licences';
-
 export type SubPageProps = {
-  readonly testIDBase: SubPageScope;
+  /** The screen's scope: 'settings', 'about', 'how-to-play' ... */
+  readonly testIDBase: string;
   /** Translated page title. */
   readonly title: string;
   /** Translated "Back" (common.back). */

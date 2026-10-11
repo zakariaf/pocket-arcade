@@ -1,11 +1,11 @@
 // packages/shell/src/screens/settings/settings-view.tsx
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { ListGroup } from '@e07/shell/ui/list-group.tsx';
+import { SubPage } from '@e07/shell/ui/sub-page.tsx';
 
 import { SettingsFooter } from './settings-footer.tsx';
 import { SETTINGS_GROUP_TABS } from './settings-row-specs.ts';
 import { SettingsRow } from './settings-row.tsx';
-import { SubPage } from './sub-page.tsx';
 
 import type { SettingsExtras } from './settings-extras.ts';
 import type { SettingsModel } from './use-settings-model.ts';

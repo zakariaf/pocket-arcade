@@ -1,41 +1,28 @@
 // packages/shell/src/screens/premium/premium-state-body.tsx
-import { StyleSheet, View } from 'react-native';
-
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { NotePanel } from '@e07/shell/ui/note-panel.tsx';
-import { Sticker } from '@e07/shell/ui/sticker.tsx';
 
+import { PremiumActiveSticker } from './premium-active-sticker.tsx';
 import { PremiumSuccess } from './premium-success.tsx';
 
 import type { PremiumModel } from './premium-model.ts';
+import type { PremiumStateView } from './premium-views.ts';
 import type { ReactNode } from 'react';
 
-export type PremiumStateBodyProps = { readonly model: PremiumModel };
-
-const styles = StyleSheet.create({
-  sticker: { alignSelf: 'flex-start' },
-});
+export type PremiumStateBodyProps = {
+  readonly model: PremiumModel;
+  /** model.view, narrowed: the normal page draws the offer instead (isOfferView). */
+  readonly view: PremiumStateView;
+};
 
 /**
  * The content of each S12 state above the grow spacer (the hero key and Restore come after it).
  * Loading and purchasing keep the subtitle readable; the other states show their message.
  */
-export function PremiumStateBody({ model }: PremiumStateBodyProps): ReactNode {
+export function PremiumStateBody({ model, view }: PremiumStateBodyProps): ReactNode {
   const t = useT();
-  const activeSticker = (
-    <View style={styles.sticker}>
-      <Sticker
-        testID="premium.active-sticker"
-        text={t('premium.active')}
-        icon="crown"
-        tiltDeg={-3}
-        slapDelayMs={0}
-        isReducedMotion={model.isReducedMotion}
-      />
-    </View>
-  );
-  switch (model.view) {
+  switch (view) {
     case 'store-unavailable':
       return (
         <NotePanel
@@ -74,7 +61,7 @@ export function PremiumStateBody({ model }: PremiumStateBodyProps): ReactNode {
     case 'already-owned':
       return (
         <>
-          {activeSticker}
+          <PremiumActiveSticker isReducedMotion={model.isReducedMotion} />
           <AppText
             text={t('premium.owned.body', { gameName: model.gameName })}
             variant="lead"
@@ -84,10 +71,6 @@ export function PremiumStateBody({ model }: PremiumStateBodyProps): ReactNode {
       );
     case 'loading-price':
     case 'purchase-in-progress':
-    case 'ready':
-    case 'restoring':
-    case 'restore-empty':
-    case 'restore-failed':
       return (
         <AppText
           text={t('premium.subtitle', { gameName: model.gameName })}

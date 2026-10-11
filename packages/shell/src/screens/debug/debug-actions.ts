@@ -35,7 +35,7 @@ export type DebugToolDeps = {
   readonly levels: { readonly packCount: number; readonly levelsPerPack: number };
   /** Re-render S15 after a change no store publishes (a debug flag, the simulated date). */
   readonly onChanged: () => void;
-  /** Import save row: opens S15's paste field (the model's importField; the view draws it). */
+  /** Import save row: opens S15's paste field (the model's importField), or cancels it when open. */
   readonly openImport: () => void;
   /** Font test row: the FontTest route (every letter and digit in every font). */
   readonly openFontTest: () => void;

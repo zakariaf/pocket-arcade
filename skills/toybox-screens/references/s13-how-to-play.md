@@ -34,11 +34,11 @@ Top bar "How to play" with Back. The body runs under the home indicator (`Screen
 
 ## States and variants
 
-Previous is disabled on the first step. On the last step Next reads "Got it" and returns (Chosen). Swipes move between steps and mirror in RTL.
+Previous is disabled on the first step. On the last step Next reads "Got it" and returns (Chosen). A horizontal swipe over the stage moves between steps and mirrors in RTL (spec S13 and 7.5): the next page lies at the reading end, so a left swipe brings it in left to right and a right swipe in right to left. The finger stays physical: `use-page-swipe.ts` builds one pan (`.withTestId('page-swipe')`, a vertical drag fails it so the body still scrolls), turns no page when the pan ends without success (`onEnd`'s success flag false: cancelled, for example when iOS's back edge swipe takes over), classifies its release with game-kit's `classifySwipe` on the UI thread and reaches JS only through `scheduleOnRN`; the pure `page-step-for-swipe.ts` turns the physical swipe into +1 or -1 for `useDirection()`. The view sends +1 to `onNext` and -1 to `onPrevious` only inside the pages: a swipe never passes the first or last page, and only "Got it" leaves the screen. The stage sits in the `GestureDetector` inside a plain `View` (`collapsable={false}`); no pressable is under the detector.
 
 ## Data the model supplies
 
-`HowToPlayModel` (in `how-to-play-view.tsx`): `goal`, `steps`, `stepIndex` (0-based), `renderPicture(stepIndex)` from the game module, `pictureAspect` (the host's `howToPlayPictureAspect`), `isReducedMotion`, `onBack`, `onPrevious`, `onNext`, `onDone`, `onReplayTutorial` (`navigate('Game', { start: 'new', ref: { kind: 'tutorial' } })`).
+`HowToPlayModel` (in `how-to-play-view.tsx`): `goal`, `steps`, `stepIndex` (0-based), `renderPicture(stepIndex)` from the game module, `pictureAspect` (the host's `howToPlayPictureAspect`), `isReducedMotion`, `onBack`, `onPrevious`, `onNext`, `onDone`, `onReplayTutorial` (the tutorial run `{ start: 'new', ref: { kind: 'tutorial' } }`: while a run is saved, which is always so from Pause, `navigation.dispatch(StackActions.popTo('Game', TUTORIAL_RUN))`, so the open Game screen opens the tutorial in place and no second Game screen stacks, and game-host-integration plays it beside the saved run, in memory only (N10); with no run saved no Game screen is open and `navigate('Game', TUTORIAL_RUN)` pushes one; once the host has opened a tutorial run (`useGameHost().tutorialRunCount()` above 0) the request is `{ start: 'new', ref: { kind: 'tutorial' }, replay: <that count> }`, so a tutorial paused under S13 (Pause, How to play) starts afresh instead of coming back paused).
 
 The template `use-how-to-play-model.ts` (with its test) builds it from the game host: `howToPlayPages` (each page's `titleId`, the goal line, and `bodyId`, the step sentence, through `gameMessageText`) and `renderHowToPlayPicture(pageIndex)` (the page's example state drawn by the game's own board). The page shown is local state, clamped to the pages; Done and Back go back to where the player came from (Home, or Pause with the run still paused). A parity capture of `s13-how-to-play` (test builds) opens on step 2, the page one Next shows from step 1: the state's initializer applies `parityFrameState()` once through the same `nextStepOf` rule `onNext` uses, so no effect runs and the first frame is already step 2. The pager and page slides then hold still (`useReduceMotion()` is true during a capture).
 
@@ -46,12 +46,15 @@ Line Siege's goal line is "Stop every monster before it reaches your wall." and 
 
 ## Templates
 
-Copy each file from `templates/` to the same path in the app repo; the code lives in `packages/shell/src/screens/how-to-play/`.
+Copy each file from `templates/` to the same path in the app repo; the code lives in `packages/shell/src/screens/how-to-play/`, and the page frame and the swipe pager in `packages/shell/src/ui/`.
 
 - `packages/shell/src/screens/how-to-play/how-to-play-view.tsx`
 - `packages/shell/src/screens/how-to-play/how-to-play-screen.tsx`
 - `packages/shell/src/screens/how-to-play/how-to-play-view.test.tsx`
 - `packages/shell/src/screens/how-to-play/use-how-to-play-model.ts` and its test
+- `packages/shell/src/ui/page-step-for-swipe.ts` and its test (pure: a physical swipe and the layout direction to a page step)
+- `packages/shell/src/ui/use-page-swipe.ts` and its test (the swipe pager: one horizontal pan over the stage; like every ui/ control it owns its gesture, which board-gestures-and-input's checker accepts)
+- `packages/shell/src/ui/sub-page.tsx` (landed with S11): the view draws `SubPage` with `testIDBase="how-to-play"`, which gives `how-to-play.screen` and `how-to-play.top-bar` with its parts
 
 ## testIDs
 

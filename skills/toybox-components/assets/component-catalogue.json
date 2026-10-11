@@ -52,6 +52,12 @@
       "why": "Button stretches a dialog-row key to the height of its neighbour through RaisedSurface isStretched (CSS align-items stretch)"
     },
     {
+      "file": "packages/shell/src/ui/edged-face.tsx",
+      "owner": "toybox-design-system",
+      "mustContain": "export function EdgedFace",
+      "why": "DialogCard lays its surface inside its edge with EdgedFace (no pale hairline at the rounded corners)"
+    },
+    {
       "file": "packages/shell/src/ui/toybox-styles.ts",
       "owner": "toybox-design-system"
     },

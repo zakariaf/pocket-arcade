@@ -1,4 +1,5 @@
 // packages/shell/src/screens/how-to-play/use-how-to-play-model.test.tsx
+import { StackActions } from '@react-navigation/native';
 import { act, renderHook } from '@testing-library/react-native';
 
 import { PARITY_PLANS } from '@e07/shell/app/parity/parity-plans.ts';
@@ -9,8 +10,12 @@ import { useHowToPlayModel } from './use-how-to-play-model.ts';
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
+const mockDispatch = jest.fn();
 jest.mock('@react-navigation/native', () => ({
-  useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack }),
+  StackActions: jest.requireActual<Record<string, unknown>>('@react-navigation/native')[
+    'StackActions'
+  ],
+  useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack, dispatch: mockDispatch }),
 }));
 
 const PAGES = [
@@ -18,10 +23,15 @@ const PAGES = [
   { titleId: 'tally.goal', bodyId: 'tally.how-to-play.step-2' },
 ];
 
-async function howToPlay() {
+async function howToPlay(hasSavedRun = false) {
   const renderHowToPlayPicture = jest.fn(() => null);
   const shell = createHostWrapper({
-    host: { howToPlayPages: PAGES, renderHowToPlayPicture, howToPlayPictureAspect: 4 / 3 },
+    host: {
+      howToPlayPages: PAGES,
+      renderHowToPlayPicture,
+      howToPlayPictureAspect: 4 / 3,
+      hasSavedRun: () => hasSavedRun,
+    },
   });
   const view = await renderHook(() => useHowToPlayModel(), { wrapper: shell.wrapper });
   return { ...view, renderHowToPlayPicture };
@@ -62,6 +72,32 @@ describe('useHowToPlayModel', () => {
     result.current.onReplayTutorial();
     expect(mockGoBack).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('Game', { start: 'new', ref: { kind: 'tutorial' } });
+  });
+
+  it('replays the tutorial on the open Game screen while a run is saved: popTo, never a second Game (N10)', async () => {
+    // From Pause the paused run is saved and its Game screen lies under S13: popTo returns to it
+    // and it opens the tutorial in place (without one, popTo replaces this page with Game).
+    mockNavigate.mockClear();
+    const { result } = await howToPlay(true);
+    result.current.onReplayTutorial();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      StackActions.popTo('Game', { start: 'new', ref: { kind: 'tutorial' } }),
+    );
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('asks for a fresh tutorial over the one paused under it: the replay carries the tutorial count (S6, S13)', async () => {
+    // From Pause during the tutorial the Game screen under S13 holds a tutorial already: equal
+    // params would only return to it paused, so the request is numbered with the host's count.
+    mockDispatch.mockClear();
+    const shell = createHostWrapper({
+      host: { howToPlayPages: PAGES, hasSavedRun: () => true, tutorialRunCount: () => 2 },
+    });
+    const { result } = await renderHook(() => useHowToPlayModel(), { wrapper: shell.wrapper });
+    result.current.onReplayTutorial();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      StackActions.popTo('Game', { start: 'new', ref: { kind: 'tutorial' }, replay: 2 }),
+    );
   });
 
   it('opens on step 2 in its parity frame, as one Next would (s13-how-to-play)', async () => {

@@ -1,5 +1,6 @@
 // packages/shell/src/screens/how-to-play/how-to-play-view.tsx
 import { StyleSheet, View } from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
@@ -7,10 +8,10 @@ import { Button } from '@e07/shell/ui/button.tsx';
 import { Chip } from '@e07/shell/ui/chip.tsx';
 import { HowToStage } from '@e07/shell/ui/how-to-stage.tsx';
 import { PagerDots } from '@e07/shell/ui/pager-dots.tsx';
-import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
-import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
-import { TopBar } from '@e07/shell/ui/top-bar.tsx';
+import { SubPage } from '@e07/shell/ui/sub-page.tsx';
+import { usePageSwipe } from '@e07/shell/ui/use-page-swipe.ts';
 
+import type { PageStep } from '@e07/shell/ui/page-step-for-swipe.ts';
 import type { ReactNode } from 'react';
 
 export type HowToPlayModel = {
@@ -33,7 +34,7 @@ export type HowToPlayModel = {
   readonly onNext: () => void;
   /** After the last step: back to where the player came from. */
   readonly onDone: () => void;
-  /** navigate('Game', { start: 'new', ref: { kind: 'tutorial' } }). */
+  /** The tutorial run in Game: popTo the open Game screen while a run is saved, else navigate. */
   readonly onReplayTutorial: () => void;
 };
 
@@ -52,76 +53,85 @@ const styles = StyleSheet.create({
 
 /**
  * S13 How to play: the goal, the stage with the step picture, "Step 2 / 4" and the pager dots,
- * the step sentence, Previous / Next, and "Play the tutorial again". Swipes mirror in RTL.
+ * the step sentence, Previous / Next, and "Play the tutorial again". A horizontal swipe over the
+ * stage turns the page; the next page lies at the reading end, so the swipe mirrors in RTL (7.5).
  */
 export function HowToPlayView({ model }: HowToPlayViewProps): ReactNode {
   const t = useT();
   const total = model.steps.length;
   const stepText = model.steps[model.stepIndex] ?? '';
   const isLast = model.stepIndex >= total - 1;
+  // A swipe turns the page like Previous and Next, and never past the first or last page: only
+  // the "Got it" key leaves the screen.
+  const handlePageStep = (step: PageStep): void => {
+    if (step === 1 && !isLast) model.onNext();
+    if (step === -1 && model.stepIndex > 0) model.onPrevious();
+  };
+  const swipe = usePageSwipe(handlePageStep);
   return (
-    <ScreenFrame testID="how-to-play.screen" edges={UNDER_HOME_INDICATOR_EDGES}>
-      <TopBar
-        testID="how-to-play.top-bar"
-        title={t('common.how-to-play')}
-        backLabel={t('common.back')}
-        onBack={model.onBack}
-        isReducedMotion={model.isReducedMotion}
-      />
-      <ScreenBody isUnderHomeIndicator>
-        <AppText text={model.goal} tone="muted" testID="how-to-play.goal" />
-        <HowToStage testID="how-to-play.stage">
-          {/* The picture is one labelled image for VoiceOver: the step sentence describes it. */}
-          <View
-            accessible
-            accessibilityRole="image"
-            accessibilityLabel={stepText}
-            testID="how-to-play.picture"
-            style={[styles.picture, { aspectRatio: model.pictureAspect }]}
-          >
-            {model.renderPicture(model.stepIndex)}
-          </View>
-        </HowToStage>
-        <View style={styles.pager} testID="how-to-play.pager">
-          <Chip
-            testID="how-to-play.step-chip"
-            text={t('how-to-play.step-counter', { step: model.stepIndex + 1, total })}
-          />
-          <PagerDots testID="how-to-play.pager-dots" count={total} index={model.stepIndex} />
+    <SubPage
+      testIDBase="how-to-play"
+      title={t('common.how-to-play')}
+      backLabel={t('common.back')}
+      onBack={model.onBack}
+      isReducedMotion={model.isReducedMotion}
+    >
+      <AppText text={model.goal} tone="muted" testID="how-to-play.goal" />
+      <GestureDetector gesture={swipe}>
+        <View collapsable={false}>
+          <HowToStage testID="how-to-play.stage">
+            {/* The picture is one labelled image for VoiceOver: the step sentence describes it. */}
+            <View
+              accessible
+              accessibilityRole="image"
+              accessibilityLabel={stepText}
+              testID="how-to-play.picture"
+              style={[styles.picture, { aspectRatio: model.pictureAspect }]}
+            >
+              {model.renderPicture(model.stepIndex)}
+            </View>
+          </HowToStage>
         </View>
-        <AppText text={stepText} variant="heading" testID="how-to-play.step-text" />
-        <View style={styles.grow} />
-        <View style={styles.buttons}>
-          <Button
-            testID="how-to-play.previous-button"
-            label={t('common.previous')}
-            onPress={model.onPrevious}
-            icon="back"
-            isDisabled={model.stepIndex === 0}
-            isInRow
-            isReducedMotion={model.isReducedMotion}
-          />
-          <Button
-            testID="how-to-play.next-button"
-            label={t(isLast ? 'common.got-it' : 'common.next')}
-            onPress={isLast ? model.onDone : model.onNext}
-            kind="primary"
-            iconEnd="forward"
-            isInRow
-            isReducedMotion={model.isReducedMotion}
-          />
-        </View>
-        <View style={styles.nudge}>
-          <Button
-            testID="how-to-play.replay-tutorial-button"
-            label={t('how-to-play.replay-tutorial')}
-            onPress={model.onReplayTutorial}
-            kind="quiet"
-            icon="restore"
-            isReducedMotion={model.isReducedMotion}
-          />
-        </View>
-      </ScreenBody>
-    </ScreenFrame>
+      </GestureDetector>
+      <View style={styles.pager} testID="how-to-play.pager">
+        <Chip
+          testID="how-to-play.step-chip"
+          text={t('how-to-play.step-counter', { step: model.stepIndex + 1, total })}
+        />
+        <PagerDots testID="how-to-play.pager-dots" count={total} index={model.stepIndex} />
+      </View>
+      <AppText text={stepText} variant="heading" testID="how-to-play.step-text" />
+      <View style={styles.grow} />
+      <View style={styles.buttons}>
+        <Button
+          testID="how-to-play.previous-button"
+          label={t('common.previous')}
+          onPress={model.onPrevious}
+          icon="back"
+          isDisabled={model.stepIndex === 0}
+          isInRow
+          isReducedMotion={model.isReducedMotion}
+        />
+        <Button
+          testID="how-to-play.next-button"
+          label={t(isLast ? 'common.got-it' : 'common.next')}
+          onPress={isLast ? model.onDone : model.onNext}
+          kind="primary"
+          iconEnd="forward"
+          isInRow
+          isReducedMotion={model.isReducedMotion}
+        />
+      </View>
+      <View style={styles.nudge}>
+        <Button
+          testID="how-to-play.replay-tutorial-button"
+          label={t('how-to-play.replay-tutorial')}
+          onPress={model.onReplayTutorial}
+          kind="quiet"
+          icon="restore"
+          isReducedMotion={model.isReducedMotion}
+        />
+      </View>
+    </SubPage>
   );
 }

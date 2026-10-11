@@ -1,9 +1,9 @@
 // packages/shell/src/screens/settings/use-settings-extras.ts
 // S11's SettingsExtras: the store price (premium store), the version line ("1.0.0 (8)":
 // readVersionText, expo-constants' version and ios.buildNumber), the screens the rows open
-// (use-settings-routes.ts), the hand-offs (use-settings-links.ts), Restore purchase, the consent
-// form (through the consent moment, which saves the answer and turns the banners on or off at
-// once), and the two S14 reset dialogs. Every handler stays synchronous (promises end in .catch).
+// (use-settings-routes.ts), the hand-offs (use-settings-links.ts), Restore purchase (ignored while
+// a restore runs), the consent form (through the consent moment, which saves the answer and turns
+// the banners on or off at once), and the two S14 reset dialogs. Every handler stays synchronous (promises end in .catch).
 // A parity capture of s14-reset-all-progress (test builds) opens Reset all progress over S11 the
 // way the row does, with the hold frozen at 46 % as the design draws it.
 import { useOptionalAdPrivacyChoices } from '@e07/shell/app/consent-moment-context.tsx';
@@ -56,13 +56,15 @@ export function useSettingsExtras(): SettingsExtras {
   const resets = useSettingsResets();
   const onResetProgress = useResetProgressDialog(resets.onConfirmResetProgress);
   const versionText = readVersionText();
+  const isRestoring = usePremiumStore((state) => state.flow.kind === 'restoring');
   return {
     removeAdsPriceText: usePremiumStore((state) => priceOf(state.flow)),
     versionText,
     ...useSettingsRoutes(),
     ...useSettingsLinks(versionText),
     onRestorePurchase: () => {
-      restorePremium(service).catch(service.onError);
+      // The running restore answers this tap too: a second one would drop "waiting for approval".
+      if (!isRestoring) restorePremium(service).catch(service.onError);
     },
     onOpenAdPrivacy: useAdPrivacyChoices(),
     onResetStats: () => {

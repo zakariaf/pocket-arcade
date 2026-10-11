@@ -137,8 +137,12 @@ const SPEC = {
 
 /** Extra scopes a folder may hold: the tutorial route lives in first-run (navigation). */
 const FOLDER_EXTRA_SCOPES = { S2: ['tutorial'] };
-/** Exact ids of another screen a folder may use: the tutorial's board host keeps the game's id. */
-const FOLDER_EXTRA_IDS = { S2: ['game.board-canvas'] };
+/**
+ * Exact ids a folder may use outside its own map elements: the tutorial's board host keeps the
+ * game's id (S2), and S12's restore toasts sit in a ToastStack, whose required testID the map
+ * leaves out (the design's toast stack is judged through its four toasts).
+ */
+const FOLDER_EXTRA_IDS = { S2: ['game.board-canvas'], S12: ['premium.restore-results'] };
 /** A line that declares string literal types (`type Key = 'a.b' | 'c.d'`, or a `| 'x'` member). */
 const LITERAL_TYPE_LINE = /^\s*(export\s+)?type\s|^\s*\|\s*'/;
 /** A constant that names a storage key (`const PENDING_KEY = 'debug.pending-screen'`). */

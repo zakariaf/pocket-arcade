@@ -2,10 +2,10 @@
 import { LANGUAGE_AUTONYMS, LANGUAGES } from '@e07/shell/i18n/languages.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
 import { systemLabel } from '@e07/shell/screens/settings/language/language-change.ts';
-import { SubPage } from '@e07/shell/screens/settings/sub-page.tsx';
 import { ListRow } from '@e07/shell/ui/list-row.tsx';
 import { List } from '@e07/shell/ui/list.tsx';
 import { NotePanel } from '@e07/shell/ui/note-panel.tsx';
+import { SubPage } from '@e07/shell/ui/sub-page.tsx';
 
 import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';

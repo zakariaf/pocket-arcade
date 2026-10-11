@@ -71,8 +71,13 @@ export const MODEL_HOOK_ROUTES = {
 const borrow = (file, owner, test = null) => ({ file: `${SHELL}/${file}`, owner, test: test === null ? null : `${SHELL}/${test}` });
 const PARITY_OPENER = borrow('app/use-parity-opener.ts', 'toybox-screens', 'app/use-parity-opener.test.tsx');
 const DIRECTION_RESTART = borrow('app/use-direction-restart.ts', 'toybox-screens', 'app/use-direction-restart.test.tsx');
-/** S11's page frame, which S11a to S11d draw too. */
-const SUB_PAGE = borrow('screens/settings/sub-page.tsx', 'toybox-screens', 'screens/settings/sub-page.test.tsx');
+/** The page frame with a top bar and Back: S11, S11a to S11d and S13 draw it. */
+const SUB_PAGE = borrow('ui/sub-page.tsx', 'toybox-screens', 'ui/sub-page.test.tsx');
+/** The swipe pager S13 turns its pages with, and its pure page step. */
+const PAGE_SWIPE = [
+  borrow('ui/use-page-swipe.ts', 'toybox-screens', 'ui/use-page-swipe.test.tsx'),
+  borrow('ui/page-step-for-swipe.ts', 'toybox-screens', 'ui/page-step-for-swipe.test.ts'),
+];
 /** S2's Continue and S11a's rows share its restart rule; S11's System label comes from it too. */
 const LANGUAGE_CHANGE = borrow('screens/settings/language/language-change.ts', 'settings-and-preferences', 'screens/settings/language/language-change.test.ts');
 const PAIR_LAYOUT = borrow('ui/use-pair-layout.ts', 'toybox-screens');
@@ -134,6 +139,7 @@ export const BORROWS = {
     borrow('screens/settings/use-settings-context.ts', 'settings-and-preferences', 'screens/settings/use-settings-context.test.tsx'),
     ...RESETS,
     LANGUAGE_CHANGE,
+    SUB_PAGE,
   ],
   S11a: [DIRECTION_RESTART, PARITY_OPENER, LANGUAGE_CHANGE, SUB_PAGE],
   S11b: [
@@ -144,6 +150,7 @@ export const BORROWS = {
   ],
   S11c: [SUB_PAGE],
   S11d: [SUB_PAGE],
+  S13: [SUB_PAGE, ...PAGE_SWIPE],
   S15: [borrow('screens/debug/use-debug-model.ts', 'e2e-maestro', 'screens/debug/use-debug-model.test.tsx')],
 };
 
@@ -249,7 +256,7 @@ export const DERIVED_PARTS = {
  */
 export const COMPONENT_IDS = {
   TopBar: { testID: { parts: ['back-button', 'title'] } },
-  // S11's own page frame (screens/settings/sub-page.tsx), shared by S11 and S11a to S11d.
+  // The page frame with a top bar and Back (ui/sub-page.tsx), shared by S11, S11a to S11d and S13.
   SubPage: { testIDBase: { parts: ['screen', 'top-bar', 'top-bar.back-button', 'top-bar.title'] } },
   ListGroup: { testID: { parts: ['tab', 'list'] } },
   ListRow: { testID: { parts: ['icon', 'label', 'description', 'value', 'toggle', 'radio'] } },

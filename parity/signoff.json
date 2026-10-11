@@ -379,8 +379,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5fb7ed3899e90903004ce6c59ae020d94cd33879c19b5a465046bffbd379cf3c",
-      "date": "2026-10-10",
+      "sheetSha256": "735a51f7c5a5983993a8f6c18d754246ff6bb818e1a5632d99c03657b5b1c743",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -399,8 +399,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "a268a47c02ce262fe206fe93fb567f9575e2ef8c29cdf04fc6e2757b11ac233a",
-      "date": "2026-10-10",
+      "sheetSha256": "5d641a69d0527818051f79256f37f9236affe0b30ad6c440b37fcc94167822c5",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -411,7 +411,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
     },
     {
       "game": "lineSiege",
@@ -419,8 +424,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "27a9d617ce9d0b2d7bf793295dabe8603b1ef519735783c1d0aed144d3005ba2",
-      "date": "2026-10-10",
+      "sheetSha256": "d6957e5d0a2089f84ec28195880741ac00d6cd548a77c473da59b561bba5d48e",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -431,7 +436,12 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
     },
     {
       "game": "lineSiege",
@@ -439,8 +449,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "dd7dc90e046e73aa03c47fcf57e0ebf382466cc272c24b60bfa6c596300d47d4",
-      "date": "2026-10-10",
+      "sheetSha256": "f21bbcebe6edde8f399a9e3f7794ee5fe10ee65ebda475871b1ed0e838130b4b",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -460,7 +470,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "622c7c607e94cc442c6b95d55c3408bfac5a3b94507e8f06c7ba032247f50453",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -480,7 +490,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "a57f0bf08effe93f73404ad4da41c75cc6822ce840f4f30a92d04658c2394e6c",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -500,7 +510,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "738dd1e0fbad62f97c74306c098e093e1f2c73e7cf3608472912e3e1bda74ffd",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -525,7 +535,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "1af2f9929877b2824c76654afb408f1c94fecf681df3318d758779ff7a578432",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -550,7 +560,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "14d0eeabe6301cea38c055be2c8ab1da31a5c65cde546202dc7f3ea095c00ef2",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -575,7 +585,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "dece810ac6a991be4b05fe9f4501cd1f7b799890a5cf6a567ab60303ced41912",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1018,8 +1028,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c335f899415ed7d8d68281b859b2a2c4e95410bbe510080898c1962df15ada43",
-      "date": "2026-10-10",
+      "sheetSha256": "559e27c0b16d2fe63d78838d4ca6d79a3b6fe362679d8986fd54b304f80e8185",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1058,8 +1068,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "fa54651cffd0ed83022af3d37872afdac2d42b5758269a784d73d4941f083172",
-      "date": "2026-10-10",
+      "sheetSha256": "9b144458b26344f48a67110708b32feb5dab337cc543ad20ada5cc709ce34330",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1078,8 +1088,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d1c82a21cefe74c700916e1de8278a5f8bc11e65a539b8bab7f8a361fc7e190d",
-      "date": "2026-10-10",
+      "sheetSha256": "abfa4183f6cf4ba1b60deec1fed590728725d0a54edeb178e2def2d4deefc9b7",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1098,8 +1108,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "029bf65bdfae502315f2e25d20eefa5216a2126d9633b0381c88f1cf28b44455",
-      "date": "2026-10-10",
+      "sheetSha256": "ad05435874d8c0487e5b9b3185ae149b6197278b8abf29c3e8228666ae913b4b",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1119,7 +1129,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "4d870e518f1b3bd73b8f768a930255c30a25b58e0fc4067ab65043b0ffbde9cb",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1294,8 +1304,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "ac4d2798b92c89938fc0044121c84ddfdc00e04c2a9337d297ef026aaacf35ea",
-      "date": "2026-10-10",
+      "sheetSha256": "904f9dee8869e843bc14a512c5a1d7534df44d0057e745f956ce4562f9c6dc46",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1320,7 +1330,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "7d450cb7e2258f8d4aa5f9edc829d673c1ba0c326fe5c2b8576879de25919a99",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1340,7 +1350,7 @@
       "lang": "en",
       "scrollY": 1056,
       "sheetSha256": "14a97bb93f75161910be68a0106765e11736ae24e73bd64b3f00a83be227bc4b",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1360,7 +1370,7 @@
       "lang": "en",
       "scrollY": 1086,
       "sheetSha256": "31e9385b02488440c169c4b58e5726d705a9433bc0eb4a36871d18f69df6882c",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1380,7 +1390,7 @@
       "lang": "en",
       "scrollY": 459,
       "sheetSha256": "07779e3972ad2e91440c12d36a61a9c9f6ec72876c3c945bf3e75a5c6ba5278a",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1400,7 +1410,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "08b403aebf6e2789049d94f8d001532a21cc907331dc5a76507d59755682176d",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1420,7 +1430,7 @@
       "lang": "fa",
       "scrollY": 1042,
       "sheetSha256": "866be25e9bafd7353e5dcc0310719d7a54a5d7d98e1c7a469183338e33d93922",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1440,7 +1450,7 @@
       "lang": "fa",
       "scrollY": 1110,
       "sheetSha256": "ab6e07326027278a744c031a252f4d555b680c2738eba3381636adeaf6e14844",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1460,7 +1470,7 @@
       "lang": "fa",
       "scrollY": 475,
       "sheetSha256": "cec7e5e08f5061ad10c849e18422f9c3c5fd3a29d61c06bdf7adb89ddbaf7f97",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1480,7 +1490,7 @@
       "lang": "en",
       "scrollY": 0,
       "sheetSha256": "f85ba3cad785cca407381357fada1c390c9fe18ba15a75b499f0c03362b6901e",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1500,7 +1510,7 @@
       "lang": "en",
       "scrollY": 1056,
       "sheetSha256": "7f47415aab18ec25b43d0b3c88ae6ac0244a78a6c6dd8005a138b6bdd854d468",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1520,7 +1530,7 @@
       "lang": "en",
       "scrollY": 1086,
       "sheetSha256": "01d89121937f30dae2a58e78ca29fae218d5f01c6b5bf8ace1572b0aa4e41c7f",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1540,7 +1550,7 @@
       "lang": "en",
       "scrollY": 459,
       "sheetSha256": "dd9733ed38e09b1e04d6abd4cd7d2599338e63c0551c64c7b73355a66a2f08a4",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1560,7 +1570,7 @@
       "lang": "fa",
       "scrollY": 0,
       "sheetSha256": "fdca4b05e379bee90c5db39eaa677e9546a6f657df3e2ae060c3112b3525df76",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1580,7 +1590,7 @@
       "lang": "fa",
       "scrollY": 1042,
       "sheetSha256": "e59d931a11150ada910321a12a72c0d9dbac0595702e6f4113949868ed485083",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1600,7 +1610,7 @@
       "lang": "fa",
       "scrollY": 1110,
       "sheetSha256": "687c7109c4442fd476a78575f9645e3aab7886e7dd08710ce1e1d8944149db1b",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1620,7 +1630,7 @@
       "lang": "fa",
       "scrollY": 475,
       "sheetSha256": "dafc6ba952ae83a80c063fd60502557586a4a07dfc5feff386c9aaa570e1dc9a",
-      "date": "2026-10-10",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2191,6 +2201,1373 @@
       "scrollY": 761,
       "sheetSha256": "f781647a72cc7f27fd431f390aff609a3f1b9cb3959ea88b5f02a0ae69dce1b4",
       "date": "2026-10-10",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b94445c69beed2a31f6cf256d55e13ff9fe43f224de196678dd1009be4362fb7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "2c918aeeebceffa15979cb2e1cf13f3b2d532188d072982a50fb58153de255ee",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "83734af2100c9e7ff702813e63c1529e162b10af211fc181f8622e0d1b701906",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "87ae441aebfb0e7b1195a2a6a5fadc4277bb0f1149fd530dd3f56115d371a6f0",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5fb018aa43c9f88f818ae98435bcc9ddbda927f604f15d575057b44f413e3421",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "271eba939ab762fe5dd975defbd04be139020d99949be6cc963bb2f075966a0e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e369fe673627fa99b9a754f8f8542eb8a685b741fde326f9d750ce4552343d9a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "705b54d5b9fc22afb39622bb226040ed5609a2d95274a6064c7582d7280f0ebb",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "90413b6fa978ac5020ffd5f08ff26d92caa36c29c5379d6ac7b998d1e6e4816f",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "87b4e5b7970bccd5c3f3d9e9b7ebc227164926bdcfbd20210e65a15e4c435ca3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ce8747fa75c7c28f73afa08948bc3a9a7a33d4d08176d575a4d39e5207682953",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-store-unavailable-offline",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4b7e88ab26fabb77477e0a02fcb804da2762b18649f71aa24eb1cf65abcc1b33",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the disabled \"Remove ads\" key draws its dashed edge with iOS dashes (pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "bd5e4cb54668c6b16231f371ef85b1ed035dd6e20bb9610c85afff9013d7c98c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "4917a9ac55d92286e509fa38f3fa1abac3f299242f7e5d3757447ae53087b022",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "269e1374b5092a2cc37560ad3af77c59a096bc78609f851aabf91a1aa8161133",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "f1bdce1a87aca0a034780dbab821963d8b717c917fd9f2d6ef8e62f2d11e136a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f236e8db621de7ca46eccc688f4066dab76af10bbad460c7b94ab039057c735d",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0a9f8d435c0545d55f4ad54a75ffb82fbee2fedf8023105d6c16893684d34dc7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "078786667aad3264a0036f4fe70c161816c5287b908fa665732b4af7feb3fe80",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0df91e4ee581f0affa91efb049b1a70c3112952c6f6137e934b7e4b2bacad8d3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8a259e8047d235ad1544cee7e951da54ce00d32f67cc8e2e8d66998bc847796c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0c5216650d34e9b81796dfd235bc1c0b6f964d8b3931593c15654db9dd579d4a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "61c303b74204ce7ccf55e471bf60d99b16a0c1568cf2c3e84d4c027c9914489e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "328a2d417fd29cc54c23d5c85171edfd958ef10ca5a762c7aa020a1df21ce592",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "243cb173480787c1fd276d337cf406987602e046e76241607b2f39f29d26696a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "07491414f6098f359d3efe03c74efff472994e60386606a75a1a75fc5026d2fd",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b4ebfe4405c91ba7b28f4e4d0583fbcf6c7bb8c3a036bc3111da572db1df7a55",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "601e9e363cf000491a1ac9c3b2b96e03e605e5185408f402de26aec049b45d38",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "fba2d811582624c5aac74fe18f37984917115433dc6fdfc797f0522b1b83a149",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "798a318ea146a02b951e4de7386f3272f5a98ef4f957bf0d3dc5ebe0ae09352c",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d7f0df58861c6abf2c2b207ab7f747567a10cedfaa34f34e31ea6718e3c49389",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ef118334cb6ca0aaf3b7110ed554c909f80b906025205f26ef506b01427ab0b4",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "41b550893b674346ddbee2bcbac43e6b069b8462570aee72921bdcd4cb7857b1",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3ffa45ed62408e6fffe1a7088c3438ef1dff74036005d77d36f2da8589eaa214",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8c1fe23f35907a970825cc920d5cab352e965de80d1719febc9e21ca91f3808b",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "44f4865d1ea9b381a82f29cfb2d8d16dc205f74394438390850c758608e55eec",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the four stacked toasts floated over the live page: the Buy key, its hard shadow and (fa) the small print showed through the gaps; the stack now lies on the ground (premium-toast.tsx)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "7a8717ec83478489d482b6a0157a2f89723083196015a05f4c45f9c56cd45632",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "06d5aacd5324510e0abba443bffac2d22a618f8601a23bbdd3359b08c58f8d12",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "94eeb2b27472dbdb276e1ef6cdfbcdffb987770b766b063dee53d1343adc9e3b",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "221558a04ac0abae5fb52cb5afa3419a8878be961d301d6d63e9f0b2a19f4943",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5adfdea49d9c88b09f863948ffc605e3e4ca7f799b4a42e37fa2a91a0defa1bf",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 181,
+      "sheetSha256": "6d850f787978aaee573473e89ca127f4cb45984aa57c60bbc4ccbacf8fe22923",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "020102722e58803ba027a865d50f982e0ebe6f9b256f8f0821e4c8d0a7455411",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 173,
+      "sheetSha256": "a9ab81426ee8472dbc997239b10ac789e6f858a80828ea233690b4912949e306",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c5ec4c75f03ec2aa114a4f938f7351a21ae6b2932a02e7f97b78612110761aa3",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 181,
+      "sheetSha256": "d25cec378dca8c8a324737182f39dd2a2d4a1bd44852f5ccbe13e2e38ed2ea5d",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ccc2d777ada051664b527a0746bf71b293e1e07d3e086c27442ab5fc009aa09c",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 173,
+      "sheetSha256": "a26efd3e7e01e451c17b7b6b1bdd1bd38b2b7f3b10b3aea10d3b0678659a3dda",
+      "date": "2026-10-11",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "35f2aca7d726491ddfc6f366757c6861a798aaf511c56fe760a4c04cbd8ecf62",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ece8bc9830c9e89ca3c6e0a712312821d89f931e96be6242e8867961d3ca8621",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ff2ca4b561925a4b1fabeb5facecb9a42528a663febbe34294332b8c80c95a9a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3a8e38c4b4b9f15a4d2d28219f1de905488b42557b8741d75c0c9c7604291915",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "af2548d6493552cf94e52ba1aef6f15ca9cc881cc5aa566fc972d26f8bbbdcd3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "34d70ee25058dba47b9b6fe141dd10c968c1f1daa6df53b2a37f5c9fa5d9569d",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        },
+        {
+          "what": "restart card about 1.33 pt taller than the design in fa (two-line Vazirmatn line boxes on the 1/3 pt grid; pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "103bc1f8fb892400a38486c3fca17d1aad56ab11fa75e255b6e964075ab777cb",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ff4b8cb140c3badcdcb6da6c0827842c300d54ea4c6db16b08056fde0ab4b00e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "restart card about 1.33 pt taller than the design in fa (two-line Vazirmatn line boxes on the 1/3 pt grid; pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e6c12913e9728ddf286e38a9451a435721b3dca79b3d5d33a826743d09652ee4",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c9018762d933c62026f49a4373b39fcd533d31bc8a42cb5cc821a0477f4f15d7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e39381764d90e2d3c1d75e8b9fb6af0679c980d3a2aa1328a042c517947a8f72",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "03bfa1320301a1f718f71d8b3dc0407fb5c898efa6a5cd1c774702696f2c8859",
+      "date": "2026-10-11",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
