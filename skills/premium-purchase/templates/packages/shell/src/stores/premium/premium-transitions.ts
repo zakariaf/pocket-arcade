@@ -36,9 +36,11 @@ export function onPriceLoaded(state: PremiumState, price: string): PremiumState 
 }
 
 // A restore during Ask to Buy (spec S12 Pending) keeps the approval outstanding: it comes back to
-// "waiting for approval" unless it finds the purchase, so BUY never opens a second purchase.
+// "waiting for approval" unless it finds the purchase, so BUY never opens a second purchase. A tap
+// while a restore runs changes nothing, so that restore keeps what it is waiting for.
 export function onRestoreTapped(state: PremiumState): PremiumState {
   const { flow } = state;
+  if (flow.kind === 'restoring') return state;
   if (flow.kind === 'pending')
     return { ...state, flow: { kind: 'restoring', price: flow.price, isAwaitingApproval: true } };
   return { ...state, flow: { kind: 'restoring', price: priceOf(flow) } };
@@ -48,19 +50,33 @@ function isAwaitingApproval(state: PremiumState): boolean {
   return state.flow.kind === 'restoring' && state.flow.isAwaitingApproval === true;
 }
 
+// A restore is not a purchase: the "restored" toast, never the thank-you animation.
+function restored(state: PremiumState, price: string | null): PremiumState {
+  const flow = readyOrUnavailable(price);
+  return { ...state, isPremium: true, didJustPurchase: false, didJustRestore: true, flow };
+}
+
+// A restore that ends after the page moved on (the Ask-to-Buy approval granted Premium first, or an
+// earlier restore already answered) changes only the entitlement: the thank-you, "waiting for
+// approval" and the page stay. Only a purchase it finds for a player without Premium is "restored".
+function onLateRestoreFinished(
+  state: PremiumState,
+  evidence: Evidence | 'sync-failed',
+): PremiumState {
+  if (evidence === 'owned' && !state.isPremium) return restored(state, priceOf(state.flow));
+  return evidence === 'sync-failed' ? state : onEntitlementsChecked(state, evidence);
+}
+
 export function onRestoreFinished(
   state: PremiumState,
   evidence: Evidence | 'sync-failed',
 ): PremiumState {
+  if (state.flow.kind !== 'restoring') return onLateRestoreFinished(state, evidence);
   const price = priceOf(state.flow);
   if (isAwaitingApproval(state) && evidence !== 'owned' && price !== null)
     return { ...state, flow: { kind: 'pending', price } };
   if (evidence === 'sync-failed') return { ...state, flow: { kind: 'restore-failed', price } };
-  if (evidence === 'owned') {
-    // A restore is not a purchase: the "restored" toast, never the thank-you animation.
-    const flow = readyOrUnavailable(price);
-    return { ...state, isPremium: true, didJustPurchase: false, didJustRestore: true, flow };
-  }
+  if (evidence === 'owned') return restored(state, price);
   if (evidence === 'revoked')
     return { ...state, isPremium: false, flow: readyOrUnavailable(price) };
   // Sync succeeded and there is no evidence: "nothing to restore" (never after a failed sync).
