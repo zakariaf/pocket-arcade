@@ -144,6 +144,49 @@ describe('AppText', () => {
     expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
   });
 
+  it('keeps the box count while its box is the room it set, so the page holds still (spec 7.6)', async () => {
+    const words = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789';
+    await renderWithShell(<AppText text={words} testID="home.title" />);
+    const line = 67 / 3;
+    const box = (height: number): unknown => ({
+      nativeEvent: { layout: { x: 0, y: 0, width: 400, height } },
+    });
+    await fireEvent(screen.getByTestId('home.title'), 'textLayout', {
+      nativeEvent: { lines: [{ width: 400 }] },
+    });
+    await fireEvent(screen.getByTestId('home.title'), 'layout', box(2 * line - 0.0007));
+
+    // The room grows the box to two lines and a pixel. Dropping the count there shrank the room,
+    // the text grew the box again, and the font page jumped back on every swipe.
+    await fireEvent(screen.getByTestId('home.title'), 'layout', box(2 * line + 1 / 3));
+    const style = StyleSheet.flatten(screen.getByTestId('home.title').props['style']);
+    expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
+  });
+
+  it('lets a longer box go once the report has caught up with it, in either order (spec 7.6)', async () => {
+    const words = 'Größe, Übung, Straße, Züge';
+    await renderWithShell(<AppText text={words} testID="home.title" />);
+    const line = 67 / 3;
+    const lines = (count: number): unknown => ({
+      nativeEvent: { lines: Array.from({ length: count }, () => ({ width: 300 })) },
+    });
+    const box = (height: number): unknown => ({
+      nativeEvent: { layout: { x: 0, y: 0, width: 400, height } },
+    });
+    const title = (): ReturnType<typeof screen.getByTestId> => screen.getByTestId('home.title');
+    await fireEvent(title(), 'textLayout', lines(2));
+
+    // A balanced wrap's probe: the three-line box comes before its three-line report. Kept as a
+    // count, it grew rows that had already scrolled by, and the font page jumped back.
+    await fireEvent(title(), 'layout', box(3 * line));
+    await fireEvent(title(), 'textLayout', lines(3));
+    await fireEvent(title(), 'textLayout', lines(2));
+    await fireEvent(title(), 'layout', box(2 * line + 1 / 3));
+
+    const style = StyleSheet.flatten(title().props['style']);
+    expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
+  });
+
   it('lets a box go back to its lines once a longer layout has passed (spec 7.6)', async () => {
     const words = 'Größe, Übung, Straße, Züge';
     await renderWithShell(<AppText text={words} testID="home.title" />);
