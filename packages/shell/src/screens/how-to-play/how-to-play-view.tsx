@@ -34,7 +34,7 @@ export type HowToPlayModel = {
   readonly onNext: () => void;
   /** After the last step: back to where the player came from. */
   readonly onDone: () => void;
-  /** navigate('Game', { start: 'new', ref: { kind: 'tutorial' } }). */
+  /** The tutorial run in Game: popTo the open Game screen while a run is saved, else navigate. */
   readonly onReplayTutorial: () => void;
 };
 
