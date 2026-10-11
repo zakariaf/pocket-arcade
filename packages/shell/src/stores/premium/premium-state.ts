@@ -10,7 +10,12 @@ export type PremiumFlow =
   | { readonly kind: 'purchasing'; readonly price: string }
   | { readonly kind: 'pending'; readonly price: string }
   | { readonly kind: 'failed'; readonly price: string }
-  | { readonly kind: 'restoring'; readonly price: string | null }
+  // isAwaitingApproval: the restore started while Ask to Buy was pending, and comes back to it.
+  | {
+      readonly kind: 'restoring';
+      readonly price: string | null;
+      readonly isAwaitingApproval?: boolean;
+    }
   | { readonly kind: 'restore-empty'; readonly price: string | null }
   | { readonly kind: 'restore-failed'; readonly price: string | null };
 

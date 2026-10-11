@@ -1,5 +1,5 @@
 // packages/shell/src/stores/premium/premium-reducer.test.ts
-import { premiumReducer } from './premium-reducer.ts';
+import { canBuyPremium, premiumReducer } from './premium-reducer.ts';
 import { initialPremiumState } from './premium-state.ts';
 import { premiumView } from './premium-view.ts';
 
@@ -133,5 +133,75 @@ describe('premiumReducer silent re-check', () => {
     const notOwned = run(READY);
     const checked = premiumReducer(notOwned, { type: 'entitlements-checked', evidence: 'revoked' });
     expect(checked).toBe(notOwned);
+  });
+});
+
+// spec S12: BUY starts a purchase only when the store has given a price and the page sells (not
+// while loading, buying, waiting for approval or restoring); the S12 Buy key reads the same rule.
+describe('canBuyPremium', () => {
+  it.each([
+    ['ready', READY, true],
+    ['error', [...BUYING, { type: 'purchase-failed', failure: 'failed' }], true],
+    [
+      'restore-empty',
+      [...READY, { type: 'restore-tapped' }, { type: 'restore-finished', evidence: 'unknown' }],
+      true,
+    ],
+    ['loading-price', [], false],
+    ['restoring', [...READY, { type: 'restore-tapped' }], false],
+    ['purchase-in-progress', BUYING, false],
+    ['pending', [...BUYING, { type: 'purchase-pending' }], false],
+    ['store-unavailable', [{ type: 'store-unavailable' }], false],
+  ] as const)('answers for %s', (view, actions, canBuy) => {
+    const state = run(actions);
+    expect([premiumView(state), canBuyPremium(state)]).toStrictEqual([view, canBuy]);
+  });
+
+  it('refuses a restore page without a price and a Premium owner', () => {
+    const early = run([
+      { type: 'restore-tapped' },
+      { type: 'restore-finished', evidence: 'unknown' },
+    ]);
+    expect([premiumView(early), canBuyPremium(early)]).toStrictEqual(['restore-empty', false]);
+    expect(canBuyPremium(run(READY, true))).toBe(false);
+  });
+});
+
+describe('premiumReducer around a restore', () => {
+  it('keeps a price that loads while a restore runs or after it, so BUY can show it', () => {
+    const during = run([
+      { type: 'restore-tapped' },
+      { type: 'price-loaded', price: PRICE },
+      { type: 'restore-finished', evidence: 'unknown' },
+    ]);
+    const after = run([
+      { type: 'restore-tapped' },
+      { type: 'restore-finished', evidence: 'sync-failed' },
+      { type: 'price-loaded', price: PRICE },
+    ]);
+    expect([during.flow, after.flow]).toStrictEqual([
+      { kind: 'restore-empty', price: PRICE },
+      { kind: 'restore-failed', price: PRICE },
+    ]);
+  });
+
+  it.each(['unknown', 'revoked', 'sync-failed'] as const)(
+    'comes back to "waiting for approval" when a restore during Ask to Buy ends %s (spec S12)',
+    (evidence) => {
+      const pending = run([...BUYING, { type: 'purchase-pending' }, { type: 'restore-tapped' }]);
+      expect(canBuyPremium(pending)).toBe(false);
+      const back = premiumReducer(pending, { type: 'restore-finished', evidence });
+      expect(back.flow).toStrictEqual({ kind: 'pending', price: PRICE });
+    },
+  );
+
+  it('turns Premium on when that restore finds the purchase, or when the approval arrives', () => {
+    const pending = run([...BUYING, { type: 'purchase-pending' }, { type: 'restore-tapped' }]);
+    const restored = premiumReducer(pending, { type: 'restore-finished', evidence: 'owned' });
+    const approved = premiumReducer(pending, { type: 'premium-granted' });
+    expect([premiumView(restored), premiumView(approved)]).toStrictEqual([
+      'already-owned',
+      'success',
+    ]);
   });
 });
