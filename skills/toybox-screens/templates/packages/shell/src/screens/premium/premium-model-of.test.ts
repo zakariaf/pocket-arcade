@@ -119,4 +119,15 @@ describe('premiumModelOf', () => {
     await settle();
     expect([sent, calls]).toStrictEqual([[], []]);
   });
+
+  it("ignores the owner's Restore while a restore runs, so its answer stays the only one (spec S12)", async () => {
+    const { deps, sent, calls } = setup();
+    const restoring: PremiumState = {
+      ...initialPremiumState(true),
+      flow: { kind: 'restoring', price: '€1.99' },
+    };
+    modelOf(restoring, deps).onRestore();
+    await settle();
+    expect([sent, calls]).toStrictEqual([[], []]);
+  });
 });
