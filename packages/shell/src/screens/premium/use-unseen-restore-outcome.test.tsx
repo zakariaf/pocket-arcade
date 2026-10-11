@@ -27,13 +27,16 @@ function storeAfterRestore(evidence: Evidence | 'sync-failed' | null): PremiumSt
   return premium;
 }
 
+/** S12's first render over that store, inside the Shell's providers. */
 function openS12(store: PremiumStore, isHeld = false) {
-  return renderHook(() =>
-    useUnseenRestoreOutcome(
-      useStore(store, useShallow(premiumOf)),
-      store.getState().dispatch,
-      isHeld,
-    ),
+  return renderHook(
+    () =>
+      useUnseenRestoreOutcome(
+        useStore(store, useShallow(premiumOf)),
+        store.getState().dispatch,
+        isHeld,
+      ),
+    { wrapper: createShellWrapper().wrapper },
   );
 }
 
