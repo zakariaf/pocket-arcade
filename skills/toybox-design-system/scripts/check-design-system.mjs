@@ -47,7 +47,8 @@ const SPEC = {
     '                         to whole pixels, so whole points and fractions both drift from the references)',
     '  no-glyph-nudge         AppText or use-localized-text-style.ts moves glyphs (translateY, top, padding or',
     '                         margin on the text); the CoreText vs Chrome offset is absorbed by the parity gate.',
-    '                         The one exception is AppText\'s overflowGuardOf (arabic-overflow-guard)',
+    '                         The exceptions are AppText\'s overflowGuardOf (arabic-overflow-guard) and its',
+    '                         roomOf (one pixel of minHeight under the last line, given back by marginBottom)',
     '  arabic-overflow-guard  AppText lacks the Persian overflow guard: iOS puts all of a Vazirmatn line\'s',
     '                         overflow above its box (content box 2100 + 1100 of 2048 per em) and clips the Text,',
     '                         where Chrome centres it; from 1.5 pt of half overflow AppText must wrap the Text in a',
@@ -230,8 +231,9 @@ function checkTextMetrics(report, root) {
     const source = readSource(join(root, file));
     if (source === null) continue;
     const text = masked(source);
-    // The overflow guard (its type and its function) is the one place AppText pads text.
-    const guard = file === APP_TEXT_FILE ? [functionRange(text, 'overflowGuardOf'), typeRange(text, 'OverflowGuard')].filter(Boolean) : [];
+    // The overflow guard (its type and its function) is the one place AppText pads text, and the
+    // room (roomOf, TextRoom) the one place it grows the box by a pixel and gives it back below.
+    const guard = file === APP_TEXT_FILE ? [functionRange(text, 'overflowGuardOf'), typeRange(text, 'OverflowGuard'), functionRange(text, 'roomOf'), typeRange(text, 'TextRoom')].filter(Boolean) : [];
     scan(report, file, text, 'no-glyph-nudge', /\b(translateY|top|paddingTop|paddingBottom|paddingBlock|paddingVertical|marginTop|marginBottom|marginBlock|marginVertical)\s*:/g, { when: (m) => !inRanges(m.index, guard), message: (m) => `${m[1]} moves the text box to nudge its glyphs`, fix: 'Remove it: the box heights are exact on the pixel grid, and the remaining CoreText vs Chrome glyph offset is measured by the parity text-ink gate, not fixed in layout (only AppText\'s overflowGuardOf pads Arabic-script text, from the font metrics).' });
   }
   checkAppTextGuards(report, root);
