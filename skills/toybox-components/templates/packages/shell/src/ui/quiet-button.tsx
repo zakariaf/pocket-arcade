@@ -11,7 +11,7 @@ import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { AppText } from './app-text.tsx';
+import { AppText, useTextScale } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 
@@ -128,9 +128,12 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
     lineHeight: NUDGE.lineHeight,
     align: 'center',
   });
+  // iOS draws the label at the text size (up to 200 %): its font and line grow, the bar's 5 pt
+  // offset and 2 pt thickness do not (CSS px).
+  const scale = useTextScale();
   const underlineTop = quietUnderlineTop(
-    NUDGE.fontSize,
-    text.lineHeight ?? NUDGE.fontSize,
+    NUDGE.fontSize * scale,
+    (text.lineHeight ?? NUDGE.fontSize) * scale,
     (text.fontFamily ?? '').startsWith('Vazirmatn'),
   );
   const isRtl = useDirection() === 'rtl';

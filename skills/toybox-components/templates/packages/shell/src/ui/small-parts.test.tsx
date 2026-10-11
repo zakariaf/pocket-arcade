@@ -12,6 +12,19 @@ import { QuietButton } from './quiet-button.tsx';
 import { RadioMark } from './radio-mark.tsx';
 import { WeekMark } from './week-mark.tsx';
 
+import type { useWindowDimensions } from 'react-native';
+
+type WindowMetrics = ReturnType<typeof useWindowDimensions>;
+
+/** The window the parts see: text size 1 normally, the largest accessibility size in one case. */
+const mockWindow: { current: WindowMetrics } = {
+  current: { width: 402, height: 874, fontScale: 1, scale: 3 },
+};
+jest.mock('react-native/Libraries/Utilities/useWindowDimensions', () => ({
+  __esModule: true,
+  default: () => mockWindow.current,
+}));
+
 const COLORS = TEST_PALETTE.standard.light;
 const HIDDEN = { includeHiddenElements: true } as const;
 
@@ -107,6 +120,38 @@ describe('QuietButton', () => {
       expect(bars[1]).toHaveStyle({ start: secondStart, width: 47, top: 38.5, height: 2 });
     },
   );
+
+  it('keeps the underline under the text at 200 % text (spec 8.11)', async () => {
+    // At the largest text size the label is drawn at 30 pt on a 38 pt line, but the bar sat where
+    // a 15 pt line puts it, 19.5 under the top: through the middle of "Restore purchase".
+    mockWindow.current = { width: 402, height: 874, fontScale: 3.571, scale: 3 };
+    try {
+      const text = 'Restore purchase';
+      await renderWithShell(
+        <QuietButton
+          label={text}
+          icon="restore"
+          onPress={jest.fn()}
+          testID="premium.restore-button"
+          isReducedMotion
+        />,
+      );
+      await fireEvent(screen.getByText(text).parent ?? screen.getByText(text), 'layout', {
+        nativeEvent: { layout: { width: 260, height: 38 } },
+      });
+      await fireEvent(screen.getByText(text), 'textLayout', {
+        nativeEvent: { lines: [{ x: 0, y: 0, width: 260, height: 38, text }] },
+      });
+
+      const bars = (screen.getByText(text).parent?.children ?? []).filter(
+        (child) => typeof child !== 'string' && child.props['accessibilityElementsHidden'] === true,
+      );
+      // Rubik 30 on its 38 pt line: ascent 28, descent 8, the bar 5 under the ascent: 34.
+      expect(bars[0]).toHaveStyle({ top: 34, height: 2 });
+    } finally {
+      mockWindow.current = { width: 402, height: 874, fontScale: 1, scale: 3 };
+    }
+  });
 
   it('greys out and ignores presses when disabled', async () => {
     const onPress = jest.fn();
