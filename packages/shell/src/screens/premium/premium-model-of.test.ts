@@ -108,4 +108,15 @@ describe('premiumModelOf', () => {
     await settle();
     expect(errors).toStrictEqual([failure]);
   });
+
+  it.each([
+    ['a restore runs', { kind: 'restoring', price: '€1.99' }],
+    ['the restore came before the price', { kind: 'restore-empty', price: null }],
+    ['Ask to Buy waits for approval', { kind: 'pending', price: '€1.99' }],
+  ] as const)('asks the store for no purchase while %s (spec S12)', async (_, flow) => {
+    const { deps, sent, calls } = setup();
+    modelOf({ ...READY, flow }, deps).onBuy();
+    await settle();
+    expect([sent, calls]).toStrictEqual([[], []]);
+  });
 });

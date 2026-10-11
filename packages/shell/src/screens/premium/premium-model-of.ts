@@ -3,6 +3,7 @@
 // Try again and Restore run the service (it dispatches every step); failures go to its onError.
 import { restorePremium } from '@e07/shell/services/purchase/premium-service.ts';
 import { buyPremium } from '@e07/shell/services/purchase/premium-store-flow.ts';
+import { canBuyPremium } from '@e07/shell/stores/premium/premium-reducer.ts';
 import { priceOf } from '@e07/shell/stores/premium/premium-state.ts';
 import { premiumView } from '@e07/shell/stores/premium/premium-view.ts';
 
@@ -26,8 +27,10 @@ export type PremiumModelInput = {
 export function premiumModelOf(input: PremiumModelInput): PremiumModel {
   const { state, service } = input;
   // Handlers stay synchronous: the promise ends in the service's own error sink.
+  // Only a tap the flow accepts reaches the store (canBuyPremium, the reducer's own rule): a tap
+  // while restoring, waiting for approval or without a price never starts an untracked purchase.
   const handleBuy = (): void => {
-    buyPremium(service).catch(service.onError);
+    if (canBuyPremium(state)) buyPremium(service).catch(service.onError);
   };
   const handleRestore = (): void => {
     restorePremium(service).catch(service.onError);
