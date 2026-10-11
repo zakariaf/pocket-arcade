@@ -20,7 +20,7 @@ import { createLinkIntake } from './debug-link-intake.ts';
 import { debugRouteFor, isGameExample, nextLevelOf } from './debug-link-routes.ts';
 
 import type { LinkSource } from './debug-link-intake.ts';
-import type { DebugGameControls, DebugRoute } from './debug-link-routes.ts';
+import type { DebugGameControls, DebugRoute, DebugRoutePlacement } from './debug-link-routes.ts';
 import type { DateKey } from '@e07/game-kit/dates/date-key.ts';
 import type { Direction } from '@e07/shell/i18n/languages.ts';
 import type { DebugLinkRequest, DebugScreen } from '@e07/shell/screens/debug/debug-link.ts';
@@ -44,8 +44,11 @@ export type DebugLinkDeps = {
   /** readLayoutDirection() of this JS run, and the reload (restartForDirection after audio). */
   readonly layoutDirection: Direction;
   readonly restart: (direction: Direction) => Promise<void>;
-  /** openDebugRoute: the route on a fixed stack, the first route alone or with it on top. */
-  readonly openRoute: (route: DebugRoute) => void;
+  /**
+   * openDebugRoute: a screen= link on a fixed stack (the first route alone or with the route on
+   * top), a rejected link's S15 on top of the screen it came from.
+   */
+  readonly openRoute: (route: DebugRoute, placement: DebugRoutePlacement) => void;
   /** Calls back once, on the navigator's next state change (the group switch a write started). */
   readonly onNextNavigationState: (callback: () => void) => void;
   /** GameHost.debugControls(): action= and the example screens. */
@@ -144,13 +147,19 @@ function openScreen(deps: DebugLinkDeps, screen: DebugScreen, level?: number): v
     deps.game?.openExample(screen);
     return;
   }
-  deps.openRoute(debugRouteFor(screen, level ?? nextLevelOf(deps.readSave(), deps.levelCount)));
+  deps.openRoute(
+    debugRouteFor(screen, level ?? nextLevelOf(deps.readSave(), deps.levelCount)),
+    'fixed-stack',
+  );
 }
 
-/** A bad link is never ignored: it is logged, and S15 (whose Error log row counts it) opens. */
+/**
+ * A bad link is never ignored: it is logged, and S15 (whose Error log row counts it) opens on top
+ * of the screen the link came from, which stays behind it.
+ */
 function reject(deps: DebugLinkDeps, source: string, message: string): DebugLinkOutcome {
   deps.onError(new Error(`${source}: ${message}`));
-  deps.openRoute({ name: 'Debug' });
+  deps.openRoute({ name: 'Debug' }, 'on-top');
   return { kind: 'error', message };
 }
 

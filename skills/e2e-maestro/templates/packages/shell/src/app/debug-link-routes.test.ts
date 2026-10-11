@@ -91,4 +91,10 @@ describe('openDebugRoute', () => {
       ['navigate', 'Game', params],
     ]);
   });
+
+  it('opens S15 on top of the current screen for a rejected link, keeping the screen it came from', () => {
+    const { navigation, calls } = readyNavigator();
+    openDebugRoute(navigation, { name: 'Debug' }, 'on-top');
+    expect(calls).toStrictEqual([['navigate', 'Debug']]);
+  });
 });
