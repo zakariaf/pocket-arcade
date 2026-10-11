@@ -11,6 +11,7 @@ import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 import { QuietButton } from './quiet-button.tsx';
 import { RaisedSurface } from './raised-surface.tsx';
+import { useWindowClass } from './use-window-class.ts';
 
 import type { KindPaint, RaisedKind } from './button-paint.ts';
 import type { IconName } from './icons/icon-paths.ts';
@@ -47,7 +48,10 @@ export type ButtonProps = {
   readonly cap?: IconName;
   /** Stretch to the width of the body (block buttons). */
   readonly isBlock?: boolean;
-  /** Share a row with other buttons (dialog rows, Replay / Levels): grow from a 120 pt basis. */
+  /**
+   * Share a wrapping row with other buttons (dialog rows, Replay / Levels, Previous / Next): grow
+   * from a 120 pt basis; at 200 % text each key takes a line of its own.
+   */
   readonly isInRow?: boolean;
   readonly isDisabled?: boolean;
   /** Keeps the label, replaces the icon with hopping blocks, ignores presses. */
@@ -82,6 +86,9 @@ const useStyles = makeStyles((theme) => {
     block: { alignSelf: 'stretch' },
     inline: { alignSelf: 'flex-start' },
     inRow: { flexGrow: 1, flexShrink: 1, flexBasis: COMPONENT_SPECS.dialog.buttonMinBasis },
+    // The basis does not grow with the text: at 200 % a label wider than half the row split
+    // inside a word ("Previo / us"), so each key fills the row and the row wraps.
+    inRowLargeText: { flexGrow: 1, flexShrink: 1, flexBasis: '100%' },
   });
   return styles;
 });
@@ -123,7 +130,7 @@ type Layout = {
 };
 
 /** Hero keys are 80 pt blocks with an optional start cap; regular buttons are 54 pt. */
-function layoutOf(props: ButtonProps, styles: Styles): Layout {
+function layoutOf(props: ButtonProps, styles: Styles, rowStyle: ViewStyle): Layout {
   const isHero = props.size === 'hero';
   const hasCap = isHero && props.cap !== undefined;
   const isBlock = isHero || props.isBlock === true;
@@ -131,7 +138,7 @@ function layoutOf(props: ButtonProps, styles: Styles): Layout {
   return {
     elevation: isHero ? HERO.elevation : BUTTON.elevation,
     faceStyle: [styles.face, isHero && styles.heroFace, hasCap && styles.heroWithCap],
-    layoutStyle: props.isInRow === true ? styles.inRow : outer,
+    layoutStyle: props.isInRow === true ? rowStyle : outer,
     isStretched: props.isInRow === true,
     variant: isHero ? 'heroKeyLabel' : 'label',
     align: hasCap ? 'start' : 'center',
@@ -142,11 +149,12 @@ function layoutOf(props: ButtonProps, styles: Styles): Layout {
 export function Button(props: ButtonProps): ReactNode {
   const styles = useStyles();
   const theme = useTheme();
+  const { isLargeText } = useWindowClass();
   const kind = props.kind ?? 'secondary';
   if (kind === 'quiet') return <QuietButton {...props} />;
   const isDisabled = props.isDisabled === true;
   const paint = kindPaint(theme, kind, isDisabled);
-  const layout = layoutOf(props, styles);
+  const layout = layoutOf(props, styles, isLargeText ? styles.inRowLargeText : styles.inRow);
   return (
     <RaisedSurface
       label={props.label}

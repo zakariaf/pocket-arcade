@@ -7,7 +7,17 @@ import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
 import { Button } from './button.tsx';
 
+import type * as WindowClassModule from './window-class.ts';
+
 const COLORS = TEST_PALETTE.standard.light;
+/** The text size the key sees: 1 normally, 2 for the 200 % text case. */
+const mockFontScale = { current: 1 };
+jest.mock('@e07/shell/ui/use-window-class.ts', () => {
+  const { classifyWindow } = jest.requireActual<typeof WindowClassModule>(
+    '@e07/shell/ui/window-class.ts',
+  );
+  return { useWindowClass: () => classifyWindow(402, 874, mockFontScale.current) };
+});
 
 describe('Button', () => {
   it('reports presses of a primary hero key with a play cap', async () => {
@@ -119,6 +129,30 @@ describe('Button', () => {
     // allow-style-assertion: CSS align-items stretch in the dialog row is only visible as flexGrow
     expect(screen.getByText('Not now').parent?.parent).toHaveStyle({ flexGrow: 1 });
     expect(screen.getByText('Play').parent?.parent).not.toHaveStyle({ flexGrow: 1 });
+  });
+
+  it('gives each key of a row a line of its own at 200 % text (spec 8.11)', async () => {
+    // A row key grew from a fixed 120 pt basis, so two keys never wrapped at 200 % text and a
+    // label wider than half the row split inside a word ("Previo / us", de "Zurüc / k").
+    mockFontScale.current = 2;
+    try {
+      await renderWithShell(
+        <Button
+          label="Zurück"
+          onPress={jest.fn()}
+          testID="how-to-play.previous-button"
+          icon="back"
+          isInRow
+          isReducedMotion={false}
+        />,
+      );
+
+      // allow-style-assertion: a key as wide as its wrapping row takes a line of its own.
+      expect(screen.getByTestId('how-to-play.previous-button')).toHaveStyle({ flexBasis: '100%' });
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    } finally {
+      mockFontScale.current = 1;
+    }
   });
 
   it('renders a quiet nudge as an underlined, unraised button', async () => {
