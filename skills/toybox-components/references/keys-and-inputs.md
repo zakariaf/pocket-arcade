@@ -156,7 +156,7 @@ Sound: every press runs the Shell's tap feedback first. `RaisedSurface`, `QuietB
 
 ## Segmented control (4.7)
 
-**Template:** `segmented-control.tsx` (`SegmentedControl<TValue>`). Each segment shares the row (`flex: 1`) and passes `isStretched`, so every segment and its face are as tall as the tallest one with their content centred, as CSS `align-items: stretch` draws them: German "Automatisch" wraps to two lines on S11, and Lateinisch and Lokal beside it grow with it.
+**Template:** `segmented-control.tsx` (`SegmentedControl<TValue>`). Each segment shares the row (`flex: 1`) and passes `isStretched`, so every segment and its face are as tall as the tallest one with their content centred, as CSS `align-items: stretch` draws them: German "Automatisch" wraps to two lines on S11, and Lateinisch and Lokal beside it grow with it. At 200 % text (`useWindowClass().isLargeText`) the segments stack in a column, each as wide as the group (`alignSelf: 'stretch'`, never `flex: 1`, a zero basis in a column): in a third of the row a word wider than the segment split inside itself ("Autom / atic", de "Lateini / sch").
 
 **Anatomy:** a row of equal segments (flex 1 each), gap 8, each min 48 tall, padding 5 × 3, radius 10, 2 pt `outline` edge (as rendered), `surface` fill, elevation 3; label 15 Rubik Bold centred (14 inside a settings row, `isInRow`), wraps; optional preview line 13 regular under it (the Numbers row shows `123` / `123` / `۱۲۳`).
 
