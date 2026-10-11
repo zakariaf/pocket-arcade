@@ -20,7 +20,7 @@ import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { TypeStyle } from '@e07/shell/theme/tokens.ts';
 import type { TypeVariant } from '@e07/shell/theme/type-styles.ts';
 import type { ReactNode } from 'react';
-import type { TextProps, TextStyle } from 'react-native';
+import type { LayoutChangeEvent, TextProps, TextStyle } from 'react-native';
 
 /**
  * default = ink, muted = inkSoft, onPrimary / onPop = text on accent / pop paint,
@@ -188,34 +188,66 @@ function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number):
   };
 }
 
+/**
+ * The lines a laid-out box holds, or null when the box says nothing new. The line report is laid
+ * out in the same short box, so it lost the dropped line too (two lines of the ad chip came back
+ * as one); the box still measures their height, a hair short, and rounds to the true count. A box
+ * no taller than the room set on it only shows that room.
+ */
+/** A text's vertical metrics: its pads (the guard's) and its line height. */
+type LineBox = { readonly pads: number; readonly lineHeight: number };
+
+function boxLinesOf(height: number, room: TextRoom | null, box: LineBox): number | null {
+  const pixel = 1 / PixelRatio.get();
+  if (box.lineHeight === 0 || (room !== null && height <= room.minHeight + pixel / 2)) return null;
+  return Math.round((height - box.pads) / box.lineHeight);
+}
+
 type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
 
 type RoomParts = {
   readonly guard: OverflowGuard | null;
   readonly room: TextRoom | null;
   readonly listeners: LineListeners;
+  readonly onBoxLayout: (event: LayoutChangeEvent) => void;
 };
 
-/** The guard, the room once the line count is known, and the listeners that learn that count. */
+/**
+ * The guard, the room once the line count is known, and the listeners that learn that count: the
+ * line report, raised to what the box holds until the report catches up.
+ */
 function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   const [lines, setLines] = useState(0);
+  const [boxLines, setBoxLines] = useState(0);
   const guard = overflowGuardOf(localized);
-  const shown = Math.min(lines, props.numberOfLines ?? lines);
+  const lineHeight = localized.lineHeight ?? 0;
+  const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
+  const count = Math.max(Math.min(lines, props.numberOfLines ?? lines), boxLines);
+  const room = count === 0 ? null : roomOf(guard, lineHeight, count);
   const { onLineCount, onTextLines } = props;
   return {
     guard,
-    room: shown === 0 ? null : roomOf(guard, localized.lineHeight ?? 0, shown),
+    room,
     listeners: {
-      onLineCount: (count) => {
-        setLines(count);
-        onLineCount?.(count);
+      onLineCount: (reported) => {
+        setLines(reported);
+        if (reported >= boxLines) setBoxLines(0);
+        onLineCount?.(reported);
       },
       ...(onTextLines === undefined ? {} : { onTextLines }),
+    },
+    onBoxLayout: (event) => {
+      const held = boxLinesOf(event.nativeEvent.layout.height, room, { pads, lineHeight });
+      if (held !== null) setBoxLines(held);
     },
   };
 }
 
-function layoutProps(balance: BalancedWrap, listeners: LineListeners): TextProps {
+function layoutProps(
+  balance: BalancedWrap,
+  listeners: LineListeners,
+  onBoxLayout: (event: LayoutChangeEvent) => void,
+): TextProps {
   const { onLineCount, onTextLines } = listeners;
   const onTextLayout: TextProps['onTextLayout'] =
     onLineCount === undefined && onTextLines === undefined
@@ -227,7 +259,10 @@ function layoutProps(balance: BalancedWrap, listeners: LineListeners): TextProps
           onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
         };
   return {
-    ...(balance.onLayout === undefined ? {} : { onLayout: balance.onLayout }),
+    onLayout: (event) => {
+      balance.onLayout?.(event);
+      onBoxLayout(event);
+    },
     ...(onTextLayout === undefined ? {} : { onTextLayout }),
   };
 }
@@ -244,7 +279,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
   const shown = style.face === 'brand' ? isolate(props.text) : props.text;
-  const { guard, room, listeners } = useTextRoom(localized, props);
+  const { guard, room, listeners, onBoxLayout } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (
@@ -252,7 +287,7 @@ export function AppText(props: AppTextProps): ReactNode {
       style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={2}
       {...textProps(guard === null ? props : rest)}
-      {...layoutProps(balance, listeners)}
+      {...layoutProps(balance, listeners, onBoxLayout)}
     >
       {shown}
     </Text>
