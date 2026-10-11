@@ -3266,6 +3266,309 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "35f2aca7d726491ddfc6f366757c6861a798aaf511c56fe760a4c04cbd8ecf62",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ece8bc9830c9e89ca3c6e0a712312821d89f931e96be6242e8867961d3ca8621",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ff2ca4b561925a4b1fabeb5facecb9a42528a663febbe34294332b8c80c95a9a",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3a8e38c4b4b9f15a4d2d28219f1de905488b42557b8741d75c0c9c7604291915",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "af2548d6493552cf94e52ba1aef6f15ca9cc881cc5aa566fc972d26f8bbbdcd3",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "34d70ee25058dba47b9b6fe141dd10c968c1f1daa6df53b2a37f5c9fa5d9569d",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        },
+        {
+          "what": "restart card about 1.33 pt taller than the design in fa (two-line Vazirmatn line boxes on the 1/3 pt grid; pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "103bc1f8fb892400a38486c3fca17d1aad56ab11fa75e255b6e964075ab777cb",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ff4b8cb140c3badcdcb6da6c0827842c300d54ea4c6db16b08056fde0ab4b00e",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "restart card about 1.33 pt taller than the design in fa (two-line Vazirmatn line boxes on the 1/3 pt grid; pre-listed platform waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e6c12913e9728ddf286e38a9451a435721b3dca79b3d5d33a826743d09652ee4",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c9018762d933c62026f49a4373b39fcd533d31bc8a42cb5cc821a0477f4f15d7",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pale seam at the dialog card's corners: the surface lay under its 3 pt edge; the card is now an EdgedFace (edge colour under, surface inside)",
+          "status": "fixed"
+        },
+        {
+          "what": "faint light seam at the card's two bottom corners where its CSS boxShadow was clipped at the antialiased curve; the hard shadow is now a plate under the card",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "e39381764d90e2d3c1d75e8b9fb6af0679c980d3a2aa1328a042c517947a8f72",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "03bfa1320301a1f718f71d8b3dc0407fb5c898efa6a5cd1c774702696f2c8859",
+      "date": "2026-10-11",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }
