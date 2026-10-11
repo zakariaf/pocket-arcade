@@ -978,6 +978,7 @@
               "packages/shell/src/testing/**",
               "packages/shell/src/ui/app-text*",
               "packages/shell/src/ui/raised-surface*",
+              "packages/shell/src/ui/edged-face*",
               "packages/shell/src/ui/toybox-styles*",
               "packages/shell/src/ui/use-balanced-wrap*",
               "packages/shell/src/app/press-feedback-context*",

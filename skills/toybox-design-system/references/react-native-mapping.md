@@ -26,6 +26,7 @@
 | `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`) | yes |
 | `packages/shell/src/ui/use-balanced-wrap.ts` | `useBalancedWrap(isEnabled, text, align)`: the design's `text-wrap: balance` for display text | yes |
 | `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash; `isStretched` in a dialog row) | yes |
+| `packages/shell/src/ui/edged-face.tsx` | `EdgedFace`: a solid-edged face painted in its edge colour with its fill laid inside the edge (radius minus edge width); a fill under the edge bleeds a pale 1/3 pt hairline past the antialiased rounded corner onto the hard shadow. RaisedSurface's solid faces and toybox-components' DialogCard draw through it | yes |
 | `packages/shell/src/ui/toybox-styles.ts` | `hardShadow()`, `dieCutRing()`, `focusRing()` | yes |
 | `packages/shell/src/testing/test-palette.ts` | the fixture palette for component tests (not a Toybox paint) | yes |
 | `packages/shell/src/testing/toybox-palette-checks.ts` | `checkToyboxPalette()` | yes |

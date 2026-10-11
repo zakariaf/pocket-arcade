@@ -13,6 +13,8 @@ import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { EASING, MOTION_MS, PRESS_SQUASH, RELEASE_SPRING } from '@e07/shell/theme/motion.ts';
 import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 
+import { EdgedFace } from './edged-face.tsx';
+
 import type { Language } from '@e07/shell/i18n/languages.ts';
 import type { ReactNode } from 'react';
 import type { AccessibilityRole, PressableProps, StyleProp, ViewStyle } from 'react-native';
@@ -86,11 +88,6 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    // A solid-edged face is painted in its edge colour and its fill lies on top, inside the edge:
-    // a fill under the edge bleeds a pale hairline past the antialiased rounded edge onto the hard
-    // shadow (seen on every S2 card corner in light mode).
-    facePlate: { position: 'absolute', top: 0, bottom: 0, start: 0, end: 0 },
-    edgePaint: { backgroundColor: theme.colors.border },
     faceDisabled: {
       backgroundColor: theme.colors.sunken,
       borderColor: theme.colors.textMuted,
@@ -131,8 +128,8 @@ function edgeStyleOf(props: RaisedSurfaceProps, isDisabled: boolean): ViewStyle[
 }
 
 /**
- * The key's face. A solid edge is painted as an edge-colour plate with the fill laid inside it; a
- * dashed edge (disabled keys, locked tiles) keeps its fill under the dashes.
+ * The key's face. A solid edge is an EdgedFace (the edge colour under the face, the fill inside
+ * it); a dashed edge (disabled keys, locked tiles) keeps its fill under the dashes.
  */
 function faceOf(props: RaisedSurfaceProps, styles: Styles, isDisabled: boolean): ReactNode {
   const faceStyle = faceStylesOf(props, styles, isDisabled);
@@ -140,19 +137,16 @@ function faceOf(props: RaisedSurfaceProps, styles: Styles, isDisabled: boolean):
   if (edgeStyle !== undefined && edgeStyle !== 'solid') {
     return <View style={faceStyle}>{props.children}</View>;
   }
-  const edge = props.edgeWidth ?? STROKE.bold;
-  const edgePaint =
-    props.edgeColor === undefined ? styles.edgePaint : { backgroundColor: props.edgeColor };
   return (
-    <View style={[faceStyle, edgePaint]}>
-      <View
-        style={[
-          styles.facePlate,
-          { borderRadius: Math.max(0, props.radius - edge), backgroundColor: props.fill },
-        ]}
-      />
+    <EdgedFace
+      style={faceStyle}
+      edgeColor={props.edgeColor ?? styles.face.borderColor}
+      fill={props.fill}
+      edgeWidth={props.edgeWidth ?? STROKE.bold}
+      radius={props.radius}
+    >
       {props.children}
-    </View>
+    </EdgedFace>
   );
 }
 
