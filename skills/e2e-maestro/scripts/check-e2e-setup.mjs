@@ -33,6 +33,7 @@ const SPEC = {
     '                        skips the checksum or strict mode',
     '  maestro-env           Maestro runs without Java 17 or without MAESTRO_CLI_NO_ANALYTICS,',
     '                        MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED and MAESTRO_DISABLE_UPDATE_CHECK set to true',
+    '                        (in simulator.ts, or in ios/maestro-tool.ts when simulator.ts calls its maestroEnvOf)',
     '  runner-file-missing   a runner, simulator, gallery, comparator or socket-sampler file is missing',
     '  runner-no-sampler     run-e2e-ios.ts does not run the socket sampler or does not fail on network.txt',
     "  sampler-own-simulators the sampler watches every copy of the app on the Mac, not only the run's own",
@@ -56,7 +57,8 @@ const SPEC = {
     '  openurl-prompt        the tooling opens a debug link with simctl openurl: iOS answers with an "Open in <app>?"',
     '                        prompt nobody accepts, so the app never gets the link (use debugSetupArgs: debug-setup.yaml)',
     '  maestro-upload        the tooling or an npm script uses maestro cloud/login or test --analyze (uploads the run)',
-    '  deterministic-capture the status bar is not pinned to 9:41 or the text size is not set before capture',
+    '  deterministic-capture the status bar is not pinned to 9:41 (in simulator.ts, or in ios/simulators.ts when',
+    '                        simulator.ts calls its statusBarArgs) or the text size is not set before capture',
     '  screenshot-tolerance  capture-screenshots-ios.ts allows more than MAX_DIFF_RATIO = 0.002 (0.2% of pixels), or',
     '                        compare-png.ts uses a pixelmatch threshold above 0.1',
     '  network-guard-missing the Shell\'s test-only JS network guard (network-guard.ts) is missing, or nothing installs',
@@ -135,6 +137,9 @@ const SUBFLOWS = {
   'packages/shell/e2e/subflows/shoot-screen.yaml': ['S15'],
   'packages/shell/e2e/screenshots/matrix.yaml': ['S15', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12', 'S13'],
 };
+/** ios-simulator-build's simulator layer, which e2e's simulator.ts is built on. */
+const MAESTRO_TOOL = 'packages/tooling/src/ios/maestro-tool.ts';
+const SIMULATORS = 'packages/tooling/src/ios/simulators.ts';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEVICES = ['phone', 'tablet'];
 const LANGS = ['en', 'de', 'fa', 'ckb'];
@@ -165,11 +170,19 @@ function checkRunner(root, report) {
   const simulator = 'packages/tooling/src/e2e/simulator.ts';
   if (exists(root, simulator)) {
     const code = maskComments(read(root, simulator));
+    // The Maestro environment and the status bar may come from ios-simulator-build's one simulator
+    // layer (maestroEnvOf in ios/maestro-tool.ts, statusBarArgs in ios/simulators.ts), which
+    // build:ios:sim uses too; then the shared file must hold them and simulator.ts must call it.
+    const shared = (rel, call) => (new RegExp(String.raw`\b${call}\s*\(`).test(code) && exists(root, rel) ? maskComments(read(root, rel)) : '');
+    const envCode = `${code}\n${shared(MAESTRO_TOOL, 'maestroEnvOf')}`;
+    const envFile = /\bmaestroEnvOf\s*\(/.test(code) ? MAESTRO_TOOL : simulator;
     for (const name of ['MAESTRO_CLI_NO_ANALYTICS', 'MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED', 'MAESTRO_DISABLE_UPDATE_CHECK']) {
-      if (!new RegExp(`${name}\\s*:\\s*['"]true['"]`).test(code)) report.problem({ file: simulator, line: 1, rule: 'maestro-env', message: `maestroEnv() does not set ${name}: 'true'`, fix: 'Restore maestroEnv() from the template: no analytics, no analysis prompt, no update check.' });
+      if (!new RegExp(`${name}\\s*:\\s*['"]true['"]`).test(envCode)) report.problem({ file: envFile, line: 1, rule: 'maestro-env', message: `maestroEnv() does not set ${name}: 'true'`, fix: 'Restore maestroEnv() from the template (it calls maestroEnvOf from ios-simulator-build\'s ios/maestro-tool.ts): no analytics, no analysis prompt, no update check.' });
     }
-    if (!/java_home['"]?\s*,\s*\[\s*['"]-v['"]\s*,\s*['"]17['"]/.test(code) && !/JAVA_HOME/.test(code)) report.problem({ file: simulator, line: 1, rule: 'maestro-env', message: 'maestroEnv() does not select Java 17', fix: "Resolve JAVA_HOME with /usr/libexec/java_home -v 17 (fallback: Android Studio's bundled JBR)." });
-    if (!/'--time'\s*,\s*'9:41'|--time 9:41/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not pin the status bar to 9:41', fix: 'Restore the simctl status_bar override (time 9:41, full bars, battery 100%).' });
+    if (!/java_home['"]?\s*,\s*\[\s*['"]-v['"]\s*,\s*['"]17['"]/.test(envCode) && !/JAVA_HOME/.test(envCode)) report.problem({ file: envFile, line: 1, rule: 'maestro-env', message: 'maestroEnv() does not select Java 17', fix: "Resolve JAVA_HOME with /usr/libexec/java_home -v 17 (fallback: Android Studio's bundled JBR)." });
+    const barCode = `${code}\n${shared(SIMULATORS, 'statusBarArgs')}`;
+    const barFile = /\bstatusBarArgs\s*\(/.test(code) ? SIMULATORS : simulator;
+    if (!/'--time'\s*,\s*'9:41'|--time 9:41/.test(barCode)) report.problem({ file: barFile, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not pin the status bar to 9:41', fix: "Restore prepareSimulator from the template: simctl(statusBarArgs(udid)), ios-simulator-build's one status bar (time 9:41, full bars, battery 100%), which build:ios:sim pins too." });
     if (!/content_size/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not set the text size', fix: 'Restore simctl ui <udid> content_size <size> (large by default, the 200% pass uses accessibility-extra-extra-extra-large).' });
   }
   const sampler = 'packages/tooling/src/audit/sample-sockets.ts';

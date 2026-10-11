@@ -9,7 +9,7 @@
 // its own before the command), wait until the screen holds still and screenshot it too. No Metro: Release embeds
 // the bundle. Every step logs to apps/<game>/build/logs/<step>.log; the first failing step stops
 // the run (exit 1). A failed preflight exits 2 before anything is touched.
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import {
   closeSync,
   existsSync,
@@ -47,6 +47,13 @@ import {
 } from '@e07/tooling/build/sim-build-plan.ts';
 import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
+import {
+  readBundleId,
+  readPerfLogPayload,
+  readPlistValue,
+  readUrlScheme,
+  saveDatabaseOf,
+} from '@e07/tooling/ios/sim-app.ts';
 import {
   bootForScreenshots,
   createSimctl,
@@ -104,16 +111,6 @@ function findWorkspace(appDir: string): string {
   return join('ios', found);
 }
 
-function readPlistValue(plist: string, keyPath: string): string {
-  return execFileSync('plutil', ['-extract', keyPath, 'raw', '-o', '-', plist], {
-    encoding: 'utf8',
-  }).trim();
-}
-
-function readBundleId(appPath: string): string {
-  return readPlistValue(join(appPath, 'Info.plist'), 'CFBundleIdentifier');
-}
-
 /** The path a DerivedData folder recorded: info.plist's WorkspacePath, else a .pcm's cache path. */
 function recordedDerivedDataPath(dd: string, game: string): string | null {
   const info = join(dd, 'info.plist');
@@ -141,15 +138,6 @@ function dropStaleDerivedData(appDir: string, game: string): void {
 
 function sleep(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-/** The perf-log payload in the app's save.db, or null without one (store builds, early Shells). */
-function readPerfLog(database: string): string | null {
-  if (!existsSync(database)) return null;
-  const result = spawnSync('sqlite3', [database, 'SELECT payload FROM perf_log WHERE id = 1'], {
-    encoding: 'utf8',
-  });
-  return result.status === 0 ? result.stdout : null;
 }
 
 /**
@@ -222,13 +210,6 @@ function buildApp(options: SimBuildOptions, context: StepContext, udid: string):
   return { path, bundleId: readBundleId(path) };
 }
 
-function javaHome(): string {
-  const found = spawnSync('/usr/libexec/java_home', ['-v', '17'], { encoding: 'utf8' });
-  return found.status === 0
-    ? found.stdout.trim()
-    : '/Applications/Android Studio.app/Contents/jbr/Contents/Home';
-}
-
 type LinkTarget = AppOnDisk & { readonly udid: string; readonly env: NodeJS.ProcessEnv };
 
 /** --link: the debug link through the setup sub-flow (the app keeps running), then a still screen. */
@@ -238,13 +219,12 @@ async function openLinkAndScreenshot(
   options: SimBuildOptions,
 ): Promise<void> {
   if (options.link === null) return;
-  const plist = join(app.path, 'Info.plist');
-  const scheme = readPlistValue(plist, 'CFBundleURLTypes.0.CFBundleURLSchemes.0');
+  const scheme = readUrlScheme(app.path);
   const outDir = join('apps', options.game, 'build', 'logs', 'link');
   const driverPort = options.driverPort ?? (await freeDriverPort());
   const args = linkSetupArgs({ ...app, driverPort, scheme, link: options.link, outDir });
   console.log(`build:ios:sim: maestro on ${app.udid}, driver port ${String(driverPort)}`);
-  const context = { appDir: join('apps', options.game), env: maestroEnvOf(app.env, javaHome) };
+  const context = { appDir: join('apps', options.game), env: maestroEnvOf(app.env) };
   runStep('link', { file: MAESTRO_BIN, args, atRoot: true }, context);
   const out = linkScreenshotPath(options);
   // The perf log already holds the launch's cold start: here only a still screen counts.
@@ -275,8 +255,8 @@ async function main(): Promise<number> {
   const out = screenshotPath(options);
   // The data container stays put once installed: look it up once, not on every poll.
   const container = simctl(['get_app_container', udid, app.bundleId, 'data']).trim();
-  const database = join(container, 'Documents', 'SQLite', 'save.db');
-  const perfLog = (): string | null => readPerfLog(database);
+  const database = saveDatabaseOf(container);
+  const perfLog = (): string | null => readPerfLogPayload(database);
   const reason = waitAndScreenshot(simctl, { udid, perfLog, launchedAtEpochMs }, out);
   console.log(
     `build:ios:sim: ${options.variant.appVariant}/${options.variant.adsMode} app ${app.path}`,

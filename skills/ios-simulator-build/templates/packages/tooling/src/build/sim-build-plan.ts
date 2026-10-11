@@ -4,6 +4,13 @@ import { join } from 'node:path';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
 import { maestroGlobalArgs } from '@e07/tooling/e2e/maestro-args.ts';
+import {
+  DEBUG_SETUP_FLOW,
+  debugSetupTestArgs,
+  MAESTRO_BIN,
+} from '@e07/tooling/ios/maestro-tool.ts';
+
+export { MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
 
 export type SimBuildOptions = {
   readonly game: string;
@@ -19,8 +26,7 @@ export type SimBuildOptions = {
 export type LinkRequest = { readonly query: string; readonly waitFor: string };
 
 /** --link goes through e2e-maestro's setup sub-flow, which accepts iOS's "Open in <app>?" prompt. */
-export const MAESTRO_BIN = 'tools/maestro/bin/maestro';
-export const LINK_SETUP_FLOW = 'packages/shell/e2e/subflows/debug-setup.yaml';
+export const LINK_SETUP_FLOW = DEBUG_SETUP_FLOW;
 
 export const SIM_BUILD_USAGE = [
   'usage: npm run build:ios:sim -- --app <game-id> [--variant test|store] [--ads off|test|live] [--sim <purpose>] [--link <debug query> [--wait-for <testID>] [--driver-port <n>]]',
@@ -187,16 +193,13 @@ export function xcodebuildSimArgs(target: SimTarget): string[] {
   ];
 }
 
+/** Where the Release simulator build of apps/<game> lands (DerivedData inside apps/<game>/build/). */
+export function simProductsDir(appDir: string): string {
+  return join(appDir, 'build', 'dd', 'Build', 'Products', 'Release-iphonesimulator');
+}
+
 export function builtAppPath(appDir: string, scheme: string): string {
-  return join(
-    appDir,
-    'build',
-    'dd',
-    'Build',
-    'Products',
-    'Release-iphonesimulator',
-    `${scheme}.app`,
-  );
+  return join(simProductsDir(appDir), `${scheme}.app`);
 }
 
 export function screenshotPath(options: SimBuildOptions): string {
@@ -232,23 +235,11 @@ export type LinkRun = {
  * (maestroGlobalArgs), then `test` with the setup sub-flow, which applies the link to the app.
  */
 export function linkSetupArgs(run: LinkRun): string[] {
+  const { bundleId, scheme, link, outDir } = run;
   return [
     ...maestroGlobalArgs({ udid: run.udid, driverPort: run.driverPort }),
-    ...['test', LINK_SETUP_FLOW, '--test-output-dir', run.outDir],
-    ...['-e', `APP_ID=${run.bundleId}`, '-e', `APP_SCHEME=${run.scheme}`],
-    ...['-e', `QUERY=${run.link.query}`, '-e', `WAIT_FOR=${run.link.waitFor}`],
+    ...debugSetupTestArgs({ appId: bundleId, scheme, ...link, outDir }),
   ];
-}
-
-/** Maestro with Java 17 and no analytics, update check or analysis prompt (as e2e:ios runs it). */
-export function maestroEnvOf(env: NodeJS.ProcessEnv, javaHome: () => string): NodeJS.ProcessEnv {
-  return {
-    ...env,
-    JAVA_HOME: env['JAVA_HOME'] ?? javaHome(),
-    MAESTRO_CLI_NO_ANALYTICS: 'true',
-    MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
-    MAESTRO_DISABLE_UPDATE_CHECK: 'true',
-  };
 }
 
 /** The screenshot taken after --link: next to the launch screenshot. */

@@ -7,12 +7,16 @@ import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { statusBarArgs } from '@e07/tooling/ios/simulators.ts';
+
 import {
   bootFailureMessage,
   debugSetupArgs,
+  e2eSimctl,
   e2eSimulatorName,
   e2eTabletName,
   e2eBuildProblem,
+  prepareSimulator,
   runMaestro,
 } from './simulator.ts';
 
@@ -139,5 +143,39 @@ describe('e2eBuildProblem', () => {
     expect(e2eBuildProblem({ appVariant, adsMode }, 'line-siege')).toBe(
       `e2e:ios needs a test build with ADS_MODE=off, this one is ${String(appVariant)}/${String(adsMode)}: run npm run build:ios:sim -- --app line-siege --variant test --ads off`,
     );
+  });
+});
+
+describe('the simulator layer e2e shares with build:ios:sim', () => {
+  const udid = '0C9E3F8A-51D2-4B7E-9A61-2F4D8C7B1E03';
+  const XCODE = '/Applications/Xcode-26.6.0.app/Contents/Developer';
+  let bin = '';
+  beforeEach(() => {
+    bin = mkdtempSync(join(tmpdir(), 'e2e-simctl-'));
+    writeFileSync(join(bin, 'xcrun'), '#!/bin/sh\nprintf "%s %s" "$DEVELOPER_DIR" "$*"\n');
+    chmodSync(join(bin, 'xcrun'), 0o755);
+  });
+  afterEach(() => {
+    rmSync(bin, { recursive: true, force: true });
+  });
+
+  it('runs simctl under the DEVELOPER_DIR of the selected Xcode, never the global one', () => {
+    const base = { PATH: `${bin}:${process.env['PATH'] ?? ''}` };
+    const select = (env: Readonly<Record<string, string | undefined>>): NodeJS.ProcessEnv => ({
+      ...env,
+      DEVELOPER_DIR: XCODE,
+    });
+    expect(e2eSimctl(base, select)(['list', 'devices'])).toBe(`${XCODE} simctl list devices`);
+  });
+
+  it("pins build:ios:sim's status bar, so e2e and build captures show one status bar", () => {
+    const calls: (readonly string[])[] = [];
+    const simctl = (args: readonly string[]): string => {
+      calls.push(args);
+      return '';
+    };
+    const app = { path: 'LineSiege.app', id: 'io.applander.linesiege', scheme: 's', name: 'L' };
+    prepareSimulator({ simctl, udid }, app, 'large');
+    expect(calls.filter((args) => args[0] === 'status_bar')).toStrictEqual([statusBarArgs(udid)]);
   });
 });

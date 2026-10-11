@@ -28,9 +28,9 @@ import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
 import { recordSaveBenchmark, runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
   appEnv,
+  e2eSimctl,
   e2eSimulatorName,
   e2eTabletName,
-  ensureSimulator,
   findSimulatorBuild,
   prepareSimulator,
   readAppInfo,
@@ -38,9 +38,12 @@ import {
   runMaestro,
   setAppearance,
   setTextSize,
+  startSimulator,
   terminateApp,
+  waitForBoot,
   type AppInfo,
   type MaestroDevice,
+  type Simctl,
 } from '@e07/tooling/e2e/simulator.ts';
 
 import type { E2eOptions } from '@e07/tooling/e2e/e2e-cli.ts';
@@ -66,6 +69,8 @@ type Cli = {
 };
 type E2eRun = {
   readonly cli: Cli;
+  /** simctl under the pinned Xcode, for every simulator of the run. */
+  readonly simctl: Simctl;
   readonly udid: string;
   readonly app: AppInfo;
   readonly out: string;
@@ -96,7 +101,7 @@ const reportArgs = (dir: string): string[] => [
 const deviceOf = (cli: Cli, udid: string): MaestroDevice => ({ udid, driverPort: cli.driverPort });
 
 /** Step 1: every flow of the Shell and the game, except quarantined and a11y (step 4) ones. */
-async function runFlows({ cli, udid, app, out }: E2eRun): Promise<string[]> {
+async function runFlows({ cli, simctl, udid, app, out }: E2eRun): Promise<string[]> {
   // Maestro does not recurse into sub-folders: list the <area>/<nn>-<name>.yaml files explicitly.
   const flows = [
     ...globSync('packages/shell/e2e/flows/*/*.yaml'),
@@ -110,12 +115,13 @@ async function runFlows({ cli, udid, app, out }: E2eRun): Promise<string[]> {
     ...cli.rest,
   ]);
   // The Shell's smoke/04-debug-performance ran last (S15's save benchmark): keep its entry now.
-  recordSaveBenchmark({ udid, app, out }, flows);
+  recordSaveBenchmark({ sim: { simctl, udid }, app, out }, flows);
   return status === 0 ? [] : [`flows: maestro test exited ${String(status)}, see ${out}`];
 }
 
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
-async function runLargeText({ cli, udid, app, out, watchSockets }: E2eRun): Promise<string[]> {
+async function runLargeText(run: E2eRun): Promise<string[]> {
+  const { cli, simctl, udid, app, out, watchSockets } = run;
   const flows = [
     ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
     ...globSync(`apps/${cli.game}/e2e/flows/a11y/*.yaml`),
@@ -126,15 +132,17 @@ async function runLargeText({ cli, udid, app, out, watchSockets }: E2eRun): Prom
   }
   const failures: string[] = [];
   for (const device of [PHONE, TABLET]) {
-    const target = device.key === 'phone' ? udid : ensureSimulator(cli.tablet, device.model);
+    const target = device.key === 'phone' ? udid : startSimulator(simctl, cli.tablet, device.model);
+    const sim = { simctl, udid: target };
     if (device.key === 'tablet') {
+      waitForBoot(sim);
       // The socket sampler follows one running copy of the app: stop the phone's first.
-      terminateApp(udid, app);
+      terminateApp({ simctl, udid }, app);
       watchSockets(target);
-      prepareSimulator(target, app, LARGE_TEXT);
-      setAppearance(target, 'light');
+      prepareSimulator(sim, app, LARGE_TEXT);
+      setAppearance(sim, 'light');
     }
-    setTextSize(target, LARGE_TEXT);
+    setTextSize(sim, LARGE_TEXT);
     for (const lang of LARGE_TEXT_LANGS) {
       const dir = join(out, 'large-text', `${device.key}-${lang}`);
       mkdirSync(dir, { recursive: true });
@@ -146,8 +154,8 @@ async function runLargeText({ cli, udid, app, out, watchSockets }: E2eRun): Prom
       ]);
       if (status !== 0) failures.push(`large text: ${device.key} ${lang} failed, see ${dir}`);
     }
-    setTextSize(target, 'large');
-    if (device.key === 'tablet') terminateApp(target, app);
+    setTextSize(sim, 'large');
+    if (device.key === 'tablet') terminateApp(sim, app);
   }
   return failures;
 }
@@ -161,14 +169,17 @@ function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
   // Ads off, always: no Google form, no tracking prompt and no ad socket in any E2E run.
   requireAdsOffTestBuild(appPath, cli.game);
   const app = readAppInfo(appPath);
-  const udid = ensureSimulator(cli.phone, PHONE.model);
-  prepareSimulator(udid, app, 'large');
-  setAppearance(udid, 'light');
+  const simctl = e2eSimctl();
+  const udid = startSimulator(simctl, cli.phone, PHONE.model);
+  const sim = { simctl, udid };
+  waitForBoot(sim);
+  prepareSimulator(sim, app, 'large');
+  setAppearance(sim, 'light');
   const out = join('reports', 'e2e', cli.game);
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   console.log(`e2e:ios: phone ${cli.phone} ${udid}; every Maestro run names this UDID`);
-  return { cli, udid, app, out };
+  return { cli, simctl, udid, app, out };
 }
 
 /**
@@ -204,7 +215,7 @@ async function main(): Promise<number> {
     return 2;
   }
   const started = startRun(cliOf(parsed.options));
-  const { cli, udid, app, out } = started;
+  const { cli, simctl, udid, app, out } = started;
   // An empty network.txt is the evidence that the samplers ran through every step and saw nothing.
   const network = join(out, 'network.txt');
   writeFileSync(network, '');
@@ -217,7 +228,8 @@ async function main(): Promise<number> {
     if (!cli.isFlowsOnly) {
       const { game, isWritingBaseline } = cli;
       const device = deviceOf(cli, udid);
-      failures.push(...(await runPerfSteps({ game, device, app, out, isWritingBaseline })));
+      const input = { game, device, simctl, app, out, isWritingBaseline };
+      failures.push(...(await runPerfSteps(input)));
       failures.push(...(await runLargeText(run)));
     }
   } finally {

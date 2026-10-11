@@ -4,7 +4,8 @@
 // the memory check (the game's smoke flows, then the feedback they asked for, read from the perf
 // log into feedback.json, then a relaunch, then `footprint` of the app: Maestro 2.10 stops the app
 // when a test ends, so the runner starts it again and the saved run resumes).
-// Writes reports/e2e/<game-id>/perf.json and feedback.json, reports/perf/sim-perf-log.json and, on
+// Writes reports/e2e/<game-id>/perf.json and feedback.json (and, after the flows step,
+// save-benchmark.json), reports/perf/sim-perf-log.json and, on
 // the first run or with --write-perf-baseline, perf-baselines/cold-start-sim-<game-id>.json.
 import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -12,6 +13,10 @@ import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
 import { feedbackEvidenceOf, feedbackFileText } from '@e07/tooling/e2e/feedback-evidence.ts';
+import {
+  saveBenchmarkEvidenceOf,
+  saveBenchmarkFileText,
+} from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import {
   baselineFileText,
   baselineMsFrom,
@@ -35,12 +40,17 @@ import {
   terminateApp,
   type AppInfo,
   type MaestroDevice,
+  type Sim,
+  type Simctl,
 } from '@e07/tooling/e2e/simulator.ts';
+import { readPerfLogPayload, saveDatabaseOf } from '@e07/tooling/ios/sim-app.ts';
 
 export type PerfStepInput = {
   readonly game: string;
   /** The phone simulator's UDID (and the session's own driver port, when it passed one). */
   readonly device: MaestroDevice;
+  /** The run's simctl, under the pinned Xcode (e2eSimctl). */
+  readonly simctl: Simctl;
   readonly app: AppInfo;
   /** reports/e2e/<game-id> */
   readonly out: string;
@@ -55,28 +65,42 @@ const HOME_QUERY =
 const COLD_START_TIMEOUT_MS = 30_000;
 const POLL_MS = 250;
 
+/** The phone simulator of the perf steps, with the run's simctl. */
+const simOf = (input: PerfStepInput): Sim => ({ simctl: input.simctl, udid: input.device.udid });
+
 const messageOf = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
 /** The perf_log payload of the test build's save.db ([] before the first entry). */
-function readPerfLog(udid: string, app: AppInfo): unknown {
+function readPerfLog(sim: Sim, app: AppInfo): unknown {
   try {
-    const db = join(appDataDir(udid, app), 'Documents', 'SQLite', 'save.db');
-    const sql = 'SELECT payload FROM perf_log WHERE id = 1';
-    const payload = execFileSync('sqlite3', [db, sql], { encoding: 'utf8' }).trim();
+    const payload = readPerfLogPayload(saveDatabaseOf(appDataDir(sim, app)))?.trim() ?? '';
     return payload === '' ? [] : (JSON.parse(payload) as unknown);
   } catch {
-    return []; // no save.db or no perf_log table yet
+    return []; // no container yet, or a payload that is not JSON
   }
 }
 
-const latestAt = (udid: string, app: AppInfo): number =>
-  latestColdStart(readPerfLog(udid, app))?.atEpochMs ?? -1;
+/**
+ * Right after the flows step: the newest save-benchmark entry the Shell's 04-debug-performance flow
+ * left in the perf log (S15's "Run save benchmark"), into reports/e2e/<game-id>/save-benchmark.json
+ * before any later step clears the app's data.
+ */
+export function recordSaveBenchmark(
+  run: { readonly sim: Sim; readonly app: AppInfo; readonly out: string },
+  flows: readonly string[],
+): void {
+  const evidence = saveBenchmarkEvidenceOf(readPerfLog(run.sim, run.app), flows);
+  writeFileSync(join(run.out, 'save-benchmark.json'), saveBenchmarkFileText(evidence));
+}
+
+const latestAt = (sim: Sim, app: AppInfo): number =>
+  latestColdStart(readPerfLog(sim, app))?.atEpochMs ?? -1;
 
 /** Waits until Home recorded a cold start newer than `afterEpochMs`; returns its totalMs. */
-async function waitForColdStart(udid: string, app: AppInfo, afterEpochMs: number): Promise<number> {
+async function waitForColdStart(sim: Sim, app: AppInfo, afterEpochMs: number): Promise<number> {
   for (let waitedMs = 0; waitedMs < COLD_START_TIMEOUT_MS; waitedMs += POLL_MS) {
-    const latest = latestColdStart(readPerfLog(udid, app));
+    const latest = latestColdStart(readPerfLog(sim, app));
     if (latest !== null && latest.atEpochMs > afterEpochMs) return latest.totalMs;
     await delay(POLL_MS);
   }
@@ -92,10 +116,10 @@ async function waitForColdStart(udid: string, app: AppInfo, afterEpochMs: number
  */
 async function openHome(input: PerfStepInput): Promise<void> {
   const { device, app } = input;
-  const { udid } = device;
-  terminateApp(udid, app);
-  const setupAt = latestAt(udid, app);
-  launchApp(udid, app);
+  const sim = simOf(input);
+  terminateApp(sim, app);
+  const setupAt = latestAt(sim, app);
+  launchApp(sim, app);
   const outDir = join(input.out, 'cold-start-setup');
   const status = await runMaestro(
     device,
@@ -106,7 +130,7 @@ async function openHome(input: PerfStepInput): Promise<void> {
       `cold start: the debug link to Home failed (maestro exit ${String(status)}), see ${outDir}`,
     );
   }
-  await waitForColdStart(udid, app, setupAt);
+  await waitForColdStart(sim, app, setupAt);
 }
 
 async function measureColdStart(
@@ -114,17 +138,17 @@ async function measureColdStart(
   budgets: PerfBudgets,
 ): Promise<ColdStartResult> {
   const { game, app } = input;
-  const { udid } = input.device;
+  const sim = simOf(input);
   await openHome(input);
   const launchesMs: number[] = [];
   for (let launch = 0; launch < COLD_LAUNCHES; launch += 1) {
-    const seenAt = latestAt(udid, app);
-    terminateApp(udid, app);
-    launchApp(udid, app);
-    launchesMs.push(await waitForColdStart(udid, app, seenAt));
+    const seenAt = latestAt(sim, app);
+    terminateApp(sim, app);
+    launchApp(sim, app);
+    launchesMs.push(await waitForColdStart(sim, app, seenAt));
   }
   mkdirSync(join('reports', 'perf'), { recursive: true });
-  const perfLog = JSON.stringify(readPerfLog(udid, app), null, 2);
+  const perfLog = JSON.stringify(readPerfLog(sim, app), null, 2);
   writeFileSync(join('reports', 'perf', 'sim-perf-log.json'), `${perfLog}\n`);
   const baselineFile = join('perf-baselines', `cold-start-sim-${game}.json`);
   const baselineMs = existsSync(baselineFile)
@@ -197,18 +221,20 @@ export async function measureMemory(
 }
 
 /** The memory step's operations on this simulator and app. */
-function simulatorMemoryOps({ game, device, app, out }: PerfStepInput): MemoryOps {
+function simulatorMemoryOps(input: PerfStepInput): MemoryOps {
+  const { game, device, app, out } = input;
+  const sim = simOf(input);
   const { udid } = device;
   return {
     smokeFlows: () => globSync(`apps/${game}/e2e/flows/smoke/*.yaml`).sort(),
     runFlows: (flows, dir) =>
       runMaestro(device, ['test', ...flows, '--test-output-dir', dir, ...appEnv(app)]),
     recordFeedback: (flows) => {
-      const evidence = feedbackEvidenceOf(readPerfLog(udid, app), flows);
+      const evidence = feedbackEvidenceOf(readPerfLog(sim, app), flows);
       writeFileSync(join(out, 'feedback.json'), feedbackFileText(evidence));
     },
     relaunch: () => {
-      launchApp(udid, app);
+      launchApp(sim, app);
     },
     pid: () => appPidOn(udid, app.name),
     wait: (ms) => delay(ms),

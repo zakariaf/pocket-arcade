@@ -1,12 +1,13 @@
 // packages/tooling/src/e2e/capture-screenshots-ios.ts
-// `npm run screenshots:ios -- --app line-siege [--update] [--devices phone] [--langs en,fa] [--driver-port <n>]`
+// `npm run screenshots:ios -- --app line-siege [--update] [--devices phone] [--langs en,fa] [--sim <purpose>] [--driver-port <n>]`
+// (--help prints every option; --sim captures on this session's own e07-<purpose> and
+// e07-<purpose>-tablet instead of the shared e07-shots-phone and e07-shots-tablet: screenshots-cli.ts)
 // 4 languages x light/dark x phone/tablet. Maestro captures (it waits for the UI to settle); comparePng
 // checks each PNG against apps/<game>/e2e/baselines/<device>/<lang>-<theme>[-<text size>]/<screen>.png.
 // Every capture names its simulator's UDID and a driver port of its own (runMaestro).
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
-import { parseArgs } from 'node:util';
 
 import {
   isChanged,
@@ -16,20 +17,21 @@ import {
 } from '@e07/tooling/e2e/write-gallery.ts';
 import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 
+import { parseScreenshotsCli, SCREENSHOTS_USAGE, shotSimulatorName } from './screenshots-cli.ts';
 import {
-  ensureSimulator,
+  e2eSimctl,
   findSimulatorBuild,
   prepareSimulator,
   readAppInfo,
   runMaestro,
   setAppearance,
+  startSimulator,
+  waitForBoot,
   type AppInfo,
+  type Simctl,
 } from './simulator.ts';
 
-const DEVICES: Readonly<Record<string, { readonly name: string; readonly model: string }>> = {
-  phone: { name: 'e07-shots-phone', model: 'iPhone 17 Pro Max' },
-  tablet: { name: 'e07-shots-tablet', model: 'iPad Pro 13-inch (M5)' },
-};
+const MODELS = { phone: 'iPhone 17 Pro Max', tablet: 'iPad Pro 13-inch (M5)' } as const;
 const DEFAULT_TEXT_SIZE = 'large';
 const MAX_DIFF_RATIO = 0.002;
 
@@ -38,11 +40,13 @@ type Cli = {
   readonly app: AppInfo;
   readonly flow: string;
   readonly isUpdate: boolean;
-  readonly devices: readonly string[];
+  readonly devices: readonly ('phone' | 'tablet')[];
   readonly langs: readonly string[];
   readonly textSize: string;
   /** --driver-port <n>: the session's own Maestro driver port (else a free one per capture). */
   readonly driverPort: number | undefined;
+  /** --sim <purpose>: this session's own simulators (else the shared capture simulators). */
+  readonly sim: string | undefined;
 };
 type Combo = { readonly device: string; readonly lang: string; readonly theme: 'light' | 'dark' };
 
@@ -86,47 +90,36 @@ function check(cli: Cli, combo: Combo, actual: string): GalleryRow {
   return { label, actual, baseline, result };
 }
 
-function parseCli(): Cli {
-  const { values } = parseArgs({
-    options: {
-      app: { type: 'string' },
-      'app-path': { type: 'string' },
-      flow: {
-        type: 'string',
-        default: join('packages', 'shell', 'e2e', 'screenshots', 'matrix.yaml'),
-      },
-      update: { type: 'boolean', default: false },
-      devices: { type: 'string', default: 'phone,tablet' },
-      langs: { type: 'string', default: 'en,de,fa,ckb' },
-      'text-size': { type: 'string', default: DEFAULT_TEXT_SIZE },
-      'driver-port': { type: 'string' },
-    },
-  });
-  if (values.app === undefined) {
-    throw new Error('usage: npm run screenshots:ios -- --app <game-id> [--update]');
+/** The command line, or the exit code when it asked for the usage or was wrong. */
+function parseCli(): Cli | number {
+  const parsed = parseScreenshotsCli(process.argv.slice(2));
+  if (parsed.kind === 'help') {
+    console.log(SCREENSHOTS_USAGE);
+    return 0;
   }
+  if (parsed.kind === 'error') {
+    console.error(`screenshots:ios: ${parsed.message}\n${SCREENSHOTS_USAGE.split('\n')[0] ?? ''}`);
+    return 2;
+  }
+  const { options } = parsed;
   return {
-    game: values.app,
-    app: readAppInfo(findSimulatorBuild(values.app, values['app-path'])),
-    flow: values.flow,
-    isUpdate: values.update,
-    devices: values.devices.split(','),
-    langs: values.langs.split(','),
-    textSize: values['text-size'],
-    driverPort: values['driver-port'] === undefined ? undefined : Number(values['driver-port']),
+    ...options,
+    app: readAppInfo(findSimulatorBuild(options.game, options.appPath)),
   };
 }
 
-async function runDevice(cli: Cli, device: string): Promise<GalleryRow[]> {
-  const spec = DEVICES[device];
-  if (spec === undefined) {
-    throw new Error(`unknown device ${device}`);
-  }
-  const udid = ensureSimulator(spec.name, spec.model);
-  prepareSimulator(udid, cli.app, cli.textSize);
+async function runDevice(
+  cli: Cli,
+  simctl: Simctl,
+  device: 'phone' | 'tablet',
+): Promise<GalleryRow[]> {
+  const udid = startSimulator(simctl, shotSimulatorName(device, cli.sim), MODELS[device]);
+  const sim = { simctl, udid };
+  waitForBoot(sim);
+  prepareSimulator(sim, cli.app, cli.textSize);
   const rows: GalleryRow[] = [];
   for (const theme of ['light', 'dark'] as const) {
-    setAppearance(udid, theme);
+    setAppearance(sim, theme);
     for (const lang of cli.langs) {
       const combo = { device, lang, theme };
       rows.push(...(await capture(cli, udid, combo)).map((actual) => check(cli, combo, actual)));
@@ -135,16 +128,23 @@ async function runDevice(cli: Cli, device: string): Promise<GalleryRow[]> {
   return rows;
 }
 
-// Idempotent and checksum-verified, like the E2E runner: nobody installs Maestro by hand.
-execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
-  stdio: 'ignore',
-});
-const cli = parseCli();
-const rows: GalleryRow[] = [];
-for (const device of cli.devices) rows.push(...(await runDevice(cli, device)));
-writeFileSync(join('reports', 'screenshots', 'summary.json'), `${JSON.stringify(rows, null, 2)}\n`);
-const changed = rows.filter(({ result }) => isChanged(result));
-console.warn(
-  `${String(rows.length)} screenshots, ${String(changed.length)} changed; gallery: ${writeGallery(rows)}`,
-);
-process.exitCode = changed.length === 0 ? 0 : 1;
+async function main(): Promise<number> {
+  const cli = parseCli();
+  if (typeof cli === 'number') return cli;
+  // Idempotent and checksum-verified, like the E2E runner: nobody installs Maestro by hand.
+  execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
+    stdio: 'ignore',
+  });
+  const simctl = e2eSimctl();
+  const rows: GalleryRow[] = [];
+  for (const device of cli.devices) rows.push(...(await runDevice(cli, simctl, device)));
+  const summary = join('reports', 'screenshots', 'summary.json');
+  writeFileSync(summary, `${JSON.stringify(rows, null, 2)}\n`);
+  const changed = rows.filter(({ result }) => isChanged(result));
+  console.warn(
+    `${String(rows.length)} screenshots, ${String(changed.length)} changed; gallery: ${writeGallery(rows)}`,
+  );
+  return changed.length === 0 ? 0 : 1;
+}
+
+process.exitCode = await main();

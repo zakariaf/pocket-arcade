@@ -1,21 +1,35 @@
 // packages/tooling/src/e2e/simulator.ts — dedicated, named simulators (never touch other agents' ones)
-// and the environment every Maestro run needs. Every simctl call names the simulator's UDID (never
-// "booted"), and every Maestro run goes through runMaestro: the global --device <udid> and a driver
-// port of its own (maestro-args.ts) before the command.
+// and the environment every Maestro run needs, on ios-simulator-build's one simulator layer: simctl
+// runs under the pinned Xcode (createSimctl(selectXcode(env)), DEVELOPER_DIR, never xcode-select),
+// e07- simulators are found or created by ensureSimulator on toolchain.ts's IOS_RUNTIME, and the
+// status bar is statusBarArgs, the same one build:ios:sim pins. Every simctl call names the
+// simulator's UDID (never "booted"), and every Maestro run goes through runMaestro: the global
+// --device <udid> and a driver port of its own (maestro-args.ts) before the command.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { globSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { appProcessPattern } from '@e07/tooling/audit/network-runtime-layer.ts';
+import { simProductsDir } from '@e07/tooling/build/sim-build-plan.ts';
 import {
   freeDriverPort,
   maestroGlobalArgs,
   maestroRunLine,
 } from '@e07/tooling/e2e/maestro-args.ts';
+import { debugSetupTestArgs, MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
+import { readBundleId, readExecutableName, readUrlScheme } from '@e07/tooling/ios/sim-app.ts';
+import {
+  createSimctl,
+  ensureSimulator,
+  findSimulator,
+  SIMULATOR_PREFIX,
+  statusBarArgs,
+  type Simctl,
+  type SimctlDeviceList,
+} from '@e07/tooling/ios/simulators.ts';
+import { IOS_RUNTIME, selectXcode, type ToolEnv } from '@e07/tooling/ios/toolchain.ts';
 
-export const IOS_RUNTIME = 'com.apple.CoreSimulator.SimRuntime.iOS-26-5';
-const ANDROID_STUDIO_JAVA = '/Applications/Android Studio.app/Contents/jbr/Contents/Home';
-const MAESTRO = join('tools', 'maestro', 'bin', 'maestro');
+export type { Simctl } from '@e07/tooling/ios/simulators.ts';
 
 /** `name` is the executable (CFBundleExecutable), which the socket sampler looks for. */
 export type AppInfo = {
@@ -25,24 +39,23 @@ export type AppInfo = {
   readonly name: string;
 };
 
-type SimDevice = { readonly name: string; readonly udid: string; readonly state: string };
-type SimctlDevices = { readonly devices: Readonly<Record<string, readonly SimDevice[]>> };
-
-function simctl(args: readonly string[]): string {
-  return execFileSync('xcrun', ['simctl', ...args], { encoding: 'utf8' });
+/**
+ * simctl for this run: under the pinned Xcode (selectXcode's DEVELOPER_DIR), as build:ios:sim runs
+ * it. Make it once per run and pass it on: selectXcode proves the version with xcodebuild.
+ */
+export function e2eSimctl(
+  base: ToolEnv = process.env,
+  select: (env: ToolEnv) => NodeJS.ProcessEnv = selectXcode,
+): Simctl {
+  return createSimctl(select(base));
 }
 
 export function readAppInfo(appPath: string): AppInfo {
-  const plist = join(appPath, 'Info.plist');
-  const read = (keyPath: string): string =>
-    execFileSync('plutil', ['-extract', keyPath, 'raw', '-o', '-', plist], {
-      encoding: 'utf8',
-    }).trim();
   return {
     path: appPath,
-    id: read('CFBundleIdentifier'),
-    scheme: read('CFBundleURLTypes.0.CFBundleURLSchemes.0'),
-    name: read('CFBundleExecutable'),
+    id: readBundleId(appPath),
+    scheme: readUrlScheme(appPath),
+    name: readExecutableName(appPath),
   };
 }
 
@@ -81,7 +94,7 @@ export function bootFailureMessage(name: string, errorText: string): string | nu
   ].join(' ');
 }
 
-function boot(udid: string, name: string): void {
+function boot(simctl: Simctl, udid: string, name: string): void {
   try {
     simctl(['boot', udid]);
   } catch (error: unknown) {
@@ -94,59 +107,55 @@ function boot(udid: string, name: string): void {
   }
 }
 
-export function ensureSimulator(name: string, model: string): string {
-  const list = JSON.parse(simctl(['list', 'devices', '--json'])) as SimctlDevices;
-  const existing = (list.devices[IOS_RUNTIME] ?? []).find((device) => device.name === name);
-  const udid = existing?.udid ?? simctl(['create', name, model, IOS_RUNTIME]).trim();
-  if (existing?.state !== 'Booted') {
-    boot(udid, name);
+/**
+ * Finds (or creates) the e07- simulator `name` on IOS_RUNTIME and starts its boot without waiting
+ * for it: waitForBoot waits, so another simulator can boot meanwhile. Returns its UDID.
+ */
+export function startSimulator(simctl: Simctl, name: string, model: string): string {
+  if (!name.startsWith(SIMULATOR_PREFIX)) {
+    throw new Error(`${name}: e2e runs only on this session's own ${SIMULATOR_PREFIX}* simulators`);
   }
-  simctl(['bootstatus', udid, '-b']);
+  const udid = ensureSimulator(simctl, name.slice(SIMULATOR_PREFIX.length), model);
+  const list = JSON.parse(simctl(['list', 'devices', '--json'])) as SimctlDeviceList;
+  if (findSimulator(list, name, IOS_RUNTIME)?.state !== 'Booted') boot(simctl, udid, name);
   return udid;
 }
 
-export function prepareSimulator(udid: string, app: AppInfo, textSize: string): void {
-  simctl(['install', udid, app.path]);
-  simctl([
-    'status_bar',
-    udid,
-    'override',
-    '--time',
-    '9:41',
-    '--dataNetwork',
-    'wifi',
-    '--wifiMode',
-    'active',
-    '--wifiBars',
-    '3',
-    '--cellularMode',
-    'active',
-    '--cellularBars',
-    '4',
-    '--batteryState',
-    'charged',
-    '--batteryLevel',
-    '100',
-  ]);
-  setTextSize(udid, textSize);
+/** One simulator of the run: its UDID and the run's simctl (under the pinned Xcode). */
+export type Sim = { readonly simctl: Simctl; readonly udid: string };
+
+/** Waits until the simulator has finished booting. */
+export function waitForBoot({ simctl, udid }: Sim): void {
+  simctl(['bootstatus', udid, '-b']);
+}
+
+/** Installs the app, pins build:ios:sim's status bar (statusBarArgs) and sets the text size. */
+export function prepareSimulator(sim: Sim, app: AppInfo, textSize: string): void {
+  sim.simctl(['install', sim.udid, app.path]);
+  sim.simctl(statusBarArgs(sim.udid));
+  setTextSize(sim, textSize);
 }
 
 /** Dynamic Type: 'large' (the default) or 'accessibility-extra-extra-extra-large' (200 % text). */
-export function setTextSize(udid: string, textSize: string): void {
+export function setTextSize({ simctl, udid }: Sim, textSize: string): void {
   simctl(['ui', udid, 'content_size', textSize]);
 }
 
 /** Stops the app if it runs (not running is fine). */
-export function terminateApp(udid: string, app: AppInfo): void {
-  spawnSync('xcrun', ['simctl', 'terminate', udid, app.id], { stdio: 'ignore' });
+export function terminateApp({ simctl, udid }: Sim, app: AppInfo): void {
+  try {
+    simctl(['terminate', udid, app.id]);
+  } catch {
+    // not running
+  }
 }
 
-export function launchApp(udid: string, app: AppInfo): void {
+export function launchApp({ simctl, udid }: Sim, app: AppInfo): void {
   simctl(['launch', udid, app.id]);
 }
 
 /** The app's data container (Documents/SQLite/save.db lives under it). */
-export function appDataDir(udid: string, app: AppInfo): string {
+export function appDataDir({ simctl, udid }: Sim, app: AppInfo): string {
   return simctl(['get_app_container', udid, app.id, 'data']).trim();
 }
 
@@ -166,7 +175,7 @@ export function appPidOn(udid: string, appName: string): string | null {
 }
 
 export function findSimulatorBuild(game: string, override: string | undefined): string {
-  const built = join('apps', game, 'build', 'dd', 'Build', 'Products', 'Release-iphonesimulator');
+  const built = simProductsDir(join('apps', game));
   const appPath = override ?? globSync(join(built, '*.app'))[0];
   if (appPath === undefined) {
     throw new Error(
@@ -198,27 +207,13 @@ export function requireAdsOffTestBuild(appPath: string, game: string): void {
   if (problem !== null) throw new Error(problem);
 }
 
-export function setAppearance(udid: string, theme: 'light' | 'dark'): void {
+export function setAppearance({ simctl, udid }: Sim, theme: 'light' | 'dark'): void {
   simctl(['ui', udid, 'appearance', theme]);
-}
-
-function javaHome(): string {
-  try {
-    return execFileSync('/usr/libexec/java_home', ['-v', '17'], { encoding: 'utf8' }).trim();
-  } catch {
-    return ANDROID_STUDIO_JAVA;
-  }
 }
 
 /** Java 17 and no telemetry, update check or analysis prompt (no data leaves the Mac). */
 export function maestroEnv(): NodeJS.ProcessEnv {
-  return {
-    ...process.env,
-    JAVA_HOME: process.env['JAVA_HOME'] ?? javaHome(),
-    MAESTRO_CLI_NO_ANALYTICS: 'true',
-    MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
-    MAESTRO_DISABLE_UPDATE_CHECK: 'true',
-  };
+  return maestroEnvOf(process.env);
 }
 
 /** Where a Maestro run goes: the simulator's UDID and, when the session passes its own, a port. */
@@ -237,20 +232,13 @@ export async function runMaestro(device: MaestroDevice, args: readonly string[])
   const target = { udid: device.udid, driverPort: device.driverPort ?? (await freeDriverPort()) };
   console.log(maestroRunLine(target, args));
   const command = [...maestroGlobalArgs(target), ...args];
-  return spawnSync(MAESTRO, command, { stdio: 'inherit', env: maestroEnv() }).status ?? 1;
+  return spawnSync(MAESTRO_BIN, command, { stdio: 'inherit', env: maestroEnv() }).status ?? 1;
 }
 
 /** The -e values every flow reads: the app's bundle id and URL scheme. */
 export function appEnv(app: AppInfo): string[] {
   return ['-e', `APP_ID=${app.id}`, '-e', `APP_SCHEME=${app.scheme}`];
 }
-
-/**
- * The shared setup sub-flow. A tool opens the debug link through it, never with `simctl openurl`:
- * iOS answers a custom scheme opened from outside with an "Open in <app>?" prompt that the sub-flow
- * accepts, and `simctl openurl` alone leaves it up, so the app never gets the link (seen on iOS 26.5).
- */
-export const DEBUG_SETUP_FLOW = join('packages', 'shell', 'e2e', 'subflows', 'debug-setup.yaml');
 
 export type DebugSetupRun = {
   readonly app: AppInfo;
@@ -262,13 +250,12 @@ export type DebugSetupRun = {
 };
 
 /**
- * `maestro test` arguments that apply one debug link to the running app and wait for waitFor; run
- * them with runMaestro, which puts the device and the driver port first.
+ * `maestro test` arguments that apply one debug link to the running app through the shared setup
+ * sub-flow (never `simctl openurl`: iOS answers a custom scheme opened from outside with an "Open in
+ * <app>?" prompt that only the sub-flow accepts) and wait for waitFor; run them with runMaestro,
+ * which puts the device and the driver port first.
  */
 export function debugSetupArgs(run: DebugSetupRun): string[] {
-  return [
-    ...['test', DEBUG_SETUP_FLOW, '--test-output-dir', run.outDir],
-    ...appEnv(run.app),
-    ...['-e', `QUERY=${run.query}`, '-e', `WAIT_FOR=${run.waitFor}`],
-  ];
+  const { app, query, waitFor, outDir } = run;
+  return debugSetupTestArgs({ appId: app.id, scheme: app.scheme, query, waitFor, outDir });
 }

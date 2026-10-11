@@ -21,7 +21,7 @@ Every Pocket Arcade screen in 4 languages × light and dark × phone and tablet,
 
 An animating screen differed by 1.08% between two captures one second apart (verified), far above the 0.2% tolerance. So:
 
-- status bar pinned to 9:41 with full bars and battery (`simctl status_bar override`);
+- status bar pinned to 9:41 with full bars and battery, no charging bolt and no carrier name (ios-simulator-build's `statusBarArgs`, the same one `build:ios:sim` pins);
 - reduce motion on (`reduceMotion=1`), `waitForAnimationToEnd` before each shot;
 - ads off (an `ADS_MODE=off` test build), fixed seed and date, the `demo` progress fixture;
 - `theme=system`, with the simulator appearance switched between light and dark (`simctl ui <udid> appearance`);

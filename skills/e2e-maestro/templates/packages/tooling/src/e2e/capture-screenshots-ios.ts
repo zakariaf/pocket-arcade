@@ -19,13 +19,16 @@ import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 
 import { parseScreenshotsCli, SCREENSHOTS_USAGE, shotSimulatorName } from './screenshots-cli.ts';
 import {
-  ensureSimulator,
+  e2eSimctl,
   findSimulatorBuild,
   prepareSimulator,
   readAppInfo,
   runMaestro,
   setAppearance,
+  startSimulator,
+  waitForBoot,
   type AppInfo,
+  type Simctl,
 } from './simulator.ts';
 
 const MODELS = { phone: 'iPhone 17 Pro Max', tablet: 'iPad Pro 13-inch (M5)' } as const;
@@ -105,12 +108,18 @@ function parseCli(): Cli | number {
   };
 }
 
-async function runDevice(cli: Cli, device: 'phone' | 'tablet'): Promise<GalleryRow[]> {
-  const udid = ensureSimulator(shotSimulatorName(device, cli.sim), MODELS[device]);
-  prepareSimulator(udid, cli.app, cli.textSize);
+async function runDevice(
+  cli: Cli,
+  simctl: Simctl,
+  device: 'phone' | 'tablet',
+): Promise<GalleryRow[]> {
+  const udid = startSimulator(simctl, shotSimulatorName(device, cli.sim), MODELS[device]);
+  const sim = { simctl, udid };
+  waitForBoot(sim);
+  prepareSimulator(sim, cli.app, cli.textSize);
   const rows: GalleryRow[] = [];
   for (const theme of ['light', 'dark'] as const) {
-    setAppearance(udid, theme);
+    setAppearance(sim, theme);
     for (const lang of cli.langs) {
       const combo = { device, lang, theme };
       rows.push(...(await capture(cli, udid, combo)).map((actual) => check(cli, combo, actual)));
@@ -126,8 +135,9 @@ async function main(): Promise<number> {
   execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
     stdio: 'ignore',
   });
+  const simctl = e2eSimctl();
   const rows: GalleryRow[] = [];
-  for (const device of cli.devices) rows.push(...(await runDevice(cli, device)));
+  for (const device of cli.devices) rows.push(...(await runDevice(cli, simctl, device)));
   const summary = join('reports', 'screenshots', 'summary.json');
   writeFileSync(summary, `${JSON.stringify(rows, null, 2)}\n`);
   const changed = rows.filter(({ result }) => isChanged(result));
