@@ -1,5 +1,5 @@
 // packages/shell/src/ui/app-text.test.tsx
-import { fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 import { PixelRatio, StyleSheet } from 'react-native';
 
 import { FSI, PDI } from '@e07/shell/i18n/bidi.ts';
@@ -141,6 +141,35 @@ describe('AppText', () => {
     const style = StyleSheet.flatten(
       screen.getByText('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz').props['style'],
     );
+    expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
+  });
+
+  it('lets a box go back to its lines once a longer layout has passed (spec 7.6)', async () => {
+    const words = 'Größe, Übung, Straße, Züge';
+    await renderWithShell(<AppText text={words} testID="home.title" />);
+    const line = 67 / 3;
+    const lines = (count: number): unknown => ({
+      nativeEvent: { lines: Array.from({ length: count }, () => ({ width: 300 })) },
+    });
+    const box = (height: number): unknown => ({
+      nativeEvent: { layout: { x: 0, y: 0, width: 400, height } },
+    });
+    await fireEvent(screen.getByTestId('home.title'), 'textLayout', lines(2));
+
+    // A longer layout (a balanced wrap's probe) reports three lines and a three-line box in one
+    // frame; then the text is back to two lines, in the box the three-line room had grown.
+    const handlers = screen.getByTestId('home.title').props as {
+      onTextLayout: (event: unknown) => void;
+      onLayout: (event: unknown) => void;
+    };
+    await act(() => {
+      handlers.onTextLayout(lines(3));
+      handlers.onLayout(box(3 * line));
+    });
+    await fireEvent(screen.getByTestId('home.title'), 'textLayout', lines(2));
+    await fireEvent(screen.getByTestId('home.title'), 'layout', box(3 * line + 1 / 3));
+
+    const style = StyleSheet.flatten(screen.getByTestId('home.title').props['style']);
     expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
   });
 

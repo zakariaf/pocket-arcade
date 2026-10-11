@@ -188,19 +188,22 @@ function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number):
   };
 }
 
-/**
- * The lines a laid-out box holds, or null when the box says nothing new. The line report is laid
- * out in the same short box, so it lost the dropped line too (two lines of the ad chip came back
- * as one); the box still measures their height, a hair short, and rounds to the true count. A box
- * no taller than the room set on it only shows that room.
- */
 /** A text's vertical metrics: its pads (the guard's) and its line height. */
 type LineBox = { readonly pads: number; readonly lineHeight: number };
 
-function boxLinesOf(height: number, room: TextRoom | null, box: LineBox): number | null {
+/**
+ * The lines a laid-out box holds, or 0 when the box says nothing about the text. The line report
+ * is laid out in the same short box, so it lost the dropped line too (two lines of the ad chip came
+ * back as one); the box still measures their height, a hair short, and rounds to the true count. A
+ * box one pixel over whole lines is the room set on it, which only says what the room was.
+ */
+function boxLinesOf(height: number, box: LineBox): number {
   const pixel = 1 / PixelRatio.get();
-  if (box.lineHeight === 0 || (room !== null && height <= room.minHeight + pixel / 2)) return null;
-  return Math.round((height - box.pads) / box.lineHeight);
+  if (box.lineHeight === 0) return 0;
+  const content = height - box.pads;
+  const lines = Math.round(content / box.lineHeight);
+  const isRoom = Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4;
+  return isRoom ? 0 : lines;
 }
 
 type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
@@ -214,31 +217,30 @@ type RoomParts = {
 
 /**
  * The guard, the room once the line count is known, and the listeners that learn that count: the
- * line report, raised to what the box holds until the report catches up.
+ * line report, or the last box's lines when that box holds more (React Native reports the lines
+ * again whenever they change, so the report catches up once the room is set).
  */
 function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   const [lines, setLines] = useState(0);
-  const [boxLines, setBoxLines] = useState(0);
+  const [boxHeight, setBoxHeight] = useState(0);
   const guard = overflowGuardOf(localized);
   const lineHeight = localized.lineHeight ?? 0;
   const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
-  const count = Math.max(Math.min(lines, props.numberOfLines ?? lines), boxLines);
-  const room = count === 0 ? null : roomOf(guard, lineHeight, count);
+  const reported = Math.min(lines, props.numberOfLines ?? lines);
+  const count = Math.max(reported, boxLinesOf(boxHeight, { pads, lineHeight }));
   const { onLineCount, onTextLines } = props;
   return {
     guard,
-    room,
+    room: count === 0 ? null : roomOf(guard, lineHeight, count),
     listeners: {
-      onLineCount: (reported) => {
-        setLines(reported);
-        if (reported >= boxLines) setBoxLines(0);
-        onLineCount?.(reported);
+      onLineCount: (lineCount) => {
+        setLines(lineCount);
+        onLineCount?.(lineCount);
       },
       ...(onTextLines === undefined ? {} : { onTextLines }),
     },
     onBoxLayout: (event) => {
-      const held = boxLinesOf(event.nativeEvent.layout.height, room, { pads, lineHeight });
-      if (held !== null) setBoxLines(held);
+      setBoxHeight(event.nativeEvent.layout.height);
     },
   };
 }
