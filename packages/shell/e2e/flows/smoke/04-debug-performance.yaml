@@ -1,10 +1,10 @@
 # packages/shell/e2e/flows/smoke/04-debug-performance.yaml — S15's save benchmark runs on the
 # simulator (test builds only): the debug menu's "Run save benchmark" writes the largest realistic
 # save 300 times into a scratch database (never the player's save.db) and appends one save-benchmark
-# entry to the perf log; the summary row then shows its p95. The runner reads the perf log right
-# after the flows step (this is the last flow of it: the Shell's flows sort after the game's, smoke/04
-# last) and keeps the entry in reports/e2e/<game-id>/save-benchmark.json, where check-e2e-report
-# (rule save-benchmark) needs 300 writes and a p95 under the 5 ms budget.
+# entry to the perf log; the summary row then shows its p95. The runner plays this flow in a Maestro
+# call of its own after the other flows (flowCallsOf), reads the perf log right after it and keeps
+# the entry in reports/e2e/<game-id>/save-benchmark.json, where check-e2e-report (rule
+# save-benchmark) needs 300 writes and a p95 under the 5 ms budget.
 # 1. the debug link opens S15 in English;
 # 2. the Performance section's benchmark row (the key under test), below the fold on a phone;
 # 3. the summary shows a save p95 in milliseconds ("save p95 –" before the first run);
