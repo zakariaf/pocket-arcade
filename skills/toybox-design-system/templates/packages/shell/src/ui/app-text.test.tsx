@@ -127,6 +127,23 @@ describe('AppText', () => {
     expect(Math.round(Number(style.minHeight) * 3)).toBe(67 + 1);
   });
 
+  it('counts its lines from its laid-out box when the reported lines come out short (spec 7.6)', async () => {
+    await renderWithShell(<AppText text="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz" />);
+
+    // Far down S15's font page the line report is measured in the same short box: two lines of
+    // the ad chip came back as one, so the room stayed under the box. The box itself still holds
+    // two lines' height, a hair short.
+    const text = screen.getByText('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz');
+    await fireEvent(text, 'textLayout', { nativeEvent: { lines: [{ width: 400 }] } });
+    await fireEvent(text, 'layout', {
+      nativeEvent: { layout: { x: 0, y: 0, width: 400, height: (2 * 67) / 3 - 0.0007 } },
+    });
+    const style = StyleSheet.flatten(
+      screen.getByText('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz').props['style'],
+    );
+    expect(Math.round(Number(style.minHeight) * 3)).toBe(2 * 67 + 1);
+  });
+
   it('draws Latin numbers without the overflow guard', async () => {
     await renderWithShell(<AppText text="58" variant="number" testID="stats.value" />);
 
