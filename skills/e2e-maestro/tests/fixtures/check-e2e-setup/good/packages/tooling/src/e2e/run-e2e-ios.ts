@@ -10,8 +10,9 @@
 // prompt, so no system prompt covers a screen and no ad SDK opens a socket. While the layer-F
 // socket sampler watches the app's sockets on this run's own simulators (one sampler per simulator:
 // other sessions run the same app on theirs), on those dedicated simulators it runs:
-// 1. flows: every Shell and game flow (a11y-tagged flows wait for step 4), the game's first and the
-//    Shell's smoke/04-debug-performance last, whose S15 save benchmark is kept in save-benchmark.json;
+// 1. flows: every Shell and game flow (a11y-tagged flows wait for step 4), then the Shell's
+//    smoke/04-debug-performance in a call of its own, whose S15 save benchmark is kept in
+//    save-benchmark.json right after it (its test case joins junit.xml);
 // 2. cold start: 6 launches into Home, the median of the last 5 against the committed
 //    perf-baselines/cold-start-sim-<game-id>.json x coldStartSimRegressionFactor (sim-perf-steps.ts);
 // 3. memory: the game's smoke flows again, the feedback the level asked for (feedback.json: the
@@ -21,10 +22,12 @@
 // and reports/perf/sim-perf-log.json. --flows-only (while iterating) runs step 1 only; it is never
 // the evidence run.
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
-import { globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
+import { mergeJunitReports } from '@e07/tooling/e2e/junit-merge.ts';
+import { flowCallsOf } from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import { recordSaveBenchmark, runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
   appEnv,
@@ -99,23 +102,49 @@ const reportArgs = (dir: string): string[] => [
 /** The simulator a run goes to, with the session's own driver port when it passed one. */
 const deviceOf = (cli: Cli, udid: string): MaestroDevice => ({ udid, driverPort: cli.driverPort });
 
-/** Step 1: every flow of the Shell and the game, except quarantined and a11y (step 4) ones. */
-async function runFlows({ cli, simctl, udid, app, out }: E2eRun): Promise<string[]> {
+/** One `maestro test` call of the flows step, reported into `dir`; its exit code. */
+function testFlows(run: E2eRun, flows: readonly string[], dir: string): Promise<number> {
+  const { cli, udid, app } = run;
+  return runMaestro(deviceOf(cli, udid), [
+    'test',
+    ...flows,
+    ...[...reportArgs(dir), '--exclude-tags', 'quarantine,a11y'],
+    ...appEnv(app),
+    ...cli.rest,
+  ]);
+}
+
+/** Adds the benchmark call's test case to reports/e2e/<game-id>/junit.xml (one report for the step). */
+function mergeBenchmarkJunit(out: string, dir: string): void {
+  const extra = join(dir, 'junit.xml');
+  if (!existsSync(extra)) return; // Maestro wrote no report: its exit code already fails the step
+  const junit = join(out, 'junit.xml');
+  const main = existsSync(junit) ? readFileSync(junit, 'utf8') : '';
+  writeFileSync(junit, mergeJunitReports(main, readFileSync(extra, 'utf8')));
+}
+
+/**
+ * Step 1: every flow of the Shell and the game, except quarantined and a11y (step 4) ones; S15's
+ * save benchmark flow in a call of its own after the others, its perf-log entry kept right after it
+ * (save-benchmark.json) and its test case added to junit.xml.
+ */
+async function runFlows(run: E2eRun): Promise<string[]> {
+  const { cli, simctl, udid, app, out } = run;
   // Maestro does not recurse into sub-folders: list the <area>/<nn>-<name>.yaml files explicitly.
   const flows = [
     ...globSync('packages/shell/e2e/flows/*/*.yaml'),
     ...globSync(`apps/${cli.game}/e2e/flows/*/*.yaml`),
   ].sort();
-  const status = await runMaestro(deviceOf(cli, udid), [
-    'test',
-    ...flows,
-    ...[...reportArgs(out), '--exclude-tags', 'quarantine,a11y'],
-    ...appEnv(app),
-    ...cli.rest,
-  ]);
-  // The Shell's smoke/04-debug-performance ran last (S15's save benchmark): keep its entry now.
-  recordSaveBenchmark({ sim: { simctl, udid }, app, out }, flows);
-  return status === 0 ? [] : [`flows: maestro test exited ${String(status)}, see ${out}`];
+  const { others, benchmark } = flowCallsOf(flows, cli.rest);
+  const statuses = others.length === 0 ? [] : [await testFlows(run, others, out)];
+  if (benchmark !== null) {
+    const dir = join(out, 'save-benchmark-flow');
+    statuses.push(await testFlows(run, [benchmark], dir));
+    recordSaveBenchmark({ sim: { simctl, udid }, app, out }, [benchmark]);
+    mergeBenchmarkJunit(out, dir);
+  }
+  const failed = statuses.filter((status) => status !== 0);
+  return failed.map((status) => `flows: maestro test exited ${String(status)}, see ${out}`);
 }
 
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
