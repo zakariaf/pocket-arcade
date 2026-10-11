@@ -17,6 +17,16 @@ import { WeekLegend } from './week-legend.tsx';
 import { WeekStrip } from './week-strip.tsx';
 
 import type { WeekDay } from './week-strip.tsx';
+import type * as WindowClassModule from './window-class.ts';
+
+/** The text size the displays see: 1 normally, 2 for the 200 % text case. */
+const mockFontScale = { current: 1 };
+jest.mock('@e07/shell/ui/use-window-class.ts', () => {
+  const { classifyWindow } = jest.requireActual<typeof WindowClassModule>(
+    '@e07/shell/ui/window-class.ts',
+  );
+  return { useWindowClass: () => classifyWindow(402, 874, mockFontScale.current) };
+});
 
 const COLORS = TEST_PALETTE.standard.light;
 const HIDDEN = { includeHiddenElements: true } as const;
@@ -215,6 +225,24 @@ describe('ScorePanel and WeekBars', () => {
 });
 
 describe('Decorative and empty displays', () => {
+  it('lets the calendar tile grow with its text at 200 % (spec 8.11)', async () => {
+    // In the 88 pt tile the 200 % day split inside the number ("2 / 6") and the fa and ckb month
+    // inside its word ("سپتام / بر"); a tile that holds text grows with it.
+    mockFontScale.current = 2;
+    try {
+      await renderWithShell(
+        <CalendarTile monthText="Sep" dayText="26" testID="daily.today-card.calendar" />,
+      );
+
+      const tile = screen.getByTestId('daily.today-card.calendar', HIDDEN);
+      // allow-style-assertion: the tile's width is the room its text grows in.
+      expect(tile).toHaveStyle({ minWidth: 88 });
+      expect(tile).not.toHaveStyle({ width: 88 });
+    } finally {
+      mockFontScale.current = 1;
+    }
+  });
+
   it('hides the calendar tile and pager dots from screen readers', async () => {
     await renderWithShell(
       <>
