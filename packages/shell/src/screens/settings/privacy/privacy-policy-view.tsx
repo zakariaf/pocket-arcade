@@ -2,10 +2,10 @@
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
-import { SubPage } from '@e07/shell/screens/settings/sub-page.tsx';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { ArtTile } from '@e07/shell/ui/art-tile.tsx';
 import { Panel } from '@e07/shell/ui/panel.tsx';
+import { SubPage } from '@e07/shell/ui/sub-page.tsx';
 
 import type { MessageValues } from '@e07/shell/i18n/create-t.ts';
 import type { ShellMessageKey } from '@e07/shell/i18n/messages.ts';

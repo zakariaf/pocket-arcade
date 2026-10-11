@@ -1,4 +1,4 @@
-// packages/shell/src/screens/how-to-play/page-step-for-swipe.ts
+// packages/shell/src/ui/page-step-for-swipe.ts
 // Spec S13 and 7.5: the how-to-play pages turn by swipe and mirror in right-to-left. The finger is
 // physical (a left swipe is a left swipe in every language); what mirrors is where the next page
 // lies: at the reading end, so a left swipe brings it in left to right and a right swipe in right

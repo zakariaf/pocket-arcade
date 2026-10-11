@@ -1,4 +1,4 @@
-// packages/shell/src/screens/how-to-play/page-step-for-swipe.test.ts
+// packages/shell/src/ui/page-step-for-swipe.test.ts
 // Spec S13: "3-5 short illustrated steps drawn in code (from the game module), swipeable,
 // mirrored in RTL." Spec 7.5: the swipeable how-to-play pages mirror in right-to-left. The next
 // page lies at the reading end: a swipe to the left brings it in left to right, a swipe to the

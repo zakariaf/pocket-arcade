@@ -1,9 +1,10 @@
-// packages/shell/src/screens/how-to-play/use-page-swipe.ts
-// Spec S13 and 7.5: How to play pages turn with a horizontal swipe over the stage. The gesture
-// stays physical (board-gestures-and-input): the worklet classifies the release with the Shell's
-// swipe thresholds and reaches JS only through scheduleOnRN, where pageStepForSwipe maps the
-// physical swipe to a page step for the layout direction (the next page lies at the reading end).
-// A vertical drag fails the gesture, so the body still scrolls.
+// packages/shell/src/ui/use-page-swipe.ts
+// The swipe pager: pages turn with a horizontal swipe over what a screen wraps in its
+// GestureDetector (S13 How to play: the stage; spec S13 and 7.5). Like every ui/ control it owns
+// its gesture, and the gesture stays physical (board-gestures-and-input): the worklet classifies
+// the release with the Shell's swipe thresholds and reaches JS only through scheduleOnRN, where
+// pageStepForSwipe maps the physical swipe to a page step for the layout direction (the next page
+// lies at the reading end). A vertical drag fails the gesture, so the body still scrolls.
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 
