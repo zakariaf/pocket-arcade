@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 import { DebugServicesProvider } from '@e07/shell/app/debug-services-context.tsx';
 import { DialogProvider } from '@e07/shell/app/dialog-context.tsx';
 import { LoadOutcomeOpener } from '@e07/shell/app/load-outcome-opener.tsx';
+import { LiveRunExitContext } from '@e07/shell/game-host/live-run-exit.ts';
 import { NavigationRoot } from '@e07/shell/navigation/navigation-root.tsx';
 import { toNavigationTheme } from '@e07/shell/navigation/navigation-theme.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
@@ -23,8 +24,8 @@ export type ShellNavigatorProps = {
 };
 
 /**
- * The debug services and link handler (test builds), the S14 dialog host (with the save's load
- * outcome dialog) and the navigator, themed. Once the navigator is ready the debug link handler starts (the pending screen of a
+ * The debug services, link handler and live-run exit (test builds), the S14 dialog host (with the
+ * save's load outcome dialog) and the navigator, themed. Once the navigator is ready the debug link handler starts (the pending screen of a
  * reload, the launch link, then every link); a remounted navigator stops the old one first.
  */
 export function ShellNavigator({
@@ -46,15 +47,17 @@ export function ShellNavigator({
   };
   return (
     <DebugServicesProvider services={debug.services} links={debug.links}>
-      <DialogProvider>
-        <NavigationRoot
-          initialState={initialState}
-          theme={toNavigationTheme(theme)}
-          navigationRef={debug.navigationRef}
-          onReady={handleReady}
-        />
-        {loadOutcome === null ? null : <LoadOutcomeOpener outcome={loadOutcome} />}
-      </DialogProvider>
+      <LiveRunExitContext value={debug.liveRunExit ?? null}>
+        <DialogProvider>
+          <NavigationRoot
+            initialState={initialState}
+            theme={toNavigationTheme(theme)}
+            navigationRef={debug.navigationRef}
+            onReady={handleReady}
+          />
+          {loadOutcome === null ? null : <LoadOutcomeOpener outcome={loadOutcome} />}
+        </DialogProvider>
+      </LiveRunExitContext>
     </DebugServicesProvider>
   );
 }
