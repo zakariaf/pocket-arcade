@@ -58,6 +58,28 @@ describe('SegmentedControl', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
+  it('stretches every segment and its face to the tallest one (spec S11)', async () => {
+    // German "Automatisch" wraps to two lines; the design draws Lateinisch and Lokal as tall, with
+    // their content centred (CSS align-items: stretch). A segment that grew only its outer box
+    // drew its face 12 pt short with the label 5 pt high (E17 de parity).
+    await renderWithShell(
+      <SegmentedControl
+        segments={THEMES}
+        selected="system"
+        onSelect={jest.fn()}
+        label="Theme"
+        testID="settings.theme-control"
+        segmentTestIDBase="settings.theme-segment"
+        isReducedMotion
+      />,
+    );
+
+    const key = screen.getByTestId('settings.theme-segment.dark').children[0];
+    // allow-style-assertion: the stretch is a layout rule the unit tests can only see as styles
+    expect(key).toHaveStyle({ flexGrow: 1 });
+    expect(typeof key === 'string' ? key : key?.children[1]).toHaveStyle({ flexGrow: 1 });
+  });
+
   it('carries the check only on the chosen segment', async () => {
     await renderWithShell(
       <SegmentedControl
