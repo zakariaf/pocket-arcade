@@ -1,0 +1,1 @@
+packages/tooling/src/ios/simulators.ts:1 [deterministic-capture] prepareSimulator does not pin the status bar to 9:41

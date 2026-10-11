@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="e07-e2e-phone - iOS 26.5 - 1B7D47E3-597E-425F-8A44-4BDD282AC701" tests="1" failures="1" time="98.1" timestamp="2026-09-28T10:01:24">
+    <testcase id="Core screens stay usable at 200% text" name="Core screens stay usable at 200% text" classname="Core screens stay usable at 200% text" file="packages/shell/e2e/flows/a11y/01-large-text-core-screens.yaml" time="21.5" timestamp="2026-09-28T10:01:24" status="ERROR">
+      <properties>
+        <property name="tags" value="shell, a11y"/>
+      </properties>
+      <failure>Element not found: id: home.levels-button</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

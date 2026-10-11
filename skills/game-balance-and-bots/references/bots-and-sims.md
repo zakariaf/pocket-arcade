@@ -20,7 +20,7 @@ How a Pocket Arcade game is played thousands of times headless, and how those ru
 
 | File (app repo) | What it does |
 |---|---|
-| `packages/game-kit/src/testing/play-bot.ts` | `BotPolicy`, `BotGame`, `randomPolicy()`, `playBot()`: the minimal loop (the game module's `testing.bot` is a `BotPolicy`). The `game-rules-engine` skill ships the same file with its own unit test; `trace-bot.test.ts` also proves `playBot`'s behaviour |
+| `packages/game-kit/src/testing/play-bot.ts` | `BotPolicy`, `BotGame`, `randomPolicy()`, `playBot()`: the minimal loop (the game module's `testing.bot` is a `BotPolicy`), and `playBotLine()`: the same game with each state and the move made from it, for tools that show a bot's line (e2e-maestro's `print-level-line`) instead of copying the loop and its seed rule. The `game-rules-engine` skill ships the same file with its own unit test; `trace-bot.test.ts` also proves `playBot`'s behaviour |
 | `packages/game-kit/src/testing/trace-bot.ts` | `traceBot()`: the same loop as `playBot`, plus what the report needs (final score, payoff and twist tags, capped runs) |
 | `packages/game-kit/src/testing/bot-policies.ts` | `greedyPolicy(rules, evaluate)` and `lookaheadPolicy(rules, evaluate, { depth, beam })` |
 | `packages/game-kit/src/testing/sim-stats.ts` | `summarizeCell()`: many traces → one report cell (win rate, move spread, loss reasons, first-payoff curve) |

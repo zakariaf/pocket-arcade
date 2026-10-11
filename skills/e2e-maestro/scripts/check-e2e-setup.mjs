@@ -33,6 +33,7 @@ const SPEC = {
     '                        skips the checksum or strict mode',
     '  maestro-env           Maestro runs without Java 17 or without MAESTRO_CLI_NO_ANALYTICS,',
     '                        MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED and MAESTRO_DISABLE_UPDATE_CHECK set to true',
+    '                        (in simulator.ts, or in ios/maestro-tool.ts when simulator.ts calls its maestroEnvOf)',
     '  runner-file-missing   a runner, simulator, gallery, comparator or socket-sampler file is missing',
     '  runner-no-sampler     run-e2e-ios.ts does not run the socket sampler or does not fail on network.txt',
     "  sampler-own-simulators the sampler watches every copy of the app on the Mac, not only the run's own",
@@ -47,8 +48,9 @@ const SPEC = {
     '                        --device <udid> and --driver-host-port <port> (maestroGlobalArgs from e2e/maestro-args.ts,',
     '                        a free port per run), passes the per-command --udid, or fixes the driver port: another',
     '                        session\'s simulator or XCTest driver can answer the run',
-    '  e2e-ads-off           run-e2e-ios.ts does not refuse a build that is not the test variant with ADS_MODE=off',
-    '                        (requireAdsOffTestBuild): only with ads off does no consent form or tracking prompt cover a',
+    '  e2e-ads-off           run-e2e-ios.ts or capture-screenshots-ios.ts does not refuse a build that is not the test',
+    '                        variant with ADS_MODE=off (requireAdsOffTestBuild, itself or through simulator.ts\'s',
+    '                        findSimulatorBuild, the one build lookup): only with ads off does no consent form or tracking prompt cover a',
     '                        screen and no ad SDK open a socket; or it runs admob-ads\' hand-run ads smoke flows',
     '                        (packages/shell/e2e/ads-smoke/, ADS_MODE=test builds only: check-flows checks them)',
     '  feedback-evidence     sim-perf-steps.ts does not write feedback.json from the perf log after the smoke flows',
@@ -56,7 +58,8 @@ const SPEC = {
     '  openurl-prompt        the tooling opens a debug link with simctl openurl: iOS answers with an "Open in <app>?"',
     '                        prompt nobody accepts, so the app never gets the link (use debugSetupArgs: debug-setup.yaml)',
     '  maestro-upload        the tooling or an npm script uses maestro cloud/login or test --analyze (uploads the run)',
-    '  deterministic-capture the status bar is not pinned to 9:41 or the text size is not set before capture',
+    '  deterministic-capture the status bar is not pinned to 9:41 (in simulator.ts, or in ios/simulators.ts when',
+    '                        simulator.ts calls its statusBarArgs) or the text size is not set before capture',
     '  screenshot-tolerance  capture-screenshots-ios.ts allows more than MAX_DIFF_RATIO = 0.002 (0.2% of pixels), or',
     '                        compare-png.ts uses a pixelmatch threshold above 0.1',
     '  network-guard-missing the Shell\'s test-only JS network guard (network-guard.ts) is missing, or nothing installs',
@@ -135,6 +138,9 @@ const SUBFLOWS = {
   'packages/shell/e2e/subflows/shoot-screen.yaml': ['S15'],
   'packages/shell/e2e/screenshots/matrix.yaml': ['S15', 'S4', 'S5', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12', 'S13'],
 };
+/** ios-simulator-build's simulator layer, which e2e's simulator.ts is built on. */
+const MAESTRO_TOOL = 'packages/tooling/src/ios/maestro-tool.ts';
+const SIMULATORS = 'packages/tooling/src/ios/simulators.ts';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEVICES = ['phone', 'tablet'];
 const LANGS = ['en', 'de', 'fa', 'ckb'];
@@ -165,11 +171,19 @@ function checkRunner(root, report) {
   const simulator = 'packages/tooling/src/e2e/simulator.ts';
   if (exists(root, simulator)) {
     const code = maskComments(read(root, simulator));
+    // The Maestro environment and the status bar may come from ios-simulator-build's one simulator
+    // layer (maestroEnvOf in ios/maestro-tool.ts, statusBarArgs in ios/simulators.ts), which
+    // build:ios:sim uses too; then the shared file must hold them and simulator.ts must call it.
+    const shared = (rel, call) => (new RegExp(String.raw`\b${call}\s*\(`).test(code) && exists(root, rel) ? maskComments(read(root, rel)) : '');
+    const envCode = `${code}\n${shared(MAESTRO_TOOL, 'maestroEnvOf')}`;
+    const envFile = /\bmaestroEnvOf\s*\(/.test(code) ? MAESTRO_TOOL : simulator;
     for (const name of ['MAESTRO_CLI_NO_ANALYTICS', 'MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED', 'MAESTRO_DISABLE_UPDATE_CHECK']) {
-      if (!new RegExp(`${name}\\s*:\\s*['"]true['"]`).test(code)) report.problem({ file: simulator, line: 1, rule: 'maestro-env', message: `maestroEnv() does not set ${name}: 'true'`, fix: 'Restore maestroEnv() from the template: no analytics, no analysis prompt, no update check.' });
+      if (!new RegExp(`${name}\\s*:\\s*['"]true['"]`).test(envCode)) report.problem({ file: envFile, line: 1, rule: 'maestro-env', message: `maestroEnv() does not set ${name}: 'true'`, fix: 'Restore maestroEnv() from the template (it calls maestroEnvOf from ios-simulator-build\'s ios/maestro-tool.ts): no analytics, no analysis prompt, no update check.' });
     }
-    if (!/java_home['"]?\s*,\s*\[\s*['"]-v['"]\s*,\s*['"]17['"]/.test(code) && !/JAVA_HOME/.test(code)) report.problem({ file: simulator, line: 1, rule: 'maestro-env', message: 'maestroEnv() does not select Java 17', fix: "Resolve JAVA_HOME with /usr/libexec/java_home -v 17 (fallback: Android Studio's bundled JBR)." });
-    if (!/'--time'\s*,\s*'9:41'|--time 9:41/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not pin the status bar to 9:41', fix: 'Restore the simctl status_bar override (time 9:41, full bars, battery 100%).' });
+    if (!/java_home['"]?\s*,\s*\[\s*['"]-v['"]\s*,\s*['"]17['"]/.test(envCode) && !/JAVA_HOME/.test(envCode)) report.problem({ file: envFile, line: 1, rule: 'maestro-env', message: 'maestroEnv() does not select Java 17', fix: "Resolve JAVA_HOME with /usr/libexec/java_home -v 17 (fallback: Android Studio's bundled JBR)." });
+    const barCode = `${code}\n${shared(SIMULATORS, 'statusBarArgs')}`;
+    const barFile = /\bstatusBarArgs\s*\(/.test(code) ? SIMULATORS : simulator;
+    if (!/'--time'\s*,\s*'9:41'|--time 9:41/.test(barCode)) report.problem({ file: barFile, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not pin the status bar to 9:41', fix: "Restore prepareSimulator from the template: simctl(statusBarArgs(udid)), ios-simulator-build's one status bar (time 9:41, full bars, battery 100%), which build:ios:sim pins too." });
     if (!/content_size/.test(code)) report.problem({ file: simulator, line: 1, rule: 'deterministic-capture', message: 'prepareSimulator does not set the text size', fix: 'Restore simctl ui <udid> content_size <size> (large by default, the 200% pass uses accessibility-extra-extra-extra-large).' });
   }
   const sampler = 'packages/tooling/src/audit/sample-sockets.ts';
@@ -193,12 +207,22 @@ function checkRunner(root, report) {
     ];
     for (const [pattern, message] of steps) if (!pattern.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-steps', message, fix: "Restore run-e2e-ios.ts from this skill's template: flows, cold start, memory and large text run in one evidence run (--flows-only is for iterating)." });
     if (/ads-smoke/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the packages/shell/e2e/ads-smoke/ flows, which need an ADS_MODE=test build and a launch by xcrun simctl launch', fix: "Run only packages/shell/e2e/flows/*/*.yaml and apps/<game-id>/e2e/flows/*/*.yaml (this skill's template); admob-ads' ads smoke flows are run by hand (references/flows.md, \"The ads smoke flows\")." });
-    if (!/\brequireAdsOffTestBuild\s*\(/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the flows on whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off', fix: "Restore startRun from this skill's template: requireAdsOffTestBuild(appPath, game) before the simulator is prepared (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket)." });
   }
   if (exists(root, simulator)) {
     const code = maskComments(read(root, simulator));
     const guard = /function\s+e2eBuildProblem\b[\s\S]*?\n\}/.exec(code)?.[0] ?? '';
     if (!/appVariant\s*===\s*['"]test['"]/.test(guard) || !/adsMode\s*===\s*['"]off['"]/.test(guard)) report.problem({ file: simulator, line: 1, rule: 'e2e-ads-off', message: "e2eBuildProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: "Restore e2eBuildProblem and requireAdsOffTestBuild from this skill's template (they read EXConstants.bundle/app.config of the build)." });
+  }
+  // Every E2E run and every capture refuses an ads-on build: each calls requireAdsOffTestBuild itself
+  // or gets its build from simulator.ts's findSimulatorBuild, which calls it (the one build lookup).
+  const lookup = exists(root, simulator) ? (/function\s+findSimulatorBuild\b[\s\S]*?\n\}/.exec(maskComments(read(root, simulator)))?.[0] ?? '') : '';
+  const isLookupGuarded = /\brequireAdsOffTestBuild\s*\(/.test(lookup);
+  const guardFix = "Get the build from findSimulatorBuild(game, appPath) of this skill's simulator.ts template, which calls requireAdsOffTestBuild before any simulator is touched (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket).";
+  for (const [rel, what] of [[runner, 'runs the flows on'], ['packages/tooling/src/e2e/capture-screenshots-ios.ts', 'captures']]) {
+    if (!exists(root, rel)) continue;
+    const code = maskComments(read(root, rel));
+    const isGuarded = /\brequireAdsOffTestBuild\s*\(/.test(code) || (isLookupGuarded && /\bfindSimulatorBuild\s*\(/.test(code));
+    if (!isGuarded) report.problem({ file: rel, line: 1, rule: 'e2e-ads-off', message: `${what} whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off`, fix: guardFix });
   }
   const perfSteps = 'packages/tooling/src/e2e/sim-perf-steps.ts';
   if (exists(root, perfSteps)) {

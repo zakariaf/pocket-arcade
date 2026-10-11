@@ -7,16 +7,21 @@
 // proves the app asked for the cues on the simulator; how they sound and feel is the owner's
 // device check, and Jest fakes prove the wiring.
 
+import type { HapticCue } from '@e07/game-kit/timeline/track.ts';
+
+/** One key per game-kit HapticCue: tsc fails when game-kit adds or renames a cue and this does not. */
+const HAPTIC_CUE_KEYS: Readonly<Record<HapticCue, true>> = {
+  selection: true,
+  light: true,
+  medium: true,
+  heavy: true,
+  success: true,
+  warning: true,
+  error: true,
+};
+
 /** The haptic cues (game-kit's HapticCue); any other feedback label is a sound id. */
-export const HAPTIC_CUES: readonly string[] = [
-  'selection',
-  'light',
-  'medium',
-  'heavy',
-  'success',
-  'warning',
-  'error',
-];
+export const HAPTIC_CUES: readonly string[] = Object.keys(HAPTIC_CUE_KEYS);
 
 export type FeedbackEvidence = {
   /** The flows the log was read after. */

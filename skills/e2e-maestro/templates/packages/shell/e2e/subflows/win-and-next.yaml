@@ -1,0 +1,17 @@
+# packages/shell/e2e/subflows/win-and-next.yaml — wins the level on screen through the game host
+# (action=win-level, the same run-end path as a real win), presses Result's Next and waits for
+# NEXT_ROOT, the testID that proves the next level is shown (game.screen, or game.board-frame in a
+# boardLayout=1 run).
+appId: ${APP_ID}
+---
+- runFlow:
+    file: debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.next-button'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: '${NEXT_ROOT}'
+    timeout: 30000

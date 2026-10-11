@@ -1,0 +1,2 @@
+[network-sampler] 409631C4-6287-4A4B-8FDA-6C6991D8D2E4: network: the socket sampler on 409631C4-6287-4A4B-8FDA-6C6991D8D2E4 stopped before the run ended (exit code 1)
+[network-sampler] 409631C4-6287-4A4B-8FDA-6C6991D8D2E4: network: the socket sampler on 409631C4-6287-4A4B-8FDA-6C6991D8D2E4 never found the app running there

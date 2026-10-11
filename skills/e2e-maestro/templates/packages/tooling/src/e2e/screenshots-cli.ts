@@ -5,7 +5,8 @@
 // e07-shots-phone and e07-shots-tablet, which another session may be using.
 import { parseArgs } from 'node:util';
 
-import { e2eSimulatorName, e2eTabletName } from './simulator.ts';
+import { driverPortOf } from './e2e-cli.ts';
+import { e2eSimulatorName, e2eTabletName, simOptionProblem } from './simulator.ts';
 
 export const SCREENSHOTS_USAGE = [
   'usage: npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--sim <purpose>] [--app-path <App.app>] [--driver-port <n>]',
@@ -20,6 +21,9 @@ export const SCREENSHOTS_USAGE = [
   '  --driver-port  one Maestro driver port for every capture (default: a free port per capture)',
   '  --help, -h     print this and exit',
 ].join('\n');
+
+/** The capture flow: every matrix screen in one Maestro run. */
+export const MATRIX_FLOW = 'packages/shell/e2e/screenshots/matrix.yaml';
 
 export const MATRIX_DEVICES = ['phone', 'tablet'] as const;
 export type MatrixDevice = (typeof MATRIX_DEVICES)[number];
@@ -48,7 +52,6 @@ const SHARED: Readonly<Record<MatrixDevice, string>> = {
 
 /** The simulator a device's captures run on: this session's own with --sim, else the shared one. */
 export function shotSimulatorName(device: MatrixDevice, sim: string | undefined): string {
-  if (sim === undefined) return SHARED[device];
   return device === 'phone'
     ? e2eSimulatorName(sim, SHARED.phone)
     : e2eTabletName(sim, SHARED.tablet);
@@ -63,7 +66,6 @@ function readValues(argv: readonly string[]) {
     options: {
       app: { type: 'string' },
       'app-path': { type: 'string' },
-      flow: { type: 'string', default: 'packages/shell/e2e/screenshots/matrix.yaml' },
       update: { type: 'boolean', default: false },
       devices: { type: 'string', default: 'phone,tablet' },
       langs: { type: 'string', default: 'en,de,fa,ckb' },
@@ -81,11 +83,10 @@ function checkedParts(
   const devices = values.devices.split(',');
   const unknown = devices.find((device) => !isDevice(device));
   if (unknown !== undefined) return `unknown device ${unknown} (phone or tablet)`;
-  const port = values['driver-port'];
-  const driverPort = port === undefined ? undefined : Number(port);
-  if (driverPort !== undefined && !(Number.isInteger(driverPort) && driverPort > 0)) {
-    return `--driver-port ${String(port)} is not a port number`;
-  }
+  const driverPort = driverPortOf(values['driver-port']);
+  if (typeof driverPort === 'string') return driverPort;
+  const simProblem = simOptionProblem(values.sim);
+  if (simProblem !== null) return simProblem;
   return { devices: devices.filter(isDevice), driverPort };
 }
 
@@ -105,7 +106,7 @@ export function parseScreenshotsCli(argv: readonly string[]): ScreenshotsCliPars
     options: {
       game: values.app,
       appPath: values['app-path'],
-      flow: values.flow,
+      flow: MATRIX_FLOW,
       isUpdate: values.update,
       devices: parts.devices,
       langs: values.langs.split(','),

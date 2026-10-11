@@ -1,0 +1,22 @@
+{
+  "coldStart": {
+    "launchesMs": [
+      912,
+      655,
+      640,
+      662,
+      648,
+      651
+    ],
+    "medianMs": 651,
+    "baselineMs": 648,
+    "limitMs": 777.6,
+    "isRegression": false
+  },
+  "memory": {
+    "physFootprintBytes": 98566144,
+    "physFootprintMb": 94,
+    "limitMb": 150,
+    "isOver": false
+  }
+}

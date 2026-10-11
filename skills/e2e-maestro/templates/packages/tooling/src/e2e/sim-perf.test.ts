@@ -2,6 +2,7 @@
 import {
   baselineFileText,
   baselineMsFrom,
+  coldStartBaselinePlan,
   coldStartEntries,
   DEFAULT_PERF_BUDGETS,
   judgeColdStart,
@@ -99,6 +100,60 @@ describe('baselineMsFrom', () => {
       baselineMsFrom({}),
       baselineMsFrom(0),
     ]).toStrictEqual([648, null, null]);
+  });
+});
+
+describe('coldStartBaselinePlan', () => {
+  const FILE = 'perf-baselines/cold-start-sim-line-siege.json';
+
+  it('judges against a committed baseline and never rewrites it without --write-perf-baseline', () => {
+    expect(coldStartBaselinePlan(FILE, '{\n  "medianMs": 648\n}\n', false)).toStrictEqual({
+      kind: 'judge',
+      baselineMs: 648,
+    });
+    expect(coldStartBaselinePlan(FILE, '{ "medianMs": 648 }', true)).toStrictEqual({
+      kind: 'write',
+      baselineMs: 648,
+    });
+  });
+
+  it('writes the first baseline when no file is committed yet', () => {
+    expect(coldStartBaselinePlan(FILE, null, false)).toStrictEqual({
+      kind: 'write',
+      baselineMs: null,
+    });
+  });
+
+  it('fails on a committed baseline that is 0, negative, not a number or not JSON, and keeps the file', () => {
+    const plans = [
+      '{ "medianMs": 0 }',
+      '{ "medianMs": -12 }',
+      '{ "medianMs": "fast" }',
+      '{}',
+      'medianMs: 648',
+    ].map((text) => coldStartBaselinePlan(FILE, text, false));
+    expect(plans.map((plan) => plan.kind)).toStrictEqual([
+      'invalid',
+      'invalid',
+      'invalid',
+      'invalid',
+      'invalid',
+    ]);
+    expect(plans[0]).toStrictEqual({
+      kind: 'invalid',
+      message: `${FILE}: medianMs is 0, not a positive number of milliseconds; restore the committed file, or rewrite it on purpose with --write-perf-baseline (owner's agreement, Gate-Change trailer)`,
+    });
+    expect(plans[4]).toStrictEqual({
+      kind: 'invalid',
+      message: `${FILE}: is not JSON; restore the committed file, or rewrite it on purpose with --write-perf-baseline (owner's agreement, Gate-Change trailer)`,
+    });
+  });
+
+  it('rewrites an invalid baseline only with --write-perf-baseline', () => {
+    expect(coldStartBaselinePlan(FILE, '{ "medianMs": 0 }', true)).toStrictEqual({
+      kind: 'write',
+      baselineMs: null,
+    });
   });
 });
 

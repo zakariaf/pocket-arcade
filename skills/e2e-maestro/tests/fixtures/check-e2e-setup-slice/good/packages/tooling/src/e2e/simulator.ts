@@ -173,6 +173,7 @@ export function findSimulatorBuild(game: string, override: string | undefined): 
       `no simulator build in ${built}: run npm run build:ios:sim -- --app ${game} --variant test --ads off`,
     );
   }
+  requireAdsOffTestBuild(appPath, game);
   return appPath;
 }
 

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="e07-e2e-phone - iOS 26.5 - 1B7D47E3-597E-425F-8A44-4BDD282AC701" tests="4" failures="0" time="98.1" timestamp="2026-09-28T10:01:24">
+    <testcase id="Demo level 1 accepts a move, resumes after a kill, then wins" name="Demo level 1 accepts a move, resumes after a kill, then wins" classname="Demo level 1 accepts a move, resumes after a kill, then wins" file="apps/demo/e2e/flows/smoke/10-level-1.yaml" time="21.5" timestamp="2026-09-28T10:01:24" status="SUCCESS">
+      <properties>
+        <property name="tags" value="smoke, demo"/>
+      </properties>
+    </testcase>
+    <testcase id="Core journey works offline and survives a kill" name="Core journey works offline and survives a kill" classname="Core journey works offline and survives a kill" file="packages/shell/e2e/flows/journeys/02-core-journey-offline.yaml" time="21.5" timestamp="2026-09-28T10:01:24" status="SUCCESS">
+      <properties>
+        <property name="tags" value="smoke, shell, offline"/>
+      </properties>
+    </testcase>
+    <testcase id="First launch goes from language choice to the tutorial" name="First launch goes from language choice to the tutorial" classname="First launch goes from language choice to the tutorial" file="packages/shell/e2e/flows/smoke/01-first-launch.yaml" time="21.5" timestamp="2026-09-28T10:01:24" status="SUCCESS">
+      <properties>
+        <property name="tags" value="smoke, shell"/>
+      </properties>
+    </testcase>
+    <testcase id="Switching to Persian restarts once and keeps progress" name="Switching to Persian restarts once and keeps progress" classname="Switching to Persian restarts once and keeps progress" file="packages/shell/e2e/flows/rtl/03-language-switch.yaml" time="21.5" timestamp="2026-09-28T10:01:24" status="SUCCESS">
+      <properties>
+        <property name="tags" value="shell, rtl"/>
+      </properties>
+    </testcase>
+  </testsuite>
+</testsuites>

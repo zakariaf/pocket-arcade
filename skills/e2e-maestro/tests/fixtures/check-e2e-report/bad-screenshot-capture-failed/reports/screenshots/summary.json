@@ -1,0 +1,30 @@
+[
+  {
+    "label": "phone/en-light/home",
+    "actual": "reports/screenshots/raw/phone/en-light/2026-09-28_100000/Screenshot matrix/takeScreenshot/home.png",
+    "baseline": "apps/demo/e2e/baselines/phone/en-light/home.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  },
+  {
+    "label": "phone/en-light/levels",
+    "actual": "reports/screenshots/raw/phone/en-light/2026-09-28_100000/Screenshot matrix/takeScreenshot/levels.png",
+    "baseline": "apps/demo/e2e/baselines/phone/en-light/levels.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  },
+  {
+    "label": "phone/fa-dark",
+    "actual": "reports/screenshots/raw/phone/fa-dark",
+    "baseline": "apps/demo/e2e/baselines/phone/fa-dark",
+    "result": {
+      "kind": "capture-failed",
+      "message": "screenshots: maestro exited 1, see reports/screenshots/raw/phone/fa-dark",
+      "outDir": "reports/screenshots/raw/phone/fa-dark"
+    }
+  }
+]

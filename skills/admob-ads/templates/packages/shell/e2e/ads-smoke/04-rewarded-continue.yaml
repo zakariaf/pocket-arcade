@@ -11,7 +11,9 @@ appId: ${APP_ID}
 name: Ads smoke 4 - the rewarded continue plays on with the continue scene settled on the board
 tags: [ads-smoke]
 ---
-# Home first: a screen=game link while a Game screen is open keeps that screen's run.
+# Home first, the path this flow was verified on: geo=eea resets Google's consent answer, and Home is
+# the banner screen where the consent moment runs. (A screen=game link alone would also start a
+# fresh level-1 run: debug links land on a fixed stack, so step 3's open Game screen is not kept.)
 - runFlow:
     file: ../subflows/debug-setup.yaml
     env:
@@ -56,26 +58,10 @@ tags: [ads-smoke]
     visible: 'Reward granted'
     timeout: 60000
     optional: true
-- waitForAnimationToEnd
-# system-ui: the rewarded ad's close key, top right (Google's UI, no testID).
-- tapOn:
-    point: '95%,9%'
-# system-ui: a tap before the close key is ready leaves the rewarded ad on screen: wait, tap again.
 - runFlow:
-    when:
-      visible: 'Test mode'
-    commands:
-      - waitForAnimationToEnd
-      - tapOn:
-          point: '95%,9%'
-# system-ui: the rewarded ad's "Test mode" label, once more (Google's UI, not app text).
-- runFlow:
-    when:
-      visible: 'Test mode'
-    commands:
-      - waitForAnimationToEnd
-      - tapOn:
-          point: '95%,9%'
+    file: ../subflows/close-test-ad.yaml
+    env:
+      POINT: '95%,9%'
 - extendedWaitUntil:
     visible:
       id: 'game.screen'

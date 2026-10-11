@@ -11,7 +11,7 @@ import { debugFeedbackOf, debugSwitchesOf } from './debug-switches.ts';
 import type { DebugParts } from './create-debug-parts.ts';
 import type { FrameHistogram } from '@e07/shell/app/perf/frame-histogram.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
-import type { ParamListBase } from '@react-navigation/native';
+import type { NavigationState, ParamListBase } from '@react-navigation/native';
 
 /** Whether this launch is a parity probe=board launch, as TEST_ONLY reports it. */
 const mockProbe = { isOn: false };
@@ -112,6 +112,27 @@ describe('debugSwitchesOf', () => {
     const params = { start: 'new', ref: { kind: 'level', level: 1 } } as const;
     debugSwitchesOf(() => parts, NOW).openGame(params);
     expect(dispatch).toHaveBeenCalledWith(StackActions.push('Game', params));
+  });
+
+  it('opens a game example on the first route alone, never above the screens of earlier links', () => {
+    const parts = partsWith(null);
+    const home = { key: 'Home-1', name: 'Home' };
+    const state = { routes: [home, { key: 'Game-2', name: 'Game' }] } as unknown as NavigationState;
+    jest.spyOn(parts.navigationRef, 'isReady').mockReturnValue(true);
+    jest.spyOn(parts.navigationRef, 'getRootState').mockReturnValue(state);
+    const calls: unknown[] = [];
+    jest.spyOn(parts.navigationRef, 'reset').mockImplementation((reset) => {
+      calls.push(['reset', reset]);
+    });
+    jest.spyOn(parts.navigationRef, 'dispatch').mockImplementation((action) => {
+      calls.push(['dispatch', action]);
+    });
+    const params = { start: 'new', ref: { kind: 'level', level: 1 } } as const;
+    debugSwitchesOf(() => parts, NOW).openGame(params);
+    expect(calls).toStrictEqual([
+      ['reset', { index: 0, routes: [home] }],
+      ['dispatch', StackActions.push('Game', params)],
+    ]);
   });
 });
 

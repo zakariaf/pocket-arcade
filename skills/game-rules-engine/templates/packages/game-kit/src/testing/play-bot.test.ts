@@ -1,5 +1,5 @@
 // packages/game-kit/src/testing/play-bot.test.ts
-import { playBot, randomPolicy } from './play-bot.ts';
+import { playBot, playBotLine, randomPolicy } from './play-bot.ts';
 
 import type { BotGame } from './play-bot.ts';
 
@@ -50,5 +50,43 @@ describe('playBot', () => {
     expect(() => randomPolicy<number, number>()(0, [], [1, 2, 3, 4])).toThrow(
       'randomPolicy called without legal moves',
     );
+  });
+});
+
+/** playBot's own moves for seed 11, recorded through a policy that wraps randomPolicy: 7, lost. */
+const PINNED_SEED_11_MOVES = [1, 1, 2, 1, 2];
+
+describe('playBotLine', () => {
+  const options = { seed: 11, difficulty: 0, policy: randomPolicy<number, number>(), maxMoves: 50 };
+
+  it('plays exactly the game playBot plays, and lists each state with the move made from it', () => {
+    const played = playBotLine(GAME, options);
+    expect({ outcome: played.outcome, moves: played.moves }).toStrictEqual(playBot(GAME, options));
+    expect(played.line).toHaveLength(played.moves);
+    let state = GAME.create(options.seed, options.difficulty);
+    for (const step of played.line) {
+      expect(step.state).toBe(state);
+      state = GAME.applyMove(state, step.move).state;
+    }
+  });
+
+  it('pins the line of seed 11 (the same bot RNG rule as playBot, on every machine)', () => {
+    expect(playBotLine(GAME, options).line.map((step) => step.move)).toStrictEqual(
+      PINNED_SEED_11_MOVES,
+    );
+  });
+
+  it('stops at maxMoves with that many steps when the game never ends', () => {
+    const stuck: BotGame<number, number, never> = {
+      ...GAME,
+      outcome: () => ({ kind: 'playing' }),
+      listMoves: () => [0],
+    };
+    const played = playBotLine(stuck, { ...options, maxMoves: 3 });
+    expect([played.moves, played.line.length, played.outcome.kind]).toStrictEqual([
+      3,
+      3,
+      'playing',
+    ]);
   });
 });

@@ -15,7 +15,7 @@ import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { createDebugLinkHandler } from './debug-link-handler.ts';
 
 import type { DebugLinkHandler, DebugLinkOutcome, LinkSource } from './debug-link-handler.ts';
-import type { DebugGameControls, DebugRoute } from './debug-link-routes.ts';
+import type { DebugGameControls, DebugRoute, DebugRoutePlacement } from './debug-link-routes.ts';
 import type { Direction } from '@e07/shell/i18n/languages.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { FakeDebugStore } from '@e07/shell/screens/debug/fake-debug-store.ts';
@@ -32,6 +32,8 @@ type Run = {
   readonly services: DebugServices;
   readonly clock: SimulatedClock;
   readonly routes: DebugRoute[];
+  /** How each route opened (openRoute's placement), in the same order as routes. */
+  readonly placements: DebugRoutePlacement[];
   readonly restarts: Direction[];
   readonly errors: unknown[];
   readonly doc: () => SaveDoc;
@@ -71,6 +73,7 @@ function startRun(options: RunOptions = {}): Run & { readonly store: FakeDebugSt
   let doc = options.doc ?? PLAYED;
   let backups = 0;
   const routes: DebugRoute[] = [];
+  const placements: DebugRoutePlacement[] = [];
   const restarts: Direction[] = [];
   const errors: unknown[] = [];
   const waiting: (() => void)[] = [];
@@ -89,8 +92,9 @@ function startRun(options: RunOptions = {}): Run & { readonly store: FakeDebugSt
       restarts.push(direction);
       return Promise.resolve();
     },
-    openRoute: (route) => {
+    openRoute: (route, placement) => {
       routes.push(route);
+      placements.push(placement);
     },
     onNextNavigationState: (callback) => {
       waiting.push(callback);
@@ -105,7 +109,10 @@ function startRun(options: RunOptions = {}): Run & { readonly store: FakeDebugSt
       callback();
     });
   };
-  const view = { routes, restarts, errors, doc: () => doc, nextState, backups: () => backups };
+  const view = {
+    ...{ routes, placements, restarts, errors },
+    ...{ doc: () => doc, nextState, backups: () => backups },
+  };
   return { handler, services, clock, store, ...view };
 }
 
@@ -246,6 +253,15 @@ describe('createDebugLinkHandler', () => {
     expect(run.services.isOffline()).toBe(false);
     expect(run.errors).toHaveLength(1);
     expect(run.routes).toStrictEqual([{ name: 'Debug' }]);
+  });
+
+  it('opens S15 on top of the screen a rejected link came from, and screen= on a fixed stack', () => {
+    const run = startRun({ game: gameControls(false) });
+    run.handler.handleUrl(`${LINK}?screen=stats`);
+    run.handler.handleUrl(`${LINK}?colour=red`);
+    run.handler.handleUrl(`${LINK}?action=win-level`);
+    expect(run.routes).toStrictEqual([{ name: 'Stats' }, { name: 'Debug' }, { name: 'Debug' }]);
+    expect(run.placements).toStrictEqual(['fixed-stack', 'on-top', 'on-top']);
   });
 
   it('refuses action= and the example screens until the game host passes its controls', () => {
