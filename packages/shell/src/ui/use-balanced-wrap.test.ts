@@ -1,6 +1,14 @@
 // packages/shell/src/ui/use-balanced-wrap.test.ts
 // device-only half: the layout events come from iOS; the search itself is pure and tested here.
-import { advance, afterTextLayout, firstSearch, isStale, nextSearch } from './use-balanced-wrap.ts';
+import {
+  advance,
+  afterTextLayout,
+  breaksWord,
+  failedSearch,
+  firstSearch,
+  isStale,
+  nextSearch,
+} from './use-balanced-wrap.ts';
 
 describe('balanced wrap search (CSS text-wrap: balance)', () => {
   it('leaves one-line text alone', () => {
@@ -27,6 +35,12 @@ describe('balanced wrap search (CSS text-wrap: balance)', () => {
     expect(search).toMatchObject({ lo: 214, hi: 248, pad: 68, isReturning: true, isDone: false });
     search = nextSearch(search, 316, [240, 121]); // back at 248: probe floor((214 + 248) / 2) = 231
     expect(search).toMatchObject({ isReturning: false, isDone: false, pad: 316 - 231 });
+  });
+
+  it('counts a probe that breaks a word inside as failed, like one that adds a line (spec 8.11)', () => {
+    let search = firstSearch('k', 316, [305, 56]); // probe 248
+    search = failedSearch(search, 316); // two lines at 248, but a word split inside
+    expect(search).toMatchObject({ lo: 248, hi: 316, pad: 0, isReturning: true, isDone: false });
   });
 
   it('stops when no width between lo and the widest kept line is left', () => {
@@ -61,6 +75,35 @@ describe('balanced wrap search (CSS text-wrap: balance)', () => {
     expect(search.isDone).toBe(true);
     expect(layoutAt(258 - search.pad)).toHaveLength(3);
     expect(258 - search.pad).toBeLessThan(215);
+  });
+});
+
+describe('breaksWord (a line break inside a word)', () => {
+  it('finds a break inside a word, as iOS wraps a word wider than its line', () => {
+    expect(breaksWord('Diesmal nicht', ['Diesm', 'al nicht'])).toBe(true);
+    expect(breaksWord('Daily challenge', ['Daily ', 'chall', 'enge'])).toBe(true);
+  });
+
+  it('accepts breaks at spaces, whether iOS keeps the space on the line or not', () => {
+    expect(breaksWord('Diesmal nicht', ['Diesmal ', 'nicht'])).toBe(false);
+    expect(breaksWord('Diesmal nicht', ['Diesmal', 'nicht'])).toBe(false);
+    expect(breaksWord('این بار نشد', ['این بار ', 'نشد'])).toBe(false);
+  });
+
+  it('accepts a break after a hyphen or a dash', () => {
+    expect(breaksWord('Tages-Challenge spielen', ['Tages-', 'Challenge spielen'])).toBe(false);
+    expect(breaksWord('Play – Level 12', ['Play –', ' Level 12'])).toBe(false);
+  });
+
+  it('looks through bidi isolates around a placeholder', () => {
+    const text = '\u2068Saturday\u2069, 26 Sep';
+    expect(breaksWord(text, ['\u2068Saturda', 'y\u2069, 26 Sep'])).toBe(true);
+    expect(breaksWord(text, ['\u2068Saturday\u2069, ', '26 Sep'])).toBe(false);
+  });
+
+  it('says nothing when the lines carry no text or do not spell the text', () => {
+    expect(breaksWord('Diesmal nicht', [undefined, undefined])).toBe(false);
+    expect(breaksWord('Diesmal nicht', ['Diesm', 'al'])).toBe(false);
   });
 });
 
