@@ -2,7 +2,8 @@
 // The game host's test-build switches, read through the debug parts once createDebugParts made
 // them (all off in a store build: no debug services, TEST_ONLY null). The board-layout probe is on
 // for the debug link's boardLayout=1 and for a parity probe=board launch, whose capture masks the
-// board; the debug controls' openExample pushes the Game route on the debug navigator. The host
+// board; the debug controls' openExample pushes the Game route on the debug navigator's first route
+// alone (Home: the stack is reset first, so examples never stack on earlier links). The host
 // exists before the debug parts (they need its debug controls), so it plays the Shell's feedback
 // (win, lose, tap, toggle) through debugFeedbackOf, which asks for parts.feedback at call time: the
 // test build's recording ports (the E2E feedback evidence), else the real ports. While the board
@@ -10,6 +11,7 @@
 // entries), and S15's "Record frame times" samples the board's frame callback.
 import { StackActions } from '@react-navigation/native';
 
+import { resetToFirstRoute } from '@e07/shell/app/debug-link-routes.ts';
 import { sampleFrame } from '@e07/shell/app/perf/use-frame-recorder.ts';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 
@@ -33,7 +35,7 @@ export type DebugSwitches = {
   readonly board: BoardSwitches;
   /** The debug link's seed=, read when an endless run starts. */
   readonly seedOverride: () => number | null;
-  /** The debug controls' openExample: a new Game screen on top. */
+  /** The debug controls' openExample: a new Game screen on the first route alone. */
   readonly openGame: (params: GameParams) => void;
 };
 
@@ -77,7 +79,10 @@ export function debugSwitchesOf(
     board,
     seedOverride: () => parts()?.services?.seedOverride() ?? null,
     openGame: (params) => {
-      parts()?.navigationRef.dispatch(StackActions.push('Game', params));
+      const navigationRef = parts()?.navigationRef;
+      if (navigationRef === undefined) return;
+      resetToFirstRoute(navigationRef);
+      navigationRef.dispatch(StackActions.push('Game', params));
     },
   };
 }

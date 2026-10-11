@@ -1,9 +1,12 @@
 // packages/shell/src/app/debug-link-routes.test.ts
+import { createNavigationContainerRef } from '@react-navigation/native';
+
 import { createDefaultSaveDoc } from '@e07/shell/services/save/schema/default-save-doc.ts';
 
-import { debugRouteFor, isGameExample, nextLevelOf } from './debug-link-routes.ts';
+import { debugRouteFor, isGameExample, nextLevelOf, openDebugRoute } from './debug-link-routes.ts';
 
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
+import type { NavigationState, ParamListBase } from '@react-navigation/native';
 
 const RESULT = {
   stars: 3,
@@ -44,5 +47,48 @@ describe('debug link routes', () => {
     expect(isGameExample('result-win')).toBe(true);
     expect(isGameExample('game')).toBe(false);
     expect(isGameExample(undefined)).toBe(false);
+  });
+});
+
+describe('openDebugRoute', () => {
+  const HOME = { key: 'Home-1', name: 'Home' };
+  /** A ready navigator whose stack holds Home, a finished level's Game and Levels (earlier links). */
+  function readyNavigator() {
+    const navigation = createNavigationContainerRef<ParamListBase>();
+    const calls: unknown[] = [];
+    const state = {
+      routes: [HOME, { key: 'Game-2', name: 'Game' }, { key: 'Levels-3', name: 'Levels' }],
+    } as unknown as NavigationState;
+    jest.spyOn(navigation, 'isReady').mockReturnValue(true);
+    jest.spyOn(navigation, 'getRootState').mockReturnValue(state);
+    jest.spyOn(navigation, 'reset').mockImplementation((reset) => {
+      calls.push(['reset', reset]);
+    });
+    jest.spyOn(navigation, 'navigate').mockImplementation((...args: unknown[]) => {
+      calls.push(['navigate', ...args]);
+    });
+    return { navigation, calls };
+  }
+
+  it('lands screen= on a fixed stack: the first route alone, then the route on top of it', () => {
+    const { navigation, calls } = readyNavigator();
+    openDebugRoute(navigation, { name: 'Settings' });
+    expect(calls).toStrictEqual([
+      ['reset', { index: 0, routes: [HOME] }],
+      ['navigate', 'Settings'],
+    ]);
+  });
+
+  it('opens screen=home as the first route alone, and screen=game as a new run above it', () => {
+    const home = readyNavigator();
+    openDebugRoute(home.navigation, { name: 'Home' });
+    expect(home.calls).toStrictEqual([['reset', { index: 0, routes: [HOME] }]]);
+    const game = readyNavigator();
+    const params = { start: 'new', ref: { kind: 'level', level: 3 } } as const;
+    openDebugRoute(game.navigation, { name: 'Game', params });
+    expect(game.calls).toStrictEqual([
+      ['reset', { index: 0, routes: [HOME] }],
+      ['navigate', 'Game', params],
+    ]);
   });
 });

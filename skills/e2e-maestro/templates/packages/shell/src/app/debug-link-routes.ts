@@ -1,8 +1,11 @@
 // packages/shell/src/app/debug-link-routes.ts
-// Pure: where a debug link's screen= goes. Routes are the navigator's own names; the four game
+// Where a debug link's screen= goes, and how it opens: on a fixed stack, the navigator's first route
+// alone or with the route on top (navigate pushes in React Navigation 7, so links would otherwise
+// stack on the screens of earlier links). Routes are the navigator's own names; the four game
 // example states belong to the game host, which knows how to build them.
 import type { DebugScreen } from '@e07/shell/screens/debug/debug-link.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
+import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native';
 
 export type DebugGameExample = 'game-start' | 'game-middle' | 'result-win' | 'result-lose';
 
@@ -75,4 +78,31 @@ export function debugRouteFor(
   if (screen === 'game')
     return { name: 'Game', params: { start: 'new', ref: { kind: 'level', level } } };
   return { name: ROUTES[screen] };
+}
+
+/** The navigator ref calls a debug link needs (the container ref from createDebugParts). */
+export type DebugNavigation = Pick<
+  NavigationContainerRef<ParamListBase>,
+  'isReady' | 'getRootState' | 'reset' | 'navigate'
+>;
+
+/**
+ * Resets the stack to its first route alone (Home, or the first-run screen), keeping that route's
+ * key so it stays mounted; null while the navigator is not ready. Every debug screen then opens on
+ * a fixed stack: never above the screens earlier links opened.
+ */
+export function resetToFirstRoute(navigation: DebugNavigation): string | null {
+  if (!navigation.isReady()) return null;
+  const first = navigation.getRootState()?.routes[0];
+  if (first === undefined) return null;
+  // Key and name only: the first routes (Home, LanguageChoice) take no params.
+  navigation.reset({ index: 0, routes: [{ key: first.key, name: first.name }] });
+  return first.name;
+}
+
+/** screen=: [first route] for the first route itself, else [first route, route]. */
+export function openDebugRoute(navigation: DebugNavigation, route: DebugRoute): void {
+  if (resetToFirstRoute(navigation) === route.name) return;
+  if (route.name === 'Game') navigation.navigate(route.name, route.params);
+  else navigation.navigate(route.name);
 }

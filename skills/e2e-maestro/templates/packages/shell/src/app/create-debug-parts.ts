@@ -15,6 +15,7 @@
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { Linking } from 'react-native';
 
+import { openDebugRoute } from '@e07/shell/app/debug-link-routes.ts';
 import { restartAfterAudio } from '@e07/shell/app/restart-after-audio.ts';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { levelCountOf } from '@e07/shell/app/use-game-extra.ts';
@@ -136,8 +137,7 @@ function createLinks(
     restart: (direction) =>
       restartAfterAudio({ audio: input.audio, guard, onDisposeError: recordBootError }, direction),
     openRoute: (route) => {
-      if (route.name === 'Game') navigationRef.navigate(route.name, route.params);
-      else navigationRef.navigate(route.name);
+      openDebugRoute(navigationRef, route);
     },
     onNextNavigationState: (callback) => {
       const unsubscribe = navigationRef.addListener('state', () => {
