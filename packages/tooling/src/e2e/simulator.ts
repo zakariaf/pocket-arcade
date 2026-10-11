@@ -61,19 +61,28 @@ export function readAppInfo(appPath: string): AppInfo {
 
 const SIMULATOR_NAME = /^e07-[a-z0-9]+(-[a-z0-9]+)*$/;
 
+const simulatorNameOf = (value: string): string =>
+  value.startsWith('e07-') ? value : `e07-${value}`;
+
+/**
+ * Why --sim <value> names no simulator of this session, or null (also without --sim). Both command
+ * lines (e2e-cli.ts, screenshots-cli.ts) ask while parsing, so a bad value is a usage error (exit 2,
+ * no stack) before Maestro is installed or a simulator starts.
+ */
+export function simOptionProblem(value: string | undefined): string | null {
+  if (value === undefined || SIMULATOR_NAME.test(simulatorNameOf(value))) return null;
+  return `--sim ${value}: pass a kebab-case purpose such as --sim r3-e2e (the simulator is e07-<purpose>)`;
+}
+
 /**
  * --sim <purpose>: the run's phone simulator e07-<purpose> (a value that already starts with e07-
  * is kept), so a session can reuse its own simulator; without it, `fallback`.
  */
 export function e2eSimulatorName(value: string | undefined, fallback: string): string {
   if (value === undefined) return fallback;
-  const name = value.startsWith('e07-') ? value : `e07-${value}`;
-  if (!SIMULATOR_NAME.test(name)) {
-    throw new Error(
-      `--sim ${value}: pass a kebab-case purpose such as --sim r3-e2e (the simulator is e07-<purpose>)`,
-    );
-  }
-  return name;
+  const problem = simOptionProblem(value);
+  if (problem !== null) throw new Error(problem);
+  return simulatorNameOf(value);
 }
 
 /**

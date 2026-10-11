@@ -5,6 +5,8 @@
 // (--include-tags, while iterating) is passed on to maestro test.
 import { parseArgs } from 'node:util';
 
+import { simOptionProblem } from './simulator.ts';
+
 export const E2E_USAGE = [
   'usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--app-path <App.app>] [--flows-only] [--write-perf-baseline] [--include-tags <tags>]',
   '  --app                  the game folder under apps/ (kebab-case)',
@@ -116,6 +118,8 @@ export function parseE2eCli(argv: readonly string[]): E2eCliParse {
   if (game === undefined) return { kind: 'error', message: 'missing --app <game-id>' };
   const driverPort = driverPortOf(read.values.get('driver-port'));
   if (typeof driverPort === 'string') return { kind: 'error', message: driverPort };
+  const simProblem = simOptionProblem(read.values.get('sim'));
+  if (simProblem !== null) return { kind: 'error', message: simProblem };
   const tags = read.values.get('include-tags');
   return {
     kind: 'run',
