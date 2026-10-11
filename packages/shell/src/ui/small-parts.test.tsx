@@ -42,6 +42,23 @@ describe('QuietButton', () => {
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
+  it('shrinks its label to the column, so a long nudge wraps inside the gutters (spec S7)', async () => {
+    // A row's text never wraps unless its box may shrink: the German S7 nudge laid out at 366 pt
+    // in a 362 pt column, 2 pt past each gutter, on one line where the design wraps (E17 parity).
+    await renderWithShell(
+      <QuietButton
+        label="Gefällt’s dir? Entferne die Werbung für 1,99 €."
+        icon="crown"
+        onPress={jest.fn()}
+        testID="result.premium-button"
+        isReducedMotion
+      />,
+    );
+
+    const label = screen.getByText('Gefällt’s dir? Entferne die Werbung für 1,99 €.');
+    expect(label.parent).toHaveStyle({ flexShrink: 1 });
+  });
+
   it('greys out and ignores presses when disabled', async () => {
     const onPress = jest.fn();
     await renderWithShell(

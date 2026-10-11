@@ -72,6 +72,9 @@ const useStyles = makeStyles((theme) => {
       gap: GAP,
     },
     pressed: { backgroundColor: theme.colors.sunken },
+    // The label may shrink to the column, so a long nudge wraps inside the gutters (a row never
+    // wraps a text whose box keeps its full width).
+    label: { flexShrink: 1 },
     underline: {
       position: 'absolute',
       start: 0,
@@ -124,7 +127,7 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
       testID={props.testID}
     >
       {props.icon === undefined ? null : <Icon name={props.icon} color={color} size={NUDGE_ICON} />}
-      <View>
+      <View style={styles.label}>
         <AppText
           text={props.label}
           variant="nudge"
