@@ -57,7 +57,7 @@ async function setup(options: RenderWithShellOptions = {}, port: PurchasePort | 
     </Shell>
   );
   const { result, unmount } = await renderHook(() => usePremiumModel(), { wrapper });
-  return { result, unmount, stores: shell.stores, service: deps.service };
+  return { result, unmount, stores: shell.stores, service: deps.service, wrapper };
 }
 
 describe('usePremiumModel', () => {
@@ -124,6 +124,18 @@ describe('usePremiumModel', () => {
     expect(restored.result.current.hasJustRestored).toBe(true);
     await restored.unmount();
     expect(restored.stores.premium.getState().didJustRestore).toBe(false);
+  });
+
+  it('opens without the toast of a restore that ended while it was closed (spec S12)', async () => {
+    const first = await setup();
+    await first.unmount();
+    await act(() => {
+      const { dispatch } = first.stores.premium.getState();
+      dispatch({ type: 'restore-tapped' });
+      dispatch({ type: 'restore-finished', evidence: 'owned' });
+    });
+    const { result } = await renderHook(() => usePremiumModel(), { wrapper: first.wrapper });
+    expect(result.current.hasJustRestored).toBe(false);
   });
 });
 

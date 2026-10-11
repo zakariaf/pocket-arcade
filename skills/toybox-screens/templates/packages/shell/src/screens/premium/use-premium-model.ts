@@ -2,7 +2,8 @@
 // S12's model hook: the premium store through useShallow, the service and game name from the
 // composition root, navigation, and reduce motion. It also announces each restore toast to
 // VoiceOver and clears the one-off notices ("Thank you!", "Purchase restored") after NOTICE_MS,
-// or when the player leaves S12 sooner, so neither shows again on a later visit.
+// or when the player leaves S12 sooner, so neither shows again on a later visit; a restore that
+// ended while S12 was closed opens without its toast (use-unseen-restore-outcome.ts).
 // A parity capture (test builds) opens its S12 card like a player: Buy once as soon as the price
 // is there (the parity store answers purchasing, pending, purchased or failed), the four restore
 // outcomes stacked on the restore card, and the thank-you page held while it is captured.
@@ -21,6 +22,7 @@ import { usePremiumStore } from '@e07/shell/stores/premium/premium-store.ts';
 
 import { premiumModelOf } from './premium-model-of.ts';
 import { premiumToastFor } from './premium-toasts.ts';
+import { useUnseenRestoreOutcome } from './use-unseen-restore-outcome.ts';
 
 import type { PremiumModel } from './premium-model.ts';
 import type { PremiumAction } from '@e07/shell/stores/premium/premium-state.ts';
@@ -95,13 +97,19 @@ export function usePremiumModel(): PremiumModel {
   const t = useT();
   const deps = usePremiumScreenDeps();
   const navigation = useNavigation();
-  const state = usePremiumStore(
-    useShallow((s) => ({
-      isPremium: s.isPremium,
-      didJustPurchase: s.didJustPurchase,
-      didJustRestore: s.didJustRestore,
-      flow: s.flow,
-    })),
+  // A captured card holds its notice; a normal launch clears it after NOTICE_MS.
+  const isHeld = frameState !== null;
+  const state = useUnseenRestoreOutcome(
+    usePremiumStore(
+      useShallow((s) => ({
+        isPremium: s.isPremium,
+        didJustPurchase: s.didJustPurchase,
+        didJustRestore: s.didJustRestore,
+        flow: s.flow,
+      })),
+    ),
+    deps.service.dispatch,
+    isHeld,
   );
   const model = premiumModelOf({
     state,
@@ -117,8 +125,6 @@ export function usePremiumModel(): PremiumModel {
   const toast = premiumToastFor(model.view, model.hasJustRestored);
   useAnnounceToast(toast === null ? null : t(toast.textKey));
   useParityBuy(frameState, model.view, model.onBuy);
-  // A captured card holds its notice; a normal launch clears it after NOTICE_MS.
-  const isHeld = frameState !== null;
   useClearNotice(model.view === 'success' && !isHeld, deps.service.dispatch, THANKS_SHOWN);
   useClearNotice(model.hasJustRestored && !isHeld, deps.service.dispatch, RESTORE_NOTICE_SHOWN);
   return model;
