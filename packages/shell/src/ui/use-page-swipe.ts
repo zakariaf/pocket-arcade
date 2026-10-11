@@ -4,7 +4,9 @@
 // its gesture, and the gesture stays physical (board-gestures-and-input): the worklet classifies
 // the release with the Shell's swipe thresholds and reaches JS only through scheduleOnRN, where
 // pageStepForSwipe maps the physical swipe to a page step for the layout direction (the next page
-// lies at the reading end). A vertical drag fails the gesture, so the body still scrolls.
+// lies at the reading end). A vertical drag fails the gesture, so the body still scrolls, and a
+// pan that ends without success (cancelled, for example when iOS's back edge swipe takes over)
+// turns no page.
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -29,7 +31,8 @@ export function usePageSwipe(onStep: (step: PageStep) => void): PanGesture {
     .withTestId('page-swipe')
     .activeOffsetX(ACTIVE_OFFSET_X)
     .failOffsetY(FAIL_OFFSET_Y)
-    .onEnd((event) => {
+    .onEnd((event, isSuccess) => {
+      if (!isSuccess) return;
       const swipe = classifySwipe({
         dx: event.translationX,
         dy: event.translationY,

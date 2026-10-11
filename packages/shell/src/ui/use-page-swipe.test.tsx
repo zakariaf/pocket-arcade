@@ -26,8 +26,10 @@ function SwipeProbe({ onStep }: SwipeProbeProps): ReactNode {
   );
 }
 
+type GestureEvents = NonNullable<Parameters<typeof fireGestureHandler>[1]>;
+
 /** A quick horizontal fling of dx points (negative: to the left). */
-function fling(dx: number): Parameters<typeof fireGestureHandler>[1] {
+function fling(dx: number): GestureEvents {
   const end = { x: 200 + dx, y: 300, translationX: dx, translationY: 0 };
   return [
     { state: State.BEGAN, x: 200, y: 300, translationX: 0, translationY: 0 },
@@ -37,12 +39,25 @@ function fling(dx: number): Parameters<typeof fireGestureHandler>[1] {
   ];
 }
 
-async function swipe(language: 'en' | 'fa', dx: number): Promise<jest.Mock> {
+/** The same fling, taken over before it ends (the system's back edge swipe cancels the pan). */
+function cancelledFling(dx: number): GestureEvents {
+  const events = fling(dx);
+  const last = events.at(-1);
+  return last === undefined
+    ? events
+    : [...events.slice(0, -1), { ...last, state: State.CANCELLED }];
+}
+
+async function swipe(
+  language: 'en' | 'fa',
+  dx: number,
+  events: GestureEvents = fling(dx),
+): Promise<jest.Mock> {
   const onStep = jest.fn();
   await renderWithShell(<SwipeProbe onStep={onStep} />, { language });
   expect(screen.getByTestId('how-to-play.stage')).toBeOnTheScreen();
   await act(() => {
-    fireGestureHandler(getByGestureTestId('page-swipe'), fling(dx));
+    fireGestureHandler(getByGestureTestId('page-swipe'), events);
   });
   expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   return onStep;
@@ -64,5 +79,9 @@ describe('usePageSwipe', () => {
 
   it('ignores a drag too short and too slow to be a swipe', async () => {
     expect((await swipe('en', -4)).mock.calls).toStrictEqual([]);
+  });
+
+  it('turns no page when the pan is cancelled, even after a full fling (spec S13)', async () => {
+    expect((await swipe('en', -120, cancelledFling(-120))).mock.calls).toStrictEqual([]);
   });
 });
