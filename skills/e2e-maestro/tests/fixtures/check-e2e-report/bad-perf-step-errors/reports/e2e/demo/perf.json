@@ -1,0 +1,8 @@
+{
+  "coldStart": {
+    "error": "cold start: no new cold-start entry within 30 s; is this a test build whose Home calls useColdStartMark(perfLog)?"
+  },
+  "memory": {
+    "error": "memory: the app is not running after the smoke flow"
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "udid": "910FA54F-FA4A-44A6-A8D8-AD86BF87BFA6",
+    "samples": 412,
+    "appSamples": 398,
+    "problems": []
+  },
+  {
+    "udid": "409631C4-6287-4A4B-8FDA-6C6991D8D2E4",
+    "samples": 3,
+    "appSamples": 0,
+    "problems": [
+      "network: the socket sampler on 409631C4-6287-4A4B-8FDA-6C6991D8D2E4 stopped before the run ended (exit code 1)",
+      "network: the socket sampler on 409631C4-6287-4A4B-8FDA-6C6991D8D2E4 never found the app running there"
+    ]
+  }
+]

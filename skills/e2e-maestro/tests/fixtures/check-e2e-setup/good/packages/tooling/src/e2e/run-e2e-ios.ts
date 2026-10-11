@@ -22,13 +22,20 @@
 // Writes reports/e2e/<game-id>/{junit.xml, network.txt, save-benchmark.json, perf.json, feedback.json, memory/, large-text/<device>-<lang>/}
 // and reports/perf/sim-perf-log.json. --flows-only (while iterating) runs step 1 only; it is never
 // the evidence run.
-import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 
+import { SAMPLER_PROOF_WAIT_MS } from '@e07/tooling/audit/network-runtime-layer.ts';
 import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
 import { mergeJunitReports } from '@e07/tooling/e2e/junit-merge.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
+import {
+  proveSamplersAlive,
+  trackSampler,
+  type RunningSampler,
+} from '@e07/tooling/e2e/sampler-evidence.ts';
 import { flowCallsOf } from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import { recordSaveBenchmark, runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
@@ -246,21 +253,21 @@ async function startRun(cli: Cli): Promise<Omit<E2eRun, 'watchSockets'>> {
 
 /**
  * Layer F: one socket sampler per simulator of this run, each naming its UDID
- * (sample-sockets.ts <App> <report> <udid>), all writing to the same network.txt.
+ * (sample-sockets.ts <App> <report> <udid>), all writing to the same network.txt, each with its
+ * own status file. stop() kills them only after proving each one alive until the end
+ * (sampler-evidence.ts); its failure lines fail the run, so a dead sampler is never an N3 pass.
  */
 function socketSamplers(
   appName: string,
   network: string,
-): { readonly watch: (udid: string) => void; readonly stop: () => void } {
-  const samplers: ChildProcess[] = [];
+): { readonly watch: (udid: string) => void; readonly stop: () => Promise<string[]> } {
+  const samplers: RunningSampler[] = [];
   return {
     watch: (udid) => {
       const args = [SOCKET_SAMPLER, appName, network, udid];
-      samplers.push(spawn(process.execPath, args, { stdio: 'inherit' }));
+      samplers.push(trackSampler(udid, spawn(process.execPath, args, { stdio: 'inherit' })));
     },
-    stop: () => {
-      for (const sampler of samplers) sampler.kill();
-    },
+    stop: () => proveSamplersAlive(samplers, network, () => delay(SAMPLER_PROOF_WAIT_MS)),
   };
 }
 
@@ -278,7 +285,7 @@ async function main(): Promise<number> {
   }
   const started = await startRun(cliOf(parsed.options));
   const { cli, simctl, udid, phone, app, out } = started;
-  // An empty network.txt is the evidence that the samplers ran through every step and saw nothing.
+  // An empty network.txt is the evidence, from samplers proven alive through every step (stop()).
   const network = join(out, 'network.txt');
   writeFileSync(network, '');
   const sockets = socketSamplers(app.name, network);
@@ -294,7 +301,8 @@ async function main(): Promise<number> {
       failures.push(...(await runLargeText(run)));
     }
   } finally {
-    sockets.stop();
+    // Every sampler proven alive until here, or the run fails: no N3 pass from a dead sampler.
+    failures.push(...(await sockets.stop()));
   }
   if (readFileSync(network, 'utf8').trim() !== '') {
     failures.push(`network: the app opened non-loopback sockets (spec N3), see ${network}`);

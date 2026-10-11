@@ -1,0 +1,5 @@
+{
+  "flows": ["apps/demo/e2e/flows/smoke/10-level-1.yaml"],
+  "sounds": ["ui.tap", "place", "ui.win"],
+  "haptics": ["success"]
+}

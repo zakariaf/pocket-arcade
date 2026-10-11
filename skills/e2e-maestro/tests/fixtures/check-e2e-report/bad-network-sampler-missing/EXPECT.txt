@@ -1,0 +1,1 @@
+reports/e2e/demo/network-samplers.json [network-sampler] is missing, so no socket sampler was proven alive and an empty network.txt proves nothing

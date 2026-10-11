@@ -34,6 +34,9 @@ const SPEC = {
     '  smoke-not-run        a smoke flow of the Shell or the game is not in junit.xml',
     '  network-report       network.txt is missing (the socket sampler did not run)',
     '  network-sockets      network.txt lists a non-loopback socket of the app (spec N3)',
+    '  network-sampler      network-samplers.json is missing, empty or names a socket sampler that was not alive until the',
+    '                       end (never started, exited early, stopped sampling, failed, never found the app): an empty',
+    '                       network.txt is N3 evidence only from samplers proven alive',
     '  perf-missing         perf.json is missing: the cold-start and memory steps did not run (--flows-only is not evidence)',
     '  cold-start           the simulator cold-start step failed, or its median is over baseline x 1.2',
     '  memory               the memory step failed, or phys_footprint after the smoke flow and a relaunch (Maestro 2.10',
@@ -119,7 +122,31 @@ function checkNetwork(root, out, game, report) {
   }
   const lines = readFileSync(file, 'utf8').split('\n').filter((line) => line.trim() !== '');
   lines.forEach((line, index) => report.problem({ file: rel, line: index + 1, rule: 'network-sockets', message: `the app opened a non-loopback socket: ${line.trim().slice(0, 140)}`, fix: 'Find the code path that opened it (spec N3: only AdMob and StoreKit may use the network, and E2E builds run with ADS_MODE=off); fix it, then rerun the flows.' }));
-  if (lines.length === 0) report.note('evidence: Network: 0 JS attempts (smoke flows asserted debug.network-attempts = 0), no non-loopback sockets (network.txt empty)');
+  const alive = checkSamplers(root, out, game, report);
+  if (lines.length === 0 && alive !== null) report.note(`evidence: Network: 0 JS attempts (smoke flows asserted debug.network-attempts = 0), no non-loopback sockets (network.txt empty; ${alive})`);
+}
+
+/** The samplers' liveness (network-samplers.json, written by the runner): a summary, or null. */
+function checkSamplers(root, out, game, report) {
+  const file = join(out, 'network-samplers.json');
+  const rel = file.slice(root.length + 1);
+  const fix = `Rerun npm run e2e:ios -- --app ${game}: each socket sampler must sample until the end of the run, find the app and report no error (the runner proves it before stopping them); a sampler error names the pgrep or lsof failure to fix.`;
+  const entries = existsSync(file) ? readJson(file) : null;
+  if (!Array.isArray(entries) || entries.length === 0) {
+    report.problem({ file: rel, line: 0, rule: 'network-sampler', message: existsSync(file) ? 'lists no socket sampler' : 'is missing, so no socket sampler was proven alive and an empty network.txt proves nothing', fix });
+    return null;
+  }
+  let isAlive = true;
+  for (const entry of entries) {
+    const problems = Array.isArray(entry?.problems) ? entry.problems : ['no verdict'];
+    const isDead = problems.length > 0 || !(entry.samples > 0) || !(entry.appSamples > 0);
+    if (isDead) isAlive = false;
+    for (const problem of problems) report.problem({ file: rel, line: 0, rule: 'network-sampler', message: `${entry?.udid ?? '?'}: ${problem}`, fix });
+    if (problems.length === 0 && isDead) report.problem({ file: rel, line: 0, rule: 'network-sampler', message: `${entry?.udid ?? '?'}: ${entry?.samples ?? 0} samples, the app found in ${entry?.appSamples ?? 0}`, fix });
+  }
+  if (!isAlive) return null;
+  const samples = entries.reduce((sum, entry) => sum + entry.samples, 0);
+  return `${entries.length} socket sampler(s) alive to the end, ${samples} samples (${rel.split('/').pop()})`;
 }
 
 function readJson(file) {
