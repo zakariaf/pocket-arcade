@@ -1,5 +1,5 @@
 // packages/shell/src/game-host/use-game-session-controls.ts
-import { useState, useSyncExternalStore } from 'react';
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from 'react';
 
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
@@ -54,14 +54,39 @@ function openParityFrame(host: GameHost, opened: OpenedSession): void {
   if (state === 'result-lose') controls.showFixtureResult(fixture, 'lost');
 }
 
-/** Opens the run for these route params once per Game screen and follows its view. */
-export function useGameSessionControls(params: GameParams): GameSessionControls {
-  const host = useGameHost();
+type OpenedRun = readonly [OpenedSession | null, (next: OpenedSession | null) => void];
+
+/**
+ * The run of one Game screen: opened once for its route params. New params for the open screen
+ * (popTo('Game', params): S13's "Play the tutorial again" from Pause) open their run in place, as
+ * startRun does, so a second Game screen never stacks over the first.
+ */
+function useOpenedRun(host: GameHost, params: GameParams): OpenedRun {
   const [opened, setOpened] = useState<OpenedSession | null>(() => {
     const first = host.openSession(params);
     if (first !== null) openParityFrame(host, first);
     return first;
   });
+  // Compared by value: a caller may pass equal params as a new object on every render.
+  const paramsKey = JSON.stringify(params);
+  const openedFor = useRef(paramsKey);
+  const reopen = useEffectEvent(() => {
+    opened?.handle.send({ type: 'finish' });
+    setOpened(host.openSession(params));
+  });
+  // Allowed effect: follows the navigator's route params, an outside system, into the open run.
+  useEffect(() => {
+    if (openedFor.current === paramsKey) return;
+    openedFor.current = paramsKey;
+    reopen();
+  }, [paramsKey]);
+  return [opened, setOpened];
+}
+
+/** Opens the run for these route params (useOpenedRun) and follows its view. */
+export function useGameSessionControls(params: GameParams): GameSessionControls {
+  const host = useGameHost();
+  const [opened, setOpened] = useOpenedRun(host, params);
   const view = useSyncExternalStore(
     opened?.handle.subscribe ?? noSubscription,
     opened?.handle.getView ?? noView,
