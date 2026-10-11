@@ -39,6 +39,8 @@ export type PremiumAction =
   | { readonly type: 'entitlements-checked'; readonly evidence: Evidence }
   | { readonly type: 'thanks-shown' }
   | { readonly type: 'restore-notice-shown' }
+  // S12 opened on a restore outcome it never saw end (a Settings restore, an earlier visit).
+  | { readonly type: 'restore-outcome-cleared' }
   // Test builds only: the debug switch / link premium=0|1 (spec S15), after the save was written.
   | { readonly type: 'debug-premium-set'; readonly isPremium: boolean };
 

@@ -44,4 +44,32 @@ describe('premiumNotice', () => {
     expect(premiumNotice(restored)).toBeNull();
     expect(restored.isPremium).toBe(true);
   });
+
+  // Spec S12: the restore toasts belong to the page that saw the restore end; S12 clears one it
+  // finds when it opens (a restore from Settings, or a visit before), so it never shows stale.
+  it.each([
+    ['Purchase restored', [{ type: 'restore-finished', evidence: 'owned' }]],
+    ['nothing to restore', [{ type: 'restore-finished', evidence: 'unknown' }]],
+    ['could not restore', [{ type: 'restore-finished', evidence: 'sync-failed' }]],
+  ] as const)('clears a "%s" outcome nobody saw, and the page sells again', (_, finished) => {
+    const cleared = run([
+      ...READY,
+      { type: 'restore-tapped' },
+      ...finished,
+      { type: 'restore-outcome-cleared' },
+    ]);
+    expect([premiumNotice(cleared), cleared.flow]).toStrictEqual([
+      null,
+      { kind: 'ready', price: '€1.99' },
+    ]);
+  });
+
+  it('leaves a running restore and a page without an outcome as they are', () => {
+    const restoring = run([...READY, { type: 'restore-tapped' }]);
+    const ready = run(READY);
+    expect([
+      premiumReducer(restoring, { type: 'restore-outcome-cleared' }),
+      premiumReducer(ready, { type: 'restore-outcome-cleared' }),
+    ]).toStrictEqual([restoring, ready]);
+  });
 });

@@ -2,7 +2,7 @@
 import { priceOf, readyOrUnavailable } from './premium-state.ts';
 
 import type { Evidence } from './entitlement-evidence.ts';
-import type { PremiumState } from './premium-state.ts';
+import type { PremiumFlow, PremiumState } from './premium-state.ts';
 import type { PurchaseFailure } from '@e07/shell/services/purchase/purchase-port.ts';
 
 // Failures count only while a purchase is in flight: iOS reports a failed requestPurchase
@@ -24,14 +24,23 @@ export function onPurchaseFailed(state: PremiumState, failure: PurchaseFailure):
   }
 }
 
+type RestoreOutcomeFlow = Extract<
+  PremiumFlow,
+  { readonly kind: 'restore-empty' | 'restore-failed' }
+>;
+
+// The page an ended restore leaves: "nothing to restore" or "couldn't restore" over the offer.
+function isRestoreOutcomeFlow(flow: PremiumFlow): flow is RestoreOutcomeFlow {
+  return flow.kind === 'restore-empty' || flow.kind === 'restore-failed';
+}
+
 // The store's price: it opens the page, and a price that arrives during a restore started while it
 // loaded (or right after that restore) is kept, so BUY can show it; a late one after "unavailable"
 // is ignored.
 export function onPriceLoaded(state: PremiumState, price: string): PremiumState {
   const { flow } = state;
   if (flow.kind === 'loading') return { ...state, flow: { kind: 'ready', price } };
-  const isRestore =
-    flow.kind === 'restoring' || flow.kind === 'restore-empty' || flow.kind === 'restore-failed';
+  const isRestore = flow.kind === 'restoring' || isRestoreOutcomeFlow(flow);
   return isRestore && flow.price === null ? { ...state, flow: { ...flow, price } } : state;
 }
 
@@ -84,6 +93,19 @@ export function onRestoreFinished(
     ? readyOrUnavailable(price)
     : { kind: 'restore-empty' as const, price };
   return { ...state, flow };
+}
+
+// S12 opened on a restore outcome it never saw end (a restore from Settings, or a visit before):
+// no "Purchase restored", and an empty or failed restore's page sells again, so no stale toast shows.
+export function onRestoreOutcomeCleared(state: PremiumState): PremiumState {
+  const { flow } = state;
+  const isOutcomeFlow = isRestoreOutcomeFlow(flow);
+  if (!isOutcomeFlow && !state.didJustRestore) return state;
+  return {
+    ...state,
+    didJustRestore: false,
+    flow: isOutcomeFlow ? readyOrUnavailable(flow.price) : flow,
+  };
 }
 
 // Silent re-check at launch, foreground and reconnect: only explicit evidence changes the

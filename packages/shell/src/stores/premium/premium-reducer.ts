@@ -6,6 +6,7 @@ import {
   onPriceLoaded,
   onPurchaseFailed,
   onRestoreFinished,
+  onRestoreOutcomeCleared,
   onRestoreTapped,
 } from './premium-transitions.ts';
 
@@ -57,6 +58,8 @@ export function premiumReducer(state: PremiumState, action: PremiumAction): Prem
       return { ...state, didJustPurchase: false };
     case 'restore-notice-shown':
       return { ...state, didJustRestore: false };
+    case 'restore-outcome-cleared':
+      return onRestoreOutcomeCleared(state);
     case 'debug-premium-set':
       return {
         ...state,
