@@ -61,7 +61,8 @@ export type DebugScreenModel = DebugModel & {
 
 type ImportFieldState = {
   readonly field: DebugImportField;
-  readonly open: () => void;
+  /** The Import save row: opens the field, or cancels it when it is open. */
+  readonly toggle: () => void;
 };
 
 /** S15's "Always show test ads" switch (debug ads override 'always-test'). */
@@ -110,7 +111,11 @@ function useLocaleValue(formatNumber: NumberFormatter): string {
   return localeValue(useLanguage(), useDirection(), formatNumber(123));
 }
 
-/** The paste field: open, typed text, the last error, and the submit through importSave. */
+/**
+ * The paste field: open, typed text, the last error, and the submit through importSave. Its row
+ * toggles it: pressed again it cancels (onCancel), dropping the pasted text, since the S15
+ * reference draws no Cancel key and the field must never close only through a good import.
+ */
 function useImportField(importSave: (text: string) => DebugImportResult): ImportFieldState {
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState('');
@@ -125,10 +130,14 @@ function useImportField(importSave: (text: string) => DebugImportResult): Import
     if (result.kind === 'imported') close();
     else setError(result.message);
   };
-  const open = (): void => {
-    setIsOpen(true);
+  const toggle = (): void => {
+    if (isOpen) close();
+    else setIsOpen(true);
   };
-  return { open, field: { isOpen, text, error, onChangeText: setText, onSubmit, onCancel: close } };
+  return {
+    toggle,
+    field: { isOpen, text, error, onChangeText: setText, onSubmit, onCancel: close },
+  };
 }
 
 type ActionHooks = {
@@ -266,7 +275,7 @@ export function useDebugModel(): DebugScreenModel {
     },
     onAction: useDebugActions(
       { services, links, app },
-      { onChanged: refresh, openImport: imports.open, openFontTest },
+      { onChanged: refresh, openImport: imports.toggle, openFontTest },
     ),
     onToggle,
     importField: imports.field,
