@@ -1,0 +1,244 @@
+# packages/shell/e2e/flows/offline/05-airplane-mode-run.yaml — spec 15.2 in one offline run: first
+# launch -> tutorial -> 10 levels -> daily -> stats -> settings -> every language switch (iOS
+# simulators have no airplane mode, so offline=1 from the first screen is the switch; N1). On the way
+# it checks spec 9's offline Premium page and that the debug flags survive the direction reloads.
+appId: ${APP_ID}
+name: A full airplane-mode run from first launch to every language switch stays offline
+tags: [shell, offline]
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- assertVisible:
+    id: 'language-choice.screen'
+# No lang in the link, so the first run stays on S2; the app is offline from its first screen.
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'offline=1&date=2026-09-26&seed=42&ads=off&reduceMotion=1'
+      WAIT_FOR: 'language-choice.screen'
+- tapOn:
+    id: 'language-choice.language-row.en'
+- tapOn:
+    id: 'language-choice.continue-button'
+- extendedWaitUntil:
+    visible:
+      id: 'tutorial.screen'
+    timeout: 10000
+# The tutorial opened offline; its own steps are proven by game-host-integration's tests.
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'firstRun=0&screen=home'
+      WAIT_FOR: 'home.screen'
+- assertNotVisible:
+    id: 'home.banner-ad'
+# Ten levels in a row, each won through the game host (written out: repeat is not a verified command).
+- tapOn:
+    id: 'home.play-button'
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.screen'
+# Ten levels won: level 11 is open, and level 10's tile reads its stars in its VoiceOver label.
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=levels'
+      WAIT_FOR: 'levels.level-tile.11'
+- assertVisible:
+    id: 'levels.level-tile.10'
+    text: '.*[^0-9][1-3] .*'
+- tapOn:
+    id: 'levels.top-bar.back-button'
+# The link pushed Levels above the finished level, so Back returns to its Result; Home comes by link.
+- extendedWaitUntil:
+    visible:
+      id: 'result.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=home'
+      WAIT_FOR: 'home.screen'
+# Daily, from Home's card (L7): the card body opens S9, its Play key plays today's daily.
+- tapOn:
+    id: 'home.daily-card'
+- extendedWaitUntil:
+    visible:
+      id: 'daily.screen'
+    timeout: 10000
+- tapOn:
+    id: 'daily.play-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 10000
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.daily-title'
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=home'
+      WAIT_FOR: 'home.screen'
+# Statistics.
+- tapOn:
+    id: 'home.stats-button'
+- assertVisible:
+    id: 'stats.overview-card'
+- tapOn:
+    id: 'stats.top-bar.back-button'
+# Premium offline (spec 9, N1): the page says to connect, the only place the app may.
+- tapOn:
+    id: 'home.premium-button'
+- assertVisible:
+    id: 'premium.state.unavailable'
+- tapOn:
+    id: 'premium.top-bar.back-button'
+# Settings and every language switch: de at once, fa after one restart, ckb at once, en after one.
+- tapOn:
+    id: 'home.settings-button'
+- tapOn:
+    id: 'settings.language-row'
+- tapOn:
+    id: 'settings-language.language-row.de'
+- assertVisible:
+    id: 'settings-language.screen'
+- tapOn:
+    id: 'settings-language.language-row.fa'
+- tapOn:
+    id: 'restart-dialog.restart-button'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 20000
+- tapOn:
+    id: 'home.settings-button'
+- tapOn:
+    id: 'settings.language-row'
+- tapOn:
+    id: 'settings-language.language-row.ckb'
+- tapOn:
+    id: 'settings-language.language-row.en'
+- tapOn:
+    id: 'restart-dialog.restart-button'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 20000
+# The debug flags survive a direction reload: the link lands on Levels after the reload, and the
+# offline flag still holds (S12 shows its offline state).
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=fa&date=2026-09-27&offline=1&screen=levels'
+      WAIT_FOR: 'levels.screen'
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=premium'
+      WAIT_FOR: 'premium.state.unavailable'
+- runFlow: ../../subflows/assert-no-network.yaml
