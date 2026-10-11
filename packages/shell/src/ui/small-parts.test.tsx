@@ -1,5 +1,5 @@
 // packages/shell/src/ui/small-parts.test.tsx
-import { screen, userEvent } from '@testing-library/react-native';
+import { fireEvent, screen, userEvent } from '@testing-library/react-native';
 
 import { PressFeedbackProvider } from '@e07/shell/app/press-feedback-context.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
@@ -58,6 +58,55 @@ describe('QuietButton', () => {
     const label = screen.getByText('Gefällt’s dir? Entferne die Werbung für 1,99 €.');
     expect(label.parent).toHaveStyle({ flexShrink: 1 });
   });
+
+  it.each([
+    ['ltr', 22, 126],
+    ['rtl', 23, 127],
+  ] as const)(
+    'underlines each line of a wrapped label at its own width (%s, spec S7)',
+    async (direction, firstStart, secondStart) => {
+      // CSS underlines every line under its own text; the German S7 nudge wraps to two lines, and
+      // one box-wide bar under the first line missed "1,99 €." (E17 parity).
+      const text = 'Gefällt’s dir? Entferne die Werbung für 1,99 €.';
+      await renderWithShell(
+        <QuietButton
+          label={text}
+          icon="crown"
+          onPress={jest.fn()}
+          testID="result.premium-button"
+          isReducedMotion
+        />,
+        { direction },
+      );
+      const label = screen.getByText(text);
+      await fireEvent(label.parent ?? label, 'layout', {
+        nativeEvent: { layout: { width: 300, height: 38 } },
+      });
+      await fireEvent(label, 'textLayout', {
+        nativeEvent: {
+          lines: [
+            {
+              x: 22,
+              y: 0,
+              width: 255,
+              height: 18.75,
+              text: 'Gefällt’s dir? Entferne die Werbung für ',
+            },
+            { x: 126, y: 19, width: 47, height: 19, text: '1,99 €.' },
+          ],
+        },
+      });
+
+      const box = screen.getByText(text).parent;
+      const bars = (box?.children ?? []).filter(
+        (child) => typeof child !== 'string' && child.props['accessibilityElementsHidden'] === true,
+      );
+      expect(bars).toHaveLength(2);
+      // Rubik 15 on its 19 pt line: the bar sits 19.5 under its line's top (quietUnderlineTop).
+      expect(bars[0]).toHaveStyle({ start: firstStart, width: 255, top: 19.5, height: 2 });
+      expect(bars[1]).toHaveStyle({ start: secondStart, width: 47, top: 38.5, height: 2 });
+    },
+  );
 
   it('greys out and ignores presses when disabled', async () => {
     const onPress = jest.fn();

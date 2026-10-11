@@ -48,6 +48,16 @@ export type AppTextProps = {
   readonly testID?: string;
   /** Called after each text layout with its line count (NotePanel fits a one-line note to its text). */
   readonly onLineCount?: (lines: number) => void;
+  /** Called after each text layout with its lines (QuietButton draws its underline under each). */
+  readonly onTextLines?: (lines: readonly TextLine[]) => void;
+};
+
+/** One laid-out line: its box in the Text, x from the physical left as iOS reports it. */
+export type TextLine = {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
 };
 
 const UNDERLINE = { textDecorationLine: 'underline' } as const;
@@ -158,13 +168,18 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
   return style.face === 'display' && BALANCED_VARIANTS.has(variant);
 }
 
-function layoutProps(balance: BalancedWrap, onLineCount?: (lines: number) => void): TextProps {
+type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
+
+function layoutProps(balance: BalancedWrap, listeners: LineListeners): TextProps {
+  const { onLineCount, onTextLines } = listeners;
   const onTextLayout: TextProps['onTextLayout'] =
-    onLineCount === undefined
+    onLineCount === undefined && onTextLines === undefined
       ? balance.onTextLayout
       : (event) => {
           balance.onTextLayout?.(event);
-          onLineCount(event.nativeEvent.lines.length);
+          const { lines } = event.nativeEvent;
+          onLineCount?.(lines.length);
+          onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
         };
   return {
     ...(balance.onLayout === undefined ? {} : { onLayout: balance.onLayout }),
@@ -192,7 +207,7 @@ export function AppText(props: AppTextProps): ReactNode {
       style={[localized, decoration, figures, color, balance.style, guard]}
       maxFontSizeMultiplier={2}
       {...textProps(guard === null ? props : rest)}
-      {...layoutProps(balance, props.onLineCount)}
+      {...layoutProps(balance, props)}
     >
       {shown}
     </Text>
