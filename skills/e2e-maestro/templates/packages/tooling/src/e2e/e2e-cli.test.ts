@@ -2,7 +2,7 @@
 // The e2e:ios command line: --help prints every option and runs nothing, a bad command line is a
 // usage error (exit 2, the usage line, no stack), and the runner's options are read out of the
 // Maestro test options it passes on.
-import { E2E_USAGE, parseE2eCli } from './e2e-cli.ts';
+import { driverPortOf, E2E_USAGE, parseE2eCli } from './e2e-cli.ts';
 
 describe('parseE2eCli', () => {
   it('asks for the usage on --help or -h, wherever it stands', () => {
@@ -60,5 +60,15 @@ describe('parseE2eCli', () => {
     [['--app', 'line-siege', 'extra'], 'unexpected argument extra'],
   ])('refuses %j as a usage error: %s', (argv, message) => {
     expect(parseE2eCli(argv)).toStrictEqual({ kind: 'error', message });
+  });
+});
+
+describe('driverPortOf (e2e:ios and screenshots:ios)', () => {
+  it('takes the ports maestroGlobalArgs accepts and nothing else, before any simulator starts', () => {
+    expect(driverPortOf(undefined)).toBeUndefined();
+    expect([driverPortOf('1024'), driverPortOf('65535')]).toStrictEqual([1024, 65_535]);
+    expect(driverPortOf('80')).toBe('--driver-port 80 is not a port from 1024 to 65535');
+    expect(driverPortOf('70000')).toBe('--driver-port 70000 is not a port from 1024 to 65535');
+    expect(driverPortOf('7e3')).toBe('--driver-port 7e3 is not a port number');
   });
 });

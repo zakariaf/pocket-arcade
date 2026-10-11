@@ -3,6 +3,7 @@
 // a bad command line is a usage error (run-e2e-ios.ts prints the message and the usage line and
 // exits 2, without a stack); the runner's own options are read out, and Maestro's tag filter
 // (--include-tags, while iterating) is passed on to maestro test.
+import { parseArgs } from 'node:util';
 
 export const E2E_USAGE = [
   'usage: npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--app-path <App.app>] [--flows-only] [--write-perf-baseline] [--include-tags <tags>]',
@@ -41,67 +42,91 @@ export type E2eCliParse =
   | { readonly kind: 'error'; readonly message: string }
   | { readonly kind: 'run'; readonly options: E2eOptions };
 
-const APP = '--app';
-const DRIVER_PORT = '--driver-port';
-const INCLUDE_TAGS = '--include-tags';
-const VALUE_OPTIONS = [APP, '--sim', DRIVER_PORT, '--app-path'] as const;
-const FLAG_OPTIONS = ['--flows-only', '--write-perf-baseline'] as const;
-const MAESTRO_OPTIONS = [INCLUDE_TAGS] as const;
-type ValueOption = (typeof VALUE_OPTIONS)[number] | (typeof MAESTRO_OPTIONS)[number];
+/** The runner's options as node:util parseArgs reads them (screenshots-cli.ts reads its own alike). */
+const OPTIONS = {
+  app: { type: 'string' },
+  sim: { type: 'string' },
+  'driver-port': { type: 'string' },
+  'app-path': { type: 'string' },
+  'flows-only': { type: 'boolean' },
+  'write-perf-baseline': { type: 'boolean' },
+  'include-tags': { type: 'string' },
+} as const;
+type OptionName = keyof typeof OPTIONS;
+
+const isOption = (name: string): name is OptionName => Object.hasOwn(OPTIONS, name);
 
 type Read = {
-  readonly values: Map<ValueOption, string>;
-  readonly flags: Set<string>;
+  readonly values: ReadonlyMap<OptionName, string>;
+  readonly flags: ReadonlySet<OptionName>;
 };
 
-const isOneOf = <T extends string>(list: readonly T[], value: string): value is T =>
-  (list as readonly string[]).includes(value);
-
-/** Every option and its value, or the first problem. */
+/**
+ * Every option and its value, or the first problem. parseArgs reads the tokens leniently, so this
+ * names each problem in the runner's words (an unknown option, a missing value, a stray word).
+ */
 function readArgs(argv: readonly string[]): Read | string {
-  const values = new Map<ValueOption, string>();
-  const flags = new Set<string>();
-  for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index] ?? '';
-    if (isOneOf(FLAG_OPTIONS, arg)) {
-      flags.add(arg);
-    } else if (isOneOf(VALUE_OPTIONS, arg) || isOneOf(MAESTRO_OPTIONS, arg)) {
-      const value = argv[index + 1];
-      if (value === undefined || value.startsWith('--')) return `${arg} needs a value`;
-      values.set(arg, value);
-      index += 1;
+  const { tokens } = parseArgs({
+    args: [...argv],
+    options: OPTIONS,
+    strict: false,
+    allowPositionals: true,
+    tokens: true,
+  });
+  const values = new Map<OptionName, string>();
+  const flags = new Set<OptionName>();
+  for (const token of tokens) {
+    if (token.kind !== 'option') {
+      return `unexpected argument ${token.kind === 'positional' ? token.value : '--'}`;
+    }
+    if (!isOption(token.name)) return `unknown option ${token.rawName}`;
+    if (OPTIONS[token.name].type === 'boolean') {
+      flags.add(token.name);
+    } else if (token.value === undefined || token.value.startsWith('--')) {
+      return `${token.rawName} needs a value`;
     } else {
-      return arg.startsWith('-') ? `unknown option ${arg}` : `unexpected argument ${arg}`;
+      values.set(token.name, token.value);
     }
   }
   return { values, flags };
 }
 
-function driverPortOf(text: string | undefined): number | undefined | string {
+/** maestro-args' bound: maestroGlobalArgs refuses any other driver port. */
+const MIN_PORT = 1024;
+const MAX_PORT = 65_535;
+
+/**
+ * --driver-port of e2e:ios and screenshots:ios: undefined without one, the port, or the problem
+ * (checked while parsing, before any simulator starts).
+ */
+export function driverPortOf(text: string | undefined): number | undefined | string {
   if (text === undefined) return undefined;
-  const port = /^\d{1,5}$/.test(text) ? Number(text) : Number.NaN;
-  return port >= 1 && port <= 65_535 ? port : `${DRIVER_PORT} ${text} is not a port number`;
+  if (!/^\d{1,5}$/.test(text)) return `--driver-port ${text} is not a port number`;
+  const port = Number(text);
+  return port >= MIN_PORT && port <= MAX_PORT
+    ? port
+    : `--driver-port ${text} is not a port from ${String(MIN_PORT)} to ${String(MAX_PORT)}`;
 }
 
 export function parseE2eCli(argv: readonly string[]): E2eCliParse {
   if (argv.includes('--help') || argv.includes('-h')) return { kind: 'help' };
   const read = readArgs(argv);
   if (typeof read === 'string') return { kind: 'error', message: read };
-  const game = read.values.get(APP);
+  const game = read.values.get('app');
   if (game === undefined) return { kind: 'error', message: 'missing --app <game-id>' };
-  const driverPort = driverPortOf(read.values.get(DRIVER_PORT));
+  const driverPort = driverPortOf(read.values.get('driver-port'));
   if (typeof driverPort === 'string') return { kind: 'error', message: driverPort };
-  const tags = read.values.get(INCLUDE_TAGS);
+  const tags = read.values.get('include-tags');
   return {
     kind: 'run',
     options: {
       game,
-      sim: read.values.get('--sim'),
+      sim: read.values.get('sim'),
       driverPort,
-      appPath: read.values.get('--app-path'),
-      isFlowsOnly: read.flags.has('--flows-only'),
-      isWritingBaseline: read.flags.has('--write-perf-baseline'),
-      maestroArgs: tags === undefined ? [] : [INCLUDE_TAGS, tags],
+      appPath: read.values.get('app-path'),
+      isFlowsOnly: read.flags.has('flows-only'),
+      isWritingBaseline: read.flags.has('write-perf-baseline'),
+      maestroArgs: tags === undefined ? [] : ['--include-tags', tags],
     },
   };
 }
