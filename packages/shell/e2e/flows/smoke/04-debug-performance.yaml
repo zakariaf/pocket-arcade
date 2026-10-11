@@ -1,0 +1,41 @@
+# packages/shell/e2e/flows/smoke/04-debug-performance.yaml — S15's save benchmark runs on the
+# simulator (test builds only): the debug menu's "Run save benchmark" writes the largest realistic
+# save 300 times into a scratch database (never the player's save.db) and appends one save-benchmark
+# entry to the perf log; the summary row then shows its p95. The runner reads the perf log right
+# after the flows step (this is the last flow of it: the Shell's flows sort after the game's, smoke/04
+# last) and keeps the entry in reports/e2e/<game-id>/save-benchmark.json, where check-e2e-report
+# (rule save-benchmark) needs 300 writes and a p95 under the 5 ms budget.
+# 1. the debug link opens S15 in English;
+# 2. the Performance section's benchmark row (the key under test), below the fold on a phone;
+# 3. the summary shows a save p95 in milliseconds ("save p95 –" before the first run);
+# 4. no network (every smoke flow ends with it).
+appId: ${APP_ID}
+name: Debug menu save benchmark runs on the simulator and shows its p95
+tags: [smoke, shell]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&theme=light&firstRun=0&reduceMotion=1&screen=debug'
+      WAIT_FOR: 'debug.screen'
+- scrollUntilVisible:
+    element:
+      id: 'debug.perf-benchmark-row'
+    direction: DOWN
+# A tap while the list still glides only stops the scroll: wait until it holds still.
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    id: 'debug.perf-benchmark-row'
+- scrollUntilVisible:
+    element:
+      id: 'debug.perf-summary'
+    direction: DOWN
+- extendedWaitUntil:
+    visible:
+      id: 'debug.perf-summary'
+      text: '.*save p95 [0-9].*'
+    timeout: 15000
+- runFlow: ../../subflows/assert-no-network.yaml
