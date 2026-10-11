@@ -14,36 +14,12 @@ import { PremiumOffer } from './premium-offer.tsx';
 import { PremiumRestore } from './premium-restore.tsx';
 import { PremiumStateBody } from './premium-state-body.tsx';
 import { PremiumToast } from './premium-toast.tsx';
+import { isOfferView, PREMIUM_VIEWS } from './premium-views.ts';
 
 import type { PremiumModel } from './premium-model.ts';
-import type { PremiumView } from '@e07/shell/stores/premium/premium-view.ts';
 import type { ReactNode } from 'react';
 
 export type PremiumPageProps = { readonly model: PremiumModel };
-
-/** The state marker E2E flows wait for; the normal page (and its restore toasts) has none. */
-const STATE_MARKERS: Readonly<Record<PremiumView, string | null>> = {
-  ready: null,
-  restoring: null,
-  'restore-empty': null,
-  'restore-failed': null,
-  'loading-price': 'premium.state.loading',
-  'store-unavailable': 'premium.state.unavailable',
-  'purchase-in-progress': 'premium.state.purchasing',
-  pending: 'premium.state.pending',
-  success: 'premium.state.success',
-  error: 'premium.state.error',
-  'already-owned': 'premium.state.owned',
-};
-
-const SMALL_PRINT_VIEWS: ReadonlySet<PremiumView> = new Set<PremiumView>([
-  'ready',
-  'restoring',
-  'restore-empty',
-  'restore-failed',
-  'loading-price',
-  'purchase-in-progress',
-]);
 
 const styles = StyleSheet.create({
   // The body's block gap (14): header, benefits, Buy, Restore and the small print (S12 design).
@@ -58,7 +34,8 @@ const styles = StyleSheet.create({
 export function PremiumPage({ model }: PremiumPageProps): ReactNode {
   const t = useT();
   const hero = premiumHeroFor(model, t);
-  const marker = STATE_MARKERS[model.view];
+  // The state marker E2E flows wait for; the normal page (and its restore toasts) has none.
+  const { marker, hasSmallPrint } = PREMIUM_VIEWS[model.view];
   return (
     // Under the home indicator: a key at the bottom (Restore on the owned page) keeps its hard
     // shadow, which the scroll view's edge clipped at the safe-area bottom.
@@ -72,7 +49,11 @@ export function PremiumPage({ model }: PremiumPageProps): ReactNode {
       />
       <ScreenBody isUnderHomeIndicator>
         <View style={styles.column} {...(marker === null ? {} : { testID: marker })}>
-          {marker === null ? <PremiumOffer model={model} /> : <PremiumStateBody model={model} />}
+          {isOfferView(model.view) ? (
+            <PremiumOffer model={model} />
+          ) : (
+            <PremiumStateBody model={model} view={model.view} />
+          )}
           <View style={styles.grow} />
           {hero === null ? null : (
             <Button
@@ -84,7 +65,7 @@ export function PremiumPage({ model }: PremiumPageProps): ReactNode {
             />
           )}
           <PremiumRestore model={model} />
-          {SMALL_PRINT_VIEWS.has(model.view) ? (
+          {hasSmallPrint ? (
             <AppText
               text={t('premium.small-print')}
               variant="caption"
