@@ -16,6 +16,7 @@ import {
   e2eSimulatorName,
   e2eTabletName,
   e2eBuildProblem,
+  findSimulatorBuild,
   prepareSimulator,
   runMaestro,
 } from './simulator.ts';
@@ -177,5 +178,34 @@ describe('the simulator layer e2e shares with build:ios:sim', () => {
     const app = { path: 'LineSiege.app', id: 'io.applander.linesiege', scheme: 's', name: 'L' };
     prepareSimulator({ simctl, udid }, app, 'large');
     expect(calls.filter((args) => args[0] === 'status_bar')).toStrictEqual([statusBarArgs(udid)]);
+  });
+});
+
+describe('findSimulatorBuild (the one build lookup of e2e:ios and screenshots:ios)', () => {
+  let dir = '';
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), 'sim-build-'));
+  });
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  function builtApp(extra: Readonly<Record<string, string>>): string {
+    const app = join(dir, 'LineSiege.app');
+    mkdirSync(join(app, 'EXConstants.bundle'), { recursive: true });
+    writeFileSync(join(app, 'EXConstants.bundle', 'app.config'), JSON.stringify({ extra }));
+    return app;
+  }
+
+  it('refuses an ads-on build for every capture and E2E path, before any simulator is used', () => {
+    const app = builtApp({ appVariant: 'test', adsMode: 'test' });
+    expect(() => findSimulatorBuild('line-siege', app)).toThrow(
+      'e2e:ios needs a test build with ADS_MODE=off, this one is test/test',
+    );
+  });
+
+  it('returns a test build with ads off', () => {
+    const app = builtApp({ appVariant: 'test', adsMode: 'off' });
+    expect(findSimulatorBuild('line-siege', app)).toBe(app);
   });
 });
