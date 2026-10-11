@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
     gap: KEY.gap,
   },
   // Three keys share a row (column gap 10); at 200 % text the row stacks them. Grow into the
-  // pair cell but keep the content height: flex: 1 (a zero basis) collapses a column cell.
+  // pair cell but keep the content height: flex: 1 (a zero basis) collapses a column cell. The
+  // key and its face stretch too (isStretched), so a one-line key is as tall as a two-line one.
   cell: { flexGrow: 1 },
 });
 
@@ -48,6 +49,7 @@ export function KeyButton(props: KeyButtonProps): ReactNode {
       isReducedMotion={props.isReducedMotion}
       faceStyle={styles.face}
       layoutStyle={styles.cell}
+      isStretched
     >
       <Icon name={props.icon} color={theme.colors.icon} size={KEY.icon} />
       <AppText text={props.label} variant="keyLabel" align="center" />
