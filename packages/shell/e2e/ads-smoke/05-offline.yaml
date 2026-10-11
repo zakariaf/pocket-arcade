@@ -1,0 +1,42 @@
+# packages/shell/e2e/ads-smoke/05-offline.yaml — step 5, after step 4 (same install):
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/05-offline.yaml
+# Simulated offline (the debug switch the whole app's connectivity port reads): no banner, and a
+# lost level offers no continue, so the lose result shows at once (L11: never strand a finished
+# run); Try again shows no interstitial and no message. Then back online.
+appId: ${APP_ID}
+name: Ads smoke 5 - offline shows no ad and no offer, and the lose result shows at once
+tags: [ads-smoke]
+---
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=eea&offline=1&screen=home'
+      WAIT_FOR: 'home.screen'
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: 'home.banner-ad'
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'level=2&boardLayout=1&screen=game'
+      WAIT_FOR: 'game.board-frame'
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=lose-level'
+      WAIT_FOR: 'result.try-again-button'
+- assertNotVisible:
+    id: 'result.continue-offer'
+- tapOn:
+    id: 'result.try-again-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 15000
+# system-ui: Google's test ads carry a "Test mode" label; none may show offline.
+- assertNotVisible: 'Test mode'
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'offline=0'
+      WAIT_FOR: 'game.screen'

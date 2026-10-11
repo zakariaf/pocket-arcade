@@ -1,0 +1,76 @@
+# packages/shell/e2e/ads-smoke/03-next-interstitial.yaml — step 3, after step 2 (same install):
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/03-next-interstitial.yaml
+# The first interstitial is due after three finished levels (spec 8.8 minimum): levels 1 and 2 are
+# won and left with Next; the third Next shows Google's test interstitial before level 4 opens.
+# After it closes, level 4's board is drawn and settled (the board clock resumed after the ad).
+appId: ${APP_ID}
+name: Ads smoke 3 - the third Next shows an interstitial, then level 4 with a settled board
+tags: [ads-smoke]
+---
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=eea&level=1&boardLayout=1&screen=game'
+      WAIT_FOR: 'game.board-frame'
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.next-button'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.board-frame'
+    timeout: 30000
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.next-button'
+- tapOn:
+    id: 'result.next-button'
+- extendedWaitUntil:
+    visible:
+      id: 'game.board-frame'
+    timeout: 30000
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=win-level'
+      WAIT_FOR: 'result.next-button'
+- tapOn:
+    id: 'result.next-button'
+# system-ui: Google's test interstitial covers the app; its "Test mode" label proves it is a test
+# ad (its "This is an interstitial test ad." text wraps, which a single-line match misses).
+- extendedWaitUntil:
+    visible: 'Test mode'
+    timeout: 30000
+- waitForAnimationToEnd
+# system-ui: the interstitial's close key, top right (Google's UI, no testID).
+- tapOn:
+    point: '94%,9%'
+# system-ui: a tap before the close key is ready leaves the interstitial on screen: wait, tap again.
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '94%,9%'
+# system-ui: the interstitial's "Test mode" label, once more (Google's UI, not app text).
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '94%,9%'
+- extendedWaitUntil:
+    visible:
+      id: 'game.board-frame'
+      text: '.*"settled":true.*'
+    timeout: 30000
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*4.*'

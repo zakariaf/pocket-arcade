@@ -1,0 +1,89 @@
+# packages/shell/e2e/ads-smoke/04-rewarded-continue.yaml — step 4, after step 3 (same install):
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/04-rewarded-continue.yaml
+# A lost level, "Continue - watch an ad", Google's test rewarded ad watched to its reward and closed:
+# the same run plays on, and the board shows the continue scene played to its end. game.board-frame
+# (test builds with boardLayout=1) is {"seq":<n>,"settled":<b>}, read on the UI thread from the
+# values the picture is recorded from. The debug lose (playTo) and the continue each change the
+# session's eventSeq once, so the continue scene is the opened run's seq + 2. Round 4's board clock
+# failed here: a stale done message stopped the clock on the continue scene's first frame (settled
+# stayed false, the tray empty and the hearts outlined until the next move; 2026-10-01).
+appId: ${APP_ID}
+name: Ads smoke 4 - the rewarded continue plays on with the continue scene settled on the board
+tags: [ads-smoke]
+---
+# Home first: a screen=game link while a Game screen is open keeps that screen's run.
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=eea&premium=0&seed=42&level=1&boardLayout=1&screen=home'
+      WAIT_FOR: 'home.screen'
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'screen=game'
+      WAIT_FOR: 'game.board-frame'
+- assertVisible:
+    id: 'game.mode-label'
+    text: '.*1.*'
+- extendedWaitUntil:
+    visible:
+      id: 'game.board-frame'
+      text: '.*"settled":true.*'
+    timeout: 15000
+- copyTextFrom:
+    id: 'game.board-frame'
+- evalScript: ${output.opened = JSON.parse(maestro.copiedText).seq}
+- evalScript: ${output.continued = '.*"seq"' + String.fromCharCode(58) + (output.opened + 2) + ',"settled"' + String.fromCharCode(58) + 'true.*'}
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'action=lose-level'
+      WAIT_FOR: 'result.screen'
+# Ready, not its loading state (L11: the key is drawn busy and not pressable while the ad loads).
+- extendedWaitUntil:
+    visible:
+      id: 'result.continue-ad-button'
+      enabled: true
+    timeout: 60000
+- tapOn:
+    id: 'result.continue-ad-button'
+# system-ui: Google's test rewarded ad is on screen ("Test mode" is its label, not app text).
+- extendedWaitUntil:
+    visible: 'Test mode'
+    timeout: 30000
+# system-ui: Google's test rewarded ad says so once the reward is earned (some test variants do not).
+- extendedWaitUntil:
+    visible: 'Reward granted'
+    timeout: 60000
+    optional: true
+- waitForAnimationToEnd
+# system-ui: the rewarded ad's close key, top right (Google's UI, no testID).
+- tapOn:
+    point: '95%,9%'
+# system-ui: a tap before the close key is ready leaves the rewarded ad on screen: wait, tap again.
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '95%,9%'
+# system-ui: the rewarded ad's "Test mode" label, once more (Google's UI, not app text).
+- runFlow:
+    when:
+      visible: 'Test mode'
+    commands:
+      - waitForAnimationToEnd
+      - tapOn:
+          point: '95%,9%'
+- extendedWaitUntil:
+    visible:
+      id: 'game.screen'
+    timeout: 30000
+- assertNotVisible:
+    id: 'result.screen'
+- extendedWaitUntil:
+    visible:
+      id: 'game.board-frame'
+      text: ${output.continued}
+    timeout: 15000
