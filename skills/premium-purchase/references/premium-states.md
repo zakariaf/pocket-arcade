@@ -48,6 +48,7 @@ All paths are under `packages/shell/src/`. The store does not write the save: th
 | `restore-finished` | after a restore started from `pending`: `owned` as below, anything else back to `pending` (BUY never reopens while approval is outstanding); otherwise `sync-failed` -> `restore-failed`; `owned` -> Premium on + `didJustRestore` (and `didJustPurchase` cleared: a restore shows the "restored" toast, never the thank-you); `revoked` -> Premium off; `unknown` -> `restore-empty` (only after a successful sync, and only when not Premium). A restore that ends when the flow is no longer `restoring` (the Ask-to-Buy approval granted Premium first, or an earlier restore already answered) changes only the entitlement, as a silent re-check would: the thank-you, "waiting for approval" and the page stay, `sync-failed` changes nothing, and only `owned` for a player without Premium shows "restored" |
 | `entitlements-checked` | silent re-check: `owned` -> Premium on; `revoked` -> Premium off; `unknown` -> nothing changes; a check that changes nothing returns the same state object, so the store publishes nothing |
 | `thanks-shown` / `restore-notice-shown` | clear the one-shot flags |
+| `restore-outcome-cleared` | S12 opened on a restore outcome it never saw end (a restore from the S11 row, or a visit before): `didJustRestore` cleared and a `restore-empty` or `restore-failed` page back to `ready` (`unavailable` without a price); a running restore or a page without an outcome stays the same object |
 | `debug-premium-set` | test builds only (debug switch "Premium on (no purchase)", debug link `premium=0|1`): sets `isPremium` and clears both one-shot flags. The debug handler first writes the save (`persistPremium({ isPremium: true })`, or `{ isPremium: false, revokedAtMs: clock.nowMs() }` so the save guard accepts it), then dispatches; it never touches StoreKit. Tier 2 flows 01, 03 and 05 rely on it |
 
 ## Every S12 state: view, test ID and copy keys
@@ -81,7 +82,7 @@ The design shows restore outcomes as toasts over the normal page (or the owned p
 
 "Nothing to restore" appears only after a successful sync; a failed sync (cancelled Apple Account prompt, offline) always shows "couldn't restore".
 
-The flow stays `restore-empty` or `restore-failed` until the next action, so the screen shows a toast when `premiumNotice` changes to a new value (remember the last one shown in component state), not on every render; BUY and Restore stay usable underneath.
+The flow stays `restore-empty` or `restore-failed` until the next action (or until S12 opens on it later and clears it unseen with `restore-outcome-cleared`: a restore's toast shows where it ended, never stale on a later visit), so the screen shows a toast when `premiumNotice` changes to a new value (remember the last one shown in component state), not on every render; BUY and Restore stay usable underneath.
 
 ## The Premium service: persist, pending, restore, revocation
 
