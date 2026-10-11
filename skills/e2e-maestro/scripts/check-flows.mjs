@@ -614,12 +614,6 @@ const FLOWS_DIR = 'packages/shell/e2e/flows';
  * come after every screen): SKIP. Without the file the whole Shell exists and the end-to-end step
  * is due: a problem (exit 1), never a silent pass. A folder that is no repo stays bad input (exit 2).
  */
-function noFlows(root, report) {
-  if (!existsSync(join(root, 'package.json'))) fail(`nothing to check: ${root} has no package.json and no Maestro flows`, 'Run from the repo root or pass the repo root.');
-  reportNoFlows(readShellSlice(root), report);
-  return report.finish({ checked: 0, unit: 'flow files' });
-}
-
 /**
  * The flows-missing line itself. Sub-flows, the matrix, StoreKit and ads smoke flows are no flows:
  * e2e:ios runs only <workspace>/e2e/flows/<area>/*.yaml, so a repo that holds only those still has
@@ -651,7 +645,9 @@ run(async () => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) fail(`--today ${today} is not YYYY-MM-DD`, 'Pass a date like 2026-09-28.');
   const report = createReporter({ name: SPEC.name, json: options.json });
   const rels = walk(root, { include: ['*.yaml', '*.yml'], ignore: [...REPO_SCAN_IGNORES, 'reports', 'tools/**'] }).filter((rel) => /^(packages\/shell|apps\/[^/]+)\/e2e\//.test(rel));
-  if (rels.length === 0) return noFlows(root, report);
+  // No YAML at all: the root must still be a repo; the main loop then reports flows-missing and every
+  // game's mode flows (an early return here once skipped the mode-flows check).
+  if (rels.length === 0 && !existsSync(join(root, 'package.json'))) fail(`nothing to check: ${root} has no package.json and no Maestro flows`, 'Run from the repo root or pass the repo root.');
   const known = knownTestIds(root);
   const params = readJson(join(ASSETS, 'debug-link-params.json')).params;
   const gameIds = new Set(existsSync(join(root, 'apps')) ? readdirSync(join(root, 'apps')) : []);
@@ -665,9 +661,9 @@ run(async () => {
     return parsedFiles.get(fileRel);
   };
   const slice = readShellSlice(root);
-  // Every game with a game.config.ts is checked for its mode flows, also one with no flow at all
-  // (a complete Shell only: in a partial Shell the flows are not due yet).
-  const flowsByGame = new Map(slice === null ? [...gameIds].filter((game) => gameModes(root, game) !== null).map((game) => [game, []]) : []);
+  // Every game is checked for its mode flows, also one with no flow at all (a complete Shell only:
+  // in a partial Shell the flows are not due yet); checkModeFlows skips a game without game.config.ts.
+  const flowsByGame = new Map(slice === null ? [...gameIds].map((game) => [game, []]) : []);
   let flowCount = 0;
   for (const rel of rels) {
     const info = classify(rel);
