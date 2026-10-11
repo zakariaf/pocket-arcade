@@ -136,15 +136,14 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
 }
 
 /**
- * The variants the design sets with `.d` (CSS text-wrap: balance): the display, title, number and
- * heading roles, the top bar and dialog titles, the group tab and the score and streak values. Its
- * other Lilita One parts (a key label, .btn .bl; stickers, level numbers, stat values, the
- * calendar) carry no `.d`, so Chrome wraps them greedily and so does the app.
+ * The variants the design sets with `.d` (CSS text-wrap: balance): the display, title and heading
+ * roles, the top bar and dialog titles, the group tab and the score and streak values. Its other
+ * Lilita One parts (a key label, .btn .bl; stat values, .sv; stickers, level numbers, the calendar)
+ * carry no `.d`, so Chrome wraps them greedily and so does the app.
  */
 const BALANCED_VARIANTS: ReadonlySet<TypeVariant> = new Set<TypeVariant>([
   'display',
   'title',
-  'number',
   'heading',
   'topBarTitle',
   'dialogTitle',
