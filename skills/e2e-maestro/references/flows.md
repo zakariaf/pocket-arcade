@@ -161,7 +161,7 @@ Since the Levels steps, the flow reaches S8: in a partial Shell without S8 in `s
 
 ## A game's mode flows: daily, continue, endless
 
-`check-flows` rule `mode-flows` reads `apps/<game-id>/game.config.ts` and asks for one flow per mode the game has. Copy each template from `templates/apps/__GAME_ID__/e2e/flows/journeys/` and fill `__GAME_ID__` and `__GAME_NAME__`; every id they use is in the screen map (`assets/e2e-testids.json` lists them under `gameFlowIds` with the step that needs each):
+`check-flows` rule `mode-flows` reads `apps/<game-id>/game.config.ts` and asks for one flow per mode the game has, for every game once the Shell is complete (no `shell-slice.json`), also a game with no flow yet. Rule `flows-missing` likewise counts only files under `<workspace>/e2e/flows/`: sub-flows and the matrix alone are no end-to-end journey. Copy each template from `templates/apps/__GAME_ID__/e2e/flows/journeys/` and fill `__GAME_ID__` and `__GAME_NAME__`; every id they use is in the screen map (`assets/e2e-testids.json` lists them under `gameFlowIds` with the step that needs each):
 
 | Game fact | Template | What it proves |
 |---|---|---|

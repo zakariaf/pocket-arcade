@@ -56,7 +56,8 @@ const SPEC = {
     '                       part hidden from VoiceOver, "a11yHidden"): Maestro never lists it, so use its coveredBy element',
     '  win-stars            a game flow asserts result.stars-<n> that apps/<game-id>/e2e/testids.json does not list',
     '                       (print-level-line.ts prints the stars the example win earns on level 1)',
-    '  mode-flows           a game mode without its flow, read from apps/<game-id>/game.config.ts: modes.daily needs a',
+    '  mode-flows           a game mode without its flow, read from apps/<game-id>/game.config.ts (every game, also one',
+    '                       with no flow yet, once the Shell is complete): modes.daily needs a',
     '                       flow that taps daily.play-button and sends action=win-level (journeys/11-daily.yaml),',
     '                       isContinueAllowed a flow that sends action=lose-level and taps result.continue-premium-button',
     '                       (journeys/12-continue-premium.yaml; E2E builds run with ads off), modes.endless a flow that',
@@ -82,7 +83,8 @@ const SPEC = {
     '                       --driver-host-port <port> before the command (another session\'s simulator could answer)',
     '  maestro-syntax       (--syntax) maestro check-syntax rejects the file',
     '  flows-missing        no flow exists although the whole Shell is built (no shell-slice.json): the end-to-end',
-    '                       step is due. With shell-slice.json (a partial Shell) no flows is a SKIP line, not a problem',
+    '                       step is due. Sub-flows, the matrix, storekit/ and ads-smoke/ are no flows. With',
+    '                       shell-slice.json (a partial Shell) no flows is a SKIP line, not a problem',
     '  slice                (a SKIP line, never a problem) with shell-slice.json, a flow or the matrix that reaches a',
     '                       screen outside the slice (by its ids, WAIT_FOR, a debug QUERY screen= or its sub-flows) is',
     '                       not checked: "SKIP <flow> [slice] <S-id> not in shell-slice.json". Copy the Shell flows at',
@@ -614,13 +616,21 @@ const FLOWS_DIR = 'packages/shell/e2e/flows';
  */
 function noFlows(root, report) {
   if (!existsSync(join(root, 'package.json'))) fail(`nothing to check: ${root} has no package.json and no Maestro flows`, 'Run from the repo root or pass the repo root.');
-  const slice = readShellSlice(root);
+  reportNoFlows(readShellSlice(root), report);
+  return report.finish({ checked: 0, unit: 'flow files' });
+}
+
+/**
+ * The flows-missing line itself. Sub-flows, the matrix, StoreKit and ads smoke flows are no flows:
+ * e2e:ios runs only <workspace>/e2e/flows/<area>/*.yaml, so a repo that holds only those still has
+ * no end-to-end journey (seen in E16: the sub-flows land a task before the first flow).
+ */
+function reportNoFlows(slice, report) {
   if (slice !== null) {
     report.skip({ file: FLOWS_DIR, rule: 'flows-missing', message: `no Maestro flows yet: ${slice.file} marks a partial Shell (${slice.why}); the flows are due at the Shell build order's end-to-end step, after every screen` });
   } else {
     report.problem({ file: FLOWS_DIR, line: 0, rule: 'flows-missing', message: 'no Maestro flow exists, but the whole Shell is built (no shell-slice.json), so the end-to-end step of the Shell build order is due', fix: "Copy this skill's Shell flows (templates/packages/shell/e2e/flows/: smoke/01-first-launch.yaml, journeys/02-core-journey-offline.yaml, rtl/03-language-switch.yaml), each game's apps/<game-id>/e2e/flows/smoke/10-level-1.yaml and the sub-flows, then rerun." });
   }
-  return report.finish({ checked: 0, unit: 'flow files' });
 }
 
 function checkSyntax(root, rels, maestro, report) {
@@ -655,7 +665,10 @@ run(async () => {
     return parsedFiles.get(fileRel);
   };
   const slice = readShellSlice(root);
-  const flowsByGame = new Map();
+  // Every game with a game.config.ts is checked for its mode flows, also one with no flow at all
+  // (a complete Shell only: in a partial Shell the flows are not due yet).
+  const flowsByGame = new Map(slice === null ? [...gameIds].filter((game) => gameModes(root, game) !== null).map((game) => [game, []]) : []);
+  let flowCount = 0;
   for (const rel of rels) {
     const info = classify(rel);
     if (info === null) continue;
@@ -663,6 +676,7 @@ run(async () => {
       report.problem({ file: rel, line: 1, rule: 'flow-location', message: 'is not in flows/<area>/, subflows/, screenshots/ or (Shell only) storekit/ or ads-smoke/', fix: 'Move it: journeys to <workspace>/e2e/flows/<area>/<nn>-<name>.yaml, shared steps to packages/shell/e2e/subflows/, the matrix to packages/shell/e2e/screenshots/, Tier 2 StoreKit flows to packages/shell/e2e/storekit/, the hand-run ads smoke flows to packages/shell/e2e/ads-smoke/.' });
       continue;
     }
+    if (info.kind === 'flow') flowCount += 1;
     // A partial Shell: a flow that reaches a screen outside the slice cannot run yet (Shell step 10).
     const sliceReason = info.kind === 'flow' || info.kind === 'screenshots' || info.kind === 'ads-smoke' ? sliceReasonOf({ root, known, parse: parseCached }, rel, slice) : null;
     if (sliceReason !== null) {
@@ -713,6 +727,7 @@ run(async () => {
   for (const [target, { from, line }] of usedAsSubflow) {
     if (/\/e2e\/flows\//.test(target)) report.problem({ file: from, line, rule: 'subflow-in-flows', message: `uses ${target} as a sub-flow, but it sits under flows/`, fix: 'Move shared steps to packages/shell/e2e/subflows/ (files under flows/ run on their own).' });
   }
+  if (flowCount === 0) reportNoFlows(slice, report);
   checkModeFlows(root, flowsByGame, slice, report);
   if (options.syntax) checkSyntax(root, rels, options.maestro, report);
   return report.finish({ checked: rels.length, unit: 'flow files' });
