@@ -6,7 +6,7 @@
 import { parseArgs } from 'node:util';
 
 import { driverPortOf } from './e2e-cli.ts';
-import { e2eSimulatorName, e2eTabletName } from './simulator.ts';
+import { e2eSimulatorName, e2eTabletName, simOptionProblem } from './simulator.ts';
 
 export const SCREENSHOTS_USAGE = [
   'usage: npm run screenshots:ios -- --app <game-id> [--update] [--devices phone,tablet] [--langs en,de,fa,ckb] [--text-size <size>] [--sim <purpose>] [--app-path <App.app>] [--driver-port <n>]',
@@ -85,6 +85,8 @@ function checkedParts(
   if (unknown !== undefined) return `unknown device ${unknown} (phone or tablet)`;
   const driverPort = driverPortOf(values['driver-port']);
   if (typeof driverPort === 'string') return driverPort;
+  const simProblem = simOptionProblem(values.sim);
+  if (simProblem !== null) return simProblem;
   return { devices: devices.filter(isDevice), driverPort };
 }
 

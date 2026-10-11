@@ -46,6 +46,14 @@ describe('parseScreenshotsCli', () => {
     expect(parsed.kind).toBe('error');
     expect(parsed.kind === 'error' ? parsed.message : '').toContain(message);
   });
+
+  it('refuses a --sim that names no e07- simulator while parsing, before any capture', () => {
+    expect(parseScreenshotsCli(['--app', 'line-siege', '--sim', 'Shots!'])).toStrictEqual({
+      kind: 'error',
+      message:
+        '--sim Shots!: pass a kebab-case purpose such as --sim r3-e2e (the simulator is e07-<purpose>)',
+    });
+  });
 });
 
 describe('shotSimulatorName', () => {

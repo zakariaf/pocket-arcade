@@ -61,6 +61,15 @@ describe('parseE2eCli', () => {
   ])('refuses %j as a usage error: %s', (argv, message) => {
     expect(parseE2eCli(argv)).toStrictEqual({ kind: 'error', message });
   });
+
+  it('refuses a --sim that names no e07- simulator while parsing, before Maestro is installed', () => {
+    expect(parseE2eCli(['--app', 'line-siege', '--sim', 'My Phone'])).toStrictEqual({
+      kind: 'error',
+      message:
+        '--sim My Phone: pass a kebab-case purpose such as --sim r3-e2e (the simulator is e07-<purpose>)',
+    });
+    expect(parseE2eCli(['--app', 'line-siege', '--sim', 'e07-e16-e2e']).kind).toBe('run');
+  });
 });
 
 describe('driverPortOf (e2e:ios and screenshots:ios)', () => {
