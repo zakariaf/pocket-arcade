@@ -28,20 +28,13 @@ export function FontTestView({ model }: FontTestViewProps): ReactNode {
         {model.rows.map((row) => (
           <View key={row.variant} style={styles.row}>
             <AppText text={row.variant} variant="caption" tone="muted" />
-            {row.samples.map((sample) => (
+            {/* The samples, then the alphabets: one text per language each. */}
+            {[...row.samples, ...row.alphabets].map((entry) => (
               <AppText
-                key={sample.language}
-                text={sample.text}
+                key={`${entry.language}:${entry.text}`}
+                text={entry.text}
                 variant={row.variant}
-                language={sample.language}
-              />
-            ))}
-            {row.alphabets.map((alphabet) => (
-              <AppText
-                key={`alphabet-${alphabet.language}`}
-                text={alphabet.text}
-                variant={row.variant}
-                language={alphabet.language}
+                language={entry.language}
               />
             ))}
           </View>
