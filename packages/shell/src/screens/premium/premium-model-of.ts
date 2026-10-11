@@ -32,8 +32,9 @@ export function premiumModelOf(input: PremiumModelInput): PremiumModel {
   const handleBuy = (): void => {
     if (canBuyPremium(state)) buyPremium(service).catch(service.onError);
   };
+  // A restore already running answers this tap too (the owner's Restore key stays enabled).
   const handleRestore = (): void => {
-    restorePremium(service).catch(service.onError);
+    if (state.flow.kind !== 'restoring') restorePremium(service).catch(service.onError);
   };
   return {
     view: premiumView(state),
