@@ -1,4 +1,5 @@
 // packages/shell/src/stores/premium/premium-reducer.test.ts
+import { premiumNotice } from './premium-notice.ts';
 import { canBuyPremium, premiumReducer } from './premium-reducer.ts';
 import { initialPremiumState } from './premium-state.ts';
 import { premiumView } from './premium-view.ts';
@@ -202,6 +203,70 @@ describe('premiumReducer around a restore', () => {
     expect([premiumView(restored), premiumView(approved)]).toStrictEqual([
       'already-owned',
       'success',
+    ]);
+  });
+
+  it('keeps the thank-you when the approval arrives before that restore finds the purchase (spec S12 Pending: "Premium turns on automatically when it completes")', () => {
+    const approved = run([
+      ...BUYING,
+      { type: 'purchase-pending' },
+      { type: 'restore-tapped' },
+      { type: 'premium-granted' },
+      { type: 'restore-finished', evidence: 'owned' },
+    ]);
+    expect([premiumView(approved), premiumNotice(approved)]).toStrictEqual(['success', null]);
+  });
+
+  it('ignores a second restore tap while one runs, so Ask to Buy stays outstanding and BUY stays locked (spec S12 Pending)', () => {
+    const twice = run([
+      ...BUYING,
+      { type: 'purchase-pending' },
+      { type: 'restore-tapped' },
+      { type: 'restore-tapped' },
+    ]);
+    expect(twice.flow).toStrictEqual({ kind: 'restoring', price: PRICE, isAwaitingApproval: true });
+    const bothEnded = run([
+      ...BUYING,
+      { type: 'purchase-pending' },
+      { type: 'restore-tapped' },
+      { type: 'restore-tapped' },
+      { type: 'restore-finished', evidence: 'unknown' },
+      { type: 'restore-finished', evidence: 'unknown' },
+    ]);
+    expect([bothEnded.flow, canBuyPremium(bothEnded)]).toStrictEqual([
+      { kind: 'pending', price: PRICE },
+      false,
+    ]);
+  });
+
+  it.each(['unknown', 'sync-failed'] as const)(
+    'lets a restore that ends %s after the page moved on change nothing the player sees',
+    (evidence) => {
+      const approved = run([
+        ...BUYING,
+        { type: 'purchase-pending' },
+        { type: 'restore-tapped' },
+        { type: 'premium-granted' },
+      ]);
+      expect(premiumReducer(approved, { type: 'restore-finished', evidence })).toBe(approved);
+    },
+  );
+
+  it('applies a refund that a restore finishing after the page moved on finds, and stays waiting for approval', () => {
+    const waiting = run([
+      ...BUYING,
+      { type: 'purchase-pending' },
+      { type: 'restore-tapped' },
+      { type: 'restore-tapped' },
+      { type: 'restore-finished', evidence: 'unknown' },
+    ]);
+    const revoked = premiumReducer(
+      { ...waiting, isPremium: true },
+      { type: 'restore-finished', evidence: 'revoked' },
+    );
+    expect([revoked.isPremium, revoked.flow]).toStrictEqual([
+      false,
+      { kind: 'pending', price: PRICE },
     ]);
   });
 });
