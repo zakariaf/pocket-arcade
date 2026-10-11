@@ -25,6 +25,7 @@ import { createRunTracker } from '@e07/shell/game-host/run-tracker.ts';
 import { writeRun } from '@e07/shell/game-host/run-writer.ts';
 import { createSessionController } from '@e07/shell/game-host/session-controller.ts';
 import { isTutorialBesideRun, runWritesOf } from '@e07/shell/game-host/tutorial-beside-run.ts';
+import { countTutorialRuns } from '@e07/shell/game-host/tutorial-run-counter.ts';
 import {
   coachStepsOf,
   howToPlayPagesOf,
@@ -163,6 +164,11 @@ export type GameHost = {
   /** S13: the picture's width / height (examplePictureAspectOf: 320 / 206 unless the board says). */
   readonly howToPlayPictureAspect: number;
   readonly hasSavedRun: () => boolean;
+  /**
+   * The tutorial runs this host opened (tutorial-run-counter.ts): S13 numbers "Play the tutorial
+   * again" with it (GameParams.replay), so a replay over an open tutorial starts it afresh.
+   */
+  readonly tutorialRunCount: () => number;
   /** null when there is no such run: no saved run, an unknown level, a mode the game lacks. */
   readonly openSession: (open: SessionOpen) => OpenedSession | null;
   /** The ads layer suspends the game through it: runFullscreenAd(host.lifecycle, show). */
@@ -274,10 +280,8 @@ function teachingOf<T extends ShellGameTypes>(
   };
 }
 
-type GameFacts = Omit<
-  GameHost,
-  keyof TeachingFacts | 'hasSavedRun' | 'openSession' | 'lifecycle' | 'debugControls'
->;
+type RunMember = 'hasSavedRun' | 'tutorialRunCount' | 'openSession' | 'lifecycle' | 'debugControls';
+type GameFacts = Omit<GameHost, keyof TeachingFacts | RunMember>;
 
 /** What screens read about the game: names, art, counters, music, score, hints and packs. */
 function factsOf<T extends ShellGameTypes>(game: ShellGameModule<T>): GameFacts {
@@ -334,7 +338,7 @@ export function createGameHost<T extends ShellGameTypes>(
     ...factsOf(game),
     ...teachingOf(game, deps),
     hasSavedRun: () => deps.save.doc().run !== null,
-    openSession: (open) => openRun({ game, deps, lifecycle, runs, resume }, open),
+    ...countTutorialRuns((open) => openRun({ game, deps, lifecycle, runs, resume }, open)),
     lifecycle,
     debugControls: () => controls,
   };

@@ -80,7 +80,7 @@ One React Navigation 7 static native stack. Route names are PascalCase; params a
 
 Depth from Home never exceeds 2: every Main route is pushed from Home or from one depth-1 screen (Settings pushes the four S11 sub-screens, About pushes Licences, Game pushes How to play from Pause and Premium from Result). A finished run leaves Game with `popTo`, so a stack never grows past `[Home, x, y]`.
 
-`GameParams` (`templates/route-params.ts`): `{ start: 'resume' }` or `{ start: 'new', ref: RunRef }`, where `RunRef` is the save document's run reference (`{ kind: 'level', level }`, `{ kind: 'daily', date }`, `{ kind: 'endless' }`, `{ kind: 'tutorial' }`). Params stay small and serialisable; screens read everything else from the stores.
+`GameParams` (`templates/route-params.ts`): `{ start: 'resume' }` or `{ start: 'new', ref: RunRef, replay?: number }` (`replay`: S13's tutorial replay number, below), where `RunRef` is the save document's run reference (`{ kind: 'level', level }`, `{ kind: 'daily', date }`, `{ kind: 'endless' }`, `{ kind: 'tutorial' }`). Params stay small and serialisable; screens read everything else from the stores.
 
 ## What is not a route, and where it renders
 
@@ -111,7 +111,7 @@ Groups switch by their if-hooks, never by `navigate`: a hook reads the settings 
 
 **Settings → Language.** The text switches at once; a direction change shows the S14 "Restart to apply" dialog (the i18n layer owns the restart).
 
-**Play the tutorial again** (S13 How to play): the tutorial run `{ start: 'new', ref: { kind: 'tutorial' } }`. While a run is saved (always so from Pause, where the paused Game screen lies under S13) `navigation.dispatch(StackActions.popTo('Game', params))`: it returns to the open Game screen, which opens the new params' run in place (`useGameSessionControls`), so a second Game screen never stacks, and without an open Game screen it replaces S13 with one. With no run saved no Game screen can be open, and `navigation.navigate('Game', params)` pushes one. The host plays a tutorial beside a saved run in memory only, so the saved run survives (N10).
+**Play the tutorial again** (S13 How to play): the tutorial run `{ start: 'new', ref: { kind: 'tutorial' } }`. While a run is saved (always so from Pause, where the paused Game screen lies under S13) `navigation.dispatch(StackActions.popTo('Game', params))`: it returns to the open Game screen, which opens the new params' run in place (`useGameSessionControls`), so a second Game screen never stacks, and without an open Game screen it replaces S13 with one. With no run saved no Game screen can be open, and `navigation.navigate('Game', params)` pushes one. Once the host has opened a tutorial run, the request carries `replay: host.tutorialRunCount()`: from Pause during the tutorial the open Game screen already holds tutorial params, equal params would only return to it paused, and the numbered request is new params, so it starts the tutorial afresh. The host plays a tutorial beside a saved run in memory only, so the saved run survives (N10).
 
 **Result → next.** Next level: the game host starts the next run inside the same Game screen (no navigation). Levels: `navigation.dispatch(StackActions.popTo('Levels'))` after the host has saved the run: if Levels is under Game it goes back to it, otherwise popTo replaces Game with Levels (React Navigation 7 `POP_TO`, read in the installed StackRouter), so no finished Game stays in the stack. Home: `navigation.dispatch(StackActions.popTo('Home'))`.
 

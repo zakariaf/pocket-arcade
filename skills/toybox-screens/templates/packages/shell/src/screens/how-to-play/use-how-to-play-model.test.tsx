@@ -86,6 +86,20 @@ describe('useHowToPlayModel', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  it('asks for a fresh tutorial over the one paused under it: the replay carries the tutorial count (S6, S13)', async () => {
+    // From Pause during the tutorial the Game screen under S13 holds a tutorial already: equal
+    // params would only return to it paused, so the request is numbered with the host's count.
+    mockDispatch.mockClear();
+    const shell = createHostWrapper({
+      host: { howToPlayPages: PAGES, hasSavedRun: () => true, tutorialRunCount: () => 2 },
+    });
+    const { result } = await renderHook(() => useHowToPlayModel(), { wrapper: shell.wrapper });
+    result.current.onReplayTutorial();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      StackActions.popTo('Game', { start: 'new', ref: { kind: 'tutorial' }, replay: 2 }),
+    );
+  });
+
   it('opens on step 2 in its parity frame, as one Next would (s13-how-to-play)', async () => {
     startParitySession({
       frame: 's13-how-to-play',

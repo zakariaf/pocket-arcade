@@ -177,6 +177,7 @@ export type GameHost = {
   readonly renderHowToPlayPicture: (pageIndex: number) => ReactNode; // S13: the page's example, drawn by the board
   readonly howToPlayPictureAspect: number;     // S13: width / height of the picture (320 / 206 unless the board says)
   readonly hasSavedRun: () => boolean;         // Home: Continue or Play
+  readonly tutorialRunCount: () => number;     // S13 numbers its tutorial replay with it
   readonly openSession: (open: SessionOpen) => OpenedSession | null;
   readonly lifecycle: FullscreenGate;          // runFullscreenAd(host.lifecycle, show)
   readonly debugControls: () => GameDebugControls; // test builds, through createDebugParts only
