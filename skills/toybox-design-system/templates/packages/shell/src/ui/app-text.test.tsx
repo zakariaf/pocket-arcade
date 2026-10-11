@@ -1,5 +1,5 @@
 // packages/shell/src/ui/app-text.test.tsx
-import { screen } from '@testing-library/react-native';
+import { fireEvent, screen } from '@testing-library/react-native';
 import { PixelRatio, StyleSheet } from 'react-native';
 
 import { FSI, PDI } from '@e07/shell/i18n/bidi.ts';
@@ -128,5 +128,31 @@ describe('AppText', () => {
     await renderWithShell(<AppText text="Settings" variant="topBarTitle" isHeader />);
 
     expect(screen.getByRole('header', { name: 'Settings' })).toBeOnTheScreen();
+  });
+
+  it('reports its laid-out lines to a part drawn under each line (the quiet underline)', async () => {
+    const onTextLines = jest.fn();
+    await renderWithShell(
+      <AppText
+        text="Gefällt’s dir? 1,99 €."
+        variant="nudge"
+        testID="x.nudge"
+        onTextLines={onTextLines}
+      />,
+    );
+
+    await fireEvent(screen.getByTestId('x.nudge'), 'textLayout', {
+      nativeEvent: {
+        lines: [
+          { x: 4, y: 0, width: 255, height: 19, text: 'Gefällt’s dir? ' },
+          { x: 100, y: 19, width: 50, height: 19, text: '1,99 €.' },
+        ],
+      },
+    });
+
+    expect(onTextLines).toHaveBeenLastCalledWith([
+      { x: 4, y: 0, width: 255, height: 19 },
+      { x: 100, y: 19, width: 50, height: 19 },
+    ]);
   });
 });
