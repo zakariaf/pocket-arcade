@@ -24,7 +24,7 @@ What the host does with one run, rule by rule, with the product requirement behi
 
 ## Run kinds and how a run opens
 
-A run is identified by its `RunRef` (the save document's type): `{ kind: 'level', level }`, `{ kind: 'daily', date }`, `{ kind: 'endless' }` or `{ kind: 'tutorial' }`. The Game route's params are `{ start: 'resume' }` or `{ start: 'new', ref }`, and `useGameSessionControls(params)` passes them to `host.openSession`.
+A run is identified by its `RunRef` (the save document's type): `{ kind: 'level', level }`, `{ kind: 'daily', date }`, `{ kind: 'endless' }` or `{ kind: 'tutorial' }`. The Game route's params are `{ start: 'resume' }` or `{ start: 'new', ref }`, and `useGameSessionControls(params)` passes them to `host.openSession`, once per Game screen. New params for an open Game screen (`popTo('Game', params)`, which S13's "Play the tutorial again" uses from Pause) open their run in that screen, as `startRun` does (the old run gets `finish` first), so a second Game screen never stacks over the first.
 
 | Kind | Seed and difficulty (`startFor`) | No run when |
 |---|---|---|
@@ -187,4 +187,4 @@ Turn-based games (about 24 of 26) save after every move: `persistence.savePolicy
 | `measure-counters.test.ts` | counters over the kept line, undone moves ignored, the continue replayed; `noCounters` is every counter at 0 |
 | `run-end-policy.test.ts`, `stranded-loss.test.ts` | L11: which lost runs are stranded; on the tally game an endless loss with a hidden offer is finished once, its endless best saved and its result shown with "New best!", a level loss counted once, the streak and the ad history saved before the Result |
 | `hud-model.test.ts`, `top-bar-model.test.ts`, `result-model-of.test.ts` | the top bar and S7 models in every variant (the continue offer `'loading'` as `'ad-loading'`); the free hint only while game.config leaves one (`hints.freePerDay`); no par and the level best (`bestScore`) for a score-rated level, the par next to the best for a moves-rated one |
-| `play-clock.test.ts`, `fullscreen-gate.test.ts`, `use-is-fullscreen-ad-showing.test.ts`, `use-pause-on-background.test.tsx`, `use-game-session-controls.test.tsx` | play time, the ad gate and the board's view of it, pausing on background and blur, opening, commanding and replacing runs from the Game screen; the parity frame openers (s6-pause, s7-result-win, s7-result-lose) and no opener on a normal or probe launch |
+| `play-clock.test.ts`, `fullscreen-gate.test.ts`, `use-is-fullscreen-ad-showing.test.ts`, `use-pause-on-background.test.tsx`, `use-game-session-controls.test.tsx` | play time, the ad gate and the board's view of it, pausing on background and blur, opening, commanding and replacing runs from the Game screen (also for new route params); the parity frame openers (s6-pause, s7-result-win, s7-result-lose) and no opener on a normal or probe launch |

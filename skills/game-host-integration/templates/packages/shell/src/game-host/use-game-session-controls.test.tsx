@@ -56,7 +56,10 @@ function parityFrame(state: string | null, isBoardProbe = false): void {
   mockParity.isBoardProbe = isBoardProbe;
 }
 
-function hostWrapper(): (props: { readonly children: ReactNode }) => ReactNode {
+/** onOpen hears every host.openSession call (it may throw to stop a reopen loop). */
+function hostWrapper(
+  onOpen: () => void = () => undefined,
+): (props: { readonly children: ReactNode }) => ReactNode {
   const { save } = createTestSave();
   const writeRunEnd: GameHostDeps['writeRunEnd'] = (write) => {
     save.update(write.recipe, { refreshBackup: write.refreshBackup });
@@ -70,7 +73,14 @@ function hostWrapper(): (props: { readonly children: ReactNode }) => ReactNode {
     writeRunEnd,
     feedback: { audio: createFakeAudio(), haptics: createFakeHaptics() },
   };
-  const host = createGameHost(TALLY_GAME, deps);
+  const created = createGameHost(TALLY_GAME, deps);
+  const host = {
+    ...created,
+    openSession: (open: GameParams) => {
+      onOpen();
+      return created.openSession(open);
+    },
+  };
   return function HostWrapper({ children }) {
     return <GameHostProvider host={host}>{children}</GameHostProvider>;
   };
@@ -126,6 +136,43 @@ describe('useGameSessionControls', () => {
       moveCount: 0,
       summary: null,
     });
+  });
+
+  it('opens the run of new route params in the same screen, as S13 replays the tutorial from Pause', async () => {
+    // popTo('Game', params) returns to the open Game screen with new params: never a second Game.
+    const view = await renderHook(
+      ({ params }: { readonly params: GameParams }) => useGameSessionControls(params),
+      { wrapper: hostWrapper(), initialProps: { params: LEVEL_1 } },
+    );
+    await act(() => {
+      view.result.current.pause();
+    });
+    await view.rerender({ params: LEVEL_1 });
+    expect(view.result.current.status).toBe('paused');
+
+    await view.rerender({ params: { start: 'new', ref: { kind: 'tutorial' } } });
+    expect(view.result.current.view).toMatchObject({
+      status: 'playing',
+      ref: { kind: 'tutorial' },
+      moveCount: 0,
+    });
+  });
+
+  it('opens its run once while equal params arrive as a new object on every render', async () => {
+    let opens = 0;
+    // A reopen loop stops here, bounded, instead of exhausting the Jest worker's memory.
+    const countOpen = (): void => {
+      opens += 1;
+      if (opens > 10) throw new Error('openSession called in a loop');
+    };
+    const view = await renderHook(
+      () => useGameSessionControls({ start: 'new', ref: { kind: 'level', level: 1 } }),
+      { wrapper: hostWrapper(countOpen) },
+    );
+    for (const round of [1, 2, 3]) {
+      await view.rerender({});
+      expect([round, opens]).toStrictEqual([round, 1]);
+    }
   });
 
   it('reports a missing run so the screen can leave to Home', async () => {
