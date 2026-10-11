@@ -66,6 +66,20 @@ describe('AppText balanced display text (the design .d: text-wrap balance)', () 
     expect(StyleSheet.flatten(label.props['style'] as TextStyle)?.paddingEnd).toBeUndefined();
   });
 
+  it('leaves a stat value greedy, as the design draws its .sv without .d (spec S10)', async () => {
+    // The S10 grid value is the mockup's .sv: Lilita One, no text-wrap balance. In de Chrome breaks
+    // "2 Std. 14 / Min."; a balanced value broke "2 Std. / 14 Min." (E17 S10 parity).
+    await renderWithShell(<AppText text="2 Std. 14 Min." variant="number" testID="x.value" />);
+    const value = screen.getByTestId('x.value');
+
+    await fireEvent(value, 'layout', { nativeEvent: { layout: { width: 150, height: 66 } } });
+    await fireEvent(value, 'textLayout', {
+      nativeEvent: { lines: [{ width: 107 }, { width: 50 }] },
+    });
+
+    expect(StyleSheet.flatten(value.props['style'] as TextStyle)?.paddingEnd).toBeUndefined();
+  });
+
   it('leaves body text greedy', async () => {
     await renderWithShell(<AppText text="Body text" testID="x.body" />);
     const body = screen.getByTestId('x.body');
