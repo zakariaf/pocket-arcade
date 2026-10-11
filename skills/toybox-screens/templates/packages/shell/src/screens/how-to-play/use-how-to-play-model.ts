@@ -3,9 +3,12 @@
 // picture drawn by the game's own board at the host's picture aspect), the page shown (local
 // state, clamped to the pages), Done going back to where the player came from (Home, or Pause
 // with the run still paused), and "Play the tutorial again" as a new tutorial run (FirstRun is
-// gone after the first launch).
+// gone after the first launch). While a run is saved (always so from Pause) the replay goes with
+// popTo to the open Game screen, which opens the tutorial in place, so no second Game screen
+// stacks; without one popTo replaces this page. The host plays that tutorial beside the saved run,
+// in memory only (N10). With no run saved, no Game screen is open, and navigate pushes one.
 // A parity capture of s13-how-to-play (test builds) opens on step 2, the page one Next shows.
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
@@ -29,6 +32,7 @@ export function useHowToPlayModel(): HowToPlayModel {
     howToPlayPages: pages,
     renderHowToPlayPicture,
     howToPlayPictureAspect: pictureAspect,
+    hasSavedRun,
   } = useGameHost();
   const lastIndex = Math.max(0, pages.length - 1);
   const [stepIndex, setStepIndex] = useState(() =>
@@ -54,7 +58,8 @@ export function useHowToPlayModel(): HowToPlayModel {
     },
     onDone: goBack,
     onReplayTutorial: () => {
-      navigation.navigate('Game', TUTORIAL_RUN);
+      if (hasSavedRun()) navigation.dispatch(StackActions.popTo('Game', TUTORIAL_RUN));
+      else navigation.navigate('Game', TUTORIAL_RUN);
     },
   };
 }
