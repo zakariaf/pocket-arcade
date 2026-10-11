@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { measureMemory, RELAUNCH_SETTLE_MS } from './sim-perf-steps.ts';
+import { measureMemory, memoryFlowArgs, RELAUNCH_SETTLE_MS } from './sim-perf-steps.ts';
 import { DEFAULT_PERF_BUDGETS } from './sim-perf.ts';
 
 import type { MemoryOps } from './sim-perf-steps.ts';
@@ -105,5 +105,23 @@ describe('measureMemory', () => {
       measureMemory({ game: 'demo', out }, DEFAULT_PERF_BUDGETS, fakeOps(calls, { flowStatus: 1 })),
     ).rejects.toThrow('memory: the smoke flow failed before the measurement');
     expect(calls).toStrictEqual(['maestro test apps/demo/e2e/flows/smoke/10-level-1.yaml']);
+  });
+});
+
+describe('memoryFlowArgs', () => {
+  it('runs the smoke flows like the flows and large-text steps: quarantined flows stay out', () => {
+    const app = {
+      path: 'LineSiege.app',
+      id: 'io.applander.linesiege',
+      scheme: 'e07-line-siege',
+      name: 'LineSiege',
+    };
+    expect(
+      memoryFlowArgs(['apps/demo/e2e/flows/smoke/10-level-1.yaml'], 'reports/e2e/demo/memory', app),
+    ).toStrictEqual([
+      ...['test', 'apps/demo/e2e/flows/smoke/10-level-1.yaml'],
+      ...['--test-output-dir', 'reports/e2e/demo/memory', '--exclude-tags', 'quarantine'],
+      ...['-e', 'APP_ID=io.applander.linesiege', '-e', 'APP_SCHEME=e07-line-siege'],
+    ]);
   });
 });
