@@ -3,11 +3,13 @@ import { use } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 
+import { isArabicScript } from '@e07/shell/i18n/fonts.ts';
 import { LAYOUT } from '@e07/shell/theme/tokens.ts';
+import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 
-import type { FontTestRow } from './font-test-samples.ts';
+import type { FontTestRow, FontTestSample } from './font-test-samples.ts';
 import type { ReactNode } from 'react';
 
 export type FontTestModel = { readonly rows: readonly FontTestRow[] };
@@ -35,13 +37,25 @@ const styles = StyleSheet.create({
   row: { gap: 4 },
 });
 
+/**
+ * The texts a row's face is made for. Game names (the brand face) are Latin in every language and
+ * set in Lilita One, which has no Arabic letters, so a game-name row draws en and de only: Persian
+ * and Sorani there fell back to a system font, and with the names' tracking TextKit looped on the
+ * main thread until the simulator's UI queries timed out.
+ */
+function textsOf(row: FontTestRow): readonly FontTestSample[] {
+  const texts = [...row.samples, ...row.alphabets];
+  if (typeStyleOf(row.variant).face !== 'brand') return texts;
+  return texts.filter((text) => !isArabicScript(text.language));
+}
+
 /** One row of the page: the variant's name, then its samples and alphabets. */
 function rowOf(row: FontTestRow): ReactNode {
   return (
     <View style={styles.row}>
       <AppText text={row.variant} variant="caption" tone="muted" />
       {/* The samples, then the alphabets: one text per language each. */}
-      {[...row.samples, ...row.alphabets].map((entry) => (
+      {textsOf(row).map((entry) => (
         <AppText
           key={`${entry.language}:${entry.text}`}
           text={entry.text}
