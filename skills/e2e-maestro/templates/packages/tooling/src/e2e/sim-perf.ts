@@ -91,6 +91,53 @@ export function baselineMsFrom(baselineFile: unknown): number | null {
   return typeof value === 'number' && value > 0 ? value : null;
 }
 
+/** What the cold-start step does with perf-baselines/cold-start-sim-<game>.json. */
+export type ColdStartBaselinePlan =
+  /** A valid committed baseline: judge the run against it, never rewrite it. */
+  | { readonly kind: 'judge'; readonly baselineMs: number }
+  /** No file yet (the first run), or --write-perf-baseline: write this run's median. */
+  | { readonly kind: 'write'; readonly baselineMs: number | null }
+  /** A committed file that holds no positive medianMs: the step fails and the file stays. */
+  | { readonly kind: 'invalid'; readonly message: string };
+
+const REWRITE_HINT =
+  "restore the committed file, or rewrite it on purpose with --write-perf-baseline (owner's agreement, Gate-Change trailer)";
+
+/** The committed file's medianMs, or why it holds none (null text: no file yet). */
+function committedBaseline(file: string, text: string): number | string {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch {
+    return `${file}: is not JSON; ${REWRITE_HINT}`;
+  }
+  const value = isRecord(parsed) ? parsed['medianMs'] : undefined;
+  return (
+    baselineMsFrom(parsed) ??
+    `${file}: medianMs is ${value === undefined ? 'missing' : JSON.stringify(value)}, not a positive number of milliseconds; ${REWRITE_HINT}`
+  );
+}
+
+/**
+ * The cold-start step's plan for the committed baseline, decided before any launch: a file that
+ * exists but holds no positive medianMs fails the step and is never overwritten as if it were a
+ * first run (that would turn the gate off); only --write-perf-baseline rewrites it.
+ */
+export function coldStartBaselinePlan(
+  file: string,
+  text: string | null,
+  isWriting: boolean,
+): ColdStartBaselinePlan {
+  if (text === null) return { kind: 'write', baselineMs: null };
+  const baseline = committedBaseline(file, text);
+  if (typeof baseline === 'string') {
+    return isWriting ? { kind: 'write', baselineMs: null } : { kind: 'invalid', message: baseline };
+  }
+  return isWriting
+    ? { kind: 'write', baselineMs: baseline }
+    : { kind: 'judge', baselineMs: baseline };
+}
+
 /**
  * The text of that file as the runner writes it: two-space JSON and a final newline, the bytes
  * Prettier keeps, so `prettier --check .` (npm run verify) passes on the committed baseline.

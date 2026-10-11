@@ -20,8 +20,8 @@ import {
 } from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import {
   baselineFileText,
-  baselineMsFrom,
   COLD_LAUNCHES,
+  coldStartBaselinePlan,
   judgeColdStart,
   judgeMemory,
   latestColdStart,
@@ -153,6 +153,11 @@ async function measureColdStart(
 ): Promise<ColdStartResult> {
   const { game, app } = input;
   const sim = simOf(input);
+  // The committed baseline is read before any launch: an invalid one fails the step at once.
+  const baselineFile = join('perf-baselines', `cold-start-sim-${game}.json`);
+  const committed = existsSync(baselineFile) ? readFileSync(baselineFile, 'utf8') : null;
+  const plan = coldStartBaselinePlan(baselineFile, committed, input.isWritingBaseline);
+  if (plan.kind === 'invalid') throw new Error(`cold start: ${plan.message}`);
   const readLog = perfLogReader(sim, app);
   let seen = await openHome(input, readLog);
   const launchesMs: number[] = [];
@@ -165,12 +170,8 @@ async function measureColdStart(
   mkdirSync(join('reports', 'perf'), { recursive: true });
   const perfLog = JSON.stringify(readLog(), null, 2);
   writeFileSync(join('reports', 'perf', 'sim-perf-log.json'), `${perfLog}\n`);
-  const baselineFile = join('perf-baselines', `cold-start-sim-${game}.json`);
-  const baselineMs = existsSync(baselineFile)
-    ? baselineMsFrom(JSON.parse(readFileSync(baselineFile, 'utf8')) as unknown)
-    : null;
-  const result = judgeColdStart(launchesMs, baselineMs, budgets);
-  if (baselineMs !== null && !input.isWritingBaseline) return result;
+  const result = judgeColdStart(launchesMs, plan.baselineMs, budgets);
+  if (plan.kind === 'judge') return result;
   // The first run writes the baseline; a slower rewrite needs the owner and a Gate-Change trailer.
   mkdirSync('perf-baselines', { recursive: true });
   writeFileSync(baselineFile, baselineFileText(result.medianMs));
