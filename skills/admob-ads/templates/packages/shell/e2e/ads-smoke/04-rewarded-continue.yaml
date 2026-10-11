@@ -11,7 +11,9 @@ appId: ${APP_ID}
 name: Ads smoke 4 - the rewarded continue plays on with the continue scene settled on the board
 tags: [ads-smoke]
 ---
-# Home first: a screen=game link while a Game screen is open keeps that screen's run.
+# Home first, the path this flow was verified on: geo=eea resets Google's consent answer, and Home is
+# the banner screen where the consent moment runs. (A screen=game link alone would also start a
+# fresh level-1 run: debug links land on a fixed stack, so step 3's open Game screen is not kept.)
 - runFlow:
     file: ../subflows/debug-setup.yaml
     env:
