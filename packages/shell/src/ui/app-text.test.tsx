@@ -99,6 +99,34 @@ describe('AppText', () => {
     expect(style).toMatchObject({ lineHeight: 131 / 3, marginVertical: -2 });
   });
 
+  it('gives every text one pixel of room under its last line, Latin too (spec 7.6)', async () => {
+    await renderWithShell(<AppText text="ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789" />);
+
+    // Far down S15's font page the caption alphabet lost its digits line the same way.
+    const text = screen.getByText('ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789');
+    await fireEvent(text, 'textLayout', {
+      nativeEvent: { lines: [{ width: 380 }, { width: 120 }] },
+    });
+    const style = StyleSheet.flatten(
+      screen.getByText('ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789').props['style'],
+    );
+    expect({
+      minHeight: Math.round(Number(style.minHeight) * 3),
+      marginBottom: Math.round(Number(style.marginBottom) * 3),
+    }).toStrictEqual({ minHeight: 2 * 67 + 1, marginBottom: -1 });
+  });
+
+  it('keeps the room within a text cut to its numberOfLines', async () => {
+    await renderWithShell(<AppText text="Line Siege daily" numberOfLines={1} />);
+
+    const text = screen.getByText('Line Siege daily');
+    await fireEvent(text, 'textLayout', {
+      nativeEvent: { lines: [{ width: 300 }, { width: 80 }] },
+    });
+    const style = StyleSheet.flatten(screen.getByText('Line Siege daily').props['style']);
+    expect(Math.round(Number(style.minHeight) * 3)).toBe(67 + 1);
+  });
+
   it('draws Latin numbers without the overflow guard', async () => {
     await renderWithShell(<AppText text="58" variant="number" testID="stats.value" />);
 
