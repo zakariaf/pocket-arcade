@@ -27,6 +27,7 @@ import type { DebugParts, DebugPartsInput } from './create-debug-parts.ts';
 import type { LinkSource } from './debug-link-handler.ts';
 import type { FakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import type { SqlDriver, SqlValue } from '@e07/shell/services/save/sql-driver.ts';
+import type { NavigationState } from '@react-navigation/native';
 
 // One in-memory key-value store stands in for expo-sqlite/kv-store across "reloads".
 const mockStore = createFakeDebugStore();
@@ -281,6 +282,24 @@ describe('createDebugParts', () => {
     parts.links?.handleUrl(`${LINK}?geo=eea`);
     expect(consentSdk.AdsConsent.reset).not.toHaveBeenCalled();
     expect(parts.services?.consentGeography()).toBe('eea');
+  });
+
+  it('opens S15 on top of the screen a bad link came from, and screen= on a fixed stack', () => {
+    const { parts } = setup();
+    const ref = parts.navigationRef;
+    const state = {
+      routes: [
+        { key: 'Home-1', name: 'Home' },
+        { key: 'Stats-2', name: 'Stats' },
+      ],
+    } as unknown as NavigationState;
+    jest.spyOn(ref, 'isReady').mockReturnValue(true);
+    jest.spyOn(ref, 'getRootState').mockReturnValue(state);
+    const reset = jest.spyOn(ref, 'reset').mockImplementation(() => undefined);
+    parts.links?.handleUrl(`${LINK}?screen=nowhere`);
+    expect(reset).not.toHaveBeenCalled();
+    parts.links?.handleUrl(`${LINK}?screen=settings`);
+    expect(reset).toHaveBeenCalledTimes(1);
   });
 
   it('logs a bad link as a boot error and opens S15', () => {

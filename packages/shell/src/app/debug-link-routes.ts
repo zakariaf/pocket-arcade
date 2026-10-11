@@ -1,8 +1,9 @@
 // packages/shell/src/app/debug-link-routes.ts
 // Where a debug link's screen= goes, and how it opens: on a fixed stack, the navigator's first route
 // alone or with the route on top (navigate pushes in React Navigation 7, so links would otherwise
-// stack on the screens of earlier links). Routes are the navigator's own names; the four game
-// example states belong to the game host, which knows how to build them.
+// stack on the screens of earlier links). Only S15 for a rejected link opens on top of the screen
+// the link came from instead (DebugRoutePlacement). Routes are the navigator's own names; the four
+// game example states belong to the game host, which knows how to build them.
 import type { DebugScreen } from '@e07/shell/screens/debug/debug-link.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native';
@@ -100,9 +101,23 @@ export function resetToFirstRoute(navigation: DebugNavigation): string | null {
   return first.name;
 }
 
-/** screen=: [first route] for the first route itself, else [first route, route]. */
-export function openDebugRoute(navigation: DebugNavigation, route: DebugRoute): void {
-  if (resetToFirstRoute(navigation) === route.name) return;
+/**
+ * Where a debug route opens: a screen= link (S15's tools included, and the game examples through
+ * the debug controls) on a fixed stack; S15 for a rejected link on top of the screen the link came
+ * from, so that screen is still there behind it.
+ */
+export type DebugRoutePlacement = 'fixed-stack' | 'on-top';
+
+/**
+ * fixed-stack: [first route] for the first route itself, else [first route, route]. on-top: the
+ * route above whatever is open (navigate pushes in React Navigation 7).
+ */
+export function openDebugRoute(
+  navigation: DebugNavigation,
+  route: DebugRoute,
+  placement: DebugRoutePlacement = 'fixed-stack',
+): void {
+  if (placement === 'fixed-stack' && resetToFirstRoute(navigation) === route.name) return;
   if (route.name === 'Game') navigation.navigate(route.name, route.params);
   else navigation.navigate(route.name);
 }

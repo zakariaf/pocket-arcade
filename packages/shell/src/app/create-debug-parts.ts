@@ -136,8 +136,8 @@ function createLinks(
     layoutDirection: readLayoutDirection(),
     restart: (direction) =>
       restartAfterAudio({ audio: input.audio, guard, onDisposeError: recordBootError }, direction),
-    openRoute: (route) => {
-      openDebugRoute(navigationRef, route);
+    openRoute: (route, placement) => {
+      openDebugRoute(navigationRef, route, placement);
     },
     onNextNavigationState: (callback) => {
       const unsubscribe = navigationRef.addListener('state', () => {
