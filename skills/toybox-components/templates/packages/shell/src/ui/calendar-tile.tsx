@@ -6,6 +6,7 @@ import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { tiltedLayer } from './toybox-styles.ts';
+import { useWindowClass } from './use-window-class.ts';
 
 import type { ReactNode } from 'react';
 
@@ -28,7 +29,6 @@ export type CalendarTileProps = {
 const useStyles = makeStyles((theme) => {
   const styles = StyleSheet.create({
     tile: {
-      width: CAL.width,
       overflow: 'hidden',
       borderWidth: CAL.border,
       borderRadius: CAL.radius,
@@ -44,6 +44,9 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: theme.colors.primary,
     },
     day: { alignItems: 'center', paddingTop: DAY_TOP, paddingBottom: DAY_BOTTOM },
+    fixed: { width: CAL.width },
+    // At 200 % text the day split inside its number ("2 / 6") in 88 pt: the tile grows with it.
+    grown: { minWidth: CAL.width },
   });
   return styles;
 });
@@ -51,9 +54,10 @@ const useStyles = makeStyles((theme) => {
 /** The S9 tear-off calendar: month band over the day. Decorative: the date is also written out. */
 export function CalendarTile({ monthText, dayText, testID }: CalendarTileProps): ReactNode {
   const styles = useStyles();
+  const { isLargeText } = useWindowClass();
   return (
     <View
-      {...tiltedLayer(CAL.rotate, styles.tile)}
+      {...tiltedLayer(CAL.rotate, [styles.tile, isLargeText ? styles.grown : styles.fixed])}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       testID={testID}
