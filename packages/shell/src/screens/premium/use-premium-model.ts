@@ -1,7 +1,8 @@
 // packages/shell/src/screens/premium/use-premium-model.ts
 // S12's model hook: the premium store through useShallow, the service and game name from the
 // composition root, navigation, and reduce motion. It also announces each restore toast to
-// VoiceOver and clears the one-off notices ("Thank you!", "Purchase restored") after NOTICE_MS.
+// VoiceOver and clears the one-off notices ("Thank you!", "Purchase restored") after NOTICE_MS,
+// or when the player leaves S12 sooner, so neither shows again on a later visit.
 // A parity capture (test builds) opens its S12 card like a player: Buy once as soon as the price
 // is there (the parity store answers purchasing, pending, purchased or failed), the four restore
 // outcomes stacked on the restore card, and the thank-you page held while it is captured.
@@ -31,12 +32,25 @@ export const NOTICE_MS = 3000;
 const THANKS_SHOWN: PremiumAction = { type: 'thanks-shown' };
 const RESTORE_NOTICE_SHOWN: PremiumAction = { type: 'restore-notice-shown' };
 
-/** After NOTICE_MS, tell the store the one-off notice was seen, so it never shows twice. */
+/**
+ * After NOTICE_MS, or when the player leaves S12 sooner, tell the store the one-off notice was
+ * seen, so it never shows twice (not even on a later visit).
+ */
 function useClearNotice(
   isShown: boolean,
   send: (action: PremiumAction) => void,
   action: PremiumAction,
 ): void {
+  const clearOnLeave = useEffectEvent(() => {
+    if (isShown) send(action);
+  });
+  // Allowed effect: on leaving S12, hands the premium store (outside React) the notice it showed.
+  useEffect(
+    () => () => {
+      clearOnLeave();
+    },
+    [],
+  );
   useEffect(() => {
     if (!isShown) return undefined;
     const timer = setTimeout(() => {
