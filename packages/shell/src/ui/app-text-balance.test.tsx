@@ -1,9 +1,12 @@
 // packages/shell/src/ui/app-text-balance.test.tsx
 import { act, fireEvent, screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { AppText } from './app-text.tsx';
+
+import type { TextStyle } from 'react-native';
 
 describe('AppText balanced display text (the design .d: text-wrap balance)', () => {
   it('pads a two-line heading at its end until its lines are nearly equal', async () => {
@@ -44,6 +47,23 @@ describe('AppText balanced display text (the design .d: text-wrap balance)', () 
     });
 
     expect(screen.getByTestId('x.label')).toHaveStyle({ paddingEnd: 68 });
+  });
+
+  it('leaves a key label greedy, as the design draws it without .d (spec S9)', async () => {
+    // The hero key's label is the mockup's .btn .bl: Lilita One, but no text-wrap balance. In de
+    // Chrome breaks "Heutige Challenge / spielen"; a balanced label broke "Heutige / Challenge
+    // spielen" (E17 S9 parity).
+    await renderWithShell(
+      <AppText text="Heutige Challenge spielen" variant="heroKeyLabel" testID="x.key-label" />,
+    );
+    const label = screen.getByTestId('x.key-label');
+
+    await fireEvent(label, 'layout', { nativeEvent: { layout: { width: 270, height: 56 } } });
+    await fireEvent(label, 'textLayout', {
+      nativeEvent: { lines: [{ width: 190 }, { width: 70 }] },
+    });
+
+    expect(StyleSheet.flatten(label.props['style'] as TextStyle)?.paddingEnd).toBeUndefined();
   });
 
   it('leaves body text greedy', async () => {
