@@ -94,8 +94,8 @@ const CASES = [
     return ['gesture-one-file', 'tap-layer.tsx:6', 'Gesture.Tap'];
   }],
   ['gesture-in-screen', (d) => {
-    // Only S13's page swipe (screens/how-to-play/use-page-swipe.ts) and ui/ controls own a gesture;
-    // any other screen file that builds one is a second gesture path.
+    // Only the Shell's ui/ controls (the Slider, the swipe pager) own a gesture; a screen file that
+    // builds one is a second gesture path.
     write(d, 'packages/shell/src/screens/home/use-home-swipe.ts', "// packages/shell/src/screens/home/use-home-swipe.ts\nimport { Gesture } from 'react-native-gesture-handler';\n\nimport type { PanGesture } from 'react-native-gesture-handler';\n\nexport function useHomeSwipe(): PanGesture {\n  return Gesture.Pan().withTestId('home.swipe');\n}\n");
     return ['gesture-one-file', 'use-home-swipe.ts:7', 'Gesture.Pan'];
   }],

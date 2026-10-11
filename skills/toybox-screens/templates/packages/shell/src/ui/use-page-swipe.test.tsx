@@ -1,4 +1,4 @@
-// packages/shell/src/screens/how-to-play/use-page-swipe.test.tsx
+// packages/shell/src/ui/use-page-swipe.test.tsx
 // Spec S13 and 7.5: How to play pages turn with a swipe, mirrored in right-to-left. The finger
 // stays physical (a left swipe is a left swipe in every language); what mirrors is where the next
 // page lies. Gesture tests need act(): the Worklets Jest mock delivers scheduleOnRN as a microtask.

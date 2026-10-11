@@ -13,6 +13,7 @@ import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
+import { TUTORIAL_RUN } from '@e07/shell/screens/first-run/use-tutorial-model.ts';
 
 import type { HowToPlayModel } from './how-to-play-view.tsx';
 
@@ -53,7 +54,7 @@ export function useHowToPlayModel(): HowToPlayModel {
     },
     onDone: goBack,
     onReplayTutorial: () => {
-      navigation.navigate('Game', { start: 'new', ref: { kind: 'tutorial' } });
+      navigation.navigate('Game', TUTORIAL_RUN);
     },
   };
 }

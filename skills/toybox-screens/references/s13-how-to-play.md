@@ -46,14 +46,15 @@ Line Siege's goal line is "Stop every monster before it reaches your wall." and 
 
 ## Templates
 
-Copy each file from `templates/` to the same path in the app repo; the code lives in `packages/shell/src/screens/how-to-play/`.
+Copy each file from `templates/` to the same path in the app repo; the code lives in `packages/shell/src/screens/how-to-play/`, and the page frame and the swipe pager in `packages/shell/src/ui/`.
 
 - `packages/shell/src/screens/how-to-play/how-to-play-view.tsx`
 - `packages/shell/src/screens/how-to-play/how-to-play-screen.tsx`
 - `packages/shell/src/screens/how-to-play/how-to-play-view.test.tsx`
 - `packages/shell/src/screens/how-to-play/use-how-to-play-model.ts` and its test
-- `packages/shell/src/screens/how-to-play/page-step-for-swipe.ts` and its test (pure: a physical swipe and the layout direction to a page step)
-- `packages/shell/src/screens/how-to-play/use-page-swipe.ts` and its test (the pan over the stage; board-gestures-and-input's checker accepts this one file as a non-board gesture)
+- `packages/shell/src/ui/page-step-for-swipe.ts` and its test (pure: a physical swipe and the layout direction to a page step)
+- `packages/shell/src/ui/use-page-swipe.ts` and its test (the swipe pager: one horizontal pan over the stage; like every ui/ control it owns its gesture, which board-gestures-and-input's checker accepts)
+- `packages/shell/src/ui/sub-page.tsx` (landed with S11): the view draws `SubPage` with `testIDBase="how-to-play"`, which gives `how-to-play.screen` and `how-to-play.top-bar` with its parts
 
 ## testIDs
 
