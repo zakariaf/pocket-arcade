@@ -9,6 +9,7 @@ import { execFileSync } from 'node:child_process';
 import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
+import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
   isChanged,
   NEW_BASELINE,
@@ -28,6 +29,7 @@ import {
   startSimulator,
   waitForBoot,
   type AppInfo,
+  type MaestroDevice,
   type Simctl,
 } from './simulator.ts';
 
@@ -43,7 +45,7 @@ type Cli = {
   readonly devices: readonly ('phone' | 'tablet')[];
   readonly langs: readonly string[];
   readonly textSize: string;
-  /** --driver-port <n>: the session's own Maestro driver port (else a free one per capture). */
+  /** --driver-port <n>: the session's own Maestro driver port (else one free port per simulator). */
   readonly driverPort: number | undefined;
   /** --sim <purpose>: this session's own simulators (else the shared capture simulators). */
   readonly sim: string | undefined;
@@ -55,7 +57,7 @@ function comboDir(cli: Cli, combo: Combo): string {
   return join(combo.device, `${combo.lang}-${combo.theme}${suffix}`);
 }
 
-async function capture(cli: Cli, udid: string, combo: Combo): Promise<string[]> {
+async function capture(cli: Cli, device: MaestroDevice, combo: Combo): Promise<string[]> {
   const outDir = join('reports', 'screenshots', 'raw', comboDir(cli, combo));
   const vars = {
     APP_ID: cli.app.id,
@@ -64,7 +66,7 @@ async function capture(cli: Cli, udid: string, combo: Combo): Promise<string[]> 
     THEME: combo.theme,
   };
   rmSync(outDir, { recursive: true, force: true });
-  const status = await runMaestro({ udid, driverPort: cli.driverPort }, [
+  const status = await runMaestro(device, [
     ...['test', cli.flow, '--test-output-dir', outDir],
     ...Object.entries(vars).flatMap(([key, value]) => ['-e', `${key}=${value}`]),
   ]);
@@ -117,12 +119,15 @@ async function runDevice(
   const sim = { simctl, udid };
   waitForBoot(sim);
   prepareSimulator(sim, cli.app, cli.textSize);
+  // One driver port for every capture on this simulator: the session's own, else one free port.
+  const maestroDevice = { udid, driverPort: cli.driverPort ?? (await freeDriverPort()) };
   const rows: GalleryRow[] = [];
   for (const theme of ['light', 'dark'] as const) {
     setAppearance(sim, theme);
     for (const lang of cli.langs) {
       const combo = { device, lang, theme };
-      rows.push(...(await capture(cli, udid, combo)).map((actual) => check(cli, combo, actual)));
+      const shots = await capture(cli, maestroDevice, combo);
+      rows.push(...shots.map((actual) => check(cli, combo, actual)));
     }
   }
   return rows;

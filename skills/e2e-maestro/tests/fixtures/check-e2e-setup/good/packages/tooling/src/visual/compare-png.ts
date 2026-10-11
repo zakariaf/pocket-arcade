@@ -1,5 +1,7 @@
 // packages/tooling/src/visual/compare-png.ts — one comparator for headless board renders and
-// simulator screenshots. Writes a diff PNG the agent can open with its Read tool.
+// simulator screenshots. Writes a diff PNG the agent can open with its Read tool. The sizes come
+// from the two PNG headers before anything is decoded, and the diff image is drawn only for a
+// mismatch (most comparisons match, and a 1320x2868 diff buffer is 15 MB).
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 
@@ -18,28 +20,31 @@ export type CompareOptions = {
   readonly maxDiffRatio: number;
 };
 
+const PIXELMATCH = { threshold: 0.1 } as const;
+
+/** "<width>x<height>" from a PNG's IHDR chunk (bytes 16-23, right after the signature). */
+function sizeOf(png: Buffer): string {
+  return `${String(png.readUInt32BE(16))}x${String(png.readUInt32BE(20))}`;
+}
+
 export function comparePng(actual: Buffer, options: CompareOptions): PngComparison {
   if (!existsSync(options.baselinePath)) {
     return { kind: 'missing-baseline', baselinePath: options.baselinePath };
   }
-  const expectedPng = pngjs.PNG.sync.read(readFileSync(options.baselinePath));
+  const expected = readFileSync(options.baselinePath);
+  if (sizeOf(expected) !== sizeOf(actual)) {
+    return { kind: 'size-changed', expected: sizeOf(expected), actual: sizeOf(actual) };
+  }
+  const expectedPng = pngjs.PNG.sync.read(expected);
   const actualPng = pngjs.PNG.sync.read(actual);
   const { width, height } = expectedPng;
-  if (actualPng.width !== width || actualPng.height !== height) {
-    return {
-      kind: 'size-changed',
-      expected: `${String(width)}x${String(height)}`,
-      actual: `${String(actualPng.width)}x${String(actualPng.height)}`,
-    };
-  }
-  const diff = new pngjs.PNG({ width, height });
-  const pixels = pixelmatch(expectedPng.data, actualPng.data, diff.data, width, height, {
-    threshold: 0.1,
-  });
+  const pixels = pixelmatch(expectedPng.data, actualPng.data, undefined, width, height, PIXELMATCH);
   const diffRatio = pixels / (width * height);
   if (diffRatio <= options.maxDiffRatio) {
     return { kind: 'match', diffRatio };
   }
+  const diff = new pngjs.PNG({ width, height });
+  pixelmatch(expectedPng.data, actualPng.data, diff.data, width, height, PIXELMATCH);
   mkdirSync(dirname(options.diffPath), { recursive: true });
   writeFileSync(options.diffPath, pngjs.PNG.sync.write(diff));
   return { kind: 'mismatch', diffRatio, diffPath: options.diffPath };

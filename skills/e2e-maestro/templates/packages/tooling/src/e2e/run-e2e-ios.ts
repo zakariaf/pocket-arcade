@@ -2,9 +2,10 @@
 // `npm run e2e:ios -- --app <game-id> [--sim <purpose>] [--driver-port <n>] [--app-path <App.app>] [--flows-only] [--write-perf-baseline] [--include-tags <tags>]`
 // (--help prints every option; a bad command line prints the usage line and exits 2, e2e-cli.ts)
 // --sim runs the phone steps on this session's own simulator e07-<purpose> (default e07-e2e-phone)
-// and the iPad steps on e07-<purpose>-tablet (default e07-e2e-tablet). Every Maestro run names its
-// simulator's UDID and a driver port of its own (a free one per run, or --driver-port for the whole
-// session) before the command, so no run reaches another session's simulator.
+// and the iPad steps on e07-<purpose>-tablet (default e07-e2e-tablet; it boots while the flows run).
+// Every Maestro run names its simulator's UDID and a driver port of its own (one free port per
+// simulator for the whole run, or --driver-port for the whole session) before the command, so no
+// run reaches another session's simulator.
 // Needs a Release simulator build of the test variant with ADS_MODE=off and refuses any other
 // (findSimulatorBuild, the one build lookup e2e:ios and screenshots:ios share): with ads off ConsentPort asks neither Google's form nor Apple's tracking
 // prompt, so no system prompt covers a screen and no ad SDK opens a socket. While the layer-F
@@ -27,6 +28,7 @@ import { join } from 'node:path';
 
 import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
 import { mergeJunitReports } from '@e07/tooling/e2e/junit-merge.ts';
+import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import { flowCallsOf } from '@e07/tooling/e2e/save-benchmark-evidence.ts';
 import { recordSaveBenchmark, runPerfSteps } from '@e07/tooling/e2e/sim-perf-steps.ts';
 import {
@@ -74,6 +76,10 @@ type E2eRun = {
   /** simctl under the pinned Xcode, for every simulator of the run. */
   readonly simctl: Simctl;
   readonly udid: string;
+  /** The phone and the one driver port all its Maestro runs use (--driver-port, else one free port). */
+  readonly phone: MaestroDevice;
+  /** The iPad of step 4, booting since the run started (null: no step 4 in this run). */
+  readonly tablet: string | null;
   readonly app: AppInfo;
   readonly out: string;
   /** Starts the socket sampler on one more simulator of this run (the iPad of step 4). */
@@ -99,13 +105,23 @@ const reportArgs = (dir: string): string[] => [
   ...['--format', 'JUNIT', '--output', join(dir, 'junit.xml'), '--test-output-dir', dir],
 ];
 
-/** The simulator a run goes to, with the session's own driver port when it passed one. */
-const deviceOf = (cli: Cli, udid: string): MaestroDevice => ({ udid, driverPort: cli.driverPort });
+/** A simulator of the run with its one driver port: the session's own, else one free port. */
+async function deviceOf(cli: Cli, udid: string): Promise<MaestroDevice> {
+  return { udid, driverPort: cli.driverPort ?? (await freeDriverPort()) };
+}
+
+/** The a11y flows of step 4 (the Shell's and the game's). */
+function largeTextFlows(game: string): string[] {
+  return [
+    ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
+    ...globSync(`apps/${game}/e2e/flows/a11y/*.yaml`),
+  ].sort();
+}
 
 /** One `maestro test` call of the flows step, reported into `dir`; its exit code. */
 function testFlows(run: E2eRun, flows: readonly string[], dir: string): Promise<number> {
-  const { cli, udid, app } = run;
-  return runMaestro(deviceOf(cli, udid), [
+  const { cli, phone, app } = run;
+  return runMaestro(phone, [
     'test',
     ...flows,
     ...[...reportArgs(dir), '--exclude-tags', 'quarantine,a11y'],
@@ -150,18 +166,19 @@ async function runFlows(run: E2eRun): Promise<string[]> {
 /** Step 4: the a11y flows at 200 % text, in en and fa, on the phone and the iPad. */
 async function runLargeText(run: E2eRun): Promise<string[]> {
   const { cli, simctl, udid, app, out, watchSockets } = run;
-  const flows = [
-    ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
-    ...globSync(`apps/${cli.game}/e2e/flows/a11y/*.yaml`),
-  ].sort();
+  const flows = largeTextFlows(cli.game);
   if (flows.length === 0) {
     console.log('e2e:ios: large text: no flows/a11y/ flow to run');
     return [];
   }
   const failures: string[] = [];
   for (const device of [PHONE, TABLET]) {
-    const target = device.key === 'phone' ? udid : startSimulator(simctl, cli.tablet, device.model);
+    const target =
+      device.key === 'phone'
+        ? udid
+        : (run.tablet ?? startSimulator(simctl, cli.tablet, device.model));
     const sim = { simctl, udid: target };
+    const maestroDevice = device.key === 'phone' ? run.phone : await deviceOf(cli, target);
     if (device.key === 'tablet') {
       waitForBoot(sim);
       // The socket sampler follows one running copy of the app: stop the phone's first.
@@ -174,7 +191,7 @@ async function runLargeText(run: E2eRun): Promise<string[]> {
     for (const lang of LARGE_TEXT_LANGS) {
       const dir = join(out, 'large-text', `${device.key}-${lang}`);
       mkdirSync(dir, { recursive: true });
-      const status = await runMaestro(deviceOf(cli, target), [
+      const status = await runMaestro(maestroDevice, [
         'test',
         ...flows,
         ...[...reportArgs(dir), '--include-tags', 'a11y'],
@@ -188,8 +205,11 @@ async function runLargeText(run: E2eRun): Promise<string[]> {
   return failures;
 }
 
-/** Installs Maestro, prepares the phone simulator and empties reports/e2e/<game-id>/. */
-function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
+/**
+ * Installs Maestro, prepares the phone simulator, starts the iPad's boot for step 4 (it boots while
+ * the flows run; step 4 waits for it) and empties reports/e2e/<game-id>/.
+ */
+async function startRun(cli: Cli): Promise<Omit<E2eRun, 'watchSockets'>> {
   execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
     stdio: 'ignore',
   });
@@ -199,6 +219,8 @@ function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
   const app = readAppInfo(appPath);
   const simctl = e2eSimctl();
   const udid = startSimulator(simctl, cli.phone, PHONE.model);
+  const hasLargeText = !cli.isFlowsOnly && largeTextFlows(cli.game).length > 0;
+  const tablet = hasLargeText ? startSimulator(simctl, cli.tablet, TABLET.model) : null;
   const sim = { simctl, udid };
   waitForBoot(sim);
   prepareSimulator(sim, app, 'large');
@@ -207,7 +229,7 @@ function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   console.log(`e2e:ios: phone ${cli.phone} ${udid}; every Maestro run names this UDID`);
-  return { cli, simctl, udid, app, out };
+  return { cli, simctl, udid, phone: await deviceOf(cli, udid), tablet, app, out };
 }
 
 /**
@@ -242,8 +264,8 @@ async function main(): Promise<number> {
     );
     return 2;
   }
-  const started = startRun(cliOf(parsed.options));
-  const { cli, simctl, udid, app, out } = started;
+  const started = await startRun(cliOf(parsed.options));
+  const { cli, simctl, udid, phone, app, out } = started;
   // An empty network.txt is the evidence that the samplers ran through every step and saw nothing.
   const network = join(out, 'network.txt');
   writeFileSync(network, '');
@@ -255,8 +277,7 @@ async function main(): Promise<number> {
     failures.push(...(await runFlows(run)));
     if (!cli.isFlowsOnly) {
       const { game, isWritingBaseline } = cli;
-      const device = deviceOf(cli, udid);
-      const input = { game, device, simctl, app, out, isWritingBaseline };
+      const input = { game, device: phone, simctl, app, out, isWritingBaseline };
       failures.push(...(await runPerfSteps(input)));
       failures.push(...(await runLargeText(run)));
     }
