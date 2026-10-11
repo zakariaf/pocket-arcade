@@ -10,7 +10,18 @@ import { HomeView } from './home-view.tsx';
 
 import type { HomeModel } from './home-model.ts';
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
+import type * as WindowClassModule from '@e07/shell/ui/window-class.ts';
 
+/** The text size the screen sees: 1 normally, 2 for the 200 % text case. */
+const mockFontScale = { current: 1 };
+jest.mock('@e07/shell/ui/use-window-class.ts', () => {
+  const { classifyWindow } = jest.requireActual<typeof WindowClassModule>(
+    '@e07/shell/ui/window-class.ts',
+  );
+  return { useWindowClass: () => classifyWindow(402, 874, mockFontScale.current) };
+});
+
+const HIDDEN = { includeHiddenElements: true } as const;
 const LOGO: LogoArt = { layers: [{ role: 'p', d: 'M22 2.5H26V17.5H22Z' }] };
 
 const ALWAYS = [
@@ -137,6 +148,24 @@ describe('HomeView', () => {
     });
     expect(model.actions.onOpenDaily).toHaveBeenCalledTimes(2);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('puts the daily streak sticker under the date at 200 % text (spec 8.11)', async () => {
+    // Beside the sticker the title and date kept a third of the card at 200 % text and split
+    // inside their words ("Daily / chall / enge", "Satur / day,"; fa one letter a line).
+    mockFontScale.current = 2;
+    try {
+      await renderWithShell(<HomeView model={modelWith()} />);
+
+      const column = screen.getByTestId('home.daily-card.date', HIDDEN).parent;
+      expect(column).not.toBeNull();
+      expect(
+        within(column ?? screen.container).getByTestId('home.daily-card.streak', HIDDEN),
+      ).toBeOnTheScreen();
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    } finally {
+      mockFontScale.current = 1;
+    }
   });
 
   it('gives VoiceOver exactly two daily elements: the card and its Play key', async () => {

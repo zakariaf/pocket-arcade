@@ -192,7 +192,7 @@ The ground becomes the game's night colour, surfaces one step lighter; text is m
 
 ## Large text (200 %) and small or wide windows
 
-Text wraps, never truncates. When `useWindowClass().isLargeText`: the Home keys, two-button rows, the streak panels and 3-column stat grids stack vertically (`usePairLayout` does it); row values drop under their labels; level tiles grow in height (the grid stays 6 columns on phones); the hero key grows taller (min 80). The body scrolls instead of clipping.
+Text wraps, never truncates. When `useWindowClass().isLargeText`: the Home keys, two-button rows, the streak panels and 3-column stat grids stack vertically (`usePairLayout` does it); a row key (`Button isInRow`) takes a line of its own and a segmented control stacks its segments (the components do it); Home's daily streak sticker drops under the date; the S9 calendar tile grows with its text; row values drop under their labels; level tiles grow in height (the grid stays 6 columns on phones); the hero key grows taller (min 80). The body scrolls instead of clipping. The test of the rule: no word splits inside itself at 200 % (iOS wraps a word wider than its line letter by letter), so any part that keeps a word narrower than the word stacks or grows instead.
 
 ## Accessibility
 
