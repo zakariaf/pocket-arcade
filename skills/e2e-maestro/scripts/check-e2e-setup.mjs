@@ -48,8 +48,9 @@ const SPEC = {
     '                        --device <udid> and --driver-host-port <port> (maestroGlobalArgs from e2e/maestro-args.ts,',
     '                        a free port per run), passes the per-command --udid, or fixes the driver port: another',
     '                        session\'s simulator or XCTest driver can answer the run',
-    '  e2e-ads-off           run-e2e-ios.ts does not refuse a build that is not the test variant with ADS_MODE=off',
-    '                        (requireAdsOffTestBuild): only with ads off does no consent form or tracking prompt cover a',
+    '  e2e-ads-off           run-e2e-ios.ts or capture-screenshots-ios.ts does not refuse a build that is not the test',
+    '                        variant with ADS_MODE=off (requireAdsOffTestBuild, itself or through simulator.ts\'s',
+    '                        findSimulatorBuild, the one build lookup): only with ads off does no consent form or tracking prompt cover a',
     '                        screen and no ad SDK open a socket; or it runs admob-ads\' hand-run ads smoke flows',
     '                        (packages/shell/e2e/ads-smoke/, ADS_MODE=test builds only: check-flows checks them)',
     '  feedback-evidence     sim-perf-steps.ts does not write feedback.json from the perf log after the smoke flows',
@@ -206,12 +207,22 @@ function checkRunner(root, report) {
     ];
     for (const [pattern, message] of steps) if (!pattern.test(code)) report.problem({ file: runner, line: 1, rule: 'runner-steps', message, fix: "Restore run-e2e-ios.ts from this skill's template: flows, cold start, memory and large text run in one evidence run (--flows-only is for iterating)." });
     if (/ads-smoke/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the packages/shell/e2e/ads-smoke/ flows, which need an ADS_MODE=test build and a launch by xcrun simctl launch', fix: "Run only packages/shell/e2e/flows/*/*.yaml and apps/<game-id>/e2e/flows/*/*.yaml (this skill's template); admob-ads' ads smoke flows are run by hand (references/flows.md, \"The ads smoke flows\")." });
-    if (!/\brequireAdsOffTestBuild\s*\(/.test(code)) report.problem({ file: runner, line: 1, rule: 'e2e-ads-off', message: 'runs the flows on whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off', fix: "Restore startRun from this skill's template: requireAdsOffTestBuild(appPath, game) before the simulator is prepared (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket)." });
   }
   if (exists(root, simulator)) {
     const code = maskComments(read(root, simulator));
     const guard = /function\s+e2eBuildProblem\b[\s\S]*?\n\}/.exec(code)?.[0] ?? '';
     if (!/appVariant\s*===\s*['"]test['"]/.test(guard) || !/adsMode\s*===\s*['"]off['"]/.test(guard)) report.problem({ file: simulator, line: 1, rule: 'e2e-ads-off', message: "e2eBuildProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: "Restore e2eBuildProblem and requireAdsOffTestBuild from this skill's template (they read EXConstants.bundle/app.config of the build)." });
+  }
+  // Every E2E run and every capture refuses an ads-on build: each calls requireAdsOffTestBuild itself
+  // or gets its build from simulator.ts's findSimulatorBuild, which calls it (the one build lookup).
+  const lookup = exists(root, simulator) ? (/function\s+findSimulatorBuild\b[\s\S]*?\n\}/.exec(maskComments(read(root, simulator)))?.[0] ?? '') : '';
+  const isLookupGuarded = /\brequireAdsOffTestBuild\s*\(/.test(lookup);
+  const guardFix = "Get the build from findSimulatorBuild(game, appPath) of this skill's simulator.ts template, which calls requireAdsOffTestBuild before any simulator is touched (with ads off ConsentPort asks neither Google's form nor Apple's tracking prompt, and no ad SDK opens a socket).";
+  for (const [rel, what] of [[runner, 'runs the flows on'], ['packages/tooling/src/e2e/capture-screenshots-ios.ts', 'captures']]) {
+    if (!exists(root, rel)) continue;
+    const code = maskComments(read(root, rel));
+    const isGuarded = /\brequireAdsOffTestBuild\s*\(/.test(code) || (isLookupGuarded && /\bfindSimulatorBuild\s*\(/.test(code));
+    if (!isGuarded) report.problem({ file: rel, line: 1, rule: 'e2e-ads-off', message: `${what} whatever build it finds, without refusing one that is not the test variant with ADS_MODE=off`, fix: guardFix });
   }
   const perfSteps = 'packages/tooling/src/e2e/sim-perf-steps.ts';
   if (exists(root, perfSteps)) {

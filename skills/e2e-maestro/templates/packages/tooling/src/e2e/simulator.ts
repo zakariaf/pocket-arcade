@@ -174,6 +174,11 @@ export function appPidOn(udid: string, appName: string): string | null {
   }
 }
 
+/**
+ * The build every E2E run and every capture uses (--app-path, else the Release simulator build of
+ * the game), refused unless it is the test variant with ads off (requireAdsOffTestBuild): one
+ * lookup, so no path can run on an ads-on build.
+ */
 export function findSimulatorBuild(game: string, override: string | undefined): string {
   const built = simProductsDir(join('apps', game));
   const appPath = override ?? globSync(join(built, '*.app'))[0];
@@ -182,6 +187,7 @@ export function findSimulatorBuild(game: string, override: string | undefined): 
       `no simulator build in ${built}: run npm run build:ios:sim -- --app ${game} --variant test --ads off`,
     );
   }
+  requireAdsOffTestBuild(appPath, game);
   return appPath;
 }
 

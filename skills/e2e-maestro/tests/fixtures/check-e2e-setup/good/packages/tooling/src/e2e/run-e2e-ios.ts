@@ -6,7 +6,7 @@
 // simulator's UDID and a driver port of its own (a free one per run, or --driver-port for the whole
 // session) before the command, so no run reaches another session's simulator.
 // Needs a Release simulator build of the test variant with ADS_MODE=off and refuses any other
-// (requireAdsOffTestBuild): with ads off ConsentPort asks neither Google's form nor Apple's tracking
+// (findSimulatorBuild, the one build lookup e2e:ios and screenshots:ios share): with ads off ConsentPort asks neither Google's form nor Apple's tracking
 // prompt, so no system prompt covers a screen and no ad SDK opens a socket. While the layer-F
 // socket sampler watches the app's sockets on this run's own simulators (one sampler per simulator:
 // other sessions run the same app on theirs), on those dedicated simulators it runs:
@@ -34,7 +34,6 @@ import {
   findSimulatorBuild,
   prepareSimulator,
   readAppInfo,
-  requireAdsOffTestBuild,
   runMaestro,
   setAppearance,
   setTextSize,
@@ -165,9 +164,9 @@ function startRun(cli: Cli): Omit<E2eRun, 'watchSockets'> {
   execFileSync('bash', [join('packages', 'tooling', 'scripts', 'install-maestro.sh')], {
     stdio: 'ignore',
   });
+  // Ads off, always (findSimulatorBuild refuses any other build): no Google form, no tracking
+  // prompt and no ad socket in any E2E run.
   const appPath = findSimulatorBuild(cli.game, cli.appPath);
-  // Ads off, always: no Google form, no tracking prompt and no ad socket in any E2E run.
-  requireAdsOffTestBuild(appPath, cli.game);
   const app = readAppInfo(appPath);
   const simctl = e2eSimctl();
   const udid = startSimulator(simctl, cli.phone, PHONE.model);
