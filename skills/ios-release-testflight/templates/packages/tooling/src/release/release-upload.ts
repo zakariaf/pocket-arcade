@@ -8,10 +8,11 @@ import { loadAscCredentials } from '@e07/tooling/asc/asc-credentials.ts';
 import { createAscJwt } from '@e07/tooling/asc/asc-jwt.ts';
 import { setWhatsNew } from '@e07/tooling/asc/beta-notes.ts';
 import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
+import { sleepMs } from '@e07/tooling/ios/tool-step.ts';
 import { buildTag } from '@e07/tooling/release/build-number.ts';
 import { buildsPath, findDeliveryId, processingStateOf } from '@e07/tooling/release/processing.ts';
 import { uploadArgs, validateArgs } from '@e07/tooling/release/release-options.ts';
-import { runReleaseStep, sleepSeconds } from '@e07/tooling/release/release-runner.ts';
+import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
 import {
   purchaseCheckNeeded,
   summarizeChanges,
@@ -105,7 +106,7 @@ export async function waitUntilValid(
         `Release stopped: build status ${state}. Owner: forward Apple's email; fix, then rebuild with a new build number.`,
       );
     }
-    sleepSeconds(POLL_SECONDS);
+    sleepMs(POLL_SECONDS * 1000);
   }
   throw new Error(
     'processing did not reach VALID within 60 minutes: check the TestFlight tab in App Store Connect, then rerun with --resume processing',
