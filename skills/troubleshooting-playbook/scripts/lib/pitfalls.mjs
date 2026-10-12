@@ -1,8 +1,9 @@
 // pitfalls.mjs: known failures that can be seen in the repo before they happen. Each rule names
 // its catalogue id; check-catalogue.mjs proves every id exists. A rule returns findings
 // [{ file, line, message }] from the repo context { root, files, read(rel) }.
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
+import { dirname, join, normalize } from 'node:path';
 
 import { lineOf, matchGlob, maskComments } from '../check-lib.mjs';
 
@@ -117,7 +118,7 @@ export const PITFALLS = [
   { id: 'testing-coverage-missing-dir', detect: (ctx) => coverageKeys(ctx) },
   { id: 'testing-snap-ios-path', detect: (ctx) => snapIosGated(ctx) },
   { id: 'testing-maestro-ai-commands', detect: (ctx) => grep(ctx, FLOWS, /\b(assertWithAI|assertNoDefectsWithAI|extractTextWithAI)\b/, 'uploads screenshots to an LLM service (banned in flows)') },
-  { id: 'testing-maestro-airplane', detect: (ctx) => grep(ctx, FLOWS, /\bsetAirplaneMode\b/, 'setAirplaneMode does nothing on the iOS simulator; use the Simulate offline debug switch') },
+  { id: 'testing-maestro-airplane', detect: (ctx) => airplaneOutsideAndroid(ctx) },
   { id: 'testing-maestro-tags-flag', detect: (ctx) => [...grep(ctx, TOOLING, /(?<![\w-])--tags\b/, 'passes --tags, which Maestro 2.10 rejects; use --include-tags / --exclude-tags'), ...grep(ctx, ['package.json'], /maestro[^"\n]*(?<![\w-])--tags\b/, 'passes --tags, which Maestro 2.10 rejects; use --include-tags / --exclude-tags')] },
   // ---- release
   { id: 'release-app-store-method', detect: (ctx) => grep(ctx, ['packages/tooling/config/*.plist'], /<key>method<\/key>\s*<string>app-store<\/string>/, 'ExportOptions method app-store is deprecated; use app-store-connect') },
@@ -131,6 +132,10 @@ export const PITFALLS = [
   { id: 'deps-knip-skills-folder', detect: (ctx) => skillsNotIgnored(ctx, 'knip.json', /["']skills\/\*\*["']/, 'knip.json does not ignore skills/**: knip reads the skill templates and fixtures') },
   { id: 'testing-store-reset-after-each', detect: (ctx) => grep(ctx, CODE.filter((glob) => !glob.endsWith('index.ts')), /\bafterEach\(\s*(?:async\s*)?\(\)\s*=>\s*(?:\{(?:(?!\}\);)[\s\S])*?)?[\w.]*\.setState\(/, 'resets a store in afterEach, before React Testing Library unmounts: the update reaches a mounted subscriber outside act(); reset it in beforeEach') },
   { id: 'testing-duplicate-manual-mock', detect: (ctx) => skillsNotIgnored(ctx, 'jest.config.js', /\bskills\b/, "jest.config.js does not ignore skills/: Jest indexes the skills' __mocks__ (duplicate manual mock)") },
+  // ---- android
+  { id: 'android-native-folder-committed', detect: (ctx) => androidFolderCommitted(ctx) },
+  { id: 'android-play-store-image', detect: (ctx) => grep(ctx, [...TOOLING, 'package.json'], /google_apis_playstore/, 'names a Play Store system image (google_apis_playstore): adb root fails there, so the kill test and save inspection cannot run; pin system-images;android-35;google_apis;arm64-v8a', { tests: false }) },
+  { id: 'android-gradle-variant-env', detect: (ctx) => gradleWithoutVariant(ctx) },
   { id: 'gates-commit-msg-enobufs', detect: (ctx) => filesMatching(ctx, ['packages/tooling/**/check-commit-message.ts']).filter((rel) => /\bspawnSync\s*\(/.test(ctx.read(rel)) && !/\bmaxBuffer\b/.test(ctx.read(rel))).map((rel) => ({ file: rel, line: 1, message: 'spawnSync without maxBuffer: a commit that stages skills/ fails with ENOBUFS' })) },
 ];
 
@@ -181,4 +186,108 @@ function snapIosGated(ctx) {
   const paths = Array.isArray(gates?.gatedPaths) ? gates.gatedPaths : [];
   if (paths.some((glob) => /\.snap\.ios\b/.test(String(glob)))) return [];
   return [{ file: 'quality-gates.json', line: 0, message: 'gatedPaths has no **/*.golden.test.ts.snap.ios entry: golden updates written by jest-expo/ios pass without a Gate-Change trailer' }];
+}
+
+const indentOf = (line) => /^\s*/.exec(line)[0].length;
+const isQuiet = (line) => /^\s*(?:#.*)?$/.test(line);
+
+/** The end (exclusive) of the YAML block that starts at lines[start] with indent depth. */
+function blockEnd(lines, start, depth) {
+  let end = start + 1;
+  while (end < lines.length && (isQuiet(lines[end]) || indentOf(lines[end]) > depth)) end += 1;
+  return end;
+}
+
+/**
+ * The runFlow blocks of a Maestro flow guarded by `when: platform: Android`: the line numbers
+ * (1-based) inside them, and the sub-flow files they run (`file:`), relative to the flow.
+ */
+function androidBlocks(body) {
+  const lines = body.split('\n');
+  const guarded = new Set();
+  const subflows = [];
+  lines.forEach((line, start) => {
+    const head = /^(\s*)-\s+runFlow:\s*$/.exec(line);
+    if (!head) return;
+    const end = blockEnd(lines, start, head[1].length);
+    const block = lines.slice(start + 1, end);
+    const when = block.findIndex((item) => /^\s*when:/.test(item));
+    if (when < 0) return;
+    const keyDepth = indentOf(block[when]);
+    const condition = block.slice(when, blockEnd(block, when, keyDepth)).join('\n');
+    if (!/\bplatform:\s*['"]?android\b/i.test(condition)) return;
+    for (let index = start; index < end; index += 1) guarded.add(index + 1);
+    for (const item of block) {
+      const file = indentOf(item) === keyDepth ? /^\s*file:\s*['"]?([^'"#\s]+)/.exec(item) : null;
+      if (file) subflows.push(file[1]);
+    }
+  });
+  return { guarded, subflows };
+}
+
+/**
+ * setAirplaneMode is Android's offline tool but does nothing on the iOS simulator, so it may stand
+ * only in a runFlow guarded by `when: platform: Android`, or in a sub-flow only such a block runs.
+ */
+function airplaneOutsideAndroid(ctx) {
+  const flows = filesMatching(ctx, FLOWS);
+  const blocks = new Map(flows.map((rel) => [rel, androidBlocks(ctx.read(rel))]));
+  const androidOnly = new Set();
+  for (const [rel, { subflows }] of blocks) {
+    for (const file of subflows) androidOnly.add(normalize(join(dirname(rel), file)).split('\\').join('/'));
+  }
+  const findings = [];
+  for (const rel of flows.filter((flow) => !androidOnly.has(flow))) {
+    const body = ctx.read(rel);
+    for (const match of body.matchAll(/\bsetAirplaneMode\b/g)) {
+      const line = lineOf(body, match.index);
+      if (!blocks.get(rel).guarded.has(line)) findings.push({ file: rel, line, message: 'setAirplaneMode outside a runFlow guarded by when: platform: Android: it does nothing on the iOS simulator; on iOS use the Simulate offline debug switch' });
+    }
+  }
+  return findings;
+}
+
+/** Paths under apps/<app>/android/ that git tracks, when root is the top of a git work tree. */
+function trackedAndroidFiles(root) {
+  const top = spawnSync('git', ['-C', root, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' });
+  if (top.status !== 0) return [];
+  try {
+    if (realpathSync(top.stdout.trim()) !== realpathSync(root)) return [];
+  } catch {
+    return [];
+  }
+  const listed = spawnSync('git', ['-C', root, 'ls-files', '-z', '--', ':(glob)apps/*/android/**'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  return listed.status === 0 ? listed.stdout.split('\0').filter(Boolean) : [];
+}
+
+/** A .gitignore line that keeps every app's generated android/ out of git. */
+const ANDROID_IGNORE = /^\/?(?:apps\/\*{1,2}\/|\*\*\/)?android\/?(?:\*\*)?$/;
+
+/**
+ * android/ is prebuild output (Continuous Native Generation) and must stay out of git: reported
+ * once per app for tracked files, and for a root .gitignore that lets the next `git add` commit it.
+ */
+function androidFolderCommitted(ctx) {
+  const firstPerApp = new Map();
+  for (const rel of trackedAndroidFiles(ctx.root)) if (!firstPerApp.has(rel.split('/')[1])) firstPerApp.set(rel.split('/')[1], rel);
+  const findings = [...firstPerApp.values()].map((rel) => ({ file: rel, line: 0, message: 'is tracked by git: apps/<game>/android/ is regenerated by prebuild --clean on every build, so a committed copy drifts and hand edits vanish' }));
+  const ignore = join(ctx.root, '.gitignore');
+  const hasApps = ctx.files.some((rel) => matchGlob(rel, 'apps/*/app.config.ts'));
+  if (hasApps && existsSync(ignore) && !readFileSync(ignore, 'utf8').split('\n').some((line) => ANDROID_IGNORE.test(line.trim()))) {
+    findings.push({ file: '.gitignore', line: 1, message: 'does not ignore apps/*/android/: the next git add commits the prebuild output' });
+  }
+  return findings;
+}
+
+/** A tooling file that runs Gradle's release build must hand it the variant (Metro runs inside Gradle). */
+function gradleWithoutVariant(ctx) {
+  const findings = [];
+  for (const rel of filesMatching(ctx, TOOLING, { tests: false })) {
+    const body = text(ctx, rel);
+    const gradle = body.search(/\bgradlew\b/);
+    if (gradle < 0 || !/\b(?:assembleRelease|bundleRelease|GRADLE_RELEASE_ARGS|BUNDLE_RELEASE_ARGS)\b/.test(body)) continue;
+    if (/\bvariantEnv\b|\bEXPO_PUBLIC_APP_VARIANT\b/.test(body)) continue;
+    findings.push({ file: rel, line: lineOf(body, gradle), message: "runs Gradle's release build without the variant variables (variantEnv): Metro inside Gradle keys its cache and folds the test gate on EXPO_PUBLIC_APP_VARIANT, so the APK or AAB gets the 'test' fallback" });
+  }
+  return findings;
 }

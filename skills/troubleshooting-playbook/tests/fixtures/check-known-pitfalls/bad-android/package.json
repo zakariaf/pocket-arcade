@@ -1,0 +1,11 @@
+{
+  "name": "e07-games",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:android:emu": "node packages/tooling/src/build/build-android-emu.ts"
+  }
+}

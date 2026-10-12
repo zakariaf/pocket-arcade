@@ -78,3 +78,62 @@ An update to TestComponent inside a test was not wrapped in act(...).
 type-aware lint error that no longer matches the code
 FAIL x/Documents/SQLite/save.db [slot-missing] no save.db after the kill rounds
 Cleanup: RPC timeout. Apparently deadlocked. Aborting now.
+JDK 17 is not installed (found: /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home)
+Unsupported class file major version 65
+NDK 27.1.12297006 is missing from /Users/me/Library/Android/sdk/ndk
+CMake '3.22.1' was not found in SDK, PATH, or by cmake.dir property.
+missing /Users/me/Library/Android/sdk/system-images/android-35/google_apis/arm64-v8a
+Accept? (y/N):
+SDK location not found. Define a valid SDK location with an ANDROID_HOME environment variable or by setting the sdk.dir path in your project's local properties file
+hand edit in android folder vanished after prebuild
+uses-permission android.permission.SYSTEM_ALERT_WINDOW is not on the allowlist
+Kotlin 2.2.0 is not supported by Expo modules
+Could not resolve all files for configuration ':app:releaseRuntimeClasspath'.
+Execution failed for task ':app:mergeReleaseResources'.
+java.lang.OutOfMemoryError: Metaspace
+FAIL app-release.apk [test-code] store build contains SHELL_TEST_BUILD_ONLY 3 time(s): the debug menu and test hooks shipped
+FAIL app-release.apk [test-code] test build does not contain SHELL_TEST_BUILD_ONLY: it was bundled as a store build
+FAIL app-release.apk [constants-variant] extra.adsMode is "test", expected "off"
+FAIL AndroidManifest.xml [variant] meta-data E07AppVariant is missing, expected "store"
+adb: more than one device/emulator
+adb: device offline
+adbd cannot run as root in production builds
+PANIC: Missing emulator engine program for 'x86' CPU.
+emulator: ERROR: Running multiple emulators with the same AVD is an experimental feature.
+HVF error: HV_ERROR
+FAIL reports/android/line-siege/smoke-test-off.png [screenshot] 98.4% of the screen is #ffffff: the app crashed, is still loading or drew nothing
+java.lang.IllegalStateException: Missing application ID. AdMob publisher ID expected
+FAIL AndroidManifest.xml [ad-app-id] com.google.android.gms.ads.APPLICATION_ID is "ca-app-pub-3940256099942544~3347511713", expected the game's own AdMob Android app id
+titles drawn in Roboto not Lilita One on Android
+FAIL AndroidManifest.xml [supports-rtl] application android:supportsRtl is missing
+FAIL app-release.aab [signing] the bundle is signed with the Android debug key
+app/build.gradle has no release signingConfig line
+Keystore was tampered with, or password was incorrect
+Execution failed for task ':app:signReleaseBundle'.
+no upload key at ~/.android-keys/line-siege-upload.jks (owner step GP2)
+~/.android-keys/play-service-account.json has mode 644, expected 600
+release:android: releases come from main, this is epic/e18-android-port
+OWNER STEPS PENDING: G3, GP5
+versionCode 11 is not above line-siege/v1.0.0+12: a number is never reused or rolled back
+FAIL AndroidManifest.xml [target-sdk] targetSdkVersion is 35, below 36
+release:android: upload stopped: api-not-enabled (HTTP 403): Google Play Android Developer API has not been used in project 123 before or it is disabled.
+release:android: upload stopped: auth (HTTP 403): The caller does not have permission (permission or key of the service account) Not retried: send the owner this line and wait.
+release:android: upload stopped: app-not-found (HTTP 404): Package not found: io.applander.linesiege.
+release:android: upload stopped: version-code-used (HTTP 403): APK specifies a version code that has already been used.
+release:android: upload stopped: policy-declarations (HTTP 403): You must complete the declarations in App content.
+no store-AAB gate stamp for app-release.aab
+Play upload stopped on a network error timeout
+internal testers do not see the build on Google Play
+Premium shows store unavailable on a tester's phone
+ads never fill in the Play build
+live Android build requests ads with the iOS ad unit ids
+after a fullscreen ad on Android the game pauses and does not resume
+TalkBack reads the screen behind an open dialog overlay
+tilted Toybox parts render jagged edges on Android
+Settings store links open the App Store on Android
+check-perf-report fails cold-start on Android process start null
+audit:licenses never read the Android bundle packages
+SKIP package.json [script-target] npm run e2e:android: due at Android step 7: packages/tooling/src/e2e/run-e2e-android.ts not yet created
+OWNER STEPS PENDING line never names a GP step
+skill runs adb without -s and passes the library validator
+edge swipe on the board opens Pause on Android

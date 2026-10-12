@@ -1,0 +1,2 @@
+// Planted: a prebuild output that was committed (the self-test adds it to a throwaway git index).
+apply plugin: "com.android.application"

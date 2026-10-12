@@ -1,0 +1,17 @@
+appId: io.applander.linesiege
+tags: [offline]
+---
+- launchApp
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - setAirplaneMode: enabled
+# Planted: the iOS branch also uses airplane mode, which does nothing on the simulator.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - setAirplaneMode: enabled
+- assertVisible:
+    id: home.screen

@@ -1,0 +1,1 @@
+release:android: upload stopped: version-code-used (HTTP 403): APK specifies a version code that has already been used.

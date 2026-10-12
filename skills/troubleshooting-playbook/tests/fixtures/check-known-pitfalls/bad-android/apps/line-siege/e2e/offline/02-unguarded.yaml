@@ -1,0 +1,10 @@
+appId: io.applander.linesiege
+tags: [offline]
+---
+- launchApp
+# Planted: a runFlow without a platform guard runs on iOS too.
+- runFlow:
+    commands:
+      - setAirplaneMode: enabled
+- assertVisible:
+    id: home.screen

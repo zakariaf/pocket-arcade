@@ -103,7 +103,7 @@ Known unknowns: behaviour not yet verified, and decisions only the owner can mak
 
 | ID | Symptom | Cause | Fix | Status | Skill |
 |---|---|---|---|---|---|
-| `open-rngh-rtl-android` | Gestures in RTL on Android are unverified | Only iOS was probed; gesture coordinates are physical | Re-run the gesture tests and a play-test in RTL when Android starts | open | `board-gestures-and-input` |
+| `open-rngh-rtl-android` | Gestures in RTL on Android are unverified | Only iOS was probed; gesture coordinates are physical | Run the gesture tests and an RTL play-test on the e07-android emulator in the Android port's screens step (Android step 6); until then treat RTL gestures on Android as unproven | open | `board-gestures-and-input` |
 
 ## Parity
 

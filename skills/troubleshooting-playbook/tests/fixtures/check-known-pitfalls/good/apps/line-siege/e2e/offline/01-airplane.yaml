@@ -1,0 +1,22 @@
+appId: io.applander.linesiege
+tags: [offline]
+---
+- launchApp
+# Real airplane mode exists only on Android; iOS uses the test build's offline switch.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - setAirplaneMode: enabled
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: debug.simulate-offline
+- assertVisible:
+    id: home.screen
+- runFlow:
+    when:
+      platform: Android
+    file: ../subflows/airplane-off.yaml

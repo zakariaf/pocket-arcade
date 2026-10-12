@@ -28,6 +28,9 @@ Read this when `find-fix.mjs` printed `no-known-fix`, or when a catalogue fix di
 | Simulator build (`npm run build:ios:sim`) | `apps/<game>/build/logs/<step>.log` (prebuild, xcodebuild, install, launch); the screenshot in `reports/ios/<game>/` |
 | Release (`npm run release:ios`) | `apps/<game>/build/logs/<step>.log` (prebuild, archive, export, validate, upload); the message the run printed is already matched against the release failure table |
 | App at runtime on the simulator | `xcrun simctl spawn <udid> log show --last 2m --predicate 'process == "<Executable>"'`; in a test build the debug menu's error log |
+| Emulator build (`npm run build:android:emu`) | `apps/<game>/build/logs/<step>.log` (prebuild, gradle); install and launch errors in the run's own output; the screenshot in `reports/android/<game>/`; Gradle's first `* What went wrong:` block is the error line |
+| Play release (`npm run release:android`) | `apps/<game>/build/logs/<step>.log` (prebuild, bundle); the store-AAB gate and the upload print to the run's output, where a Play API stop prints one `release:android: <step> stopped: <reason> (HTTP <status>)` line, never retried |
+| App at runtime on the emulator | `adb -s <serial> logcat -d -s ReactNativeJS:V AndroidRuntime:E` (always the `emulator-<port>` serial of your own `e07-android-<purpose>` AVD) |
 | Jest | the first `●` block of the failing suite; run one file with `npx jest <path>` |
 | TypeScript | `npm run -s typecheck`; the error code (`TS2593`, `TS4111` ...) is the fastest lookup key |
 | ESLint | `npx eslint <file> --max-warnings 0`; the rule id in the last column |
@@ -48,7 +51,7 @@ Read this when `find-fix.mjs` printed `no-known-fix`, or when a catalogue fix di
 
 Stop, send one message (the step, the exact error line, the one action needed) and wait, whenever the fix needs:
 
-- a password, `sudo`, the keychain, an Apple or Google account, a console (App Store Connect, AdMob), an agreement, or the owner's device;
+- a password, `sudo`, the keychain, an Apple or Google account, a console (App Store Connect, the Play Console, AdMob), an agreement, or the owner's device;
 - a change to a quality gate, a limit, a tolerance or a golden file;
 - a product decision (anything in the open-risks reference marked owner);
 - anything outward-facing or irreversible: uploading, tagging, pushing, submitting, deleting data that is not scratch.
@@ -62,7 +65,7 @@ Add one object to `entries` in `assets/known-failures.json`. Never edit the rend
 | Field | Rule |
 |---|---|
 | `id` | `<area>-<what-failed>`, kebab-case, unique (for example `build-metro-cache-variant`) |
-| `area` | one of the keys in `areas` (build, release, deps, lint, testing, engine, i18n, services, state, parity, gates, perf, skills, open) |
+| `area` | one of the keys in `areas` (build, release, deps, lint, testing, engine, i18n, services, state, parity, gates, perf, skills, open, android) |
 | `topic` | a short group heading inside the area (reuse an existing topic when one fits) |
 | `symptom` | what you see, as close to the literal error text as possible, so a later search finds it |
 | `cause` | why it happens, in one sentence |
