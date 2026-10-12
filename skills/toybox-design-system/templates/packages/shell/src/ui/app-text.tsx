@@ -8,9 +8,8 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { useBalancedWrap } from './use-balanced-wrap.ts';
+import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
 
-import type { BalancedWrap } from './use-balanced-wrap.ts';
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
   LocalizedTextOptions,
@@ -194,47 +193,50 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
 type TextRoom = { readonly minHeight: number; readonly marginBottom: number };
 
 /** A text's vertical metrics: its pads (the guard's), its line height and its first box's surplus. */
-type LineBox = { readonly pads: number; readonly lineHeight: number; readonly surplus: number };
+export type LineBox = {
+  readonly pads: number;
+  readonly lineHeight: number;
+  readonly surplus: number;
+};
+
+/** One device pixel in points: the room's extra height and the tolerance of every box reading. */
+const pixel = (): number => 1 / PixelRatio.get();
 
 function roomOf(guard: OverflowGuard | null, box: LineBox, lines: number): TextRoom {
-  const pixel = 1 / PixelRatio.get();
   return {
-    minHeight: lines * box.lineHeight + box.pads + box.surplus + pixel,
-    marginBottom: (guard?.marginVertical ?? 0) - pixel,
+    minHeight: lines * box.lineHeight + box.pads + box.surplus + pixel(),
+    marginBottom: (guard?.marginVertical ?? 0) - pixel(),
   };
 }
 
 /**
- * How far a box iOS laid out reaches past its whole lines: a pixel at most, none when it is short
- * (the float32 frames far down a page) or within float noise of its lines.
+ * What a laid-out box says. surplus: how far it reaches past its whole lines, a pixel at most, none
+ * when it is short (the float32 frames far down a page) or within float noise of its lines (read
+ * from the first box, laid out before any room, whose own surplus is still 0). lines: the lines it
+ * holds, or null when the box is the room set on it (whole lines plus one pixel), which says nothing
+ * new. The line report is laid out in the same short box, so it lost the dropped line too (two
+ * lines of the ad chip came back as one); the box still measures their height, a hair short, and
+ * rounds to the true count.
  */
-function surplusOf(height: number, box: LineBox): number {
-  const pixel = 1 / PixelRatio.get();
-  if (box.lineHeight === 0) return 0;
-  const content = height - box.pads;
-  const surplus = content - Math.round(content / box.lineHeight) * box.lineHeight;
-  return surplus < pixel / 4 ? 0 : Math.min(surplus, pixel);
-}
-
-/**
- * The lines a laid-out box holds, or null when the box is the room set on it (whole lines plus one
- * pixel), which says nothing new. The line report is laid out in the same short box, so it lost
- * the dropped line too (two lines of the ad chip came back as one); the box still measures their
- * height, a hair short, and rounds to the true count.
- */
-function boxLinesOf(height: number, box: LineBox): number | null {
-  const pixel = 1 / PixelRatio.get();
-  if (box.lineHeight === 0) return null;
+export function fitOf(
+  height: number,
+  box: LineBox,
+): { readonly surplus: number; readonly lines: number | null } {
+  if (box.lineHeight === 0) return { surplus: 0, lines: null };
   const content = height - box.pads - box.surplus;
   const lines = Math.round(content / box.lineHeight);
-  return Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4 ? null : lines;
+  const rest = content - lines * box.lineHeight;
+  return {
+    surplus: rest < pixel() / 4 ? 0 : Math.min(rest, pixel()),
+    lines: Math.abs(rest - pixel()) < pixel() / 4 ? null : lines,
+  };
 }
 
 /**
  * What a text learned from its layouts: the reported lines, the box's lines when more, and the
  * surplus of its first box (laid out before any room: the room waits for a line count).
  */
-type Measured = {
+export type Measured = {
   readonly text: string;
   readonly lines: number;
   readonly boxLines: number;
@@ -242,6 +244,15 @@ type Measured = {
 };
 
 const freshMeasure = (text: string): Measured => ({ text, lines: 0, boxLines: 0, surplus: null });
+
+/**
+ * The lines the room holds: the reported lines (only those numberOfLines shows) or the box's
+ * lines when more. 0 while nothing has laid out: no room yet.
+ */
+export function countOf(measured: Measured, numberOfLines: number | undefined): number {
+  const reported = Math.min(measured.lines, numberOfLines ?? measured.lines);
+  return Math.max(reported, measured.boxLines);
+}
 
 /**
  * A box that holds more lines than the report becomes the count; a box no taller than the report
@@ -254,26 +265,29 @@ function afterBox(measured: Measured, held: number | null): Measured {
   return { ...measured, boxLines: held > measured.lines ? held : 0 };
 }
 
-/** A report that reaches the box's count has caught up with it: the report counts again. */
-function afterReport(measured: Measured, lines: number): Measured {
-  return { ...measured, lines, boxLines: lines >= measured.boxLines ? 0 : measured.boxLines };
+/**
+ * A report that reaches the box's count has caught up with it: the report counts again. A report
+ * that changes nothing keeps the stored state itself, so React skips the render.
+ */
+export function afterReport(measured: Measured, lines: number): Measured {
+  const boxLines = lines >= measured.boxLines ? 0 : measured.boxLines;
+  if (lines === measured.lines && boxLines === measured.boxLines) return measured;
+  return { ...measured, lines, boxLines };
 }
-
-type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
 
 type RoomParts = {
   readonly guard: OverflowGuard | null;
   readonly room: TextRoom | null;
-  readonly listeners: LineListeners;
+  /** The line count of each text layout. */
+  readonly onLines: (lines: number) => void;
   readonly onBoxLayout: (event: LayoutChangeEvent) => void;
 };
 
-/** The guard, the room once the line count is known, and the listeners that learn that count. */
+/** The guard, the room once the line count is known, and the layout handlers that learn it. */
 function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
-  const { text, onLineCount, onTextLines } = props;
+  const { text } = props;
   const [stored, setMeasured] = useState<Measured>(() => freshMeasure(text));
-  // A new text starts from nothing.
-  const measured = stored.text === text ? stored : freshMeasure(text);
+  const measured = forText(stored, text, freshMeasure);
   const guard = overflowGuardOf(localized);
   // iOS lays each line at the line height times the text size (200 % at most): a box and a room
   // counted in the 1x line read one 200 % line as two.
@@ -282,53 +296,21 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
     lineHeight: (localized.lineHeight ?? 0) * useTextScale(),
     surplus: measured.surplus ?? 0,
   };
-  const reported = Math.min(measured.lines, props.numberOfLines ?? measured.lines);
-  const count = Math.max(reported, measured.boxLines);
-  const forText = (previous: Measured): Measured =>
-    previous.text === text ? previous : freshMeasure(text);
+  const count = countOf(measured, props.numberOfLines);
   return {
     guard,
     room: count === 0 ? null : roomOf(guard, box, count),
-    listeners: {
-      onLineCount: (lines) => {
-        setMeasured((previous) => afterReport(forText(previous), lines));
-        onLineCount?.(lines);
-      },
-      ...(onTextLines === undefined ? {} : { onTextLines }),
+    onLines: (lines) => {
+      setMeasured((previous) => afterReport(forText(previous, text, freshMeasure), lines));
     },
     onBoxLayout: (event) => {
-      const { height } = event.nativeEvent.layout;
-      const held = boxLinesOf(height, box);
+      const fit = fitOf(event.nativeEvent.layout.height, box);
       setMeasured((previous) => {
-        const current = forText(previous);
-        const surplus = current.surplus ?? surplusOf(height, box);
-        return afterBox(current.surplus === surplus ? current : { ...current, surplus }, held);
+        const current = forText(previous, text, freshMeasure);
+        const surplus = current.surplus ?? fit.surplus;
+        return afterBox(current.surplus === surplus ? current : { ...current, surplus }, fit.lines);
       });
     },
-  };
-}
-
-function layoutProps(
-  balance: BalancedWrap,
-  listeners: LineListeners,
-  onBoxLayout: (event: LayoutChangeEvent) => void,
-): TextProps {
-  const { onLineCount, onTextLines } = listeners;
-  const onTextLayout: TextProps['onTextLayout'] =
-    onLineCount === undefined && onTextLines === undefined
-      ? balance.onTextLayout
-      : (event) => {
-          balance.onTextLayout?.(event);
-          const { lines } = event.nativeEvent;
-          onLineCount?.(lines.length);
-          onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
-        };
-  return {
-    onLayout: (event) => {
-      balance.onLayout?.(event);
-      onBoxLayout(event);
-    },
-    ...(onTextLayout === undefined ? {} : { onTextLayout }),
   };
 }
 
@@ -344,7 +326,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
   const shown = style.face === 'brand' ? isolate(props.text) : props.text;
-  const { guard, room, listeners, onBoxLayout } = useTextRoom(localized, props);
+  const { guard, room, onLines, onBoxLayout } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (
@@ -352,7 +334,17 @@ export function AppText(props: AppTextProps): ReactNode {
       style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={MAX_TEXT_SCALE}
       {...textProps(guard === null ? props : rest)}
-      {...layoutProps(balance, listeners, onBoxLayout)}
+      onLayout={(event) => {
+        balance.onLayout?.(event);
+        onBoxLayout(event);
+      }}
+      onTextLayout={(event) => {
+        balance.onTextLayout?.(event);
+        const { lines } = event.nativeEvent;
+        onLines(lines.length);
+        props.onLineCount?.(lines.length);
+        props.onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
+      }}
     >
       {shown}
     </Text>

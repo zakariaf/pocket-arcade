@@ -6,6 +6,7 @@ import {
   breaksWord,
   failedSearch,
   firstSearch,
+  forText,
   isStale,
   nextSearch,
 } from './use-balanced-wrap.ts';
@@ -184,5 +185,14 @@ describe('afterTextLayout (the state after a text layout)', () => {
       lineWidths: [120],
       search: null,
     });
+  });
+});
+
+describe('forText (state kept for one text)', () => {
+  it('keeps the stored state for its text and starts a new text from nothing', () => {
+    const stored = { text: 'Daily', lines: 2 };
+    const fresh = (text: string) => ({ text, lines: 0 });
+    expect(forText(stored, 'Daily', fresh)).toBe(stored);
+    expect(forText(stored, 'Täglich', fresh)).toStrictEqual({ text: 'Täglich', lines: 0 });
   });
 });
