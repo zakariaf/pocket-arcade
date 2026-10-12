@@ -1,0 +1,4 @@
+run: adb -s emulator-5554 root
+round 2: killed pid 4242 after 200 ms
+current: ok
+kill-test: 2 kill rounds checked, 0 problems

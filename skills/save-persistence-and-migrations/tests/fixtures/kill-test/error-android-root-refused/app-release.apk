@@ -1,0 +1,1 @@
+fake APK: the kill-test self-test passes this path to the fake adb, which never reads it

@@ -1,0 +1,4 @@
+run: adb -s emulator-5554 root
+run: adb -s emulator-5554 pull /data/data/io.applander.linesiege/files/SQLite/
+current: ok
+inspect-save: 1 databases checked, 0 problems

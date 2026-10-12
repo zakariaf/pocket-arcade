@@ -4,12 +4,17 @@
 // save.db copy: both slots must decode and save_quarantine must be empty. Without --step-ms one
 // calibration launch first measures when the first save write lands, and the rounds spread over
 // KILL_WINDOW_FACTOR times that (lib/kill-plan.mjs), so kills hit the writes however slow the start-up is. Needs Xcode's simctl and a Release (test variant) build installed or passed with --app.
+// With --platform android it does the same on an Android emulator over adb (lib/android-device.mjs):
+// `adb root` on a google_apis image, `kill -9` of the app's process on the device, then the app's
+// files/SQLite/ folder is pulled and inspected the same way.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --udid <id> --bundle-id <id> --game-id <id> [--app <path.app>] [--repo .]
+//      node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --platform android --serial <serial>|--create --bundle-id <package> --game-id <id> [--app <app-release.apk>] [--repo .]
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, statSync } from 'node:fs';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
+import { androidSaveDir, androidSdkDir, createAndroidDevice, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat, SYSTEM_IMAGE } from './lib/android-device.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, KILL_WINDOW_FACTOR, killStepMs, MIN_STEP_MS } from './lib/kill-plan.mjs';
 import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
@@ -17,15 +22,18 @@ import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib
 const SPEC = {
   name: 'kill-test',
   summary:
-    'Runs the save kill test on an iOS simulator: N launches killed with SIGKILL at growing delays during the startup writes, then the save.db health check (both slots decode, no quarantined rows). Never runs without --udid (or --create) and --bundle-id.',
-  usage: '--udid <id>|--create --bundle-id <id> --game-id <id> [--app <path.app>] [--repo <dir>] [--kills <n>] [--step-ms <ms>] [--dry-run]',
+    'Runs the save kill test on an iOS simulator (or, with --platform android, an Android emulator): N launches killed with SIGKILL at growing delays during the startup writes, then the save.db health check (both slots decode, no quarantined rows). Never runs without --udid/--serial (or --create) and --bundle-id.',
+  usage: '[--platform ios|android] --udid <id>|--serial <serial>|--create --bundle-id <id> --game-id <id> [--app <path.app|app-release.apk>] [--repo <dir>] [--kills <n>] [--step-ms <ms>] [--sdk <dir>] [--dry-run]',
   options: {
-    udid: { type: 'string', value: 'id', help: 'The simulator to use (a dedicated one: this test kills apps on it)' },
-    create: { type: 'boolean', help: 'Create a fresh simulator "e07-kill-test" and delete it afterwards' },
+    platform: { type: 'string', default: 'ios', value: 'ios|android', help: 'ios (simctl, the default) or android (adb on an emulator)' },
+    udid: { type: 'string', value: 'id', help: 'iOS: the simulator to use (a dedicated one: this test kills apps on it)' },
+    serial: { type: 'string', value: 'serial', help: 'Android: the running emulator to use, as `adb devices` lists it (a dedicated e07-android-* one on a google_apis image)' },
+    sdk: { type: 'string', value: 'dir', help: 'Android: the SDK folder (default: ANDROID_HOME, ANDROID_SDK_ROOT, ~/Library/Android/sdk)' },
+    create: { type: 'boolean', help: `Create a fresh simulator "e07-kill-test" (Android: the AVD "${KILL_TEST_AVD}" on ${SYSTEM_IMAGE}) and delete it afterwards` },
     'device-type': { type: 'string', default: 'iPhone 17', value: 'name', help: 'Device type for --create' },
     runtime: { type: 'string', default: 'com.apple.CoreSimulator.SimRuntime.iOS-26-5', value: 'id', help: 'Runtime for --create' },
-    app: { type: 'string', value: 'path', help: 'A built .app to install first (Release, test variant)' },
-    'bundle-id': { type: 'string', value: 'id', help: 'The app bundle id' },
+    app: { type: 'string', value: 'path', help: 'A built .app (Android: .apk) to install first (Release, test variant)' },
+    'bundle-id': { type: 'string', value: 'id', help: 'The app bundle id (Android: the package id, the same io.applander.<id>)' },
     'game-id': { type: 'string', value: 'id', help: 'The gameId the save must carry' },
     kills: { type: 'string', default: '12', value: 'n', help: 'How many launch-and-kill rounds' },
     'step-ms': { type: 'string', value: 'ms', help: `Delay step: round i kills after i x step ms (default: calibrated, ${KILL_WINDOW_FACTOR} x the first save write spread over the rounds, at least ${MIN_STEP_MS})` },
@@ -40,6 +48,13 @@ const SPEC = {
     'Pass criteria: every round launched and was killed, then inspect finds both slots ok and',
     'save_quarantine empty (rules from inspect-save: slot-missing, checksum, json, quarantine, ...).',
     'The mid-level kill (play N moves, kill, relaunch, assert the paused Game screen) is a Maestro flow.',
+    '',
+    'Android (--platform android): every adb call names the device (adb -s <serial>). --create makes the AVD',
+    `${KILL_TEST_AVD} on ${SYSTEM_IMAGE} (never a Play Store image: it refuses adb root), starts it`,
+    'headless on a free console port, and at the end kills it by serial and deletes the AVD. The run needs adb root',
+    `(proved with id -u = 0), kills with kill -9 on the device, and pulls ${androidSaveDir('<package>')}.`,
+    'Calibration polls the WAL with stat until its size or time changes after the launch. A missing SDK part stops',
+    'the run (exit 2) and names the sdkmanager package; nothing is downloaded.',
   ].join('\n'),
 };
 
@@ -146,6 +161,9 @@ function calibratedStep(udid, bundleId, { kills, givenStepMs, dryRun }, report) 
 
 run(async () => {
   const { options } = parseArgs(process.argv.slice(2), SPEC);
+  if (!['ios', 'android'].includes(options.platform)) fail(`--platform must be ios or android, not "${options.platform}"`);
+  if (options.platform === 'android') return runAndroid(options);
+  if (options.serial !== undefined || options.sdk !== undefined) fail('--serial and --sdk are for --platform android', 'On iOS pass --udid <simulator> or --create.');
   if (options['bundle-id'] === undefined || options['game-id'] === undefined) fail('--bundle-id and --game-id are required');
   if (options.udid === undefined && !options.create) fail('pass --udid <id> (a dedicated simulator) or --create');
   if (options.create && options.app === undefined) fail('--create makes an empty simulator: pass --app <path/to/App.app> too', 'Build the Release test-variant simulator app first, then pass its .app path.');
@@ -195,4 +213,114 @@ function inspectAppDatabase(DatabaseSync, database, options, report) {
   } finally {
     staged.cleanup();
   }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Android (--platform android): the same test over adb on an emulator
+// ---------------------------------------------------------------------------------------------
+
+/** Arguments of an Android run; each wrong combination stops with exit 2 before any device is touched. */
+function androidArgs(options) {
+  if (options['bundle-id'] === undefined || options['game-id'] === undefined) fail('--bundle-id (the Android package id) and --game-id are required');
+  if (options.udid !== undefined) fail('--udid is for iOS', 'On Android pass --serial <serial> (as adb devices lists it) or --create.');
+  if (options.serial === undefined && !options.create) fail('pass --serial <serial> (a dedicated emulator) or --create', `--create makes ${KILL_TEST_AVD} on ${SYSTEM_IMAGE} and deletes it afterwards.`);
+  if (options.serial !== undefined && options.create) fail('--serial and --create exclude each other');
+  if (options.app !== undefined && !options.app.endsWith('.apk')) fail(`--app must be an .apk on Android, not ${options.app}`, 'Pass the Release test-variant APK (apps/<game>/android/app/build/outputs/apk/release/app-release.apk).');
+  if (options.create && options.app === undefined) fail('--create makes an empty emulator: pass --app <app-release.apk> too', 'Build the Release test-variant APK first (npm run build:android:emu).');
+  if (options.app !== undefined && !options['dry-run'] && !existsSync(options.app)) fail(`no APK at ${options.app}`, 'Build the Release test-variant APK first (npm run build:android:emu).');
+  const kills = Number(options.kills);
+  const givenStepMs = options['step-ms'] === undefined ? undefined : Number(options['step-ms']);
+  if (!Number.isInteger(kills) || kills < 1 || (givenStepMs !== undefined && (!Number.isInteger(givenStepMs) || givenStepMs < 1))) fail('--kills and --step-ms must be positive whole numbers');
+  const sdk = androidSdkDir(options.sdk);
+  const missing = options['dry-run'] ? [] : missingSdkParts(sdk, { create: options.create });
+  if (missing.length > 0) fail(`the Android SDK at ${sdk} lacks ${missing.join(', ')}`, 'Install the missing parts with sdkmanager only after the owner (or the lead) agreed to the download; this script never downloads.');
+  return { packageId: options['bundle-id'], kills, givenStepMs, sdk, dryRun: options['dry-run'] };
+}
+
+/** Launches once without killing and returns the ms from launch to the first save write, or null. */
+function androidFirstWrite(device, packageId) {
+  const wal = `${androidSaveDir(packageId)}save.db-wal`;
+  const statWal = () => parseStat(device.adb(['shell', 'stat', '-c', "'%s %Y'", wal], { allowFail: true, quiet: true }));
+  device.adb(['shell', 'am', 'force-stop', packageId], { quiet: true });
+  const before = statWal();
+  const startedMs = Date.now();
+  device.adb(['shell', 'am', 'start', '-n', `${packageId}/.MainActivity`], { quiet: true });
+  while (Date.now() - startedMs < CALIBRATION_TIMEOUT_MS) {
+    if (isAndroidWalWrite(before, statWal())) return Date.now() - startedMs;
+    sleepMs(10);
+  }
+  return null;
+}
+
+function androidStep(device, { packageId, kills, givenStepMs, dryRun }, report) {
+  let firstWriteMs;
+  const stepMs = killStepMs({
+    kills,
+    stepMs: givenStepMs,
+    measureFirstWrite: () => {
+      if (dryRun) {
+        console.log(`would launch once and time the first save write (up to ${CALIBRATION_TIMEOUT_MS} ms), then spread ${kills} rounds over ${KILL_WINDOW_FACTOR} x it`);
+        return undefined;
+      }
+      firstWriteMs = androidFirstWrite(device, packageId);
+      return firstWriteMs;
+    },
+  });
+  if (stepMs === null) {
+    report.problem({ file: packageId, rule: 'slot-missing', message: `no save write within ${CALIBRATION_TIMEOUT_MS} ms of an undisturbed launch`, fix: 'The app never finished a first write: check boot order (hydrate before the first render) and that save.db opens in WAL mode.' });
+    return null;
+  }
+  if (firstWriteMs !== undefined) console.log(`calibration: first save write ${firstWriteMs} ms after launch; kill step ${stepMs} ms (rounds up to ${stepMs * kills} ms)`);
+  return stepMs;
+}
+
+/** Each round: force-stop (a cold start), then launch, wait and kill -9 in one device shell line. */
+function androidKillRounds(device, { packageId, kills, dryRun }, stepMs) {
+  for (let round = 1; round <= kills; round += 1) {
+    device.adb(['shell', 'am', 'force-stop', packageId]);
+    const delay = round * stepMs;
+    const output = device.adb(['shell', killRoundScript(packageId, delay)]);
+    if (dryRun) continue;
+    const pid = killedPid(output);
+    console.log(pid === null ? `round ${round}: the app had exited before ${delay} ms` : `round ${round}: killed pid ${pid} after ${delay} ms`);
+  }
+  device.adb(['shell', 'am', 'force-stop', packageId]);
+  // Let the file system settle after the last kill, then the folder is pulled and inspected.
+  if (!dryRun) sleepMs(500);
+}
+
+async function runAndroid(options) {
+  const args = androidArgs(options);
+  const DatabaseSync = await openSqlite();
+  if (DatabaseSync === null) fail('node:sqlite is not available in this Node', 'Use Node 22.13 or newer.');
+  const decode = await loadDecoder(options.repo, options['game-id']);
+  const device = createAndroidDevice({ sdk: args.sdk, dryRun: args.dryRun, fail });
+  const report = createReporter({ name: 'kill-test', json: options.json });
+  let isCreated = false;
+  try {
+    if (options.create) {
+      isCreated = true;
+      device.createAndBoot();
+    } else {
+      device.useSerial(options.serial);
+      device.waitForBoot();
+    }
+    device.becomeRoot();
+    if (options.app !== undefined) device.adb(['install', '-r', options.app]);
+    const stepMs = androidStep(device, args, report);
+    if (stepMs === null) return report.finish({ checked: 0, unit: 'kill rounds' });
+    androidKillRounds(device, args, stepMs);
+    const pulled = device.pullSaveDb(args.packageId);
+    // A plan proves nothing: never end a dry run with RESULT: PASS.
+    if (args.dryRun) fail(`dry run: printed the plan for ${args.kills} rounds, killed nothing`, 'Run again without --dry-run on a dedicated google_apis emulator (or --create) with the Release test APK.');
+    try {
+      inspectAppDatabase(DatabaseSync, pulled.database, { gameId: options['game-id'], decode }, report);
+    } finally {
+      pulled.cleanup();
+    }
+  } finally {
+    // An emulator and AVD this run created are always removed, also when a step failed.
+    if (isCreated) device.teardownCreated();
+  }
+  return report.finish({ checked: args.kills, unit: 'kill rounds' });
 }

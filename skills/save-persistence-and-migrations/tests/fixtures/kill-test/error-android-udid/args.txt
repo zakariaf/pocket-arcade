@@ -1,0 +1,1 @@
+--platform android --udid ABC --bundle-id io.applander.linesiege --game-id line-siege

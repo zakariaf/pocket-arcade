@@ -1,0 +1,4 @@
+adb root was refused on emulator-5556
+google_apis
+run: adb -s emulator-5556 emu kill
+run: avdmanager delete avd --name e07-android-kill-test

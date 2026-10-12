@@ -1,0 +1,1 @@
+--platform android needs --serial <serial> and --bundle-id <package>

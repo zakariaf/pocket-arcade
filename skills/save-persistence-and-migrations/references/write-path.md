@@ -16,12 +16,20 @@ How the document gets into `save.db` and back: tables and pragmas, the two drive
 - Write path and backup path
 - Resets
 - WAL checkpoint on background
+- Device backup (D5)
 - The error log
 - What check-save-layer reports
 
 ## Where the file lives
 
-`<app container>/Documents/SQLite/save.db` (plus `-wal` and `-shm`), expo-sqlite's default directory, which the device backup includes (decision D5). The language direction guard lives in `expo-sqlite/kv-store`'s own database, not in `save.db`, through `services/save/sqlite-kv-direction-guard-adapter.ts` (the RTL work owns it). The only other key-value use is test-only: e2e-maestro's `services/save/sqlite-kv-debug-store-adapter.ts` keeps the debug flags (`debug.overrides`, `debug.pending-screen`) across a direction reload or a kill, and is reached only through `TEST_ONLY`, so store builds never contain it. Nothing else may use the key-value store: player data goes into the save document.
+The same three files (`save.db` plus `-wal` and `-shm`) in expo-sqlite's default directory, which the device backup includes (decision D5, see "Device backup (D5)" below):
+
+| Platform | Folder | Where it comes from |
+|---|---|---|
+| iOS | `<app container>/Documents/SQLite/` | expo-sqlite's default directory in the app's Documents |
+| Android | `/data/data/<package>/files/SQLite/` (the app's files directory, `files/SQLite/`) | expo-sqlite 57.0.3's `SQLiteModule.kt`: `context.filesDir.canonicalPath + File.separator + "SQLite"` |
+
+The app code never builds either path: `openDatabaseSync('save.db')` resolves it on both platforms. Tools reach the Android folder only over `adb -s <serial>` with root on a `google_apis` emulator (`kill-test.mjs` and `inspect-save.mjs --platform android`); a Release app is not debuggable, so `run-as` cannot read it. The language direction guard lives in `expo-sqlite/kv-store`'s own database, not in `save.db`, through `services/save/sqlite-kv-direction-guard-adapter.ts` (the RTL work owns it). The only other key-value use is test-only: e2e-maestro's `services/save/sqlite-kv-debug-store-adapter.ts` keeps the debug flags (`debug.overrides`, `debug.pending-screen`) across a direction reload or a kill, and is reached only through `TEST_ONLY`, so store builds never contain it. Nothing else may use the key-value store: player data goes into the save document.
 
 ## Tables and pragmas
 
@@ -192,6 +200,16 @@ Both are written with `refreshBackup: true`, so a later backup restore cannot un
 ## WAL checkpoint on background
 
 `useCheckpointOnBackground(save)` listens to `AppState` and calls `save.checkpoint()` (`PRAGMA wal_checkpoint(TRUNCATE)`) when the app goes to the background, so a device backup taken while the app is suspended holds one self-contained `save.db` (verified: `save.db-wal` went from 4-16 KB to 0 bytes). The game host's own background handler saves the paused run first; the checkpoint only folds what is already committed. Call the hook once in the Shell's root component (`ShellApp` in `app/shell-app.tsx`); `check-save-layer` reports a missing listener, and a hook that `shell-app.tsx` never calls (`no-background-checkpoint`).
+
+## Device backup (D5)
+
+Spec 8.6: "The phone's own device backup (iCloud / Google device backup) may include the save, so progress follows a player to a new phone. That is the operating system's feature, not a network request from us (decision D5)." D5's answer is yes, so the save goes into the device backup on both platforms, and nothing else of ours goes online for it (N3).
+
+- **iOS:** files in the app's `Documents/` are in the iCloud and Finder backups by default; nothing to configure.
+- **Android (Auto Backup):** the manifest keeps `android:allowBackup="true"`, and the backup rules include exactly the save: in the `file` domain (the app's files directory), `SQLite/save.db`, `SQLite/save.db-wal` and `SQLite/save.db-shm`, nothing else. Both rule files say it, because Android reads one or the other by version: `backup_rules.xml` (`android:fullBackupContent`, Android 11 and older) and `data_extraction_rules.xml` (`android:dataExtractionRules`, Android 12 and newer, in its `<cloud-backup>` and its `<device-transfer>` section). An `<include>` list backs up only what it names, so the key-value store's own database and any cache stay out (the `error_log` table lives inside `save.db` and travels with it); the three files stay together, so a restore never pairs a `save.db` with another copy's WAL. The save is a few kilobytes, far under Auto Backup's 25 MB per app.
+- The rule is written by a config plugin of the Shell (`packages/shell/plugins/with-backup-rules.ts`, listed in `withShell`; the architecture-and-boundaries work owns it and its test), never by hand in `android/`, which prebuild regenerates.
+- The WAL checkpoint on background (above) is what makes a backed-up `save.db` complete on its own; the `-wal` and `-shm` in the rules cover a backup taken between a write and the next checkpoint.
+- A restored save is an ordinary save: it loads through the same load plan, so a damaged or newer one gets the same outcomes as any other.
 
 ## The error log
 

@@ -1,0 +1,4 @@
+would run: adb -s emulator-5554 root
+would run: adb -s emulator-5554 shell am force-stop io.applander.linesiege
+sleep 0.2
+dry run: printed the plan for 4 rounds

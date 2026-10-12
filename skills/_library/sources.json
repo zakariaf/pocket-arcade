@@ -12266,11 +12266,15 @@
         ]
       },
       "references/boot-and-kill-test.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
             "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           },
           {
             "path": "spec.txt",
@@ -12305,11 +12309,15 @@
         ]
       },
       "references/write-path.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
             "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           },
           {
             "path": "spec.txt",

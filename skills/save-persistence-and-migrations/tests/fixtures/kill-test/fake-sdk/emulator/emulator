@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+// Fake emulator for the kill-test self-test: `-list-avds` prints the scenario's AVDs; a start
+// (`-avd <name> -port <port> ...`) checks its arguments and exits at once (no device starts).
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const scenario = JSON.parse(readFileSync(join(process.cwd(), 'scenario.json'), 'utf8'));
+const argv = process.argv.slice(2);
+if (argv[0] === '-list-avds') {
+  for (const name of scenario.avds ?? []) process.stdout.write(`${name}\n`);
+  process.exit(0);
+}
+if (argv[0] !== '-avd' || !String(argv[1]).startsWith('e07-android-') || !argv.includes('-no-window')) {
+  process.stderr.write(`fake emulator: unexpected arguments: ${argv.join(' ')}\n`);
+  process.exit(1);
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+// Fake avdmanager for the kill-test self-test: accepts only `create avd` and `delete avd` of an
+// e07-android-* AVD on the google_apis image (never a Play Store image) and changes nothing.
+const argv = process.argv.slice(2);
+const name = argv[argv.indexOf('--name') + 1] ?? '';
+const image = argv.includes('--package') ? argv[argv.indexOf('--package') + 1] : '';
+const isCreate = argv[0] === 'create' && argv[1] === 'avd' && /;google_apis;/.test(image);
+const isDelete = argv[0] === 'delete' && argv[1] === 'avd';
+if (!name.startsWith('e07-android-') || !(isCreate || isDelete)) {
+  process.stderr.write(`fake avdmanager: unexpected arguments: ${argv.join(' ')}\n`);
+  process.exit(1);
+}
+process.stdout.write(isCreate ? `Created AVD '${name}'\n` : `AVD '${name}' deleted.\n`);
