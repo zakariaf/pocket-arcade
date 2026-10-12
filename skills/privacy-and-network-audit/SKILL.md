@@ -92,6 +92,7 @@ Proves the privacy promise of every game: our own code makes no network requests
 | `scripts/selftest.mjs` | Pins `PLACEHOLDERS`, then proves the five scripts on clean bases, pass cases and planted problems, and that every template is Prettier-formatted (needs the `npm ci` above) | After changing a script, a template or a fixture |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/prettierrc.json` | The repo's `.prettierrc.json` (synced from the library; do not edit here) | Read by `check-template-format.mjs` |
+| `assets/permission-allowlist.json` | The Android permissions a Pocket Arcade app may hold, each with who declares it (synced from the library, the same list android-emulator-build and android-release-play check; do not edit here) | Before an Android permission changes; change only with the owner |
 | `assets/shared.json` | Declares the shared files copied into this skill | When adding a shared file |
 | `tests/fixtures/` | Bases (`base-repo/`, `base-bundle/`, `base-pods/`, `base-app/`) and one `mutation.json` + `EXPECT.txt` (+ `ARGS.txt`) per case; `check-template-format/` mutates the real templates | When adding a rule |
 

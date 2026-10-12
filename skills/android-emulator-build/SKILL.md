@@ -78,7 +78,7 @@ Turns `apps/<game>` into a Release Android app with one command, `npm run build:
 | `scripts/lib/apk.mjs` | Zip reader (node:zlib) and the parsers of `aapt2 dump badging` and `dump xmltree` | Never by hand |
 | `scripts/lib/png.mjs` | PNG decoder and the one-colour measure used by the screenshot rule | Never by hand |
 | `scripts/lib/ship-placeholders.mjs` | The scaffold placeholders a ship gate refuses, with their owner steps (G3, G5, GP5) and the `OWNER STEPS PENDING` line (synced from the library; do not edit here) | Never by hand |
-| `assets/permission-allowlist.json` | The permissions a Pocket Arcade APK may hold, each with who declares it | When check-emu-app reports `permission` |
+| `assets/permission-allowlist.json` | The permissions a Pocket Arcade APK may hold, each with who declares it (synced from the library, the same list android-release-play and privacy-and-network-audit check; do not edit here) | When check-emu-app reports `permission` |
 | `scripts/selftest.mjs` | Proves both checkers pass good fixtures and catch every planted bug (APKs read through a fake aapt2) | After changing a checker, the allowlist or a template |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |

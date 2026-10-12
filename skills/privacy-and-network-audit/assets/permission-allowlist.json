@@ -1,0 +1,17 @@
+{
+  "$comment": "The Android permissions a Pocket Arcade app may hold (spec N3: only AdMob and Google Play Billing go online). One canonical list, synced into android-emulator-build (check-emu-app: the APK), android-release-play (check-store-aab: the store AAB) and privacy-and-network-audit (the Android config and merged-manifest audits), so the three gates never disagree. Each entry names who declares it. To be confirmed against the first real merged manifest (Android step 5); a new entry is a reviewed change with its source.",
+  "permissions": [
+    { "name": "android.permission.INTERNET", "source": "AdMob and Play Billing (the only network users, N3)" },
+    { "name": "android.permission.ACCESS_NETWORK_STATE", "source": "AdMob, UMP and WorkManager (pulled in by AdMob)" },
+    { "name": "com.google.android.gms.permission.AD_ID", "source": "AdMob's advertising id (the expo-tracking-transparency plugin adds it too)" },
+    { "name": "android.permission.ACCESS_ADSERVICES_AD_ID", "source": "AdMob, Privacy Sandbox" },
+    { "name": "android.permission.ACCESS_ADSERVICES_ATTRIBUTION", "source": "AdMob, Privacy Sandbox" },
+    { "name": "android.permission.ACCESS_ADSERVICES_TOPICS", "source": "AdMob, Privacy Sandbox" },
+    { "name": "android.permission.WAKE_LOCK", "source": "WorkManager (pulled in by AdMob)" },
+    { "name": "android.permission.RECEIVE_BOOT_COMPLETED", "source": "WorkManager (pulled in by AdMob)" },
+    { "name": "android.permission.FOREGROUND_SERVICE", "source": "WorkManager (pulled in by AdMob)" },
+    { "name": "com.android.vending.BILLING", "source": "Google Play Billing through expo-iap (Premium)" },
+    { "name": "android.permission.VIBRATE", "source": "expo-haptics (the vibration setting)" },
+    { "name": "<package>.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION", "source": "androidx.core, declared for the app's own package" }
+  ]
+}

@@ -75,7 +75,7 @@ Takes one commit of `apps/<game>` to a signed Android App Bundle on the Google P
 | `scripts/check-store-aab.mjs` | The store-AAB gate: signature, versionCode against the tags, package, test code, variant, AdMob id, owner placeholders, permissions, debuggable, target SDK, Shell; `--unsigned` for the rehearsal, `--stamp` after a PASS | Workflow step 6 and the definition of done |
 | `scripts/lib/aab.mjs` | Zip reader, the protobuf manifest decoder and the signature check | Never by hand |
 | `scripts/lib/ship-placeholders.mjs` | The placeholders a ship gate refuses, with their owner steps (G3, G5, GP5) and the `OWNER STEPS PENDING` line (synced from the library; do not edit here) | Never by hand |
-| `assets/permission-allowlist.json` | The permissions a Pocket Arcade bundle may hold, each with who declares it | When check-store-aab reports `permission` |
+| `assets/permission-allowlist.json` | The permissions a Pocket Arcade bundle may hold, each with who declares it (synced from the library, the same list android-emulator-build and privacy-and-network-audit check; do not edit here) | When check-store-aab reports `permission` |
 | `scripts/selftest.mjs` | Proves the stamp and both checkers on good fixtures and every planted bug (settings and key files planted in a temporary copy) | After changing a checker, the allowlist or a template |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |

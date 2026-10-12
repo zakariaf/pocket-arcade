@@ -1,5 +1,5 @@
 {
-  "$comment": "The Android permissions a Pocket Arcade app may hold (spec N3: only AdMob and Google Play Billing go online). check-store-aab fails any other uses-permission of a store AAB; android-emulator-build keeps the same list for the APK check. Each entry names who declares it. To be confirmed against the first real merged manifest (Android step 5); a new entry is a reviewed change with its source.",
+  "$comment": "The Android permissions a Pocket Arcade app may hold (spec N3: only AdMob and Google Play Billing go online). One canonical list, synced into android-emulator-build (check-emu-app: the APK), android-release-play (check-store-aab: the store AAB) and privacy-and-network-audit (the Android config and merged-manifest audits), so the three gates never disagree. Each entry names who declares it. To be confirmed against the first real merged manifest (Android step 5); a new entry is a reviewed change with its source.",
   "permissions": [
     { "name": "android.permission.INTERNET", "source": "AdMob and Play Billing (the only network users, N3)" },
     { "name": "android.permission.ACCESS_NETWORK_STATE", "source": "AdMob, UMP and WorkManager (pulled in by AdMob)" },

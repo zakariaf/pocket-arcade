@@ -1,4 +1,5 @@
 [
   { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
-  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" }
+  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
+  { "from": "android/permission-allowlist.json", "to": "assets/permission-allowlist.json" }
 ]
