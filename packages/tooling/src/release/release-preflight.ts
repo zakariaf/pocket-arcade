@@ -1,6 +1,7 @@
 // packages/tooling/src/release/release-preflight.ts
 // Release steps 0-2: what must be true before anything is built or uploaded, the app's identity
-// from the resolved Expo config, and the build-number bump commit.
+// from the resolved Expo config, the What to Test text (checked here, so an over-long --notes stops
+// the run before anything else), and the build-number bump commit.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -25,6 +26,7 @@ import {
   REVIEW_SHEET,
   translationReviewLines,
 } from '@e07/tooling/release/translation-review.ts';
+import { releaseWhatToTest, type BuildHistory } from '@e07/tooling/release/what-to-test.ts';
 
 export type AppIdentity = {
   readonly name: string;
@@ -35,6 +37,28 @@ export type AppIdentity = {
 
 function git(args: readonly string[]): string {
   return execFileSync('git', args, { encoding: 'utf8' }).trim();
+}
+
+function gitLines(args: readonly string[]): string[] {
+  return git(args)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '');
+}
+
+/** What changed for this game since its previous build tag ('' = none: the first build). */
+function changesSincePreviousBuild(game: string): BuildHistory {
+  const previousTag = gitLines(['tag', '--list', `${game}/v*+*`, '--sort=-creatordate'])[0] ?? '';
+  if (previousTag === '') {
+    return { previousTag, subjects: [], files: [] };
+  }
+  // Only what ships in this app: its own folder and the shared packages.
+  const paths = ['--', `apps/${game}`, 'packages/shell', 'packages/game-kit'];
+  const range = `${previousTag}..HEAD`;
+  const subjects = gitLines(['log', '--format=%s', range, ...paths]).filter((subject) =>
+    /^(feat|fix)(\(|:)/.test(subject),
+  );
+  return { previousTag, subjects, files: gitLines(['diff', '--name-only', range]) };
 }
 
 function assertCleanMain(): void {
@@ -131,6 +155,8 @@ export type Preflight = {
   readonly ids: AscIds;
   readonly keyFile: string;
   readonly app: AppIdentity;
+  /** The tester text step 11 sets, built and length-checked before anything else happens. */
+  readonly whatToTest: string;
 };
 
 /** A partial Shell (shell-slice.json at the repo root) is a build-time state: it never ships. */
@@ -152,13 +178,22 @@ export async function preflight(
   const ids = readAscIds(context.env);
   const keyFile = assertKeyFile(ids);
   assertKeychainUnlocked();
-  runReleaseStep('verify', { file: 'npm', args: ['run', '-s', 'verify'], atRoot: true }, context);
   const identity = readIdentity(context);
   if (identity.bundleId !== appIdOf(options.game)) {
     throw new Error(
       `the bundle id is ${identity.bundleId}, not ${appIdOf(options.game)}: every game ships as io.applander.<game id without hyphens> (owner decision O4); fix game.config.ts bundleId`,
     );
   }
+  const whatToTest = releaseWhatToTest({
+    gameName: identity.name,
+    version: identity.version,
+    buildNumber: plannedBuildNumber(options, context),
+    appVariant: options.variant.appVariant,
+    notes: options.notes,
+    knownIssues: options.knownIssues,
+    history: changesSincePreviousBuild(options.game),
+  });
+  runReleaseStep('verify', { file: 'npm', args: ['run', '-s', 'verify'], atRoot: true }, context);
   if (options.variant.appVariant === 'store') {
     reportTranslationsToReview(context);
     const tags = git(['tag', '--list', `${options.game}/v*`]).split('\n');
@@ -169,7 +204,25 @@ export async function preflight(
     }
   }
   const appleAppId = await lookUpAppleAppId(identity.bundleId, context.env);
-  return { ids, keyFile, app: { ...identity, appleAppId } };
+  return { ids, keyFile, app: { ...identity, appleAppId }, whatToTest };
+}
+
+/** The resumed run's committed number (checked, never guessed). */
+function resumedBuildNumber(options: ReleaseOptions, gameConfigSource: string): number {
+  return resumableBuildNumber({
+    game: options.game,
+    gameConfigSource,
+    headSubject: git(['log', '-1', '--format=%s']),
+    tags: git(['tag', '--list', `${options.game}/v*`]).split('\n'),
+  });
+}
+
+/** The build number this run will use: the next one, or with --resume the stopped run's. */
+export function plannedBuildNumber(options: ReleaseOptions, context: ReleaseContext): number {
+  const source = readFileSync(join(context.appDir, 'game.config.ts'), 'utf8');
+  return options.resume === null
+    ? bumpBuildNumber(source).next
+    : resumedBuildNumber(options, source);
 }
 
 /**
@@ -179,12 +232,7 @@ export async function preflight(
 export function bumpAndCommit(options: ReleaseOptions, context: ReleaseContext): number {
   const file = join(context.appDir, 'game.config.ts');
   if (options.resume !== null) {
-    const reused = resumableBuildNumber({
-      game: options.game,
-      gameConfigSource: readFileSync(file, 'utf8'),
-      headSubject: git(['log', '-1', '--format=%s']),
-      tags: git(['tag', '--list', `${options.game}/v*`]).split('\n'),
-    });
+    const reused = resumedBuildNumber(options, readFileSync(file, 'utf8'));
     console.log(`release:ios: resuming (${options.resume}) with build ${String(reused)}`);
     return reused;
   }

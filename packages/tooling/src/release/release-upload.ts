@@ -18,11 +18,6 @@ import {
 import { findDeliveryId } from '@e07/tooling/release/processing.ts';
 import { uploadArgs, validateArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
-import {
-  purchaseCheckNeeded,
-  summarizeChanges,
-  whatToTest,
-} from '@e07/tooling/release/what-to-test.ts';
 
 import type { AscCredentials } from '@e07/tooling/asc/asc-jwt.ts';
 import type { ReleaseOptions } from '@e07/tooling/release/release-options.ts';
@@ -122,33 +117,10 @@ export async function waitUntilValid(
   });
 }
 
-function gitLines(args: readonly string[]): string[] {
-  return execFileSync('git', args, { encoding: 'utf8' })
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '');
-}
-
-/** What changed for this game since its previous build tag ('' = none: the first build). */
-function changesSincePreviousBuild(game: string): {
-  readonly previousTag: string;
-  readonly subjects: readonly string[];
-  readonly files: readonly string[];
-} {
-  const previousTag = gitLines(['tag', '--list', `${game}/v*+*`, '--sort=-creatordate'])[0] ?? '';
-  if (previousTag === '') {
-    return { previousTag, subjects: [], files: [] };
-  }
-  // Only what ships in this app: its own folder and the shared packages.
-  const paths = ['--', `apps/${game}`, 'packages/shell', 'packages/game-kit'];
-  const range = `${previousTag}..HEAD`;
-  const subjects = gitLines(['log', '--format=%s', range, ...paths]).filter((subject) =>
-    /^(feat|fix)(\(|:)/.test(subject),
-  );
-  return { previousTag, subjects, files: gitLines(['diff', '--name-only', range]) };
-}
-
-/** Steps 11-12: What to Test, then the per-build tag. Returns the tester text for the report. */
+/**
+ * Steps 11-12: What to Test (the text preflight built and checked), then the per-build tag.
+ * Returns the tester text for the report; any failure here keeps the resume line.
+ */
 export type TagInput = {
   readonly options: ReleaseOptions;
   readonly pre: Preflight;
@@ -158,30 +130,14 @@ export type TagInput = {
 
 export async function describeAndTag(input: TagInput, env: NodeJS.ProcessEnv): Promise<string> {
   const { options, pre, buildNumber, restId } = input;
-  const history = changesSincePreviousBuild(options.game);
-  const isFirstBuild = history.previousTag === '';
-  const text = whatToTest({
-    gameName: pre.app.name,
-    version: pre.app.version,
-    buildNumber,
-    appVariant: options.variant.appVariant,
-    changes: summarizeChanges(history.subjects, isFirstBuild),
-    focus: options.notes,
-    knownIssues: options.knownIssues,
-    needsPurchaseTest: purchaseCheckNeeded({
-      isFirstBuild,
-      changedFiles: history.files,
-      notes: options.notes,
-    }),
-  });
   try {
-    await setWhatsNew(token(env), restId, text);
+    await setWhatsNew(token(env), restId, pre.whatToTest);
+    execFileSync('git', ['tag', buildTag(options.game, pre.app.version, buildNumber)]);
   } catch (error: unknown) {
     const reason = error instanceof Error ? error.message : String(error);
     throw new Error(
       `${reason}\nResume: the build is VALID; rerun with --resume processing to set What to Test and tag it.`,
     );
   }
-  execFileSync('git', ['tag', buildTag(options.game, pre.app.version, buildNumber)]);
-  return text;
+  return pre.whatToTest;
 }
