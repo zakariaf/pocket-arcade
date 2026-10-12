@@ -12817,11 +12817,11 @@
     },
     "skill-maintenance": {
       "examples/new-skill-walkthrough.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           },
           {
             "path": "skills/_library/check-staleness.mjs",
@@ -12830,54 +12830,54 @@
         ]
       },
       "references/authoring-standard.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/AUTHORING-STANDARD.md",
-            "sha256": "de5ded169996c1351a04d37dc552ec967a20d8a8ffce0e6d89ba7eba49ded097"
+            "sha256": "e7b468a6257520f847883a0a70be147c0f9666fdcdf0b3b64f6603183507d20f"
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           },
           {
             "path": "skills/_library/validate-skills.mjs",
-            "sha256": "d6c712d7792a117f4c90b78e726e934472da0769dc4ac647add1f3f5bde3b1da"
+            "sha256": "a19cce5506551cb77b12824451c92f5d2f10313a0ea34dbb8bb14991a3879461"
           }
         ]
       },
       "references/descriptions-and-routing.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/AUTHORING-STANDARD.md",
-            "sha256": "de5ded169996c1351a04d37dc552ec967a20d8a8ffce0e6d89ba7eba49ded097"
+            "sha256": "e7b468a6257520f847883a0a70be147c0f9666fdcdf0b3b64f6603183507d20f"
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           }
         ]
       },
       "references/how-skills-load.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/AUTHORING-STANDARD.md",
-            "sha256": "de5ded169996c1351a04d37dc552ec967a20d8a8ffce0e6d89ba7eba49ded097"
+            "sha256": "e7b468a6257520f847883a0a70be147c0f9666fdcdf0b3b64f6603183507d20f"
           },
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           }
         ]
       },
       "references/library-commands.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           },
           {
             "path": "skills/_library/check-staleness.mjs",
@@ -12910,11 +12910,11 @@
         ]
       },
       "references/writing-scripts.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/README.md",
-            "sha256": "327634900d172498607ca5df19cdc11d15510be3208c5c52d8a8d766e798314c"
+            "sha256": "c167dfd51fe8bdff4ca066a5b2363111776b6824ed383e05ee9da638709c2645"
           },
           {
             "path": "skills/_library/shared/scripts/check-lib.mjs",
@@ -12926,16 +12926,16 @@
           },
           {
             "path": "skills/_library/validate-skills.mjs",
-            "sha256": "d6c712d7792a117f4c90b78e726e934472da0769dc4ac647add1f3f5bde3b1da"
+            "sha256": "a19cce5506551cb77b12824451c92f5d2f10313a0ea34dbb8bb14991a3879461"
           }
         ]
       },
       "scripts/new-skill.mjs": {
-        "recorded": "2026-09-30",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "skills/_library/validate-skills.mjs",
-            "sha256": "d6c712d7792a117f4c90b78e726e934472da0769dc4ac647add1f3f5bde3b1da"
+            "sha256": "a19cce5506551cb77b12824451c92f5d2f10313a0ea34dbb8bb14991a3879461"
           }
         ]
       },

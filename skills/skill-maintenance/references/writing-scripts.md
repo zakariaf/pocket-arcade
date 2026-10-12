@@ -133,6 +133,6 @@ The validator scans every skill file (scripts too) for project paths. A checker 
 - [ ] Rules that a partial Shell or a later build step puts out of reach print `SKIP` lines (`sliceSkipReason`, `dueSkipReason`), with a fixture for the SKIP and one for the strict case once the target exists; `NOT APPLICABLE` only for a repo fact, never for a missing target.
 - [ ] `node:` built-ins only (or exact pins loaded with `await import()`).
 - [ ] The self-test has a good fixture and one bad fixture per rule, each EXPECT naming the rule id; passing outcomes worth pinning are `pass-*` fixtures and bad input is an `error-*` fixture.
-- [ ] Every maestro, simctl and xcodebuild call the script makes or prints names its simulator (`--device <udid>`, a UDID, `-destination id=<udid>`).
+- [ ] Every maestro, simctl, xcodebuild, adb and emulator call the script makes or prints names its device (`--device <udid>`, a UDID, `-destination id=<udid>`, `-s <serial>` before the adb command, `-avd e07-android-<purpose>`), and none runs adb kill-server.
 - [ ] The script ran on a real verified workspace with no false findings.
 - [ ] `node skills/_library/validate-skills.mjs <skill>` and `node <skill>/scripts/selftest.mjs` print `RESULT: PASS`.
