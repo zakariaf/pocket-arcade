@@ -32,7 +32,8 @@ function viewFor(model: ResultModel): ReactNode {
  * S7 as an overlay inside Game (never a route): it covers the finished board completely, and
  * VoiceOver stays inside it (accessibilityViewIsModal) instead of wandering onto the board. The
  * parity launch marker comes first (it draws nothing outside a parity capture), because the modal
- * layer hides the parity root's own marker from the capture's hierarchy.
+ * layer hides the parity root's own marker from the capture's hierarchy. The modal flag is iOS-only;
+ * on Android GameLayout hides the board behind this overlay from TalkBack instead.
  */
 export function ResultOverlay({ model }: ResultOverlayProps): ReactNode {
   return (

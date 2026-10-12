@@ -1,7 +1,9 @@
 // packages/shell/src/app/dialog-context.tsx
 // The S14 dialog host's state: ShellApp wraps the navigator in DialogProvider, which draws the one
-// open dialog after it (above every screen). A screen model opens one with useOpenDialog().
+// open dialog after it (above every screen) and hides the screens from TalkBack while it is open.
+// A screen model opens one with useOpenDialog().
 import { createContext, use, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { DialogHost } from '@e07/shell/screens/dialogs/dialog-host.tsx';
@@ -13,13 +15,25 @@ const DialogContext = createContext<((request: DialogRequest) => void) | null>(n
 
 export type DialogProviderProps = { readonly children: ReactNode };
 
-/** Holds at most one open dialog (plain React state: never persisted, never a route). */
+const styles = StyleSheet.create({ fill: { flex: 1 } });
+
+/**
+ * Holds at most one open dialog (plain React state: never persisted, never a route). While one is
+ * open, the screens behind it are hidden from TalkBack: the Scrim's accessibilityViewIsModal is
+ * iOS-only, and on Android only what lies behind can be hidden. The wrapper stays and only its
+ * value changes, so the navigator never remounts.
+ */
 export function DialogProvider({ children }: DialogProviderProps): ReactNode {
   const [request, setRequest] = useState<DialogRequest | null>(null);
   const isReducedMotion = useReduceMotion();
   return (
     <DialogContext value={setRequest}>
-      {children}
+      <View
+        style={styles.fill}
+        importantForAccessibility={request === null ? 'auto' : 'no-hide-descendants'}
+      >
+        {children}
+      </View>
       <DialogHost
         request={request}
         onClose={() => {

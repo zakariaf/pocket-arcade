@@ -11,6 +11,10 @@ const TEMPLATES = fileURLToPath(new URL('../templates', import.meta.url));
 /** Planted bugs laid over the templates (the fixture's files replace the template files of the same path). */
 const OVER_TEMPLATES = {
   'bad-overlay-not-modal': ['--screen', 'S7'],
+  // The Android half: the frame behind Pause and Result, and the screens behind a dialog, stay
+  // reachable by TalkBack (no importantForAccessibility trap in game-layout.tsx / dialog-context.tsx).
+  'bad-overlay-not-trapped': ['--screen', 'S7'],
+  'bad-dialog-not-trapped': ['--screen', 'S14'],
   'bad-game-half-wired': ['--screen', 'S5'],
   'bad-daily-card-not-pressable': ['--screen', 'S4'],
   'bad-play-inside-opener': ['--screen', 'S4'],

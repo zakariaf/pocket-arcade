@@ -35,7 +35,7 @@ One state.
 
 `AboutModel` (in `about-view.tsx`): `logo` (`useGameHost().logo`; `LogoTile` needs it), `gameName` and `tagline` (`gameMessageText(t, { id: host.nameId })` and `{ id: host.taglineId }`), `versionText`, `emailText`, `isReducedMotion`, `onBack`, `onContact` (the mail app, no network), `onOpenLicences`. Both lists have no tab, so they are the Toybox `List` (not `ListGroup`); fact rows have no `end`, the two link rows `end="chevron"`.
 
-The template `use-about-model.ts` (with its test) builds it: `versionText` from `readVersionText()` ("1.0.0 (8)": expo-constants' version and `ios.buildNumber`), `emailText` from `useGameExtra().links.supportEmail`, `onContact` from `useSettingsLinks(versionText)` (the mail app with the address and the version), `onOpenLicences` = `navigate('Licences')`.
+The template `use-about-model.ts` (with its test) builds it: `versionText` from `readVersionText()` ("1.0.0 (8)": expo-constants' version and `ios.buildNumber`, or `android.versionCode` on Android), `emailText` from `useGameExtra().links.supportEmail`, `onContact` from `useSettingsLinks(versionText)` (the mail app with the address and the version), `onOpenLicences` = `navigate('Licences')`.
 
 ## Templates
 

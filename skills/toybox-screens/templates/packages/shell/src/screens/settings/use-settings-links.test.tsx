@@ -1,12 +1,21 @@
 // packages/shell/src/screens/settings/use-settings-links.test.tsx
-import { renderHook } from '@testing-library/react-native';
-import { Linking } from 'react-native';
+import { act, renderHook } from '@testing-library/react-native';
+import { Linking, Platform } from 'react-native';
 
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
+import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { createShellWrapper } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_GAME_EXTRA } from '@e07/shell/testing/test-game-extra.ts';
 
 import { useSettingsLinks } from './use-settings-links.ts';
+
+jest.mock(
+  'expo-constants',
+  () =>
+    jest.requireActual<Record<string, unknown>>('@e07/shell/testing/test-game-extra.ts')[
+      'TEST_EXPO_CONSTANTS'
+    ],
+);
 
 let mockAppStoreId: string | undefined;
 jest.mock('@e07/shell/app/use-game-extra.ts', () => ({
@@ -43,5 +52,31 @@ describe('useSettingsLinks', () => {
     const { links: handlers } = await links(undefined);
     handlers.onRate();
     expect(openUrl).not.toHaveBeenCalled();
+  });
+
+  it('hands Rate to Google Play on Android, on the web when there is no Play Store (spec S11)', async () => {
+    // Spec S11: "Rate this game: opens the store page. The store app handles this; the game
+    // itself makes no request." Android's store is Google Play, known by the build's package.
+    jest.replaceProperty(Platform, 'OS', 'android');
+    const openUrl = jest
+      .spyOn(Linking, 'openURL')
+      .mockRejectedValueOnce(new Error('no app for market'))
+      .mockResolvedValueOnce(undefined);
+    const { links: handlers, errorLog } = await links(undefined);
+    await act(async () => {
+      handlers.onRate();
+      await flushMicrotasks();
+    });
+
+    expect(
+      openUrl.mock.calls.map(([url]) => {
+        const { protocol, host, search } = new URL(url);
+        return [protocol, host, search];
+      }),
+    ).toStrictEqual([
+      ['market:', 'details', '?id=io.applander.linesiege'],
+      ['https:', 'play.google.com', '?id=io.applander.linesiege'],
+    ]);
+    expect(errorLog.entries()).toStrictEqual([]);
   });
 });

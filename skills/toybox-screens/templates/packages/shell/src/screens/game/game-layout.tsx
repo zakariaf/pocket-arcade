@@ -24,16 +24,25 @@ const styles = StyleSheet.create({
  * over the board, ever. GameScreen (navigation-and-routing) renders this in place of a bare View.
  * The overlay is a sibling of the safe-area frame, so Pause's scrim and Result's own ScreenFrame
  * cover the whole screen (status bar and home indicator too) and are inset once, not twice.
+ * While an overlay is up, the frame behind it is hidden from TalkBack: the overlays' own
+ * accessibilityViewIsModal is iOS-only, and on Android only what lies behind can be hidden. The
+ * wrapper stays and only its value changes, so the board never remounts.
  */
 export function GameLayout({ topBar, board, overlay }: GameLayoutProps): ReactNode {
+  const isCovered = overlay !== null && overlay !== undefined && overlay !== false;
   return (
     <View style={styles.fill}>
-      <ScreenFrame testID="game.screen">
-        {topBar}
-        <View style={styles.board} testID="game.board">
-          {board}
-        </View>
-      </ScreenFrame>
+      <View
+        style={styles.fill}
+        importantForAccessibility={isCovered ? 'no-hide-descendants' : 'auto'}
+      >
+        <ScreenFrame testID="game.screen">
+          {topBar}
+          <View style={styles.board} testID="game.board">
+            {board}
+          </View>
+        </ScreenFrame>
+      </View>
       {overlay}
     </View>
   );
