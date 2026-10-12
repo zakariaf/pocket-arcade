@@ -96,9 +96,9 @@ expo-sqlite keeps `save.db` (with `-wal` and `-shm`) in the app's `files/SQLite/
 
 | Command | Why not |
 |---|---|
-| `adb kill-server`, `adb start-server` with another port | cuts off every session's emulators on this Mac |
+| never `adb kill-server`, never `adb start-server` with another port | cuts off every session's emulators on this Mac |
 | `adb <command>` without `-s` | reaches whichever device answers first |
 | starting, wiping or deleting `MindForge_Android_390x844`, `Pixel_8a_API_35` or any non-`e07-android-` AVD | another project's device |
-| `emulator -wipe-data` on a shared AVD | destroys another task's state; use your own AVD |
+| never `emulator -wipe-data` on a shared AVD | destroys another task's state; use your own AVD |
 | `sdkmanager --licenses`, answering a licence prompt | the owner's step |
 | `npx expo run:android`, `./gradlew installDebug`, Metro | a Debug build is not what players run |
