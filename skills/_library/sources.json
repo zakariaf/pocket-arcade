@@ -19347,7 +19347,7 @@
         ]
       },
       "references/jest-config.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -19356,6 +19356,10 @@
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
             "sha256": "8a621b898acbd2e757f340835014339a6e6614b584f673180dae101b1c113998"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },

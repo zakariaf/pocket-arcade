@@ -95,6 +95,7 @@
   {"prompt": "this 60-line function breaks the max-lines-per-function lint limit; split it properly", "expect": "typescript-and-lint-rules"},
   {"prompt": "write a component test for the level tile with renderWithShell and the root ads SDK mock", "expect": "unit-and-component-tests"},
   {"prompt": "set up fast-check property tests and the coverage thresholds in the Jest config", "expect": "unit-and-component-tests"},
+  {"prompt": "add the third Jest project that runs the Android tests", "expect": "unit-and-component-tests"},
   {"prompt": "Explain what a monad is in one short paragraph.", "expect": null},
   {"prompt": "What is 17 times 23? Reply with the number only.", "expect": null},
   {"prompt": "write the failing test for the new streak rule first, then the code", "expect": "tdd-workflow"},
