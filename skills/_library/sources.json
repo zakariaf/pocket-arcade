@@ -12057,7 +12057,7 @@
     },
     "rtl-and-direction": {
       "SKILL.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -12104,11 +12104,15 @@
         ]
       },
       "references/direction-switch.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/10-i18n-and-rtl.md",
             "sha256": "b777ae4cbcfe874f10bae6cfdb04b2acf731c407c92e4343c749cbe15e531a5e"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -12130,7 +12134,7 @@
         ]
       },
       "references/testing-rtl.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -12143,7 +12147,7 @@
         ]
       },
       "scripts/check-rtl.mjs": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -12273,6 +12277,19 @@
           {
             "path": "docs/10-i18n-and-rtl.md",
             "sha256": "b777ae4cbcfe874f10bae6cfdb04b2acf731c407c92e4343c749cbe15e531a5e"
+          }
+        ]
+      },
+      "templates/shell-i18n/direction.android.test.ts": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "packages/shell/src/i18n/direction.test.ts",
+            "sha256": "07850969eda19d21ce6bbab6ad51d65642c867936eb21c24ab548978b1087fab"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },

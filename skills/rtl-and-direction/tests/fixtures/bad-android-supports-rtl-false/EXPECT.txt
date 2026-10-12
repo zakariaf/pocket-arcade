@@ -1,0 +1,2 @@
+[android-supports-rtl]
+with-rtl-support.ts:6

@@ -6,7 +6,8 @@ Jest proves the decisions (direction plan, digits, bidi, alignment and font of t
 
 - What Jest can and cannot see
 - The RTL tests to keep
-- Simulator commands
+- Simulator commands (iOS)
+- Emulator commands (Android)
 - The RTL Maestro flow
 - The screenshot matrix and what to look for
 
@@ -22,6 +23,7 @@ Jest proves the decisions (direction plan, digits, bidi, alignment and font of t
 |---|---|
 | `direction-plan.test.ts` | keep / restart / give-up for every combination; `languageFromRawSave` tolerates garbage |
 | `direction.test.ts` | the layout reads LTR in Jest; `restartForDirection` writes the guard, then reloads once with a reason |
+| `direction.android.test.ts` (`unit-android`, Android step 4) | on the Android modules: the guard, then `allowRTL` and `forceRTL` (both, also `false` for English), then one reload; a reload that left the layout unchanged gives up; Persian digits through the polyfills; the faces named by their file names |
 | `digits.test.ts` | the digit table; ckb gets Persian-style digits; Persian decimal and percent signs; Latin on request |
 | `create-number-formatter.test.ts` | `createPercentFormatter`: a 0.62 rate is "62%", "62 %", "۶۲٪" in en, de, fa/ckb, Latin on request, whole percentages only |
 | `bidi.test.ts` | FSI/PDI code points; `stripIsolates` |
@@ -33,7 +35,7 @@ Jest proves the decisions (direction plan, digits, bidi, alignment and font of t
 
 Every new screen or component with text or a row gets one RTL render in its test (`{ language: 'fa', direction: 'rtl' }`) that at least renders without a missing-message error; add a style assertion only for the text contract above.
 
-## Simulator commands
+## Simulator commands (iOS)
 
 Verified with Xcode 26.6 on the iOS 26.5 simulator:
 
@@ -46,6 +48,21 @@ Verified with Xcode 26.6 on the iOS 26.5 simulator:
 | App logs | `xcrun simctl spawn <udid> log show --last 2m --info --debug --style compact --predicate 'process == "<App>" AND eventMessage CONTAINS "[TAG]"'` |
 
 Only Release builds of the test variant are used for these checks.
+
+## Emulator commands (Android)
+
+The same checks on the Android emulator (android-emulator-build's `e07-android-<purpose>` AVD on the `google_apis` image, API 35). Every call names its device with `adb -s <serial>` (`emulator-<port>`): several emulators share this Mac's adb server, and a call without a serial reaches whichever device answers. Not yet run on an emulator: Android step 5 makes the first build, and the RTL flow runs at Android step 7.
+
+| Purpose | Command |
+|---|---|
+| "System" language path (per-app language, Android 13+; the app lists its locales through expo-localization's `supportedLocales`) | `adb -s <serial> shell cmd locale set-app-locales io.applander.<gameId without hyphens> --user current --locales fa-IR` (Sorani: `--locales ckb-IQ`; back with `--locales en`), then launch |
+| Launch | `adb -s <serial> shell am start -W -n io.applander.<gameId without hyphens>/.MainActivity` |
+| Forced in-app language and digits (test variant) | the debug deep link (`<scheme>://debug/setup?lang=ckb&digits=latin`, e2e-maestro's parameters): `adb -s <serial> shell am start -W -a android.intent.action.VIEW -d '<link>'` |
+| Screenshot | the demo-mode clock first (`adb -s <serial> shell settings put global sysui_demo_allowed 1`, then `adb -s <serial> shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0941`), then `adb -s <serial> exec-out screencap -p > out.png` (`exec-out`, so the PNG is not mangled) |
+| 200 % text | `adb -s <serial> shell settings put system font_scale 2.0` (reset with `1.0`) |
+| App logs | `adb -s <serial> logcat -d -s ReactNativeJS:V AndroidRuntime:E` |
+| The stored direction (what `forceRTL` and `allowRTL` wrote) | `adb -s <serial> root`, then `adb -s <serial> shell cat /data/data/io.applander.<gameId without hyphens>/shared_prefs/com.facebook.react.modules.i18nmanager.I18nUtil.xml` (`RCTI18nUtil_forceRTL`, `RCTI18nUtil_allowRTL`; `adb root` works on the `google_apis` image, never on a Play Store image) |
+| The manifest flag | `aapt2 dump xmltree --file AndroidManifest.xml <apk>` shows `android:supportsRtl` = true (the Expo template's value; `check-rtl` rule `android-supports-rtl` fails any config that turns it off) |
 
 ## The RTL Maestro flow
 
