@@ -4,8 +4,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 import type { AscCredentials } from './asc-jwt.ts';
-
-export type ToolEnv = Readonly<Record<string, string | undefined>>;
+import type { ToolEnv } from '@e07/tooling/ios/toolchain.ts';
 
 export function requireEnv(env: ToolEnv, name: string): string {
   const value = env[name];
@@ -17,8 +16,9 @@ export function requireEnv(env: ToolEnv, name: string): string {
   return value;
 }
 
-export function ascKeyPath(keyId: string): string {
-  return join(homedir(), '.appstoreconnect', 'private_keys', `AuthKey_${keyId}.p8`);
+/** ~/.appstoreconnect/private_keys/AuthKey_<id>.p8, where altool also finds the key by itself. */
+export function ascKeyPath(keyId: string, home: string = homedir()): string {
+  return join(home, '.appstoreconnect', 'private_keys', `AuthKey_${keyId}.p8`);
 }
 
 // Loads the key into memory only. Never log, print, copy or commit its contents.

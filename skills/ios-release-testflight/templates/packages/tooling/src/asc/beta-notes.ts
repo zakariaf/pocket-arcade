@@ -1,7 +1,7 @@
 // packages/tooling/src/asc/beta-notes.ts
 // Sets TestFlight "What to Test" (whatsNew) for one build through the App Store Connect REST API:
 // PATCH the existing en-US beta build localization, or POST one when none exists.
-import { ascRequest, type AscResponse } from '@e07/tooling/asc/asc-client.ts';
+import { ascField, ascRequest, type AscResponse } from '@e07/tooling/asc/asc-client.ts';
 
 export type BetaLocalization = { readonly id: string; readonly locale: string };
 
@@ -25,17 +25,13 @@ export function createWhatsNewBody(buildId: string, whatsNew: string): unknown {
   };
 }
 
-function read(value: unknown, key: string): unknown {
-  return typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
-}
-
 /** The en-US localization in a GET .../betaBuildLocalizations answer, if there is one. */
 export function findEnglishLocalization(json: unknown): BetaLocalization | null {
-  const data = read(json, 'data');
+  const data = ascField(json, 'data');
   const items: unknown[] = Array.isArray(data) ? data : [];
   for (const item of items) {
-    const id = read(item, 'id');
-    const locale = read(read(item, 'attributes'), 'locale');
+    const id = ascField(item, 'id');
+    const locale = ascField(ascField(item, 'attributes'), 'locale');
     if (typeof id === 'string' && locale === 'en-US') {
       return { id, locale };
     }

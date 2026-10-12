@@ -5,7 +5,10 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { ascKeyPath, requireEnv } from '@e07/tooling/asc/asc-credentials.ts';
 import { isGameId } from '@e07/tooling/build/game-id.ts';
+
+import type { ToolEnv } from '@e07/tooling/ios/toolchain.ts';
 
 /**
  * Where a stopped run picks up again. `build`: the committed build number is reused and the run
@@ -90,9 +93,7 @@ function parseResume(raw: string | undefined): ResumePoint | null {
   return point;
 }
 
-export type ToolEnv = Readonly<Record<string, string | undefined>>;
-
-/** Tools receive only the three IDs; a missing one is owner step O3. */
+/** Tools receive only the three IDs; a missing one is owner step O3 (all missing ones named). */
 export function readAscIds(env: ToolEnv): AscIds {
   const missing = ['ASC_KEY_ID', 'ASC_ISSUER_ID', 'APPLE_TEAM_ID'].filter(
     (name) => (env[name] ?? '') === '',
@@ -103,15 +104,15 @@ export function readAscIds(env: ToolEnv): AscIds {
     );
   }
   return {
-    keyId: env['ASC_KEY_ID'] ?? '',
-    issuerId: env['ASC_ISSUER_ID'] ?? '',
-    teamId: env['APPLE_TEAM_ID'] ?? '',
+    keyId: requireEnv(env, 'ASC_KEY_ID'),
+    issuerId: requireEnv(env, 'ASC_ISSUER_ID'),
+    teamId: requireEnv(env, 'APPLE_TEAM_ID'),
   };
 }
 
-/** ~/.appstoreconnect/private_keys/AuthKey_<id>.p8: altool finds the key there by itself. */
+/** The key's path (asc-credentials' ascKeyPath under `home`); nothing here reads the key. */
 export function ascKeyFile(home: string, keyId: string): string {
-  return join(home, '.appstoreconnect', 'private_keys', `AuthKey_${keyId}.p8`);
+  return ascKeyPath(keyId, home);
 }
 
 /** Automatic signing with the team API key: the only signing method (no .p12, no manual profiles). */
