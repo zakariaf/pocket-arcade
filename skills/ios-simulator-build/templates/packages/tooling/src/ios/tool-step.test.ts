@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { runToolStep, tailOf } from './tool-step.ts';
+import { runToolStep, STEP_TAIL_BYTES, tailOf } from './tool-step.ts';
 
 describe('runToolStep', () => {
   let appDir = '';
@@ -37,6 +37,44 @@ describe('runToolStep', () => {
       { appDir, env: process.env },
     );
     expect([result.status, result.output]).toStrictEqual([65, 'error: no signing team\n']);
+  });
+
+  it('names a command that could not start, in its output and its log', () => {
+    const missing = join(appDir, 'no-such-tool');
+    const result = runToolStep(
+      'missing',
+      { file: missing, args: [] },
+      { appDir, env: process.env },
+    );
+    expect(result.status).toBeNull();
+    expect(result.output).toBe(`${missing} did not start: spawnSync ${missing} ENOENT\n`);
+    expect(readFileSync(result.logFile, 'utf8')).toBe(result.output);
+  });
+
+  it('writes the log while the step runs, so a long step can be followed', () => {
+    const log = join(appDir, 'build', 'logs', 'archive.log');
+    const script = `process.stdout.write('compiling\\n'); let seen = false; try { seen = require('node:fs').readFileSync(${JSON.stringify(log)}, 'utf8').includes('compiling'); } catch {} process.stdout.write('seen ' + String(seen))`;
+    const result = runToolStep(
+      'archive',
+      { file: process.execPath, args: ['-e', script] },
+      { appDir, env: process.env },
+    );
+    expect(result.stdout).toBe('compiling\nseen true');
+  });
+
+  it('logs a long output whole and hands back only its tail', () => {
+    // 3 MiB of build output: more than a pipe buffer holds, and more than a message needs.
+    const script =
+      "const line = 'x'.repeat(1023) + '\\n'; for (let i = 0; i < 3072; i += 1) process.stdout.write(line); process.stdout.write('** ARCHIVE FAILED **\\n'); process.exit(65)";
+    const result = runToolStep(
+      'archive',
+      { file: process.execPath, args: ['-e', script] },
+      { appDir, env: process.env },
+    );
+    expect(readFileSync(result.logFile, 'utf8')).toHaveLength(3072 * 1024 + 21);
+    expect(result.output.length).toBeLessThanOrEqual(STEP_TAIL_BYTES);
+    expect(tailOf(result.output, 1)).toBe('** ARCHIVE FAILED **');
+    expect(result.stdout).toBe(result.output);
   });
 });
 
