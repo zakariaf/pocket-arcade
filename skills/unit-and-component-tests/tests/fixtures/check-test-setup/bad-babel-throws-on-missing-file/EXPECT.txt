@@ -1,0 +1,4 @@
+[babel-config]
+babel.config.js:1
+throws (ENOENT: no such file or directory
+for a file that does not exist: guard it and answer false

@@ -8,13 +8,28 @@
 // code runs as plain JS in Jest.
 const { readFileSync } = require('node:fs');
 
-// Stryker's instrumenter declares this namespace helper in every file it mutates.
-const STRYKER_NAMESPACE_HELPER = 'stryNS_9fa48';
+// Stryker's instrumenter declares a namespace helper, stryNS_<hash>, in every file it mutates. The
+// hash is Stryker's internal detail, so only the prefix is matched.
+const STRYKER_NAMESPACE = /\bstryNS_[0-9a-f]+\b/;
+// One answer per file: an instrumented file keeps its text for the whole mutation run.
+const isInstrumentedByFile = new Map();
+
+/** The file's text, or '' for a file that is gone or unreadable (it was not instrumented). */
+function readIfPresent(filename) {
+  try {
+    return readFileSync(filename, 'utf8');
+  } catch {
+    return '';
+  }
+}
 
 function isInstrumentedByStryker(filename) {
-  return (
-    filename !== undefined && readFileSync(filename, 'utf8').includes(STRYKER_NAMESPACE_HELPER)
-  );
+  // Stryker never instruments a dependency: no node_modules file is read.
+  if (filename === undefined || filename.includes('/node_modules/')) return false;
+  if (!isInstrumentedByFile.has(filename)) {
+    isInstrumentedByFile.set(filename, STRYKER_NAMESPACE.test(readIfPresent(filename)));
+  }
+  return isInstrumentedByFile.get(filename);
 }
 
 module.exports = function (api) {

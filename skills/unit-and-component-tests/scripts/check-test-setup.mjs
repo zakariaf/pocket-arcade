@@ -6,8 +6,9 @@
 // tsconfig.stryker.json, the root vendor mocks and the renderWithShell helper.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-test-setup.mjs [repo-root]
 
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, createReporter, dueSkipReason, fail, maskComments, parseArgs, requireDir, run, walk } from './check-lib.mjs';
@@ -30,7 +31,8 @@ const SPEC = {
     '  test-renderer-line        test-renderer minor differs from the React minor (React 19.2 needs test-renderer 1.2.x)',
     '  one-react                 root overrides do not pin react and react-native to the apps\' exact versions',
     '  test-script               a canonical test script (test, test:golden, test:sim, test:coverage, test:mutation) differs',
-    '  babel-config              root babel.config.js is missing or lacks the Stryker branch (worklets: false, reanimated: false, only on files Stryker instrumented)',
+    '  babel-config              root babel.config.js is missing or lacks the Stryker branch (worklets: false, reanimated: false, only on files Stryker instrumented),',
+    '                            or its override test misjudges a probe: another stryNS_ hash, a plain file, a missing file (must not throw)',
     '  jest-config-missing       no jest.config.js at the repo root',
     '  jest-config-load          jest.config.js or jest.sim.config.js throws when loaded',
     '  jest-tz                   a Jest config does not set process.env.TZ = \'UTC\'',
@@ -211,10 +213,64 @@ function checkBabel(root, report) {
     [/worklets:\s*false/, 'worklets: false'],
     [/reanimated:\s*false/, 'reanimated: false'],
     [/overrides/, 'the override that limits the plugin-free branch to instrumented files'],
-    [/stryNS_9fa48/, "the test for Stryker's instrumented files (its stryNS_9fa48 helper)"],
+    [/stryNS_/, "the test for Stryker's instrumented files (its stryNS_<hash> namespace helper)"],
   ];
+  const fix = 'Copy templates/babel.config.js: mutation workers compile only the files Stryker instrumented without the Worklets and Reanimated plugins ("stryNS_… is read-only"); every other file keeps them, or Reanimated hooks throw ("useAnimatedStyle was used without a dependency array or Babel plugin").';
+  let isComplete = true;
   for (const [pattern, what] of needs) {
-    if (!pattern.test(text)) report.problem({ file: 'babel.config.js', line: 1, rule: 'babel-config', message: `lacks ${what}`, fix: 'Copy templates/babel.config.js: mutation workers compile only the files Stryker instrumented without the Worklets and Reanimated plugins ("stryNS_… is read-only"); every other file keeps them, or Reanimated hooks throw ("useAnimatedStyle was used without a dependency array or Babel plugin").' });
+    if (pattern.test(text)) continue;
+    isComplete = false;
+    report.problem({ file: 'babel.config.js', line: 1, rule: 'babel-config', message: `lacks ${what}`, fix });
+  }
+  if (isComplete) probeStrykerOverride(file, report, fix);
+}
+
+/** The override's test as a mutation worker sees it (null when the config gives none). */
+function strykerOverrideTest(file) {
+  const saved = process.env.STRYKER_MUTATOR_WORKER;
+  process.env.STRYKER_MUTATOR_WORKER = '1';
+  try {
+    const load = createRequire(file);
+    delete load.cache[file];
+    const config = load(file)({ cache: { using: () => undefined } });
+    const test = config?.overrides?.[0]?.test;
+    return typeof test === 'function' ? test : null;
+  } finally {
+    if (saved === undefined) delete process.env.STRYKER_MUTATOR_WORKER;
+    else process.env.STRYKER_MUTATOR_WORKER = saved;
+  }
+}
+
+/**
+ * Runs the override's test on three files: one Stryker instrumented under another namespace hash
+ * (the hash is Stryker's internal detail and may change), a plain one and a missing one. Only the
+ * first may lose the plugins, and no file may make the test throw.
+ */
+function probeStrykerOverride(file, report, fix) {
+  const dir = mkdtempSync(join(tmpdir(), 'babel-probe-'));
+  const instrumented = join(dir, 'mutated.ts');
+  const plain = join(dir, 'plain.ts');
+  writeFileSync(instrumented, 'function stryNS_0c1d2() {}\nexport const x = stryNS_0c1d2();\n');
+  writeFileSync(plain, "export const x = 'worklet';\n");
+  const problem = (message) => report.problem({ file: 'babel.config.js', line: 1, rule: 'babel-config', message, fix });
+  try {
+    const test = strykerOverrideTest(file);
+    if (test === null) return problem('gives mutation workers no override test for the files Stryker instrumented');
+    const answer = (path) => {
+      try {
+        return test(path) === true;
+      } catch (error) {
+        return error;
+      }
+    };
+    if (answer(instrumented) !== true) problem('does not take the plugins off a file Stryker instrumented under another namespace hash (stryNS_0c1d2): match the stryNS_ prefix, not one hash');
+    if (answer(plain) !== false) problem('takes the plugins off a file Stryker did not instrument');
+    const missing = answer(join(dir, 'gone.ts'));
+    if (missing !== false) problem(`${missing instanceof Error ? `throws (${String(missing.message).split('\n')[0]})` : 'answers true'} for a file that does not exist: guard it and answer false`);
+  } catch (error) {
+    problem(`throws when a mutation worker loads it: ${String(error.message).split('\n')[0]}`);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 }
 
