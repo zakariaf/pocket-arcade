@@ -9331,7 +9331,7 @@
     },
     "new-game-scaffold": {
       "SKILL.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -9458,7 +9458,7 @@
         ]
       },
       "references/new-game-checklist.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
