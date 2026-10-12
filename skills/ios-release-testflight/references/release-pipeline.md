@@ -161,11 +161,13 @@ xcrun altool --upload-package "$IPA" -t ios --apple-id "$APPLE_APP_ID" --bundle-
 
 ## Step 10: wait for processing
 
-An upload is done only when processing reaches `VALID`. `release-ios.ts` polls the REST endpoint every 60 s for up to 60 minutes and reads `attributes.processingState`:
+An upload is done only when processing reaches `VALID`. `release-ios.ts` waits 2 minutes (Apple never lists a fresh upload sooner), then polls the REST endpoint every 60 s for up to 60 minutes and reads `attributes.processingState` of one build (`processing-wait.ts`, tested on a fake clock):
 
 ```text
-GET /v1/builds?filter[app]=<APPLE_APP_ID>&filter[version]=<BUILD_NUMBER>&filter[preReleaseVersion.version]=<VERSION>
+GET /v1/builds?filter[app]=<APPLE_APP_ID>&filter[version]=<BUILD_NUMBER>&filter[preReleaseVersion.version]=<VERSION>&fields[builds]=processingState&limit=1
 ```
+
+The key is read into memory once for the wait, and one token serves every poll until about a minute before it expires (`reusedToken`); the token is never logged.
 
 altool also offers `xcrun altool --build-status --delivery-id "$DELIVERY_ID" "${ALTOOL_AUTH[@]}" --wait --output-format json`; whether its `--wait` waits until `VALID` is unverified, which is why REST is the default. On `INVALID` or `FAILED`: stop and ask the owner for Apple's email (the agent cannot read email). If 60 minutes pass without `VALID`, the run ends; after checking the TestFlight tab, rerun with `--resume processing` (the upload is done, so nothing is uploaded again).
 

@@ -27,7 +27,7 @@ There is no endpoint to create an app record (the Apps resource offers list, rea
 
 ## Tokens (JWT)
 
-Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issuer ID>`, `iat`, `exp`, `aud "appstoreconnect-v1"`. "Tokens that expire more than 20 minutes into the future are not valid." `createAscJwt()` uses 15 minutes and signs with `dsaEncoding: 'ieee-p1363'` (the raw r||s signature JWTs need). A long wait (step 10) makes a fresh token per request.
+Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issuer ID>`, `iat`, `exp`, `aud "appstoreconnect-v1"`. "Tokens that expire more than 20 minutes into the future are not valid." `createAscJwt()` uses 15 minutes and signs with `dsaEncoding: 'ieee-p1363'` (the raw r||s signature JWTs need). A long wait (step 10) reuses one token and mints the next about a minute before it expires (`reusedToken` in `release/processing-wait.ts`, with `ASC_TOKEN_LIFETIME_SECONDS`).
 
 `xcrun altool --generate-jwt` also exists but has keychain options; the Node script keeps the key in memory only. The current time comes from `nowEpochSeconds()` in `packages/tooling/src/clock/system-clock.ts`, the one tooling module allowed to read the wall clock.
 
