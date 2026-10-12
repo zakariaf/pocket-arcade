@@ -7,7 +7,7 @@ import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
-import { AppText } from './app-text.tsx';
+import { AppText, afterReport, countOf, fitOf } from './app-text.tsx';
 
 import type { useWindowDimensions } from 'react-native';
 
@@ -362,5 +362,61 @@ describe('AppText', () => {
       { x: 4, y: 0, width: 255, height: 19 },
       { x: 100, y: 19, width: 50, height: 19 },
     ]);
+  });
+});
+
+describe("AppText's room (pure helpers, at 3 pixels per point)", () => {
+  beforeEach(() => {
+    jest.spyOn(PixelRatio, 'get').mockReturnValue(3);
+  });
+
+  const BOX = { pads: 0, lineHeight: 67 / 3, surplus: 0 };
+
+  it.each([
+    { name: 'whole lines', height: 134 / 3, box: BOX, surplus: 0, lines: 2 },
+    {
+      name: 'the room itself (lines plus a pixel)',
+      height: 135 / 3,
+      box: BOX,
+      surplus: 1 / 3,
+      lines: null,
+    },
+    {
+      name: 'a float32 box a hair short (S15)',
+      height: 174.6665,
+      box: { ...BOX, lineHeight: 131 / 3 },
+      surplus: 0,
+      lines: 4,
+    },
+    {
+      name: 'no line height yet',
+      height: 40,
+      box: { ...BOX, lineHeight: 0 },
+      surplus: 0,
+      lines: null,
+    },
+  ])('reads $name', ({ height, box, surplus, lines }) => {
+    const read = fitOf(height, box);
+    expect(read.lines).toBe(lines);
+    expect(read.surplus).toBeCloseTo(surplus, 9);
+  });
+
+  it.each([
+    { lines: 0, boxLines: 0, cap: undefined, count: 0 },
+    { lines: 2, boxLines: 0, cap: undefined, count: 2 },
+    { lines: 3, boxLines: 0, cap: 2, count: 2 },
+    { lines: 1, boxLines: 2, cap: undefined, count: 2 },
+    { lines: 3, boxLines: 2, cap: 1, count: 2 },
+  ])('holds $lines reported and $boxLines boxed lines (numberOfLines $cap) as $count', (row) => {
+    const measured = { text: 't', lines: row.lines, boxLines: row.boxLines, surplus: null };
+    expect(countOf(measured, row.cap)).toBe(row.count);
+  });
+
+  it('keeps the stored state when a report changes nothing, so React skips the render', () => {
+    const measured = { text: 't', lines: 2, boxLines: 0, surplus: 0 };
+    expect(afterReport(measured, 2)).toBe(measured);
+    const boxed = { ...measured, lines: 1, boxLines: 2 };
+    expect(afterReport(boxed, 1)).toBe(boxed);
+    expect(afterReport(boxed, 2)).toStrictEqual({ ...measured, lines: 2, boxLines: 0 });
   });
 });

@@ -68,12 +68,24 @@ export function failedSearch(search: Search, width: number): Search {
   return { ...failed, pad: Math.max(0, width - search.hi), isReturning: true };
 }
 
+/**
+ * Whether a probe failed: it added a line, or it split a word (as surely failed: CSS balance never
+ * splits one). A layout back at hi after a failure is no probe.
+ */
+function isFailedProbe(
+  search: Search,
+  lineWidths: readonly number[],
+  isWordBroken = false,
+): boolean {
+  return !search.isReturning && (lineWidths.length > search.lines || isWordBroken);
+}
+
 /** One step of the search after a text layout. A probe that keeps the count narrows on from it. */
 export function nextSearch(search: Search, width: number, lineWidths: readonly number[]): Search {
   const steps = search.steps + 1;
   const widest = Math.max(...lineWidths);
   if (search.isReturning) return probeFrom({ ...search, steps, widest }, width);
-  if (lineWidths.length > search.lines) return failedSearch(search, width);
+  if (isFailedProbe(search, lineWidths)) return failedSearch(search, width);
   return probeFrom({ ...search, steps, hi: width - search.pad, widest }, width);
 }
 
@@ -165,10 +177,10 @@ export function advance(measure: Measure, isWordBroken = false): Measure {
   if (width === 0 || lineWidths === null || search?.isDone === true) return measure;
   const key = `${String(width)}|${measure.text}`;
   if (search?.key !== key) return { ...measure, search: firstSearch(key, width, lineWidths) };
-  const isSplitProbe = isWordBroken && !search.isReturning;
+  const isFailed = isFailedProbe(search, lineWidths, isWordBroken);
   return {
     ...measure,
-    search: isSplitProbe ? failedSearch(search, width) : nextSearch(search, width, lineWidths),
+    search: isFailed ? failedSearch(search, width) : nextSearch(search, width, lineWidths),
   };
 }
 
@@ -188,37 +200,52 @@ export function isStale(measure: Measure, lineWidths: readonly number[]): boolea
 
 const EMPTY: Measure = { text: '', width: 0, lineWidths: null, search: null };
 
-/** The stored measure for this text (a new text starts from nothing). */
-function forText(stored: Measure, text: string): Measure {
-  return stored.text === text ? stored : { ...EMPTY, text };
+/**
+ * A state kept for one text: the stored one while it belongs to `text`, else `fresh(text)` (a new
+ * text starts from nothing). The balanced wrap and AppText's room both key their state so.
+ */
+export function forText<T extends { readonly text: string }>(
+  stored: T,
+  text: string,
+  fresh: (text: string) => T,
+): T {
+  return stored.text === text ? stored : fresh(text);
 }
+
+const emptyFor = (text: string): Measure => ({ ...EMPTY, text });
 
 function isSameLines(a: readonly number[] | null, b: readonly number[]): boolean {
   return a !== null && a.length === b.length && a.every((line, index) => line === b[index]);
 }
 
-type TextLayoutStep = (previous: Measure, text: string, lineWidths: readonly number[]) => Measure;
+/** One text layout: its line widths, and whether it split a word. */
+type TextLayout = { readonly lineWidths: readonly number[]; readonly isWordBroken: boolean };
 
 /**
- * The state after a text layout (isWordBroken: it split a word): a stale layout is dropped, any
- * other one is stored and moves the search on. A layout that changes nothing (the same lines, the
- * search not moved) keeps the stored state itself, so React skips the render.
+ * The state after a text layout: a stale layout is dropped, any other one is stored and moves the
+ * search on. A layout that changes nothing (the same lines, the search not moved) keeps the stored
+ * state itself, so React skips the render.
  */
-export function afterTextLayoutOf(isWordBroken: boolean): TextLayoutStep {
-  return (previous, text, lineWidths) => {
-    const current = forText(previous, text);
-    if (isStale(current, lineWidths)) return previous;
-    const next = advance({ ...current, lineWidths }, isWordBroken);
-    const isUnchanged =
-      current === previous &&
-      next.search === previous.search &&
-      isSameLines(previous.lineWidths, lineWidths);
-    return isUnchanged ? previous : next;
-  };
+function afterLayout(previous: Measure, text: string, layout: TextLayout): Measure {
+  const { lineWidths, isWordBroken } = layout;
+  const current = forText(previous, text, emptyFor);
+  if (isStale(current, lineWidths)) return previous;
+  const next = advance({ ...current, lineWidths }, isWordBroken);
+  const isUnchanged =
+    current === previous &&
+    next.search === previous.search &&
+    isSameLines(previous.lineWidths, lineWidths);
+  return isUnchanged ? previous : next;
 }
 
 /** The state after a text layout that split no word. */
-export const afterTextLayout = afterTextLayoutOf(false);
+export function afterTextLayout(
+  previous: Measure,
+  text: string,
+  lineWidths: readonly number[],
+): Measure {
+  return afterLayout(previous, text, { lineWidths, isWordBroken: false });
+}
 
 export function useBalancedWrap(
   isEnabled: boolean,
@@ -227,14 +254,14 @@ export function useBalancedWrap(
 ): BalancedWrap {
   const [stored, setMeasure] = useState<Measure>(EMPTY);
   if (!isEnabled) return { style: null };
-  const measure = forText(stored, text);
+  const measure = forText(stored, text, emptyFor);
   // Both events can arrive before a re-render: update from the latest state, never a stale closure.
   return {
     style: padStyle(measure.search?.pad ?? 0, align),
     onLayout: (event) => {
       const width = event.nativeEvent.layout.width;
       setMeasure((previous) => {
-        const current = forText(previous, text);
+        const current = forText(previous, text, emptyFor);
         if (Math.abs(width - current.width) <= 0.5) return previous;
         // A new width starts over from the full-width line layout.
         const lineWidths = current.search === null ? current.lineWidths : null;
@@ -248,8 +275,7 @@ export function useBalancedWrap(
         text,
         lines.map((line) => line.text),
       );
-      const step = afterTextLayoutOf(isWordBroken);
-      setMeasure((previous) => step(previous, text, lineWidths));
+      setMeasure((previous) => afterLayout(previous, text, { lineWidths, isWordBroken }));
     },
   };
 }
