@@ -7,7 +7,7 @@
 // hints.freePerDay (1 with solver hints, 0 without); a free hint for a non-Premium player spends
 // that daily allowance; a watched ad counts only when the reward was earned. One payment runs at a
 // time: a second tap before the first settles pays nothing and sends nothing.
-import { useRef, useSyncExternalStore } from 'react';
+import { useRef, useState, useSyncExternalStore } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useAdContext, useAdPolicyConfig, useHintPerk } from '@e07/shell/app/use-ad-context.ts';
@@ -29,6 +29,11 @@ export type PerkPayment = {
   /** Resolves true once the hint is paid for (allowance spent, Premium, or the ad rewarded). */
   readonly payForHint: () => Promise<boolean>;
   readonly payForContinue: () => Promise<boolean>;
+  /**
+   * True while the continue is being paid for. The shown rewarded ad is used up, so the offer reads
+   * 'hidden' while it is on screen: the loss is not stranded then (L11), it waits for the payment.
+   */
+  readonly isPayingContinue: boolean;
 };
 
 /**
@@ -66,6 +71,31 @@ function useOnePaymentAtATime(): (payment: () => Promise<boolean>) => Promise<bo
   };
 }
 
+/** Runs a payment and tells, as React state, whether it is still in flight. */
+function useTrackedPayment(): {
+  readonly isPaying: boolean;
+  readonly track: (payment: () => Promise<boolean>) => Promise<boolean>;
+} {
+  const [isPaying, setIsPaying] = useState(false);
+  return {
+    isPaying,
+    track: async (payment) => {
+      setIsPaying(true);
+      try {
+        return await payment();
+      } finally {
+        setIsPaying(false);
+      }
+    },
+  };
+}
+
+/** The continue perk of a run: offered by the game only while the run's continue is open. */
+function continuePerkOf(view: SessionView | null) {
+  const isOffered = view?.continueState === 'offered';
+  return { kind: 'continue', isAllowedByGame: isOffered, isUsedThisLevel: false } as const;
+}
+
 export function usePerkPayment(view: SessionView | null): PerkPayment {
   const { ads } = useServices();
   const { lifecycle } = useGameHost();
@@ -78,19 +108,14 @@ export function usePerkPayment(view: SessionView | null): PerkPayment {
   const { freePerDay } = useGameExtra().hints;
   const dispatch = useProgressStore(selectProgressDispatch);
   const hintOffer = perkOffer(useHintPerk(today), request);
-  const isOffered = view?.continueState === 'offered';
-  const continuePerk = {
-    kind: 'continue',
-    isAllowedByGame: isOffered,
-    isUsedThisLevel: false,
-  } as const;
-  const continueOffer = perkOffer(continuePerk, request);
+  const continueOffer = perkOffer(continuePerkOf(view), request);
   // 'loading' and 'hidden' pay nothing: the busy key takes no press, and a hidden one is not drawn.
   const pay = async (offer: PerkOffer): Promise<boolean> => {
     if (offer === 'free') return true;
     return offer === 'watch-ad' ? earnRewardedPerk({ ads, lifecycle }) : false;
   };
   const payOnce = useOnePaymentAtATime();
+  const continuePayment = useTrackedPayment();
   return {
     hintOffer,
     continueOffer,
@@ -101,6 +126,7 @@ export function usePerkPayment(view: SessionView | null): PerkPayment {
         }
         return pay(hintOffer);
       }),
-    payForContinue: () => payOnce(() => pay(continueOffer)),
+    payForContinue: () => payOnce(() => continuePayment.track(() => pay(continueOffer))),
+    isPayingContinue: continuePayment.isPaying,
   };
 }
