@@ -3,9 +3,12 @@
 // literals are allowed only in external-links.ts itself.
 import {
   licenceTextUrl,
+  playStoreUrls,
   privacyPolicyUrl,
   storePageUrl,
   storeReviewUrl,
+  storeReviewUrlsOf,
+  storeUpdateUrlsOf,
   supportMailUrl,
 } from './external-links.ts';
 
@@ -47,6 +50,41 @@ describe('external links', () => {
       pathname: '/app/id6740000001',
       search: '',
     });
+  });
+
+  it("opens the game's Google Play page in the Play Store app, then on the web (spec S11, N3)", () => {
+    // Spec S11: "Rate this game: opens the store page. The store app handles this; the game itself
+    // makes no request." market: needs the Play Store app; the https page is the fallback.
+    expect(playStoreUrls(undefined)).toBeNull();
+    expect(playStoreUrls('io.applander.linesiege')?.map(partsOf)).toStrictEqual([
+      { protocol: 'market:', host: 'details', pathname: '', search: '?id=io.applander.linesiege' },
+      {
+        protocol: 'https:',
+        host: 'play.google.com',
+        pathname: '/store/apps/details',
+        search: '?id=io.applander.linesiege',
+      },
+    ]);
+  });
+
+  it('picks the store by platform: the App Store on iOS, Google Play on Android', () => {
+    const ids = { appStoreId: '6740000001', androidPackage: 'io.applander.linesiege' };
+    expect(storeReviewUrlsOf({ os: 'ios', ...ids })).toStrictEqual([storeReviewUrl('6740000001')]);
+    expect(storeUpdateUrlsOf({ os: 'ios', ...ids })).toStrictEqual([storePageUrl('6740000001')]);
+    expect(storeReviewUrlsOf({ os: 'android', ...ids })).toStrictEqual(
+      playStoreUrls('io.applander.linesiege'),
+    );
+    expect(storeUpdateUrlsOf({ os: 'android', ...ids })).toStrictEqual(
+      playStoreUrls('io.applander.linesiege'),
+    );
+  });
+
+  it('opens nothing before the store knows the game', () => {
+    const none = { appStoreId: undefined, androidPackage: undefined };
+    expect(storeReviewUrlsOf({ os: 'ios', ...none })).toBeNull();
+    expect(storeUpdateUrlsOf({ os: 'ios', ...none })).toBeNull();
+    expect(storeReviewUrlsOf({ os: 'android', ...none })).toBeNull();
+    expect(storeUpdateUrlsOf({ os: 'android', ...none })).toBeNull();
   });
 
   it('fills in the support address and the version', () => {

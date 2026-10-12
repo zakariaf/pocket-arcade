@@ -1,7 +1,7 @@
 // packages/shell/src/config/external-links.ts
 // The ONE app file allowed to hold URL literals: OS hand-off links only (the App Store's review
-// and product pages, the privacy policy and a licence's public text in the browser, the phone's
-// mail app). The no-URL lint rule and the
+// and product pages, Google Play's page of the game, the privacy policy and a licence's public text
+// in the browser, the phone's mail app). The no-URL lint rule and the
 // network audit exempt exactly this path (privacy-and-network-audit); nothing here fetches.
 import type { GameExtra } from '@e07/shell/config/game-extra.ts';
 
@@ -20,6 +20,40 @@ export function storeReviewUrl(appStoreId: string | undefined): string | null {
 /** The game's App Store page (S14 "please update" for a save from a newer version); null without an id. */
 export function storePageUrl(appStoreId: string | undefined): string | null {
   return appStoreId === undefined ? null : `https://apps.apple.com/app/id${appStoreId}`;
+}
+
+/**
+ * Google Play's page of the game, where the player rates it or updates it (Play has no write-review
+ * link): first in the Play Store app (market:), then on the web for a phone without the Play Store
+ * (an emulator's google_apis image). Null until the build knows its Android package.
+ */
+export function playStoreUrls(androidPackage: string | undefined): readonly string[] | null {
+  if (androidPackage === undefined) return null;
+  const query = `?id=${encodeURIComponent(androidPackage)}`;
+  return [`market://details${query}`, `https://play.google.com/store/apps/details${query}`];
+}
+
+/** The two stores a build can hand its links to, and what each knows the game by. */
+export type StoreIds = {
+  /** `Platform.OS`: 'android' opens Google Play, anything else the App Store. */
+  readonly os: string;
+  readonly appStoreId: string | undefined;
+  /** The Android package (`expo.android.package`), Google Play's id for the game. */
+  readonly androidPackage: string | undefined;
+};
+
+/** S11's Rate, tried in order: the App Store's review page on iOS, Google Play's page on Android. */
+export function storeReviewUrlsOf(ids: StoreIds): readonly string[] | null {
+  if (ids.os === 'android') return playStoreUrls(ids.androidPackage);
+  const url = storeReviewUrl(ids.appStoreId);
+  return url === null ? null : [url];
+}
+
+/** S14's "please update", tried in order: the App Store page on iOS, Google Play's page on Android. */
+export function storeUpdateUrlsOf(ids: StoreIds): readonly string[] | null {
+  if (ids.os === 'android') return playStoreUrls(ids.androidPackage);
+  const url = storePageUrl(ids.appStoreId);
+  return url === null ? null : [url];
 }
 
 /** The phone's mail app with the support address, and the version in the subject. */
