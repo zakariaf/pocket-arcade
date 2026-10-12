@@ -9,5 +9,7 @@
   { "from": "repo-templates/packages/tooling/src/asc/asc-client.ts", "to": "templates/packages/tooling/src/asc/asc-client.ts" },
   { "from": "repo-templates/packages/tooling/src/asc/asc-credentials.ts", "to": "templates/packages/tooling/src/asc/asc-credentials.ts" },
   { "from": "repo-templates/packages/tooling/src/asc/asc-jwt.ts", "to": "templates/packages/tooling/src/asc/asc-jwt.ts" },
+  { "from": "repo-templates/packages/tooling/src/asc/find-app.ts", "to": "templates/packages/tooling/src/asc/find-app.ts" },
+  { "from": "repo-templates/packages/tooling/src/asc/find-app.test.ts", "to": "templates/packages/tooling/src/asc/find-app.test.ts" },
   { "from": "tooling-deps/src/clock/system-clock.ts", "to": "templates/packages/tooling/src/clock/system-clock.ts" }
 ]
