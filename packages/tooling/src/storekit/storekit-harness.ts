@@ -1,4 +1,5 @@
 // packages/tooling/src/storekit/storekit-harness.ts
+// device-only: covered by check-premium (harness-maestro) and the Tier 2 harness run itself
 // Tier-2 Premium purchase tests on a throwaway simulator of your own. Test variant only.
 // Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --device <udid>
 //          [--driver-port <n>] [--metro-port <n>]
@@ -16,6 +17,7 @@ import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
+import { MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
 import { busyNote } from '@e07/tooling/storekit/busy-note.ts';
 
 import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
@@ -134,22 +136,17 @@ function busyNoteNow(): string | null {
 }
 
 // One Maestro run: the global --device and its own driver port (a free one for each flow, or the
-// port a session passes with --driver-port).
+// port a session passes with --driver-port), the pinned install and Maestro's environment (Java 17
+// even when the shell sets no JAVA_HOME, no analytics or update check: maestro-tool.ts).
 async function runFlow(h: Harness, givenPort: string | undefined, flow: string): Promise<boolean> {
   const target: MaestroTarget = { udid: h.udid, driverPort: await driverPortFor(givenPort) };
-  const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro'); // the pinned Maestro install
   const file = join(ROOT, 'packages', 'shell', 'e2e', 'storekit', flow);
   const vars = ['-e', `APP_ID=${h.bundleId}`, '-e', `APP_SCHEME=${h.urlScheme}`];
-  const env = {
-    ...process.env, // JAVA_HOME must point at Java 17 (Maestro 2.10)
-    MAESTRO_CLI_NO_ANALYTICS: 'true',
-    MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
-    MAESTRO_DISABLE_UPDATE_CHECK: 'true',
-  };
   const command = ['test', file, ...vars];
   console.error(maestroRunLine(target, command));
   const args = [...maestroGlobalArgs(target), ...command];
-  return spawnSync(maestro, args, { stdio: 'inherit', env }).status === 0;
+  const env = maestroEnvOf(process.env);
+  return spawnSync(MAESTRO_BIN, args, { stdio: 'inherit', env }).status === 0;
 }
 
 async function main(argv: readonly string[]): Promise<number> {
