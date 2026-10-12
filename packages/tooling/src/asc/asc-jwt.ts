@@ -8,7 +8,7 @@ export type AscCredentials = {
 };
 
 // Apple rejects tokens whose exp is more than 20 minutes after iat.
-const TOKEN_LIFETIME_SECONDS = 15 * 60;
+export const ASC_TOKEN_LIFETIME_SECONDS = 15 * 60;
 const AUDIENCE = 'appstoreconnect-v1';
 
 function toBase64Url(value: string | Uint8Array): string {
@@ -20,7 +20,7 @@ export function createAscJwt(credentials: AscCredentials, nowEpochSeconds: numbe
   const payload = {
     iss: credentials.issuerId,
     iat: nowEpochSeconds,
-    exp: nowEpochSeconds + TOKEN_LIFETIME_SECONDS,
+    exp: nowEpochSeconds + ASC_TOKEN_LIFETIME_SECONDS,
     aud: AUDIENCE,
   };
   const signingInput = `${toBase64Url(JSON.stringify(header))}.${toBase64Url(JSON.stringify(payload))}`;
