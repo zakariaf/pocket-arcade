@@ -3,12 +3,14 @@
 // role and name on every pressable, 44 pt boxes without hitSlop, state, translated labels, Dynamic
 // Type left on, reduce motion and announcements through the Shell, modal overlays, the board as
 // one labelled image, hold alternatives, adjustable controls, and screen tests that audit a11y.
+// Android: the 44 rule per platform branch, hidden hitSlops, and the focus trap behind overlays.
 // Run from the app repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-a11y-code.mjs [repo-root]
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
+import { androidOnlySpans, resolvePlatform, styleSizesFor } from './lib/platform-branches.mjs';
 import { findCalls, findClosing, findImports, findJsxTags, jsxAttributes, literalOf, maskCode } from './lib/source-scan.mjs';
 
 const SPEC = {
@@ -24,8 +26,10 @@ const SPEC = {
     '  pressable-role      a Pressable/Touchable* without accessibilityRole (or role)',
     '  pressable-name      a Pressable/Touchable* without accessibilityLabel and without text inside',
     '                      (no AppText/T/Text child and no {expression} child: an icon-only button)',
-    '  touch-target        a pressable whose own style box is smaller than 44 x 44 pt',
-    '  hit-slop            hitSlop used to reach 44 pt (invisible in layout, overlaps neighbours)',
+    '  touch-target        a pressable whose own style box is smaller than 44 x 44 pt (dp on Android); each',
+    '                      platform is judged on its own branch of Platform.select / Platform.OS ternaries',
+    '  hit-slop            hitSlop used to reach 44 pt (invisible in layout, overlaps neighbours): the prop,',
+    '                      or a hitSlop key in an object (an Android-only branch, props spread onto a pressable)',
     '  disabled-state      disabled= without accessibilityState',
     '  literal-a11y-text   accessibilityLabel/Hint or aria-label with literal or built English text (use t())',
     '  font-scaling        allowFontScaling={false}, or maxFontSizeMultiplier other than 2',
@@ -34,7 +38,12 @@ const SPEC = {
     '  announce            announceForAccessibility outside app/use-announce.ts (use useAnnounce())',
     '  modal-overlay       a *dialog/*overlay/*sheet/pause-menu component that neither sets',
     '                      accessibilityViewIsModal nor renders a component that does (the Scrim, the modal',
-    '                      root of every Toybox dialog; an overlay root; Modal)',
+    '                      root of every Toybox dialog; an overlay root; Modal). Android half (due at Android',
+    '                      step 4, once packages/shell/src/screens/game/game-screen-back.android.test.tsx',
+    '                      exists): importantForAccessibility no-hide-descendants (literal, or an expression',
+    "                      holding 'no-hide-descendants') in a file that renders the overlay, directly or",
+    '                      through other files, or in a component its direct renderer also renders (the layout',
+    '                      it hands the overlay to); never in an overlay-named file; Modal counts as trapped',
     '  nested-pressable    an accessible Pressable/Touchable* that contains another accessible pressable (a',
     '                      raw one, or a component that renders one, such as Button): iOS then reads the',
     '                      outer element and VoiceOver never reaches the inner key; make them siblings (a',
@@ -50,6 +59,11 @@ const SPEC = {
 const PRESSABLES = new Set(['Pressable', 'TouchableOpacity', 'TouchableHighlight', 'TouchableWithoutFeedback']);
 const MIN_TOUCH = 44;
 const LETTER = /\p{L}/u;
+const OVERLAY_FILE = /(dialog|overlay|sheet|pause-menu)\.tsx$/;
+/** The Android focus trap on the view behind an overlay (the same pattern check-screens accepts). */
+const ANDROID_TRAP = /importantForAccessibility=["']no-hide-descendants["']|importantForAccessibility=\{[^}]*'no-hide-descendants'/;
+/** The Android half of modal-overlay is due once Android step 4 copies its first template. */
+const ANDROID_TRAP_DUE = Object.freeze({ file: 'packages/shell/src/screens/game/game-screen-back.android.test.tsx', step: 4 });
 
 function collectFiles(root) {
   const files = [];
@@ -63,32 +77,40 @@ function collectFiles(root) {
   return files;
 }
 
-/** styleName -> { width, height, minWidth, minHeight } (numbers, or undefined when unknown). */
+/**
+ * styleName -> { ios, android }, each { width, height, minWidth, minHeight } (a number, null when
+ * computed, undefined when unset). A Platform.select or Platform.OS ternary, as the whole value or
+ * spread inside it, gives each platform its own branch, so an Android-only shrink is seen too.
+ */
 function styleSizes(source, masked) {
   const sizes = new Map();
   for (const call of findCalls(masked, 'StyleSheet\\.create')) {
     const open = masked.indexOf('{', call.open);
     if (open === -1 || open > call.close) continue;
     const close = findClosing(masked, open);
-    for (const match of masked.slice(open, close).matchAll(/[{,]\s*([A-Za-z_$][\w$]*)\s*:\s*\{/g)) {
-      const valueOpen = open + match.index + match[0].length - 1;
+    for (const match of masked.slice(open, close).matchAll(/[{,]\s*([A-Za-z_$][\w$]*)\s*:/g)) {
+      const valueFrom = open + match.index + match[0].length;
       let depth = 0;
-      for (let i = open; i < valueOpen; i += 1) depth += masked[i] === '{' ? 1 : masked[i] === '}' ? -1 : 0;
+      for (let i = open; i < valueFrom; i += 1) depth += '({['.includes(masked[i]) ? 1 : ')}]'.includes(masked[i]) ? -1 : 0;
       if (depth !== 1) continue;
-      const valueClose = findClosing(masked, valueOpen);
-      const text = source.slice(valueOpen, valueClose + 1);
-      const read = (key) => {
-        const m = new RegExp(`[{,]\\s*${key}\\s*:\\s*([^,}\\n]+)`).exec(text);
-        if (!m) return undefined;
-        const value = m[1].trim();
-        if (/^\d+(\.\d+)?$/.test(value)) return Number(value);
-        if (/^MIN_TOUCH$/.test(value)) return MIN_TOUCH;
-        return null; // computed: unknown
-      };
-      sizes.set(match[1], { width: read('width'), height: read('height'), minWidth: read('minWidth'), minHeight: read('minHeight') });
+      let valueTo = valueFrom;
+      for (let d = 0; valueTo < close; valueTo += 1) {
+        const ch = masked[valueTo];
+        if ('({['.includes(ch)) d += 1;
+        else if (')}]'.includes(ch)) d -= 1;
+        else if (ch === ',' && d === 0) break;
+      }
+      const text = source.slice(valueFrom, valueTo);
+      sizes.set(match[1], { ios: styleSizesFor(resolvePlatform(text, 'ios')), android: styleSizesFor(resolvePlatform(text, 'android')) });
     }
   }
   return sizes;
+}
+
+/** Where a hitSlop key sits in an object (props built for a pressable), with its Android-only note. */
+function hitSlopKeys(source, masked) {
+  const android = androidOnlySpans(source, masked);
+  return [...masked.matchAll(/(?<![\w$.])hitSlop\s*:/g)].map((m) => ({ index: m.index, isAndroidOnly: android.some((span) => m.index >= span.from && m.index < span.to) }));
 }
 
 function boxTooSmall(size) {
@@ -231,6 +253,62 @@ function findModalFiles(root, files) {
   return modalFiles;
 }
 
+/**
+ * The render graph of the non-test .tsx files: file -> the files whose exported components it
+ * renders as JSX tags (renders), and the reverse (renderedBy).
+ */
+function renderGraph(root, files) {
+  const nodes = new Map();
+  const exportedBy = new Map();
+  for (const rel of files.filter((file) => file.endsWith('.tsx') && !/\.test\.tsx$/.test(file))) {
+    const source = readFileSync(join(root, rel), 'utf8');
+    const masked = maskCode(source);
+    nodes.set(rel, { code: source.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), masked, tags: new Set(findJsxTags(source, masked).map((tag) => tag.name)) });
+    for (const m of masked.matchAll(/export\s+(?:function|const)\s+([A-Z][\w$]*)/g)) exportedBy.set(m[1], [...(exportedBy.get(m[1]) ?? []), rel]);
+  }
+  const renders = new Map([...nodes.keys()].map((rel) => [rel, new Set()]));
+  const renderedBy = new Map([...nodes.keys()].map((rel) => [rel, new Set()]));
+  for (const [rel, node] of nodes) {
+    for (const name of node.tags) {
+      for (const target of exportedBy.get(name) ?? []) {
+        if (target === rel) continue;
+        renders.get(rel).add(target);
+        renderedBy.get(target).add(rel);
+      }
+    }
+  }
+  return { nodes, renders, renderedBy };
+}
+
+/** Every file reachable from `start` along `edges` (start excluded). */
+function reachable(edges, start) {
+  const seen = new Set();
+  const queue = [...(edges.get(start) ?? [])];
+  while (queue.length > 0) {
+    const rel = queue.shift();
+    if (seen.has(rel) || rel === start) continue;
+    seen.add(rel);
+    queue.push(...(edges.get(rel) ?? []));
+  }
+  return seen;
+}
+
+/**
+ * The Android half of modal-overlay. accessibilityViewIsModal is iOS-only, and importantForAccessibility
+ * hides only a view's own subtree, so the trap sits on the container behind the overlay: a file that
+ * renders the overlay (directly or through other files: dialog-host -> dialog-context), or a component
+ * a direct renderer of the overlay also renders (game-screen renders GameLayout and hands it the
+ * overlay). Overlay-named files never count. An overlay that renders RN <Modal> (its own window) is
+ * trapped already.
+ */
+function hasAndroidTrap(graph, overlay) {
+  const usesModal = [overlay, ...reachable(graph.renders, overlay)].some((rel) => /<Modal\b/.test(graph.nodes.get(rel)?.masked ?? ''));
+  if (usesModal) return true;
+  const candidates = new Set(reachable(graph.renderedBy, overlay));
+  for (const parent of graph.renderedBy.get(overlay) ?? []) for (const sibling of graph.renders.get(parent) ?? []) candidates.add(sibling);
+  return [...candidates].some((rel) => !OVERLAY_FILE.test(basename(rel)) && ANDROID_TRAP.test(graph.nodes.get(rel)?.code ?? ''));
+}
+
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const rootArg = positionals[0] ?? '.';
@@ -241,6 +319,11 @@ run(async () => {
   const modalFiles = findModalFiles(root, files);
   const pressableNames = findPressableNames(root, files);
   const shown = (rel) => toPosix(relative(process.cwd(), join(root, rel))) || rel;
+  const graph = renderGraph(root, files);
+  const androidTrapDue = existsSync(join(root, ANDROID_TRAP_DUE.file));
+  if (!androidTrapDue && files.some((rel) => OVERLAY_FILE.test(basename(rel)))) {
+    report.skip({ file: ANDROID_TRAP_DUE.file, rule: 'modal-overlay', message: `Android focus trap (importantForAccessibility behind each overlay): due at Android step ${ANDROID_TRAP_DUE.step}: ${ANDROID_TRAP_DUE.file} not yet created` });
+  }
 
   for (const rel of files) {
     const source = readFileSync(join(root, rel), 'utf8');
@@ -275,6 +358,9 @@ run(async () => {
     if (holdUse.test(masked) && !/\baccessibilityActions\b/.test(masked)) {
       const at = masked.search(holdUse);
       problem(at, 'hold-alternative', 'a hold or long-press action has no screen-reader alternative', 'Add accessibilityActions (for example { name: \'activate\' }) with onAccessibilityAction, or confirm through a dialog.');
+    }
+    for (const key of hitSlopKeys(source, masked)) {
+      problem(key.index, 'hit-slop', key.isAndroidOnly ? 'hitSlop is set in an Android-only branch (Platform.select or Platform.OS), hidden from the iOS layout' : 'hitSlop is set in an object (props spread onto a pressable)', 'Make the pressable\'s own box at least 44 x 44 (MIN_TOUCH, pt on iOS and dp on Android); no hitSlop on either platform.');
     }
     if (!rel.endsWith('.tsx')) continue;
 
@@ -323,14 +409,19 @@ run(async () => {
       if (style) {
         for (const ref of style.value.matchAll(/\bstyles\.([A-Za-z_$][\w$]*)/g)) {
           const size = sizes.get(ref[1]);
-          const small = size ? boxTooSmall(size) : null;
+          const small = size ? boxTooSmall(size.ios) : null;
+          const smallOnAndroid = size && !small ? boxTooSmall(size.android) : null;
           if (small) problem(style.index, 'touch-target', `<${tag.name}> style styles.${ref[1]} is only ${small}`, 'Give the pressable itself at least 44 x 44 pt (MIN_TOUCH) and centre the smaller glyph inside it.');
+          if (smallOnAndroid) problem(style.index, 'touch-target', `<${tag.name}> style styles.${ref[1]} is only ${smallOnAndroid} on Android (an Android-only style branch: Platform.select or Platform.OS)`, 'The 44 rule holds in dp on Android too: drop the Android branch\'s smaller size, or make it at least MIN_TOUCH.');
         }
       }
     }
 
-    if (/(dialog|overlay|sheet|pause-menu)\.tsx$/.test(basename(rel)) && !modalFiles.has(rel)) {
-      problem(0, 'modal-overlay', `${basename(rel)} is an overlay without accessibilityViewIsModal`, 'Set accessibilityViewIsModal on the overlay container so VoiceOver cannot wander into the screen behind it.');
+    if (OVERLAY_FILE.test(basename(rel)) && !modalFiles.has(rel)) {
+      problem(0, 'modal-overlay', `${basename(rel)} is an overlay without accessibilityViewIsModal`, 'Set accessibilityViewIsModal on the overlay container so VoiceOver cannot wander into the screen behind it (iOS; Android also needs the focus trap on the container behind it).');
+    }
+    if (OVERLAY_FILE.test(basename(rel)) && androidTrapDue && !hasAndroidTrap(graph, rel)) {
+      problem(0, 'modal-overlay', `${basename(rel)} is an overlay with no Android focus trap: TalkBack reaches the screen behind it (accessibilityViewIsModal is iOS-only)`, "In the layout or provider that renders the overlay beside the content behind it (game-layout.tsx, dialog-context.tsx; never the overlay file itself), set importantForAccessibility={overlay === null ? 'auto' : 'no-hide-descendants'} on the view holding that content, so the board or screen stays mounted.");
     }
     if (basename(rel) === 'board-canvas.tsx') {
       const text = source;

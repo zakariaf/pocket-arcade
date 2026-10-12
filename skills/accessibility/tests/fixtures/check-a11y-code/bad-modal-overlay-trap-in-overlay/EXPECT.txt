@@ -1,0 +1,3 @@
+[modal-overlay]
+pause-dialog.tsx
+no Android focus trap

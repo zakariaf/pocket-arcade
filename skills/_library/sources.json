@@ -132,7 +132,7 @@
     },
     "accessibility": {
       "SKILL.md": {
-        "recorded": "2026-09-30",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -145,6 +145,10 @@
           {
             "path": "docs/18-design-system-toybox.md",
             "sha256": "e65b9276f05341107e9bea224d896d155fb0f8656f9af2a92a4f25e48b3366f8"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
@@ -175,7 +179,7 @@
         ]
       },
       "references/roles-labels-and-voiceover.md": {
-        "recorded": "2026-09-30",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -188,20 +192,36 @@
           {
             "path": "docs/18-design-system-toybox.md",
             "sha256": "e65b9276f05341107e9bea224d896d155fb0f8656f9af2a92a4f25e48b3366f8"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+          },
+          {
+            "path": "packages/shell/src/app/dialog-context.tsx",
+            "sha256": "e697219e210ef253839cfe30a75eb9290110a1688cf36a52fe026afe5e65a6e3"
+          },
+          {
+            "path": "packages/shell/src/screens/game/game-layout.tsx",
+            "sha256": "2338e23df8a87721ea0ff46a0713b9189bd72d05432030d1ca78d09cc834c74d"
           }
         ]
       },
       "references/testing-accessibility.md": {
-        "recorded": "2026-09-28",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/15-performance-and-accessibility.md",
             "sha256": "459f4a055aa022eaeecf90733972b50ddfa2bea471c27c23c719ada6dfe6a7ae"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/text-scaling-and-motion.md": {
-        "recorded": "2026-09-30",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
@@ -218,11 +238,15 @@
           {
             "path": "docs/18-design-system-toybox.md",
             "sha256": "e65b9276f05341107e9bea224d896d155fb0f8656f9af2a92a4f25e48b3366f8"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "scripts/check-a11y-code.mjs": {
-        "recorded": "2026-09-28",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -231,6 +255,18 @@
           {
             "path": "docs/15-performance-and-accessibility.md",
             "sha256": "459f4a055aa022eaeecf90733972b50ddfa2bea471c27c23c719ada6dfe6a7ae"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+          },
+          {
+            "path": "packages/shell/src/app/dialog-context.tsx",
+            "sha256": "e697219e210ef253839cfe30a75eb9290110a1688cf36a52fe026afe5e65a6e3"
+          },
+          {
+            "path": "packages/shell/src/screens/game/game-layout.tsx",
+            "sha256": "2338e23df8a87721ea0ff46a0713b9189bd72d05432030d1ca78d09cc834c74d"
           }
         ]
       },
@@ -244,6 +280,15 @@
           {
             "path": "docs/18-design-system-toybox.md",
             "sha256": "e65b9276f05341107e9bea224d896d155fb0f8656f9af2a92a4f25e48b3366f8"
+          }
+        ]
+      },
+      "scripts/lib/platform-branches.mjs": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
