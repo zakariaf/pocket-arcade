@@ -1,6 +1,6 @@
 ---
 name: android-emulator-build
-description: Builds Pocket Arcade Android apps - Release APK via Gradle assembleRelease on JDK 17, clean prebuild, test/store variant proof, e07-android AVD by adb serial, screencap, APK check. Use when a game must build, run or be proven on Android or an emulator. Not for iOS uploads (ios-release-testflight).
+description: Builds Pocket Arcade Android apps - Release APK via Gradle assembleRelease on JDK 17, clean prebuild, test/store variant proof, e07-android AVD by adb serial, screencap, APK check. Use when a game must build, run or be proven on Android or an emulator. Not for Play uploads (android-release-play).
 ---
 
 # Android emulator build
@@ -12,7 +12,7 @@ Turns `apps/<game>` into a Release Android app with one command, `npm run build:
 1. **Build only through `npm run build:android:emu -- --app <game> [--variant test|store] [--ads off|test|live]`, from `npx expo prebuild --platform android --clean`. Never edit or commit `android/`.** Continuous Native Generation regenerates `android/` and drops hand edits; every setting goes into `app.config.ts`, `withShell` or a config plugin.
 2. **Use JDK 17 through `JAVA_HOME` (Android Studio's JBR) and `ANDROID_HOME` with the pinned SDK parts; never switch the Mac's Java.** AGP 8.12 and Gradle 9 run on JDK 17, and other projects on this Mac rely on the global default.
 3. **Export `APP_VARIANT`, `EXPO_PUBLIC_APP_VARIANT` (same value) and `ADS_MODE` once for the whole run, and key Metro's `cacheVersion` on the variant.** The variant enters the APK three times (prebuild, expo-constants' Gradle task, Metro), and Metro's cache ignores it: verified on iOS, a store build after a test build shipped the debug module.
-4. **Use `assembleRelease` for emulator APKs; `bundleRelease` belongs to the Play release tooling only (`packages/tooling/src/release-android/`).** An emulator installs an APK, and a second AAB path outside the release tooling would bypass the store gate.
+4. **Use `assembleRelease` for emulator APKs; `bundleRelease` belongs to the Play release only (android-release-play).** An emulator installs an APK, and a second AAB path outside the release tooling would bypass the store gate.
 5. **Name AVDs `e07-android-<purpose>` and give them the pinned `google_apis` arm64 image; never use a Play Store image for checks.** `adb root`, which the kill test and save inspection need, fails on Play Store images, and the prefix is what keeps other projects' AVDs untouched.
 6. **Start each AVD on a free console port, target it as `emulator-<port>` and pass `adb -s <serial>` in every call. Never `adb kill-server`, and never start, change or delete another project's AVD.** Several sessions and emulators share this Mac's adb server; a call without a serial reaches whichever device answers.
 7. **Wait on `sys.boot_completed` and the app's ready signal, never a fixed sleep; take the screenshot with `adb -s <serial> exec-out screencap -p` and look at it.** A build that succeeded can still launch to a blank screen or Roboto instead of Lilita One; only the picture shows it.
@@ -86,6 +86,7 @@ Turns `apps/<game>` into a Release Android app with one command, `npm run build:
 
 ## Related skills
 
+- `android-release-play` - the signed AAB, the store-AAB gate and the upload to Google Play internal testing.
 - `ios-simulator-build` - the iOS twin of this skill; the variant files and the test-only gate are shared.
 - `architecture-and-boundaries` - `withShell`, the Android block, the variant marker plugin and where the variant files live.
 - `troubleshooting-playbook` - failures outside this skill's table (`find-fix.mjs`).

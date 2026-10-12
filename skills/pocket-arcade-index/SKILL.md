@@ -54,6 +54,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Build, run or smoke-test on the iOS simulator | `ios-simulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
 | Build, run or smoke-test on the Android emulator | `android-emulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
 | Release a game to TestFlight | `ios-release-testflight` `premium-purchase` `privacy-and-network-audit` `e2e-maestro` `toybox-visual-parity` `game-balance-and-bots` `i18n-strings-and-catalogs` `git-commits-and-reporting` |
+| Release a game to Google Play internal testing | `android-release-play` `premium-purchase` `privacy-and-network-audit` `android-emulator-build` `git-commits-and-reporting` |
 | Add, upgrade or remove an npm package | `dependency-management` `privacy-and-network-audit` `performance-budgets` `ios-simulator-build` `quality-gates` |
 | Move to a new Expo SDK or Xcode version | `expo-sdk-upgrade` `dependency-management` `board-gestures-and-input` `unit-and-component-tests` `golden-tests` `ios-simulator-build` `e2e-maestro` |
 | A quality gate, hook or verify run fails | `quality-gates` `troubleshooting-playbook` `typescript-and-lint-rules` `unit-and-component-tests` |

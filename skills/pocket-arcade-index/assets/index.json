@@ -104,7 +104,8 @@
       "skills": [
         "ios-simulator-build",
         "ios-release-testflight",
-        "android-emulator-build"
+        "android-emulator-build",
+        "android-release-play"
       ]
     }
   ],
@@ -455,6 +456,17 @@
         "git-commits-and-reporting"
       ],
       "note": "Nothing leaves the Mac without the owner's word in this session; the owner's play-test, fa and ckb review and listening to the sound previews are listed as owner steps, never waited for."
+    },
+    {
+      "task": "Release a game to Google Play internal testing",
+      "skills": [
+        "android-release-play",
+        "premium-purchase",
+        "privacy-and-network-audit",
+        "android-emulator-build",
+        "git-commits-and-reporting"
+      ],
+      "note": "Signed AAB from a clean main, the store-AAB gate with its stamp, then the upload with the owner's word; the keyless rehearsal and a slice report until the Play steps are done."
     },
     {
       "task": "Add, upgrade or remove an npm package",

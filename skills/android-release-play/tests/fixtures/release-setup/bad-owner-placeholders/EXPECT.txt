@@ -1,0 +1,4 @@
+[owner-placeholder] links.privacyPolicy.host
+[owner-placeholder] links.supportEmail
+[owner-placeholder] ads.ids.android
+OWNER STEPS PENDING: G3, GP5
