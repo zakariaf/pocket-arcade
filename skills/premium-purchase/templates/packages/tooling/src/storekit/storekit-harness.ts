@@ -2,7 +2,7 @@
 // device-only: covered by check-premium (harness-maestro) and the Tier 2 harness run itself
 // Tier-2 Premium purchase tests on a throwaway simulator of your own. Test variant only.
 // Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --device <udid>
-//          [--driver-port <n>] [--metro-port <n>]
+//          [--driver-port <n>] [--metro-port <n>] (node:util parseArgs; any other option stops it)
 // Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro, then
 // per scenario arms the simulator's StoreKit test store and runs one flow from
 // packages/shell/e2e/storekit/. Every Maestro call names the simulator and its own XCTest driver
@@ -15,7 +15,10 @@ import { copyFileSync, mkdirSync, readFileSync, readdirSync, writeFileSync } fro
 import { availableParallelism, loadavg } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { parseArgs } from 'node:util';
 
+import { isGameId } from '@e07/tooling/build/game-id.ts';
+import { findWorkspace, PREBUILD_ARGS, schemeOf } from '@e07/tooling/build/sim-build-plan.ts';
 import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
 import { MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
 import { readUrlScheme } from '@e07/tooling/ios/sim-app.ts';
@@ -69,12 +72,9 @@ function bundleIdOf(appDir: string): string {
 
 // Fresh CNG project (test variant) + harness files + target. Never used for shipped builds.
 function prepareHarness(appDir: string, udid: string, metroPort: number): Harness {
-  run('npx', ['expo', 'prebuild', '--platform', 'ios', '--clean'], appDir);
+  run('npx', PREBUILD_ARGS, appDir);
   const ios = join(appDir, 'ios');
-  const scheme = readdirSync(ios)
-    .find((f) => f.endsWith('.xcworkspace'))
-    ?.replace('.xcworkspace', '');
-  if (scheme === undefined) throw new Error('no .xcworkspace after prebuild');
+  const scheme = schemeOf(findWorkspace(readdirSync(ios)));
   const bundleId = bundleIdOf(appDir);
   const template = readFileSync(join(HERE, 'Premium.storekit.template'), 'utf8');
   writeFileSync(
@@ -144,19 +144,24 @@ async function runFlow(h: Harness, givenPort: string | undefined, flow: string):
   return spawnSync(MAESTRO_BIN, args, { stdio: 'inherit', env }).status === 0;
 }
 
+const USAGE =
+  'usage: storekit-harness.ts --app <game-id> --device <udid> [--driver-port <n>] [--metro-port <n>]';
+const OPTIONS = {
+  app: { type: 'string' },
+  device: { type: 'string' },
+  'driver-port': { type: 'string' },
+  'metro-port': { type: 'string' },
+} as const;
+
 async function main(argv: readonly string[]): Promise<number> {
-  const valueOf = (flag: string): string | undefined =>
-    argv.includes(flag) ? argv[argv.indexOf(flag) + 1] : undefined;
-  const game = valueOf('--app');
-  const udid = valueOf('--device');
-  if (game === undefined || udid === undefined) {
-    throw new Error('usage: storekit-harness.ts --app <game-id> --device <udid>');
-  }
+  const { values } = parseArgs({ args: [...argv], options: OPTIONS });
+  const { app: game, device: udid } = values;
+  if (!isGameId(game) || udid === undefined) throw new Error(USAGE);
   // Refuse a non-UDID or a bad --driver-port before anything is built; each flow then gets its own
   // driver port (runFlow).
-  const givenPort = valueOf('--driver-port');
+  const givenPort = values['driver-port'];
   maestroGlobalArgs({ udid, driverPort: await driverPortFor(givenPort) });
-  const metroPort = await driverPortFor(valueOf('--metro-port')); // any free port serves Metro too
+  const metroPort = await driverPortFor(values['metro-port']); // any free port serves Metro too
   const busy = busyNoteNow();
   if (busy !== null) console.error(busy);
   const h = prepareHarness(join(ROOT, 'apps', game), udid, metroPort);

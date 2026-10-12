@@ -3,6 +3,7 @@
 import { join } from 'node:path';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { isGameId } from '@e07/tooling/build/game-id.ts';
 import { maestroGlobalArgs } from '@e07/tooling/e2e/maestro-args.ts';
 import {
   DEBUG_SETUP_FLOW,
@@ -102,7 +103,7 @@ const isDriverPort = (port: number): boolean =>
 export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
   const flags = readFlags(argv);
   const game = flags.get('--app');
-  if (game === undefined || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(game)) {
+  if (!isGameId(game)) {
     throw new Error(
       `--app <game-id> is required (kebab-case folder under apps/). ${SIM_BUILD_USAGE}`,
     );
@@ -166,6 +167,20 @@ export function buildScriptProblems(
       .filter((target) => !exists(target))
       .map((target) => `"${name}" runs ${target}, which does not exist; install ${source}`);
   });
+}
+
+/**
+ * The workspace a clean prebuild wrote, as ios/<Scheme>.xcworkspace, from the entries of
+ * apps/<game>/ios (build:ios:sim, release:ios and the StoreKit harness alike).
+ */
+export function findWorkspace(iosEntries: readonly string[]): string {
+  const found = iosEntries.find((entry) => entry.endsWith('.xcworkspace'));
+  if (found === undefined) {
+    throw new Error(
+      'no .xcworkspace in ios/: prebuild did not finish, see build/logs/prebuild.log',
+    );
+  }
+  return join('ios', found);
 }
 
 /** `ios/LineSiege.xcworkspace` -> `LineSiege` (the scheme comes from expo.name, spaces removed). */

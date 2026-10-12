@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { findWorkspace, PREBUILD_ARGS, schemeOf } from '@e07/tooling/build/sim-build-plan.ts';
 import { readAppExtra, readPlistValue } from '@e07/tooling/ios/sim-app.ts';
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
@@ -17,27 +18,13 @@ import type { ArtifactFacts, TRACKING_LANGUAGES } from '@e07/tooling/release/sto
 
 export type BuiltIpa = { readonly ipa: string; readonly appDirInIpa: string };
 
-function schemeOf(appDir: string): string {
-  const workspace = readdirSync(join(appDir, 'ios')).find((entry) =>
-    entry.endsWith('.xcworkspace'),
-  );
-  if (workspace === undefined) {
-    throw new Error('prebuild wrote no .xcworkspace: read build/logs/prebuild.log');
-  }
-  return workspace.slice(0, -'.xcworkspace'.length);
-}
-
 /** Step 3: a clean prebuild, then the audits that read ios/Pods and ios/Podfile.lock. */
 function prebuildAndAudit(options: ReleaseOptions, context: ReleaseContext): string {
   const npmRun = (script: string, extra: readonly string[]): readonly string[] => [
     ...['run', '-s', script],
     ...extra,
   ];
-  runReleaseStep(
-    'prebuild',
-    { file: 'npx', args: ['expo', 'prebuild', '--platform', 'ios', '--clean'] },
-    context,
-  );
+  runReleaseStep('prebuild', { file: 'npx', args: PREBUILD_ARGS }, context);
   runReleaseStep(
     'audit-privacy',
     { file: 'npm', args: npmRun('audit:privacy', ['--', '--app', options.game]), atRoot: true },
@@ -48,7 +35,7 @@ function prebuildAndAudit(options: ReleaseOptions, context: ReleaseContext): str
     { file: 'npm', args: npmRun('audit:network', []), atRoot: true },
     context,
   );
-  return schemeOf(context.appDir);
+  return findWorkspace(readdirSync(join(context.appDir, 'ios')));
 }
 
 /** Steps 4-6: archive and export with API-key signing, then unpack the .ipa for the gate. */
@@ -58,9 +45,9 @@ export function buildIpa(
   pre: Preflight,
 ): BuiltIpa {
   rmSync(join(context.appDir, 'build', 'export'), { recursive: true, force: true });
-  const scheme = prebuildAndAudit(options, context);
+  const workspace = prebuildAndAudit(options, context);
+  const scheme = schemeOf(workspace);
   const auth = xcodeAuthArgs(pre.keyFile, pre.ids);
-  const workspace = join('ios', `${scheme}.xcworkspace`);
   runReleaseStep(
     'archive',
     { file: 'xcodebuild', args: archiveArgs({ workspace, scheme }, auth) },
