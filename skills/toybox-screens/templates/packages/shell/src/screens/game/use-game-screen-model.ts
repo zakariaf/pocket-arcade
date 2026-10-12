@@ -98,18 +98,13 @@ function useTopBar({
  * recorded (statistics, streak, endless best, ad history) and the recorded Result follows, the
  * endless result with its score and New best or the lose result without the offer. The same holds
  * when a shown offer turns hidden (offline, a load error) and for a pending loss reopened from
- * Home, but not while the continue is being paid for (its rewarded ad on screen is used up, so the
- * offer reads 'hidden' until the payment settles). 'loading' keeps the offer (drawn busy). A layout effect, so the recorded Result replaces
- * the pending one before the frame is shown.
+ * Home. 'loading' keeps the offer (drawn busy): while the rewarded ad loads, and while a continue
+ * is paid for with an ad (usePerkPayment), whose shown ad is used up. A layout effect, so the
+ * recorded Result replaces the pending one before the frame is shown.
  */
-function useFinishStrandedLoss(
-  controls: GameSessionControls,
-  continueOffer: PerkOffer,
-  isPayingContinue: boolean,
-): void {
+function useFinishStrandedLoss(controls: GameSessionControls, continueOffer: PerkOffer): void {
   const { view, send } = controls;
-  // While the continue is paid for, its rewarded ad is on screen and the offer reads 'hidden'.
-  const isStranded = view !== null && !isPayingContinue && isLossStranded(view, continueOffer);
+  const isStranded = view !== null && isLossStranded(view, continueOffer);
   // The view a finish was sent for: a new run, or a new eventSeq, is always a new view object.
   const finishedFor = useRef<SessionView | null>(null);
   // Allowed effect: records the run end in the session (an external store) the view follows.
@@ -140,7 +135,7 @@ export function useGameScreenModel(
     },
   });
   const topBar = useTopBar({ controls, perks, text, hasHints: game.hasHints, isReducedMotion });
-  useFinishStrandedLoss(controls, perks.continueOffer, perks.isPayingContinue);
+  useFinishStrandedLoss(controls, perks.continueOffer);
   const { view } = controls;
   const { continueOffer } = perks;
   const result =
