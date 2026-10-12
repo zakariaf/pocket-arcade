@@ -1,27 +1,19 @@
 // packages/tooling/src/release/release-runner.ts
 // Runs one release step with its output in apps/<game>/build/logs/<step>.log. A failure is matched
 // against the playbook: an owner stop ends the run with one message; nothing is ever retried here.
-import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-
+import { runToolStep } from '@e07/tooling/ios/tool-step.ts';
 import {
   classifyReleaseFailure,
   resumeHint,
   stopMessage,
 } from '@e07/tooling/release/release-failures.ts';
 
+import type { StepCommand } from '@e07/tooling/ios/tool-step.ts';
+
 export type ReleaseContext = {
   readonly game: string;
   readonly appDir: string;
   readonly env: NodeJS.ProcessEnv;
-};
-
-export type StepCommand = {
-  readonly file: string;
-  readonly args: readonly string[];
-  /** Run from the repo root instead of apps/<game>. */
-  readonly atRoot?: boolean;
 };
 
 function lastErrorLine(output: string): string {
@@ -35,22 +27,12 @@ export function runReleaseStep(
   command: StepCommand,
   context: ReleaseContext,
 ): string {
-  const logDir = join(context.appDir, 'build', 'logs');
-  mkdirSync(logDir, { recursive: true });
   console.log(`release:ios: ${name} ...`);
-  const result = spawnSync(command.file, command.args, {
-    cwd: command.atRoot === true ? '.' : context.appDir,
-    env: context.env,
-    encoding: 'utf8',
-    maxBuffer: 512 << 20,
-  });
-  const output = `${result.stdout}${result.stderr}`;
-  const logFile = join(logDir, `${name}.log`);
-  writeFileSync(logFile, output);
+  const result = runToolStep(name, command, context);
   if (result.status === 0) {
     return result.stdout;
   }
-  throw new Error(failureMessage(name, output, logFile));
+  throw new Error(failureMessage(name, result.output, result.logFile));
 }
 
 export function failureMessage(step: string, output: string, logFile: string): string {
@@ -64,9 +46,4 @@ export function failureMessage(step: string, output: string, logFile: string): s
     return `${stopMessage(step, errorLine, verdict)}\n(log: ${logFile})\n${resume}`;
   }
   return `step "${step}" failed (${verdict.id}): ${errorLine}\nFix: ${verdict.action}\n(log: ${logFile})\n${resume}`;
-}
-
-/** Synchronous wait between polls (the CLI has nothing else to do meanwhile). */
-export function sleepSeconds(seconds: number): void {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, seconds * 1000);
 }
