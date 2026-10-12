@@ -900,6 +900,21 @@
         ]
       }
     },
+    "android-emulator-build": {
+      "references/environment-and-sdk.md": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "docs/01-stack-and-versions.md",
+            "sha256": "32f3c8fd2d596361087b395359bed0421b6918e6472419bc351c8949b2d119ab"
+          },
+          {
+            "path": "docs/14-ios-build-and-release.md",
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
+          }
+        ]
+      }
+    },
     "architecture-and-boundaries": {
       "assets/architecture-rules.json": {
         "recorded": "2026-10-01",

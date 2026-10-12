@@ -100,10 +100,11 @@
     },
     {
       "name": "Build and release",
-      "why": "Release simulator builds, and the road to TestFlight.",
+      "why": "Release simulator and emulator builds, and the road to TestFlight and Google Play.",
       "skills": [
         "ios-simulator-build",
-        "ios-release-testflight"
+        "ios-release-testflight",
+        "android-emulator-build"
       ]
     }
   ],
@@ -431,6 +432,15 @@
         "architecture-and-boundaries"
       ],
       "note": "Release builds of the test variant; look at the screenshot."
+    },
+    {
+      "task": "Build, run or smoke-test on the Android emulator",
+      "skills": [
+        "android-emulator-build",
+        "troubleshooting-playbook",
+        "architecture-and-boundaries"
+      ],
+      "note": "Release APKs of the test and store variants on an e07-android emulator; check the APK and look at the screenshot."
     },
     {
       "task": "Release a game to TestFlight",

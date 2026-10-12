@@ -108,6 +108,7 @@ Named skills are always loaded and their definitions of done are binding; `pocke
 
 - `ios-simulator-build`: Release simulator builds of the test and store variants, proven by a screenshot.
 - `ios-release-testflight`: signing, uploading and processing a build on TestFlight, with the owner's go.
+- `android-emulator-build`: Release Android builds of the test and store variants on an e07-android emulator, proven by the APK check and a screenshot.
 
 ## Library commands
 

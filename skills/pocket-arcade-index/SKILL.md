@@ -52,6 +52,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Write or fix end-to-end flows or the screenshot matrix | `e2e-maestro` `ios-simulator-build` `toybox-visual-parity` `privacy-and-network-audit` `golden-tests` |
 | Prove a screen matches its Toybox design screenshot | `toybox-visual-parity` `ios-simulator-build` `toybox-screens` `toybox-components` `toybox-design-system` |
 | Build, run or smoke-test on the iOS simulator | `ios-simulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
+| Build, run or smoke-test on the Android emulator | `android-emulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
 | Release a game to TestFlight | `ios-release-testflight` `premium-purchase` `privacy-and-network-audit` `e2e-maestro` `toybox-visual-parity` `game-balance-and-bots` `i18n-strings-and-catalogs` `git-commits-and-reporting` |
 | Add, upgrade or remove an npm package | `dependency-management` `privacy-and-network-audit` `performance-budgets` `ios-simulator-build` `quality-gates` |
 | Move to a new Expo SDK or Xcode version | `expo-sdk-upgrade` `dependency-management` `board-gestures-and-input` `unit-and-component-tests` `golden-tests` `ios-simulator-build` `e2e-maestro` |

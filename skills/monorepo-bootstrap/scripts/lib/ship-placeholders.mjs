@@ -1,9 +1,9 @@
 // ship-placeholders.mjs: the one list of scaffold placeholders a ship gate refuses by name, with the
 // owner step that replaces each one, the owner-placeholder result every gate prints, and the one
 // app id rule (a helper, not an entry point). Shared by ios-release-testflight (check-release-setup,
-// check-store-artifact), privacy-and-network-audit (audit-app-bundle) and ios-simulator-build
-// (check-sim-app --variant store); new-game-scaffold's app-files.mjs re-exports the list for
-// check-game-app --stage complete. Each checker re-exports PLACEHOLDERS and its self-test pins it.
+// check-store-artifact), privacy-and-network-audit (audit-app-bundle), ios-simulator-build
+// (check-sim-app --variant store) and android-emulator-build (check-emu-app); new-game-scaffold's
+// app-files.mjs re-exports the list for check-game-app --stage complete. Each checker re-exports PLACEHOLDERS and its self-test pins it.
 //
 // Owner decision O4 (2026-09-30): every app's iOS bundle id and Android package is
 // io.applander.<game id without hyphens>, all lowercase (Line Siege: io.applander.linesiege), and
@@ -23,10 +23,28 @@
 /** The rule every ship gate reports a scaffold placeholder under. */
 export const OWNER_PLACEHOLDER_RULE = 'owner-placeholder';
 
-/** What each owner step supplies (human-steps G3 and G5 of ios-release-testflight). */
+/**
+ * What each owner step supplies: G3 and G5 (human-steps of ios-release-testflight) and GP5, the
+ * per-game Google Play step of android-release-play (the AdMob Android app and its three units).
+ */
 export const OWNER_STEP_TEXT = Object.freeze({
   G3: "the owner's privacy-policy host and support address (owner step G3, with the App Privacy answers and the store listing)",
   G5: "the owner's AdMob app id and its banner, interstitial and rewarded unit ids (owner step G5)",
+  GP5: "the owner's AdMob Android app id and its banner, interstitial and rewarded unit ids (owner step GP5)",
+});
+
+/**
+ * The Android AdMob ids a live Android build needs while game.config.ts still has
+ * `ads.ids.android: null`: not a typed placeholder (nothing to match), so it is not in PLACEHOLDERS;
+ * the Android gates report its absence with ownerPlaceholderProblem({ entry: ANDROID_AD_IDS_MISSING }).
+ */
+export const ANDROID_AD_IDS_MISSING = Object.freeze({
+  field: 'ads.ids.android',
+  value: 'ads.ids.android: null',
+  name: 'missing: game.config.ts has',
+  ownerStep: 'GP5',
+  step: "the owner's AdMob Android app id and units (owner step GP5)",
+  matches: () => false,
 });
 
 const exactly = (value) => (text) => text === value;
@@ -112,14 +130,21 @@ export function ownerPlaceholderProblem({ entry: item, where = item.field, file,
   };
 }
 
-/** The owner steps still pending, from a gate's problems (rule owner-placeholder), sorted: ['G3', 'G5']. */
+/** G steps first, then GP steps (Google Play), each by number: G3, G5, GP5. */
+function ownerStepOrder(a, b) {
+  const [, letterA, numberA] = /^(GP|G)(\d+)$/.exec(a);
+  const [, letterB, numberB] = /^(GP|G)(\d+)$/.exec(b);
+  return letterA === letterB ? Number(numberA) - Number(numberB) : letterA.length - letterB.length;
+}
+
+/** The owner steps still pending, from a gate's problems (rule owner-placeholder), sorted: ['G3', 'G5', 'GP5']. */
 export function ownerStepsPending(problems) {
   const steps = new Set();
   for (const problem of problems ?? []) {
     if (problem?.rule !== OWNER_PLACEHOLDER_RULE) continue;
-    for (const match of `${problem.message ?? ''} ${problem.fix ?? ''}`.matchAll(/owner step (G\d+)/g)) steps.add(match[1]);
+    for (const match of `${problem.message ?? ''} ${problem.fix ?? ''}`.matchAll(/owner step (GP\d+|G\d+)/g)) steps.add(match[1]);
   }
-  return [...steps].sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+  return [...steps].sort(ownerStepOrder);
 }
 
 /** "OWNER STEPS PENDING: G3, G5" for a gate's problems, or null when no owner placeholder is left. */

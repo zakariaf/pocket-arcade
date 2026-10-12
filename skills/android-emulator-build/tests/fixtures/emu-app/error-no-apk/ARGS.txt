@@ -1,0 +1,1 @@
+--apk no-such.apk --variant test --ads off --game line-siege --aapt2 ../../fakes/fake-aapt2.mjs

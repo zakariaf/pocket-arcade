@@ -1,0 +1,2 @@
+[permission]
+android.permission.READ_CONTACTS

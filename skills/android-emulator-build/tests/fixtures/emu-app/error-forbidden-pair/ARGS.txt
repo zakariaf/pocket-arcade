@@ -1,0 +1,1 @@
+--apk app-release.apk --variant store --ads test --game line-siege --aapt2 ../../fakes/fake-aapt2.mjs

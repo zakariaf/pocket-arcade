@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/reset.ts:5 [adb-serial]
