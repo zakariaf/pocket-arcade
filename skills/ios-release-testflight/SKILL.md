@@ -70,7 +70,7 @@ Takes one commit of `apps/<game>` to a processed TestFlight build with one comma
 | [references/signing-and-keys.md](references/signing-and-keys.md) | What signs what, team key and Admin role, env vars, key and token rules, keychain, entitlements, leak response, verified vs not | Workflow step 1, and on any signing error |
 | [references/release-pipeline.md](references/release-pipeline.md) | Steps 0-12 with every command, ExportOptions keys, the gate commands, processing wait, What to Test, resuming a stopped run, version/build/tag policy, after "ship" | Workflow steps 5 and 7, and to run a step by hand |
 | [references/app-store-connect-api.md](references/app-store-connect-api.md) | REST endpoints and when to use them, JWT rules, the ASC modules, error codes | When a REST call fails or a new one is needed |
-| [references/human-steps.md](references/human-steps.md) | Owner steps O1-O10, G1-G8, R1-R6, the release checklist, Android later | Workflow steps 1 and 4 |
+| [references/human-steps.md](references/human-steps.md) | Owner steps O1-O10, G1-G8, R1-R6, the release checklist, where the Android steps are | Workflow steps 1 and 4 |
 | [references/failure-playbook.md](references/failure-playbook.md) | Symptom, cause, action for every known release failure; stops; open questions | Workflow step 7 |
 | [examples/release-messages.md](examples/release-messages.md) | A finished-release report, a stop message and a G2 request, plus bad versions | Workflow step 8 |
 | `templates/packages/tooling/config/` | `export-options-test.plist` and `export-options-store.plist` | Workflow step 2 |
