@@ -213,7 +213,7 @@ Keep the board contract: at most one `InputIntent` per gesture, hit-testing thro
 ## Scene support, Android, expo-doctor
 
 - `ios.enableSceneSupport` is a no-op on SDK 58: remove the scene-support entry and its file in the move commit (`check-sdk-alignment.mjs` rule `scene-support`).
-- Android (later): SDK 58 moves compileSdk to 37 with AGP 9. Nothing ships on Android yet; the monthly Android smoke build catches it.
+- Android: SDK 58 moves compileSdk to 37 with AGP 9 (preview reading, not yet confirmed from the stable React Native's `libs.versions.toml`, so SDK 58's `android` entry in `assets/sdk-lines.json` is still `null`). In the move commit, fill that entry from the new catalog, move the Android pins and the `dependency-management` Android toolchain with it, and run the Android build of the upgrade, `npm run build:android:emu` and `npm run e2e:android`, for every app with an Android port; `check-sdk-alignment.mjs` rule `android-toolchain` fails an Android repo on SDK 58 until the entry exists.
 - `npx expo-doctor` runs 20 checks on SDK 58 (21 on SDK 57).
 - `fsevents@2.3.3` may appear in `npm approve-scripts --allow-scripts-pending` after an `npx expo install`: it is macOS file watching (optional); read its script and approve it.
 

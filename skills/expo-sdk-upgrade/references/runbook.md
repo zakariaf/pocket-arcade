@@ -67,7 +67,7 @@ npm run -s check:fast
 npm run verify
 ```
 
-Then, for every app, the device-side checks (the `ios-simulator-build` and `e2e-maestro` skills own the commands): `npx expo prebuild --platform ios --clean`, `npm run build:ios:sim -- --app <id>` and a launch, `npm run e2e:ios -- --app <id>`, `npm run screenshots:ios -- --app <id>`. Open every screenshot and golden diff with the Read tool; a diff is accepted only when the change list explains it, with a `Gate-Change:` trailer.
+Then, for every app, the device-side checks (the `ios-simulator-build` and `e2e-maestro` skills own the commands): `npx expo prebuild --platform ios --clean`, `npm run build:ios:sim -- --app <id>` and a launch, `npm run e2e:ios -- --app <id>`, `npm run screenshots:ios -- --app <id>`. For every app with an Android port, the Android build of the upgrade (the `android-emulator-build` and `e2e-maestro` skills own the commands): `npm run build:android:emu -- --app <id>` (it runs `npx expo prebuild --platform android --clean` and Gradle on JDK 17) and `npm run e2e:android -- --app <id>`; a new compileSdk, AGP, NDK or Kotlin comes with the SDK's Android line (`android-toolchain`), and a missing SDK part is an owner download, asked for first. Open every screenshot and golden diff with the Read tool; a diff is accepted only when the change list explains it, with a `Gate-Change:` trailer.
 
 ## Commit, report, merge
 
@@ -81,7 +81,8 @@ Then, for every app, the device-side checks (the `ios-simulator-build` and `e2e-
   tools and overrides follow. Board gestures use the Gesture Handler 3
   hooks; config plugins import expo/config-plugins; Jest uses the
   Reanimated resolver. verify, simulator builds, E2E and the screenshot
-  matrix pass for every app; N golden diffs reviewed (Skia 2.11).
+  matrix pass for every app, and the Android build and E2E for every
+  Android port; N golden diffs reviewed (Skia 2.11).
 
   Gate-Change: Jest resolver and re-accepted goldens for Expo SDK 58
   ```

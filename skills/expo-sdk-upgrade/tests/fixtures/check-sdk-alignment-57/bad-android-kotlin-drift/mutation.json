@@ -1,0 +1,15 @@
+[
+  {
+    "write": {
+      "file": "node_modules/react-native/gradle/libs.versions.toml",
+      "content": "[versions]\n# Android versions\nminSdk = \"24\"\ntargetSdk = \"36\"\ncompileSdk = \"36\"\nbuildTools = \"36.0.0\"\nndkVersion = \"27.1.12297006\"\n# Dependencies versions\nagp = \"8.12.0\"\nandroidx-annotation = \"1.6.0\"\nkotlin = \"2.1.20\"\n\n[libraries]\nandroidx-annotation = { module = \"androidx.annotation:annotation\", version.ref = \"androidx-annotation\" }\n"
+    }
+  },
+  {
+    "replace": {
+      "file": "packages/shell/src/config/with-shell.ts",
+      "find": "['expo-sqlite', ",
+      "with": "['expo-sqlite', ['expo-build-properties', { android: { kotlinVersion: '2.2.0' } }], "
+    }
+  }
+]

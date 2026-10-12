@@ -1,0 +1,4 @@
+android-toolchain
+packages/tooling/src/android/toolchain.ts:3
+pins JDK 21, but SDK 57's Android line says 17
+pins ndk 28.2.13676358, but SDK 57's Android line says 27.1.12297006

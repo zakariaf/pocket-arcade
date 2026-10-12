@@ -3310,7 +3310,7 @@
     },
     "expo-sdk-upgrade": {
       "assets/sdk-lines.json": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3323,20 +3323,28 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "examples/sdk-move-report.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/runbook.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3349,11 +3357,15 @@
           {
             "path": "docs/99-final-decisions.md",
             "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/sdk-58-changes.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3370,11 +3382,15 @@
           {
             "path": "docs/14-ios-build-and-release.md",
             "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/upgrade-policy.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3391,6 +3407,10 @@
           {
             "path": "docs/99-final-decisions.md",
             "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
