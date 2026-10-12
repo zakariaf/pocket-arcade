@@ -112,6 +112,15 @@ function underlineBarsOf({ lines, boxWidth, isRtl, top }: UnderlineInput): reado
   }));
 }
 
+/** A line list as text: iOS repeats a layout's report, and the same lines need no new render. */
+function linesKey(lines: readonly TextLine[]): string {
+  return lines
+    .map(
+      (line) => `${String(line.x)},${String(line.y)},${String(line.width)},${String(line.height)}`,
+    )
+    .join(';');
+}
+
 /** A quiet nudge ("Restore purchase", "Home"): underlined text, pressed = sunken tint, tap feedback. */
 export function QuietButton(props: QuietButtonProps): ReactNode {
   const styles = useStyles();
@@ -171,7 +180,11 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
           variant="nudge"
           tone={isDisabled ? 'muted' : 'default'}
           align="center"
-          onTextLines={setLines}
+          onTextLines={(next) => {
+            setLines((previous) =>
+              previous !== null && linesKey(previous) === linesKey(next) ? previous : next,
+            );
+          }}
         />
         {bars.map((bar) => (
           <View
