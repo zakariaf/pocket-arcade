@@ -87,8 +87,8 @@ const useStyles = makeStyles((theme) => {
     inline: { alignSelf: 'flex-start' },
     inRow: { flexGrow: 1, flexShrink: 1, flexBasis: COMPONENT_SPECS.dialog.buttonMinBasis },
     // The basis does not grow with the text: at 200 % a label wider than half the row split
-    // inside a word ("Previo / us"), so each key fills the row and the row wraps.
-    inRowLargeText: { flexGrow: 1, flexShrink: 1, flexBasis: '100%' },
+    // inside a word ("Previo / us"), so each key fills the row and the row wraps (inRow + fullRow).
+    fullRow: { flexBasis: '100%' },
   });
   return styles;
 });
@@ -130,7 +130,7 @@ type Layout = {
 };
 
 /** Hero keys are 80 pt blocks with an optional start cap; regular buttons are 54 pt. */
-function layoutOf(props: ButtonProps, styles: Styles, rowStyle: ViewStyle): Layout {
+function layoutOf(props: ButtonProps, styles: Styles, rowStyle: StyleProp<ViewStyle>): Layout {
   const isHero = props.size === 'hero';
   const hasCap = isHero && props.cap !== undefined;
   const isBlock = isHero || props.isBlock === true;
@@ -154,7 +154,7 @@ export function Button(props: ButtonProps): ReactNode {
   if (kind === 'quiet') return <QuietButton {...props} />;
   const isDisabled = props.isDisabled === true;
   const paint = kindPaint(theme, kind, isDisabled);
-  const layout = layoutOf(props, styles, isLargeText ? styles.inRowLargeText : styles.inRow);
+  const layout = layoutOf(props, styles, [styles.inRow, isLargeText && styles.fullRow]);
   return (
     <RaisedSurface
       label={props.label}

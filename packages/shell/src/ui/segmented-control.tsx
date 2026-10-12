@@ -41,9 +41,9 @@ export type SegmentedControlProps<TValue extends string> = {
 
 const styles = StyleSheet.create({
   group: { flexDirection: 'row', gap: SEG.gap, alignSelf: 'stretch' },
-  // At 200 % text the segments stack, each as wide as the group: in a third of the row a label
-  // split inside a word ("Autom / atic"). No flex 1 there: in a column it is a zero basis.
-  stacked: { flexDirection: 'column', gap: SEG.gap, alignSelf: 'stretch' },
+  // At 200 % text the segments stack (group + column), each as wide as the group: in a third of the
+  // row a label split inside a word ("Autom / atic"). No flex 1 there: in a column it is a zero basis.
+  column: { flexDirection: 'column' },
   stackedCell: { alignSelf: 'stretch' },
   // Each segment shares the row's width and stretches, face too, to the tallest segment (a
   // two-line German "Automatisch" beside one-line Lateinisch and Lokal).
@@ -122,7 +122,7 @@ export function SegmentedControl<TValue extends string>(
   const { isLargeText } = useWindowClass();
   return (
     <View
-      style={isLargeText ? styles.stacked : styles.group}
+      style={[styles.group, isLargeText && styles.column]}
       accessibilityRole="radiogroup"
       accessibilityLabel={props.label}
       testID={props.testID}
