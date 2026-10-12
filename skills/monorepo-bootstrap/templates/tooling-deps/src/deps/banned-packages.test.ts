@@ -31,6 +31,49 @@ describe('findBannedPackages', () => {
     expect(findBannedPackages(inventoryFromLockfile(clean))).toStrictEqual([]);
   });
 
+  it('bans the Android SDKs that report to Google or a tracker: Play Integrity, Install Referrer, analytics', () => {
+    const android: Lockfile = {
+      packages: {
+        'apps/line-siege': { dependencies: { 'react-native-google-play-integrity': '1.0.0' } },
+        'node_modules/react-native-google-play-integrity': {},
+        'node_modules/@expo/app-integrity': {},
+        'node_modules/react-native-play-install-referrer': {},
+        'node_modules/react-native-install-referrer': {},
+        'node_modules/@react-native-firebase/analytics': {},
+        'node_modules/expo-firebase-analytics': {},
+        'node_modules/react-native-appsflyer': {},
+        'node_modules/react-native-adjust': {},
+        'node_modules/react-native-fbsdk-next': {},
+        'node_modules/mixpanel-react-native': {},
+      },
+    };
+    expect(findBannedPackages(inventoryFromLockfile(android)).map((hit) => hit.name)).toStrictEqual(
+      [
+        '@react-native-firebase/analytics',
+        '@expo/app-integrity',
+        'react-native-google-play-integrity',
+        'react-native-install-referrer',
+        'react-native-play-install-referrer',
+        'expo-firebase-analytics',
+        'mixpanel-react-native',
+        'react-native-adjust',
+        'react-native-appsflyer',
+        'react-native-fbsdk-next',
+      ],
+    );
+  });
+
+  it('keeps the AdMob and Play Billing wrappers the Shell ships with allowed on Android', () => {
+    const shipped: Lockfile = {
+      packages: {
+        'node_modules/react-native-google-mobile-ads': {},
+        'node_modules/expo-iap': {},
+        'node_modules/expo-tracking-transparency': {},
+      },
+    };
+    expect(findBannedPackages(inventoryFromLockfile(shipped))).toStrictEqual([]);
+  });
+
   it('allows the App Tracking Transparency module the consent adapter asks with', () => {
     const withAtt: Lockfile = {
       packages: {

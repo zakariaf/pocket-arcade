@@ -11,7 +11,7 @@ Every package Pocket Arcade may depend on, the exact version, the specifier that
 - Companions and root overrides
 - Do not add
 - Held-back majors and their triggers
-- Toolchain outside npm
+- Toolchain outside npm (with the Android toolchain)
 - Native pods
 - Re-verifying versions (they age)
 
@@ -41,7 +41,7 @@ Each of these is a dependency of **every** app with the identical specifier, and
 | `expo-sqlite` | 57.0.4 | `~57.0.4` | npx expo install (in each app) | synchronous API, WAL; 57.0.4 (2026-10-06) fixes reading a re-run prepared statement and locks `step`, `getAll`, `reset` and `finalize` |
 | `expo-localization` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | plugin option supportedLocales only |
 | `expo-font` | 57.0.4 | `~57.0.4` | npx expo install (in each app) | fonts embedded by the config plugin |
-| `expo-build-properties` | 57.0.22 | `~57.0.22` | npx expo install (in each app) | has ios.enableSceneSupport (needs expo >= 57.0.23) |
+| `expo-build-properties` | 57.0.22 | `~57.0.22` | npx expo install (in each app) | has ios.enableSceneSupport (needs expo >= 57.0.23); on Android it sets `kotlinVersion` 2.1.20, React Native 0.86.3's Kotlin ("Android toolchain" below); installed by the Android port (Android step 2) |
 | `expo-constants` | 57.0.21 | `~57.0.21` | npx expo install (in each app) | runtime read of expo.extra |
 | `expo-haptics` | 57.0.3 | `~57.0.3` | npx expo install (in each app) | HapticsPort adapter |
 | `expo-network` | 57.0.2 | `~57.0.2` | npx expo install (in each app) | ConnectivityPort; no HTTP probe |
@@ -157,6 +157,24 @@ An override moves with its row: an SDK move (`expo-sdk-upgrade`) updates the fir
 | Xcode | 26.6 (17F113) | selected through `DEVELOPER_DIR`, never `xcode-select` |
 | Ruby / CocoaPods | 3.2.2 / 1.17.0 | `.mise.toml`; `gem install cocoapods -v 1.17.0` |
 | Maestro CLI | 2.10.0 | zip + SHA-256 into `tools/maestro` |
+
+### Android toolchain (Expo SDK 57 / React Native 0.86.3)
+
+Read on 2026-10-12 from the installed packages, never from memory: `node_modules/react-native/gradle/libs.versions.toml` (React Native's version catalog, which Expo's root-project plugin uses for every module), the Gradle wrapper of `@react-native/gradle-plugin`, and ReactAndroid's `jvmToolchain(17)`. `assets/versions.json` holds the same facts as `androidToolchain`. They move only with an Expo SDK (the `expo-sdk-upgrade` skill), never one by one; a Gradle or AGP bump by hand leaves the toolchain React Native was tested with.
+
+| Tool | Version | Where it comes from | How it is pinned |
+|---|---|---|---|
+| JDK | 17 | ReactAndroid `jvmToolchain(17)`, `JavaVersion.VERSION_17` | Android Studio's bundled JBR, selected through `JAVA_HOME` for the build only |
+| compileSdk / targetSdk | 36 / 36 | `libs.versions.toml` `compileSdk`, `targetSdk` | React Native's catalog (no override in `app.config.ts`) |
+| minSdk | 24 | `libs.versions.toml` `minSdk` | same |
+| Build tools | 36.0.0 | `libs.versions.toml` `buildTools` | SDK package `build-tools;36.0.0` |
+| NDK | 27.1.12297006 | `libs.versions.toml` `ndkVersion` | SDK package `ndk;27.1.12297006`, installed on purpose (never by Gradle on its own) |
+| CMake | 3.22.1 | the SDK package the native modules build with (ReactAndroid's own 3.30.5 is only for building React Native from source) | SDK package `cmake;3.22.1` |
+| Android Gradle Plugin | 8.12.0 | `libs.versions.toml` `agp` | React Native's catalog |
+| Gradle | 9.3.1 | `@react-native/gradle-plugin`'s `gradle-wrapper.properties` (the wrapper prebuild writes) | the generated wrapper; never edited in `android/` |
+| Kotlin | 2.1.20 | `libs.versions.toml` `kotlin` | `expo-build-properties` `~57.0.22` with `android.kotlinVersion: '2.1.20'` in the Shell's plugin list (expo-iap needs it set) |
+
+The SDK packages come with Android Studio's SDK manager (`sdkmanager`), not npm: each is a download into the owner's SDK, asked for first (the `android-emulator-build` skill's preflight names any missing one). Nothing here is an npm dependency, so `check-deps-policy.mjs` does not judge it; the `expo-sdk-upgrade` alignment check compares the catalog with its SDK line.
 
 Node 26 becomes LTS on 2026-10-28; after that, move to the newest 26.x LTS that is at least 7 days old with a full verify run, and update `.mise.toml`, `.nvmrc` and this table together.
 

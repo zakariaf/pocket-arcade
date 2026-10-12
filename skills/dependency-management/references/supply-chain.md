@@ -21,7 +21,7 @@ What protects the apps from packages nobody reviewed: the banned list, reviewed 
 | Lockfile | `package-lock.json` committed; fresh clones and CI use `npm ci` | `check-deps-policy.mjs` (`lockfile-missing`, `lockfile-sync`) |
 | Release age | `min-release-age=7`; exceptions only in dated blocks | `check-deps.ts` in `verify`; `check-deps-policy.mjs` (`npmrc-policy`, `npmrc-exclude`) |
 | Install scripts | `allowScripts` in the root `package.json`, one reviewed package at a time | `check-deps.ts`; `check-deps-policy.mjs` (`install-scripts`, `stale-approval`) |
-| Banned packages | the list below, anywhere in the lockfile (HTTP clients: as direct dependencies) | `check-deps.ts`, the network audit, ESLint `no-restricted-imports`; `check-deps-policy.mjs` (`banned`) |
+| Banned packages | the list below (iOS and Android alike), anywhere in the lockfile (HTTP clients: as direct dependencies) | `check-deps.ts`, the network audit, ESLint `no-restricted-imports`; `check-deps-policy.mjs` (`banned`) |
 | Licences | shipped code only under MIT, ISC, Apache-2.0, BSD-2/3-Clause, 0BSD, OFL-1.1, CC0-1.0 | `npm run audit:licenses`; `plan-dependency.mjs --online` (`licence`) |
 | Expo alignment | `npx expo install --check` and `npx expo-doctor` pass in every app | `check-deps.ts` |
 | Vendor pods | only `Google-Mobile-Ads-SDK`, `GoogleUserMessagingPlatform` and `openiap` come from the CocoaPods trunk | the network audit (the `privacy-and-network-audit` skill) |
@@ -44,6 +44,9 @@ The spec forbids our code from reaching the network (N1 to N3) and forbids analy
 | `expo-insights`, `expo-observe`, `expo-app-metrics` | Expo telemetry services | nothing |
 | `expo-notifications` | The product has no push notifications | nothing |
 | `@amplitude/*`, `expo-analytics-amplitude`, `@segment/*` | Analytics | nothing |
+| any `*play-integrity*` or `*app-integrity*` package (`react-native-google-play-integrity`, `@expo/app-integrity`) | Android: Play Integrity asks Google's servers for a device verdict on every call; the app has no server to show it to | nothing |
+| any `*install-referrer*` package (`react-native-play-install-referrer`, `react-native-install-referrer`) | Android: Play Install Referrer is install attribution, which is tracking | nothing |
+| `expo-firebase-analytics`, `expo-firebase-core`, `react-native-appsflyer`, `react-native-adjust`, `react-native-branch`, `react-native-fbsdk-next`, `mixpanel-react-native`, `posthog-react-native`, `@posthog/*`, `appcenter*` | Analytics and attribution SDKs, on Android as on iOS (Firebase itself is the `firebase` row above) | nothing |
 | `react-native-webview`, `expo-web-browser` | Web views are a network surface (`@expo/dom-webview` comes with `expo`: allowed installed, banned from imports) | OS hand-off links through `Linking` |
 | `react-native-restart` | A pre-1.0 native dependency | `reloadAppAsync()` from `expo` |
 | `eslint-plugin-react-compiler` | Superseded by `eslint-plugin-react-hooks` 7 (brought by `eslint-config-expo`) | nothing |
@@ -62,6 +65,7 @@ Some installed packages are fine while one of their options is not. Other skills
 - `expo-iap`: the exports `kitApi`, `KitApiError`, `verifyPurchaseWithProvider`, the plugin options `iapkitApiKey` and `modules.onside`, and `ios.onside.enabled` (they add servers).
 - `react-native-google-mobile-ads`: the plugin option `userTrackingUsageDescription` stays unset. The tracking text has one source: the `expo-tracking-transparency` plugin entry (`userTrackingPermission`, the English text) and the Shell's localised `NSUserTrackingUsageDescription` per language (owner decision O1).
 - Maestro: the commands `assertWithAI`, `assertNoDefectsWithAI`, `extractTextWithAI` (they upload screenshots to an LLM service).
+- Gradle artefacts (Android): none of `com.google.firebase:*` (and the `com.google.gms.google-services` plugin, which `android.googleServicesFile` in the app config switches on), `com.google.android.play:integrity`, `com.android.installreferrer:installreferrer`, `com.google.android.gms:play-services-measurement*`, `com.google.android.gms:play-services-analytics`, `com.appsflyer:*`, `com.adjust.sdk:*`, `io.branch.sdk.android:*`, `com.mixpanel.android:*`, `com.facebook.android:*` may reach the release classpath. The npm list above keeps their wrappers out; a native module that pulls one in by itself is caught by the network audit's Gradle layer (the `privacy-and-network-audit` skill), which owns that check. Gradle has no age gate either; the artefacts follow the npm pins because each module's `build.gradle` pins them.
 - Pods: none of `Firebase*`, `GoogleAppMeasurement`, `Sentry`, `Bugsnag`, `Crashlytics`, `Adjust`, `AppsFlyerFramework`, `Branch`, `Amplitude`, `Mixpanel`, `Segment`, `RevenueCat`/`PurchasesHybridCommon`, `OneSignal`, `OnsideKit`, `FBSDKCoreKit`, `FBAudienceNetwork`, `GoogleMobileAdsMediation*` may appear in `Podfile.lock`. Only three pods may come from the CocoaPods trunk at all (see the table above). CocoaPods has no age gate; pods follow the npm pins because the podspecs pin them exactly (as resolved on 2026-09-26: Google-Mobile-Ads-SDK 13.6.0, GoogleUserMessagingPlatform 3.1.0, openiap 3.6.0).
 
 ## Install scripts: review, approve, re-approve

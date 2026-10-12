@@ -1,0 +1,2 @@
+native change: npx expo prebuild --clean and npm run build:ios:sim for every app (the ios-simulator-build skill)
+native change (Android): npm run build:android:emu for every app with an Android port, from npx expo prebuild --platform android --clean (the android-emulator-build skill)

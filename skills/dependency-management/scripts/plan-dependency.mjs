@@ -186,7 +186,10 @@ function planAdd(repo, policy, request, add) {
   if (row.install === 'expo') steps.push('in every app: npx expo install --check && npx expo-doctor');
   steps.push('npm run -s knip   (the package must be imported by the code that needed it)');
   steps.push('node ${CLAUDE_SKILL_DIR}/scripts/check-deps-policy.mjs .   (one-version and companion catch a copy that floated in)');
-  if (row.native) steps.push('native change: npx expo prebuild --clean and npm run build:ios:sim for every app (the ios-simulator-build skill)');
+  if (row.native) {
+    steps.push('native change: npx expo prebuild --clean and npm run build:ios:sim for every app (the ios-simulator-build skill)');
+    steps.push('native change (Android): npm run build:android:emu for every app with an Android port, from npx expo prebuild --platform android --clean (the android-emulator-build skill)');
+  }
   steps.forEach((step, index) => console.log(`step ${index + 1}   ${step}`));
   if (steps.some((step) => step.includes('npx expo install ') && step.includes('@'))) console.log('note     keep the @<spec> in each npx expo install: it writes the versions table\'s specifier. A plain npx expo install <pkg> writes whatever Expo\'s online versions list names today, which can be a patch published that day; that patch stays a WARN with its due date in check-deps.ts and moves on that date through the upgrade procedure.');
   return row;

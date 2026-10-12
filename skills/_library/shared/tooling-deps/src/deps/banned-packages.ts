@@ -49,6 +49,22 @@ export const BANNED_PACKAGES: readonly BannedRule[] = [
     reason: NO_NETWORK,
   },
   {
+    pattern: /(^|[/-])(play|app)-integrity($|-)/,
+    scope: 'anywhere',
+    reason: 'Play Integrity sends a device verdict request to Google (Spec N2/N3).',
+  },
+  {
+    pattern: /(^|[/-])install-referrer($|-)/,
+    scope: 'anywhere',
+    reason: 'Play Install Referrer is install attribution, which is tracking (Spec N2).',
+  },
+  {
+    pattern:
+      /^(expo-firebase-(analytics|core)|react-native-(appsflyer|adjust|branch|fbsdk-next)|mixpanel-react-native|posthog-react-native|@posthog\/.+|appcenter(-.+)?)$/,
+    scope: 'anywhere',
+    reason: NO_NETWORK,
+  },
+  {
     pattern: /^(react-native-webview|expo-web-browser)$/,
     scope: 'anywhere',
     reason: 'Web views are a network surface.',

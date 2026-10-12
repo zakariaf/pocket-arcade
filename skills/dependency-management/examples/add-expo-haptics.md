@@ -19,6 +19,7 @@ step 5   in every app: npx expo install --check && npx expo-doctor
 step 6   npm run -s knip   (the package must be imported by the code that needed it)
 step 7   node ${CLAUDE_SKILL_DIR}/scripts/check-deps-policy.mjs .   (one-version and companion catch a copy that floated in)
 step 8   native change: npx expo prebuild --clean and npm run build:ios:sim for every app (the ios-simulator-build skill)
+step 9   native change (Android): npm run build:android:emu for every app with an Android port, from npx expo prebuild --platform android --clean (the android-emulator-build skill)
 note     keep the @<spec> in each npx expo install: it writes the versions table's specifier. A plain npx expo install <pkg> writes whatever Expo's online versions list names today, which can be a patch published that day; that patch stays a WARN with its due date in check-deps.ts and moves on that date through the upgrade procedure.
 age      expo-haptics@57.0.3 was published 2026-09-11 (17 days before 2026-09-29)
 licence  MIT
@@ -66,7 +67,7 @@ npm run -s check:fast
 npm run -s knip
 ```
 
-`expo-haptics` is a native module, so hand off to the `ios-simulator-build` skill for a clean prebuild and a Release simulator build of each app, and run the network and privacy audits (a new native module is a new surface).
+`expo-haptics` is a native module, so hand off to the `ios-simulator-build` skill for a clean prebuild and a Release simulator build of each app, to the `android-emulator-build` skill for `npm run build:android:emu` of each app with an Android port, and run the network and privacy audits (a new native module is a new surface).
 
 ## 6. Commit
 

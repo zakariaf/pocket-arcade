@@ -1,0 +1,4 @@
+banned
+react-native-play-install-referrer is in the lockfile
+react-native-google-play-integrity is in the lockfile
+react-native-appsflyer is in the lockfile

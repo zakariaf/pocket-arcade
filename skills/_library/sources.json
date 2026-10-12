@@ -2883,16 +2883,20 @@
     },
     "dependency-management": {
       "assets/banned-packages.json": {
-        "recorded": "2026-09-30",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
             "sha256": "32f3c8fd2d596361087b395359bed0421b6918e6472419bc351c8949b2d119ab"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "assets/versions.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2905,6 +2909,10 @@
           {
             "path": "docs/07-testing-and-tdd.md",
             "sha256": "4ce76c032444057f7138e9214bbdcb91a1ad63ebfd019055b32e28dca27913ee"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
@@ -2922,7 +2930,7 @@
         ]
       },
       "references/procedures.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2935,6 +2943,10 @@
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
             "sha256": "8a621b898acbd2e757f340835014339a6e6614b584f673180dae101b1c113998"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
@@ -2952,7 +2964,7 @@
         ]
       },
       "references/supply-chain.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2965,11 +2977,15 @@
           {
             "path": "docs/16-quality-gates-hooks-ci.md",
             "sha256": "8a621b898acbd2e757f340835014339a6e6614b584f673180dae101b1c113998"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/versions.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2986,6 +3002,10 @@
           {
             "path": "docs/07-testing-and-tdd.md",
             "sha256": "4ce76c032444057f7138e9214bbdcb91a1ad63ebfd019055b32e28dca27913ee"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
