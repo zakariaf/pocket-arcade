@@ -1,5 +1,11 @@
 // packages/tooling/src/audit/license-policy.test.ts
-import { isAllowedLicense, licenseProblems, packageRootOf } from './license-policy.ts';
+import {
+  LICENSE_MAP_GLOBS,
+  isAllowedLicense,
+  licenseMapFiles,
+  licenseProblems,
+  packageRootOf,
+} from './license-policy.ts';
 
 describe('isAllowedLicense', () => {
   it('accepts an OR expression with one allowed side', () => {
@@ -53,5 +59,40 @@ describe('licenseProblems', () => {
     expect(licenseProblems(new Map([['mystery', null]]), {})).toStrictEqual([
       'mystery: licence "null" is not allowed and has no exception entry',
     ]);
+  });
+});
+
+describe('licenseMapFiles', () => {
+  const IOS_MAP = 'dist-audit/line-siege/_expo/static/js/ios/index-1.map';
+  const ANDROID_MAP = 'dist-audit/line-siege/_expo/static/js/android/index-2.map';
+  const IOS_GLOB = 'dist-audit/*/_expo/static/js/ios/*.map';
+  const ANDROID_GLOB = 'dist-audit/*/_expo/static/js/android/*.map';
+  // A fake glob: the files each pattern matches in an exported repo.
+  const exported =
+    (matches: Readonly<Record<string, readonly string[]>>) =>
+    (pattern: string): readonly string[] =>
+      matches[pattern] ?? [];
+
+  it('looks for the iOS and the Android export of every app', () => {
+    expect(LICENSE_MAP_GLOBS).toStrictEqual([IOS_GLOB, ANDROID_GLOB]);
+  });
+
+  it('audits the iOS and the Android source maps when a game has both exports', () => {
+    expect(
+      licenseMapFiles([], exported({ [IOS_GLOB]: [IOS_MAP], [ANDROID_GLOB]: [ANDROID_MAP] })),
+    ).toStrictEqual([IOS_MAP, ANDROID_MAP]);
+  });
+
+  it('audits the iOS maps alone while no Android export exists', () => {
+    expect(licenseMapFiles([], exported({ [IOS_GLOB]: [IOS_MAP] }))).toStrictEqual([IOS_MAP]);
+  });
+
+  it('audits only the files named on the command line', () => {
+    expect(
+      licenseMapFiles(
+        ['custom.map'],
+        exported({ [IOS_GLOB]: [IOS_MAP], [ANDROID_GLOB]: [ANDROID_MAP] }),
+      ),
+    ).toStrictEqual(['custom.map']);
   });
 });

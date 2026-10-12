@@ -30,7 +30,10 @@ const SPEC = {
     '                          build:ios:sim (step 8), e2e:ios and',
     '                          screenshots:ios (step 10, SHELL_DUE_TARGETS.e2e), release:ios (step 11,',
     '                          SHELL_DUE_TARGETS.release); every other target (verify, audit:licenses, new-game)',
-    '                          exists from Shell step 1 and is a problem when missing',
+    '                          exists from Shell step 1 and is a problem when missing. The Android scripts\' targets',
+    '                          print "due at Android step <n>" instead: build:android:emu (step 1), e2e:android and',
+    '                          screenshots:android (step 7), release:android (step 8); an Android script missing',
+    '                          from package.json is an npm-script problem and gets no target line',
     '  npm-script              a canonical npm script is missing or differs from the baseline',
     '  eslint-cache            a root npm script runs eslint with --cache: the cache keys each result on the',
     '                          file alone, so a test written before its module replays import/no-unresolved',
@@ -51,7 +54,8 @@ const SPEC = {
     '                          baseline does not have (each baseline entry has a documented reason)',
     '',
     'The repo root is the optional positional argument (default "."). A fresh skeleton (Shell step 1) passes',
-    'with seven script-target SKIP lines, one per target a later step builds; each disappears at its step:',
+    'with eleven script-target SKIP lines, one per target a later step builds (seven Shell steps, four Android',
+    'steps); each disappears at its step:',
     '  node check-gate-wiring.mjs .',
     '--pending <path> is still accepted: it turns that target\'s SKIP line into a note.',
     '',
@@ -95,6 +99,27 @@ const DUE_SCRIPT_TARGETS = [
   { target: { file: 'packages/tooling/src/e2e/capture-screenshots-ios.ts', step: SHELL_DUE_TARGETS.e2e.step }, owner: 'e2e-maestro' },
   { target: SHELL_DUE_TARGETS.release, owner: 'ios-release-testflight' },
 ];
+/**
+ * The Android scripts' targets, with the Android port step that creates each one (the "Android port"
+ * order, steps 1-8, run once a game's iOS version has shipped) and the skill that copies it. The
+ * canonical scripts include them from Shell step 1, so a fresh repo carries the scripts long before
+ * their targets: while a target is missing the script-target rule prints a not-yet-due SKIP. A repo
+ * whose package.json lacks an Android script gets its npm-script FAIL and no target line.
+ */
+const ANDROID_DUE_TARGETS = [
+  { target: { file: 'packages/tooling/src/build/build-android-emu.ts', step: 1 }, owner: 'android-emulator-build' },
+  { target: { file: 'packages/tooling/src/e2e/run-e2e-android.ts', step: 7 }, owner: 'e2e-maestro' },
+  { target: { file: 'packages/tooling/src/e2e/capture-screenshots-android.ts', step: 7 }, owner: 'e2e-maestro' },
+  { target: { file: 'packages/tooling/src/release-android/release-android.ts', step: 8 }, owner: 'android-release-play' },
+];
+
+/**
+ * Why an Android script's target is not yet due, or null when it exists: the Android form of
+ * check-lib's dueSkipReason, 'due at Android step <step>: <file> not yet created'.
+ */
+function androidDueSkipReason(root, target) {
+  return existsSync(join(root, target.file)) ? null : `due at Android step ${target.step}: ${target.file} not yet created`;
+}
 const NODE_TARGET = /^node\s+(\S+\.(?:ts|mjs|js))(?:\s|$)/;
 const LINTER_OPTIONS = [/noInlineConfig:\s*true/, /reportUnusedDisableDirectives:\s*'error'/, /reportUnusedInlineConfigs:\s*'error'/];
 
@@ -144,18 +169,27 @@ function checkEslintCache(root, report) {
  */
 function checkScriptTargets(root, pending, report) {
   const baseline = readJson(join(TEMPLATES, 'package-scripts.json'));
+  let scripts = {};
+  try {
+    scripts = readJson(join(root, 'package.json')).scripts ?? {};
+  } catch {
+    // checkScripts already reported the unreadable package.json.
+  }
   let checked = 0;
   for (const [name, command] of Object.entries(baseline)) {
     const rel = NODE_TARGET.exec(command)?.[1];
     if (rel === undefined) continue;
+    const android = ANDROID_DUE_TARGETS.find((item) => item.target.file === rel);
+    if (android && scripts[name] === undefined) continue;
     checked += 1;
     if (existsSync(join(root, rel))) continue;
-    const due = DUE_SCRIPT_TARGETS.find((item) => item.target.file === rel);
+    const due = android ?? DUE_SCRIPT_TARGETS.find((item) => item.target.file === rel);
+    const stepName = android ? 'Android step' : 'Shell step';
     if (due && pending.has(rel)) {
-      report.note(`note: ${rel} is pending (${due.owner} builds it at Shell step ${due.target.step}); npm run ${name} fails until it exists`);
+      report.note(`note: ${rel} is pending (${due.owner} builds it at ${stepName} ${due.target.step}); npm run ${name} fails until it exists`);
       continue;
     }
-    const reason = due ? dueSkipReason(root, due.target) : null;
+    const reason = android ? androidDueSkipReason(root, android.target) : due ? dueSkipReason(root, due.target) : null;
     if (reason) report.skip({ file: 'package.json', rule: 'script-target', message: `npm run ${name}: ${reason} (${due.owner} copies it)` });
     else report.problem({ file: 'package.json', line: 1, rule: 'script-target', message: `npm run ${name} runs ${rel}, which does not exist`, fix: `Copy ${rel} from the skill that ships it (the bootstrap writes it at Shell step 1); a script must never point at a missing file.` });
   }

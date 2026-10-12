@@ -1,0 +1,5 @@
+SKIP package.json [script-target] npm run e2e:android: due at Android step 7: packages/tooling/src/e2e/run-e2e-android.ts not yet created (e2e-maestro copies it)
+SKIP package.json [script-target] npm run screenshots:android: due at Android step 7: packages/tooling/src/e2e/capture-screenshots-android.ts not yet created (e2e-maestro copies it)
+SKIP package.json [script-target] npm run build:android:emu: due at Android step 1: packages/tooling/src/build/build-android-emu.ts not yet created (android-emulator-build copies it)
+SKIP package.json [script-target] npm run release:android: due at Android step 8: packages/tooling/src/release-android/release-android.ts not yet created (android-release-play copies it)
+RESULT: PASS

@@ -23,6 +23,10 @@
     "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts",
     "build:ios:sim": "node packages/tooling/src/build/build-ios-sim.ts",
     "release:ios": "node packages/tooling/src/release/release-ios.ts",
+    "e2e:android": "node packages/tooling/src/e2e/run-e2e-android.ts",
+    "screenshots:android": "node packages/tooling/src/e2e/capture-screenshots-android.ts",
+    "build:android:emu": "node packages/tooling/src/build/build-android-emu.ts",
+    "release:android": "node packages/tooling/src/release-android/release-android.ts",
     "new-game": "node packages/tooling/src/scaffold/new-game.ts"
   }
 }

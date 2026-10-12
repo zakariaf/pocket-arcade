@@ -40,7 +40,7 @@ Expected approvals on SDK 57: `lefthook` (postinstall installs its binary), `unr
 
 - Shipped dependencies may use MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD, OFL-1.1 or CC0-1.0. An SPDX `OR` needs one allowed side, `AND` needs all.
 - Anything else needs an entry in `packages/tooling/license-exceptions.json` (a gated path): `{ "<package>": { "license": "<exact SPDX>", "reason": "<why it is acceptable>" } }`. An exception applies only while the package keeps that exact licence, and it needs the owner.
-- `audit:licenses` reads the source maps that `audit:network` exported, so only shipped code is audited: build tools in the lockfile (for example Expo CLI's MPL-2.0 `lightningcss`) never fail it. Fonts and sounds are not npm packages; their licences are listed on the Licences screen (S11d).
+- `audit:licenses` reads the source maps that `audit:network` exported (`dist-audit/*/_expo/static/js/ios/*.map`, and `dist-audit/*/_expo/static/js/android/*.map` for a game ported to Android; both ship, so both are audited; `licenseMapFiles` in `license-policy.ts`), so only shipped code is audited: build tools in the lockfile (for example Expo CLI's MPL-2.0 `lightningcss`) never fail it. Fonts and sounds are not npm packages; their licences are listed on the Licences screen (S11d).
 
 ## App lockstep and Expo alignment
 
@@ -61,4 +61,4 @@ Expected approvals on SDK 57: `lefthook` (postinstall installs its binary), `unr
 
 ## Optional CI
 
-Local `npm run verify` is the gate. If the owner wants CI, `templates/github/verify.yml` goes to `.github/workflows/verify.yml`: the `static` job runs `npm ci` and `npm run verify` on ubuntu-latest for every push and pull request; the `ios-e2e` job runs nightly or on demand on `macos-26` (Xcode 26.6, iOS 26.5 simulators, Java 17). `LEFTHOOK: '0'` there only switches git hooks off on the runner; it is the one allowed place for it. Linux minutes cost about a tenth of macOS minutes, so only the simulator job runs on macOS. Pushing a workflow is outward-facing: ask the owner first.
+Local `npm run verify` is the gate. If the owner wants CI, `templates/github/verify.yml` goes to `.github/workflows/verify.yml`: the `static` job runs `npm ci` and `npm run verify` on ubuntu-latest for every push and pull request; the `ios-e2e` job runs nightly or on demand on `macos-26` (Xcode 26.6, iOS 26.5 simulators, Java 17). `LEFTHOOK: '0'` there only switches git hooks off on the runner; it is the one allowed place for it. Linux minutes cost about a tenth of macOS minutes, so only the simulator job runs on macOS. The workflow stays iOS only: the Android build, E2E and release run locally on the Mac's emulator (`build:android:emu`, `e2e:android`), never in CI. Pushing a workflow is outward-facing: ask the owner first.

@@ -24,7 +24,7 @@ There is no human reviewer, so quality is a stack of automatic gates, each cheap
 | Every `verify` | the guardrail: resolved configs equal `quality-gates.json` | the push | about 6-30 s |
 | Nightly / manual (optional) | GitHub Actions `static` and `ios-e2e` | merge, if the owner uses pull requests | 5-60 min |
 
-End-to-end flows (`e2e:ios`), the screenshot matrix (`screenshots:ios`) and mutation testing (`test:mutation`) are outside `verify` and run nightly, before a release, and when a rules module is finished.
+End-to-end flows (`e2e:ios`, and `e2e:android` for a ported game), the screenshot matrix (`screenshots:ios`, `screenshots:android`) and mutation testing (`test:mutation`) are outside `verify` and run nightly, before a release, and when a rules module is finished.
 
 ## The canonical npm scripts
 
@@ -45,16 +45,18 @@ All scripts live in the root `package.json` and run from the repo root. The exac
 | `test:mutation` | Stryker on logic folders (nightly, before a release) | |
 | `knip` | unused files, exports and dependencies; sets `APP_VARIANT=test ADS_MODE=off` because knip evaluates `app.config.ts` | |
 | `audit:network` | the static no-network layers for every app; writes each export to `dist-audit/<game-id>/` | Expo CLI |
-| `audit:licenses` | the licence of every npm package in the exported bundles | after `audit:network` |
+| `audit:licenses` | the licence of every npm package in the exported bundles: the iOS source maps of every app and the Android ones of every ported app (`dist-audit/<game-id>/_expo/static/js/ios/` and `.../android/`) | after `audit:network` |
 | `audit:privacy` | aggregates the iOS privacy manifests against `app.config.ts` | macOS, after prebuild + pod install |
 | `i18n:verify` | FormatJS verify + the catalog linter for Shell and game catalogs | |
 | `e2e:ios`, `screenshots:ios` | Maestro flows and the screenshot matrix on a Release simulator build | macOS, simulator, Java 17 |
 | `build:ios:sim`, `release:ios` | local `xcodebuild` pipelines | macOS, Xcode |
+| `e2e:android`, `screenshots:android` | Maestro flows and the screenshot matrix on a Release emulator build | Android SDK, an `e07-android-*` AVD, JDK 17 |
+| `build:android:emu`, `release:android` | local Gradle pipelines: the Release APK on the emulator, the AAB for Google Play internal testing | Android SDK, JDK 17 |
 | `new-game` | scaffolds `apps/<game-id>` | |
 
-Two scripts are gates but run elsewhere: `audit:privacy` needs `ios/Pods`, so the simulator build and the release run it right after prebuild; `test:golden` is already inside `test:coverage`. `build:ios:sim`, `release:ios`, `screenshots:ios` and `new-game` are tools, not gates.
+Two scripts are gates but run elsewhere: `audit:privacy` needs `ios/Pods`, so the simulator build and the release run it right after prebuild; `test:golden` is already inside `test:coverage`. `build:ios:sim`, `release:ios`, `screenshots:ios`, `build:android:emu`, `release:android`, `screenshots:android` and `new-game` are tools, not gates.
 
-Who builds the files behind the scripts: this skill ships the guardrail, the edit hook, the commit-message check, the dependency check and the licence audit (`templates/packages/tooling/src/`). `i18n:verify` comes from the `i18n-strings-and-catalogs` skill, `audit:network` and `audit:privacy` from `privacy-and-network-audit`, `e2e:ios` and `screenshots:ios` from `e2e-maestro`, the build and release scripts from `ios-simulator-build` and `ios-release-testflight`, and `new-game` from `new-game-scaffold`.
+Who builds the files behind the scripts: this skill ships the guardrail, the edit hook, the commit-message check, the dependency check and the licence audit (`templates/packages/tooling/src/`). `i18n:verify` comes from the `i18n-strings-and-catalogs` skill, `audit:network` and `audit:privacy` from `privacy-and-network-audit`, `e2e:ios` and `screenshots:ios` from `e2e-maestro`, the build and release scripts from `ios-simulator-build` and `ios-release-testflight`, and `new-game` from `new-game-scaffold`. The Android scripts are canonical from Shell step 1, but their files come with a game's Android port, once its iOS version has shipped: `build:android:emu` from `android-emulator-build` (Android step 1), `e2e:android` and `screenshots:android` from `e2e-maestro` (Android step 7), `release:android` from `android-release-play` (Android step 8). Until a file exists, `check-gate-wiring.mjs` prints its not-yet-due `script-target` SKIP line, `due at Android step <n>`; a repo whose `package.json` lacks an Android script fails `npm-script`.
 
 ## The verify pipeline, step by step
 
@@ -117,4 +119,5 @@ Run it at the end of every slice and before saying any change is done. Run `npm 
 | `npm run test:mutation` | nightly, before a release, when a rules module is finished (break below 75%) | `unit-and-component-tests` |
 | `npm run e2e:ios -- --app <game-id>` | nightly, before a release, after UI or navigation changes | `e2e-maestro` |
 | `npm run screenshots:ios -- --app <game-id>` | before a release, after any UI change | `e2e-maestro`, `toybox-visual-parity` |
+| `npm run e2e:android -- --app <game-id>`, `npm run screenshots:android -- --app <game-id>` | for a ported game: the same moments as iOS, on the emulator | `e2e-maestro`, `toybox-visual-parity` |
 | `npm run audit:privacy` | after every prebuild (inside the build and release scripts) | `privacy-and-network-audit` |
