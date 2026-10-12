@@ -37,7 +37,9 @@ const SPEC = {
     'Rules: module-load, interstitial-rules, banner-rules, perk-rules (the L11 continue offer: loading is shown, hidden ends the run), ad-history, consent-order,',
     '  consent-moment-flow, fullscreen-lifecycle, ads-config, variant-matrix, adapter-init,',
     '  adapter-interstitial, adapter-rewarded, adapter-rewarded-status, adapter-banner, ads-factory, read-ads-extra,',
-    '  consent-adapter, tracking-adapter, consent-factory.',
+    '  consent-adapter, tracking-adapter, consent-factory. The Android cases: no Android app id in a live build without',
+    '  ads.ids.android (ads-config), the Android units on Android (read-ads-extra), and prepareAds on Android with no',
+    '  tracking step (consent-order).',
     'The SDK, expo-tracking-transparency, react-native, react and expo-constants are replaced by the',
     'scripted stand-ins in lib/stubs/.',
     'Needs Node 22.18+ (type stripping). Modules must use erasable TypeScript and explicit .ts imports.',
@@ -67,6 +69,7 @@ const READY = { isPremium: false, isOnline: true, canRequestAds: true, isTutoria
 const EMPTY = { lastInterstitialAtMs: null, levelsCompletedSinceInterstitial: 0, didLastInterstitialFollowLoss: false };
 const T0 = 1_000_000_000;
 const PUB = '1234567890123456';
+const LIVE_ANDROID = { appId: `ca-app-pub-${PUB}~0987654321`, units: { banner: `ca-app-pub-${PUB}/4444444444`, interstitial: `ca-app-pub-${PUB}/5555555555`, rewarded: `ca-app-pub-${PUB}/6666666666` } };
 const LIVE_IDS = {
   ios: { appId: `ca-app-pub-${PUB}~1234567890`, units: { banner: `ca-app-pub-${PUB}/1111111111`, interstitial: `ca-app-pub-${PUB}/2222222222`, rewarded: `ca-app-pub-${PUB}/3333333333` } },
   android: null,
@@ -331,7 +334,16 @@ run(async () => {
       await expect('ads-config', FILES.config, `${mode}: no unit IDs in expo.extra`, () => config.adUnitsExtra(mode, LIVE_IDS), null, fix);
     }
     await expect('ads-config', FILES.config, 'live: the game app ID', () => config.admobPluginOptions('live', LIVE_IDS, []).iosAppId, LIVE_IDS.ios.appId, fix);
-    await expect('ads-config', FILES.config, 'live: the game unit IDs', () => config.adUnitsExtra('live', LIVE_IDS), LIVE_IDS.ios.units, fix);
+    await expect('ads-config', FILES.config, 'live: the game unit IDs', () => config.adUnitsExtra('live', LIVE_IDS), { ios: LIVE_IDS.ios.units, android: null }, fix);
+    const androidFix = "Restore ads-config.ts: a live build gets the game's Android app id and units from ads.ids.android, and without them no Android app id at all (never Google's sample) and android: null units; test and off builds get Google's Android sample app id.";
+    await expect('ads-config', FILES.config, 'live without Android ids: no Android app id', () => Object.keys(config.admobPluginOptions('live', LIVE_IDS, [])).sort(), ['delayAppMeasurementInit', 'iosAppId', 'skAdNetworkItems'], androidFix);
+    await expect('ads-config', FILES.config, 'live with Android ids: the game Android app id and units', () => {
+      const ids = { ...LIVE_IDS, android: LIVE_ANDROID };
+      return { appId: config.admobPluginOptions('live', ids, []).androidAppId, units: config.adUnitsExtra('live', ids) };
+    }, { appId: LIVE_ANDROID.appId, units: { ios: LIVE_IDS.ios.units, android: LIVE_ANDROID.units } }, androidFix);
+    for (const mode of ['test', 'off']) {
+      await expect('ads-config', FILES.config, `${mode}: the Android sample app ID`, () => config.admobPluginOptions(mode, LIVE_IDS, []).androidAppId, 'ca-app-pub-3940256099942544~3347511713', androidFix);
+    }
     await expect('ads-config', FILES.config, 'plugin options keys', () => Object.keys(config.admobPluginOptions('test', LIVE_IDS, [])).sort(), ['androidAppId', 'delayAppMeasurementInit', 'iosAppId', 'skAdNetworkItems'], fix);
     await expect('ads-config', FILES.config, 'delayAppMeasurementInit', () => config.admobPluginOptions('live', LIVE_IDS, []).delayAppMeasurementInit, true, fix);
     const sample = { ...LIVE_IDS, ios: { ...LIVE_IDS.ios, appId: 'ca-app-pub-3940256099942544~1458002511' } };
@@ -466,15 +478,20 @@ run(async () => {
 
   if (extra) {
     const file = FILES.extra;
-    const fix = "Restore readAdsExtra: anything unexpected falls back to 'off' and adUnits null; units only when all three are strings.";
+    const fix = "Restore readAdsExtra: anything unexpected falls back to 'off' and adUnits null; units only from extra.adUnits[Platform.OS] and only when all three are strings.";
+    const perPlatform = { ios: UNITS, android: LIVE_ANDROID.units };
+    // withShell embeds the live units per platform ({ ios, android }); readAdsExtra takes Platform.OS's.
     const cases = [
-      ['live with units', { adsMode: 'live', adUnits: UNITS }, { adsMode: 'live', adUnits: UNITS }],
-      ['test without units', { adsMode: 'test' }, { adsMode: 'test', adUnits: null }],
-      ['an unknown mode', { adsMode: 'LIVE', adUnits: UNITS }, { adsMode: 'off', adUnits: UNITS }],
-      ['no extra at all', null, { adsMode: 'off', adUnits: null }],
-      ['incomplete units', { adsMode: 'live', adUnits: { banner: UNITS.banner } }, { adsMode: 'live', adUnits: null }],
+      ['live with units', { adsMode: 'live', adUnits: perPlatform }, 'ios', { adsMode: 'live', adUnits: UNITS }],
+      ['test without units', { adsMode: 'test' }, 'ios', { adsMode: 'test', adUnits: null }],
+      ['an unknown mode', { adsMode: 'LIVE', adUnits: perPlatform }, 'ios', { adsMode: 'off', adUnits: UNITS }],
+      ['no extra at all', null, 'ios', { adsMode: 'off', adUnits: null }],
+      ['incomplete units', { adsMode: 'live', adUnits: { ios: { banner: UNITS.banner } } }, 'ios', { adsMode: 'live', adUnits: null }],
+      ['live on Android reads the Android units', { adsMode: 'live', adUnits: perPlatform }, 'android', { adsMode: 'live', adUnits: LIVE_ANDROID.units }],
+      ['live on Android without Android ids: no units, never the iOS ones', { adsMode: 'live', adUnits: { ios: UNITS, android: null } }, 'android', { adsMode: 'live', adUnits: null }],
+      ['a unit set that names no platform', { adsMode: 'live', adUnits: UNITS }, 'android', { adsMode: 'live', adUnits: null }],
     ];
-    for (const [label, input, want] of cases) await expect('read-ads-extra', file, label, () => extra.readAdsExtra(input), want, fix);
+    for (const [label, input, os, want] of cases) await expect('read-ads-extra', file, label, () => extra.readAdsExtra(input, os), want, fix);
     await expect('read-ads-extra', file, 'reads Constants.expoConfig.extra by default', () => {
       constantsStub.extra = { adsMode: 'test' };
       return extra.readAdsExtra();
@@ -520,6 +537,21 @@ run(async () => {
     await expect('tracking-adapter', file, 'in the background: waits for the app to be active', () => ask({ appState: 'background', becomeActive: true }), { result: 'denied', errors: [], beforeActive: ['getTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync', 'requestTrackingPermissionsAsync'] }, fix);
     await expect('tracking-adapter', file, 'a failing read resolves unavailable and is logged', () => ask({ fail: true }), { result: 'unavailable', errors: ['tracking module unavailable'], beforeActive: ['getTrackingPermissionsAsync'], calls: ['getTrackingPermissionsAsync'] }, fix);
     await expect('tracking-adapter', file, 'off iOS: unavailable, the module untouched', () => ask({ os: 'android' }), { result: 'unavailable', errors: [], beforeActive: [], calls: [] }, fix);
+  }
+
+  if (gate && consentAdapter) {
+    const fix = "On Android (L14) there is no tracking prompt: the consent adapter's requestTracking answers 'unavailable' before it touches expo-tracking-transparency or waits for the app to be active, so prepareAds goes from Google's consent straight to initialize.";
+    await expect('consent-order', FILES.gate, 'prepareAds on Android: no tracking step', async () => {
+      sdkStub.reset({ requestInfoUpdate: CONSENT_CACHED });
+      trackingStub.reset({ status: 'undetermined' });
+      reactNativeStub.reset({ os: 'android', appState: 'background' });
+      const calls = [];
+      const consent = consentAdapter.createAdmobConsentAdapter({ onError: (error) => calls.push(`error:${String(error?.message ?? error)}`) });
+      const deps = { ads: fakeAds(calls), consent, onConsent: () => undefined, showIntro: async () => { calls.push('intro'); } };
+      const result = await settled(gate.prepareAds(deps, { isPremium: false, isAdsEnabled: true, isTutorialDone: true, isOnline: true }));
+      reactNativeStub.reset();
+      return { result, calls, tracking: trackingStub.calls() };
+    }, { result: true, calls: ['initialize', 'initialized', 'preloadInterstitial', 'preloadRewarded'], tracking: [] }, fix);
   }
 
   if (consentFactory) {

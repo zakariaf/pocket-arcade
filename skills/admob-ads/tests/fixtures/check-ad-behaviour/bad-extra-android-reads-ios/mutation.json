@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/ads/read-ads-extra.ts",
+      "find": "const mine: unknown = Reflect.get(units, os);",
+      "with": "const mine: unknown = Reflect.get(units, 'ios');"
+    }
+  }
+]

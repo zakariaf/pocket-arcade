@@ -6,12 +6,18 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, maskComments, parseArgs, readShellSlice, requireDir, run, sliceSkipReason } from './check-lib.mjs';
+import { SHELL_DUE_TARGETS, createReporter, dueSkipReason, maskComments, parseArgs, readShellSlice, requireDir, run, sliceSkipReason, walk } from './check-lib.mjs';
+import { importRepoModule, setModuleStubs } from './lib/load-ts.mjs';
 import { callRanges, configFiles, isTestFile, lineAt, packageJsonFiles, parseImports, readRepoJson, readRepoText, runtimeSourceFiles } from './lib/repo-scan.mjs';
+
+// android-ids and android-units run the repo's ads-config.ts and read-ads-extra.ts (Node type
+// stripping) with the same stand-ins check-ad-behaviour uses: what a build gets is a computed value.
+const STUBS = join(dirname(fileURLToPath(import.meta.url)), 'lib', 'stubs');
+setModuleStubs({ 'expo-constants': join(STUBS, 'expo-constants.mjs'), 'react-native': join(STUBS, 'react-native.mjs') });
 
 const SPEC = {
   name: 'check-ads',
-  summary: 'Checks the AdMob integration of a Pocket Arcade app repo: files in place, the SDK pinned and imported only by its adapters, no banned SDK APIs, consent and test-only tools kept apart, IDs, the ATT prompt (only in the consent adapter, after the Google form, before initialize, with its plugin and four localised texts), SKAdNetwork list, policy numbers, banner placement and interstitial triggers.',
+  summary: 'Checks the AdMob integration of a Pocket Arcade app repo: files in place, the SDK pinned and imported only by its adapters, no banned SDK APIs, consent and test-only tools kept apart, IDs, the ATT prompt (only in the consent adapter, after the Google form, before initialize, with its plugin and four localised texts; never on Android), SKAdNetwork list, policy numbers, banner placement, interstitial triggers, and the Android ids, units and AD_ID permission.',
   usage: '[repo-root] [--json]',
   options: {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -23,7 +29,13 @@ const SPEC = {
     '  rewarded-status, sample-id, hard-coded-id,',
     '  att-adapter-only, att-order, att-plugin, plugin-entry, extra-ad-units, skadnetwork, game-config-ids,',
     '  policy-numbers, banner-placement, ad-in-effect, pure-policy, root-mock, level-end-recorded, consent-moment,',
-    '  free-hints-config.',
+    '  free-hints-config,',
+    '  android-ids (a live build without ads.ids.android gets no Android app id, never Google\'s sample),',
+    '  android-units (the live units are embedded per platform and read for Platform.OS), ad-id-permission',
+    '  (nothing blocks or strips com.google.android.gms.permission.AD_ID), no-att-android (the tracking request',
+    '  answers \'unavailable\' off iOS before it touches expo-tracking-transparency; L14).',
+    'android-ids and android-units run the repo\'s ads-config.ts and read-ads-extra.ts (Node type stripping, the',
+    'stand-ins in lib/stubs/).',
     'Facts (versions, allowlists, minimums) come from assets/admob-facts.json.',
     '',
     'Rules whose target a later Shell build step creates print SKIP lines until it exists (they count as a',
@@ -584,6 +596,154 @@ function checkFreeHints(files, sources, report) {
   }
 }
 
+const PUB = '1234567890123456';
+const unitsOf = (first) => ({ banner: `ca-app-pub-${PUB}/${first}111111111`, interstitial: `ca-app-pub-${PUB}/${first}222222222`, rewarded: `ca-app-pub-${PUB}/${first}333333333` });
+const LIVE_IOS = { appId: `ca-app-pub-${PUB}~1234567890`, units: unitsOf(1) };
+const LIVE_ANDROID = { appId: `ca-app-pub-${PUB}~0987654321`, units: unitsOf(4) };
+
+/** Calls fn and returns its value, or { threw: '<message>' }. */
+function attempt(fn) {
+  try {
+    return fn();
+  } catch (error) {
+    return { threw: String(error?.message ?? error).split('\n')[0] };
+  }
+}
+
+/**
+ * A live build without the game's Android AdMob ids gets no Android app id at all, never
+ * Google's sample (which would ship a store app on Google's test app and serve no real ads); with the
+ * ids it gets the game's own. Runs the repo's admobPluginOptions with an iOS-only and a full live config.
+ */
+async function checkAndroidIds(root, report) {
+  const rel = FACTS.android.adsConfig;
+  if (!existsSync(join(root, rel))) return { module: null }; // required-file reports it
+  const fix = `In admobPluginOptions: const androidAppId = isLive ? ids.android?.appId : GOOGLE_SAMPLE_APP_IDS.android; and spread ...(androidAppId === undefined ? {} : { androidAppId }). Until the owner's Android AdMob app exists (${FACTS.android.ownerStep}) a live Android build stays unshippable and the Android gates say so; iOS builds are unaffected.`;
+  const loaded = await importRepoModule(root, rel);
+  if (loaded.error || typeof loaded.module.admobPluginOptions !== 'function') {
+    report.problem({ file: rel, rule: 'android-ids', message: loaded.error ?? 'exports no admobPluginOptions', fix });
+    return { module: null };
+  }
+  const { admobPluginOptions } = loaded.module;
+  const iosOnly = attempt(() => admobPluginOptions('live', { ios: LIVE_IOS, android: null }, []));
+  const add = (message) => report.problem({ file: rel, rule: 'android-ids', message, fix });
+  if (iosOnly?.threw) add(`a live config without Android ids throws (${iosOnly.threw}): iOS releases of a game not yet on Android must still build`);
+  else if (iosOnly?.androidAppId !== undefined) {
+    const isSample = String(iosOnly.androidAppId).includes(FACTS.samplePublisher);
+    add(isSample ? `a live build without ads.ids.android gets Google's Android sample app id (${iosOnly.androidAppId})` : `a live build without ads.ids.android gets an Android app id (${iosOnly.androidAppId}) that is not the game's`);
+  }
+  const both = attempt(() => admobPluginOptions('live', { ios: LIVE_IOS, android: LIVE_ANDROID }, []));
+  if (!both?.threw && both?.androidAppId !== LIVE_ANDROID.appId) add(`a live build with ads.ids.android gets the Android app id ${JSON.stringify(both?.androidAppId)}, not the game's own`);
+  return { module: loaded.module };
+}
+
+/**
+ * The live units reach expo.extra per platform ({ ios, android }) and readAdsExtra takes this
+ * platform's entry, so a live Android build never shows ads from the iOS units (nor any when the game
+ * has no Android ids yet).
+ */
+async function checkAndroidUnits(root, config, report) {
+  const configRel = FACTS.android.adsConfig;
+  const fixConfig = 'adUnitsExtra(mode, ids) returns { ios: ids.ios.units, android: ids.android?.units ?? null } in live builds (null otherwise), each platform validated with assertLiveIds.';
+  if (typeof config?.adUnitsExtra === 'function') {
+    const both = attempt(() => config.adUnitsExtra('live', { ios: LIVE_IOS, android: LIVE_ANDROID }));
+    const iosOnly = attempt(() => config.adUnitsExtra('live', { ios: LIVE_IOS, android: null }));
+    const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    if (!same(both, { ios: LIVE_IOS.units, android: LIVE_ANDROID.units })) {
+      const android = both?.android;
+      const why = same(android, LIVE_IOS.units) || same(both, LIVE_IOS.units) ? 'a live Android build would show ads from the iOS units' : 'the live units are not embedded per platform';
+      report.problem({ file: configRel, rule: 'android-units', message: `adUnitsExtra('live', ids) gives ${JSON.stringify(both)}: ${why}`, fix: fixConfig });
+    } else if (!same(iosOnly, { ios: LIVE_IOS.units, android: null })) {
+      report.problem({ file: configRel, rule: 'android-units', message: `adUnitsExtra('live', ids) without Android ids gives ${JSON.stringify(iosOnly)}: a live Android build would show ads from the iOS units`, fix: fixConfig });
+    }
+  }
+  const rel = FACTS.android.readAdsExtra;
+  if (!existsSync(join(root, rel))) return;
+  const loaded = await importRepoModule(root, rel);
+  const fix = 'readAdsExtra(extra = Constants.expoConfig?.extra, os = Platform.OS) reads extra.adUnits[os] (all three ids strings), else null: never the ios entry on Android.';
+  if (loaded.error || typeof loaded.module.readAdsExtra !== 'function') {
+    report.problem({ file: rel, rule: 'android-units', message: loaded.error ?? 'exports no readAdsExtra', fix });
+    return;
+  }
+  const extra = { adsMode: 'live', adUnits: { ios: LIVE_IOS.units, android: LIVE_ANDROID.units } };
+  const onAndroid = attempt(() => loaded.module.readAdsExtra(extra, 'android'))?.adUnits;
+  const withoutAndroid = attempt(() => loaded.module.readAdsExtra({ adsMode: 'live', adUnits: { ios: LIVE_IOS.units, android: null } }, 'android'))?.adUnits;
+  if (JSON.stringify(onAndroid) !== JSON.stringify(LIVE_ANDROID.units) || (withoutAndroid !== null && withoutAndroid !== undefined)) {
+    const isIos = JSON.stringify(onAndroid) === JSON.stringify(LIVE_IOS.units) || JSON.stringify(withoutAndroid) === JSON.stringify(LIVE_IOS.units);
+    report.problem({ file: rel, rule: 'android-units', message: isIos ? 'on Android it reads the iOS units' : `on Android it reads ${JSON.stringify(onAndroid ?? null)}, not the Android units`, fix });
+  }
+}
+
+/** The text of the array literal starting at text[open] === '[' (quotes respected), or ''. */
+function arrayAt(text, open) {
+  let depth = 0;
+  let quote = null;
+  for (let i = open; i < text.length; i += 1) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === '\\') i += 1;
+      else if (ch === quote) quote = null;
+    } else if (ch === '"' || ch === "'" || ch === '`') quote = ch;
+    else if (ch === '[') depth += 1;
+    else if (ch === ']') {
+      depth -= 1;
+      if (depth === 0) return text.slice(open, i + 1);
+    }
+  }
+  return '';
+}
+
+/**
+ * Spec 8.8 and the AdMob Android setup: ads need the advertising-id permission (AD_ID), which the ads
+ * SDK and the expo-tracking-transparency plugin declare. Nothing may block or strip it: not
+ * android.blockedPermissions (or withBlockedPermissions), not a plugin's tools:node="remove".
+ */
+function checkAdIdPermission(root, report) {
+  const permission = FACTS.android.adIdPermission;
+  const pluginsDir = join(root, FACTS.android.pluginsDir);
+  const plugins = existsSync(pluginsDir) ? walk(pluginsDir, { include: ['*.ts'] }).map((rel) => `${FACTS.android.pluginsDir}/${rel}`) : [];
+  const fix = `Keep ${permission}: ads are on in every game that has them (spec 8.8), and UMP and the SDK read the advertising id. Block only the permissions the allowlist does not need.`;
+  for (const rel of [...new Set([...configFiles(root), ...plugins])].filter((file) => !isTestFile(file))) {
+    const text = maskComments(readRepoText(root, rel));
+    if (!text.includes(permission)) continue;
+    const add = (index, message) => report.problem({ file: rel, line: lineAt(text, index), rule: 'ad-id-permission', message, fix });
+    for (const match of text.matchAll(/\bblockedPermissions\s*:\s*|\bwithBlockedPermissions\s*\(\s*[^,]+,\s*/g)) {
+      const at = match.index + match[0].length;
+      let list = text[at] === '[' ? arrayAt(text, at) : '';
+      const name = /^[A-Za-z_$][\w$]*/.exec(text.slice(at))?.[0];
+      if (list === '' && name !== undefined) {
+        const definition = new RegExp(`\\b(?:const|let)\\s+${name}\\b[^=]*=\\s*\\[`).exec(text);
+        if (definition) list = arrayAt(text, definition.index + definition[0].length - 1);
+      }
+      if (list.includes(permission)) add(match.index, `blocks ${permission} (AD_ID) while ads can be on`);
+    }
+    for (const match of text.matchAll(new RegExp(permission.replace(/\./g, '\\.'), 'g'))) {
+      const window = text.slice(Math.max(0, match.index - 200), match.index + 200);
+      if (/tools:node['"]?\s*:\s*['"]remove['"]/.test(window)) add(match.index, `removes ${permission} (AD_ID) from the manifest while ads can be on`);
+    }
+  }
+}
+
+/**
+ * L14: Apple's tracking prompt exists only on iOS. The consent adapter answers 'unavailable' off iOS
+ * before it touches expo-tracking-transparency or waits for the app to be active, so the consent
+ * moment on Android never awaits a tracking answer.
+ */
+function checkNoAttOnAndroid(root, report) {
+  const rel = FACTS.tracking.adapter;
+  if (!existsSync(join(root, rel))) return;
+  const text = maskComments(readRepoText(root, rel));
+  const call = /\b(?:getTrackingPermissionsAsync|requestTrackingPermissionsAsync)\s*\(/.exec(text);
+  if (call === null) return;
+  const before = text.slice(0, call.index);
+  const fnStart = Math.max(before.lastIndexOf('function '), 0);
+  const scope = before.slice(fnStart);
+  const guarded = /Platform\s*\.\s*OS\s*!==\s*['"]ios['"]\s*\)\s*return\b/.test(scope) || /Platform\s*\.\s*OS\s*===\s*['"]android['"]\s*\)\s*return\b/.test(scope);
+  if (!guarded) {
+    report.problem({ file: rel, line: lineAt(text, call.index), rule: 'no-att-android', message: 'the tracking request reaches expo-tracking-transparency without an off-iOS return first: on Android the consent path would await a tracking answer that has no prompt', fix: "Start requestTracking with `if (Platform.OS !== 'ios') return 'unavailable';` (L14), before reading the status or waiting for the app to be active." });
+  }
+}
+
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const root = requireDir(positionals[0] ?? '.', 'repo root');
@@ -612,5 +772,9 @@ run(async () => {
   checkLevelEndRecorded(root, slice, unique, sources, report);
   checkConsentMoment(root, slice, unique, sources, report);
   checkFreeHints(unique, sources, report);
+  const { module: adsConfig } = await checkAndroidIds(root, report);
+  await checkAndroidUnits(root, adsConfig, report);
+  checkAdIdPermission(root, report);
+  checkNoAttOnAndroid(root, report);
   return report.finish({ checked: unique.length, unit: 'files' });
 });

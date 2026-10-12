@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/consent/admob-consent-adapter.ts",
+      "find": "  if (Platform.OS !== 'ios') return 'unavailable';\n",
+      "with": ""
+    }
+  }
+]

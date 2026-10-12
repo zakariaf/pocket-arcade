@@ -1,0 +1,3 @@
+[no-att-android]
+packages/shell/src/services/consent/admob-consent-adapter.ts
+Android

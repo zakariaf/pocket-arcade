@@ -4,6 +4,7 @@
 
 - What the spec requires (S3, 4.2)
 - App Tracking Transparency (owner decision O1)
+- Android: Google's UMP only, no tracking prompt (L14)
 - ConsentPort and its adapter
 - Which ConsentPort a build gets (ADS_MODE=off never calls UMP or ATT)
 - The sequence: refresh, form, tracking, initialize, preload
@@ -49,7 +50,7 @@ Never asked: with `ADS_MODE=off` (every E2E, screenshot and network-audit build)
 |---|---|
 | Google uses this to show you ads that fit your interests. You see ads either way, and the game itself collects no data. | Google nutzt das, um dir Werbung zu zeigen, die zu deinen Interessen passt. Werbung siehst du so oder so, und das Spiel selbst sammelt keine Daten. |
 
-**How Expo reports the status.** `expo-tracking-transparency` 57.0.2 (`TrackingTransparencyPermissionRequester.swift`) maps `ATTrackingManager.AuthorizationStatus` `.authorized` to `granted`, **both `.denied` and `.restricted` to `denied`** (with `canAskAgain` false), and `.notDetermined` to `undetermined`; off iOS both calls answer `granted` without asking. So the adapter returns `authorized`, `denied` (declined or restricted, which behave the same for ads), `not-determined` (the system closed the prompt without an answer, or the app was not active), or `unavailable` (not iOS, or the read failed). `'restricted'` stays in `TrackingStatus` for other adapters and tests. The plugin also adds Android's `com.google.android.gms.permission.AD_ID` permission (for later).
+**How Expo reports the status.** `expo-tracking-transparency` 57.0.2 (`TrackingTransparencyPermissionRequester.swift`) maps `ATTrackingManager.AuthorizationStatus` `.authorized` to `granted`, **both `.denied` and `.restricted` to `denied`** (with `canAskAgain` false), and `.notDetermined` to `undetermined`; off iOS both calls answer `granted` without asking. So the adapter returns `authorized`, `denied` (declined or restricted, which behave the same for ads), `not-determined` (the system closed the prompt without an answer, or the app was not active), or `unavailable` (not iOS, or the read failed). `'restricted'` stays in `TrackingStatus` for other adapters and tests. The plugin also adds Android's `com.google.android.gms.permission.AD_ID` permission (the Android section below).
 
 **Sources, verified 2026-09-30:**
 
@@ -61,6 +62,23 @@ Never asked: with `ADS_MODE=off` (every E2E, screenshot and network-audit build)
 - Apple, `NSPrivacyTracking` and `NSPrivacyTrackingDomains`: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking and https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains (requests to a listed domain fail while tracking is not granted).
 - Apple, App Review Guidelines 5.1.2(i): https://developer.apple.com/app-store/review/guidelines/ (explicit permission through the ATT APIs; nothing may require it).
 - Expo, TrackingTransparency (SDK 57): https://docs.expo.dev/versions/v57.0.0/sdk/tracking-transparency/ (plugin option `userTrackingPermission`; localise through the `ios` object of each locale).
+
+## Android: Google's UMP only, no tracking prompt (L14)
+
+Android has no App Tracking Transparency. On Android the consent moment is the same as on iOS without Apple's step:
+
+1. a consent-info refresh at every launch (UMP 4.0.0 through the same `AdsConsent` calls);
+2. where Google's form is required (EEA, UK, Switzerland): the S3 intro, **only right before Google's form** (L10 holds unchanged), then the form;
+3. `requestTracking()` answers `'unavailable'` at once: `admob-consent-adapter.ts` starts with `if (Platform.OS !== 'ios') return 'unavailable';`, before it reads any status or waits for the app to be active, so the consent path never awaits a tracking answer on Android (`check-ads` rule `no-att-android`; `check-ad-behaviour` case "prepareAds on Android: no tracking step");
+4. then `initialize()` and the preloads, as on iOS (only when `canRequestAds`).
+
+Where no form is due (outside the EEA), nothing is asked at all: no S3, no form, no prompt, and the first banner loads. UMP's "IDFA explainer" is an iOS-only message, so even the sample app's console shows nothing there on Android (ads-smoke flow 6 has an Android branch for it).
+
+Why not ask anything on Android: `expo-tracking-transparency` answers `granted` off iOS without asking, so a "prompt" would be a no-op that only delays ads, and L14 fixed the adapter's off-iOS answer as `'unavailable'`. The advertising id itself (AAID) needs the `AD_ID` permission, which the SDK and the tracking plugin declare and nothing may block (`check-ads` rule `ad-id-permission`); the player resets or deletes it in Android's settings, and Google's SDK honours that.
+
+The tests: `admob-consent-adapter.android.test.ts` (the `unit-android` Jest project, where `Platform.OS` is `'android'`) proves `requestTracking()` resolves `'unavailable'` without touching `expo-tracking-transparency` or AppState, and that refresh, the form and the privacy options work as on iOS.
+
+One Android difference outside consent: a fullscreen ad starts its own Activity, so the app's AppState leaves `active` while it shows (iOS keeps the app active). `runFullscreenAd` still pauses the game itself (rule 7); references/placements-and-lifecycle.md has the details.
 
 ## ConsentPort and its adapter
 

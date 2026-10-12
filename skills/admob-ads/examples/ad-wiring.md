@@ -24,7 +24,7 @@ Copy `packages/shell/src/services/{ads,consent,connectivity}/*` and `packages/sh
 
 ```ts
 const errorLog = createSqliteErrorLogAdapter(driver, clock);
-const adsExtra = readAdsExtra(); // { adsMode, adUnits } embedded at build time
+const adsExtra = readAdsExtra(); // { adsMode, adUnits }: this platform's live units, embedded at build time
 const ads = createAdsPort(adsExtra, (error) => {
   errorLog.record('ads', error);
 });

@@ -416,7 +416,7 @@
     },
     "admob-ads": {
       "assets/admob-facts.json": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -455,7 +455,7 @@
         ]
       },
       "references/consent-flow.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -476,7 +476,7 @@
         ]
       },
       "references/console-privacy-troubleshooting.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -489,7 +489,7 @@
         ]
       },
       "references/placements-and-lifecycle.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "design/shared/copy-deck.json",
@@ -518,7 +518,7 @@
         ]
       },
       "references/setup-ids-and-modes.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",

@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/ads-config.ts",
+      "find": "return { ios: ids.ios.units, android: ids.android?.units ?? null };",
+      "with": "return { ios: ids.ios.units, android: ids.ios.units };"
+    }
+  }
+]

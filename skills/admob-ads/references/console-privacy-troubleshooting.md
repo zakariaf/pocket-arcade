@@ -3,8 +3,10 @@
 ## Contents
 
 - AdMob console: the owner's steps A1-A6
+- The AdMob Android app and its 3 units (GP5)
 - Privacy facts the ads bring
 - Simulator smoke test (test variant): the ads-smoke flows
+- On the Android emulator
 - Jest root mock
 - Troubleshooting by error phase and reason
 - Common problems
@@ -20,6 +22,15 @@ These are human steps. Ask the owner, explain in plain words what to click, and 
 - **A5. After the first release.** Link the AdMob app to the App Store listing. Publish `app-ads.txt` at the root of the developer website with the line AdMob shows under Apps -> app-ads.txt (format `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`). AdMob finds the site through the App Store listing's Marketing URL and can take up to 24 hours to verify. That field can only be edited with a new app version, so the store-pages step must fill it for the first version.
 - **A6. Physical-device testing with live IDs** is never needed: test builds always use test units.
 
+## The AdMob Android app and its 3 units (GP5)
+
+AdMob makes one app per platform, so a game on Google Play needs its own AdMob Android app with its own three units; the iOS ids never serve on Android. This is owner step **GP5** of the Google Play steps (android-release-play), the Android twin of A2; A1, A3 and A4 are per account or per app as on iOS (A3's GDPR message is published for the Android app too; there is no IDFA explainer on Android at all).
+
+- **GP5. Per game, the Android app and units.** admob.google.com -> Apps -> Add app -> Android -> "Is the app listed on a supported app store?" No -> app name (the game's English name) -> Add app. Then Ad units -> Add ad unit, one each: Banner (adaptive), Interstitial, Rewarded (reward amount 1, type `perk`). The owner sends the 4 ids: the app id `ca-app-pub-<16 digits>~<10 digits>` and the three unit ids `ca-app-pub-<16 digits>/<10 digits>`. Claude writes them into `apps/<game>/game.config.ts` as `ads.ids.android: { appId, units: { banner, interstitial, rewarded } }`.
+- Until then `ads.ids.android` stays `null`: test and ads-off builds use Google's Android sample app, and a live Android build gets no app id at all, never the sample (`ads-config.ts`, `check-ads` rule `android-ids`), so the Android gates stop it with `owner-placeholder` and `OWNER STEPS PENDING: GP5`. iOS releases are unaffected.
+- After the first Play release, link the AdMob Android app to the Play listing (the Android half of A5); `app-ads.txt` is the same file on the same developer website, found through the Play listing's website field.
+- Ask with one request, the four ids as the answer, the default meanwhile: "Android builds use Google's test ads; no live Android build."
+
 ## Privacy facts the ads bring
 
 Owned in depth by the privacy-and-network-audit work; the facts this skill must respect:
@@ -29,6 +40,7 @@ Owned in depth by the privacy-and-network-audit work; the facts this skill must 
 - The app's own privacy manifest keeps `NSPrivacyTracking: false` and lists no `NSPrivacyTrackingDomains`: the Shell's code tracks nothing, and Apple fails requests to listed domains for players who decline (which would stop ads for them). Only Google's pods may declare tracking in their own manifests (Apple's `NSPrivacyTracking` page: "your app or third-party SDK"). `ExpoTrackingTransparency` is a no-network system wrapper; the N3 network audit still allows only the ads and store SDKs.
 - App Tracking Transparency (owner decision O1, guideline 5.1.2(i)): Apple's prompt comes after Google's form and before the first ad request (references/consent-flow.md). Declined, restricted or unavailable: the advertising identifier is all zeros, ads still serve without it and SKAdNetwork attribution still works. Nothing in the app depends on the answer.
 - A privacy-policy URL is required by the App Store and by AdMob; the offline copy lives in Settings (S11c).
+- Android: no ATT and no SKAdNetwork. The SDK and the tracking plugin declare `com.google.android.gms.permission.AD_ID`, which stays (`check-ads` rule `ad-id-permission`); Play's Data safety form declares "Device or other IDs" collected and shared for advertising by the ads SDK (privacy-and-network-audit writes the form).
 
 ## Simulator smoke test (test variant)
 
@@ -58,9 +70,22 @@ Flows 1 to 5 run in that order on one install; 6 needs its own fresh install. Do
 
 **Recorded run, 2026-10-01** (Line Siege, `ADS_MODE=test` Release build of these templates, simulator `e07-r5-continue-board-ads`, iOS 26.5, Maestro 2.10 on its own driver port, a Berlin network): flows 1 to 5 passed on one fresh install. Flow 1: S3, "Publisher Test Ads", "Consent", Apple's prompt, "Ask App Not to Track", the banner. Flow 3: no ad after the first two Next taps, the test interstitial after the third, level 4 settled after Close. Flow 4 (three passes): "Reward granted", Close, the run on the Game screen with `{"seq":2,"settled":true}`, the tray with its three pieces and one heart restored; the board-clock trace shows the stale done ignored (`resume run 5 seq 1`, `push run 6 seq 2`, `frame run 5 seq 1`, `done run 5 isStale true`, then frames of run 6 from elapsed 0 to 556 ms and `done run 6`). Flow 5: no banner, the lose result at once with no continue offer, no ad. Flow 6 on a new fresh install: S3, Google's IDFA explainer, Apple's prompt with "Google uses this to show you ads that fit your interests. ...", the banner, and the UMP state `IABTCF_gdprApplies = 0`. The same flow 4 on the round-4 templates (the debug link of that build knows no `geo=`, so its setup links left it out) failed at its last step in one of its two runs that reached the ad (and the same build froze in both rewarded continues traced earlier that day): `{"seq":2,"settled":false}`, the hearts outlined and the tray empty, with the trace `resume run 4 seq 1`, `push run 5 seq 2`, `frame run 4 seq 1`, `done ... stopped`, and no frame of seq 2. On the fixed build the Premium continue on the same seed, an ordinary move, Pause and Resume, and Home in the middle of the continue animation with the app reopened 10 s later (one frame at resume, `settled: true`) all settled too.
 
+## On the Android emulator
+
+The same six flows run on an Android `ADS_MODE=test` emulator build (android-emulator-build), each with the emulator's serial: the flows hold the tracking-prompt steps in `runFlow` blocks with `when: platform: iOS`, and flow 6 has an Android branch (outside the EEA nothing is asked: no S3, no form). Start from a fresh install launched by adb, always naming the serial:
+
+```sh
+adb -s <serial> uninstall <package>; adb -s <serial> install -r <apk>
+adb -s <serial> shell am start -W -n <package>/.MainActivity
+tools/maestro/bin/maestro --device <serial> --driver-host-port <port> test \
+  -e APP_ID=<package> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
+```
+
+Flow 2's relaunch is `adb -s <serial> shell am force-stop <package>` then the same `am start`. On Android Google's form, the test ads and their close keys are Google's own Android views: the texts "Consent" and "Test mode" and the close points of flows 3 and 4 were recorded on iOS; the first Android ads smoke run confirms them and records any Android difference here. A fullscreen ad backgrounds the app on Android (references/placements-and-lifecycle.md), so flow 4's settled-board step is also the Android proof that the run plays on after the ad.
+
 ## Jest root mock
 
-`templates/__mocks__/react-native-google-mobile-ads.ts` is a root manual mock: Jest applies it to every test without a `jest.mock` call, so importing an adapter never touches native code (without it, Jest fails with `TurboModuleRegistry.getEnforcing(...): 'RNGoogleMobileAdsModule' could not be found`). It lists `BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER` next to `ANCHORED_ADAPTIVE_BANNER`, because the adapter uses the large size (without it a banner test would pass `undefined` as the size). Shell tests use `fake-ads.ts` and `fake-consent.ts`; an adapter test that asserts on the SDK calls `jest.mock('react-native-google-mobile-ads')` plus `jest.requireMock(...)`. `templates/__mocks__/expo-tracking-transparency.ts` does the same for the tracking module (jest-expo mocks only its native module, whose calls answer undefined): by default the status is `undetermined` and a request answers `denied`. The mock lives in `__mocks__/`, which the lint config exempts from the no-default-export rule (the library's `mobileAds` is a default export).
+`templates/__mocks__/react-native-google-mobile-ads.ts` is a root manual mock: Jest applies it to every test without a `jest.mock` call, so importing an adapter never touches native code (without it, Jest fails with `TurboModuleRegistry.getEnforcing(...): 'RNGoogleMobileAdsModule' could not be found`). It lists `BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER` next to `ANCHORED_ADAPTIVE_BANNER`, because the adapter uses the large size (without it a banner test would pass `undefined` as the size). Its `TestIds` follow `Platform.OS` like the library's, so the `unit-android` Jest project (`*.android.test.ts(x)`) sees Google's Android test units. Shell tests use `fake-ads.ts` and `fake-consent.ts`; an adapter test that asserts on the SDK calls `jest.mock('react-native-google-mobile-ads')` plus `jest.requireMock(...)`. `templates/__mocks__/expo-tracking-transparency.ts` does the same for the tracking module (jest-expo mocks only its native module, whose calls answer undefined): by default the status is `undetermined` and a request answers `denied`. The mock lives in `__mocks__/`, which the lint config exempts from the no-default-export rule (the library's `mobileAds` is a default export).
 
 ## Troubleshooting by error phase and reason
 

@@ -1,0 +1,3 @@
+[android-ids]
+packages/shell/src/config/ads-config.ts
+Google's Android sample app id

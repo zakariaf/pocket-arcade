@@ -78,7 +78,10 @@ describe('withShell', () => {
   });
 
   it('embeds the live ad units only in a live store build', () => {
-    expect(withShell(GAME, STORE_LIVE).extra?.['adUnits']).toStrictEqual(LIVE_UNITS);
+    expect(withShell(GAME, STORE_LIVE).extra?.['adUnits']).toStrictEqual({
+      ios: LIVE_UNITS,
+      android: null,
+    });
   });
 
   it('refuses a live build that still carries Google sample IDs', () => {

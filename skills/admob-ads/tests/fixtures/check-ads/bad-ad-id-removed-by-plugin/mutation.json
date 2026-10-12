@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/plugins/with-no-ad-id.ts",
+      "content": "// packages/shell/plugins/with-no-ad-id.ts (fixture: a plugin that strips the advertising-id permission)\nexport const REMOVED = {\n  $: { 'android:name': 'com.google.android.gms.permission.AD_ID', 'tools:node': 'remove' },\n};\n"
+    }
+  }
+]
