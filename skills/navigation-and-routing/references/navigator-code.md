@@ -11,6 +11,7 @@ What each template file does, how screens use navigation, how to test it, and th
 - Using navigation from a screen
 - Partial Shell: building the navigator before every screen exists
 - Back on the Game screen
+- Android: the system back
 - Testing navigation
 - Verified facts and versions
 - Pitfalls seen before
@@ -33,6 +34,8 @@ Every file lands at Shell step 7 with the composition root, each with its test, 
 | `game-screen.tsx` | `packages/shell/src/screens/game/game-screen.tsx` | S5, the assembled Game screen (a shared copy, byte-identical to toybox-screens' template): session, Back opens Pause, Pause and Result overlays, the screen model |
 | `game-screen-back.test.tsx` | `packages/shell/src/screens/game/game-screen-back.test.tsx` | Back behaviour in a real static stack (shared copy, same bytes as toybox-screens') |
 | `route-guards.test.tsx` | `packages/shell/src/navigation/route-guards.test.tsx` | first-run flow: language → tutorial → Home (lands with `route-guards.ts` at Shell step 7) |
+| `game-screen-back.android.test.tsx` (Android step 4) | `packages/shell/src/screens/game/game-screen-back.android.test.tsx` | the system back on Game, in the `unit-android` project: Pause, resume, only Pause Home leaves, a finished run leaves, Home backgrounds the app |
+| `use-hardware-back.ts` (+ `use-hardware-back.android.test.tsx`, Android step 4) | `packages/shell/src/navigation/use-hardware-back.ts` | `useHardwareBack(onBack \| null)`: what sits above the navigator (an S14 dialog) takes the system back |
 
 Imports use the package name with the file extension (`@e07/shell/navigation/root-stack.tsx`); same-folder imports are `./file.ts`; `../` is banned.
 
@@ -111,6 +114,24 @@ Debug: { if: useIsTestBuild, screens: { Debug: NotBuiltScreen, FontTest: NotBuil
 
 `game-screen-back.test.tsx` renders the route in a real static native stack and stubs everything it is not about: the session controls (`view: null`, `BoardHost: null`, `status` in a vanilla store), the Pause overlay (only its Home button), the screen model (`{ topBar: null, result: null }`) and `GameLayout` (a View that draws its board and overlay slots). A copy that mocks only the session controls crashes once the screen is wired (the layout needs the theme providers and the model reads the host).
 
+## Android: the system back
+
+The Android port brings these files at Android step 4, each with its test in the `unit-android` Jest project (`jest-expo/android`, only `*.android.test.ts(x)`), and changes no iOS file.
+
+- **Routes need no code.** React Navigation 7.4's container registers one `BackHandler` listener (`useBackButton`): while `canGoBack()` it calls `goBack()` and consumes the press, otherwise it returns `false`. On Game that `goBack()` meets `usePreventRemove` exactly as the Back control does (Pause, then resume); on any other route it is the Back control's own call; on Home the press is not handled, React Native calls `BackHandler.exitApp()`, the activity's default back runs, and Android (12 and later) moves the app's task to the background; Android 7-11 finish the root activity instead, which the save after every move already covers. There is no `BackHandler` in screen code.
+- **Dialogs take it with `useHardwareBack`.** S14 dialogs are drawn above the navigator (the dialog host), not as routes, so without help the press would go to the container and leave the screen behind the open dialog. `navigation/use-hardware-back.ts` adds a listener while it has a handler and consumes the press; `BackHandler` asks the newest listener first, so the open dialog answers before the container. Every S14 cancel (Cancel, Later, OK) closes the dialog, so the dialog host (toybox-screens' `screens/dialogs/dialog-host.tsx`) wires it once, before its early return:
+
+  ```tsx
+  // Android's system back is the open dialog's cancel; every S14 cancel (Cancel, Later, OK) closes.
+  useHardwareBack(request === null ? null : onClose);
+  if (request === null) return null;
+  ```
+
+  `check-navigation` rule `dialog-back` fails a dialog host without it. On iOS `BackHandler` never fires, so the hook does nothing there.
+- **The tests press the real Android path.** React Native 0.86 ships no `BackHandler` mock (`mockPressBack` is gone); in `jest-expo/android` `BackHandler` is the Android module, which listens to the `hardwareBackPress` device event. Press the system back exactly as the back button and the back gesture deliver it: `await act(() => { DeviceEventEmitter.emit('hardwareBackPress', {}); })`. Watch the unhandled case with `jest.spyOn(BackHandler, 'exitApp').mockImplementation(() => undefined)` (called once = Android backgrounds the app). Remove any listener a test adds by hand in `afterEach`: a listener left behind consumes the next test's press.
+- **Proof that the test is about Android:** the same `game-screen-back.android.test.tsx` run by the iOS preset fails all six cases on assertions (`Expected: "paused"`, `Received: "playing"`), because the iOS `BackHandler` never delivers the press.
+- **Predictive back.** `targetSdkVersion` 36 enforces predictive back, which disables `onBackPressed()`; React Native 0.86's `ReactActivity` registers an always-enabled `OnBackPressedCallback` that calls it (read in its source), so the press still reaches JavaScript and the rules above hold. The emulator run (e2e-maestro's Android flows, `pressKey: back`) is the device proof.
+
 ## Testing navigation
 
 - Jest runs the real native stack: jest-expo 57's preset mocks react-native-screens, so a static stack renders in the `unit` project with RNTL 14 (`await render(...)`).
@@ -128,7 +149,7 @@ Debug: { if: useIsTestBuild, screens: { Debug: NotBuiltScreen, FontTest: NotBuil
 
 Stack: Expo SDK 57, React Native 0.86.3, React 19.2.3, `@react-navigation/native` 7.4.1, `@react-navigation/native-stack` 7.19.2 (core 7.22.1, routers 7.6.4, elements 2.9.43), react-native-screens 4.26.2, react-native-safe-area-context 5.7.0, TypeScript 6.0.3, Jest 29.7 + jest-expo 57 + RNTL 14.0.1.
 
-Verified on 2026-09-30 in a test workspace with the full route table (every screen built, no slice): the template `root-stack.tsx` (with `FontTest`) passes `tsc`, ESLint `--max-warnings 0` and Prettier, the navigation and composition-root tests pass (15), `check-navigation.mjs . --complete` prints `RESULT: PASS`, and `font-test-route.test.tsx` draws `font-test.screen` through `TEST_ONLY`; the shared `game-screen.tsx` with `game-screen-back.test.tsx` (4 tests) passes against the assembled S5 set. Verified on 2026-09-28 in a workspace with the project's strict tsconfig, ESLint config and Jest projects, together with the real Toybox components and screens: every template passes `tsc`, ESLint `--max-warnings 0` and Prettier; `game-screen-back.test.tsx` (4 tests) and `route-guards.test.tsx` (3 tests) pass, and three of the Back tests fail when `usePreventRemove` is disabled; `NavigationRoot` with `.with()` rendered the first-run group, then Home after `finish-tutorial`, with Reduce motion on (the `.with()` wrapper's `screenOptions` are merged over the static ones, read in core 7.22.1); `check-navigation.mjs` flags a `linking` prop added to the container. Earlier verification (2026-09-26): a wrong route name and a wrong `Game` param were rejected by `tsc`; the debug screen was absent from a store export and present in a test export; a Release build on the iOS simulator ran the direction flip from the mounted splash.
+Verified on 2026-10-12 in a test workspace with a temporary `unit-android` project (`jest-expo/android`, only `*.android.test.ts(x)`): `game-screen-back.android.test.tsx` (6 tests) and `use-hardware-back.android.test.tsx` (4 tests) pass and pass `tsc`, ESLint `--max-warnings 0` and Prettier; the Android back test fails all six cases when the iOS preset runs it, and the hook test fails on its assertions against a stub that registers nothing; the dialog host with the `useHardwareBack(request === null ? null : onClose)` line answered the system back with its cancel while an earlier listener (standing for the container) was never called. Verified on 2026-09-30 in a test workspace with the full route table (every screen built, no slice): the template `root-stack.tsx` (with `FontTest`) passes `tsc`, ESLint `--max-warnings 0` and Prettier, the navigation and composition-root tests pass (15), `check-navigation.mjs . --complete` prints `RESULT: PASS`, and `font-test-route.test.tsx` draws `font-test.screen` through `TEST_ONLY`; the shared `game-screen.tsx` with `game-screen-back.test.tsx` (4 tests) passes against the assembled S5 set. Verified on 2026-09-28 in a workspace with the project's strict tsconfig, ESLint config and Jest projects, together with the real Toybox components and screens: every template passes `tsc`, ESLint `--max-warnings 0` and Prettier; `game-screen-back.test.tsx` (4 tests) and `route-guards.test.tsx` (3 tests) pass, and three of the Back tests fail when `usePreventRemove` is disabled; `NavigationRoot` with `.with()` rendered the first-run group, then Home after `finish-tutorial`, with Reduce motion on (the `.with()` wrapper's `screenOptions` are merged over the static ones, read in core 7.22.1); `check-navigation.mjs` flags a `linking` prop added to the container. Earlier verification (2026-09-26): a wrong route name and a wrong `Game` param were rejected by `tsc`; the debug screen was absent from a store export and present in a test export; a Release build on the iOS simulator ran the direction flip from the mounted splash.
 
 ## Pitfalls seen before
 

@@ -11,7 +11,7 @@ The product's screen map, what is a route and what is not, and how the app moves
 - Flows
 - Where each screen navigates to
 - Direction and transitions
-- The Game screen's Back rule
+- The Game screen's Back rule (and Android's system back)
 - A partial Shell (shell-slice.json)
 
 ## The screen map (product rules)
@@ -42,7 +42,7 @@ S15 Debug menu (test builds only)
 Navigation rules from the product spec:
 
 - Home is the root. Every other screen has a Back control. In right-to-left languages the Back arrow points right.
-- The system back gesture or button always does the same as Back.
+- The system back gesture or button always does the same as Back (on Android: "Android: the system back" below).
 - On the Game screen, Back opens the Pause menu instead of leaving, so a stray swipe never loses a run.
 - Maximum depth from Home: 2 screens (for example Settings > Language).
 - Transitions slide in the reading direction and mirror in RTL.
@@ -153,6 +153,21 @@ Navigation calls live in screens and their `use-<screen>-model.ts` hooks, never 
 - A won or lost run is not live, so Back from the Result overlay leaves normally.
 - The app going to the background pauses the session (the game host's lifecycle hook), so a return shows Pause.
 - `usePreventRemove` cannot see app kills: the save after every move is the real guarantee.
+
+### Android: the system back (spec 5)
+
+Android has a system back (the back button, or the edge swipe with gesture navigation). It reaches JavaScript as one `hardwareBackPress` event, and React Navigation's container answers it with `goBack()` while the stack can go back. So, with no extra code per screen:
+
+| Where | The system back | Why |
+|---|---|---|
+| Game, playing | opens Pause, the route stays | `goBack()` is intercepted by `usePreventRemove` (as the Back control) |
+| Game, Pause open | resumes | the same callback resumes |
+| Game, run won or lost (Result) | leaves like Back | the run is not live |
+| Any other route (S8-S13, S11a-d, S15) | does what its Back control does (`goBack()`) | the container's listener |
+| An S14 dialog open | runs the dialog's cancel (Cancel, Later or OK: each closes it); the screen behind stays | the dialog host's `useHardwareBack(onClose)` answers before the container |
+| Home (the root) | not handled: Android sends the app to the background | `canGoBack()` is false, the press reaches `BackHandler.exitApp()` |
+
+`gestureEnabled: false` stays an iOS rule (`gesture-off`): the native stack on Android has no swipe-back of its own, and Android's back gesture is the system back above. No screen sets a gesture exclusion, so the system back always works.
 
 ## A partial Shell (shell-slice.json)
 

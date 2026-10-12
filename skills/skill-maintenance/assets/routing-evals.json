@@ -54,6 +54,7 @@
   {"prompt": "rename these files, exports and boolean variables so they follow our conventions", "expect": "naming-conventions"},
   {"prompt": "add the How to Play screen to the navigator with typed params and open it from Settings", "expect": "navigation-and-routing"},
   {"prompt": "pressing Back on the game screen should open Pause instead of leaving the route", "expect": "navigation-and-routing"},
+  {"prompt": "the Android back button must open Pause on the Game screen", "expect": "navigation-and-routing"},
   {"prompt": "start game number three, Bank Shot: create its app with config, palette, IDs and catalogs", "expect": "new-game-scaffold"},
   {"prompt": "check that the new game app is complete before I start writing its rules", "expect": "new-game-scaffold"},
   {"prompt": "cold start takes 1.4 s on my phone; measure it and get it under the budget", "expect": "performance-budgets"},

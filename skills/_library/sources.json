@@ -9221,16 +9221,28 @@
     },
     "navigation-and-routing": {
       "references/navigator-code.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
             "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          },
+          {
+            "path": "packages/shell/src/screens/dialogs/dialog-host.tsx",
+            "sha256": "3f6e1ee46a7b4dd99da86e88e275c360cf0201b34cd91d1b8684c696463979e5"
+          },
+          {
+            "path": "packages/shell/src/screens/game/game-screen-back.test.tsx",
+            "sha256": "f444b6e685cbaae0fcd9bbe381287cfc57669c35d5da614dde977ef460c9ae85"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "references/routes-and-flows.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -9248,6 +9260,19 @@
           {
             "path": "docs/06-navigation-state-persistence.md",
             "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          }
+        ]
+      },
+      "templates/game-screen-back.android.test.tsx": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/game/game-screen-back.test.tsx",
+            "sha256": "f444b6e685cbaae0fcd9bbe381287cfc57669c35d5da614dde977ef460c9ae85"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -9329,6 +9354,28 @@
           {
             "path": "docs/06-navigation-state-persistence.md",
             "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          }
+        ]
+      },
+      "templates/use-hardware-back.android.test.tsx": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/use-hardware-back.ts": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "docs/06-navigation-state-persistence.md",
+            "sha256": "924b4f6c40c6efa2c8090f98ff1e9c910a9bcd4be1ddafdd27e665ff1e171449"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       }
