@@ -25,7 +25,8 @@ const SPEC = {
     '  is gone from the Premium files),',
     '  harness-maestro (the StoreKit harness builds every Maestro call with maestroGlobalArgs: the global --device <udid>',
     '  and its own --driver-host-port, never the per-command --udid; the function that spawns Maestro picks a driver port',
-    '  for each run with driverPortFor or freeDriverPort),',
+    '  for each run with driverPortFor or freeDriverPort, and it spawns the pinned MAESTRO_BIN with maestroEnvOf\'s',
+    '  environment: Java 17 even without JAVA_HOME, no analytics or update check),',
     '  harness-relaunch-wait (each wait for a premium.* state in a relaunch flow, 02-refund-relaunch.yaml and',
     '  04-approval-relaunch.yaml, allows at least 60000 ms: StoreKit answers the launch re-check only after its',
     '  transaction sync, measured at 28 s).',
@@ -282,9 +283,18 @@ function checkHarnessMaestro(root, report) {
   const fix = 'Build the Maestro arguments with maestroGlobalArgs({ udid, driverPort }) from packages/tooling/src/e2e/maestro-args.ts before the command (copy the harness template again).';
   if (!/\bmaestroGlobalArgs\s*\(/.test(text)) report.problem({ file: rel, line: 1, rule: 'harness-maestro', message: 'runs Maestro without maestroGlobalArgs (the global --device <udid> and its own --driver-host-port)', fix });
   for (const match of text.matchAll(/['"`]--udid['"`]/g)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'harness-maestro', message: "passes Maestro's per-command --udid, so the run shares the XCTest driver port with other sessions", fix });
+  // The pinned install and Maestro's environment (maestro-tool.ts): a hand-built env without
+  // JAVA_HOME fails on a Mac whose shell does not export Java 17.
+  const spawns = [...text.matchAll(/\bspawn(?:Sync)?\s*\(\s*(?:maestro|MAESTRO_BIN)\b/g)];
+  for (const spawn of spawns) {
+    const call = text.slice(spawn.index, text.indexOf(';', spawn.index));
+    const start = [...text.slice(0, spawn.index).matchAll(/\bfunction\s+\w+\s*\(/g)].at(-1)?.index ?? 0;
+    if (/^\w+\s*\(\s*MAESTRO_BIN\b/.test(call) && /\bmaestroEnvOf\s*\(/.test(text.slice(start, spawn.index + call.length))) continue;
+    report.problem({ file: rel, line: lineAt(text, spawn.index), rule: 'harness-maestro', message: 'runs Maestro outside the pinned install or without its environment (Java 17, no analytics or update check)', fix: "Spawn MAESTRO_BIN with env: maestroEnvOf(process.env), both from packages/tooling/src/ios/maestro-tool.ts (copy the harness template again)." });
+  }
   // Each Maestro run gets its own driver port: the function that spawns Maestro picks it
   // (driverPortFor(givenPort) or freeDriverPort()) for every flow, unless a session passes --driver-port.
-  for (const spawn of text.matchAll(/\bspawn(?:Sync)?\s*\(\s*maestro\b/g)) {
+  for (const spawn of spawns) {
     const before = text.slice(0, spawn.index);
     const starts = [...before.matchAll(/\bfunction\s+\w+\s*\(/g)];
     const start = starts.at(-1)?.index ?? 0;
