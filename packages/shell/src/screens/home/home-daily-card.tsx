@@ -13,6 +13,7 @@ import { IconTile } from '@e07/shell/ui/icon-tile.tsx';
 import { Icon } from '@e07/shell/ui/icons/icon.tsx';
 import { RaisedSurface } from '@e07/shell/ui/raised-surface.tsx';
 import { Sticker } from '@e07/shell/ui/sticker.tsx';
+import { useWindowClass } from '@e07/shell/ui/use-window-class.ts';
 
 import type { HomeDaily } from './home-model.ts';
 import type { ReactNode } from 'react';
@@ -48,6 +49,9 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   text: { flex: 1, gap: 1 },
   streak: { marginTop: 2 },
+  // At 200 % text the sticker drops under the date: beside it the title and date kept a third
+  // of the card and split inside their words ("Daily / chall / enge"; fa one letter a line).
+  streakStacked: { marginTop: 6, alignItems: 'flex-start' },
   done: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });
 
@@ -76,6 +80,7 @@ export function HomeDailyCard({
 }: HomeDailyCardProps): ReactNode {
   const t = useT();
   const theme = useTheme();
+  const { isLargeText } = useWindowClass();
   const title = t('daily.title');
   const streak = t('daily.streak.count', { daysCount: daily.streakDays });
   const doneText = t('daily.today.done');
@@ -90,6 +95,9 @@ export function HomeDailyCard({
       streakText: streak,
       doneText,
     }),
+  );
+  const sticker = (
+    <Sticker testID="home.daily-card.streak" text={streak} size="sm" icon="chain" tiltDeg={4} />
   );
   const handleOpenAction = (event: AccessibilityActionEvent): void => {
     if (event.nativeEvent.actionName === 'activate') onOpenDaily();
@@ -118,16 +126,9 @@ export function HomeDailyCard({
         <View style={styles.text}>
           <AppText text={title} variant="heading" isHeader testID="home.daily-card.title" />
           <AppText text={daily.dateText} tone="muted" testID="home.daily-card.date" />
+          {isLargeText ? <View style={styles.streakStacked}>{sticker}</View> : null}
         </View>
-        <View style={styles.streak}>
-          <Sticker
-            testID="home.daily-card.streak"
-            text={streak}
-            size="sm"
-            icon="chain"
-            tiltDeg={4}
-          />
-        </View>
+        {isLargeText ? null : <View style={styles.streak}>{sticker}</View>}
       </View>
       {daily.isDoneToday ? (
         <View style={styles.done} {...DECORATION}>

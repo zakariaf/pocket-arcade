@@ -54,23 +54,94 @@ function probeFrom(search: Search, width: number): Search {
 }
 
 /**
- * One step of the search after a text layout. A probe that keeps the count narrows on from it. A
- * probe that adds a line sends the pad back to hi first (a wider probe straight after it could lay
- * out the same lines again and send no event), then probes between the two.
+ * A probe that failed: it added a line, or it split a word (as surely failed: CSS balance never
+ * splits one). The pad goes back to hi first (a wider probe straight after it could lay out the
+ * same lines again and send no event), then the search probes between the two.
  */
-export function nextSearch(search: Search, width: number, lineWidths: readonly number[]): Search {
+export function failedSearch(search: Search, width: number): Search {
+  const steps = search.steps + 1;
+  const tried = width - search.pad;
+  const failed = { ...search, steps, lo: tried };
+  if (steps >= MAX_STEPS || probeOf(tried, search.hi, search.widest) <= tried) {
+    return { ...failed, pad: Math.max(0, width - search.hi), isDone: true };
+  }
+  return { ...failed, pad: Math.max(0, width - search.hi), isReturning: true };
+}
+
+/**
+ * Whether a probe failed: it added a line, or it split a word (as surely failed: CSS balance never
+ * splits one). A layout back at hi after a failure is no probe.
+ */
+function isFailedProbe(
+  search: Search,
+  lineWidths: readonly number[],
+  isWordBroken = false,
+): boolean {
+  return !search.isReturning && (lineWidths.length > search.lines || isWordBroken);
+}
+
+/** One text layout: its line widths, and whether it split a word. */
+type TextLayout = { readonly lineWidths: readonly number[]; readonly isWordBroken: boolean };
+
+/**
+ * One step of the search after a text layout (its line widths alone: a layout that split no
+ * word). The one place a probe is judged: one that keeps the count whole narrows on from it, a
+ * failed one goes back to hi.
+ */
+export function nextSearch(
+  search: Search,
+  width: number,
+  layout: TextLayout | readonly number[],
+): Search {
+  const { lineWidths, isWordBroken } =
+    'lineWidths' in layout ? layout : { lineWidths: layout, isWordBroken: false };
   const steps = search.steps + 1;
   const widest = Math.max(...lineWidths);
   if (search.isReturning) return probeFrom({ ...search, steps, widest }, width);
-  const tried = width - search.pad;
-  if (lineWidths.length > search.lines) {
-    const failed = { ...search, steps, lo: tried };
-    if (steps >= MAX_STEPS || probeOf(tried, search.hi, search.widest) <= tried) {
-      return { ...failed, pad: Math.max(0, width - search.hi), isDone: true };
-    }
-    return { ...failed, pad: Math.max(0, width - search.hi), isReturning: true };
+  if (isFailedProbe(search, lineWidths, isWordBroken)) return failedSearch(search, width);
+  return probeFrom({ ...search, steps, hi: width - search.pad, widest }, width);
+}
+
+/** Marks drawn as nothing (bidi isolates and marks, joiners): a break looks through them. */
+const INVISIBLE = /[\u061C\u200D\u200E\u200F\u2066-\u2069\uFEFF]/u;
+const SPACE = /\s/u;
+/** A line may end after a space, a hyphen, a dash or a slash, as CSS breaks lines. */
+const BREAK_AFTER = /[\s\-\u00AD\u2010\u2012-\u2015/]/u;
+
+/** The nearest visible character before (step -1) or from (step 1) a position, if any. */
+function visibleAt(text: string, from: number, step: 1 | -1): string | undefined {
+  for (let at = from; at >= 0 && at < text.length; at += step) {
+    const char = text.charAt(at);
+    if (!INVISIBLE.test(char)) return char;
   }
-  return probeFrom({ ...search, steps, hi: tried, widest }, width);
+  return undefined;
+}
+
+function isWordBreak(text: string, at: number): boolean {
+  const before = visibleAt(text, at - 1, -1);
+  const after = visibleAt(text, at, 1);
+  if (before === undefined || after === undefined) return true;
+  return BREAK_AFTER.test(before) || SPACE.test(after);
+}
+
+/**
+ * Whether a layout broke a line inside a word. iOS wraps a word wider than its line letter by
+ * letter, so a narrow probe can keep the line count by splitting a word ("Diesm / al nicht");
+ * CSS balance never does. The lines' texts are walked along the text (iOS may leave a line's
+ * trailing spaces out); lines without texts, or texts that do not spell the text, say nothing.
+ */
+export function breaksWord(text: string, lineTexts: readonly (string | undefined)[]): boolean {
+  const parts = lineTexts.filter((line): line is string => line !== undefined);
+  const squeeze = (value: string): string => value.replace(/\s/gu, '');
+  if (parts.length !== lineTexts.length || squeeze(parts.join('')) !== squeeze(text)) return false;
+  let at = 0;
+  for (const [index, line] of parts.slice(0, -1).entries()) {
+    at += line.length;
+    if (!isWordBreak(text, at)) return true;
+    const next = parts[index + 1] ?? '';
+    while (at < text.length && SPACE.test(text.charAt(at)) && !SPACE.test(next.charAt(0))) at += 1;
+  }
+  return false;
 }
 
 /** The first probe after a layout at the full width. */
@@ -111,14 +182,15 @@ export type Measure = {
 
 /**
  * The next state after a measurement: the first layout at the full width starts the search, each
- * later layout moves it on. onLayout and onTextLayout arrive in either order, so both call it.
+ * later layout moves it on (isWordBroken: that layout split a word). onLayout and onTextLayout
+ * arrive in either order, so both call it.
  */
-export function advance(measure: Measure): Measure {
+export function advance(measure: Measure, isWordBroken = false): Measure {
   const { width, lineWidths, search } = measure;
   if (width === 0 || lineWidths === null || search?.isDone === true) return measure;
   const key = `${String(width)}|${measure.text}`;
   if (search?.key !== key) return { ...measure, search: firstSearch(key, width, lineWidths) };
-  return { ...measure, search: nextSearch(search, width, lineWidths) };
+  return { ...measure, search: nextSearch(search, width, { lineWidths, isWordBroken }) };
 }
 
 /** Slack for sub-point rounding between the line widths and the laid-out width. */
@@ -137,10 +209,19 @@ export function isStale(measure: Measure, lineWidths: readonly number[]): boolea
 
 const EMPTY: Measure = { text: '', width: 0, lineWidths: null, search: null };
 
-/** The stored measure for this text (a new text starts from nothing). */
-function forText(stored: Measure, text: string): Measure {
-  return stored.text === text ? stored : { ...EMPTY, text };
+/**
+ * A state kept for one text: the stored one while it belongs to `text`, else `fresh(text)` (a new
+ * text starts from nothing). The balanced wrap and AppText's room both key their state so.
+ */
+export function forText<T extends { readonly text: string }>(
+  stored: T,
+  text: string,
+  fresh: (text: string) => T,
+): T {
+  return stored.text === text ? stored : fresh(text);
 }
+
+const emptyFor = (text: string): Measure => ({ ...EMPTY, text });
 
 function isSameLines(a: readonly number[] | null, b: readonly number[]): boolean {
   return a !== null && a.length === b.length && a.every((line, index) => line === b[index]);
@@ -151,19 +232,25 @@ function isSameLines(a: readonly number[] | null, b: readonly number[]): boolean
  * search on. A layout that changes nothing (the same lines, the search not moved) keeps the stored
  * state itself, so React skips the render.
  */
-export function afterTextLayout(
-  previous: Measure,
-  text: string,
-  lineWidths: readonly number[],
-): Measure {
-  const current = forText(previous, text);
+function afterLayout(previous: Measure, text: string, layout: TextLayout): Measure {
+  const { lineWidths, isWordBroken } = layout;
+  const current = forText(previous, text, emptyFor);
   if (isStale(current, lineWidths)) return previous;
-  const next = advance({ ...current, lineWidths });
+  const next = advance({ ...current, lineWidths }, isWordBroken);
   const isUnchanged =
     current === previous &&
     next.search === previous.search &&
     isSameLines(previous.lineWidths, lineWidths);
   return isUnchanged ? previous : next;
+}
+
+/** The state after a text layout that split no word. */
+export function afterTextLayout(
+  previous: Measure,
+  text: string,
+  lineWidths: readonly number[],
+): Measure {
+  return afterLayout(previous, text, { lineWidths, isWordBroken: false });
 }
 
 export function useBalancedWrap(
@@ -173,14 +260,14 @@ export function useBalancedWrap(
 ): BalancedWrap {
   const [stored, setMeasure] = useState<Measure>(EMPTY);
   if (!isEnabled) return { style: null };
-  const measure = forText(stored, text);
+  const measure = forText(stored, text, emptyFor);
   // Both events can arrive before a re-render: update from the latest state, never a stale closure.
   return {
     style: padStyle(measure.search?.pad ?? 0, align),
     onLayout: (event) => {
       const width = event.nativeEvent.layout.width;
       setMeasure((previous) => {
-        const current = forText(previous, text);
+        const current = forText(previous, text, emptyFor);
         if (Math.abs(width - current.width) <= 0.5) return previous;
         // A new width starts over from the full-width line layout.
         const lineWidths = current.search === null ? current.lineWidths : null;
@@ -188,8 +275,13 @@ export function useBalancedWrap(
       });
     },
     onTextLayout: (event) => {
-      const lineWidths = event.nativeEvent.lines.map((line) => line.width);
-      setMeasure((previous) => afterTextLayout(previous, text, lineWidths));
+      const { lines } = event.nativeEvent;
+      const lineWidths = lines.map((line) => line.width);
+      const isWordBroken = breaksWord(
+        text,
+        lines.map((line) => line.text),
+      );
+      setMeasure((previous) => afterLayout(previous, text, { lineWidths, isWordBroken }));
     },
   };
 }

@@ -105,7 +105,7 @@ In the verification repo, line coverage was 97.8% while the mutation score was 7
 - `ignoreStatic: true`: static mutants (module-level constants) are skipped; they would rerun every test.
 - `thresholds: { high: 90, low: 80, break: 75 }`: below 75% the run exits 1.
 - Reports: `reports/stryker/mutation.json` (read by `check-mutation-report.mjs`) and `mutation.html`.
-- Stryker workers compile without the Worklets and Reanimated Babel plugins (the branch in `babel.config.js`); the logic is identical as plain JS, and the file-level-worklet modules (game-kit geom, timeline, sims) stay in scope. The one test that checks the plugin's output is skipped inside mutation runs.
+- Stryker workers compile the files Stryker instrumented without the Worklets and Reanimated Babel plugins (the branch in `babel.config.js`; every other file keeps them, or Reanimated's hooks throw in component tests); the logic is identical as plain JS, and the file-level-worklet modules (game-kit geom, timeline, sims) stay in scope. The one test that checks the plugin's output is skipped inside mutation runs.
 - Inline Stryker config is off repo-wide: never `// Stryker disable`.
 
 ## Running Stryker

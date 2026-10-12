@@ -94,6 +94,26 @@ describe('KeyButton', () => {
     expect(key.flexBasis ?? 'auto').toBe('auto');
     expect(key.flex).toBeUndefined();
   });
+
+  it('fills its cell to the tallest key of the row, its face too (spec S4)', async () => {
+    // Sorani's "How to play" wraps to two lines; the design stretches Levels and Statistics to
+    // that height (CSS align-items: stretch) with their content centred. A key that grew only its
+    // outer box drew its face 13 pt short with the label 6 pt high (E17 ckb parity).
+    await renderWithShell(
+      <KeyButton
+        icon="stats"
+        label="Statistics"
+        onPress={jest.fn()}
+        testID="home.stats-button"
+        isReducedMotion
+      />,
+    );
+
+    const face = screen.getByText('Statistics').parent;
+    // allow-style-assertion: the stretch is a layout rule the unit tests can only see as styles
+    expect(face).toHaveStyle({ flexGrow: 1 });
+    expect(face?.parent).toHaveStyle({ flexGrow: 1 });
+  });
 });
 
 describe('IconTile and RatingStar', () => {

@@ -3,7 +3,10 @@
 // alone or with the route on top (navigate pushes in React Navigation 7, so links would otherwise
 // stack on the screens of earlier links). Only S15 for a rejected link opens on top of the screen
 // the link came from instead (DebugRoutePlacement). Routes are the navigator's own names; the four
-// game example states belong to the game host, which knows how to build them.
+// game example states belong to the game host, which knows how to build them. A reset leaves the
+// open Game screen's live run first (the test build's live-run exit, DebugParts.liveRunExit), as
+// Pause -> Home does: the Game screen guards every other reset like Back.
+import type { LiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import type { DebugScreen } from '@e07/shell/screens/debug/debug-link.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native';
@@ -90,12 +93,18 @@ export type DebugNavigation = Pick<
 /**
  * Resets the stack to its first route alone (Home, or the first-run screen), keeping that route's
  * key so it stays mounted; null while the navigator is not ready. Every debug screen then opens on
- * a fixed stack: never above the screens earlier links opened.
+ * a fixed stack: never above the screens earlier links opened. A live run on the Game screen is
+ * left first through `exit` (the test build's live-run exit), as Pause -> Home leaves it, so the
+ * Game screen lets the reset through.
  */
-export function resetToFirstRoute(navigation: DebugNavigation): string | null {
+export function resetToFirstRoute(
+  navigation: DebugNavigation,
+  exit: Pick<LiveRunExit, 'leave'> | null,
+): string | null {
   if (!navigation.isReady()) return null;
   const first = navigation.getRootState()?.routes[0];
   if (first === undefined) return null;
+  exit?.leave();
   // Key and name only: the first routes (Home, LanguageChoice) take no params.
   navigation.reset({ index: 0, routes: [{ key: first.key, name: first.name }] });
   return first.name;
@@ -108,16 +117,25 @@ export function resetToFirstRoute(navigation: DebugNavigation): string | null {
  */
 export type DebugRoutePlacement = 'fixed-stack' | 'on-top';
 
-/**
- * fixed-stack: [first route] for the first route itself, else [first route, route]. on-top: the
- * route above whatever is open (navigate pushes in React Navigation 7).
- */
-export function openDebugRoute(
+export type OpenDebugRoute = (
   navigation: DebugNavigation,
   route: DebugRoute,
-  placement: DebugRoutePlacement = 'fixed-stack',
-): void {
-  if (placement === 'fixed-stack' && resetToFirstRoute(navigation) === route.name) return;
-  if (route.name === 'Game') navigation.navigate(route.name, route.params);
-  else navigation.navigate(route.name);
+  placement?: DebugRoutePlacement,
+) => void;
+
+/**
+ * Opens debug routes, leaving a live run through `exit` before each fixed-stack reset (the test
+ * build's live-run exit: createDebugParts binds DebugParts.liveRunExit). fixed-stack: [first
+ * route] for the first route itself, else [first route, route]. on-top: the route above whatever
+ * is open (navigate pushes in React Navigation 7).
+ */
+export function debugRouteOpener(exit: Pick<LiveRunExit, 'leave'> | null): OpenDebugRoute {
+  return (navigation, route, placement = 'fixed-stack') => {
+    if (placement === 'fixed-stack' && resetToFirstRoute(navigation, exit) === route.name) return;
+    if (route.name === 'Game') navigation.navigate(route.name, route.params);
+    else navigation.navigate(route.name);
+  };
 }
+
+/** The opener with no live run to leave (a navigator without a Game screen open). */
+export const openDebugRoute: OpenDebugRoute = debugRouteOpener(null);

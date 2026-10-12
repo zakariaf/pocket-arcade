@@ -47,15 +47,17 @@ const SPEC = {
     '                         to whole pixels, so whole points and fractions both drift from the references)',
     '  no-glyph-nudge         AppText or use-localized-text-style.ts moves glyphs (translateY, top, padding or',
     '                         margin on the text); the CoreText vs Chrome offset is absorbed by the parity gate.',
-    '                         The one exception is AppText\'s overflowGuardOf (arabic-overflow-guard)',
+    '                         The exceptions are AppText\'s overflowGuardOf (arabic-overflow-guard) and its',
+    '                         roomOf (one pixel of minHeight under the last line, given back by marginBottom)',
     '  arabic-overflow-guard  AppText lacks the Persian overflow guard: iOS puts all of a Vazirmatn line\'s',
     '                         overflow above its box (content box 2100 + 1100 of 2048 per em) and clips the Text,',
     '                         where Chrome centres it; from 1.5 pt of half overflow AppText must wrap the Text in a',
     '                         View that keeps the line box and the testID, pad the Text by ceil(h) + h / ceil(h) - h',
     '                         and cancel it with marginVertical -ceil(h)',
     '  balanced-display       AppText does not balance display text (useBalancedWrap for face display, as the',
-    '                         design\'s .d: text-wrap balance), or ui/use-balanced-wrap.ts sets its state from a',
-    '                         closure (iOS sends onTextLayout and onLayout in one batch: use functional updates)',
+    '                         design\'s .d: text-wrap balance), balances a key label (heroKeyLabel: the design\'s',
+    '                         .btn label has no .d), or ui/use-balanced-wrap.ts sets its state from a closure',
+    '                         (iOS sends onTextLayout and onLayout in one batch: use functional updates)',
     '  tabular-digits         TYPE_SCALE.number or TYPE_STYLES.statValueCompact lacks isTabular, or AppText does not map',
     '                         isTabular to fontVariant [\'tabular-nums\'] (the design\'s .sv stat values)',
     '  persian-number-clip    TYPE_STYLES.levelNumber or scoreValue has a Persian line height under 1.45, so iOS clips',
@@ -229,8 +231,9 @@ function checkTextMetrics(report, root) {
     const source = readSource(join(root, file));
     if (source === null) continue;
     const text = masked(source);
-    // The overflow guard (its type and its function) is the one place AppText pads text.
-    const guard = file === APP_TEXT_FILE ? [functionRange(text, 'overflowGuardOf'), typeRange(text, 'OverflowGuard')].filter(Boolean) : [];
+    // The overflow guard (its type and its function) is the one place AppText pads text, and the
+    // room (roomOf, TextRoom) the one place it grows the box by a pixel and gives it back below.
+    const guard = file === APP_TEXT_FILE ? [functionRange(text, 'overflowGuardOf'), typeRange(text, 'OverflowGuard'), functionRange(text, 'roomOf'), typeRange(text, 'TextRoom')].filter(Boolean) : [];
     scan(report, file, text, 'no-glyph-nudge', /\b(translateY|top|paddingTop|paddingBottom|paddingBlock|paddingVertical|marginTop|marginBottom|marginBlock|marginVertical)\s*:/g, { when: (m) => !inRanges(m.index, guard), message: (m) => `${m[1]} moves the text box to nudge its glyphs`, fix: 'Remove it: the box heights are exact on the pixel grid, and the remaining CoreText vs Chrome glyph offset is measured by the parity text-ink gate, not fixed in layout (only AppText\'s overflowGuardOf pads Arabic-script text, from the font metrics).' });
   }
   checkAppTextGuards(report, root);
@@ -262,7 +265,7 @@ function functionRange(text, name) {
 }
 
 const GUARD_FIX = 'Copy ui/app-text.tsx from the templates: overflowGuardOf pads Arabic-script text by half of Vazirmatn\'s overflow (content box 2100 + 1100 of 2048 per em) inside a View that keeps the line box and the testID (references/type-and-fonts.md, "Persian overflow on iOS").';
-const BALANCE_FIX = 'Copy ui/app-text.tsx and ui/use-balanced-wrap.ts from the templates: display text runs useBalancedWrap(style.face === \'display\', ...), and the hook updates its state with functional updates (references/type-and-fonts.md, "Balanced display text").';
+const BALANCE_FIX = 'Copy ui/app-text.tsx and ui/use-balanced-wrap.ts from the templates: display text in the design\'s .d variants (BALANCED_VARIANTS, never a key label) runs useBalancedWrap, and the hook updates its state with functional updates (references/type-and-fonts.md, "Balanced display text").';
 
 /**
  * AppText's device fixes, each proven on the simulator: the Persian overflow guard, balanced
@@ -281,9 +284,13 @@ function checkAppTextGuards(report, root) {
     const missing = [!hasMetrics && 'the Vazirmatn metrics (2100 / 1100 of 2048)', !hasShape && 'overflowGuardOf (padding ceil(h) + h and ceil(h) - h, marginVertical -ceil(h))', !hasWrapper && 'a wrapper View that carries the testID'].filter(Boolean);
     report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'arabic-overflow-guard', message: `AppText has no Persian overflow guard (missing ${missing.join(', ')}): iOS puts a Vazirmatn line's overflow above its box and clips it, so Persian digits lose their tops and text sits up to 3 pt high`, fix: GUARD_FIX });
   }
-  const balanceCall = /\buseBalancedWrap\s*\(\s*style\.face\s*===\s*['"]display['"]/.test(text);
+  const balanceCall = /\buseBalancedWrap\s*\(/.test(text) && /\bstyle\.face\s*===\s*['"]display['"]/.test(text);
   if (!balanceCall) {
     report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'balanced-display', message: 'AppText wraps display text greedily; the design balances every display text (.d: text-wrap balance), so two-line titles broke in other places', fix: BALANCE_FIX });
+  }
+  const balancedSet = /\bBALANCED_VARIANTS\b[^=]*=\s*new Set[^(]*\(\s*\[([^\]]*)\]/.exec(text);
+  if (balanceCall && (balancedSet === null || /['"]heroKeyLabel['"]/.test(balancedSet[1]))) {
+    report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'balanced-display', message: 'AppText balances a key label (heroKeyLabel): the design draws .btn labels without .d, so Chrome wraps them greedily ("Heutige Challenge / spielen") and a balanced label broke elsewhere', fix: BALANCE_FIX });
   }
   const hook = readSource(join(root, BALANCE_FILE));
   if (hook !== null) {

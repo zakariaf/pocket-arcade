@@ -13,7 +13,7 @@ import { useGameScreenModel } from './use-game-screen-model.ts';
 
 import type { GameScreenNav } from './use-game-screen-model.ts';
 import type { SessionCommand } from '@e07/shell/game-host/session-view.ts';
-import type { RewardedStatus } from '@e07/shell/services/ads/ads-port.ts';
+import type { RewardResult, RewardedStatus } from '@e07/shell/services/ads/ads-port.ts';
 import type { FakeAdsScript } from '@e07/shell/services/ads/fake-ads.ts';
 import type { RunRef } from '@e07/shell/services/save/schema/save-doc.ts';
 
@@ -51,6 +51,11 @@ type Setup = {
   readonly rewardedStatus?: RewardedStatus;
   /** The player answered consent so that ads may be requested (spec 8.8). */
   readonly canRequestAds?: boolean;
+  /**
+   * The rewarded ad on screen, as the AdMob adapter shows it: the shown ad is used up, so the
+   * status turns 'unavailable' until the ad closes; the test settles it with `closeAd`.
+   */
+  readonly isAdOnScreenUntilClosed?: boolean;
 };
 
 /** Tally level 1: the target is 4 and par is 2; column 0 adds one, column 1 adds two. */
@@ -71,6 +76,7 @@ async function gameScreen({
   adsMode = 'test',
   rewardedStatus = 'unavailable',
   canRequestAds = false,
+  isAdOnScreenUntilClosed = false,
 }: Setup = {}) {
   mockBuild.adsMode = adsMode;
   const script: FakeAdsScript = {
@@ -84,7 +90,15 @@ async function gameScreen({
     ...doc,
     ads: { ...doc.ads, consent: { ...doc.ads.consent, canRequestAds } },
   }));
-  const ads = createFakeAds(script);
+  const fakeAds = createFakeAds(script);
+  let closeAd: (result: RewardResult) => void = () => undefined;
+  const showUntilClosed = (): Promise<RewardResult> => {
+    fakeAds.setRewardedStatus('unavailable');
+    return new Promise((resolve) => {
+      closeAd = resolve;
+    });
+  };
+  const ads = isAdOnScreenUntilClosed ? { ...fakeAds, showRewarded: showUntilClosed } : fakeAds;
   const shell = createHostWrapper({
     isPremium,
     host: { hasHints },
@@ -123,7 +137,13 @@ async function gameScreen({
     });
   };
   const finishes = (): number => sent.filter((type) => type === 'finish').length;
-  return { ...view, shell, nav, script, tap, tapAll, setStatus, finishes };
+  const closeAdWith = async (result: RewardResult): Promise<void> => {
+    await act(async () => {
+      closeAd(result);
+      await flushMicrotasks();
+    });
+  };
+  return { ...view, shell, nav, script, tap, tapAll, setStatus, finishes, closeAdWith };
 }
 
 describe('useGameScreenModel', () => {
@@ -279,6 +299,28 @@ describe('useGameScreenModel', () => {
     await setStatus('ready');
     expect(result.current.model.result).toMatchObject({ kind: 'lose', continueOffer: 'ad' });
     expect(finishes()).toBe(0);
+    expect(shell.save.doc().stats.gamesPlayed).toBe(0);
+  });
+
+  it('keeps the loss open while its rewarded ad is on screen, then plays on (spec 8.10, L11)', async () => {
+    const { result, shell, tapAll, finishes, closeAdWith } = await gameScreen({
+      rewardedStatus: 'ready',
+      canRequestAds: true,
+      isAdOnScreenUntilClosed: true,
+    });
+    await tapAll([1, 0, 1]);
+    expect(result.current.model.result).toMatchObject({ kind: 'lose', continueOffer: 'ad' });
+
+    await act(async () => {
+      result.current.model.result?.actions.onContinue();
+      await flushMicrotasks();
+    });
+    expect(finishes()).toBe(0);
+
+    await closeAdWith('rewarded');
+    expect(finishes()).toBe(0);
+    expect(result.current.controls.status).toBe('playing');
+    expect(result.current.model.result).toBeNull();
     expect(shell.save.doc().stats.gamesPlayed).toBe(0);
   });
 

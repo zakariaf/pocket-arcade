@@ -15,10 +15,11 @@
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { Linking } from 'react-native';
 
-import { openDebugRoute } from '@e07/shell/app/debug-link-routes.ts';
+import { debugRouteOpener } from '@e07/shell/app/debug-link-routes.ts';
 import { restartAfterAudio } from '@e07/shell/app/restart-after-audio.ts';
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
 import { levelCountOf } from '@e07/shell/app/use-game-extra.ts';
+import { createLiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import { readLayoutDirection } from '@e07/shell/i18n/direction.ts';
 import { readAdsExtra } from '@e07/shell/services/ads/read-ads-extra.ts';
 import { createSqliteKvDirectionGuardAdapter } from '@e07/shell/services/save/sqlite-kv-direction-guard-adapter.ts';
@@ -28,6 +29,7 @@ import type { DebugLinkHandler, LinkSource } from '@e07/shell/app/debug-link-han
 import type { DebugGameControls } from '@e07/shell/app/debug-link-routes.ts';
 import type { TestOnlyApi } from '@e07/shell/app/test-only-api.ts';
 import type { GameExtra } from '@e07/shell/config/game-extra.ts';
+import type { LiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import type { DebugStore } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { DebugServices } from '@e07/shell/screens/debug/debug-services.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
@@ -80,6 +82,12 @@ export type DebugParts = {
    * store build, which plays through the real ports.
    */
   readonly feedback: FeedbackPorts | null;
+  /**
+   * Test builds: the open Game screen's way out of its live run, which a debug link's stack reset
+   * takes first (as Pause -> Home does). ShellNavigator provides it to the Game screen; a store
+   * build has none, so no registry exists there.
+   */
+  readonly liveRunExit?: LiveRunExit;
 };
 
 type TestBuild = {
@@ -115,12 +123,18 @@ function createServices(build: TestBuild, input: DebugPartsInput): DebugServices
   });
 }
 
+type LinkTargets = {
+  readonly navigationRef: DebugParts['navigationRef'];
+  readonly liveRunExit: LiveRunExit;
+};
+
 function createLinks(
   build: TestBuild,
   input: DebugPartsInput & { readonly debug: DebugServices },
-  navigationRef: DebugParts['navigationRef'],
+  { navigationRef, liveRunExit }: LinkTargets,
 ): DebugLinkHandler {
   const guard = createSqliteKvDirectionGuardAdapter();
+  const openDebugRoute = debugRouteOpener(liveRunExit);
   const recordBootError = (error: unknown): void => {
     input.errorLog.record('boot', error);
   };
@@ -191,8 +205,10 @@ export function createDebugParts(input: DebugPartsInput): DebugParts {
     store: TEST_ONLY.createSqliteKvDebugStoreAdapter(),
   };
   const services = createServices(build, input);
-  const links = createLinks(build, { ...input, debug: services }, navigationRef);
+  const liveRunExit = createLiveRunExit();
+  const links = createLinks(build, { ...input, debug: services }, { navigationRef, liveRunExit });
   // At once, not from onReady: a link sent while the app starts would otherwise be lost.
   links.listen(input.linking ?? Linking);
-  return { services, links, navigationRef, feedback: recordFeedback(build, input, services) };
+  const feedback = recordFeedback(build, input, services);
+  return { services, links, navigationRef, feedback, liveRunExit };
 }

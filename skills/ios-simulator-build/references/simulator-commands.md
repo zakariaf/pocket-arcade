@@ -29,7 +29,7 @@ selectXcode + variantEnv  ->  ensure e07-<purpose> simulator
   -> reports/ios/<game>/smoke-<variant>-<ads>.png  (then: check-sim-app, check-screenshot, look at it)
 ```
 
-Every step writes `apps/<game>/build/logs/<step>.log`; the first failing step stops the run and prints the last 30 lines of its log.
+Every step writes `apps/<game>/build/logs/<step>.log` while it runs (stdout straight into the file, stderr appended when the step ends; follow a long archive with `tail -f`), with no buffer cap; a command that could not start (`ENOENT`) or a signal that stopped it is named on the log's last line. The first failing step stops the run and prints the last 30 lines of its log.
 
 ## 1. Environment
 

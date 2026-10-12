@@ -14,17 +14,18 @@ export type AscResponse =
   | { readonly ok: true; readonly status: number; readonly json: unknown }
   | { readonly ok: false; readonly status: number; readonly errors: readonly AscError[] };
 
+/** One field of an App Store Connect JSON answer: undefined unless `value` is an object. */
+export function ascField(value: unknown, key: string): unknown {
+  return typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
+}
+
 function readField(value: unknown, key: string): string {
-  if (typeof value !== 'object' || value === null || !(key in value)) {
-    return '';
-  }
-  const field: unknown = (value as Record<string, unknown>)[key];
+  const field = ascField(value, key);
   return typeof field === 'string' ? field : '';
 }
 
 function parseErrors(json: unknown): readonly AscError[] {
-  const list: unknown =
-    typeof json === 'object' && json !== null ? Reflect.get(json, 'errors') : undefined;
+  const list = ascField(json, 'errors');
   if (!Array.isArray(list)) {
     return [];
   }

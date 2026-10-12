@@ -98,8 +98,9 @@ function useTopBar({
  * recorded (statistics, streak, endless best, ad history) and the recorded Result follows, the
  * endless result with its score and New best or the lose result without the offer. The same holds
  * when a shown offer turns hidden (offline, a load error) and for a pending loss reopened from
- * Home. 'loading' keeps the offer (drawn busy). A layout effect, so the recorded Result replaces
- * the pending one before the frame is shown.
+ * Home. 'loading' keeps the offer (drawn busy): while the rewarded ad loads, and while a continue
+ * is paid for with an ad (usePerkPayment), whose shown ad is used up. A layout effect, so the
+ * recorded Result replaces the pending one before the frame is shown.
  */
 function useFinishStrandedLoss(controls: GameSessionControls, continueOffer: PerkOffer): void {
   const { view, send } = controls;

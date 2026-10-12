@@ -1,0 +1,29 @@
+# packages/shell/e2e/storekit/05-restore.yaml — Tier 2 Premium test. Run only by storekit-harness.ts,
+# right after testArmDefault; outside e2e/flows/, so the normal E2E run never picks it up.
+appId: ${APP_ID}
+name: Restore brings Premium back after the local flag was cleared
+tags: [storekit]
+---
+- launchApp
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'premium=0&screen=premium'
+      WAIT_FOR: 'premium.screen'
+- tapOn:
+    id: 'premium.buy-button'
+- extendedWaitUntil:
+    visible:
+      id: 'premium.state.success'
+    timeout: 15000
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'premium=0&screen=premium'
+      WAIT_FOR: 'premium.screen'
+- tapOn:
+    id: 'premium.restore-button'
+- extendedWaitUntil:
+    visible:
+      id: 'premium.state.owned'
+    timeout: 15000

@@ -17,6 +17,7 @@ import { Slider } from './slider.tsx';
 import { ToggleKey } from './toggle-key.tsx';
 import { Toggle } from './toggle.tsx';
 
+import type * as WindowClassModule from './window-class.ts';
 import type { ViewStyle } from 'react-native';
 
 // Each icon image carries its glyph name, so a test can tell a check from a dash (the root mock
@@ -24,6 +25,15 @@ import type { ViewStyle } from 'react-native';
 jest.mock('@e07/shell/ui/icons/icon-raster.ts', () => ({
   getIconUri: (name: string) => `icon:${name}`,
 }));
+
+/** The text size the controls see: 1 normally, 2 for the 200 % text case. */
+const mockFontScale = { current: 1 };
+jest.mock('@e07/shell/ui/use-window-class.ts', () => {
+  const { classifyWindow } = jest.requireActual<typeof WindowClassModule>(
+    '@e07/shell/ui/window-class.ts',
+  );
+  return { useWindowClass: () => classifyWindow(402, 874, mockFontScale.current) };
+});
 
 const COLORS = TEST_PALETTE.standard.light;
 const THEMES = [
@@ -56,6 +66,62 @@ describe('SegmentedControl', () => {
       color: COLORS.onPrimary,
     });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('stretches every segment and its face to the tallest one (spec S11)', async () => {
+    // German "Automatisch" wraps to two lines; the design draws Lateinisch and Lokal as tall, with
+    // their content centred (CSS align-items: stretch). A segment that grew only its outer box
+    // drew its face 12 pt short with the label 5 pt high (E17 de parity).
+    await renderWithShell(
+      <SegmentedControl
+        segments={THEMES}
+        selected="system"
+        onSelect={jest.fn()}
+        label="Theme"
+        testID="settings.theme-control"
+        segmentTestIDBase="settings.theme-segment"
+        isReducedMotion
+      />,
+    );
+
+    const key = screen.getByTestId('settings.theme-segment.dark').children[0];
+    // allow-style-assertion: the stretch is a layout rule the unit tests can only see as styles
+    expect(key).toHaveStyle({ flexGrow: 1 });
+    expect(typeof key === 'string' ? key : key?.children[1]).toHaveStyle({ flexGrow: 1 });
+  });
+
+  it('stacks its segments, each as wide as the group, at 200 % text (spec 8.11)', async () => {
+    // Three segments shared the row's width at 200 % text, so a label wider than a third of it
+    // split inside a word ("Autom / atic", de "Autom / atisch", "Lateini / sch").
+    mockFontScale.current = 2;
+    try {
+      await renderWithShell(
+        <SegmentedControl
+          segments={[
+            { value: 'auto', label: 'Automatic', preview: '123' },
+            { value: 'latin', label: 'Latin', preview: '123' },
+            { value: 'local', label: 'Local', preview: '123' },
+          ]}
+          selected="auto"
+          onSelect={jest.fn()}
+          label="Numbers"
+          testID="settings.numbers-control"
+          segmentTestIDBase="settings.numbers-segment"
+          isReducedMotion
+          isInRow
+        />,
+      );
+
+      // allow-style-assertion: the stacked column is the 200 % text layout.
+      expect(screen.getByTestId('settings.numbers-control')).toHaveStyle({
+        flexDirection: 'column',
+      });
+      // allow-style-assertion: flex 1 in a column is a zero basis (the Pause row measured 0 pt).
+      expect(screen.getByTestId('settings.numbers-segment.auto')).not.toHaveStyle({ flex: 1 });
+      expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+    } finally {
+      mockFontScale.current = 1;
+    }
   });
 
   it('carries the check only on the chosen segment', async () => {

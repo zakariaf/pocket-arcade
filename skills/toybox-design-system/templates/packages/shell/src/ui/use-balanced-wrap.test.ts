@@ -1,6 +1,15 @@
 // packages/shell/src/ui/use-balanced-wrap.test.ts
 // device-only half: the layout events come from iOS; the search itself is pure and tested here.
-import { advance, afterTextLayout, firstSearch, isStale, nextSearch } from './use-balanced-wrap.ts';
+import {
+  advance,
+  afterTextLayout,
+  breaksWord,
+  failedSearch,
+  firstSearch,
+  forText,
+  isStale,
+  nextSearch,
+} from './use-balanced-wrap.ts';
 
 describe('balanced wrap search (CSS text-wrap: balance)', () => {
   it('leaves one-line text alone', () => {
@@ -27,6 +36,25 @@ describe('balanced wrap search (CSS text-wrap: balance)', () => {
     expect(search).toMatchObject({ lo: 214, hi: 248, pad: 68, isReturning: true, isDone: false });
     search = nextSearch(search, 316, [240, 121]); // back at 248: probe floor((214 + 248) / 2) = 231
     expect(search).toMatchObject({ isReturning: false, isDone: false, pad: 316 - 231 });
+  });
+
+  it('counts a probe that breaks a word inside as failed, like one that adds a line (spec 8.11)', () => {
+    let search = firstSearch('k', 316, [305, 56]); // probe 248
+    search = failedSearch(search, 316); // two lines at 248, but a word split inside
+    expect(search).toMatchObject({ lo: 248, hi: 316, pad: 0, isReturning: true, isDone: false });
+  });
+
+  it('takes the word-broken verdict itself: a probe that keeps the count but splits a word fails', () => {
+    // One place decides a failed probe: nextSearch, told whether the layout split a word.
+    const probing = firstSearch('k', 316, [305, 56]); // probe 248
+    expect(nextSearch(probing, 316, { lineWidths: [240, 121], isWordBroken: true })).toStrictEqual(
+      failedSearch(probing, 316),
+    );
+    // Back at hi after a failure, a split word is no probe: the search probes on from hi.
+    const returning = failedSearch(probing, 316);
+    expect(nextSearch(returning, 316, { lineWidths: [305, 56], isWordBroken: true })).toMatchObject(
+      { isReturning: false },
+    );
   });
 
   it('stops when no width between lo and the widest kept line is left', () => {
@@ -61,6 +89,35 @@ describe('balanced wrap search (CSS text-wrap: balance)', () => {
     expect(search.isDone).toBe(true);
     expect(layoutAt(258 - search.pad)).toHaveLength(3);
     expect(258 - search.pad).toBeLessThan(215);
+  });
+});
+
+describe('breaksWord (a line break inside a word)', () => {
+  it('finds a break inside a word, as iOS wraps a word wider than its line', () => {
+    expect(breaksWord('Diesmal nicht', ['Diesm', 'al nicht'])).toBe(true);
+    expect(breaksWord('Daily challenge', ['Daily ', 'chall', 'enge'])).toBe(true);
+  });
+
+  it('accepts breaks at spaces, whether iOS keeps the space on the line or not', () => {
+    expect(breaksWord('Diesmal nicht', ['Diesmal ', 'nicht'])).toBe(false);
+    expect(breaksWord('Diesmal nicht', ['Diesmal', 'nicht'])).toBe(false);
+    expect(breaksWord('این بار نشد', ['این بار ', 'نشد'])).toBe(false);
+  });
+
+  it('accepts a break after a hyphen or a dash', () => {
+    expect(breaksWord('Tages-Challenge spielen', ['Tages-', 'Challenge spielen'])).toBe(false);
+    expect(breaksWord('Play – Level 12', ['Play –', ' Level 12'])).toBe(false);
+  });
+
+  it('looks through bidi isolates around a placeholder', () => {
+    const text = '\u2068Saturday\u2069, 26 Sep';
+    expect(breaksWord(text, ['\u2068Saturda', 'y\u2069, 26 Sep'])).toBe(true);
+    expect(breaksWord(text, ['\u2068Saturday\u2069, ', '26 Sep'])).toBe(false);
+  });
+
+  it('says nothing when the lines carry no text or do not spell the text', () => {
+    expect(breaksWord('Diesmal nicht', [undefined, undefined])).toBe(false);
+    expect(breaksWord('Diesmal nicht', ['Diesm', 'al'])).toBe(false);
   });
 });
 
@@ -141,5 +198,14 @@ describe('afterTextLayout (the state after a text layout)', () => {
       lineWidths: [120],
       search: null,
     });
+  });
+});
+
+describe('forText (state kept for one text)', () => {
+  it('keeps the stored state for its text and starts a new text from nothing', () => {
+    const stored = { text: 'Daily', lines: 2 };
+    const fresh = (text: string) => ({ text, lines: 0 });
+    expect(forText(stored, 'Daily', fresh)).toBe(stored);
+    expect(forText(stored, 'Täglich', fresh)).toStrictEqual({ text: 'Täglich', lines: 0 });
   });
 });

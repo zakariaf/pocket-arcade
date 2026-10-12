@@ -25,6 +25,35 @@ describe('FontTestView', () => {
   });
 });
 
+describe('FontTestView, the game-name rows', () => {
+  it('draws only the Latin texts in a game-name row, the script Lilita One is made for (spec 7.6)', async () => {
+    // Game names are Latin in every language and Lilita One has no Arabic letters: Persian and
+    // Sorani there fell back to a system font, and with the names' tracking TextKit looped on the
+    // main thread until the simulator's UI queries timed out (E17).
+    const rows = fontTestRowsOf(['gameNameHome'], FONT_TEST_SAMPLES);
+    await renderWithShell(<FontTestView model={{ rows }} />);
+
+    const drawn = [...(rows[0]?.samples ?? []), ...(rows[0]?.alphabets ?? [])]
+      .filter((entry) => screen.queryByText(entry.text, { exact: false }) !== null)
+      .map((entry) => entry.language);
+    expect(drawn).toStrictEqual(['en', 'de', 'en', 'de']);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
+describe('FontTestView, a window of rows', () => {
+  it('mounts only the first rows and draws the rest as the page scrolls (XCUITest can read it)', async () => {
+    // The whole page is about 570 texts: drawn at once, XCUITest's hierarchy query timed out on
+    // the simulator (main thread busy 30 s), so no flow could scroll or screenshot it (E17).
+    const rows = fontTestRowsOf(FONT_TEST_VARIANTS, FONT_TEST_SAMPLES);
+    await renderWithShell(<FontTestView model={{ rows }} />);
+
+    expect(screen.getByText(FONT_TEST_VARIANTS[0] ?? '')).toBeOnTheScreen();
+    expect(screen.queryByText(FONT_TEST_VARIANTS.at(-1) ?? '')).not.toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
 describe('FontTestView, every font (spec 7.6)', () => {
   it('draws the en and de alphabets in every Latin face and the fa and ckb alphabets in both Vazirmatn weights', async () => {
     const rows = fontTestRowsOf(FONT_TEST_VARIANTS, FONT_TEST_SAMPLES);

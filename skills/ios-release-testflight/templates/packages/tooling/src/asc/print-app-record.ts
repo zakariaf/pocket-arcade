@@ -5,15 +5,15 @@
 import { loadAscCredentials } from '@e07/tooling/asc/asc-credentials.ts';
 import { createAscJwt } from '@e07/tooling/asc/asc-jwt.ts';
 import { findAppByBundleId } from '@e07/tooling/asc/find-app.ts';
+import { isAppId } from '@e07/tooling/build/game-id.ts';
 import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
 import { appIdOf } from '@e07/tooling/release/store-gate.ts';
 
 const EXIT_NO_APP_RECORD = 2;
-const APP_ID = /^io\.applander\.[a-z0-9]+$/;
 const [first, second] = process.argv.slice(2);
 const bundleId = first === '--app' && second !== undefined ? appIdOf(second) : first;
 
-if (bundleId === undefined || !APP_ID.test(bundleId)) {
+if (!isAppId(bundleId)) {
   console.error(
     `usage: print-app-record.ts --app <game-id> | io.applander.<game id without hyphens> (got ${String(bundleId)})`,
   );

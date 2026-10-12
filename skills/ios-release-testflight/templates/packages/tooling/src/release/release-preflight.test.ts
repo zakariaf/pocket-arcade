@@ -1,8 +1,10 @@
 // packages/tooling/src/release/release-preflight.test.ts
 // Owner decision O6: the fa/ckb review is the owner's step R3 and never stops a release.
-import { existsSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
-import { reportTranslationsToReview } from './release-preflight.ts';
+import { plannedBuildNumber, reportTranslationsToReview } from './release-preflight.ts';
 import { runReleaseStep } from './release-runner.ts';
 
 jest.mock('node:fs', () => ({ ...jest.requireActual<object>('node:fs'), existsSync: jest.fn() }));
@@ -53,5 +55,22 @@ describe('reportTranslationsToReview', () => {
     reportTranslationsToReview(CONTEXT);
     expect(printed.every((line) => line.includes('Owner step R3 (not blocking)'))).toBe(true);
     expect(printed).toHaveLength(2);
+  });
+});
+
+describe('plannedBuildNumber', () => {
+  it('is the next build number, read before the bump commit writes it', () => {
+    const appDir = mkdtempSync(join(tmpdir(), 'release-preflight-'));
+    const config = join(appDir, 'game.config.ts');
+    writeFileSync(config, 'export default {\n  version: "1.0.0",\n  buildNumber: 7,\n};\n');
+    const options = {
+      game: 'line-siege',
+      variant: { appVariant: 'test', adsMode: 'off' },
+      notes: [],
+      knownIssues: [],
+      resume: null,
+    } as const;
+    expect(plannedBuildNumber(options, { ...CONTEXT, appDir })).toBe(8);
+    expect(readFileSync(config, 'utf8')).toContain('  buildNumber: 7,\n');
   });
 });

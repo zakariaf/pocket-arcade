@@ -17,7 +17,7 @@ The Daily, Statistics, Result and How-to-play parts: calendar tile, week strip a
 
 **Template:** `calendar-tile.tsx` (`CalendarTile`: `monthText`, `dayText`).
 
-**Anatomy:** 88 wide, radius 12, 3 pt `outline` edge, `surface`, tilt −3°, clipped: a month band (`accent` fill, `onAccent` `calendarMonth` 16 display, padding 2 / 0 / 3, 3 pt `outline` bottom edge) over the day number (`calendarDay` 42 display, line height 1.15, padding 4 / 0 / 6). Decorative: hidden from VoiceOver, because the date is also written next to it.
+**Anatomy:** 88 wide, radius 12, 3 pt `outline` edge, `surface`, tilt −3°, clipped: a month band (`accent` fill, `onAccent` `calendarMonth` 16 display, padding 2 / 0 / 3, 3 pt `outline` bottom edge) over the day number (`calendarDay` 42 display, line height 1.15, padding 4 / 0 / 6). Decorative: hidden from VoiceOver, because the date is also written next to it. At 200 % text (`useWindowClass().isLargeText`) the 88 pt width becomes a `minWidth`: the 84 pt day split inside its number ("2 / 6") and the fa month inside its word, so the tile grows with its text.
 
 *Measurements* (`calendarTile`): width 88 · radius 12 · border 3 · rotate -3 · monthPadding 2/0/3 · dayPadding 4/0/6 (CSS shorthand: top, inline, bottom).
 

@@ -27,7 +27,7 @@ There is no endpoint to create an app record (the Apps resource offers list, rea
 
 ## Tokens (JWT)
 
-Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issuer ID>`, `iat`, `exp`, `aud "appstoreconnect-v1"`. "Tokens that expire more than 20 minutes into the future are not valid." `createAscJwt()` uses 15 minutes and signs with `dsaEncoding: 'ieee-p1363'` (the raw r||s signature JWTs need). A long wait (step 10) makes a fresh token per request.
+Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issuer ID>`, `iat`, `exp`, `aud "appstoreconnect-v1"`. "Tokens that expire more than 20 minutes into the future are not valid." `createAscJwt()` uses 15 minutes and signs with `dsaEncoding: 'ieee-p1363'` (the raw r||s signature JWTs need). A long wait (step 10) reuses one token and mints the next about a minute before it expires (`reusedToken` in `release/processing-wait.ts`, with `ASC_TOKEN_LIFETIME_SECONDS`).
 
 `xcrun altool --generate-jwt` also exists but has keychain options; the Node script keeps the key in memory only. The current time comes from `nowEpochSeconds()` in `packages/tooling/src/clock/system-clock.ts`, the one tooling module allowed to read the wall clock.
 
@@ -38,7 +38,7 @@ Apple's rules: header `alg ES256`, `kid <Key ID>`, `typ JWT`; payload `iss <Issu
 | `packages/tooling/src/asc/asc-jwt.ts` | `createAscJwt(credentials, nowEpochSeconds)`: pure, tested with a throwaway key |
 | `packages/tooling/src/asc/asc-credentials.ts` | `requireEnv`, `ascKeyPath`, `loadAscCredentials(env)`: the only reader of the `.p8`, into memory |
 | `packages/tooling/src/asc/asc-client.ts` | `ascRequest(token, { method, path, body })` -> `{ ok, status, json }` or `{ ok: false, status, errors: [{ code, detail }] }` |
-| `packages/tooling/src/asc/find-app.ts` | `findAppByBundleId(token, bundleId)` -> `{ id, name }` or `null` |
+| `packages/tooling/src/asc/find-app.ts` | `findAppByBundleId(token, bundleId, request?)` -> `{ id, name }` or `null`: asks `fields[apps]=name,bundleId` and keeps only the record whose `bundleId` equals the one asked for (Apple's `filter[bundleId]` is not an exact match, so a near id such as `io.applander.linesiege2` is never taken); `null` is owner step G2, two exact records stop the run; `request` defaults to `ascRequest` (tests pass a fake, so no test reaches the network) |
 | `packages/tooling/src/asc/print-app-record.ts` | CLI: `node packages/tooling/src/asc/print-app-record.ts --app <game-id>` (or the bundle id `io.applander.<game id without hyphens>`) prints `{"id","name"}` or exits 2 (no record: owner step G2); any other id is refused (exit 1) |
 | `packages/tooling/src/asc/beta-notes.ts` | `setWhatsNew(token, buildId, text)` and its pure payload builders |
 | `packages/tooling/src/clock/system-clock.ts` | `nowEpochSeconds()` and `todayIso()` |

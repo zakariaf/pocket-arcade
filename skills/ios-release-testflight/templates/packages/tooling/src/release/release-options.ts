@@ -2,8 +2,13 @@
 // Pure parts of `npm run release:ios`: arguments, key path, auth flags and the xcodebuild/altool
 // argument lists. The .p8 key is only ever named by path here; nothing in this module reads it.
 import { join } from 'node:path';
+import { parseArgs } from 'node:util';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { ascKeyPath, requireEnv } from '@e07/tooling/asc/asc-credentials.ts';
+import { isGameId } from '@e07/tooling/build/game-id.ts';
+
+import type { ToolEnv } from '@e07/tooling/ios/toolchain.ts';
 
 /**
  * Where a stopped run picks up again. `build`: the committed build number is reused and the run
@@ -25,42 +30,55 @@ export type AscIds = { readonly keyId: string; readonly issuerId: string; readon
 
 const USAGE =
   'usage: npm run release:ios -- --app <game-id> --variant test|store [--ads off|test|live] [--notes "..."]... [--known-issue "..."]... [--resume build|processing]';
-const SINGLE = new Set(['--app', '--variant', '--ads', '--resume']);
-const REPEATED = new Set(['--notes', '--known-issue']);
+const OPTIONS = {
+  app: { type: 'string' },
+  variant: { type: 'string' },
+  ads: { type: 'string' },
+  resume: { type: 'string' },
+  notes: { type: 'string', multiple: true },
+  'known-issue': { type: 'string', multiple: true },
+} as const;
+const SINGLE = ['app', 'variant', 'ads', 'resume'];
 
-function readFlags(argv: readonly string[]): Map<string, string[]> {
-  const flags = new Map<string, string[]>();
-  for (let index = 0; index < argv.length; index += 2) {
-    const flag = argv[index] ?? '';
-    const value = argv[index + 1];
-    const isKnown = SINGLE.has(flag) || REPEATED.has(flag);
-    if (!isKnown || value === undefined || (SINGLE.has(flag) && flags.has(flag))) {
-      throw new Error(`unexpected argument "${flag}". ${USAGE}`);
-    }
-    flags.set(flag, [...(flags.get(flag) ?? []), value]);
+/** node:util parseArgs, strict: an unknown option, a stray word or a repeated single option throws. */
+function readFlags(argv: readonly string[]): ReturnType<typeof parseFlags>['values'] {
+  let parsed: ReturnType<typeof parseFlags>;
+  try {
+    parsed = parseFlags(argv);
+  } catch (error: unknown) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(`unexpected argument: ${reason} ${USAGE}`);
   }
-  return flags;
+  const names = parsed.tokens.flatMap((token) => (token.kind === 'option' ? [token.name] : []));
+  const repeated = SINGLE.find((name) => names.filter((found) => found === name).length > 1);
+  if (repeated !== undefined)
+    throw new Error(`unexpected argument "--${repeated}" (twice). ${USAGE}`);
+  return parsed.values;
+}
+
+function parseFlags(argv: readonly string[]) {
+  return parseArgs({ args: [...argv], options: OPTIONS, tokens: true });
 }
 
 /** The variant is required (no default): a release is always a deliberate test or store build. */
 export function parseReleaseArgs(argv: readonly string[]): ReleaseOptions {
   const flags = readFlags(argv);
-  const game = flags.get('--app')?.[0];
-  const appVariant = flags.get('--variant')?.[0];
-  if (game === undefined || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(game) || appVariant === undefined) {
+  const game = flags.app;
+  const appVariant = flags.variant;
+  if (!isGameId(game) || appVariant === undefined) {
     throw new Error(`--app and --variant are required. ${USAGE}`);
   }
   const variant = resolveBuildVariant({
     APP_VARIANT: appVariant,
     EXPO_PUBLIC_APP_VARIANT: appVariant,
-    ADS_MODE: flags.get('--ads')?.[0],
+    ADS_MODE: flags.ads,
   });
   return {
     game,
     variant,
-    notes: flags.get('--notes') ?? [],
-    knownIssues: flags.get('--known-issue') ?? [],
-    resume: parseResume(flags.get('--resume')?.[0]),
+    notes: flags.notes ?? [],
+    knownIssues: flags['known-issue'] ?? [],
+    resume: parseResume(flags.resume),
   };
 }
 
@@ -75,9 +93,7 @@ function parseResume(raw: string | undefined): ResumePoint | null {
   return point;
 }
 
-export type ToolEnv = Readonly<Record<string, string | undefined>>;
-
-/** Tools receive only the three IDs; a missing one is owner step O3. */
+/** Tools receive only the three IDs; a missing one is owner step O3 (all missing ones named). */
 export function readAscIds(env: ToolEnv): AscIds {
   const missing = ['ASC_KEY_ID', 'ASC_ISSUER_ID', 'APPLE_TEAM_ID'].filter(
     (name) => (env[name] ?? '') === '',
@@ -88,15 +104,15 @@ export function readAscIds(env: ToolEnv): AscIds {
     );
   }
   return {
-    keyId: env['ASC_KEY_ID'] ?? '',
-    issuerId: env['ASC_ISSUER_ID'] ?? '',
-    teamId: env['APPLE_TEAM_ID'] ?? '',
+    keyId: requireEnv(env, 'ASC_KEY_ID'),
+    issuerId: requireEnv(env, 'ASC_ISSUER_ID'),
+    teamId: requireEnv(env, 'APPLE_TEAM_ID'),
   };
 }
 
-/** ~/.appstoreconnect/private_keys/AuthKey_<id>.p8: altool finds the key there by itself. */
+/** The key's path (asc-credentials' ascKeyPath under `home`); nothing here reads the key. */
 export function ascKeyFile(home: string, keyId: string): string {
-  return join(home, '.appstoreconnect', 'private_keys', `AuthKey_${keyId}.p8`);
+  return ascKeyPath(keyId, home);
 }
 
 /** Automatic signing with the team API key: the only signing method (no .p12, no manual profiles). */

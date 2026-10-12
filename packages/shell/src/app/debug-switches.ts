@@ -79,9 +79,10 @@ export function debugSwitchesOf(
     board,
     seedOverride: () => parts()?.services?.seedOverride() ?? null,
     openGame: (params) => {
-      const navigationRef = parts()?.navigationRef;
-      if (navigationRef === undefined) return;
-      resetToFirstRoute(navigationRef);
+      const debug = parts();
+      if (debug === null) return;
+      resetToFirstRoute(debug.navigationRef, debug.liveRunExit ?? null);
+      const { navigationRef } = debug;
       navigationRef.dispatch(StackActions.push('Game', params));
     },
   };

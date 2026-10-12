@@ -6,8 +6,10 @@
 // the hint perk is the ads layer's useHintPerk(today), whose free hints follow game.config.ts
 // hints.freePerDay (1 with solver hints, 0 without); a free hint for a non-Premium player spends
 // that daily allowance; a watched ad counts only when the reward was earned. One payment runs at a
-// time: a second tap before the first settles pays nothing and sends nothing.
-import { useRef, useSyncExternalStore } from 'react';
+// time: a second tap before the first settles pays nothing and sends nothing. While a continue is
+// paid for with an ad, its offer reads 'loading' (S7's ad key busy under the ad), never 'hidden':
+// the shown ad is used up, yet the loss is not stranded (L11), it waits for the payment.
+import { useRef, useState, useSyncExternalStore } from 'react';
 
 import { useServices } from '@e07/shell/app/services-context.tsx';
 import { useAdContext, useAdPolicyConfig, useHintPerk } from '@e07/shell/app/use-ad-context.ts';
@@ -49,21 +51,42 @@ export function sendWhenPaid(
     });
 }
 
+type Perk = 'hint' | 'continue';
+
+type OnePayment = {
+  /** The perk being paid for, as React state (null when no payment is in flight). */
+  readonly inFlight: Perk | null;
+  readonly run: (perk: Perk, payment: () => Promise<boolean>) => Promise<boolean>;
+};
+
 /**
  * A double tap reaches the handlers before the screen re-renders, so both see the same offer: the
- * first payment runs, and any other started before it settles resolves false at once.
+ * first payment runs, and any other started before it settles resolves false at once (the ref);
+ * the screen follows the payment through inFlight.
  */
-function useOnePaymentAtATime(): (payment: () => Promise<boolean>) => Promise<boolean> {
+function useOnePaymentAtATime(): OnePayment {
   const isPaying = useRef(false);
-  return async (payment) => {
-    if (isPaying.current) return false;
-    isPaying.current = true;
-    try {
-      return await payment();
-    } finally {
-      isPaying.current = false;
-    }
+  const [inFlight, setInFlight] = useState<Perk | null>(null);
+  return {
+    inFlight,
+    run: async (perk, payment) => {
+      if (isPaying.current) return false;
+      isPaying.current = true;
+      setInFlight(perk);
+      try {
+        return await payment();
+      } finally {
+        isPaying.current = false;
+        setInFlight(null);
+      }
+    },
   };
+}
+
+/** The continue perk of a run: offered by the game only while the run's continue is open. */
+function continuePerkOf(view: SessionView | null) {
+  const isOffered = view?.continueState === 'offered';
+  return { kind: 'continue', isAllowedByGame: isOffered, isUsedThisLevel: false } as const;
 }
 
 export function usePerkPayment(view: SessionView | null): PerkPayment {
@@ -78,29 +101,26 @@ export function usePerkPayment(view: SessionView | null): PerkPayment {
   const { freePerDay } = useGameExtra().hints;
   const dispatch = useProgressStore(selectProgressDispatch);
   const hintOffer = perkOffer(useHintPerk(today), request);
-  const isOffered = view?.continueState === 'offered';
-  const continuePerk = {
-    kind: 'continue',
-    isAllowedByGame: isOffered,
-    isUsedThisLevel: false,
-  } as const;
-  const continueOffer = perkOffer(continuePerk, request);
+  const payment = useOnePaymentAtATime();
+  const offer = perkOffer(continuePerkOf(view), request);
+  // A continue paid with an ad reads 'loading' until the payment settles (Premium's stays 'free').
+  const isPayingWithAd = payment.inFlight === 'continue' && offer !== 'free';
+  const continueOffer = isPayingWithAd ? 'loading' : offer;
   // 'loading' and 'hidden' pay nothing: the busy key takes no press, and a hidden one is not drawn.
   const pay = async (offer: PerkOffer): Promise<boolean> => {
     if (offer === 'free') return true;
     return offer === 'watch-ad' ? earnRewardedPerk({ ads, lifecycle }) : false;
   };
-  const payOnce = useOnePaymentAtATime();
   return {
     hintOffer,
     continueOffer,
     payForHint: () =>
-      payOnce(() => {
+      payment.run('hint', () => {
         if (hintOffer === 'free' && !request.context.isPremium) {
           dispatch({ type: 'use-free-hint', today, freePerDay });
         }
         return pay(hintOffer);
       }),
-    payForContinue: () => payOnce(() => pay(continueOffer)),
+    payForContinue: () => payment.run('continue', () => pay(offer)),
   };
 }

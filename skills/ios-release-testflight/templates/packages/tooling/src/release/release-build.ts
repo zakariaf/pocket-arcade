@@ -1,10 +1,13 @@
 // packages/tooling/src/release/release-build.ts
 // Release steps 3-7: clean prebuild and native audits, signed archive, export, and the
 // store-artifact gate on the exported .ipa (before anything reaches Apple).
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { ascField } from '@e07/tooling/asc/asc-client.ts';
+import { findWorkspace, PREBUILD_ARGS, schemeOf } from '@e07/tooling/build/sim-build-plan.ts';
+import { readAppExtra, readPlistValue } from '@e07/tooling/ios/sim-app.ts';
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
 import { ownerStepsPendingLine, storeGateProblems } from '@e07/tooling/release/store-gate.ts';
@@ -16,27 +19,13 @@ import type { ArtifactFacts, TRACKING_LANGUAGES } from '@e07/tooling/release/sto
 
 export type BuiltIpa = { readonly ipa: string; readonly appDirInIpa: string };
 
-function schemeOf(appDir: string): string {
-  const workspace = readdirSync(join(appDir, 'ios')).find((entry) =>
-    entry.endsWith('.xcworkspace'),
-  );
-  if (workspace === undefined) {
-    throw new Error('prebuild wrote no .xcworkspace: read build/logs/prebuild.log');
-  }
-  return workspace.slice(0, -'.xcworkspace'.length);
-}
-
 /** Step 3: a clean prebuild, then the audits that read ios/Pods and ios/Podfile.lock. */
 function prebuildAndAudit(options: ReleaseOptions, context: ReleaseContext): string {
   const npmRun = (script: string, extra: readonly string[]): readonly string[] => [
     ...['run', '-s', script],
     ...extra,
   ];
-  runReleaseStep(
-    'prebuild',
-    { file: 'npx', args: ['expo', 'prebuild', '--platform', 'ios', '--clean'] },
-    context,
-  );
+  runReleaseStep('prebuild', { file: 'npx', args: PREBUILD_ARGS }, context);
   runReleaseStep(
     'audit-privacy',
     { file: 'npm', args: npmRun('audit:privacy', ['--', '--app', options.game]), atRoot: true },
@@ -47,7 +36,7 @@ function prebuildAndAudit(options: ReleaseOptions, context: ReleaseContext): str
     { file: 'npm', args: npmRun('audit:network', []), atRoot: true },
     context,
   );
-  return schemeOf(context.appDir);
+  return findWorkspace(readdirSync(join(context.appDir, 'ios')));
 }
 
 /** Steps 4-6: archive and export with API-key signing, then unpack the .ipa for the gate. */
@@ -57,9 +46,9 @@ export function buildIpa(
   pre: Preflight,
 ): BuiltIpa {
   rmSync(join(context.appDir, 'build', 'export'), { recursive: true, force: true });
-  const scheme = prebuildAndAudit(options, context);
+  const workspace = prebuildAndAudit(options, context);
+  const scheme = schemeOf(workspace);
   const auth = xcodeAuthArgs(pre.keyFile, pre.ids);
-  const workspace = join('ios', `${scheme}.xcworkspace`);
   runReleaseStep(
     'archive',
     { file: 'xcodebuild', args: archiveArgs({ workspace, scheme }, auth) },
@@ -80,12 +69,8 @@ export function buildIpa(
   return { ipa, appDirInIpa: globSync(join(unpacked, 'Payload', '*.app'))[0] ?? '' };
 }
 
-function plistValue(plist: string, keyPath: string): string | undefined {
-  const result = spawnSync('plutil', ['-extract', keyPath, 'raw', '-o', '-', plist], {
-    encoding: 'utf8',
-  });
-  return result.status === 0 ? result.stdout.trim() : undefined;
-}
+const plistValue = (plist: string, keyPath: string): string | undefined =>
+  readPlistValue(plist, keyPath, { isOptional: true });
 
 function hasGetTaskAllow(appDir: string): boolean {
   const xml = execFileSync('codesign', ['-d', '--entitlements', '-', '--xml', appDir], {
@@ -109,35 +94,27 @@ function trackingTextOf(appDir: string, info: string): ArtifactFacts['trackingTe
   };
 }
 
-function readExtra(appDir: string): Readonly<Record<string, unknown>> {
-  const constants = join(appDir, 'EXConstants.bundle', 'app.config');
-  const parsed = JSON.parse(readFileSync(constants, 'utf8')) as { extra?: Record<string, unknown> };
-  return parsed.extra ?? {};
-}
-
 const textOf = (value: unknown): string | undefined =>
   typeof value === 'string' ? value : undefined;
-const fieldOf = (value: unknown, key: string): unknown =>
-  typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
 
 /** extra.adUnits (live builds), extra.game.links: what the placeholder checks read. */
 function idsAndLinksOf(extra: Readonly<Record<string, unknown>>): Partial<ArtifactFacts> {
   const units = extra['adUnits'];
-  const links = fieldOf(extra['game'], 'links');
+  const links = ascField(extra['game'], 'links');
   return {
     adUnits:
       typeof units === 'object' && units !== null
         ? Object.values(units).filter((unit): unit is string => typeof unit === 'string')
         : [],
-    privacyHost: textOf(fieldOf(fieldOf(links, 'privacyPolicy'), 'host')),
-    supportEmail: textOf(fieldOf(links, 'supportEmail')),
+    privacyHost: textOf(ascField(ascField(links, 'privacyPolicy'), 'host')),
+    supportEmail: textOf(ascField(links, 'supportEmail')),
   };
 }
 
 /** Step 6: the facts the gate needs, read from the unpacked app. */
 export function readArtifactFacts(appDir: string): ArtifactFacts {
   const info = join(appDir, 'Info.plist');
-  const extra = readExtra(appDir);
+  const extra = readAppExtra(appDir);
   const bundle = readFileSync(join(appDir, 'main.jsbundle')).toString('latin1');
   const encryption = plistValue(info, 'ITSAppUsesNonExemptEncryption');
   return {

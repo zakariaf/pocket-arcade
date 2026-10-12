@@ -9,21 +9,13 @@
 // its own before the command), wait until the screen holds still and screenshot it too. No Metro: Release embeds
 // the bundle. Every step logs to apps/<game>/build/logs/<step>.log; the first failing step stops
 // the run (exit 1). A failed preflight exits 2 before anything is touched.
-import { spawnSync } from 'node:child_process';
-import {
-  closeSync,
-  existsSync,
-  mkdirSync,
-  openSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-} from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import {
   buildScriptProblems,
   builtAppPath,
+  findWorkspace,
   isHelpRequest,
   isStaleDerivedData,
   linkProblems,
@@ -63,52 +55,23 @@ import {
   type AppOnDisk,
   type Simctl,
 } from '@e07/tooling/ios/simulators.ts';
+import { runToolStep, sleepMs, tailOf } from '@e07/tooling/ios/tool-step.ts';
 import { selectXcode } from '@e07/tooling/ios/toolchain.ts';
 
-type StepContext = { readonly appDir: string; readonly env: NodeJS.ProcessEnv };
+import type { StepCommand, StepContext } from '@e07/tooling/ios/tool-step.ts';
 
 /** The repo is not ready for a build (exit 2): nothing was prebuilt, built or launched. */
 class PreflightError extends Error {}
-type Command = {
-  readonly file: string;
-  readonly args: readonly string[];
-  /** Run from the repo root instead of apps/<game>. */
-  readonly atRoot?: boolean;
-};
-
-function tail(file: string, lines: number): string {
-  return readFileSync(file, 'utf8').trimEnd().split('\n').slice(-lines).join('\n');
-}
 
 /** Runs one step with its output in build/logs/<step>.log; throws with the log's tail on failure. */
-function runStep(name: string, command: Command, context: StepContext): void {
-  const logDir = join(context.appDir, 'build', 'logs');
-  mkdirSync(logDir, { recursive: true });
-  const logFile = join(logDir, `${name}.log`);
-  const fd = openSync(logFile, 'w');
+function runStep(name: string, command: StepCommand, context: StepContext): void {
   console.log(`build:ios:sim: ${name} ...`);
-  const result = spawnSync(command.file, command.args, {
-    cwd: command.atRoot === true ? '.' : context.appDir,
-    env: context.env,
-    stdio: ['ignore', fd, fd],
-  });
-  closeSync(fd);
+  const result = runToolStep(name, command, context);
   if (result.status !== 0) {
     throw new Error(
-      `step "${name}" failed (exit ${String(result.status)}), see ${logFile}:\n${tail(logFile, 30)}`,
+      `step "${name}" failed (exit ${String(result.status)}), see ${result.logFile}:\n${tailOf(result.output, 30)}`,
     );
   }
-}
-
-function findWorkspace(appDir: string): string {
-  const iosDir = join(appDir, 'ios');
-  const found = readdirSync(iosDir).find((entry) => entry.endsWith('.xcworkspace'));
-  if (found === undefined) {
-    throw new Error(
-      `no .xcworkspace in ${iosDir}: prebuild did not finish, see build/logs/prebuild.log`,
-    );
-  }
-  return join('ios', found);
 }
 
 /** The path a DerivedData folder recorded: info.plist's WorkspacePath, else a .pcm's cache path. */
@@ -136,10 +99,6 @@ function dropStaleDerivedData(appDir: string, game: string): void {
   console.log(`build:ios:sim: removed ${dd}: it was built in another folder (${String(recorded)})`);
 }
 
-function sleep(ms: number): void {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
 /**
  * Polls every 500 ms (never a fixed sleep), then keeps the last screenshot. perfLog() null waits
  * for a still screen (at least 3 s, two identical screenshots in a row). launchedAtEpochMs: only
@@ -153,7 +112,7 @@ function waitAndScreenshot(
   mkdirSync(dirname(out), { recursive: true });
   let previous: Buffer | null = null;
   for (let attempt = 1; attempt <= READY_MAX_ATTEMPTS; attempt += 1) {
-    sleep(READY_POLL_MS);
+    sleepMs(READY_POLL_MS);
     simctl(['io', target.udid, 'screenshot', out]);
     const current = readFileSync(out);
     const isSame = previous?.equals(current) ?? false;
@@ -199,7 +158,7 @@ function auditPrivacy(game: string, context: StepContext): void {
 function buildApp(options: SimBuildOptions, context: StepContext, udid: string): AppOnDisk {
   runStep('prebuild', { file: 'npx', args: PREBUILD_ARGS }, context);
   auditPrivacy(options.game, context);
-  const workspace = findWorkspace(context.appDir);
+  const workspace = findWorkspace(readdirSync(join(context.appDir, 'ios')));
   const scheme = schemeOf(workspace);
   runStep(
     'xcodebuild',

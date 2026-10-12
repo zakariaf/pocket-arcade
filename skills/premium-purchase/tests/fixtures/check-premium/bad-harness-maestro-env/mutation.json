@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/storekit/storekit-harness.ts",
+      "find": "  const env = maestroEnvOf(process.env);\n  return spawnSync(MAESTRO_BIN, args, { stdio: 'inherit', env }).status === 0;\n",
+      "with": "  const maestro = join(ROOT, 'tools', 'maestro', 'bin', 'maestro');\n  const env = { ...process.env, MAESTRO_CLI_NO_ANALYTICS: 'true' };\n  return spawnSync(maestro, args, { stdio: 'inherit', env }).status === 0;\n"
+    }
+  }
+]

@@ -1,7 +1,9 @@
 // packages/shell/src/ui/quiet-button.tsx
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { usePressFeedback } from '@e07/shell/app/press-feedback-context.tsx';
+import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { PRESS_SQUASH } from '@e07/shell/theme/motion.ts';
@@ -9,13 +11,14 @@ import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { AppText } from './app-text.tsx';
+import { AppText, useTextScale } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 
+import type { TextLine } from './app-text.tsx';
 import type { IconName } from './icons/icon-paths.ts';
 import type { ReactNode } from 'react';
-import type { PressableStateCallbackType } from 'react-native';
+import type { PressableStateCallbackType, ViewStyle } from 'react-native';
 
 const SPEC = COMPONENT_SPECS.quietButton;
 const GAP = COMPONENT_SPECS.button.gap;
@@ -72,16 +75,55 @@ const useStyles = makeStyles((theme) => {
       gap: GAP,
     },
     pressed: { backgroundColor: theme.colors.sunken },
-    underline: {
-      position: 'absolute',
-      start: 0,
-      end: 0,
-      height: UNDERLINE_THICKNESS,
-    },
+    // The label may shrink to the column, so a long nudge wraps inside the gutters (a row never
+    // wraps a text whose box keeps its full width).
+    label: { flexShrink: 1 },
+    underline: { position: 'absolute', height: UNDERLINE_THICKNESS },
     squashed: { transform: [{ scale: PRESS_SQUASH.quietButtonScale }] },
   });
   return styles;
 });
+
+type UnderlineInput = {
+  /** The label's laid-out lines, or null before the first text layout. */
+  readonly lines: readonly TextLine[] | null;
+  /** The label box's width: iOS reports each line's x from the physical left. */
+  readonly boxWidth: number;
+  readonly isRtl: boolean;
+  /** quietUnderlineTop: the bar's offset under its line's top. */
+  readonly top: number;
+};
+
+type UnderlineBar = { readonly key: string; readonly style: ViewStyle };
+
+/**
+ * One bar under each laid-out line, at that line's own width, as CSS underlines every line; before
+ * the first text layout one bar spans the label. In RTL a line's start comes from the box's width,
+ * which arrives in its own layout event (either one may come first): until it has, the one bar
+ * spans the label too, so no frame draws a bar off the label.
+ */
+function underlineBarsOf({ lines, boxWidth, isRtl, top }: UnderlineInput): readonly UnderlineBar[] {
+  if (lines === null || (isRtl && boxWidth === 0)) {
+    return [{ key: 'label', style: { start: 0, end: 0, top } }];
+  }
+  return lines.map((line) => ({
+    key: String(line.y),
+    style: {
+      start: isRtl ? boxWidth - line.x - line.width : line.x,
+      width: line.width,
+      top: line.y + top,
+    },
+  }));
+}
+
+/** A line list as text: iOS repeats a layout's report, and the same lines need no new render. */
+function linesKey(lines: readonly TextLine[]): string {
+  return lines
+    .map(
+      (line) => `${String(line.x)},${String(line.y)},${String(line.width)},${String(line.height)}`,
+    )
+    .join(';');
+}
 
 /** A quiet nudge ("Restore purchase", "Home"): underlined text, pressed = sunken tint, tap feedback. */
 export function QuietButton(props: QuietButtonProps): ReactNode {
@@ -99,11 +141,18 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
     lineHeight: NUDGE.lineHeight,
     align: 'center',
   });
+  // iOS draws the label at the text size (up to 200 %): its font and line grow, the bar's 5 pt
+  // offset and 2 pt thickness do not (CSS px).
+  const scale = useTextScale();
   const underlineTop = quietUnderlineTop(
-    NUDGE.fontSize,
-    text.lineHeight ?? NUDGE.fontSize,
+    NUDGE.fontSize * scale,
+    (text.lineHeight ?? NUDGE.fontSize) * scale,
     (text.fontFamily ?? '').startsWith('Vazirmatn'),
   );
+  const isRtl = useDirection() === 'rtl';
+  const [lines, setLines] = useState<readonly TextLine[] | null>(null);
+  const [boxWidth, setBoxWidth] = useState(0);
+  const bars = underlineBarsOf({ lines, boxWidth, isRtl, top: underlineTop });
   const pressedStyle = (state: PressableStateCallbackType): (object | false)[] => [
     styles.face,
     state.pressed && !isDisabled && styles.pressed,
@@ -124,18 +173,31 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
       testID={props.testID}
     >
       {props.icon === undefined ? null : <Icon name={props.icon} color={color} size={NUDGE_ICON} />}
-      <View>
+      <View
+        style={styles.label}
+        onLayout={(event) => {
+          setBoxWidth(event.nativeEvent.layout.width);
+        }}
+      >
         <AppText
           text={props.label}
           variant="nudge"
           tone={isDisabled ? 'muted' : 'default'}
           align="center"
+          onTextLines={(next) => {
+            setLines((previous) =>
+              previous !== null && linesKey(previous) === linesKey(next) ? previous : next,
+            );
+          }}
         />
-        <View
-          style={[styles.underline, { top: underlineTop, backgroundColor: underlineColor }]}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-        />
+        {bars.map((bar) => (
+          <View
+            key={bar.key}
+            style={[styles.underline, bar.style, { backgroundColor: underlineColor }]}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          />
+        ))}
       </View>
       {props.iconEnd === undefined ? null : (
         <Icon name={props.iconEnd} color={color} size={NUDGE_ICON} />

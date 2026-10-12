@@ -1,5 +1,6 @@
 // packages/shell/src/ui/app-text.tsx
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { PixelRatio, Text, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
@@ -10,7 +11,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 import { useBalancedWrap } from './use-balanced-wrap.ts';
 
 import type { BalancedWrap } from './use-balanced-wrap.ts';
-import type { Language } from '@e07/shell/i18n/languages.ts';
+import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
   LocalizedTextOptions,
   TextAlignToken,
@@ -19,7 +20,7 @@ import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { TypeStyle } from '@e07/shell/theme/tokens.ts';
 import type { TypeVariant } from '@e07/shell/theme/type-styles.ts';
 import type { ReactNode } from 'react';
-import type { TextProps, TextStyle } from 'react-native';
+import type { LayoutChangeEvent, TextProps, TextStyle } from 'react-native';
 
 /**
  * default = ink, muted = inkSoft, onPrimary / onPop = text on accent / pop paint,
@@ -38,11 +39,26 @@ export type AppTextProps = {
   readonly align?: TextAlignToken;
   /** Only for text in another language than the UI (the language list). */
   readonly language?: Language;
+  /**
+   * A whole text written in the other direction than the layout ('ltr' for S15's English labels in
+   * fa and ckb, L13): laid left to right, still aligned to the layout's start (useLocalizedTextStyle).
+   */
+  readonly textDirection?: Direction;
   readonly numberOfLines?: number;
   readonly isHeader?: boolean;
   readonly testID?: string;
   /** Called after each text layout with its line count (NotePanel fits a one-line note to its text). */
   readonly onLineCount?: (lines: number) => void;
+  /** Called after each text layout with its lines (QuietButton draws its underline under each). */
+  readonly onTextLines?: (lines: readonly TextLine[]) => void;
+};
+
+/** One laid-out line: its box in the Text, x from the physical left as iOS reports it. */
+export type TextLine = {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
 };
 
 const UNDERLINE = { textDecorationLine: 'underline' } as const;
@@ -82,6 +98,7 @@ function localizedOptions(style: TypeStyle, props: AppTextProps): LocalizedTextO
     align: props.align ?? 'start',
     ...(style.letterSpacingEm === undefined ? {} : { letterSpacingEm: style.letterSpacingEm }),
     ...(props.language === undefined ? {} : { language: props.language }),
+    ...(props.textDirection === undefined ? {} : { textDirection: props.textDirection }),
   };
 }
 
@@ -129,16 +146,145 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   return { paddingTop: margin + half, paddingBottom: margin - half, marginVertical: -margin };
 }
 
-function layoutProps(balance: BalancedWrap, onLineCount?: (lines: number) => void): TextProps {
+/**
+ * The variants the design sets with `.d` (CSS text-wrap: balance): the display, title and heading
+ * roles, the top bar and dialog titles, the group tab and the score and streak values. Its other
+ * Lilita One parts (a key label, .btn .bl; stat values, .sv; stickers, level numbers, the calendar)
+ * carry no `.d`, so Chrome wraps them greedily and so does the app.
+ */
+const BALANCED_VARIANTS: ReadonlySet<TypeVariant> = new Set<TypeVariant>([
+  'display',
+  'title',
+  'heading',
+  'topBarTitle',
+  'dialogTitle',
+  'groupTab',
+  'scoreValue',
+  'streakValue',
+  'gameTopBarScore',
+]);
+
+/** Display text balances only in the variants the design marks .d. */
+function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
+  return style.face === 'display' && BALANCED_VARIANTS.has(variant);
+}
+
+/**
+ * Room under a text's last line. React Native lays frames out in float32 and draws a text in its
+ * frame (minus any pads); far down a scrolled page (S15's font page) a box came out a hair shorter
+ * than the lines it measured (174.66650 pt for four 131/3 pt lines), so TextKit dropped the last
+ * line: its letters were piled onto the line before or ran off the edge (spec 7.6). Once the text
+ * has laid out, its box is one pixel taller than its lines (minHeight) and the margin below gives
+ * that pixel back, so the element keeps its line box. A text cut to numberOfLines counts only those.
+ */
+type TextRoom = { readonly minHeight: number; readonly marginBottom: number };
+
+function roomOf(guard: OverflowGuard | null, lineHeight: number, lines: number): TextRoom {
+  const pixel = 1 / PixelRatio.get();
+  const pads = guard === null ? 0 : guard.paddingTop + guard.paddingBottom;
+  return {
+    minHeight: lines * lineHeight + pads + pixel,
+    marginBottom: (guard?.marginVertical ?? 0) - pixel,
+  };
+}
+
+/** A text's vertical metrics: its pads (the guard's) and its line height. */
+type LineBox = { readonly pads: number; readonly lineHeight: number };
+
+/**
+ * The lines a laid-out box holds, or null when the box is the room set on it (whole lines plus one
+ * pixel), which says nothing new. The line report is laid out in the same short box, so it lost
+ * the dropped line too (two lines of the ad chip came back as one); the box still measures their
+ * height, a hair short, and rounds to the true count.
+ */
+function boxLinesOf(height: number, box: LineBox): number | null {
+  const pixel = 1 / PixelRatio.get();
+  if (box.lineHeight === 0) return null;
+  const content = height - box.pads;
+  const lines = Math.round(content / box.lineHeight);
+  return Math.abs(content - lines * box.lineHeight - pixel) < pixel / 4 ? null : lines;
+}
+
+/** What a text learned from its layouts: the reported lines and the box's lines when more. */
+type Measured = { readonly text: string; readonly lines: number; readonly boxLines: number };
+
+/**
+ * A box that holds more lines than the report becomes the count; a box no taller than the report
+ * clears it (a longer layout that the report saw too, such as a balanced wrap's probe), and the
+ * room's own box keeps it, so the room never shrinks under its text. A report that reaches the
+ * count clears it, so a longer box that came before its own report never stays.
+ */
+function afterBox(measured: Measured, held: number | null): Measured {
+  if (held === null) return measured;
+  return { ...measured, boxLines: held > measured.lines ? held : 0 };
+}
+
+/** A report that reaches the box's count has caught up with it: the report counts again. */
+function afterReport(measured: Measured, lines: number): Measured {
+  return { ...measured, lines, boxLines: lines >= measured.boxLines ? 0 : measured.boxLines };
+}
+
+type LineListeners = Pick<AppTextProps, 'onLineCount' | 'onTextLines'>;
+
+type RoomParts = {
+  readonly guard: OverflowGuard | null;
+  readonly room: TextRoom | null;
+  readonly listeners: LineListeners;
+  readonly onBoxLayout: (event: LayoutChangeEvent) => void;
+};
+
+/** The guard, the room once the line count is known, and the listeners that learn that count. */
+function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
+  const { text, onLineCount, onTextLines } = props;
+  const [stored, setMeasured] = useState<Measured>({ text, lines: 0, boxLines: 0 });
+  // A new text starts from nothing.
+  const measured = stored.text === text ? stored : { text, lines: 0, boxLines: 0 };
+  const guard = overflowGuardOf(localized);
+  const box = {
+    pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
+    lineHeight: localized.lineHeight ?? 0,
+  };
+  const reported = Math.min(measured.lines, props.numberOfLines ?? measured.lines);
+  const count = Math.max(reported, measured.boxLines);
+  const forText = (previous: Measured): Measured =>
+    previous.text === text ? previous : { text, lines: 0, boxLines: 0 };
+  return {
+    guard,
+    room: count === 0 ? null : roomOf(guard, box.lineHeight, count),
+    listeners: {
+      onLineCount: (lines) => {
+        setMeasured((previous) => afterReport(forText(previous), lines));
+        onLineCount?.(lines);
+      },
+      ...(onTextLines === undefined ? {} : { onTextLines }),
+    },
+    onBoxLayout: (event) => {
+      const held = boxLinesOf(event.nativeEvent.layout.height, box);
+      setMeasured((previous) => afterBox(forText(previous), held));
+    },
+  };
+}
+
+function layoutProps(
+  balance: BalancedWrap,
+  listeners: LineListeners,
+  onBoxLayout: (event: LayoutChangeEvent) => void,
+): TextProps {
+  const { onLineCount, onTextLines } = listeners;
   const onTextLayout: TextProps['onTextLayout'] =
-    onLineCount === undefined
+    onLineCount === undefined && onTextLines === undefined
       ? balance.onTextLayout
       : (event) => {
           balance.onTextLayout?.(event);
-          onLineCount(event.nativeEvent.lines.length);
+          const { lines } = event.nativeEvent;
+          onLineCount?.(lines.length);
+          onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
         };
   return {
-    ...(balance.onLayout === undefined ? {} : { onLayout: balance.onLayout }),
+    onLayout: (event) => {
+      balance.onLayout?.(event);
+      onBoxLayout(event);
+    },
     ...(onTextLayout === undefined ? {} : { onTextLayout }),
   };
 }
@@ -146,23 +292,24 @@ function layoutProps(balance: BalancedWrap, onLineCount?: (lines: number) => voi
 /** The only component that renders text: role or style, script font, direction, 200% cap. */
 export function AppText(props: AppTextProps): ReactNode {
   const theme = useTheme();
-  const style = typeStyleOf(props.variant ?? 'body');
+  const variant = props.variant ?? 'body';
+  const style = typeStyleOf(variant);
   const localized = useLocalizedTextStyle(localizedOptions(style, props));
-  // Display text wraps balanced, as the design's .d (text-wrap: balance).
-  const balance = useBalancedWrap(style.face === 'display', props.text, props.align ?? 'start');
+  // Display text wraps balanced where the design sets .d (text-wrap: balance).
+  const balance = useBalancedWrap(isBalancedOf(style, variant), props.text, props.align ?? 'start');
   const decoration = style.isUnderlined === true ? UNDERLINE : null;
   const figures = style.isTabular === true ? TABULAR : null;
   // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
   const shown = style.face === 'brand' ? isolate(props.text) : props.text;
-  const guard = overflowGuardOf(localized);
+  const { guard, room, listeners, onBoxLayout } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (
     <Text
-      style={[localized, decoration, figures, color, balance.style, guard]}
+      style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={2}
       {...textProps(guard === null ? props : rest)}
-      {...layoutProps(balance, props.onLineCount)}
+      {...layoutProps(balance, listeners, onBoxLayout)}
     >
       {shown}
     </Text>
