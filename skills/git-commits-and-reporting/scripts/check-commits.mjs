@@ -56,6 +56,9 @@ const SPEC = {
     '                       "with-shell final composer (phase 0 placeholder replaced)", needs none)',
     '  trailer-placement    a trailer sits outside the last paragraph (git would not read it)',
     '  placeholder-left     a __PLACEHOLDER__ from templates/commit-message.txt is still in the message',
+  '  build-number-reused  (--range and --log only) two "chore(<game-id>): build <n>" release commits of one game',
+  '                       carry the same number: release:ios and release:android share one build number',
+  '                       (= versionCode). The commit-msg hook sees one message, so only a history shows this',
     '  sample-mismatch      (--samples) a sample gives other rule ids than the shared list says: the hook and',
     '                       this checker have drifted',
     '',
@@ -204,6 +207,21 @@ function checkMessage(report, where, message, files, context) {
   });
 }
 
+// The release commit both release:ios and release:android make before a build.
+const BUILD_COMMIT = /^chore\((?<game>[a-z0-9]+(?:-[a-z0-9]+)*)\): build (?<build>\d+)$/;
+
+/** History only: one game's release commits never repeat a build number (iOS and Android share it). */
+function checkBuildNumbers(report, commits) {
+  const seen = new Map();
+  for (const commit of commits) {
+    const match = BUILD_COMMIT.exec(commit.message.split('\n')[0] ?? '');
+    if (!match) continue;
+    const key = `${match.groups.game} ${Number(match.groups.build)}`;
+    if (seen.has(key)) report.problem({ file: commit.sha, line: 1, rule: 'build-number-reused', message: `reuses build ${Number(match.groups.build)} of ${match.groups.game} (also ${seen.get(key)})`, fix: 'Build numbers come only from npm run release:ios or release:android and are shared by both platforms: the next release takes one above the highest number of the config and every upload tag.' });
+    else seen.set(key, commit.sha);
+  }
+}
+
 /** The message as git stores it: no comment lines, nothing below the scissors, no trailing space. */
 function normalizeMessage(raw) {
   const cut = /^# -+ >8 -+$/m.exec(raw);
@@ -258,5 +276,6 @@ run(async () => {
     if (commits.length === 0) fail('the log or range holds no commits', 'Pass a range that contains the new commits, for example main..HEAD.');
   }
   for (const commit of commits) checkMessage(report, commit.sha, commit.message, commit.files, { scopes, gated });
+  if (!options.message) checkBuildNumbers(report, commits);
   return report.finish({ checked: commits.length, unit: 'commit messages' });
 });

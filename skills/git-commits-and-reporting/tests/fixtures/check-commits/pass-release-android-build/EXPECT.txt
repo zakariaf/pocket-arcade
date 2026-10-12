@@ -1,0 +1,2 @@
+check-commits: 2 commit messages checked, 0 problems
+RESULT: PASS

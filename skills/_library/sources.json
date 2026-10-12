@@ -6108,7 +6108,7 @@
     },
     "git-commits-and-reporting": {
       "SKILL.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6125,6 +6125,10 @@
           {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -6185,7 +6189,7 @@
         ]
       },
       "references/commit-format.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6206,24 +6210,36 @@
           {
             "path": "docs/99-final-decisions.md",
             "sha256": "0aa95611a81ae9dedcd655077df0ccfee00b83619e8edd425fd1f11baa1af4bb"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "references/owner-updates.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
             "sha256": "4ce76c032444057f7138e9214bbdcb91a1ad63ebfd019055b32e28dca27913ee"
           },
           {
+            "path": "docs/14-ios-build-and-release.md",
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
+          },
+          {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "references/stop-and-ask.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -6240,11 +6256,15 @@
           {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "references/tags-and-releases.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/03-naming.md",
@@ -6257,6 +6277,10 @@
           {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -6309,6 +6333,23 @@
           {
             "path": "docs/17-claude-code-playbook.md",
             "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          }
+        ]
+      },
+      "templates/evidence-release-play.md": {
+        "recorded": "2026-10-12",
+        "sources": [
+          {
+            "path": "docs/14-ios-build-and-release.md",
+            "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
+          },
+          {
+            "path": "docs/17-claude-code-playbook.md",
+            "sha256": "831893dc65838de5bdd33bcef93c642caaac697b75ff27f42433ea77c484f725"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },

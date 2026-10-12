@@ -63,7 +63,7 @@ Trailers go in the last paragraph, after a blank line, one per line, `Key: value
 | `Gate-Change: <reason>` | a staged file matches `gatedPaths` in `quality-gates.json` (quality gates, configs, goldens, screenshot baselines, save fixtures, network baselines, the parity waivers and game facts `parity/waivers.json` and `parity/game-facts.json`, `.npmrc`, `.claude/settings.json`). A pattern matches the whole repo-relative path (`eslint.config.mjs` is the root file only, `**/tsconfig.json` any depth), and a file under `skills/` or `.claude/` counts only for a pattern that starts with that folder, so a skills-only commit that edits template configs needs no trailer while `.claude/settings.json` stays gated (the hook and `check-commits.mjs` share this rule) | required; the reason says why the gate, golden or baseline had to change; the owner agreed first for a gate change |
 | `Spec-Change: <spec section and what changed>` | an existing test's expectation changed because the spec changed | required then; never for "the test was wrong"; names the spec section or ID, except the build order's one directed swap: Shell step 8 replaces the phase-0 `with-shell.ts` and its test with exactly `Spec-Change: with-shell final composer (phase 0 placeholder replaced)` (the hook's and check-commits' `DIRECTED_SWAP_TRAILERS`; any other wording still needs a spec id) |
 | `Co-Authored-By: ...` | the session instructions ask for attribution | keep it in the same final trailer block |
-| `Release-Variant: test` or `store` | only on the release commit `chore(<game-id>): build <n>` that `npm run release:ios` writes | written by the release script, never by hand |
+| `Release-Variant: test` or `store` | only on the release commit `chore(<game-id>): build <n>` that `npm run release:ios` (test or store) or `npm run release:android` (always store) writes | written by the release script, never by hand |
 
 The owner finds every gate change with:
 
@@ -78,7 +78,7 @@ So a `Gate-Change:` trailer on a commit that changed no gated file is wrong too:
 - **One behaviour per commit**, its tests and its code together (red and green in the same commit), and any documentation it changes.
 - **Never `--no-verify`** (the permissions deny it) and never `LEFTHOOK=0`: a failing hook means the commit is not ready.
 - **Never amend or rebase commits that were pushed.** Amending an unpushed commit of this session is fine.
-- **Release commits and tags come only from `npm run release:ios`**: `chore(<game-id>): build <n>`.
+- **Release commits and tags come only from `npm run release:ios` and `npm run release:android`**: `chore(<game-id>): build <n>`. Both share one build number per game, so two release commits never carry the same `<n>` (`check-commits.mjs --range` rule `build-number-reused`).
 - **Branches**, only when one is needed: `<type>/<scope>-<slug>`, for example `feat/line-siege-endless-mode`.
 
 ## Good and bad headers
@@ -100,6 +100,8 @@ So a `Gate-Change:` trailer on a commit that changed no gated file is wrong too:
 The lefthook `commit-msg` hook (`packages/tooling/src/git/check-commit-message.ts` over `commit-message-rules.ts` and `commit-trailer-rules.ts`, installed by the `quality-gates` skill) and `scripts/check-commits.mjs` apply the same 18 rules with the same ids: `header-format`, `header-type`, `scope-missing`, `header-scope`, `header-length`, `subject-case`, `subject-period`, `subject-mood`, `subject-vague`, `blank-line`, `body-missing`, `spec-ref-missing` (a `feat` or `fix` outside `tooling`, `repo`, `deps`, `docs`, `ci`, `skills`), `trailer-placement`, `trailer-empty`, `spec-change-format`, `gate-change-missing`, `gate-change-unneeded` and `placeholder-left`. Both drop comment lines and everything below git's scissors line first, as git does. Git-generated headers (Merge, Revert, fixup!, squash!, amend!) pass.
 
 The two cannot drift: `packages/tooling/src/git/commit-message-samples.json` holds a good message and at least one sample per rule with the exact rule ids it must give. The hook's Jest test runs every sample through `commit-message-rules.ts`, and this skill's self-test runs the same list through `check-commits.mjs --samples`. A new rule is added to both rule sets and the sample list in one change.
+
+One rule is the script's alone, because it needs a history: `build-number-reused` (`--range` and `--log` only) fails two release commits `chore(<game-id>): build <n>` of one game with the same `<n>`. `npm run release:ios` and `npm run release:android` share one build number per game (Android's `versionCode`), so a repeat means a release counted from the wrong number. The hook sees one message at a time, so this rule has no sample in the shared list and is not one of the 18.
 
 The only difference is what each knows about the files: the hook always has the staged files, so it always applies the `Gate-Change:` rules; the script applies them when it knows the files (`--staged`, `--files`, `--range`, `--log`), not for a bare `--message`. Run the script before `git commit -F` (`node ${CLAUDE_SKILL_DIR}/scripts/check-commits.mjs . --message <file> --staged`) and over the session's commits (`node ${CLAUDE_SKILL_DIR}/scripts/check-commits.mjs . --range <base>..HEAD`). Without `quality-gates.json` it uses the platform's default gated paths:
 
