@@ -3,7 +3,8 @@
 // Tier-2 Premium purchase tests on a throwaway simulator of your own. Test variant only.
 // Usage: node packages/tooling/src/storekit/storekit-harness.ts --app <game-id> --device <udid>
 //          [--driver-port <n>] [--metro-port <n>] (node:util parseArgs; any other option stops it)
-// Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro, then
+// Prebuilds a harness project, builds it (Debug) against its own Metro port, starts Metro (its
+// output in apps/<game>/build/logs/storekit-metro.log; stopped however the run ends), then
 // per scenario arms the simulator's StoreKit test store and runs one flow from
 // packages/shell/e2e/storekit/. Every Maestro call names the simulator and its own XCTest driver
 // port (maestro-args.ts: a free port for each flow unless --driver-port is given), so no call can
@@ -23,6 +24,7 @@ import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e
 import { MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
 import { readUrlScheme } from '@e07/tooling/ios/sim-app.ts';
 import { busyNote } from '@e07/tooling/storekit/busy-note.ts';
+import { spawnMetro, withMetro } from '@e07/tooling/storekit/metro-session.ts';
 
 import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
 
@@ -111,17 +113,18 @@ function arm(h: Harness, test: string): void {
 // Debug builds load JS from Metro (localhost only; tooling may use fetch).
 async function startMetro(appDir: string, port: number): Promise<() => void> {
   const env = { ...TEST_ENV, CI: '1', EXPO_NO_TELEMETRY: '1' };
-  const metro = spawn('npx', ['expo', 'start', '--port', String(port)], { cwd: appDir, env });
+  const logFile = join(appDir, 'build', 'logs', 'storekit-metro.log');
+  const stop = spawnMetro(spawn, { appDir, port, env, logFile });
   for (let attempt = 0; attempt < 120; attempt += 1) {
     const status = await fetch(`http://localhost:${String(port)}/status`).then(
       async (response) => response.text(),
       () => '',
     );
-    if (status === 'packager-status:running') return () => metro.kill();
+    if (status === 'packager-status:running') return stop;
     await sleep(1000);
   }
-  metro.kill();
-  throw new Error(`Metro did not start on port ${String(port)}`);
+  stop();
+  throw new Error(`Metro did not start on port ${String(port)} (log: ${logFile})`);
 }
 
 // Before the run and after a failed one: is the Mac too busy for StoreKit's test store?
@@ -166,13 +169,17 @@ async function main(argv: readonly string[]): Promise<number> {
   if (busy !== null) console.error(busy);
   const h = prepareHarness(join(ROOT, 'apps', game), udid, metroPort);
   xcodebuild(h, ['build-for-testing', '-sdk', 'iphonesimulator']);
-  const stopMetro = await startMetro(h.appDir, metroPort);
-  let failures = 0;
-  for (const [test, flow] of SCENARIOS) {
-    if (test !== null) arm(h, test);
-    if (!(await runFlow(h, givenPort, flow))) failures += 1;
-  }
-  stopMetro();
+  const failures = await withMetro(
+    () => startMetro(h.appDir, metroPort),
+    async () => {
+      let failed = 0;
+      for (const [test, flow] of SCENARIOS) {
+        if (test !== null) arm(h, test);
+        if (!(await runFlow(h, givenPort, flow))) failed += 1;
+      }
+      return failed;
+    },
+  );
   console.error(`storekit: ${String(failures)} of ${String(SCENARIOS.length)} scenario(s) failed`);
   const busyAtEnd = failures > 0 ? busyNoteNow() : null;
   if (busyAtEnd !== null) console.error(busyAtEnd);
