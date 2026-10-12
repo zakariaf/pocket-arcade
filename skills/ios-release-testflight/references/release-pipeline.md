@@ -55,6 +55,7 @@ Stop on the first failure, before anything is built, committed or uploaded:
 - The login keychain is unlocked: `security show-keychain-info ~/Library/Keychains/login.keychain-db` exits 0.
 - `xcodebuild -version` prints Xcode 26.6 (from `selectXcode()`).
 - The bundle id the app config resolves is `io.applander.<game id without hyphens>` (owner decision O4: every game, all lowercase; Line Siege is `io.applander.linesiege`, Premium `<bundle id>.premium`). Anything else stops the preflight.
+- The What to Test text of this run (step 11) is built and checked right after the bundle id, before `npm run verify`: `releaseWhatToTest()` with the planned build number (`plannedBuildNumber()`: the next one, or the stopped run's with `--resume`), the game's changes since its previous build tag, `--notes` and `--known-issue`. Over TestFlight's 4000 characters it stops with `What to Test would be <n> characters; TestFlight allows 4000: shorten --notes or --known-issue, then rerun (nothing was built, committed or uploaded)`. Step 11 sends exactly this text (`Preflight.whatToTest`).
 - The app record exists: `node packages/tooling/src/asc/print-app-record.ts --app <game>` (or the bundle id itself) prints `{"id","name"}`; exit 2 means no record, which is owner step G2. The numeric `id` is the Apple ID (`APPLE_APP_ID`) for the upload.
 - Store only: the `version` in `game.config.ts` is higher than the last release tag `<slug>/vX.Y.Z` (build tags contain `+` and do not count).
 
@@ -173,7 +174,7 @@ altool also offers `xcrun altool --build-status --delivery-id "$DELIVERY_ID" "${
 
 ## Step 11: What to Test
 
-`whatToTest()` builds the text; `setWhatsNew()` sends it through REST: `GET /v1/builds/{id}/betaBuildLocalizations`, then `PATCH /v1/betaBuildLocalizations/{id}` with `{"data":{"type":"betaBuildLocalizations","id":"...","attributes":{"whatsNew":"..."}}}`, or `POST /v1/betaBuildLocalizations` with `locale: "en-US"` and the `build` relationship when none exists. `whatsNew` holds up to 4000 characters.
+The text was built and length-checked in the preflight (`Preflight.whatToTest`, from `whatToTest()`); `setWhatsNew()` sends it through REST, then the build tag is made, and a failure of either keeps the `Resume: ... --resume processing` line: `GET /v1/builds/{id}/betaBuildLocalizations`, then `PATCH /v1/betaBuildLocalizations/{id}` with `{"data":{"type":"betaBuildLocalizations","id":"...","attributes":{"whatsNew":"..."}}}`, or `POST /v1/betaBuildLocalizations` with `locale: "en-US"` and the `build` relationship when none exists. `whatsNew` holds up to 4000 characters.
 
 altool's own route (`--beta-app-store-text <folder> --download`, edit the `en-US` file's `"whatsNew" = "...";` line, `--upload`) is documented by the README altool writes into the downloaded folder and by `ContentDelivery.framework/Resources/AppStoreText-README.md`; its exact folder layout for a build was not verified, so REST is used until the first real release records it.
 

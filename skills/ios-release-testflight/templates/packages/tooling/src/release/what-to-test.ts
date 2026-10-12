@@ -80,3 +80,50 @@ export function whatToTest(input: WhatToTestInput): string {
   }
   return text;
 }
+
+/** A game's builds since its previous build tag ('' = none: the first build). */
+export type BuildHistory = {
+  readonly previousTag: string;
+  /** feat/fix commit subjects since that tag. */
+  readonly subjects: readonly string[];
+  /** `git diff --name-only <previous build tag>..HEAD` */
+  readonly files: readonly string[];
+};
+
+export type ReleaseNotesInput = Pick<
+  WhatToTestInput,
+  'gameName' | 'version' | 'buildNumber' | 'appVariant' | 'knownIssues'
+> & {
+  /** release:ios --notes: what testers should check. */
+  readonly notes: readonly string[];
+  readonly history: BuildHistory;
+};
+
+/**
+ * The What to Test text of one release, built in its preflight: an over-long --notes or
+ * --known-issue stops the run there, before the build number commit and the upload.
+ */
+export function releaseWhatToTest(input: ReleaseNotesInput): string {
+  const isFirstBuild = input.history.previousTag === '';
+  try {
+    return whatToTest({
+      gameName: input.gameName,
+      version: input.version,
+      buildNumber: input.buildNumber,
+      appVariant: input.appVariant,
+      changes: summarizeChanges(input.history.subjects, isFirstBuild),
+      focus: input.notes,
+      knownIssues: input.knownIssues,
+      needsPurchaseTest: purchaseCheckNeeded({
+        isFirstBuild,
+        changedFiles: input.history.files,
+        notes: input.notes,
+      }),
+    });
+  } catch (error: unknown) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${reason.replace('What to Test is', 'What to Test would be')}: shorten --notes or --known-issue, then rerun (nothing was built, committed or uploaded)`,
+    );
+  }
+}
