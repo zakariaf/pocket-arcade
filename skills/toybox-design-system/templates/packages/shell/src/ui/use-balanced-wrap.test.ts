@@ -44,6 +44,19 @@ describe('balanced wrap search (CSS text-wrap: balance)', () => {
     expect(search).toMatchObject({ lo: 248, hi: 316, pad: 0, isReturning: true, isDone: false });
   });
 
+  it('takes the word-broken verdict itself: a probe that keeps the count but splits a word fails', () => {
+    // One place decides a failed probe: nextSearch, told whether the layout split a word.
+    const probing = firstSearch('k', 316, [305, 56]); // probe 248
+    expect(nextSearch(probing, 316, { lineWidths: [240, 121], isWordBroken: true })).toStrictEqual(
+      failedSearch(probing, 316),
+    );
+    // Back at hi after a failure, a split word is no probe: the search probes on from hi.
+    const returning = failedSearch(probing, 316);
+    expect(nextSearch(returning, 316, { lineWidths: [305, 56], isWordBroken: true })).toMatchObject(
+      { isReturning: false },
+    );
+  });
+
   it('stops when no width between lo and the widest kept line is left', () => {
     let search = firstSearch('k', 316, [305, 56]);
     search = nextSearch(search, 316, [200, 161]); // 248 kept, widest 200: probe 199

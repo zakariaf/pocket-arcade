@@ -80,12 +80,25 @@ function isFailedProbe(
   return !search.isReturning && (lineWidths.length > search.lines || isWordBroken);
 }
 
-/** One step of the search after a text layout. A probe that keeps the count narrows on from it. */
-export function nextSearch(search: Search, width: number, lineWidths: readonly number[]): Search {
+/** One text layout: its line widths, and whether it split a word. */
+type TextLayout = { readonly lineWidths: readonly number[]; readonly isWordBroken: boolean };
+
+/**
+ * One step of the search after a text layout (its line widths alone: a layout that split no
+ * word). The one place a probe is judged: one that keeps the count whole narrows on from it, a
+ * failed one goes back to hi.
+ */
+export function nextSearch(
+  search: Search,
+  width: number,
+  layout: TextLayout | readonly number[],
+): Search {
+  const { lineWidths, isWordBroken } =
+    'lineWidths' in layout ? layout : { lineWidths: layout, isWordBroken: false };
   const steps = search.steps + 1;
   const widest = Math.max(...lineWidths);
   if (search.isReturning) return probeFrom({ ...search, steps, widest }, width);
-  if (isFailedProbe(search, lineWidths)) return failedSearch(search, width);
+  if (isFailedProbe(search, lineWidths, isWordBroken)) return failedSearch(search, width);
   return probeFrom({ ...search, steps, hi: width - search.pad, widest }, width);
 }
 
@@ -177,11 +190,7 @@ export function advance(measure: Measure, isWordBroken = false): Measure {
   if (width === 0 || lineWidths === null || search?.isDone === true) return measure;
   const key = `${String(width)}|${measure.text}`;
   if (search?.key !== key) return { ...measure, search: firstSearch(key, width, lineWidths) };
-  const isFailed = isFailedProbe(search, lineWidths, isWordBroken);
-  return {
-    ...measure,
-    search: isFailed ? failedSearch(search, width) : nextSearch(search, width, lineWidths),
-  };
+  return { ...measure, search: nextSearch(search, width, { lineWidths, isWordBroken }) };
 }
 
 /** Slack for sub-point rounding between the line widths and the laid-out width. */
@@ -217,9 +226,6 @@ const emptyFor = (text: string): Measure => ({ ...EMPTY, text });
 function isSameLines(a: readonly number[] | null, b: readonly number[]): boolean {
   return a !== null && a.length === b.length && a.every((line, index) => line === b[index]);
 }
-
-/** One text layout: its line widths, and whether it split a word. */
-type TextLayout = { readonly lineWidths: readonly number[]; readonly isWordBroken: boolean };
 
 /**
  * The state after a text layout: a stale layout is dropped, any other one is stored and moves the
