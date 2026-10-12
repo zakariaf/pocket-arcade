@@ -3,12 +3,10 @@
 // recorded on the first real upload, so it is searched for), the processing state from the REST
 // builds endpoint, release-tag comparison, and the REST query for one build.
 
+import { ascField } from '@e07/tooling/asc/asc-client.ts';
+
 export type ProcessingState = 'PROCESSING' | 'VALID' | 'INVALID' | 'FAILED';
 const STATES: readonly ProcessingState[] = ['PROCESSING', 'VALID', 'INVALID', 'FAILED'];
-
-function field(value: unknown, key: string): unknown {
-  return typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
-}
 
 /** Depth-first search for the first string under a key like deliveryUuid / delivery-id / DeliveryID. */
 export function findDeliveryId(json: unknown): string | null {
@@ -32,9 +30,9 @@ export function findDeliveryId(json: unknown): string | null {
 
 /** GET /v1/builds?filter[app]=...: attributes.processingState of the first build, if any. */
 export function processingStateOf(json: unknown): ProcessingState | null {
-  const data = field(json, 'data');
+  const data = ascField(json, 'data');
   const first: unknown = Array.isArray(data) ? data[0] : undefined;
-  const state = field(field(first, 'attributes'), 'processingState');
+  const state = ascField(ascField(first, 'attributes'), 'processingState');
   return STATES.find((candidate) => candidate === state) ?? null;
 }
 

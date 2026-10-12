@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { ascField } from '@e07/tooling/asc/asc-client.ts';
 import { findWorkspace, PREBUILD_ARGS, schemeOf } from '@e07/tooling/build/sim-build-plan.ts';
 import { readAppExtra, readPlistValue } from '@e07/tooling/ios/sim-app.ts';
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
@@ -95,20 +96,18 @@ function trackingTextOf(appDir: string, info: string): ArtifactFacts['trackingTe
 
 const textOf = (value: unknown): string | undefined =>
   typeof value === 'string' ? value : undefined;
-const fieldOf = (value: unknown, key: string): unknown =>
-  typeof value === 'object' && value !== null ? Reflect.get(value, key) : undefined;
 
 /** extra.adUnits (live builds), extra.game.links: what the placeholder checks read. */
 function idsAndLinksOf(extra: Readonly<Record<string, unknown>>): Partial<ArtifactFacts> {
   const units = extra['adUnits'];
-  const links = fieldOf(extra['game'], 'links');
+  const links = ascField(extra['game'], 'links');
   return {
     adUnits:
       typeof units === 'object' && units !== null
         ? Object.values(units).filter((unit): unit is string => typeof unit === 'string')
         : [],
-    privacyHost: textOf(fieldOf(fieldOf(links, 'privacyPolicy'), 'host')),
-    supportEmail: textOf(fieldOf(links, 'supportEmail')),
+    privacyHost: textOf(ascField(ascField(links, 'privacyPolicy'), 'host')),
+    supportEmail: textOf(ascField(links, 'supportEmail')),
   };
 }
 
