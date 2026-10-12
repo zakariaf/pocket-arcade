@@ -30,7 +30,7 @@ const SPEC = {
     '  test-renderer-line        test-renderer minor differs from the React minor (React 19.2 needs test-renderer 1.2.x)',
     '  one-react                 root overrides do not pin react and react-native to the apps\' exact versions',
     '  test-script               a canonical test script (test, test:golden, test:sim, test:coverage, test:mutation) differs',
-    '  babel-config              root babel.config.js is missing or lacks the Stryker branch (worklets: false, reanimated: false)',
+    '  babel-config              root babel.config.js is missing or lacks the Stryker branch (worklets: false, reanimated: false, only on files Stryker instrumented)',
     '  jest-config-missing       no jest.config.js at the repo root',
     '  jest-config-load          jest.config.js or jest.sim.config.js throws when loaded',
     '  jest-tz                   a Jest config does not set process.env.TZ = \'UTC\'',
@@ -210,9 +210,11 @@ function checkBabel(root, report) {
     [/STRYKER_MUTATOR_WORKER/, 'the STRYKER_MUTATOR_WORKER branch'],
     [/worklets:\s*false/, 'worklets: false'],
     [/reanimated:\s*false/, 'reanimated: false'],
+    [/overrides/, 'the override that limits the plugin-free branch to instrumented files'],
+    [/stryNS_9fa48/, "the test for Stryker's instrumented files (its stryNS_9fa48 helper)"],
   ];
   for (const [pattern, what] of needs) {
-    if (!pattern.test(text)) report.problem({ file: 'babel.config.js', line: 1, rule: 'babel-config', message: `lacks ${what}`, fix: 'Copy templates/babel.config.js: mutation workers must compile without the Worklets and Reanimated plugins ("stryNS_… is read-only").' });
+    if (!pattern.test(text)) report.problem({ file: 'babel.config.js', line: 1, rule: 'babel-config', message: `lacks ${what}`, fix: 'Copy templates/babel.config.js: mutation workers compile only the files Stryker instrumented without the Worklets and Reanimated plugins ("stryNS_… is read-only"); every other file keeps them, or Reanimated hooks throw ("useAnimatedStyle was used without a dependency array or Babel plugin").' });
   }
 }
 

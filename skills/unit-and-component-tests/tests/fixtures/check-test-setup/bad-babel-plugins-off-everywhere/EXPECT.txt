@@ -1,0 +1,3 @@
+[babel-config]
+babel.config.js:1
+lacks the override that limits the plugin-free branch to instrumented files
