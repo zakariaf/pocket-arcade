@@ -121,6 +121,42 @@ describe('QuietButton', () => {
     },
   );
 
+  it('draws no line-placed bar in RTL before the label box has its width (spec S7)', async () => {
+    // iOS can report the lines before the label box's layout: with the width still 0, the RTL
+    // start (width - x - line width) put the bar off the label for one frame.
+    const text = 'Gefällt’s dir? Entferne die Werbung für 1,99 €.';
+    await renderWithShell(
+      <QuietButton
+        label={text}
+        icon="crown"
+        onPress={jest.fn()}
+        testID="result.premium-button"
+        isReducedMotion
+      />,
+      { direction: 'rtl' },
+    );
+    await fireEvent(screen.getByText(text), 'textLayout', {
+      nativeEvent: {
+        lines: [
+          {
+            x: 22,
+            y: 0,
+            width: 255,
+            height: 18.75,
+            text: 'Gefällt’s dir? Entferne die Werbung für ',
+          },
+          { x: 126, y: 19, width: 47, height: 19, text: '1,99 €.' },
+        ],
+      },
+    });
+
+    const bars = (screen.getByText(text).parent?.children ?? []).filter(
+      (child) => typeof child !== 'string' && child.props['accessibilityElementsHidden'] === true,
+    );
+    expect(bars).toHaveLength(1);
+    expect(bars[0]).toHaveStyle({ start: 0, end: 0, top: 19.5 });
+  });
+
   it('keeps the underline under the text at 200 % text (spec 8.11)', async () => {
     // At the largest text size the label is drawn at 30 pt on a 38 pt line, but the bar sat where
     // a 15 pt line puts it, 19.5 under the top: through the middle of "Restore purchase".

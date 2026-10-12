@@ -98,10 +98,14 @@ type UnderlineBar = { readonly key: string; readonly style: ViewStyle };
 
 /**
  * One bar under each laid-out line, at that line's own width, as CSS underlines every line; before
- * the first text layout one bar spans the label.
+ * the first text layout one bar spans the label. In RTL a line's start comes from the box's width,
+ * which arrives in its own layout event (either one may come first): until it has, the one bar
+ * spans the label too, so no frame draws a bar off the label.
  */
 function underlineBarsOf({ lines, boxWidth, isRtl, top }: UnderlineInput): readonly UnderlineBar[] {
-  if (lines === null) return [{ key: 'label', style: { start: 0, end: 0, top } }];
+  if (lines === null || (isRtl && boxWidth === 0)) {
+    return [{ key: 'label', style: { start: 0, end: 0, top } }];
+  }
   return lines.map((line) => ({
     key: String(line.y),
     style: {
