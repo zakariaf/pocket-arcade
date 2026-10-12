@@ -984,7 +984,7 @@
         ]
       },
       "references/app-wiring-and-variants.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -993,6 +993,10 @@
           {
             "path": "docs/14-ios-build-and-release.md",
             "sha256": "3982c50f7f3cc393d39bb33d13c52ab01e576159ff3f71d4a223d72fc71948b5"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -1010,7 +1014,7 @@
         ]
       },
       "references/file-placement.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -1053,7 +1057,7 @@
         ]
       },
       "references/workspaces-and-layout.md": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",
@@ -1204,7 +1208,7 @@
         ]
       },
       "templates/with-app-variant-marker.ts": {
-        "recorded": "2026-10-01",
+        "recorded": "2026-10-12",
         "sources": [
           {
             "path": "docs/02-architecture-and-folders.md",

@@ -2,9 +2,11 @@
 // check-layout.mjs: checks the shape of the Pocket Arcade monorepo: the four kinds of workspace and
 // their manifests, one React, native modules in every app, each app's wiring files (app.config.ts,
 // index.ts, game.config.ts, metro.config.js), the folder sets, ports with their fakes, file placement
-// and work at import time.
+// and work at import time, and that Android stays generated (android/ ignored, Kotlin only in the
+// Shell's native module, native Android settings only in withShell and its plugins).
 // Run from the app repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-layout.mjs [repo-root]
 
+import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -20,7 +22,8 @@ const SPEC = {
   summary:
     'Checks the monorepo shape: workspaces and manifests (type module, exports map, one React), native ' +
     'modules in every app, the app wiring files, the canonical folder sets, port/adapter/fake triples, ' +
-    'file placement and module-level work.',
+    'file placement, module-level work, and that Android stays generated (android/ ignored, Kotlin only in ' +
+    'packages/shell/android/, native Android settings only in withShell and its plugins).',
   usage: '[options] [repo-root]',
   options: {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -44,6 +47,12 @@ const SPEC = {
     '  placement         a screen, adapter, port, store, reducer, plugin or Node-API test in the wrong place',
     '  import-time-work  module-level code opens a database, creates an AudioContext, an adapter or a global zustand',
     '                    store, boots the Shell or switches the direction (a reload re-runs every module)',
+    '  android-committed the generated apps/<id>/android/ would be committed: .gitignore lacks apps/*/android/, or',
+    '                    git tracks a file under it (prebuild regenerates it from withShell on every build)',
+    '  kotlin-placement  a Kotlin file outside packages/shell/android/ (the Shell\'s one local native module)',
+    '  android-setting   a native Android setting outside withShell (packages/shell/src/config/) and',
+    '                    packages/shell/plugins/: an "android" key in an app.json, a Gradle or manifest file, or an',
+    '                    Android config-plugin mod (withAndroidManifest, withAppBuildGradle, AndroidConfig, ...)',
     '',
     'Example: node check-layout.mjs .            (from the app repo root)',
   ].join('\n'),
@@ -256,6 +265,51 @@ function checkImportTimeWork(root, files, report) {
   }
 }
 
+// Android lives in generated android/ folders (prebuild writes them from withShell), in the Shell's
+// one local native module (packages/shell/android/) and in the config plugins; nowhere else.
+const SHELL_NATIVE_ANDROID = /^packages\/shell\/android\//;
+const ANDROID_IGNORE_LINES = new Set(['apps/*/android/', 'apps/*/android', '/apps/*/android/', 'android/', 'android']);
+const ANDROID_NATIVE_FILES = ['AndroidManifest.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts', 'gradle.properties', 'proguard-rules.pro'];
+const ANDROID_MODS = /\b(withAndroidManifest|withAppBuildGradle|withProjectBuildGradle|withSettingsGradle|withGradleProperties|withStringsXml|withAndroidStyles|withAndroidColors|withAndroidColorsNight|withMainActivity|withMainApplication|AndroidConfig\.)/;
+const ANDROID_SETTING_HOMES = /^packages\/shell\/(plugins|src\/config)\//;
+
+function checkAndroidCommitted(root, apps, report) {
+  if (apps.length === 0) return;
+  const ignore = existsSync(join(root, '.gitignore')) ? readFileSync(join(root, '.gitignore'), 'utf8').split('\n').map((line) => line.trim()) : [];
+  if (!ignore.some((line) => ANDROID_IGNORE_LINES.has(line))) {
+    report.problem({ file: '.gitignore', rule: 'android-committed', message: 'does not ignore apps/*/android/', fix: 'Add the line apps/*/android/: prebuild regenerates android/ from withShell on every build, so a committed copy goes stale and hides hand edits.' });
+    for (const app of apps) {
+      if (existsSync(join(root, app.dir, 'android'))) report.problem({ file: `${app.dir}/android/`, rule: 'android-committed', message: 'the generated Android project is not ignored and would be committed', fix: 'Ignore apps/*/android/ and change native settings in withShell or a plugin in packages/shell/plugins/.' });
+    }
+  }
+  if (!existsSync(join(root, '.git'))) return;
+  const tracked = spawnSync('git', ['-C', root, 'ls-files', '--', 'apps/*/android/*'], { encoding: 'utf8' });
+  for (const rel of (tracked.status === 0 ? tracked.stdout : '').split('\n').filter(Boolean).slice(0, 5)) {
+    report.problem({ file: rel, rule: 'android-committed', message: 'git tracks a file of the generated Android project', fix: 'git rm -r --cached the app\'s android/ folder; prebuild regenerates it from withShell.' });
+  }
+}
+
+function checkAndroidSources(root, report) {
+  const files = walk(root, { include: ['*.kt', '*.json', '*.ts', '*.tsx', ...ANDROID_NATIVE_FILES], ignore: IGNORE }).filter((rel) => MONOREPO_CODE.test(rel) || /^modules\//.test(rel));
+  for (const rel of files) {
+    const name = rel.split('/').at(-1);
+    if (name.endsWith('.kt') && !SHELL_NATIVE_ANDROID.test(rel)) report.problem({ file: rel, rule: 'kotlin-placement', message: 'a Kotlin file outside packages/shell/android/', fix: 'Native Android code lives only in the Shell\'s local Expo module, packages/shell/android/ (beside packages/shell/ios/); the generated apps/<id>/android/ is rebuilt by prebuild.' });
+    if (ANDROID_NATIVE_FILES.includes(name) && !SHELL_NATIVE_ANDROID.test(rel)) report.problem({ file: rel, rule: 'android-setting', message: `a native Android file (${name}) outside the Shell's native module`, fix: 'Set it in withShell (packages/shell/src/config/with-shell.ts) or a config plugin in packages/shell/plugins/; prebuild writes the native files.' });
+    if (name === 'app.json') {
+      const text = readFileSync(join(root, rel), 'utf8');
+      const at = text.search(/"android"\s*:/);
+      if (at >= 0) report.problem({ file: rel, line: text.slice(0, at).split('\n').length, rule: 'android-setting', message: 'an "android" block in app.json', fix: 'Every native setting comes from withShell through app.config.ts; delete app.json\'s android block and set it in withShell\'s Android block.' });
+    }
+    if (/\.tsx?$/.test(name) && !ANDROID_SETTING_HOMES.test(rel) && !/^packages\/tooling\//.test(rel)) {
+      const { code, lineOf } = scanSource(readFileSync(join(root, rel), 'utf8'));
+      // Import and re-export statements only name a mod; the first use is the finding.
+      const uses = code.replace(/\b(import|export)\b[^;]*?\bfrom\b[^;]*;/g, (statement) => statement.replace(/[^\n]/g, ' '));
+      const match = ANDROID_MODS.exec(uses);
+      if (match) report.problem({ file: rel, line: lineOf(match.index), rule: 'android-setting', message: `an Android config-plugin mod (${match[1].replace(/\.$/, '')}) outside packages/shell/plugins/`, fix: 'Native settings come only from withShell and path-referenced plugins in packages/shell/plugins/with-<capability>.ts.' });
+    }
+  }
+}
+
 function checkGameConfigUse(root, files, report) {
   for (const rel of files) {
     if (/^apps\/[^/]+\/app\.config\.ts$/.test(rel) || /^packages\/tooling\//.test(rel) || /^test\//.test(rel)) continue;
@@ -280,5 +334,7 @@ run(async () => {
   const files = checkPlacement(root, report);
   checkImportTimeWork(root, files, report);
   checkGameConfigUse(root, files, report);
+  checkAndroidCommitted(root, apps, report);
+  checkAndroidSources(root, report);
   return report.finish({ checked: files.length + apps.length + 1, unit: 'files and manifests' });
 });

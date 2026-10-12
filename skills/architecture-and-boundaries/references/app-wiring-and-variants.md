@@ -9,6 +9,7 @@ How one game becomes one Expo app: every per-game value in `game.config.ts`, `ap
 - app.config.ts
 - index.ts and src/index.ts
 - What withShell does
+- The Android block
 - Runtime configuration: expo.extra.game
 - Local config plugins
 - Build variants
@@ -142,7 +143,8 @@ Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 | `scheme` only in test builds | debug deep links (Maestro setup) exist only where the debug handler exists |
 | `ios.deploymentTarget: '16.4'` | built-in key since SDK 56 |
 | `ios.appleTeamId` from `APPLE_TEAM_ID` | writes `DEVELOPMENT_TEAM`; absent for simulator builds |
-| `ios.buildNumber`, `android.versionCode` | from `buildNumber` |
+| `ios.buildNumber`, `android.versionCode` | from `buildNumber` (one shared sequence for both stores) |
+| `android: androidConfig(game)` | the Android block (next section): package, `versionCode`, `allowBackup: true`, the permission allowlist and `blockedPermissions`, `userInterfaceStyle: 'automatic'` |
 | `ios.config.usesNonExemptEncryption: false` | skips the export-compliance question |
 | `infoPlist.CADisableMinimumFrameDurationOnPhone: true` | 120 Hz on ProMotion |
 | `CFBundleAllowMixedLocalizations` + `locales` | per language: the home-screen name (`CFBundleDisplayName`) and Apple's tracking prompt text (`NSUserTrackingUsageDescription`, from the Shell catalogs' `consent.tracking.usage-description` through `TRACKING_USAGE_DESCRIPTIONS`); Expo writes them into each language's `InfoPlist.strings` at prebuild |
@@ -151,7 +153,7 @@ Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 | `experiments.reactCompiler: true` | the React Compiler |
 | `extra.appVariant`, `extra.adsMode`, `extra.adUnits` | runtime inputs; `adsMode` is `off` when the game's ads master switch is off; `adUnits` only in live builds (absent, not `null`) |
 | `extra.game` | the runtime subset of `GameConfig` |
-| `plugins` | `['@e07/shell/plugins/with-app-variant-marker.ts', { appVariant }]`, then `...shellPlugins(game, adsMode)` |
+| `plugins` | `['@e07/shell/plugins/with-app-variant-marker.ts', { appVariant }]`, then `...shellPlugins(game, adsMode)`, then `...androidPlugins(game)` (the backup rules, RTL support, the upload-key signing) |
 | the icon and the splash | `withGameArt(config, game.id)` last: the generated icons and the `expo-splash-screen` plugin, only once `render-art.ts` has drawn the game (its grounds are in `splash-grounds.ts`, which ships empty) |
 
 `shell-plugins.ts` is the ONE native-module plugin list; each line names the skill that owns the module:
@@ -162,11 +164,32 @@ Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 | `['expo-localization', { supportedLocales: { ios, android } }]` (the four languages only; never `supportsRTL`/`forcesRTL`) | i18n-strings-and-catalogs |
 | `['expo-font', { fonts: FONT_FILES }]` (Lilita One, Rubik Regular and Bold, Vazirmatn Regular and Bold, from `./assets/fonts/`) | toybox-design-system |
 | `'expo-iap'` (the bare string: every option adds a server or an SDK) | premium-purchase |
+| `['expo-build-properties', { android: { kotlinVersion: '2.1.20' } }]` (expo-iap's Play Billing half needs React Native's Kotlin; `expo-build-properties` `~57.0.22` is installed at Android step 2) | premium-purchase |
 | `['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)]` | admob-ads |
 | `['expo-tracking-transparency', { userTrackingPermission: TRACKING_USAGE_DESCRIPTIONS.en }]` (Apple's ATT prompt, owner decision O1; in every variant, and never asked with `ADS_MODE=off`) | admob-ads |
 | `AUDIO_API_PLUGIN` (no background audio, microphone, permissions or downloads) | game-audio-and-haptics |
 
-Outside the list, `withShell` adds `ios.privacyManifests: PRIVACY_MANIFESTS` (privacy-and-network-audit) and ends with `withGameArt(config, game.id)` (code-drawn-art-and-icons). Paths in plugin options are relative to the app folder (Expo's project root): each app carries its own `assets/fonts/`, copied by the new-game scaffold. A new native module with a config plugin gets one line in `shellPlugins`, never a second list and never an edit in `ios/`; the Xcode-27 scene-support wrapper (expo-sdk-upgrade) wraps this list when it is due. `with-shell.test.ts` proves the order (marker first, then every Shell plugin), the privacy manifest, the app ids (a `com.example.*` or hyphenated bundle id and a Premium id other than `<bundleId>.premium` throw), the tracking text in all four locales, and that the icon and splash join only for a game `render-art.ts` has drawn; `shell-plugins.test.ts` proves each line and its options, the tracking entry with the catalog's en text in every ads mode included. `shell-plugins.ts` reads the four Shell catalogs with `import ... with { type: 'json' }` through `@e07/shell/i18n/catalogs/<lang>.json` (Node, Jest and Expo's config loader all accept it; verified with `npx expo config` on 2026-09-30).
+Outside the list, `withShell` adds `ios.privacyManifests: PRIVACY_MANIFESTS` (privacy-and-network-audit) and ends with `withGameArt(config, game.id)` (code-drawn-art-and-icons). Paths in plugin options are relative to the app folder (Expo's project root): each app carries its own `assets/fonts/`, copied by the new-game scaffold. A new native module with a config plugin gets one line in `shellPlugins`, never a second list and never an edit in `ios/`; the Xcode-27 scene-support wrapper (expo-sdk-upgrade) wraps this list when it is due. `with-shell.test.ts` proves the order (marker first, then every Shell plugin, then the Android plugins), the Android block, the backup-rules and upload-signing entries, the privacy manifest, the app ids (a `com.example.*` or hyphenated bundle id and a Premium id other than `<bundleId>.premium` throw), the tracking text in all four locales, and that the icon and splash join only for a game `render-art.ts` has drawn; `shell-plugins.test.ts` proves each line and its options, the tracking entry with the catalog's en text in every ads mode included. `shell-plugins.ts` reads the four Shell catalogs with `import ... with { type: 'json' }` through `@e07/shell/i18n/catalogs/<lang>.json` (Node, Jest and Expo's config loader all accept it; verified with `npx expo config` on 2026-09-30).
+
+## The Android block
+
+`packages/shell/src/config/android-config.ts` (Node world, with its test) is the Android part of the composer, as `ads-config.ts` and `art-config.ts` are theirs. `withShell` sets `android: androidConfig(game)` and appends `...androidPlugins(game)` after `shellPlugins`. Nothing Android is set anywhere else: the generated `apps/<id>/android/` is never edited or committed (`check-layout` `android-committed`, `android-setting`), and Kotlin lives only in `packages/shell/android/` (`kotlin-placement`).
+
+| Field or plugin | Value and why |
+|---|---|
+| `package` | `game.bundleId`, the same `io.applander.<game id without hyphens>` as iOS (owner decision O4; `appIdOf` already refused any other) |
+| `versionCode` | `game.buildNumber`: one build-number sequence for both stores, so a tag `<game-id>/vX.Y.Z+<n>` never repeats |
+| `allowBackup: true` | the save follows the player through Google's device backup (spec 8.6, decision D5); Expo's template default is `false` |
+| `permissions` | `ANDROID_PERMISSIONS`: `INTERNET` (AdMob and Play Billing, the only network users, N3) and `VIBRATE` (haptics). The SDKs add theirs; every permission of a built APK must be on android-emulator-build's allowlist (`check-emu-app` `permission`) |
+| `blockedPermissions` | `BLOCKED_ANDROID_PERMISSIONS`: the Expo template's extras (`SYSTEM_ALERT_WINDOW`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`) and the ones no app may hold (microphone, camera, location, media, contacts, notifications), removed from the merged manifest with `tools:node="remove"` whoever adds them |
+| `userInterfaceStyle: 'automatic'` | dark mode follows the phone; on Android it needs `expo-system-ui` in every app |
+| `'@e07/shell/plugins/with-backup-rules.ts'` | writes `res/xml/backup_rules.xml` (`android:fullBackupContent`, Android 11 and lower) and `res/xml/data_extraction_rules.xml` (`android:dataExtractionRules`, Android 12 and later, cloud backup and device transfer), each including only `SQLite/save.db`, `SQLite/save.db-wal` and `SQLite/save.db-shm` in domain `file` (expo-sqlite 57 keeps databases in `<filesDir>/SQLite/`), and sets the three attributes on `<application>`. Everything else (consent and ad SDK state) stays out of the backup. The XML and the attributes come from `backup-rules.ts` (tested); the plugin only writes them |
+| `'@e07/shell/plugins/with-rtl-support.ts'` | `android:supportsRtl="true"` on `<application>` (`rtl-support.ts`, tested): Expo's template sets it today, this keeps fa and ckb right to left if the template changes. Never expo-localization's `supportsRTL` option (rtl-and-direction) |
+| `['@e07/shell/plugins/with-upload-signing.ts', { game: game.id }]` | android-release-play's plugin (it ships the plugin and `upload-signing.ts`): release builds use the game's upload key when its Gradle properties exist. Without this entry every Play bundle stays debug-signed and the store-AAB gate's `signing` rule refuses it |
+
+Plugin paths are package paths (`@e07/shell/plugins/<file>.ts`), never `./plugins/...`: Expo resolves a plugin string from the app folder (its project root), where `./plugins/` does not exist.
+
+The composer files change together at Android step 2 (the repo's `with-shell.ts`, `shell-plugins.ts` and their tests are replaced, and `android-config.ts`, `backup-rules.ts`, `rtl-support.ts` with their tests and the two plugins are added; `expo-build-properties` is installed first, or `expo config` fails to resolve its line). Two existing expectations grow by the Android lines: the plugin order in `with-shell.test.ts` and the module list in `shell-plugins.test.ts`, so `check-test-edits` reports them as `assertion-changed` unless the commit carries the directed trailer git-commits-and-reporting names for Android step 2. Proven on Expo's mod compiler (introspect mode on the template manifest, and a real run on a throwaway project): the application gets `allowBackup="true"`, `supportsRtl="true"`, `fullBackupContent="@xml/backup_rules"`, `dataExtractionRules="@xml/data_extraction_rules"` and the `E07AppVariant` meta-data, and both XML files are written.
 
 ## Runtime configuration: expo.extra.game
 
@@ -178,7 +201,9 @@ Outside the list, `withShell` adds `ios.privacyManifests: PRIVACY_MANIFESTS` (pr
 
 A local plugin is an ESM TypeScript file in `packages/shell/plugins/`, named `with-<capability>.ts`, with a default export, referenced from `withShell` by its package path (`templates/with-app-variant-marker.ts` is the shape to copy). Runtime imports from Expo use `expo/config-plugins.js`: the `expo` package has no `exports` map, so the bare `expo/config-plugins` does not resolve from ESM (`ERR_MODULE_NOT_FOUND`, verified). Tag the default export `/** @public ... */` so knip keeps it.
 
-`with-app-variant-marker.ts` writes `E07AppVariant` into Info.plist, a second, native-side signal for the store-artifact gate: `plutil -extract E07AppVariant raw <App>.app/Info.plist` must print `store`.
+`with-app-variant-marker.ts` writes `E07AppVariant` into Info.plist and, on Android, as `<meta-data android:name="E07AppVariant" android:value="test|store">` under `<application>`: a second, native-side signal for the store-artifact gates. On iOS `plutil -extract E07AppVariant raw <App>.app/Info.plist` must print `store`; on Android android-emulator-build's `check-emu-app` rule `variant` reads the meta-data from the APK.
+
+The Android plugins follow the same shape: `with-backup-rules.ts` and `with-rtl-support.ts` (this skill) and `with-upload-signing.ts` (android-release-play). Each keeps its logic in a tested module under `packages/shell/src/config/` (`backup-rules.ts`, `rtl-support.ts`, `upload-signing.ts`), because Jest runs only `src/` tests and a `../` import from a test into `plugins/` breaks the import rules; the plugin only applies it with `withAndroidManifest` (and `withDangerousMod` to write `res/xml/` files).
 
 ## Build variants
 

@@ -1,0 +1,3 @@
+apps/sky-hop/app.json:3 [android-setting]
+apps/tile-drop/AndroidManifest.xml [android-setting]
+packages/shell/src/app/backup-off.ts:5 [android-setting]

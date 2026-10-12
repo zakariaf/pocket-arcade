@@ -1,6 +1,6 @@
 ---
 name: architecture-and-boundaries
-description: Places Pocket Arcade code by workspace, folder and import zone (game-kit, Shell, tooling, apps), the nine ports and fakes, the GameModule seam, withShell wiring, build variants. Use when placing a new file, package, port or game, or on an import-boundary error. Not for names (naming-conventions).
+description: Places Pocket Arcade code by workspace, folder and import zone (game-kit, Shell, tooling, apps), the nine ports and fakes, the GameModule seam, withShell and its Android plugins, build variants. Use when placing a file, package, port, game, or on a boundary error. Not for names (naming-conventions).
 ---
 
 # Architecture and boundaries
@@ -17,7 +17,7 @@ One monorepo holds one reusable Shell and about 26 game apps. This skill keeps i
 6. **App code never imports Node-world code.** Not even with `import type`: `packages/tooling`, `packages/shell/plugins`, `app.config.ts` and any config file that reaches `node:*` or `expo/config-plugins` stay out of app programs; only neutral config files (types, pure parsers) are shared. Why: a type-only import still drags `process` and `node:fs` into the app program.
 7. **Packages are TypeScript source.** Packages have `"type": "module"` and `"exports": { "./*": "./src/*" }` (the Shell also `./plugins/*`), no build step, no `main`, no barrel; every native module is a dependency of every app with one version, and a Shell `peerDependency`; the root `overrides` pins `react` and `react-native`. Why: Metro, Jest, tsc and Node all resolve source through `exports`, and two Reacts break Jest.
 8. **Per-game values live only in `game.config.ts`.** App code never imports it; `withShell` embeds the runtime subset as `expo.extra.game`, read by `readGameExtra()`; never put `null` in `extra` (it arrives as `{}` and crashes the parser). The app id is always `io.applander.<game id without hyphens>` (iOS bundle and Android package; Line Siege `io.applander.linesiege`) and Premium is `<bundleId>.premium` (owner decision O4): `withShell` throws on anything else, `com.example.*` included. Why: one file per game, real ad IDs reach only live builds, and a placeholder id must never reach a build.
-9. **Each app is wired the same way.** `app.config.ts` is one statement, `export default withShell(gameConfig, process.env);`; `index.ts` is 3 lines ending in `startShell(<game>Game)`; native settings come only from `withShell`, the ONE plugin list `shellPlugins` (`packages/shell/src/config/shell-plugins.ts`, one line per native module naming its owner skill) and path-referenced plugins in `packages/shell/plugins/`. Why: Continuous Native Generation, the polyfills and direction check must run first, and a second plugin list is how a module silently goes missing from a build.
+9. **Each app is wired the same way.** `app.config.ts` is one statement, `export default withShell(gameConfig, process.env);`; `index.ts` is 3 lines ending in `startShell(<game>Game)`; native settings come only from `withShell` (its Android block is `android-config.ts`), the ONE plugin list `shellPlugins` (`packages/shell/src/config/shell-plugins.ts`, one line per native module naming its owner skill) and path-referenced plugins in `packages/shell/plugins/`; the generated `ios/` and `android/` are never edited or committed, and Kotlin lives only in `packages/shell/android/`. Why: Continuous Native Generation, the polyfills and direction check must run first, and a second plugin list is how a module silently goes missing from a build.
 10. **Build variants decide inclusion.** `APP_VARIANT` and `EXPO_PUBLIC_APP_VARIANT` (same value) and `ADS_MODE` are set for every build; test-only code is reachable only through `packages/shell/src/app/test-only.ts` behind the literal `process.env.EXPO_PUBLIC_APP_VARIANT === 'store'` comparison; every app's `metro.config.js` keys `cacheVersion` on the variant. Why: verified twice, an imported constant or an unkeyed cache shipped the debug menu in a store build.
 11. **Every file has one home.** Place files by the placement table; a new kind of file gets a row (the owner decides). No module does work at import time: no database, adapter, domain store or AudioContext creation and no direction switch at module level. Why: the agent finds code by path, and a direction reload re-runs every module.
 
@@ -56,7 +56,9 @@ In a new repo each file lands at the Shell build step the project index gives it
 | `templates/app-variant.ts`, `templates/app-variant.test.ts` | `packages/shell/src/config/` at Shell step 1, the bootstrap |
 | `templates/with-shell.ts`, `templates/with-shell.test.ts`, `templates/shell-plugins.ts`, `templates/shell-plugins.test.ts` | `packages/shell/src/config/` at the Shell's native step (Shell step 8): they replace the bootstrap's phase-0 `with-shell.ts` and its test once every plugin's package is installed (app-wiring-and-variants.md, "withShell") |
 | `templates/test-only.ts`, `templates/test-only-api.ts`, `templates/test-only-entry.ts` | `packages/shell/src/app/` at Shell step 6 (the boot pieces that compile alone): the gate and the one shared test-only pair. At step 6 the pair holds only `TEST_BUILD_SENTINEL` (delete every other member and its export: a member joins once the file behind it exists), so `test-only.ts` compiles; the Shell core's members join at step 7, where `hydrate-save.ts` is the first save file that imports the gate. No step-4 or step-5 template imports it. `DebugScreen` stays out while S15 is outside `shell-slice.json` |
-| `templates/with-app-variant-marker.ts` | `packages/shell/plugins/with-app-variant-marker.ts` at Shell step 1, the bootstrap (the shape of every local config plugin) |
+| `templates/with-app-variant-marker.ts` | `packages/shell/plugins/with-app-variant-marker.ts` at Shell step 1, the bootstrap (the shape of every local config plugin); its Android half (the `E07AppVariant` meta-data) arrives again at Android step 2 |
+| `templates/android-config.ts`, `templates/android-config.test.ts`, `templates/backup-rules.ts`, `templates/backup-rules.test.ts`, `templates/rtl-support.ts`, `templates/rtl-support.test.ts` | `packages/shell/src/config/` at Android step 2, with the new `with-shell.ts`, `shell-plugins.ts` and their tests (install `expo-build-properties` first) |
+| `templates/with-backup-rules.ts`, `templates/with-rtl-support.ts` | `packages/shell/plugins/` at Android step 2, with android-release-play's `with-upload-signing.ts` (withShell lists all three) |
 
 ## Definition of done
 
@@ -66,7 +68,7 @@ In a new repo each file lands at the Shell build step the project index gives it
 - [ ] New files sit where the placement table says; a new kind of file got a row approved by the owner.
 - [ ] A new port has its port file, adapter, fake and fake test, is in `Services`, is created once in the composition root (`device-adapters.ts`, faked in `create-test-adapters.ts`) and faked in `renderWithShell`.
 - [ ] `app.config.ts` is the one `withShell` statement, `index.ts` the 3-line entry, `metro.config.js` keys the cache on the variant, and no runtime file imports `game.config.ts`.
-- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-layout.mjs .` prints `RESULT: PASS` (workspaces, manifests, one React, wiring, folders, ports, placement, import-time work).
+- [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-layout.mjs .` prints `RESULT: PASS` (workspaces, manifests, one React, wiring, folders, ports, placement, import-time work, Android generated and in place).
 - [ ] `node ${CLAUDE_SKILL_DIR}/scripts/check-boundaries.mjs .` prints `RESULT: PASS`
 
 ## Anti-patterns
@@ -79,7 +81,8 @@ In a new repo each file lands at the Shell build step the project index gives it
 - **Test-only code reading `TEST_ONLY`.** The debug screen, its model, the parity harness and the perf tools are reached from `test-only-entry.ts`; importing `app/test-only.ts` again (directly or through `use-parity-opener.ts` or `use-reduce-motion.ts`) closes an import loop through the gate (`import-cycle`). They import the member from its own file, such as `parityFrameState` from `app/parity/parity-session.ts`.
 - **Reading `game.config.ts` at runtime, or `null` in `extra`.** Runtime values come from `expo.extra.game` through `readGameExtra()`, with absent keys instead of `null`.
 - **Creating stores, databases or adapters at module level.** A direction reload re-runs every module and doubles the writes; create them in the composition root (`createDeviceAdapters()`, `createShellParts`).
-- **Editing `ios/` or setting native options outside `withShell`.** Prebuild regenerates `ios/`; use a config plugin in `packages/shell/plugins/`.
+- **Editing `ios/` or `android/`, or setting native options outside `withShell`.** Prebuild regenerates both; use the Android block (`android-config.ts`) or a config plugin in `packages/shell/plugins/`.
+- **`./plugins/with-x.ts` as a plugin path.** Expo resolves it from the app folder, where it does not exist; list `@e07/shell/plugins/with-x.ts`.
 
 ## Files in this skill
 
@@ -111,16 +114,24 @@ In a new repo each file lands at the Shell build step the project index gives it
 | `templates/fake-error-log.test.ts` | Its tests (synced from the library) | With the fake |
 | `templates/read-game-extra.ts` | `readGameExtra()` (valibot parse of `expo.extra.game`, throws on a composer bug) and `readAppVersion()` | New repo, before the composition root |
 | `templates/read-game-extra.test.ts` | Its tests: the embedded config, the App Store id, an empty-object null, a missing key, no extra | With `read-game-extra.ts` |
-| `templates/with-shell.ts` | The final config composer: phase 0 plus the app-id guard (`appIdOf`, owner decision O4), the privacy manifest, `shellPlugins`, the per-language name and ATT text (`locales`) and `withGameArt` | Shell native step (replaces the bootstrap's) |
-| `templates/with-shell.test.ts` | Its tests: variants, ad units, names and ATT texts per language, the app ids (`com.example.*` and hyphens refused), the plugin order, the privacy manifest, the art only for a drawn game | With `with-shell.ts` |
-| `templates/shell-plugins.ts` | `shellPlugins(game, adsMode)`: the ONE native-module plugin list, each line naming its owning skill (the `expo-tracking-transparency` entry included), and `TRACKING_USAGE_DESCRIPTIONS` read from the four Shell catalogs | Shell native step; a new native module |
-| `templates/shell-plugins.test.ts` | Its tests: every module once, locales and fonts, bare `expo-iap`, AdMob ids per mode, the ATT entry with the catalog's en text | With `shell-plugins.ts` |
+| `templates/with-shell.ts` | The final config composer: phase 0 plus the app-id guard (`appIdOf`, owner decision O4), the privacy manifest, `shellPlugins`, the Android block and plugins (`androidConfig`, `androidPlugins`), the per-language name and ATT text (`locales`) and `withGameArt` | Shell native step (replaces the bootstrap's); again at Android step 2 |
+| `templates/with-shell.test.ts` | Its tests: variants, ad units, names and ATT texts per language, the app ids (`com.example.*` and hyphens refused), the plugin order, the Android block, the backup-rules and upload-signing entries, the privacy manifest, the art only for a drawn game | With `with-shell.ts` |
+| `templates/android-config.ts` | `androidConfig(game)` (package, `versionCode`, `allowBackup: true`, the permission allowlist and `blockedPermissions`, `userInterfaceStyle: 'automatic'`) and `androidPlugins(game)` (backup rules, RTL support, upload signing) | Android step 2 |
+| `templates/android-config.test.ts` | Its tests: the block, the blocked permissions, the three plugin entries | With `android-config.ts` |
+| `templates/backup-rules.ts` | The Auto Backup rules (decision D5): `backup_rules.xml`, `data_extraction_rules.xml` with only `SQLite/save.db` and its `-wal` and `-shm`, and `applyBackupRules` for `<application>` | Android step 2 |
+| `templates/backup-rules.test.ts` | Its tests: the included files, the exact XML, the manifest attributes | With `backup-rules.ts` |
+| `templates/rtl-support.ts` | `applyRtlSupport`: `android:supportsRtl="true"` on `<application>` | Android step 2 |
+| `templates/rtl-support.test.ts` | Its tests | With `rtl-support.ts` |
+| `templates/with-backup-rules.ts` | The config plugin that writes both XML files (`withDangerousMod`) and applies `applyBackupRules` | Android step 2 |
+| `templates/with-rtl-support.ts` | The config plugin that applies `applyRtlSupport` | Android step 2 |
+| `templates/shell-plugins.ts` | `shellPlugins(game, adsMode)`: the ONE native-module plugin list, each line naming its owning skill (the `expo-tracking-transparency` and `expo-build-properties` entries included), and `TRACKING_USAGE_DESCRIPTIONS` read from the four Shell catalogs | Shell native step; a new native module; Android step 2 |
+| `templates/shell-plugins.test.ts` | Its tests: every module once, locales and fonts, bare `expo-iap`, Kotlin 2.1.20, AdMob ids per mode, the ATT entry with the catalog's en text | With `shell-plugins.ts` |
 | `templates/app-variant.ts` | `resolveBuildVariant`: the variant matrix as code | New repo; a variant change |
 | `templates/app-variant.test.ts` | Its tests (defaults, mismatch, forbidden pairs) | With `app-variant.ts` |
 | `templates/test-only.ts` | The literal gate that strips test-only code from store bundles | New repo |
 | `templates/test-only-api.ts` | `TestOnlyApi`, the type of the one shared test-only pair (synced from the library; do not edit here): one member per entry export; trim it to the members whose files exist (sentinel-only at Shell step 6) | Shell step 6 (sentinel only), then each step that adds a member's file |
 | `templates/test-only-entry.ts` | The pair's entry: every test-only export `@public` plus `TEST_BUILD_SENTINEL` (synced from the library; do not edit here) | With `test-only-api.ts` |
-| `templates/with-app-variant-marker.ts` | A local config plugin (default export, `@public`) | A new config plugin |
+| `templates/with-app-variant-marker.ts` | A local config plugin (default export, `@public`): `E07AppVariant` in Info.plist and as Android meta-data | A new config plugin |
 | [examples/clock-port/clock-port.ts](examples/clock-port/clock-port.ts) | A complete port type (the four clock files are synced from the library) | Workflow step 2 (ports); copy when the clock files are missing |
 | [examples/clock-port/system-clock-adapter.ts](examples/clock-port/system-clock-adapter.ts) | Its device adapter | Workflow step 2 (ports) |
 | [examples/clock-port/fake-clock.ts](examples/clock-port/fake-clock.ts) | Its controllable fake | Workflow step 2 (ports) |
@@ -128,7 +139,7 @@ In a new repo each file lands at the Shell build step the project index gives it
 | [examples/game-config.ts](examples/game-config.ts) | A complete `game.config.ts` (Line Siege) | Workflow step 2 (games) |
 | [examples/line-siege-module.ts](examples/line-siege-module.ts) | A game's `src/index.ts`: assembly only | Workflow step 2 (games) |
 | `scripts/check-boundaries.mjs` | Resolves every import and checks zones, purity, game-facing modules, Node world, vendor SDKs, banned packages, the test-only gate, `../` and cycles (a loop back through the test-only gate is named as such) | Workflow step 5 |
-| `scripts/check-layout.mjs` | Checks workspaces, manifests, one React, native deps, app wiring, folders, port triples, placement and import-time work | Workflow step 5 |
+| `scripts/check-layout.mjs` | Checks workspaces, manifests, one React, native deps, app wiring, folders, port triples, placement, import-time work, and Android: the generated `android/` ignored and untracked, Kotlin only in `packages/shell/android/`, native Android settings only in `withShell` and its plugins | Workflow step 5 |
 | `scripts/lib/import-graph.mjs` | Builds and resolves the import graph (workspace `exports`, built-ins, packages), finds cycles and Node-world reach | Only when changing a checker |
 | `scripts/lib/source-scan.mjs` | Dependency-free lexer for comments, strings and imports (synced from the library; do not edit here) | Only when changing a checker |
 | `scripts/lib/workspaces.mjs` | Reads the workspace packages (synced from the library) | Only when changing a checker |

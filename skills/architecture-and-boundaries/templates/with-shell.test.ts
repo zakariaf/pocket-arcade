@@ -1,4 +1,5 @@
 // packages/shell/src/config/with-shell.test.ts
+import { androidConfig, androidPlugins } from './android-config.ts';
 import { ICON_CONFIG } from './art-config.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
 import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
@@ -151,8 +152,30 @@ describe('withShell', () => {
     expect(config.plugins).toStrictEqual([
       [MARKER, { appVariant: 'test' }],
       ...shellPlugins(GAME, 'test'),
+      ...androidPlugins(GAME),
     ]);
     expect(config.ios?.privacyManifests).toBe(PRIVACY_MANIFESTS);
+  });
+
+  it('writes the Android block: package, versionCode, backup, permissions, dark mode', () => {
+    const config = withShell(GAME, STORE_OFF);
+    expect(config.android).toStrictEqual(androidConfig(GAME));
+    expect(config.android).toMatchObject({
+      package: 'io.applander.probegame',
+      versionCode: 3,
+      allowBackup: true,
+      userInterfaceStyle: 'automatic',
+    });
+  });
+
+  it('keeps the save in the device backup and signs Play bundles with the upload key', () => {
+    const plugins = withShell(GAME, STORE_OFF).plugins ?? [];
+    expect(plugins).toContain('@e07/shell/plugins/with-backup-rules.ts');
+    expect(plugins).toContain('@e07/shell/plugins/with-rtl-support.ts');
+    expect(plugins).toContainEqual([
+      '@e07/shell/plugins/with-upload-signing.ts',
+      { game: 'probe-game' },
+    ]);
   });
 
   it('adds the icon and the splash plugin last, only for a game render-art has drawn', () => {

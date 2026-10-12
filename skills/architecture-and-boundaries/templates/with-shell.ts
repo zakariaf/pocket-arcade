@@ -3,12 +3,14 @@
 // (type stripping): relative or @e07/shell/ imports with .ts extensions, erasable syntax, no RN.
 // Every native setting comes only from this file and config plugins. This full version replaces the
 // bootstrap's phase-0 composer once every native module is installed (architecture-and-boundaries):
-// it adds the privacy manifest, the one plugin list (shell-plugins.ts) and the game's art. The swap
+// it adds the privacy manifest, the one plugin list (shell-plugins.ts), the Android block and its
+// plugins (android-config.ts) and the game's art. The swap
 // (this file and with-shell.test.ts, Shell step 8) is committed with the trailer line
 // Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 // The app ids are the owner's decision O4 (2026-09-30): io.applander.<game id without hyphens>
 // for the iOS bundle and the Android package, and <bundle id>.premium for Premium.
 import { adUnitsExtra } from './ads-config.ts';
+import { androidConfig, androidPlugins } from './android-config.ts';
 import { resolveBuildVariant } from './app-variant.ts';
 import { withGameArt } from './art-config.ts';
 import { toGameExtra } from './game-extra.ts';
@@ -82,7 +84,8 @@ export function withShell(game: GameConfig, env: BuildEnv): ExpoConfig {
     userInterfaceStyle: 'automatic',
     ...(variant.appVariant === 'test' ? { scheme: `e07-${game.id}` } : {}),
     ios: iosConfig(game, env['APPLE_TEAM_ID']),
-    android: { package: game.bundleId, versionCode: game.buildNumber },
+    // The Android block (android-config.ts): package, versionCode, backup, permissions, dark mode.
+    android: androidConfig(game),
     locales: localizedNames(game),
     updates: { enabled: false },
     experiments: { reactCompiler: true },
@@ -97,6 +100,8 @@ export function withShell(game: GameConfig, env: BuildEnv): ExpoConfig {
       ['@e07/shell/plugins/with-app-variant-marker.ts', { appVariant: variant.appVariant }],
       // One line per native module, each naming its skill (shell-plugins.ts).
       ...shellPlugins(game, adsMode),
+      // Android only: the backup rules (D5), RTL support and the upload-key signing.
+      ...androidPlugins(game),
     ],
   };
   // code-drawn-art-and-icons: the icon and splash, once render-art.ts has drawn this game.

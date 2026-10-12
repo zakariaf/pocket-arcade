@@ -11,6 +11,8 @@
   {"prompt": "sign the Android release bundle with the upload key and bump the versionCode for Google Play", "expect": "android-release-play"},
   {"prompt": "where should the new clock port, its adapter and its fake live, and may a game import the Shell's store?", "expect": "architecture-and-boundaries"},
   {"prompt": "eslint reports import/no-restricted-paths when line-siege imports from another package; which dependency zone is allowed?", "expect": "architecture-and-boundaries"},
+  {"prompt": "add the Android backup rules and the upload-signing plugin to withShell", "expect": "architecture-and-boundaries"},
+  {"prompt": "where does the Kotlin for the cold-start module go, and which config plugin sets an Android manifest attribute?", "expect": "architecture-and-boundaries"},
   {"prompt": "swipes on the Line Siege board sometimes register as taps; tune the swipe classification and hit slop", "expect": "board-gestures-and-input"},
   {"prompt": "add pull-back-and-release aiming with a drag gesture for Bank Shot", "expect": "board-gestures-and-input"},
   {"prompt": "draw the Line Siege board with Skia and animate the pieces sliding after each move", "expect": "board-rendering-skia"},

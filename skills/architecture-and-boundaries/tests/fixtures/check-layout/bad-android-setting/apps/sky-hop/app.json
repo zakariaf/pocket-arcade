@@ -1,0 +1,5 @@
+{
+  "expo": {
+    "android": { "permissions": ["android.permission.CAMERA"] }
+  }
+}

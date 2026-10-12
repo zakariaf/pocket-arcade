@@ -61,6 +61,8 @@ export function shellPlugins(game: GameConfig, adsMode: AdsMode): PluginEntry[] 
     ['expo-font', { fonts: [...FONT_FILES] }],
     // premium-purchase: StoreKit 2 for the one Premium purchase (no options).
     'expo-iap',
+    // premium-purchase: expo-iap's Android half (Play Billing) needs React Native's Kotlin 2.1.20.
+    ['expo-build-properties', { android: { kotlinVersion: '2.1.20' } }],
     // admob-ads: app IDs and SKAdNetwork IDs, through admobPluginOptions only.
     ['react-native-google-mobile-ads', admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)],
     // admob-ads: Apple's App Tracking Transparency prompt (guideline 5.1.2(i)), asked after Google's
