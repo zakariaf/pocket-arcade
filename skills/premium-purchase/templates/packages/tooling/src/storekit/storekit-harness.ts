@@ -18,6 +18,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 import { driverPortFor, maestroGlobalArgs, maestroRunLine } from '@e07/tooling/e2e/maestro-args.ts';
 import { MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
+import { readUrlScheme } from '@e07/tooling/ios/sim-app.ts';
 import { busyNote } from '@e07/tooling/storekit/busy-note.ts';
 
 import type { MaestroTarget } from '@e07/tooling/e2e/maestro-args.ts';
@@ -66,12 +67,6 @@ function bundleIdOf(appDir: string): string {
   return id;
 }
 
-function urlSchemeOf(ios: string, scheme: string): string {
-  const key = 'CFBundleURLTypes.0.CFBundleURLSchemes.0';
-  const plist = join(ios, scheme, 'Info.plist');
-  return execFileSync('plutil', ['-extract', key, 'raw', plist], { encoding: 'utf8' }).trim();
-}
-
 // Fresh CNG project (test variant) + harness files + target. Never used for shipped builds.
 function prepareHarness(appDir: string, udid: string, metroPort: number): Harness {
   run('npx', ['expo', 'prebuild', '--platform', 'ios', '--clean'], appDir);
@@ -93,7 +88,7 @@ function prepareHarness(appDir: string, udid: string, metroPort: number): Harnes
     join(ios, scheme, 'storekit-harness.entitlements'),
   );
   run('ruby', [join(HERE, 'add-harness.rb'), ios, scheme, bundleId], appDir);
-  return { appDir, udid, metroPort, scheme, bundleId, urlScheme: urlSchemeOf(ios, scheme) };
+  return { appDir, udid, metroPort, scheme, bundleId, urlScheme: readUrlScheme(join(ios, scheme)) };
 }
 
 function xcodebuild(h: Harness, action: readonly string[]): void {

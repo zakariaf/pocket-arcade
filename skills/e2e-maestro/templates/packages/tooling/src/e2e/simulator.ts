@@ -6,7 +6,7 @@
 // simulator's UDID (never "booted"), and every Maestro run goes through runMaestro: the global
 // --device <udid> and a driver port of its own (maestro-args.ts) before the command.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { globSync, readFileSync } from 'node:fs';
+import { globSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { appProcessPattern } from '@e07/tooling/audit/network-runtime-layer.ts';
@@ -17,7 +17,12 @@ import {
   maestroRunLine,
 } from '@e07/tooling/e2e/maestro-args.ts';
 import { debugSetupTestArgs, MAESTRO_BIN, maestroEnvOf } from '@e07/tooling/ios/maestro-tool.ts';
-import { readBundleId, readExecutableName, readUrlScheme } from '@e07/tooling/ios/sim-app.ts';
+import {
+  readAppExtra,
+  readBundleId,
+  readExecutableName,
+  readUrlScheme,
+} from '@e07/tooling/ios/sim-app.ts';
 import {
   createSimctl,
   ensureSimulator,
@@ -214,11 +219,11 @@ export function e2eBuildProblem(build: BuildVariantInfo, game: string): string |
   return `e2e:ios needs a test build with ADS_MODE=off, this one is ${found}: run npm run build:ios:sim -- --app ${game} --variant test --ads off`;
 }
 
-/** Reads EXConstants.bundle/app.config and throws when the build is not test/off. */
+/** Reads the build's expo.extra (EXConstants.bundle) and throws when the build is not test/off. */
 export function requireAdsOffTestBuild(appPath: string, game: string): void {
-  const config = readFileSync(join(appPath, 'EXConstants.bundle', 'app.config'), 'utf8');
-  const extra = (JSON.parse(config) as { extra?: BuildVariantInfo }).extra;
-  const problem = e2eBuildProblem(extra ?? { appVariant: null, adsMode: null }, game);
+  const extra = readAppExtra(appPath);
+  const variant = { appVariant: extra['appVariant'] ?? null, adsMode: extra['adsMode'] ?? null };
+  const problem = e2eBuildProblem(variant, game);
   if (problem !== null) throw new Error(problem);
 }
 

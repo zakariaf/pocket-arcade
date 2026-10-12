@@ -6,9 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
+  readAppExtra,
   readBundleId,
   readExecutableName,
   readPerfLogPayload,
+  readPlistValue,
   readUrlScheme,
   saveDatabaseOf,
 } from './sim-app.ts';
@@ -40,6 +42,24 @@ describe('a built app and its data', () => {
       'e07-line-siege',
       'LineSiege',
     ]);
+  });
+
+  it('reads a key the plist lacks as undefined when it is optional, and throws when it is not', () => {
+    const plist = join(dir, 'Info.plist');
+    writeFileSync(plist, INFO_PLIST);
+    const key = 'ITSAppUsesNonExemptEncryption';
+    expect(readPlistValue(plist, key, { isOptional: true })).toBeUndefined();
+    expect(readPlistValue(plist, 'CFBundleExecutable', { isOptional: true })).toBe('LineSiege');
+    expect(() => readPlistValue(plist, key)).toThrow(`plutil could not read ${key}`);
+  });
+
+  it("reads expo.extra from the build's EXConstants.bundle, or {} without one", () => {
+    const bundle = join(dir, 'EXConstants.bundle');
+    mkdirSync(bundle);
+    writeFileSync(join(bundle, 'app.config'), '{"name":"Line Siege","extra":{"adsMode":"off"}}');
+    expect(readAppExtra(dir)).toStrictEqual({ adsMode: 'off' });
+    writeFileSync(join(bundle, 'app.config'), '{"name":"Line Siege"}');
+    expect(readAppExtra(dir)).toStrictEqual({});
   });
 
   it("reads the perf log's payload from the data container's save.db, or null without one", () => {

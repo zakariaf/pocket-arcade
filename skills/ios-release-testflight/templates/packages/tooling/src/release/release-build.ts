@@ -1,10 +1,11 @@
 // packages/tooling/src/release/release-build.ts
 // Release steps 3-7: clean prebuild and native audits, signed archive, export, and the
 // store-artifact gate on the exported .ipa (before anything reaches Apple).
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { existsSync, globSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { readAppExtra, readPlistValue } from '@e07/tooling/ios/sim-app.ts';
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
 import { ownerStepsPendingLine, storeGateProblems } from '@e07/tooling/release/store-gate.ts';
@@ -80,12 +81,8 @@ export function buildIpa(
   return { ipa, appDirInIpa: globSync(join(unpacked, 'Payload', '*.app'))[0] ?? '' };
 }
 
-function plistValue(plist: string, keyPath: string): string | undefined {
-  const result = spawnSync('plutil', ['-extract', keyPath, 'raw', '-o', '-', plist], {
-    encoding: 'utf8',
-  });
-  return result.status === 0 ? result.stdout.trim() : undefined;
-}
+const plistValue = (plist: string, keyPath: string): string | undefined =>
+  readPlistValue(plist, keyPath, { isOptional: true });
 
 function hasGetTaskAllow(appDir: string): boolean {
   const xml = execFileSync('codesign', ['-d', '--entitlements', '-', '--xml', appDir], {
@@ -107,12 +104,6 @@ function trackingTextOf(appDir: string, info: string): ArtifactFacts['trackingTe
     fa: lproj('fa'),
     ckb: lproj('ckb'),
   };
-}
-
-function readExtra(appDir: string): Readonly<Record<string, unknown>> {
-  const constants = join(appDir, 'EXConstants.bundle', 'app.config');
-  const parsed = JSON.parse(readFileSync(constants, 'utf8')) as { extra?: Record<string, unknown> };
-  return parsed.extra ?? {};
 }
 
 const textOf = (value: unknown): string | undefined =>
@@ -137,7 +128,7 @@ function idsAndLinksOf(extra: Readonly<Record<string, unknown>>): Partial<Artifa
 /** Step 6: the facts the gate needs, read from the unpacked app. */
 export function readArtifactFacts(appDir: string): ArtifactFacts {
   const info = join(appDir, 'Info.plist');
-  const extra = readExtra(appDir);
+  const extra = readAppExtra(appDir);
   const bundle = readFileSync(join(appDir, 'main.jsbundle')).toString('latin1');
   const encryption = plistValue(info, 'ITSAppUsesNonExemptEncryption');
   return {
