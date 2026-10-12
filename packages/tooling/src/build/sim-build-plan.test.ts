@@ -2,6 +2,7 @@
 import {
   buildScriptProblems,
   builtAppPath,
+  findWorkspace,
   isHelpRequest,
   isStaleDerivedData,
   linkProblems,
@@ -232,6 +233,12 @@ describe('variantEnv', () => {
 describe('xcode paths', () => {
   it('derives the scheme from the workspace name', () => {
     expect(schemeOf('ios/LineSiege.xcworkspace')).toBe('LineSiege');
+  });
+
+  it('finds the workspace a clean prebuild wrote, and names the prebuild log without one', () => {
+    const entries = ['Podfile', 'LineSiege.xcodeproj', 'LineSiege.xcworkspace', 'Pods'];
+    expect(findWorkspace(entries)).toBe('ios/LineSiege.xcworkspace');
+    expect(() => findWorkspace(['Podfile'])).toThrow('see build/logs/prebuild.log');
   });
 
   it('builds Release for the simulator without signing, arm64 only', () => {

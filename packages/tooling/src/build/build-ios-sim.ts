@@ -24,6 +24,7 @@ import { dirname, join } from 'node:path';
 import {
   buildScriptProblems,
   builtAppPath,
+  findWorkspace,
   isHelpRequest,
   isStaleDerivedData,
   linkProblems,
@@ -98,17 +99,6 @@ function runStep(name: string, command: Command, context: StepContext): void {
       `step "${name}" failed (exit ${String(result.status)}), see ${logFile}:\n${tail(logFile, 30)}`,
     );
   }
-}
-
-function findWorkspace(appDir: string): string {
-  const iosDir = join(appDir, 'ios');
-  const found = readdirSync(iosDir).find((entry) => entry.endsWith('.xcworkspace'));
-  if (found === undefined) {
-    throw new Error(
-      `no .xcworkspace in ${iosDir}: prebuild did not finish, see build/logs/prebuild.log`,
-    );
-  }
-  return join('ios', found);
 }
 
 /** The path a DerivedData folder recorded: info.plist's WorkspacePath, else a .pcm's cache path. */
@@ -199,7 +189,7 @@ function auditPrivacy(game: string, context: StepContext): void {
 function buildApp(options: SimBuildOptions, context: StepContext, udid: string): AppOnDisk {
   runStep('prebuild', { file: 'npx', args: PREBUILD_ARGS }, context);
   auditPrivacy(options.game, context);
-  const workspace = findWorkspace(context.appDir);
+  const workspace = findWorkspace(readdirSync(join(context.appDir, 'ios')));
   const scheme = schemeOf(workspace);
   runStep(
     'xcodebuild',
