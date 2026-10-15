@@ -53,7 +53,7 @@ The spec forbids our code from reaching the network (N1 to N3) and forbids analy
 
 HTTP clients are banned only as direct dependencies, because some tools pull them in transitively (for example `fbjs` pulls `cross-fetch`). Everything else is banned anywhere in `package-lock.json`: if a banned package appears transitively, find the parent with `npm explain <pkg>` and remove the parent.
 
-Also "do not add" (not banned, just wrong): `babel-preset-expo` (57.0.13 comes with `expo`), `babel-plugin-react-compiler` (a dependency of `babel-preset-expo`; the compiler is switched on with `experiments.reactCompiler: true`), `react-dom` and `react-native-web` (no web target; the Expo template leftovers). The checks report them as `do-not-add`.
+Also "do not add" (not banned, just wrong): `babel-preset-expo` (57.0.14 comes with `expo`), `babel-plugin-react-compiler` (a dependency of `babel-preset-expo`; the compiler is switched on with `experiments.reactCompiler: true`), `react-dom` and `react-native-web` (no web target; the Expo template leftovers). The checks report them as `do-not-add`.
 
 ## Banned options and pods (not packages, same reason)
 
