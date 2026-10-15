@@ -2,16 +2,16 @@
   "$comment": "The verified Pocket Arcade dependency set. Read by check-deps-policy.mjs and plan-dependency.mjs. heldBack.allowed is a regex on the bare version (without ~ or ^). appOnly: an app dependency that is not a Shell peer. implicitUse: an app-wide package that another package loads, so no code of ours imports it (the unused-dependency rule skips it). companions: packages that must be pinned together with the row, because the row lets them float (a caret dependency or an auto-installed peer): via install = install them in the same command, at the same exact version; via overrides = a root overrides entry at that version. Every app-wide row that the Shell lists as a \"*\" peer also gets a root overrides entry at its version (rule 4). Change a row only in the same commit that changes the repo, after the procedure in references/procedures.md.",
   "sdk": 57,
   "verified": "2026-09-26",
-  "expo": "57.0.25",
+  "expo": "57.0.27",
   "reactNative": "0.86.3",
   "react": "19.2.3",
   "packages": {
     "expo": {
-      "version": "57.0.25",
-      "spec": "~57.0.25",
+      "version": "57.0.27",
+      "spec": "~57.0.27",
       "install": "expo",
       "where": "apps",
-      "why": "SDK 57 line; on 2026-09-30 npm latest / sdk-57 is 57.0.26 (a patch, due 2026-10-07), next is 58.0.0 (not latest, so no SDK move is due)",
+      "why": "SDK 57 line; 57.0.27 (published 2026-10-06) is the newest patch at least 7 days old on 2026-10-15 and its module map carries expo-sqlite ~57.0.4 and expo-constants ~57.0.21; 57.0.28 and 57.0.29 are younger (due 2026-10-20 and 2026-10-22), next is 58.0.0 (not latest, so no SDK move is due)",
       "native": true
     },
     "react-native": {
@@ -98,11 +98,11 @@
       "why": "save-document validator (no eval or new Function, MIT, no dependencies); Shell only"
     },
     "expo-sqlite": {
-      "version": "57.0.3",
-      "spec": "~57.0.3",
+      "version": "57.0.4",
+      "spec": "~57.0.4",
       "install": "expo",
       "where": "apps",
-      "why": "synchronous API, WAL",
+      "why": "synchronous API, WAL; 57.0.4 (2026-10-06) fixes reading a re-run prepared statement and locks step, getAll, reset and finalize",
       "native": true
     },
     "expo-localization": {
@@ -130,8 +130,8 @@
       "native": true
     },
     "expo-constants": {
-      "version": "57.0.19",
-      "spec": "~57.0.19",
+      "version": "57.0.21",
+      "spec": "~57.0.21",
       "install": "expo",
       "where": "apps",
       "why": "runtime read of expo.extra",
@@ -698,7 +698,7 @@
     }
   ],
   "doNotAdd": {
-    "babel-preset-expo": "comes with expo (57.0.13); never add it directly",
+    "babel-preset-expo": "comes with expo (57.0.14); never add it directly",
     "babel-plugin-react-compiler": "a dependency of babel-preset-expo; the React Compiler is switched on in app.config",
     "react-dom": "no web target; remove the template leftover",
     "react-native-web": "no web target; remove the template leftover"

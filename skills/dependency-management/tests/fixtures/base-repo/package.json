@@ -13,7 +13,7 @@
     "react": "19.2.3",
     "react-native": "0.86.3",
     "@react-navigation/native": "7.4.1",
-    "expo": "57.0.25",
+    "expo": "57.0.27",
     "expo-haptics": "57.0.3",
     "expo-tracking-transparency": "57.0.2",
     "react-native-google-mobile-ads": "17.2.0",
