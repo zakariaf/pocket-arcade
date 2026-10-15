@@ -18,7 +18,7 @@ The exact steps for every kind of dependency change, with the commands and the t
 
 | Kind | Examples | Where | How |
 |---|---|---|---|
-| Expo-managed runtime (in Expo's module map) | `expo-haptics`, `react-native-screens`, Skia, Reanimated | every app, same specifier; Shell peer `"*"`; root override at the installed version | `npx expo install <pkg>@<table spec>` inside each `apps/<game>` (`expo-constants@~57.0.19`); keep what it writes |
+| Expo-managed runtime (in Expo's module map) | `expo-haptics`, `react-native-screens`, Skia, Reanimated | every app, same specifier; Shell peer `"*"`; root override at the installed version | `npx expo install <pkg>@<table spec>` inside each `apps/<game>` (`expo-constants@~57.0.21`); keep what it writes |
 | Native runtime outside the map | `react-native-google-mobile-ads`, `expo-iap`, `react-native-audio-api` | every app, exact; Shell peer; root override | `npm install <pkg>@<exact> -w apps/<a> -w apps/<b> …` |
 | JavaScript runtime used by apps and the Shell | `@react-navigation/native`, `@react-navigation/native-stack` | every app, exact; Shell peer | `npm install <pkg>@<exact> -w apps/<each>` |
 | Shell-only JavaScript library | `zustand`, `valibot`, `react-intl`, `@formatjs/intl-*` | `packages/shell` dependencies only | `npm install <pkg>@<exact> -w packages/shell` |
