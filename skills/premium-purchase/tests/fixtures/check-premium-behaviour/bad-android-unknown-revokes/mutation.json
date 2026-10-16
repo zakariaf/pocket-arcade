@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "  if (purchase.purchaseState === 'unknown') return null;\n",
+      "with": "  if (purchase.purchaseState === 'unknown' && 'purchaseToken' in purchase) {\n    return { productId: purchase.productId, transactionId: purchase.id, state: 'purchased', revocationDateMs: Date.now(), handle: purchase };\n  }\n  if (purchase.purchaseState === 'unknown') return null;\n"
+    }
+  }
+]

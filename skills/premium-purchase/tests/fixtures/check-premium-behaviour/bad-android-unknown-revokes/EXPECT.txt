@@ -1,0 +1,3 @@
+[android-refund]
+packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts
+never revokes

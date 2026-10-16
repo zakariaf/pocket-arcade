@@ -29,7 +29,11 @@ const SPEC = {
     '  environment: Java 17 even without JAVA_HOME, no analytics or update check),',
     '  harness-relaunch-wait (each wait for a premium.* state in a relaunch flow, 02-refund-relaunch.yaml and',
     '  04-approval-relaunch.yaml, allows at least 60000 ms: StoreKit answers the launch re-check only after its',
-    '  transaction sync, measured at 28 s).',
+    '  transaction sync, measured at 28 s),',
+    '  android-acknowledge (Google Play: finishTransaction, the acknowledge, only in the port\'s finish() and never',
+    '  with isConsumable other than false), android-pending (the adapter keeps state: purchase.purchaseState, so a',
+    '  pending Play purchase is never granted), android-kotlin (with \'expo-iap\' in the plugin list, expo-build-properties',
+    '  sets android.kotlinVersion to the pinned Kotlin).',
     'Facts (version, allowlists, keys, test IDs) come from assets/premium-facts.json; typed-price skips',
     'i18n/, testing/ and typedPriceAllowedIn (the parity harness\'s fixture store, test builds only).',
     'Not yet due (SKIP lines, a pass): plugin-entry until packages/shell/src/config/shell-plugins.ts exists',
@@ -327,6 +331,54 @@ function checkRelaunchWaits(root, report) {
   }
 }
 
+/**
+ * Google Play Billing (Android). finishTransaction is the acknowledge there: Play never delivers an
+ * unacknowledged purchase again and refunds it after 3 days, so it runs only from the port's
+ * finish(), which the service calls after persistPremium returned true (android-acknowledge); with
+ * isConsumable: true it would consume the one-time product and Premium could be bought again and
+ * lost. The adapter passes purchaseState through untouched, so a pending purchase (Play's slow
+ * card, a family approval) is never granted or acknowledged (android-pending).
+ */
+function checkAndroidBilling(root, report) {
+  const rel = FACTS.adapter.file;
+  if (!existsSync(join(root, rel))) return;
+  const text = maskComments(readRepoText(root, rel));
+  const ackFix = 'Keep finishTransaction({ purchase, isConsumable: false }) only in the port\'s finish(), which premium-service calls after persistPremium returned true (copy the adapter template again).';
+  for (const match of text.matchAll(/\bisConsumable\s*:\s*(?!false\b)[^,}\s]+/g)) {
+    report.problem({ file: rel, line: lineAt(text, match.index), rule: 'android-acknowledge', message: `"${match[0]}" consumes the one-time Premium on Google Play (it can be bought again and is gone after a reinstall)`, fix: ackFix });
+  }
+  const finish = /\bfinish\s*:\s*\([^)]*\)\s*=>\s*finishTransaction\s*\(/.exec(text);
+  for (const match of text.matchAll(/\bfinishTransaction\s*\(/g)) {
+    if (finish !== null && match.index === finish.index + finish[0].length - match[0].length) continue;
+    report.problem({ file: rel, line: lineAt(text, match.index), rule: 'android-acknowledge', message: "finishTransaction is called outside the port's finish(): on Android it acknowledges the purchase before Premium is saved", fix: ackFix });
+  }
+  if (!/\bstate\s*:\s*purchase\.purchaseState\s*[,}]/.test(text)) {
+    const at = /\bstate\s*:/.exec(text);
+    report.problem({ file: rel, line: at === null ? 1 : lineAt(text, at.index), rule: 'android-pending', message: "the transaction's state is not purchase.purchaseState: a pending Play purchase could be granted and acknowledged before it is paid", fix: "Map state: purchase.purchaseState unchanged ('pending' stays pending: the service shows \"Waiting for approval\" and grants Premium only when the purchased update arrives)." });
+  }
+}
+
+/**
+ * expo-iap's Android module (openiap-google) builds with the Kotlin of React Native's toolchain only
+ * when expo-build-properties sets it: wherever the one plugin list holds 'expo-iap', it also holds
+ * ['expo-build-properties', { android: { kotlinVersion: '<FACTS.android.kotlinVersion>' } }].
+ */
+function checkKotlin(root, report) {
+  const rel = SHELL_DUE_TARGETS.plugins.file;
+  if (!existsSync(join(root, rel))) return; // plugin-entry reports it as not yet due
+  const text = maskComments(readRepoText(root, rel));
+  if (!/['"]expo-iap['"]/.test(text)) return;
+  const want = FACTS.android.kotlinVersion;
+  const fix = `Add ['${FACTS.android.buildPropertiesPlugin}', { android: { kotlinVersion: '${want}' } }] to shellPlugins (architecture-and-boundaries' template carries it), installed through dependency-management.`;
+  const plugin = new RegExp(`['"]${FACTS.android.buildPropertiesPlugin}['"]`).exec(text);
+  const version = /\bkotlinVersion\s*:\s*['"]([^'"]+)['"]/.exec(text);
+  if (plugin === null || version === null) {
+    report.problem({ file: rel, line: lineAt(text, /['"]expo-iap['"]/.exec(text).index), rule: 'android-kotlin', message: `'expo-iap' without ${FACTS.android.buildPropertiesPlugin} setting android.kotlinVersion: its Play Billing module does not build on Android`, fix });
+  } else if (version[1] !== want) {
+    report.problem({ file: rel, line: lineAt(text, version.index), rule: 'android-kotlin', message: `kotlinVersion is ${version[1]}, not ${want} (React Native's Kotlin, with a matching KSP)`, fix });
+  }
+}
+
 /** The product spec's old "about EUR 1.9-0" target, in either decimal notation. */
 const OLD_TARGET = new RegExp(`\\b1[.,]${'9'}0\\b`, 'g');
 const OLD_TARGET_TEXT = `EUR 1.${'9'}0`;
@@ -376,5 +428,7 @@ run(async () => {
   checkPriceTarget(root, report);
   checkHarnessMaestro(root, report);
   checkRelaunchWaits(root, report);
+  checkAndroidBilling(root, report);
+  checkKotlin(root, report);
   return report.finish({ checked: files.length, unit: 'files' });
 });

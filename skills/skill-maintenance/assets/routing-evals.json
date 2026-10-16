@@ -61,6 +61,7 @@
   {"prompt": "what are the non-negotiables N1-N12, and does feature 8.8 apply to every game?", "expect": "pocket-arcade-product-spec"},
   {"prompt": "implement the Premium purchase with restore, pending approval and refunds", "expect": "premium-purchase"},
   {"prompt": "the buy button stays on loading when the store returns no products; fix the Premium state", "expect": "premium-purchase"},
+  {"prompt": "acknowledge the Google Play purchase only after Premium is saved", "expect": "premium-purchase"},
   {"prompt": "prove the app makes no network requests before we release it", "expect": "privacy-and-network-audit"},
   {"prompt": "fill in the App Privacy answers and check the privacy manifest covers every pod", "expect": "privacy-and-network-audit"},
   {"prompt": "npm run verify fails on the guardrail after I changed eslint.config.mjs", "expect": "quality-gates"},

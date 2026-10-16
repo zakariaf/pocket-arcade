@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "      const transaction = toTransaction(purchase);\n",
+      "with": "      void finishTransaction({ purchase, isConsumable: false });\n      const transaction = toTransaction(purchase);\n"
+    }
+  }
+]

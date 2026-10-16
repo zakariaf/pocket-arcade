@@ -25,7 +25,7 @@ const SPEC = {
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
-  details: 'Rules: module-load, s12-states, restore-notices, evidence, service-order, restore-flow, revocation, store-flow, price-format,\n  adapter-errors, adapter-restore, adapter-transactions, adapter-calls, offline-gate, result-nudge, store-reloads.\nstore-reloads: the composition root (packages/shell/src/app/, not tests) must call shouldReloadStore on a\n  connectivity change (then recheckPremium once online) and recheckPremium when the app comes back to the\n  foreground (startPremium runs before the first network state, so without them the price never loads and\n  a refund is never revoked after an offline start).\nexpo-iap is replaced by the scripted stand-in lib/stubs/expo-iap.mjs.\nNeeds Node 22.18+ (type stripping).',
+  details: 'Rules: module-load, s12-states, restore-notices, evidence, service-order, restore-flow, revocation, store-flow, price-format,\n  adapter-errors, adapter-restore, adapter-transactions, adapter-calls, offline-gate, result-nudge, store-reloads,\n  android-pending, android-restore, android-refund (Google Play Billing through the real adapter: pending then purchased,\n  the re-check acknowledging a saved purchase, restore-failed vs restore-empty, absence never revokes: owner default a).\nstore-reloads: the composition root (packages/shell/src/app/, not tests) must call shouldReloadStore on a\n  connectivity change (then recheckPremium once online) and recheckPremium when the app comes back to the\n  foreground (startPremium runs before the first network state, so without them the price never loads and\n  a refund is never revoked after an offline start).\nexpo-iap is replaced by the scripted stand-in lib/stubs/expo-iap.mjs.\nNeeds Node 22.18+ (type stripping).',
 };
 
 const STORES = 'packages/shell/src/stores/premium';
@@ -97,6 +97,52 @@ function checkStoreReloads(root, report) {
     report.problem({ file: APP_DIR, rule: 'store-reloads', message: 'the connectivity subscription reloads the store but never re-checks Premium once online (a refund stays unrevoked after an offline launch)', fix: 'In connectPremiumReloads: after loadStore on an online change, run recheckPremium(premiumDeps) (StoreKit harness flow 02, 2026-09-30).' });
   }
   return RELOADS.length + 1;
+}
+
+/**
+ * Google Play Billing end to end: the real adapter over the scripted expo-iap with Play's purchase
+ * shape (purchaseToken, isAcknowledgedAndroid), under the real service and store flow. The log holds
+ * the saves, the dispatches and the acknowledges (finishTransaction) in order.
+ */
+async function checkAndroidBilling(expect, adapter, service, flow) {
+  const file = FILES.adapter;
+  const play = (overrides = {}) => ({ id: 'GPA.1', productId: ID, transactionId: 'GPA.1', purchaseState: 'purchased', isAcknowledgedAndroid: false, purchaseToken: 'token-1', platform: 'android', ...overrides });
+  const run = async (script, steps) => {
+    iapStub.reset(script);
+    const log = [];
+    const deps = {
+      port: adapter.createExpoIapPurchaseAdapter(),
+      productId: ID,
+      dispatch: (action) => log.push(`dispatch:${action.type}${action.evidence ? `:${action.evidence}` : ''}`),
+      persistPremium: (change) => { log.push(change.isPremium ? 'persist:true' : `persist:false@${change.revokedAtMs}`); return true; },
+      formatPrice: (p) => p.displayPrice,
+      onError: () => log.push('onError'),
+    };
+    await steps(deps);
+    await flush();
+    const acks = iapStub.calls().filter((call) => call.startsWith('finishTransaction')).map((call) => `ack:${JSON.parse(call.slice(call.indexOf(':') + 1)).purchase}`);
+    return [...log.filter((entry) => !entry.startsWith('dispatch:connect') && !entry.startsWith('dispatch:price') && !entry.startsWith('dispatch:store')), ...acks];
+  };
+  const quiet = (entries) => entries.filter((entry) => !entry.startsWith('dispatch:entitlements-checked'));
+
+  await expect('android-pending', file, 'Play: pending then purchased grants Premium without a tap, then acknowledges', () => run({}, async (deps) => {
+    await flow.startPremium(deps);
+    iapStub.emitPurchase(play({ transactionId: null, purchaseState: 'pending' }));
+    await flush();
+    iapStub.emitPurchase(play());
+  }).then(quiet), ['dispatch:purchase-pending', 'persist:true', 'dispatch:premium-granted', 'ack:GPA.1'], "Map Play's purchaseState unchanged: 'pending' only shows \"Waiting for approval\" (no save, no acknowledge); the purchased update then saves, grants and acknowledges.");
+  await expect('android-pending', file, 'Play: the launch re-check neither grants nor acknowledges a pending purchase', () => run({ getAvailablePurchases: [play({ transactionId: null, purchaseState: 'pending' })] }, (deps) => service.recheckPremium(deps)), ['dispatch:entitlements-checked:unknown'], 'A pending purchase is not evidence of ownership: keep it unsaved and unacknowledged until Play reports it purchased.');
+  await expect('android-pending', file, 'Play: the launch re-check acknowledges a saved, unacknowledged purchase', () => run({ getAvailablePurchases: [play()] }, (deps) => service.recheckPremium(deps)), ['persist:true', 'dispatch:entitlements-checked:owned', 'ack:GPA.1'], 'Google refunds an unacknowledged purchase after 3 days: the re-check saves Premium, then acknowledges it.');
+
+  const rfix = 'Let a failed Play query reject (never .catch(() => [])): restorePremium then says "couldn\'t restore" (restore-failed), and "nothing to restore" (restore-empty) only after a query that succeeded.';
+  await expect('android-restore', file, 'Play: a failed purchase query is restore-failed', () => run({ getAvailablePurchases: { rejectWith: { code: 'billing-unavailable' } } }, (deps) => service.restorePremium(deps)), ['dispatch:restore-tapped', 'onError', 'dispatch:restore-finished:sync-failed'], rfix);
+  await expect('android-restore', file, 'Play: an empty successful query is restore-empty', () => run({}, (deps) => service.restorePremium(deps)), ['dispatch:restore-tapped', 'dispatch:restore-finished:unknown'], rfix);
+  await expect('android-restore', file, 'Play: a query listing Premium restores it', () => run({ getAvailablePurchases: [play({ isAcknowledgedAndroid: true })] }, (deps) => service.restorePremium(deps)), ['dispatch:restore-tapped', 'persist:true', 'dispatch:restore-finished:owned'], rfix);
+
+  const ffix = "Owner default (a): a Play refund leaves no dated evidence on the phone, so Premium missing from a query (or in Play's unspecified state) never revokes it; drop purchaseState 'unknown' and never invent a revocation date.";
+  for (const [label, list] of [['no longer lists Premium', []], ["lists it in Play's unspecified state", [play({ purchaseState: 'unknown' })]]]) {
+    await expect('android-refund', file, `Play: a query that ${label} never revokes Premium`, () => run({ getAvailablePurchases: list }, (deps) => service.recheckPremium(deps)), ['dispatch:entitlements-checked:unknown'], ffix);
+  }
 }
 
 run(async () => {
@@ -463,6 +509,7 @@ run(async () => {
       return iapStub.calls();
     }, [`requestPurchase:{"request":{"apple":{"sku":"${ID}"},"google":{"skus":["${ID}"]}},"type":"in-app"}`, 'finishTransaction:{"purchase":"t1","isConsumable":false}'], cfix);
   }
+  if (adapter && service && flow) await checkAndroidBilling(expect, adapter, service, flow);
   checked += checkStoreReloads(root, report);
   return report.finish({ checked, unit: 'scenarios' });
 });

@@ -1,0 +1,3 @@
+[android-kotlin]
+packages/shell/src/config/shell-plugins.ts
+kotlinVersion

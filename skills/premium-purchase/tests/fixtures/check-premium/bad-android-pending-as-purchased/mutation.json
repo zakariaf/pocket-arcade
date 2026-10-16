@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "    state: purchase.purchaseState,\n",
+      "with": "    state: purchase.purchaseState === 'pending' && isUnacknowledged ? 'purchased' : purchase.purchaseState,\n"
+    }
+  }
+]

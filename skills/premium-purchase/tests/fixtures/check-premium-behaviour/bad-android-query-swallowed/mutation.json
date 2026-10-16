@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
+      "find": "  const purchases = await getAvailablePurchases({ onlyIncludeActiveItemsIOS: false });\n",
+      "with": "  const purchases = await getAvailablePurchases({ onlyIncludeActiveItemsIOS: false }).catch(() => []);\n"
+    }
+  }
+]

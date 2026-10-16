@@ -10061,6 +10061,19 @@
           }
         ]
       },
+      "references/google-play-billing.md": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/12-in-app-purchase.md",
+            "sha256": "8946a7ddd80091656b585e07a38a2cb0eca5048914e93622b5136ab3f47e0b77"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
       "references/premium-states.md": {
         "recorded": "2026-10-01",
         "sources": [
