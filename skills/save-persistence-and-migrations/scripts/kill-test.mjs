@@ -14,7 +14,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, statSync } from 'node:fs';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
-import { androidSaveDir, androidSdkDir, createAndroidDevice, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat, SYSTEM_IMAGE } from './lib/android-device.mjs';
+import { adbArgs, androidSaveDir, androidSdkDir, createAndroidDevice, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat, SYSTEM_IMAGE } from './lib/android-device.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, KILL_WINDOW_FACTOR, killStepMs, MIN_STEP_MS } from './lib/kill-plan.mjs';
 import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
@@ -240,11 +240,11 @@ function androidArgs(options) {
 /** Launches once without killing and returns the ms from launch to the first save write, or null. */
 function androidFirstWrite(device, packageId) {
   const wal = `${androidSaveDir(packageId)}save.db-wal`;
-  const statWal = () => parseStat(device.adb(['shell', 'stat', '-c', "'%s %Y'", wal], { allowFail: true, quiet: true }));
-  device.adb(['shell', 'am', 'force-stop', packageId], { quiet: true });
+  const statWal = () => parseStat(device.adb(adbArgs(device.serial, ['shell', 'stat', '-c', "'%s %Y'", wal]), { allowFail: true, quiet: true }));
+  device.adb(adbArgs(device.serial, ['shell', 'am', 'force-stop', packageId]), { quiet: true });
   const before = statWal();
   const startedMs = Date.now();
-  device.adb(['shell', 'am', 'start', '-n', `${packageId}/.MainActivity`], { quiet: true });
+  device.adb(adbArgs(device.serial, ['shell', 'am', 'start', '-n', `${packageId}/.MainActivity`]), { quiet: true });
   while (Date.now() - startedMs < CALIBRATION_TIMEOUT_MS) {
     if (isAndroidWalWrite(before, statWal())) return Date.now() - startedMs;
     sleepMs(10);
@@ -277,14 +277,14 @@ function androidStep(device, { packageId, kills, givenStepMs, dryRun }, report) 
 /** Each round: force-stop (a cold start), then launch, wait and kill -9 in one device shell line. */
 function androidKillRounds(device, { packageId, kills, dryRun }, stepMs) {
   for (let round = 1; round <= kills; round += 1) {
-    device.adb(['shell', 'am', 'force-stop', packageId]);
+    device.adb(adbArgs(device.serial, ['shell', 'am', 'force-stop', packageId]));
     const delay = round * stepMs;
-    const output = device.adb(['shell', killRoundScript(packageId, delay)]);
+    const output = device.adb(adbArgs(device.serial, ['shell', killRoundScript(packageId, delay)]));
     if (dryRun) continue;
     const pid = killedPid(output);
     console.log(pid === null ? `round ${round}: the app had exited before ${delay} ms` : `round ${round}: killed pid ${pid} after ${delay} ms`);
   }
-  device.adb(['shell', 'am', 'force-stop', packageId]);
+  device.adb(adbArgs(device.serial, ['shell', 'am', 'force-stop', packageId]));
   // Let the file system settle after the last kill, then the folder is pulled and inspected.
   if (!dryRun) sleepMs(500);
 }
@@ -306,7 +306,7 @@ async function runAndroid(options) {
       device.waitForBoot();
     }
     device.becomeRoot();
-    if (options.app !== undefined) device.adb(['install', '-r', options.app]);
+    if (options.app !== undefined) device.adb(adbArgs(device.serial, ['install', '-r', options.app]));
     const stepMs = androidStep(device, args, report);
     if (stepMs === null) return report.finish({ checked: 0, unit: 'kill rounds' });
     androidKillRounds(device, args, stepMs);

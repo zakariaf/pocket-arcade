@@ -42,13 +42,18 @@ export function missingSdkParts(sdk, { create }) {
   return missing;
 }
 
+/** The adb arguments for one device: -s <serial> always comes before the command. */
+export function adbArgs(serial, args) {
+  return ['-s', serial, ...args];
+}
+
 /** The app's save folder on the device: expo-sqlite's SQLite/ in the app's files directory. */
 export function androidSaveDir(packageId) {
   return `/data/data/${packageId}/files/SQLite/`;
 }
 
 /**
- * Where save.db lands after `adb pull <device>/SQLite/ <dest>`: adb puts the folder itself inside an
+ * Where save.db lands after `adb -s <serial> pull <device>/SQLite/ <dest>`: adb puts the folder itself inside an
  * existing <dest> (dest/SQLite/save.db), and copies its contents when <dest> did not exist
  * (dest/save.db). The first that exists, else the first.
  */
@@ -136,7 +141,11 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
     return null;
   }
 
-  const adb = (args, options) => exec('adb', ['-s', serial, ...args], options);
+  /** Runs adb with arguments built by adbArgs(serial, [...]); refuses any call that does not name its device first. */
+  const adb = (args, options) => {
+    if (args[0] !== '-s' || !args[1]) fail(`adb ${args.join(' ')} names no device`, 'Build the arguments with adbArgs(serial, [...]).');
+    return exec('adb', args, options);
+  };
 
   return {
     get serial() {
@@ -171,17 +180,17 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
       }
       const startedMs = Date.now();
       while (Date.now() - startedMs < BOOT_TIMEOUT_MS) {
-        if (adb(['shell', 'getprop', 'sys.boot_completed'], { allowFail: true, quiet: true }) === '1') return;
+        if (adb(adbArgs(serial, ['shell', 'getprop', 'sys.boot_completed']), { allowFail: true, quiet: true }) === '1') return;
         sleepMs(1000);
       }
       fail(`${serial} did not finish booting within ${BOOT_TIMEOUT_MS / 1000} s`, 'Read the emulator output (run the emulator command by hand) and check the system image.');
     },
     /** adb root, then proves it: a Play Store image answers "cannot run as root" and stays uid 2000. */
     becomeRoot() {
-      const answer = adb(['root']);
+      const answer = adb(adbArgs(serial, ['root']));
       if (dryRun) return;
-      adb(['wait-for-device'], { quiet: true });
-      if (/cannot run as root/i.test(answer ?? '') || adb(['shell', 'id', '-u'], { quiet: true }) !== '0') {
+      adb(adbArgs(serial, ['wait-for-device']), { quiet: true });
+      if (/cannot run as root/i.test(answer ?? '') || adb(adbArgs(serial, ['shell', 'id', '-u']), { quiet: true }) !== '0') {
         fail(`adb root was refused on ${serial} (${answer})`, `Use an emulator on the ${SYSTEM_IMAGE} image (google_apis): a google_apis_playstore image never allows adb root, so the Release app's files/SQLite/ folder cannot be read.`);
       }
     },
@@ -191,12 +200,12 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
      */
     pullSaveDb(packageId) {
       const dest = dryRun ? '<tmp>' : mkdtempSync(join(tmpdir(), 'save-android-'));
-      adb(['pull', androidSaveDir(packageId), dest]);
+      adb(adbArgs(serial, ['pull', androidSaveDir(packageId), dest]));
       return { database: pulledSaveDb(dest), cleanup: () => (dryRun ? undefined : rmSync(dest, { recursive: true, force: true })) };
     },
     /** Shuts the created emulator down by serial, waits until adb no longer lists it, deletes the AVD. */
     teardownCreated() {
-      adb(['emu', 'kill'], { allowFail: true });
+      adb(adbArgs(serial, ['emu', 'kill']), { allowFail: true });
       if (!dryRun) {
         const startedMs = Date.now();
         while (Date.now() - startedMs < 60_000 && listedSerials(exec('adb', ['devices'], { quiet: true, allowFail: true }) ?? '').includes(serial)) sleepMs(1000);
