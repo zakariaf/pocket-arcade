@@ -592,6 +592,19 @@
           }
         ]
       },
+      "templates/packages/shell/src/app/consent-moment.android.test.tsx": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/app/consent-moment.android.test.tsx",
+            "sha256": "faddaaab88eb65610b9cca5a45d2a413254c3a72e4afe16212274690285b13d6"
+          }
+        ]
+      },
       "templates/packages/shell/src/config/ads-config.test.ts": {
         "recorded": "2026-10-04",
         "sources": [
@@ -718,6 +731,19 @@
           {
             "path": "docs/11-ads-admob.md",
             "sha256": "a8efdbef2669775ec776ecbb3598a6325fe353af97363c7135008c0bbb77dcc6"
+          }
+        ]
+      },
+      "templates/packages/shell/src/services/ads/admob-ads-adapter.android.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/services/ads/admob-ads-adapter.android.test.ts",
+            "sha256": "5a1c313fdafd10a731f4df0d89a6d79df0cd1582d65dc3865017b4169e6afb7e"
           }
         ]
       },
@@ -10485,6 +10511,19 @@
           {
             "path": "docs/12-in-app-purchase.md",
             "sha256": "8946a7ddd80091656b585e07a38a2cb0eca5048914e93622b5136ab3f47e0b77"
+          }
+        ]
+      },
+      "templates/packages/shell/src/stores/premium/premium-flow.android.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/stores/premium/premium-flow.android.test.ts",
+            "sha256": "7b024a912648a60babb43a72f02eef997382517e08f2496e7aa8a8f4705dbcbc"
           }
         ]
       },

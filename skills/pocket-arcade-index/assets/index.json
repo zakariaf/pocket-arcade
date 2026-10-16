@@ -841,7 +841,11 @@
               "__mocks__/**",
               "packages/shell/src/services/purchase/**",
               "packages/shell/src/stores/premium/**"
-            ]
+            ],
+            "exclude": [
+              "packages/shell/src/stores/premium/premium-flow.android.test.ts"
+            ],
+            "note": "premium-flow.android.test.ts imports the composition root (step 7) and runs only in unit-android: Android step 3 copies it"
           },
           {
             "skill": "game-audio-and-haptics",
@@ -2112,13 +2116,16 @@
                 "skill": "admob-ads",
                 "paths": [
                   "packages/shell/src/services/consent/admob-consent-adapter*",
+                  "packages/shell/src/services/ads/admob-ads-adapter.android.test.ts",
+                  "packages/shell/src/app/consent-moment.android.test.tsx",
                   "__mocks__/react-native-google-mobile-ads.ts"
                 ]
               },
               {
                 "skill": "premium-purchase",
                 "paths": [
-                  "packages/shell/src/services/purchase/expo-iap-purchase-adapter*"
+                  "packages/shell/src/services/purchase/expo-iap-purchase-adapter*",
+                  "packages/shell/src/stores/premium/premium-flow.android.test.ts"
                 ]
               },
               {
