@@ -1,0 +1,3 @@
+[android-permissions]
+packages/shell/src/config/android-config.ts
+android.permission.RECORD_AUDIO

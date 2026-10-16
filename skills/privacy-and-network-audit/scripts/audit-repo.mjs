@@ -26,7 +26,8 @@ const SPEC = {
     '  privacy-manifest, audit-wiring, baseline, gitignore-secrets, secret-file, private-key, deny-rules,',
     '  android-permissions, android-cleartext, android-allowlists, keystore-ignored.',
     'android-permissions: a permission literal in the app config or packages/shell/plugins/ (a full name, or a short',
-    '  name in a permissions array) that is not on assets/permission-allowlist.json and not in blockedPermissions.',
+    '  name in a permissions array) that is not on assets/permission-allowlist.json and not in blockedPermissions (an',
+    '  array literal there, or a BLOCKED_..._PERMISSIONS list the same file spreads into blockedPermissions).',
     'android-cleartext: usesCleartextTraffic true or cleartextTrafficPermitted="true" in the same files.',
     'android-allowlists: the repo copies of the two Android allowlists match this skill: ANDROID_PERMISSION_ALLOWLIST in',
     '  android-manifest-audit.ts = assets/permission-allowlist.json, ALLOWED_ARTIFACTS in network-gradle-layer.ts =',
@@ -187,6 +188,7 @@ const ANDROID_ALLOWLIST = JSON.parse(readFileSync(join(dirname(fileURLToPath(imp
 const PERMISSION_LITERAL = /(['"`])((?:android|com\.[\w.]+)\.permission\.[A-Z0-9_]+|com\.android\.vending\.BILLING)\1/g;
 const PERMISSION_ARRAY = /(?<![\w$])(?:android)?[pP]ermissions['"]?\s*:\s*\[/g;
 const BLOCKED_ARRAY = /\bblockedPermissions['"]?\s*:\s*\[/g;
+const BLOCKED_CONST = /\b([A-Z0-9_]*BLOCKED[A-Z0-9_]*PERMISSIONS)\b[^=\n]*=\s*\[/g;
 const SHORT_PERMISSION = /(['"`])([A-Z][A-Z0-9_]+)\1/g;
 const CLEARTEXT = /\busesCleartextTraffic['"]?\]?\s*[:=]\s*['"]?true\b|\bcleartextTrafficPermitted\s*=\s*\\?['"]true/g;
 
@@ -210,7 +212,10 @@ function androidConfigFiles(root) {
 function androidConfig(root, report) {
   for (const rel of androidConfigFiles(root)) {
     const text = maskComments(readRepoText(root, rel));
-    const blocked = arraySpans(text, BLOCKED_ARRAY);
+    // A named list (BLOCKED_ANDROID_PERMISSIONS = [...]) counts as blocked only when the same file
+    // spreads it into blockedPermissions; otherwise its entries are permissions like any other.
+    const namedBlocked = [...text.matchAll(BLOCKED_CONST)].filter((match) => text.includes(`blockedPermissions: [...${match[1]}`));
+    const blocked = [...arraySpans(text, BLOCKED_ARRAY), ...namedBlocked.map((match) => [match.index, text.indexOf(']', match.index + match[0].length) + 1])];
     const isBlocked = (index) => blocked.some(([start, end]) => index >= start && index < end);
     const found = [...text.matchAll(PERMISSION_LITERAL)].map((match) => ({ index: match.index, name: match[2] }));
     for (const [start, end] of arraySpans(text, PERMISSION_ARRAY)) {
