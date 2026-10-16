@@ -26,7 +26,10 @@ function uploadConfigOf(prefix: string): string {
 }
 
 const SIGNING_BLOCK = /^(\s*)signingConfigs \{\n/m;
-const RELEASE_SIGNING = /(\n\s*release \{\n\s*)signingConfig signingConfigs\.debug\n/;
+// React Native's template keeps two comment lines above the release signing line; any number of
+// them may sit between `release {` and the line, and they are kept.
+const RELEASE_SIGNING =
+  /(\n\s*release \{\n(?:\s*\/\/[^\n]*\n)*\s*)signingConfig signingConfigs\.debug\n/;
 
 /** app/build.gradle with the upload signing config added; unchanged when it is already there. */
 export function addUploadSigning(gradle: string, game: string): string {

@@ -27,8 +27,8 @@ Takes one commit of `apps/<game>` to a signed Android App Bundle on the Google P
    | Template | Goes to |
    |---|---|
    | `templates/packages/tooling/src/release-android/` | same path: `release-android.ts` (the CLI), `release-android-plan.ts`, `version-code.ts`, `aab-signing.ts`, `play-credentials.ts`, `play-client.ts`, each with its test |
-   | `templates/packages/shell/src/config/upload-signing.ts` + `upload-signing.test.ts` | same paths (`addUploadSigning`, the release signing config) |
-   | `templates/packages/shell/plugins/with-upload-signing.ts` | same path, listed in `withShell`'s Android block as `['./plugins/with-upload-signing.ts', { game: game.id }]` (architecture-and-boundaries owns `withShell`) |
+   | `templates/packages/shell/src/config/upload-signing.ts` + `upload-signing.test.ts` | same paths (`addUploadSigning`, the release signing config); already copied at Android step 2 with `withShell` |
+   | `templates/packages/shell/plugins/with-upload-signing.ts` | same path, already copied at Android step 2: `withShell`'s Android plugins list it as `['@e07/shell/plugins/with-upload-signing.ts', { game: game.id }]` (architecture-and-boundaries owns `withShell`) |
 
    Copy each test before its module against a typed stub and see it fail on an assertion (tdd-workflow). They reuse `build/game-id.ts`, `release/build-number.ts`, `ios/tool-step.ts`, `clock/system-clock.ts` and android-emulator-build's `android/toolchain.ts` and `build/emu-build-plan.ts`. Root script, byte for byte: `"release:android": "node packages/tooling/src/release-android/release-android.ts"`. Then `npm run -s check:fast`.
 3. **Check the setup:** `node ${CLAUDE_SKILL_DIR}/scripts/check-release-setup-android.mjs .` from the repo root. Fix every `FAIL` line and rerun. Until the owner supplies G3 and GP5 it ends with the `owner-placeholder` lines, `OWNER STEPS PENDING: G3, GP5` and `RESULT: FAIL`, by design; any other FAIL line is real.

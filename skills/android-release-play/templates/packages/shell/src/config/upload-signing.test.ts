@@ -40,6 +40,17 @@ describe('addUploadSigning', () => {
     );
   });
 
+  it("signs the release block of React Native 0.86's template, with its comment lines kept", () => {
+    // The generated app/build.gradle has two comment lines above the release signing line.
+    const comments =
+      '            // Caution! In production, you need to generate your own keystore file.\n' +
+      '            // see the signed APK page of the React Native docs.\n';
+    const generated = TEMPLATE.replace('        release {\n', `        release {\n${comments}`);
+    expect(addUploadSigning(generated, 'line-siege')).toContain(
+      `        release {\n${comments}            signingConfig project.hasProperty('E07_LINE_SIEGE_UPLOAD_STORE_FILE') ? signingConfigs.upload : signingConfigs.debug\n`,
+    );
+  });
+
   it('keeps debug builds on the debug key', () => {
     expect(addUploadSigning(TEMPLATE, 'line-siege')).toContain(
       '        debug {\n            signingConfig signingConfigs.debug\n        }',

@@ -53,6 +53,7 @@ React Native's template signs release builds with the debug keystore. The config
 
 - it adds a signing config `upload` that reads the four `E07_<GAME>_UPLOAD_*` properties when they exist;
 - release builds use `upload` when `E07_<GAME>_UPLOAD_STORE_FILE` exists, otherwise the debug key (emulator builds and the keyless rehearsal need no upload key);
+- it keeps the comment lines React Native 0.86's template puts between `release {` and its `signingConfig signingConfigs.debug` line (a prebuild of Expo SDK 57 writes two);
 - it throws at prebuild when the template no longer has the anchors it edits, so a React Native change never silently drops the signing.
 
 A bundle signed with the debug key or unsigned fails `check-store-aab.mjs` rule `signing`; only the keyless rehearsal (`--unsigned`) SKIPs that rule, and it is never release evidence.
