@@ -78,7 +78,8 @@ describe('withShell', () => {
     expect(JSON.stringify(config)).not.toContain('null');
   });
 
-  it('embeds the live ad units only in a live store build', () => {
+  it('embeds the live ad units per platform only in a live store build', () => {
+    // admob-ads: per platform, so an Android live build never carries the iOS units or a sample.
     expect(withShell(GAME, STORE_LIVE).extra?.['adUnits']).toStrictEqual({
       ios: LIVE_UNITS,
       android: null,

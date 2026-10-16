@@ -151,7 +151,7 @@ Spec-Change: with-shell final composer (phase 0 placeholder replaced)
 | `privacyManifests` | aggregated required-reason APIs (`npm run audit:privacy`) |
 | `updates.enabled: false` | no OTA network traffic (N3) |
 | `experiments.reactCompiler: true` | the React Compiler |
-| `extra.appVariant`, `extra.adsMode`, `extra.adUnits` | runtime inputs; `adsMode` is `off` when the game's ads master switch is off; `adUnits` only in live builds (absent, not `null`) |
+| `extra.appVariant`, `extra.adsMode`, `extra.adUnits` | runtime inputs; `adsMode` is `off` when the game's ads master switch is off; `adUnits` only in live builds (absent, not `null`), per platform: `{ ios, android }`, `android` `null` until the game has Android ids (admob-ads' `adUnitsExtra`) |
 | `extra.game` | the runtime subset of `GameConfig` |
 | `plugins` | `['@e07/shell/plugins/with-app-variant-marker.ts', { appVariant }]`, then `...shellPlugins(game, adsMode)`, then `...androidPlugins(game)` (the backup rules, RTL support, the upload-key signing) |
 | the icon and the splash | `withGameArt(config, game.id)` last: the generated icons and the `expo-splash-screen` plugin, only once `render-art.ts` has drawn the game (its grounds are in `splash-grounds.ts`, which ships empty) |
