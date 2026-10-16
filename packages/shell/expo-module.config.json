@@ -4,6 +4,6 @@
     "modules": ["ProcessStartModule"]
   },
   "android": {
-    "modules": ["io.applander.e07shell.ProcessStartModule"]
+    "modules": ["io.applander.e07shell.ProcessStartModule", "io.applander.shell.ParityLaunchModule"]
   }
 }
