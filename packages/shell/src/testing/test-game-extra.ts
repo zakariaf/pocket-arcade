@@ -29,7 +29,8 @@ export const TEST_GAME_EXTRA: GameExtra = {
 };
 
 /**
- * expo-constants as a test build sees it: version 1.0.0, build 8, test ads. Tests reach it through
+ * expo-constants as a test build sees it: version 1.0.0, build 8 (iOS buildNumber and Android
+ * versionCode, one shared number), the Android package, test ads. Tests reach it through
  * jest.requireActual, which knip cannot follow.
  * @public
  */
@@ -40,6 +41,7 @@ export const TEST_EXPO_CONSTANTS = {
       name: 'Line Siege',
       version: '1.0.0',
       ios: { buildNumber: '8' },
+      android: { package: 'io.applander.linesiege', versionCode: 8 },
       extra: { adsMode: 'test', game: TEST_GAME_EXTRA },
     },
   },
