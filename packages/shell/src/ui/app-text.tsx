@@ -1,6 +1,6 @@
 // packages/shell/src/ui/app-text.tsx
 import { useState } from 'react';
-import { PixelRatio, Text, useWindowDimensions, View } from 'react-native';
+import { PixelRatio, Platform, Text, useWindowDimensions, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
@@ -118,7 +118,10 @@ function textProps(props: AppTextProps): TextProps {
  * pt of ink for 20.7) and every Arabic-script text sat half its overflow higher than the design
  * (S12's 38 pt title: 3 pt). From MIN_SHIFT on, the text gets pads that move the line down by half
  * the overflow and make the frame hold the ink, cancelled by negative margins, inside a wrapper
- * that keeps the design's line box and carries the testID.
+ * that keeps the design's line box and carries the testID. Android already centres the overflow
+ * as Chrome does (React Native's line-height span adds half the leading above and half below), so
+ * there the pads only hold the ink and never move the line: the shift drew S2's Persian title 2 pt
+ * below the design on the emulator.
  */
 const VAZIRMATN_EM = { ascent: 2100 / 2048, descent: 1100 / 2048 } as const;
 const MIN_SHIFT = 1.5;
@@ -142,7 +145,8 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   const half = (vazirmatnContentHeight(size) - line) / 2;
   if (half < MIN_SHIFT) return null;
   const margin = Math.ceil(half);
-  return { paddingTop: margin + half, paddingBottom: margin - half, marginVertical: -margin };
+  const shift = Platform.OS === 'ios' ? half : 0;
+  return { paddingTop: margin + shift, paddingBottom: margin - shift, marginVertical: -margin };
 }
 
 /** Text grows with Dynamic Type up to 200 % and no further (spec 8.11): maxFontSizeMultiplier. */
