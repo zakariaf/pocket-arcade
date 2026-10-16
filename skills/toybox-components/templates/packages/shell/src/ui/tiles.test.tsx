@@ -301,7 +301,7 @@ describe('Stickers and art', () => {
     for (const piece of pieces) expect(piece).toHaveProp('shouldRasterizeIOS', true);
   });
 
-  it('gives every tilted printed part its Android hardware layer as well', async () => {
+  it('gives every tilted printed part its Android hardware layer, except the die-cut ones', async () => {
     const hidden = { includeHiddenElements: true } as const;
     await renderWithShell(
       <>
@@ -330,16 +330,21 @@ describe('Stickers and art', () => {
 
     // Android ignores shouldRasterizeIOS: without its own flag the same parts turn with stepped
     // edges there. TILTED_LAYER carries both, so every part that turns through the primitive has both.
+    for (const testID of ['daily.week-day.1.today-tag', 'daily.today-card.calendar']) {
+      const part = screen.getByTestId(testID, hidden);
+      expect(part).toHaveProp('renderToHardwareTextureAndroid', true);
+      expect(part).toHaveProp('shouldRasterizeIOS', true);
+    }
+    // A die-cut part draws its ring outside its box, and Android's texture is the size of the box:
+    // it cut the ring off (E18-T20). These keep iOS's layer and never get Android's texture.
     for (const testID of [
       'language-choice.phone-badge',
       'language-choice.art',
       'levels.level-tile.12.flag',
-      'daily.week-day.1.today-tag',
-      'daily.today-card.calendar',
       'premium.art',
     ]) {
       const part = screen.getByTestId(testID, hidden);
-      expect(part).toHaveProp('renderToHardwareTextureAndroid', true);
+      expect(part).not.toHaveProp('renderToHardwareTextureAndroid');
       expect(part).toHaveProp('shouldRasterizeIOS', true);
     }
     const pieces = screen.getByTestId('premium.confetti', hidden).children;
