@@ -1,7 +1,7 @@
 // packages/shell/src/i18n/bidi.test.ts
 import fc from 'fast-check';
 
-import { FSI, isolate, PDI, stripIsolates } from './bidi.ts';
+import { FSI, isInvisibleMark, isolate, PDI, stripIsolates } from './bidi.ts';
 
 describe('isolate', () => {
   it('wraps free text in FIRST STRONG ISOLATE ... POP DIRECTIONAL ISOLATE', () => {
@@ -25,5 +25,19 @@ describe('isolate', () => {
         expect(stripIsolates(isolate(text))).toBe(text);
       }),
     );
+  });
+});
+
+describe('isInvisibleMark', () => {
+  it('finds the marks a line break looks through: ALM, ZWJ, LRM, RLM, the isolates and the BOM', () => {
+    for (const code of [0x061c, 0x200d, 0x200e, 0x200f, 0x2066, 0x2067, 0x2068, 0x2069, 0xfeff]) {
+      expect(isInvisibleMark(String.fromCodePoint(code))).toBe(true);
+    }
+  });
+
+  it('treats letters, digits, spaces and the zero-width non-joiner as drawn text', () => {
+    for (const char of ['a', 'ب', '۳', ' ', '-', String.fromCodePoint(0x200c)]) {
+      expect(isInvisibleMark(char)).toBe(false);
+    }
   });
 });
