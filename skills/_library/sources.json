@@ -2035,6 +2035,15 @@
           }
         ]
       },
+      "assets/reference/line-siege-android-art.png": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "design/toybox.html",
+            "sha256": "d335ebc99836ac437a30be4a84459c919fde0206664b9cb0e2bdefe93c52b5ca"
+          }
+        ]
+      },
       "assets/reference/line-siege-app-art.png": {
         "recorded": "2026-09-30",
         "sources": [

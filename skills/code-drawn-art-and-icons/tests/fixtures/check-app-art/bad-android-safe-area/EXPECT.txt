@@ -1,0 +1,3 @@
+apps/demo-game/assets/generated/android-icon-foreground.png [art-safe-area]
+apps/demo-game/assets/generated/android-splash-icon.png [art-safe-area]
+apps/demo-game/assets/generated/play-icon-512.png [art-format] 1024 x 1024, must be 512 x 512
