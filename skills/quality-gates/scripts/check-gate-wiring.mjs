@@ -38,7 +38,9 @@ const SPEC = {
     '  eslint-cache            a root npm script runs eslint with --cache: the cache keys each result on the',
     '                          file alone, so a test written before its module replays import/no-unresolved',
     '                          and type-aware errors after the module appears (lint the whole repo uncached)',
-    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry',
+    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry; the two',
+    '                          Android budgets (perf.coldStartEmuRegressionFactor, perf.memoryPssMbMax) print',
+    '                          "due at Android step 1" while packages/tooling/src/build/build-android-emu.ts is missing',
     '  claude-settings         .claude/settings.json lost a deny/ask rule, a hook, or allows a bypass',
     '  lefthook                a pre-commit, commit-msg or pre-push job is missing, changed or skipped',
     '  npmrc                   .npmrc lacks min-release-age=7, engine-strict=true or save-exact=true',
@@ -112,6 +114,13 @@ const ANDROID_DUE_TARGETS = [
   { target: { file: 'packages/tooling/src/e2e/capture-screenshots-android.ts', step: 7 }, owner: 'e2e-maestro' },
   { target: { file: 'packages/tooling/src/release-android/release-android.ts', step: 8 }, owner: 'android-release-play' },
 ];
+
+/**
+ * The Android budgets (performance-budgets) join quality-gates.json at Android step 1, with the Android
+ * build tooling: while packages/tooling/src/build/build-android-emu.ts is missing, a missing one prints a
+ * not-yet-due SKIP; from then on it fails like any lost entry. A present value is compared as usual.
+ */
+const ANDROID_BUDGET_KEYS = ['perf.coldStartEmuRegressionFactor', 'perf.memoryPssMbMax'];
 
 /**
  * Why an Android script's target is not yet due, or null when it exists: the Android form of
@@ -211,7 +220,12 @@ function checkQualityGates(root, report) {
   const actual = tryJson(root, 'quality-gates.json', report);
   if (!actual) return;
   if (JSON.stringify(actual).includes(GAME_PLACEHOLDER)) report.problem({ file: 'quality-gates.json', line: 1, rule: 'gate-weakened', message: `still holds the ${GAME_PLACEHOLDER} placeholder`, fix: 'Replace __GAME_ID__ with the pilot app id (the folder under apps/ that holds src/rules/gate-probe.ts).' });
+  const androidBudgetsDue = androidDueSkipReason(root, ANDROID_DUE_TARGETS[0].target);
   for (const { path, message } of findWeaker(baselineGates(actual), actual)) {
+    if (androidBudgetsDue && ANDROID_BUDGET_KEYS.includes(path) && message.startsWith('is missing')) {
+      report.skip({ file: 'quality-gates.json', rule: 'gate-weakened', message: `${path}: ${androidBudgetsDue} (performance-budgets adds it)` });
+      continue;
+    }
     report.problem({ file: 'quality-gates.json', line: 1, rule: 'gate-weakened', message: `${path} ${message}`, fix: 'Restore the baseline value; a gate changes only with the owner\'s agreement, in one commit with the gate and a Gate-Change: trailer.' });
   }
 }
