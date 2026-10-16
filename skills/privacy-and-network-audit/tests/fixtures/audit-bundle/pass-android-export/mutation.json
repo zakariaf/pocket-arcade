@@ -1,0 +1,8 @@
+[
+  {
+    "move": {
+      "from": "export/_expo/static/js/ios",
+      "to": "export/_expo/static/js/android"
+    }
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/tooling/play-service-account.json",
+      "content": "{ \"note\": \"not a real key\" }\n"
+    }
+  }
+]

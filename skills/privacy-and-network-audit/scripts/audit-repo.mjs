@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // audit-repo.mjs: the static half of the spec N3 audit on a Pocket Arcade app repo:
 // layer A (our code), layer D (vendor pods, when a Podfile.lock exists), layer E (build config),
-// banned packages, the privacy-manifest config, the audit tooling wiring and secrets hygiene.
+// banned packages, the privacy-manifest config, the Android permissions and cleartext switches, the
+// audit tooling wiring and secrets hygiene (the .p8 key, the upload keystore, the service-account key).
 // Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/audit-repo.mjs .
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -22,7 +23,16 @@ const SPEC = {
   details: [
     'Rules: network-call, network-global, remote-url, banned-import, vendor-import, iap-server-api, network-guard-import,',
     '  banned-package, config-updates, config-ats, att-config, config-iap-options, vendor-pod, banned-pod,',
-    '  privacy-manifest, audit-wiring, baseline, gitignore-secrets, secret-file, private-key, deny-rules.',
+    '  privacy-manifest, audit-wiring, baseline, gitignore-secrets, secret-file, private-key, deny-rules,',
+    '  android-permissions, android-cleartext, android-allowlists, keystore-ignored.',
+    'android-permissions: a permission literal in the app config or packages/shell/plugins/ (a full name, or a short',
+    '  name in a permissions array) that is not on assets/permission-allowlist.json and not in blockedPermissions.',
+    'android-cleartext: usesCleartextTraffic true or cleartextTrafficPermitted="true" in the same files.',
+    'android-allowlists: the repo copies of the two Android allowlists match this skill: ANDROID_PERMISSION_ALLOWLIST in',
+    '  android-manifest-audit.ts = assets/permission-allowlist.json, ALLOWED_ARTIFACTS in network-gradle-layer.ts =',
+    '  privacy-facts android.gradleArtifactAllowlist (checked when the file exists).',
+    'keystore-ignored: .gitignore and the Claude Code deny rules cover *.jks, *.keystore and play-service-account.json',
+    '  (secret-file also fails such a file inside the repo).',
     'att-config (owner decision O1, App Tracking Transparency): with ads enabled in a game.config.ts, shell-plugins.ts',
     '  lists expo-tracking-transparency with userTrackingPermission, with-shell.ts writes the localized',
     '  NSUserTrackingUsageDescription, and the en, de, fa and ckb catalogs hold consent.tracking.usage-description;',
@@ -171,6 +181,78 @@ function attConfig(root, report) {
   }
 }
 
+// The Android permissions an app may hold: the library's one list, synced into this skill and the two
+// Android build skills, so the config audit, the APK gate and the store-AAB gate never disagree.
+const ANDROID_ALLOWLIST = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'permission-allowlist.json'), 'utf8')).permissions.map((entry) => entry.name);
+const PERMISSION_LITERAL = /(['"`])((?:android|com\.[\w.]+)\.permission\.[A-Z0-9_]+|com\.android\.vending\.BILLING)\1/g;
+const PERMISSION_ARRAY = /(?<![\w$])(?:android)?[pP]ermissions['"]?\s*:\s*\[/g;
+const BLOCKED_ARRAY = /\bblockedPermissions['"]?\s*:\s*\[/g;
+const SHORT_PERMISSION = /(['"`])([A-Z][A-Z0-9_]+)\1/g;
+const CLEARTEXT = /\busesCleartextTraffic['"]?\]?\s*[:=]\s*['"]?true\b|\bcleartextTrafficPermitted\s*=\s*\\?['"]true/g;
+
+function isAllowedPermission(name) {
+  return ANDROID_ALLOWLIST.some((allowed) => (allowed.startsWith('<package>.') ? name.endsWith(allowed.slice('<package>'.length)) : allowed === name));
+}
+
+/** [start, end) of every `<key>: [ ... ]` array the pattern opens (the arrays hold string literals only). */
+function arraySpans(text, pattern) {
+  return [...text.matchAll(pattern)].map((match) => [match.index, text.indexOf(']', match.index + match[0].length) + 1]);
+}
+
+/** The app config code, plus the Shell's config plugins (they write the Android manifest). */
+function androidConfigFiles(root) {
+  const plugins = join(root, FACTS.android.pluginDir);
+  const pluginFiles = existsSync(plugins) ? walk(plugins, { include: ['*.ts'] }).map((rel) => `${FACTS.android.pluginDir}/${rel}`) : [];
+  return [...configFiles(root), ...pluginFiles].filter((rel) => !isTestFile(rel));
+}
+
+/** Android: every permission our config asks for is on the allowlist (or blocked), and no cleartext HTTP. */
+function androidConfig(root, report) {
+  for (const rel of androidConfigFiles(root)) {
+    const text = maskComments(readRepoText(root, rel));
+    const blocked = arraySpans(text, BLOCKED_ARRAY);
+    const isBlocked = (index) => blocked.some(([start, end]) => index >= start && index < end);
+    const found = [...text.matchAll(PERMISSION_LITERAL)].map((match) => ({ index: match.index, name: match[2] }));
+    for (const [start, end] of arraySpans(text, PERMISSION_ARRAY)) {
+      for (const match of text.slice(start, end).matchAll(SHORT_PERMISSION)) found.push({ index: start + match.index, name: `android.permission.${match[2]}` });
+    }
+    for (const { index, name } of found) {
+      if (isBlocked(index) || isAllowedPermission(name)) continue;
+      report.problem({ file: rel, line: lineAt(text, index), rule: 'android-permissions', message: `${name} is not on the Android permission allowlist`, fix: `Remove it, or list it in withShell's android.blockedPermissions when a library adds it; the app may hold only ${ANDROID_ALLOWLIST.length} permissions (spec N3; a new one is the owner's call and changes the Data safety answers).` });
+    }
+    for (const match of text.matchAll(CLEARTEXT)) report.problem({ file: rel, line: lineAt(text, match.index), rule: 'android-cleartext', message: `plain HTTP allowed (${match[0].trim()})`, fix: 'Remove it: the app loads nothing remote (N3), and the ads and billing SDKs use HTTPS; usesCleartextTraffic stays unset (false for target 28+).' });
+  }
+}
+
+/** The quoted strings of the array literal that follows `name` in a file, or null without one. */
+function arrayLiteralAfter(text, name) {
+  const start = text.search(new RegExp(`\\b${name}\\b[^=]*=[^\\[]*\\[`));
+  if (start < 0) return null;
+  const open = text.indexOf('[', text.indexOf('=', start));
+  const close = text.indexOf(']', open);
+  return { index: open, values: [...text.slice(open, close).matchAll(/'([^']*)'|"([^"]*)"/g)].map((m) => m[1] ?? m[2]) };
+}
+
+/** The repo's copies of the Android allowlists say exactly what this skill's lists say (rule 12). */
+function androidAllowlists(root, report) {
+  const lists = [
+    { rel: FACTS.android.manifestAuditFile, name: 'ANDROID_PERMISSION_ALLOWLIST', canonical: ANDROID_ALLOWLIST, source: 'assets/permission-allowlist.json (the APK and store-AAB gates check the same list)' },
+    { rel: FACTS.android.gradleLayerFile, name: 'ALLOWED_ARTIFACTS', canonical: FACTS.android.gradleArtifactAllowlist, source: "privacy-facts.json's android.gradleArtifactAllowlist (spec N3: ads and billing only)" },
+  ];
+  for (const { rel, name, canonical, source } of lists) {
+    if (!existsSync(join(root, rel))) continue;
+    const text = maskComments(readRepoText(root, rel));
+    const found = arrayLiteralAfter(text, name);
+    if (found === null) {
+      report.problem({ file: rel, rule: 'android-allowlists', message: `${name} not found`, fix: "Copy the file again from this skill's templates." });
+      continue;
+    }
+    const line = lineAt(text, found.index);
+    for (const value of found.values.filter((v) => !canonical.includes(v))) report.problem({ file: rel, line, rule: 'android-allowlists', message: `${name} has ${value}, which ${source} does not`, fix: 'Remove it: an allowlist grows only with the owner\'s word, in this skill first (spec N3).' });
+    for (const value of canonical.filter((v) => !found.values.includes(v))) report.problem({ file: rel, line, rule: 'android-allowlists', message: `${name} lacks ${value}, which ${source} has`, fix: "Copy the file again from this skill's templates, so the gates agree." });
+  }
+}
+
 function layerD(root, report) {
   const apps = join(root, 'apps');
   if (!existsSync(apps)) return;
@@ -252,7 +334,11 @@ function secrets(root, report) {
   const marker = new RegExp(['-----BEGIN ', '(?:[A-Z]+ )*', 'PRIVATE KEY-----'].join(''));
   for (const rel of walk(root, { ignore: [...SECRET_SCAN_IGNORES, 'dist', 'dist-audit', 'coverage', 'reports'] })) {
     if (secretFile.test(rel)) {
-      report.problem({ file: rel, rule: 'secret-file', message: 'a key or signing file inside the repo', fix: 'Move it out (keys live in ~/.appstoreconnect/private_keys, mode 600); if it was ever committed, revoke the key.' });
+      const isAndroidKey = /(\.jks|\.keystore|play-service-account\.json)$/.test(rel);
+      const fix = isAndroidKey
+        ? `Move it to ${FACTS.android.keyHome} (mode 600); if it was ever committed, the key is burnt: ask the owner to reset the upload key in the Play Console or to delete the service-account key.`
+        : 'Move it out (keys live in ~/.appstoreconnect/private_keys, mode 600); if it was ever committed, revoke the key.';
+      report.problem({ file: rel, rule: 'secret-file', message: 'a key or signing file inside the repo', fix });
       continue;
     }
     const text = readText(join(root, rel));
@@ -262,6 +348,10 @@ function secrets(root, report) {
   const settings = readRepoJson(root, '.claude/settings.json');
   const deny = settings?.permissions?.deny ?? [];
   for (const rule of FACTS.denyRules) if (!deny.includes(rule)) report.problem({ file: '.claude/settings.json', rule: 'deny-rules', message: `permissions.deny lacks ${rule}`, fix: 'Add it so Claude Code never reads key or signing files.' });
+  // Android: the upload keystore and the Play service-account key (beside the .p8).
+  const { keyGitignorePatterns, keyDenyRules, keyHome } = FACTS.android;
+  for (const pattern of gitignore === null ? [] : keyGitignorePatterns) if (!gitignore.includes(pattern)) report.problem({ file: '.gitignore', rule: 'keystore-ignored', message: `does not ignore ${pattern}`, fix: `Add the line ${pattern}: the upload keystore and the service-account key live in ${keyHome} and must never reach git.` });
+  for (const rule of keyDenyRules) if (!deny.includes(rule)) report.problem({ file: '.claude/settings.json', rule: 'keystore-ignored', message: `permissions.deny lacks ${rule}`, fix: 'Add it so Claude Code never reads the upload keystore or the service-account key (only the release scripts read them, in memory).' });
 }
 
 run(async () => {
@@ -275,6 +365,8 @@ run(async () => {
   bannedPackages(root, report);
   layerE(root, report);
   attConfig(root, report);
+  androidConfig(root, report);
+  androidAllowlists(root, report);
   layerD(root, report);
   privacyManifest(root, report);
   auditWiring(root, report);

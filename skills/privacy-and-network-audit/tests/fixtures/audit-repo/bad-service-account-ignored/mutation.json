@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".gitignore",
+      "find": "play-service-account.json\n",
+      "with": ""
+    }
+  }
+]

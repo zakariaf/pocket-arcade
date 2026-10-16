@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".claude/settings.json",
+      "find": ",\n      \"Read(**/play-service-account.json)\"",
+      "with": ""
+    }
+  }
+]

@@ -9,3 +9,6 @@ ApiKey_*
 *.mobileprovision
 *.xcarchive
 *.ipa
+*.jks
+*.keystore
+play-service-account.json

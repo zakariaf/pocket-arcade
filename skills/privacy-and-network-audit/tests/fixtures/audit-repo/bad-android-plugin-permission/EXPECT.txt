@@ -1,0 +1,3 @@
+[android-permissions]
+packages/shell/plugins/with-camera.ts:4
+android.permission.CAMERA

@@ -1,0 +1,14 @@
+{
+  "com.squareup.okhttp3:okhttp": {
+    "categories": ["okhttp"],
+    "reason": "React Native's and Expo's own HTTP client (react-android, expo-modules-core, expo-file-system, expo-asset, @expo/log-box), unused: our code never calls fetch (layer A)"
+  },
+  "com.squareup.okhttp3:okhttp-urlconnection": {
+    "categories": ["okhttp"],
+    "reason": "React Native's OkHttp URLConnection bridge (react-android), unused by our code (layer A)"
+  },
+  "com.facebook.fresco:imagepipeline-okhttp3": {
+    "categories": ["image-loader"],
+    "reason": "React Native's network image fetcher (react-android), unused: images are bundled and layer A bans remote URLs"
+  }
+}

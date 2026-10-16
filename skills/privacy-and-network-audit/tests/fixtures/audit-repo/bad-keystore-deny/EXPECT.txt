@@ -1,0 +1,3 @@
+[keystore-ignored]
+.claude/settings.json
+Read(**/play-service-account.json)

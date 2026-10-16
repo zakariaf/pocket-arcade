@@ -10530,7 +10530,7 @@
     },
     "privacy-and-network-audit": {
       "assets/privacy-facts.json": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/11-ads-admob.md",
@@ -10543,6 +10543,10 @@
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -10555,8 +10559,21 @@
           }
         ]
       },
+      "references/data-safety.md": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
       "references/n3-layers.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
@@ -10599,11 +10616,15 @@
         ]
       },
       "references/secrets-and-supply-chain.md": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -10634,6 +10655,19 @@
           }
         ]
       },
+      "templates/packages/tooling/network-audit/gradle-baseline.json": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
       "templates/packages/tooling/network-audit/js-baseline.json": {
         "recorded": "2026-10-04",
         "sources": [
@@ -10644,29 +10678,67 @@
         ]
       },
       "templates/packages/tooling/network-audit/native-baseline.json": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/android-manifest-audit.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/android-manifest-audit.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "templates/packages/tooling/src/audit/audit-network.ts": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "templates/packages/tooling/src/audit/audit-privacy.ts": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -10676,6 +10748,32 @@
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/data-safety.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/data-safety.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -10698,20 +10796,54 @@
         ]
       },
       "templates/packages/tooling/src/audit/network-config-layer.test.ts": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
       "templates/packages/tooling/src/audit/network-config-layer.ts": {
-        "recorded": "2026-10-04",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/network-gradle-layer.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/network-gradle-layer.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },
@@ -10733,12 +10865,29 @@
           }
         ]
       },
-      "templates/packages/tooling/src/audit/network-native-layer.ts": {
-        "recorded": "2026-10-04",
+      "templates/packages/tooling/src/audit/network-native-layer.test.ts": {
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/13-privacy-network-security.md",
             "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/tooling/src/audit/network-native-layer.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "docs/13-privacy-network-security.md",
+            "sha256": "76e56679e19c17ae76e6f6cd81632f37078e7ace6fd56ac3a59a87237b2937a6"
+          },
+          {
+            "path": "spec.txt",
+            "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
           }
         ]
       },

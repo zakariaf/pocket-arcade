@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": ".gitignore",
+      "find": "*.jks\n",
+      "with": ""
+    }
+  }
+]

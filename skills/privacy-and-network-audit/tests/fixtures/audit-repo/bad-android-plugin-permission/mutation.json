@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/plugins/with-camera.ts",
+      "content": "// packages/shell/plugins/with-camera.ts (fixture: a config plugin that adds a permission)\nimport { AndroidConfig, withAndroidManifest } from 'expo/config-plugins';\n\nconst CAMERA = 'android.permission.CAMERA';\n\nexport default function withCamera(config: object): object {\n  return withAndroidManifest(config, (mod) => {\n    AndroidConfig.Permissions.ensurePermissions(mod.modResults, [CAMERA]);\n    return mod;\n  });\n}\n"
+    }
+  }
+]

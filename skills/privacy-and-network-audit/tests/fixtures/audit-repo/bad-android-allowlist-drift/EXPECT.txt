@@ -1,0 +1,3 @@
+[android-allowlists]
+packages/tooling/src/audit/android-manifest-audit.ts
+android.permission.CAMERA

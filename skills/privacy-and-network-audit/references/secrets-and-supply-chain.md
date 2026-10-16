@@ -3,6 +3,7 @@
 ## Contents
 
 - The App Store Connect key
+- The Android upload keystore and the Play service-account key
 - Rules for tokens and scripts
 - Leak response (human)
 - Supply-chain guards
@@ -22,6 +23,19 @@
 Never open, print, copy, move, commit or log the `.p8` key, and never print a JWT made from it. A leaked team key can publish apps.
 
 `private-key` looks for PEM armour (five dashes, `BEGIN`, an optional `EC`/`RSA`/`ENCRYPTED`, `PRIVATE KEY`, five dashes) in every repo file, `skills/` included, so a key pasted anywhere is found; prose that only names the marker (a release checklist's `git grep`, a skill reference) is not reported.
+
+## The Android upload keystore and the Play service-account key
+
+Two more files can publish apps as us, so they get the `.p8`'s treatment:
+
+| Item | Rule | Where it is enforced |
+|---|---|---|
+| Location | `~/.android-keys/<game>-upload.jks` (the upload key; Google holds the app-signing key through Play App Signing) and `~/.android-keys/play-service-account.json` (owner step GP3), mode `600`, outside the repo; the keystore passwords sit in `~/.gradle/gradle.properties`, never in the repo | the Android release preflight checks place and mode with `stat`, never opens them |
+| Who reads them | Gradle reads the keystore at `bundleRelease` (through the game's own `E07_<GAME>_UPLOAD_*` properties); only `packages/tooling/src/release-android/play-credentials.ts` reads the JSON, once, into memory, to sign the token request | code review + `audit-repo.mjs` |
+| Agent file access | `permissions.deny` also holds `Read(~/.android-keys/**)`, `Read(**/*.jks)`, `Read(**/*.keystore)`, `Read(**/play-service-account.json)` | `audit-repo.mjs` (`keystore-ignored`) |
+| Commits | `.gitignore` also lists `*.jks`, `*.keystore`, `play-service-account.json` | `audit-repo.mjs` (`keystore-ignored`; `secret-file` fails such a file anywhere in the repo, `private-key` the PEM key inside a pasted JSON) |
+
+Never open, print, copy, move, commit or log either file, never run `keytool -list` on the keystore (it opens it; check who signed a bundle with `keytool -printcert -jarfile <aab>`), and never print the Google access token or the signed JWT. Leak response: a committed or printed upload keystore is burnt, so the owner asks for an upload-key reset in the Play Console (App integrity); a leaked service-account key is deleted in the Google Cloud console and replaced (GP3). Check history the same way as for the `.p8`.
 
 ## Rules for tokens and scripts
 
@@ -49,13 +63,14 @@ Explain to the owner in plain words and wait for each step:
 | Licences | `npm run audit:licenses` checks exactly the npm packages that ship in the release bundles (MIT, BSD, Apache-2.0, ISC, 0BSD, OFL, CC0; for `OR` one allowed side is enough) |
 | Banned npm packages | `banned-packages.ts` (template in `templates/tooling-deps/src/deps/`), run inside `audit:network` and by this skill's `audit-repo.mjs` |
 | Vendor pods | the trunk allowlist of exactly three pods (layer D) |
+| Gradle artifacts | network-capable Maven artifacts only from the ads and billing allowlist, others only with a reasoned baseline entry (layer D on Android) |
 | Freshness | `npx expo install --check` and `npx expo-doctor` in verify; a monthly dependency pass |
 
 Why the licence audit reads the bundle, not the lockfile: in the SDK 57 test app the 27 shipped npm packages were all MIT, Apache-2.0 or ISC, while the lockfile's production closure also held build-time packages under MPL-2.0, Unlicense, Python-2.0, CC-BY-4.0 and GPL-dual licences (`lightningcss`, `big-integer`, `argparse`, `caniuse-lite`, `node-forge`) that never ship. Pinning, cooldowns and install scripts are owned by the dependency work; this skill only checks that nothing banned or network-capable slips in.
 
 ## Banned SDKs and pods
 
-None may appear in `Podfile.lock`, `package-lock.json` or a config plugin list. Layer D fails on any trunk pod outside the allowlist anyway; this table names the usual suspects so a failure is recognised at once:
+None may appear in `Podfile.lock`, the release runtime classpath, `package-lock.json` or a config plugin list. Layer D fails on any trunk pod outside the allowlist anyway; this table names the usual suspects so a failure is recognised at once:
 
 | SDK family | Example pods / packages | Why |
 |---|---|---|

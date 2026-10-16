@@ -1,0 +1,2 @@
+[secret-file]
+packages/tooling/play-service-account.json
