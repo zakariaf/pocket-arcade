@@ -13,6 +13,7 @@ How `setup-parity-sim.mjs` and `capture-app.mjs` get a screenshot and element bo
 - Taking the screenshot
 - Element bounds with maestro hierarchy
 - Fast iteration after a JavaScript-only change
+- Android: the parity emulator and its capture
 - Human steps
 
 ## The parity device
@@ -129,7 +130,42 @@ When native dependencies did not change, a new Release JS bundle can be swapped 
 
 Rebuild properly (the `ios-simulator-build` skill) after any native change, and always before the final sign-off captures.
 
+## Android: the parity emulator and its capture
+
+Every script takes `--platform ios|android` (default `ios`); the iOS path above is unchanged. On Android the same loop runs on an emulator, against a reference set of its own:
+
+| Fact | Value |
+|---|---|
+| Device profile | `assets/device/android-phone.json` (`"platform": "android"`) |
+| AVD | `e07-android-parity[-<key>]`, system image `system-images;android-35;google_apis;arm64-v8a` (android-emulator-build's image), base device `pixel_8` |
+| Screen | 402 x 874 dp at density 3.0 (`hw.lcd.density=480`) = 1206 x 2622 px, the iPhone 16 Pro's logical size, so text wraps as in the iOS references (owner default d) |
+| Insets | status bar 24 dp (masked), gesture navigation bar 24 dp; its handle (x 120, y 850, 162 x 24 dp) is masked because screencap draws it |
+| Status bar | demo mode: 09:41, full battery, Wi-Fi, no notifications (`sysui_demo_allowed 1`, `com.android.systemui.demo` broadcasts) |
+| References | `assets/reference-android/lineSiege/`, rendered by `shoot-design.mjs --device assets/device/android-phone.json` (no Dynamic Island, no drawn iOS clock); a new set for a new device, never a change to `assets/reference/` |
+| Runs | `.parity/android/<game>/<frame>/<theme>-<lang>[-y<scroll>]/`, `run.json` `"platform": "android"` |
+
+**The emulator.** `setup-parity-emu.mjs --appearance light|dark --name e07-android-parity-<key>` creates the AVD once (avdmanager, then the profile's `hw.lcd.*` and `hw.*` keys in its `config.ini`), boots it on a free console port with `-no-snapshot -no-boot-anim -no-audio -no-window`, and pins it: no `wm size` or `wm density` override, night mode for the appearance, `font_scale` 1.0, gesture navigation, demo mode on. It prints `serial <serial>`. It refuses any other AVD name, never downloads (a missing system image is exit 2: install it with android-emulator-build's step), never restarts the adb server, and never kills an emulator it did not start: a running one with the wrong geometry is reported (`emu-wrong-geometry`), since `config.ini` is read only at boot. `--check` changes nothing and fails with a rule id: `emu-missing`, `emu-wrong-image`, `emu-wrong-geometry`, `emu-duplicate`, `emu-not-booted`, `emu-size`, `emu-density`, `emu-night-mode`, `emu-font-scale`, `emu-navigation`, `emu-demo-mode`.
+
+**One emulator per session, every call names it.** Every adb call is `adb -s <serial> ...`; `--serial` must run the `--name` AVD, or the capture fails `wrong-serial` (another project's or session's emulator is never captured). Maestro gets `--device <serial> --driver-host-port <port>`, and the launch nonce works as on iOS: a dump without `parity.launch.<nonce>` stops with exit 2, "hierarchy from another device".
+
+**The launch.** `capture-app.mjs --platform android` sets night mode from `--theme`, sends demo mode again (SystemUI forgets it on a restart), sets the app's own locale (`cmd locale set-app-locales <package> --user current --locales fa-IR`, Android 13+), then cold-starts the app with `am start -S -W -n <package>/.MainActivity --es parity "<query>"`. Android has no launch arguments in NSUserDefaults: the query arrives as the launch intent's string extra `parity`, which the harness reads through the Shell's `ParityLaunch` native module in test builds only (parity-harness.md, "The contract"). An `Error:` line of `am start` (the activity or the package is missing) is exit 2, "the app did not launch".
+
+**Screenshot and bounds.** `adb -s <serial> exec-out screencap -p` gives the 1206 x 2622 PNG (the still-screen rule is the same). Maestro's Android hierarchy gives bounds in pixels, so `run.json` records `hierarchyPxPerPt: 3` and `check-parity.mjs` divides by it (a run without it would compare pixels with points and fail `bounds`). Android's own dialogs fail `system-alert` like Apple's: a permission prompt ("Allow ... to", "While using the app"), "isn't responding", "keeps stopping", the "Open with" chooser.
+
+**Judging.** An Android run is compared only with the Android set and the Android profile (`wrong-reference` otherwise, both ways), is signed off only by `check-signoff.mjs --platform android` with ledger entries that say `"platform": "android"`, and is waived only by Android waivers (signoff-and-waivers.md). Every gate number is the same as on iOS: an Android difference is fixed or waived, never tolerated by a wider number.
+
+```sh
+node ${CLAUDE_SKILL_DIR}/scripts/setup-parity-emu.mjs --appearance light --name e07-android-parity-b
+node ${CLAUDE_SKILL_DIR}/scripts/run-parity.mjs --platform android --screen S4 --bundle-id io.applander.linesiege --name e07-android-parity-b
+node ${CLAUDE_SKILL_DIR}/scripts/check-signoff.mjs --platform android --screen S4
+```
+
+**When the session is done**, stop its own emulator by serial (`adb -s <serial> emu kill`), never another one.
+
+The insets are the AOSP values for a 480 dpi screen without a cutout under gesture navigation; no AVD had been made when the profile was written (E18-T07). `setup-parity-emu.mjs --check` proves the size and density, and the first capture proves the insets. A different measured inset is a deliberate profile change: re-render `assets/reference-android` and log it in its manifest's `referenceChanges`.
+
 ## Human steps
 
 - Installing Xcode 26.6 and the iOS 26.5 simulator runtime (Xcode > Settings > Components, or `xcodebuild -downloadPlatform iOS -buildVersion 26.5`) is the owner's step if they are missing; the setup script says so and stops.
 - Installing Maestro and Java 17 follows the `e2e-maestro` skill.
+- The Android system image and the emulator come from the `android-emulator-build` skill's install step (an approved `sdkmanager` run); `setup-parity-emu.mjs` never downloads and stops with exit 2 when the image is missing.

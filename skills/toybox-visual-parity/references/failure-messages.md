@@ -8,6 +8,7 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 - Where the design's numbers are: layout.json and the mockup CSS
 - capture-app.mjs and run-parity.mjs
 - setup-parity-sim.mjs
+- setup-parity-emu.mjs
 - make-sheet.mjs and check-signoff.mjs
 - check-harness.mjs
 - shoot-design.mjs, import-design.mjs and check-testids.mjs
@@ -40,7 +41,9 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 | `reference-missing` | no reference for this frame, theme, language or game | a game or language outside the committed set | render it with `shoot-design.mjs --out .parity/design ...` and pass `--reference .parity/design` |
 | `reference-mismatch` | run.json names another frame, theme or language than the reference | a hand-edited run.json or reference path | capture again with `capture-app.mjs` |
 | `bounds-missing` | the run has no element bounds | the hierarchy dump failed or was skipped | capture again (Maestro and Java 17 installed) |
-| `waiver-invalid` | the waiver file is malformed or tries to change a number | an extra field, a wildcard testID, a short reason, no report date, an unknown `class`, a `platform-text-shaping` waiver on another rule than `text-ink` or without `glyphs`, a `design-artefact` waiver without the CSS in `designCause` or on `missing` | fix the entry (see [signoff-and-waivers.md](signoff-and-waivers.md)) |
+| `waiver-invalid` | the waiver file is malformed or tries to change a number | an extra field, a wildcard testID, a short reason, no report date, an unknown `class` or `platform`, an Android waiver without `class`, a `platform-text-shaping` waiver on another rule than `text-ink` or without `glyphs`, a `design-artefact` waiver without the CSS in `designCause` or on `missing` | fix the entry (see [signoff-and-waivers.md](signoff-and-waivers.md)) |
+| `wrong-reference` (check-parity) | an Android run checked against the iOS set or with the iOS profile, or an iOS run against the Android set | `--reference` or `--device` named the other platform's files, or a `run.json` lacks `"platform": "android"` (not written by `capture-app.mjs --platform android`) | drop `--reference` and `--device` (the defaults follow the run's platform); capture again with `--platform android` |
+| `waiver-platform` | a problem of an Android run is matched only by a waiver without `"platform": "android"` (an iOS waiver) | the iOS waiver was assumed to cover Android | fix it on Android, or write its own Android waiver with its class (signoff-and-waivers.md, "Android waivers"); never copy the iOS one blindly |
 
 ## Where the design's numbers are: layout.json and the mockup CSS
 
@@ -54,6 +57,9 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 |---|---|---|---|
 | exit 2 "hierarchy from another simulator: the dump has no parity.launch.<nonce>" | three Maestro dumps in a row (2 s apart) do not hold this launch's nonce marker, so they did not come from this launch on this simulator (the last is kept as `rejected.hier.json`; a single dump with only the status bar, taken before the app's tree was attached, is read again and never stops the capture) | another session's XCUITest driver answered (a shared simulator or driver port); or the app's parity root or a modal root draws no `ParityLaunchMarker` (an old harness, or a Scrim, Result overlay or consent cover without the marker); on `s1-splash` only, start-shell registers the held splash without `withParityRoot` | give the session its own simulator (`--name e07-parity-<key>`) and let the scripts pick a free driver port; `check-harness.mjs` names a missing marker (`harness-launch-marker`); rebuild and capture again |
 | `system-alert` | a system alert is on screen: Apple's tracking prompt, a permission prompt or an "Open in ...?" alert (the message quotes it) | the consent moment asked Google or Apple in a parity launch (the held S3 frame must never), a permission was requested at launch, or a deep link was used | find what asked; a parity launch asks nothing (parity-harness.md, "The S3 consent moment"); dismiss the alert and capture again |
+| `wrong-serial` (Android) | `--serial` names an emulator that runs another AVD than `--name` (the message names both) | another project's or session's emulator, or a stale serial | drop `--serial` (the AVD's own serial is found), or pass this session's (`setup-parity-emu.mjs` prints it) |
+| `system-alert` on Android | a permission prompt, "isn't responding", "keeps stopping" or the "Open with" chooser is up | an ANR or crash behind the frame, a permission asked at launch | read `adb -s <serial> logcat -d`; fix the crash or the request; capture again |
+| exit 2 "hierarchy from another device" / "the e07-android-parity emulator is not running" / "the app did not launch: Error: Activity class ..." (Android) | no marker of this launch on this serial; no emulator runs the AVD; `am start` printed an `Error:` line | as for iOS, or the dump came from another emulator; the emulator is off; the test build is not installed | `setup-parity-emu.mjs --name e07-android-parity-<key>`; `adb -s <serial> install -r <apk>` (android-emulator-build) |
 | `unstable` | no two screenshots 300 ms apart were the same within the settle time | a loop or entrance that ignores `useReduceMotion` (every parity capture freezes motion through `isParityMotionFrozen()`, the one frozen-motion switch that `app/use-reduce-motion.ts` honours), a timer, a loading state, a blinking caret | route the loop or entrance through `useReduceMotion()` (never a parity-only branch); stop timers in parity mode; raise `--settle-ms` only for a slow first launch |
 | `board-probe` | the probe=board launch of a Game-route frame showed no usable `game.board-layout` | `isParityBoardProbeOn()` is not wired into the host's `isLayoutProbeOn` closure, or the board host does not render the probe | wire it (game-host-integration's `create-shell-parts.ts`), rebuild, capture again |
 | `changed-during-capture` | the screen changed during three hierarchy dumps in a row | a timer, a polling spinner, a toast that times out | stop it in parity mode |
@@ -77,6 +83,19 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 | `sim-status-bar` | no status bar override (cleared by every reboot) | run without `--check` |
 | `sim-appearance`, `sim-content-size`, `sim-increase-contrast` | appearance, text size or contrast differ | run with the wanted `--appearance` |
 
+## setup-parity-emu.mjs
+
+| Rule | Means | Fix |
+|---|---|---|
+| `emu-missing` | no e07-android-parity AVD (or no config.ini) | run without `--check` |
+| `emu-wrong-image` | the AVD uses another system image than the profile's | delete your own AVD (`avdmanager delete avd --name <name>`) and run again |
+| `emu-wrong-geometry` | `hw.lcd.width`, `hw.lcd.height` or `hw.lcd.density` (or another profile key) differs in `config.ini` | run without `--check` while it is shut down (a running emulator is never killed: stop your own with `adb -s <serial> emu kill` first) |
+| `emu-duplicate` | several emulators run the AVD | stop the extra ones (your own only) |
+| `emu-not-booted` | the AVD is not running | run without `--check` |
+| `emu-size`, `emu-density` | a `wm size` or `wm density` override is set | run without `--check` (resets them) |
+| `emu-night-mode`, `emu-font-scale`, `emu-navigation`, `emu-demo-mode` | night mode, `font_scale`, gesture navigation or demo mode differ | run with the wanted `--appearance` |
+| exit 2 "the system image ... is not installed" / "refuses the AVD ..." | no download here; another AVD name | install the image with android-emulator-build's step; use `e07-android-parity[-<key>]` |
+
 ## make-sheet.mjs and check-signoff.mjs
 
 | Rule | Means | Fix |
@@ -85,10 +104,12 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 | `no-sheet`, `stale-sheet` | sheets missing, older than the report, or edited since | run `make-sheet.mjs` again and look again |
 | `not-captured` | a required theme x language has no run | capture it (`run-parity.mjs` does all of them) |
 | `narrowed` | "narrowed: not a sign-off": `--themes` or `--langs` left out part of the done set (light and dark x en and fa) | drop the options; capture the missing variants, look and record them. Narrowing is for iteration only |
+| `wrong-platform` | `--platform android` found an iOS capture (or the other way round) | the run was copied or captured without `--platform android` | capture it on the parity emulator (`capture-app.mjs --platform android`, into `.parity/android`) |
+| `wrong-reference` (check-signoff) | the report was checked against the other platform's set | `check-parity.mjs --reference` named the other set | `check-parity.mjs <run-dir>` (the default follows the run's platform), then `make-sheet.mjs` and look again |
 | `reference-variant` | a run was captured against another reference than the game facts select | capture again with `run-parity.mjs` |
 | `not-checked`, `not-passing` | no report, or a failing report | run `check-parity.mjs`; fix the app |
 | `not-a-capture` | the run is not a simulator capture of the app | capture the app; never copy the reference in |
-| `not-looked` | no ledger entry, or images missing from `looked` | read every sheet image, then add or complete the entry (`--draft`) |
+| `not-looked` | no ledger entry of this platform (an entry without `platform` is an iOS look), or images missing from `looked` | read every sheet image, then add or complete the entry (`--draft`) |
 | `looked-at-old-sheet` | the entry is for an earlier sheet | look at the new sheet, update the entry |
 | `eye-check-open` | an eye check is not answered | compare that aspect, answer `match`, `n/a` or `waived: <reason>` |
 | `difference-open` | the look found something still open | fix it (then capture, check, sheet, look again) |
@@ -112,6 +133,7 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 | `harness-opener` | the hook that owns a frame state does not open it (nothing in it or a `use-*.ts` helper next to it reads `parityFrameState()` or `useParityOpener()` and names `'<state>'`), or the plans name an unknown state. A frame whose root is reached anyway still fails: S15 without its opener draws "Always show test ads" off and fails `structure` on `debug.ads-always-test-switch.toggle`. The same failure with the opener in place (`harness-opener` passes) means its re-render was lost: the React Compiler cached the model's switches, so the flag is saved on but drawn off (before the startup cleared saved flags, only the first capture after an install showed it) | add the opener to that hook, applied once on mount through the handler a tap would use, with its test (parity-harness.md, "Frame states and who opens them"); S15's reads `parityFrameState() === 'debug-ads-always-test'` from `app/parity/parity-session.ts` in `screens/debug/use-debug-model.ts` (never `useParityOpener`, whose gate import closes a loop through the test-only entry), whose `useDebugModel` reads the debug services outside React and so carries `'use no memo'` (or subscribes to them) |
 | `harness-debug-flags` | `parity-startup.tsx`'s `applyParityData` does not set `debug.overrides` to null, so the debug services restore the flags an earlier launch saved (the S15 frame's "Always show test ads", a debug link's offline switch) into every later capture | copy the template `parity-startup.tsx` again (parity-harness.md, "Three traps") |
 | `harness-frame-state` | a plan's `state` is not the state its design frame draws (for example `s15-debug-menu` with no state, so its capture can never match) | copy the template `parity-plans.ts` again; every frame's state is in parity-harness.md, "Frame states and who opens them" |
+| `harness-android-launch` | the Android launch path is missing or leaks: `parity/parity-launch-extra.ts`, `read-parity-request.ts` reading it when `Platform.OS` is android, `parity-startup.android.test.tsx`, `packages/shell/android/.../ParityLaunchModule.kt`, its entry in `packages/shell/expo-module.config.json` (`android.modules`), or a file outside `app/parity/` asks for the `ParityLaunch` module | copy the templates (parity-harness.md, "The contract"); only `app/parity/parity-launch-extra.ts` asks for the module |
 | `harness-game-facts` | `parity/game-facts.json` is missing, malformed, lacks a game app or a fact, or disagrees with the app's `parity-game-facts.test.ts` or plainly with the module (a music sound with `hasMusic: false`, a score stars rule with `winLine: "moves"`, a solver hint policy with `hasHints: false`) | copy `templates/parity/game-facts.json` and the facts test; set both to the game's facts |
 | `harness-launch-marker` | the parity root does not provide `ParityLaunchContext` and draw `<ParityLaunchMarker />`, a modal root (Scrim, Result overlay, consent cover) draws none, or start-shell registers the held S1 splash without `withParityRoot` | copy the template `parity-root.tsx`; render `<ParityLaunchMarker />` as the first child of each modal View (it draws nothing outside a capture); register the held splash as `withParityRoot(parity.request, createStartupSplash(...))` |
 | `component-border` | `component-specs.json` holds another edge width than the references draw (for example `groupTab.border 2.5` where every layout says `2px solid`), or does not exist | regenerate the specs with the `toybox-components` skill (as-rendered widths: a CSS border of 1 px or more renders floored); never edit the references |

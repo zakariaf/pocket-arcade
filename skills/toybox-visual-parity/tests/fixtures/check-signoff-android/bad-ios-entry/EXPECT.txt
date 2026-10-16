@@ -1,0 +1,3 @@
+[not-looked]
+no android sign-off entry
+an entry without "platform" is an iOS look

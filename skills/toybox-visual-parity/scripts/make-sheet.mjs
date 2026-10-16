@@ -8,7 +8,8 @@ import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { TOLERANCES, frameGeometry, isCropOnly } from './lib/gates.mjs';
 import { parseAppLayout, parseMaestroHierarchy } from './lib/hierarchy.mjs';
-import { DEFAULTS, readJson } from './lib/paths.mjs';
+import { readJson } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, deviceTargetName } from './lib/platform.mjs';
 import { blank, blit, crop, downscale, encodePng, fillRect, outline, readPng } from './lib/png.mjs';
 import { RUN_FILES, findRunDirs, readRun } from './lib/runs.mjs';
 
@@ -23,8 +24,8 @@ const SPEC = {
   options: {
     runs: { type: 'string', value: 'folder', help: 'Every run folder under this folder' },
     out: { type: 'string', value: 'dir', help: 'Write the images here instead of into the run folder (one run only)' },
-    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
-    device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    reference: { type: 'string', value: 'dir', help: "Reference root (default: the committed set of the run's platform)" },
+    device: { type: 'string', value: 'file', help: "Device profile (default: the run's platform, assets/device/iphone16pro.json or android-phone.json)" },
     tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: Infinity },
@@ -99,8 +100,11 @@ run(async () => {
   if (options.runs) dirs.push(...findRunDirs(resolve(options.runs)));
   if (dirs.length === 0) fail('nothing to draw: pass run folders or --runs <folder>', 'Run: node make-sheet.mjs --help');
   if (options.out && dirs.length !== 1) fail('--out works with exactly one run folder', 'Drop --out to write into each run folder.');
-  const device = readJson(resolve(options.device), 'device profile');
-  const S = device.scale;
+  const devices = {};
+  const deviceFor = (platform) => {
+    devices[platform] ??= readJson(resolve(options.device ?? PLATFORM_DEFAULTS[platform].device), 'device profile');
+    return devices[platform];
+  };
   const { PNG, pixelmatch } = await loadImageDeps(toolingDirOf(options));
   const report = createReporter({ name: 'make-sheet' });
   const show = (p) => relative(process.cwd(), p) || '.';
@@ -108,6 +112,8 @@ run(async () => {
   for (const dir of dirs) {
     const r = readRun(dir, { referenceRoot: options.reference });
     const file = show(r.app);
+    const device = deviceFor(r.info.platform);
+    const S = device.scale;
     if (!existsSync(r.reference.image) || !existsSync(r.reference.layout)) {
       report.problem({ file, rule: 'reference-missing', message: `no design reference at ${show(r.reference.image)}`, fix: 'Render it with shoot-design.mjs (see check-parity.mjs --help).' });
       continue;
@@ -118,7 +124,7 @@ run(async () => {
     const isPhone = layout.kind === 'phone' || layout.kind === 'phone-tall';
     const sizeOk = isPhone ? app.width === device.pixels.width && app.height === device.pixels.height : app.width === device.pixels.width;
     if (!sizeOk) {
-      report.problem({ file, rule: 'capture-size', message: `app.png is ${app.width} x ${app.height} px, not the parity device's ${device.pixels.width} x ${device.pixels.height}`, fix: `Re-capture on the "${device.simulatorName}" simulator (capture-app.mjs).` });
+      report.problem({ file, rule: 'capture-size', message: `app.png is ${app.width} x ${app.height} px, not the parity device's ${device.pixels.width} x ${device.pixels.height}`, fix: `Re-capture on the "${deviceTargetName(device)}" ${r.info.platform === 'android' ? 'emulator' : 'simulator'} (capture-app.mjs).` });
       continue;
     }
     const reportPath = join(dir, RUN_FILES.report);
@@ -137,7 +143,7 @@ run(async () => {
     mkdirSync(outDir, { recursive: true });
     const failing = (runReport?.problems ?? []).filter((p) => p.rect);
     const boundsPath = r.appLayout ?? r.hier;
-    const bounds = boundsPath ? (r.appLayout ? parseAppLayout(readJson(boundsPath)) : parseMaestroHierarchy(readJson(boundsPath))) : { elements: new Map() };
+    const bounds = boundsPath ? (r.appLayout ? parseAppLayout(readJson(boundsPath)) : parseMaestroHierarchy(readJson(boundsPath), { pxPerPt: r.info.hierarchyPxPerPt ?? 1 })) : { elements: new Map() };
 
     // Tall frames: the part of the design this capture shows (header, scrolled body, pinned banner).
     const geo = frameGeometry(layout, device);

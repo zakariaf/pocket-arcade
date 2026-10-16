@@ -1,0 +1,2 @@
+[emu-wrong-geometry]
+hw.lcd.width is 1080, not 1206

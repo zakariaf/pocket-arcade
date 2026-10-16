@@ -1,0 +1,1 @@
+--appearance light --check --avd-home avd --sdk avd --adb ../../fakes/fake-adb.mjs --emulator ../../fakes/fake-emulator.mjs --avdmanager ../../fakes/fake-avdmanager.mjs

@@ -61,9 +61,23 @@
 //                     while S15 is outside shell-slice.json; harness-debug-flags: a parity launch
 //                     clears the saved debug flags before the debug services restore them
 //
+// Added 2026-10-16 (E18-T07, Android), against the fake adb, emulator and avdmanager:
+//   check-parity      an Android run against the Android set passes; one against the iOS set (and an
+//                     iOS run against the Android set) fails wrong-reference; Android bounds in pixels
+//                     without hierarchyPxPerPt fail bounds; an iOS waiver never covers an Android run
+//                     (waiver-platform); an Android waiver without its class is invalid
+//   check-signoff     --platform android: the full Android set passes; narrowed, an iOS ledger entry,
+//                     an iOS capture (wrong-platform) and an iOS-checked report (wrong-reference) fail
+//   capture-app       --platform android: a capture on the wrong serial, an Android system dialog, a
+//                     dump without this launch's nonce, no emulator, a launch that fails
+//   setup-parity-emu  --check: every emu-* rule; apply: creates and pins the AVD, refuses duplicates
+//                     and a running emulator with the wrong geometry; never another AVD name
+//   run-parity        --platform android end to end, and a wrong serial
+//   check-harness     the Android launch path is wired and only app/parity/ asks for the module
+//
 //   node selftest.mjs [--tooling <repo>/.parity/tooling]
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -121,10 +135,21 @@ const scratch = () => {
 };
 const extraArgs = (dir) => (existsSync(join(dir, 'args.json')) ? JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8')) : null);
 const fakes = ['--xcrun', join(FAKES, 'fake-xcrun.mjs')];
+// The Android fakes: adb, emulator and avdmanager share one state per fixture folder (scenario.json
+// overlaid on one ready e07-android-parity emulator), kept under FAKE_ANDROID_STATE_DIR.
+const androidFakes = ['--adb', join(FAKES, 'fake-adb.mjs'), '--maestro', join(FAKES, 'fake-maestro.mjs')];
+const emuFakes = ['--sdk', join(FAKES, 'android-sdk'), '--adb', join(FAKES, 'fake-adb.mjs'), '--emulator', join(FAKES, 'fake-emulator.mjs'), '--avdmanager', join(FAKES, 'fake-avdmanager.mjs')];
+// The AVD folder of a case: a scratch copy of its avd/ (apply mode writes config.ini there).
+const avdHome = (dir) => {
+  const home = scratch();
+  if (existsSync(join(dir, 'avd'))) cpSync(join(dir, 'avd'), home, { recursive: true });
+  return ['--avd-home', home];
+};
 // The fake xcrun writes each launch's nonce here and the fake maestro puts its marker into the dump,
 // as the app's parity root does (every child script inherits the variable).
 const fakeStateDir = mkdtempSync(join(tmpdir(), 'toybox-visual-parity-fake-'));
 process.env.FAKE_PARITY_STATE = join(fakeStateDir, 'launch.json');
+process.env.FAKE_ANDROID_STATE_DIR = join(fakeStateDir, 'android');
 // map-edit.json { "dropTestID": "<id>" }: a copy of the skill's testID map without that element, so a
 // map change that reaches a reference (one element fewer measured) must show as drift.
 const editedMap = (dir) => {
@@ -430,6 +455,36 @@ await runSelftest(import.meta.url, [
     script: 'run-parity.mjs',
     fixtures: '../tests/fixtures/run-parity-session',
     args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs'), ...(extraArgs(dir) ?? [])],
+  },
+  {
+    script: 'check-parity.mjs',
+    fixtures: '../tests/fixtures/check-parity-android',
+    args: (dir) => [dir, '--waivers', join(dir, 'waivers.json'), '--no-write'],
+  },
+  {
+    script: 'check-signoff.mjs',
+    fixtures: '../tests/fixtures/check-signoff-android',
+    args: (dir) => ['--platform', 'android', ...(extraArgs(dir) ?? ['--frame', 's4-home']), '--reference', join(dir, '..', 'reference')],
+  },
+  {
+    script: 'capture-app.mjs',
+    fixtures: '../tests/fixtures/capture-app-android',
+    args: (dir) => ['--platform', 'android', '--bundle-id', 'io.applander.linesiege', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...androidFakes, ...(extraArgs(dir) ?? [])],
+  },
+  {
+    script: 'setup-parity-emu.mjs',
+    fixtures: '../tests/fixtures/setup-parity-emu',
+    args: (dir) => ['--appearance', 'light', '--check', ...avdHome(dir), ...emuFakes],
+  },
+  {
+    script: 'setup-parity-emu.mjs',
+    fixtures: '../tests/fixtures/setup-parity-emu-apply',
+    args: (dir) => ['--appearance', 'light', '--boot-timeout', '5', '--log-dir', scratch(), ...avdHome(dir), ...emuFakes],
+  },
+  {
+    script: 'run-parity.mjs',
+    fixtures: '../tests/fixtures/run-parity-android',
+    args: (dir) => ['--platform', 'android', '--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity-android', 'reference'), '--waivers', join(dir, 'waivers.json'), ...androidFakes, ...(extraArgs(dir) ?? [])],
   },
   {
     script: 'check-harness.mjs',

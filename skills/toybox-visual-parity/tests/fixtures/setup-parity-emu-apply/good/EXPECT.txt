@@ -1,0 +1,4 @@
+created e07-android-parity
+hw.lcd.width=1206
+starting e07-android-parity on emulator-5554
+serial emulator-5554

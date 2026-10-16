@@ -1,0 +1,1 @@
+The Android stand-in reference for the self-test: s4-home light-en rendered by shoot-design.mjs --device assets/device/android-phone.json (manifest "platform": "android"). check-parity-android/good/app.png is the same render (design-as-app), so a correct Android run passes every gate.

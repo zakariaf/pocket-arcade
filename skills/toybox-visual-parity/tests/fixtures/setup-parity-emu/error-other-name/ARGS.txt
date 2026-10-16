@@ -1,0 +1,1 @@
+--appearance light --check --name Pixel_8a_API_35 --avd-home avd --sdk ../../fakes/android-sdk --adb ../../fakes/fake-adb.mjs --emulator ../../fakes/fake-emulator.mjs --avdmanager ../../fakes/fake-avdmanager.mjs

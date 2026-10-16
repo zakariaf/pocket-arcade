@@ -1,0 +1,49 @@
+{
+ "version": 1,
+ "game": "lineSiege",
+ "platform": "android",
+ "set": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 24 dp status bar and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
+ "rendered": "2026-10-12",
+ "renderer": {
+  "chrome": "154.0.8037.98",
+  "playwright": "1.63.0",
+  "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
+ },
+ "device": {
+  "name": "Android parity phone 402 x 874 dp",
+  "points": {
+   "width": 402,
+   "height": 874
+  },
+  "scale": 3,
+  "safeTop": 24
+ },
+ "inputs": {
+  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
+  "frames": "1c287947c5c7f2fc7bc9693f466a5a7964abd1fb1badb439ed81452d0c725c57",
+  "deviceProfile": "33ece2e896281209c550a879812f7c73a8ff7fbd217f79601f5d49305e8484c2"
+ },
+ "themes": [
+  "light"
+ ],
+ "langs": [
+  "en"
+ ],
+ "frames": [
+  "s4-home"
+ ],
+ "variants": [],
+ "files": {
+  "light-en/s4-home.layout.json": {
+   "sha256": "e4dc9a15305b8ac609579380d6c2d19a07289343c5c6afe758bf6b4002728d13",
+   "bytes": 16452
+  },
+  "light-en/s4-home.png": {
+   "sha256": "52dac269c0d8e9a7a3f5af51f5165de93275b5e286f485ff69a1bfa93e3bc878",
+   "bytes": 146260,
+   "width": 1206,
+   "height": 2622
+  }
+ }
+}

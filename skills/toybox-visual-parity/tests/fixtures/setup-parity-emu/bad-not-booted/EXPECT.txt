@@ -1,0 +1,2 @@
+[emu-not-booted]
+e07-android-parity is not running

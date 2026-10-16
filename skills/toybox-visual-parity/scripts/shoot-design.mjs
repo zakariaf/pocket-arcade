@@ -9,6 +9,7 @@ import { CHROME_ARGS, TOOLING_OPTION, launchChrome, loadImageDeps, loadPlaywrigh
 import { LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
 import { referenceChangeProblems } from './lib/reference-changes.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, platformOf } from './lib/platform.mjs';
 import { compactJson, encodePng, readPng } from './lib/png.mjs';
 import { openDesign, shootFrame } from './lib/render.mjs';
 
@@ -16,7 +17,8 @@ const SPEC = {
   name: 'shoot-design',
   summary:
     'Renders design frames (every frame by default) in light and dark x en and fa at the parity device geometry ' +
-    '(iPhone 16 Pro, 402 x 874 pt @3x, safe top 62) and writes <frame>.png (lossless) + <frame>.layout.json ' +
+    '(iPhone 16 Pro, 402 x 874 pt @3x, safe top 62; with --device assets/device/android-phone.json the Android parity ' +
+    'emulator, 402 x 874 dp at 3.0, status bar 24) and writes <frame>.png (lossless) + <frame>.layout.json ' +
     '(testID rects, texts, styles, text runs), plus each reference variant a frame has for other game facts ' +
     '(<frame>--<variant>, derived from the rendered mockup by the DOM change frames.json names; variants compose, as in ' +
     's6-pause--no-music--no-hints). --check re-renders ' +
@@ -35,7 +37,7 @@ const SPEC = {
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
-    reference: { type: 'string', value: 'dir', help: 'Reference root for --check / --update-reference', default: DEFAULTS.reference },
+    reference: { type: 'string', value: 'dir', help: 'Reference root for --check / --update-reference (default: assets/reference, or assets/reference-android for an Android device profile)' },
     tooling: TOOLING_OPTION,
   },
   positionals: { min: 0, max: 0 },
@@ -47,6 +49,8 @@ const SPEC = {
     '',
     'Examples:',
     '  node shoot-design.mjs --check                                   (prove the committed set is current)',
+    '  node shoot-design.mjs --check --device assets/device/android-phone.json --reference assets/reference-android',
+    '                                                                  (prove the Android set is current)',
     '  node shoot-design.mjs --out .parity/design --game flockTilt     (references for another design game)',
     '  node shoot-design.mjs --out .parity/design --frame s4-home --theme dark --lang fa',
     '  node shoot-design.mjs --out .parity/self --as-app               (design-vs-design runs for check-parity)',
@@ -116,7 +120,9 @@ run(async () => {
   const keys = listOption(options.frame, [...frames.keys()]);
   for (const k of keys) if (!frames.has(k)) fail(`unknown frame "${k}"`, `Use one of: ${[...frames.keys()].join(', ')}`);
 
-  const referenceRoot = resolve(options.reference);
+  // An Android profile renders the Android set: never the iOS references at another geometry.
+  const platform = platformOf(device);
+  const referenceRoot = resolve(options.reference ?? PLATFORM_DEFAULTS[platform].reference);
   const committed = join(referenceRoot, game);
   const tempRoot = modes[0] === 'check' ? makeTempDir('shoot-design-') : null;
   const outRoot = modes[0] === 'out' ? resolve(options.out) : modes[0] === 'update' ? referenceRoot : tempRoot;
@@ -214,7 +220,7 @@ run(async () => {
               const app = { width: decoded.width, height: appHeight, data: decoded.data.subarray(0, decoded.width * appHeight * 4) };
               writeFileSync(join(runDir, 'app.png'), encodePng(PNG, { ...app, data: Buffer.from(app.data) }));
               writeFileSync(join(runDir, 'app.hier.json'), `${JSON.stringify(hierarchyFromLayout(layout, isPhone ? device.points.height : null), null, 1)}\n`);
-              const runInfo = { frame: frameKey, variant: variant?.id ?? null, theme, lang, game, scrollY: 0, source: 'design-as-app', capturedAt: new Date().toISOString() };
+              const runInfo = { frame: frameKey, variant: variant?.id ?? null, theme, lang, game, scrollY: 0, source: 'design-as-app', capturedAt: new Date().toISOString(), ...(platform === 'ios' ? {} : { platform }) };
               if (!existsSync(join(committed, 'manifest.json'))) runInfo.referenceRoot = outRoot;
               writeFileSync(join(runDir, 'run.json'), `${JSON.stringify(runInfo, null, 1)}\n`);
             }
@@ -227,6 +233,8 @@ run(async () => {
     const manifest = {
       version: 1,
       game,
+      // A set for another device says so (a manifest without "platform" is the iOS set).
+      ...(platform === 'ios' ? {} : { platform, set: device.referenceSet }),
       rendered: new Date().toISOString().slice(0, 10),
       renderer: { chrome: browser.version(), playwright: playwrightVersion(tooling), flags: CHROME_ARGS.join(' ') },
       device: { name: device.name, points: device.points, scale: device.scale, safeTop: device.safeArea.top },

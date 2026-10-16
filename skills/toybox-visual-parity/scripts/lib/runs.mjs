@@ -1,8 +1,9 @@
 // Run folders and waivers.
 //
 // A run folder is what capture-app.mjs writes for one frame x theme x language (x scroll):
-//   run.json         { frame, variant, theme, lang, game, scrollY, board, ... }   required
-//                    (variant: the reference variant the app's game facts picked, or null;
+//   run.json         { frame, variant, theme, lang, game, scrollY, board, platform, ... }   required
+//                    (platform: "android" for an emulator capture; none means ios;
+//                    variant: the reference variant the app's game facts picked, or null;
 //                    board: the board rectangle a Game-route frame masks, from the probe launch)
 //   app.png          the simulator screenshot (1206 x 2622)        required (run.json "app" may name
 //                    another file; only the self-test fixtures do that, and check-signoff refuses it)
@@ -10,13 +11,15 @@
 //   app.layout.json  an in-app layout reporter's output
 //   report.json      written by check-parity.mjs
 //   sheet*.png, crops/  written by make-sheet.mjs
-// Default location in the app repo: .parity/<game>/<frame>/<theme>-<lang>[-y<scroll>]/
+// Default location in the app repo: .parity/<game>/<frame>/<theme>-<lang>[-y<scroll>]/ (iOS) and
+// .parity/android/<game>/<frame>/<theme>-<lang>[-y<scroll>]/ (Android).
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { isAbsolute, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 import { fail } from '../check-lib.mjs';
 import { LANGS, THEMES } from './frames.mjs';
-import { DEFAULTS, SKILL_DIR } from './paths.mjs';
+import { SKILL_DIR } from './paths.mjs';
+import { PLATFORMS, PLATFORM_DEFAULTS, platformOf } from './platform.mjs';
 
 export const RUN_FILES = Object.freeze({ info: 'run.json', app: 'app.png', hier: 'app.hier.json', layout: 'app.layout.json', report: 'report.json' });
 
@@ -68,14 +71,32 @@ export function readRun(dir, { referenceRoot } = {}) {
     image = rel(info.reference.image);
     layout = rel(info.reference.layout);
   } else {
-    const root = referenceRoot ? resolve(referenceRoot) : info.referenceRoot ? rel(info.referenceRoot) : DEFAULTS.reference;
+    // An Android run defaults to the Android set (assets/reference-android), an iOS run to assets/reference.
+    const root = referenceRoot ? resolve(referenceRoot) : info.referenceRoot ? rel(info.referenceRoot) : PLATFORM_DEFAULTS[platformOf(info)].reference;
     image = join(root, game, `${info.theme}-${info.lang}`, `${stem}.png`);
     layout = join(root, game, `${info.theme}-${info.lang}`, `${stem}.layout.json`);
   }
   const hier = existsSync(join(dir, RUN_FILES.hier)) ? join(dir, RUN_FILES.hier) : null;
   const appLayout = existsSync(join(dir, RUN_FILES.layout)) ? join(dir, RUN_FILES.layout) : null;
   const app = typeof info.app === 'string' ? rel(info.app) : join(dir, RUN_FILES.app);
-  return { dir, info: { ...info, game, variant, scrollY: info.scrollY ?? 0 }, reference: { image, layout, name: stem }, app, hier, appLayout };
+  if (!PLATFORMS.includes(platformOf(info))) fail(`${infoPath}: unknown platform "${info.platform}"`, 'Use ios or android (capture-app.mjs --platform writes it).');
+  const referenceRootDir = dirname(dirname(image));
+  return { dir, info: { ...info, game, variant, scrollY: info.scrollY ?? 0, platform: platformOf(info) }, reference: { image, layout, name: stem, platform: referencePlatform(referenceRootDir) }, app, hier, appLayout };
+}
+
+/**
+ * The platform a reference set was rendered for: its manifest's "platform" (the Android set says
+ * android), none means the iOS set. A folder without a manifest (a render of --out for one frame,
+ * a self-test stand-in) is read the same way.
+ */
+export function referencePlatform(gameDir) {
+  const manifestPath = join(gameDir, 'manifest.json');
+  if (!existsSync(manifestPath)) return 'ios';
+  try {
+    return platformOf(JSON.parse(readFileSync(manifestPath, 'utf8')));
+  } catch {
+    return 'ios';
+  }
 }
 
 export function mtime(path) {
@@ -89,7 +110,9 @@ export function mtime(path) {
 // ---------------------------------------------------------------------------------------------
 // Waivers: parity/waivers.json in the app repo (committed). A waiver accepts one named problem of
 // one element on one frame. It never changes a tolerance, and it must say why and when the owner was
-// told. Three classes:
+// told. A waiver covers one platform: "platform": "android" for an Android run; a waiver that names no
+// platform covers iOS runs only (every waiver written before Android, the pre-listed ones included).
+// An Android waiver always names its class. Three classes:
 //   platform              (default) iOS or React Native cannot draw it like the design;
 //   platform-text-shaping text-ink only: CoreText shapes these glyphs or marks differently from
 //                         Chrome's HarfBuzz (same font file); names the glyphs;
@@ -101,7 +124,7 @@ export function mtime(path) {
 
 export const WAIVABLE_RULES = ['missing', 'bounds', 'text', 'fill', 'border', 'text-ink', 'structure'];
 export const WAIVER_CLASSES = ['platform', 'platform-text-shaping', 'design-artefact'];
-const WAIVER_KEYS = ['frame', 'testID', 'rule', 'class', 'themes', 'langs', 'games', 'reason', 'glyphs', 'designCause', 'reportedToOwner'];
+const WAIVER_KEYS = ['frame', 'testID', 'rule', 'class', 'platform', 'themes', 'langs', 'games', 'reason', 'glyphs', 'designCause', 'reportedToOwner'];
 
 /** Class-specific checks; returns [message, fix] or null. */
 function classProblem(w) {
@@ -141,34 +164,43 @@ export function readWaivers(path) {
     if (extra.length) return bad(`unknown field(s) ${extra.join(', ')}`, `A waiver has only ${WAIVER_KEYS.join(', ')}; it can never change a tolerance.`);
     if (typeof w.frame !== 'string' || typeof w.testID !== 'string' || !w.testID || w.testID.includes('*')) return bad('needs a frame and one exact testID', 'Name the frame key and the testID (no wildcards).');
     if (!WAIVABLE_RULES.includes(w.rule)) return bad(`rule "${w.rule}" cannot be waived`, `Waivable rules: ${WAIVABLE_RULES.join(', ')}. A wrong capture or an unreached screen is never waived.`);
+    if (w.platform !== undefined && !PLATFORMS.includes(w.platform)) return bad(`platform "${w.platform}" is not ios or android`, 'Write "platform": "android" for an Android waiver; leave it out for iOS.');
+    if (w.platform === 'android' && w.class === undefined) return bad('an Android waiver names its class', 'Add "class": "platform" (what Android or React Native on Android cannot draw), "platform-text-shaping" with the glyphs, or "design-artefact".');
     const classIssue = classProblem(w);
     if (classIssue) return bad(...classIssue);
     if (typeof w.reason !== 'string' || w.reason.trim().length < 20) return bad('needs a reason of at least 20 characters naming the platform limit or the design artefact', 'Say exactly what iOS or React Native cannot draw (or what the mockup CSS does) and why.');
     if (typeof w.reportedToOwner !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(w.reportedToOwner)) return bad('needs "reportedToOwner": "YYYY-MM-DD"', 'Tell the owner in the task report, then record the date.');
     for (const key of ['themes', 'langs', 'games']) if (w[key] !== undefined && (!Array.isArray(w[key]) || w[key].length === 0)) return bad(`"${key}" must be a non-empty list when present`, 'Omit it to mean every value.');
-    waivers.push({ ...w, class: w.class ?? 'platform', index: i + 1 });
+    waivers.push({ ...w, class: w.class ?? 'platform', platform: platformOf(w), index: i + 1 });
   });
   return { path, waivers, problems };
 }
 
-/** Split problems into { kept, waived } for one run. */
+/**
+ * Split problems into { kept, waived } for one run. Only waivers of the run's platform apply;
+ * otherPlatform lists the kept problems a waiver of the other platform would have covered (an
+ * Android run's problem matched by a waiver without "platform": "android").
+ */
 export function applyWaivers(problems, waivers, info) {
   const kept = [];
   const waived = [];
+  const otherPlatform = [];
   const used = new Set();
+  const platform = platformOf(info);
+  const fits = (x) => x.frame === info.frame && (!x.themes || x.themes.includes(info.theme)) && (!x.langs || x.langs.includes(info.lang)) && (!x.games || x.games.includes(info.game));
   for (const p of problems) {
-    const w = waivers.find(
-      (x) => x.frame === info.frame && x.rule === p.rule && x.testID === p.testID
-        && (!x.themes || x.themes.includes(info.theme)) && (!x.langs || x.langs.includes(info.lang)) && (!x.games || x.games.includes(info.game)),
-    );
+    const matches = waivers.filter((x) => fits(x) && x.rule === p.rule && x.testID === p.testID);
+    const w = matches.find((x) => platformOf(x) === platform);
     if (w) {
-      waived.push({ ...p, waiver: { index: w.index, class: w.class, reason: w.reason, reportedToOwner: w.reportedToOwner } });
+      waived.push({ ...p, waiver: { index: w.index, class: w.class, platform: platformOf(w), reason: w.reason, reportedToOwner: w.reportedToOwner } });
       used.add(w.index);
-    } else kept.push(p);
+    } else {
+      kept.push(p);
+      if (matches.length) otherPlatform.push({ problem: p, waiver: matches[0] });
+    }
   }
-  const unused = waivers.filter((w) => w.frame === info.frame && !used.has(w.index)
-    && (!w.themes || w.themes.includes(info.theme)) && (!w.langs || w.langs.includes(info.lang)) && (!w.games || w.games.includes(info.game)));
-  return { kept, waived, unused };
+  const unused = waivers.filter((w) => fits(w) && platformOf(w) === platform && !used.has(w.index));
+  return { kept, waived, unused, otherPlatform };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -198,7 +230,9 @@ export function prelistedWaivers() {
 
 /** The pre-listed waiver for one problem of one run, as { class, cause }, or null. */
 export function prelistedWaiverFor(problem, info) {
-  const w = prelistedWaivers().find((x) => x.frame === info.frame && x.testID === problem.testID && x.rule === problem.rule
+  // The pre-listed waivers name no platform: they are iOS waivers (React Native's iOS dash pattern,
+  // CoreText line boxes); an Android run never gets their hint.
+  const w = prelistedWaivers().find((x) => platformOf(x) === platformOf(info) && x.frame === info.frame && x.testID === problem.testID && x.rule === problem.rule
     && (!x.themes || x.themes.includes(info.theme)) && (!x.langs || x.langs.includes(info.lang)) && (!x.games || x.games.includes(info.game)));
   if (!w) return null;
   const sentences = w.reason.split(/(?<=\.) /);

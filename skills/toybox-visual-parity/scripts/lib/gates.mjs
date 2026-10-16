@@ -885,7 +885,9 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   const sizeOk = isPhone ? fullScreen : app.img.width === px.width && app.img.height <= px.height;
   if (!sizeOk) {
     add('capture-size', null, `app.png is ${app.img.width} x ${app.img.height} px; the parity device (${device.name}) captures ${px.width} x ${px.height}`,
-      `Capture on the "${device.simulatorName}" simulator with capture-app.mjs (setup-parity-sim.mjs creates it).`);
+      device.platform === 'android'
+        ? `Capture on the "${device.avdName}" emulator with capture-app.mjs --platform android (setup-parity-emu.mjs creates it).`
+        : `Capture on the "${device.simulatorName}" simulator with capture-app.mjs (setup-parity-sim.mjs creates it).`);
     return finish();
   }
   const viewH = app.img.height / S;

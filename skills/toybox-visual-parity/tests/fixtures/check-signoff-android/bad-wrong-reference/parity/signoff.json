@@ -1,0 +1,105 @@
+{
+ "version": 1,
+ "entries": [
+  {
+   "platform": "android",
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "light",
+   "lang": "en",
+   "scrollY": 0,
+   "sheetSha256": "6503f12c366879a3bae0fe29ea30f49747493f90eb012a7b43326324e903029f",
+   "date": "2026-10-12",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "n/a",
+    "feel": "match"
+   },
+   "differences": []
+  },
+  {
+   "platform": "android",
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "light",
+   "lang": "fa",
+   "scrollY": 0,
+   "sheetSha256": "3ba1ccc86007c22ccddbe513e4634ba90ae5c48f65b2aca6e6df0eb1b735f0f5",
+   "date": "2026-10-12",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "match",
+    "feel": "match"
+   },
+   "differences": []
+  },
+  {
+   "platform": "android",
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "dark",
+   "lang": "en",
+   "scrollY": 0,
+   "sheetSha256": "63e7f872a2766d7ddf123a4727c92399445ec06fbe7a9fb4c4980b7511d335ae",
+   "date": "2026-10-12",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "n/a",
+    "feel": "match"
+   },
+   "differences": []
+  },
+  {
+   "platform": "android",
+   "game": "lineSiege",
+   "frame": "s4-home",
+   "theme": "dark",
+   "lang": "fa",
+   "scrollY": 0,
+   "sheetSha256": "93ee99e862dc2af3272534774bb1b34a372f249bb31793497ebbc0b96d10d4b8",
+   "date": "2026-10-12",
+   "looked": [
+    "sheet.png",
+    "zoom-1.png",
+    "eye-1.png"
+   ],
+   "eyeChecks": {
+    "icons": "match",
+    "pictures": "match",
+    "shadows": "match",
+    "alignment": "match",
+    "wrapping": "match",
+    "direction": "match",
+    "feel": "match"
+   },
+   "differences": []
+  }
+ ]
+}

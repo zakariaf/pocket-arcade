@@ -1,0 +1,2 @@
+the app did not launch: Error: Activity class
+adb -s emulator-5554 install -r

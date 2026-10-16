@@ -1,6 +1,7 @@
 // Element bounds of the app, from either source:
 //   app.hier.json    `maestro hierarchy` output: resource-id = RN testID, bounds "[x0,y0][x1,y1]" in
-//                    whole points, accessibilityText = the accessibility label. Lists only on-screen
+//                    whole points on iOS and in screen pixels on Android (run.json "hierarchyPxPerPt":
+//                    the density, 3), accessibilityText = the accessibility label. Lists only on-screen
 //                    elements and hides the children of accessible elements.
 //   app.layout.json  an in-app layout reporter (test builds): { elements: [{ testID, x, y, w, h, text }] }
 //                    in points, floats, children included.
@@ -14,7 +15,8 @@ export function normText(text) {
   return String(text ?? '').replace(INVISIBLE_BIDI, '').replace(/\s+/g, ' ').trim();
 }
 
-export function parseMaestroHierarchy(json) {
+/** Maestro's hierarchy; pxPerPt divides Android's pixel bounds into points (1 on iOS). */
+export function parseMaestroHierarchy(json, { pxPerPt = 1 } = {}) {
   const elements = new Map();
   const labels = [];
   let nodes = 0;
@@ -26,7 +28,7 @@ export function parseMaestroHierarchy(json) {
     const label = a.accessibilityText || a.text || a.value || '';
     if (label) labels.push(label);
     if (id && TESTID_PATTERN.test(id) && m) {
-      const [x0, y0, x1, y1] = m.slice(1).map(Number);
+      const [x0, y0, x1, y1] = m.slice(1).map((v) => Number(v) / pxPerPt);
       const found = elements.get(id);
       if (found) found.count += 1;
       else elements.set(id, { x: x0, y: y0, w: x1 - x0, h: y1 - y0, label: normText(label), count: 1 });

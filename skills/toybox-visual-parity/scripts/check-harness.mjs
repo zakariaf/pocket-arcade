@@ -9,6 +9,8 @@
 // switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn (by
 // the parity root and inside every modal root), and parity/game-facts.json holds each app's facts
 // (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
+// On Android the request arrives as the launch intent's extra "parity", read through the Shell's
+// ParityLaunch native module by the harness only (rule harness-android-launch).
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -116,6 +118,23 @@ const FRAME_STATES = {
   's15-debug-menu': 'debug-ads-always-test',
 };
 
+/**
+ * The Android launch path (harness-android-launch): capture-app.mjs --platform android starts the
+ * activity with "am start ... --es parity <query>"; the Kotlin module ParityLaunch hands the extra to
+ * parity-launch-extra.ts, which read-parity-request.ts uses when Platform.OS is android. Each file and
+ * what it must say; nothing outside app/parity/ (tests aside) asks for the module.
+ */
+const ANDROID_LAUNCH = [
+  { file: `${PARITY_DIR}/parity-launch-extra.ts`, needs: [/\brequireOptionalNativeModule\b[^;]*\(\s*'ParityLaunch'\s*\)/, /\bgetLaunchExtra\b/], says: "asks the Shell's native module for the launch extra (requireOptionalNativeModule('ParityLaunch'), getLaunchExtra)" },
+  { file: `${PARITY_DIR}/read-parity-request.ts`, needs: [/Platform\.OS\s*===\s*'android'/, /\bandroidLaunchExtras\s*\(/], says: 'reads the Android launch (Platform.OS android, androidLaunchExtras())' },
+  { file: 'packages/shell/src/app/parity-startup.android.test.tsx', needs: [/'ParityLaunch'/, /\breadParityLaunch\s*\(/], says: "tests readParityLaunch() with the ParityLaunch module's extra on Android" },
+  { file: 'packages/shell/android/src/main/java/io/applander/shell/ParityLaunchModule.kt', needs: [/Name\("ParityLaunch"\)/, /getStringExtra\(/], says: 'defines the native module ParityLaunch reading the launch intent\'s string extra' },
+];
+const ANDROID_LAUNCH_MODULE = 'io.applander.shell.ParityLaunchModule';
+const EXPO_MODULE_CONFIG = 'packages/shell/expo-module.config.json';
+/** A request for the ParityLaunch native module (any of expo's lookups). */
+const PARITY_LAUNCH_LOOKUP = /\brequire(?:Optional)?NativeModule\b[^;]*\(\s*['"]ParityLaunch['"]\s*\)/;
+
 /** Wiring outside the harness: file, the call it must make, the screens that need it. */
 const WIRING = [
   { name: 'isParityMotionFrozen', file: 'packages/shell/src/app/use-reduce-motion.ts', pattern: /\bisParityMotionFrozen\s*\(/, screens: null, fix: 'useReduceMotion() returns true while TEST_ONLY?.isParityMotionFrozen() is true (the one frozen-motion switch); the saved setting stays as it is.' },
@@ -160,7 +179,8 @@ const SPEC = {
     'Checks the app repo for screen parity: the test-only parity harness (packages/shell/src/app/parity/) has one plan ' +
     'per design frame with the right root testID, reads the -parity launch argument, is reachable only through ' +
     'test-only-entry.ts and is called from the Shell (TEST_ONLY?.readParityRequest()), .parity/ is gitignored, and ' +
-    'parity/waivers.json and parity/signoff.json are well formed.',
+    'parity/waivers.json and parity/signoff.json are well formed. On Android the request is the launch intent\'s extra ' +
+    '"parity", read through the Shell\'s ParityLaunch module by the harness only (harness-android-launch).',
   usage: '[app-repo-root] [options]',
   options: {
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
@@ -472,6 +492,33 @@ run(async () => {
     if (!/\.set\(\s*'debug\.overrides'\s*,\s*null\s*\)/.test(maskComments(texts.startup))) {
       problem(STARTUP, 0, 'harness-debug-flags', 'applyParityData does not clear the saved debug flags (debug.overrides), so a capture inherits what an earlier launch saved (the S15 frame leaves "Always show test ads" on, a debug link can leave offline on)', "Copy the template parity-startup.tsx again: applyParityData sets 'debug.overrides' to null (TEST_ONLY.createSqliteKvDebugStoreAdapter()) before the debug services read it.");
     }
+  }
+
+  // 4a''. The Android launch path: every file of it, the module registered, and test-only (the
+  // module is asked for only inside app/parity/, which only the test-only entry reaches).
+  const androidFix = "Copy the skill's Android launch path: templates/packages/shell/src/app/parity/parity-launch-extra.ts and read-parity-request.ts, templates/packages/shell/src/app/parity-startup.android.test.tsx and templates/packages/shell/android/src/main/java/io/applander/shell/ParityLaunchModule.kt, and list the module in packages/shell/expo-module.config.json (android.modules).";
+  for (const part of ANDROID_LAUNCH) {
+    checked += 1;
+    const text = read(part.file);
+    if (text === null) problem(part.file, 0, 'harness-android-launch', `does not exist, so an Android parity launch (--es parity) opens no frame`, androidFix);
+    else if (!part.needs.every((re) => re.test(part.file.endsWith('.kt') ? text : maskComments(text)))) problem(part.file, 0, 'harness-android-launch', `does not ${part.says.replace(/^\w+/, (verb) => ({ asks: 'ask', reads: 'read', tests: 'test', defines: 'define' })[verb] ?? verb)}`, androidFix);
+  }
+  checked += 1;
+  const moduleConfigText = read(EXPO_MODULE_CONFIG);
+  let moduleConfig = null;
+  try {
+    moduleConfig = moduleConfigText === null ? null : JSON.parse(moduleConfigText);
+  } catch {
+    moduleConfig = null;
+  }
+  const androidModules = moduleConfig?.android?.modules ?? [];
+  if (!(moduleConfig?.platforms ?? []).includes('android') || !androidModules.includes(ANDROID_LAUNCH_MODULE)) {
+    problem(EXPO_MODULE_CONFIG, 0, 'harness-android-launch', `${moduleConfigText === null ? 'does not exist' : 'does not register'} the Android module ${ANDROID_LAUNCH_MODULE} (platforms has "android", android.modules lists it), so the app has no ParityLaunch module`, androidFix);
+  }
+  for (const rel of sources) {
+    if (isTest(rel) || rel.startsWith(`${PARITY_DIR}/`)) continue;
+    const clean = maskComments(readFileSync(join(root, rel), 'utf8'));
+    if (PARITY_LAUNCH_LOOKUP.test(clean)) problem(rel, 0, 'harness-android-launch', 'asks for the ParityLaunch native module outside app/parity/, so a store build could read a parity request', 'Read the launch extra only through app/parity/parity-launch-extra.ts (reached through TEST_ONLY?.readParityRequest()).');
   }
 
   // 4a. Wiring outside the harness: the frozen-motion switch and the board probe.

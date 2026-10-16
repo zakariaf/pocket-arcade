@@ -1,0 +1,2 @@
+[wrong-serial]
+emulator-5556 runs the AVD e07-android-smoke, not e07-android-parity

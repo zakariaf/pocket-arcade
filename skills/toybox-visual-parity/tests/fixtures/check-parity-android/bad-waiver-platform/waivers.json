@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s4-home",
+   "testID": "home.settings-button",
+   "rule": "bounds",
+   "class": "platform",
+   "reason": "Self-test fixture: a planted 10 dp move of the settings key, standing in for a difference the platform cannot fix.",
+   "reportedToOwner": "2026-10-12"
+  }
+ ]
+}

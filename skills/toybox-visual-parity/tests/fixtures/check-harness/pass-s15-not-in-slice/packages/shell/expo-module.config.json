@@ -1,0 +1,16 @@
+{
+  "platforms": [
+    "apple",
+    "android"
+  ],
+  "apple": {
+    "modules": [
+      "ProcessStartModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "io.applander.shell.ParityLaunchModule"
+    ]
+  }
+}

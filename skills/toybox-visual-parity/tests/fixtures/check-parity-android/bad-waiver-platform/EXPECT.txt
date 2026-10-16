@@ -1,0 +1,3 @@
+[bounds] home.settings-button
+[waiver-platform]
+it names no "platform": "android"

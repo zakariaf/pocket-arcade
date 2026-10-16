@@ -1,0 +1,2 @@
+[emu-font-scale]
+font_scale is 1.15

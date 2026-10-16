@@ -1,0 +1,6 @@
+[harness-android-launch]
+packages/shell/src/app/parity/parity-launch-extra.ts
+does not read the Android launch (Platform.OS android, androidLaunchExtras())
+packages/shell/src/app/parity-startup.android.test.tsx
+packages/shell/android/src/main/java/io/applander/shell/ParityLaunchModule.kt
+packages/shell/expo-module.config.json
