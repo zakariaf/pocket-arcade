@@ -23,6 +23,7 @@
     "expo-haptics": "57.0.3",
     "expo-localization": "57.0.2",
     "expo-iap": "5.8.0",
+    "expo-build-properties": "57.0.22",
     "react-native-google-mobile-ads": "17.2.0",
     "react-native-audio-api": "0.13.6",
     "react-native-gesture-handler": "2.32.0",
