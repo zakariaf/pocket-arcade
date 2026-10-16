@@ -54,6 +54,9 @@ const SPEC = {
     '                         where Chrome centres it; from 1.5 pt of half overflow AppText must wrap the Text in a',
     '                         View that keeps the line box and the testID, pad the Text by ceil(h) + h / ceil(h) - h',
     '                         and cancel it with marginVertical -ceil(h)',
+    '  overflow-guard-android AppText\'s guard moves the line on Android too: Android centres the overflow as',
+    '                         Chrome does (React Native\'s line-height span), so only iOS shifts by h',
+    '                         (Platform.OS === \'ios\' ? h : 0); otherwise Persian text sits h pt low on Android',
     '  balanced-display       AppText does not balance display text (useBalancedWrap for face display, as the',
     '                         design\'s .d: text-wrap balance), balances a key label (heroKeyLabel: the design\'s',
     '                         .btn label has no .d), or ui/use-balanced-wrap.ts sets its state from a closure',
@@ -283,6 +286,9 @@ function checkAppTextGuards(report, root) {
   if (!hasMetrics || !hasShape || !hasWrapper) {
     const missing = [!hasMetrics && 'the Vazirmatn metrics (2100 / 1100 of 2048)', !hasShape && 'overflowGuardOf (padding ceil(h) + h and ceil(h) - h, marginVertical -ceil(h))', !hasWrapper && 'a wrapper View that carries the testID'].filter(Boolean);
     report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'arabic-overflow-guard', message: `AppText has no Persian overflow guard (missing ${missing.join(', ')}): iOS puts a Vazirmatn line's overflow above its box and clips it, so Persian digits lose their tops and text sits up to 3 pt high`, fix: GUARD_FIX });
+  }
+  if (hasShape && !/\bPlatform\.OS\s*===\s*['"]ios['"]/.test(guard)) {
+    report.problem({ file: APP_TEXT_FILE, line: 1, rule: 'overflow-guard-android', message: 'AppText\'s overflow guard moves Persian lines down on Android too: Android already centres a Vazirmatn line\'s overflow as Chrome does, so the shift drew S2\'s Persian title 2 pt below the design on the emulator', fix: 'Copy ui/app-text.tsx from the templates: overflowGuardOf shifts by half the overflow only on iOS (Platform.OS === \'ios\' ? half : 0) and keeps the symmetric pads that hold the ink on Android (references/type-and-fonts.md, "Persian overflow on iOS").' });
   }
   const balanceCall = /\buseBalancedWrap\s*\(/.test(text) && /\bstyle\.face\s*===\s*['"]display['"]/.test(text);
   if (!balanceCall) {

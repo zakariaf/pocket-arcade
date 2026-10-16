@@ -1,5 +1,5 @@
 // packages/shell/src/ui/app-text.tsx
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
@@ -126,7 +126,8 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   const half = (vazirmatnContentHeight(size) - line) / 2;
   if (half < MIN_SHIFT) return null;
   const margin = Math.ceil(half);
-  return { paddingTop: margin + half, paddingBottom: margin - half, marginVertical: -margin };
+  const shift = Platform.OS === 'ios' ? half : 0;
+  return { paddingTop: margin + shift, paddingBottom: margin - shift, marginVertical: -margin };
 }
 
 /**
