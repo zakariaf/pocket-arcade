@@ -64,7 +64,8 @@ packages/shell/src/services/
 
 | Kind | File | Runs in |
 |---|---|---|
-| Unit / component | `<unit>.test.ts(x)` next to the unit | `npm test` (Jest project `unit`) |
+| Unit / component | `<unit>.test.ts(x)` next to the unit | `npm test` (Jest project `unit`, preset `jest-expo/ios`) |
+| Android-only unit / component | `<unit>.android.test.ts(x)` next to the unit | `npm test` (Jest project `unit-android`, preset `jest-expo/android`) |
 | Data golden | `<unit>.golden.test.ts` | `npm run test:golden` |
 | Bot / balance simulation | `<unit>.sim.test.ts` | `npm run test:sim` (not pre-commit) |
 | Performance | `<unit>.perf.test.ts` | `npm test` |
