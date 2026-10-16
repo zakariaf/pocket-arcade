@@ -616,7 +616,7 @@ For this epic:
 - **Tests first:** There is no code. The message is checked before it is sent: `check-report.mjs --kind request` must pass.
 - **Build:** Fill in git-commits-and-reporting's `templates/owner-request.md` as `reports/android/play-steps-request.md`. Each step has its id and its exact click path from android-release-play's human-steps reference:
   - **O10:** the Google Play developer account (fee and identity verification).
-  - **GP1:** the Play Console app "Line Siege": App, Free, with in-app purchases, default language en-US. The package `io.applander.linesiege` is fixed by the first upload.
+  - **GP1:** the Play Console app "Line Siege": Game, Free, with in-app purchases, default language en-US. The package `io.applander.linesiege` is fixed by the first upload.
   - **GP2:** Play App Signing, with Google holding the app-signing key. The default: Claude generates the upload key at `~/.android-keys/line-siege-upload.jks`; say "no" to use your own.
   - **GP3:** a service account with release rights for this app only. Its JSON key is saved at `~/.android-keys/play-service-account.json` with chmod 600, and is never pasted into the chat.
   - **GP4:** App content:
