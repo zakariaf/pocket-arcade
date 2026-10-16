@@ -19,8 +19,20 @@ export function parityLaunchTestID(nonce: string): string {
   return `parity.launch.${nonce}`;
 }
 
+/**
+ * In the middle of the root, never at its top corner: Android marks a node that lies under a system
+ * bar's window (the status bar with the cutout, the navigation bar) not visible to the user, and
+ * Maestro's dump then drops it (verified on the API 35 parity emulator, E18-T20).
+ */
 const styles = StyleSheet.create({
-  marker: { position: 'absolute', top: 0, start: 0, width: 1, height: 1, pointerEvents: 'none' },
+  marker: {
+    position: 'absolute',
+    top: '50%',
+    start: '50%',
+    width: 1,
+    height: 1,
+    pointerEvents: 'none',
+  },
 });
 
 /** Renders the invisible nonce marker in a parity capture, and nothing otherwise. */
