@@ -1,0 +1,3 @@
+[cold-start]
+median cold start 1150 ms is over 1080 ms
+emulator

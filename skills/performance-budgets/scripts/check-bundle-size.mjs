@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// check-bundle-size.mjs: checks the minified JS of a store build (npx expo export --platform ios
-// --no-bytecode) against the size cap and the committed baseline.
-// Run: node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs <dist-dir> [--baseline <file>] [--write-baseline]
+// check-bundle-size.mjs: checks the minified JS of a store build (npx expo export --platform ios or
+// android --no-bytecode) against the size cap and the committed baseline of that platform.
+// Run: node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs <dist-dir> [--platform ios|android] [--baseline <file>] [--write-baseline]
 
 import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
@@ -11,10 +11,11 @@ import { loadBudgets } from './lib/budgets.mjs';
 
 const SPEC = {
   name: 'check-bundle-size',
-  summary: 'Checks the iOS JavaScript bundle of an expo export (--no-bytecode) against perf.bundleJsBytesMax and against the committed baseline x perf.bundleGrowthMaxRatio.',
-  usage: '<dist-dir> [--root <dir>] [--baseline <file>] [--write-baseline]',
+  summary: 'Checks the iOS or Android JavaScript bundle of an expo export (--no-bytecode) against perf.bundleJsBytesMax and against the committed baseline x perf.bundleGrowthMaxRatio.',
+  usage: '<dist-dir> [--platform ios|android] [--root <dir>] [--baseline <file>] [--write-baseline]',
   options: {
     root: { type: 'string', default: '.', value: 'dir', help: 'App repo root (reads quality-gates.json for the budgets)' },
+    platform: { type: 'string', default: 'ios', value: 'ios|android', help: 'Which bundle of the export to measure (each platform has its own baseline: perf-baselines/bundle-<platform>-<game>.json)' },
     baseline: { type: 'string', value: 'file', help: 'Baseline JSON { "bundleJsBytes": n } to compare with (the growth check)' },
     'write-baseline': { type: 'boolean', help: 'Write the measured size to --baseline after the checks pass (first run, or an approved growth)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
@@ -22,29 +23,34 @@ const SPEC = {
   positionals: { min: 1, max: 1 },
   details: [
     'Rules:',
-    '  bundle-cap      the iOS .js bundle is larger than perf.bundleJsBytesMax (6,000,000 bytes)',
+    '  bundle-cap      the platform\'s .js bundle is larger than perf.bundleJsBytesMax (6,000,000 bytes)',
     '  bundle-growth   it is more than perf.bundleGrowthMaxRatio (1.1) times the baseline',
     '',
     'Produce the input with: npx expo export --platform ios --no-bytecode --output-dir <dist-dir>',
-    '(in apps/<game>). Hermes bytecode (.hbc) is not measured: export with --no-bytecode.',
+    '(in apps/<game>; --platform android for the Android bundle, checked with --platform android).',
+    'Hermes bytecode (.hbc) is not measured: export with --no-bytecode.',
   ].join('\n'),
 };
 
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const dist = resolve(positionals[0]);
-  if (!existsSync(dist) || !statSync(dist).isDirectory()) fail(`nothing to check: ${positionals[0]} is not a folder`, 'Pass the --output-dir of npx expo export --platform ios --no-bytecode.');
-  const files = walk(dist, { include: ['*.js', '*.hbc'] }).filter((rel) => /(^|\/)_expo\/static\/js\/ios\//.test(rel) || /\bios\b/.test(rel));
+  const platform = options.platform;
+  if (!['ios', 'android'].includes(platform)) fail(`--platform must be ios or android, got ${platform}`, 'Pass --platform ios (the default) or --platform android.');
+  const exportCommand = `npx expo export --platform ${platform} --no-bytecode`;
+  if (!existsSync(dist) || !statSync(dist).isDirectory()) fail(`nothing to check: ${positionals[0]} is not a folder`, `Pass the --output-dir of ${exportCommand}.`);
+  const platformPath = new RegExp(`(^|/)_expo/static/js/${platform}/|\\b${platform}\\b`);
+  const files = walk(dist, { include: ['*.js', '*.hbc'] }).filter((rel) => platformPath.test(rel));
   const js = files.filter((rel) => rel.endsWith('.js'));
   if (js.length === 0) {
     const hbc = files.some((rel) => rel.endsWith('.hbc'));
-    fail(hbc ? 'the export holds Hermes bytecode (.hbc), not minified JS' : `no iOS .js bundle under ${positionals[0]}`, 'Export again with: npx expo export --platform ios --no-bytecode --output-dir <dir>');
+    fail(hbc ? 'the export holds Hermes bytecode (.hbc), not minified JS' : `no ${platform} .js bundle under ${positionals[0]}`, `Export again with: ${exportCommand} --output-dir <dir>`);
   }
   const bytes = js.reduce((sum, rel) => sum + statSync(join(dist, rel)).size, 0);
   const { budgets } = loadBudgets(resolve(options.root));
   const report = createReporter({ name: 'check-bundle-size', json: options.json });
   const shown = toPosix(relative(process.cwd(), dist)) || positionals[0];
-  console.log(`bundle: ${bytes.toLocaleString('en-US')} bytes of minified JS in ${js.length} file(s) (cap ${budgets.bundleJsBytesMax.toLocaleString('en-US')})`);
+  console.log(`bundle: ${bytes.toLocaleString('en-US')} bytes of minified JS in ${js.length} file(s) (${platform}, cap ${budgets.bundleJsBytesMax.toLocaleString('en-US')})`);
   if (bytes > budgets.bundleJsBytesMax) {
     report.problem({ file: shown, line: 0, rule: 'bundle-cap', message: `${bytes} bytes is over the ${budgets.bundleJsBytesMax}-byte cap`, fix: 'Find the new weight (compare exports before and after), drop or replace the dependency, and never add Intl locale data beyond en, de, fa, ckb.' });
   }
@@ -62,7 +68,7 @@ run(async () => {
   }
   const code = report.finish({ checked: js.length, unit: 'bundle files' });
   if (code === 0 && options['write-baseline']) {
-    if (!options.baseline) fail('--write-baseline needs --baseline <file>', 'Pass the baseline path, for example perf-baselines/bundle-ios.json.');
+    if (!options.baseline) fail('--write-baseline needs --baseline <file>', `Pass the baseline path, for example perf-baselines/bundle-${platform}-<game>.json.`);
     writeFileSync(options.baseline, `${JSON.stringify({ bundleJsBytes: bytes }, null, 2)}\n`);
     console.log(`wrote ${options.baseline}`);
   }

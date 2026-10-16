@@ -9627,11 +9627,15 @@
     },
     "performance-budgets": {
       "SKILL.md": {
-        "recorded": "2026-09-28",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/15-performance-and-accessibility.md",
             "sha256": "459f4a055aa022eaeecf90733972b50ddfa2bea471c27c23c719ada6dfe6a7ae"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
@@ -9645,16 +9649,20 @@
         ]
       },
       "references/budgets-and-gates.md": {
-        "recorded": "2026-09-28",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/15-performance-and-accessibility.md",
             "sha256": "459f4a055aa022eaeecf90733972b50ddfa2bea471c27c23c719ada6dfe6a7ae"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },
       "references/measuring.md": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
@@ -9663,6 +9671,10 @@
           {
             "path": "docs/15-performance-and-accessibility.md",
             "sha256": "459f4a055aa022eaeecf90733972b50ddfa2bea471c27c23c719ada6dfe6a7ae"
+          },
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
           }
         ]
       },

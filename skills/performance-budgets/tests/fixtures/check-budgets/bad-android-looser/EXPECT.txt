@@ -1,0 +1,2 @@
+[budget-looser]
+perf.memoryPssMbMax is 200, looser than the budget 150

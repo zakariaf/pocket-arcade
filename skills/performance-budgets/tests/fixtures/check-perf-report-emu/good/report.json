@@ -1,0 +1,68 @@
+{
+ "appId": "io.applander.demogame",
+ "appVersion": "1.0.0",
+ "buildNumber": "12",
+ "deviceModel": "android 35",
+ "entries": [
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600000000,
+   "data": {
+    "nativeMs": 2040,
+    "jsMs": 60,
+    "totalMs": 2100
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600001000,
+   "data": {
+    "nativeMs": 850,
+    "jsMs": 60,
+    "totalMs": 910
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600002000,
+   "data": {
+    "nativeMs": 870,
+    "jsMs": 60,
+    "totalMs": 930
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600003000,
+   "data": {
+    "nativeMs": 830,
+    "jsMs": 60,
+    "totalMs": 890
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600004000,
+   "data": {
+    "nativeMs": 890,
+    "jsMs": 60,
+    "totalMs": 950
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600005000,
+   "data": {
+    "nativeMs": 860,
+    "jsMs": 60,
+    "totalMs": 920
+   }
+  }
+ ]
+}

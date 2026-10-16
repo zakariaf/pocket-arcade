@@ -8,6 +8,7 @@ import { join } from 'node:path';
 export const PERF_BUDGETS = {
   coldStartHomeMsMax: [1000, 'max', 'cold start, process start to Home interactive, median of 5 launches on the owner\'s iPhone (ms)'],
   coldStartSimRegressionFactor: [1.2, 'max', 'simulator cold start may be at most this times the committed baseline'],
+  coldStartEmuRegressionFactor: [1.2, 'max', 'Android emulator cold start may be at most this times the committed baseline (perf-baselines/cold-start-emu-<game>.json)'],
   hitchMsPerSecondMax: [10, 'max', 'hitch rate while boards animate (ms of hitch per second; Apple: good <= 10)'],
   frameP95MsMax: [17, 'max', 'p95 frame time while animating (ms, bucket upper bound)'],
   saveWriteP95MsMax: [5, 'max', 'p95 of the per-move save write (ms)'],
@@ -15,9 +16,17 @@ export const PERF_BUDGETS = {
   bundleJsBytesMax: [6000000, 'max', 'minified JS of the store build, expo export --no-bytecode (bytes)'],
   bundleGrowthMaxRatio: [1.1, 'max', 'bundle may grow at most this times the committed baseline'],
   memoryFootprintMbMax: [150, 'max', 'phys_footprint after the smoke flow on the simulator (MB)'],
+  memoryPssMbMax: [150, 'max', 'Android: dumpsys meminfo TOTAL PSS after the smoke flow on the emulator (MB, 1,024 KB)'],
   levelGridTilesMax: [150, 'max', 'level tiles mounted on one screen'],
   skiaCanvasesPerScreenMax: [8, 'max', 'Skia canvases per screen outside the board'],
 };
+
+/**
+ * The Android budgets join quality-gates.json at Android step 1 (with the Android build tooling):
+ * before that file exists a missing Android key is not yet due.
+ */
+export const ANDROID_BUDGET_KEYS = Object.freeze(['coldStartEmuRegressionFactor', 'memoryPssMbMax']);
+export const ANDROID_BUDGETS_DUE = Object.freeze({ file: 'packages/tooling/src/build/build-android-emu.ts', step: 1 });
 
 export function defaultBudgets() {
   return Object.fromEntries(Object.entries(PERF_BUDGETS).map(([key, [value]]) => [key, value]));

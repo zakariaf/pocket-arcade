@@ -1,0 +1,17 @@
+// packages/shell/android/build.gradle
+// The Shell's native Android helpers as an Expo module (autolinked through expo-module.config.json).
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'io.applander'
+version = '1.0.0'
+
+android {
+  namespace "io.applander.e07shell"
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+  }
+}

@@ -44,6 +44,11 @@ const SPEC = {
     "                         useColdStartMark in Home's model hook (SKIP while S4 is outside shell-slice.json).",
     '                         Native half (Shell step 8, due once packages/shell/src/config/shell-plugins.ts exists):',
     '                         expo-module.config.json, ios/E07Shell.podspec, ios/ProcessStartModule.swift.',
+    '                         Android half (Android step 3, due once packages/shell/src/services/haptics/',
+    '                         expo-haptics-adapter.android.test.ts exists): android/build.gradle (the Expo module',
+    '                         plugin, namespace io.applander.e07shell), the Kotlin ProcessStartModule.kt on',
+    '                         Process.getStartUptimeMillis() with the Swift module\'s Name and Function, and',
+    '                         expo-module.config.json listing the android platform and its module.',
     '                         Both SKIP with "screens": [] (no Shell app).',
     '  debug-perf-wired       the debug menu cannot reach its Performance actions: createDebugPerfActions is not a',
     '                         TestOnlyApi member, or createDebugParts never builds it (due with start-shell.ts).',
@@ -114,6 +119,18 @@ const PERF_NATIVE_FILES = [
   'packages/shell/ios/E07Shell.podspec',
   'packages/shell/ios/ProcessStartModule.swift',
 ];
+/**
+ * The Android half of the native layer (Android step 3): the same Expo module surface in Kotlin, so
+ * process-start.ts reads the process start on Android too. Due once Android step 3 copies its first
+ * template, game-audio-and-haptics' Android haptics test (the step's tests come first).
+ */
+const ANDROID_PACKAGE = 'io.applander.e07shell';
+const ANDROID_MODULE = `${ANDROID_PACKAGE}.ProcessStartModule`;
+const PERF_ANDROID_FILES = [
+  'packages/shell/android/build.gradle',
+  `packages/shell/android/src/main/java/${ANDROID_PACKAGE.replaceAll('.', '/')}/ProcessStartModule.kt`,
+];
+const PERF_ANDROID_DUE = Object.freeze({ file: 'packages/shell/src/services/haptics/expo-haptics-adapter.android.test.ts', step: 3 });
 const PERF_WIRING = [
   { file: 'packages/shell/src/app/start-shell.ts', pattern: /\bmarkJsEntry\s*\(\s*\)/, message: 'start-shell.ts does not call markJsEntry() (the first JS timestamp of a launch)', fix: 'Call markJsEntry() inside startShell (start-shell.ts), right after readParityLaunch() (rtl-and-direction owns the file).' },
   { file: 'packages/shell/src/app/test-only-api.ts', pattern: /\bcreatePerfLog\s*:/, message: 'TestOnlyApi has no createPerfLog member (test builds cannot keep the perf log)', fix: 'Sync the shared test-only pair: createPerfLog (from app/perf/perf-log.ts) joins it once perf-log.ts exists.' },
@@ -158,6 +175,49 @@ function checkPerfLayer(root, report) {
   const nativeReason = noShell ?? dueSkipReason(root, SHELL_DUE_TARGETS.plugins);
   if (nativeReason !== null) report.skip({ file: 'packages/shell/ios', rule: 'perf-layer', message: nativeReason });
   else missingFiles(root, PERF_NATIVE_FILES, 8, report);
+  const androidReason = nativeReason ?? (existsSync(join(root, PERF_ANDROID_DUE.file)) ? null : `due at Android step ${PERF_ANDROID_DUE.step}: ${PERF_ANDROID_DUE.file} not yet created`);
+  if (androidReason !== null) report.skip({ file: 'packages/shell/android', rule: 'perf-layer', message: `Android half: ${androidReason}` });
+  else checkAndroidHalf(root, report);
+}
+
+/** Names an Expo module declares: Name("...") and every Function("...") / AsyncFunction("..."). */
+function moduleSurface(source) {
+  const name = /\bName\(\s*"([^"]+)"\s*\)/.exec(source)?.[1] ?? null;
+  const functions = [...source.matchAll(/\b(?:Async)?Function(?:<[^>]*>)?\(\s*"([^"]+)"/g)].map((m) => m[1]).sort();
+  return { name, functions };
+}
+
+function checkAndroidHalf(root, report) {
+  const problem = (file, message, fix) => report.problem({ file, line: 1, rule: 'perf-layer', message, fix });
+  for (const rel of PERF_ANDROID_FILES.filter((file) => !existsSync(join(root, file)))) {
+    problem(rel, 'a file of the Android cold-start layer is missing', 'Copy templates/shell-native/android/ into packages/shell/android/ at Android step 3 (the Kotlin module compiles in the first emulator build).');
+  }
+  const configFile = 'packages/shell/expo-module.config.json';
+  if (existsSync(join(root, configFile))) {
+    let config = null;
+    try {
+      config = JSON.parse(readFileSync(join(root, configFile), 'utf8'));
+    } catch {
+      config = null;
+    }
+    const lists = Array.isArray(config?.platforms) && config.platforms.includes('android') && Array.isArray(config?.android?.modules) && config.android.modules.includes(ANDROID_MODULE);
+    if (!lists) problem(configFile, `expo-module.config.json does not list the Android module (platforms "android", android.modules "${ANDROID_MODULE}")`, 'Copy templates/shell-native/expo-module.config.json over it: without the entry autolinking never registers the Kotlin module and process-start.ts answers null on Android.');
+  }
+  const [gradleFile, kotlinFile] = PERF_ANDROID_FILES;
+  if (existsSync(join(root, gradleFile))) {
+    const gradle = readFileSync(join(root, gradleFile), 'utf8');
+    if (!/expo-module-gradle-plugin/.test(gradle) || !gradle.includes(`namespace "${ANDROID_PACKAGE}"`)) problem(gradleFile, `build.gradle does not apply expo-module-gradle-plugin with namespace "${ANDROID_PACKAGE}"`, 'Copy templates/shell-native/android/build.gradle.');
+  }
+  if (existsSync(join(root, kotlinFile))) {
+    const kotlin = readFileSync(join(root, kotlinFile), 'utf8').replace(/\/\/.*$|\/\*[\s\S]*?\*\//gm, '');
+    if (!/\bProcess\.getStartUptimeMillis\(\)/.test(kotlin)) problem(kotlinFile, 'ProcessStartModule.kt does not read Process.getStartUptimeMillis()', 'Copy templates/shell-native/android/: the process start comes from Process.getStartUptimeMillis() (API 24+), turned into epoch ms against SystemClock.uptimeMillis().');
+    const swiftFile = 'packages/shell/ios/ProcessStartModule.swift';
+    const swift = existsSync(join(root, swiftFile)) ? moduleSurface(readFileSync(join(root, swiftFile), 'utf8')) : { name: 'ProcessStart', functions: ['getProcessStartEpochMs'] };
+    const android = moduleSurface(kotlin);
+    if (android.name !== swift.name || android.functions.join() !== swift.functions.join()) {
+      problem(kotlinFile, `the Kotlin module declares ${android.name ?? 'no Name'} (${android.functions.join(', ') || 'no Function'}), not the Swift module's ${swift.name} (${swift.functions.join(', ')})`, 'Mirror the Swift module exactly: Name("ProcessStart") and Function("getProcessStartEpochMs") returning epoch ms as a Double, so process-start.ts reads both platforms the same way.');
+    }
+  }
 }
 
 run(async () => {

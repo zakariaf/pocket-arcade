@@ -1,0 +1,1 @@
+SKIP packages/shell/android [perf-layer] Android half: due at Android step 3: packages/shell/src/services/haptics/expo-haptics-adapter.android.test.ts not yet created
