@@ -12,6 +12,7 @@ How a finger on a Skia board becomes at most one `InputIntent`, and how that int
 - Choosing a pan mode per game
 - Pointer, hover and drag previews
 - Coordinates, RTL and touch targets
+- Android: the system back and edge swipes
 - Accessibility and end-to-end taps
 - Files and prerequisites
 
@@ -136,6 +137,17 @@ Continuous input for real-time games is not a pan mode: see [stick-input.md](sti
 - `event.x/y` are canvas-local and physical: they do not mirror under RTL (verified with `forceRTL(true)`). Swipe directions are physical too. A mirrored board (`isMirroredInRtl`) mirrors positions only inside `BoardLayout`.
 - Touch targets on boards are at least 44 × 44 pt. Each game proves it with `hit-targets.test.ts`: the smallest region cell of its largest grid is ≥ 44 pt in the board area of a 402 × 874 pt phone (tested at 374 × 660 pt: the width after the 14 pt side margins, and a height below the Toybox S5 board area of 374 × 708 pt so a taller top bar at large text sizes still passes). Line Siege's test also runs the S5 board canvas of other common phones: the screen minus the status bar (54 pt on 390 × 844, 59 pt on 393 × 852, 62 pt on 402 × 874, 20 pt on 375 × 667), the 60 pt game top bar and the board margins 4 / 14 / 40, which gives 362 × 686, 365 × 689, 374 × 708 and 347 × 543 pt. Width is what limits a phone board: eight 44 pt columns need 352 pt plus the layout's own padding, so a 375 pt wide phone cannot reach 44 pt within the design's margins. An exception needs the owner's sign-off in the game's design pass.
 - Wrap the app root in `GestureHandlerRootView` (the Shell providers). Never render a `Pressable` (or a Shell button) inside the board's `GestureDetector`: the canvas is its only child and Shell controls are siblings, so React Native's touch system and Gesture Handler stay apart.
+
+## Android: the system back and edge swipes
+
+On Android with gesture navigation (the default since Android 10), a swipe inward from the left or right screen edge is the system back. It is not a board gesture: Android takes it before the app sees a pan, and React Navigation receives it as the hardware back. On the Game screen navigation-and-routing's back handling (`usePreventRemove`) turns it into Pause, as the Back control does (spec 5). So:
+
+- **No gesture exclusion.** Never call Android's system-gesture exclusion (`setSystemGestureExclusionRects`) for a board, and never add a library or native module that does: back must always work, and Android caps exclusions anyway.
+- **Taps near the edge still land.** Only an inward swipe that starts in the system's back strip (its width follows the user's back-sensitivity setting) is back; a tap there reaches the board, and `HIT_SLOP` and the 44 pt targets hold unchanged (Android sizes are dp, the same numbers as pt).
+- **Swipes and drags start inside the board.** A board's swipe or drag that starts on its outer column can begin in that strip and open Pause instead. The S5 side margins (14 pt) keep most of the board out of it; if a game's main gesture is a horizontal swipe from the edge, start its pan area inside the board frame, never by exclusion.
+- **Coordinates are the same.** `event.x/y` stay canvas-local and physical on Android, and an LTR board stays LTR under RTL, as on iOS.
+
+Not yet seen on a device: the emulator check at Android step 6 (an edge swipe on S5 opens Pause and moves no piece; taps on the outer column land; drags, swipes and tap-then-tap behave as on iOS in en and fa). Record what it shows here.
 
 ## Accessibility and end-to-end taps
 
