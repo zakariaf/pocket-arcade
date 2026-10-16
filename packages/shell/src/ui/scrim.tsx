@@ -40,7 +40,10 @@ const useStyles = makeStyles((theme) => {
  * modal root: VoiceOver stays inside it, and the accessibility tree (what Maestro and the parity
  * capture read) still lists the scrim's own testID, which a modal child would hide. Its first child is
  * the parity launch marker (nothing outside a parity capture): a modal layer hides the parity root's
- * own marker, so a capture of a dialog frame proves its launch through this one.
+ * own marker, so a capture of a dialog frame proves its launch through this one. The modal flag is
+ * iOS-only; on Android the component that draws the scrim beside the screen (the dialog host, the
+ * Game layout) hides that screen with importantForAccessibility="no-hide-descendants" while the
+ * scrim is up, since no prop here can hide a sibling.
  */
 export function Scrim({ testID, children }: ScrimProps): ReactNode {
   const styles = useStyles();
