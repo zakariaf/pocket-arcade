@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run } from './check-lib.mjs';
-import { PARITY_AVD, avdHomeOf, demoModeCommands, freeConsolePort, makeAdb, makeAvdmanager, makeEmulator, readAvdConfig, runningEmulators, sdkRootOf, systemImageDir } from './lib/android.mjs';
+import { PARITY_AVD, avdHomeOf, demoModeCommands, systemBarInsetsOf, freeConsolePort, makeAdb, makeAvdmanager, makeEmulator, readAvdConfig, runningEmulators, sdkRootOf, systemImageDir } from './lib/android.mjs';
 import { readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS } from './lib/platform.mjs';
 import { sleep } from './lib/tools.mjs';
@@ -18,7 +18,8 @@ const SPEC = {
     'Creates (if needed) the Android parity AVD "e07-android-parity" (the android-emulator-build system image, ' +
     '402 x 874 dp at density 3.0 = 1206 x 2622 px, like the iPhone 16 Pro), boots it on a free console port, and pins ' +
     'it: no display size or density override, night mode for the appearance, font scale 1.0, gesture navigation, demo ' +
-    'mode allowed and on (09:41, full battery and Wi-Fi, no notifications). Prints "serial <serial>". --check changes ' +
+    'mode allowed and on (09:41, full battery and Wi-Fi, no notifications), and measures the status and navigation bar ' +
+    'insets against the profile (emu-insets). Prints "serial <serial>". --check changes ' +
     'nothing and fails when any of that is not true.',
   usage: '--appearance light|dark [--check] [options]',
   options: {
@@ -164,6 +165,16 @@ run(async () => {
   const overlay = device.navigationBar.overlay;
   const gestural = sh('cmd', 'overlay', 'list').stdout.split('\n').some((line) => line.trim() === `[x] ${overlay}`);
   pin('emu-navigation', gestural, `gesture navigation is off (${overlay} not enabled), so the bottom inset is not ${device.navigationBar.height} dp`, [['cmd', 'overlay', 'enable-exclusive', '--category', overlay]], 'gesture navigation on');
+  // The insets are measured, never assumed: the pinned image draws a punch-hole cutout, so its status
+  // bar is 44 dp, and a profile that assumed 24 dp put every element 20 pt low (E18-T20).
+  const insets = systemBarInsetsOf(sh('dumpsys', 'window', 'displays').stdout);
+  if (insets === null) problem('emu-insets', 'dumpsys window displays names no statusBars or navigationBars inset frame, so the insets cannot be measured', 'Read them by hand (adb -s <serial> shell dumpsys window displays) and compare with the profile\'s statusBarHeight and navigationBar.height.');
+  else {
+    const statusDp = insets.statusBarPx / device.scale;
+    const navigationDp = insets.navigationBarPx / device.scale;
+    if (statusDp !== device.statusBarHeight || statusDp !== device.safeArea.top) problem('emu-insets', `the status bar is ${statusDp} dp (${insets.statusBarPx} px), the profile says ${device.statusBarHeight} dp (safe top ${device.safeArea.top})`, 'A measured inset is a profile change: set statusBarHeight, safeArea.top and the status-bar mask in the device profile, re-render assets/reference-android with shoot-design.mjs --update-reference and log a referenceChanges entry (never move the app).');
+    if (gestural && navigationDp !== device.navigationBar.height) problem('emu-insets', `the navigation bar is ${navigationDp} dp (${insets.navigationBarPx} px), the profile says ${device.navigationBar.height} dp`, 'A measured inset is a profile change: set navigationBar.height and the gesture-handle mask in the device profile, then re-render assets/reference-android with a referenceChanges entry.');
+  }
   const demoAllowed = sh('settings', 'get', 'global', 'sysui_demo_allowed').stdout.trim();
   pin('emu-demo-mode', demoAllowed === '1', `demo mode is not allowed (sysui_demo_allowed ${demoAllowed}), so the real clock, battery and notifications show`, demoModeCommands(device), 'demo mode on (09:41, full battery, Wi-Fi, no notifications)');
   if (!options.check && demoAllowed === '1') for (const words of demoModeCommands(device)) sh(...words);

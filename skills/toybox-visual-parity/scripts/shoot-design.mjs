@@ -18,7 +18,7 @@ const SPEC = {
   summary:
     'Renders design frames (every frame by default) in light and dark x en and fa at the parity device geometry ' +
     '(iPhone 16 Pro, 402 x 874 pt @3x, safe top 62; with --device assets/device/android-phone.json the Android parity ' +
-    'emulator, 402 x 874 dp at 3.0, status bar 24) and writes <frame>.png (lossless) + <frame>.layout.json ' +
+    'emulator, 402 x 874 dp at 3.0, status bar 44) and writes <frame>.png (lossless) + <frame>.layout.json ' +
     '(testID rects, texts, styles, text runs), plus each reference variant a frame has for other game facts ' +
     '(<frame>--<variant>, derived from the rendered mockup by the DOM change frames.json names; variants compose, as in ' +
     's6-pause--no-music--no-hints). --check re-renders ' +

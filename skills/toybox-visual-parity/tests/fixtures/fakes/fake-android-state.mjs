@@ -18,6 +18,8 @@ const DEFAULTS = {
   fontScale: '1.0',
   gestural: true,
   demoAllowed: '1',
+  statusBarPx: 132,
+  navigationBarPx: 72,
   screenshots: [],
   launchFails: false,
 };

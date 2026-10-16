@@ -93,6 +93,12 @@ if (w[0] === 'am' && w[1] === 'broadcast') {
   if (w.includes('enter')) set({ demoEntered: true });
   done('Broadcasting: Intent { act=com.android.systemui.demo flg=0x400000 (has extras) }\nBroadcast completed: result=0\n');
 }
+if (line === 'dumpsys window displays') {
+  done(
+    `        InsetsSource id=787a0000 type=statusBars frame=[0,0][1206,${state.statusBarPx}] visible=true flags= sideHint=TOP boundingRects=null\n` +
+      `        InsetsSource id=aa0a0001 type=navigationBars frame=[0,${2622 - state.navigationBarPx}][1206,2622] visible=true flags=SUPPRESS_SCRIM sideHint=BOTTOM boundingRects=null\n`,
+  );
+}
 if (line === 'cmd overlay list') done(`com.android.internal.systemui.navbar.gestural\n[${state.gestural ? 'x' : ' '}] com.android.internal.systemui.navbar.gestural\n[${state.gestural ? ' ' : 'x'}] com.android.internal.systemui.navbar.threebutton\n`);
 if (w[0] === 'cmd' && w[1] === 'overlay' && w[2] === 'enable-exclusive') setThen({ gestural: true }, '');
 if (w[0] === 'cmd' && w[1] === 'locale' && w[2] === 'set-app-locales') setThen({ appLocale: w[w.indexOf('--locales') + 1] }, '');

@@ -144,3 +144,18 @@ export function demoModeCommands(device) {
     ...(device.demoMode ?? []).map(([command, ...extras]) => ['am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', command, ...extras]),
   ];
 }
+
+/**
+ * The measured system-bar insets in px, from `dumpsys window displays`: the height of the statusBars
+ * and navigationBars inset frames (`InsetsSource id=... type=statusBars frame=[0,0][1206,132]`).
+ * null when either frame is missing.
+ */
+export function systemBarInsetsOf(dumpsys) {
+  const heightOf = (type) => {
+    const m = new RegExp(`type=${type} frame=\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]`).exec(dumpsys);
+    return m ? Number(m[4]) - Number(m[2]) : null;
+  };
+  const statusBarPx = heightOf('statusBars');
+  const navigationBarPx = heightOf('navigationBars');
+  return statusBarPx === null || navigationBarPx === null ? null : { statusBarPx, navigationBarPx };
+}

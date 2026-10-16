@@ -94,6 +94,7 @@ Every `FAIL` line has the form `FAIL <file> [<rule>] <message> Fix: <fix>`. This
 | `emu-not-booted` | the AVD is not running | run without `--check` |
 | `emu-size`, `emu-density` | a `wm size` or `wm density` override is set | run without `--check` (resets them) |
 | `emu-night-mode`, `emu-font-scale`, `emu-navigation`, `emu-demo-mode` | night mode, `font_scale`, gesture navigation or demo mode differ | run with the wanted `--appearance` |
+| `emu-insets` "the status bar is 44 dp (132 px), the profile says 24 dp" | the measured system-bar insets differ from the device profile (the pinned image's punch-hole cutout makes the status bar 44 dp; a capture then puts every element 20 pt low) | a profile that was assumed, not measured | set `statusBarHeight`, `safeArea.top` and the status-bar mask (or the navigation bar and its handle mask) to the measured value, re-render `assets/reference-android` with `shoot-design.mjs --update-reference --device assets/device/android-phone.json` and log a `referenceChanges` entry; never shift the app |
 | exit 2 "the system image ... is not installed" / "refuses the AVD ..." | no download here; another AVD name | install the image with android-emulator-build's step; use `e07-android-parity[-<key>]` |
 
 ## make-sheet.mjs and check-signoff.mjs

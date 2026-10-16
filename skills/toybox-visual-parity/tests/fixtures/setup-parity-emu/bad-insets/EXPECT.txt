@@ -1,0 +1,2 @@
+[emu-insets]
+the status bar is 24 dp (72 px), the profile says 44 dp
