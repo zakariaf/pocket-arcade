@@ -1,0 +1,38 @@
+[
+  {
+    "label": "phone/en-light/home",
+    "actual": "reports/screenshots-android/raw/phone/en-light/2026-09-28_100000/Screenshot matrix/takeScreenshot/home.png",
+    "baseline": "apps/demo/e2e/baselines-android/phone/en-light/home.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  },
+  {
+    "label": "phone/en-light/levels",
+    "actual": "reports/screenshots-android/raw/phone/en-light/2026-09-28_100000/Screenshot matrix/takeScreenshot/levels.png",
+    "baseline": "apps/demo/e2e/baselines-android/phone/en-light/levels.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  },
+  {
+    "label": "phone/fa-dark/home",
+    "actual": "reports/screenshots-android/raw/phone/fa-dark/2026-09-28_100000/Screenshot matrix/takeScreenshot/home.png",
+    "baseline": "apps/demo/e2e/baselines-android/phone/fa-dark/home.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  },
+  {
+    "label": "phone/fa-dark/levels",
+    "actual": "reports/screenshots-android/raw/phone/fa-dark/2026-09-28_100000/Screenshot matrix/takeScreenshot/levels.png",
+    "baseline": "apps/demo/e2e/baselines-android/phone/fa-dark/levels.png",
+    "result": {
+      "kind": "match",
+      "diffRatio": 0.0004
+    }
+  }
+]

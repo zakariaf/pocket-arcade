@@ -1,0 +1,14 @@
+[
+  {
+    "udid": "emulator-5554",
+    "samples": 412,
+    "appSamples": 398,
+    "problems": []
+  },
+  {
+    "udid": "emulator-5556",
+    "samples": 96,
+    "appSamples": 90,
+    "problems": []
+  }
+]

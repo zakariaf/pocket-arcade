@@ -1,0 +1,8 @@
+{
+  "launchesMs": [1404, 1012, 998, 1031, 1005, 1019],
+  "medianMs": 1012,
+  "baselineMs": 1000,
+  "limitMs": 1200,
+  "isRegression": false,
+  "amTotalTimesMs": [1210, 842, 830, 861, 838, 851]
+}
