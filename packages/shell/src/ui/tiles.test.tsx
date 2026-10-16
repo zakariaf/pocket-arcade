@@ -301,6 +301,52 @@ describe('Stickers and art', () => {
     for (const piece of pieces) expect(piece).toHaveProp('shouldRasterizeIOS', true);
   });
 
+  it('gives every tilted printed part its Android hardware layer as well', async () => {
+    const hidden = { includeHiddenElements: true } as const;
+    await renderWithShell(
+      <>
+        <Sticker text="Phone language" size="sm" tiltDeg={3} testID="language-choice.phone-badge" />
+        <ArtTile icon="globe" testID="language-choice.art" />
+        <LevelTile
+          numberText="12"
+          state={{ kind: 'current' }}
+          label="Level 12: no stars yet"
+          onPress={jest.fn()}
+          testID="levels.level-tile.12"
+          isReducedMotion
+          width={54}
+        />
+        <WeekStrip
+          testID="daily.week-strip"
+          dayTestIDBase="daily.week-day"
+          days={[{ letter: 'Sun', state: 'today', isToday: true, label: 'Today' }]}
+          todayTagText="Today"
+        />
+        <CalendarTile monthText="Sep" dayText="27" testID="daily.today-card.calendar" />
+        <PremiumArt testID="premium.art" />
+        <Confetti isReducedMotion isHiddenBySetting={false} testID="premium.confetti" />
+      </>,
+    );
+
+    // Android ignores shouldRasterizeIOS: without its own flag the same parts turn with stepped
+    // edges there. TILTED_LAYER carries both, so every part that turns through the primitive has both.
+    for (const testID of [
+      'language-choice.phone-badge',
+      'language-choice.art',
+      'levels.level-tile.12.flag',
+      'daily.week-day.1.today-tag',
+      'daily.today-card.calendar',
+      'premium.art',
+    ]) {
+      const part = screen.getByTestId(testID, hidden);
+      expect(part).toHaveProp('renderToHardwareTextureAndroid', true);
+      expect(part).toHaveProp('shouldRasterizeIOS', true);
+    }
+    const pieces = screen.getByTestId('premium.confetti', hidden).children;
+    expect(pieces.length).toBeGreaterThan(0);
+    for (const piece of pieces) expect(piece).toHaveProp('renderToHardwareTextureAndroid', true);
+  });
+
   it('keeps art tiles, Premium art and confetti decorative', async () => {
     await renderWithShell(
       <>

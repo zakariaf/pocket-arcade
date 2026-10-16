@@ -28,10 +28,15 @@ export function focusRing(color: string): ViewStyle {
  * The raster half of the tilt primitive. Fabric draws a border from an image it stretches with
  * nearest filtering, so a turned edge, and an inner border such as the calendar's month band, steps
  * at device pixels; a rasterized layer is resampled smoothly when it turns, as Chrome draws the
- * references. Static tilts get it from tiltedLayer; only a tilt that animates (the sticker's slap)
- * spreads it itself, and turns with tilt() in its animated style.
+ * references. Each platform reads only its own flag: iOS rasterizes the layer
+ * (shouldRasterizeIOS), Android renders it into one GPU texture (renderToHardwareTextureAndroid).
+ * Static tilts get both from tiltedLayer; only a tilt that animates (the sticker's slap) spreads
+ * it itself, and turns with tilt() in its animated style.
  */
-export const TILTED_LAYER = { shouldRasterizeIOS: true } as const;
+export const TILTED_LAYER = {
+  shouldRasterizeIOS: true,
+  renderToHardwareTextureAndroid: true,
+} as const;
 
 /** One entry of a transform list (rotate, translateY, scale ...). */
 export type TransformEntry = Exclude<NonNullable<ViewStyle['transform']>, string>[number];
@@ -47,12 +52,12 @@ export function tilt(deg: number): TransformEntry {
  * Today tag, art and logo tiles, the calendar, Premium art, confetti):
  * `<View {...tiltedLayer(deg, styles.part)} testID=...>`. It owns both halves: the turn (after the
  * part's own style, then any `after` transforms, as CSS `rotate() translateY()`) and the one
- * rasterized layer that turns smoothly.
+ * rasterized layer (both platforms' flags) that turns smoothly.
  */
 export function tiltedLayer(
   deg: number,
   style?: StyleProp<ViewStyle>,
   after: readonly TransformEntry[] = [],
-): { readonly shouldRasterizeIOS: true; readonly style: StyleProp<ViewStyle> } {
+): typeof TILTED_LAYER & { readonly style: StyleProp<ViewStyle> } {
   return { ...TILTED_LAYER, style: [style, { transform: [tilt(deg), ...after] }] };
 }
