@@ -23,7 +23,7 @@ import { ANDROID_PINS, selectAndroidToolchain } from '@e07/tooling/android/toolc
 import {
   apkPath,
   EMU_BUILD_USAGE,
-  GRADLE_RELEASE_ARGS,
+  gradleEmuArgs,
   installArgs,
   isHelpRequest,
   launchArgs,
@@ -147,11 +147,7 @@ function main(): number {
   const env = { ...preflight(appDir), ...variantEnv(options.variant) };
   const context = { appDir, env };
   runStep('prebuild', { file: 'npx', args: PREBUILD_ANDROID_ARGS }, context);
-  runStep(
-    'gradle',
-    { file: join('android', 'gradlew'), args: ['-p', 'android', ...GRADLE_RELEASE_ARGS] },
-    context,
-  );
+  runStep('gradle', { file: join('android', 'gradlew'), args: gradleEmuArgs() }, context);
   const apk = apkPath(appDir);
   const device = startEmulator(options.purpose, env, appDir);
   waitForBoot(device);

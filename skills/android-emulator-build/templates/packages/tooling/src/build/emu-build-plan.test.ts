@@ -1,7 +1,11 @@
 // packages/tooling/src/build/emu-build-plan.test.ts
+import { ANDROID_PINS } from '@e07/tooling/android/toolchain.ts';
+
 import {
   apkPath,
+  EMU_ABI,
   EMU_BUILD_USAGE,
+  gradleEmuArgs,
   GRADLE_RELEASE_ARGS,
   installArgs,
   isHelpRequest,
@@ -81,6 +85,15 @@ describe('the build commands', () => {
 
   it('assembles the Release APK, never the Play bundle', () => {
     expect(GRADLE_RELEASE_ARGS).toStrictEqual(['assembleRelease', '--console=plain']);
+  });
+
+  it("compiles only the pinned emulator image's ABI, arm64-v8a", () => {
+    expect(EMU_ABI).toBe('arm64-v8a');
+    expect(ANDROID_PINS.systemImage.endsWith(`;${EMU_ABI}`)).toBe(true);
+    expect(gradleEmuArgs()).toStrictEqual([
+      ...['-p', 'android', 'assembleRelease', '--console=plain'],
+      '-PreactNativeArchitectures=arm64-v8a',
+    ]);
   });
 
   it('finds the APK where Gradle writes it', () => {

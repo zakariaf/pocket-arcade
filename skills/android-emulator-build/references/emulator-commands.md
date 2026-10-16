@@ -20,7 +20,7 @@ Every command `npm run build:android:emu` runs, with its flags, so a step can be
 |---|---|---|
 | preflight | JDK 17, the SDK pins, the emulator, avdmanager and the system image exist | printed; exit 2 |
 | prebuild | `npx expo prebuild --platform android --clean` (apps/<game>) | `apps/<game>/build/logs/prebuild.log` |
-| gradle | `android/gradlew -p android assembleRelease --console=plain` (apps/<game>) | `apps/<game>/build/logs/gradle.log` |
+| gradle | `android/gradlew -p android assembleRelease --console=plain -PreactNativeArchitectures=arm64-v8a` (apps/<game>; `gradleEmuArgs`: the emulator's ABI only) | `apps/<game>/build/logs/gradle.log` |
 | AVD | `avdmanager create avd --name e07-android-<purpose> --package <image> --device pixel_8`, once | printed |
 | emulator | `emulator -avd e07-android-<purpose> -port <port> -no-snapshot -no-boot-anim -no-audio -no-window` (detached) | `apps/<game>/build/logs/emulator.log` |
 | boot | `adb -s emulator-<port> shell getprop sys.boot_completed` every second until `1` | |
@@ -29,7 +29,7 @@ Every command `npm run build:android:emu` runs, with its flags, so a step can be
 | launch | `adb -s emulator-<port> shell am start -W -n <package>/.MainActivity` | |
 | ready, screenshot | `adb -s emulator-<port> exec-out screencap -p > reports/android/<game>/smoke-<variant>-<ads>.png` every 500 ms | |
 
-The APK lands at `apps/<game>/android/app/build/outputs/apk/release/app-release.apk`. A Release APK is signed with the debug keystore the template generates; that is fine for an emulator and never for Play (android-release-play builds and signs the AAB).
+The APK lands at `apps/<game>/android/app/build/outputs/apk/release/app-release.apk`. It holds the native libraries of `arm64-v8a` only (`EMU_ABI`, the pinned image's ABI): React Native, Hermes, Reanimated and Skia otherwise compile their C++ four times (arm64-v8a, armeabi-v7a, x86, x86_64), and the emulator loads only one. A Play AAB from release:android keeps all four, because players' phones need them. A Release APK is signed with the debug keystore the template generates; that is fine for an emulator and never for Play (android-release-play builds and signs the AAB).
 
 ## Creating the AVD
 
