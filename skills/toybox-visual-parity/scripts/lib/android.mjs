@@ -45,7 +45,7 @@ export function systemImageDir(sdkRoot, pkg) {
   return join(sdkRoot, ...pkg.split(';'));
 }
 
-/** Quote one word for the device's shell (adb shell joins its arguments into one command line). */
+/** Quote one word for the device's shell (adb -s <serial> shell joins its arguments into one command line). */
 export function shellQuote(word) {
   const text = String(word);
   return /^[A-Za-z0-9_./:=-]+$/.test(text) ? text : `'${text.replace(/'/g, "'\\''")}'`;
@@ -136,7 +136,7 @@ export function readAvdConfig(avdHome, name) {
   return { path, config };
 }
 
-/** The demo-mode commands (android-emulator-build's demoModeCommands), as adb shell words. */
+/** The demo-mode commands (android-emulator-build's demoModeCommands), as the words after adb -s <serial> shell. */
 export function demoModeCommands(device) {
   return [
     ['settings', 'put', 'global', 'sysui_demo_allowed', '1'],

@@ -90,7 +90,7 @@ const SPEC = {
     'adb call names the serial (-s). Night mode follows --theme, demo mode is sent before the launch, the language is the',
     'app\'s locale (cmd locale set-app-locales), and the launch is "am start -S -W -n <package>/.MainActivity --es',
     'parity <query>": the launch intent\'s extra that the harness reads in test builds. Screenshots come from',
-    '"adb exec-out screencap -p". Maestro gets --device <serial> --driver-host-port <port>; its bounds are pixels, so',
+    '"adb -s <serial> exec-out screencap -p". Maestro gets --device <serial> --driver-host-port <port>; its bounds are pixels, so',
     'run.json records "hierarchyPxPerPt" (the density). A dump without the marker is "hierarchy from another device".',
     'The run goes to .parity/android/<game>/... and run.json says "platform": "android".',
     '',
