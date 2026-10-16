@@ -164,7 +164,7 @@ Every Shell app still has the **Shell core**, whatever the slice, because the co
 |---|---|---|
 | `app/create-startup-splash.tsx` (+ test), `app/startup-splash.tsx` (+ test), `app/game-startup-splash.tsx` | S1 | `start-shell.ts` registers the restart root and shows the splash while the save hydrates (`create-startup-splash.test.tsx` covers the game splash) |
 | `screens/consent/consent-intro-screen.tsx` (+ test) | S3 | admob-ads' consent moment (`app/consent-moment.tsx`, in ShellFeatures) shows it before Google's form |
-| `screens/dialogs/dialog-host.tsx` (+ `dialog-host.test.tsx`), `dialog-request.ts`, `dialog-frame.tsx` and the six dialogs (+ `dialogs.test.tsx`); `app/dialog-context.tsx` (+ test) | S14 | the composition root's `shell-navigator.tsx` wraps the navigator in `DialogProvider` |
+| `screens/dialogs/dialog-host.tsx` (+ `dialog-host.test.tsx`, and `dialog-host.android.test.tsx` for the `unit-android` project: Android's system back cancels the open dialog), `dialog-request.ts`, `dialog-frame.tsx` and the six dialogs (+ `dialogs.test.tsx`); `app/dialog-context.tsx` (+ test) | S14 | the composition root's `shell-navigator.tsx` wraps the navigator in `DialogProvider` |
 | `app/crash-screen.tsx` (+ test) | S14 | `shell-app.tsx`'s error boundary draws it |
 | `app/premium-screen-deps-context.tsx` | S12 | `shell-features.tsx` provides it (`shell-features.test.tsx` covers it) |
 | `game-host/game-top-bar.tsx` (+ test) | S5 | game-host-integration's `top-bar-model.ts` imports its props types |

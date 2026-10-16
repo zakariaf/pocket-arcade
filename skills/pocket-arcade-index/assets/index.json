@@ -2206,6 +2206,7 @@
                 "paths": [
                   "packages/shell/src/app/dialog-context*",
                   "packages/shell/src/app/read-version-text*",
+                  "packages/shell/src/screens/dialogs/dialog-host*",
                   "packages/shell/src/app/use-open-external*",
                   "packages/shell/src/app/read-store-ids*",
                   "packages/shell/src/screens/game/game-layout*",

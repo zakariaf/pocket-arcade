@@ -9247,7 +9247,7 @@
     },
     "navigation-and-routing": {
       "references/navigator-code.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -9255,7 +9255,7 @@
           },
           {
             "path": "packages/shell/src/screens/dialogs/dialog-host.tsx",
-            "sha256": "3f6e1ee46a7b4dd99da86e88e275c360cf0201b34cd91d1b8684c696463979e5"
+            "sha256": "cabe1f8e33e3a7946d612dc9b7c2ded0699a096797291a55204d2122392aff97"
           },
           {
             "path": "packages/shell/src/screens/game/game-screen-back.test.tsx",
@@ -16954,6 +16954,19 @@
           {
             "path": "spec.txt",
             "sha256": "323d6267cd19780345c209b9e284621f3ccbff751bdb8e0ae0edf813a39d215b"
+          }
+        ]
+      },
+      "templates/packages/shell/src/screens/dialogs/dialog-host.android.test.tsx": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/screens/dialogs/dialog-host.android.test.tsx",
+            "sha256": "ef09f69490f8c4356f53ddbc1448fbc6772307b61804e8c27af8fedcfbdcb94c"
           }
         ]
       },

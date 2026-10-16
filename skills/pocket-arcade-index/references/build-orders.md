@@ -310,7 +310,7 @@ Step 4:
 - Copy from `rtl-and-direction`: `packages/shell/src/i18n/direction.android.test.ts`.
 - Copy from `toybox-design-system`: `packages/shell/src/ui/toybox-styles*`.
 - Copy from `toybox-components`: `packages/shell/src/ui/scrim.tsx`, `packages/shell/src/ui/tiles.test.tsx`.
-- Copy from `toybox-screens`: `packages/shell/src/app/dialog-context*`, `packages/shell/src/app/read-version-text*`, `packages/shell/src/app/use-open-external*`, `packages/shell/src/app/read-store-ids*`, `packages/shell/src/screens/game/game-layout*`, `packages/shell/src/screens/result/result-overlay.tsx`, `packages/shell/src/screens/settings/use-settings-links*`, `packages/shell/src/testing/test-game-extra.ts`.
+- Copy from `toybox-screens`: `packages/shell/src/app/dialog-context*`, `packages/shell/src/app/read-version-text*`, `packages/shell/src/screens/dialogs/dialog-host*`, `packages/shell/src/app/use-open-external*`, `packages/shell/src/app/read-store-ids*`, `packages/shell/src/screens/game/game-layout*`, `packages/shell/src/screens/result/result-overlay.tsx`, `packages/shell/src/screens/settings/use-settings-links*`, `packages/shell/src/testing/test-game-extra.ts`.
 - Copy from `settings-and-preferences`: `packages/shell/src/config/external-links*`.
 
 Step 6:

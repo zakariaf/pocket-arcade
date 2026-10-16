@@ -66,6 +66,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/dialogs/dialog-request.ts`
 - `packages/shell/src/screens/dialogs/dialog-host.tsx`
 - `packages/shell/src/screens/dialogs/dialog-host.test.tsx`
+- `packages/shell/src/screens/dialogs/dialog-host.android.test.tsx` (the `unit-android` project, from the Android port on: the system back is the open dialog's cancel and goes no further; the host calls navigation-and-routing's `useHardwareBack(request === null ? null : onClose)`, which lands at the same step, and on iOS it never fires)
 - `packages/shell/src/app/dialog-context.tsx`
 - `packages/shell/src/app/dialog-context.test.tsx`
 - `packages/shell/src/screens/dialogs/newer-save-dialog.tsx`
