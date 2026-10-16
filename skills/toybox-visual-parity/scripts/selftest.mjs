@@ -208,6 +208,21 @@ const editedMap = (dir) => {
   console.log('ok   make-sheet crops a scrolled bounds failure from the window the capture shows');
 }
 
+// A text-ink failure of a label inside a larger element (S4's Statistics key in fa on Android) is
+// cropped where the app draws the text run, not at the key's bounds: the app side must show the
+// label آمار, not the key's top corner.
+{
+  const out = scratch();
+  const run = spawnSync(process.execPath, [join(HERE, 'make-sheet.mjs'), join(FIXTURES, 'make-sheet-text-ink', 'good'), '--out', out], { encoding: 'utf8' });
+  const want = 'crops/home.stats-button.png: design 190,544 | app 190,544';
+  if (run.status !== 0 || !run.stdout.includes(want)) {
+    console.log(`FAIL tests/fixtures/make-sheet-text-ink/good [crop-text-run] make-sheet.mjs exited ${run.status} without "${want}" Fix: Crop a text-ink failure's app side at the text run's screen rect (problem.viewRect), not at its element's bounds.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log('ok   make-sheet crops a text-ink failure at the text run, not at its element');
+}
+
 // frames-edit.json { "frame", "variant", "derive" }: a copy of the skill's frames manifest whose variant
 // derive is replaced, so a derive that hides the wrong element must fail (variant-derive).
 const editedFrames = (dir) => {

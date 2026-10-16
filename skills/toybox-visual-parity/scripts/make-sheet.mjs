@@ -232,9 +232,10 @@ run(async () => {
       // screen rect; anything else: its bounds).
       const isCard = layout.kind === 'state-card';
       const rr = isCard ? p.rect : (p.viewRect ?? toView(p.rect, p.testID));
+      // A text run sits inside its element (a key's label): its bounds would crop the key's corner.
       const ar = isCard
         ? (p.appRect ?? (p.rule === 'text-ink' ? p.viewRect : bounds.elements.get(p.testID)) ?? p.viewRect ?? rr)
-        : (p.appRect ?? bounds.elements.get(p.testID) ?? rr);
+        : (p.appRect ?? (p.rule === 'text-ink' ? rr : bounds.elements.get(p.testID)) ?? rr);
       const w = Math.min(Math.round(rr.w * S) + 2 * ctx, 1400);
       const h = Math.min(Math.round(rr.h * S) + 2 * ctx, 1400);
       const dc = crop(view, Math.round(rr.x * S) - ctx, Math.round(rr.y * S) - ctx, w, h);
