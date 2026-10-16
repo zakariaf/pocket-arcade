@@ -6,6 +6,8 @@
 // pad at the text's end, so the element keeps the full width the design measures.
 import { useState } from 'react';
 
+import { isInvisibleMark } from '@e07/shell/i18n/bidi.ts';
+
 import type { TextAlignToken } from '@e07/shell/i18n/use-localized-text-style.ts';
 import type { LayoutChangeEvent, TextLayoutEvent, TextStyle } from 'react-native';
 
@@ -102,17 +104,15 @@ export function nextSearch(
   return probeFrom({ ...search, steps, hi: width - search.pad, widest }, width);
 }
 
-/** Marks drawn as nothing (bidi isolates and marks, joiners): a break looks through them. */
-const INVISIBLE = /[\u061C\u200D\u200E\u200F\u2066-\u2069\uFEFF]/u;
 const SPACE = /\s/u;
 /** A line may end after a space, a hyphen, a dash or a slash, as CSS breaks lines. */
 const BREAK_AFTER = /[\s\-\u00AD\u2010\u2012-\u2015/]/u;
 
-/** The nearest visible character before (step -1) or from (step 1) a position, if any. */
+/** The nearest visible character (bidi marks and joiners are looked through) before (step -1) or from (step 1) a position, if any. */
 function visibleAt(text: string, from: number, step: 1 | -1): string | undefined {
   for (let at = from; at >= 0 && at < text.length; at += step) {
     const char = text.charAt(at);
-    if (!INVISIBLE.test(char)) return char;
+    if (!isInvisibleMark(char)) return char;
   }
   return undefined;
 }
