@@ -70,10 +70,6 @@ export const PREBUILD_ANDROID_ARGS = ['expo', 'prebuild', '--platform', 'android
 /** The emulator APK; bundleRelease (the Play AAB) belongs to release:android only. */
 export const GRADLE_RELEASE_ARGS = ['bundleRelease', '--console=plain'];
 
-export function gradlewOf(appDir: string): string {
-  return join(appDir, 'android', 'gradlew');
-}
-
 export function apkPath(appDir: string): string {
   return join(appDir, 'android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk');
 }
