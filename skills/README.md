@@ -1,6 +1,6 @@
 # Pocket Arcade skill library
 
-This folder holds the skills Claude Code uses to build Pocket Arcade: one reusable Shell and about 26 small offline 2D games, each its own iOS app, built entirely by Claude Code. The owner never reads the code, so everything that must be true about it is written down here as skills, and every skill proves its own work with scripts.
+This folder holds the skills Claude Code uses to build Pocket Arcade: one reusable Shell and about 26 small offline 2D games, each its own iOS app (and its own Android app once the iOS version has shipped), built entirely by Claude Code. The owner never reads the code, so everything that must be true about it is written down here as skills, and every skill proves its own work with scripts.
 
 A skill is a folder with a `SKILL.md` (the rules, the workflow, the definition of done), plus the references, templates, examples, data and check scripts it needs. Each skill is complete on its own: it never points at a project document, because the knowledge it needs has been copied into it. Each skill's scripts come with a self-test that proves they catch the mistakes they exist to catch.
 
@@ -32,7 +32,7 @@ Named skills are always loaded and their definitions of done are binding; `pocke
 
 ## The catalogue
 
-45 skills in ten groups. The one-line summaries here are for people; the full descriptions Claude Code reads are in `pocket-arcade-index/references/skill-table.md` (generated from each skill's frontmatter).
+47 skills in ten groups. The one-line summaries here are for people; the full descriptions Claude Code reads are in `pocket-arcade-index/references/skill-table.md` (generated from each skill's frontmatter).
 
 ### Start here
 
@@ -102,7 +102,7 @@ Named skills are always loaded and their definitions of done are binding; `pocke
 
 - `unit-and-component-tests`: the Jest set-up and how to write unit, component, hook and adapter tests.
 - `golden-tests`: level, daily and board goldens, and the rule that they change only on purpose.
-- `e2e-maestro`: end-to-end flows on the simulator, the no-network check and the screenshot matrix.
+- `e2e-maestro`: end-to-end flows on the simulator and the emulator, the no-network check and the screenshot matrix.
 
 ### Build and release
 

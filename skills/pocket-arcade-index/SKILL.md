@@ -27,10 +27,10 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 |---|---|
 | Bootstrap the monorepo from an empty or docs-only repo | `monorepo-bootstrap` `dependency-management` `quality-gates` `typescript-and-lint-rules` `architecture-and-boundaries` `unit-and-component-tests` `git-commits-and-reporting` |
 | Build the Home screen (S4) | `toybox-screens` `toybox-components` `toybox-design-system` `i18n-strings-and-catalogs` `rtl-and-direction` `accessibility` `toybox-visual-parity` `unit-and-component-tests` `tdd-workflow` `navigation-and-routing` `daily-and-statistics` `admob-ads` |
-| Build or change any other Shell screen, overlay or dialog (S1-S15) | `toybox-screens` `toybox-components` `toybox-design-system` `i18n-strings-and-catalogs` `rtl-and-direction` `accessibility` `toybox-visual-parity` `react-components-and-hooks` `navigation-and-routing` `unit-and-component-tests` `tdd-workflow` |
+| Build or change any other Shell screen, overlay or dialog (S1-S15) | `toybox-screens` `toybox-components` `toybox-design-system` `i18n-strings-and-catalogs` `rtl-and-direction` `accessibility` `toybox-visual-parity` `react-components-and-hooks` `navigation-and-routing` `unit-and-component-tests` `tdd-workflow` `android-emulator-build` |
 | Build the Settings screen or add a setting (S11) | `settings-and-preferences` `toybox-screens` `state-stores` `save-persistence-and-migrations` `i18n-strings-and-catalogs` `rtl-and-direction` `toybox-visual-parity` `tdd-workflow` |
-| Sell Premium or change the purchase flow (S12) | `premium-purchase` `toybox-screens` `state-stores` `save-persistence-and-migrations` `i18n-strings-and-catalogs` `toybox-visual-parity` `privacy-and-network-audit` `tdd-workflow` |
-| Add or change ads, consent, the ATT tracking permission or a rewarded perk | `admob-ads` `architecture-and-boundaries` `game-host-integration` `settings-and-preferences` `privacy-and-network-audit` `unit-and-component-tests` `tdd-workflow` |
+| Sell Premium or change the purchase flow (S12) | `premium-purchase` `toybox-screens` `state-stores` `save-persistence-and-migrations` `i18n-strings-and-catalogs` `toybox-visual-parity` `privacy-and-network-audit` `tdd-workflow` `android-release-play` |
+| Add or change ads, consent, the ATT tracking permission or a rewarded perk | `admob-ads` `architecture-and-boundaries` `game-host-integration` `settings-and-preferences` `privacy-and-network-audit` `unit-and-component-tests` `tdd-workflow` `android-emulator-build` |
 | Add or restyle a Toybox component | `toybox-components` `toybox-design-system` `code-drawn-art-and-icons` `accessibility` `react-components-and-hooks` `unit-and-component-tests` `tdd-workflow` `toybox-visual-parity` |
 | Change colours, fonts, dark mode or a game's palette | `toybox-design-system` `accessibility` `toybox-visual-parity` `toybox-components` |
 | Add an icon, a game logo, the app icon or the splash | `code-drawn-art-and-icons` `toybox-design-system` `golden-tests` `ios-simulator-build` |
@@ -49,9 +49,10 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Add or tune sounds, music or haptics | `game-audio-and-haptics` `settings-and-preferences` `board-rendering-skia` `game-host-integration` |
 | Balance difficulty or add bots and sims | `game-balance-and-bots` `game-rules-engine` `level-generation-and-solvers` `git-commits-and-reporting` |
 | Wire a game into the Shell (Game screen, Pause, Result, run end) | `game-host-integration` `state-stores` `daily-and-statistics` `navigation-and-routing` `toybox-screens` `board-rendering-skia` `admob-ads` `i18n-strings-and-catalogs` |
-| Write or fix end-to-end flows or the screenshot matrix | `e2e-maestro` `ios-simulator-build` `toybox-visual-parity` `privacy-and-network-audit` `golden-tests` |
-| Prove a screen matches its Toybox design screenshot | `toybox-visual-parity` `ios-simulator-build` `toybox-screens` `toybox-components` `toybox-design-system` |
+| Write or fix end-to-end flows or the screenshot matrix | `e2e-maestro` `ios-simulator-build` `toybox-visual-parity` `privacy-and-network-audit` `golden-tests` `android-emulator-build` |
+| Prove a screen matches its Toybox design screenshot | `toybox-visual-parity` `ios-simulator-build` `toybox-screens` `toybox-components` `toybox-design-system` `android-emulator-build` |
 | Build, run or smoke-test on the iOS simulator | `ios-simulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
+| Port a game to Android | `android-emulator-build` `pocket-arcade-product-spec` `architecture-and-boundaries` `unit-and-component-tests` `privacy-and-network-audit` `toybox-visual-parity` `e2e-maestro` `tdd-workflow` `git-commits-and-reporting` |
 | Build, run or smoke-test on the Android emulator | `android-emulator-build` `troubleshooting-playbook` `architecture-and-boundaries` |
 | Release a game to TestFlight | `ios-release-testflight` `premium-purchase` `privacy-and-network-audit` `e2e-maestro` `toybox-visual-parity` `game-balance-and-bots` `i18n-strings-and-catalogs` `git-commits-and-reporting` |
 | Release a game to Google Play internal testing | `android-release-play` `premium-purchase` `privacy-and-network-audit` `android-emulator-build` `git-commits-and-reporting` |
@@ -63,7 +64,7 @@ Several rows can apply to one task: load the union. The notes for each row, and 
 | Something errors, crashes, hangs or renders wrong | `troubleshooting-playbook` `quality-gates` `ios-simulator-build` |
 | Check or improve performance | `performance-budgets` `board-rendering-skia` `react-components-and-hooks` `realtime-game-loop` |
 | Review accessibility or VoiceOver | `accessibility` `toybox-components` `i18n-strings-and-catalogs` `e2e-maestro` |
-| Prove the app makes no network requests, or answer App Privacy (tracking, ATT, the privacy manifest) | `privacy-and-network-audit` `admob-ads` `premium-purchase` `e2e-maestro` `dependency-management` |
+| Prove the app makes no network requests, or answer App Privacy (tracking, ATT, the privacy manifest) | `privacy-and-network-audit` `admob-ads` `premium-purchase` `e2e-maestro` `dependency-management` `android-emulator-build` |
 | A golden or snapshot test shows a diff | `golden-tests` `level-generation-and-solvers` `board-rendering-skia` `git-commits-and-reporting` |
 | Commit, tag, report to the owner or ask the owner a question | `git-commits-and-reporting` `pocket-arcade-product-spec` `quality-gates` |
 | Find out what the spec requires (a screen, rule, feature or game) | `pocket-arcade-product-spec` `pocket-arcade-index` |
