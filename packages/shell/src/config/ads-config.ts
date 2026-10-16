@@ -34,12 +34,16 @@ export function assertLiveIds(ids: AdmobPlatformIds): void {
 
 export type AdmobPluginOptions = {
   readonly iosAppId: string;
-  readonly androidAppId: string;
+  // Absent only in a live build without the game's Android ids (owner step GP5): never the sample.
+  readonly androidAppId?: string;
   readonly delayAppMeasurementInit: true;
   readonly skAdNetworkItems: readonly string[];
 };
 
 // The SDK is linked in every variant, so Info.plist always needs an app ID (missing = crash).
+// A live build without ads.ids.android gets no Android app id at all, never Google's sample: an
+// Android build of it is unusable and the Android gates name owner step GP5, while iOS releases of
+// a game that is not on Android yet still build.
 // No userTrackingUsageDescription: Apple's ATT text (owner decision O1) has one writer, the
 // expo-tracking-transparency plugin entry and withShell's locales (shell-plugins.ts, with-shell.ts).
 export function admobPluginOptions(
@@ -50,18 +54,26 @@ export function admobPluginOptions(
   const isLive = mode === 'live';
   if (isLive) assertLiveIds(ids.ios);
   if (isLive && ids.android !== null) assertLiveIds(ids.android);
+  const androidAppId = isLive ? ids.android?.appId : GOOGLE_SAMPLE_APP_IDS.android;
   return {
     iosAppId: isLive ? ids.ios.appId : GOOGLE_SAMPLE_APP_IDS.ios,
-    androidAppId:
-      isLive && ids.android !== null ? ids.android.appId : GOOGLE_SAMPLE_APP_IDS.android,
+    ...(androidAppId === undefined ? {} : { androidAppId }),
     delayAppMeasurementInit: true,
     skAdNetworkItems,
   };
 }
 
+// The live units per platform: readAdsExtra picks Platform.OS's entry, so an Android build never
+// shows ads from the iOS units (null until the game's Android AdMob app exists, owner step GP5).
+export type AdUnitsExtra = {
+  readonly ios: AdmobUnitIds;
+  readonly android: AdmobUnitIds | null;
+};
+
 // withShell writes this as expo.extra.adUnits. Real unit IDs reach the runtime ONLY when live.
-export function adUnitsExtra(mode: AdsMode, ids: AdmobGameIds): AdmobUnitIds | null {
+export function adUnitsExtra(mode: AdsMode, ids: AdmobGameIds): AdUnitsExtra | null {
   if (mode !== 'live') return null;
   assertLiveIds(ids.ios);
-  return ids.ios.units;
+  if (ids.android !== null) assertLiveIds(ids.android);
+  return { ios: ids.ios.units, android: ids.android?.units ?? null };
 }
