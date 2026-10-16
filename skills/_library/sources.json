@@ -132,7 +132,7 @@
     },
     "accessibility": {
       "SKILL.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -148,7 +148,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -179,7 +179,7 @@
         ]
       },
       "references/roles-labels-and-voiceover.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -195,7 +195,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
@@ -208,7 +208,7 @@
         ]
       },
       "references/testing-accessibility.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/15-performance-and-accessibility.md",
@@ -216,12 +216,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "references/text-scaling-and-motion.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "design/toybox/tokens.json",
@@ -241,12 +241,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "scripts/check-a11y-code.mjs": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -258,7 +258,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
@@ -284,11 +284,11 @@
         ]
       },
       "scripts/lib/platform-branches.mjs": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -2941,7 +2941,7 @@
     },
     "dependency-management": {
       "assets/banned-packages.json": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2949,12 +2949,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "assets/versions.json": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -2970,7 +2970,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -2988,7 +2988,7 @@
         ]
       },
       "references/procedures.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3004,7 +3004,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -3022,7 +3022,7 @@
         ]
       },
       "references/supply-chain.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3038,12 +3038,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "references/versions.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3063,7 +3063,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -3368,7 +3368,7 @@
     },
     "expo-sdk-upgrade": {
       "assets/sdk-lines.json": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3384,12 +3384,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "examples/sdk-move-report.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/17-claude-code-playbook.md",
@@ -3397,12 +3397,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "references/runbook.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3418,12 +3418,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "references/sdk-58-changes.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3443,12 +3443,12 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
       "references/upgrade-policy.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/01-stack-and-versions.md",
@@ -3468,7 +3468,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -9727,7 +9727,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -9749,7 +9749,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -9766,7 +9766,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
@@ -12458,7 +12458,7 @@
         ]
       },
       "references/boot-and-kill-test.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -12466,7 +12466,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           },
           {
             "path": "spec.txt",
@@ -12501,7 +12501,7 @@
         ]
       },
       "references/write-path.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/06-navigation-state-persistence.md",
@@ -12509,7 +12509,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           },
           {
             "path": "spec.txt",
@@ -19547,7 +19547,7 @@
         ]
       },
       "references/jest-config.md": {
-        "recorded": "2026-10-12",
+        "recorded": "2026-10-16",
         "sources": [
           {
             "path": "docs/07-testing-and-tdd.md",
@@ -19559,7 +19559,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "df84fd68a9ec372f680ab0e0283755627dcd2d718d499605afda1d034d80d7b3"
+            "sha256": "35450ecdc3268d43c9b2806a62c7efb6e73c57b44530e713c07f7438fcc10e3c"
           }
         ]
       },
