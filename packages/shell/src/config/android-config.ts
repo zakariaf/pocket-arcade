@@ -22,7 +22,7 @@ export const ANDROID_PERMISSIONS: readonly string[] = [
 /**
  * Removed from the merged manifest whoever adds them (tools:node="remove"): the Expo template's
  * optional extras and the permissions no Pocket Arcade app may hold (no microphone, camera,
- * location, media, contacts or notifications; spec N3).
+ * location, media, contacts, notifications or Wi-Fi details; spec N3).
  */
 export const BLOCKED_ANDROID_PERMISSIONS: readonly string[] = [
   'android.permission.SYSTEM_ALERT_WINDOW',
@@ -38,6 +38,9 @@ export const BLOCKED_ANDROID_PERMISSIONS: readonly string[] = [
   'android.permission.READ_MEDIA_AUDIO',
   'android.permission.READ_CONTACTS',
   'android.permission.POST_NOTIFICATIONS',
+  // expo-network declares it for getIpAddressAsync only; the connectivity adapter reads
+  // getNetworkStateAsync and its listener (ACCESS_NETWORK_STATE), never the Wi-Fi details.
+  'android.permission.ACCESS_WIFI_STATE',
 ];
 
 /** The `android` block: the shared build number is the versionCode (one sequence for both stores). */
