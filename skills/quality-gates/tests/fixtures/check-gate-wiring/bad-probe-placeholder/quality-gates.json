@@ -293,6 +293,10 @@
         "Read(**/AuthKey_*)",
         "Read(**/*.p12)",
         "Read(**/*.mobileprovision)",
+        "Read(~/.android-keys/**)",
+        "Read(**/*.jks)",
+        "Read(**/*.keystore)",
+        "Read(**/play-service-account.json)",
         "Bash(git commit *--no-verify*)",
         "Bash(git commit -n *)",
         "Bash(git push *--no-verify*)"

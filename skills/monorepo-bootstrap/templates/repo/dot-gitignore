@@ -20,6 +20,7 @@ dist-audit/
 *.mobileprovision
 *.keystore
 *.jks
+play-service-account.json
 AuthKey_*
 ApiKey_*
 *.xcarchive
