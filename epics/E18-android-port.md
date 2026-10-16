@@ -802,13 +802,14 @@ For this epic:
   - Sound mixes with the player's own music and stops in the background (8.7).
   - Cold start is measured from process start on Android too, through a Kotlin module in the Shell, so every game inherits it.
 - **Skills:** `game-audio-and-haptics`, `settings-and-preferences`, `performance-budgets`, `unit-and-component-tests`, `tdd-workflow`, `git-commits-and-reporting`.
-- **Tests first:**
+- **Tests first:** Copy each test from pocket-arcade-index's Android step 3 manifest.
   - `packages/shell/src/services/haptics/expo-haptics-adapter.android.test.ts`: each `HapticCue` maps to `performAndroidHapticsAsync` with the cue table's `AndroidHaptics` type; Vibration off makes no call; the 40 ms throttle; every call ends in `.catch`; `isSupported` follows the haptics reference.
-  - `packages/shell/src/services/audio/audio-api-audio-adapter.android.test.ts`: no audio-focus request that would stop other audio; suspend and resume on interruptions and on background; `dispose()` before a reload.
-  - `packages/shell/src/screens/settings/settings-rows.android.test.ts`: the Vibration row is visible exactly when `haptics.isSupported`.
+  - `packages/shell/src/services/audio/audio-api-audio-adapter.android.test.ts`: no audio-focus request that would stop other audio (on Android the adapter observes no interruptions at all, since that request is what stops the player's music); `dispose()` resolves with no focus to give back. Suspending in the background is `useAudioLifecycle`'s, proven on every platform by `use-audio-lifecycle.test.ts`. The template's `audio-api-audio-adapter.test.ts` adds the iOS case (interruptions still observed there).
+  - `packages/shell/src/screens/settings/settings-rows.android.test.ts` (settings-and-preferences' template): the Vibration row is visible exactly when `haptics.isSupported`, through `useSettingsContext` and the real Android haptics adapter.
+  - performance-budgets' `process-start.test.ts` and `perf-report-header.test.ts` (in `packages/shell/src/app/perf/`): the process start read through the one module on both platforms, and the shared perf report naming the Play package and versionCode on Android.
   - `node skills/performance-budgets/scripts/check-perf-code.mjs .` is red: `[perf-layer]` names the missing Android half under `packages/shell/android/`.
-  - `npx jest packages/shell/src/app/perf --ci --selectProjects unit-android` stays green, because `process-start.ts` answers null in Jest.
-- **Build:** Add the adapters' Android paths. Copy performance-budgets' `templates/shell-native/android/` into `packages/shell/android/`, and the updated `templates/shell-native/expo-module.config.json` over `packages/shell/expo-module.config.json`. Never edit `apps/line-siege/android/`. Commit `feat(shell): vibrate, play sound and mark cold start on android`, with 8.7 in the body.
+  - `npx jest packages/shell/src/app/perf --ci --selectProjects unit` stays green: `process-start.ts` answers null in Jest (no native module). There is no Android test under `app/perf/`, so a `unit-android` run of that folder alone finds no tests and exits 1.
+- **Build:** Add the adapters' Android paths. Copy performance-budgets' `templates/shell-native/android/` into `packages/shell/android/`, the updated `templates/shell-native/expo-module.config.json` over `packages/shell/expo-module.config.json`, and the rest of the step's perf files (`process-start.ts`, `debug-perf-device.ts`, `share-perf-report.ts`, `perf-report-header.ts`, with their tests). Never edit `apps/line-siege/android/`. Commit one behaviour per commit (tdd-workflow rule 2): the haptics, the audio focus, the cold-start module and the perf report header each as their own `feat(shell)` or `fix(shell)`, with 8.7 (sound and vibration) or S1 (cold start) in the body; a test whose behaviour already held is committed as `test(shell)`, proven by a planted break recorded under `reports/e18/`.
 - **Done when:**
   - `npx jest packages/shell/src/services/haptics packages/shell/src/services/audio --ci --selectProjects unit` and `npx jest --ci --selectProjects unit-android` pass.
   - These print `RESULT: PASS`:
@@ -825,17 +826,18 @@ For this epic:
   - Choosing Persian or Sorani restarts into right-to-left exactly once (N6).
   - The Toybox fonts and Vazirmatn draw from the first frame, offline (7.6).
   - All fixes are in the Shell (N5).
-- **Skills:** `navigation-and-routing`, `rtl-and-direction`, `toybox-design-system`, `board-gestures-and-input`, `accessibility`, `tdd-workflow`, `git-commits-and-reporting`.
-- **Tests first:**
-  - `packages/shell/src/screens/game/game-screen-back.android.test.tsx`, from navigation-and-routing's Android template, using `BackHandler.mockPressBack()`: back while playing opens Pause; back in Pause resumes; a finished run leaves normally; only the Pause Home button leaves a live run.
-  - `packages/shell/src/navigation/hardware-back.android.test.tsx`:
-    - on S8, S9, S10, S11, S11a-d, S12, S13 and S15, back does what the Back control does;
-    - with an S14 dialog open, back runs the dialog's cancel and the screen behind stays;
+- **Skills:** `navigation-and-routing`, `rtl-and-direction`, `toybox-design-system`, `toybox-components`, `toybox-screens`, `settings-and-preferences`, `game-host-integration`, `board-gestures-and-input`, `accessibility`, `tdd-workflow`, `git-commits-and-reporting`.
+- **Tests first:** Copy each test from pocket-arcade-index's Android step 4 manifest.
+  - `packages/shell/src/screens/game/game-screen-back.android.test.tsx`, from navigation-and-routing's Android template. React Native 0.86 has no `BackHandler.mockPressBack()`: the test presses the system back as Android delivers it, `DeviceEventEmitter.emit('hardwareBackPress', {})`, and watches `BackHandler.exitApp` for the press nobody handles: back while playing opens Pause; back in Pause resumes; a finished run leaves normally; only the Pause Home button leaves a live run.
+  - `packages/shell/src/navigation/use-hardware-back.android.test.tsx` (navigation-and-routing) and `packages/shell/src/screens/dialogs/dialog-host.android.test.tsx` (toybox-screens):
+    - on every other route the system back is React Navigation's own `goBack()`, with no Shell code (navigation-and-routing, "Android: the system back"); `game-screen-back.android.test.tsx` proves that listener on Game and Home;
+    - with an S14 dialog open, back runs the dialog's cancel and the screen behind stays (the dialog host's `useHardwareBack`);
     - on Home, the press is not handled, so Android moves the app to the background.
   - `packages/shell/src/i18n/direction.android.test.ts`: on Android the restart calls `allowRTL`, `forceRTL` and `reloadAppAsync` once, after the save write; the guard turns a second attempt into `give-up`.
-  - `packages/shell/src/i18n/fonts.android.test.ts`: every family the type roles name equals a bundled TTF's base name, because Android resolves families by file name; fa and ckb use Vazirmatn; no `fontWeight` with a custom family.
-  - `node skills/navigation-and-routing/scripts/check-navigation.mjs . --complete` is red on T09's Android rule.
-- **Build:** Fix only where a test is red: the navigation, the dialog host's back handling, `direction.ts`, or the theme's font names. Never fix it inside a game. Commit each behaviour on its own (`fix(shell): ...` or `feat(shell): ...`), with spec 5, N6 or 7.6 in the body.
+  - The fonts on Android: `direction.android.test.ts`'s last case pins every family to its TTF's base name (Android resolves families by file name) and fa and ckb to Vazirmatn; `check-design-system` proves the bundled TTFs and bans `fontWeight` with a custom family. App tests cannot read the TTF files (no `node:fs` in app tests), so there is no separate `fonts.android.test.ts`.
+  - The rest of the step's tests: toybox-design-system's `toybox-styles.test.ts` and toybox-components' `tiles.test.tsx` (every tilted printed part also gets `renderToHardwareTextureAndroid`), toybox-screens' `dialog-context.test.tsx` and `game-layout.test.tsx` (TalkBack kept inside Pause, Result and the dialogs: what lies behind gets `importantForAccessibility="no-hide-descendants"`), `read-version-text.test.ts` (the versionCode), `read-store-ids.test.ts`, `use-open-external.test.tsx` and `use-settings-links.test.tsx` with settings-and-preferences' `external-links.test.ts` (Rate opens Google Play), and game-host-integration's `load-outcome-opener.test.tsx` (S14's Update opens Google Play on Android).
+  - `node skills/navigation-and-routing/scripts/check-navigation.mjs . --complete` is red on T09's Android rule; `check-a11y-code`, `check-components` and `check-screens` are red on the TalkBack trap and the tilt flag.
+- **Build:** Fix only where a test is red: the navigation, the dialog host's back handling, `direction.ts`, the theme's font names, and the rest of Android step 4's manifest (the TalkBack trap, the tilt flag, the store links and the version text). Never fix it inside a game. Commit each behaviour on its own (`fix(shell): ...` or `feat(shell): ...`), with spec 5, N6, 7.6, 8.11, S11 or S14 in the body.
 - **Done when:**
   - `npx jest packages/shell/src/navigation packages/shell/src/screens/game --ci --selectProjects unit` and `npx jest --ci --selectProjects unit-android` pass.
   - These print `RESULT: PASS`:
@@ -843,7 +845,8 @@ For this epic:
     - `node skills/rtl-and-direction/scripts/check-rtl.mjs .`;
     - `node skills/toybox-design-system/scripts/check-design-system.mjs .`;
     - `node skills/board-gestures-and-input/scripts/check-board-input.mjs .`;
-    - `node skills/accessibility/scripts/check-a11y-code.mjs .`.
+    - `node skills/accessibility/scripts/check-a11y-code.mjs .`;
+    - `node skills/toybox-components/scripts/check-components.mjs .`, `node skills/toybox-screens/scripts/check-screens.mjs . --all` and `node skills/settings-and-preferences/scripts/check-settings.mjs .`.
   - `npm run -s check:fast` is green. The device proof comes in T19 (fonts on screen) and T24 (`03-language-switch` and back on the emulator).
 
 ### E18-T19 · First Release emulator builds, audits and the kill test (Android step 5)
