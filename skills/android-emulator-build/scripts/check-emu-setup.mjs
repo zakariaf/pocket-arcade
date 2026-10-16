@@ -20,7 +20,7 @@ const SPEC = {
     '  npm-script      root package.json build:android:emu is exactly "node packages/tooling/src/build/build-android-emu.ts"',
     '                  and that file exists',
     '  tooling-files   emu-build-plan.ts, android/toolchain.ts, android/emulators.ts and android/emulator-device.ts exist',
-    '  gitignore       .gitignore ignores apps/*/android/ and apps/*/build/ (prebuild regenerates android/)',
+    '  gitignore       .gitignore ignores apps/*/android/, apps/*/build/ and packages/*/android/build/ (prebuild regenerates android/; Gradle builds the Shell module in place)',
     '  metro-cache-key every apps/<game>/metro.config.js sets config.cacheVersion from EXPO_PUBLIC_APP_VARIANT',
     '  adb-serial      every adb call under packages/tooling/src names -s <serial> first (adbArgs()), only',
     '                  `adb devices` and `adb version` may go without; never kill-server (other sessions share adb)',
@@ -66,8 +66,13 @@ function checkScriptAndFiles(ctx) {
 
 function checkGitignore(ctx) {
   const lines = new Set((read(ctx.root, '.gitignore') ?? '').split('\n').map((line) => line.trim()));
-  for (const entry of ['apps/*/android/', 'apps/*/build/']) {
-    if (!lines.has(entry)) ctx.problem('.gitignore', 0, 'gitignore', `does not ignore ${entry}`, `Add the line ${entry}: prebuild regenerates android/ on every build and build/ holds logs and pulled saves.`);
+  const reasons = {
+    'apps/*/android/': 'prebuild regenerates android/ on every build',
+    'apps/*/build/': 'build/ holds the logs and pulled saves',
+    'packages/*/android/build/': "Gradle builds the Shell's Kotlin module in place, into packages/shell/android/build/",
+  };
+  for (const [entry, reason] of Object.entries(reasons)) {
+    if (!lines.has(entry)) ctx.problem('.gitignore', 0, 'gitignore', `does not ignore ${entry}`, `Add the line ${entry}: ${reason}.`);
   }
 }
 

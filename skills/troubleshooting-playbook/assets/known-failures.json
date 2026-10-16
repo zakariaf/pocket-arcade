@@ -6717,6 +6717,20 @@
       "skill": "architecture-and-boundaries"
     },
     {
+      "id": "android-shell-module-build-untracked",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "After the first Gradle build, git status shows ?? packages/shell/android/build/ and npm run -s check:fast prints Prettier [warn] lines for its JSON files",
+      "cause": "Gradle builds the Shell's local Kotlin module (the cold-start ProcessStartModule) where it lives, so its outputs land in packages/shell/android/build/, which .gitignore did not list",
+      "fix": "Add packages/*/android/build/ to .gitignore (the shared template has it; android-emulator-build's check-emu-setup rule gitignore checks it); never commit or format the folder",
+      "match": [
+        "packages/shell/android/build"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
       "id": "android-default-permissions",
       "area": "android",
       "topic": "Prebuild and Gradle",

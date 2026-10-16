@@ -137,3 +137,4 @@ SKIP package.json [script-target] npm run e2e:android: due at Android step 7: pa
 OWNER STEPS PENDING line never names a GP step
 skill runs adb without -s and passes the library validator
 edge swipe on the board opens Pause on Android
+?? packages/shell/android/build/
