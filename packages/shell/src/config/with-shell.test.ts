@@ -1,4 +1,5 @@
 // packages/shell/src/config/with-shell.test.ts
+import { androidConfig, androidPlugins } from './android-config.ts';
 import { ICON_CONFIG } from './art-config.ts';
 import { PRIVACY_MANIFESTS } from './privacy-manifest.ts';
 import { shellPlugins, TRACKING_USAGE_DESCRIPTIONS } from './shell-plugins.ts';
@@ -148,8 +149,30 @@ describe('withShell', () => {
     expect(config.plugins).toStrictEqual([
       [MARKER, { appVariant: 'test' }],
       ...shellPlugins(GAME, 'test'),
+      ...androidPlugins(GAME),
     ]);
     expect(config.ios?.privacyManifests).toBe(PRIVACY_MANIFESTS);
+  });
+
+  it('writes the Android block: package, versionCode, backup, permissions, dark mode', () => {
+    const config = withShell(GAME, STORE_OFF);
+    expect(config.android).toStrictEqual(androidConfig(GAME));
+    expect(config.android).toMatchObject({
+      package: 'io.applander.probegame',
+      versionCode: 3,
+      allowBackup: true,
+      userInterfaceStyle: 'automatic',
+    });
+  });
+
+  it('keeps the save in the device backup and signs Play bundles with the upload key', () => {
+    const plugins = withShell(GAME, STORE_OFF).plugins ?? [];
+    expect(plugins).toContain('@e07/shell/plugins/with-backup-rules.ts');
+    expect(plugins).toContain('@e07/shell/plugins/with-rtl-support.ts');
+    expect(plugins).toContainEqual([
+      '@e07/shell/plugins/with-upload-signing.ts',
+      { game: 'probe-game' },
+    ]);
   });
 
   it('adds the icon and the splash plugin last, only for a game render-art has drawn', () => {
@@ -161,5 +184,62 @@ describe('withShell', () => {
       'expo-splash-screen',
       expect.objectContaining({ backgroundColor: '#A5DAF3' }),
     ]);
+  });
+});
+
+describe('withShell on Android', () => {
+  it('uses the fixed package and the shared build number as versionCode (spec 11, O4)', () => {
+    const config = withShell(gameWithId('line-siege'), STORE_OFF);
+    expect(config.android?.package).toBe('io.applander.linesiege');
+    expect(config.android?.versionCode).toBe(3);
+  });
+
+  it('names the app in each of the four languages on the home screen (N6)', () => {
+    const appName = { en: 'Probe EN', de: 'Probe DE', fa: 'Probe FA', ckb: 'Probe CKB' };
+    const config = withShell({ ...GAME, appName }, STORE_OFF);
+    for (const lang of ['en', 'de', 'fa', 'ckb'] as const) {
+      expect(config.locales?.[lang]).toMatchObject({ android: { app_name: appName[lang] } });
+    }
+  });
+
+  it('keeps Auto Backup on and lists the backup-rules plugin that limits it to the save (8.6, D5)', () => {
+    const config = withShell(GAME, STORE_OFF);
+    expect(config.android?.allowBackup).toBe(true);
+    expect(config.plugins).toContain('@e07/shell/plugins/with-backup-rules.ts');
+  });
+
+  it('asks only for the allowlisted permissions and blocks the extras a library adds (N3)', () => {
+    const config = withShell(GAME, STORE_OFF);
+    expect(config.android?.permissions).toStrictEqual([
+      'android.permission.INTERNET',
+      'android.permission.VIBRATE',
+    ]);
+    expect(config.android?.blockedPermissions).toStrictEqual(
+      expect.arrayContaining([
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
+        'android.permission.SYSTEM_ALERT_WINDOW',
+        'android.permission.RECORD_AUDIO',
+      ]),
+    );
+  });
+
+  it('lets light and dark follow the phone', () => {
+    expect(withShell(GAME, STORE_OFF).android?.userInterfaceStyle).toBe('automatic');
+  });
+
+  it('leaves the ios block exactly as it was before the Android port', () => {
+    expect(withShell(GAME, STORE_OFF).ios).toStrictEqual({
+      bundleIdentifier: 'io.applander.probegame',
+      buildNumber: '3',
+      deploymentTarget: '16.4',
+      supportsTablet: true,
+      config: { usesNonExemptEncryption: false },
+      privacyManifests: PRIVACY_MANIFESTS,
+      infoPlist: {
+        CADisableMinimumFrameDurationOnPhone: true,
+        CFBundleAllowMixedLocalizations: true,
+      },
+    });
   });
 });
