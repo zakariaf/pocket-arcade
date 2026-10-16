@@ -65,6 +65,7 @@ describe('androidConfig', () => {
       'android.permission.WRITE_EXTERNAL_STORAGE',
       'android.permission.RECORD_AUDIO',
       'android.permission.CAMERA',
+      'android.permission.ACCESS_WIFI_STATE',
     ]) {
       expect(BLOCKED_ANDROID_PERMISSIONS).toContain(permission);
     }
