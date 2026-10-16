@@ -148,7 +148,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -195,15 +195,15 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
-            "sha256": "e697219e210ef253839cfe30a75eb9290110a1688cf36a52fe026afe5e65a6e3"
+            "sha256": "4d9521a695f5f317c790915c98a054de72963409e3b3b8c0a8fb695e2047dc99"
           },
           {
             "path": "packages/shell/src/screens/game/game-layout.tsx",
-            "sha256": "2338e23df8a87721ea0ff46a0713b9189bd72d05432030d1ca78d09cc834c74d"
+            "sha256": "d80ec468b548bb915beb5c590608bb0998b1dd2e453db0c39c05f47ebe56b899"
           }
         ]
       },
@@ -216,7 +216,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -241,7 +241,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -258,15 +258,15 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
-            "sha256": "e697219e210ef253839cfe30a75eb9290110a1688cf36a52fe026afe5e65a6e3"
+            "sha256": "4d9521a695f5f317c790915c98a054de72963409e3b3b8c0a8fb695e2047dc99"
           },
           {
             "path": "packages/shell/src/screens/game/game-layout.tsx",
-            "sha256": "2338e23df8a87721ea0ff46a0713b9189bd72d05432030d1ca78d09cc834c74d"
+            "sha256": "d80ec468b548bb915beb5c590608bb0998b1dd2e453db0c39c05f47ebe56b899"
           }
         ]
       },
@@ -288,7 +288,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -597,7 +597,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/app/consent-moment.android.test.tsx",
@@ -739,7 +739,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/services/ads/admob-ads-adapter.android.test.ts",
@@ -2975,7 +2975,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -2996,7 +2996,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3030,7 +3030,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3064,7 +3064,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3089,7 +3089,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3410,7 +3410,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3423,7 +3423,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3444,7 +3444,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3469,7 +3469,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -3494,7 +3494,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -4733,7 +4733,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/app/load-outcome-opener.test.tsx",
@@ -4746,7 +4746,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/app/load-outcome-opener.tsx",
@@ -9779,7 +9779,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -9801,7 +9801,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -9818,7 +9818,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
@@ -10545,7 +10545,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/stores/premium/premium-flow.android.test.ts",
@@ -12531,7 +12531,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "spec.txt",
@@ -12574,7 +12574,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "spec.txt",
@@ -13094,7 +13094,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/screens/settings/settings-rows.android.test.ts",
@@ -16988,7 +16988,7 @@
         "sources": [
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           },
           {
             "path": "packages/shell/src/screens/dialogs/dialog-host.android.test.tsx",
@@ -19659,7 +19659,7 @@
           },
           {
             "path": "epics/E18-android-port.md",
-            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+            "sha256": "a6e6900eb5ba4cff45102836c52017b10bc232b2a0ebad0c37726a97862c8c9d"
           }
         ]
       },
