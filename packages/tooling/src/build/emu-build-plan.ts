@@ -70,6 +70,18 @@ export const PREBUILD_ANDROID_ARGS = ['expo', 'prebuild', '--platform', 'android
 /** The emulator APK; bundleRelease (the Play AAB) belongs to release:android only. */
 export const GRADLE_RELEASE_ARGS = ['assembleRelease', '--console=plain'];
 
+/**
+ * The emulator's ABI, the last part of the pinned system image (ANDROID_PINS.systemImage). An
+ * emulator build compiles the native code for this ABI only, a quarter of the C++ work of all four;
+ * the Play AAB (release:android) keeps every ABI.
+ */
+export const EMU_ABI = 'arm64-v8a';
+
+/** gradlew arguments of the emulator build: the Release APK for the emulator's ABI only. */
+export function gradleEmuArgs(): string[] {
+  return ['-p', 'android', ...GRADLE_RELEASE_ARGS, `-PreactNativeArchitectures=${EMU_ABI}`];
+}
+
 export function apkPath(appDir: string): string {
   return join(appDir, 'android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk');
 }
