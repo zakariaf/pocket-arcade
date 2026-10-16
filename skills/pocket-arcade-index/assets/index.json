@@ -2103,14 +2103,15 @@
             ]
           },
           {
-            "step": "Android step 3, services: the consent adapter's Android case (Google's form with no tracking prompt: requestTracking answers 'unavailable', L14), Premium through Google Play Billing (acknowledged only after Premium is saved, a pending purchase never granted, absence never revokes), the Android haptics column and no audio focus (spec 8.7), and the native half of the cold-start layer on Android (the Kotlin ProcessStartModule, listed in expo-module.config.json beside the iOS module)",
+            "step": "Android step 3, services: the consent adapter's Android case (Google's form with no tracking prompt: requestTracking answers 'unavailable', L14), Premium through Google Play Billing (acknowledged only after Premium is saved, a pending purchase never granted, absence never revokes), the Android haptics column with the Vibration row that follows it, and no audio focus (spec 8.7), and the native half of the cold-start layer on Android (the Kotlin ProcessStartModule, listed in expo-module.config.json beside the iOS module)",
             "skills": [
               "admob-ads",
               "premium-purchase",
               "game-audio-and-haptics",
+              "settings-and-preferences",
               "performance-budgets"
             ],
-            "proof": "`check-ads.mjs .` and `check-ad-behaviour.mjs .` (admob-ads), `check-premium.mjs .` and `check-premium-behaviour.mjs .` (premium-purchase), `check-audio-haptics.mjs .` (game-audio-and-haptics) and `check-perf-code.mjs .` (performance-budgets) print RESULT: PASS; `npx jest --ci --selectProjects unit-android` passes",
+            "proof": "`check-ads.mjs .` and `check-ad-behaviour.mjs .` (admob-ads), `check-premium.mjs .` and `check-premium-behaviour.mjs .` (premium-purchase), `check-audio-haptics.mjs .` (game-audio-and-haptics), `check-settings.mjs .` (settings-and-preferences) and `check-perf-code.mjs .` (performance-budgets) print RESULT: PASS; `npx jest --ci --selectProjects unit-android` passes",
             "copies": [
               {
                 "skill": "admob-ads",
@@ -2133,6 +2134,12 @@
                 "paths": [
                   "packages/shell/src/services/audio/audio-api-audio-adapter*",
                   "packages/shell/src/services/haptics/expo-haptics-adapter*"
+                ]
+              },
+              {
+                "skill": "settings-and-preferences",
+                "paths": [
+                  "packages/shell/src/screens/settings/settings-rows.android.test.ts"
                 ]
               },
               {

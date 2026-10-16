@@ -13063,6 +13063,19 @@
           }
         ]
       },
+      "templates/settings-rows.android.test.ts": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/screens/settings/settings-rows.android.test.ts",
+            "sha256": "e17a4c8978e5239e1002e35c364275e74f38320d77dd41ee97b99dce05c3cae2"
+          }
+        ]
+      },
       "templates/settings-rows.test.ts": {
         "recorded": "2026-10-03",
         "sources": [
