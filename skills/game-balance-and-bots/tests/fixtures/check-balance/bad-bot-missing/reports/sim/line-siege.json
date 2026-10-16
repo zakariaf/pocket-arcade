@@ -1,0 +1,302 @@
+{
+  "gameId": "line-siege",
+  "rulesFingerprint": "b985e45d0633ef2b69a2591908f2fb5c71b5f3d016f501d9e1ab778bc4fb9b18",
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "cells": [
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "runs": 100,
+      "wins": 22,
+      "capHits": 0,
+      "winRate": 0.22,
+      "medianMoves": 17,
+      "p10Moves": 10,
+      "p90Moves": 23,
+      "medianScore": 45,
+      "payoffPerRun": 1.59,
+      "twistPerRun": 0.88,
+      "lossReasons": {
+        "line-siege.lose.board-full": 78
+      },
+      "firstPayoffShare": [
+        0,
+        0.01,
+        0.04,
+        0.09,
+        0.17,
+        0.19,
+        0.22,
+        0.29,
+        0.41,
+        0.46
+      ]
+    },
+    {
+      "policy": "random",
+      "difficulty": 25,
+      "runs": 100,
+      "wins": 14,
+      "capHits": 0,
+      "winRate": 0.14,
+      "medianMoves": 14,
+      "p10Moves": 10,
+      "p90Moves": 23,
+      "medianScore": 45,
+      "payoffPerRun": 1.4,
+      "twistPerRun": 0.72,
+      "lossReasons": {
+        "line-siege.lose.board-full": 86
+      },
+      "firstPayoffShare": [
+        0,
+        0.01,
+        0.04,
+        0.09,
+        0.17,
+        0.19,
+        0.22,
+        0.29,
+        0.4,
+        0.47
+      ]
+    },
+    {
+      "policy": "random",
+      "difficulty": 50,
+      "runs": 100,
+      "wins": 11,
+      "capHits": 0,
+      "winRate": 0.11,
+      "medianMoves": 17,
+      "p10Moves": 11,
+      "p90Moves": 24,
+      "medianScore": 45,
+      "payoffPerRun": 1.49,
+      "twistPerRun": 1.02,
+      "lossReasons": {
+        "line-siege.lose.board-full": 80,
+        "line-siege.lose.broke-through": 9
+      },
+      "firstPayoffShare": [
+        0,
+        0.01,
+        0.04,
+        0.06,
+        0.08,
+        0.11,
+        0.15,
+        0.2,
+        0.29,
+        0.36
+      ]
+    },
+    {
+      "policy": "random",
+      "difficulty": 75,
+      "runs": 100,
+      "wins": 2,
+      "capHits": 0,
+      "winRate": 0.02,
+      "medianMoves": 17,
+      "p10Moves": 11,
+      "p90Moves": 26,
+      "medianScore": 55,
+      "payoffPerRun": 1.26,
+      "twistPerRun": 1.08,
+      "lossReasons": {
+        "line-siege.lose.board-full": 81,
+        "line-siege.lose.broke-through": 17
+      },
+      "firstPayoffShare": [
+        0,
+        0.01,
+        0.04,
+        0.06,
+        0.08,
+        0.11,
+        0.15,
+        0.19,
+        0.28,
+        0.34
+      ]
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "runs": 100,
+      "wins": 73,
+      "capHits": 0,
+      "winRate": 0.73,
+      "medianMoves": 19,
+      "p10Moves": 13,
+      "p90Moves": 28,
+      "medianScore": 140,
+      "payoffPerRun": 3.41,
+      "twistPerRun": 1.51,
+      "lossReasons": {
+        "line-siege.lose.board-full": 27
+      },
+      "firstPayoffShare": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "runs": 100,
+      "wins": 56,
+      "capHits": 0,
+      "winRate": 0.56,
+      "medianMoves": 20,
+      "p10Moves": 14,
+      "p90Moves": 28,
+      "medianScore": 145,
+      "payoffPerRun": 3.16,
+      "twistPerRun": 1.56,
+      "lossReasons": {
+        "line-siege.lose.board-full": 39,
+        "line-siege.lose.broke-through": 5
+      },
+      "firstPayoffShare": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 50,
+      "runs": 100,
+      "wins": 39,
+      "capHits": 0,
+      "winRate": 0.39,
+      "medianMoves": 24,
+      "p10Moves": 14,
+      "p90Moves": 28,
+      "medianScore": 135,
+      "payoffPerRun": 2.91,
+      "twistPerRun": 1.59,
+      "lossReasons": {
+        "line-siege.lose.board-full": 38,
+        "line-siege.lose.broke-through": 23
+      },
+      "firstPayoffShare": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "runs": 100,
+      "wins": 14,
+      "capHits": 0,
+      "winRate": 0.14,
+      "medianMoves": 24,
+      "p10Moves": 14,
+      "p90Moves": 32,
+      "medianScore": 120,
+      "payoffPerRun": 2.66,
+      "twistPerRun": 1.87,
+      "lossReasons": {
+        "line-siege.lose.board-full": 37,
+        "line-siege.lose.broke-through": 49
+      },
+      "firstPayoffShare": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "policy": "lookahead",
+      "difficulty": 25,
+      "runs": 100,
+      "wins": 100,
+      "capHits": 0,
+      "winRate": 1,
+      "medianMoves": 19,
+      "p10Moves": 13,
+      "p90Moves": 26,
+      "medianScore": 185,
+      "payoffPerRun": 4.76,
+      "twistPerRun": 1.45,
+      "lossReasons": {},
+      "firstPayoffShare": [
+        0.85,
+        0.99,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 100,
+      "runs": 100,
+      "wins": 0,
+      "capHits": 0,
+      "winRate": 0,
+      "medianMoves": 26,
+      "p10Moves": 14,
+      "p90Moves": 44,
+      "medianScore": 185,
+      "payoffPerRun": 4.84,
+      "twistPerRun": 2.35,
+      "lossReasons": {
+        "line-siege.lose.board-full": 57,
+        "line-siege.lose.broke-through": 43
+      },
+      "firstPayoffShare": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
