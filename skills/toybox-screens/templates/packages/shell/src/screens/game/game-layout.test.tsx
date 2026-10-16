@@ -1,7 +1,7 @@
 // packages/shell/src/screens/game/game-layout.test.tsx
 import { screen, within } from '@testing-library/react-native';
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
@@ -9,6 +9,42 @@ import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { GameLayout } from './game-layout.tsx';
 
 import type { ReactNode } from 'react';
+import type { useWindowDimensions } from 'react-native';
+
+type WindowMetrics = ReturnType<typeof useWindowDimensions>;
+
+const mockWindow: { current: WindowMetrics } = {
+  current: { width: 402, height: 874, fontScale: 1, scale: 3 },
+};
+jest.mock('react-native/Libraries/Utilities/useWindowDimensions', () => ({
+  __esModule: true,
+  default: () => mockWindow.current,
+}));
+
+type Box = { readonly props: Record<string, unknown> } | null | undefined;
+
+// allow-style-assertion: Jest has no layout engine; the centred column is its styles.
+function styleOf(node: Box): Record<string, unknown> {
+  return (StyleSheet.flatten(node?.props['style'] as never) ?? {}) as Record<string, unknown>;
+}
+
+/** The S5 column the board sits in, laid out in a window `windowWidth` points wide. */
+async function boardColumnAt(windowWidth: number, windowHeight: number) {
+  mockWindow.current = { width: windowWidth, height: windowHeight, fontScale: 1, scale: 2 };
+  await renderWithShell(
+    <GameLayout
+      topBar={null}
+      board={<View testID="probe.board" />}
+      overlay={<View testID="probe.overlay" />}
+    />,
+  );
+  // The overlay hides the frame behind it from TalkBack (Android's focus trap), so reach it hidden.
+  const frame = screen.getByTestId('game.screen', { includeHiddenElements: true });
+  const column = styleOf(screen.getByTestId('game.board', { includeHiddenElements: true }).parent);
+  const maxWidth = typeof column['maxWidth'] === 'number' ? column['maxWidth'] : windowWidth;
+  const width = column['width'] === '100%' ? Math.min(windowWidth, maxWidth) : Number.NaN;
+  return { frame: styleOf(frame), column, width, side: (windowWidth - width) / 2 };
+}
 
 type HostNode = { readonly parent: HostNode | null; readonly props: Record<string, unknown> };
 
@@ -83,6 +119,25 @@ describe('GameLayout', () => {
     const reopenedFrame = screen.getByTestId('game.screen');
     expect(trapAbove(reopenedFrame)).toBeNull();
     expect(onMount).toHaveBeenCalledTimes(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('centres a board column at most 640 pt wide on a landscape iPad, ground on both sides (spec S5)', async () => {
+    const ipad = await boardColumnAt(1366, 1024);
+    expect([ipad.width, ipad.side]).toStrictEqual([640, 363]);
+    expect(ipad.frame).toMatchObject({ alignItems: 'center', flex: 1 });
+    expect(ipad.frame['backgroundColor']).toStrictEqual(expect.any(String));
+    expect(ipad.column['backgroundColor']).toBeUndefined();
+    // The overlay is the frame's sibling, so it still covers the whole window.
+    expect(
+      within(screen.getByTestId('game.screen', { includeHiddenElements: true })).queryByTestId(
+        'probe.overlay',
+      ),
+    ).not.toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+
+    const phone = await boardColumnAt(402, 874);
+    expect([phone.width, phone.side]).toStrictEqual([402, 0]);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

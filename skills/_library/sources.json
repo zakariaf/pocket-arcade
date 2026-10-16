@@ -17144,6 +17144,15 @@
           }
         ]
       },
+      "templates/packages/shell/src/screens/game/game-layout.test.tsx": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "packages/shell/src/screens/game/game-layout.test.tsx",
+            "sha256": "cf723b17996fa21f7ae75aa8299bed7405d3ca869fb2e05c0adc949a0f723789"
+          }
+        ]
+      },
       "templates/packages/shell/src/screens/game/game-layout.tsx": {
         "recorded": "2026-10-03",
         "sources": [
