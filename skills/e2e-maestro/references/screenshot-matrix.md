@@ -11,6 +11,7 @@ Every Pocket Arcade screen in 4 languages × light and dark × phone and tablet,
 - Reviewing: open every changed PNG
 - The gallery
 - The 200% text pass
+- Android: screenshots:android
 - Screenshots and the Toybox design
 
 ## What is captured
@@ -60,6 +61,19 @@ Flaky screenshots: rerun once. A diff in a different place on each run means the
 ## The 200% text pass
 
 Spec 8.11 (text scaling): `npm run screenshots:ios -- --app <game-id> --text-size accessibility-extra-extra-extra-large` captures the same matrix at the largest accessibility size into `<lang>-<theme>-accessibility-extra-extra-extra-large/` sets. Check truncation and overlap by eye.
+
+## Android: screenshots:android
+
+`npm run screenshots:android -- --app <game-id>` (`capture-screenshots-android.ts`, Android step 7) runs the same `matrix.yaml`, unchanged, on Android and compares at the same tolerance:
+
+- **Devices:** a phone AVD and a tablet AVD, `e07-android-shots-phone` (profile `pixel_8`) and `e07-android-shots-tablet` (`pixel_tablet`), or this session's own `e07-android-<purpose>` and `-tablet` (`--avd <purpose>`), on android-emulator-build's pinned `google_apis` image. The same Release APK of the test variant with ads off as `e2e:android` (`readApkApp` refuses any other).
+- **Still screens:** on every start, `stillScreenCommands`: `adb -s <serial> shell settings put global window_animation_scale 0`, the same for `transition_animation_scale` and `animator_duration_scale`, then the demo-mode status bar (`settings put global sysui_demo_allowed 1` and the `com.android.systemui.demo` broadcasts from android-emulator-build's `demoModeCommands`: clock 9:41, full battery not charging, full wifi and no mobile icon, no notifications). Reduce motion, seed, date and the `demo` fixture come from the same debug link as on iOS.
+- **Light and dark:** `adb -s <serial> shell cmd uimode night yes|no` (`nightModeArgs`) with `theme=system`.
+- **Text size:** `settings put system font_scale 1.0` for the matrix, `--font-scale 2.0` for the 200 % pass (sets named `<lang>-<theme>-font-scale-2.0`; checked by eye).
+- **Baselines:** `apps/<game-id>/e2e/baselines-android/<phone|tablet>/<lang>-<theme>/<screen>.png`, apart from the iOS baselines; `MAX_DIFF_RATIO = 0.002` and pixelmatch threshold 0.1, never raised (`check-e2e-setup` rule `screenshot-tolerance`). `--update` with `--devices` and `--langs` for the sets you mean, every PNG opened, a `Gate-Change:` trailer.
+- **Reports:** `reports/screenshots-android/summary.json` and `index.html` (`writeGallery(rows, 'reports/screenshots-android')`); a combination that fails becomes a `capture-failed` row and the next one still runs. Check with `check-e2e-report.mjs . --app <game-id> --platform android --screenshots`.
+
+Every adb call names the emulator's serial and every Maestro run its own driver port, as in `e2e:android`.
 
 ## Screenshots and the Toybox design
 

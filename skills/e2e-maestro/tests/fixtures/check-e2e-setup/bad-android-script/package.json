@@ -1,0 +1,15 @@
+{
+  "name": "fixture",
+  "private": true,
+  "scripts": {
+    "e2e:android": "node packages/tooling/src/e2e/run-e2e-android.mjs",
+    "e2e:ios": "node packages/tooling/src/e2e/run-e2e-ios.ts",
+    "screenshots:android": "node packages/tooling/src/e2e/capture-screenshots-android.ts",
+    "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts"
+  },
+  "devDependencies": {
+    "@types/pngjs": "6.0.5",
+    "pixelmatch": "7.2.0",
+    "pngjs": "7.0.0"
+  }
+}

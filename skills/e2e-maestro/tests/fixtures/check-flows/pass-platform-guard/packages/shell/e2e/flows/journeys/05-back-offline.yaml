@@ -1,0 +1,24 @@
+# packages/shell/e2e/flows/journeys/05-back-offline.yaml — the Android steps guarded by
+# platform: Android; the airplane sub-flow guards its own steps.
+appId: ${APP_ID}
+name: Back from Settings, then offline
+tags: [shell]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&firstRun=0&screen=settings'
+      WAIT_FOR: 'settings.screen'
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - assertVisible:
+          id: 'home.screen'
+- runFlow:
+    file: ../../subflows/airplane-mode.yaml
+    env:
+      AIRPLANE: 'enabled'

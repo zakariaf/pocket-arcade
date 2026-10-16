@@ -12,6 +12,7 @@ How `npm run e2e:ios -- --app <game-id>` runs every flow on a Release build, on 
 - Layer F: the runtime network check
 - Reports and how to read them
 - Passing options to maestro test
+- Android: e2e:android on emulators
 - The files
 
 ## What the run needs
@@ -103,6 +104,35 @@ Spec N3: the app's own code makes no network requests; only AdMob and StoreKit m
 
 `--include-tags <tags>` goes straight to the flows' `test` command (after the global `--device` and `--driver-host-port`): `npm run e2e:ios -- --app line-siege --flows-only --include-tags smoke` runs only smoke flows and skips the measurements (fine while iterating; the evidence run has no filter and no `--flows-only`). The runner passes `--exclude-tags quarantine,a11y` itself; any other option is refused (exit 2), so a typo never silently changes the run. One flow by hand: `tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test <flow> -e APP_ID=<id> -e APP_SCHEME=<scheme>`.
 
+## Android: e2e:android on emulators
+
+`npm run e2e:android -- --app <game-id>` (`run-e2e-android.ts`) runs the same flows, unchanged, on Android emulators and leaves the same evidence in `reports/e2e-android/<game-id>/`. It is due at Android step 7; before any of its files exists, `check-e2e-setup` prints not-yet-due `SKIP` lines.
+
+**What it needs.** A Release APK of the test variant with ads off, built by android-emulator-build: `npm run build:android:emu -- --app <game-id> --variant test --ads off` (or `--apk <app-release.apk>`). `readApkApp` reads `assets/app.config` from the APK (`unzip -p`) and refuses anything but `appVariant` `test` with `adsMode` `off` (`apkVariantProblem`: `e2e:android needs a test build with ADS_MODE=off, this one is <variant>/<ads>`); the package is `android.package` (the flows' `APP_ID`), the scheme the first `scheme` (`APP_SCHEME`). JDK 17 and the pinned SDK come from android-emulator-build's toolchain (`selectAndroidToolchain`), Maestro from the same installer.
+
+**Emulators.** Dedicated AVDs only: `e07-android-e2e-phone` (profile `pixel_8`) and `e07-android-e2e-tablet` (`pixel_tablet`), or this session's own `e07-android-<purpose>` and `-tablet` from `--avd <purpose>`, created once on the pinned `google_apis` image and started on a free console port (android-emulator-build's `startEmulator`, `waitForBoot`). Each start turns the three animation scales to 0, pins the demo-mode status bar at 9:41 (`stillScreenCommands`) and installs the APK. The serial is always `emulator-<port>`; a USB device or an AVD name is refused.
+
+**One emulator, one driver port.** Several sessions share this Mac's adb server and Maestro's Android driver host port (7001 by default). So every adb call is built by `android-device-args.ts` with `-s <serial>` first (`deviceAdbArgs`, which checks the serial and refuses `kill-server`) and run through `adbOn(device, args)`, which refuses arguments built for another emulator. Every Maestro run starts with `androidMaestroGlobalArgs({ serial, driverPort })`: `--device <serial> --driver-host-port <port>` before the command, the port from `--driver-port` or `freeDriverPort()`, never 7001. The run log prints `maestro: device emulator-5554, driver port <port>: test ...` for each run. `check-e2e-setup` rule `android-serial`.
+
+**Debug links.** A debug link reaches the app through a VIEW intent: `adb -s <serial> shell am start -W -a android.intent.action.VIEW -d '<link>' <package>` (`deepLinkArgs`; the link is single-quoted because the device shell would split it at `&`). Android asks nothing, so there is no "Open in" alert to accept as on iOS. The flows still set state through `debug-setup.yaml` (its `Open in .*\?` guard simply never matches on Android).
+
+**The steps.**
+
+1. **Flows** (`android-flow-steps.ts`): every Shell and game flow except the `a11y`, `offline` and `quarantine` ones; then the `offline` journeys under real airplane mode: `subflows/airplane-mode.yaml` with `AIRPLANE=enabled` (Maestro `setAirplaneMode`, under `when: platform: Android`), the journeys with `--include-tags offline`, then `AIRPLANE=disabled` whatever happened (spec 15.2: on Android the airplane-mode test is real; iOS keeps `offline=1` and the sampler). Then `smoke/04-debug-performance.yaml` alone and `save-benchmark.json` from the perf log right after it. The three JUnit reports become one `junit.xml`. With `--include-tags` (iterating) one call runs, without airplane mode.
+2. **Cold start** (`emu-perf-steps.ts`): the debug link to Home through the VIEW intent, then 6 launches with `am start -W -S -n <package>/.MainActivity` (`coldLaunchArgs`; `-S` stops the app first). Each launch is judged from the perf log's newest cold-start entry (`emuLaunchOf`: the same process-start-to-Home time as on the simulator, written by the Kotlin `ProcessStartModule` on Android); `am start`'s `TotalTime` (to the first frame, `parseAmStart`) is kept beside it, and a launch whose `LaunchState` is not `COLD` is refused. `judgeColdStart` drops the first launch and compares the median of the other 5 with `perf-baselines/cold-start-emu-<game-id>.json` (`emuBaselineFile`; apart from the simulator's file) × `perf.coldStartEmuRegressionFactor`, which falls back to the simulator's 1.2 (a factor of its own is a gate change with a `Gate-Change:` trailer). The first run writes the baseline: commit it with a `Gate-Change:` trailer. The perf log is pulled with `adb root` (the `google_apis` image allows it) from the app's `files/SQLite/save.db`. Result: `cold-start.json` (`{ launchesMs, medianMs, baselineMs, limitMs, isRegression, amTotalTimesMs }` or `{ error }`).
+3. **Memory and the feedback evidence**: the game's smoke flows again, `feedback.json` from the perf log (`feedbackEvidenceOf`, as on iOS), a relaunch, 10 s to settle, then `adb -s <serial> shell dumpsys meminfo <package>` (`meminfoArgs`, saved as `memory/meminfo.txt`). `totalPssKbOf` reads the App Summary's `TOTAL PSS:` (or the table's `TOTAL` row) and `judgePss` compares it with `perf.memoryFootprintMbMax`, the one 150 MB budget of both platforms (lead decision e: total PSS on Android, `phys_footprint` on iOS). Result: `memory.json` (`{ totalPssKb, totalPssMb, limitMb, isOver }` or `{ error }`).
+4. **Large text**: the `a11y` flows at `adb -s <serial> shell settings put system font_scale 2.0` (`LARGE_FONT_SCALE`), with `-e LANG=en` and `-e LANG=fa`, on the phone, then on the tablet (the phone's app force-stopped first, the tablet with a socket sampler of its own); the font scale goes back to 1.0 afterwards. Reports in `large-text/<phone|tablet>-<en|fa>/`; open every screenshot with the Read tool.
+
+`--flows-only` runs step 1 only and is never evidence.
+
+**The socket sampler.** `sample-sockets-android.ts <package> <report> <serial>` runs as its own process, one per emulator of the run. Once a second, on that emulator only, it reads the app's uid (`cmd package list packages -U <package>`), whether the app runs (`pidof`), and the four socket tables in one adb call (`procNetArgs`: `/proc/net/tcp`, `tcp6`, `udp`, `udp6`, each after a `## <table>` marker). `android-socket-sampler.ts` (pure, tested) decodes the kernel's little-endian hex addresses and keeps the uid's sockets whose peer is neither loopback (`127.*`, `::1`, the IPv4-mapped loopback) nor unspecified (a listening socket's peer is 0); each is appended to `network.txt` as `<serial> <table> uid <uid> <state> <local> -> <peer>`. After every sample it writes the same status file as the iOS sampler (`network.txt.sampler-<serial>.json`), so `proveSamplersAlive` writes `network-samplers.json` alike. An empty `network.txt` is N3 evidence only next to samplers proven alive.
+
+**Reports.** `reports/e2e-android/<game-id>/`: `junit.xml`, `network.txt`, `network-samplers.json`, `save-benchmark.json`, `cold-start.json`, `memory.json` (and `memory/meminfo.txt`), `feedback.json`, `large-text/<device>-<lang>/`; the perf log in `reports/perf/emu-perf-log.json`. `node ${CLAUDE_SKILL_DIR}/scripts/check-e2e-report.mjs . --app <game-id> --platform android` judges them with the same rules as on iOS (`perf-missing` names `cold-start.json` or `memory.json`; `memory` reads total PSS) and prints the evidence lines with "(emulator)": "Cold start (emulator): median 1012 ms of 5 launches, baseline 1000 ms, limit 1200 ms", "Memory (emulator): total PSS 96 MB after the smoke flow and a relaunch (budget 150 MB)".
+
+**Flows on both platforms.** The flows do not fork. A step that exists on one platform only sits in a `runFlow` with `when: platform: Android` (`back`, `pressKey: back`, `setAirplaneMode`, `toggleAirplaneMode`) or `when: platform: iOS` (Apple's tracking prompt); `check-flows` rule `platform-guard`, due at Android step 7 (flows reference, "Both platforms").
+
+**Clean up.** Stop only the `e07-android-*` emulators this run started (`adb -s <serial> emu kill`); never `adb kill-server`, which cuts every session's emulators.
+
 ## The files
 
 | Template | Path in the repo |
@@ -111,6 +141,8 @@ Spec N3: the app's own code makes no network requests; only AdMob and StoreKit m
 | `run-e2e-ios.ts`, `e2e-cli.ts` (+ test), `sim-perf-steps.ts` (+ test), `sim-perf.ts` (+ test), `simulator.ts` (+ test), `maestro-args.ts` (+ test), `feedback-evidence.ts` (+ test), `save-benchmark-evidence.ts` (+ test), `write-gallery.ts`, `capture-screenshots-ios.ts`, `print-level-line.ts` with `level-line.ts` (+ test) | `packages/tooling/src/e2e/` |
 | `compare-png.ts` | `packages/tooling/src/visual/` |
 | `network-runtime-layer.ts` (+ test), `sample-sockets.ts` | `packages/tooling/src/audit/` |
+| Android step 7: `run-e2e-android.ts`, `android-flow-steps.ts`, `emu-perf-steps.ts`, `android-e2e-device.ts`, `sample-sockets-android.ts`, `capture-screenshots-android.ts`, `android-cli.ts` (+ test), `android-device-args.ts` (+ test), `android-socket-sampler.ts` (+ test), `android-cold-start.ts` (+ test), `android-memory.ts` (+ test) | `packages/tooling/src/e2e/` (on android-emulator-build's `packages/tooling/src/android/` and `build/emu-build-plan.ts`) |
+| `airplane-mode.yaml` | `packages/shell/e2e/subflows/` |
 | The debug kit: `network-guard.ts`, `simulated-connectivity.ts`, `simulated-clock.ts`, `debug-services.ts`, `debug-overrides.ts`, `fake-debug-store.ts`, `debug-link.ts`, `debug-save-recipe.ts`, `debug-save-import.ts`, `debug-tools.ts`, `debug-sheets.ts`, `debug-actions.ts`, `debug-perf.ts`, `fake-debug-perf.ts`, `use-debug-model.ts` (+ tests) | `packages/shell/src/screens/debug/` (test-only, reached through `test-only.ts`) |
 | `debug-link-handler.ts`, `debug-link-intake.ts`, `debug-link-routes.ts`, `create-debug-parts.ts`, `debug-services-context.tsx` (+ tests) | `packages/shell/src/app/` (the handler through `test-only.ts`; the parts and the context in every build, with type-only debug imports) |
 | `sqlite-kv-debug-store-adapter.ts` (its test: `test/integration/save/sqlite-kv-debug-store-adapter.test.ts`) | `packages/shell/src/services/save/` (through `test-only.ts`) |
@@ -120,6 +152,8 @@ The tooling files run under Node's type stripping (`node packages/tooling/src/e2
 ```json
 {
   "e2e:ios": "node packages/tooling/src/e2e/run-e2e-ios.ts",
-  "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts"
+  "screenshots:ios": "node packages/tooling/src/e2e/capture-screenshots-ios.ts",
+  "e2e:android": "node packages/tooling/src/e2e/run-e2e-android.ts",
+  "screenshots:android": "node packages/tooling/src/e2e/capture-screenshots-android.ts"
 }
 ```

@@ -26,6 +26,7 @@
   {"prompt": "remove a package we no longer use and check the licences of everything we ship", "expect": "dependency-management"},
   {"prompt": "write an end-to-end flow that plays level one on the simulator and checks the win screen appears", "expect": "e2e-maestro"},
   {"prompt": "take the screenshot matrix of every screen in all four languages, light and dark, with Maestro", "expect": "e2e-maestro"},
+  {"prompt": "run the Maestro flows on the Android emulator with no network", "expect": "e2e-maestro"},
   {"prompt": "Expo SDK 58 is out; plan and do the upgrade for every game together", "expect": "expo-sdk-upgrade"},
   {"prompt": "Apple will require Xcode 27 soon; what breaks and how do we move all apps over?", "expect": "expo-sdk-upgrade"},
   {"prompt": "add a pop sound and a light vibration when a piece lands", "expect": "game-audio-and-haptics"},

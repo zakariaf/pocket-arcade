@@ -1,0 +1,2 @@
+[platform-guard]
+Ask App Not to Track

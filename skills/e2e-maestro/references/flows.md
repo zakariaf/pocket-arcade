@@ -15,6 +15,7 @@ Where flows live, how they are named and tagged, how they select elements and se
 - A game's mode flows: daily, continue, endless
 - The continue offer and the endless result (lead decision L11)
 - The ads smoke flows (admob-ads, ADS_MODE=test)
+- Both platforms: platform guards
 - Taps and stars from the game: print-level-line
 - Ending smoke flows: no network
 - Waiting without sleeping
@@ -192,6 +193,32 @@ The same happens when a shown offer becomes hidden (offline, a load error) and w
 `packages/shell/e2e/ads-smoke/<nn>-<name>.yaml` holds admob-ads' smoke test of the ads-on build: S3, Google's form and Apple's prompt in order (`geo=eea`), Apple's prompt alone (`geo=other`), the banner, the rewarded continue with its board assertion (`game.board-frame`, test builds with `boardLayout=1`). They run by hand on an `ADS_MODE=test` build, never through `e2e:ios` (whose `requireAdsOffTestBuild` refuses ads-on builds, and whose flow list never includes `ads-smoke/`; `check-e2e-setup` rule `e2e-ads-off`). Start each from a fresh install with `xcrun simctl launch <udid> <bundle id>`: Maestro's `launchApp` grants the App Tracking Transparency answer, so Apple's prompt would never show. Reset the tracking answer too (`xcrun simctl privacy <udid> reset all <bundle id>`): it survives `simctl uninstall`, and without the reset Apple's prompt did not show after a reinstall (verified 2026-10-01: the `geo=eea` run after a `geo=other` run went from Google's form straight to Home). What Google shows comes from the AdMob account: Google's sample app id (every `ADS_MODE=test` build) has an IDFA explainer message, so outside the EEA (`geo=other`, `IABTCF_gdprApplies` 0) S3 and Google's "Our app wants to stay free for you" message (one `Continue` button) came before Apple's prompt, and in the EEA (`geo=eea`, `IABTCF_gdprApplies` 1) S3 came before Google's consent form (`Consent`) (verified 2026-10-01 on the Line Siege pilot). The owner's account publishes no IDFA explainer (ios-release-testflight's owner step G5), so a live build outside the EEA shows Apple's prompt alone. Run each with `tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> <flow>` on this session's own `e07-*` simulator.
 
 `check-flows` checks them like every flow (header, names, ids, debug queries, `open-alert-guard`, `--syntax`) plus: no `launchApp` (`ads-smoke-launch`), the first setup link sets `geo=eea` or `geo=other` (`ads-smoke-geo`: otherwise Google's form depends on the Mac's network location), at least one `id:` step (`ads-smoke-testid`), the `ads-smoke` tag, and a run command written in a comment names `--device` and `--driver-host-port` before `test` (`run-command-device`). The no-network rule does not apply: ads open sockets on purpose.
+
+## Both platforms: platform guards
+
+The same flow files run on the iOS simulator (`e2e:ios`) and on the Android emulator (`e2e:android`); they never fork into an iOS and an Android copy. A step that exists on one platform only goes in a `runFlow` guarded by that platform:
+
+```yaml
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - assertVisible:
+          id: 'home.screen'
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # system-ui: Apple's tracking prompt.
+      - tapOn: 'Ask App Not to Track'
+```
+
+- **Android only:** `back` and `pressKey: back` (the system Back), `setAirplaneMode` and `toggleAirplaneMode` (real airplane mode; iOS simulators have none, so on iOS they do nothing and the flow would pass without proving anything). `subflows/airplane-mode.yaml` guards each of its steps itself.
+- **iOS only:** Apple's App Tracking Transparency prompt (`Ask App Not to Track`, `Allow Tracking`): Android has no such prompt, so an unguarded wait for it fails every Android run. Google's UMP form shows on both platforms and needs no guard.
+- `check-flows` rule `platform-guard` finds an unguarded step, or one guarded by the other platform. It is due at Android step 7 (once any Android E2E file exists); before that a file with such a step prints one not-yet-due `SKIP` line.
+- A debug link needs no guard: `debug-setup.yaml`'s `Open in .*\?` alert guard never matches on Android, where a VIEW intent asks nothing.
+- Hand-run ads smoke flows on Android start the fresh install with `adb -s <serial> shell am start -n <package>/.MainActivity` (no `launchApp`, as on iOS) and run with `--device <serial> --driver-host-port <port>`.
 
 ## Taps and stars from the game: print-level-line
 

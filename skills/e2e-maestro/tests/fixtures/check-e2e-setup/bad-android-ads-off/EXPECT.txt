@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/android-e2e-device.ts:1 [e2e-ads-off] readApkApp does not refuse an APK that is not the test variant with ADS_MODE=off

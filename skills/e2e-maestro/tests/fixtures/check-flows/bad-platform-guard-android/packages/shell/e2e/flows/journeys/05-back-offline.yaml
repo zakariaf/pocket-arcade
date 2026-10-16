@@ -1,0 +1,25 @@
+# packages/shell/e2e/flows/journeys/05-back-offline.yaml — planted: Android-only steps without a
+# platform: Android guard (Maestro's setAirplaneMode and back do nothing on iOS, so the iOS run
+# would pass without proving anything).
+appId: ${APP_ID}
+name: Back from Settings, then offline
+tags: [shell]
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../../subflows/debug-setup.yaml
+    env:
+      QUERY: 'lang=en&firstRun=0&screen=settings'
+      WAIT_FOR: 'settings.screen'
+- back
+- assertVisible:
+    id: 'home.screen'
+- setAirplaneMode: enabled
+- assertVisible:
+    id: 'home.screen'
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - setAirplaneMode: disabled

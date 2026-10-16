@@ -1,0 +1,6 @@
+evidence: Cold start (emulator): median 1012 ms of 5 launches, baseline 1000 ms, limit 1200 ms
+evidence: Memory (emulator): total PSS 96 MB after the smoke flow and a relaunch (budget 150 MB)
+evidence: Feedback (emulator)
+evidence: Save benchmark (emulator, S15)
+(reports/e2e-android/demo/junit.xml)
+(reports/screenshots-android/index.html)

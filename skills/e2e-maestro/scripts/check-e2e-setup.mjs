@@ -15,7 +15,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createReporter, dueSkipReason, fail, maskComments, parseArgs, readShellSlice, requireDir, run, SHELL_DUE_TARGETS, sliceSkipReason, walk } from './check-lib.mjs';
+import { createReporter, dueSkipReason, fail, lineOf, maskComments, parseArgs, readShellSlice, requireDir, run, SHELL_DUE_TARGETS, sliceSkipReason, walk } from './check-lib.mjs';
+import { ANDROID_CAPTURE, ANDROID_E2E_DIR, ANDROID_E2E_FILES, ANDROID_RUNNER, ANDROID_SCRIPTS, androidE2eSkipReason } from './lib/android-e2e.mjs';
 import { maestroSpawnProblems } from './lib/maestro-spawns.mjs';
 
 const SPEC = {
@@ -103,7 +104,25 @@ const SPEC = {
     'SKIPs it). Only S15\'s model hook (use-debug-model.ts) and the sub-flows belong to S15, the matrix also to',
     'the screens it shoots; for a screen outside the slice they print "SKIP <file> [<rule>] <S-id> not in',
     'shell-slice.json" and do not count.',
-    '  e2e-script            npm script e2e:ios or screenshots:ios differs',
+    'Android (Android step 7; before any Android E2E file or script exists, one not-yet-due SKIP line each):',
+    '  android-runner-missing a file of the Android set is missing: run-e2e-android.ts, capture-screenshots-android.ts,',
+    '                        android-cli.ts, android-device-args.ts, android-e2e-device.ts, android-flow-steps.ts,',
+    '                        android-socket-sampler.ts, android-cold-start.ts, android-memory.ts, emu-perf-steps.ts,',
+    '                        sample-sockets-android.ts (packages/tooling/src/e2e/) and subflows/airplane-mode.yaml',
+    '  android-serial        an adb call of the Android set does not start with -s <emulator serial>: an adb spawn',
+    '                        whose arguments do not come from deviceAdbArgs()/adbArgs(), an android-device-args.ts',
+    '                        builder that does not go through shell(serial, ...) or deviceAdbArgs(serial, ...),',
+    '                        deviceAdbArgs or androidMaestroGlobalArgs without assertEmulatorSerial, adbOn without',
+    '                        its serial check, or a Maestro run without androidMaestroGlobalArgs (several sessions',
+    "                        share this Mac's adb server; Maestro's default Android driver port 7001 is shared too)",
+    '  The Android lines of runner-no-sampler, sampler-own-simulators, runner-steps, feedback-evidence, e2e-ads-off,',
+    '  screenshot-tolerance and deterministic-capture hold the Android files to the same evidence as the iOS ones:',
+    '  the sampler per emulator by uid, an empty network.txt, flows with the offline journeys under airplane mode,',
+    '  S15\'s save benchmark, am start -W cold starts against perf-baselines/cold-start-emu-<game-id>.json, dumpsys',
+    '  meminfo total PSS against perf.memoryFootprintMbMax (150 MB), the a11y flows at font_scale 2.0, an APK refused',
+    '  unless test/off, MAX_DIFF_RATIO = 0.002, the three animation scales at 0 and the demo status bar at 9:41.',
+    '  e2e-script            npm script e2e:ios or screenshots:ios differs (e2e:android or screenshots:android once',
+    '                        Android step 7 has started)',
     '  visual-deps           pixelmatch 7.2.0, pngjs 7.0.0 or @types/pngjs 6.0.5 is missing or not an exact pin',
     '  gitignore-tools       .gitignore does not ignore /tools/ (Maestro) and reports/',
     '  baseline-matrix       a baseline set lacks a screen the other sets have, or (--baselines) a device/language/theme',
@@ -263,6 +282,178 @@ function checkMaestroDevice(root, report) {
   if (!existsSync(join(root, base))) return;
   const files = walk(join(root, base), { include: ['*.ts', '*.mts'], ignore: ['*.test.ts', '*.test.mts'] }).map((rel) => ({ rel: `${base}/${rel}`, code: maskComments(read(root, `${base}/${rel}`)) }));
   for (const found of maestroSpawnProblems(files)) report.problem({ ...found, rule: 'maestro-device' });
+}
+
+const androidFix = (rel) => `Restore ${rel} from this skill's templates/${rel} (references/runner-and-network.md, "Android").`;
+
+/** The body of `export function name(...) {...}` (braces matched), with its start index. */
+function exportedFunctions(code) {
+  const found = [];
+  for (const match of code.matchAll(/export\s+(?:async\s+)?function\s+(\w+)\s*\(/g)) {
+    const open = code.indexOf('{', code.indexOf(')', match.index));
+    let depth = 0;
+    let end = open;
+    for (let i = open; i < code.length; i += 1) {
+      if (code[i] === '{') depth += 1;
+      else if (code[i] === '}' && (depth -= 1) === 0) {
+        end = i;
+        break;
+      }
+    }
+    found.push({ name: match[1], index: match.index, body: code.slice(open, end + 1) });
+  }
+  return found;
+}
+
+/** Every adb spawn of an Android file names the serial through deviceAdbArgs()/adbArgs(). */
+function adbSpawnProblems(code) {
+  const found = [];
+  for (const match of code.matchAll(/\b(?:execFileSync|execFile|spawnSync|spawn)\(\s*([\w.$'"]*\badb\b[\w.$'"]*)\s*,\s*/g)) {
+    const rest = code.slice(match.index + match[0].length);
+    if (/^(?:deviceAdbArgs|adbArgs)\(/.test(rest)) continue;
+    const literal = /^\[\s*(['"`])([^'"`]*)\1/.exec(rest);
+    if (literal?.[2] === '-s') continue;
+    found.push({ index: match.index, message: literal ? `adb ${literal[2]} without -s <serial>` : 'an adb spawn whose arguments do not come from deviceAdbArgs()' });
+  }
+  return found;
+}
+
+function checkAndroidSerial(root, codes, report) {
+  const rule = 'android-serial';
+  const args = `${ANDROID_E2E_DIR}/android-device-args.ts`;
+  const fix = "Build every adb call with a builder of android-device-args.ts (shell(serial, ...) or deviceAdbArgs(serial, ...): -s <emulator serial> first, checked) and run it with adbOn(device, args); run Maestro only through runMaestroAndroid (androidMaestroGlobalArgs: --device <serial> --driver-host-port <port>).";
+  for (const [rel, code] of codes) for (const found of adbSpawnProblems(code)) report.problem({ file: rel, line: lineOf(code, found.index), rule, message: found.message, fix });
+  const argsCode = codes.get(args);
+  if (argsCode !== undefined) {
+    for (const fn of exportedFunctions(argsCode)) {
+      if (fn.name === 'deviceAdbArgs' || fn.name === 'androidMaestroGlobalArgs') {
+        const needs = fn.name === 'deviceAdbArgs' ? [/\bassertEmulatorSerial\s*\(/, /\badbArgs\s*\(\s*serial\b/] : [/\bassertEmulatorSerial\s*\(/];
+        if (!needs.every((pattern) => pattern.test(fn.body))) report.problem({ file: args, line: lineOf(argsCode, fn.index), rule, message: `${fn.name} does not check the emulator serial (assertEmulatorSerial${fn.name === 'deviceAdbArgs' ? ', then adbArgs(serial, args)' : ''})`, fix });
+      } else if (/(?:Args|Commands)$/.test(fn.name) && !/\b(?:shell|deviceAdbArgs)\(\s*serial\b/.test(fn.body)) {
+        report.problem({ file: args, line: lineOf(argsCode, fn.index), rule, message: `${fn.name} builds adb arguments without -s <serial> (neither shell(serial, ...) nor deviceAdbArgs(serial, ...))`, fix });
+      }
+    }
+  }
+  const device = `${ANDROID_E2E_DIR}/android-e2e-device.ts`;
+  const deviceCode = codes.get(device);
+  if (deviceCode !== undefined) {
+    const adbOn = exportedFunctions(deviceCode).find((fn) => fn.name === 'adbOn');
+    if (!adbOn || !/serial\s*!==\s*device\.serial/.test(adbOn.body)) report.problem({ file: device, line: 1, rule, message: "adbOn does not refuse arguments built for another emulator's serial", fix });
+    const maestro = exportedFunctions(deviceCode).find((fn) => fn.name === 'runMaestroAndroid');
+    if (!maestro || !/\bandroidMaestroGlobalArgs\s*\(/.test(maestro.body)) report.problem({ file: device, line: 1, rule, message: 'runMaestroAndroid does not start Maestro with androidMaestroGlobalArgs (--device <serial> --driver-host-port <port>)', fix });
+  }
+}
+
+/** The runner and its steps: sampler, flows, cold start, memory, feedback, save benchmark, large text. */
+function checkAndroidSteps(root, codes, report) {
+  const runner = codes.get(ANDROID_RUNNER);
+  if (runner !== undefined) {
+    if (!/sample-sockets-android/.test(runner)) report.problem({ file: ANDROID_RUNNER, line: 1, rule: 'runner-no-sampler', message: 'does not run the socket sampler (sample-sockets-android.ts)', fix: androidFix(ANDROID_RUNNER) });
+    if (!/['"]network\.txt['"]/.test(runner)) report.problem({ file: ANDROID_RUNNER, line: 1, rule: 'runner-no-sampler', message: 'does not check network.txt, so a socket the app opened never fails the run (spec N3)', fix: androidFix(ANDROID_RUNNER) });
+    if (/SOCKET_SAMPLER/.test(runner) && !/\[\s*SOCKET_SAMPLER\s*,[^\],]+,[^\],]+,\s*serial\s*\]/.test(runner)) report.problem({ file: ANDROID_RUNNER, line: 1, rule: 'sampler-own-simulators', message: "spawns the socket sampler without an emulator's serial", fix: 'Spawn one sampler per emulator of the run: [SOCKET_SAMPLER, app.id, network, serial].' });
+    const steps = [
+      [/\brunAndroidFlows\s*\(/, 'there is no flows step (runAndroidFlows)'],
+      [/\brunEmuPerfSteps\s*\(/, 'there is no cold-start and memory step (runEmuPerfSteps)'],
+      [/\brunAndroidLargeText\s*\(/, 'there is no large-text step (runAndroidLargeText)'],
+      [/\bproveSamplersAlive\s*\(/, 'does not prove the samplers alive (proveSamplersAlive: network-samplers.json)'],
+    ];
+    for (const [pattern, message] of steps) if (!pattern.test(runner)) report.problem({ file: ANDROID_RUNNER, line: 1, rule: 'runner-steps', message, fix: androidFix(ANDROID_RUNNER) });
+    if (!/\breadApkApp\s*\(/.test(runner)) report.problem({ file: ANDROID_RUNNER, line: 1, rule: 'e2e-ads-off', message: 'runs the flows on an APK it never checked (readApkApp refuses one that is not test/off)', fix: androidFix(ANDROID_RUNNER) });
+  }
+  const flowsRel = `${ANDROID_E2E_DIR}/android-flow-steps.ts`;
+  const flows = codes.get(flowsRel);
+  if (flows !== undefined) {
+    const needs = [
+      [/['"]quarantine,a11y,offline['"]/, 'the flows step does not keep the a11y and offline flows out of its first call'],
+      [/airplane-mode\.yaml|['"]airplane-mode/, 'the offline journeys do not run under real airplane mode (subflows/airplane-mode.yaml)'],
+      [/['"]--include-tags['"]\s*,\s*['"]offline['"]/, 'the offline journeys are never run on their own under airplane mode'],
+      [/\bsaveBenchmarkEvidenceOf\s*\(/, "the flows step does not keep S15's save benchmark (save-benchmark.json)"],
+      [/\bLARGE_FONT_SCALE\b/, 'the large-text step does not set font_scale 2.0 (LARGE_FONT_SCALE)'],
+      [/['"]--include-tags['"]\s*,\s*['"]a11y['"]/, 'the large-text step does not run the a11y-tagged flows'],
+      [/LANG=\$\{/, 'the large-text step does not pass LANG to the a11y flows'],
+    ];
+    for (const [pattern, message] of needs) if (!pattern.test(flows)) report.problem({ file: flowsRel, line: 1, rule: 'runner-steps', message, fix: androidFix(flowsRel) });
+    if (/ads-smoke/.test(flows)) report.problem({ file: flowsRel, line: 1, rule: 'e2e-ads-off', message: "runs admob-ads' ads-smoke flows, which need an ADS_MODE=test build", fix: 'Run only <workspace>/e2e/flows/*/*.yaml; the ads smoke flows are run by hand.' });
+  }
+  const perfRel = `${ANDROID_E2E_DIR}/emu-perf-steps.ts`;
+  const perf = codes.get(perfRel);
+  if (perf !== undefined) {
+    const needs = [
+      [/\bcoldLaunchArgs\s*\(/, 'does not launch cold with am start -W -S (coldLaunchArgs)'],
+      [/\bjudgeColdStart\s*\(/, 'does not judge the cold starts (judgeColdStart)'],
+      [/\bemuBaselineFile\s*\(|cold-start-emu-/, 'does not read the committed perf-baselines/cold-start-emu-<game-id>.json'],
+      [/\bmeminfoArgs\s*\(/, 'does not measure memory with dumpsys meminfo (meminfoArgs)'],
+      [/\btotalPssKbOf\s*\(/, 'does not read total PSS (totalPssKbOf)'],
+      [/\bjudgePss\s*\(/, 'does not judge total PSS against the memory budget (judgePss)'],
+      [/['"]cold-start\.json['"]/, 'does not write cold-start.json'],
+      [/['"]memory\.json['"]/, 'does not write memory.json'],
+    ];
+    for (const [pattern, message] of needs) if (!pattern.test(perf)) report.problem({ file: perfRel, line: 1, rule: 'runner-steps', message, fix: androidFix(perfRel) });
+    if (!/\bfeedbackEvidenceOf\s*\(/.test(perf) || !/['"]feedback\.json['"]/.test(perf)) report.problem({ file: perfRel, line: 1, rule: 'feedback-evidence', message: 'the memory step does not write feedback.json from the perf log after the smoke flows', fix: androidFix(perfRel) });
+  }
+  const coldRel = `${ANDROID_E2E_DIR}/android-cold-start.ts`;
+  if (codes.has(coldRel) && !/cold-start-emu-/.test(codes.get(coldRel))) report.problem({ file: coldRel, line: 1, rule: 'runner-steps', message: 'the emulator baseline is not perf-baselines/cold-start-emu-<game-id>.json (the simulator baseline stays apart)', fix: androidFix(coldRel) });
+  const memoryRel = `${ANDROID_E2E_DIR}/android-memory.ts`;
+  if (codes.has(memoryRel) && !/\bmemoryFootprintMbMax\b/.test(codes.get(memoryRel))) report.problem({ file: memoryRel, line: 1, rule: 'runner-steps', message: 'judgePss does not use perf.memoryFootprintMbMax, the one 150 MB memory budget of both platforms', fix: androidFix(memoryRel) });
+  const samplerRel = `${ANDROID_E2E_DIR}/android-socket-sampler.ts`;
+  if (codes.has(samplerRel) && !/\btcp6\b/.test(codes.get(samplerRel))) report.problem({ file: samplerRel, line: 1, rule: 'runner-no-sampler', message: 'does not read /proc/net/tcp6 (IPv6 sockets would go unseen)', fix: androidFix(samplerRel) });
+}
+
+/** Only a test/off APK, the capture tolerance and still screens. */
+function checkAndroidCapture(root, codes, report) {
+  const cliRel = `${ANDROID_E2E_DIR}/android-cli.ts`;
+  const cli = codes.get(cliRel);
+  if (cli !== undefined) {
+    const variant = exportedFunctions(cli).find((fn) => fn.name === 'apkVariantProblem');
+    if (!variant || !/===\s*['"]test['"]/.test(variant.body) || !/===\s*['"]off['"]/.test(variant.body)) report.problem({ file: cliRel, line: 1, rule: 'e2e-ads-off', message: "apkVariantProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: androidFix(cliRel) });
+  }
+  const deviceRel = `${ANDROID_E2E_DIR}/android-e2e-device.ts`;
+  const device = codes.get(deviceRel);
+  if (device !== undefined) {
+    const read = exportedFunctions(device).find((fn) => fn.name === 'readApkApp');
+    if (!read || !/\bapkVariantProblem\s*\(/.test(read.body)) report.problem({ file: deviceRel, line: 1, rule: 'e2e-ads-off', message: 'readApkApp does not refuse an APK that is not the test variant with ADS_MODE=off (apkVariantProblem)', fix: androidFix(deviceRel) });
+    const start = exportedFunctions(device).find((fn) => fn.name === 'startE2eEmulator');
+    if (!start || !/\bstillScreenCommands\s*\(/.test(start.body)) report.problem({ file: deviceRel, line: 1, rule: 'deterministic-capture', message: 'startE2eEmulator does not turn the animations off and pin the status bar (stillScreenCommands)', fix: androidFix(deviceRel) });
+  }
+  const capture = codes.get(ANDROID_CAPTURE);
+  if (capture !== undefined) {
+    const ratio = /\bMAX_DIFF_RATIO\s*=\s*([0-9.eE+-]+)/.exec(capture);
+    const passes = /maxDiffRatio\s*:\s*MAX_DIFF_RATIO\b/.test(capture);
+    if (!ratio || !(Number(ratio[1]) <= 0.002) || !passes) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'screenshot-tolerance', message: ratio ? `MAX_DIFF_RATIO is ${ratio[1]}${passes ? '' : ' or comparePng does not receive it'}, not at most 0.002` : 'has no MAX_DIFF_RATIO', fix: "Restore const MAX_DIFF_RATIO = 0.002 and maxDiffRatio: MAX_DIFF_RATIO: the same tolerance as on iOS; it changes only with the owner's agreement (Gate-Change trailer)." });
+    if (!/\breadApkApp\s*\(/.test(capture)) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'e2e-ads-off', message: 'captures an APK it never checked (readApkApp refuses one that is not test/off)', fix: androidFix(ANDROID_CAPTURE) });
+    if (!/\bfontScaleArgs\s*\(/.test(capture)) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'deterministic-capture', message: 'does not set the font scale before capture (fontScaleArgs)', fix: androidFix(ANDROID_CAPTURE) });
+  }
+  const argsRel = `${ANDROID_E2E_DIR}/android-device-args.ts`;
+  const args = codes.get(argsRel);
+  if (args !== undefined) {
+    const still = exportedFunctions(args).find((fn) => fn.name === 'stillScreenCommands');
+    const stillCode = still ? `${still.body}\n${/const\s+ANIMATION_SCALES\s*=\s*\[[^\]]*\]/.exec(args)?.[0] ?? ''}` : '';
+    for (const scale of ['window_animation_scale', 'transition_animation_scale', 'animator_duration_scale']) {
+      if (!stillCode.includes(`'${scale}'`)) report.problem({ file: argsRel, line: 1, rule: 'deterministic-capture', message: `stillScreenCommands does not set ${scale} to 0`, fix: androidFix(argsRel) });
+    }
+    if (!/\bdemoModeCommands\s*\(/.test(stillCode)) report.problem({ file: argsRel, line: 1, rule: 'deterministic-capture', message: "stillScreenCommands does not pin the demo-mode status bar at 9:41 (android-emulator-build's demoModeCommands)", fix: androidFix(argsRel) });
+    if (!/\bLARGE_FONT_SCALE\s*=\s*['"]2\.0['"]/.test(args)) report.problem({ file: argsRel, line: 1, rule: 'deterministic-capture', message: 'LARGE_FONT_SCALE is not 2.0 (the 200 % text of the large-text step)', fix: androidFix(argsRel) });
+  }
+}
+
+/** Android step 7: the runner, its helpers and the airplane sub-flow, held to the iOS evidence. */
+function checkAndroid(root, report) {
+  const skip = androidE2eSkipReason(root);
+  if (skip !== null) {
+    report.skip({ file: ANDROID_RUNNER, rule: 'android-runner-missing', message: skip });
+    return;
+  }
+  const codes = new Map();
+  for (const rel of ANDROID_E2E_FILES) {
+    if (!exists(root, rel)) report.problem({ file: rel, line: 0, rule: 'android-runner-missing', message: 'is missing', fix: `Copy it from this skill's templates/${rel}, with its test (references/runner-and-network.md, "Android").` });
+    else if (rel.endsWith('.ts')) codes.set(rel, maskComments(read(root, rel)));
+  }
+  checkAndroidSerial(root, codes, report);
+  checkAndroidSteps(root, codes, report);
+  checkAndroidCapture(root, codes, report);
+  for (const [rel, code] of codes) {
+    if (/['"](?:--analyze|cloud|login)['"]/.test(code)) report.problem({ file: rel, line: 1, rule: 'maestro-upload', message: 'passes --analyze, cloud or login to Maestro', fix: "Remove it: those send the run, its screenshots or the app to Maestro's servers; runs stay on the Mac." });
+  }
 }
 
 const DEBUG_DIR = 'packages/shell/src/screens/debug';
@@ -466,6 +657,11 @@ function checkPackage(root, report) {
   for (const [name, command] of Object.entries(SCRIPTS)) {
     if (pkg.scripts?.[name] !== command) report.problem({ file: 'package.json', line: 1, rule: 'e2e-script', message: `script "${name}" is ${pkg.scripts?.[name] === undefined ? 'missing' : JSON.stringify(pkg.scripts[name])}`, fix: `Set "${name}": ${JSON.stringify(command)}.` });
   }
+  for (const [name, command] of Object.entries(ANDROID_SCRIPTS)) {
+    const skip = androidE2eSkipReason(root, command.replace(/^node /, ''));
+    if (skip !== null) report.skip({ file: 'package.json', rule: 'e2e-script', message: `npm run ${name}: ${skip}` });
+    else if (pkg.scripts?.[name] !== command) report.problem({ file: 'package.json', line: 1, rule: 'e2e-script', message: `script "${name}" is ${pkg.scripts?.[name] === undefined ? 'missing' : JSON.stringify(pkg.scripts[name])}`, fix: `Set "${name}": ${JSON.stringify(command)} (Android step 7).` });
+  }
   for (const [name, command] of Object.entries(pkg.scripts ?? {})) {
     if (/\bmaestro\b[^&|;]*(?:\s--analyze\b|\s(?:cloud|login)\b)/.test(String(command))) report.problem({ file: 'package.json', line: 1, rule: 'maestro-upload', message: `script "${name}" uploads to Maestro's servers: ${String(command).slice(0, 80)}`, fix: 'Remove --analyze, maestro cloud and maestro login; runs stay on the Mac.' });
   }
@@ -529,6 +725,7 @@ run(async () => {
   checkInstaller(root, report);
   checkRunner(root, report);
   checkMaestroDevice(root, report);
+  checkAndroid(root, report);
   checkDebugKit(root, slice, report);
   checkPerfLayer(root, slice, report);
   checkPackage(root, report);

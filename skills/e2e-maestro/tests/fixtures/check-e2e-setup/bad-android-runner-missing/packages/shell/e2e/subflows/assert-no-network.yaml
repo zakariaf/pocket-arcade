@@ -1,0 +1,17 @@
+# packages/shell/e2e/subflows/assert-no-network.yaml — the last step of every smoke flow (spec N3):
+# the test build's JS network guard must have counted zero attempts.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: debug-setup.yaml
+    env:
+      QUERY: 'screen=debug'
+      WAIT_FOR: 'debug.screen'
+# The counter is drawn under S15's fourteen rows, below the fold on a phone: scroll to it first.
+- scrollUntilVisible:
+    element:
+      id: 'debug.network-attempts'
+    direction: DOWN
+- assertVisible:
+    id: 'debug.network-attempts'
+    text: '0'

@@ -1,0 +1,1 @@
+SKIP packages/shell/e2e/ads-smoke/01-consent-eea.yaml [platform-guard] due at Android step 7: packages/tooling/src/e2e/run-e2e-android.ts not yet created

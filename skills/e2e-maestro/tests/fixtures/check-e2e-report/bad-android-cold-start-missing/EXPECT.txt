@@ -1,0 +1,1 @@
+reports/e2e-android/demo/cold-start.json [perf-missing] is missing, so the cold-start step did not run
