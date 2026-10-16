@@ -4728,6 +4728,32 @@
           }
         ]
       },
+      "templates/packages/shell/src/app/load-outcome-opener.test.tsx": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/app/load-outcome-opener.test.tsx",
+            "sha256": "ed82d4e47d5b37ccb41243fbb0d91a65a3b1b6bdad2a59d8317d3606ade51128"
+          }
+        ]
+      },
+      "templates/packages/shell/src/app/load-outcome-opener.tsx": {
+        "recorded": "2026-10-16",
+        "sources": [
+          {
+            "path": "epics/E18-android-port.md",
+            "sha256": "1e0d7d2f2c61db3334558add2bc7564c74158e0b9e1c4a82dffa28b887fc2859"
+          },
+          {
+            "path": "packages/shell/src/app/load-outcome-opener.tsx",
+            "sha256": "3108f40af07559a8aca65a100280250d0adb637905fa71ad236f8753a71bb55a"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/fullscreen-gate.test.ts": {
         "recorded": "2026-10-03",
         "sources": [

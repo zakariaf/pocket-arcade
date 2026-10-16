@@ -116,7 +116,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
 - Copy from `board-gestures-and-input`: `packages/shell/src/game-host/**`, `packages/game-kit/src/geom/stick-command*`, `apps/line-siege/src/board/**`.
 - Copy from `game-audio-and-haptics`: `apps/line-siege/src/sounds/**`.
 - Copy from `admob-ads`: `packages/shell/src/app/**`.
-- Copy from `toybox-screens`: `packages/shell/src/app/crash-screen*`, `packages/shell/src/app/create-startup-splash*`, `packages/shell/src/app/dialog-context*`, `packages/shell/src/app/game-startup-splash.tsx`, `packages/shell/src/app/premium-screen-deps-context.tsx`, `packages/shell/src/app/read-version-text*`, `packages/shell/src/app/startup-splash*`, `packages/shell/src/app/use-game-extra*`, `packages/shell/src/app/use-is-online*`, `packages/shell/src/app/use-open-external*`, `packages/shell/src/screens/consent/**`, `packages/shell/src/screens/dialogs/**`, `packages/shell/src/screens/game/game-layout*`, `packages/shell/src/screens/result/result-model.ts`, `packages/shell/src/screens/debug/debug-rows.ts`, `packages/shell/src/game-host/game-top-bar*`, `packages/shell/src/testing/**`, `packages/shell/src/ui/screen-body*`.
+- Copy from `toybox-screens`: `packages/shell/src/app/crash-screen*`, `packages/shell/src/app/create-startup-splash*`, `packages/shell/src/app/dialog-context*`, `packages/shell/src/app/game-startup-splash.tsx`, `packages/shell/src/app/premium-screen-deps-context.tsx`, `packages/shell/src/app/read-store-ids*`, `packages/shell/src/app/read-version-text*`, `packages/shell/src/app/startup-splash*`, `packages/shell/src/app/use-game-extra*`, `packages/shell/src/app/use-is-online*`, `packages/shell/src/app/use-open-external*`, `packages/shell/src/screens/consent/**`, `packages/shell/src/screens/dialogs/**`, `packages/shell/src/screens/game/game-layout*`, `packages/shell/src/screens/result/result-model.ts`, `packages/shell/src/screens/debug/debug-rows.ts`, `packages/shell/src/game-host/game-top-bar*`, `packages/shell/src/testing/**`, `packages/shell/src/ui/screen-body*`.
 - Copy from `e2e-maestro`: `packages/shell/src/app/**`, `packages/shell/src/screens/debug/**`, `packages/shell/src/services/save/sqlite-kv-debug-store-adapter.ts`, `test/integration/save/sqlite-kv-debug-store-adapter.test.ts` (not `packages/shell/src/screens/debug/use-debug-model*`).
 - Copy from `toybox-visual-parity`: `packages/shell/src/app/parity/**`, `packages/shell/src/app/parity-launch-marker*`, `packages/shell/src/app/parity-startup*`.
 - Copy from `performance-budgets`: `packages/shell/src/app/perf/**`, `test/integration/save/save-write.perf.test.ts`.
@@ -169,7 +169,7 @@ The build-order contract: at each step, copy exactly these templates (tests incl
   - Copy from `daily-and-statistics`: `packages/shell/src/screens/stats/**`.
   - Copy from `settings-and-preferences`: `packages/shell/src/stores/settings-resets*`, `packages/shell/src/stores/use-settings-resets*`.
 - **S11**
-  - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`, `packages/shell/src/ui/sub-page*`, `packages/shell/src/app/read-store-ids*`.
+  - Copy from `toybox-screens`: `packages/shell/src/screens/settings/*`, `packages/shell/src/ui/sub-page*`.
   - Copy from `settings-and-preferences`: `packages/shell/src/screens/settings/*`, `packages/shell/src/game-host/use-hints-during-play*`.
   - Copy from `toybox-components`: `packages/shell/src/screens/settings/sound-group*`.
   - Copy from `state-stores`: `packages/shell/src/screens/settings/use-display-settings.ts`.

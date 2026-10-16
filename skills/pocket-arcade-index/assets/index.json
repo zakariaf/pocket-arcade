@@ -1183,6 +1183,7 @@
               "packages/shell/src/app/dialog-context*",
               "packages/shell/src/app/game-startup-splash.tsx",
               "packages/shell/src/app/premium-screen-deps-context.tsx",
+              "packages/shell/src/app/read-store-ids*",
               "packages/shell/src/app/read-version-text*",
               "packages/shell/src/app/startup-splash*",
               "packages/shell/src/app/use-game-extra*",
@@ -1546,8 +1547,7 @@
                 "skill": "toybox-screens",
                 "paths": [
                   "packages/shell/src/screens/settings/*",
-                  "packages/shell/src/ui/sub-page*",
-                  "packages/shell/src/app/read-store-ids*"
+                  "packages/shell/src/ui/sub-page*"
                 ]
               },
               {

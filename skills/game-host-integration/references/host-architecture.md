@@ -104,7 +104,7 @@ This skill's files, each with a test unless marked device-only:
 | `app/leave-run-after-crash.ts` | The crash screen's Back to Home: the saved run stays, `resumeOnLaunch: false`, so a relaunch lands on Home |
 | `app/shell-features.tsx` | `ShellFeatures`: `GameHostProvider`, `PremiumScreenDepsProvider`, `PressFeedbackProvider` (the tap sound) and admob-ads' `ConsentMoment` (S3 over the app) around the navigator |
 | `app/shell-navigator.tsx` | `ShellNavigator`: `DebugServicesProvider`, `DialogProvider` (with `LoadOutcomeOpener`) and the themed `NavigationRoot` (split out for `jsx-max-depth` and `no-multi-comp`) |
-| `app/load-outcome-opener.tsx` | `LoadOutcomeOpener`: the S14 dialog the save's load outcome asks for, opened once over the first screen: "Progress restored" after `restored-from-backup`, "please update" (Update opens `storePageUrl(appStoreId)`) after `newer-version`, which plays read-only and so asks at every launch; nothing after `fresh`, `loaded`, `migrated` or `reset-after-damage`. `ShellApp` passes `hydrated.outcome`, or `null` after the crash screen's Back to Home |
+| `app/load-outcome-opener.tsx` | `LoadOutcomeOpener`: the S14 dialog the save's load outcome asks for, opened once over the first screen: "Progress restored" after `restored-from-backup`, "please update" (Update opens `storeUpdateUrlsOf(readStoreIds(appStoreId))`: the App Store page on iOS, Google Play's page of the game on Android, the Play Store app first and the web page after) after `newer-version`, which plays read-only and so asks at every launch; nothing after `fresh`, `loaded`, `migrated` or `reset-after-damage`. `ShellApp` passes `hydrated.outcome`, or `null` after the crash screen's Back to Home |
 | `screens/first-run/` | The Tutorial route: `tutorial-screen.tsx`, `tutorial-view.tsx`, `use-tutorial-model.ts`, `tutorial-coach.ts` |
 | `testing/tally-game.ts`, `testing/create-test-adapters.ts` | The tiny complete game the tests run against; the in-memory `ShellAdapters` |
 | `test/integration/game-host/<game-id>-debug-controls.test.ts` | Per game (template `__GAME_ID__`): `playTo` and `openExample` on the real module (its own win, lose, start and middle examples) |
@@ -311,7 +311,7 @@ Where each import of the root comes from. Every `@e07/` file that a template in 
 | 7 | settings-and-preferences | `app/connect-audio-settings.ts`, `app/create-shell-haptics.ts`, `app/localized-root.tsx`, `config/external-links.ts` |
 | 7 | toybox-components | `ui/button.tsx` |
 | 7 | toybox-design-system | `app/press-feedback-context.tsx`, `theme/theme-set.ts`, `theme/use-theme.ts`, `ui/app-text.tsx` |
-| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `app/use-open-external.ts`, `screens/dialogs/dialog-request.ts` |
+| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `app/read-store-ids.ts`, `app/use-open-external.ts`, `screens/dialogs/dialog-request.ts` |
 | 7 | unit-and-component-tests | `testing/render-with-shell.tsx` |
 
 In a partial Shell (`shell-slice.json`) the root is the same, and so is the **Shell core** it imports, whatever the slice: screens outside the slice have no route or view files, but these files are always there, because the composition root and startup import them (D36):
