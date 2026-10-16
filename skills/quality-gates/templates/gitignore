@@ -8,6 +8,8 @@ apps/*/dist/
 apps/*/sfx-preview/
 coverage/
 reports/
+# Skill fixtures and examples carry their own reports/ folders; keep them in git
+!skills/**/reports/
 dist-audit/
 /tools/
 .stryker-tmp/
