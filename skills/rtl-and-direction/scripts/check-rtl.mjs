@@ -30,7 +30,8 @@ const SPEC = {
     '  reload-outside-direction reloadAppAsync outside direction.ts, or expo-updates at all',
     '  expo-localization-rtl   supportsRTL / forcesRTL in an app or Shell config',
     '  android-supports-rtl    android:supportsRtl (or supportsRtl) set to false in an app config, the Shell config or a',
-    '                          Shell config plugin: Android then ignores forceRTL and fa/ckb stay left-to-right',
+    '                          Shell config plugin (not their tests, which may plant false as input): Android then',
+    '                          ignores forceRTL and fa/ckb stay left-to-right',
     '  text-import             Text imported from react-native outside ui/app-text.tsx',
     '  number-format           Intl.NumberFormat with a literal, undefined or missing locale (use localeTagFor)',
     '  bidi-in-source          raw or escaped bidi controls / ALM outside i18n/bidi.ts (also an LRE/LRM put around a',
@@ -231,7 +232,8 @@ run(async () => {
     }
     if (/(^|\/)(app\.config\.ts|plugins\/|config\/)/.test(rel) || rel.startsWith('packages/shell/src/config/')) {
       code(/\b(supportsRTL|forcesRTL)\b/g, (m) => problem(m.index, 'expo-localization-rtl', `${m[1]} is set for expo-localization`, 'Give expo-localization supportedLocales only; supportsRTL/forcesRTL would undo an in-app language choice at every launch.'));
-      const off = SUPPORTS_RTL_OFF.exec(maskComments(source));
+      // A test may plant supportsRtl false as input to prove the plugin turns it back on.
+      const off = test ? null : SUPPORTS_RTL_OFF.exec(maskComments(source));
       if (off) problem(off.index, 'android-supports-rtl', SUPPORTS_RTL_OFF_MESSAGE, SUPPORTS_RTL_OFF_FIX);
     }
     if (!rel.startsWith('packages/shell/src/i18n/') && !test) {
