@@ -79,6 +79,16 @@ function bottomPaddingOf(isUnderHomeIndicator: boolean, insetBottom: number): nu
 }
 
 /**
+ * What a page that is not a ScreenBody keeps under its last block beyond the bottom inset, so it ends
+ * 34 pt above the screen's edge as every Toybox page does: 0 above the iPhone's 34 pt home
+ * indicator, 10 above Android's 24 dp gesture bar (the startup splash).
+ */
+export function useBodyBottomTopUp(): number {
+  const insetBottom = use(SafeAreaInsetsContext)?.bottom ?? 0;
+  return bottomPaddingOf(false, insetBottom);
+}
+
+/**
  * The Toybox screen body under the top bar: 6 pt top padding, 20 pt gutters, one gap between
  * blocks. The top bar stays fixed and only the body scrolls.
  */

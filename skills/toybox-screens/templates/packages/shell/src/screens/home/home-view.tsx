@@ -8,7 +8,7 @@ import { RowButton } from '@e07/shell/ui/row-button.tsx';
 import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
 import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
 import { Sticker } from '@e07/shell/ui/sticker.tsx';
-import { useBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
+import { usePinnedBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
 
 import { HomeDailyCard } from './home-daily-card.tsx';
 import { HomeKeys } from './home-keys.tsx';
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
  */
 export function HomeView({ model }: HomeViewProps): ReactNode {
   const t = useT();
-  const bannerBandStyle = useBannerBandStyle();
+  const bannerBandStyle = usePinnedBannerBandStyle();
   const { actions, isReducedMotion } = model;
   const isTaglineShown = !model.hasEndless || model.isPremium;
   return (

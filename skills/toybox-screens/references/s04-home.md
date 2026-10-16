@@ -42,7 +42,7 @@ S4 Home is the one-tap start and the door to everything else.
 4. Endless row button (only games with Endless): secondary, accent icon tile `endless`, label with the best score, description, chevron.
 5. Home keys: three secondary keys (94 tall, icon 30, label 15 Bold) in three columns with gap 10: Levels (`grid`), Statistics (`stats`), How to play (`book`). They stack at 200 % text.
 6. Premium row button (pop, gold icon tile `crown`, "Premium" / "Remove ads", chevron); not for owners.
-7. Banner slot, pinned under the scrolling body (not for owners).
+7. Banner slot, pinned under the scrolling body (not for owners), with `usePinnedBannerBandStyle()`: the band ends 34 pt above the screen's edge on both platforms (10 pt of ground under it over Android's 24 dp gesture bar; `home-view.android.test.tsx`).
 
 ## States and variants
 
