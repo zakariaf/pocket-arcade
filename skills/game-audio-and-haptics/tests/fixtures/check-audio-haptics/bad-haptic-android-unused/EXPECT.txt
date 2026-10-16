@@ -1,0 +1,3 @@
+[haptic-android]
+packages/shell/src/services/haptics/expo-haptics-adapter.ts:1
+does not play the Android column when Platform.OS is 'android'

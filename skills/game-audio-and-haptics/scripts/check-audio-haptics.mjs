@@ -32,7 +32,9 @@ const SPEC = {
     '  music-default          DEFAULT_AUDIO_SETTINGS keeps music off; no activelyReclaimSession anywhere',
     '  voice-policy           MAX_VOICES = 8, DEFAULT_MIN_INTERVAL_MS = 30, squared channel gain, 50 ms gain ramps',
     '  haptic-throttle        MIN_HAPTIC_GAP_MS = 40',
-    '  haptic-table           each HapticCue maps to its expo-haptics call',
+    '  haptic-table           each HapticCue maps to its expo-haptics call (the iOS column)',
+    '  haptic-android         each HapticCue maps to its performAndroidHapticsAsync type (the Android column), and the',
+    '                         adapter plays that column when Platform.OS is \'android\'',
     '  haptic-safety          the haptics adapter throttles (shouldPulse), hides on iPad (isPad) and swallows failures',
     '  cue-in-sim             no sound or haptic calls inside sims or \'worklet\' modules (fire from drained events on JS)',
     '  button-haptics         Shell UI and screens use only the selection haptic (toggles)',
@@ -42,6 +44,8 @@ const SPEC = {
     '  dispose-before-reload  code that calls restartForDirection or reloadAppAsync awaits audio.dispose() first',
     '                         (start-shell.ts is exempt: its startup direction check runs before any audio exists)',
     '  audio-mock             the root mock adds setAudioSessionOptions and observeAudioInterruptions',
+    '  audio-focus            observeAudioInterruptions runs only on iOS and never names an Android focus type: on',
+    '                         Android it requests audio focus, which stops the player\'s music (spec 8.7)',
     '',
     'A game-first repo (shell-slice.json with "screens": []) has no Shell app yet. It still needs the game stage (the audio',
     'and haptics ports, their fakes, the synth, use-is-app-active and the WAV preview tooling); the Shell audio wiring',
@@ -137,6 +141,15 @@ const HAPTIC_TABLE = {
   success: 'notificationAsync(NotificationFeedbackType.Success)',
   warning: 'notificationAsync(NotificationFeedbackType.Warning)',
   error: 'notificationAsync(NotificationFeedbackType.Error)',
+};
+const ANDROID_HAPTIC_TABLE = {
+  selection: 'performAndroidHapticsAsync(AndroidHaptics.Segment_Tick)',
+  light: 'performAndroidHapticsAsync(AndroidHaptics.Context_Click)',
+  medium: 'performAndroidHapticsAsync(AndroidHaptics.Confirm)',
+  heavy: 'performAndroidHapticsAsync(AndroidHaptics.Long_Press)',
+  success: 'performAndroidHapticsAsync(AndroidHaptics.Confirm)',
+  warning: 'performAndroidHapticsAsync(AndroidHaptics.Reject)',
+  error: 'performAndroidHapticsAsync(AndroidHaptics.Reject)',
 };
 const PLUGIN_OPTIONS = [
   ['iosBackgroundMode', /\biosBackgroundMode\s*:\s*false\b/],
@@ -280,20 +293,46 @@ function checkPolicies(root, report) {
   expectPattern(root, `${HAPTICS}/should-pulse.ts`, /\bMIN_HAPTIC_GAP_MS\s*=\s*40\b/, 'haptic-throttle', 'MIN_HAPTIC_GAP_MS is not 40', 'Keep 40 ms: closer pulses feel like a mushy buzz.', report);
   const rawMock = readRel(root, AUDIO_MOCK);
   const mock = rawMock === null ? null : maskComments(rawMock);
+  checkAudioFocus(root, report);
   if (mock !== null && !(/\bsetAudioSessionOptions\b/.test(mock) && /\bobserveAudioInterruptions\b/.test(mock))) report.problem({ file: AUDIO_MOCK, line: 1, rule: 'audio-mock', message: 'the root mock does not add AudioManager.setAudioSessionOptions and observeAudioInterruptions', fix: 'Copy templates/__mocks__/react-native-audio-api.ts: the library mock (0.13.6) lacks both, so the adapter test would fail.' });
+}
+
+/** spec 8.7: on Android observeAudioInterruptions requests audio focus (AUDIOFOCUS_GAIN by default), which stops the player's music. */
+function checkAudioFocus(root, report) {
+  const raw = readRel(root, AUDIO_ADAPTER);
+  if (raw === null) return;
+  const lines = maskComments(raw).split('\n');
+  lines.forEach((text, index) => {
+    if (!/\bobserveAudioInterruptions\s*\(/.test(text)) return;
+    const named = /\bobserveAudioInterruptions\s*\(\s*['"]/.test(text);
+    const guarded = lines.slice(Math.max(0, index - 6), index + 1).some((line) => /\bPlatform\.OS\s*!==\s*['"]ios['"]\s*\)\s*return\b|\bif\s*\(\s*Platform\.OS\s*===\s*['"]ios['"]\s*\)/.test(line));
+    if (named || !guarded) report.problem({ file: AUDIO_ADAPTER, line: index + 1, rule: 'audio-focus', message: named ? 'observeAudioInterruptions names an audio focus type, which Android takes from the player\'s music' : 'observeAudioInterruptions also runs on Android, where it requests audio focus and stops the player\'s music (spec 8.7)', fix: "Call AudioManager.observeAudioInterruptions(true) only on iOS (if (Platform.OS !== 'ios') return this.graph; before it, as the template does); Android asks for no audio focus, and useAudioLifecycle suspends the context in the background." });
+  });
 }
 
 function checkHaptics(root, report) {
   const raw = readRel(root, HAPTICS_ADAPTER);
   if (raw === null) return;
   const source = maskComments(raw);
-  const found = {};
-  for (const match of source.matchAll(/case\s+['"](\w+)['"]\s*:\s*return\s+([^;]+);/g)) found[match[1]] = { call: match[2].replace(/\s+/g, ''), line: lineOf(source, match.index) };
-  for (const [cue, call] of Object.entries(HAPTIC_TABLE)) {
-    const got = found[cue];
-    if (got === undefined) report.problem({ file: HAPTICS_ADAPTER, line: 1, rule: 'haptic-table', message: `cue '${cue}' is not mapped`, fix: `case '${cue}': return ${call};` });
-    else if (got.call !== call) report.problem({ file: HAPTICS_ADAPTER, line: got.line, rule: 'haptic-table', message: `cue '${cue}' calls ${got.call}, expected ${call}`, fix: 'Follow the haptic cue table (references/haptics.md).' });
+  // Each cue has one case in the iOS switch and one in the Android switch.
+  const found = { ios: {}, android: {} };
+  for (const match of source.matchAll(/case\s+['"](\w+)['"]\s*:\s*return\s+([^;]+);/g)) {
+    const call = match[2].replace(/\s+/g, '');
+    const column = call.startsWith('performAndroidHapticsAsync(') ? 'android' : 'ios';
+    found[column][match[1]] ??= { call, line: lineOf(source, match.index) };
   }
+  const columns = [
+    ['ios', HAPTIC_TABLE, 'haptic-table', 'Follow the haptic cue table (references/haptics.md).'],
+    ['android', ANDROID_HAPTIC_TABLE, 'haptic-android', 'Follow the Android column of the haptic cue table (references/haptics.md): View haptic feedback through performAndroidHapticsAsync, never the Vibrator calls.'],
+  ];
+  for (const [column, table, rule, fix] of columns) {
+    for (const [cue, call] of Object.entries(table)) {
+      const got = found[column][cue];
+      if (got === undefined) report.problem({ file: HAPTICS_ADAPTER, line: 1, rule, message: `cue '${cue}' is not mapped${column === 'android' ? ' on Android' : ''}`, fix: `case '${cue}': return ${call};` });
+      else if (got.call !== call) report.problem({ file: HAPTICS_ADAPTER, line: got.line, rule, message: `cue '${cue}' calls ${got.call}, expected ${call}`, fix });
+    }
+  }
+  if (!/\bPlatform\.OS\s*===\s*['"]android['"]\s*\?\s*fireAndroid\s*\(/.test(source)) report.problem({ file: HAPTICS_ADAPTER, line: 1, rule: 'haptic-android', message: "does not play the Android column when Platform.OS is 'android'", fix: "Copy templates/packages/shell/src/services/haptics/expo-haptics-adapter.ts: fire(cue) returns Platform.OS === 'android' ? fireAndroid(cue) : fireIos(cue)." });
   const safety = [
     [/\bshouldPulse\s*\(/, 'does not gate pulses through shouldPulse (Vibration setting + 40 ms throttle)'],
     [/\bisPad\b/, 'does not report isSupported = false on iPad'],

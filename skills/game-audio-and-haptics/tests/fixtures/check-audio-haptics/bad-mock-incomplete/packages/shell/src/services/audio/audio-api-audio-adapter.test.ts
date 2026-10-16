@@ -81,3 +81,16 @@ describe('audio-api adapter (library mock)', () => {
     await expect(audio.dispose()).resolves.toBeUndefined();
   });
 });
+
+// iOS keeps the ambient session's interruption events (calls, Siri): they suspend and resume
+// the context. Android gets no such request (audio-api-audio-adapter.android.test.ts).
+describe('audio-api adapter on iOS', () => {
+  it('observes audio interruptions once the context exists', () => {
+    const api = jest.requireMock<{ AudioManager: { observeAudioInterruptions: jest.Mock } }>(
+      'react-native-audio-api',
+    );
+    api.AudioManager.observeAudioInterruptions.mockClear();
+    createAudioApiAudioAdapter({ reportError: jest.fn() }).load({});
+    expect(api.AudioManager.observeAudioInterruptions).toHaveBeenCalledWith(true);
+  });
+});

@@ -1,0 +1,3 @@
+[haptic-android]
+packages/shell/src/services/haptics/expo-haptics-adapter.ts:52
+cue 'selection' calls performAndroidHapticsAsync(AndroidHaptics.Long_Press)

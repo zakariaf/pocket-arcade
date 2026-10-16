@@ -1,5 +1,6 @@
 // packages/shell/src/services/audio/audio-api-audio-adapter.ts
 // The ONLY file that imports react-native-audio-api (pinned exactly: 0.13.6).
+import { Platform } from 'react-native';
 import { AudioContext, AudioManager } from 'react-native-audio-api';
 
 import { synthesizeRecipe } from '@e07/shell/services/audio/synth/synthesize-recipe.ts';
@@ -171,6 +172,10 @@ class AudioApiAudioAdapter implements AudioPort {
   private ensureGraph(): Graph {
     if (this.graph !== null) return this.graph;
     this.graph = createGraph();
+    // spec 8.7: never stop the player's music. On Android, observing interruptions requests
+    // audio focus (AUDIOFOCUS_GAIN), which pauses their music app, so Android asks for none;
+    // useAudioLifecycle suspends the context whenever the app leaves the foreground.
+    if (Platform.OS !== 'ios') return this.graph;
     AudioManager.observeAudioInterruptions(true);
     AudioManager.activelyReclaimSession(true);
     this.interruptions = AudioManager.addSystemEventListener('interruption', (event) => {
