@@ -1,9 +1,10 @@
 // packages/tooling/src/art/render-art.ts
-// Renders a game's app icon (light, dark, tinted) and splash logos (light, dark) with headless
-// Skia from its Toybox logo (apps/<game>/src/art/logo-art.ts) and palette (src/theme/palette.ts).
-// Writes apps/<game>/assets/generated/*.png and the game's splash grounds in
-// packages/shell/src/config/splash-grounds.ts (all committed). --check re-renders in memory and
-// exits 1 when a committed file is stale.
+// Renders a game's app icon (light, dark, tinted), splash logos (light, dark), Android adaptive
+// icon layers (foreground, monochrome), Android 12 splash icons (light, dark) and the 512 px Play
+// icon with headless Skia from its Toybox logo (apps/<game>/src/art/logo-art.ts) and palette
+// (src/theme/palette.ts). Writes apps/<game>/assets/generated/*.png (the list is art-outputs.ts)
+// and the game's splash grounds and accent in packages/shell/src/config/splash-grounds.ts (all
+// committed). --check re-renders in memory and exits 1 when a committed file is stale.
 // Run from the repo root: node packages/tooling/src/art/render-art.ts --app line-siege [--check]
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,20 +15,20 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { loadHeadlessSkia } from '@e07/tooling/visual/load-headless-skia.ts';
 
 import { failInput, readCliOrExit } from './art-cli.ts';
+import { ADAPTIVE_GLYPH, ANDROID_SPLASH_FIT, ART_OUTPUTS, ICON_GLYPH } from './art-outputs.ts';
 
 import type { CliSpec, CliValues } from './art-cli.ts';
+import type { ArtOutput, ArtVariant } from './art-outputs.ts';
 import type { SkiaApi } from '@e07/shell/art/draw-logo.ts';
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { ColorScheme, ColorTokens, Palette } from '@e07/shell/theme/theme-types.ts';
 
-type Variant = 'light' | 'dark' | 'tinted' | 'splash';
-type Ground = { readonly light: string; readonly dark: string };
-type Output = { readonly file: string; readonly variant: Variant; readonly scheme: ColorScheme };
+type Ground = { readonly light: string; readonly dark: string; readonly accent?: string };
 
 const GROUNDS_FILE = 'packages/shell/src/config/splash-grounds.ts';
 const CLI: CliSpec = {
   command: 'node packages/tooling/src/art/render-art.ts',
-  summary: `Renders a game's app icon (light, dark, tinted) and splash logos (light, dark) into apps/<game-id>/assets/generated/ and its splash grounds into ${GROUNDS_FILE}, from its LOGO_ART and PALETTE. Run from the repo root.`,
+  summary: `Renders a game's app icon (light, dark, tinted), splash logos (light, dark), Android adaptive icon layers and splash icons and the 512 px Play icon into apps/<game-id>/assets/generated/, and its splash grounds and accent into ${GROUNDS_FILE}, from its LOGO_ART and PALETTE. Run from the repo root.`,
   options: {
     app: {
       type: 'string',
@@ -52,31 +53,25 @@ const GROUNDS_HEADER = [
   "/** Each drawn game's S1 ground (its palette background), light and dark, for the native splash. */",
   'export const SPLASH_GROUNDS: Readonly<Partial<Record<string, SplashColors>>> = {',
 ];
-const SIZE = 1024;
-/** Apple: keep the glyph inside the central area; Toybox uses 62 % of the icon. */
-const GLYPH = 0.62;
 /** The splash image is shown 200 pt wide (expo-splash-screen imageWidth). */
 const SPLASH_PT = 200;
 /** S1 logo tile: 152 pt, 4 pt edge, 7 pt ring, -6 degrees. */
 const SPLASH_TILE = { size: 152, edge: 4, ring: 7, rotateDeg: -6 } as const;
-const OUTPUTS: readonly Output[] = [
-  { file: 'icon-light.png', variant: 'light', scheme: 'light' },
-  { file: 'icon-dark.png', variant: 'dark', scheme: 'dark' },
-  { file: 'icon-tinted.png', variant: 'tinted', scheme: 'dark' },
-  { file: 'splash-logo.png', variant: 'splash', scheme: 'light' },
-  { file: 'splash-logo-dark.png', variant: 'splash', scheme: 'dark' },
-];
 /** Rec. 709 luma: the tinted icon must be grayscale. */
 const GRAYSCALE = [
   0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0, 0, 0,
   1, 0,
 ];
+/** Android's themed icon: white, with alpha = the logo's alpha minus its luma (ink solid, white cut out). */
+const MONOCHROME = [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.2126, -0.7152, -0.0722, 1, 0];
 
 type Frame = {
   readonly skia: SkiaApi;
   readonly logo: LogoArt;
   readonly colors: ColorTokens;
   readonly scheme: ColorScheme;
+  /** The output's width and height in px. */
+  readonly size: number;
 };
 
 function opsFor(frame: Frame): ReturnType<typeof logoOps> {
@@ -87,7 +82,7 @@ function opsFor(frame: Frame): ReturnType<typeof logoOps> {
 /** Dark and tinted icons: the "cut" logo tile (toy-ink edge, white ring), untilted, 62 % wide. */
 function iconTileSpec(frame: Frame): Parameters<typeof drawLogoTile>[2]['spec'] {
   const shell = SHELL_COLORS[frame.scheme];
-  const tile = (SIZE * GLYPH) / (1 + (SPLASH_TILE.ring * 2) / SPLASH_TILE.size);
+  const tile = (frame.size * ICON_GLYPH) / (1 + (SPLASH_TILE.ring * 2) / SPLASH_TILE.size);
   return {
     size: tile,
     fill: frame.colors.primary,
@@ -99,8 +94,10 @@ function iconTileSpec(frame: Frame): Parameters<typeof drawLogoTile>[2]['spec'] 
   };
 }
 
-function splashSpec(frame: Frame): Parameters<typeof drawLogoTile>[2]['spec'] {
-  const px = SIZE / SPLASH_PT;
+/** The S1 tile: 152 of 200 pt on iOS; on Android scaled so tile and ring span ANDROID_SPLASH_FIT. */
+function splashSpec(frame: Frame, isAndroid: boolean): Parameters<typeof drawLogoTile>[2]['spec'] {
+  const span = SPLASH_TILE.size + SPLASH_TILE.ring * 2;
+  const px = isAndroid ? (frame.size * ANDROID_SPLASH_FIT) / span : frame.size / SPLASH_PT;
   return {
     size: SPLASH_TILE.size * px,
     fill: frame.colors.primary,
@@ -112,33 +109,53 @@ function splashSpec(frame: Frame): Parameters<typeof drawLogoTile>[2]['spec'] {
   };
 }
 
-function draw(frame: Frame, variant: Variant, canvas: Parameters<typeof drawLogoArt>[1]): void {
+/** The logo art alone, centred, `glyph` of the canvas wide. */
+function drawGlyph(frame: Frame, canvas: Parameters<typeof drawLogoArt>[1], glyph: number): void {
+  canvas.translate((frame.size * (1 - glyph)) / 2, (frame.size * (1 - glyph)) / 2);
+  drawLogoArt(frame.skia, canvas, { ops: opsFor(frame), size: frame.size * glyph });
+}
+
+function draw(frame: Frame, variant: ArtVariant, canvas: Parameters<typeof drawLogoArt>[1]): void {
   const { skia } = frame;
-  const center = SIZE / 2;
+  const center = frame.size / 2;
   if (variant === 'light') {
-    // Opaque, full bleed: the accent is the tile; iOS masks the corners.
+    // Opaque, full bleed: the accent is the tile; iOS masks the corners (the Play icon too).
     canvas.drawColor(skia.Color(frame.colors.primary));
-    canvas.translate((SIZE * (1 - GLYPH)) / 2, (SIZE * (1 - GLYPH)) / 2);
-    drawLogoArt(skia, canvas, { ops: opsFor(frame), size: SIZE * GLYPH });
+    drawGlyph(frame, canvas, ICON_GLYPH);
+    return;
+  }
+  if (variant === 'adaptive' || variant === 'monochrome') {
+    // Transparent: the launcher paints the accent (or the theme colour) behind the glyph.
+    drawGlyph(frame, canvas, ADAPTIVE_GLYPH);
     return;
   }
   if (variant === 'tinted') canvas.drawColor(skia.Color(frame.colors.background));
-  const spec = variant === 'splash' ? splashSpec(frame) : iconTileSpec(frame);
+  const spec =
+    variant === 'dark' || variant === 'tinted'
+      ? iconTileSpec(frame)
+      : splashSpec(frame, variant === 'android-splash');
   drawLogoTile(skia, canvas, { ops: opsFor(frame), spec, cx: center, cy: center });
 }
 
-function renderOne(frame: Frame, output: Output): Uint8Array {
-  const surface = frame.skia.Surface.Make(SIZE, SIZE);
+/** The colour filter an output is drawn through, if any. */
+function filterOf(variant: ArtVariant): readonly number[] | null {
+  if (variant === 'tinted') return GRAYSCALE;
+  return variant === 'monochrome' ? MONOCHROME : null;
+}
+
+function renderOne(frame: Frame, output: ArtOutput): Uint8Array {
+  const surface = frame.skia.Surface.Make(frame.size, frame.size);
   if (surface === null) throw new Error('No offscreen surface');
   const canvas = surface.getCanvas();
   canvas.clear(frame.skia.Color('transparent'));
-  if (output.variant === 'tinted') {
-    const gray = frame.skia.Paint();
-    gray.setColorFilter(frame.skia.ColorFilter.MakeMatrix(GRAYSCALE));
-    canvas.saveLayer(gray);
+  const filter = filterOf(output.variant);
+  if (filter !== null) {
+    const paint = frame.skia.Paint();
+    paint.setColorFilter(frame.skia.ColorFilter.MakeMatrix([...filter]));
+    canvas.saveLayer(paint);
   }
   draw(frame, output.variant, canvas);
-  if (output.variant === 'tinted') canvas.restore();
+  if (filter !== null) canvas.restore();
   surface.flush();
   return surface.makeImageSnapshot().encodeToBytes();
 }
@@ -157,7 +174,10 @@ async function groundsText(app: string, ground: Ground): Promise<string> {
     .sort()
     .map((id) => {
       const key = /^[a-z][a-z0-9]*$/.test(id) ? id : `'${id}'`;
-      return `  ${key}: { light: '${grounds[id]?.light ?? ''}', dark: '${grounds[id]?.dark ?? ''}' },`;
+      const { light = '', dark = '', accent } = grounds[id] ?? {};
+      // An entry from before the accent existed keeps its two grounds until its game is rendered.
+      const tail = accent === undefined ? '' : `, accent: '${accent}'`;
+      return `  ${key}: { light: '${light}', dark: '${dark}'${tail} },`;
     });
   return [...GROUNDS_HEADER, ...entries, '};', ''].join('\n');
 }
@@ -167,6 +187,7 @@ async function syncGrounds(app: string, palette: Palette, isCheck: boolean): Pro
   const ground = {
     light: palette.standard.light.background,
     dark: palette.standard.dark.background,
+    accent: palette.standard.light.primary,
   };
   const text = await groundsText(app, ground);
   if (isCheck) return existsSync(GROUNDS_FILE) && readFileSync(GROUNDS_FILE, 'utf8') === text;
@@ -218,15 +239,16 @@ type RenderJob = {
   readonly isCheck: boolean;
 };
 
-/** Renders the five PNGs; writes them, or (check) returns the paths whose bytes differ. */
+/** Renders every output PNG; writes them, or (check) returns the paths whose bytes differ. */
 function renderOutputs(job: RenderJob): string[] {
   const { skia, app, game, isCheck } = job;
   const outDir = join('apps', app, 'assets', 'generated');
   mkdirSync(outDir, { recursive: true });
   const stale: string[] = [];
-  for (const output of OUTPUTS) {
+  for (const output of ART_OUTPUTS) {
     const colors = game.palette.standard[output.scheme];
-    const png = renderOne({ skia, logo: game.logo, colors, scheme: output.scheme }, output);
+    const frame = { skia, logo: game.logo, colors, scheme: output.scheme, size: output.size };
+    const png = renderOne(frame, output);
     const path = join(outDir, output.file);
     if (!isCheck) {
       writeFileSync(path, png);
