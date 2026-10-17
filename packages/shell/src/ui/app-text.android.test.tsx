@@ -48,4 +48,19 @@ describe('AppText on Android', () => {
       marginTop: Math.round(Number(style.marginTop ?? style.marginVertical) * 3),
     }).toStrictEqual({ paddingTop: 6, paddingBottom: 6, marginTop: -6 });
   });
+
+  it('lets a line end after an in-word hyphen, as the design does, and reads the text as written (spec 15.1)', async () => {
+    await renderWithShell(
+      <AppText
+        text="Persian and Sorani use a right-to-left layout."
+        testID="settings-language.direction-note.label"
+      />,
+    );
+
+    // Android breaks after "right-to-" only with a break point there (E18-T22: S11a's note, S11b's
+    // "public-domain"); TalkBack and Maestro read the label without it.
+    const text = screen.getByTestId('settings-language.direction-note.label');
+    expect(text).toHaveTextContent('Persian and Sorani use a right-\u200Bto-\u200Bleft layout.');
+    expect(text.props['accessibilityLabel']).toBe('Persian and Sorani use a right-to-left layout.');
+  });
 });
