@@ -184,6 +184,21 @@ describe('createShellParts', () => {
     ]);
   });
 
+  // Spec S15: the debug menu "also shows the local error log"; a parity capture empties it through
+  // the one save.db connection, which the launch gets with the save.
+  it('hands a test-build launch the save.db connection with the hydrated save', () => {
+    const adapters = createTestAdapters();
+    const drivers: unknown[] = [];
+    launch(adapters, {
+      launch: {
+        prepareSave: (_save, _clock, saveDriver) => {
+          drivers.push(saveDriver);
+        },
+      },
+    });
+    expect(drivers).toStrictEqual([adapters.saveDriver]);
+  });
+
   it('loads the UI sounds and the game bank into the one audio engine', () => {
     const adapters = createTestAdapters();
     launch(adapters);
