@@ -233,6 +233,22 @@ const editedMap = (dir) => {
   console.log('ok   make-sheet crops a text-ink failure at the text run, not at its element');
 }
 
+// A crop-only part of a scrolled Android capture is placed through its cover, and Android reports a
+// cover that runs past the body window cut at the window's edge (S15's debug.list at y 130 instead
+// of -27.6 at scroll 163, E18-T23): the eye page must place the Error log icon through the cover
+// rebuilt from its visible bottom edge (app y 728), not 157 pt lower.
+{
+  const out = scratch();
+  const run = spawnSync(process.execPath, [join(HERE, 'make-sheet.mjs'), join(FIXTURES, 'make-sheet-android-clipped-cover', 'good'), '--out', out], { encoding: 'utf8' });
+  const want = "debug.error-log-row.icon: placed through debug.list, which Android cut at the body window's top: app 37,728";
+  if (run.status !== 0 || !run.stdout.includes(want)) {
+    console.log(`FAIL tests/fixtures/make-sheet-android-clipped-cover/good [eye-clipped-cover] make-sheet.mjs exited ${run.status} without "${want}" Fix: Rebuild a cover Android cut at the body window from its visible edge (as the gates do) before placing a crop-only part through it.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log('ok   make-sheet places crop-only parts through an Android cover cut at the body window');
+}
+
 // frames-edit.json { "frame", "variant", "derive" }: a copy of the skill's frames manifest whose variant
 // derive is replaced, so a derive that hides the wrong element must fail (variant-derive).
 const editedFrames = (dir) => {

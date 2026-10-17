@@ -252,6 +252,19 @@ run(async () => {
     const eyes = layout.elements.filter((el) => el.rect && el.checks?.includes('crop') && !isInkOnly(el) && !el.mask && el.rect.w * el.rect.h > 0);
     const pairs = [];
     const pairIds = [];
+    // Android reports accessibility bounds clipped to what is visible: a body cover of a tall frame
+    // that runs past the body window comes back cut at the window's edge (S15's debug.list at scroll
+    // 163). Its real top is rebuilt from the visible edge and the design's height, as the gates do.
+    const clipsBounds = r.info.platform === 'android' && geo.tall;
+    const coverTop = (cover, ca) => {
+      if (!clipsBounds || !geo.inBody(cover)) return { y: ca.y, cut: null };
+      const expected = cover.rect.y + shiftPt;
+      const isCutTop = expected < geo.headerBottom && Math.abs(ca.y - geo.headerBottom) <= TOLERANCES.boundsPt;
+      const isCutBottom = expected + cover.rect.h > geo.bodyBottom && Math.abs(ca.y + ca.h - geo.bodyBottom) <= TOLERANCES.boundsPt;
+      if (isCutTop && isCutBottom) return { y: expected, cut: 'top and bottom' };
+      if (isCutTop) return { y: ca.y + ca.h - cover.rect.h, cut: 'top' };
+      return { y: ca.y, cut: isCutBottom ? 'bottom' : null };
+    };
     // A crop-only part (inside an accessible element, or hidden from VoiceOver) is placed through
     // its cover: the cover's measured offset applied to the part's design box.
     const placed = (el) => {
@@ -260,7 +273,9 @@ run(async () => {
       const cover = coverId ? layout.elements.find((c) => c.testID === coverId && c.rect) : null;
       const ca = coverId ? bounds.elements.get(coverId) : null;
       if (!cover || !ca) return { a: undefined, key: coverId };
-      return { a: { x: el.rect.x + ca.x - cover.rect.x, y: el.rect.y + ca.y - cover.rect.y }, key: coverId };
+      const top = coverTop(cover, ca);
+      if (top.cut) report.note(`      ${el.testID}: placed through ${coverId}, which Android cut at the body window's ${top.cut}: app ${Math.round(el.rect.x + ca.x - cover.rect.x)},${Math.round(el.rect.y + top.y - cover.rect.y)}`);
+      return { a: { x: el.rect.x + ca.x - cover.rect.x, y: el.rect.y + top.y - cover.rect.y }, key: coverId };
     };
     for (const el of eyes) {
       const { a, key } = placed(el);
