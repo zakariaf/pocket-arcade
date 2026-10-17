@@ -1,6 +1,7 @@
 [
   { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
   { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
+  { "from": "scripts/lib/png.mjs", "to": "scripts/lib/png.mjs" },
   { "from": "scripts/lib/tracking-text.mjs", "to": "scripts/lib/tracking-text.mjs" },
   { "from": "scripts/lib/maestro-spawns.mjs", "to": "scripts/lib/maestro-spawns.mjs" },
   { "from": "repo-templates/apps/__GAME_ID__/metro.config.js", "to": "templates/apps/game/metro.config.js" },

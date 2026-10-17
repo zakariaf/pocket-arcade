@@ -85,7 +85,7 @@ Turns `apps/<game>` into a Release simulator app with one command, `npm run buil
 | `scripts/check-sim-app.mjs` | Checks a built `.app` against its variant: Xcode, platform, sentinel, EXConstants, AdMob ID, owner placeholders by field (`owner-placeholder`, then `OWNER STEPS PENDING: G3, G5`), the app id (`bundle-id`), the tracking prompt text in every language (`att-string`), Info.plist keys, StoreKit files; exports `PLACEHOLDERS` | Workflow steps 5-6 and the definition of done |
 | `scripts/check-screenshot.mjs` | Checks screenshots for the device size, a blank screen and a light system banner over the top | Workflow step 5 |
 | `scripts/lib/plist.mjs` | XML and binary plist reader used by the app check | Never by hand |
-| `scripts/lib/png.mjs` | PNG decoder, colour measure and the light-banner row count used by the screenshot check | Never by hand |
+| `scripts/lib/png.mjs` | PNG decoder, colour measure and the light-banner row count used by the screenshot check (synced from the library, the same decoder android-emulator-build uses; do not edit here) | Never by hand |
 | `scripts/lib/maestro-spawns.mjs` | The `maestro-device` rule (synced from the library, identical to e2e-maestro's copy; do not edit here) | Never by hand |
 | `scripts/lib/ship-placeholders.mjs` | The scaffold placeholders a ship gate refuses by name, each with its owner step, `ownerStepsPendingLine` and the io.applander app id rule (synced from the library; do not edit here) | Never by hand |
 | `scripts/lib/tracking-text.mjs` | Reads `NSUserTrackingUsageDescription` from `Info.plist` and each `.lproj/InfoPlist.strings` (synced from the library; do not edit here) | Never by hand |

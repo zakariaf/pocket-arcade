@@ -1,5 +1,8 @@
-// png.mjs: decodes 8-bit RGB/RGBA non-interlaced PNGs (what `xcrun simctl io screenshot` writes)
-// with node:zlib, and measures how much of an area is one colour. Zero dependencies.
+// png.mjs: decodes 8-bit RGB/RGBA non-interlaced PNGs (what `xcrun simctl io <udid> screenshot` and
+// `adb -s <serial> exec-out screencap -p` write) with node:zlib, and measures how much of an area is
+// one colour. Zero dependencies. A helper, not an entry point. Shared by ios-simulator-build
+// (check-screenshot) and android-emulator-build (check-emu-app); each caller names the tool that took
+// its screenshot (`source`), which the fix hints quote.
 import { readFileSync } from 'node:fs';
 import { inflateSync } from 'node:zlib';
 
@@ -41,10 +44,13 @@ function unfilter(raw, width, height, bpp) {
   return out;
 }
 
-/** Decode a PNG file into { width, height, channels, pixels }. */
-export function readPng(path) {
+/**
+ * Decode a PNG file into { width, height, channels, pixels }. `source` is the command that wrote the
+ * screenshot, quoted in the fix hint of a file it cannot read.
+ */
+export function readPng(path, { source = 'the screenshot command' } = {}) {
   const buffer = readFileSync(path);
-  if (buffer.subarray(0, 8).toString('hex') !== SIGNATURE) fail(`${path} is not a PNG file`, 'Pass the PNG that xcrun simctl io <udid> screenshot wrote.');
+  if (buffer.subarray(0, 8).toString('hex') !== SIGNATURE) fail(`${path} is not a PNG file`, `Pass the PNG that ${source} wrote.`);
   let offset = 8;
   let header = null;
   const data = [];
@@ -60,7 +66,7 @@ export function readPng(path) {
   if (!header) fail(`${path} has no IHDR chunk`, 'Take the screenshot again.');
   const channels = CHANNELS[header.colorType];
   if (header.depth !== 8 || !channels || header.interlace !== 0) {
-    fail(`${path}: only 8-bit RGB/RGBA non-interlaced PNGs are supported (depth ${header.depth}, colour type ${header.colorType}, interlace ${header.interlace})`, 'Use the PNG straight from xcrun simctl io screenshot.');
+    fail(`${path}: only 8-bit RGB/RGBA non-interlaced PNGs are supported (depth ${header.depth}, colour type ${header.colorType}, interlace ${header.interlace})`, `Use the PNG straight from ${source}.`);
   }
   const pixels = unfilter(inflateSync(Buffer.concat(data)), header.width, header.height, channels);
   return { width: header.width, height: header.height, channels, pixels };

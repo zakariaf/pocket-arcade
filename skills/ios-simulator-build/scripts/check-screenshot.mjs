@@ -95,7 +95,7 @@ run(async () => {
   const files = collect(positionals);
   for (const file of files) {
     const shown = toPosix(relative(process.cwd(), file)) || file;
-    const image = readPng(file);
+    const image = readPng(file, { source: 'xcrun simctl io <udid> screenshot' });
     if (image.width !== width || image.height !== height) {
       report.problem({ file: shown, rule: 'png-size', message: `is ${image.width}x${image.height}, expected ${width}x${height} (${options.size ?? options.device})`, fix: 'Take the screenshot on the e07- simulator of the expected model, or pass the model it was taken on with --device.' });
     }

@@ -1,0 +1,3 @@
+ERROR [bad-input]
+is not a PNG file
+Pass the PNG that adb -s <serial> exec-out screencap -p wrote.

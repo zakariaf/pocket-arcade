@@ -1,5 +1,8 @@
-// png.mjs: decodes 8-bit RGB/RGBA non-interlaced PNGs (what `adb -s <serial> exec-out screencap -p` writes)
-// with node:zlib, and measures how much of an area is one colour. Zero dependencies.
+// png.mjs: decodes 8-bit RGB/RGBA non-interlaced PNGs (what `xcrun simctl io <udid> screenshot` and
+// `adb -s <serial> exec-out screencap -p` write) with node:zlib, and measures how much of an area is
+// one colour. Zero dependencies. A helper, not an entry point. Shared by ios-simulator-build
+// (check-screenshot) and android-emulator-build (check-emu-app); each caller names the tool that took
+// its screenshot (`source`), which the fix hints quote.
 import { readFileSync } from 'node:fs';
 import { inflateSync } from 'node:zlib';
 
@@ -41,10 +44,13 @@ function unfilter(raw, width, height, bpp) {
   return out;
 }
 
-/** Decode a PNG file into { width, height, channels, pixels }. */
-export function readPng(path) {
+/**
+ * Decode a PNG file into { width, height, channels, pixels }. `source` is the command that wrote the
+ * screenshot, quoted in the fix hint of a file it cannot read.
+ */
+export function readPng(path, { source = 'the screenshot command' } = {}) {
   const buffer = readFileSync(path);
-  if (buffer.subarray(0, 8).toString('hex') !== SIGNATURE) fail(`${path} is not a PNG file`, 'Pass the PNG that adb -s <serial> exec-out screencap -p wrote.');
+  if (buffer.subarray(0, 8).toString('hex') !== SIGNATURE) fail(`${path} is not a PNG file`, `Pass the PNG that ${source} wrote.`);
   let offset = 8;
   let header = null;
   const data = [];
@@ -60,7 +66,7 @@ export function readPng(path) {
   if (!header) fail(`${path} has no IHDR chunk`, 'Take the screenshot again.');
   const channels = CHANNELS[header.colorType];
   if (header.depth !== 8 || !channels || header.interlace !== 0) {
-    fail(`${path}: only 8-bit RGB/RGBA non-interlaced PNGs are supported (depth ${header.depth}, colour type ${header.colorType}, interlace ${header.interlace})`, 'Use the PNG straight from adb -s <serial> exec-out screencap -p.');
+    fail(`${path}: only 8-bit RGB/RGBA non-interlaced PNGs are supported (depth ${header.depth}, colour type ${header.colorType}, interlace ${header.interlace})`, `Use the PNG straight from ${source}.`);
   }
   const pixels = unfilter(inflateSync(Buffer.concat(data)), header.width, header.height, channels);
   return { width: header.width, height: header.height, channels, pixels };
@@ -93,3 +99,36 @@ export function dominantColour(image, { top = 0, bottom = image.height, step = 3
   return { hex, share: total === 0 ? 0 : best / total, distinct: counts.size };
 }
 
+/** A light, nearly grey pixel (a light-mode iOS notification banner), channels 0-255. */
+function isLightGrey(image, x, y) {
+  const i = (y * image.width + x) * image.channels;
+  const r = image.pixels[i];
+  const g = image.pixels[i + 1];
+  const b = image.pixels[i + 2];
+  return Math.min(r, g, b) >= 215 && Math.max(r, g, b) - Math.min(r, g, b) <= 24;
+}
+
+/**
+ * Rows in the top band that look like a light system banner (a notification drawn over the app):
+ * at least 97% of the row between 2.5% and 97.5% of the width is light grey, while the thin strips
+ * at both edges (0.6% to 1.2% from each side, outside the banner's 8 pt inset) are not. A heuristic:
+ * an app's own full-width light bar fails the edge test, a card with content fails the 97% test.
+ */
+export function lightBannerRows(image, { top = Math.round(image.height * 0.045), bottom = Math.round(image.height * 0.17) } = {}) {
+  const innerFrom = Math.round(image.width * 0.025);
+  const innerTo = Math.round(image.width * 0.975);
+  const edges = [Math.round(image.width * 0.006), Math.round(image.width * 0.012)];
+  let rows = 0;
+  for (let y = top; y < bottom; y += 1) {
+    let light = 0;
+    let total = 0;
+    for (let x = innerFrom; x < innerTo; x += 2) {
+      total += 1;
+      if (isLightGrey(image, x, y)) light += 1;
+    }
+    if (light / total < 0.97) continue;
+    const isEdgeLight = edges.some((x) => isLightGrey(image, x, y) || isLightGrey(image, image.width - 1 - x, y));
+    if (!isEdgeLight) rows += 1;
+  }
+  return rows;
+}

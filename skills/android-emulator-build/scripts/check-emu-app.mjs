@@ -165,7 +165,7 @@ function checkBadging({ badging, manifest, where, report }) {
 
 function checkScreenshot({ options, report }) {
   if (!options.screenshot) return;
-  const image = readPng(options.screenshot);
+  const image = readPng(options.screenshot, { source: 'adb -s <serial> exec-out screencap -p' });
   // The status bar and the gesture bar (about 5% each) are drawn by Android: left out of the test.
   const { hex, share } = dominantColour(image, { top: Math.round(image.height * 0.05), bottom: Math.round(image.height * 0.95) });
   if (share >= BLANK_SHARE) report.problem({ file: toPosix(relative(process.cwd(), options.screenshot)), rule: 'screenshot', message: `${(share * 100).toFixed(1)}% of the screen is ${hex}: the app crashed, is still loading or drew nothing`, fix: 'Open the PNG, read apps/<game>/build/logs/ and adb -s <serial> logcat, relaunch, wait for the ready signal and screenshot again.' });
