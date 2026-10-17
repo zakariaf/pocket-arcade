@@ -7425,6 +7425,32 @@
       "status": "documented",
       "owner": false,
       "skill": "board-gestures-and-input"
+    },
+    {
+      "id": "android-text-bounds-wrap",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "On Android 15+ a text's last word wraps onto a second line and is clipped (a Persian group tab drew two lines in a one-line box) while onTextLayout reports one line",
+      "cause": "An app targeting SDK 35+ gets the compat change USE_BOUNDS_FOR_WIDTH (63938206): a TextView wraps by its glyph bounds, while React Native 0.86 measures a Text by its advances, so a line whose ink overhangs its advance fits the measured box and wraps when drawn. Proof: adb -s <serial> shell am compat disable USE_BOUNDS_FOR_WIDTH <package> draws it on one line",
+      "fix": "Keep withShell's with-prepared-text-layout plugin: it forces React Native's enablePreparedTextLayout on in MainApplication.kt after loadReactNative(this), so the view draws the layout React Native measured; reset any compat override (am compat reset) before judging a capture; never pad or shrink the text",
+      "match": [
+        "USE_BOUNDS_FOR_WIDTH"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-hyphen-no-break",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "A hyphenated word moves whole to the next line on Android (\"right-to-left\", \"public-domain\") where the design and iOS end the line after the hyphen",
+      "cause": "Android's line breaker ends a line after a hyphen-minus inside a word only with hyphenation on; Chrome and iOS break there by the Unicode rule HY",
+      "fix": "AppText draws a zero-width space after each hyphen between two letters on Android (line-breaks.ts) and keeps the text as written as its accessibility label; never edit the catalog strings or turn on hyphenation",
+      "match": [],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-design-system"
     }
   ]
 }

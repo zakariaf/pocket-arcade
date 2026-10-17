@@ -138,3 +138,5 @@ OWNER STEPS PENDING line never names a GP step
 skill runs adb without -s and passes the library validator
 edge swipe on the board opens Pause on Android
 ?? packages/shell/android/build/
+android 15 last word wraps and is clipped while onTextLayout reports one line
+hyphenated word moves whole to the next line on Android
