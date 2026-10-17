@@ -5,6 +5,7 @@
 // layout this hook searches that width from the Text's own line measurements and applies it as a
 // pad at the text's end, so the element keeps the full width the design measures.
 import { useState } from 'react';
+import { Platform } from 'react-native';
 
 import { isInvisibleMark } from '@e07/shell/i18n/bidi.ts';
 
@@ -193,6 +194,14 @@ export function advance(measure: Measure, isWordBroken = false): Measure {
   return { ...measure, search: nextSearch(search, width, { lineWidths, isWordBroken }) };
 }
 
+/**
+ * Android 15 and later break lines by their glyph bounds (useBoundsForWidth), so a probe a little
+ * narrower than a line can keep it, and onTextLayout reports it at its advance width, wider than
+ * the room (S13's Persian step 2 kept 257.24 pt at 256). That layout is the probe's own: Fabric
+ * sends a text layout only for a new layout, in order, so nothing on Android is stale.
+ */
+const IS_BROKEN_BY_GLYPH_BOUNDS = Platform.OS === 'android';
+
 /** Slack for sub-point rounding between the line widths and the laid-out width. */
 const LINE_SLACK = 0.5;
 
@@ -201,8 +210,12 @@ const LINE_SLACK = 0.5;
  * layout twice). A line wider than the room the current pad leaves proves the layout is not for
  * this pad; one that fits wraps the same at this pad (greedy wrapping), so it counts.
  */
-export function isStale(measure: Measure, lineWidths: readonly number[]): boolean {
-  if (measure.width === 0) return false;
+export function isStale(
+  measure: Measure,
+  lineWidths: readonly number[],
+  isBrokenByGlyphBounds = IS_BROKEN_BY_GLYPH_BOUNDS,
+): boolean {
+  if (measure.width === 0 || isBrokenByGlyphBounds) return false;
   const room = measure.width - (measure.search?.pad ?? 0);
   return lineWidths.some((line) => line > room + LINE_SLACK);
 }
