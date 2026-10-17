@@ -1,7 +1,16 @@
 // packages/shell/src/i18n/bidi.test.ts
 import fc from 'fast-check';
 
-import { FSI, isInvisibleMark, isolate, PDI, stripIsolates } from './bidi.ts';
+import {
+  asRtlParagraph,
+  firstStrongDirection,
+  FSI,
+  isInvisibleMark,
+  isolate,
+  PDI,
+  RLM,
+  stripIsolates,
+} from './bidi.ts';
 
 describe('isolate', () => {
   it('wraps free text in FIRST STRONG ISOLATE ... POP DIRECTIONAL ISOLATE', () => {
@@ -39,5 +48,57 @@ describe('isInvisibleMark', () => {
     for (const char of ['a', 'ب', '۳', ' ', '-', String.fromCodePoint(0x200c)]) {
       expect(isInvisibleMark(char)).toBe(false);
     }
+  });
+});
+
+describe('firstStrongDirection', () => {
+  it.each([
+    ['Line Siege', 'ltr'],
+    ['آمار', 'rtl'],
+    ['ئاستی ۳', 'rtl'],
+    ['۲۸ / ۲۷۰', null],
+    ['×۶', null],
+    [`${isolate('یکشنبه')}، ۲۷ ${isolate('سپتامبر')}`, null],
+    [`${isolate('Line Siege')} آفلاین کار می‌کند.`, 'rtl'],
+    [`${isolate('آمار')} for you`, 'ltr'],
+  ] as const)('reads %s as %s: the first letter outside isolates (spec 7.4)', (text, direction) => {
+    expect(firstStrongDirection(text)).toBe(direction);
+  });
+});
+
+describe('asRtlParagraph', () => {
+  it('starts a text without a strong letter with a right-to-left mark (spec N11)', () => {
+    // Android's text layout reads such a text left to right (FIRSTSTRONG_LTR); a TextView in an RTL
+    // layout read it right to left. The mark gives the drawn layout the paragraph direction back.
+    expect(asRtlParagraph('۲۸ / ۲۷۰')).toBe(`${RLM}۲۸ / ۲۷۰`);
+    expect(asRtlParagraph(`${isolate('یکشنبه')}، ۲۷`)).toBe(`${RLM}${isolate('یکشنبه')}، ۲۷`);
+  });
+
+  it('leaves a text with a strong letter, or a single number, as written', () => {
+    // A single number reads the same in either paragraph direction ("۵۸", "۱٫۹۹").
+    for (const text of [
+      'آمار',
+      'ئاستی ۳',
+      'Vazirmatn 33.003',
+      `${isolate('Line Siege')} آفلاین`,
+      '۵۸',
+      '۱٫۹۹',
+      '12',
+    ]) {
+      expect(asRtlParagraph(text)).toBe(text);
+    }
+  });
+
+  it('adds at most one mark, and only marks: removing it gives the text back', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ unit: fc.constantFrom('۲', ' ', '/', 'a', 'ب', FSI, PDI) }),
+        (text) => {
+          const shown = asRtlParagraph(text);
+          expect(asRtlParagraph(shown)).toBe(shown);
+          expect(shown.startsWith(RLM) ? shown.slice(1) : shown).toBe(text);
+        },
+      ),
+    );
   });
 });
