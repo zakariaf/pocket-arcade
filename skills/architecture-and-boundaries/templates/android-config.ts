@@ -65,6 +65,9 @@ export function androidPlugins(game: GameConfig): PluginEntry[] {
     '@e07/shell/plugins/with-backup-rules.ts',
     // architecture-and-boundaries: android:supportsRtl for fa and ckb (rtl-and-direction).
     '@e07/shell/plugins/with-rtl-support.ts',
+    // architecture-and-boundaries: each Text drawn with the layout React Native measured (Android
+    // 15+ wraps a TextView by its glyph bounds, and a tight Persian line lost its last word).
+    '@e07/shell/plugins/with-prepared-text-layout.ts',
     // android-release-play: release builds signed with the game's upload key when its Gradle
     // properties exist; without this line every Play bundle stays debug-signed.
     ['@e07/shell/plugins/with-upload-signing.ts', { game: game.id }],
