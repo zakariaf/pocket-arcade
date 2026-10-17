@@ -6,7 +6,8 @@
 // from the perf log's newest cold start (emuLaunchOf, with am start's TotalTime beside it); the
 // median of the last 5 against perf-baselines/cold-start-emu-<game-id>.json (judgeColdStart).
 // Memory: the game's smoke flows, feedback.json from the perf log, a relaunch, 10 s to settle, then
-// `dumpsys meminfo` total PSS against the 150 MB budget (lead decision e). Writes cold-start.json,
+// `dumpsys meminfo`: private dirty + swap against the 150 MB budget, like the iOS footprint (total
+// PSS beside it as information; lead decision 2026-10-17). Writes cold-start.json,
 // memory.json and feedback.json into reports/e2e-android/<game-id>/ and reports/perf/emu-perf-log.json.
 import { existsSync, globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -35,7 +36,7 @@ import {
   type AndroidMaestroDevice,
   type Device,
 } from '@e07/tooling/e2e/android-e2e-device.ts';
-import { judgePss, totalPssKbOf } from '@e07/tooling/e2e/android-memory.ts';
+import { judgeMemory, memoryOf } from '@e07/tooling/e2e/android-memory.ts';
 import { pidOf } from '@e07/tooling/e2e/android-socket-sampler.ts';
 import { feedbackEvidenceOf, feedbackFileText } from '@e07/tooling/e2e/feedback-evidence.ts';
 import {
@@ -158,10 +159,10 @@ async function measureMemory(input: EmuPerfInput, budgets: PerfBudgets): Promise
   await delay(SETTLE_MS);
   const meminfo = adbOn(input.device, meminfoArgs(input.device.serial, input.app.id));
   writeFileSync(join(dir, 'meminfo.txt'), meminfo);
-  const kb = totalPssKbOf(meminfo);
-  if (kb === null)
+  const reading = memoryOf(meminfo);
+  if (reading === null)
     throw new Error(`memory: dumpsys meminfo found no process, see ${dir}/meminfo.txt`);
-  return judgePss(kb, budgets);
+  return judgeMemory(reading, budgets);
 }
 
 const errorOf = (error: unknown): { readonly error: string } => ({
@@ -193,6 +194,6 @@ function stepFailure(step: string, result: unknown): string | null {
   if (record['isRegression'] === true)
     return `${step}: median ${String(record['medianMs'])} ms is over ${String(record['limitMs'])} ms`;
   if (record['isOver'] === true)
-    return `${step}: total PSS ${String(record['totalPssMb'])} MB is over ${String(record['limitMb'])} MB`;
+    return `${step}: private dirty + swap ${String(record['footprintMb'])} MB is over ${String(record['limitMb'])} MB (total PSS ${String(record['totalPssMb'])} MB, information only)`;
   return null;
 }

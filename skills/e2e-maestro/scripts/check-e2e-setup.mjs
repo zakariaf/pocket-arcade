@@ -383,8 +383,8 @@ function checkAndroidSteps(root, codes, report) {
       [/\bjudgeColdStart\s*\(/, 'does not judge the cold starts (judgeColdStart)'],
       [/\bemuBaselineFile\s*\(|cold-start-emu-/, 'does not read the committed perf-baselines/cold-start-emu-<game-id>.json'],
       [/\bmeminfoArgs\s*\(/, 'does not measure memory with dumpsys meminfo (meminfoArgs)'],
-      [/\btotalPssKbOf\s*\(/, 'does not read total PSS (totalPssKbOf)'],
-      [/\bjudgePss\s*\(/, 'does not judge total PSS against the memory budget (judgePss)'],
+      [/\bmemoryOf\s*\(/, 'does not read private dirty and swap from dumpsys meminfo (memoryOf)'],
+      [/\bjudgeMemory\s*\(/, 'does not judge private dirty + swap against the memory budget (judgeMemory)'],
       [/['"]cold-start\.json['"]/, 'does not write cold-start.json'],
       [/['"]memory\.json['"]/, 'does not write memory.json'],
     ];
@@ -394,7 +394,7 @@ function checkAndroidSteps(root, codes, report) {
   const coldRel = `${ANDROID_E2E_DIR}/android-cold-start.ts`;
   if (codes.has(coldRel) && !/cold-start-emu-/.test(codes.get(coldRel))) report.problem({ file: coldRel, line: 1, rule: 'runner-steps', message: 'the emulator baseline is not perf-baselines/cold-start-emu-<game-id>.json (the simulator baseline stays apart)', fix: androidFix(coldRel) });
   const memoryRel = `${ANDROID_E2E_DIR}/android-memory.ts`;
-  if (codes.has(memoryRel) && !/\bmemoryFootprintMbMax\b/.test(codes.get(memoryRel))) report.problem({ file: memoryRel, line: 1, rule: 'runner-steps', message: 'judgePss does not use perf.memoryFootprintMbMax, the one 150 MB memory budget of both platforms', fix: androidFix(memoryRel) });
+  if (codes.has(memoryRel) && !/\bmemoryFootprintMbMax\b/.test(codes.get(memoryRel))) report.problem({ file: memoryRel, line: 1, rule: 'runner-steps', message: 'judgeMemory does not use perf.memoryFootprintMbMax, the one 150 MB memory budget of both platforms', fix: androidFix(memoryRel) });
   const samplerRel = `${ANDROID_E2E_DIR}/android-socket-sampler.ts`;
   if (codes.has(samplerRel) && !/\btcp6\b/.test(codes.get(samplerRel))) report.problem({ file: samplerRel, line: 1, rule: 'runner-no-sampler', message: 'does not read /proc/net/tcp6 (IPv6 sockets would go unseen)', fix: androidFix(samplerRel) });
 }

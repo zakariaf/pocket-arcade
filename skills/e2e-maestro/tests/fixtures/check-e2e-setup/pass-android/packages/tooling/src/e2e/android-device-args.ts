@@ -128,3 +128,15 @@ export function stillScreenCommands(serial: string): string[][] {
     ...demoModeCommands().map((args) => deviceAdbArgs(serial, args)),
   ];
 }
+
+/**
+ * One light or dark capture's set-up: the night mode, then the demo status bar at 9:41 again. The
+ * demo commands sent right after a cold boot can reach SystemUI before it listens, so the status bar
+ * kept the real clock (E18-T24); sent again before each combination they always hold.
+ */
+export function themeCommands(serial: string, theme: 'light' | 'dark'): string[][] {
+  return [
+    nightModeArgs(serial, theme),
+    ...demoModeCommands().map((args) => deviceAdbArgs(serial, args)),
+  ];
+}

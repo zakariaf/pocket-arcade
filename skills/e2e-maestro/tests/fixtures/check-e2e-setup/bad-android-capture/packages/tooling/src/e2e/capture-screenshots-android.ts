@@ -18,7 +18,7 @@ import {
   parseAndroidShotsCli,
   type AndroidShotsOptions,
 } from '@e07/tooling/e2e/android-cli.ts';
-import { fontScaleArgs, nightModeArgs } from '@e07/tooling/e2e/android-device-args.ts';
+import { fontScaleArgs, themeCommands } from '@e07/tooling/e2e/android-device-args.ts';
 import {
   adbOn,
   androidAppEnv,
@@ -140,7 +140,7 @@ async function runDevice(
   return captureEach(
     combos.map((combo) =>
       jobOf(cli, combo, async () => {
-        adbOn(emulator, nightModeArgs(emulator.serial, combo.theme));
+        for (const args of themeCommands(emulator.serial, combo.theme)) adbOn(emulator, args);
         const shots = await capture(cli, maestro, combo);
         return shots.map((actual) => check(cli, combo, actual));
       }),

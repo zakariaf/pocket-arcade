@@ -15,6 +15,7 @@ import {
   pidofArgs,
   procNetArgs,
   stillScreenCommands,
+  themeCommands,
 } from './android-device-args.ts';
 
 const SERIAL = 'emulator-5554';
@@ -32,6 +33,7 @@ function everyAdbCall(serial: string): string[][] {
     fontScaleArgs(serial, LARGE_FONT_SCALE),
     nightModeArgs(serial, 'dark'),
     ...stillScreenCommands(serial),
+    ...themeCommands(serial, 'light'),
   ];
 }
 
@@ -139,6 +141,17 @@ describe('the device settings of a run', () => {
     ]) {
       expect(commands).toContain(`-s ${SERIAL} shell settings put global ${scale} 0`);
     }
+    expect(commands.some((line) => line.includes('-e hhmm 0941'))).toBe(true);
+  });
+
+  it('pins the 9:41 status bar again after each light or dark switch (E18-T24: a cold boot lost it)', () => {
+    const commands = themeCommands(SERIAL, 'dark').map((args) => args.join(' '));
+    expect(commands[0]).toBe(`-s ${SERIAL} shell cmd uimode night yes`);
+    expect(commands.slice(1)).toStrictEqual(
+      stillScreenCommands(SERIAL)
+        .map((args) => args.join(' '))
+        .filter((line) => line.includes('systemui.demo') || line.includes('sysui_demo_allowed')),
+    );
     expect(commands.some((line) => line.includes('-e hhmm 0941'))).toBe(true);
   });
 
