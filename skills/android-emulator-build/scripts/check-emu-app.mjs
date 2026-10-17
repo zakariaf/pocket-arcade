@@ -13,9 +13,11 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
-import { findElements, metaDataValue, parseBadging, parseXmlTree, readZipEntry, readZipIndex } from './lib/apk.mjs';
+import { parseBadging, parseXmlTree } from './lib/apk.mjs';
+import { findElements, metaDataValue } from './lib/manifest-tree.mjs';
 import { dominantColour, readPng } from './lib/png.mjs';
 import { ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
+import { readZipEntry, readZipIndex } from './lib/zip.mjs';
 
 const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~3347511713';
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;

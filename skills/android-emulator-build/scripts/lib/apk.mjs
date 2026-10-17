@@ -1,57 +1,8 @@
-// apk.mjs: reads a built APK without any package: zip entries through node:zlib, and the two aapt2
-// dumps check-emu-app needs (`aapt2 dump badging` and `aapt2 dump xmltree --file AndroidManifest.xml`).
+// apk.mjs: the two aapt2 dumps check-emu-app reads from a built APK (`aapt2 dump badging` and `aapt2 dump xmltree --file AndroidManifest.xml`).
 // The APK's AndroidManifest.xml is binary XML; aapt2 (in the pinned build-tools) prints it as text,
 // so the checker never parses binary XML itself. Formats verified on 2026-10-12 against a real
-// release APK dumped with build-tools 36.0.0's aapt2.
-import { readFileSync } from 'node:fs';
-import { inflateRawSync } from 'node:zlib';
-
-const EOCD = 0x06054b50;
-const CENTRAL = 0x02014b50;
-const LOCAL = 0x04034b50;
-
-/** The entries of a zip file (APK and AAB alike): name -> { method, offset, compressedSize }. */
-export function readZipIndex(path) {
-  const buffer = readFileSync(path);
-  const from = Math.max(0, buffer.length - 0xffff - 22);
-  let eocd = -1;
-  for (let i = buffer.length - 22; i >= from; i -= 1) {
-    if (buffer.readUInt32LE(i) === EOCD) {
-      eocd = i;
-      break;
-    }
-  }
-  if (eocd < 0) throw new Error(`${path} is not a zip file (no end-of-central-directory record)`);
-  const count = buffer.readUInt16LE(eocd + 10);
-  let offset = buffer.readUInt32LE(eocd + 16);
-  const entries = new Map();
-  for (let index = 0; index < count; index += 1) {
-    if (buffer.readUInt32LE(offset) !== CENTRAL) throw new Error(`${path}: broken central directory at entry ${index}`);
-    const method = buffer.readUInt16LE(offset + 10);
-    const compressedSize = buffer.readUInt32LE(offset + 20);
-    const nameLength = buffer.readUInt16LE(offset + 28);
-    const extraLength = buffer.readUInt16LE(offset + 30);
-    const commentLength = buffer.readUInt16LE(offset + 32);
-    const local = buffer.readUInt32LE(offset + 42);
-    const name = buffer.subarray(offset + 46, offset + 46 + nameLength).toString('utf8');
-    entries.set(name, { method, local, compressedSize });
-    offset += 46 + nameLength + extraLength + commentLength;
-  }
-  return { buffer, entries };
-}
-
-/** One entry's bytes, or null when the zip has no such entry. Stored and deflated entries only. */
-export function readZipEntry(zip, name) {
-  const entry = zip.entries.get(name);
-  if (entry === undefined) return null;
-  const { buffer } = zip;
-  if (buffer.readUInt32LE(entry.local) !== LOCAL) throw new Error(`broken local header for ${name}`);
-  const start = entry.local + 30 + buffer.readUInt16LE(entry.local + 26) + buffer.readUInt16LE(entry.local + 28);
-  const data = buffer.subarray(start, start + entry.compressedSize);
-  if (entry.method === 0) return Buffer.from(data);
-  if (entry.method === 8) return inflateRawSync(data);
-  throw new Error(`${name} uses zip method ${entry.method}; only stored (0) and deflate (8) are read`);
-}
+// release APK dumped with build-tools 36.0.0's aapt2. The zip itself is read by the shared zip.mjs,
+// and the manifest tree is queried with the shared manifest-tree.mjs.
 
 /** `aapt2 dump badging` text -> { package, versionCode, versionName, minSdk, targetSdk, permissions, isDebuggable }. */
 export function parseBadging(text) {
@@ -101,20 +52,3 @@ export function parseXmlTree(text) {
   return root;
 }
 
-/** Every element called `name` anywhere below `node`. */
-export function findElements(node, name) {
-  const found = [];
-  for (const child of node.children) {
-    if (child.name === name) found.push(child);
-    found.push(...findElements(child, name));
-  }
-  return found;
-}
-
-/** The value of the <meta-data android:name="<name>"> under <application>, or null. */
-export function metaDataValue(tree, name) {
-  const application = findElements(tree, 'application')[0];
-  if (application === undefined) return null;
-  const entry = application.children.find((child) => child.name === 'meta-data' && child.attributes.name === name);
-  return entry?.attributes.value ?? null;
-}

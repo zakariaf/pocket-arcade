@@ -2,7 +2,8 @@
 // selftest.mjs: proves both checkers pass their good fixtures and catch every planted bug.
 // release-setup cases are copied to a temporary folder first, where each case's
 // claude-settings.json becomes .claude/settings.json and plant.json writes files git refuses to
-// hold (a *.jks key). Before the suites, it proves --stamp: a passing gate writes the stamp with
+// hold (a *.jks key). Before the suites, it pins the shared manifest-tree helpers on the good AAB (the
+// protobuf tree is rooted at <manifest>, so findElements searches at or below its node), and proves --stamp: a passing gate writes the stamp with
 // the AAB's sha256, a failing one or a rehearsal writes none.
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -11,6 +12,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { makeTempDir, removeTempDir, runSelftest } from './check-lib.mjs';
+import { parseProtoXml } from './lib/aab.mjs';
+import { findElements, metaDataValue } from './lib/manifest-tree.mjs';
+import { readZipEntry, readZipIndex } from './lib/zip.mjs';
 
 /** A temporary folder removed when the self-test ends. */
 function tempDir(prefix) {
@@ -59,6 +63,27 @@ function plantedReleaseSetup() {
     }
   }
   return target;
+}
+
+/** The shared helpers on the good AAB's protobuf manifest, whose root node is <manifest> itself. */
+function manifestTreeProblems() {
+  const zip = readZipIndex(join(FIXTURES, 'store-aab', 'good', 'app-release.aab'));
+  const manifest = parseProtoXml(readZipEntry(zip, 'base/manifest/AndroidManifest.xml'));
+  const problems = [];
+  if (manifest?.name !== 'manifest' || findElements(manifest, 'manifest')[0] !== manifest) problems.push('findElements(tree, "manifest") does not return the root <manifest> of the AAB tree');
+  if (findElements(manifest, 'application').length !== 1) problems.push('findElements(tree, "application") does not find the one <application>');
+  if (metaDataValue(manifest, 'E07AppVariant') !== 'store') problems.push('metaDataValue(tree, "E07AppVariant") is not "store"');
+  if (readZipEntry(zip, 'no/such/entry') !== null) problems.push('readZipEntry of a missing entry is not null');
+  return problems;
+}
+
+if (existsSync(join(HERE, 'check-store-aab.mjs'))) {
+  const problems = manifestTreeProblems();
+  for (const problem of problems) console.log(`FAIL lib/manifest-tree.mjs [selftest-manifest-tree] ${problem} Fix: Keep findElements searching at or below the node it is given (shared in _library/shared/scripts/lib/manifest-tree.mjs), then sync.`);
+  if (problems.length > 0) {
+    console.log(`RESULT: FAIL (${problems.length} problems)`);
+    process.exit(1);
+  }
 }
 
 if (existsSync(join(HERE, 'check-store-aab.mjs'))) {

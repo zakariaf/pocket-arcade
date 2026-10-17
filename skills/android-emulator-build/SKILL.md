@@ -75,7 +75,9 @@ Turns `apps/<game>` into a Release Android app with one command, `npm run build:
 | `templates/packages/tooling/src/build/` | `emu-build-plan.ts` (pure plan) and its test, `build-android-emu.ts` (the CLI) | Workflow step 2 |
 | `scripts/check-emu-setup.mjs` | Checks the repo setup: the npm script and tooling files, .gitignore, the Metro cache key, adb serials, AVD names, the JDK 17 pin, no Play Store image, assembleRelease | Workflow step 3 and the definition of done |
 | `scripts/check-emu-app.mjs` | Checks a built APK against its variant: package, sentinel, app.config, the variant meta-data, the AdMob id, owner placeholders by field (`OWNER STEPS PENDING`), permissions, debuggable, supportsRtl, allowBackup, SDK levels, a blank screenshot | Workflow steps 5-6 and the definition of done |
-| `scripts/lib/apk.mjs` | Zip reader (node:zlib) and the parsers of `aapt2 dump badging` and `dump xmltree` | Never by hand |
+| `scripts/lib/apk.mjs` | The parsers of `aapt2 dump badging` and `dump xmltree` | Never by hand |
+| `scripts/lib/zip.mjs` | Zip reader (node:zlib) for APKs and AABs (synced from the library, the same reader android-release-play uses; do not edit here) | Never by hand |
+| `scripts/lib/manifest-tree.mjs` | `findElements` and `metaDataValue` over a parsed manifest tree (synced from the library; do not edit here) | Never by hand |
 | `scripts/lib/png.mjs` | PNG decoder and the one-colour measure used by the screenshot rule | Never by hand |
 | `scripts/lib/ship-placeholders.mjs` | The scaffold placeholders a ship gate refuses, with their owner steps (G3, G5, GP5) and the `OWNER STEPS PENDING` line (synced from the library; do not edit here) | Never by hand |
 | `assets/permission-allowlist.json` | The permissions a Pocket Arcade APK may hold, each with who declares it (synced from the library, the same list android-release-play and privacy-and-network-audit check; do not edit here) | When check-emu-app reports `permission` |

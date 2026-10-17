@@ -3,50 +3,9 @@
 // manifest base/manifest/AndroidManifest.xml in aapt2's protobuf format (Resources.proto XmlNode:
 // element = 1; XmlElement name = 3, attribute = 4, child = 5; XmlAttribute name = 2, value = 3,
 // compiled_item = 6 with Primitive = 7). The jar signature sits in META-INF/*.RSA|EC|DSA.
-// Verified on 2026-10-12 against a real release AAB built with AGP 8.
-import { readFileSync } from 'node:fs';
-import { inflateRawSync } from 'node:zlib';
-
-const EOCD = 0x06054b50;
-const CENTRAL = 0x02014b50;
-const LOCAL = 0x04034b50;
-
-/** The entries of a zip file: name -> { method, local, compressedSize }. */
-export function readZipIndex(path) {
-  const buffer = readFileSync(path);
-  let eocd = -1;
-  for (let i = buffer.length - 22; i >= Math.max(0, buffer.length - 0xffff - 22); i -= 1) {
-    if (buffer.readUInt32LE(i) === EOCD) {
-      eocd = i;
-      break;
-    }
-  }
-  if (eocd < 0) throw new Error(`${path} is not a zip file (no end-of-central-directory record)`);
-  const count = buffer.readUInt16LE(eocd + 10);
-  let offset = buffer.readUInt32LE(eocd + 16);
-  const entries = new Map();
-  for (let index = 0; index < count; index += 1) {
-    if (buffer.readUInt32LE(offset) !== CENTRAL) throw new Error(`${path}: broken central directory at entry ${index}`);
-    const nameLength = buffer.readUInt16LE(offset + 28);
-    const name = buffer.subarray(offset + 46, offset + 46 + nameLength).toString('utf8');
-    entries.set(name, { method: buffer.readUInt16LE(offset + 10), compressedSize: buffer.readUInt32LE(offset + 20), local: buffer.readUInt32LE(offset + 42) });
-    offset += 46 + nameLength + buffer.readUInt16LE(offset + 30) + buffer.readUInt16LE(offset + 32);
-  }
-  return { buffer, entries };
-}
-
-/** One entry's bytes, or null when the zip has no such entry (stored or deflated). */
-export function readZipEntry(zip, name) {
-  const entry = zip.entries.get(name);
-  if (entry === undefined) return null;
-  const { buffer } = zip;
-  if (buffer.readUInt32LE(entry.local) !== LOCAL) throw new Error(`broken local header for ${name}`);
-  const start = entry.local + 30 + buffer.readUInt16LE(entry.local + 26) + buffer.readUInt16LE(entry.local + 28);
-  const data = buffer.subarray(start, start + entry.compressedSize);
-  if (entry.method === 0) return Buffer.from(data);
-  if (entry.method === 8) return inflateRawSync(data);
-  throw new Error(`${name} uses zip method ${entry.method}; only stored (0) and deflate (8) are read`);
-}
+// Verified on 2026-10-12 against a real release AAB built with AGP 8. The zip itself is read by the
+// shared zip.mjs, and the manifest tree is queried with the shared manifest-tree.mjs.
+import { readZipEntry } from './zip.mjs';
 
 /** Protobuf wire fields of a message: [{ no, value (varint) | bytes }]. */
 function fields(buffer) {
@@ -107,20 +66,6 @@ export function parseProtoXml(buffer) {
     }
   }
   return node;
-}
-
-/** Every element called `name` at or below `node`. */
-export function findElements(node, name) {
-  const found = node.name === name ? [node] : [];
-  for (const child of node.children) found.push(...findElements(child, name));
-  return found;
-}
-
-/** <meta-data android:name="<name>"> under <application>: its value, or null. */
-export function metaDataValue(manifest, name) {
-  const application = findElements(manifest, 'application')[0];
-  const entry = application?.children.find((child) => child.name === 'meta-data' && child.attributes.name === name);
-  return entry?.attributes.value ?? null;
 }
 
 /**

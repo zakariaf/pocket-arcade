@@ -73,7 +73,9 @@ Takes one commit of `apps/<game>` to a signed Android App Bundle on the Google P
 | `templates/packages/shell/plugins/with-upload-signing.ts` | The config plugin that applies it at prebuild | Workflow step 2 |
 | `scripts/check-release-setup-android.mjs` | Checks the repo: script and tooling, the upload key outside the repo, secrets ignored and denied, the service-account file read in one place, owner values (G3, GP5), a complete Shell | Workflow step 3 and the definition of done |
 | `scripts/check-store-aab.mjs` | The store-AAB gate: signature, versionCode against the tags, package, test code, variant, AdMob id, owner placeholders, permissions, debuggable, target SDK, Shell; `--unsigned` for the rehearsal, `--stamp` after a PASS | Workflow step 6 and the definition of done |
-| `scripts/lib/aab.mjs` | Zip reader, the protobuf manifest decoder and the signature check | Never by hand |
+| `scripts/lib/aab.mjs` | The protobuf manifest decoder and the signature check | Never by hand |
+| `scripts/lib/zip.mjs` | Zip reader (node:zlib) for AABs and APKs (synced from the library, the same reader android-emulator-build uses; do not edit here) | Never by hand |
+| `scripts/lib/manifest-tree.mjs` | `findElements` and `metaDataValue` over a parsed manifest tree (synced from the library; do not edit here) | Never by hand |
 | `scripts/lib/ship-placeholders.mjs` | The placeholders a ship gate refuses, with their owner steps (G3, G5, GP5) and the `OWNER STEPS PENDING` line (synced from the library; do not edit here) | Never by hand |
 | `assets/permission-allowlist.json` | The permissions a Pocket Arcade bundle may hold, each with who declares it (synced from the library, the same list android-emulator-build and privacy-and-network-audit check; do not edit here) | When check-store-aab reports `permission` |
 | `scripts/selftest.mjs` | Proves the stamp and both checkers on good fixtures and every planted bug (settings and key files planted in a temporary copy) | After changing a checker, the allowlist or a template |
