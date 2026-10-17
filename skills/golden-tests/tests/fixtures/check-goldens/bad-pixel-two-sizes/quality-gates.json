@@ -6,6 +6,7 @@
     "**/*.golden.test.ts.snap.ios",
     "**/__image_snapshots__/**",
     "apps/*/e2e/baselines/**",
+    "apps/*/e2e/baselines-android/**",
     "test/goldens/boards/skia-golden.ts",
     "**/fixtures/save-v*.json"
   ]

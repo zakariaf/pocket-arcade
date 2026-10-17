@@ -112,7 +112,7 @@ tsconfig.stryker.json  knip.json  lefthook.yml  .prettierrc.json  .prettierignor
 .claude/settings.json  packages/tooling/network-audit/**  packages/tooling/license-exceptions.json
 packages/tooling/scripts/install-maestro.sh  test/goldens/boards/skia-golden.ts
 **/__snapshots__/*.golden.test.ts.snap  **/*.golden.test.ts.snap.ios  **/__image_snapshots__/**
-apps/*/e2e/baselines/**  **/fixtures/save-v*.json  parity/waivers.json  parity/game-facts.json
+apps/*/e2e/baselines/**  apps/*/e2e/baselines-android/**  **/fixtures/save-v*.json  parity/waivers.json  parity/game-facts.json
 packages/tooling/src/quality/verify-plan.ts
 packages/tooling/src/quality/run-verify.ts  packages/tooling/src/quality/shell-slice.ts
 packages/tooling/src/quality/device-only.ts

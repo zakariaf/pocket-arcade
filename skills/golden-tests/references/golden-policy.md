@@ -66,6 +66,7 @@ The commit-msg hook rejects a commit that touches a gated path without the trail
 | `**/__snapshots__/*.golden.test.ts.snap` | data golden snapshots written without the iOS resolver |
 | `**/__image_snapshots__/**` | pixel golden baselines |
 | `apps/*/e2e/baselines/**` | simulator screenshot baselines |
+| `apps/*/e2e/baselines-android/**` | emulator screenshot baselines (Android step 7; gated since E18-T25) |
 | `test/goldens/boards/skia-golden.ts` | the pixel matcher, which holds the 0.1% tolerance |
 | `**/fixtures/save-v*.json` | frozen save fixtures (the save work owns them; never edit a shipped one) |
 

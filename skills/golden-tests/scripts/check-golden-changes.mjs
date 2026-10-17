@@ -35,7 +35,7 @@ const SPEC = {
     '                        trailer that names the owner\'s approval',
     '',
     'Golden paths: **/*.golden.test.ts.snap.ios, **/*.golden.test.ts.snap, **/__image_snapshots__/**',
-    '(not __diff_output__), apps/*/e2e/baselines/**, test/goldens/boards/skia-golden.ts, **/fixtures/save-v*.json.',
+    '(not __diff_output__), apps/*/e2e/baselines/**, apps/*/e2e/baselines-android/**, test/goldens/boards/skia-golden.ts, **/fixtures/save-v*.json.',
     'Never under skills/, .claude/, node_modules, Pods or an app\'s generated ios/, android/, build/, out/ (check-lib',
     'REPO_SCAN_IGNORES): the skill library\'s fixtures hold golden-shaped files that are not the app\'s goldens.',
     '',
@@ -46,7 +46,7 @@ const SPEC = {
 };
 
 const FORMAT = '==> commit %H%n%B%n==> diff';
-const GOLDEN = ['**/*.golden.test.ts.snap.ios', '**/*.golden.test.ts.snap', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'test/goldens/boards/skia-golden.ts', '**/fixtures/save-v*.json'];
+const GOLDEN = ['**/*.golden.test.ts.snap.ios', '**/*.golden.test.ts.snap', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'apps/*/e2e/baselines-android/**', 'test/goldens/boards/skia-golden.ts', '**/fixtures/save-v*.json'];
 const GIT_GENERATED = /^(Merge |Revert "|fixup! |squash! |amend! )/;
 const TOLERANCE = /\b(failureThreshold|MAX_DIFF_RATIO|maxDiffRatio)\b\s*[:=]\s*([0-9]*\.?[0-9]+(?:e-?\d+)?)/;
 

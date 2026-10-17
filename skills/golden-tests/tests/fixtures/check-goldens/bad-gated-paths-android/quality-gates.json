@@ -1,0 +1,12 @@
+{
+  "gatedPaths": [
+    "quality-gates.json",
+    "jest.config.js",
+    "**/__snapshots__/*.golden.test.ts.snap",
+    "**/*.golden.test.ts.snap.ios",
+    "**/__image_snapshots__/**",
+    "apps/*/e2e/baselines/**",
+    "test/goldens/boards/skia-golden.ts",
+    "**/fixtures/save-v*.json"
+  ]
+}
