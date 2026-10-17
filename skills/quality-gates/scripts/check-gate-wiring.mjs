@@ -38,8 +38,8 @@ const SPEC = {
     '  eslint-cache            a root npm script runs eslint with --cache: the cache keys each result on the',
     '                          file alone, so a test written before its module replays import/no-unresolved',
     '                          and type-aware errors after the module appears (lint the whole repo uncached)',
-    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry; the two',
-    '                          Android budgets (perf.coldStartEmuRegressionFactor, perf.memoryPssMbMax) print',
+    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry; the',
+    '                          Android budget (perf.coldStartEmuRegressionFactor) prints',
     '                          "due at Android step 1" while packages/tooling/src/build/build-android-emu.ts is missing',
     '  claude-settings         .claude/settings.json lost a deny/ask rule, a hook, or allows a bypass',
     '  lefthook                a pre-commit, commit-msg or pre-push job is missing, changed or skipped',
@@ -120,7 +120,7 @@ const ANDROID_DUE_TARGETS = [
  * build tooling: while packages/tooling/src/build/build-android-emu.ts is missing, a missing one prints a
  * not-yet-due SKIP; from then on it fails like any lost entry. A present value is compared as usual.
  */
-const ANDROID_BUDGET_KEYS = ['perf.coldStartEmuRegressionFactor', 'perf.memoryPssMbMax'];
+const ANDROID_BUDGET_KEYS = ['perf.coldStartEmuRegressionFactor'];
 
 /**
  * Why an Android script's target is not yet due, or null when it exists: the Android form of

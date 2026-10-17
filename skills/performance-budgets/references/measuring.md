@@ -12,7 +12,7 @@ How each budget is measured, what the templates do, and the exact commands.
 - Draw-call budget
 - Bundle size
 - Memory footprint
-- Android memory: total PSS
+- Android memory: private dirty + swap
 - The owner's steps
 - The owner's steps on Android
 
@@ -139,15 +139,15 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs reports/perf/export-andro
 
 After the smoke flow on the simulator: `phys_footprint` must stay ≤ 150 MB (footprint's MB, 1,048,576 bytes). `npm run e2e:ios` measures it in its memory step: it plays the game's smoke flows again, finds the app's process on that simulator (`pgrep -f 'Devices/<udid>/.*/<App>\.app/<App>'`) and runs `footprint --pid <pid> -j <file> -f bytes --noCategories` (no `sudo` for simulator apps); the result is in `reports/e2e/<game>/perf.json`. Costs to keep in mind: one Skia `<Canvas>` (48 × 15 pt at 3×) ≈ 0.18 MB and ≈ 2.8 ms to mount; a rasterized 24 pt icon at 3× is a 0.3–1.4 KB PNG; a pre-rendered texture costs w × h × 4 bytes (1024² = 4 MB); one second of mono float audio at 48 kHz is 192 KB.
 
-## Android memory: total PSS
+## Android memory: private dirty + swap
 
-Android has no `phys_footprint`; the decision is `dumpsys meminfo` **TOTAL PSS** against the same 150 MB (`memoryPssMbMax`). PSS counts the app's private pages plus its share of pages it shares with other processes (the zygote, system libraries), which is the closest Android number to the iOS footprint. After the smoke flow on the emulator, the e2e-maestro runner (`npm run e2e:android`, Android step 7) reads:
+Android has no `phys_footprint`. Its like is the `TOTAL` row's **Private Dirty** of `dumpsys meminfo` plus the swapped-out part (**TOTAL SWAP PSS**, 0 where the device reports none), judged against the same 150 MB budget, the one key `memoryFootprintMbMax` of both platforms (lead decision, 2026-10-17). Why not total PSS: `phys_footprint` is the dirty and compressed memory without clean file-backed pages, while total PSS also counts the clean, reclaimable mapped code (`.apk`, `.dex`, `.so`). On the API 35 emulator (E18-T24, Line Siege after the smoke flow and a relaunch) total PSS was 211 MB, of which about 82 MB was that code (`.apk mmap` 31 MB: the stored `librnskia.so`, `libreactnative.so` and the 5.3 MB Hermes bundle mapped from the APK; `.dex mmap` 28 MB, R8 off; `.so mmap` 12 MB), and private dirty + swap was 111 MB. After the smoke flow on the emulator, the e2e-maestro runner (`npm run e2e:android`, Android step 7) reads:
 
 ```sh
 adb -s "$SERIAL" shell dumpsys meminfo "$PACKAGE"
 ```
 
-and takes the `TOTAL PSS:` value of its App Summary (KB) divided by 1,024 into `reports/e2e-android/<game>/perf.json`; over `memoryPssMbMax` fails the run. RSS (larger, it counts shared pages in full) and `SWAP PSS` are not the budget. Not yet confirmed on the emulator: the `dumpsys meminfo` layout of API 35 (the first Android E2E run records the line it read here). The emulator shows regressions only, as the simulator does.
+and reads the table by its column names (`Pss Total`, `Private Dirty`, `SwapPss Dirty`) and the App Summary's `TOTAL PSS:` and `TOTAL SWAP PSS:` (KB; an MB is 1,024 KB) into `reports/e2e-android/<game>/memory.json`; private dirty + swap over `memoryFootprintMbMax` fails the run, and total PSS stays beside it as information. RSS (larger, it counts shared pages in full) is not the budget either. Confirmed on API 35 (E18-T24): `        TOTAL   216122   113616    88808      426   300640    98611    78725    15545` under the `Pss Private Private SwapPss Rss Heap Heap Heap` / `Total Dirty Clean Dirty Total Size Alloc Free` header, and `TOTAL PSS:   216122 ... TOTAL SWAP PSS:      426`. The emulator shows regressions only, as the simulator does.
 
 ## The owner's steps
 

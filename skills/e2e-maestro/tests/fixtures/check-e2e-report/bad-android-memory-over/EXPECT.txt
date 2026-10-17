@@ -1,1 +1,1 @@
-[memory] total PSS 168 MB after the smoke flow is over 150 MB
+[memory] private dirty + swap 160 MB after the smoke flow is over 150 MB (total PSS 140 MB, information only)

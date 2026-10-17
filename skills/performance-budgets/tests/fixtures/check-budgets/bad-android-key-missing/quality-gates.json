@@ -2,7 +2,6 @@
   "perf": {
     "coldStartHomeMsMax": 1000,
     "coldStartSimRegressionFactor": 1.2,
-    "coldStartEmuRegressionFactor": 1.2,
     "hitchMsPerSecondMax": 10,
     "frameP95MsMax": 17,
     "saveWriteP95MsMax": 5,

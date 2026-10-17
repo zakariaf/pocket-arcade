@@ -1,7 +1,7 @@
 // packages/tooling/src/e2e/android-memory.test.ts
 import fc from 'fast-check';
 
-import { judgePss, totalPssKbOf } from './android-memory.ts';
+import { judgeMemory, memoryOf, totalPssKbOf } from './android-memory.ts';
 
 const BUDGETS = { coldStartSimRegressionFactor: 1.2, memoryFootprintMbMax: 150 };
 
@@ -44,27 +44,76 @@ describe('totalPssKbOf', () => {
   });
 });
 
-describe('judgePss', () => {
-  it('compares total PSS with the same 150 MB budget as the simulator footprint', () => {
-    expect(judgePss(98_304, BUDGETS)).toStrictEqual({
+/** The run-3 reading of E18-T24 (Line Siege, API 35 emulator): private dirty under, PSS over. */
+const MEMINFO_E18 = [
+  '** MEMINFO in pid 14319 [io.applander.linesiege] **',
+  '                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap',
+  '                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free',
+  '                ------   ------   ------   ------   ------   ------   ------   ------',
+  '  Native Heap    67012    66876       96       49    67780    83580    71209     8030',
+  '    .dex mmap    28492        4    28452        0    29252',
+  '        TOTAL   216122   113616    88808      426   300640    98611    78725    15545',
+  '',
+  ' App Summary',
+  '           TOTAL PSS:   216122            TOTAL RSS:   300640       TOTAL SWAP PSS:      426',
+  '',
+].join('\n');
+
+describe('memoryOf', () => {
+  it("reads the table's TOTAL private dirty, the swap PSS and the total PSS in KB (pinned)", () => {
+    expect(memoryOf(MEMINFO_E18)).toStrictEqual({
+      totalPssKb: 216_122,
+      privateDirtyKb: 113_616,
+      swapPssKb: 426,
+    });
+  });
+
+  it('counts no swap where the device reports none, and is null without a process', () => {
+    expect(memoryOf(MEMINFO_15)).toStrictEqual({
       totalPssKb: 98_304,
-      totalPssMb: 96,
+      privateDirtyKb: 80_000,
+      swapPssKb: 0,
+    });
+    expect(memoryOf('No process found for: io.applander.linesiege\n')).toBeNull();
+  });
+});
+
+describe('judgeMemory', () => {
+  it('judges private dirty + swap, like the iOS footprint, and keeps total PSS as information', () => {
+    expect(
+      judgeMemory({ totalPssKb: 216_122, privateDirtyKb: 113_616, swapPssKb: 426 }, BUDGETS),
+    ).toStrictEqual({
+      footprintKb: 114_042,
+      footprintMb: 111.4,
+      privateDirtyKb: 113_616,
+      swapPssKb: 426,
+      totalPssKb: 216_122,
+      totalPssMb: 211.1,
       limitMb: 150,
       isOver: false,
     });
   });
 
-  it('is over the budget above 150 MB of 1024 KB each', () => {
-    expect(judgePss(153_600, BUDGETS).isOver).toBe(false);
-    expect(judgePss(153_601, BUDGETS).isOver).toBe(true);
+  it('is over when private dirty + swap is above 150 MB, whatever the total PSS', () => {
+    const over = { totalPssKb: 140_000, privateDirtyKb: 153_000, swapPssKb: 601 };
+    expect(judgeMemory(over, BUDGETS).isOver).toBe(true);
+    expect(judgeMemory({ ...over, swapPssKb: 600 }, BUDGETS).isOver).toBe(false);
   });
 
-  it('is over exactly when the MB value is above the limit', () => {
+  it('is over exactly when the footprint in KB is above the limit', () => {
     fc.assert(
-      fc.property(fc.nat({ max: 400_000 }), (kb) => {
-        const result = judgePss(kb, BUDGETS);
-        return result.isOver === kb > 150 * 1024 && result.totalPssMb >= 0;
-      }),
+      fc.property(
+        fc.nat({ max: 300_000 }),
+        fc.nat({ max: 50_000 }),
+        fc.nat({ max: 400_000 }),
+        (dirty, swap, pss) => {
+          const result = judgeMemory(
+            { totalPssKb: pss, privateDirtyKb: dirty, swapPssKb: swap },
+            BUDGETS,
+          );
+          return result.isOver === dirty + swap > 150 * 1024 && result.footprintKb === dirty + swap;
+        },
+      ),
     );
   });
 });

@@ -8,7 +8,7 @@
 // phone and the iPad, and (with
 // --screenshots) no screenshot differs from its baseline and every device/language/theme set is
 // complete. Prints the evidence lines for the report. With --platform android it reads the same evidence
-// of npm run e2e:android from reports/e2e-android/<game-id>/ (cold-start.json and memory.json, total PSS,
+// of npm run e2e:android from reports/e2e-android/<game-id>/ (cold-start.json and memory.json, private dirty + swap,
 // instead of perf.json) and reports/screenshots-android/.
 // Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/check-e2e-report.mjs . --app <game-id> [--platform ios|android] [--screenshots]
 
@@ -45,8 +45,9 @@ const SPEC = {
     '  cold-start           the simulator cold-start step failed, or its median is over baseline x 1.2 (android: the',
     '                       emulator median of am start -W launches against perf-baselines/cold-start-emu-<game-id>.json)',
     '  memory               the memory step failed, or phys_footprint after the smoke flow and a relaunch (Maestro 2.10',
-    '                       stops the app when a test ends) is over the budget (150 MB); android: dumpsys meminfo total',
-    '                       PSS against the same 150 MB budget',
+    '                       stops the app when a test ends) is over the budget (150 MB); android: dumpsys meminfo private',
+    '                       dirty + swap PSS (the iOS footprint\'s like) against the same 150 MB budget, total PSS kept as',
+    '                       information (it counts the clean mapped code); a memory.json without footprintMb fails',
     '  feedback-evidence    feedback.json is missing (the memory step did not read the perf log), or the game\'s',
     '                       smoke flows asked for no win sound (a sound id "win" or ending in ".win", the Shell\'s ui.win)',
     '                       or no success haptic: the win feedback is not wired to the ports (test builds record each',
@@ -204,9 +205,12 @@ function checkEmuPerf(root, out, game, report) {
   const memory = existsSync(memoryFile) ? readJson(memoryFile) : null;
   if (memory === null) missing(memoryRel, 'memory');
   else if (typeof memory.error === 'string') report.problem({ file: memoryRel, line: 0, rule: 'memory', message: memory.error, fix: `Open reports/e2e-android/${game}/memory/ (the smoke flow's log and meminfo.txt), fix the cause and rerun.` });
-  else if (memory.isOver === true) report.problem({ file: memoryRel, line: 0, rule: 'memory', message: `total PSS ${memory.totalPssMb} MB after the smoke flow is over ${memory.limitMb} MB`, fix: 'Find what holds memory (textures, pictures, audio buffers, canvases per screen; the performance-budgets skill) and release it.' });
-  else if (typeof memory.totalPssMb === 'number') report.note(`evidence: Memory (emulator): total PSS ${memory.totalPssMb} MB after the smoke flow and a relaunch (budget ${memory.limitMb} MB)`);
-  else report.problem({ file: memoryRel, line: 0, rule: 'memory', message: 'holds no total PSS and no error', fix: `Rerun npm run e2e:android -- --app ${game}.` });
+  else if (typeof memory.footprintMb === 'number' && typeof memory.limitMb === 'number') {
+    const pss = typeof memory.totalPssMb === 'number' ? `total PSS ${memory.totalPssMb} MB, information only` : 'no total PSS';
+    if (memory.footprintMb > memory.limitMb) report.problem({ file: memoryRel, line: 0, rule: 'memory', message: `private dirty + swap ${memory.footprintMb} MB after the smoke flow is over ${memory.limitMb} MB (${pss})`, fix: 'Find what holds memory (textures, pictures, audio buffers, canvases per screen; the performance-budgets skill) and release it.' });
+    else report.note(`evidence: Memory (emulator): private dirty + swap ${memory.footprintMb} MB after the smoke flow and a relaunch (budget ${memory.limitMb} MB; ${pss})`);
+  }
+  else report.problem({ file: memoryRel, line: 0, rule: 'memory', message: 'holds no private dirty footprint (footprintMb) and no error: total PSS alone is not the budget, it counts the clean mapped code', fix: `Copy android-memory.ts and emu-perf-steps.ts from this skill's templates, then rerun npm run e2e:android -- --app ${game}.` });
 }
 
 const BENCHMARK_WRITES = 300;

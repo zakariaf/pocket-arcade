@@ -1,2 +1,2 @@
 [budget-looser]
-perf.memoryPssMbMax is 200, looser than the budget 150
+perf.coldStartEmuRegressionFactor is 1.5, looser than the budget 1.2

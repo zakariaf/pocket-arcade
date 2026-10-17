@@ -15,8 +15,7 @@ export const PERF_BUDGETS = {
   drawCallsPerFrameMax: [1000, 'max', 'ceiling for every game\'s per-frame draw-call budget'],
   bundleJsBytesMax: [6000000, 'max', 'minified JS of the store build, expo export --no-bytecode (bytes)'],
   bundleGrowthMaxRatio: [1.1, 'max', 'bundle may grow at most this times the committed baseline'],
-  memoryFootprintMbMax: [150, 'max', 'phys_footprint after the smoke flow on the simulator (MB)'],
-  memoryPssMbMax: [150, 'max', 'Android: dumpsys meminfo TOTAL PSS after the smoke flow on the emulator (MB, 1,024 KB)'],
+  memoryFootprintMbMax: [150, 'max', 'memory after the smoke flow, both platforms: phys_footprint on the simulator, dumpsys meminfo private dirty + swap PSS on the emulator (MB)'],
   levelGridTilesMax: [150, 'max', 'level tiles mounted on one screen'],
   skiaCanvasesPerScreenMax: [8, 'max', 'Skia canvases per screen outside the board'],
 };
@@ -25,7 +24,7 @@ export const PERF_BUDGETS = {
  * The Android budgets join quality-gates.json at Android step 1 (with the Android build tooling):
  * before that file exists a missing Android key is not yet due.
  */
-export const ANDROID_BUDGET_KEYS = Object.freeze(['coldStartEmuRegressionFactor', 'memoryPssMbMax']);
+export const ANDROID_BUDGET_KEYS = Object.freeze(['coldStartEmuRegressionFactor']);
 export const ANDROID_BUDGETS_DUE = Object.freeze({ file: 'packages/tooling/src/build/build-android-emu.ts', step: 1 });
 
 export function defaultBudgets() {

@@ -3,5 +3,4 @@ SKIP package.json [script-target] npm run screenshots:android: due at Android st
 SKIP package.json [script-target] npm run build:android:emu: due at Android step 1: packages/tooling/src/build/build-android-emu.ts not yet created (android-emulator-build copies it)
 SKIP package.json [script-target] npm run release:android: due at Android step 8: packages/tooling/src/release-android/release-android.ts not yet created (android-release-play copies it)
 SKIP quality-gates.json [gate-weakened] perf.coldStartEmuRegressionFactor: due at Android step 1: packages/tooling/src/build/build-android-emu.ts not yet created (performance-budgets adds it)
-SKIP quality-gates.json [gate-weakened] perf.memoryPssMbMax: due at Android step 1: packages/tooling/src/build/build-android-emu.ts not yet created (performance-budgets adds it)
 RESULT: PASS
