@@ -2,13 +2,20 @@
 // Test builds only (reached through test-only.ts). A malformed -parity argument shows only this:
 // a silent fallback to Home would be compared with the wrong reference. It renders before any
 // theme or i18n provider exists, so the error is the accessible label of one plain view (Maestro
-// reads it as the element's text) on the system background.
-import { PlatformColor, StyleSheet, View } from 'react-native';
+// reads it as the element's text) on the system background: iOS's systemBackground, Android's
+// theme colorBackground (an iOS semantic name is no Android resource, and the app would crash).
+import { Platform, PlatformColor, StyleSheet, View } from 'react-native';
 
 import type { ComponentType, ReactNode } from 'react';
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: PlatformColor('systemBackground') },
+  root: {
+    flex: 1,
+    backgroundColor:
+      Platform.OS === 'android'
+        ? PlatformColor('?android:attr/colorBackground')
+        : PlatformColor('systemBackground'),
+  },
 });
 
 /** The root component startShell registers instead of the app. */
