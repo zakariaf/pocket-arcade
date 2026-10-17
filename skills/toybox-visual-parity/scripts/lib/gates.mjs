@@ -979,8 +979,10 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     for (const [id, { el, a }] of pairs) {
       if (!geo.inBody(el)) continue;
       const top = expectedY(el);
-      const isCutTop = top < geo.headerBottom - T.boundsPt && atTop(a);
-      const isCutBottom = top + el.rect.h > geo.bodyBottom + T.boundsPt && atBottom(a);
+      // Any part past the window edge is cut, a sliver too: S11's Privacy tab ran 1.6 pt under the
+      // top bar at the last offset and came back 2.2 pt short (E18-T22).
+      const isCutTop = top < geo.headerBottom && atTop(a);
+      const isCutBottom = top + el.rect.h > geo.bodyBottom && atBottom(a);
       if (!isCutTop && !isCutBottom) continue;
       const y = isCutTop && isCutBottom ? top : isCutTop ? a.y + a.h - el.rect.h : a.y;
       pairs.set(id, { el, a: { ...a, y, h: el.rect.h } });

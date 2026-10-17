@@ -1,0 +1,16 @@
+{
+ "version": 1,
+ "frame": "s11-settings",
+ "variant": "no-music",
+ "referenceName": "s11-settings--no-music",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 1068,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "A real Release capture of S11 light-en at its last scroll offset, 1068, on the e07-android-parity emulator (E18-T22). The Privacy tab's top runs 1.6 pt under the top bar, so Android reports it cut at the body window by less than the 2 pt tolerance; it is judged by its visible edges."
+}
