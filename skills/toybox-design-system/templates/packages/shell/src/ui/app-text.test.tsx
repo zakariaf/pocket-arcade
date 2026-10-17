@@ -334,6 +334,19 @@ describe('AppText', () => {
     expect(text.props['accessibilityLabel']).toBeUndefined();
   });
 
+  it('keeps a game name and Persian digits as written on iOS, with no label of their own', async () => {
+    await renderWithShell(
+      <>
+        <AppText text="Line Siege" variant="gameNameHome" testID="home.name" />
+        <AppText text="۲۸ / ۲۷۰" testID="stats.levels-card.stars.value" />
+      </>,
+      { language: 'fa' },
+    );
+
+    expect(screen.getByTestId('home.name').props['accessibilityLabel']).toBeUndefined();
+    expect(screen.getByTestId('stats.levels-card.stars.value')).toHaveTextContent('۲۸ / ۲۷۰');
+  });
+
   it('paints tones from the theme', async () => {
     await renderWithShell(<AppText text="Reset" tone="danger" testID="settings.reset-label" />);
 

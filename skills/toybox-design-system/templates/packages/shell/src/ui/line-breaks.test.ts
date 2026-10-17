@@ -4,7 +4,9 @@
 // hyphenation, so S11a's note and S11b's credits line wrapped a word earlier there (E18-T22).
 import fc from 'fast-check';
 
-import { withHyphenBreaks } from './line-breaks.ts';
+import { RLM } from '@e07/shell/i18n/bidi.ts';
+
+import { androidMarksOf, withHyphenBreaks } from './line-breaks.ts';
 
 const ZWSP = '​';
 
@@ -39,5 +41,14 @@ describe('withHyphenBreaks', () => {
     expect(withHyphenBreaks('Persian and Sorani use a right-to-left layout.')).toBe(
       `Persian and Sorani use a right-${ZWSP}to-${ZWSP}left layout.`,
     );
+  });
+});
+
+describe('androidMarksOf', () => {
+  it('adds the break points, and in a right-to-left paragraph the mark before a text without letters', () => {
+    expect(androidMarksOf('۲۸ / ۲۷۰', true)).toBe(`${RLM}۲۸ / ۲۷۰`);
+    expect(androidMarksOf('۲۸ / ۲۷۰', false)).toBe('۲۸ / ۲۷۰');
+    expect(androidMarksOf('right-to-left', true)).toBe(`right-${ZWSP}to-${ZWSP}left`);
+    expect(androidMarksOf('چپ-به-راست', true)).toBe(`چپ-${ZWSP}به-${ZWSP}راست`);
   });
 });
