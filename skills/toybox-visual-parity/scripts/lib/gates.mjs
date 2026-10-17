@@ -67,6 +67,20 @@ export function textRoleFloor(font) {
   return { role: `${family} ${size}${probed === undefined ? ' (not probed: family maximum)' : ''}`, floorPt, centrePt };
 }
 
+// React Native on Android (0.86.3, BaseViewManager.updateViewContentDescription) appends the state
+// descriptions that AccessibilityNodeInfo has no field for to an element's contentDescription, joined
+// with ", ": "busy" (accessibilityState.busy) and "mixed" (checked: 'mixed'), in the phone's locale
+// from its own res/views/uimanager/values*/strings.xml (en, de, fa; ckb has no table and falls back to
+// en). Maestro lists that contentDescription as the label, so a busy key reads "Loading price…, busy"
+// while the screen shows "Loading price…". Only these exact suffixes are read off, and only on Android.
+export const ANDROID_RN_STATE_SUFFIXES = ['busy', 'mixed', 'in Gebrauch', 'gemischt', 'مشغول', 'ترکیب‌شده'];
+export function withoutAndroidStateSuffix(label, want) {
+  for (const suffix of ANDROID_RN_STATE_SUFFIXES) {
+    if (label === `${want}, ${suffix}`) return { label: want, suffix };
+  }
+  return { label, suffix: null };
+}
+
 const RULE_ORDER = ['capture-size', 'screen-not-reached', 'scroll-mismatch', 'duplicate-testid', 'missing', 'bounds', 'text', 'fill', 'border', 'text-ink', 'structure'];
 
 /**
@@ -1125,7 +1139,9 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
       continue;
     }
     checked.text += 1;
-    if (normText(a.label) !== want) {
+    const read = device.platform === 'android' ? withoutAndroidStateSuffix(normText(a.label), want) : { label: normText(a.label), suffix: null };
+    if (read.suffix) notes.push(`${el.testID}: Android's state description ", ${read.suffix}" read off the label (React Native appends it for TalkBack)`);
+    if (read.label !== want) {
       add('text', el.testID, `text "${normText(a.label)}" but the design says "${want}"`,
         'Use the copy-deck key the design uses, with the same numbers, spaces and punctuation, and the fixture values of this frame.', { rect: el.rect });
     }
