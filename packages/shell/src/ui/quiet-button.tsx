@@ -11,9 +11,10 @@ import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { AppText, useTextScale } from './app-text.tsx';
+import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
+import { useTextScale } from './use-text-scale.ts';
 
 import type { TextLine } from './app-text.tsx';
 import type { IconName } from './icons/icon-paths.ts';
