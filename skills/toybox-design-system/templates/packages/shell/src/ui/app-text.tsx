@@ -9,9 +9,10 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
+import { MAX_TEXT_SCALE } from './font-scale-curve.ts';
 import { androidMarksOf } from './line-breaks.ts';
 import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
-import { MAX_TEXT_SCALE, useTextScale } from './use-text-scale.ts';
+import { useScaledSize } from './use-scaled-size.ts';
 
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
@@ -294,11 +295,12 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   const [stored, setMeasured] = useState<Measured>(() => freshMeasure(text));
   const measured = forText(stored, text, freshMeasure);
   const guard = overflowGuardOf(localized);
-  // iOS lays each line at the line height times the text size (200 % at most): a box and a room
-  // counted in the 1x line read one 200 % line as two.
+  // The phone draws each line at the line height scaled to the text size (200 % at most; along
+  // Android 14's curve there): a box and a room counted in the 1x line read one 200 % line as two,
+  // and counted linearly on Android they kept an empty band under the text.
   const box = {
     pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
-    lineHeight: (localized.lineHeight ?? 0) * useTextScale(),
+    lineHeight: useScaledSize()(localized.lineHeight ?? 0),
     surplus: measured.surplus ?? 0,
   };
   const count = countOf(measured, props.numberOfLines);
