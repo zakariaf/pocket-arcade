@@ -175,6 +175,8 @@ describe('withShell', () => {
     expect(plugins).toContain('@e07/shell/plugins/with-rtl-support.ts');
     // Android 15+ draws each Text with the layout React Native measured (E18-T22).
     expect(plugins).toContain('@e07/shell/plugins/with-prepared-text-layout.ts');
+    // Play Billing's own telemetry never uploads from the app's process (spec N3, E18-T24).
+    expect(plugins).toContain('@e07/shell/plugins/with-no-google-telemetry.ts');
     expect(plugins).toContainEqual([
       '@e07/shell/plugins/with-upload-signing.ts',
       { game: 'probe-game' },
