@@ -7432,7 +7432,7 @@
       "topic": "The app on the emulator",
       "symptom": "On Android 15+ a text's last word wraps onto a second line and is clipped (a Persian group tab drew two lines in a one-line box) while onTextLayout reports one line",
       "cause": "An app targeting SDK 35+ gets the compat change USE_BOUNDS_FOR_WIDTH (63938206): a TextView wraps by its glyph bounds, while React Native 0.86 measures a Text by its advances, so a line whose ink overhangs its advance fits the measured box and wraps when drawn. Proof: adb -s <serial> shell am compat disable USE_BOUNDS_FOR_WIDTH <package> draws it on one line",
-      "fix": "Keep withShell's with-prepared-text-layout plugin: it forces React Native's enablePreparedTextLayout on in MainApplication.kt after loadReactNative(this), so the view draws the layout React Native measured; reset any compat override (am compat reset) before judging a capture; never pad or shrink the text",
+      "fix": "Keep withShell's with-prepared-text-layout plugin: it forces React Native's enablePreparedTextLayout on in MainApplication.kt after loadReactNative(this), so the view draws the layout React Native measured; reset any compat override (am compat reset) before judging a capture; never pad or shrink the text. Side effect of the prepared layout: its StaticLayout reads the paragraph direction first-strong-LTR, so in fa and ckb a text without a strong letter outside isolates (\"۲۸ / ۲۷۰\", a date of isolated names) draws left to right; AppText's androidMarksOf adds the right-to-left mark (android-prepared-layout-ltr)",
       "match": [
         "USE_BOUNDS_FOR_WIDTH"
       ],
@@ -7451,6 +7451,18 @@
       "status": "verified",
       "owner": false,
       "skill": "toybox-design-system"
+    },
+    {
+      "id": "android-prepared-layout-ltr",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "In Persian or Sorani on Android a text of digits and signs (\"۲۸ / ۲۷۰\", \"×۶\") or a date of isolated names draws left to right, its parts in the wrong order",
+      "cause": "React Native's prepared text layout (with-prepared-text-layout) draws the layout TextLayoutManager measured, whose StaticLayout never sets a text direction and so reads FIRSTSTRONG_LTR; a TextView in a right-to-left layout read first strong, then RTL",
+      "fix": "AppText on Android, in a right-to-left layout, starts a text without a strong letter outside isolates with U+200F (asRtlParagraph in bidi.ts through androidMarksOf); a single number stays as written; never type the mark into catalogs or screens",
+      "match": [],
+      "status": "verified",
+      "owner": false,
+      "skill": "rtl-and-direction"
     }
   ]
 }

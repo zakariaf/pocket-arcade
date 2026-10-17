@@ -140,3 +140,4 @@ edge swipe on the board opens Pause on Android
 ?? packages/shell/android/build/
 android 15 last word wraps and is clipped while onTextLayout reports one line
 hyphenated word moves whole to the next line on Android
+persian digits and slash draw left to right on Android
