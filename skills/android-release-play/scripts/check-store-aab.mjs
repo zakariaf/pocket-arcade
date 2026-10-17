@@ -175,9 +175,10 @@ function checkShell({ root, report }) {
   if (existsSync(join(root, 'shell-slice.json'))) report.problem({ file: 'shell-slice.json', rule: 'shell-slice', message: 'the repo declares a partial Shell; a slice never ships', fix: 'Build every Shell screen and delete shell-slice.json before a release.' });
 }
 
-function writeStamp(options, code) {
+/** The stamp hashes the bytes the gate read (zip.buffer), so it names exactly what was checked. */
+function writeStamp(options, code, zip) {
   if (!options.stamp || code !== 0 || options.unsigned) return;
-  const sha256 = createHash('sha256').update(readFileSync(options.aab)).digest('hex');
+  const sha256 = createHash('sha256').update(zip.buffer).digest('hex');
   mkdirSync(dirname(options.stamp), { recursive: true });
   writeFileSync(options.stamp, `${JSON.stringify({ result: 'PASS', sha256, versionCode: Number(options.build), isUnsigned: false }, null, 2)}\n`);
   console.log(`stamp written: ${options.stamp} (sha256 ${sha256})`);
@@ -197,6 +198,6 @@ run(async () => {
   checkManifest(context);
   checkShell(context);
   const code = finishWithOwnerSteps(report, { checked: 1, unit: `bundle (${options.variant}/${options.ads}, versionCode ${options.build})` });
-  writeStamp(options, code);
+  writeStamp(options, code, inputs.zip);
   return code;
 });
