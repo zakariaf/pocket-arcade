@@ -5,6 +5,8 @@ import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 
 import { LAYOUT } from '@e07/shell/theme/tokens.ts';
 
+import { bodyBottomPaddingOf } from './use-body-bottom-top-up.ts';
+
 import type { ComponentRef, ReactNode } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
@@ -85,23 +87,6 @@ const styles = StyleSheet.create({
   overhangContent: { paddingTop: LAYOUT.bodyPaddingTop + OVERHANG_ROOM },
 });
 
-/** Under the home indicator: max(34, inset). Otherwise ScreenFrame insets it; top up to 34. */
-function bottomPaddingOf(isUnderHomeIndicator: boolean, insetBottom: number): number {
-  return isUnderHomeIndicator
-    ? Math.max(LAYOUT.bodyPaddingBottom, insetBottom)
-    : Math.max(0, LAYOUT.bodyPaddingBottom - insetBottom);
-}
-
-/**
- * What a page that is not a ScreenBody keeps under its last block beyond the bottom inset, so it ends
- * 34 pt above the screen's edge as every Toybox page does: 0 above the iPhone's 34 pt home
- * indicator, 10 above Android's 24 dp gesture bar (the startup splash).
- */
-export function useBodyBottomTopUp(): number {
-  const insetBottom = use(SafeAreaInsetsContext)?.bottom ?? 0;
-  return bottomPaddingOf(false, insetBottom);
-}
-
 type ReachedScrollMarker = {
   /** onScroll for the ScrollView in a test build that measures its scroll; nothing otherwise. */
   readonly scrollProps: {
@@ -136,7 +121,7 @@ export function ScreenBody(props: ScreenBodyProps): ReactNode {
   const paddingBottom =
     props.isAboveBanner === true
       ? GAPS[gap]
-      : bottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
+      : bodyBottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
   const isOverhang = props.hasTopOverhang === true;
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
   const harnessScrollY = use(ScreenScrollTargetContext);
