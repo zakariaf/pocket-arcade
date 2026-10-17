@@ -4,10 +4,15 @@
 #   xcrun simctl uninstall <udid> <bundle id>; xcrun simctl install <udid> <app>
 #   xcrun simctl privacy <udid> reset all <bundle id>; xcrun simctl launch <udid> <bundle id>
 #   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
+# Android (no App Tracking Transparency, L14: the tracking steps run only on iOS), from a fresh install
+# on the e07-android-<purpose> emulator, always by its serial:
+#   adb -s <serial> uninstall <package>; adb -s <serial> install -r <apk>
+#   adb -s <serial> shell am start -W -n <package>/.MainActivity
+#   tools/maestro/bin/maestro --device <serial> --driver-host-port <port> test -e APP_ID=<package> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
 # No ads= in the link: ads=test is S15's "Always show test ads", which drops the pacing rules that
 # step 3 proves (it is kept across launches, so a fresh install is the only way back).
 # geo=eea makes Google's UMP answer as for a player in the EEA on any network: S3 (the Shell's
-# intro), then Google's form, then Apple's prompt, then the first banner (spec S3, O1, L10).
+# intro), then Google's form, then Apple's prompt (iOS only), then the first banner (spec S3, O1, L10).
 appId: ${APP_ID}
 name: Ads smoke 1 - EEA consent order, S3 then Google's form then Apple's prompt, then a banner
 tags: [ads-smoke]
@@ -26,13 +31,18 @@ tags: [ads-smoke]
 - waitForAnimationToEnd
 # system-ui: Google's form button.
 - tapOn: 'Consent'
-# system-ui: Apple's tracking alert. It may appear while Google's form is still drawn behind it;
-# wait for the alert's own button, never for the form to disappear (round 4, iOS 26.5).
-- extendedWaitUntil:
-    visible: 'Ask App Not to Track'
-    timeout: 30000
-# system-ui: Apple's tracking alert button (declining still serves ads, without the IDFA).
-- tapOn: 'Ask App Not to Track'
+# Apple's tracking alert exists only on iOS (L14).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # system-ui: Apple's tracking alert. It may appear while Google's form is still drawn behind
+      # it; wait for the alert's own button, never for the form to disappear (round 4, iOS 26.5).
+      - extendedWaitUntil:
+          visible: 'Ask App Not to Track'
+          timeout: 30000
+      # system-ui: Apple's tracking alert button (declining still serves ads, without the IDFA).
+      - tapOn: 'Ask App Not to Track'
 - extendedWaitUntil:
     visible:
       id: 'home.screen'
