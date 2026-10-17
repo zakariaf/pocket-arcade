@@ -6677,195 +6677,6 @@
       ]
     },
     {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s6-pause",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "dae982a2d87bcead617ae9dbe8694a386bd74fe6b8cdca43f98b597e3e73dbd3",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "n/a",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s6-pause",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "91223a1316590a4d9431d863398cc7ecbf792d22af27c09cfced403fda667e58",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "n/a",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s6-pause",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "451896936fb21a61937398b64d2833fda662cd099aa5a8686f65a51c1027ecc8",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "n/a",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s6-pause",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "559cc5c0041a9f722ab4f2cc1c170a5e690fed015afb8a78983c9a9d75404faf",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "n/a",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s7-result-win",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "4373eb2a144fed2d68cbb0a2ecfa59bbe5d71be0b9483afc9a835b8426d038e9",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s7-result-win",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "db8373d84ae527ad07fb0e9125988db6ad7753226599e4bc66c05610e8af9341",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s7-result-win",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "857657854c479d40b97ca0c0a0c1ea23b18a86716666a44d53ecaa09737c547e",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s10-statistics",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 768,
-      "sheetSha256": "2d29bd409ec922d469625e6b2d6186a9020a9fbf0ddf1338ff1f5821b172bf27",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s10-statistics",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 768,
-      "sheetSha256": "2ec135debffbd52da5a9b3107361482bbbe495f6d6d076ebb580dae607cd3705",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
       "platform": "ios",
       "game": "lineSiege",
       "frame": "s6-pause",
@@ -7297,6 +7108,832 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "13bdb44ab10c29536269f2120e7ed9e998a023589cb61dfba0423ea45f278dd2",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c72c4079ca0abe9f3da6d43224157677d94fd5bd7c18b9ffce504e734d642cce",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "500820ffd7764241f9bef06001511d9e3f3aa63a620d455404e34aa7130c2f55",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "7099a82e7b111522bfb07813ec06dc808bcfa5c1d44b02c9a50bcb348980a6ee",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 374,
+      "sheetSha256": "84af29974049f48f72e288a625a355c17e868080ad810a408ccccff6d05d2178",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 768,
+      "sheetSha256": "1314cd4efdd1805c4c43b4ad6b601815f52a203d0fcea72d20afea30f6980175",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "63d40d3ccd674c406a9657109237969805b16a0f18dd8d4d2c76b52c7001de3c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "0e57d38fe057b77e9ab8fbc8e2b14bc987deb257bb4ea188d3cdacfa3d84a5d9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 834,
+      "sheetSha256": "26a89a6f8b300225c49ffc534f790ff0f3d9a76cfbd06f8ed4c4b55ef494121a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "'۲۸ / ۲۷۰' and '×۶' drew left to right after the prepared text layout; AppText marks a text without letters right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "cdb773a4e478f19fc8468e8b6e02dc10c9be09cd08e57bc392d28e4278fe1c1b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "'۲۸ / ۲۷۰' and '×۶' drew left to right after the prepared text layout; AppText marks a text without letters right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 374,
+      "sheetSha256": "ad4a0f3e226942eb02aa29d1516f01b74bdfad6bd6424306dcfb23405793a14a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 768,
+      "sheetSha256": "673a2dac00e3ca67486591e838b252c3e907703c77f2bb55b4476e4e3e99bdab",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c0eb07a8708c5b1f808951befc0a28d53b61b8df5500d6630c1e54496c8296b3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 418,
+      "sheetSha256": "c9185526ad14e4c076f84854955a76aece31736b4285e6d32e6a13ed0fc709b3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 834,
+      "sheetSha256": "041a00b182615573d864b9f87db1de1cb8e9bf1c0b87e248ff84c7974a3d3232",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "'۲۸ / ۲۷۰' and '×۶' drew left to right after the prepared text layout; AppText marks a text without letters right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "7ec1430b16dc7782b9a3de76091db1c8e6e308c1743c2606970ab6b088d2126a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "'۲۸ / ۲۷۰' and '×۶' drew left to right after the prepared text layout; AppText marks a text without letters right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "eda0a2947258cb6ff51ef85ba5cc7d7955238a3770f9fae003b0736bd128370a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "684d6e49af7bfa19eff42ed01af4f6b042be472283e91a9965402abe1ae55b73",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b5415a0b46c133bedd107431bcba2917b5c6018aa2246aaed77dbd51029a6492",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "71961f734424a5595089aab1c7a189db95ac83b23818fc1258e2f14abd0bd8d8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "783fa43ec87bf5c21dd447ec8679cc00b928c1cac71ca627e4cba41af7e4c019",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "7e77b4c6186a363878d54c505135e36b3999b1b921e43fc310aefa22ee40667e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5bfe0fcc1c1bcc2f1d607216651f5593e6145220aae0f57a0b5aed1a82754ae4",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "960c009a34601c36c64a802207de0360d0934189eb5ef2b6a89be72c9100ba5f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "29e8a277ce280fc804ab499505051159e6d10aeb60bd4fba736a62fa75111a0d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "faec85a242b8497eb0db5989a0371ebcdcef99d39e5eedc469c024e6920abe5a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "565e73dc54c15f8e3dcde45544f2d3284ac67a074284bc90191e6efb0d767efb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "8291c7fbebf497db8f239fd96b6b4f933728e7752f7c7285c4080f436d67e032",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "aae01c45700ac07ecd8ea735fd2a24f814e73efcd5ce0e5fb6398f446db0d094",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "f5cb1ddb0d545626ea9811d54fc1f381ecceb852a4c507bf2b818753d5321c79",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "7a4cdd24c87975a5c4e057aa69ae12bc39100b44b8ebab7f47ae983ce38d7daf",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "3fdc39ec6bd2b510138f7930268edbb87d2d06cb79260bedd218f758232c19d5",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "fad9cbdaf68eb5861f73f89d32934d49f0d3a189d61dc3fbe8d2e5414beaa2ee",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "a521a9a4bc327af33fe1ade97b76e7255581df3a410cc0d8b2a6b65af64d72fd",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "ba2c3a2733a3f592c3562401859209ac6f58a5538af7a001aa1478ef0ff5c9e3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "a005d7d23233cab35e73570ab0d0463d9933e5feef76ff15c528f52f621c092c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
     }
   ]
 }
