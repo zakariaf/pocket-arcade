@@ -112,14 +112,16 @@ function checkSafeArea(report, { file, img, isContent, safe, id }) {
 function checkCircle(report, { file, img, diameter, id, what }) {
   const center = img.width / 2;
   const limit = (img.width * diameter) / 2 + CIRCLE_SLACK;
-  let worst = 0;
-  for (let y = 0; y < img.height; y += 1) {
-    for (let x = 0; x < img.width; x += 1) {
-      if (pixel(img, x, y)[3] === 0) continue;
-      const distance = Math.hypot(x + 0.5 - center, y + 0.5 - center);
-      if (distance > worst) worst = distance;
-    }
+  // Steps through the alpha bytes only and keeps the largest squared distance: one sqrt at the end.
+  let worstSquared = 0;
+  for (let at = 3, index = 0; at < img.rgba.length; at += 4, index += 1) {
+    if (img.rgba[at] === 0) continue;
+    const dx = (index % img.width) + 0.5 - center;
+    const dy = Math.floor(index / img.width) + 0.5 - center;
+    const squared = dx * dx + dy * dy;
+    if (squared > worstSquared) worstSquared = squared;
   }
+  const worst = Math.sqrt(worstSquared);
   if (worst === 0) {
     report.problem({ file, rule: 'art-safe-area', message: 'the image is empty (no glyph)', fix: REGENERATE(id) });
   } else if (worst > limit) {
