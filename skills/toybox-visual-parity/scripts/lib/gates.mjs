@@ -1415,7 +1415,11 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     // Where the app hides this element (fixed header, pinned banner), mapped into design
     // coordinates at the element's measured offset, widened by the alignment search.
     const hidden = toDesign(hiddenFor(el).map((r) => pad(r, T.alignSearchPx / S)), a.x - el.rect.x, a.y - el.rect.y);
-    const designExclude = [...textRects.map((r) => pad(r, T.textPadPt)), ...maskedDesign, ...coveredBy(el), ...children, ...hidden].map(toCrop);
+    // The device's own bars (status bar, home indicator or gesture bar) are never compared: left in,
+    // the app's clock and handle, which the design does not draw, pulled a full-screen crop's
+    // alignment off by 1.7 pt (the Android S6 scrim, E18-T21).
+    const bars = toDesign(deviceMasks, a.x - el.rect.x, a.y - el.rect.y);
+    const designExclude = [...textRects.map((r) => pad(r, T.textPadPt)), ...maskedDesign, ...coveredBy(el), ...children, ...hidden, ...bars].map(toCrop);
     const ignore = new Uint8Array(crop.w * crop.h);
     for (const r of designExclude) {
       for (let y = Math.max(0, Math.floor(r.y)); y < Math.min(crop.h, Math.ceil(r.y + r.h)); y += 1) {

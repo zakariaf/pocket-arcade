@@ -1,0 +1,34 @@
+{
+ "version": 1,
+ "frame": "s6-pause",
+ "variant": "no-music--no-hints",
+ "referenceName": "s6-pause--no-music--no-hints",
+ "kind": "phone",
+ "theme": "dark",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "facts": {
+  "file": "parity/game-facts.json",
+  "app": "line-siege",
+  "hasMusic": false,
+  "winLine": "score",
+  "hasHints": false
+ },
+ "board": {
+  "rect": {
+   "x": 14,
+   "y": 108,
+   "w": 374,
+   "h": 742
+  },
+  "source": "probe=board",
+  "probedAt": "2026-10-17T05:00:10.243Z",
+  "nonce": "4e869a8ec058"
+ },
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "A real Release capture of S6 dark-en on the e07-android-parity emulator (E18-T21). Its status bar and gesture handle, which the design does not draw, pulled the scrim crop's alignment 1.7 pt off and drew the masked board's outline as a structure difference; with the device bars left out of the alignment it passes."
+}
