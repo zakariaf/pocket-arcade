@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { PixelRatio, Platform, Text, useWindowDimensions, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
+import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { useLocalizedTextStyle } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { withHyphenBreaks } from './line-breaks.ts';
+import { androidMarksOf } from './line-breaks.ts';
 import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
 
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
@@ -109,10 +110,10 @@ function localizedOptions(style: TypeStyle, props: AppTextProps): LocalizedTextO
   };
 }
 
-function textProps(props: AppTextProps, shown: string): TextProps {
+function textProps(props: AppTextProps, drawn: Drawn): TextProps {
   return {
-    // Android draws break points the design does not spell (withHyphenBreaks): read it as written.
-    ...(shown === props.text ? {} : { accessibilityLabel: props.text }),
+    // Android draws marks the design does not spell (androidMarksOf): read the text as written.
+    ...(drawn.isMarked ? { accessibilityLabel: props.text } : {}),
     ...(props.language === undefined ? {} : { accessibilityLanguage: props.language }),
     ...(props.numberOfLines === undefined ? {} : { numberOfLines: props.numberOfLines }),
     ...(props.isHeader === true ? { accessibilityRole: 'header' as const } : {}),
@@ -328,13 +329,18 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   };
 }
 
+/** What the Text draws, and whether Android's marks were added to it (read as written then). */
+type Drawn = { readonly shown: string; readonly isMarked: boolean };
+
 /**
  * What the Text draws: game names (Latin brand names) isolated so an RTL sentence cannot reorder
- * them; on Android a break point after each in-word hyphen, where the design may end a line.
+ * them, then Android's marks.
  */
-function shownTextOf(style: TypeStyle, text: string): string {
-  if (style.face === 'brand') return isolate(text);
-  return Platform.OS === 'android' ? withHyphenBreaks(text) : text;
+function drawnTextOf(style: TypeStyle, direction: Direction, props: AppTextProps): Drawn {
+  const text = style.face === 'brand' ? isolate(props.text) : props.text;
+  if (Platform.OS !== 'android') return { shown: text, isMarked: false };
+  const shown = androidMarksOf(text, direction === 'rtl' && props.textDirection !== 'ltr');
+  return { shown, isMarked: shown !== text };
 }
 
 /** The only component that renders text: role or style, script font, direction, 200% cap. */
@@ -347,7 +353,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const balance = useBalancedWrap(isBalancedOf(style, variant), props.text, props.align ?? 'start');
   const decoration = style.isUnderlined === true ? UNDERLINE : null;
   const figures = style.isTabular === true ? TABULAR : null;
-  const shown = shownTextOf(style, props.text);
+  const drawn = drawnTextOf(style, useDirection(), props);
   const { guard, room, onLines, onBoxLayout } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
@@ -356,7 +362,7 @@ export function AppText(props: AppTextProps): ReactNode {
       style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={MAX_TEXT_SCALE}
       textBreakStrategy={GREEDY_BREAKS}
-      {...textProps(guard === null ? props : rest, shown)}
+      {...textProps(guard === null ? props : rest, drawn)}
       onLayout={(event) => {
         balance.onLayout?.(event);
         onBoxLayout(event);
@@ -369,7 +375,7 @@ export function AppText(props: AppTextProps): ReactNode {
         props.onTextLines?.(lines.map(({ x, y, width, height }) => ({ x, y, width, height })));
       }}
     >
-      {shown}
+      {drawn.shown}
     </Text>
   );
   if (guard === null) return text;

@@ -7,6 +7,7 @@
 import { screen } from '@testing-library/react-native';
 import { PixelRatio, StyleSheet } from 'react-native';
 
+import { isolate, RLM } from '@e07/shell/i18n/bidi.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { AppText } from './app-text.tsx';
@@ -79,5 +80,50 @@ describe('AppText on Android', () => {
     expect(
       screen.getByTestId('privacy-policy.section.purchase.body').props['textBreakStrategy'],
     ).toBe('simple');
+  });
+  it('lays a Persian text without letters right to left, as a TextView did (spec N11)', async () => {
+    await renderWithShell(
+      <AppText text="۲۸ / ۲۷۰" variant="number" testID="stats.levels-card.stars.value" />,
+      { language: 'fa' },
+    );
+
+    // React Native's prepared text layout reads a text of digits and signs left to right
+    // (FIRSTSTRONG_LTR): S10's stars value drew as "۲۸ / ۲۷۰" from the left (E18-T22).
+    // The number role's Persian guard puts the testID on a wrapper; the label sits on the Text.
+    expect(screen.getByTestId('stats.levels-card.stars.value')).toHaveTextContent(`${RLM}۲۸ / ۲۷۰`);
+    expect(screen.getByText(`${RLM}۲۸ / ۲۷۰`).props['accessibilityLabel']).toBe('۲۸ / ۲۷۰');
+  });
+
+  it('lays a date of isolated names right to left in Persian and Sorani (spec N11)', async () => {
+    const date = `${isolate('یەکشەممە')}، ٢٧ ${isolate('ئەیلوول')}`;
+    await renderWithShell(<AppText text={date} testID="daily.today-card.date" />, {
+      language: 'ckb',
+    });
+
+    expect(screen.getByTestId('daily.today-card.date')).toHaveTextContent(`${RLM}${date}`);
+  });
+
+  it('keeps a right-to-left text with a letter, and English, as written (spec N11)', async () => {
+    const mixed = `${isolate('Line Siege')} آفلاین کار می‌کند.`;
+    await renderWithShell(
+      <>
+        <AppText text={mixed} testID="privacy-policy.section.game.body" />
+        <AppText text="Vazirmatn 33.003" testID="licences.entry-row.vazirmatn.label" />
+      </>,
+      { language: 'fa' },
+    );
+
+    const body = screen.getByTestId('privacy-policy.section.game.body');
+    expect(body).toHaveTextContent(mixed);
+    expect(body.props['accessibilityLabel']).toBeUndefined();
+    expect(screen.getByTestId('licences.entry-row.vazirmatn.label')).toHaveTextContent(
+      'Vazirmatn 33.003',
+    );
+  });
+
+  it('keeps digits as written in a left-to-right layout', async () => {
+    await renderWithShell(<AppText text="28 / 270" testID="stats.levels-card.stars.value" />);
+
+    expect(screen.getByTestId('stats.levels-card.stars.value')).toHaveTextContent('28 / 270');
   });
 });
