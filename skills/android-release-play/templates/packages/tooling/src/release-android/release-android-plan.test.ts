@@ -173,6 +173,26 @@ describe('ownerStepsOf', () => {
     expect(ownerStepsOf(placeholder)).toStrictEqual(['GP5']);
   });
 
+  it("names GP5 for Google's test ids typed into the Android ids: a live build shows test ads", () => {
+    const sample = {
+      ...OWNER_VALUES,
+      ads: {
+        isEnabled: true,
+        ids: {
+          android: {
+            appId: 'ca-app-pub-3940256099942544~3347511713',
+            units: {
+              banner: 'ca-app-pub-3940256099942544/6300978111',
+              interstitial: 'ca-app-pub-3940256099942544/1033173712',
+              rewarded: 'ca-app-pub-3940256099942544/5224354917',
+            },
+          },
+        },
+      },
+    };
+    expect(ownerStepsOf(sample)).toStrictEqual(['GP5']);
+  });
+
   it('needs no Android ids for a game without ads', () => {
     expect(
       ownerStepsOf({ ...OWNER_VALUES, ads: { isEnabled: false, ids: { android: null } } }),

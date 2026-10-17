@@ -1,0 +1,2 @@
+[owner-placeholder] ads.ids.android is Google's sample (test) AdMob id ca-app-pub-3940256099942544~3347511713 (owner step GP5)
+OWNER STEPS PENDING: GP5

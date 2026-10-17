@@ -17,7 +17,7 @@ Symptom, cause and action for every failure of an Android release seen or expect
 | `releases come from main, this is ...` | run on an epic branch | merge first; releases start from a clean `main` |
 | `the working tree is not clean` | uncommitted work | commit or stash it; the release commits the build number |
 | `npm run verify is not green on this commit` | a red gate | fix the gate's cause first |
-| `owner steps pending: G3, GP5 ...` | `game.config.ts` still has the scaffold links or no Android AdMob ids | stop: ask for G3 / GP5; meanwhile the keyless rehearsal |
+| `owner steps pending: G3, GP5 ...` | `game.config.ts` still has the scaffold links, or no Android AdMob ids (null, a scaffold placeholder or Google's test ids `ca-app-pub-3940256099942544`) | stop: ask for G3 / GP5; meanwhile the keyless rehearsal |
 | `no upload key at ~/.android-keys/<game>-upload.jks (owner step GP2 ...)` | the key does not exist yet | ask for GP2's go, then generate it (signing-and-keys) |
 | `... has mode 644, expected 600` | the key or JSON is readable by others | `chmod 600` it; never open it |
 | `buildNumber ... is behind the tags` | a tag carries a higher number than `game.config.ts` | raise `buildNumber` to the highest tag in its own commit, then rerun |
@@ -40,7 +40,7 @@ Symptom, cause and action for every failure of an Android release seen or expect
 | `version-code` | not the committed number, or not above a tag | a new run 1 takes a new number |
 | `test-code` | the store bundle has `SHELL_TEST_BUILD_ONLY` | the variant was lost or Metro reused a test transform: rebuild from a clean prebuild with the variables exported once |
 | `ad-app-id` | Google's sample id in a live build | `ads-config.ts` must give a live build no sample id (admob-ads); supply GP5 |
-| `owner-placeholder` | G3 or GP5 values missing | stop: ask the owner; the rehearsal meanwhile |
+| `owner-placeholder` | G3 or GP5 values missing (Google's test ids in `ads.ids.android` count as missing: a live build would show test ads) | stop: ask the owner; the rehearsal meanwhile |
 | `permission` | a permission outside the allowlist | block it in `withShell` or remove the module; a new permission changes the Data safety answers (GP4) |
 | `target-sdk` | below 36 | the Expo SDK and React Native levels; never lower them |
 | `shell-slice` | a partial Shell | finish the Shell first |

@@ -144,11 +144,18 @@ export type OwnerValues = {
 
 /** The scaffold's AdMob placeholders (Google's documented examples) and links (owner steps G5, G3). */
 const PLACEHOLDER_PUBLISHER = 'ca-app-pub-1234567890123456';
+/** Google's sample publisher: its test ids belong to test builds (ads-config.ts), never here. */
+const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
 const PLACEHOLDER_LINKS = { host: 'example.com', supportEmail: 'support@example.com' } as const;
+
+function isStandInAdId(id: string): boolean {
+  return id.startsWith(PLACEHOLDER_PUBLISHER) || id.startsWith(SAMPLE_PUBLISHER);
+}
 
 /**
  * The owner steps a Play store build still waits for: G3 (the privacy-policy host and the support
- * address) and GP5 (the AdMob Android app and its three units, when the game shows ads).
+ * address) and GP5 (the AdMob Android app and its three units, when the game shows ads; Google's
+ * test ids are no stand-in: a live build with them shows test ads and earns nothing).
  */
 export function ownerStepsOf(config: OwnerValues): string[] {
   const { links, ads } = config;
@@ -157,8 +164,6 @@ export function ownerStepsOf(config: OwnerValues): string[] {
     links.supportEmail === PLACEHOLDER_LINKS.supportEmail;
   const android = ads.ids.android;
   const androidIds = android === null ? [] : [android.appId, ...Object.values(android.units)];
-  const isAndroidAdsMissing =
-    ads.isEnabled &&
-    (android === null || androidIds.some((id) => id.startsWith(PLACEHOLDER_PUBLISHER)));
+  const isAndroidAdsMissing = ads.isEnabled && (android === null || androidIds.some(isStandInAdId));
   return [...(isLinkPlaceholder ? ['G3'] : []), ...(isAndroidAdsMissing ? ['GP5'] : [])];
 }

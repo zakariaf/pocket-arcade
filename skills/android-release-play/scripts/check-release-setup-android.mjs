@@ -17,6 +17,8 @@ const SCRIPT = 'node packages/tooling/src/release-android/release-android.ts';
 const RELEASE_DIR = 'packages/tooling/src/release-android';
 const RELEASE_FILES = ['release-android-plan.ts', 'aab-signing.ts', 'version-code.ts', 'play-credentials.ts', 'play-client.ts'];
 const GITIGNORE = ['*.jks', '*.keystore', 'play-service-account.json'];
+/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts), never in game.config.ts. */
+const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
 const DENY = ['Read(~/.android-keys/**)', 'Read(**/*.jks)', 'Read(**/*.keystore)', 'Read(**/play-service-account.json)'];
 
 const SPEC = {
@@ -33,7 +35,8 @@ const SPEC = {
     `  secrets-ignored    .gitignore lists ${GITIGNORE.join(', ')}; .claude/settings.json denies ${DENY.join(', ')}`,
     '  credentials-read   only play-credentials.ts names the service-account file (it reads it into memory, never prints it)',
     '  owner-placeholder  apps/<game>/game.config.ts: the example.com links (owner step G3) and, for a game with ads,',
-    "                     ads.ids.android null or a placeholder (owner step GP5); then 'OWNER STEPS PENDING: ...'",
+    "                     ads.ids.android null, a placeholder or Google's sample (test) ids (owner step GP5); then",
+    "                     'OWNER STEPS PENDING: ...'",
     '  shell-slice        shell-slice.json exists: a partial Shell never ships',
     '',
     'Exit 2 when the folder has no package.json and no apps/ (nothing to check).',
@@ -120,8 +123,12 @@ async function checkOwnerValues(ctx) {
     const android = config.ads?.ids?.android ?? null;
     const ids = android === null ? [] : [android.appId, ...Object.values(android.units ?? {})];
     const placeholder = ids.find((id) => ownerPlaceholderOf(id) !== null);
-    if (android === null) ctx.report.problem(ownerPlaceholderProblem({ entry: ANDROID_AD_IDS_MISSING, where: 'ads.ids.android', file: rel, line: lineAt('android:') }));
-    else if (placeholder !== undefined) ctx.report.problem(ownerPlaceholderProblem({ entry: { ...ANDROID_AD_IDS_MISSING, name: PLACEHOLDERS.find((item) => item.matches(placeholder))?.name ?? 'a placeholder', value: placeholder }, where: 'ads.ids.android', file: rel, line: lineAt('android:') }));
+    const sample = ids.find((id) => String(id).startsWith(SAMPLE_PUBLISHER));
+    const at = { where: 'ads.ids.android', file: rel, line: lineAt('android:') };
+    if (android === null) ctx.report.problem(ownerPlaceholderProblem({ entry: ANDROID_AD_IDS_MISSING, ...at }));
+    else if (placeholder !== undefined) ctx.report.problem(ownerPlaceholderProblem({ entry: { ...ANDROID_AD_IDS_MISSING, name: PLACEHOLDERS.find((item) => item.matches(placeholder))?.name ?? 'a placeholder', value: placeholder }, ...at }));
+    // A live build with Google's test ids shows test ads and earns nothing: GP5 is still pending.
+    else if (sample !== undefined) ctx.report.problem(ownerPlaceholderProblem({ entry: { ...ANDROID_AD_IDS_MISSING, name: "Google's sample (test) AdMob id", value: sample }, ...at }));
   }
 }
 
