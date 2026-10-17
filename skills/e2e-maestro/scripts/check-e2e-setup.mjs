@@ -126,7 +126,8 @@ const SPEC = {
     '  visual-deps           pixelmatch 7.2.0, pngjs 7.0.0 or @types/pngjs 6.0.5 is missing or not an exact pin',
     '  gitignore-tools       .gitignore does not ignore /tools/ (Maestro) and reports/',
     '  baseline-matrix       a baseline set lacks a screen the other sets have, or (--baselines) a device/language/theme',
-    '                        set is missing',
+    '                        set is missing; Android step 7 on, the same for apps/<game-id>/e2e/baselines-android/',
+    '                        (screenshots:android, the 16 phone/tablet x en/de/fa/ckb x light/dark sets)',
   ].join('\n'),
 };
 
@@ -691,28 +692,39 @@ function checkIgnore(root, report) {
 
 const listDir = (path) => (existsSync(path) && statSync(path).isDirectory() ? readdirSync(path).sort() : []);
 
+/** One app's baseline folder: every set holds the same screens, and (--baselines) all 16 sets exist. */
+function checkBaselineFolder(root, app, platform, requireAll, report) {
+  const isAndroid = platform === 'android';
+  const base = join('apps', app, 'e2e', isAndroid ? 'baselines-android' : 'baselines');
+  const capture = isAndroid ? 'npm run screenshots:android' : 'npm run screenshots:ios';
+  const isExtraSize = (combo) => combo.includes('-accessibility') || combo.includes('-font-scale-');
+  const sets = [];
+  for (const device of listDir(join(root, base))) {
+    if (device === 'boards') continue;
+    for (const combo of listDir(join(root, base, device))) {
+      const pngs = listDir(join(root, base, device, combo)).filter((name) => name.endsWith('.png'));
+      sets.push({ device, combo, pngs });
+    }
+  }
+  const byCombo = new Map(sets.map((set) => [`${set.device}/${set.combo}`, set.pngs]));
+  const union = new Set(sets.filter((set) => !isExtraSize(set.combo)).flatMap((set) => set.pngs));
+  for (const set of sets.filter((item) => !isExtraSize(item.combo))) {
+    const missing = [...union].filter((name) => !set.pngs.includes(name));
+    if (missing.length > 0) report.problem({ file: `${base}/${set.device}/${set.combo}`, line: 0, rule: 'baseline-matrix', message: `lacks ${missing.length} screen(s) the other sets have: ${missing.slice(0, 4).join(', ')}`, fix: `Capture them: ${capture} -- --app ${app} --update --devices ${set.device} --langs ${set.combo.split('-')[0]}, open every new PNG, commit with a Gate-Change trailer.` });
+  }
+  if (!requireAll) return;
+  for (const device of DEVICES) for (const lang of LANGS) for (const theme of THEMES) {
+    if (!byCombo.has(`${device}/${lang}-${theme}`)) report.problem({ file: `${base}/${device}/${lang}-${theme}`, line: 0, rule: 'baseline-matrix', message: 'the baseline set is missing', fix: `Capture it: ${capture} -- --app ${app} --update --devices ${device} --langs ${lang}, open every PNG, commit with a Gate-Change trailer.` });
+  }
+}
+
+/** iOS baselines always; the Android ones (baselines-android) once the Android E2E set is due. */
 function checkBaselines(root, requireAll, report) {
+  const isAndroidDue = androidE2eSkipReason(root) === null;
   for (const app of listDir(join(root, 'apps'))) {
     const hasFlows = existsSync(join(root, 'apps', app, 'e2e', 'flows'));
-    const base = join('apps', app, 'e2e', 'baselines');
-    const sets = [];
-    for (const device of listDir(join(root, base))) {
-      if (device === 'boards') continue;
-      for (const combo of listDir(join(root, base, device))) {
-        const pngs = listDir(join(root, base, device, combo)).filter((name) => name.endsWith('.png'));
-        sets.push({ device, combo, pngs });
-      }
-    }
-    const byCombo = new Map(sets.map((set) => [`${set.device}/${set.combo}`, set.pngs]));
-    const union = new Set(sets.filter((set) => !set.combo.includes('-accessibility')).flatMap((set) => set.pngs));
-    for (const set of sets.filter((item) => !item.combo.includes('-accessibility'))) {
-      const missing = [...union].filter((name) => !set.pngs.includes(name));
-      if (missing.length > 0) report.problem({ file: `${base}/${set.device}/${set.combo}`, line: 0, rule: 'baseline-matrix', message: `lacks ${missing.length} screen(s) the other sets have: ${missing.slice(0, 4).join(', ')}`, fix: `Capture them: npm run screenshots:ios -- --app ${app} --update --devices ${set.device} --langs ${set.combo.split('-')[0]}, open every new PNG, commit with a Gate-Change trailer.` });
-    }
-    if (!requireAll || !hasFlows) continue;
-    for (const device of DEVICES) for (const lang of LANGS) for (const theme of THEMES) {
-      if (!byCombo.has(`${device}/${lang}-${theme}`)) report.problem({ file: `${base}/${device}/${lang}-${theme}`, line: 0, rule: 'baseline-matrix', message: 'the baseline set is missing', fix: `Capture it: npm run screenshots:ios -- --app ${app} --update --devices ${device} --langs ${lang}, open every PNG, commit with a Gate-Change trailer.` });
-    }
+    checkBaselineFolder(root, app, 'ios', requireAll && hasFlows, report);
+    if (isAndroidDue) checkBaselineFolder(root, app, 'android', requireAll && hasFlows, report);
   }
 }
 
