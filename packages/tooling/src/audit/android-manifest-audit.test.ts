@@ -89,6 +89,38 @@ describe('the merged Android manifest (spec N3)', () => {
     ]);
   });
 
+  it("fails Google's datatransport CCT backend, which uploads Play Billing's telemetry (spec N3)", () => {
+    const manifest = MANIFEST.replace(
+      '    </application>',
+      [
+        '        <service',
+        '            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"',
+        '            android:exported="false" >',
+        '            <meta-data',
+        '                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"',
+        '                android:value="cct" />',
+        '        </service>',
+        '    </application>',
+      ].join('\n'),
+    );
+    expect(manifestProblems(manifest)).toStrictEqual([
+      "Google's datatransport CCT backend is registered (backend:com.google.android.datatransport.cct.CctBackendFactory): Play Billing would upload its telemetry from the app; withShell's with-no-google-telemetry plugin removes it",
+    ]);
+  });
+
+  it('passes the discovery service once the CCT backend is removed', () => {
+    const manifest = MANIFEST.replace(
+      '    </application>',
+      [
+        '        <service',
+        '            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"',
+        '            android:exported="false" />',
+        '    </application>',
+      ].join('\n'),
+    );
+    expect(manifestProblems(manifest)).toStrictEqual([]);
+  });
+
   it('fails a file that is not an Android manifest', () => {
     expect(manifestProblems('<plist></plist>')).toStrictEqual([
       'not an AndroidManifest.xml (no <manifest> element)',
