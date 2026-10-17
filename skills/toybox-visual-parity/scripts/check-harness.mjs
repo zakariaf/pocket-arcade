@@ -7,7 +7,8 @@
 // the edge widths the references draw, capture output is gitignored, the waiver and sign-off
 // files are well formed, every frame state has its opener in the hook that owns it, the frozen-motion
 // switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn (by
-// the parity root and inside every modal root), and parity/game-facts.json holds each app's facts
+// the parity root and inside every modal root), every ScreenBody draws the scroll offset it reached
+// (parity.scroll.<y>, the measured scroll of a tall capture), and parity/game-facts.json holds each app's facts
 // (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
 // On Android the request arrives as the launch intent's extra "parity", read through the Shell's
 // ParityLaunch native module by the harness only (rule harness-android-launch).
@@ -27,6 +28,8 @@ const STARTUP = 'packages/shell/src/app/parity-startup.tsx';
 /** Where the held S1 splash is registered (rtl-and-direction's start-shell template). */
 const HELD_SPLASH_FILE = 'packages/shell/src/app/start-shell.ts';
 const SPECS = 'packages/shell/src/ui/component-specs.json';
+/** The common scrolling body (toybox-screens' template), which draws the measured scroll marker. */
+const SCREEN_BODY = 'packages/shell/src/ui/screen-body.tsx';
 const FILES = {
   plans: `${PARITY_DIR}/parity-plans.ts`,
   request: `${PARITY_DIR}/parity-request.ts`,
@@ -40,6 +43,7 @@ const FILES = {
   start: `${PARITY_DIR}/parity-start.ts`,
   errorView: `${PARITY_DIR}/parity-error-view.tsx`,
   root: `${PARITY_DIR}/parity-root.tsx`,
+  scrollMarker: `${PARITY_DIR}/parity-scroll-marker.tsx`,
   startup: STARTUP,
   marker: 'packages/shell/src/app/parity-launch-marker.tsx',
   entry: 'packages/shell/src/app/test-only-entry.ts',
@@ -566,6 +570,25 @@ run(async () => {
     checked += 1;
     if (!/<ParityLaunchMarker\b/.test(maskComments(text))) {
       problem(m.file, 0, 'harness-launch-marker', `${m.what} is a modal root (accessibilityViewIsModal) but draws no <ParityLaunchMarker />, so a capture behind it has no nonce in its hierarchy`, 'Render <ParityLaunchMarker /> (packages/shell/src/app/parity-launch-marker.tsx) as the first child of the modal View: it draws nothing outside a parity capture.');
+    }
+  }
+
+  // 4a''. The measured scroll: the parity root hands every ScreenBody renderParityScrollMarker, and
+  // the body draws it with the contentOffset its ScrollView reported, so check-parity measures a tall
+  // capture's scroll instead of inferring it from element shifts (a waived cascade moves those).
+  if (texts.root !== null) {
+    checked += 1;
+    const clean = maskComments(texts.root);
+    if (!/<ScreenScrollMarkerContext\s+value=\{renderParityScrollMarker\}/.test(clean)) {
+      problem(FILES.root, 0, 'harness-scroll-marker', 'does not provide ScreenScrollMarkerContext with renderParityScrollMarker, so no ScreenBody draws the offset it reached and check-parity can only infer a tall capture\'s scroll from element shifts', "Copy the template parity-root.tsx and parity-scroll-marker.tsx again (<ScreenScrollMarkerContext value={renderParityScrollMarker}> around the children).");
+    }
+  }
+  const body = read(SCREEN_BODY);
+  if (body !== null) {
+    checked += 1;
+    const clean = maskComments(body);
+    if (!/\buse\(\s*ScreenScrollMarkerContext\s*\)/.test(clean) || !/\bonScroll\b/.test(clean) || !/contentOffset\.y\b/.test(clean)) {
+      problem(SCREEN_BODY, 0, 'harness-scroll-marker', 'does not draw the scroll marker of ScreenScrollMarkerContext (use(ScreenScrollMarkerContext), onScroll, contentOffset.y), so a tall capture has no measured scroll', "Copy toybox-screens' template ui/screen-body.tsx (with its test): in a test build it listens to onScroll and draws the harness's marker next to the ScrollView.");
     }
   }
 

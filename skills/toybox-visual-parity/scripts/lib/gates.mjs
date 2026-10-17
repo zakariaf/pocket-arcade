@@ -842,10 +842,12 @@ function applyBoardMask({ board, layout, byId, pairs, design, app, S }) {
  *   design { img, layout }   reference image + layout.json (points, frame coordinates)
  *   app    { img, bounds }   capture + parsed bounds (parseMaestroHierarchy / parseAppLayout)
  *   device                   device profile; pixelmatch: the pixelmatch function
+ *   scrollMarkers            [{ testID, y }]: the offsets the app's ScreenBody reported
+ *                            (scrollMarkersOf); a tall frame's scroll is then measured, not inferred
  * Returns { problems, notes, checked, coverage, offscreen, stats }. Problems are ordered in the
  * order they should be fixed: screen reached, missing, geometry, text, colour, type, structure.
  */
-export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null, boardMask = null }) {
+export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null, boardMask = null, scrollMarkers = [] }) {
   const T = TOLERANCES;
   const S = device.scale;
   const layout = design.layout;
@@ -961,18 +963,42 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     if (geo.inBody(el) && el.rect.h < viewH && !atTop(a) && !atBottom(a)) bodyShifts.push(a.y - el.rect.y);
   }
   bodyShifts.sort((p, q) => p - q);
-  const scrollShift = bodyShifts.length ? bodyShifts[Math.floor(bodyShifts.length / 2)] : 0;
+  const inferredShift = bodyShifts.length ? bodyShifts[Math.floor(bodyShifts.length / 2)] : 0;
+  // The scroll of a tall capture is measured when the app reports it: the parity harness draws the
+  // contentOffset its ScreenBody reached as parity.scroll.<y>. The median element shift is only the
+  // fallback for a capture without that marker (an older harness): a waived text-layout difference
+  // that moves most visible elements (S11c en: one more ads line, 23.5 pt) or rows that drift by
+  // pixel snapping (S11d fa) moves the median, although the body scrolled where it was asked (E18).
+  const markerValues = [...new Set(scrollMarkers.map((m) => Math.round(m.y * 100) / 100))];
+  const measured = geo.tall && markerValues.length === 1 ? markerValues[0] : null;
+  const scrollShift = measured !== null ? -measured : inferredShift;
   const inBody = (r) => kind === 'phone-tall' && r.y >= topBarBottom;
   const expectedY = (el) => (geo.isPinned(el) ? el.rect.y + geo.pinShift : geo.inBody(el) ? el.rect.y + scrollShift : el.rect.y);
   viewShift = (el) => expectedY(el) - el.rect.y;
   stats.scrollShiftPt = Math.round(scrollShift * 10) / 10;
+  if (geo.tall) {
+    stats.scrollSource = measured !== null ? 'measured' : 'inferred';
+    if (measured !== null) stats.scrollMarker = scrollMarkers.find((m) => Math.round(m.y * 100) / 100 === measured).testID;
+    if (bodyShifts.length) stats.inferredScrollShiftPt = Math.round(inferredShift * 10) / 10;
+    if (markerValues.length > 1) stats.scrollMarkersDisagree = markerValues.length;
+  }
+  const fixScroll = "The parity harness must scroll the screen's ScrollView to scrollY without animation, after the content has laid out; then capture again.";
+  // Two bodies that report different offsets (a ScreenBody of a screen under the frame's own) leave
+  // the scroll unmeasured: nothing guesses which one the capture shows.
+  if (geo.tall && markerValues.length > 1) {
+    const listed = [...scrollMarkers].sort((p, q) => p.y - q.y).map((m) => `${m.testID} at ${round1(m.y)} pt`).join(', ');
+    add('scroll-mismatch', layout.root, `${markerValues.length} scroll markers disagree (${listed}): more than one ScreenBody reported its scroll, so the capture's scroll is not measured`,
+      "Only the frame's own ScreenBody may be in the capture's hierarchy: a screen under it must not draw a parity.scroll marker (check that the navigator detaches the screens below), then capture again.");
+  }
   // The capture shows the scroll offset it asked for (clamped to the end of the design's scroll):
   // a harness that ignores scrollY would otherwise pass every offset with the same top screen.
-  if (geo.tall && scrollY !== null && bodyShifts.length) {
+  if (geo.tall && scrollY !== null && (measured !== null || bodyShifts.length)) {
     const wanted = Math.min(scrollY, Math.max(0, (layout.size?.h ?? viewH) - viewH));
     if (Math.abs(scrollShift + wanted) > T.boundsPt) {
-      add('scroll-mismatch', layout.root, `the body is scrolled by ${round1(Math.max(0, -scrollShift))} pt but the capture asked for scrollY ${scrollY} (${round1(wanted)} pt within the design's scroll height)`,
-        "The parity harness must scroll the screen's ScrollView to scrollY without animation, after the content has laid out; then capture again.");
+      const source = measured !== null
+        ? `; measured by the app's ${stats.scrollMarker} marker`
+        : `; inferred from the median element shift (${markerValues.length > 1 ? 'its scroll markers disagree' : 'the capture has no parity.scroll marker'})`;
+      add('scroll-mismatch', layout.root, `the body is scrolled by ${round1(measured !== null ? measured : Math.max(0, -scrollShift))} pt but the capture asked for scrollY ${scrollY} (${round1(wanted)} pt within the design's scroll height)${source}`, fixScroll);
     }
   }
   if (clipsBounds) {

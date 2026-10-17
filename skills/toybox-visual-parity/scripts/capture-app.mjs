@@ -8,7 +8,7 @@ import { join, relative, resolve } from 'node:path';
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { FACTS_FILE, LANGS, THEMES, describeFacts, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
-import { parseMaestroHierarchy } from './lib/hierarchy.mjs';
+import { parseMaestroHierarchy, scrollMarkersOf } from './lib/hierarchy.mjs';
 import { demoModeCommands, makeAdb, runningEmulators } from './lib/android.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS, PLATFORM_OPTION, platformOf, platformOption } from './lib/platform.mjs';
@@ -394,6 +394,7 @@ run(async () => {
   // again and dump again (3 attempts).
   let hierarchy = null;
   let systemAlert = null;
+  let scrollMarkers = [];
   if (maestro) {
     let accepted = false;
     for (let attempt = 1; attempt <= 3 && !accepted; attempt += 1) {
@@ -414,6 +415,11 @@ run(async () => {
     writeFileSync(join(outDir, RUN_FILES.hier), `${JSON.stringify(hierarchy, null, 1)}\n`);
     const parsed = parseMaestroHierarchy(hierarchy, { pxPerPt });
     systemAlert = systemAlertIn(parsed, platform);
+    // The offset each ScreenBody reached (parity.scroll.<y>): check-parity measures a tall capture's
+    // scroll by it, and infers it from the element shifts only when no body drew one (an old harness).
+    scrollMarkers = scrollMarkersOf(parsed);
+    if (scrollMarkers.length) step(scrollMarkers.map((m) => `the body reached ${m.y.toFixed(2)} pt (${m.testID})`).join('; '));
+    else if (scrollY > 0) step(`no parity.scroll marker in the dump, so check-parity infers this capture's scroll from the element shifts (copy the harness's parity-root.tsx and toybox-screens' screen-body.tsx: check-harness rule harness-scroll-marker)`);
     if (systemAlert) problem('system-alert', `a system alert is on screen: "${systemAlert}"`, 'Nothing may ask the system in a parity launch: the held consent moment (S3) never requests Google\'s form or Apple\'s tracking prompt, and captures never use deep links. Dismiss it, find what asked, and capture again.');
     const reached = frame.root && (parsed.elements.has(frame.root) || (frame.modal && parsed.elements.has(frame.modal.reachedBy)));
     if (frame.root && !reached) {
@@ -447,7 +453,7 @@ run(async () => {
       : { simulator: { name, udid, runtime: device.runtime, driverPort } }),
     launchArgs,
     nonce,
-    ...(maestro ? { hierarchyNonce: launchMarker(nonce), systemAlert } : {}),
+    ...(maestro ? { hierarchyNonce: launchMarker(nonce), systemAlert, scrollMarkers } : {}),
     ...(facts ? { facts: { file: relative(process.cwd(), facts.path) || facts.path, app: facts.app, ...facts.facts } } : {}),
     ...(board ? { board } : {}),
     capturedAt: new Date().toISOString(),

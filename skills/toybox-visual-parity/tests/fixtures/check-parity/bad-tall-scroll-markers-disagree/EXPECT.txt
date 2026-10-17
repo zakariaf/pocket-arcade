@@ -1,0 +1,1 @@
+[scroll-mismatch] stats.screen: 2 scroll markers disagree (parity.scroll.0.00 at 0.0 pt, parity.scroll.600.00 at 600.0 pt)

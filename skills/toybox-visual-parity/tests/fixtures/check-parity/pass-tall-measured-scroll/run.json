@@ -1,0 +1,14 @@
+{
+ "frame": "s10-statistics",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 600,
+ "source": "self-test fixture",
+ "note": "The good tall S10 capture at scroll 600 with the scroll marker the parity harness draws (parity.scroll.600.00): the scroll is measured, not inferred, and the run passes.",
+ "reference": {
+  "image": "../reference/lineSiege/light-en/s10-statistics.png",
+  "layout": "../reference/lineSiege/light-en/s10-statistics.layout.json"
+ },
+ "app": "../good/tall-s10-statistics-light-en-y600/app.png"
+}

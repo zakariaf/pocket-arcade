@@ -39,6 +39,21 @@ export function parseMaestroHierarchy(json, { pxPerPt = 1 } = {}) {
   return { source: 'maestro', elements, labels, nodes };
 }
 
+/**
+ * The parity harness's scroll markers: a ScreenBody that has scrolled in a parity capture draws an
+ * invisible element parity.scroll.<y> with the contentOffset it reached (hundredths of a point,
+ * "n" before a negative offset). Returns [{ testID, y }] in the order found (none in an old capture).
+ */
+export const SCROLL_MARKER = /^parity\.scroll\.(n?)(\d+)\.(\d{2})$/;
+export function scrollMarkersOf(bounds) {
+  const markers = [];
+  for (const testID of bounds?.elements?.keys?.() ?? []) {
+    const m = SCROLL_MARKER.exec(testID);
+    if (m) markers.push({ testID, y: (m[1] ? -1 : 1) * (Number(m[2]) + Number(m[3]) / 100) });
+  }
+  return markers;
+}
+
 export function parseAppLayout(json) {
   const elements = new Map();
   for (const el of json?.elements ?? []) {

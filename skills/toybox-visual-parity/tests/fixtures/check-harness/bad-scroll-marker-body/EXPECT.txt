@@ -1,0 +1,3 @@
+[harness-scroll-marker]
+packages/shell/src/ui/screen-body.tsx
+does not draw the scroll marker of ScreenScrollMarkerContext

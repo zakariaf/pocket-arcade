@@ -1,0 +1,279 @@
+{
+  "about": "The design's demo player in save-document terms (SaveDocV1 sections) on 2026-09-27, the date of every frame. The same JSON as fixtureSave in the toybox-visual-parity frames manifest (check-harness.mjs compares them). parityDoc() writes it for progress 'demo'; 'new-player' keeps empty progress, daily and statistics; 'first-run' also leaves firstRun false. settings.language is null (System) in en renders and the render language otherwise. Volumes are integer percent (0..100), like the save. counters are keyed by the design game id, then by CounterSpec id.",
+  "date": "2026-09-27",
+  "settings": {
+    "language": null,
+    "digits": "automatic",
+    "soundEnabled": true,
+    "soundVolume": 70,
+    "musicEnabled": true,
+    "musicVolume": 40,
+    "vibrationEnabled": true,
+    "theme": "system",
+    "colorBlind": false,
+    "reduceMotion": "system",
+    "hintsDuringPlay": true
+  },
+  "progress": {
+    "levels": {
+      "1": {
+        "stars": 3,
+        "bestScore": 1120,
+        "bestMoves": 7,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-10"
+      },
+      "2": {
+        "stars": 3,
+        "bestScore": 1260,
+        "bestMoves": 7,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-11"
+      },
+      "3": {
+        "stars": 2,
+        "bestScore": 980,
+        "bestMoves": 8,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-12"
+      },
+      "4": {
+        "stars": 3,
+        "bestScore": 1410,
+        "bestMoves": 7,
+        "completions": 2,
+        "firstCompletedOn": "2026-09-13"
+      },
+      "5": {
+        "stars": 1,
+        "bestScore": 870,
+        "bestMoves": 11,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-15"
+      },
+      "6": {
+        "stars": 3,
+        "bestScore": 1530,
+        "bestMoves": 7,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-16"
+      },
+      "7": {
+        "stars": 3,
+        "bestScore": 1650,
+        "bestMoves": 7,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-18"
+      },
+      "8": {
+        "stars": 2,
+        "bestScore": 1190,
+        "bestMoves": 9,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-19"
+      },
+      "9": {
+        "stars": 3,
+        "bestScore": 2310,
+        "bestMoves": 7,
+        "completions": 3,
+        "firstCompletedOn": "2026-09-21"
+      },
+      "10": {
+        "stars": 2,
+        "bestScore": 1380,
+        "bestMoves": 9,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-23"
+      },
+      "11": {
+        "stars": 3,
+        "bestScore": 1720,
+        "bestMoves": 7,
+        "completions": 1,
+        "firstCompletedOn": "2026-09-25"
+      }
+    },
+    "endlessBest": 4210
+  },
+  "run": {
+    "ref": {
+      "kind": "level",
+      "level": 12
+    },
+    "resumeOnLaunch": false
+  },
+  "daily": {
+    "results": {
+      "2026-09-22": {
+        "won": true,
+        "score": 1640,
+        "moves": 9,
+        "playMs": 180000
+      },
+      "2026-09-23": {
+        "won": true,
+        "score": 1510,
+        "moves": 10,
+        "playMs": 210000
+      },
+      "2026-09-24": {
+        "won": true,
+        "score": 1840,
+        "moves": 8,
+        "playMs": 165000
+      },
+      "2026-09-25": {
+        "won": true,
+        "score": 1390,
+        "moves": 11,
+        "playMs": 240000
+      },
+      "2026-09-26": {
+        "won": true,
+        "score": 1720,
+        "moves": 9,
+        "playMs": 190000
+      }
+    },
+    "completed": 19,
+    "streak": {
+      "lastDate": "2026-09-26",
+      "length": 5
+    },
+    "bestStreak": 12
+  },
+  "stats": {
+    "gamesPlayed": 58,
+    "wins": 36,
+    "losses": 22,
+    "playMs": 8040000,
+    "bestScore": {
+      "level": 2310,
+      "daily": 1840,
+      "endless": 4210
+    },
+    "currentWinStreak": 3,
+    "longestWinStreak": 9,
+    "days": {
+      "2026-09-21": {
+        "games": 0,
+        "playMs": 0
+      },
+      "2026-09-22": {
+        "games": 3,
+        "playMs": 360000
+      },
+      "2026-09-23": {
+        "games": 5,
+        "playMs": 600000
+      },
+      "2026-09-24": {
+        "games": 2,
+        "playMs": 240000
+      },
+      "2026-09-25": {
+        "games": 6,
+        "playMs": 720000
+      },
+      "2026-09-26": {
+        "games": 4,
+        "playMs": 480000
+      },
+      "2026-09-27": {
+        "games": 1,
+        "playMs": 120000
+      }
+    }
+  },
+  "counters": {
+    "lineSiege": {
+      "monsters-defeated": 1284,
+      "beams-fired": 3907,
+      "biggest-combo": 6
+    },
+    "flockTilt": {
+      "sheep-penned": 612,
+      "tilts-made": 2145,
+      "solved-at-par": 38
+    },
+    "scrapShove": {
+      "robots-scrapped": 947,
+      "scrap-shoved": 1562,
+      "biggest-crash": 4
+    }
+  },
+  "hints": {
+    "freeDate": null,
+    "freeUsed": 0
+  },
+  "ads": {
+    "history": {
+      "lastInterstitialAtMs": null,
+      "levelsCompletedSinceInterstitial": 0,
+      "didLastInterstitialFollowLoss": false
+    },
+    "consent": {
+      "canRequestAds": true,
+      "isPrivacyOptionsRequired": true
+    }
+  },
+  "premium": {
+    "ownedSinceMs": 1788256800000,
+    "revokedAtMs": 1790499600000
+  },
+  "upsell": {
+    "lastShownOn": null
+  },
+  "store": {
+    "price": 1.99,
+    "currency": "EUR"
+  },
+  "buildNumber": "8",
+  "gameFrame": {
+    "about": "The numbers the Game frames draw (S5, S6, S7): level 12, score 1,840 (a new best, so the level's best after the run is 1,840), 3 stars, 7 moves with par 7 (a moves-rated game; a score-rated one shows the score line instead), the game's progress params at mid (the top bar) and full (the win card), the game's first lose-reason key and the Continue-with-ad offer. parityGameFixture() returns them for the Game frames; debugControls().applyFixtureHud and showFixtureResult show them without writing the save.",
+    "level": 12,
+    "score": 1840,
+    "bestScore": 1840,
+    "isNewBest": true,
+    "stars": 3,
+    "movesCount": 7,
+    "par": 7,
+    "isContinueOffered": true,
+    "games": {
+      "lineSiege": {
+        "progressMid": {
+          "defeated": 3,
+          "total": 10
+        },
+        "progressFull": {
+          "defeated": 10,
+          "total": 10
+        },
+        "loseReasonId": "line-siege.lose.broke-through"
+      },
+      "flockTilt": {
+        "progressMid": {
+          "penned": 2,
+          "total": 4
+        },
+        "progressFull": {
+          "penned": 4,
+          "total": 4
+        },
+        "loseReasonId": "flock-tilt.lose.wolf-got-sheep"
+      },
+      "scrapShove": {
+        "progressMid": {
+          "wrecked": 4,
+          "total": 6
+        },
+        "progressFull": {
+          "wrecked": 6,
+          "total": 6
+        },
+        "loseReasonId": "scrap-shove.lose.caught"
+      }
+    }
+  }
+}

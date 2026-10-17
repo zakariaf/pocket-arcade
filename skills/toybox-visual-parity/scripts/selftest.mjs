@@ -75,6 +75,16 @@
 //   run-parity        --platform android end to end, and a wrong serial
 //   check-harness     the Android launch path is wired and only app/parity/ asks for the module
 //
+// Added 2026-10-17 (E18, between T22 and T23: the measured scroll):
+//   check-parity      a tall capture whose ScreenBody drew parity.scroll.<y> is judged at that
+//                     measured scroll (an agreeing marker passes; one 20 pt off fails scroll-mismatch
+//                     although the elements sit at the target; two markers that disagree fail); an
+//                     Android S11c en capture at y107 whose waived extra line moves most elements
+//                     passes with its marker, and the same dump without it still fails the inferred
+//                     scroll-mismatch (old captures keep the median)
+//   capture-app       records the dump's scroll markers in run.json and names the offset reached
+//   check-harness     harness-scroll-marker: the parity root provides the marker, ScreenBody draws it
+//
 //   node selftest.mjs [--tooling <repo>/.parity/tooling]
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
