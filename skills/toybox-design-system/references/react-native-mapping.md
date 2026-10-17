@@ -25,6 +25,7 @@
 | `packages/shell/src/i18n/fonts.ts` | `FONT_FAMILIES`, `scriptFontFor(language, weight, face)` (synced from the library; the RTL skill ships the same file) | yes |
 | `packages/shell/src/i18n/use-localized-text-style.ts` | family, size, pixel-snapped line height (`snapToPixels`), tracking, direction, alignment (synced from the library; the RTL skill ships the same file) | yes |
 | `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`) | yes |
+| `packages/shell/src/ui/use-text-scale.ts` | `useTextScale()` and `MAX_TEXT_SCALE`: the factor iOS draws text at (the phone's text size, capped at 200 %); AppText's line heights and the quiet underline scale with it | yes |
 | `packages/shell/src/ui/use-balanced-wrap.ts` | `useBalancedWrap(isEnabled, text, align)`: the design's `text-wrap: balance` for display text | yes |
 | `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash; `isStretched` in a dialog row) | yes |
 | `packages/shell/src/ui/edged-face.tsx` | `EdgedFace`: a solid-edged face painted in its edge colour with its fill laid inside the edge (radius minus edge width); a fill under the edge bleeds a pale 1/3 pt hairline past the antialiased rounded corner onto the hard shadow. It sets its own border (width, colour, radius) and paint from its props (edge colour default `colors.border`, fill default `colors.surface`); callers pass only layout. RaisedSurface's solid faces and toybox-components' DialogCard draw through it | yes |

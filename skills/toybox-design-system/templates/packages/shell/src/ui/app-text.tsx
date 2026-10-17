@@ -1,6 +1,6 @@
 // packages/shell/src/ui/app-text.tsx
 import { useState } from 'react';
-import { PixelRatio, Platform, Text, useWindowDimensions, View } from 'react-native';
+import { PixelRatio, Platform, Text, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
@@ -11,6 +11,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { androidMarksOf } from './line-breaks.ts';
 import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
+import { MAX_TEXT_SCALE, useTextScale } from './use-text-scale.ts';
 
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
@@ -158,17 +159,6 @@ function overflowGuardOf(style: TextStyle): OverflowGuard | null {
   const margin = Math.ceil(half);
   const shift = Platform.OS === 'ios' ? half : 0;
   return { paddingTop: margin + shift, paddingBottom: margin - shift, marginVertical: -margin };
-}
-
-/** Text grows with Dynamic Type up to 200 % and no further (spec 8.11): maxFontSizeMultiplier. */
-export const MAX_TEXT_SCALE = 2;
-
-/**
- * The factor iOS draws text at: the phone's text size, capped at 200 %. React Native scales the
- * font size and the line height by it, so a part measured against a text line scales with it.
- */
-export function useTextScale(): number {
-  return Math.min(useWindowDimensions().fontScale, MAX_TEXT_SCALE);
 }
 
 /**
