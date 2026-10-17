@@ -1028,6 +1028,7 @@
               "packages/shell/src/ui/edged-face*",
               "packages/shell/src/ui/toybox-styles*",
               "packages/shell/src/ui/use-balanced-wrap*",
+              "packages/shell/src/ui/line-breaks*",
               "packages/shell/src/app/press-feedback-context*",
               "packages/shell/src/i18n/use-localized-text-style*",
               "apps/line-siege/src/theme/**",
