@@ -49,9 +49,9 @@ tags: [ads-smoke]
     timeout: 60000
 - tapOn:
     id: 'result.continue-ad-button'
-# system-ui: Google's test rewarded ad is on screen ("Test mode" is its label, not app text).
+# system-ui: Google's test rewarded ad is on screen ("Test mode" on iOS, "Test Ad" on Android: its label, not app text).
 - extendedWaitUntil:
-    visible: 'Test mode'
+    visible: 'Test mode|Test Ad'
     timeout: 30000
 # system-ui: Google's test rewarded ad says so once the reward is earned (some test variants do not).
 - extendedWaitUntil:
