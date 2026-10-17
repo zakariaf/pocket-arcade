@@ -65,6 +65,19 @@ describe('AppText on Android', () => {
     expect(text.props['accessibilityLabel']).toBe('Persian and Sorani use a right-to-left layout.');
   });
 
+  it('draws a German no-break space in the text’s own font, and reads the text as written (spec 15.1)', async () => {
+    await renderWithShell(
+      <AppText text={'62\u00A0%'} variant="number" testID="stats.overview-card.win-rate.value" />,
+    );
+
+    // Lilita One has no U+00A0, so Android drew the no-break space from a fallback font, 1.7 pt
+    // wider than Lilita's space (E18-T23: S10's "62 %" and S12's "1,99 €" in German). A space
+    // between two word joiners keeps the line unbroken in the font's own space.
+    const text = screen.getByTestId('stats.overview-card.win-rate.value');
+    expect(text).toHaveTextContent('62\u2060 \u2060%');
+    expect(text.props['accessibilityLabel']).toBe('62\u00A0%');
+  });
+
   it('fills each line before breaking, as the design does, not with the paragraph-optimal breaker (spec 15.1)', async () => {
     await renderWithShell(
       <AppText
