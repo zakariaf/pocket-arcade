@@ -324,6 +324,16 @@ describe('AppText', () => {
     expect(name).toHaveStyle({ fontFamily: 'LilitaOne', fontSize: 28 });
   });
 
+  it('keeps a hyphenated text as written on iOS, which breaks after the hyphen itself', async () => {
+    await renderWithShell(
+      <AppText text="public-domain sources" testID="about.art-sound-row.label" />,
+    );
+
+    const text = screen.getByTestId('about.art-sound-row.label');
+    expect(text).toHaveTextContent('public-domain sources');
+    expect(text.props['accessibilityLabel']).toBeUndefined();
+  });
+
   it('paints tones from the theme', async () => {
     await renderWithShell(<AppText text="Reset" tone="danger" testID="settings.reset-label" />);
 

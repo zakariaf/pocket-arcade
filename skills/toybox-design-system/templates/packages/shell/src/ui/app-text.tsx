@@ -8,6 +8,7 @@ import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
+import { withHyphenBreaks } from './line-breaks.ts';
 import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
 
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
@@ -101,8 +102,10 @@ function localizedOptions(style: TypeStyle, props: AppTextProps): LocalizedTextO
   };
 }
 
-function textProps(props: AppTextProps): TextProps {
+function textProps(props: AppTextProps, shown: string): TextProps {
   return {
+    // Android draws break points the design does not spell (withHyphenBreaks): read it as written.
+    ...(shown === props.text ? {} : { accessibilityLabel: props.text }),
     ...(props.language === undefined ? {} : { accessibilityLanguage: props.language }),
     ...(props.numberOfLines === undefined ? {} : { numberOfLines: props.numberOfLines }),
     ...(props.isHeader === true ? { accessibilityRole: 'header' as const } : {}),
@@ -318,6 +321,15 @@ function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
   };
 }
 
+/**
+ * What the Text draws: game names (Latin brand names) isolated so an RTL sentence cannot reorder
+ * them; on Android a break point after each in-word hyphen, where the design may end a line.
+ */
+function shownTextOf(style: TypeStyle, text: string): string {
+  if (style.face === 'brand') return isolate(text);
+  return Platform.OS === 'android' ? withHyphenBreaks(text) : text;
+}
+
 /** The only component that renders text: role or style, script font, direction, 200% cap. */
 export function AppText(props: AppTextProps): ReactNode {
   const theme = useTheme();
@@ -328,8 +340,7 @@ export function AppText(props: AppTextProps): ReactNode {
   const balance = useBalancedWrap(isBalancedOf(style, variant), props.text, props.align ?? 'start');
   const decoration = style.isUnderlined === true ? UNDERLINE : null;
   const figures = style.isTabular === true ? TABULAR : null;
-  // Game names are Latin brand names: isolate them so an RTL sentence cannot reorder them.
-  const shown = style.face === 'brand' ? isolate(props.text) : props.text;
+  const shown = shownTextOf(style, props.text);
   const { guard, room, onLines, onBoxLayout } = useTextRoom(localized, props);
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
@@ -337,7 +348,7 @@ export function AppText(props: AppTextProps): ReactNode {
     <Text
       style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={MAX_TEXT_SCALE}
-      {...textProps(guard === null ? props : rest)}
+      {...textProps(guard === null ? props : rest, shown)}
       onLayout={(event) => {
         balance.onLayout?.(event);
         onBoxLayout(event);
