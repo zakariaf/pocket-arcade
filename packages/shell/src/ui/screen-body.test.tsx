@@ -1,14 +1,24 @@
 // packages/shell/src/ui/screen-body.test.tsx
 import { fireEvent, screen } from '@testing-library/react-native';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
 import { AppText } from './app-text.tsx';
-import { ScreenBody, ScreenScrollTargetContext } from './screen-body.tsx';
+import {
+  ScreenBody,
+  ScreenScrollMarkerContext,
+  ScreenScrollTargetContext,
+} from './screen-body.tsx';
 
 import type { ScreenBodyProps } from './screen-body.tsx';
+import type { ReactNode } from 'react';
+
+/** Stands in for the parity harness's marker: shows the offset it is given as its label. */
+function renderProbeMarker(y: number): ReactNode {
+  return <View testID="probe.scroll-marker" accessibilityLabel={String(y)} />;
+}
 
 /** iPhone 16 Pro: 62 pt status bar, 34 pt home indicator. */
 const PHONE_METRICS = {
@@ -93,6 +103,35 @@ describe('ScreenBody', () => {
     await fireEvent(screen.getByTestId('settings.body'), 'contentSizeChange', 402, 2074);
 
     expect(scrollTo).toHaveBeenCalledWith({ y: 1170, animated: false });
+  });
+
+  it('shows the offset it reached through the test-build scroll marker, once it has scrolled', async () => {
+    await renderWithShell(
+      <ScreenScrollMarkerContext value={renderProbeMarker}>
+        <ScreenBody testID="licences.body">
+          <AppText text="Block" />
+        </ScreenBody>
+      </ScreenScrollMarkerContext>,
+    );
+    const before = screen.queryByTestId('probe.scroll-marker');
+
+    await fireEvent.scroll(screen.getByTestId('licences.body'), {
+      nativeEvent: { contentOffset: { x: 0, y: 742.67 } },
+    });
+
+    expect({
+      before,
+      after: screen.queryByTestId('probe.scroll-marker')?.props ?? null,
+    }).toMatchObject({
+      before: null,
+      after: { accessibilityLabel: '742.67' },
+    });
+  });
+
+  it('listens to no scroll and draws no marker in a store build', async () => {
+    await bodyStylesFor({ scrollToY: 573 });
+
+    expect(screen.getByTestId('home.body')).not.toHaveProp('onScroll');
   });
 
   it('leaves a body without a scroll target where it starts', async () => {
