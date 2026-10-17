@@ -33,8 +33,8 @@ tags: [ads-smoke]
     visible:
       id: 'game.screen'
     timeout: 15000
-# system-ui: Google's test ads carry a "Test mode" label; none may show offline.
-- assertNotVisible: 'Test mode'
+# system-ui: Google's test ads carry a "Test mode" (iOS) or "Test Ad" (Android) label; none may show offline.
+- assertNotVisible: 'Test mode|Test Ad'
 - runFlow:
     file: ../subflows/debug-setup.yaml
     env:

@@ -81,7 +81,12 @@ tools/maestro/bin/maestro --device <serial> --driver-host-port <port> test \
   -e APP_ID=<package> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
 ```
 
-Flow 2's relaunch is `adb -s <serial> shell am force-stop <package>` then the same `am start`. On Android Google's form, the test ads and their close keys are Google's own Android views: the texts "Consent" and "Test mode" and the close points of flows 3 and 4 were recorded on iOS; the first Android ads smoke run confirms them and records any Android difference here. A fullscreen ad backgrounds the app on Android (references/placements-and-lifecycle.md), so flow 4's settled-board step is also the Android proof that the run plays on after the ad.
+Flow 2's relaunch is `adb -s <serial> shell am force-stop <package>` then the same `am start`. On Android Google's form, the test ads and their close keys are Google's own Android views: the texts "Consent" and "Test mode" and the close points of flows 3 and 4 were recorded on iOS; the first Android ads smoke run confirmed "Consent" and recorded the differences (E18-T24, API 35 `google_apis` emulator, Maestro 2.10, a Berlin network):
+
+- Google's test ads label themselves "Test Ad" on Android (top centre), "Test mode" on iOS: flows 3 to 5 match `'Test mode|Test Ad'`.
+- The close key of the interstitial and the rewarded ad is a view whose text is "Close" at about 94%,3% on a 1080 x 2400 screen, so the iOS point (94%,9%) misses it: `close-test-ad.yaml` taps `'Close'` under `when: platform: Android` and keeps the point taps under `platform: iOS`.
+- Recorded run: flows 1 to 5 on one fresh install and flow 6 on a new one passed (logs in `reports/e18/t24-ads-smoke/`). Flow 1: S3, Google's form, "Consent", the "Test Ad" adaptive banner on Home, no tracking prompt. Flow 3: no ad after the first two Next taps, the test interstitial after the third, level 4 settled after Close. Flow 4: the rewarded test ad, Close, the run on the Game screen with `{"seq":2,"settled":true}`, one heart and the tray restored. Flow 5: no banner, no continue offer, no ad. Flow 6 (`geo=other`): no S3 and no form, the banner.
+- A UMP request can fail on the network ("UserMessagingPlatform: Error making request", then "No available form can be built"): flow 1 then waits for "Consent" in vain and the app shows neither a form nor an ad, as it must (silent). Check the network and run the six flows again from a fresh install; the second attempt of E18-T24 failed this way and the third passed. A fullscreen ad backgrounds the app on Android (references/placements-and-lifecycle.md), so flow 4's settled-board step is also the Android proof that the run plays on after the ad.
 
 ## Jest root mock
 
