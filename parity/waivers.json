@@ -251,6 +251,68 @@
       "langs": ["fa"],
       "reason": "Its three two-line Vazirmatn texts (title 25/36.25, body 17/25.5, key label 17/24.65) snap each line box to the 1/3-pt device pixel grid on iOS, so the centred card measures 353.33 pt tall against Chrome's 352 pt (1.33 pt taller, 2 px at each edge) while every text, the art and the keys match their bounds and ink. A pre-listed platform waiver of the parity skill.",
       "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s3-consent-moment",
+      "testID": "consent.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 18 pt Rubik line 1.4 pt wider than Chrome (ink 350.7 vs 349.3 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/consent.body.png."
+    },
+    {
+      "frame": "s3-consent-moment",
+      "testID": "consent.footnote",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 13 pt Rubik line 1.3 pt wider than Chrome (ink 354.0 vs 352.7 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/consent.footnote.png."
+    },
+    {
+      "frame": "s4-home",
+      "testID": "home.endless-card.description",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 14 pt Rubik line 1.7 pt wider than Chrome (ink 218.7 vs 217.0 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/home.endless-card.description.png."
+    },
+    {
+      "frame": "s4-home-premium",
+      "testID": "home.endless-card.description",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 14 pt Rubik line 1.7 pt wider than Chrome (ink 218.7 vs 217.0 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/home.endless-card.description.png."
+    },
+    {
+      "frame": "s4-home",
+      "testID": "home.stats-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 15 narrower than Chrome's HarfBuzz with the same font file: the word is 1.3 pt narrower in light fa (21.0 vs 22.3 pt, gate 1 pt) and 1.0 pt in dark fa (passes); box, position and colour match, and no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the light-fa run's crops/home.stats-button.png."
+    },
+    {
+      "frame": "s4-home-premium",
+      "testID": "home.stats-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 15 narrower than Chrome's HarfBuzz with the same font file: the word is 1.3 pt narrower in light fa (21.0 vs 22.3 pt, gate 1 pt) and 1.0 pt in dark fa (passes); box, position and colour match, and no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the light-fa run's crops/home.stats-button.png."
     }
   ]
 }
