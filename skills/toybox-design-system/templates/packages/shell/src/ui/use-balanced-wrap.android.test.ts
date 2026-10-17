@@ -1,7 +1,7 @@
 // packages/shell/src/ui/use-balanced-wrap.android.test.ts
-// The Android half of the balanced wrap (the unit-android project): Android 15 and later break lines
-// by their glyph bounds (useBoundsForWidth), so a probe a little narrower than a line can keep that
-// line, which onTextLayout reports at its advance width, wider than the room the pad leaves.
+// The Android half of the balanced wrap (the unit-android project): Android lets a line's trailing
+// space hang past the room but counts it in the width onTextLayout reports, so a probe can keep a
+// line that reads wider than the room the pad leaves.
 import { advance, afterTextLayout, isStale } from './use-balanced-wrap.ts';
 
 import type { Measure } from './use-balanced-wrap.ts';
@@ -21,13 +21,13 @@ function probingAt256(): Measure {
   return afterTextLayout(first, STEP_2, AT_293);
 }
 
-describe('balanced wrap on Android (lines broken by glyph bounds)', () => {
+describe('balanced wrap on Android (a trailing space counted in the line width)', () => {
   // Spec S13: "3-5 short illustrated steps drawn in code (from the game module)", and 15.1: each
   // screen matches its Toybox design, which balances this heading as "... تا در / مسیر ...".
   it('takes a probe that kept a line wider than its room as that probe’s own layout (spec S13, 15.1)', () => {
     const probing = probingAt256();
     expect(probing.search).toMatchObject({ hi: 293, pad: 362 - 256, isDone: false });
-    // At 256 pt Android keeps "... تا در مسیر" (257.24 pt by advance) on the first line.
+    // At 256 pt Android keeps "... تا در مسیر " (251.98 pt and a 5.30 pt space) on the first line.
     const next = afterTextLayout(probing, STEP_2, AT_293);
     expect(next.search).toMatchObject({ hi: 256, pad: 362 - 240, isDone: false });
   });

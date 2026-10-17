@@ -195,12 +195,13 @@ export function advance(measure: Measure, isWordBroken = false): Measure {
 }
 
 /**
- * Android 15 and later break lines by their glyph bounds (useBoundsForWidth), so a probe a little
- * narrower than a line can keep it, and onTextLayout reports it at its advance width, wider than
- * the room (S13's Persian step 2 kept 257.24 pt at 256). That layout is the probe's own: Fabric
- * sends a text layout only for a new layout, in order, so nothing on Android is stale.
+ * Android lets a line's trailing space hang past the room but counts it in the line width that
+ * onTextLayout reports, so a probe can keep a line that reads wider than the room (S13's Persian
+ * step 2 kept "... تا در مسیر " at 256 pt: 251.98 pt of text plus its 5.30 pt space, reported as
+ * 257.24). That layout is the probe's own: Fabric sends a text layout only for a new layout, in
+ * order, so nothing on Android is stale.
  */
-const IS_BROKEN_BY_GLYPH_BOUNDS = Platform.OS === 'android';
+const IS_TRAILING_SPACE_COUNTED = Platform.OS === 'android';
 
 /** Slack for sub-point rounding between the line widths and the laid-out width. */
 const LINE_SLACK = 0.5;
@@ -213,9 +214,9 @@ const LINE_SLACK = 0.5;
 export function isStale(
   measure: Measure,
   lineWidths: readonly number[],
-  isBrokenByGlyphBounds = IS_BROKEN_BY_GLYPH_BOUNDS,
+  isTrailingSpaceCounted = IS_TRAILING_SPACE_COUNTED,
 ): boolean {
-  if (measure.width === 0 || isBrokenByGlyphBounds) return false;
+  if (measure.width === 0 || isTrailingSpaceCounted) return false;
   const room = measure.width - (measure.search?.pad ?? 0);
   return lineWidths.some((line) => line > room + LINE_SLACK);
 }
