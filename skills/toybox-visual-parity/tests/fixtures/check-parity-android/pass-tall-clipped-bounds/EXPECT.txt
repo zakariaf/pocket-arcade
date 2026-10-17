@@ -1,0 +1,2 @@
+stats.week-card: Android reports only its visible part (cut at the body window's bottom); judged by its visible edges
+1 of 1 runs pass

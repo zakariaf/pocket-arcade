@@ -1,0 +1,17 @@
+{
+ "version": 1,
+ "frame": "s10-statistics",
+ "variant": null,
+ "referenceName": "s10-statistics",
+ "kind": "phone-tall",
+ "theme": "dark",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 418,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "The S10 dark-fa capture at scroll 418 with stats.week-card (cut by the body window at the bottom) reported with its visible top edge 3 pt lower: a cut box is judged by its visible edges, so the move still fails.",
+ "app": "../pass-tall-clipped-bounds/app.png"
+}

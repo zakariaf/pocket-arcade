@@ -944,13 +944,21 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   // frame the body is visible only between the fixed header and the pinned banner (headerBottom and
   // bodyBottom, screen coordinates): body pixels outside that window are hidden in the app and are
   // never compared, and an element counts as covered only when it was fully inside it.
+  // Android reports accessibility bounds clipped to what is visible (iOS reports the whole frame), so
+  // a body element of a tall frame that runs past the body window comes back cut at the window's
+  // edge. The scroll is read only from elements clear of both edges, and a cut box is rebuilt below
+  // from its visible edge and the design's height: only the edges on screen are judged, and the
+  // element still counts as covered only where it is wholly on screen.
+  const clipsBounds = device.platform === 'android' && geo.tall;
+  const atTop = (a) => clipsBounds && Math.abs(a.y - geo.headerBottom) <= T.boundsPt;
+  const atBottom = (a) => clipsBounds && Math.abs(a.y + a.h - geo.bodyBottom) <= T.boundsPt;
   const pairs = new Map();
   const bodyShifts = [];
   for (const el of designEls) {
     const a = app.bounds.elements.get(el.testID);
     if (!a) continue;
     pairs.set(el.testID, { el, a });
-    if (geo.inBody(el) && el.rect.h < viewH) bodyShifts.push(a.y - el.rect.y);
+    if (geo.inBody(el) && el.rect.h < viewH && !atTop(a) && !atBottom(a)) bodyShifts.push(a.y - el.rect.y);
   }
   bodyShifts.sort((p, q) => p - q);
   const scrollShift = bodyShifts.length ? bodyShifts[Math.floor(bodyShifts.length / 2)] : 0;
@@ -965,6 +973,19 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     if (Math.abs(scrollShift + wanted) > T.boundsPt) {
       add('scroll-mismatch', layout.root, `the body is scrolled by ${round1(Math.max(0, -scrollShift))} pt but the capture asked for scrollY ${scrollY} (${round1(wanted)} pt within the design's scroll height)`,
         "The parity harness must scroll the screen's ScrollView to scrollY without animation, after the content has laid out; then capture again.");
+    }
+  }
+  if (clipsBounds) {
+    for (const [id, { el, a }] of pairs) {
+      if (!geo.inBody(el)) continue;
+      const top = expectedY(el);
+      const isCutTop = top < geo.headerBottom - T.boundsPt && atTop(a);
+      const isCutBottom = top + el.rect.h > geo.bodyBottom + T.boundsPt && atBottom(a);
+      if (!isCutTop && !isCutBottom) continue;
+      const y = isCutTop && isCutBottom ? top : isCutTop ? a.y + a.h - el.rect.h : a.y;
+      pairs.set(id, { el, a: { ...a, y, h: el.rect.h } });
+      const cut = isCutTop && isCutBottom ? 'top and bottom' : isCutTop ? 'top' : 'bottom';
+      notes.push(`${id}: Android reports only its visible part (cut at the body window's ${cut}); judged by its visible edges`);
     }
   }
   const windowH = geo.bodyBottom - geo.headerBottom;

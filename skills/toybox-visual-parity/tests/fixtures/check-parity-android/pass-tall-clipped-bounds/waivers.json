@@ -1,0 +1,15 @@
+{
+ "version": 1,
+ "waivers": [
+  {
+   "frame": "s10-statistics",
+   "testID": "stats.top-bar.title",
+   "rule": "text-ink",
+   "class": "platform-text-shaping",
+   "glyphs": "آمار",
+   "platform": "android",
+   "reason": "Self-test fixture: Android shapes this Vazirmatn word 1.3 pt narrower than Chrome; it stands in for a waiver so the clipped-bounds case is judged alone.",
+   "reportedToOwner": "2026-10-17"
+  }
+ ]
+}
