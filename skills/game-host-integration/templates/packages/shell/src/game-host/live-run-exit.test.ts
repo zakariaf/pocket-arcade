@@ -1,12 +1,6 @@
 // packages/shell/src/game-host/live-run-exit.test.ts
-// no-shell-context: useLiveRunExit reads only the exit context the test build provides.
-import { renderHook } from '@testing-library/react-native';
-import { createElement } from 'react';
-
 import * as liveRunExitModule from './live-run-exit.ts';
-import { createLiveRunExit, LiveRunExitContext, useLiveRunExit } from './live-run-exit.ts';
-
-import type { ReactNode } from 'react';
+import { createLiveRunExit } from './live-run-exit.ts';
 
 describe('createLiveRunExit (spec S5 and S6: only Pause -> Home leaves a live run)', () => {
   it('leaves through the open Game screen, as its Pause Home key does', () => {
@@ -37,25 +31,7 @@ describe('createLiveRunExit (spec S5 and S6: only Pause -> Home leaves a live ru
   });
 });
 
-describe('useLiveRunExit (spec S5 and S6, test builds only)', () => {
-  it("offers the Game screen's leave to the exit the test build provides, until it unmounts", async () => {
-    const calls: string[] = [];
-    const exit = createLiveRunExit();
-    const wrapper = ({ children }: { readonly children: ReactNode }): ReactNode =>
-      createElement(LiveRunExitContext, { value: exit }, children);
-    const view = await renderHook(
-      () => {
-        useLiveRunExit(() => calls.push('leave'));
-      },
-      { wrapper },
-    );
-    exit.leave();
-    expect(calls).toStrictEqual(['leave']);
-    await view.unmount();
-    exit.leave();
-    expect(calls).toStrictEqual(['leave']);
-  });
-
+describe('the live-run exit module (test builds only)', () => {
   it('keeps no registry of its own: a store build provides no exit, so nothing registers', () => {
     expect(Object.keys(liveRunExitModule)).not.toContain('LIVE_RUN_EXIT');
   });

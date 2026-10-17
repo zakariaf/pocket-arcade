@@ -1,7 +1,7 @@
 // packages/shell/src/app/shell-navigator-exit.test.tsx
 // The live-run exit a test build's debug parts make reaches every screen ShellNavigator hosts, so
 // the Game screen's leave is what a debug link's stack reset calls first (spec S5, S6).
-import { useLiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
+import { useLiveRunExit } from '@e07/shell/game-host/use-live-run-exit.ts';
 import { createFakeDebugStore } from '@e07/shell/screens/debug/fake-debug-store.ts';
 import { createTestAdapters } from '@e07/shell/testing/create-test-adapters.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';

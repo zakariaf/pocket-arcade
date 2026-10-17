@@ -3,8 +3,8 @@ import { StackActions, useNavigation, usePreventRemove } from '@react-navigation
 import { useEffect, useRef } from 'react';
 
 import { GameTopBar } from '@e07/shell/game-host/game-top-bar.tsx';
-import { useLiveRunExit } from '@e07/shell/game-host/live-run-exit.ts';
 import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
+import { useLiveRunExit } from '@e07/shell/game-host/use-live-run-exit.ts';
 import { usePauseOnBackground } from '@e07/shell/game-host/use-pause-on-background.ts';
 import { PauseOverlay } from '@e07/shell/screens/pause/pause-overlay.tsx';
 import { ResultOverlay } from '@e07/shell/screens/result/result-overlay.tsx';
