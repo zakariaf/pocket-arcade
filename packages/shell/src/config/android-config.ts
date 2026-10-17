@@ -68,6 +68,9 @@ export function androidPlugins(game: GameConfig): PluginEntry[] {
     // architecture-and-boundaries: each Text drawn with the layout React Native measured (Android
     // 15+ wraps a TextView by its glyph bounds, and a tight Persian line lost its last word).
     '@e07/shell/plugins/with-prepared-text-layout.ts',
+    // architecture-and-boundaries: Play Billing's own telemetry (Google's datatransport CCT
+    // backend) unregistered, so nothing in the app's process uploads it (spec N3, E18-T24).
+    '@e07/shell/plugins/with-no-google-telemetry.ts',
     // android-release-play: release builds signed with the game's upload key when its Gradle
     // properties exist; without this line every Play bundle stays debug-signed.
     ['@e07/shell/plugins/with-upload-signing.ts', { game: game.id }],

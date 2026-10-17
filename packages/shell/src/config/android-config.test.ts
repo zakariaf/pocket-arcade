@@ -76,11 +76,12 @@ describe('androidConfig', () => {
 });
 
 describe('androidPlugins', () => {
-  it('lists the backup rules, right-to-left support, the prepared text layout and the upload signing for this game', () => {
+  it('lists the backup rules, right-to-left support, the prepared text layout, no Google telemetry and the upload signing for this game', () => {
     expect(androidPlugins(GAME)).toStrictEqual([
       '@e07/shell/plugins/with-backup-rules.ts',
       '@e07/shell/plugins/with-rtl-support.ts',
       '@e07/shell/plugins/with-prepared-text-layout.ts',
+      '@e07/shell/plugins/with-no-google-telemetry.ts',
       ['@e07/shell/plugins/with-upload-signing.ts', { game: 'probe-game' }],
     ]);
   });
