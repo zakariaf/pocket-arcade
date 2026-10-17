@@ -7089,6 +7089,195 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "dae982a2d87bcead617ae9dbe8694a386bd74fe6b8cdca43f98b597e3e73dbd3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "91223a1316590a4d9431d863398cc7ecbf792d22af27c09cfced403fda667e58",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "451896936fb21a61937398b64d2833fda662cd099aa5a8686f65a51c1027ecc8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "559cc5c0041a9f722ab4f2cc1c170a5e690fed015afb8a78983c9a9d75404faf",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "4373eb2a144fed2d68cbb0a2ecfa59bbe5d71be0b9483afc9a835b8426d038e9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "db8373d84ae527ad07fb0e9125988db6ad7753226599e4bc66c05610e8af9341",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "857657854c479d40b97ca0c0a0c1ea23b18a86716666a44d53ecaa09737c547e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 768,
+      "sheetSha256": "2d29bd409ec922d469625e6b2d6186a9020a9fbf0ddf1338ff1f5821b172bf27",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 768,
+      "sheetSha256": "2ec135debffbd52da5a9b3107361482bbbe495f6d6d076ebb580dae607cd3705",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }
