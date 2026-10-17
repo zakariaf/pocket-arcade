@@ -1,6 +1,6 @@
 // packages/shell/src/ui/screen-body.tsx
 import { createContext, use, useRef } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 
 import { LAYOUT } from '@e07/shell/theme/tokens.ts';
@@ -35,7 +35,8 @@ export type ScreenBodyProps = {
    */
   readonly hasTopOverhang?: boolean;
   /**
-   * Opens the body scrolled to this offset, without animation (iOS clamps it to the maximum).
+   * Opens the body scrolled to this offset, without animation (iOS clamps it to the maximum;
+   * Android scrolls a frame after each content or layout change).
    * Defaults to ScreenScrollTargetContext; only test builds set either.
    */
   readonly scrollToY?: number;
@@ -106,8 +107,15 @@ export function ScreenBody(props: ScreenBodyProps): ReactNode {
   const scrollToY = props.scrollToY ?? harnessScrollY ?? 0;
   // From both callbacks: the first layout happens before the safe-area insets arrive, so the frame
   // is too tall and iOS clamps the offset; the later layout (same content size) scrolls again.
+  // Android runs a view command before the mount items of its batch and clamps scrollTo to the
+  // content it has then, so there the body scrolls a frame later, once the grown content is mounted.
+  const scrollToTarget = (): void => {
+    scroll.current?.scrollTo({ y: scrollToY, animated: false });
+  };
   const handleScrollTarget = (): void => {
-    if (scrollToY > 0) scroll.current?.scrollTo({ y: scrollToY, animated: false });
+    if (scrollToY <= 0) return;
+    if (Platform.OS === 'android') requestAnimationFrame(scrollToTarget);
+    else scrollToTarget();
   };
   return (
     <ScrollView
