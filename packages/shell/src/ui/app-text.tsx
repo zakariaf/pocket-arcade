@@ -62,6 +62,13 @@ export type TextLine = {
 };
 
 const UNDERLINE = { textDecorationLine: 'underline' } as const;
+
+/**
+ * Chrome (the design) and iOS fill each line before breaking; Android's default high-quality
+ * breaker evens a paragraph's lines out instead (S11c's purchase text moved "or" to its second
+ * line). Android only; iOS ignores the prop.
+ */
+const GREEDY_BREAKS = 'simple';
 const TABULAR: TextStyle = { fontVariant: ['tabular-nums'] };
 
 function toneColor(theme: Theme, tone: TextTone): string {
@@ -348,6 +355,7 @@ export function AppText(props: AppTextProps): ReactNode {
     <Text
       style={[localized, decoration, figures, color, balance.style, guard, room]}
       maxFontSizeMultiplier={MAX_TEXT_SCALE}
+      textBreakStrategy={GREEDY_BREAKS}
       {...textProps(guard === null ? props : rest, shown)}
       onLayout={(event) => {
         balance.onLayout?.(event);
