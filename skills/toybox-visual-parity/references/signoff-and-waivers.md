@@ -70,6 +70,8 @@ A waiver accepts **one named problem of one element on one frame** that the app 
 | `platform-text-shaping` | CoreText shapes certain glyphs or marks differently from Chrome's HarfBuzz with the same font file (the ink is narrower or wider, not moved) | `glyphs`: the characters or marks, for example `"آ"` | `text-ink` only |
 | `design-artefact` | the mockup's own CSS draws something the product does not mean, and the copy deck or component is right | `designCause`: the CSS rule in `assets/design/toybox.html` and what it does | every waivable rule except `missing` |
 
+**Android Latin text widths (a `platform` waiver).** Android's text engine (Minikin) shapes each word and each space on its own, so a font's kerning pairs across a space are lost, while Chrome shapes the whole run. Rubik lines therefore come out 1 to 2 pt wider on the Android emulator than in the design (E18-T20 to T22). It was measured, not guessed: Chrome's per-word sums of S11c's lines with the bundled Rubik-Regular.ttf equal Android's `onTextLayout` widths within 0.04 pt (334.94 vs 334.91 pt), and Chrome's whole-run widths are 1.1 to 1.9 pt narrower. No style fixes it (nudging glyphs is banned). Such a text-ink difference gets a `platform` waiver naming the measured widths. A line that this extra width pushes past its box breaks one word later, which is more than 2 pt (S11c's ads paragraph gained a line). That goes to the lead as its own decision, never as a routine text-layout waiver.
+
 The format, with one waiver of each extra class (the madda entry shows the fields; since text ink is measured by colour, S4's آمار is 0.67 pt narrower and passes without it; the tile-13 entry is one of the pre-listed pair below):
 
 ```json
