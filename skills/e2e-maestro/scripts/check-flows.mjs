@@ -86,7 +86,8 @@ const SPEC = {
     '                       (when: platform: Android or iOS). Android only: back, pressKey: back, setAirplaneMode and',
     '                       toggleAirplaneMode (on iOS they do nothing, so the iOS run passes without proving anything).',
     "                       iOS only: Apple's tracking prompt (text 'Ask App Not to Track' or 'Allow Tracking'), which",
-    '                       never shows on Android. Due at Android step 7 (once any Android E2E file exists); before',
+    '                       never shows on Android, and killApp (on Android it is am kill, which spares the foreground',
+    '                       app: use subflows/kill-app.yaml). Due at Android step 7 (once any Android E2E file exists); before',
     '                       that, a file with such a step prints one not-yet-due SKIP line',
     '  maestro-syntax       (--syntax) maestro check-syntax rejects the file',
     '  flows-missing        no flow exists although the whole Shell is built (no shell-slice.json): the end-to-end',
@@ -369,6 +370,7 @@ function platformGuardFindings(steps, platform = null, found = []) {
     const where = platform === null ? 'outside a runFlow with when: platform:' : `inside a runFlow guarded by platform: ${platform}`;
     const isAndroidOnly = ANDROID_ONLY_COMMANDS.has(name) || (name === 'pressKey' && /^back$/i.test(String(arg)));
     if (isAndroidOnly && platform?.toLowerCase() !== 'android') found.push({ line, message: `${name} runs on Android only (on iOS it does nothing), ${where}`, platform: 'Android' });
+    if (name === 'killApp' && platform?.toLowerCase() !== 'ios') found.push({ line, message: `killApp runs ${where}; on Android it is am kill, which never ends the foreground app (the relaunch finds it still running, so a save-survives-a-kill check proves nothing)`, platform: 'iOS', fix: 'Run packages/shell/e2e/subflows/kill-app.yaml instead (killApp under when: platform: iOS, stopApp, which is am force-stop, under when: platform: Android; references/flows.md, "Both platforms").' });
     if (platform?.toLowerCase() !== 'ios') {
       const text = stepTexts(name, arg).find((value) => IOS_ONLY_TEXT.test(value));
       if (text !== undefined) found.push({ line, message: `"${text}" is Apple's tracking prompt, iOS only (it never shows on Android), ${where}`, platform: 'iOS' });
@@ -388,7 +390,7 @@ function checkPlatformGuard(rel, parsed, androidSkip, report) {
     report.skip({ file: rel, rule: 'platform-guard', message: androidSkip });
     return;
   }
-  for (const item of found) report.problem({ file: rel, line: item.line, rule: 'platform-guard', message: item.message, fix: `Wrap it in - runFlow: { when: { platform: ${item.platform} }, commands: [...] } (flows run unchanged on both platforms; references/flows.md, "Both platforms").` });
+  for (const item of found) report.problem({ file: rel, line: item.line, rule: 'platform-guard', message: item.message, fix: item.fix ?? `Wrap it in - runFlow: { when: { platform: ${item.platform} }, commands: [...] } (flows run unchanged on both platforms; references/flows.md, "Both platforms").` });
 }
 
 /**

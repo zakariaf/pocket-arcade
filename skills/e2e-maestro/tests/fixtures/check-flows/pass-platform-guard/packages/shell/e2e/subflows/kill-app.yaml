@@ -1,0 +1,17 @@
+# packages/shell/e2e/subflows/kill-app.yaml — sub-flow: process death of the app in the foreground,
+# for the save-survives-a-kill checks (spec 15.6). On iOS Maestro's killApp ends the process. On
+# Android killApp is `am kill`, which only ends processes that are safe to kill, never the
+# foreground app: the app kept running, the relaunch came back to the same screen and no Pause
+# showed (E18-T24). There `stopApp` is `am force-stop`, a real kill of the foreground process.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - killApp
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - stopApp

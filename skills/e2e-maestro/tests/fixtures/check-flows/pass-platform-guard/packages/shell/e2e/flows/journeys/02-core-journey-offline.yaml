@@ -28,7 +28,8 @@ tags: [smoke, shell, offline]
     id: 'result.next-button'
 - assertVisible:
     id: 'game.screen'
-- killApp
+# A real process death on both platforms (on Android killApp spares the foreground app).
+- runFlow: ../../subflows/kill-app.yaml
 - launchApp:
     stopApp: false
 - extendedWaitUntil:
