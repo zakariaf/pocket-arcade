@@ -5,7 +5,7 @@ import { makeStyles } from '@e07/shell/theme/make-styles.ts';
 import { SHELL_COLORS } from '@e07/shell/theme/shell-colors.ts';
 
 import { COMPONENT_SPECS } from './component-specs.ts';
-import { useBodyBottomTopUp } from './screen-body.tsx';
+import { useBodyBottomTopUp } from './use-body-bottom-top-up.ts';
 
 import type { ViewStyle } from 'react-native';
 

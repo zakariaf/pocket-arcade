@@ -7,7 +7,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
 import { BusyBlocks } from '@e07/shell/ui/busy-blocks.tsx';
 import { LogoTile } from '@e07/shell/ui/logo-tile.tsx';
-import { useBodyBottomTopUp } from '@e07/shell/ui/screen-body.tsx';
+import { useBodyBottomTopUp } from '@e07/shell/ui/use-body-bottom-top-up.ts';
 import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
