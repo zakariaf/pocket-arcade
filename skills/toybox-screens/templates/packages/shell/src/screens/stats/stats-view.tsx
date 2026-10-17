@@ -5,7 +5,7 @@ import { Button } from '@e07/shell/ui/button.tsx';
 import { ScreenBody } from '@e07/shell/ui/screen-body.tsx';
 import { ScreenFrame, UNDER_HOME_INDICATOR_EDGES } from '@e07/shell/ui/screen-frame.tsx';
 import { TopBar } from '@e07/shell/ui/top-bar.tsx';
-import { useBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
+import { usePinnedBannerBandStyle } from '@e07/shell/ui/use-banner-band-style.ts';
 
 import { StatsEmptyState } from './stats-empty-state.tsx';
 import { StatsLocalNote } from './stats-local-note.tsx';
@@ -22,7 +22,7 @@ export type StatsViewProps = { readonly model: StatsModel };
  */
 export function StatsView({ model }: StatsViewProps): ReactNode {
   const t = useT();
-  const bannerBandStyle = useBannerBandStyle();
+  const bannerBandStyle = usePinnedBannerBandStyle();
   // With its banner the page ends above the pinned band (the home indicator sits under the band);
   // without it (Premium, offline, no consent) the tall body scrolls on under the home indicator.
   const isUnderHomeIndicator = !model.banner.isAllowed;
