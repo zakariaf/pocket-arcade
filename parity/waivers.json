@@ -313,6 +313,310 @@
       "glyphs": "آ",
       "langs": ["fa"],
       "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 15 narrower than Chrome's HarfBuzz with the same font file: the word is 1.3 pt narrower in light fa (21.0 vs 22.3 pt, gate 1 pt) and 1.0 pt in dark fa (passes); box, position and colour match, and no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the light-fa run's crops/home.stats-button.png."
+    },
+    {
+      "frame": "s10-statistics",
+      "testID": "stats.top-bar.title",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 27 narrower than Chrome's HarfBuzz with the same font file: the top-bar title is 1.3 pt narrower in light and dark fa at every scroll offset (39.3 vs 40.7 pt, gate 1 pt), the class T20 found on Home's Statistics key; box, position and colour match, no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the fa runs' crops/stats.top-bar.title.png."
+    },
+    {
+      "frame": "s10-statistics-empty",
+      "testID": "stats.top-bar.title",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 27 narrower than Chrome's HarfBuzz with the same font file: the top-bar title is 1.3 pt narrower in light and dark fa at every scroll offset (39.3 vs 40.7 pt, gate 1 pt), the class T20 found on Home's Statistics key; box, position and colour match, no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the fa runs' crops/stats.top-bar.title.png."
+    },
+    {
+      "frame": "s10-statistics-empty",
+      "testID": "stats.empty-state.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 16 pt Rubik line 1.7 pt wider than Chrome (ink 280.7 vs 279.0 pt, gate 1 pt) in light and dark en: same Rubik-Regular.ttf, size, line box and line break, subpixel and linear text on through React Native's CustomStyleSpan, no letter-spacing; Android's advance and kerning sums for Rubik come out wider (Chrome measures this class 1.3-1.7 pt narrower with kerning, wider without). iOS passes it. Evidence: the en runs' crops/stats.empty-state.body.png."
+    },
+    {
+      "frame": "s10-statistics",
+      "testID": "stats.best-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The Best card's list rows come out 44.33-44.67 pt on Android against the design's 44.8 (the row content is the 22 pt Lilita One value line, 74 px, and the key line under its Chrome baseline drop, identical code on iOS): the rule above the fifth row sits 0.7 pt high on screen and 1.3 pt relative to the card's top (gate 1.5 pt blobs; 1.3 pt measured), every rule within 0.7 pt of its design line (reports/e18 rule scan: app 584.33, 629, 673.33, 718, 762.33 vs design 584, 629, 673, 718, 763). Text line boxes, not a style: the chromeBaseline model is pinned at a 4.7 pt drop by its test. Evidence: crops/stats.best-card.png of light-en, dark-en and their y374 captures."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.streak-rule",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the 15 pt Rubik line \"Play every day to grow your streak.\" 2.67 pt wider than Chrome (ink 241.3 vs 238.7 pt): same font file, size, box (48 pt start after the 20 pt chain icon and 8 pt gap) and line; Chrome measures the line 241.02 pt with kerning and 245.27 without, so Android's advance and kerning sums sit between. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "themes": ["light"],
+      "langs": ["fa"],
+      "reason": "In the one-line Vazirmatn 15 sentence around the bidi-isolated price (از بازی لذت می‌برید؟ تبلیغات را با ⁨€۱٫۹۹⁩ حذف کنید.), Android puts the first run 2.2-2.4 pt closer to the price than Chrome while the price and the last run sit within 0.4 pt: the space around the FSI/PDI isolate comes out narrower. Dark fa passes (gate 2 pt)."
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.continue-offer",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.14",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.15",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.16",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.17",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.18",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.19",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.20",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.21",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.22",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.23",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.24",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.25",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.26",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.27",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.28",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.29",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.30",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.pack.2",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.1.mark",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.7.mark",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. On Android the tile is dx +1.1 dy -1.9 dw -2.1 dh +3.7 pt off and its number 2.2 pt low in light en. The iOS pre-listed design-artefact pair, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. On Android the tile is dx +1.1 dy -1.9 dw -2.1 dh +3.7 pt off and its number 2.2 pt low in light en. The iOS pre-listed design-artefact pair, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13.number",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)}",
+      "themes": ["light"],
+      "langs": ["en"],
+      "reason": "The number of the mid-press tile 13 sits 2.2 pt lower in light en because the mockup squashes the tile; the app tile is at rest."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["fa"],
+      "reason": "The month sits on the tilted calendar tile; in dark fa Chrome's antialiased tile-edge pixels next to the word count as ink in the design (ink height 23.0 pt) while the app's edge does not (16.7 pt). The word itself matches (crop). The iOS pre-listed waiver, for Android."
     }
   ]
 }
