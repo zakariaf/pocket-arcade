@@ -627,8 +627,7 @@
       "class": "design-artefact",
       "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
       "langs": ["en"],
-      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android.",
-      "task": "T22"
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
     },
     {
       "frame": "s11b-about-and-credits",
@@ -639,8 +638,7 @@
       "class": "design-artefact",
       "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
       "langs": ["en"],
-      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android.",
-      "task": "T22"
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
     },
     {
       "frame": "s11b-about-and-credits",
@@ -651,8 +649,7 @@
       "class": "design-artefact",
       "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
       "langs": ["en"],
-      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android.",
-      "task": "T22"
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
     },
     {
       "frame": "s11d-licences",
@@ -662,8 +659,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "The 17 pt Rubik intro line is 1.3-1.7 pt wider than Chrome (ink 354.0 vs 352.3 pt light, 244.3 vs 243.0 pt dark; gate 1 pt); box, position and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "The 17 pt Rubik intro line is 1.3-1.7 pt wider than Chrome (ink 354.0 vs 352.3 pt light, 244.3 vs 243.0 pt dark; gate 1 pt); box, position and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -673,8 +669,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -684,8 +679,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -695,8 +689,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -706,8 +699,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -717,8 +709,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -728,8 +719,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -739,8 +729,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -750,8 +739,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -761,8 +749,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -772,8 +759,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -783,8 +769,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -794,8 +779,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -805,8 +789,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -816,8 +799,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -827,8 +809,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -838,8 +819,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -849,8 +829,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -860,8 +839,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -871,8 +849,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "The 16 pt Rubik paragraph's widest measured line is 345.3 vs 344.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 345.3 vs 344.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -882,8 +859,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "The 16 pt Rubik paragraph's widest measured line is 329.3 vs 328.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 329.3 vs 328.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -893,8 +869,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "The 16 pt Rubik paragraph's widest measured line is 316.3 vs 314.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features.",
-      "task": "T22"
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 316.3 vs 314.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -904,8 +879,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign).",
-      "task": "T22"
+      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign)."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -915,8 +889,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign).",
-      "task": "T22"
+      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign)."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -926,8 +899,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift.",
-      "task": "scroll-gate"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -937,8 +909,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift.",
-      "task": "scroll-gate"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -948,8 +919,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift.",
-      "task": "scroll-gate"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
     },
     {
       "frame": "s11c-privacy-policy",
@@ -959,8 +929,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["en"],
-      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift.",
-      "task": "scroll-gate"
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
     },
     {
       "frame": "s11d-licences",
@@ -970,8 +939,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -981,8 +949,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -992,8 +959,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1003,8 +969,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1014,8 +979,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1025,8 +989,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1036,8 +999,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1047,8 +1009,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1058,8 +1019,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1069,8 +1029,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1080,8 +1039,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1091,8 +1049,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's.",
-      "task": "scroll-gate"
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
     },
     {
       "frame": "s11d-licences",
@@ -1101,8 +1058,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt.",
-      "task": "scroll-gate"
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
     },
     {
       "frame": "s11d-licences",
@@ -1111,8 +1067,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt.",
-      "task": "scroll-gate"
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
     },
     {
       "frame": "s11d-licences",
@@ -1121,8 +1076,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt.",
-      "task": "scroll-gate"
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
     },
     {
       "frame": "s11d-licences",
@@ -1131,8 +1085,7 @@
       "reportedToOwner": "2026-10-17",
       "class": "platform",
       "langs": ["fa"],
-      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt.",
-      "task": "scroll-gate"
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
     }
   ]
 }
