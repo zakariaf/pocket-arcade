@@ -1424,26 +1424,6 @@
       "frame": "s11c-privacy-policy",
       "theme": "dark",
       "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "f1981fd07ad5b69719f7935c859fc553e24f533e286a310e65a5d3b13e188f7c",
-      "date": "2026-10-12",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s11c-privacy-policy",
-      "theme": "dark",
-      "lang": "en",
       "scrollY": 125,
       "sheetSha256": "dccf2bcb553a033843f019d7269411ee1469f6e2039e712dabe9dcd26f882b1a",
       "date": "2026-10-12",
@@ -1486,26 +1466,6 @@
       "lang": "fa",
       "scrollY": 234,
       "sheetSha256": "d2e916022722de955b386914e5ab1c18f5d8ebe0350bd7c82c6bce84cbde35ce",
-      "date": "2026-10-12",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "game": "lineSiege",
-      "frame": "s11c-privacy-policy",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "db3c29dc5b8e9595558fdea4dd2d57ece8cc7c75bd356c431a6f7797e31f45b3",
       "date": "2026-10-12",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
@@ -6164,519 +6124,6 @@
       ]
     },
     {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s1-splash",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "b6e58233f6609aa181ac284e8eb297798bafb314d325a8157e08726bfa676e3c",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "n/a",
-        "pictures": "match",
-        "shadows": "n/a",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s2-language-choice",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "18f63e8104b56e56eb7390a3068b8732514eb429e61babd80b1f70f7a5adae3c",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s1-splash",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "bd54cdb7d3fc1bb2e1ddaee000fe91061a88c1aa7a39567f571dc2e6e837d848",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "n/a",
-        "pictures": "match",
-        "shadows": "n/a",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s2-language-choice",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "ddb5e482e5af466182b6196c9a1ded265fa855a48eb815212c5cdf440362c50a",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
-          "status": "fixed"
-        },
-        {
-          "what": "Persian title 2 pt below the design: the overflow guard moved Vazirmatn lines down on Android too; it now shifts only on iOS (dy 0.33 pt)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s1-splash",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "4bba1f40b170076792ca397330c8bc460eba1aebc207e4faa292851f86d4dfca",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "n/a",
-        "pictures": "match",
-        "shadows": "n/a",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s2-language-choice",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "c8a5b4b6506dc270f21af230e01d59e74c1427891107b26207c3e2aef3977f44",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s1-splash",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "28714d198abd219334b7b0442249ab38d31ca1f6a1896c49c525b225f2e17f04",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "n/a",
-        "pictures": "match",
-        "shadows": "n/a",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s2-language-choice",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "f9f909c2ae4b07e301ea8ed8a80c523ff95527f0ff7855987257c4c8ca46fad8",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
-          "status": "fixed"
-        },
-        {
-          "what": "Persian title 2 pt below the design: the overflow guard moved Vazirmatn lines down on Android too; it now shifts only on iOS (dy 0.33 pt)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s3-consent-moment",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "a31543181ee2ad5e7dfe12055146317dd5bfb9d061b93a20413befd62521af65",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s3-consent-moment",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "a64083e43fde234754e3a122649b96a33cca817f86115c5018292408793d65c8",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "0c09214f46eb992ffe52a42adf84c93921c53f8fbc33c7de0c4819e8f02954d7",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
-          "status": "fixed"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "af3e89dd23c54316ef50ad6de972388f8d3f945a6dd508abb209c7be000d84f5",
-      "date": "2026-10-16",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s3-consent-moment",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "5cd3f6eb8e38fa8f6b7b9bc708b2f81d6a12c23f40b25971381e56de4b6ca37b",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s3-consent-moment",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "cf09aaaf925cbabe68b0d441ece63f0922e7b8f8f1c59875aafcf59dbb0cb1e2",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "cc8123d4437b958047cf05776ca3d647d913c01391640ff2269da1ef8fe1d9df",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "a156a875388bb01cd8f649cf78e7826d9fde28b0508064bd0ba38d16a31a7d78",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "26711f745e7d8213b6c7b584234f206b014e59a2214d83b312b91bafc0d4c9ba",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "light",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "4bde1ce635d548a36963743f290fba9707138f65d64e10aa362768494e54173f",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "dark",
-      "lang": "en",
-      "scrollY": 0,
-      "sheetSha256": "48635a7911ce9beaa237e2cdf91ab5705268ac117cf5d6c2b947eed8ee857afc",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s4-home-premium",
-      "theme": "light",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "590b9b349385afce73774005159c04b3a65898806a120c3d857314e3f1539c32",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "match",
-        "feel": "match"
-      },
-      "differences": [
-        {
-          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
-          "status": "waived"
-        }
-      ]
-    },
-    {
       "platform": "ios",
       "game": "lineSiege",
       "frame": "s6-pause",
@@ -7112,6 +6559,110 @@
     {
       "platform": "android",
       "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "313e85a4b9e5a4b6a1942a7914d1bf879d31ee6003d9e5c984b3b9bbdfc5f8a1",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "23a1cb0ebacda16ea0714e6ebaddbca98e8ad79ee958708e7a3285ffa66d421d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "14872a39826df2151ada6090c9e88982844ba40c40ca7b33fb2f23ea31592be8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "5f63947d40cf38321bf0dbdeb769cdf3da68b1a54cf3645169a0c58fb69e7f76",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
       "frame": "s10-statistics-empty",
       "theme": "dark",
       "lang": "en",
@@ -7461,6 +7012,1092 @@
       "differences": [
         {
           "what": "'۲۸ / ۲۷۰' and '×۶' drew left to right after the prepared text layout; AppText marks a text without letters right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1056,
+      "sheetSha256": "865e7279dac8d4500c8b72d87236ab6e5da23215fd8da705a8f8a225ea4ee37c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 1068,
+      "sheetSha256": "39b924a1cb979790b737bfa0cb786f5b460b9d9959f16956de0710ddd2a8860f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 459,
+      "sheetSha256": "b2fbda5e74510a441ac03ad9b3ab2d380397afa9343aca76a3b288fe90348b72",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "96d4695f23417e6d38620ea83e46e47cab948ea200a8cbd6ade168c2472485ec",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 1092,
+      "sheetSha256": "ccc4902ba1d6ba2d323e0b36369558b7ad9be0cdb14ab18aa251a59f2f0ccc72",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "e6e39a80c0c55f1ac0b467755dec1b456186acc1c7b13c6933dc2769348854b7",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0af1cabac36ff745b7afb2ab3899697bb8ff90c8f6b10a2265ade736342edeb9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 1056,
+      "sheetSha256": "2787b5f47cd8a21d6a1f461ae8c664f7338dd9d9b57e54c95cb9b0edfc24db0a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 1068,
+      "sheetSha256": "27744e8d965e7c93ed025564c8352b3444c96f6ab07be827f5d0553efabc6182",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 459,
+      "sheetSha256": "2e15ffa72dec5c8854bddcd49e4643f31552bec9555372b277eea6363deb1a3a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c493a434fbc19e6160eca56d8c22c5271fffec6b3b19080c30aa2dcd490a0722",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 1092,
+      "sheetSha256": "dfeb925e0cc5b4f246855174a4bc3724164a265b956a118aadf0edc8f6e325a4",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 475,
+      "sheetSha256": "8edd59c906eb6975a97e11bfb873ac1855f702e25344832173ba2685001d379e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "dd7712fba650e47897b73e9b2dc2e53436f6bdadf15d4a0676fdaa5ae10a4161",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "8cc73c92e66e6437f9ed9e8a1d9627c7687a3e1d67dedbdca1f5431deaf82a52",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the note broke before 'right-to-left' where the design breaks after 'right-to-'; AppText gives Android a break point after in-word hyphens (438d9b75)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "35b63e64d8df773bdf3f3d6d5569e945e2c1c55fd24d4271d166b9074f1bac29",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "7cfa80b057f8c5ce7c112ac2eaf3ebc08d5bb88a028137895e0ed997cd00881d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the note broke before 'right-to-left' where the design breaks after 'right-to-'; AppText gives Android a break point after in-word hyphens (438d9b75)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0056dde99d825bde972699b0e577ff25f771af540634f7f6f580f00a9ead0643",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "62dcb397a62c85fc627e78a2a063940dec734e10023df30a6ca96a87cd60b3ca",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "1137f809e3c49382d2669df9fc8ebc7ec252dc60f5322d8e0ab24876297ccc0d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 216,
+      "sheetSha256": "6564686c176ff3793630e4d9bea9df812d30f563996479e4d15db73efc64fc7a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 216,
+      "sheetSha256": "d951644cc4347181efd1c3cf03b263e4f1941227cb7c56061b822c39fdfbebe4",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 392,
+      "sheetSha256": "e4da2437d09df3b0be4d660b45347511627ba1c485abc2aea6e439740d0748c4",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 642,
+      "sheetSha256": "fbc726472df66c8d6b0c05bc96b930a5772cdefebc633a6f6d7e0202d0f57fa3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "fdbd578a5e7849edb11ff72585c2dd11cefab62b2913a3b9dd7fc90a05eb7845",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the software tab wrapped to two lines and its last word was clipped (Android 15 wraps by glyph bounds); each Text now draws the layout React Native measured (9baea27f)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "29acda6ff30e4c9e78d4965c0b536c3ca7e2ed764dd8dc4e7aabe71fe5cde6f6",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the software tab wrapped to two lines and its last word was clipped (Android 15 wraps by glyph bounds); each Text now draws the layout React Native measured (9baea27f)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 392,
+      "sheetSha256": "8186d4a485c48fbc55f374bf4d7acb969adf9e48abf48ffe2f0c93249d6e0368",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 642,
+      "sheetSha256": "4d28c3763415056ec29f4924d53f94ea9afa913a2debd069926c7c92f1aa4223",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 402,
+      "sheetSha256": "fd845fb96a63664cee9cfc92339e9d9a5ed1805a5d6e04352a032275e7f9f673",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the software tab wrapped to two lines and its last word was clipped (Android 15 wraps by glyph bounds); each Text now draws the layout React Native measured (9baea27f)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "c7955f95db73b3665241dcd6d65057c1d95681e54cb89d3f6f26f347430a880f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the software tab wrapped to two lines and its last word was clipped (Android 15 wraps by glyph bounds); each Text now draws the layout React Native measured (9baea27f)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "484c1c7a1ce29c513b08861d5b292cd0b002693417a7b83352cb36bc40e1c014",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "2c601c35fb9f79215fee5ebb0dac92365b75cd694a9818db26d4d63d6b09579d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
+          "status": "fixed"
+        },
+        {
+          "what": "Persian title 2 pt below the design: the overflow guard moved Vazirmatn lines down on Android too; it now shifts only on iOS (dy 0.33 pt)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5e175c7db146f8bdfb72773d6fc52a51a222e37a1331a3b5ca47193c7762e50c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "82666da0baf83eca8bb235a5dced6004432476e298d87ddb5ba657846c0390d8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "globe art tile and Phone language sticker: white wedges in the die-cut ring's corners (Android's hardware texture cut the outset ring at the part's box); ringed parts no longer use the texture (dieCutTiltedLayer)",
+          "status": "fixed"
+        },
+        {
+          "what": "Persian title 2 pt below the design: the overflow guard moved Vazirmatn lines down on Android too; it now shifts only on iOS (dy 0.33 pt)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "2d1dca56c625bfc6138e38beef82cce87c905b989ff7be1c7902c858955a57cb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "8a219847f83ce4cf2ebee232c7edd526a54e96c111d812e53598f8793e1eeabe",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "eb8a7ed6f8001ae1d3635cf47a7f91a45493e3cfabef144bf024df6581eb37ff",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "0e21592c609c7c0df4abf146530e1e61626f29ca75635b39d73e30b792ad2dff",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d17397c039e6938ca4c161cc8793d1788352badd344dae3ed15d57d512f7c629",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "14a74a7077accec839823deecde229eac7c7dcd7c1a2dd9c40e974a356e2e908",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b8da3bb1379fc4de601f597ae01e8c321eef6232b0dbf3d85a6cad7973c4824b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "ba34480de4864239e662386c04b3e89acf0dd77de4c4fd8cf05ccf05639317ac",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
+          "status": "waived"
+        },
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5945f9382d49842eb8c92a8374437335789b0fc1d19b9e884b91b6c7c918f413",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "d5b07aba8ac591d65d3ff8acd4ff0f9006c61757b8e34e611ff47e0084a786cb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "page ended at the screen edge, over Android's 24 dp gesture bar; the splash and the Home banner band now end 34 pt above the edge as designed (useBodyBottomTopUp, usePinnedBannerBandStyle)",
+          "status": "fixed"
+        },
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
+          "status": "fixed"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "9401f284a8a5d9142fdaa2f659f5e9047af3de6f00a522cd42924f6fa9cb7af2",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "f14c84c1fca7a8258793f21969232607919acefc47aa7ef5b0874d0f5c19b153",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
+          "status": "waived"
+        },
+        {
+          "what": "the Persian date drew its isolated weekday and month left to right after the prepared text layout; AppText marks such a text right to left (7a973983)",
           "status": "fixed"
         }
       ]
@@ -7934,6 +8571,48 @@
           "status": "fixed"
         }
       ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "508db8696567c45d88b140ed4d81e2f80b09d4751c1c560de5a59722bd315a30",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "d9892f0d74d5388ab4ba7302733d7728a232121eb108f8cb4a2d9896daf4d32d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
     }
   ]
 }
