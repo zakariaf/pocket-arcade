@@ -7,7 +7,7 @@ import { useSharedValue } from 'react-native-reanimated';
 import { EMPTY_LAYOUT } from '@e07/game-kit/geom/board-layout.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 
-import { BoardLayoutProbe, boardLayoutText } from './board-layout-probe.tsx';
+import { BoardLayoutProbe, boardLayoutText, tapScaleOf } from './board-layout-probe.tsx';
 import { NOT_STARTED } from './board-scene.ts';
 
 import type { MeasureOrigin } from './board-layout-probe.tsx';
@@ -59,6 +59,22 @@ describe('boardLayoutText', () => {
       ...ORIGIN,
       layout: LAYOUT,
     });
+  });
+});
+
+describe('the tap scale', () => {
+  it('is 1 where Maestro taps in points (iOS) and the density where it taps in pixels (Android)', () => {
+    expect(tapScaleOf('ios', 3)).toBe(1);
+    expect(tapScaleOf('android', 2.625)).toBe(2.625);
+  });
+
+  it('joins the text only where it is not 1, so a flow multiplies every point by it', () => {
+    expect(JSON.parse(boardLayoutText(ORIGIN, LAYOUT, 2.625))).toStrictEqual({
+      ...ORIGIN,
+      layout: LAYOUT,
+      tapScale: 2.625,
+    });
+    expect(boardLayoutText(ORIGIN, LAYOUT, 1)).toBe(boardLayoutText(ORIGIN, LAYOUT));
   });
 });
 

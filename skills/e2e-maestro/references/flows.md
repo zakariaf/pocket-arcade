@@ -126,20 +126,21 @@ Templates in `templates/packages/shell/e2e/flows/` (all pass `maestro check-synt
 
 ## A game's flows and board taps
 
-A Skia canvas has no accessibility nodes, so the board is tapped by coordinates. With `boardLayout=1` the test build renders `game.board-layout`, a small Text holding `JSON.stringify({ x, y, layout })`: `x`, `y` are the canvas's top-left corner in window points and `layout` is the game's `BoardLayout` (regions in canvas points, unmirrored, plus `isMirrored`). The flow reads it and computes cell centres:
+A Skia canvas has no accessibility nodes, so the board is tapped by coordinates. With `boardLayout=1` the test build renders `game.board-layout`, a small Text holding `JSON.stringify({ x, y, layout })`, plus `tapScale` on Android: `x`, `y` are the canvas's top-left corner in window points, `layout` is the game's `BoardLayout` (regions in canvas points, unmirrored, plus `isMirrored`), and `tapScale` is the density. Maestro's `tapOn: { point }` is in window points on iOS and in pixels on Android, so every point is multiplied by `tapScale || 1` (E18-T24: without it the level-1 tray tap at window point 80,809 landed near the top of a 1080 x 2400 emulator and the move never happened). The flow reads it and computes cell centres:
 
 ```yaml
 - copyTextFrom:
     id: 'game.board-layout'
 - evalScript: ${output.board = JSON.parse(maestro.copiedText)}
 - evalScript: ${output.grid = output.board.layout.regions.find((region) => region.id === 'board')}
-# Cell centre = canvas origin + region origin + (col + 0.5) * cell (this board does not mirror).
-- evalScript: ${output.cell20 = Math.round(output.board.x + output.grid.x + 2.5 * output.grid.cell) + ',' + Math.round(output.board.y + output.grid.y + 0.5 * output.grid.cell)}
+- evalScript: ${output.scale = output.board.tapScale || 1}
+# Cell centre = (canvas origin + region origin + (col + 0.5) * cell) * scale (no mirroring here).
+- evalScript: ${output.cell20 = Math.round((output.board.x + output.grid.x + 2.5 * output.grid.cell) * output.scale) + ',' + Math.round((output.board.y + output.grid.y + 0.5 * output.grid.cell) * output.scale)}
 - tapOn:
     point: ${output.cell20}
 ```
 
-For a mirrored board (`isMirrored` true) the horizontal centre is `x + layout.width - region.x - (col + 0.5) * region.cell`. A tap-then-tap board (Line Siege: a tray slot, then a board cell) makes each move with two taps, select first.
+For a mirrored board (`isMirrored` true) the horizontal centre is `(x + layout.width - region.x - (col + 0.5) * region.cell) * scale`. A tap-then-tap board (Line Siege: a tray slot, then a board cell) makes each move with two taps, select first.
 
 Maestro reads each `evalScript` line as YAML first: `: ` (colon and space) inside it starts a mapping and `maestro check-syntax` fails ("Parsing Failed"). No ternary `cond ? a : b` there; use arithmetic such as `Number(output.tray.cols > 1)`, or quote the whole scalar.
 

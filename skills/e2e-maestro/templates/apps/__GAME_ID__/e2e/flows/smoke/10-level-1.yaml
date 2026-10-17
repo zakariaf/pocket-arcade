@@ -1,8 +1,8 @@
 # apps/__GAME_ID__/e2e/flows/smoke/10-level-1.yaml — level 1 on the real board, then a win:
 # 1. one real move by taps (Canvas content has no testIDs: with boardLayout=1 the test build renders
 #    game.board-layout, a Text holding { x, y, layout }, and game.moves-label, the move count), so a
-#    region cell becomes a tap point: x + region.x + (col + 0.5) * region.cell (this board does not
-#    mirror; the debug-deep-link reference shows the mirrored formula);
+#    region cell becomes a tap point: (x + region.x + (col + 0.5) * region.cell) * tapScale (this
+#    board does not mirror; the debug-deep-link reference shows the mirrored formula);
 # 2. a kill (subflows/kill-app.yaml: a real process death on iOS and Android) and relaunch: the
 #    run resumes on Pause with the move kept;
 # 3. action=win-level: GameHost.debugControls().playTo('won') swaps the run's state for the game's
@@ -34,8 +34,11 @@ tags: [smoke, __GAME_ID__]
 - evalScript: ${output.from = output.board.layout.regions.find((region) => region.id === '__FROM_REGION_ID__')}
 - evalScript: ${output.to = output.board.layout.regions.find((region) => region.id === '__TO_REGION_ID__')}
 # No ': ' inside an evalScript (YAML would read a mapping): use arithmetic such as Number(cond).
-- evalScript: ${output.fromPoint = Math.round(output.board.x + output.from.x + (__FROM_COL__ + 0.5) * output.from.cell) + ',' + Math.round(output.board.y + output.from.y + (__FROM_ROW__ + 0.5) * output.from.cell)}
-- evalScript: ${output.toPoint = Math.round(output.board.x + output.to.x + (__TO_COL__ + 0.5) * output.to.cell) + ',' + Math.round(output.board.y + output.to.y + (__TO_ROW__ + 0.5) * output.to.cell)}
+# Maestro's point taps are window points on iOS and pixels on Android: the probe's tapScale (the
+# density, Android only) turns one into the other.
+- evalScript: ${output.scale = output.board.tapScale || 1}
+- evalScript: ${output.fromPoint = Math.round((output.board.x + output.from.x + (__FROM_COL__ + 0.5) * output.from.cell) * output.scale) + ',' + Math.round((output.board.y + output.from.y + (__FROM_ROW__ + 0.5) * output.from.cell) * output.scale)}
+- evalScript: ${output.toPoint = Math.round((output.board.x + output.to.x + (__TO_COL__ + 0.5) * output.to.cell) * output.scale) + ',' + Math.round((output.board.y + output.to.y + (__TO_ROW__ + 0.5) * output.to.cell) * output.scale)}
 - tapOn:
     point: ${output.fromPoint}
 - tapOn:
