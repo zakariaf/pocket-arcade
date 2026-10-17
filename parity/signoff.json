@@ -10079,6 +10079,3946 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "4bc7e8b129f9a06192ed0c628630cc1c78b91828baf56a4dd0458d8ac426d79e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "n/a",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "f60683ddc362e328a2560d44d1f3c0216a98d2b4afb35ca387f12a458cb0460f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'ریکلام 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "db2a66a0474589484d2fe3db78920bfc2039a02998976ef617156c476220b288",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'ریکلام 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 801,
+      "sheetSha256": "1c3ed6cbf03c6972c08e61becbee47526c6547e369c517ca21264b2553fd8655",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "31b7dab3dc9a1c2847acbd56023f5cf9e1aea7fc62c6b961a57e6986b74c46b3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side (status bar text and icons are drawn white over the light sky background).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 475,
+      "sheetSha256": "701b47d2dcc4416aef3cff5a089a3bc90b621b978077fc9c65118228f73a0f1b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 473,
+      "sheetSha256": "b68157e1a10fe0a3af1650168cf2bbb8598bfbd743fa98aba9dd73aa4248f130",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side (the gesture bar crosses the 'Datenschutzerklärung' row text at the bottom edge).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "15ebf6226f6e9055f52637921dcb1cafc28fc573584489bf85a6c00d039ec2a9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side (the gesture bar crosses the 'Bewegung reduzieren' row at the bottom edge; status bar drawn white over the light sky).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "68bdb1b2b4b7e1beafc98157f840e315758f0ed3498cd5e0f65b842e1182d275",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "68b0f66b8764956618354e798509cd1431b76911a111970ab2ee0204b8916a70",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Latin words (Line Siege, Google, AdMob, App Store) a few tenths of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "4c08cb0d2b29fd32b6b115e9f23f50032997e84236e077c16e5cebcf9305691c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Sorani licence rows drift slightly down the S11d page (about 1-2 pt by the lower rows).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 642,
+      "sheetSha256": "cc180456fb15eb2843b191903efa9cde43e015851024c0e08394b32931a5cc71",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Licence rows drift about 1-1.5 pt down the page by the Sounds card (same kind of row drift as the accepted fa/ckb S11d drift, smaller).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "a325b971bbecf428bc23cedf06d1fd1aeef716d8bb31789802f7d86fb68a8e16",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the restore key pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "9b5cf41c253bfb5bdbf4969f7d1184b633c61934998db286e78b3f2caf3f9762",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the keys pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1e4c29ecccb313d174e80b691a997e833ac30ef0b40f7baa65aa329b1d5cabba",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the restore link pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e5d338a4a33529d114ef8506bcb5e89f47d9585055a691ae53bfcfada93805a6",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d822da915f3cc34d46aefc841abbd4768c6ca4231011377775879e931709a929",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the keys pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "b5125222d99ee26b39827ce40f34e789585c4b743ab7cadbaf97b5aacac4794c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide fragment listing the four restore toasts under a stand-in heading; the app shows the full Premium page with the four toasts stacked at the screen foot; positions differ by design (state cards are compared by text, fill, border, ink size, never position). Toast icons, text and fills match.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "c4d6bec42aff3df85363d8f39f8b842d532ece3a327fc540d34622bd378729d7",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (confetti, thanks heading, text, Premium-active sticker) without the top bar; the app shows the full Premium page with its real top bar (back key), so the same block sits lower; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "cab60d8be8b27158b5b91b63181a92f0d31e1d371e62970b26519178db633e9a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot under the scrim: the design shows the dashed 'ریکلام 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "45ba36eb9b6ee2d38c0486ae4810fd6012a9c192491b09b4ca3266a836c53c76",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "02fe0342a9ca4b43cc404617658aaac11eb05f2b18d03d974c09325f3d846195",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 163,
+      "sheetSha256": "e2999fb3a5614eae79ddd254dda57317672238128b205555602d638b220498ac",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Scrolled run: eye pairs for the rows hidden under the top bar (jump to level, unlock all levels, give stars) show status-bar/header pixels on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Small stray '0' below the list on the app side at this scroll offset (start of the debug Performance section, same on iOS).",
+          "status": "waived"
+        },
+        {
+          "what": "S15 debug labels stay English in de by design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 163,
+      "sheetSha256": "129667f364408ffe53d6fbcac14e34a3fd28f7be649cd5be0969492b4faf0761",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Scrolled run: eye pairs for the rows hidden under the top bar (jump to level, unlock all levels, give stars) show status-bar/header pixels on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Small stray '0' below the list on the app side at this scroll offset (start of the debug Performance section, same on iOS).",
+          "status": "waived"
+        },
+        {
+          "what": "S15 debug labels stay English in de by design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "baa16073f3885a6bab440dca1172a3bb940ea787a2bc83a420f391ada0c09356",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "b3ed2315d016e2c89fd874a8cc5113d3f274108365c5e9d7f46bee478b61f939",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "643694bf8050eefd39a3ee4a4276d594426ab6fb54aa5980687a7b10652a2759",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "cf213ce7b369c852b4c70fee6ed64e33c4562d405b593fb20ef9cdde765b7e4c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Game board: the design shows the dashed 'SPIELFELD' board placeholder, the app the real Line Siege board (monsters, piece trays) under the dimmed pause sheet; the board is masked by the testID map (hatched in the diff, proven by board goldens).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "55298af5211433ce1d9484c451d22e8d67f8d08399faffdebee2ccef0042db6c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edge of the continue offer: Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text a fraction of a point wider on Android, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "7622482587afded9a0f874d815d2573151ff1b5bbb810a667ce7f0b7752f8a4e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edges of the week-day marks (missed and today) and the 'Verpasst' legend: Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Calendar tile month band edge antialiasing differs slightly in the tilted tile.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider on Android (Rubik per-word shaping), same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "09a8a2ffcb84c7e05ff9b15a6b965f072c3e4247611b8077bf01fce131a98823",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "n/a",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Tagline text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "cb44596905c2725dd921c50740b41f1960e70d6a2fe36239ff29748cfa0a4aeb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Body and footnote text render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 418,
+      "sheetSha256": "8dda0836d1e3c5d976a9852f7e7fbbfec7ccad9cc19e4b5b3750c3295ed09371",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Pinned banner ad slot: design shows the dashed 320 x 50 placeholder, the app the empty ad box; the slot is masked by the testID map.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "81c90c55a386cf279045927b4b63179e3e146c2b7fa97e725c81aad77fe703d0",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Pinned banner ad slot: design shows the dashed 320 x 50 placeholder, the app the empty ad box; the slot is masked by the testID map.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 801,
+      "sheetSha256": "82a2146ab3eff6205903e5a8d791430b6b1237a0e0d7d3a554962750f49a5114",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Pinned banner ad slot: design shows the dashed 'Anzeige 320 x 50' placeholder, the app the empty ad box; the slot is masked by the testID map.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "459a0ed296d11fedfe697b05d066008a9ea7966c15d556bf2e596a986abcc791",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side; the gesture bar sits over the Reduce motion row at the bottom edge.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "a2c074ea865e3947169447376008390c44cc31f4da64d8bbb9a583ee9f80d9a0",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side; the gesture bar sits over the Reduce motion subtitle at the bottom edge.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 1048,
+      "sheetSha256": "ca3f03011c3c43cf913e648d3a377279554b68835e17c56cb9c1ee4ffd00697b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side; the gesture bar sits over 'Aenderungen gelten sofort' at the bottom edge.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Rows below the top bar sit about 1 to 2 pt lower on the app side at this scroll offset (no clipping, same order), within the machine position gate.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "17e38ebfe99ed93e8b9ca9e0d2bf570dd5d3e3083434ee9729bec8f7667294c5",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 244,
+      "sheetSha256": "c3ca25cd4cc853e6c1da62cc24fccf5e2d2bc24dcf2d687df351c39e59bd677e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 392,
+      "sheetSha256": "ba95a7918bdf72cfb22a4c2776b53795848b56d21f3bfb3e416fdb0071fc40de",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side; the gesture bar sits over the Google Mobile Ads SDK row at the bottom edge.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android; licence subtitles sit about 1 pt lower, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "bbe594d37d4c34f671654ac2f033f07217e7e665d355d6f8645acb4ade5198ba",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the key pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "65dc3f50fff839879686cf44ce2af060c4bf9d26ffa4afae58626730d55362d6",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the key pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "52b6271f901b74050efcc3f252c483bf0d2976ab1b14a2590a09d06368bde3bb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the keys pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "3da9f2e559f8c3478aa721e793ac895c5e696edb7d7a20621206553cd7076ba4",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the keys pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "02227901e07f406f6e0b1e66b5445d080df7e70ce86f1600deba2d8f4a5ccfd6",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "7dddab7493138d32ea4eb1aab2d36317a868e01daad8f023116058483ac26097",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the keys pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b9b52343bd0d32c58bf2198e98d73bde620ce57027b3324020d02627343958d8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design shows the four restore toasts stacked under a stand-in heading; the app shows the full Premium page with the same four toasts floating over the Buy key at the bottom, as the reference set describes.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "7f1bf8b9b295e2199370f342b9e2d08195cb584b0ba79a269eb3f9d05c26b53a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (confetti, heading, text, sticker) with no top bar; the app shows the full Premium page with its real top bar, so the same confetti, heading and sticker sit lower; positions differ by design (state cards are never compared by position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d66a3dff75c862f2fd32a78a8b67a8d081aa7c5f78960b678be18a8e5a328c7f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Home's banner ad slot under the dialog: design shows the dashed 'Anzeige 320 x 50' placeholder, the app the empty ad box; masked by the frame's designMasks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "4a9856909d8dfccec9eced4e76a79f0376180fad2cafff54ccdc67f23fedfc11",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "German text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b292a8545824eeccf71fb487fc57dec484ab2c9e99a90eba0bdd16e02558e4fb",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in ckb by design; numbers and the date use Sorani digits on both sides.",
+          "status": "waived"
+        },
+        {
+          "what": "Eye page 2: the Error log and Font test page icons sit below the screen at this offset (tall frame), so the app side is blank; they are shown at the scrolled offset.",
+          "status": "waived"
+        },
+        {
+          "what": "Text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "dfe5cd809fd2a8e5aa84bb46b6fd3aaae16dca8fcc4f25bb03ec388b546eabf7",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in ckb by design; numbers and the date use Sorani digits on both sides.",
+          "status": "waived"
+        },
+        {
+          "what": "Eye page 2: the Error log and Font test page icons sit below the screen at this offset (tall frame), so the app side is blank; they are shown at the scrolled offset.",
+          "status": "waived"
+        },
+        {
+          "what": "Text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "cb11fbbe9284eb0017e755f9103a4bb8e6ab9d74e974d0ddb1b4517bed90a9fa",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "d5a7420d76b73c731963811c519661bb34f67caf302c27719d6c33fd188cddc3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "e49407f6d21ed30eca52d458fc7019e1250f6ec9e432edabe1c21a14699142f8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "49dc26125f125e7c2803e54e67aa7f9fb8594a4c3378bd74fbfdb5d14d0a7e65",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Banner ad slot: design shows the dashed 320 x 50 placeholder, the app the empty ad box; the slot (home.banner-ad) is masked by the testID map.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "c77bfdca6cfb749c6d7601bc91b46f7e97cce6385c38b816246972121dc7d855",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Game board: the design shows the dashed board placeholder, the app the real Line Siege board under the dimmed pause sheet; the board is masked by the testID map (proven by board goldens).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1fbd194818aa69b1a49e052daf52610f8d43cd051ef0626b751dd65b8449c522",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Dashed edges of locked tiles 13-30 and the pack 2 card: Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Tile 13: the mockup draws it mid-press (slightly squashed); the app shows it at rest.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Banner ad slot: design shows the dashed 320 x 50 placeholder, the app the empty ad box; the slot (levels.banner-ad) is masked by the testID map.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "8386abd66826cb6112965d8fba3c080db9f3c7ce092e525e668a6e90553a9a40",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Dashed edges of the week-day marks (today and missed): Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Calendar tile month band edge antialiasing differs slightly in the tilted tile.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "3da95b4ce9ce8bbb5c84cbfbe2b843a8fb55eca46b36cf3fe95a348cac9dd142",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "31c16220cb0f101dba0e41bc85cfb7795b5ac8f505694f9df7c41f42f7d965bc",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed placeholder with the ad label and 320 x 50 size, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 834,
+      "sheetSha256": "607a0de04a904e1517b30dcefa299c62d1bb88a8edbf088659fbb4f0a9d4721f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed placeholder with the ad label and 320 x 50 size, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 418,
+      "sheetSha256": "46a0884e1c2e7771c4405b59e0156412b1bf14acc3c20fb7745e25ab31c02366",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed placeholder with the ad label and 320 x 50 size, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "32d7640b85fa5371bcf82f4cd66e5d9ad78ac9a74d23483148b26fec918d2299",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar (drawn over the reduce-motion row hint) appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 1048,
+      "sheetSha256": "4bcc3706e731a7697cff81bbed6a5594d746e48476a85c51fd612d5677e0be27",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German row labels are a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar (drawn over the changes-apply-immediately line) appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 1092,
+      "sheetSha256": "12f75f4571874c74cb2352b1fbe5c21c67723dfe69cbbf106317fb576990a40f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 1105,
+      "sheetSha256": "27e6ea16a457b557c579fa41121cd5b661a87d2c8e4190cb614eddd91bb94d32",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German row labels are a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ecf02633dd862a5d5c5bfd1a2c6d278f4d7c77b10a920491e9d3a616805cd0ca",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "95607192a9b544a061ef4e6677938f6de8aceb65452b67c6594b50e769123773",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Embedded Latin words (Line Siege, Google, AdMob, App Store) are a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "cad92bcb3b31b66cc76c87db679656e3f21629a6a08f2b40f13104e5afc3e807",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Sorani licence rows drift slightly (up to a few points) down the page on Android, same order and content.",
+          "status": "waived"
+        },
+        {
+          "what": "Latin licence names are a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "4f2156e9a6a090189f355300e3ea53df9634a8f4d606c0bc366ea8c0ed81e37f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (title, Premium-active sticker, thanks line, restore key directly below); the app shows the full screen with the back key in the top bar and the restore key pinned at the bottom, so the elements sit lower and the restore key is at the screen foot; same elements, colours and text (matched element by element by the gates).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "fabcca6c170183852dc6eafaa59bffd4c798023c3abf4697da1e2205f99e2883",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (title, error card, retry key and restore link stacked); the app shows the full screen with the back key in the top bar and the retry key and restore link pinned at the bottom; same elements, colours, text and right-to-left order.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "df0e5916f20b7a95c90e912bb5623845b8291cd288c3ffb310db924b5ca8b7f3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (title, tagline, loading key, restore link and fine print stacked); the app shows the full screen with the back key in the top bar and the key, link and fine print pinned at the bottom; same elements, colours, text and right-to-left order.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-pending-approval",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "70e02b310bf62a278c621a33b02935f14696f8e7671349f8d4c73b8cbe20592c",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (title, pending card, note, restore link); the app shows the full screen with the back key in the top bar and the restore link pinned at the bottom; same elements, colours and text.",
+          "status": "waived"
+        },
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "add8120298a4454997c04403d6b128acd9f6a8e652f1d010d5203d1200dd46f2",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e5ef18d3c516107b39d243a5fbcc5219c4c82e058e604c4ddf4b86cbd182f19e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (title, tagline, busy key, restore link, fine print stacked); the app shows the full screen with the back key in the top bar and the key, link and fine print pinned at the bottom; same elements, colours and text.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "9c9199b3ceca4912041d7525fa990e65c6c1a72c46455e9424227f04fdd19ad9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a toast sheet (a Kauf wiederherstellen heading over the four restore toasts); the app shows the four toasts stacked at the foot of the full Premium screen; the toasts match in icons, colours, text and line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ae0935c261b476dd680f6d6ee55d8034e462d5da2d4a8d4fb34c13e35f1878c0",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The design frame is a state fragment (confetti, thanks heading, text, Premium-active sticker); the app shows the same block below the back key in the full-screen top bar, so everything sits one top bar lower; confetti, sticker, colours and line breaks match.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ea14d65ad0754f4dbb18fe80788e1c914235d6f38b6bdde08d16d260e5d7cc44",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot behind the dim: the design shows the dashed placeholder with the ad label and 320 x 50 size, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "475ae1e47c3637590ae1a05a82b2418a1ec8485d6d02eb7dd63127ac54e46a18",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks; the settings rows behind the dim sit about 2 pt lower.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 155,
+      "sheetSha256": "f90af15ad952df4fa572269aff45c1f714a74dc549677ce480030e6cf41dd3b3",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Scrolled run: the eye pairs for the Jump to level and Unlock all levels icons (scrolled under the top bar) show status-bar and top-bar pixels on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "A small stray 0 shows below the list on the app side (start of the debug Performance section, same on iOS).",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in ckb by design; the date, digits and error count use Sorani digits like the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 155,
+      "sheetSha256": "b994fafe01950762094871cbc9f37010253c15d5d3d311a3fb67e46a728032e2",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Scrolled run: the eye pairs for the Jump to level and Unlock all levels icons (scrolled under the top bar) show status-bar and top-bar pixels on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "A small stray 0 shows below the list on the app side (start of the debug Performance section, same on iOS).",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in ckb by design; the date, digits and error count use Sorani digits like the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d75c7a070203f23c96d02ccb460a51c76e9aebcbac675522a5f4eb979ae4585a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "15a404a61bf2e49db74431b5fe41a18753c44817d6bc4e954fc79e8abbdab318",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "adfbd870df9725ca2c6b5765283f375776a85b7d5f9fe44ef4f374dc22ec87d8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "991c9f3d084d8bb23e609da22da47f2fa7e8efa09190c7c140a7f38567171825",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed Anzeige 320 x 50 placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "6ede5a955c6ab65ac35d59c6c83958a7a89bc710e7effcab76cdaea9607295d0",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Game board: the design shows the dashed SPIELFELD placeholder, the app the real Line Siege board and piece tray under the dimmed pause sheet; the board is masked (hatched) in the diff panel and proven by board goldens.",
+          "status": "waived"
+        },
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "6e0d0d1b108e71fdbad4ff1a8417f4418faac67cd86f2ce9b5999612cc188797",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edges of locked tiles 13-30 and the pack 2 card: Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Tile 13: the mockup draws it mid-press (slightly squashed); the app shows it at rest.",
+          "status": "waived"
+        },
+        {
+          "what": "Banner ad slot: the design shows the dashed Anzeige 320 x 50 placeholder, the app the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "bf0d42dc53f630831a2aa03898efa80b215ad761dcfc968f62a825186d4f93db",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edges of the week-day marks (missed Monday, today Sunday, legend Verpasst): Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Calendar month band edge antialiasing differs slightly in the tilted calendar tile.",
+          "status": "waived"
+        },
+        {
+          "what": "German text is a few tenths of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "7db0e4a23c3e68297b7b1893d22756bdc6f3a0e40be89b8fb83bc806a07d9207",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Tagline text renders marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics-empty",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "4a2c3a5f79a7d6d1db91bfa3f6f4efed9a8000f90be1b8d30c32d64b7103e867",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Body text renders marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "60ad46a12882d14e3175ce2c2b08e2010104a99fcfc88dab2eb5cf91cf8947b7",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Pinned banner ad slot: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Labels and values render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s10-statistics",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 834,
+      "sheetSha256": "21794551ffc6388c83327b7d084835817c90269ef7445d4281411ac25119173e",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Pinned banner ad slot: the design shows the dashed Sorani ad label and 320 x 50 placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Chart bars in the eye crops sit a sub-pixel off on the app side (crop edge antialiasing), same heights and order.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 1092,
+      "sheetSha256": "6a5d32923faee9c339a0e9d75917a79f24548dc375b04fbfc401263b5fa71fec",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 1105,
+      "sheetSha256": "84023e23278e48dda0c095a5d903f0b9b8fc41c15a3bc60c7cf63a0a3ac61605",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks; rows sit up to about 2 pt lower by the page foot, within the machine gate tolerance.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 475,
+      "sheetSha256": "1264a7c76102ddaa20f2fdadb03753db6ef4e86bfe4cf550c5d952267f700cef",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11-settings",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 473,
+      "sheetSha256": "c2a1b37f3af6e08f63565afe426feba3f38912dd3f81f8e66e01533915f34fcb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar (drawn over the last visible row) appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11a-language",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "aec64677ed48caf36eed0bc213969c7ac9611b70a108bdd0c839994d61452149",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11c-privacy-policy",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 244,
+      "sheetSha256": "9e9d169653be82a26f9da25aa64fe6e5e31c37e36d4c957437ad4240544abb10",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and Android gesture bar appear only on the app side.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s11d-licences",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 392,
+      "sheetSha256": "fc61c1b9f5be9fcd82bb11dcff247ee4672bc08c8c9bccb8cde56f370ed6e277",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar (drawn over the last visible row) appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android (Rubik per-word shaping) and rows sit about 1 pt lower by the foot, same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-already-owned",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "09af6b850fa37086476211086d0abf30dae667a1f25ae22ecdecaec511d4cda7",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment with a stand-in heading, the app the full Premium page with its real top bar (back key) and the restore key pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-error",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d8c936d8e73db052396531a10a6cf015a17dbef2c203039f6d475fda7e41e332",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (title, error card, retry key and restore link stacked), the app the full Premium page with its real top bar (back key) and the retry key and restore link pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Error text renders marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-loading-price",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "fcc905dbedba0de525e93303adee161013be2420684901829797dd2ca891321d",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (title, subtitle, loading buy key, restore link, fine print stacked), the app the full Premium page with its real top bar (back key) and the buy key, restore link and fine print pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-premium",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "c6c16ee9191714292cdc317a6bc5d166c641b7d59342da5571c183b3d3958dcf",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-purchase-in-progress",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "07d07ea4bc0523394f58f3c65a52a5707999d27aca3fe0185ca222923d89bcac",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (title, subtitle, busy buy key, restore link, fine print stacked), the app the full Premium page with its real top bar (back key) and the buy key, restore link and fine print pinned at the bottom; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-restore-results-toasts",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "5fadf77339b1baecf5ec05f527d86a25aacb69fd1d24f328051bd4719a3316e3",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide fragment with a stand-in restore heading and the four restore toasts stacked under it, the app the full Premium page (top bar, crown sticker, perks card) with the same four toasts stacked at the screen foot; positions differ by design (state cards are compared by text, fill, border, ink size, never position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani toast texts render a fraction of a point wider on Android with the same single-line layout.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s12-success",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1ec7ac67b7ea6041b17d1c28b21aeceb1db020d6d04c078673a3511225260ddb",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "State-card frame: the design is a 390-wide S12 fragment (confetti, heading, text, sticker) with no top bar; the app shows the full Premium page with its real top bar, so the same confetti, heading and sticker sit lower; positions differ by design (state cards are never compared by position).",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani text renders a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1f90f893c913d78e0deb639a181063ccbc0dea1e416ce7934e5d190298025f13",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Step picture: the mockup draws a stylised 6 x 5 board with ghosts and a beam spark, the app the game's own board (8-column grid, hearts bar, tray pieces) drawn by its board code; the picture is masked by the reference set (boardMask, D56) and only its frame and place are gated.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e7c39ee28a7b6c7f984313a7a1a0ad61bf04780c981cd6899adbd267359c0bec",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot under the scrim: the design shows the dashed 'Anzeige 320 x 50' placeholder, the app shows the empty filled stand-in ad box.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Dialog texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "d7dc80c74f3e62c58b57d04b34f9840373e65155dd9bffaeb80af7a45192863a",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Dialog texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks, including the three-line 'Jetzt neu starten' key.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "bbfbfcb91b292afcab026da9150f1df1b05e104e3609edcf4dfd93f102bce49c",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Eye pairs for the Error log and Font test page icons are blank/white on the app side because those rows lie below the first screen (shown in the tall design panel; checked at the scrolled offsets).",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in de by design; the date and digits use the German forms.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s15-debug-menu",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "8be96615493bbcd650d264d1d088d0c9782fa91ad31c2907404c019150ba4a06",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Eye pairs for the Error log and Font test page icons are blank/white on the app side because those rows lie below the first screen (shown in the tall design panel; checked at the scrolled offsets).",
+          "status": "waived"
+        },
+        {
+          "what": "Debug labels stay English in de by design; the date and digits use the German forms.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Row texts render marginally wider on Android (Rubik per-word shaping) with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "7c19bfcb80c8b57f3d2ae7ccf62e0cc5b0d9dd9eb157251c12e7216b2e5b6962",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "4448a71bbf40fbffe5cf3bd8ae004be0c14caa951bab9264c9b234b7af6a37b8",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "05b47c31d597ccceadf738212ecdb71e65cacafdc0ebe7ee51cf3a6c9e642d0b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner ad slot: the design shows the dashed Sorani ad label and 320 x 50 placeholder, the app shows the empty filled stand-in ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "187b1501868171c578da50b6461b639d4e61965501ba4a521d30d70fc6ed7be9",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Board area under the pause card: the design shows the dashed 'game board' placeholder, the app the game's real dimmed board (monsters and tray pieces); the board is masked (hatched in the diff panel) like the S5 to S7 boards.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ef06d7aef11b77e66c484b73e1f192db21fa2799e7ad2f54998fb85507254b1b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edge of the continue offer: Android draws longer dashes with a different phase than the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s8-levels",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "729d6b20e54e3ea215fb79da92fb2fa0776d660b211588f5a420bdfa9fd54616",
+      "date": "2026-10-17",
+      "looked": [
+        "sheet.png",
+        "zoom-1.png",
+        "zoom-2.png",
+        "zoom-3.png",
+        "zoom-4.png",
+        "eye-1.png",
+        "eye-2.png",
+        "eye-3.png",
+        "eye-4.png"
+      ],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Dashed edges of the locked tiles 13 onward and of the pack 2 card: Android dash length and phase differ from the design.",
+          "status": "waived"
+        },
+        {
+          "what": "Tile 13: the mockup draws it mid-press (slightly squashed inside its focus ring), the app at rest.",
+          "status": "waived"
+        },
+        {
+          "what": "Banner ad slot: the design shows the dashed Sorani ad label and 320 x 50 placeholder, the app shows the empty filled stand-in ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "status": "waived"
+        },
+        {
+          "what": "Status bar (9:41, icons) and the Android gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Sorani texts render a fraction of a point wider on Android with the same line breaks.",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }
