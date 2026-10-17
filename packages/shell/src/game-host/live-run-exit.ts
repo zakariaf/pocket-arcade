@@ -5,8 +5,9 @@
 // link resets the stack to open its screen (app/debug-link-routes.ts, resetToFirstRoute): it leaves
 // through this exit first, exactly as Pause -> Home does. The exit exists only in a test build:
 // createDebugParts makes it and ShellNavigator provides it; a store build provides none, so the
-// Game screen registers nowhere and no registry exists.
-import { createContext, use, useEffect } from 'react';
+// Game screen registers nowhere and no registry exists. The Game screen offers its leave through
+// use-live-run-exit.ts.
+import { createContext } from 'react';
 
 export type LiveRunExit = {
   /** The Game screen's leave while its run is live; returns the call that takes it back. */
@@ -33,13 +34,3 @@ export function createLiveRunExit(): LiveRunExit {
 
 /** The test build's exit (DebugParts.liveRunExit); null in a store build. */
 export const LiveRunExitContext = createContext<LiveRunExit | null>(null);
-
-/** Offers the Game screen's leave to the test build's exit while its run is live (leave null otherwise). */
-export function useLiveRunExit(leave: (() => void) | null): void {
-  const exit = use(LiveRunExitContext);
-  // Allowed effect: registers with the debug link's exit, an outside system that calls it.
-  useEffect(
-    () => (exit === null || leave === null ? undefined : exit.register(leave)),
-    [exit, leave],
-  );
-}
