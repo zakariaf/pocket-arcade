@@ -1,6 +1,6 @@
 // packages/shell/src/screens/debug/font-test-view.test.tsx
 // allow-style-assertion: the font family of each alphabet is spec 7.6's contract (every letter in every bundled font).
-import { screen } from '@testing-library/react-native';
+import { fireEvent, screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import { FONT_FAMILIES } from '@e07/shell/i18n/fonts.ts';
@@ -50,6 +50,30 @@ describe('FontTestView, a window of rows', () => {
 
     expect(screen.getByText(FONT_TEST_VARIANTS[0] ?? '')).toBeOnTheScreen();
     expect(screen.queryByText(FONT_TEST_VARIANTS.at(-1) ?? '')).not.toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+});
+
+describe('FontTestView, a page that grows as it scrolls', () => {
+  it('adds rows as the page nears its end and keeps the rows it drew, until every row is drawn (spec 7.6)', async () => {
+    // A ScrollView, never a virtualized list (react-components-and-hooks rule 11): rows only join,
+    // so the first type role stays drawn after the last one arrives.
+    const rows = fontTestRowsOf(FONT_TEST_VARIANTS, FONT_TEST_SAMPLES);
+    await renderWithShell(<FontTestView model={{ rows }} />);
+    const first = screen.getByText(FONT_TEST_VARIANTS[0] ?? '');
+
+    // One scroll to the page's end per row: more than the steps it takes to mount them all.
+    const pageEnd = {
+      nativeEvent: {
+        contentOffset: { x: 0, y: 3200 },
+        layoutMeasurement: { width: 402, height: 800 },
+        contentSize: { width: 402, height: 4000 },
+      },
+    };
+    for (const scroll of rows.map(() => pageEnd)) await fireEvent.scroll(first, scroll);
+
+    expect(screen.getByText(FONT_TEST_VARIANTS.at(-1) ?? '')).toBeOnTheScreen();
+    expect(screen.getByText(FONT_TEST_VARIANTS[0] ?? '')).toBeOnTheScreen();
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
