@@ -63,4 +63,21 @@ describe('AppText on Android', () => {
     expect(text).toHaveTextContent('Persian and Sorani use a right-\u200Bto-\u200Bleft layout.');
     expect(text.props['accessibilityLabel']).toBe('Persian and Sorani use a right-to-left layout.');
   });
+
+  it('fills each line before breaking, as the design does, not with the paragraph-optimal breaker (spec 15.1)', async () => {
+    await renderWithShell(
+      <AppText
+        text="Premium is bought through the App Store or Google Play."
+        variant="prose"
+        testID="privacy-policy.section.purchase.body"
+      />,
+    );
+
+    // Chrome and iOS fill a line greedily. Android's default high-quality breaker evens the lines
+    // of a paragraph out: S11c's purchase text moved "or" to its second line and the backup text
+    // "may" (E18-T22), though both fit the first line.
+    expect(
+      screen.getByTestId('privacy-policy.section.purchase.body').props['textBreakStrategy'],
+    ).toBe('simple');
+  });
 });
