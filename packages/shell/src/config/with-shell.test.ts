@@ -173,6 +173,8 @@ describe('withShell', () => {
     const plugins = withShell(GAME, STORE_OFF).plugins ?? [];
     expect(plugins).toContain('@e07/shell/plugins/with-backup-rules.ts');
     expect(plugins).toContain('@e07/shell/plugins/with-rtl-support.ts');
+    // Android 15+ draws each Text with the layout React Native measured (E18-T22).
+    expect(plugins).toContain('@e07/shell/plugins/with-prepared-text-layout.ts');
     expect(plugins).toContainEqual([
       '@e07/shell/plugins/with-upload-signing.ts',
       { game: 'probe-game' },
