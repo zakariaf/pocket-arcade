@@ -6,6 +6,7 @@
 // launch's members in the order the functions are listed here, and hands isConsentMomentHeld to
 // the consent moment host (S3).
 import { TEST_ONLY } from '@e07/shell/app/test-only.ts';
+import { clearErrorLog } from '@e07/shell/services/error-log/sqlite-error-log-adapter.ts';
 
 import type { ShellLaunch } from '@e07/shell/app/create-shell-app.tsx';
 import type { ParityParseResult, ParityRequest } from '@e07/shell/app/parity/parity-request.ts';
@@ -15,6 +16,7 @@ import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts
 import type { AdsPort } from '@e07/shell/services/ads/ads-port.ts';
 import type { PurchasePort } from '@e07/shell/services/purchase/purchase-port.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
+import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
 import type { InitialState } from '@react-navigation/native';
 import type { ComponentType, ReactNode } from 'react';
 
@@ -46,15 +48,18 @@ type ParityDataInput<T extends ShellGameTypes> = {
   readonly simulatedClock: SimulatedClock | null;
   /** The test build's saved debug flags; TEST_ONLY.createSqliteKvDebugStoreAdapter() unless given. */
   readonly debugStore?: DebugStore | undefined;
+  /** The one save.db connection, whose error_log table a frame starts from empty. */
+  readonly saveDriver?: SqlDriver | undefined;
 };
 
 /**
  * Right after hydrateSave and before the game host, the stores and the debug services exist: the
  * frame's player data written through the save service (so Premium is revoked with a date when
- * needed), today() moved to the frame's date, and no saved debug flag left. The debug services
- * restore their flags (offline, the ads override, a seed, a consent geography) from that store
- * when they are made, so without this a frame would inherit what an earlier launch saved: the S15
- * frame's "Always show test ads", or a debug link's offline switch on every S12 card.
+ * needed), today() moved to the frame's date, no saved debug flag left and an empty error log. The
+ * debug services restore their flags (offline, the ads override, a seed, a consent geography) from
+ * that store when they are made, so without this a frame would inherit what an earlier launch
+ * saved: the S15 frame's "Always show test ads", a debug link's offline switch on every S12 card,
+ * or the S15 error log count of an emulator without Play Billing (three rows a normal launch).
  */
 export function applyParityData<T extends ShellGameTypes>(input: ParityDataInput<T>): void {
   const { parity: request, game, save } = input;
@@ -63,6 +68,7 @@ export function applyParityData<T extends ShellGameTypes>(input: ParityDataInput
   save.update((doc) => api.parityDoc({ base: doc, game, request }));
   input.simulatedClock?.setSimulatedToday(request.date);
   (input.debugStore ?? api.createSqliteKvDebugStoreAdapter()).set('debug.overrides', null);
+  if (input.saveDriver !== undefined) clearErrorLog(input.saveDriver);
 }
 
 /** The store port of a parity launch (fixture product, the S12 state's behaviour); null normally. */
@@ -164,8 +170,8 @@ export function parityLaunchFor<T extends ShellGameTypes>(
   const api = TEST_ONLY;
   if (api === null) return {};
   return {
-    prepareSave: (save, simulatedClock) => {
-      applyParityData({ parity: request, game, save, simulatedClock, debugStore });
+    prepareSave: (save, simulatedClock, saveDriver) => {
+      applyParityData({ parity: request, game, save, simulatedClock, debugStore, saveDriver });
     },
     purchasePort: (productId) => api.createParityPurchase({ productId, plan: request.plan }),
     adsPort: () => api.createParityAds(),

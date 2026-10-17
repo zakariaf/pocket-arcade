@@ -66,3 +66,17 @@ export function createSqliteErrorLogAdapter(
     },
   };
 }
+
+/**
+ * Empties the error_log table: a parity capture (test builds) starts from no error, as it starts
+ * from no saved debug flag, so S15 shows the design's 0 whatever earlier launches logged. A save.db
+ * from a newer app is left alone (N10), and like `record` it never throws.
+ */
+export function clearErrorLog(driver: SqlDriver): void {
+  try {
+    if (isNewerStructure(driver)) return;
+    driver.run('DELETE FROM error_log', []);
+  } catch {
+    // No table yet: nothing to empty.
+  }
+}

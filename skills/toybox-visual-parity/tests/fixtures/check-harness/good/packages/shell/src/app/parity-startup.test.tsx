@@ -29,6 +29,7 @@ import {
 import type { ParityRequest } from '@e07/shell/app/parity/parity-request.ts';
 import type { DebugStore, DebugStoreKey } from '@e07/shell/screens/debug/debug-overrides.ts';
 import type { SimulatedClock } from '@e07/shell/screens/debug/simulated-clock.ts';
+import type { SqlDriver } from '@e07/shell/services/save/sql-driver.ts';
 import type { ReactNode } from 'react';
 
 const REQUEST: ParityRequest = {
@@ -98,6 +99,24 @@ describe('readParityLaunch', () => {
   });
 });
 
+/** A save.db connection that records the statements it runs (no table, user_version unset). */
+function recordingDriver(): SqlDriver & { readonly statements: string[] } {
+  const statements: string[] = [];
+  return {
+    statements,
+    exec: (sql) => {
+      statements.push(sql);
+    },
+    run: (sql) => {
+      statements.push(sql);
+    },
+    get: () => null,
+    transaction: (work) => {
+      work();
+    },
+  };
+}
+
 describe('applyParityData', () => {
   it('writes the frame player through the save service and moves today to the frame date', () => {
     const { save } = createTestSave();
@@ -118,6 +137,40 @@ describe('applyParityData', () => {
     applyParityData({ parity: REQUEST, game: TALLY_GAME, save, simulatedClock: null, debugStore });
 
     expect(debugStore.get('debug.overrides')).toBeNull();
+  });
+
+  // Spec S15: the debug menu "also shows the local error log"; its frame shows 0 entries, so the
+  // rows an earlier launch logged (an emulator without Play Billing logs three) never carry over.
+  it('starts the frame with an empty error log, through the save.db connection', () => {
+    const { save } = createTestSave();
+    const saveDriver = recordingDriver();
+
+    applyParityData({
+      parity: REQUEST,
+      game: TALLY_GAME,
+      save,
+      simulatedClock: null,
+      debugStore: savedDebugFlags(),
+      saveDriver,
+    });
+
+    expect(saveDriver.statements).toContain('DELETE FROM error_log');
+  });
+
+  it('keeps the error log on a normal launch', () => {
+    const { save } = createTestSave();
+    const saveDriver = recordingDriver();
+
+    applyParityData({
+      parity: null,
+      game: TALLY_GAME,
+      save,
+      simulatedClock: null,
+      debugStore: savedDebugFlags(),
+      saveDriver,
+    });
+
+    expect(saveDriver.statements).toStrictEqual([]);
   });
 
   it('changes nothing on a normal launch', () => {
@@ -178,8 +231,11 @@ describe('parityLaunchFor', () => {
     const { save } = createTestSave();
     const simulatedClock = fakeClock();
 
-    launch.prepareSave?.(save, simulatedClock);
+    const saveDriver = recordingDriver();
 
+    launch.prepareSave?.(save, simulatedClock, saveDriver);
+
+    expect(saveDriver.statements).toContain('DELETE FROM error_log');
     expect(save.doc().progress.endlessBest).toBe(4210);
     expect(simulatedClock.setSimulatedToday).toHaveBeenCalledWith('2026-09-27');
     expect(debugStore.get('debug.overrides')).toBeNull();

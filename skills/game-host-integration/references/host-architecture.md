@@ -271,7 +271,7 @@ Boot order (all synchronous, under the native splash), as `createShellParts` run
 
 | `ShellLaunch` member | When the root calls it | The parity harness's function |
 |---|---|---|
-| `prepareSave(save, simulatedClock)` | right after `hydrateSave`, before the host and the stores | `applyParityData({ parity, game, save, simulatedClock })` |
+| `prepareSave(save, simulatedClock, saveDriver)` | right after `hydrateSave`, before the host and the stores; `saveDriver` is `adapters.saveDriver`, the one save.db connection | `applyParityData({ parity, game, save, simulatedClock, saveDriver })`, which also empties the `error_log` table (`clearErrorLog`) |
 | `purchasePort(productId)` | building the Premium dependencies (the port is gated like the device's) | `parityStorePort(parity, productId)` |
 | `adsPort()` | building the services | `parityAdsPort(parity)` |
 | `initialState()` | instead of `resumeState(save.doc())` | `initialStateFor(parity, undefined)` (the frame's route) |

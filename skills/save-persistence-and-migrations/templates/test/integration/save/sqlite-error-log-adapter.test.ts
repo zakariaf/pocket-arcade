@@ -3,7 +3,10 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { createSqliteErrorLogAdapter } from '@e07/shell/services/error-log/sqlite-error-log-adapter.ts';
+import {
+  clearErrorLog,
+  createSqliteErrorLogAdapter,
+} from '@e07/shell/services/error-log/sqlite-error-log-adapter.ts';
 import { createSqliteSaveStore } from '@e07/shell/services/save/sqlite-save-store.ts';
 
 import { createNodeSqliteSqlDriver } from './node-sqlite-sql-driver.ts';
@@ -76,6 +79,40 @@ describe('sqlite-error-log-adapter', () => {
       driver.get('SELECT COUNT(*) AS n, MIN(id) AS low, MAX(at_ms) AS last FROM error_log', []),
     ).toStrictEqual({ n: 200, low: 1, last: 200 });
     expect(log.entries()[0]?.message).toBe('newer 200');
+    driver.close();
+  });
+
+  // Spec S15: the debug menu "also shows the local error log"; its design frame shows 0 entries,
+  // so a parity capture starts from an empty log, as it starts from no saved debug flag.
+  it('empties the log for a parity capture, and records again after it', () => {
+    const driver = createNodeSqliteSqlDriver(join(dir, 'save.db'));
+    createSqliteSaveStore(driver);
+    const log = createSqliteErrorLogAdapter(driver, { nowMs: () => 5 });
+    log.record('purchase', new Error('Billing client not ready'));
+    log.record('purchase', new Error('Failed to query product'));
+    clearErrorLog(driver);
+
+    expect(log.entries()).toStrictEqual([]);
+    log.record('boot', new Error('after'));
+    expect(log.entries()).toStrictEqual([{ atMs: 5, source: 'boot', message: 'after' }]);
+    driver.close();
+  });
+
+  it('leaves the log of a save.db from a newer app alone, and never throws', () => {
+    const driver = createNodeSqliteSqlDriver(join(dir, 'save.db'));
+    expect(() => {
+      clearErrorLog(driver); // no tables yet
+    }).not.toThrow();
+    createSqliteSaveStore(driver);
+    driver.run('INSERT INTO error_log (at_ms, area, message) VALUES (?, ?, ?)', [
+      1,
+      'boot',
+      'kept',
+    ]);
+    driver.exec('PRAGMA user_version = 2');
+    clearErrorLog(driver);
+
+    expect(driver.get('SELECT COUNT(*) AS n FROM error_log', [])).toStrictEqual({ n: 1 });
     driver.close();
   });
 });

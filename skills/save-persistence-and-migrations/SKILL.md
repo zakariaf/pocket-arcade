@@ -64,7 +64,7 @@ Everything the player owns is one versioned JSON document, validated on every lo
 | [references/boot-and-kill-test.md](references/boot-and-kill-test.md) | Boot sequence, peek, hydrateSave, composition root, clock adapter, SQL tests, kill test, inspect-save, verified facts | Workflow steps 5 and 7 |
 | `templates/packages/shell/src/services/save/` | Driver port and drivers, SaveStore (SQLite and fake), SQL, checksum, codec, load plan, SaveService, resets, peek, schema v1, migrations, fixtures, and their tests | Workflow step 2 |
 | `templates/packages/shell/src/services/clock/` | `clock-port.ts`, `system-clock-adapter.ts` (the one file that reads `Date`), `fake-clock.ts` and their tests, synced from the library (do not edit here) | Workflow step 2 |
-| `templates/packages/shell/src/services/error-log/` | `sqlite-error-log-adapter.ts` (newest 200 rows), plus `error-log-port.ts`, `fake-error-log.ts` and its test synced from the library | Workflow step 2 |
+| `templates/packages/shell/src/services/error-log/` | `sqlite-error-log-adapter.ts` (newest 200 rows; `clearErrorLog(driver)` empties the table for a parity capture, never a newer app's save.db), plus `error-log-port.ts`, `fake-error-log.ts` and its test synced from the library | Workflow step 2 |
 | `templates/packages/shell/src/app/` | `hydrate-save.ts` (`hydrateSave` over an injected `SaveStore`, `resumeState`), `use-checkpoint-on-background.ts`, and their tests | Workflow steps 2 and 5 |
 | `templates/test/integration/save/` | `node:sqlite` driver and the SQL integration tests | Workflow steps 2 and 6 |
 | `examples/save-v2/` | A complete v1-to-v2 change (schema, step, step test, defaults, fixtures, checksums) | Workflow step 4 |
