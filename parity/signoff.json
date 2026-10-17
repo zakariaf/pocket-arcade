@@ -6881,6 +6881,214 @@
         "feel": "match"
       },
       "differences": []
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "5cd3f6eb8e38fa8f6b7b9bc708b2f81d6a12c23f40b25971381e56de4b6ca37b",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s3-consent-moment",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "cf09aaaf925cbabe68b0d441ece63f0922e7b8f8f1c59875aafcf59dbb0cb1e2",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "consent body and footnote Rubik lines 1.4 and 1.3 pt wider than Chrome, same line breaks (Android waivers 31, 32)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "cc8123d4437b958047cf05776ca3d647d913c01391640ff2269da1ef8fe1d9df",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "a156a875388bb01cd8f649cf78e7826d9fde28b0508064bd0ba38d16a31a7d78",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "26711f745e7d8213b6c7b584234f206b014e59a2214d83b312b91bafc0d4c9ba",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "4bde1ce635d548a36963743f290fba9707138f65d64e10aa362768494e54173f",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "dark",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "48635a7911ce9beaa237e2cdf91ab5705268ac117cf5d6c2b947eed8ee857afc",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Endless description Rubik line 1.7 pt wider than Chrome, same line breaks (Android waivers 33, 34)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "590b9b349385afce73774005159c04b3a65898806a120c3d857314e3f1539c32",
+      "date": "2026-10-17",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Statistics key \"آمار\" 1.3 pt narrower (alef with madda shaping, Android waivers 35, 36)",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }
