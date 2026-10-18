@@ -6,7 +6,7 @@
 import { act, render } from '@testing-library/react-native';
 import { BackHandler, DeviceEventEmitter } from 'react-native';
 
-import { useHardwareBack } from './use-hardware-back.ts';
+import { HardwareBackCoverContext, useHardwareBack } from './use-hardware-back.ts';
 
 import type { ReactNode } from 'react';
 
@@ -61,6 +61,28 @@ describe('useHardwareBack on Android (spec 5, S14)', () => {
     await pressSystemBack();
 
     expect(exitApp).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the press to the layer above while an open layer covers it, and answers again after', async () => {
+    jest.spyOn(BackHandler, 'exitApp').mockImplementation(() => undefined);
+    const onBack = jest.fn();
+    const coverBack = jest.fn(() => true);
+    added.push(BackHandler.addEventListener('hardwareBackPress', coverBack));
+    const view = await render(
+      <HardwareBackCoverContext value>
+        <BackProbe onBack={onBack} />
+      </HardwareBackCoverContext>,
+    );
+
+    await pressSystemBack();
+    await view.rerender(
+      <HardwareBackCoverContext value={false}>
+        <BackProbe onBack={onBack} />
+      </HardwareBackCoverContext>,
+    );
+    await pressSystemBack();
+
+    expect([coverBack.mock.calls.length, onBack.mock.calls.length]).toStrictEqual([1, 1]);
   });
 
   it('stops answering once its component unmounts', async () => {
