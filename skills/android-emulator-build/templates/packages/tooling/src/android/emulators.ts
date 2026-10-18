@@ -57,6 +57,32 @@ export function serialOf(port: number): string {
   return `emulator-${String(port)}`;
 }
 
+/** The AVD name an `adb -s <serial> emu avd name` answer starts with; null when the query fails. */
+function avdNameOrNull(serial: string, avdNameOf: (serial: string) => string): string | null {
+  try {
+    return avdNameOf(serial).split('\n')[0]?.trim() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The serial of the running emulator named `name`, else null. Only emulator-* serials in state
+ * 'device' are asked for their AVD name (`avdNameOf`, the console query): this Mac's adb server is
+ * shared, and an offline or unreachable emulator of another session is never ours, so a query that
+ * fails is "not ours" rather than a crash.
+ */
+export function runningSerialAmong(
+  devices: readonly AdbDevice[],
+  name: string,
+  avdNameOf: (serial: string) => string,
+): string | null {
+  const running = devices.filter(
+    (device) => device.serial.startsWith('emulator-') && device.state === 'device',
+  );
+  return running.find(({ serial }) => avdNameOrNull(serial, avdNameOf) === name)?.serial ?? null;
+}
+
 /** The first even console port from 5554 that no running emulator holds. */
 export function freeConsolePort(devices: readonly AdbDevice[]): number {
   const taken = new Set(devices.map((device) => device.serial));

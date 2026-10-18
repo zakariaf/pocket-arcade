@@ -46,7 +46,7 @@ The APK lands at `apps/<game>/android/app/build/outputs/apk/release/app-release.
 ## Starting it on a free console port
 
 - `adb devices` lists running devices as `emulator-<port>`; `freeConsolePort` takes the first even port from 5554 that no running emulator holds (adb uses the odd port above it).
-- When the AVD already runs, the tooling finds its serial with `adb -s <serial> emu avd name` on each running emulator and reuses it.
+- When the AVD already runs, the tooling finds its serial with `adb -s <serial> emu avd name` on each emulator in state `device` (`runningSerialAmong`) and reuses it. An offline or unauthorized emulator is never asked, and one whose console query fails is another session's, never ours: it is skipped, never a crash. Our own AVD still booting (offline) is therefore not found and a second start fails in the emulator log: wait for the boot or shut it down by its serial.
 - `-no-snapshot` boots cold (no stale state from another run), `-no-window` keeps the run unattended; `screencap` works without a window.
 - The emulator is started detached with its output in `build/logs/emulator.log`, so it keeps running after the CLI ends.
 

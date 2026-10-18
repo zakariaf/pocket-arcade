@@ -11,6 +11,7 @@ import {
   isBootCompleted,
   parseAdbDevices,
   perfLogReaderOf,
+  runningSerialAmong,
   serialOf,
 } from './emulators.ts';
 import { ANDROID_PINS } from './toolchain.ts';
@@ -68,6 +69,53 @@ describe('parseAdbDevices', () => {
       { serial: 'emulator-5556', state: 'offline' },
       { serial: 'R58M123ABC', state: 'device' },
     ]);
+  });
+});
+
+describe('runningSerialAmong', () => {
+  const SMOKE = 'e07-android-smoke';
+  const answersOf =
+    (names: Readonly<Record<string, string>>, asked: string[]) =>
+    (serial: string): string => {
+      asked.push(serial);
+      const answer = names[serial];
+      if (answer === undefined)
+        throw new Error(`adb -s ${serial} emu avd name: connection refused`);
+      return `${answer}\nOK\n`;
+    };
+
+  it('finds the running emulator of the AVD by its console name', () => {
+    const devices = [
+      { serial: 'emulator-5554', state: 'device' },
+      { serial: 'emulator-5556', state: 'device' },
+    ];
+    const names = { 'emulator-5554': 'Pixel_8a_API_35', 'emulator-5556': SMOKE };
+    expect(runningSerialAmong(devices, SMOKE, answersOf(names, []))).toBe('emulator-5556');
+    expect(runningSerialAmong(devices, 'e07-android-e2e', answersOf(names, []))).toBeNull();
+  });
+
+  it("asks only emulators in state 'device': an offline one or a phone is never queried", () => {
+    const asked: string[] = [];
+    const devices = [
+      { serial: 'emulator-5554', state: 'offline' },
+      { serial: 'R58M123ABC', state: 'device' },
+      { serial: 'emulator-5556', state: 'unauthorized' },
+      { serial: 'emulator-5558', state: 'device' },
+    ];
+    const names = { 'emulator-5554': SMOKE, 'emulator-5558': SMOKE };
+    expect(runningSerialAmong(devices, SMOKE, answersOf(names, asked))).toBe('emulator-5558');
+    expect(asked).toStrictEqual(['emulator-5558']);
+  });
+
+  it("treats an emulator whose console query fails as not ours (another session's emulator)", () => {
+    const devices = [
+      { serial: 'emulator-5554', state: 'device' },
+      { serial: 'emulator-5556', state: 'device' },
+    ];
+    const find = (): string | null =>
+      runningSerialAmong(devices, SMOKE, answersOf({ 'emulator-5556': SMOKE }, []));
+    expect(find).not.toThrow();
+    expect(find()).toBe('emulator-5556');
   });
 });
 
