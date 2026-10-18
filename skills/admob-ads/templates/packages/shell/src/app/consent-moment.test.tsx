@@ -8,6 +8,7 @@ import { createFakeConnectivity } from '@e07/shell/services/connectivity/fake-co
 import { createFakeConsent } from '@e07/shell/services/consent/fake-consent.ts';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
 import { createTestSave, TEST_CLOCK } from '@e07/shell/testing/create-test-save.ts';
+import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { flushMicrotasks } from '@e07/shell/testing/flush-microtasks.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { AppText } from '@e07/shell/ui/app-text.tsx';
@@ -31,6 +32,16 @@ jest.mock(
 function MockHome(): ReactNode {
   const banner = useBannerSlot('home');
   return <AppText testID="probe.banner" text={banner.isAllowed ? 'banner' : 'no banner'} />;
+}
+
+type HostNode = { readonly parent: HostNode | null; readonly props: Record<string, unknown> };
+
+/** The nearest modal ancestor (VoiceOver stays inside it), if any. */
+function modalAbove(node: HostNode): HostNode | null {
+  for (let at = node.parent; at !== null; at = at.parent) {
+    if (at.props['accessibilityViewIsModal'] === true) return at;
+  }
+  return null;
 }
 
 type Options = {
@@ -101,6 +112,20 @@ describe('ConsentMoment', () => {
     // The answer is saved for the next launch and reaches the banner at once.
     expect(save.doc().ads.consent.canRequestAds).toBe(true);
     expect(screen.getByTestId('probe.banner')).toHaveTextContent('banner');
+  });
+
+  it('keeps VoiceOver on S3 while it covers the app, and lets it back to Home after (spec S3, 8.11)', async () => {
+    const user = userEvent.setup();
+    await renderMoment();
+    const cover = screen.getByTestId('consent.screen');
+    expect(modalAbove(cover)).not.toBeNull();
+    expect(screen.getByTestId('probe.banner', { includeHiddenElements: true })).toBeOnTheScreen();
+    expect(screen.queryByTestId('probe.banner')).not.toBeOnTheScreen();
+
+    await user.press(screen.getByRole('button', { name: 'Choose options' }));
+    await act(flushMicrotasks);
+    expect(screen.getByTestId('probe.banner')).toBeOnTheScreen();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 
   it('holds the S3 parity frame on screen and asks neither Google nor Apple', async () => {

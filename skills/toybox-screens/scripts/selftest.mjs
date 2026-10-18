@@ -15,6 +15,8 @@ const OVER_TEMPLATES = {
   // reachable by TalkBack (no importantForAccessibility trap in game-layout.tsx / dialog-context.tsx).
   'bad-overlay-not-trapped': ['--screen', 'S7'],
   'bad-dialog-not-trapped': ['--screen', 'S14'],
+  // The hosts draw their overlay in the ModalLayer, and the layer itself hides nothing behind it.
+  'bad-modal-layer-untrapped': ['--screen', 'S7'],
   'bad-game-half-wired': ['--screen', 'S5'],
   'bad-daily-card-not-pressable': ['--screen', 'S4'],
   'bad-play-inside-opener': ['--screen', 'S4'],

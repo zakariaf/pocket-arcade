@@ -90,7 +90,8 @@ const SPEC = {
     '                       VoiceOver inside it (accessibilityViewIsModal, or a DialogCard, which sets it); or',
     '                       on Android, the host beside an overlay (screens/game/game-layout.tsx for S6 and S7,',
     '                       app/dialog-context.tsx for S14) never hides what lies behind it from TalkBack',
-    '                       (importantForAccessibility "no-hide-descendants" while the overlay is up)',
+    '                       (importantForAccessibility "no-hide-descendants" while the overlay is up, itself or',
+    '                       through the ModalLayer it draws the overlay in, app/modal-layer.tsx)',
     '  screen-not-built     a screen named with --screen (or any, with --all, or any in shell-slice.json) has no code',
     '  route-model-hook     a route file (home-screen.tsx, pause-overlay.tsx, ...) calls no use-<screen>-model hook',
     '  model-hook-missing   a route file imports ./use-<name>.ts, which does not exist',
@@ -429,17 +430,31 @@ const OVERLAY_TRAP_HOSTS = {
 };
 /** The literal attribute, or the value chosen in an expression ({covered ? 'no-hide-descendants' : 'auto'}). */
 const ANDROID_TRAP = /\bimportantForAccessibility="no-hide-descendants"|\bimportantForAccessibility=\{[^}]*'no-hide-descendants'/;
+/** The one layer primitive the hosts draw their overlay in: it holds the trap for them. */
+const MODAL_LAYER = 'packages/shell/src/app/modal-layer.tsx';
+
+/** The last root's copy of a repo file (a fixture's file replaces the template's), or undefined. */
+function newestCopy(roots, rel) {
+  return [...roots].reverse().map((root) => join(root, rel)).find((abs) => existsSync(abs));
+}
+
+/** The host hides what lies behind: itself, or through the ModalLayer it draws the overlay in. */
+function isTrapped(roots, hostText) {
+  if (ANDROID_TRAP.test(hostText)) return true;
+  const layer = /<ModalLayer\b/.test(hostText) ? newestCopy(roots, MODAL_LAYER) : undefined;
+  return layer !== undefined && ANDROID_TRAP.test(readFileSync(layer, 'utf8'));
+}
 
 function checkOverlayTrap(roots, screen, report) {
   const host = OVERLAY_TRAP_HOSTS[screen.id];
   if (host === undefined) return;
-  const found = [...roots].reverse().map((root) => join(root, host)).find((abs) => existsSync(abs));
+  const found = newestCopy(roots, host);
   if (found === undefined) {
     report.skip({ file: host, rule: 'overlay-not-modal', message: `${screen.id}'s Android focus trap is checked once ${host} exists (it lands with the Shell core)` });
     return;
   }
-  if (ANDROID_TRAP.test(readFileSync(found, 'utf8'))) return;
-  report.problem({ file: host, rule: 'overlay-not-modal', message: `${screen.id} keeps TalkBack inside it only on iOS: accessibilityViewIsModal is iOS-only, and nothing hides the screen behind it on Android, so TalkBack walks onto it`, fix: "Wrap what lies behind in a View with importantForAccessibility={<covered> ? 'no-hide-descendants' : 'auto'} (the value changes, the View stays, so nothing remounts), as the templates' game-layout.tsx and dialog-context.tsx do." });
+  if (isTrapped(roots, readFileSync(found, 'utf8'))) return;
+  report.problem({ file: host, rule: 'overlay-not-modal', message: `${screen.id} keeps TalkBack inside it only on iOS: accessibilityViewIsModal is iOS-only, and nothing hides the screen behind it on Android, so TalkBack walks onto it`, fix: "Draw the overlay in a ModalLayer (app/modal-layer.tsx: <ModalLayer behind={...} layer={overlay} />), whose View holding what lies behind sets importantForAccessibility={<covered> ? 'no-hide-descendants' : 'auto'} (the value changes, the View stays, so nothing remounts), as the templates' game-layout.tsx and dialog-context.tsx do." });
 }
 
 

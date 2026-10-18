@@ -179,7 +179,7 @@
         ]
       },
       "references/roles-labels-and-voiceover.md": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-18",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -199,11 +199,15 @@
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
-            "sha256": "4d9521a695f5f317c790915c98a054de72963409e3b3b8c0a8fb695e2047dc99"
+            "sha256": "aca82e1f74a5ef13a81c4d11f170d81856e1e8488bc32f0ab5905897995dffed"
+          },
+          {
+            "path": "packages/shell/src/app/modal-layer.tsx",
+            "sha256": "28761455953a914c2bedd7d554f8f5ef562981c9e96a95349daae97e212606ea"
           },
           {
             "path": "packages/shell/src/screens/game/game-layout.tsx",
-            "sha256": "d80ec468b548bb915beb5c590608bb0998b1dd2e453db0c39c05f47ebe56b899"
+            "sha256": "0b0e9922cd0ca6ab37a189152b2d97ab1be2e9dd1c2adce98b66a7c95f1e2f1e"
           }
         ]
       },
@@ -246,7 +250,7 @@
         ]
       },
       "scripts/check-a11y-code.mjs": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-18",
         "sources": [
           {
             "path": "docs/05-components-hooks-styling.md",
@@ -262,11 +266,15 @@
           },
           {
             "path": "packages/shell/src/app/dialog-context.tsx",
-            "sha256": "4d9521a695f5f317c790915c98a054de72963409e3b3b8c0a8fb695e2047dc99"
+            "sha256": "aca82e1f74a5ef13a81c4d11f170d81856e1e8488bc32f0ab5905897995dffed"
+          },
+          {
+            "path": "packages/shell/src/app/modal-layer.tsx",
+            "sha256": "28761455953a914c2bedd7d554f8f5ef562981c9e96a95349daae97e212606ea"
           },
           {
             "path": "packages/shell/src/screens/game/game-layout.tsx",
-            "sha256": "d80ec468b548bb915beb5c590608bb0998b1dd2e453db0c39c05f47ebe56b899"
+            "sha256": "0b0e9922cd0ca6ab37a189152b2d97ab1be2e9dd1c2adce98b66a7c95f1e2f1e"
           }
         ]
       },
@@ -593,7 +601,7 @@
         ]
       },
       "templates/packages/shell/src/app/consent-moment.android.test.tsx": {
-        "recorded": "2026-10-16",
+        "recorded": "2026-10-18",
         "sources": [
           {
             "path": "epics/E18-android-port.md",
@@ -601,7 +609,7 @@
           },
           {
             "path": "packages/shell/src/app/consent-moment.android.test.tsx",
-            "sha256": "faddaaab88eb65610b9cca5a45d2a413254c3a72e4afe16212274690285b13d6"
+            "sha256": "1ac39ee216a91e8fb89810d302ca116b9e6d6786551da7022beaee7e2db7c8dc"
           }
         ]
       },

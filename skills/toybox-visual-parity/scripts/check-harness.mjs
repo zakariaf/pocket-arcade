@@ -153,7 +153,7 @@ const WIRING = [
 const MODAL_ROOTS = [
   { file: 'packages/shell/src/ui/scrim.tsx', screen: 'S14', what: 'the Scrim (S6 Pause and the S14 dialogs)' },
   { file: 'packages/shell/src/screens/result/result-overlay.tsx', screen: 'S7', what: 'the Result overlay (S7)' },
-  { file: 'packages/shell/src/app/consent-moment.tsx', screen: 'S3', what: 'the consent cover (S3)' },
+  { file: 'packages/shell/src/app/modal-layer.tsx', screen: 'S3', what: 'the ModalLayer (the S3 consent cover, and the layer every overlay is drawn in)' },
 ];
 
 /** The startup steps (parity-startup.tsx) the Shell calls; a harness nobody applies draws nothing. */

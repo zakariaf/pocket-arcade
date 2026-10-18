@@ -43,7 +43,8 @@ const SPEC = {
     '                      exists): importantForAccessibility no-hide-descendants (literal, or an expression',
     "                      holding 'no-hide-descendants') in a file that renders the overlay, directly or",
     '                      through other files, or in a component its direct renderer also renders (the layout',
-    '                      it hands the overlay to); never in an overlay-named file; Modal counts as trapped',
+    '                      it hands the overlay to), or in the ModalLayer such a file draws the overlay in',
+    '                      (app/modal-layer.tsx); never in an overlay-named file; Modal counts as trapped',
     '  nested-pressable    an accessible Pressable/Touchable* that contains another accessible pressable (a',
     '                      raw one, or a component that renders one, such as Button): iOS then reads the',
     '                      outer element and VoiceOver never reaches the inner key; make them siblings (a',
@@ -62,6 +63,8 @@ const LETTER = /\p{L}/u;
 const OVERLAY_FILE = /(dialog|overlay|sheet|pause-menu)\.tsx$/;
 /** The Android focus trap on the view behind an overlay (the same pattern check-screens accepts). */
 const ANDROID_TRAP = /importantForAccessibility=["']no-hide-descendants["']|importantForAccessibility=\{[^}]*'no-hide-descendants'/;
+/** The one layer primitive (toybox-screens): a host that draws its overlay in it gets its trap. */
+const MODAL_LAYER = 'packages/shell/src/app/modal-layer.tsx';
 /** The Android half of modal-overlay is due once Android step 4 copies its first template. */
 const ANDROID_TRAP_DUE = Object.freeze({ file: 'packages/shell/src/screens/game/game-screen-back.android.test.tsx', step: 4 });
 
@@ -298,15 +301,18 @@ function reachable(edges, start) {
  * hides only a view's own subtree, so the trap sits on the container behind the overlay: a file that
  * renders the overlay (directly or through other files: dialog-host -> dialog-context), or a component
  * a direct renderer of the overlay also renders (game-screen renders GameLayout and hands it the
- * overlay). Overlay-named files never count. An overlay that renders RN <Modal> (its own window) is
- * trapped already.
+ * overlay). Overlay-named files never count. A file that draws the overlay in the ModalLayer
+ * (renders <ModalLayer>) has the layer's trap. An overlay that renders RN <Modal> (its own window)
+ * is trapped already.
  */
 function hasAndroidTrap(graph, overlay) {
   const usesModal = [overlay, ...reachable(graph.renders, overlay)].some((rel) => /<Modal\b/.test(graph.nodes.get(rel)?.masked ?? ''));
   if (usesModal) return true;
   const candidates = new Set(reachable(graph.renderedBy, overlay));
   for (const parent of graph.renderedBy.get(overlay) ?? []) for (const sibling of graph.renders.get(parent) ?? []) candidates.add(sibling);
-  return [...candidates].some((rel) => !OVERLAY_FILE.test(basename(rel)) && ANDROID_TRAP.test(graph.nodes.get(rel)?.code ?? ''));
+  const trapsItself = (rel) => ANDROID_TRAP.test(graph.nodes.get(rel)?.code ?? '');
+  const trapsThroughLayer = (rel) => (graph.renders.get(rel)?.has(MODAL_LAYER) ?? false) && trapsItself(MODAL_LAYER);
+  return [...candidates].some((rel) => !OVERLAY_FILE.test(basename(rel)) && (trapsItself(rel) || trapsThroughLayer(rel)));
 }
 
 run(async () => {
@@ -421,7 +427,7 @@ run(async () => {
       problem(0, 'modal-overlay', `${basename(rel)} is an overlay without accessibilityViewIsModal`, 'Set accessibilityViewIsModal on the overlay container so VoiceOver cannot wander into the screen behind it (iOS; Android also needs the focus trap on the container behind it).');
     }
     if (OVERLAY_FILE.test(basename(rel)) && androidTrapDue && !hasAndroidTrap(graph, rel)) {
-      problem(0, 'modal-overlay', `${basename(rel)} is an overlay with no Android focus trap: TalkBack reaches the screen behind it (accessibilityViewIsModal is iOS-only)`, "In the layout or provider that renders the overlay beside the content behind it (game-layout.tsx, dialog-context.tsx; never the overlay file itself), set importantForAccessibility={overlay === null ? 'auto' : 'no-hide-descendants'} on the view holding that content, so the board or screen stays mounted.");
+      problem(0, 'modal-overlay', `${basename(rel)} is an overlay with no Android focus trap: TalkBack reaches the screen behind it (accessibilityViewIsModal is iOS-only)`, "Draw the overlay in the ModalLayer (app/modal-layer.tsx) from the layout or provider that renders it beside the content behind it (game-layout.tsx, dialog-context.tsx; never the overlay file itself): its View holding that content sets importantForAccessibility={overlay === null ? 'auto' : 'no-hide-descendants'}, so the board or screen stays mounted.");
     }
     if (basename(rel) === 'board-canvas.tsx') {
       const text = source;
