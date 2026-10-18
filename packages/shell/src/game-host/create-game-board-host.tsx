@@ -136,7 +136,7 @@ function boardHostFor<T extends ShellGameTypes>(
     const hand =
       coach.hand === null
         ? null
-        : { hand: coach.hand, cells: coach.cells, look: handLook, replay: 0 };
+        : { hand: coach.hand, cells: coach.cells, look: handLook, replay: props.coachReplay ?? 0 };
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();

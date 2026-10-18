@@ -30,6 +30,8 @@ function modelWith(overrides: Partial<TutorialModel> = {}): TutorialModel {
     coachText: 'Tap the left column to add one.',
     coachTargets: [TARGET],
     coachPointer: { kind: 'target', target: TARGET },
+    nudgeText: null,
+    coachReplay: 0,
     continueKey: null,
     skipKey: null,
     isReducedMotion: true,
@@ -54,6 +56,22 @@ describe('TutorialView', () => {
   it("hands the board the step's pointer, which the board resolves into the cells to fill", async () => {
     await renderWithShell(<TutorialView model={modelWith({ BoardHost: PointerBoard })} />);
     expect(screen.getByTestId('game.board-canvas')).toHaveTextContent('pointer target');
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('shows the nudge over the sentence after a refused try, and the board replays its hand', async () => {
+    const replays: number[] = [];
+    function ReplayBoard({ testID, coachReplay = 0 }: BoardHostProps): ReactNode {
+      replays.push(coachReplay);
+      return <AppText testID={testID} text="board" />;
+    }
+    const nudged = { BoardHost: ReplayBoard, welcomeText: null, nudgeText: 'Follow the hand.' };
+    await renderWithShell(<TutorialView model={modelWith({ ...nudged, coachReplay: 2 })} />);
+    expect(screen.getByText('Follow the hand.')).toBeOnTheScreen();
+    expect(screen.getByTestId('tutorial.coach-text')).toHaveTextContent(
+      'Tap the left column to add one.',
+    );
+    expect(replays.at(-1)).toBe(2);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

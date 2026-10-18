@@ -1,11 +1,13 @@
 // packages/shell/src/game-host/tutorial-script.test.ts
 import {
   coachStepsOf,
+  expectsScriptedMove,
   exampleHighlightOf,
   howToPlayPagesOf,
   isSameMove,
   isTutorialMoveAccepted,
   pointerTargets,
+  tutorialRulesOf,
 } from './tutorial-script.ts';
 
 import type { TutorialStep } from '@e07/game-kit/contract/teaching.ts';
@@ -32,6 +34,27 @@ describe('isTutorialMoveAccepted', () => {
   it('accepts every move on an any-move step and after the last step', () => {
     expect(isTutorialMoveAccepted(STEPS, ADD_ONE, 1)).toBe(true);
     expect(isTutorialMoveAccepted(STEPS, ADD_ONE, 2)).toBe(true);
+  });
+});
+
+describe('expectsScriptedMove', () => {
+  it('names the steps that wait for one exact move, where a refused try earns a nudge', () => {
+    expect([0, 1, 2].map((moveCount) => expectsScriptedMove(STEPS, moveCount))).toStrictEqual([
+      true,
+      false,
+      false,
+    ]);
+  });
+});
+
+describe('tutorialRulesOf', () => {
+  it("hands the tutorial run's controller both rules of the script", () => {
+    const rules = tutorialRulesOf(STEPS);
+    expect([rules.isMoveAccepted(ADD_ONE, 0), rules.isMoveAccepted(ADD_ONE, 1)]).toStrictEqual([
+      false,
+      true,
+    ]);
+    expect([rules.expectsMove(0), rules.expectsMove(1)]).toStrictEqual([true, false]);
   });
 });
 

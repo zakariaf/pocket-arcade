@@ -29,7 +29,7 @@ import { countTutorialRuns } from '@e07/shell/game-host/tutorial-run-counter.ts'
 import {
   coachStepsOf,
   howToPlayPagesOf,
-  isTutorialMoveAccepted,
+  tutorialRulesOf,
 } from '@e07/shell/game-host/tutorial-script.ts';
 
 import type { BoardHostProps } from './board-host-props.ts';
@@ -224,14 +224,6 @@ function exampleSession<T extends ShellGameTypes>(
   return session;
 }
 
-/** The tutorial run plays its script: each step accepts only its expected move. */
-function tutorialFilter<T extends ShellGameTypes>(
-  game: ShellGameModule<T>,
-): (move: T['move'], moveCount: number) => boolean {
-  const { steps } = game.teaching.tutorial;
-  return (move, moveCount) => isTutorialMoveAccepted(steps, move, moveCount);
-}
-
 function controllerFor<T extends ShellGameTypes>(
   game: ShellGameModule<T>,
   deps: GameHostDeps,
@@ -253,7 +245,8 @@ function controllerFor<T extends ShellGameTypes>(
     isContinueAllowed: deps.isContinueAllowed,
     feedback: deps.feedback,
     ...(deps.extendRunEnd === undefined ? {} : { extendRunEnd: deps.extendRunEnd }),
-    ...(session.ref.kind === 'tutorial' ? { isMoveAccepted: tutorialFilter(game) } : {}),
+    // The tutorial run plays its script: each step accepts only its expected move.
+    ...(session.ref.kind === 'tutorial' ? tutorialRulesOf(game.teaching.tutorial.steps) : {}),
   };
   return createSessionController(controllerDeps, session);
 }

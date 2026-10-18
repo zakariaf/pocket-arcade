@@ -13,4 +13,6 @@ export type BoardHostProps = {
    * pointing hand is drawn; when it is left out, coachTargets are outlined as given.
    */
   readonly coachPointer?: TutorialPointer | null;
+  /** Grows with each try the Tutorial step refused: the pointing hand then plays again. */
+  readonly coachReplay?: number;
 };

@@ -43,6 +43,7 @@ export function TutorialView({ model }: TutorialViewProps): ReactNode {
             testID="game.board-canvas"
             coachTargets={model.coachTargets}
             coachPointer={model.coachPointer}
+            coachReplay={model.coachReplay}
           />
         )}
       </View>
@@ -51,6 +52,7 @@ export function TutorialView({ model }: TutorialViewProps): ReactNode {
           {model.welcomeText === null ? null : (
             <AppText text={model.welcomeText} variant="heading" testID="tutorial.welcome" />
           )}
+          {model.nudgeText === null ? null : <AppText text={model.nudgeText} variant="heading" />}
           <AppText text={model.coachText} testID="tutorial.coach-text" />
         </Panel>
         {continueKey === null ? null : (

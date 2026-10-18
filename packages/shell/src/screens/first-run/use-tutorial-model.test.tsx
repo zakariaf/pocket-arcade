@@ -1,6 +1,8 @@
 // packages/shell/src/screens/first-run/use-tutorial-model.test.tsx
 import { act, renderHook } from '@testing-library/react-native';
+import { AccessibilityInfo } from 'react-native';
 
+import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createGameHost } from '@e07/shell/game-host/game-host.ts';
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
@@ -123,6 +125,38 @@ describe('useTutorialModel', () => {
     expect(result.current.coachText).toBe('Now add two to hit the target.');
     expect(result.current.welcomeText).toBeNull();
     expect(result.current.skipKey?.label).toBe('Skip');
+  });
+
+  it('nudges a refused try: "Follow the hand.", the sentence again, the hand replays, VoiceOver hears it', async () => {
+    // Spec S13 is silent on a wrong move (CLAUDE.md product rule: build the default, never stay
+    // silent, never skip): the copy deck's "Follow the hand." over the step's own sentence, the
+    // pointing hand plays again, and VoiceOver reads both. Hints during play covers nudges (S11).
+    const speak = jest.spyOn(AccessibilityInfo, 'announceForAccessibility');
+    systemA11yStore.setState({ isScreenReaderOn: true });
+    const { result, send } = await tutorial();
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect(result.current.nudgeText).toBe('Follow the hand.');
+    expect(result.current.coachText).toBe('Tap the left column to add one.');
+    expect([result.current.welcomeText, result.current.coachReplay]).toStrictEqual([null, 1]);
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect(result.current.coachReplay).toBe(2);
+    expect(speak.mock.calls).toStrictEqual([
+      ['Follow the hand. Tap the left column to add one.'],
+      ['Follow the hand. Tap the left column to add one.'],
+    ]);
+    await send({ type: 'intent', intent: tapColumn(0) });
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
+    systemA11yStore.setState({ isScreenReaderOn: false });
+  });
+
+  it('leaves the nudge out while Hints during play is off', async () => {
+    const { result, send, stores } = await tutorial();
+    await act(() => {
+      stores.settings.getState().dispatch({ type: 'set-hints-during-play', enabled: false });
+    });
+    await send({ type: 'intent', intent: tapColumn(1) });
+    expect([result.current.nudgeText, result.current.coachReplay]).toStrictEqual([null, 0]);
   });
 
   it('asks for a tap while paused, and the continue key resumes the run', async () => {
