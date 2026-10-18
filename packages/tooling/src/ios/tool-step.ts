@@ -1,8 +1,9 @@
 // packages/tooling/src/ios/tool-step.ts
-// The one way build:ios:sim and release:ios run a step: the command from apps/<game> (or the repo
-// root), its whole output in apps/<game>/build/logs/<step>.log, and the result for the caller to
-// judge (the build throws with the log's tail, the release matches its failure playbook). Also the
-// one synchronous wait between polls: these CLIs have nothing else to do meanwhile.
+// The one way build:ios:sim, build:android:emu, release:ios and release:android run a step: the
+// command from apps/<game> (or the repo root), its whole output in apps/<game>/build/logs/<step>.log,
+// and the result for the caller to judge (the builds throw with the log's tail, runStepOrThrow; the
+// iOS release matches its failure playbook). Also the one synchronous wait between polls: these
+// CLIs have nothing else to do meanwhile.
 import { spawnSync } from 'node:child_process';
 import { closeSync, fstatSync, mkdirSync, openSync, readSync, rmSync, writeSync } from 'node:fs';
 import { join } from 'node:path';
@@ -100,4 +101,20 @@ export function tailOf(output: string, count: number): string {
 /** Blocks for `ms` milliseconds. */
 export function sleepMs(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+/** Runs one step of a CLI; throws with the step's log and the last 30 lines of its output. */
+export function runStepOrThrow(
+  cli: string,
+  step: StepCommand & { readonly name: string },
+  context: StepContext,
+): void {
+  const { name, ...command } = step;
+  console.log(`${cli}: ${name} ...`);
+  const result = runToolStep(name, command, context);
+  if (result.status !== 0) {
+    throw new Error(
+      `step "${name}" failed (exit ${String(result.status)}), see ${result.logFile}:\n${tailOf(result.output, 30)}`,
+    );
+  }
 }

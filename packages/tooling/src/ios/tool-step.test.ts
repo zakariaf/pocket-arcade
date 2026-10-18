@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { runToolStep, STEP_TAIL_BYTES, tailOf } from './tool-step.ts';
+import { runStepOrThrow, runToolStep, STEP_TAIL_BYTES, tailOf } from './tool-step.ts';
 
 describe('runToolStep', () => {
   let appDir = '';
@@ -75,6 +75,40 @@ describe('runToolStep', () => {
     expect(result.output.length).toBeLessThanOrEqual(STEP_TAIL_BYTES);
     expect(tailOf(result.output, 1)).toBe('** ARCHIVE FAILED **');
     expect(result.stdout).toBe(result.output);
+  });
+});
+
+describe('runStepOrThrow', () => {
+  let appDir = '';
+  beforeEach(() => {
+    appDir = join(mkdtempSync(join(tmpdir(), 'tool-step-')), 'apps', 'line-siege');
+    mkdirSync(appDir, { recursive: true });
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+    rmSync(join(appDir, '..', '..'), { recursive: true, force: true });
+  });
+
+  it('names the CLI and the step it starts, and returns when the step passes', () => {
+    const command = { file: process.execPath, args: ['-e', "process.stdout.write('ok')"] };
+    runStepOrThrow('build:ios:sim', { name: 'prebuild', ...command }, { appDir, env: process.env });
+    expect(jest.mocked(console.log).mock.calls).toStrictEqual([['build:ios:sim: prebuild ...']]);
+  });
+
+  it("throws with the step's exit status, its log and the last 30 lines of its output", () => {
+    const script =
+      "for (let i = 1; i <= 40; i += 1) console.log('line ' + String(i)); process.exit(65)";
+    const command = { file: process.execPath, args: ['-e', script] };
+    const log = join(appDir, 'build', 'logs', 'gradle.log');
+    const tail = Array.from({ length: 30 }, (_, index) => `line ${String(index + 11)}`).join('\n');
+    expect(() => {
+      runStepOrThrow(
+        'build:android:emu',
+        { name: 'gradle', ...command },
+        { appDir, env: process.env },
+      );
+    }).toThrow(`step "gradle" failed (exit 65), see ${log}:\n${tail}`);
   });
 });
 
