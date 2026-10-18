@@ -3,6 +3,8 @@
 // withShell sets `android: androidConfig(game)` and appends `...androidPlugins(game)` to its one
 // plugin list. Every Android native setting comes from here, shell-plugins.ts or a plugin in
 // packages/shell/plugins/; the generated apps/<id>/android/ is never edited or committed.
+import { IS_BACKUP_ALLOWED } from './backup-rules.ts';
+
 import type { GameConfig } from './game-config.ts';
 import type { ExpoConfig } from 'expo/config';
 
@@ -50,7 +52,7 @@ export function androidConfig(game: GameConfig): NonNullable<ExpoConfig['android
     versionCode: game.buildNumber,
     // save-persistence-and-migrations: the save follows the player through Google's device backup
     // (spec 8.6, D5); with-backup-rules.ts limits the backup to SQLite/save.db and its WAL pair.
-    allowBackup: true,
+    allowBackup: IS_BACKUP_ALLOWED,
     permissions: [...ANDROID_PERMISSIONS],
     blockedPermissions: [...BLOCKED_ANDROID_PERMISSIONS],
     // toybox-design-system: light and dark follow the phone (needs expo-system-ui in every app).

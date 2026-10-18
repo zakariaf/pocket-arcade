@@ -5,14 +5,14 @@
 // direction itself is chosen in the app (rtl-and-direction), never by expo-localization's
 // supportsRTL option.
 
-import type { AndroidManifest } from './backup-rules.ts';
+import { updateMainApplication } from './main-application.ts';
+
+import type { AndroidManifest } from './main-application.ts';
 
 /** The manifest with android:supportsRtl="true" on its <application>; input unchanged. */
 export function applyRtlSupport(manifest: AndroidManifest): AndroidManifest {
-  const [main, ...rest] = manifest.manifest.application ?? [];
-  if (main === undefined) {
-    throw new Error('AndroidManifest.xml has no <application>: prebuild did not write the app');
-  }
-  const application = { ...main, $: { ...main.$, 'android:supportsRtl': 'true' } };
-  return { ...manifest, manifest: { ...manifest.manifest, application: [application, ...rest] } };
+  return updateMainApplication(manifest, (main) => ({
+    ...main,
+    $: { ...main.$, 'android:supportsRtl': 'true' },
+  }));
 }

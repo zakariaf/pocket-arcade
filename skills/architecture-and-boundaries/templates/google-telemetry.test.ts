@@ -5,7 +5,7 @@ import {
   TRANSPORT_BACKEND_DISCOVERY,
 } from './google-telemetry.ts';
 
-import type { AndroidManifest } from './backup-rules.ts';
+import type { AndroidManifest } from './main-application.ts';
 
 // The XML namespaces, without spelling out their URLs in app code (N3 lint).
 const ANDROID_NAMESPACE = 'android-namespace';

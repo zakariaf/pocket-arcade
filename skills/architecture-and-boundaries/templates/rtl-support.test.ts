@@ -1,7 +1,7 @@
 // packages/shell/src/config/rtl-support.test.ts
 import { applyRtlSupport } from './rtl-support.ts';
 
-import type { AndroidManifest } from './backup-rules.ts';
+import type { AndroidManifest } from './main-application.ts';
 
 // The android XML namespace, without spelling out its URL in app code (N3 lint).
 const ANDROID_NAMESPACE = 'android-namespace';
