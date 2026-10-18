@@ -5,12 +5,10 @@
 // its move (intentToMove, the same rule a player's drag follows) and the move into the cells it
 // fills (board.targetsOfMove). Line Siege's first step marked only the top cell of a vertical two,
 // so the gap read as one cell (2026-10-18). Pure, so plain Jest proves it.
+import type { CoachHand } from './draw-coach-hand.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
-
-/** The pointing hand: from where it starts (a drag's slot; null for a plain target) to its end. */
-export type CoachHand = { readonly from: BoardTarget | null; readonly to: BoardTarget };
 
 export type CoachPointer = {
   /** The cells the board marks with the hinted ones: the slot and every cell the move fills. */

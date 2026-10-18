@@ -9,9 +9,11 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 
 import type { RenderKit } from './board-types.ts';
-import type { CoachHand } from './coach-pointer.ts';
 import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
+
+/** The pointing hand: from where it starts (a drag's slot; null for a plain target) to its end. */
+export type CoachHand = { readonly from: BoardTarget | null; readonly to: BoardTarget };
 
 /** Where the fingertip is (x, y: the top of the finger) and the hand's size (the end cell's). */
 export type HandPose = { readonly x: number; readonly y: number; readonly size: number };
