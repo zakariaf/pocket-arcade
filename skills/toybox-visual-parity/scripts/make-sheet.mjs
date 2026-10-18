@@ -7,7 +7,7 @@ import { join, relative, resolve } from 'node:path';
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { TOLERANCES, frameGeometry, isCropOnly } from './lib/gates.mjs';
-import { parseAppLayout, parseMaestroHierarchy } from './lib/hierarchy.mjs';
+import { parseAppLayout, parseMaestroHierarchy, unclipBodyBounds } from './lib/hierarchy.mjs';
 import { readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS, deviceTargetName } from './lib/platform.mjs';
 import { blank, blit, crop, downscale, encodePng, fillRect, outline, readPng } from './lib/png.mjs';
@@ -257,13 +257,8 @@ run(async () => {
     // 163). Its real top is rebuilt from the visible edge and the design's height, as the gates do.
     const clipsBounds = r.info.platform === 'android' && geo.tall;
     const coverTop = (cover, ca) => {
-      if (!clipsBounds || !geo.inBody(cover)) return { y: ca.y, cut: null };
-      const expected = cover.rect.y + shiftPt;
-      const isCutTop = expected < geo.headerBottom && Math.abs(ca.y - geo.headerBottom) <= TOLERANCES.boundsPt;
-      const isCutBottom = expected + cover.rect.h > geo.bodyBottom && Math.abs(ca.y + ca.h - geo.bodyBottom) <= TOLERANCES.boundsPt;
-      if (isCutTop && isCutBottom) return { y: expected, cut: 'top and bottom' };
-      if (isCutTop) return { y: ca.y + ca.h - cover.rect.h, cut: 'top' };
-      return { y: ca.y, cut: isCutBottom ? 'bottom' : null };
+      const real = clipsBounds && geo.inBody(cover) ? unclipBodyBounds(ca, { top: cover.rect.y + shiftPt, height: cover.rect.h, window: { top: geo.headerBottom, bottom: geo.bodyBottom }, tolerance: TOLERANCES.boundsPt }) : null;
+      return real ?? { y: ca.y, cut: null };
     };
     // A crop-only part (inside an accessible element, or hidden from VoiceOver) is placed through
     // its cover: the cover's measured offset applied to the part's design box.

@@ -40,6 +40,26 @@ export function parseMaestroHierarchy(json, { pxPerPt = 1 } = {}) {
 }
 
 /**
+ * Android reports accessibility bounds clipped to what is visible (iOS reports the whole frame), so
+ * a body element of a tall frame that runs past the body window comes back cut at the window's edge.
+ * `box` is the element's reported box, `top` where its top should be (its design y plus the scroll),
+ * `height` its design height, `window` the body window ({ top, bottom }: the fixed header's bottom and
+ * the body's bottom, screen pt) and `tolerance` the bounds tolerance in pt. Any part past an edge is
+ * cut, a sliver too (S11's Privacy tab ran 1.6 pt under the top bar and came back 2.2 pt short,
+ * E18-T22). Returns the box rebuilt from its visible edge and the design height, { y, h, cut } with
+ * cut 'top', 'bottom' or 'top and bottom', or null when the box is not cut. The gates and the sheets
+ * (eye pages through a cut cover) both normalise through here.
+ */
+export function unclipBodyBounds(box, { top, height, window, tolerance }) {
+  const isCutTop = top < window.top && Math.abs(box.y - window.top) <= tolerance;
+  const isCutBottom = top + height > window.bottom && Math.abs(box.y + box.h - window.bottom) <= tolerance;
+  if (isCutTop && isCutBottom) return { y: top, h: height, cut: 'top and bottom' };
+  if (isCutTop) return { y: box.y + box.h - height, h: height, cut: 'top' };
+  if (isCutBottom) return { y: box.y, h: height, cut: 'bottom' };
+  return null;
+}
+
+/**
  * The parity harness's scroll markers: a ScreenBody that has scrolled in a parity capture draws an
  * invisible element parity.scroll.<y> with the contentOffset it reached (hundredths of a point,
  * "n" before a negative offset). Returns [{ testID, y }] in the order found (none in an old capture).

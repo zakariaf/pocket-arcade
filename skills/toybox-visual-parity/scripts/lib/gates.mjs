@@ -11,6 +11,7 @@
 // Global pixel-difference percentages and SSIM are reported only: correct builds scored 0.13-0.51 %
 // and SSIM 0.983-0.995, overlapping real defects. Never widen these numbers to make a screen pass;
 // the self-test has fixtures on both sides of each boundary and fails if they move.
+import { unclipBodyBounds } from './hierarchy.mjs';
 import { hex } from './png.mjs';
 
 export const TOLERANCES = Object.freeze({
@@ -1018,16 +1019,10 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   if (clipsBounds) {
     for (const [id, { el, a }] of pairs) {
       if (!geo.inBody(el)) continue;
-      const top = expectedY(el);
-      // Any part past the window edge is cut, a sliver too: S11's Privacy tab ran 1.6 pt under the
-      // top bar at the last offset and came back 2.2 pt short (E18-T22).
-      const isCutTop = top < geo.headerBottom && atTop(a);
-      const isCutBottom = top + el.rect.h > geo.bodyBottom && atBottom(a);
-      if (!isCutTop && !isCutBottom) continue;
-      const y = isCutTop && isCutBottom ? top : isCutTop ? a.y + a.h - el.rect.h : a.y;
-      pairs.set(id, { el, a: { ...a, y, h: el.rect.h } });
-      const cut = isCutTop && isCutBottom ? 'top and bottom' : isCutTop ? 'top' : 'bottom';
-      notes.push(`${id}: Android reports only its visible part (cut at the body window's ${cut}); judged by its visible edges`);
+      const real = unclipBodyBounds(a, { top: expectedY(el), height: el.rect.h, window: { top: geo.headerBottom, bottom: geo.bodyBottom }, tolerance: T.boundsPt });
+      if (real === null) continue;
+      pairs.set(id, { el, a: { ...a, y: real.y, h: real.h } });
+      notes.push(`${id}: Android reports only its visible part (cut at the body window's ${real.cut}); judged by its visible edges`);
     }
   }
   const windowH = geo.bodyBottom - geo.headerBottom;

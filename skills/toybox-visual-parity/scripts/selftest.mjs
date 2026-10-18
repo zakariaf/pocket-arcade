@@ -240,6 +240,30 @@ const editedMap = (dir) => {
   console.log('ok   setup-parity-emu polls only its own serial while booting and checks the AVD name once after');
 }
 
+// Android's clipped bounds are rebuilt once, by unclipBodyBounds (lib/hierarchy.mjs), for the gates
+// and the sheets alike: a box cut at the body window's edge gets its design height back from the
+// visible edge, a box clear of both edges is left alone (null).
+{
+  const { unclipBodyBounds } = await import('./lib/hierarchy.mjs');
+  const window = { top: 100, bottom: 700 };
+  const at = (box, top, height) => JSON.stringify(unclipBodyBounds(box, { top, height, window, tolerance: 2 }));
+  const cases = [
+    ['a box inside the window is not cut', at({ y: 200, h: 80 }, 200, 80), 'null'],
+    ['a box cut at the top keeps its visible bottom edge', at({ y: 100, h: 50 }, 70, 80), '{"y":70,"h":80,"cut":"top"}'],
+    ['a box cut at the bottom keeps its visible top edge', at({ y: 650, h: 50 }, 650, 80), '{"y":650,"h":80,"cut":"bottom"}'],
+    ['a box cut at both edges sits where the scroll puts it', at({ y: 100, h: 600 }, 40, 900), '{"y":40,"h":900,"cut":"top and bottom"}'],
+    ['a sliver past the top edge is cut too (E18-T22)', at({ y: 101, h: 47 }, 98.5, 49), '{"y":99,"h":49,"cut":"top"}'],
+    ['a box at the edge that belongs there is not cut', at({ y: 100, h: 80 }, 100, 80), 'null'],
+  ];
+  const problems = cases.filter(([, actual, want]) => actual !== want).map(([what, actual, want]) => `${what}: got ${actual}, want ${want}`);
+  if (problems.length) {
+    for (const p of problems) console.log(`FAIL scripts/lib/hierarchy.mjs [unclip-bounds] ${p} Fix: Rebuild a cut box from its visible edge and the design height; leave an uncut one alone.`);
+    console.log(`RESULT: FAIL (${problems.length} problems)`);
+    process.exit(1);
+  }
+  console.log(`ok   unclipBodyBounds rebuilds Android's clipped boxes (${cases.length} cases)`);
+}
+
 // A scrolled capture's failing element is cropped from the design window the capture shows: for S11
 // at scroll 1170 the settings.version crop must start at screen y 844 (page y 2013), not at the
 // Display group that sits at y 844 of the unscrolled page.
