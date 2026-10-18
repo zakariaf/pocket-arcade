@@ -213,6 +213,19 @@ function sampleUnitProblem(unit: string): string {
   return `${OWNER_PLACEHOLDER}extra.adUnits is Google's sample (test) AdMob id ${unit} (owner step G5)`;
 }
 
+/**
+ * The iOS live units of a built app's expo.extra.adUnits. withShell writes the units per platform,
+ * { ios: {...}, android: {...} | null } (ads-config.ts adUnitsExtra), so an iOS artefact is judged
+ * by its own entry only; anything else holds no unit.
+ */
+export function iosAdUnitsOf(adUnits: unknown): string[] {
+  const units: unknown =
+    typeof adUnits === 'object' && adUnits !== null ? Reflect.get(adUnits, 'ios') : undefined;
+  return typeof units === 'object' && units !== null
+    ? Object.values(units).filter((unit): unit is string => typeof unit === 'string')
+    : [];
+}
+
 /** The AdMob units (live builds) in every variant, the links in store builds: owner steps G5 and G3. */
 function placeholderProblems(facts: ArtifactFacts, isStore: boolean): string[] {
   return [

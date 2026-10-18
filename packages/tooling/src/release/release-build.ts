@@ -10,7 +10,11 @@ import { findWorkspace, PREBUILD_ARGS, schemeOf } from '@e07/tooling/build/sim-b
 import { readAppExtra, readPlistValue } from '@e07/tooling/ios/sim-app.ts';
 import { archiveArgs, exportArgs, xcodeAuthArgs } from '@e07/tooling/release/release-options.ts';
 import { runReleaseStep } from '@e07/tooling/release/release-runner.ts';
-import { ownerStepsPendingLine, storeGateProblems } from '@e07/tooling/release/store-gate.ts';
+import {
+  iosAdUnitsOf,
+  ownerStepsPendingLine,
+  storeGateProblems,
+} from '@e07/tooling/release/store-gate.ts';
 
 import type { ReleaseOptions } from '@e07/tooling/release/release-options.ts';
 import type { Preflight } from '@e07/tooling/release/release-preflight.ts';
@@ -97,15 +101,11 @@ function trackingTextOf(appDir: string, info: string): ArtifactFacts['trackingTe
 const textOf = (value: unknown): string | undefined =>
   typeof value === 'string' ? value : undefined;
 
-/** extra.adUnits (live builds), extra.game.links: what the placeholder checks read. */
+/** extra.adUnits.ios (live builds), extra.game.links: what the placeholder checks read. */
 function idsAndLinksOf(extra: Readonly<Record<string, unknown>>): Partial<ArtifactFacts> {
-  const units = extra['adUnits'];
   const links = ascField(extra['game'], 'links');
   return {
-    adUnits:
-      typeof units === 'object' && units !== null
-        ? Object.values(units).filter((unit): unit is string => typeof unit === 'string')
-        : [],
+    adUnits: iosAdUnitsOf(extra['adUnits']),
     privacyHost: textOf(ascField(ascField(links, 'privacyPolicy'), 'host')),
     supportEmail: textOf(ascField(links, 'supportEmail')),
   };
