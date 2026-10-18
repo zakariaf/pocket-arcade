@@ -7455,19 +7455,32 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "eda0a2947258cb6ff51ef85ba5cc7d7955238a3770f9fae003b0736bd128370a",
-      "date": "2026-10-17",
+      "sheetSha256": "0da79e294419af3a9f71e385a3a551e9007a824a49fc2495d57796a2861f0042",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "Board area: the design shows the dashed 'game board' placeholder, the app the real dimmed Line Siege board (monster lane and piece trays); the board is masked (hatched in the diff) (known S6 difference, not recorded in the previous entry).",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar and gesture bar appear only on the app side (known Android difference, not recorded in the previous entry).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider/lower on Android with the same line breaks (known Android difference, not recorded in the previous entry).",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "android",
@@ -7476,19 +7489,32 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "684d6e49af7bfa19eff42ed01af4f6b042be472283e91a9965402abe1ae55b73",
-      "date": "2026-10-17",
+      "sheetSha256": "f5cfb3470cc7f82102df07585a244e5291940c3610bf3cebb67dd8f90f4a290f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "Board area: the design shows the dashed 'game board' placeholder, the app the real dimmed Line Siege board (monster lane and piece trays); the board is masked (hatched in the diff) (known S6 difference, not recorded in the previous entry).",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar and gesture bar appear only on the app side (known Android difference, not recorded in the previous entry).",
+          "status": "waived"
+        },
+        {
+          "what": "Text a few tenths of a point wider/lower on Android with the same line breaks (known Android difference, not recorded in the previous entry).",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "android",
@@ -7497,16 +7523,16 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "783fa43ec87bf5c21dd447ec8679cc00b928c1cac71ca627e4cba41af7e4c019",
-      "date": "2026-10-17",
+      "sheetSha256": "36edb8c3cb2479d007443472773f5d9c5f153c5dc9f64979d42df441002d1e24",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
         "pictures": "match",
-        "shadows": "waived: Android draws dashed borders with its own dash length and corner phase (Android platform waivers in parity/waivers.json, owner told 2026-10-17)",
+        "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -7523,13 +7549,13 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "7e77b4c6186a363878d54c505135e36b3999b1b921e43fc310aefa22ee40667e",
-      "date": "2026-10-17",
+      "sheetSha256": "d1ed4b14bfddeb6a71635b22734253520b653977023c632f4082d946e23180fc",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
         "pictures": "match",
-        "shadows": "waived: Android draws dashed borders with its own dash length and corner phase (Android platform waivers in parity/waivers.json, owner told 2026-10-17)",
+        "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
@@ -7549,8 +7575,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "29e8a277ce280fc804ab499505051159e6d10aeb60bd4fba736a62fa75111a0d",
-      "date": "2026-10-17",
+      "sheetSha256": "a1814a98071d5580fa9d43904ddef3579b549f6da019c0231403f1c240975a5e",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -7558,7 +7584,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": []
@@ -7570,8 +7596,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "faec85a242b8497eb0db5989a0371ebcdcef99d39e5eedc469c024e6920abe5a",
-      "date": "2026-10-17",
+      "sheetSha256": "1c67067e69eb505db275f3ad068053ed2f89cc447c6762db0a57685e4aa27e2f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -8309,8 +8335,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "2a7d5354716a8c3c5c6c1d4343bb5b0c683018f4b43b06b39213a3ac53a0170e",
-      "date": "2026-10-17",
+      "sheetSha256": "f047b07b5fbd997efa6aa71af7a1a4b5e798c63129fe92b9acd7395b1ae1907b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -8318,7 +8344,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": []
@@ -8330,8 +8356,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "32ef297efa0dbf50d910b793d0439f0d26bdfe214f705c07c45f71905daeb590",
-      "date": "2026-10-17",
+      "sheetSha256": "6d66336921488b82949bcb7650f72189db19141d32f075d144e90253814251a0",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -8351,29 +8377,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "045a3e1efc214ad4e9576ade390fdee7bbb5f8af50a198fd76254d0e2f50ea43",
-      "date": "2026-10-17",
-      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
-      "eyeChecks": {
-        "icons": "match",
-        "pictures": "match",
-        "shadows": "match",
-        "alignment": "match",
-        "wrapping": "match",
-        "direction": "n/a",
-        "feel": "match"
-      },
-      "differences": []
-    },
-    {
-      "platform": "android",
-      "game": "lineSiege",
-      "frame": "s14-progress-restored",
-      "theme": "dark",
-      "lang": "fa",
-      "scrollY": 0,
-      "sheetSha256": "9cca3f212fe6a16624278e1650aac97e96c069357a24603dc24266451ae3b644",
-      "date": "2026-10-17",
+      "sheetSha256": "521d6dbc34c520749916bfa8f0dff99934aead42095cc02b6a995ab955a522db",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -8384,7 +8389,50 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "Android status bar (white on the dark theme) and gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Dialog text a few tenths of a point wider/lower on Android; same line breaks, including the two-line 'Restart now' key.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "game": "lineSiege",
+      "frame": "s14-progress-restored",
+      "theme": "dark",
+      "lang": "fa",
+      "scrollY": 0,
+      "sheetSha256": "1f61c7dba6746b7cb0ec6f007e8c5cd87e25da68d0dfb79b552ed4523910c43a",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "Banner slot under the dimmed Home: design shows the dashed placeholder with Persian digits, the app an empty filled box (masked).",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar (white on the dark theme) and gesture bar appear only on the app side.",
+          "status": "waived"
+        },
+        {
+          "what": "Persian text a few tenths of a point wider/lower on Android; line breaks identical.",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "android",
@@ -8987,8 +9035,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "cab60d8be8b27158b5b91b63181a92f0d31e1d371e62970b26519178db633e9a",
-      "date": "2026-10-17",
+      "sheetSha256": "00b189e63a16ba5556b590435c4ed0ac7fe31940aaffbcc1513bb6dcda8770fd",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -9001,7 +9049,7 @@
       },
       "differences": [
         {
-          "what": "Banner ad slot under the scrim: the design shows the dashed 'ریکلام 320 x 50' placeholder, the app shows the empty filled ad box; the band is hatched (masked) in the diff panel as a known slot.",
+          "what": "Banner ad slot under the scrim: the design shows the dashed 'ریکلام 320 x 50' placeholder, the app shows the empty filled ad box; treated as a masked known slot in the diff.",
           "status": "waived"
         },
         {
@@ -9021,12 +9069,12 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "45ba36eb9b6ee2d38c0486ae4810fd6012a9c192491b09b4ca3266a836c53c76",
-      "date": "2026-10-17",
+      "sheetSha256": "0dcc01ac13c94bc4960975fc324334fc694977b5e8f04262995c3b9d17b93854",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -9165,16 +9213,16 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "cf213ce7b369c852b4c70fee6ed64e33c4562d405b593fb20ef9cdde765b7e4c",
-      "date": "2026-10-17",
+      "sheetSha256": "f3d733deba6b89544227e2279039ea613c063bf8ea319a4642169a0f01b9874d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -9557,8 +9605,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "d66a3dff75c862f2fd32a78a8b67a8d081aa7c5f78960b678be18a8e5a328c7f",
-      "date": "2026-10-17",
+      "sheetSha256": "59082347c755b05082dabea6526d8b4d029d476a550f802c7b34152ed7bd5833",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -9566,7 +9614,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -9591,16 +9639,16 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "4a9856909d8dfccec9eced4e76a79f0376180fad2cafff54ccdc67f23fedfc11",
-      "date": "2026-10-17",
+      "sheetSha256": "f8ed3e100e3135aa5d40334aec607b596cc12be3ae73247e8acb00a5a37a8cdc",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -10249,16 +10297,16 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "d7dc80c74f3e62c58b57d04b34f9840373e65155dd9bffaeb80af7a45192863a",
-      "date": "2026-10-17",
+      "sheetSha256": "d97cb78017c432ea2da6e3800a1b6d1bc86b9355585178dc8509e3c71cf1bd94",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -10389,12 +10437,12 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "187b1501868171c578da50b6461b639d4e61965501ba4a521d30d70fc6ed7be9",
-      "date": "2026-10-17",
+      "sheetSha256": "ea6a4ae3d3818b25a5cbdb5bf00a252329ce79fb6dcbc8cfdc590177e22626c2",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -10423,8 +10471,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "ef06d7aef11b77e66c484b73e1f192db21fa2799e7ad2f54998fb85507254b1b",
-      "date": "2026-10-17",
+      "sheetSha256": "da2f5e7e636f30183736e8f52928d75145b778ed618bb222b2b664c0a415fc4b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -11089,8 +11137,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "f868211468b98bf5c9cc605573c559958632d33895097941ed13f9d7336fc11c",
-      "date": "2026-10-17",
+      "sheetSha256": "77c3ec2d1b0907960120c71c6486d65449e009b15d07a42de35a9660de5c48af",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -11107,7 +11155,7 @@
           "status": "waived"
         },
         {
-          "what": "Android status bar (dark text and icons on this light run) and gesture bar only on the app side; under the dialog scrim the gesture bar is drawn white, while it is dark on the other light runs.",
+          "what": "Android status bar (dark text and icons on this light run) and gesture bar only on the app side; under the dialog scrim the gesture bar is drawn white (the same on every light run of this frame).",
           "status": "waived"
         },
         {
@@ -11123,8 +11171,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "92d30db3344d206cd14461708a95825a63b2a4a7df46891f74d877eb2feb6704",
-      "date": "2026-10-17",
+      "sheetSha256": "cd34e505004d856295d157c962cfa3fe5b1e2170488a13f0fab3a8e4da62122f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -11309,12 +11357,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "fac5dd066262528abd2e90b5818aaa58d783f56e7db4a645d0a21fbb08760f1d",
-      "date": "2026-10-17",
+      "sheetSha256": "81b605c263d18f7f66cba2b32b4eb98e9ec14c9c28c57d9fb5a30e63f7374863",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -11343,8 +11391,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "8c6b3a7a551f235f01a2ce9ac08fa9fe1b9881d40b6aedae301aa5b6af4c5d51",
-      "date": "2026-10-17",
+      "sheetSha256": "121799297d2aa4c10ae8db1bfa91d942c8aa71c9f11fe07c5b8a590c91ddc70e",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -11352,7 +11400,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -11377,8 +11425,8 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "58e815dd30ee8add31f57c399d683fe8c710b87cbd2ddec590465eede13c9d65",
-      "date": "2026-10-17",
+      "sheetSha256": "d5cbcadbea10c4b30fea1ab8ab8b4c9adfd4710420af73d2afe8c62342a9e7b7",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -11386,7 +11434,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -12043,12 +12091,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "6bbeee22a3455955dc102b9a99608550ed64ed01771e841e8fc35ca8a145b612",
-      "date": "2026-10-17",
+      "sheetSha256": "18706c6890e30ceffee8b065d1a6c46e2ba832e2909f13bc550e087cc01534b2",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -12073,12 +12121,12 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "6d8bc85e132270a8f1074bdc95e95935a0bbc895cb84d0b9e4005cd0d00dc5e0",
-      "date": "2026-10-17",
+      "sheetSha256": "e2541e2c34b0a4266273891316a480475674226ef3f2739b6bd1baf5aca1350f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -12219,16 +12267,16 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "f152361f6e7740d82c4c98a6b04a8a697e769bccd1c44ec914a212c15a909e77",
-      "date": "2026-10-17",
+      "sheetSha256": "96346f58ca30c98cb47e73a357d0613828e94935dfec38c2e54a48db91a2fc70",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -12238,6 +12286,10 @@
         },
         {
           "what": "German text a few tenths of a point wider on Android; no line moves.",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar and gesture bar appear only on the app side (known Android difference, not recorded in the previous entry).",
           "status": "waived"
         }
       ]
@@ -12249,8 +12301,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4e0b62758d222110f0f86bc339edd35eb3e9b657697a05933f9c2509ccc33d42",
-      "date": "2026-10-17",
+      "sheetSha256": "a05f5e088a991050cf5a091220cdd34ecc34e460048a5591ba54668bee68396d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -12258,7 +12310,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -12279,8 +12331,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "a3eb924e8a14e39dc13b712c897dc0e8c506bdbae89fce93d11b03f6fda2657e",
-      "date": "2026-10-17",
+      "sheetSha256": "4d8dd02bf994c959d74fbf615678ab5bbcb1ef2d2f69f6ee035a9834261eaf78",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -12288,12 +12340,16 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
         {
           "what": "Text a few tenths of a point wider on Android; no line moves.",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar and gesture bar appear only on the app side (known Android difference, not recorded in the previous entry).",
           "status": "waived"
         }
       ]
@@ -12941,8 +12997,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "871ade83d430fc530e00f5aecbbc9de977977f23edc3b21b0b3343c2d96f384f",
-      "date": "2026-10-17",
+      "sheetSha256": "896cb38d6e9803e4c4988d43ec1c720c2641a217eb01cbf5f510b902e0c4d93b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -12950,7 +13006,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -12975,16 +13031,16 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "b8ddc80af31acd428e814ed824b0c00bc2f3710c66d74803673239ea79dcb7b4",
-      "date": "2026-10-17",
+      "sheetSha256": "be4d13b76f4827d1f10523420a81396db0d1bfb245dd37052239a2715fea2c91",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -13005,16 +13061,16 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "e051c7e2be51128f2439bcec8dedc412f71a93b01136d127ab290dd617893a85",
-      "date": "2026-10-17",
+      "sheetSha256": "302eeaa807d745ffdfd84170233b6a2e324405d78f579f1c3fade4f83887febe",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -13175,16 +13231,16 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "0d2ea64c026eab5d59410c00ecc674a8e1bf2c90d03905f2485ad8d5bf55e23c",
-      "date": "2026-10-17",
+      "sheetSha256": "e5ba0bcac038b79f65c29a0c6fab74aaacb5c758746454ce1443387ccd321e4b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -13209,8 +13265,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "07d4cf5bf41ef344e723ced6d4d97e7b8dd9005a9ea9af64d66cce90b286d030",
-      "date": "2026-10-17",
+      "sheetSha256": "7d05fe0d0989112b405530d70bce5d824f17338ab01270ef8ac37d4edd83bc07",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -13243,8 +13299,8 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "09f2d0fefcd67f1e4f0612a1aea4e6806f010a72818e97dd9881936be913eaa6",
-      "date": "2026-10-17",
+      "sheetSha256": "4fde0e7f2ba12865bc1570ca02d82e56a08f818ff82fe91a7f8eca081bc08d73",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -13905,8 +13961,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "83681206e6b05da4ff535bf4ead45a03a539896b5fcfea9653c941dfde94902a",
-      "date": "2026-10-17",
+      "sheetSha256": "f0aa2d657dd2de73bf3680ef63f021b569dfd4fbb2283efcc1489de15c14be3f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -13939,16 +13995,16 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "242c47f822d911668e056a861c8ddc6e1fa1581e31fb111cc4fb2842e2e61436",
-      "date": "2026-10-17",
+      "sheetSha256": "0f3233dcf279267fd120fd5450b49b65905a7ee6e6e347fd907187cbd895ac6e",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -13969,16 +14025,16 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "0ec9be5665346f49e787319bf9bd6f235103e43379ed8d7a107951451449e13d",
-      "date": "2026-10-17",
+      "sheetSha256": "9f9859c18f0e567b7496651d12cd9c3ace21ce449ae8ddec51e5043bf68e5e3d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -14135,12 +14191,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5e36a22d2b8cd69a7c8957c6f7ae3457cc31ea705e1609e11f16b4d141f9ba0c",
-      "date": "2026-10-17",
+      "sheetSha256": "b4a415ade26ea56645554a63ecd64087d2598fab72e4cb324c4c99421f7bd41a",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -14169,8 +14225,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "9ed720cb42699277d807c2f66cc1213b7801428e7e914d0288707076862d07a1",
-      "date": "2026-10-17",
+      "sheetSha256": "5d0eb4bd2d051679acb15ac2a1b3d0fc2bb3348ee0fe862e104a65d3dedda8fa",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -14845,16 +14901,16 @@
       "theme": "light",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "46dafbbee8496260c6c6a149165642c34da2be5ce6704f14579a3ac5bc430e2b",
-      "date": "2026-10-17",
+      "sheetSha256": "2077153305a71ca13dd7a418bc3854d50ae3effd4e66e6714b9c16e6d15cc3de",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -14864,6 +14920,10 @@
         },
         {
           "what": "German dialog text a few tenths of a point wider on Android; same line breaks.",
+          "status": "waived"
+        },
+        {
+          "what": "Android status bar (dark on the light theme) and gesture bar (drawn white over the scrim) appear only on the app side.",
           "status": "waived"
         }
       ]
@@ -14875,12 +14935,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "aaa5e36fa540f9921d6da88f45df2f732538bf2e3912be69a525217cf80ce0e6",
-      "date": "2026-10-17",
+      "sheetSha256": "9550e72138148bcc533c0d54a8ea941b91079cdc8cd975c4db6695120d54f46d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -14905,12 +14965,12 @@
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5a4c1e414066cfae9a98bb6747de2bc669652a0f8f333ad911b9dd12bd3982bc",
-      "date": "2026-10-17",
+      "sheetSha256": "0785ab4c744f12c3221d46b8938bc9934a8d948d33eddf539e3ab9230e377bf9",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "n/a",
+        "pictures": "match",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
@@ -15055,8 +15115,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "9501a8948fb3c3f44ce2ea211de90e50545f038fcb2a53fcac99720997004444",
-      "date": "2026-10-17",
+      "sheetSha256": "e87f490ba5ed8b3674322c59c09386702362ac576fec6ff6d0ac816192275da0",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -15064,7 +15124,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -15085,8 +15145,8 @@
       "theme": "dark",
       "lang": "de",
       "scrollY": 0,
-      "sheetSha256": "bd2cec4f2d8c5a0a23fd8139bf1452a6cc33663b46f3fe732d4c49620ebb44be",
-      "date": "2026-10-17",
+      "sheetSha256": "e575ed8dfbec2f712aab5fbc490050007e83c47e189ae2b71e26c100476d5c80",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -15094,7 +15154,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -15817,8 +15877,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "bf7093012449c184d7765ddbe7587e0eee6bc28f9a0b62e328498e238f1b1be8",
-      "date": "2026-10-17",
+      "sheetSha256": "5326bfcb7ee2c50cf106aae72211530185b581733a0a04a6a84b5cd031e1783c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -15826,7 +15886,7 @@
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
-        "direction": "n/a",
+        "direction": "match",
         "feel": "match"
       },
       "differences": [
@@ -15851,8 +15911,8 @@
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "e161ff26413e4ec5c4a948352bf45be76a4dbf8a5814151e9dead0fda32f925a",
-      "date": "2026-10-17",
+      "sheetSha256": "3a93ad1853556f27ae048b216f055cb7c0013dae44a4c7c2437357a4763f9bd4",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -16071,8 +16131,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "23363e0aabf49f2a84ce41e5080fc2b74dbd792a0bc28006603981e865d1b3b6",
-      "date": "2026-10-17",
+      "sheetSha256": "334fd5c09a69252ed6f5090251819d72a65560becae1516ea90d250e481fd258",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -16105,8 +16165,8 @@
       "theme": "light",
       "lang": "ckb",
       "scrollY": 0,
-      "sheetSha256": "6887868b4d77ef7380338cace4b90773529e366884c04e8fdff5e51a437a437b",
-      "date": "2026-10-17",
+      "sheetSha256": "365c9edde3bd6963df2b568f90ba467fac14cb805e6460c7fa12354238eabd3a",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
