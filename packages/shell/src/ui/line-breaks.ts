@@ -4,9 +4,8 @@
 // there only with hyphenation on, which would also hyphenate every other word. A zero-width space
 // after such a hyphen gives Android the same break point and draws nothing.
 
-import { asRtlParagraph } from '@e07/shell/i18n/bidi.ts';
+import { asRtlParagraph, WORD_JOINER, ZERO_WIDTH_SPACE } from '@e07/shell/i18n/bidi.ts';
 
-const ZERO_WIDTH_SPACE = '\u200B';
 const IN_WORD_HYPHEN = /(?<=\p{L})-(?=\p{L})/gu;
 
 /** The text with a zero-width break point after each hyphen between two letters. */
@@ -15,7 +14,6 @@ export function withHyphenBreaks(text: string): string {
 }
 
 const NO_BREAK_SPACE = /\u00A0/gu;
-const WORD_JOINER = '\u2060';
 
 /**
  * The text with each no-break space drawn as a plain space between two word joiners. Intl writes

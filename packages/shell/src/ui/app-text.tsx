@@ -1,6 +1,5 @@
 // packages/shell/src/ui/app-text.tsx
-import { useState } from 'react';
-import { PixelRatio, Platform, Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 import { isolate } from '@e07/shell/i18n/bidi.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
@@ -11,9 +10,10 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { MAX_TEXT_SCALE } from './font-scale-curve.ts';
 import { androidMarksOf } from './line-breaks.ts';
-import { forText, useBalancedWrap } from './use-balanced-wrap.ts';
-import { useScaledSize } from './use-scaled-size.ts';
+import { useBalancedWrap } from './use-balanced-wrap.ts';
+import { useTextRoom } from './use-text-room.ts';
 
+import type { OverflowGuard } from './use-text-room.ts';
 import type { Direction, Language } from '@e07/shell/i18n/languages.ts';
 import type {
   LocalizedTextOptions,
@@ -23,7 +23,7 @@ import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { TypeStyle } from '@e07/shell/theme/tokens.ts';
 import type { TypeVariant } from '@e07/shell/theme/type-styles.ts';
 import type { ReactNode } from 'react';
-import type { LayoutChangeEvent, TextProps, TextStyle } from 'react-native';
+import type { TextProps, TextStyle } from 'react-native';
 
 /**
  * default = ink, muted = inkSoft, onPrimary / onPop = text on accent / pop paint,
@@ -139,12 +139,6 @@ function textProps(props: AppTextProps, drawn: Drawn): TextProps {
 const VAZIRMATN_EM = { ascent: 2100 / 2048, descent: 1100 / 2048 } as const;
 const MIN_SHIFT = 1.5;
 
-type OverflowGuard = {
-  readonly paddingTop: number;
-  readonly paddingBottom: number;
-  readonly marginVertical: number;
-};
-
 /** Chrome's content box of a Vazirmatn line: the rounded ascent plus the rounded descent. */
 export function vazirmatnContentHeight(fontSize: number): number {
   return Math.round(VAZIRMATN_EM.ascent * fontSize) + Math.round(VAZIRMATN_EM.descent * fontSize);
@@ -185,142 +179,6 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
   return style.face === 'display' && BALANCED_VARIANTS.has(variant);
 }
 
-/**
- * Room under a text's last line. React Native lays frames out in float32 and draws a text in its
- * frame (minus any pads); far down a scrolled page (S15's font page) a box came out a hair shorter
- * than the lines it measured (174.66650 pt for four 131/3 pt lines), so TextKit dropped the last
- * line: its letters were piled onto the line before or ran off the edge (spec 7.6). Once the text
- * has laid out, its box is one pixel taller than its lines (minHeight) and the margin below gives
- * that pixel back, so the element keeps its line box. A text cut to numberOfLines counts only those.
- * iOS lays some boxes out a pixel above their lines (a 59/3 pt stat-list key came out 20 pt): that
- * surplus, read from the text's first box, stays in the room, so the element keeps the box iOS
- * laid out (without it every S10 best-scores row came out a pixel short of the design).
- */
-type TextRoom = { readonly minHeight: number; readonly marginBottom: number };
-
-/** A text's vertical metrics: its pads (the guard's), its line height and its first box's surplus. */
-export type LineBox = {
-  readonly pads: number;
-  readonly lineHeight: number;
-  readonly surplus: number;
-};
-
-/** One device pixel in points: the room's extra height and the tolerance of every box reading. */
-const pixel = (): number => 1 / PixelRatio.get();
-
-function roomOf(guard: OverflowGuard | null, box: LineBox, lines: number): TextRoom {
-  return {
-    minHeight: lines * box.lineHeight + box.pads + box.surplus + pixel(),
-    marginBottom: (guard?.marginVertical ?? 0) - pixel(),
-  };
-}
-
-/**
- * What a laid-out box says. surplus: how far it reaches past its whole lines, a pixel at most, none
- * when it is short (the float32 frames far down a page) or within float noise of its lines (read
- * from the first box, laid out before any room, whose own surplus is still 0). lines: the lines it
- * holds, or null when the box is the room set on it (whole lines plus one pixel), which says nothing
- * new. The line report is laid out in the same short box, so it lost the dropped line too (two
- * lines of the ad chip came back as one); the box still measures their height, a hair short, and
- * rounds to the true count.
- */
-export function fitOf(
-  height: number,
-  box: LineBox,
-): { readonly surplus: number; readonly lines: number | null } {
-  if (box.lineHeight === 0) return { surplus: 0, lines: null };
-  const content = height - box.pads - box.surplus;
-  const lines = Math.round(content / box.lineHeight);
-  const rest = content - lines * box.lineHeight;
-  return {
-    surplus: rest < pixel() / 4 ? 0 : Math.min(rest, pixel()),
-    lines: Math.abs(rest - pixel()) < pixel() / 4 ? null : lines,
-  };
-}
-
-/**
- * What a text learned from its layouts: the reported lines, the box's lines when more, and the
- * surplus of its first box (laid out before any room: the room waits for a line count).
- */
-export type Measured = {
-  readonly text: string;
-  readonly lines: number;
-  readonly boxLines: number;
-  readonly surplus: number | null;
-};
-
-const freshMeasure = (text: string): Measured => ({ text, lines: 0, boxLines: 0, surplus: null });
-
-/**
- * The lines the room holds: the reported lines (only those numberOfLines shows) or the box's
- * lines when more. 0 while nothing has laid out: no room yet.
- */
-export function countOf(measured: Measured, numberOfLines: number | undefined): number {
-  const reported = Math.min(measured.lines, numberOfLines ?? measured.lines);
-  return Math.max(reported, measured.boxLines);
-}
-
-/**
- * A box that holds more lines than the report becomes the count; a box no taller than the report
- * clears it (a longer layout that the report saw too, such as a balanced wrap's probe), and the
- * room's own box keeps it, so the room never shrinks under its text. A report that reaches the
- * count clears it, so a longer box that came before its own report never stays.
- */
-function afterBox(measured: Measured, held: number | null): Measured {
-  if (held === null) return measured;
-  return { ...measured, boxLines: held > measured.lines ? held : 0 };
-}
-
-/**
- * A report that reaches the box's count has caught up with it: the report counts again. A report
- * that changes nothing keeps the stored state itself, so React skips the render.
- */
-export function afterReport(measured: Measured, lines: number): Measured {
-  const boxLines = lines >= measured.boxLines ? 0 : measured.boxLines;
-  if (lines === measured.lines && boxLines === measured.boxLines) return measured;
-  return { ...measured, lines, boxLines };
-}
-
-type RoomParts = {
-  readonly guard: OverflowGuard | null;
-  readonly room: TextRoom | null;
-  /** The line count of each text layout. */
-  readonly onLines: (lines: number) => void;
-  readonly onBoxLayout: (event: LayoutChangeEvent) => void;
-};
-
-/** The guard, the room once the line count is known, and the layout handlers that learn it. */
-function useTextRoom(localized: TextStyle, props: AppTextProps): RoomParts {
-  const { text } = props;
-  const [stored, setMeasured] = useState<Measured>(() => freshMeasure(text));
-  const measured = forText(stored, text, freshMeasure);
-  const guard = overflowGuardOf(localized);
-  // The phone draws each line at the line height scaled to the text size (200 % at most; along
-  // Android 14's curve there): a box and a room counted in the 1x line read one 200 % line as two,
-  // and counted linearly on Android they kept an empty band under the text.
-  const box = {
-    pads: guard === null ? 0 : guard.paddingTop + guard.paddingBottom,
-    lineHeight: useScaledSize()(localized.lineHeight ?? 0),
-    surplus: measured.surplus ?? 0,
-  };
-  const count = countOf(measured, props.numberOfLines);
-  return {
-    guard,
-    room: count === 0 ? null : roomOf(guard, box, count),
-    onLines: (lines) => {
-      setMeasured((previous) => afterReport(forText(previous, text, freshMeasure), lines));
-    },
-    onBoxLayout: (event) => {
-      const fit = fitOf(event.nativeEvent.layout.height, box);
-      setMeasured((previous) => {
-        const current = forText(previous, text, freshMeasure);
-        const surplus = current.surplus ?? fit.surplus;
-        return afterBox(current.surplus === surplus ? current : { ...current, surplus }, fit.lines);
-      });
-    },
-  };
-}
-
 /** What the Text draws, and whether Android's marks were added to it (read as written then). */
 type Drawn = { readonly shown: string; readonly isMarked: boolean };
 
@@ -341,12 +199,23 @@ export function AppText(props: AppTextProps): ReactNode {
   const variant = props.variant ?? 'body';
   const style = typeStyleOf(variant);
   const localized = useLocalizedTextStyle(localizedOptions(style, props));
+  // What the Text draws comes first: its layouts report the drawn text's lines (Android's marks
+  // included), so the balanced wrap and the room measure that text, never the one written.
+  const drawn = drawnTextOf(style, useDirection(), props);
   // Display text wraps balanced where the design sets .d (text-wrap: balance).
-  const balance = useBalancedWrap(isBalancedOf(style, variant), props.text, props.align ?? 'start');
+  const balance = useBalancedWrap(
+    isBalancedOf(style, variant),
+    drawn.shown,
+    props.align ?? 'start',
+  );
   const decoration = style.isUnderlined === true ? UNDERLINE : null;
   const figures = style.isTabular === true ? TABULAR : null;
-  const drawn = drawnTextOf(style, useDirection(), props);
-  const { guard, room, onLines, onBoxLayout } = useTextRoom(localized, props);
+  const guard = overflowGuardOf(localized);
+  const { room, onLines, onBoxLayout } = useTextRoom(drawn.shown, {
+    guard,
+    lineHeight: localized.lineHeight ?? 0,
+    numberOfLines: props.numberOfLines,
+  });
   const color = { color: toneColor(theme, props.tone ?? 'default') };
   const { testID, ...rest } = props;
   const text = (

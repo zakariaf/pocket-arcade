@@ -7,7 +7,8 @@ import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
-import { AppText, afterReport, countOf, fitOf } from './app-text.tsx';
+import { AppText } from './app-text.tsx';
+import { afterReport, countOf, fitOf } from './use-text-room.ts';
 
 import type { useWindowDimensions } from 'react-native';
 
