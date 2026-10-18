@@ -99,18 +99,19 @@ export function dominantColour(image, { top = 0, bottom = image.height, step = 3
   return { hex, share: total === 0 ? 0 : best / total, distinct: counts.size };
 }
 
-/** A light, nearly grey pixel (a light-mode iOS notification banner), channels 0-255. */
-function isLightGrey(image, x, y) {
+/**
+ * A light pixel, every channel at least 200 of 255: a light-mode iOS notification banner. iOS 26
+ * draws the banner as tinted glass that takes the app's colour behind it, so it is light but not
+ * grey: over Line Siege's sky blue (157, 209, 232) it measured (210, 244, 255).
+ */
+function isLight(image, x, y) {
   const i = (y * image.width + x) * image.channels;
-  const r = image.pixels[i];
-  const g = image.pixels[i + 1];
-  const b = image.pixels[i + 2];
-  return Math.min(r, g, b) >= 215 && Math.max(r, g, b) - Math.min(r, g, b) <= 24;
+  return Math.min(image.pixels[i], image.pixels[i + 1], image.pixels[i + 2]) >= 200;
 }
 
 /**
  * Rows in the top band that look like a light system banner (a notification drawn over the app):
- * at least 97% of the row between 2.5% and 97.5% of the width is light grey, while the thin strips
+ * at least 97% of the row between 2.5% and 97.5% of the width is light (grey or app-tinted), while the thin strips
  * at both edges (0.6% to 1.2% from each side, outside the banner's 8 pt inset) are not. A heuristic:
  * an app's own full-width light bar fails the edge test, a card with content fails the 97% test.
  */
@@ -124,10 +125,10 @@ export function lightBannerRows(image, { top = Math.round(image.height * 0.045),
     let total = 0;
     for (let x = innerFrom; x < innerTo; x += 2) {
       total += 1;
-      if (isLightGrey(image, x, y)) light += 1;
+      if (isLight(image, x, y)) light += 1;
     }
     if (light / total < 0.97) continue;
-    const isEdgeLight = edges.some((x) => isLightGrey(image, x, y) || isLightGrey(image, image.width - 1 - x, y));
+    const isEdgeLight = edges.some((x) => isLight(image, x, y) || isLight(image, image.width - 1 - x, y));
     if (!isEdgeLight) rows += 1;
   }
   return rows;

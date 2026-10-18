@@ -1,0 +1,2 @@
+smoke-test-off.png
+[system-banner] a light system banner (a notification
