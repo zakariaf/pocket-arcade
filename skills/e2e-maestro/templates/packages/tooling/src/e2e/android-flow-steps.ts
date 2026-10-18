@@ -12,6 +12,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { underAirplaneMode } from '@e07/tooling/e2e/airplane-mode.ts';
 import {
   DEFAULT_FONT_SCALE,
   fontScaleArgs,
@@ -81,13 +82,10 @@ async function offlineFlows(run: AndroidRun, flows: readonly string[]): Promise<
     const args = ['test', AIRPLANE_FLOW, ...appEnv(run.app), '-e', `AIRPLANE=${mode}`];
     return runMaestroAndroid(run.maestro, args, run.env);
   };
-  if ((await airplane('enabled')) !== 0) return 1;
-  try {
-    const tags = ['--include-tags', 'offline', EXCLUDE, 'quarantine,a11y'];
-    return await testFlows(run, { flows, dir: join(run.out, 'offline-flows'), tags });
-  } finally {
-    await airplane('disabled');
-  }
+  const tags = ['--include-tags', 'offline', EXCLUDE, 'quarantine,a11y'];
+  return underAirplaneMode(airplane, () =>
+    testFlows(run, { flows, dir: join(run.out, 'offline-flows'), tags }),
+  );
 }
 
 /** Step 1; one failure line per failed call or unmergeable report. */
