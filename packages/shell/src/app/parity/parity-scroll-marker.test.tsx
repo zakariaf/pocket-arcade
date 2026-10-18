@@ -1,5 +1,7 @@
 // packages/shell/src/app/parity/parity-scroll-marker.test.tsx
 // no-shell-context: the marker reads nothing from the Shell.
+// allow-style-assertion: the marker's place clear of the system bars is its contract (Maestro's
+// Android dump drops what lies under them).
 import { render, screen } from '@testing-library/react-native';
 
 import { ParityScrollMarker, parityScrollTestID } from './parity-scroll-marker.tsx';

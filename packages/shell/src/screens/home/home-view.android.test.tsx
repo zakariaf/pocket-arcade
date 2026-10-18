@@ -3,6 +3,7 @@
 // scrolling body, and every Toybox page ends 34 pt above the screen's edge: the iPhone's home
 // indicator inset is 34, Android's gesture bar only 24 dp, so on the emulator the band sat 10 pt low
 // (S4 parity, E18-T20). The band keeps the ground for the missing 10 under it.
+// allow-style-assertion: the band's 10 pt bottom margin is the contract the S4 parity run measured.
 import { act, screen } from '@testing-library/react-native';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

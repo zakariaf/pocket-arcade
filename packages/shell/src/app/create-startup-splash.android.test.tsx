@@ -1,6 +1,7 @@
 // packages/shell/src/app/create-startup-splash.android.test.tsx
-// Runs in the unit-android project. no-shell-context: the restart splash brings its own i18n and
-// theme, so it is rendered bare, as startShell registers it. It draws the status bar for its theme
+// Runs in the unit-android project.
+// no-shell-context: the restart splash brings its own i18n and theme, so it is rendered bare, as
+// startShell registers it. It draws the status bar for its theme
 // too: the light S1 capture showed a white bar on the sky blue (E18-T23), because this root sits
 // outside ShellProviders.
 import { render } from '@testing-library/react-native';

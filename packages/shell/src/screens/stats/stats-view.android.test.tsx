@@ -4,6 +4,7 @@
 // iPhone's home indicator inset is 34, Android's gesture bar only 24 dp, so on the emulator the band
 // would sit 10 pt low (E18-T21). The band keeps the ground for the missing 10 under it. The stat
 // values are drawn in Persian digits in fa (createNumberFormatter).
+// allow-style-assertion: the band's 10 pt bottom margin is the contract the S10 parity run measured.
 import { act, screen } from '@testing-library/react-native';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

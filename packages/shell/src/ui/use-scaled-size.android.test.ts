@@ -2,6 +2,7 @@
 // Runs in the unit-android project. Spec 8.11: "Text grows with the phone's text-size setting up
 // to 200%." Android 14 and later draw sp sizes along AOSP's font scale curves, so a part laid out
 // against a text line grows as Android draws that line (E18-T25: 25.5 sp lines 36.5 dp apart).
+// no-shell-context: the hook reads only the window's font scale and the Android version.
 import { renderHook } from '@testing-library/react-native';
 import { Platform } from 'react-native';
 

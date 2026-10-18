@@ -1,5 +1,7 @@
 // packages/shell/src/app/parity-marker.test.tsx
 // no-shell-context: the marker reads no context.
+// allow-style-assertion: the 1 x 1 pt place in the middle of its parent is the contract the
+// parity capture reads (clear of the system bars Maestro's Android dump drops).
 import { render, screen } from '@testing-library/react-native';
 
 import { ParityMarker } from './parity-marker.tsx';
