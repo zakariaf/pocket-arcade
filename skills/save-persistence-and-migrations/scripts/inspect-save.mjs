@@ -10,7 +10,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
 import { createReporter, fail, parseArgs, requireDir, requireFile, run } from './check-lib.mjs';
-import { androidSdkDir, createAndroidDevice, missingSdkParts } from './lib/android-device.mjs';
+import { createAndroidDevice, missingSdkParts } from './lib/android-device.mjs';
+import { androidSdkRoot } from './lib/android-emu.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
 
@@ -53,7 +54,7 @@ const SPEC = {
 function androidDatabase(options) {
   if (options.serial === undefined || options['bundle-id'] === undefined) fail('--platform android needs --serial <serial> and --bundle-id <package>', 'adb devices lists the serial; the package id is io.applander.<game id without hyphens>.');
   if (options.udid !== undefined) fail('--udid is for iOS; on Android pass --serial');
-  const sdk = androidSdkDir(options.sdk);
+  const sdk = androidSdkRoot(options.sdk);
   const missing = missingSdkParts(sdk, { create: false }).filter((part) => part.includes('adb'));
   if (missing.length > 0) fail(`the Android SDK at ${sdk} lacks ${missing.join(', ')}`, 'Pass --sdk <dir> or set ANDROID_HOME.');
   const device = createAndroidDevice({ sdk, dryRun: false, fail });

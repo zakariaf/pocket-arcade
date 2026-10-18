@@ -1,18 +1,20 @@
 // android-device.mjs: the Android emulator side of kill-test.mjs and inspect-save.mjs. Every adb call
 // names its device (`adb -s <serial>`); the only AVD this file creates or deletes is
-// e07-android-kill-test, on the google_apis image (a Play Store image refuses `adb root`, so the
-// Release app's files/SQLite/ folder could not be read). The pure helpers are proven by the self-test;
+// e07-android-kill-test, on the shared pinned google_apis image (android-emu.mjs: a Play Store image
+// refuses `adb root`, so the Release app's files/SQLite/ folder could not be read). The SDK lookup,
+// the device list, the console ports and the sleep are android-emu.mjs's, shared with
+// toybox-visual-parity. The pure helpers are proven by the self-test;
 // the commands run against tests/fixtures/kill-test/fake-sdk there and never against a real device.
 
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
+import { FIRST_CONSOLE_PORT, LAST_CONSOLE_PORT, SYSTEM_IMAGE, freeConsolePort, readySerials, sleepMs } from './android-emu.mjs';
 
 /** The one AVD the kill test owns: created for a --create run and deleted at its end. */
 export const KILL_TEST_AVD = 'e07-android-kill-test';
-/** The pinned system image: google_apis (adb root works), never google_apis_playstore. */
-export const SYSTEM_IMAGE = 'system-images;android-35;google_apis;arm64-v8a';
 /** The device profile of every e07-android-* AVD. */
 export const AVD_DEVICE = 'pixel_8';
 /** How long a cold boot of a new AVD may take before the run stops. */
@@ -23,11 +25,6 @@ const SDK_TOOLS = {
   emulator: ['emulator', 'emulator'],
   avdmanager: ['cmdline-tools', 'latest', 'bin', 'avdmanager'],
 };
-
-/** The SDK folder: --sdk, else ANDROID_HOME, else ANDROID_SDK_ROOT, else Android Studio's default. */
-export function androidSdkDir(given, env = process.env) {
-  return given ?? env.ANDROID_HOME ?? env.ANDROID_SDK_ROOT ?? join(homedir(), 'Library', 'Android', 'sdk');
-}
 
 /** Absolute paths of adb, emulator and avdmanager inside the SDK. */
 export function sdkTools(sdk) {
@@ -62,21 +59,6 @@ export function pulledSaveDb(dest, exists = existsSync) {
   return candidates.find((path) => exists(path)) ?? candidates[0];
 }
 
-/** Serials of the devices `adb devices` lists as ready. */
-export function listedSerials(devicesOutput) {
-  return devicesOutput
-    .split('\n')
-    .map((line) => /^(\S+)\s+device\s*$/.exec(line.trim())?.[1])
-    .filter(Boolean);
-}
-
-/** The first even console port from 5554 that no listed emulator holds (adb takes the odd one above). */
-export function freeConsolePort(devicesOutput) {
-  const taken = new Set(listedSerials(devicesOutput).map((serial) => Number(/^emulator-(\d+)$/.exec(serial)?.[1])));
-  for (let port = 5554; port <= 5682; port += 2) if (!taken.has(port)) return port;
-  return null;
-}
-
 /** `stat -c '%s %Y'` output as { size, mtime }, or null when the file does not exist. */
 export function parseStat(text) {
   const match = /^(\d+)\s+(\d+)\s*$/.exec(String(text ?? '').trim());
@@ -106,11 +88,6 @@ export function killRoundScript(packageId, delayMs) {
 export function killedPid(output) {
   const match = /killed (\d+)/.exec(String(output));
   return match === null ? null : Number(match[1]);
-}
-
-/** Synchronous sleep without a child process. */
-export function sleepMs(ms) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
 /** Environment for avdmanager: JAVA_HOME (else Android Studio's JDK 17) and ANDROID_HOME. */
@@ -156,7 +133,7 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
     useSerial(given) {
       serial = given;
       if (dryRun) return;
-      const listed = listedSerials(exec('adb', ['devices'], { quiet: true }) ?? '');
+      const listed = readySerials(exec('adb', ['devices'], { quiet: true }) ?? '');
       if (!listed.includes(given)) fail(`${given} is not a running device (adb devices lists: ${listed.join(', ') || 'none'})`, `Start a dedicated e07-android-<purpose> emulator, or pass --create to use ${KILL_TEST_AVD}.`);
     },
     /** Creates (or reuses) e07-android-kill-test, starts it headless on a free port and waits for boot. */
@@ -164,8 +141,8 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
       const avds = dryRun ? [] : (exec('emulator', ['-list-avds'], { quiet: true }) ?? '').split('\n').map((line) => line.trim());
       if (avds.includes(KILL_TEST_AVD)) console.log(`reusing the AVD ${KILL_TEST_AVD} left by an earlier run`);
       else exec('avdmanager', ['create', 'avd', '--name', KILL_TEST_AVD, '--package', SYSTEM_IMAGE, '--device', AVD_DEVICE], { input: 'no\n' });
-      const port = dryRun ? '<port>' : freeConsolePort(exec('adb', ['devices'], { quiet: true }) ?? '');
-      if (port === null) fail('no free emulator console port between 5554 and 5682', 'Shut down an emulator this session started (adb -s <serial> emu kill).');
+      const port = dryRun ? '<port>' : freeConsolePort(readySerials(exec('adb', ['devices'], { quiet: true }) ?? ''));
+      if (port === null) fail(`no free emulator console port between ${FIRST_CONSOLE_PORT} and ${LAST_CONSOLE_PORT}`, 'Shut down an emulator this session started (adb -s <serial> emu kill).');
       const args = ['-avd', KILL_TEST_AVD, '-port', String(port), '-no-snapshot', '-no-boot-anim', '-no-audio', '-no-window'];
       console.log(`${dryRun ? 'would run' : 'run'}: emulator ${args.join(' ')} (detached)`);
       if (!dryRun) spawn(tools.emulator, args, { detached: true, stdio: 'ignore', env }).unref();
@@ -208,7 +185,7 @@ export function createAndroidDevice({ sdk, dryRun, fail }) {
       adb(adbArgs(serial, ['emu', 'kill']), { allowFail: true });
       if (!dryRun) {
         const startedMs = Date.now();
-        while (Date.now() - startedMs < 60_000 && listedSerials(exec('adb', ['devices'], { quiet: true, allowFail: true }) ?? '').includes(serial)) sleepMs(1000);
+        while (Date.now() - startedMs < 60_000 && readySerials(exec('adb', ['devices'], { quiet: true, allowFail: true }) ?? '').includes(serial)) sleepMs(1000);
       }
       exec('avdmanager', ['delete', 'avd', '--name', KILL_TEST_AVD], { allowFail: true });
     },

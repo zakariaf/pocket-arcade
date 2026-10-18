@@ -2,13 +2,16 @@
 // the self-test can swap in fake tools (a path ending in .mjs runs with this Node), and every adb call
 // names its device: adb.on(serial) puts "-s <serial>" first, and the only call without it is
 // "adb devices". Several emulators and sessions share this Mac (other projects' AVDs too), so the
-// parity scripts touch only an AVD named e07-android-parity[-<key>], found by its name.
+// parity scripts touch only an AVD named e07-android-parity[-<key>], found by its name. The SDK lookup,
+// the device list, the console ports and the demo-mode commands are android-emu.mjs's, shared with
+// save-persistence-and-migrations.
 import { spawn, spawnSync } from 'node:child_process';
 import { closeSync, existsSync, openSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 import { fail } from '../check-lib.mjs';
+import { adbDevices, androidSdkRoot } from './android-emu.mjs';
 
 /** The only AVD names the parity scripts create, start or pin. */
 export const PARITY_AVD = /^e07-android-parity(?:-[a-z0-9]+)*$/;
@@ -28,11 +31,6 @@ function exec(tool, args, { input, binary = false, timeoutMs = 120000 } = {}) {
   if (result.error?.code === 'ENOENT') return { status: 127, stdout: binary ? Buffer.alloc(0) : '', stderr: `${tool}: not found` };
   const stderr = Buffer.isBuffer(result.stderr) ? result.stderr.toString('utf8') : (result.stderr ?? '');
   return { status: result.status ?? (result.error ? 1 : 0), stdout: result.stdout ?? (binary ? Buffer.alloc(0) : ''), stderr: `${stderr}${result.error && result.error.code !== 'ENOENT' ? String(result.error.message) : ''}` };
-}
-
-/** The Android SDK: --sdk, $ANDROID_HOME, $ANDROID_SDK_ROOT, then Android Studio's default. */
-export function sdkRootOf(option) {
-  return option || process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT || join(homedir(), 'Library', 'Android', 'sdk');
 }
 
 /** Where AVDs live: --avd-home, $ANDROID_AVD_HOME, then ~/.android/avd. */
@@ -56,7 +54,7 @@ export function shellQuote(word) {
  * adb.on(serial)(...args), which puts -s <serial> first; .buffer() keeps binary stdout (screencap).
  */
 export function makeAdb({ adb, sdk } = {}) {
-  const tool = adb || process.env.PARITY_ADB || join(sdkRootOf(sdk), 'platform-tools', 'adb');
+  const tool = adb || process.env.PARITY_ADB || join(androidSdkRoot(sdk), 'platform-tools', 'adb');
   const devices = () => exec(tool, ['devices']);
   const on = (serial) => {
     if (!EMULATOR_SERIAL.test(String(serial ?? ''))) fail(`"${serial}" is not an emulator serial`, 'Pass the serial of this session\'s own parity emulator (setup-parity-emu.mjs prints it, e.g. emulator-5554).');
@@ -71,7 +69,7 @@ export function makeAdb({ adb, sdk } = {}) {
 
 /** avdmanager: list and create (create answers "no" to the custom hardware profile question). */
 export function makeAvdmanager({ avdmanager, sdk } = {}) {
-  const tool = avdmanager || process.env.PARITY_AVDMANAGER || join(sdkRootOf(sdk), 'cmdline-tools', 'latest', 'bin', 'avdmanager');
+  const tool = avdmanager || process.env.PARITY_AVDMANAGER || join(androidSdkRoot(sdk), 'cmdline-tools', 'latest', 'bin', 'avdmanager');
   return {
     tool,
     names: () => {
@@ -85,7 +83,7 @@ export function makeAvdmanager({ avdmanager, sdk } = {}) {
 
 /** The emulator binary: started detached, its output in a log file, so it outlives this script. */
 export function makeEmulator({ emulator, sdk } = {}) {
-  const tool = emulator || process.env.PARITY_EMULATOR || join(sdkRootOf(sdk), 'emulator', 'emulator');
+  const tool = emulator || process.env.PARITY_EMULATOR || join(androidSdkRoot(sdk), 'emulator', 'emulator');
   return {
     tool,
     start: (name, port, logPath) => {
@@ -107,21 +105,12 @@ export function makeEmulator({ emulator, sdk } = {}) {
 export function runningEmulators(adb) {
   const r = adb.devices();
   if (r.status !== 0) fail(`adb devices failed (${r.status}): ${(r.stderr || r.stdout).trim().split('\n')[0]}`, 'Install the Android platform tools and set ANDROID_HOME; never restart the adb server (other sessions use it).');
-  const out = [];
-  for (const line of r.stdout.split('\n')) {
-    const m = /^(emulator-\d+)\s+(\S+)/.exec(line.trim());
-    if (!m) continue;
-    const name = adb.on(m[1])('emu', 'avd', 'name');
-    out.push({ serial: m[1], state: m[2], avd: name.status === 0 ? name.stdout.split('\n')[0].trim() : null });
-  }
-  return out;
-}
-
-/** The first free even console port from 5554 (adb takes the odd port above it). */
-export function freeConsolePort(running) {
-  const used = new Set(running.map((e) => Number(e.serial.split('-')[1])));
-  for (let port = 5554; port <= 5682; port += 2) if (!used.has(port)) return port;
-  return fail('no free emulator console port from 5554 to 5682', 'Shut down your own e07-android-* emulators you no longer need (adb -s <serial> emu kill).');
+  return adbDevices(r.stdout)
+    .filter(({ serial }) => EMULATOR_SERIAL.test(serial))
+    .map(({ serial, state }) => {
+      const name = adb.on(serial)('emu', 'avd', 'name');
+      return { serial, state, avd: name.status === 0 ? name.stdout.split('\n')[0].trim() : null };
+    });
 }
 
 /** An AVD's config.ini as { key: value }, or null when the AVD folder has none. */
@@ -134,15 +123,6 @@ export function readAvdConfig(avdHome, name) {
     if (m) config[m[1]] = m[2];
   }
   return { path, config };
-}
-
-/** The demo-mode commands (android-emulator-build's demoModeCommands), as the words after adb -s <serial> shell. */
-export function demoModeCommands(device) {
-  return [
-    ['settings', 'put', 'global', 'sysui_demo_allowed', '1'],
-    ['am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'enter'],
-    ...(device.demoMode ?? []).map(([command, ...extras]) => ['am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', command, ...extras]),
-  ];
 }
 
 /**

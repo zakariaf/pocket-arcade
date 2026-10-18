@@ -1,5 +1,6 @@
 [
   { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "scripts/lib/android-emu.mjs", "to": "scripts/lib/android-emu.mjs" },
   { "from": "shell-services/clock/clock-port.ts", "to": "templates/packages/shell/src/services/clock/clock-port.ts" },
   { "from": "shell-services/clock/system-clock-adapter.ts", "to": "templates/packages/shell/src/services/clock/system-clock-adapter.ts" },
   { "from": "shell-services/clock/system-clock-adapter.test.ts", "to": "templates/packages/shell/src/services/clock/system-clock-adapter.test.ts" },

@@ -7,7 +7,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run } from './check-lib.mjs';
-import { PARITY_AVD, avdHomeOf, demoModeCommands, systemBarInsetsOf, freeConsolePort, makeAdb, makeAvdmanager, makeEmulator, readAvdConfig, runningEmulators, sdkRootOf, systemImageDir } from './lib/android.mjs';
+import { PARITY_AVD, avdHomeOf, systemBarInsetsOf, makeAdb, makeAvdmanager, makeEmulator, readAvdConfig, runningEmulators, systemImageDir } from './lib/android.mjs';
+import { FIRST_CONSOLE_PORT, LAST_CONSOLE_PORT, androidSdkRoot, demoModeCommands, freeConsolePort } from './lib/android-emu.mjs';
 import { readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS } from './lib/platform.mjs';
 import { sleep } from './lib/tools.mjs';
@@ -62,7 +63,7 @@ run(async () => {
   if (!PARITY_AVD.test(name)) fail(`refuses the AVD "${name}": the parity scripts create, start and pin only e07-android-parity[-<key>]`, 'Pass --name e07-android-parity-<key> (lowercase letters and digits); other AVDs belong to other sessions or projects.');
   const bootTimeoutMs = Number(options['boot-timeout']) * 1000;
   if (!(bootTimeoutMs > 0)) fail(`--boot-timeout must be seconds above 0, got "${options['boot-timeout']}"`, 'Pass e.g. --boot-timeout 240.');
-  const sdk = resolve(sdkRootOf(options.sdk));
+  const sdk = resolve(androidSdkRoot(options.sdk));
   const avdHome = resolve(avdHomeOf(options['avd-home']));
   // Child tools (avdmanager, the emulator) read the same AVD folder.
   process.env.ANDROID_AVD_HOME = avdHome;
@@ -118,7 +119,7 @@ run(async () => {
       problem('emu-not-booted', `${name} is not running`, `Run: node setup-parity-emu.mjs --appearance ${options.appearance}${name === device.avdName ? '' : ` --name ${name}`}`);
       return finish();
     }
-    const port = freeConsolePort(runningEmulators(adb));
+    const port = freeConsolePort(runningEmulators(adb).map((e) => e.serial)) ?? fail(`no free emulator console port from ${FIRST_CONSOLE_PORT} to ${LAST_CONSOLE_PORT}`, 'Shut down your own e07-android-* emulators you no longer need (adb -s <serial> emu kill).');
     const logPath = join(resolve(options['log-dir']), `${name}.log`);
     mkdirSync(resolve(options['log-dir']), { recursive: true });
     emulator.start(name, port, logPath);

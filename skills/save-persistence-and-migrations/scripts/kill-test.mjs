@@ -14,7 +14,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, statSync } from 'node:fs';
 
 import { createReporter, fail, parseArgs, requireDir, run } from './check-lib.mjs';
-import { adbArgs, androidSaveDir, androidSdkDir, createAndroidDevice, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat, SYSTEM_IMAGE } from './lib/android-device.mjs';
+import { adbArgs, androidSaveDir, createAndroidDevice, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat } from './lib/android-device.mjs';
+import { androidSdkRoot, sleepMs, SYSTEM_IMAGE } from './lib/android-emu.mjs';
 import { enableAppImports } from './lib/app-modules.mjs';
 import { CALIBRATION_TIMEOUT_MS, isWriteAfterLaunch, KILL_WINDOW_FACTOR, killStepMs, MIN_STEP_MS } from './lib/kill-plan.mjs';
 import { appSaveDbPath, inspectDatabase, openSqlite, stageDatabase } from './lib/save-db.mjs';
@@ -57,11 +58,6 @@ const SPEC = {
     'the run (exit 2) and names the sdkmanager package; nothing is downloaded.',
   ].join('\n'),
 };
-
-/** Synchronous sleep without a child process (the agent's own `sleep` may be blocked). */
-function sleepMs(ms) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
 
 function simctl(args, { dryRun, allowFail = false } = {}) {
   if (dryRun) {
@@ -231,7 +227,7 @@ function androidArgs(options) {
   const kills = Number(options.kills);
   const givenStepMs = options['step-ms'] === undefined ? undefined : Number(options['step-ms']);
   if (!Number.isInteger(kills) || kills < 1 || (givenStepMs !== undefined && (!Number.isInteger(givenStepMs) || givenStepMs < 1))) fail('--kills and --step-ms must be positive whole numbers');
-  const sdk = androidSdkDir(options.sdk);
+  const sdk = androidSdkRoot(options.sdk);
   const missing = options['dry-run'] ? [] : missingSdkParts(sdk, { create: options.create });
   if (missing.length > 0) fail(`the Android SDK at ${sdk} lacks ${missing.join(', ')}`, 'Install the missing parts with sdkmanager only after the owner (or the lead) agreed to the download; this script never downloads.');
   return { packageId: options['bundle-id'], kills, givenStepMs, sdk, dryRun: options['dry-run'] };

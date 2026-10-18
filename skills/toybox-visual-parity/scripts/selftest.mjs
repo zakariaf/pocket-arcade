@@ -203,6 +203,19 @@ const editedMap = (dir) => {
   console.log(`ok   type-role floors: ${pinned} sizes in gates.mjs equal the evidence table in what-exact-means.md`);
 }
 
+// The Android system image is pinned once, in the shared android-emu.mjs: the device profile the
+// parity emulator is made from must name the same package.
+{
+  const { SYSTEM_IMAGE } = await import('./lib/android-emu.mjs');
+  const profile = JSON.parse(readFileSync(join(HERE, '..', 'assets', 'device', 'android-phone.json'), 'utf8'));
+  if (profile.systemImage !== SYSTEM_IMAGE) {
+    console.log(`FAIL assets/device/android-phone.json [system-image-pin] systemImage is ${profile.systemImage}, the shared pin is ${SYSTEM_IMAGE} Fix: Change both together (the pin lives in _library/shared/scripts/lib/android-emu.mjs).`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log(`ok   the Android device profile's system image is the shared pin (${SYSTEM_IMAGE})`);
+}
+
 // A scrolled capture's failing element is cropped from the design window the capture shows: for S11
 // at scroll 1170 the settings.version crop must start at screen y 844 (page y 2013), not at the
 // Display group that sits at y 844 of the unscrolled page.

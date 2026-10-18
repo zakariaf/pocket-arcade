@@ -71,7 +71,8 @@ Everything the player owns is one versioned JSON document, validated on every lo
 | `scripts/check-save-layer.mjs` | Static checker for the save layer, schemas, migration chain, fixture checksums and the newer-`save.db` boot path | Workflow step 8, and at the end |
 | `scripts/inspect-save.mjs` | Health check of a save.db, a .sql dump, the simulator app's file, or with `--platform android` the emulator app's `files/SQLite/` pulled over adb | Workflow step 7, and when a save looks wrong |
 | `scripts/kill-test.mjs` | Kill test on an iOS simulator, or with `--platform android` on an emulator over adb (`e07-android-kill-test` on the google_apis image, `adb root`, `kill -9`, pull `files/SQLite/`): a calibration launch times the first save write, then launch and SIGKILL at growing delays over 1.5 x that, inspect | Workflow step 7 |
-| `scripts/lib/android-device.mjs` | The adb, emulator and avdmanager side of both scripts on Android: SDK paths, free console port, boot wait, root check, kill round, pull, teardown (proven by the self-test) | Never by hand |
+| `scripts/lib/android-device.mjs` | The adb, emulator and avdmanager side of both scripts on Android: SDK tool paths, boot wait, root check, kill round, pull, teardown (proven by the self-test) | Never by hand |
+| `scripts/lib/android-emu.mjs` | The pinned system image, the SDK lookup, the `adb devices` list, the free console port (5554 to 5682) and the sleep (synced from the library, the same file toybox-visual-parity uses; do not edit here) | Never by hand |
 | `scripts/lib/save-db.mjs` | Stages a copy of save.db and judges its health (used by both scripts above) | Never by hand |
 | `scripts/lib/kill-plan.mjs` | The kill test's timing: the calibrated step and the first-write test (proven by the self-test) | Never by hand |
 | `scripts/lib/app-modules.mjs` | Imports the app's TypeScript modules for `inspect-save --deep` | Never by hand |

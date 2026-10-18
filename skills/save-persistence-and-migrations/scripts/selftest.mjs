@@ -19,7 +19,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { runSelftest } from './check-lib.mjs';
-import { androidSaveDir, freeConsolePort, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, listedSerials, missingSdkParts, parseStat, pulledSaveDb, SYSTEM_IMAGE } from './lib/android-device.mjs';
+import { androidSaveDir, isAndroidWalWrite, KILL_TEST_AVD, killedPid, killRoundScript, missingSdkParts, parseStat, pulledSaveDb } from './lib/android-device.mjs';
+import { freeConsolePort, readySerials, SYSTEM_IMAGE } from './lib/android-emu.mjs';
 import { buildFixtureTree } from './lib/fixture-tree.mjs';
 import { isWriteAfterLaunch, killStepMs } from './lib/kill-plan.mjs';
 
@@ -59,9 +60,11 @@ console.log(`PASS lib/kill-plan.mjs: ${KILL_PLAN_CASES.length} timing cases`);
 const killFixtures = join(skill, 'tests', 'fixtures', 'kill-test');
 const DEVICES = 'List of devices attached\nemulator-5554\tdevice\nemulator-5556\toffline\nemulator-5558\tdevice\n';
 const ANDROID_CASES = [
-  ['listed serials are the ready devices only', listedSerials(DEVICES).join(','), 'emulator-5554,emulator-5558'],
-  ['the free console port skips a running emulator', freeConsolePort(DEVICES), 5556],
-  ['no device leaves 5554 free', freeConsolePort('List of devices attached\n'), 5554],
+  ['listed serials are the ready devices only', readySerials(DEVICES).join(','), 'emulator-5554,emulator-5558'],
+  ['the free console port skips a running emulator', freeConsolePort(readySerials(DEVICES)), 5556],
+  ['no device leaves 5554 free', freeConsolePort(readySerials('List of devices attached\n')), 5554],
+  ['5682 is the last console port the emulator takes', freeConsolePort(Array.from({ length: 64 }, (_, i) => `emulator-${5554 + 2 * i}`)), 5682],
+  ['all 65 console ports taken leaves none', freeConsolePort(Array.from({ length: 65 }, (_, i) => `emulator-${5554 + 2 * i}`)), null],
   ['stat output parses', JSON.stringify(parseStat('32992 1760000000\n')), '{"size":32992,"mtime":1760000000}'],
   ['a missing WAL parses as null', parseStat("stat: '/data/x': No such file or directory"), null],
   ['a WAL that appears after the launch is the first write', isAndroidWalWrite(null, { size: 4096, mtime: 5 }), true],
