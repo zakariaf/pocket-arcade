@@ -1,23 +1,33 @@
 // packages/shell/src/game-host/board-canvas.tsx
 // device-only: covered by the e2e level flow and the simulator board screenshots (a Skia Canvas; unit Jest has no Skia).
 import { Canvas, Picture, Skia } from '@shopify/react-native-skia';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
-import { useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import {
+  cancelAnimation,
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { EMPTY_LAYOUT } from '@e07/game-kit/geom/board-layout.ts';
 
 import { BoardLayoutProbe } from './board-layout-probe.tsx';
+import { COACH_HAND_LOOP_MS, COACH_HAND_LOOPS, coachHandKey } from './draw-coach-hand.ts';
 import { recordBoard } from './record-board.ts';
 import { useBoardGestures } from './use-board-gestures.ts';
 
 import type { BoardColors, BoardHighlight, GameBoard, RenderKit } from './board-types.ts';
 import type { PanMode } from './pan-intent.ts';
+import type { CoachHandInput } from './record-board.ts';
 import type { BoardClock } from './use-board-clock.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { Motion } from '@e07/game-kit/timeline/track.ts';
 import type { SkSize } from '@shopify/react-native-skia';
 
 export type BoardCanvasProps<TState, TView, TToken extends string> = {
@@ -39,12 +49,41 @@ export type BoardCanvasProps<TState, TView, TToken extends string> = {
   readonly onDrawError: (message: string) => void;
   /** Test builds with the debug link's boardLayout=1 only: publish game.board-layout for flows. */
   readonly isLayoutProbeOn?: boolean;
+  /** The tutorial's pointing hand (null: none) and how often it was asked to play again. */
+  readonly coach?: BoardCoachHand | null;
+  /** Reduce motion: the hand then rests at the gap instead of gliding there. */
+  readonly motion?: Motion;
 };
+
+/** The hand the board draws over its picture, and its replay count (a refused move bumps it). */
+export type BoardCoachHand = Omit<CoachHandInput, 'phase'> & { readonly replay: number };
+
+/**
+ * The hand's phase: it glides from the slot to the gap COACH_HAND_LOOPS times, again each time
+ * the replay count grows (a refused tutorial move), and rests at the gap under reduced motion.
+ */
+function useCoachHandPhase(coach: BoardCoachHand | null, motion: Motion): { get: () => number } {
+  const phase = useSharedValue(1);
+  const key = coachHandKey(coach);
+  useEffect(() => {
+    cancelAnimation(phase);
+    if (key === null || motion === 'reduced') {
+      phase.set(1);
+      return;
+    }
+    phase.set(0);
+    const loop = withTiming(1, { duration: COACH_HAND_LOOP_MS, easing: Easing.linear });
+    phase.set(withRepeat(loop, COACH_HAND_LOOPS, false));
+  }, [key, motion, phase]);
+  return phase;
+}
 
 export function BoardCanvas<TState, TView, TToken extends string>(
   props: BoardCanvasProps<TState, TView, TToken>,
 ): React.JSX.Element {
   const { board, clock, colors, kit, highlight, onDrawError } = props;
+  const coach = props.coach ?? null;
+  const handPhase = useCoachHandPhase(coach, props.motion ?? 'full');
   // The worklets below capture only the two worklet functions they call, not the whole board
   // (whose describe, toView, targetsOfMove and buildPaths would be copied to the UI runtime).
   const { layout: layoutBoard, draw } = board;
@@ -81,6 +120,7 @@ export function BoardCanvas<TState, TView, TToken extends string>(
       kit,
       draw,
       onError: reportDrawError,
+      coach: coach === null ? null : { ...coach, phase: handPhase.get() },
     }),
   );
 

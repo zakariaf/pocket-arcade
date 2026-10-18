@@ -5,6 +5,7 @@ import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
 
 import { sceneElapsedMs } from './board-scene.ts';
 import { describeError } from './describe-error.ts';
+import { drawCoachHand } from './draw-coach-hand.ts';
 
 import type { BoardScene } from './board-scene.ts';
 import type {
@@ -14,6 +15,7 @@ import type {
   PointerSample,
   RenderKit,
 } from './board-types.ts';
+import type { CoachHandFrame } from './draw-coach-hand.ts';
 import type { BoardLayout } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas, SkPicture, SkPictureRecorder } from '@shopify/react-native-skia';
 
@@ -28,7 +30,12 @@ export type RecordInput<TView, TToken extends string> = {
   readonly draw: (canvas: SkCanvas, frame: DrawFrame<TView, TToken>) => void;
   /** Must itself be a worklet (it runs on the UI thread); it forwards with scheduleOnRN. */
   readonly onError: (message: string) => void;
+  /** The tutorial's pointing hand at its phase, drawn over the game's picture; null: none. */
+  readonly coach?: CoachHandInput | null;
 };
+
+/** The hand as the board host hands it over (the layout and kit are the frame's own). */
+export type CoachHandInput = Omit<CoachHandFrame, 'layout' | 'kit'>;
 
 /**
  * Records one frame into a Picture. Runs inside useDerivedValue on the UI thread.
@@ -54,6 +61,9 @@ export function recordBoard<TView, TToken extends string>(
       layout: input.layout,
       kit: input.kit,
     });
+    if (input.coach !== undefined && input.coach !== null) {
+      drawCoachHand(canvas, { ...input.coach, layout: input.layout, kit: input.kit });
+    }
   } catch (error) {
     input.onError(describeError(error));
   }

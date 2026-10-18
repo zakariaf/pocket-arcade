@@ -65,7 +65,7 @@ Rotations in `transform` are radians. Build element lists with a plain function 
 
 ## Fonts in Skia
 
-Icons, logos and the app icon contain no text, so the art scripts load no fonts. Boards or art that draw Latin text use the bundled Toybox fonts: on the device `Skia.FontMgr.System().matchFamilyStyle('Lilita One', ...)` (or `'Rubik'`, `'Vazirmatn'`: the `expo-font` plugin embeds them and the system font manager sees them); in goldens and Node scripts `Skia.Typeface.MakeFreeTypeFaceFromData(Skia.Data.fromBytes(bytes))` with the TTF from `apps/<game>/assets/fonts/`, registered in a `Skia.TypefaceFontProvider` for paragraphs. Arabic-script paragraphs use `heightMultiplier: 1.5`.
+Icons, logos and the app icon contain no text, so the art scripts load no fonts. Boards or art that draw text use the bundled Toybox fonts, made from the TTF's own bytes everywhere: `Skia.Typeface.MakeFreeTypeFaceFromData(Skia.Data.fromBytes(bytes))`, with the bytes from the Shell's `BoardFont` native module on the device (board-rendering-skia's `boardNumberTypeface()` for Vazirmatn; the `expo-font` plugin bundles the files) and from `apps/<game>/assets/fonts/` in goldens and Node scripts, registered in a `Skia.TypefaceFontProvider` for paragraphs. Never `Skia.FontMgr.System().matchFamilyStyle('Lilita One' | 'Rubik' | 'Vazirmatn', ...)`: iOS finds the embedded fonts that way, but Android's Skia font manager reads only `/system/fonts` and returns an empty face, so the text draws nothing (the Line Siege monster digits, 2026-10-18). Arabic-script paragraphs use `heightMultiplier: 1.5`.
 
 ## Sprites
 

@@ -86,4 +86,42 @@ describe('recordBoard', () => {
     expect(picture).toBe(PICTURE);
     expect(failing.onError).toHaveBeenCalledWith('Error: bad token');
   });
+
+  it("draws the tutorial's pointing hand over the game's picture, on the same canvas", () => {
+    // Spec S13: the pointing hand guides the first move; the Shell draws it for every game.
+    const calls: string[] = [];
+    const canvas = new Proxy(
+      {},
+      {
+        get: (_target, name) => () => {
+          calls.push(String(name));
+        },
+      },
+    ) as SkCanvas;
+    const recorder = {
+      beginRecording: () => canvas,
+      finishRecordingAsPicture: () => PICTURE,
+    } as unknown as SkPictureRecorder;
+    const paint = new Proxy({}, { get: () => () => undefined });
+    const cell = { regionId: 'board', col: 0, row: 0 };
+    const layout = {
+      ...LAYOUT,
+      regions: [{ id: 'board', x: 0, y: 0, cell: 40, cols: 2, rows: 2 }],
+    };
+    const coach = {
+      hand: { from: null, to: cell },
+      cells: [cell],
+      phase: 1,
+      look: { fill: new Float32Array(4), ink: new Float32Array(4) },
+    };
+    recordBoard(recorder, {
+      ...input(() => {
+        calls.push('game');
+      }),
+      layout,
+      kit: { fill: paint, stroke: paint } as unknown as RenderKit,
+      coach,
+    });
+    expect(calls).toStrictEqual(['game', ...Array.from({ length: 6 }, () => 'drawRRect')]);
+  });
 });

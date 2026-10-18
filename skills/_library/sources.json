@@ -1629,11 +1629,20 @@
         ]
       },
       "examples/line-siege/line-siege-board.golden.test.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-18",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "test/goldens/boards/line-siege-board.golden.test.ts",
+            "sha256": "5ac7fbf44bdcc94613a91820c86b6d574fdf902e94077a752979a9fdf7d35da6"
+          }
+        ]
+      },
+      "examples/line-siege/line-siege-tutorial.golden.test.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "test/goldens/boards/line-siege-tutorial.golden.test.ts",
+            "sha256": "ebbaa83863e16d39ef9ae2afab500ef9e881605943b6f9b592a18a02531c7f1d"
           }
         ]
       },
@@ -1898,11 +1907,11 @@
         ]
       },
       "templates/shell/game-host/board-canvas.tsx": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-18",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/board-canvas.tsx",
+            "sha256": "79dba26d4c90165685fdd8b4591f7f69a8bcf19c4ffdee5617d4b94192464802"
           }
         ]
       },
@@ -1912,6 +1921,33 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-font.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-font.ts",
+            "sha256": "ef13d296375f080e889be9dcd1c0ce115d8473bfe97956db32ad46331dedbaa4"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-typeface.android.test.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.android.test.ts",
+            "sha256": "b054be4c49f971e2db5843dc7288ca2562b807ba90493803624c5bc9c191c2a1"
+          }
+        ]
+      },
+      "templates/shell/game-host/board-number-typeface.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.ts",
+            "sha256": "0becb7034ca8f852b6d6d01e94560e2fb42ff139a3ebeb8afcf87048a3b6f698"
           }
         ]
       },
@@ -1982,12 +2018,30 @@
           }
         ]
       },
-      "templates/shell/game-host/game-board-host.tsx": {
-        "recorded": "2026-10-03",
+      "templates/shell/game-host/draw-coach-hand.test.ts": {
+        "recorded": "2026-10-18",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/draw-coach-hand.test.ts",
+            "sha256": "562d34ff0ce5c76097e4a5d2ebbf546782e472201ef430faaa76c2e2e5627cf9"
+          }
+        ]
+      },
+      "templates/shell/game-host/draw-coach-hand.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/draw-coach-hand.ts",
+            "sha256": "f06fe74b781c065ba13be57ecd38e76cb69b708b3e105c964f07e85b52d6cf87"
+          }
+        ]
+      },
+      "templates/shell/game-host/game-board-host.tsx": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/game-board-host.tsx",
+            "sha256": "81de5fbfc92395969fdc9713d8f0948944f1d82d5df963d4d1f4b1dd21c25a3a"
           }
         ]
       },
@@ -2018,12 +2072,21 @@
           }
         ]
       },
-      "templates/shell/game-host/record-board.ts": {
-        "recorded": "2026-10-03",
+      "templates/shell/game-host/record-board.test.ts": {
+        "recorded": "2026-10-18",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/record-board.test.ts",
+            "sha256": "e81aba729bd205c22db57038a8cf28401358ca0f92bb0f894dca5f8390305c37"
+          }
+        ]
+      },
+      "templates/shell/game-host/record-board.ts": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/record-board.ts",
+            "sha256": "ad37a619f16dddafde3344bb5c83909902657988ed68d4ad97e6d31e2e0c2181"
           }
         ]
       },
@@ -2051,6 +2114,24 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          }
+        ]
+      },
+      "templates/shell/native/android/BoardFontModule.kt": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/android/src/main/java/io/applander/e07shell/BoardFontModule.kt",
+            "sha256": "638f5820ee6929f7ff5b58b43ea77dca6e14b7d5f6af84ca663e8ed78633f083"
+          }
+        ]
+      },
+      "templates/shell/native/ios/BoardFontModule.swift": {
+        "recorded": "2026-10-18",
+        "sources": [
+          {
+            "path": "packages/shell/ios/BoardFontModule.swift",
+            "sha256": "34b6e10d0105822c17023e37a61bba91a78bd3dbca9887a66bdb12910bc9aa7c"
           }
         ]
       },

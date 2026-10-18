@@ -8,6 +8,7 @@ import { presentMove } from './present-move.ts';
 import { useBoardClock } from './use-board-clock.ts';
 import { useGameLifecycle } from './use-game-lifecycle.ts';
 
+import type { BoardCoachHand } from './board-canvas.tsx';
 import type { BoardClockLabel } from './board-clock-state.ts';
 import type {
   BoardColors,
@@ -68,6 +69,8 @@ export type GameBoardHostProps<TState, TEvent, TView, TToken extends string> = {
   readonly traceClock?: BoardClockTrace;
   /** Test builds only: S15's frame recorder, fed from the board's frame callback. */
   readonly onFrameTime?: BoardFrameTime;
+  /** The tutorial's pointing hand over the board (null: none). */
+  readonly coach?: BoardCoachHand | null;
 };
 
 const NO_FLAGS: RunnableFlags = { isAppActive: false, isFocused: false, isAdShowing: false };
@@ -131,6 +134,8 @@ export function GameBoardHost<TState, TEvent, TView, TToken extends string>(
       {...(props.onMiss === undefined ? {} : { onMiss: props.onMiss })}
       onDrawError={clock.fail}
       isLayoutProbeOn={props.isLayoutProbeOn === true}
+      coach={props.coach ?? null}
+      motion={props.motion}
     />
   );
 }

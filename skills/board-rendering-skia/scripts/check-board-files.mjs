@@ -62,9 +62,13 @@ const HOST_FILES = [
     'board-clock-state.ts', 'board-clock-state.test.ts', 'board-clock-traces.test.ts',
     'run-board-frame.ts', 'run-board-frame.test.ts', 'use-board-clock.ts', 'record-board.ts', 'record-board.test.ts', 'draw-centered-text.ts',
     'draw-centered-text.test.ts', 'present-move.ts', 'present-move.test.ts', 'cue-scheduler.ts', 'cue-scheduler.test.ts', 'paint-board-png.ts',
-    'use-game-lifecycle.ts', 'use-game-lifecycle.test.ts',
+    'use-game-lifecycle.ts', 'use-game-lifecycle.test.ts', 'draw-coach-hand.ts', 'draw-coach-hand.test.ts',
+    'board-number-typeface.ts', 'board-number-typeface.android.test.ts',
   ].map((f) => [`${GH}/${f}`, 'pure']),
-  ...['board-canvas.tsx', 'board-canvas.test.tsx', 'board-layout-probe.tsx', 'board-layout-probe.test.tsx', 'game-board-host.tsx', 'game-board-host.test.tsx'].map((f) => [`${GH}/${f}`, 'shell']),
+  ...['board-canvas.tsx', 'board-canvas.test.tsx', 'board-layout-probe.tsx', 'board-layout-probe.test.tsx', 'game-board-host.tsx', 'game-board-host.test.tsx', 'board-number-font.ts'].map((f) => [`${GH}/${f}`, 'shell']),
+  // The BoardFont native module the board's digits face is read through (both platforms).
+  ['packages/shell/ios/BoardFontModule.swift', 'shell'],
+  ['packages/shell/android/src/main/java/io/applander/e07shell/BoardFontModule.kt', 'shell'],
   ['test/goldens/boards/skia-golden.ts', 'pure'],
   // The repo-level worklet boundary gate that runs inside `npm test`.
   ['packages/tooling/src/quality/check-worklet-boundary.ts', 'pure'],

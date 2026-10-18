@@ -109,13 +109,13 @@ function drawCells(canvas: SkCanvas, frame: Frame): void {
     if (view.cells[i] !== 1)
       canvas.drawRRect({ rect: inset(rect, INSET), rx: corner, ry: corner }, kit.fill);
     if (fade <= 0) continue;
-    kit.fill.setColor(colors.color.block);
-    drawBlock(canvas, frame, { rect: inset(rect, INSET + (1 - pop) / 2), alpha: fade });
+    const block = inset(rect, INSET + (1 - pop) / 2);
+    drawBlock(canvas, frame, { rect: block, color: colors.color.block, alpha: fade });
   }
 }
 
 function drawBeams(canvas: SkCanvas, frame: Frame): void {
-  const { view, layout, colors, kit, fx } = frame;
+  const { view, layout, colors, fx } = frame;
   for (let lane = 0; lane < view.size; lane += 1) {
     const beam = fxEntry(fx, 'beam', lane);
     const bottom = cellRect(layout, { regionId: 'board', col: lane, row: view.size - 1 });
@@ -125,8 +125,7 @@ function drawBeams(canvas: SkCanvas, frame: Frame): void {
     const height = (base - (far.y - far.step / 2)) * beam.progress;
     const width = bottom.width * 0.4;
     const rect = { x: bottom.x + (bottom.width - width) / 2, y: base - height, width, height };
-    kit.fill.setColor(colors.color.beam);
-    drawBlock(canvas, frame, { rect, alpha: 1 - beam.progress * 0.5 });
+    drawBlock(canvas, frame, { rect, color: colors.color.beam, alpha: 1 - beam.progress * 0.5 });
   }
 }
 
