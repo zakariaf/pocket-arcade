@@ -11,6 +11,8 @@ const IN_WORD_HYPHEN = /(?<=\p{L})-(?=\p{L})/gu;
 
 /** The text with a zero-width break point after each hyphen between two letters. */
 export function withHyphenBreaks(text: string): string {
+  // Most texts have no hyphen: skip the regex then (AppText draws every text through here).
+  if (!text.includes('-')) return text;
   return text.replace(IN_WORD_HYPHEN, `-${ZERO_WIDTH_SPACE}`);
 }
 
@@ -23,6 +25,7 @@ const NO_BREAK_SPACE = /\u00A0/gu;
  * where Chrome and iOS draw the font's own space. The joiners keep the line unbroken there.
  */
 export function withFontSpaces(text: string): string {
+  if (!text.includes('\u00A0')) return text;
   return text.replace(NO_BREAK_SPACE, `${WORD_JOINER} ${WORD_JOINER}`);
 }
 

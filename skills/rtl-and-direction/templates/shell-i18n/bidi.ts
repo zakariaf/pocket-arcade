@@ -47,13 +47,14 @@ export function isInvisibleMark(char: string): boolean {
 const STRONG_RTL =
   /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}]/u;
 const ISOLATE_START = /[\u2066-\u2068]/u;
+const LETTER = /\p{L}/u;
 // One number reads the same in either paragraph direction: digits and decimal or group marks.
 const SINGLE_NUMBER = /^[\p{Nd}.,\u066B\u066C]*$/u;
 
 function directionOfChar(char: string): 'ltr' | 'rtl' | null {
   if (char === '\u200E') return 'ltr';
   if (char === RLM || char === '\u061C') return 'rtl';
-  if (!/\p{L}/u.test(char)) return null;
+  if (!LETTER.test(char)) return null;
   return STRONG_RTL.test(char) ? 'rtl' : 'ltr';
 }
 
