@@ -1,4 +1,4 @@
-// apps/line-siege/src/board/draw-board.android.test.ts
+// apps/line-siege/src/board/board-digits.android.test.ts
 import { Platform } from 'react-native';
 
 import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
