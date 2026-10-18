@@ -2,7 +2,8 @@
 // no-shell-context: reads expo-constants only (mocked with the pilot's test build values).
 import { Platform } from 'react-native';
 
-import { buildNumberOf, readVersionText, versionTextOf } from './read-version-text.ts';
+import { buildNumberOf } from './build-number.ts';
+import { readVersionText, versionTextOf } from './read-version-text.ts';
 
 let mockParityBuildNumber: string | null = null;
 jest.mock('@e07/shell/app/test-only.ts', () => ({
