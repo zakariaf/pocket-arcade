@@ -373,8 +373,13 @@ const AUDIO_CASES = {
     return ['[haptic-safety]', `${HAPTICS}:1`, '.catch(() => undefined)'];
   },
   'haptic-android': (dir) => {
-    replace(dir, HAPTICS, 'return performAndroidHapticsAsync(AndroidHaptics.Segment_Tick);', 'return performAndroidHapticsAsync(AndroidHaptics.Long_Press);');
+    replace(dir, HAPTICS, 'return performAndroidHapticsAsync(\n        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,\n      );', 'return performAndroidHapticsAsync(AndroidHaptics.Long_Press);');
     return ['[haptic-android]', `${HAPTICS}:${lineOf(dir, HAPTICS, 'AndroidHaptics.Long_Press') - 1}`, "cue 'selection' calls performAndroidHapticsAsync(AndroidHaptics.Long_Press)"];
+  },
+  // The E18 review finding: Segment_Tick unguarded is silent on every phone below Android 14.
+  'haptic-android-api': (dir) => {
+    replace(dir, HAPTICS, 'return performAndroidHapticsAsync(\n        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,\n      );', 'return performAndroidHapticsAsync(AndroidHaptics.Segment_Tick);');
+    return ['[haptic-android]', `${HAPTICS}:${lineOf(dir, HAPTICS, 'AndroidHaptics.Segment_Tick') - 1}`, "cue 'selection' calls performAndroidHapticsAsync(AndroidHaptics.Segment_Tick), expected performAndroidHapticsAsync(api>=34?AndroidHaptics.Segment_Tick:AndroidHaptics.Clock_Tick)"];
   },
   'haptic-android-unused': (dir) => {
     replace(dir, HAPTICS, "return Platform.OS === 'android' ? fireAndroid(cue) : fireIos(cue);", 'return fireIos(cue);');

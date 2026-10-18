@@ -33,8 +33,9 @@ const SPEC = {
     '  voice-policy           MAX_VOICES = 8, DEFAULT_MIN_INTERVAL_MS = 30, squared channel gain, 50 ms gain ramps',
     '  haptic-throttle        MIN_HAPTIC_GAP_MS = 40',
     '  haptic-table           each HapticCue maps to its expo-haptics call (the iOS column)',
-    '  haptic-android         each HapticCue maps to its performAndroidHapticsAsync type (the Android column), and the',
-    '                         adapter plays that column when Platform.OS is \'android\'',
+    '  haptic-android         each HapticCue maps to its performAndroidHapticsAsync type (the Android column, newer types',
+    '                         guarded by API level with a fallback every level has), and the adapter plays that column',
+    '                         when Platform.OS is \'android\'',
     '  haptic-safety          the haptics adapter throttles (shouldPulse), hides on iPad (isPad) and swallows failures',
     '  cue-in-sim             no sound or haptic calls inside sims or \'worklet\' modules (fire from drained events on JS)',
     '  button-haptics         Shell UI and screens use only the selection haptic (toggles)',
@@ -142,14 +143,16 @@ const HAPTIC_TABLE = {
   warning: 'notificationAsync(NotificationFeedbackType.Warning)',
   error: 'notificationAsync(NotificationFeedbackType.Error)',
 };
+// A type an older phone lacks makes expo-haptics reject (no pulse), so each newer type is guarded by its
+// API level with a fallback every level offers: Segment_Tick from API 34, Confirm and Reject from API 30.
 const ANDROID_HAPTIC_TABLE = {
-  selection: 'performAndroidHapticsAsync(AndroidHaptics.Segment_Tick)',
+  selection: 'performAndroidHapticsAsync(api>=34?AndroidHaptics.Segment_Tick:AndroidHaptics.Clock_Tick)',
   light: 'performAndroidHapticsAsync(AndroidHaptics.Context_Click)',
-  medium: 'performAndroidHapticsAsync(AndroidHaptics.Confirm)',
+  medium: 'performAndroidHapticsAsync(api>=30?AndroidHaptics.Confirm:AndroidHaptics.Virtual_Key)',
   heavy: 'performAndroidHapticsAsync(AndroidHaptics.Long_Press)',
-  success: 'performAndroidHapticsAsync(AndroidHaptics.Confirm)',
-  warning: 'performAndroidHapticsAsync(AndroidHaptics.Reject)',
-  error: 'performAndroidHapticsAsync(AndroidHaptics.Reject)',
+  success: 'performAndroidHapticsAsync(api>=30?AndroidHaptics.Confirm:AndroidHaptics.Virtual_Key)',
+  warning: 'performAndroidHapticsAsync(api>=30?AndroidHaptics.Reject:AndroidHaptics.Long_Press)',
+  error: 'performAndroidHapticsAsync(api>=30?AndroidHaptics.Reject:AndroidHaptics.Long_Press)',
 };
 const PLUGIN_OPTIONS = [
   ['iosBackgroundMode', /\biosBackgroundMode\s*:\s*false\b/],
@@ -317,7 +320,8 @@ function checkHaptics(root, report) {
   // Each cue has one case in the iOS switch and one in the Android switch.
   const found = { ios: {}, android: {} };
   for (const match of source.matchAll(/case\s+['"](\w+)['"]\s*:\s*return\s+([^;]+);/g)) {
-    const call = match[2].replace(/\s+/g, '');
+    // Whitespace and Prettier's trailing comma of a wrapped argument are not part of the call.
+    const call = match[2].replace(/\s+/g, '').replace(/,\)/g, ')');
     const column = call.startsWith('performAndroidHapticsAsync(') ? 'android' : 'ios';
     found[column][match[1]] ??= { call, line: lineOf(source, match.index) };
   }

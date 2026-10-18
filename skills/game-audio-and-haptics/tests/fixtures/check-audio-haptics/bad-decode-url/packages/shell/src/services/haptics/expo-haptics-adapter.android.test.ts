@@ -22,9 +22,11 @@ jest.mock('expo-haptics', () => {
     AndroidHaptics: {
       Confirm: 'confirm',
       Reject: 'reject',
+      Clock_Tick: 'clock-tick',
       Context_Click: 'context-click',
       Long_Press: 'long-press',
       Segment_Tick: 'segment-tick',
+      Virtual_Key: 'virtual-key',
     },
     impactAsync: record('impact'),
     notificationAsync: record('notification'),
@@ -42,6 +44,12 @@ const native = jest.requireMock<{ readonly calls: string[]; readonly unsupported
   'expo-haptics',
 );
 
+// The jest-expo Android preset reports no API level (Platform.Version is undefined), so each test
+// names one: a current phone (Android 16, API 36) unless it says otherwise.
+function onApiLevel(apiLevel: number): void {
+  jest.spyOn(Platform, 'Version', 'get').mockReturnValue(apiLevel);
+}
+
 type Clock = { now: number };
 
 function adapter(clock: Clock, isEnabled = true) {
@@ -52,6 +60,11 @@ describe('createExpoHapticsAdapter on Android', () => {
   beforeEach(() => {
     native.calls.length = 0;
     native.unsupported.clear();
+    onApiLevel(36);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('runs on the Android platform', () => {
@@ -114,5 +127,91 @@ describe('createExpoHapticsAdapter on Android', () => {
 
   it('reports support on Android phones and tablets', () => {
     expect(adapter({ now: 0 }).isSupported).toBe(true);
+  });
+});
+
+// expo-haptics 57.0.3 reads each HapticFeedbackConstants field by reflection and rejects a type the
+// phone lacks: Segment_Tick from API 34 (Android 14), Confirm and Reject from API 30 (Android 11).
+// Clock_Tick, Context_Click, Keyboard_Tap, Long_Press and Virtual_Key have a fallback on every level.
+const SINCE_API: Readonly<Record<string, number>> = {
+  'segment-tick': 34,
+  confirm: 30,
+  reject: 30,
+  'clock-tick': 1,
+  'context-click': 1,
+  'long-press': 1,
+  'virtual-key': 1,
+};
+
+const ALL_CUES: readonly HapticCue[] = [
+  'selection',
+  'light',
+  'medium',
+  'heavy',
+  'success',
+  'warning',
+  'error',
+];
+
+function playEveryCue(apiLevel: number): readonly string[] {
+  onApiLevel(apiLevel);
+  for (const [type, since] of Object.entries(SINCE_API)) {
+    if (since > apiLevel) native.unsupported.add(type);
+  }
+  const clock = { now: 0 };
+  const haptics = adapter(clock);
+  for (const cue of ALL_CUES) {
+    haptics.play(cue);
+    clock.now += 100;
+  }
+  return [...native.calls];
+}
+
+describe('createExpoHapticsAdapter on older Android', () => {
+  beforeEach(() => {
+    native.calls.length = 0;
+    native.unsupported.clear();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('plays a Clock_Tick for selection below Android 14 (API 33)', () => {
+    expect(playEveryCue(33)[0]).toBe('android:clock-tick');
+  });
+
+  it('plays only the types every level offers below Android 11 (API 29)', () => {
+    expect(playEveryCue(29)).toStrictEqual([
+      'android:clock-tick',
+      'android:context-click',
+      'android:virtual-key',
+      'android:long-press',
+      'android:virtual-key',
+      'android:long-press',
+      'android:long-press',
+    ]);
+  });
+
+  it('keeps the newest types from Android 14 (API 34)', () => {
+    expect(playEveryCue(34)).toStrictEqual([
+      'android:segment-tick',
+      'android:context-click',
+      'android:confirm',
+      'android:long-press',
+      'android:confirm',
+      'android:reject',
+      'android:reject',
+    ]);
+  });
+
+  it('gives every cue a type the phone offers on each level from API 24', () => {
+    for (let apiLevel = 24; apiLevel <= 36; apiLevel += 1) {
+      native.calls.length = 0;
+      native.unsupported.clear();
+      const types = playEveryCue(apiLevel).map((call) => call.slice('android:'.length));
+      expect(types.filter((type) => (SINCE_API[type] ?? Infinity) > apiLevel)).toStrictEqual([]);
+      expect(types).toHaveLength(ALL_CUES.length);
+    }
   });
 });

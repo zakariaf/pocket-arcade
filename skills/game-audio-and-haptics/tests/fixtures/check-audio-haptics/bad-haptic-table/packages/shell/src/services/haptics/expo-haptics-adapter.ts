@@ -43,26 +43,37 @@ function fireIos(cue: HapticCue): Promise<void> {
 }
 
 /**
- * The cue table's Android column: View haptic feedback (no Vibrator, no VIBRATE needed). A type the
- * phone's API level lacks (Segment_Tick before Android 14, Confirm and Reject before Android 11)
- * rejects, and the caller's catch turns it into no pulse.
+ * The cue table's Android column: View haptic feedback (no Vibrator, no VIBRATE needed). expo-haptics
+ * rejects a type the phone's API level lacks (Segment_Tick before API 34, Confirm and Reject before
+ * API 30), so an older phone gets a type every level offers (Clock_Tick, Virtual_Key, Long_Press).
  */
 function fireAndroid(cue: HapticCue): Promise<void> {
+  const api = Number(Platform.Version);
   switch (cue) {
     case 'selection':
-      return performAndroidHapticsAsync(AndroidHaptics.Segment_Tick);
+      return performAndroidHapticsAsync(
+        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,
+      );
     case 'light':
       return performAndroidHapticsAsync(AndroidHaptics.Context_Click);
     case 'medium':
-      return performAndroidHapticsAsync(AndroidHaptics.Confirm);
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Confirm : AndroidHaptics.Virtual_Key,
+      );
     case 'heavy':
       return performAndroidHapticsAsync(AndroidHaptics.Long_Press);
     case 'success':
-      return performAndroidHapticsAsync(AndroidHaptics.Confirm);
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Confirm : AndroidHaptics.Virtual_Key,
+      );
     case 'warning':
-      return performAndroidHapticsAsync(AndroidHaptics.Reject);
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Reject : AndroidHaptics.Long_Press,
+      );
     case 'error':
-      return performAndroidHapticsAsync(AndroidHaptics.Reject);
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Reject : AndroidHaptics.Long_Press,
+      );
   }
 }
 
