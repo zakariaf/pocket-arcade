@@ -62,7 +62,8 @@ const SPEC = {
     '  deterministic-capture the status bar is not pinned to 9:41 (in simulator.ts, or in ios/simulators.ts when',
     '                        simulator.ts calls its statusBarArgs) or the text size is not set before capture',
     '  screenshot-tolerance  capture-screenshots-ios.ts allows more than MAX_DIFF_RATIO = 0.002 (0.2% of pixels), or',
-    '                        compare-png.ts uses a pixelmatch threshold above 0.1',
+    '                        compare-png.ts uses a pixelmatch threshold above 0.1; a capture script that imports',
+    '                        screenshot-compare.ts (the compare core both platforms share) is judged by that file',
     '  network-guard-missing the Shell\'s test-only JS network guard (network-guard.ts) is missing, or nothing installs',
     '                        it (createDebugParts calls installNetworkGuard; the test-only entry exports it)',
     '  debug-services        the debug module (packages/shell/src/screens/debug/) lacks simulated-connectivity.ts,',
@@ -120,7 +121,8 @@ const SPEC = {
     '  the sampler per emulator by uid, an empty network.txt, flows with the offline journeys under airplane mode,',
     '  S15\'s save benchmark, am start -W cold starts against perf-baselines/cold-start-emu-<game-id>.json, dumpsys',
     '  meminfo total PSS against perf.memoryFootprintMbMax (150 MB), the a11y flows at font_scale 2.0, an APK refused',
-    '  unless test/off, MAX_DIFF_RATIO = 0.002, the three animation scales at 0 and the demo status bar at 9:41.',
+    '  unless test/off (apkVariantProblem\'s own check, or `return e2eBuildProblem(..., \'android\')`), MAX_DIFF_RATIO =',
+    '  0.002, the three animation scales at 0 and the demo status bar at 9:41.',
     '  e2e-script            npm script e2e:ios or screenshots:ios differs (e2e:android or screenshots:android once',
     '                        Android step 7 has started)',
     '  visual-deps           pixelmatch 7.2.0, pngjs 7.0.0 or @types/pngjs 6.0.5 is missing or not an exact pin',
@@ -258,10 +260,8 @@ function checkRunner(root, report) {
   }
   const capture = 'packages/tooling/src/e2e/capture-screenshots-ios.ts';
   if (exists(root, capture)) {
-    const code = maskComments(read(root, capture));
-    const ratio = /\bMAX_DIFF_RATIO\s*=\s*([0-9.eE+-]+)/.exec(code);
-    const passes = /maxDiffRatio\s*:\s*MAX_DIFF_RATIO\b/.test(code);
-    if (!ratio || !(Number(ratio[1]) <= 0.002) || !passes) report.problem({ file: capture, line: 1, rule: 'screenshot-tolerance', message: ratio ? `MAX_DIFF_RATIO is ${ratio[1]}${passes ? '' : ' or comparePng does not receive it'}, not at most 0.002` : 'has no MAX_DIFF_RATIO', fix: "Restore const MAX_DIFF_RATIO = 0.002 and maxDiffRatio: MAX_DIFF_RATIO; a tolerance changes only with the owner's agreement (Gate-Change trailer)." });
+    const problem = toleranceProblem(root, capture, maskComments(read(root, capture)), "Restore const MAX_DIFF_RATIO = 0.002 and maxDiffRatio: MAX_DIFF_RATIO; a tolerance changes only with the owner's agreement (Gate-Change trailer).");
+    if (problem !== null) report.problem(problem);
   }
   const compare = 'packages/tooling/src/visual/compare-png.ts';
   if (exists(root, compare)) {
@@ -400,13 +400,34 @@ function checkAndroidSteps(root, codes, report) {
   if (codes.has(samplerRel) && !/\btcp6\b/.test(codes.get(samplerRel))) report.problem({ file: samplerRel, line: 1, rule: 'runner-no-sampler', message: 'does not read /proc/net/tcp6 (IPv6 sockets would go unseen)', fix: androidFix(samplerRel) });
 }
 
+const COMPARE_CORE = 'packages/tooling/src/e2e/screenshot-compare.ts';
+
+/**
+ * The screenshot-tolerance problem of a capture script, or null: MAX_DIFF_RATIO = 0.002 handed to
+ * comparePng, in the capture itself or in the compare core it imports (screenshot-compare.ts, which
+ * screenshots:ios and screenshots:android share; the problem then names that file).
+ */
+function toleranceProblem(root, capture, code, fix) {
+  const usesCore = /\bfrom\s+['"][^'"]*\/screenshot-compare\.ts['"]/.test(code);
+  const file = usesCore ? COMPARE_CORE : capture;
+  const held = !usesCore ? code : exists(root, COMPARE_CORE) ? maskComments(read(root, COMPARE_CORE)) : '';
+  const ratio = /\bMAX_DIFF_RATIO\s*=\s*([0-9.eE+-]+)/.exec(held);
+  const passes = /maxDiffRatio\s*:\s*MAX_DIFF_RATIO\b/.test(held);
+  if (ratio && Number(ratio[1]) <= 0.002 && passes) return null;
+  return { file, line: 1, rule: 'screenshot-tolerance', message: ratio ? `MAX_DIFF_RATIO is ${ratio[1]}${passes ? '' : ' or comparePng does not receive it'}, not at most 0.002` : 'has no MAX_DIFF_RATIO', fix };
+}
+
 /** Only a test/off APK, the capture tolerance and still screens. */
 function checkAndroidCapture(root, codes, report) {
   const cliRel = `${ANDROID_E2E_DIR}/android-cli.ts`;
   const cli = codes.get(cliRel);
   if (cli !== undefined) {
     const variant = exportedFunctions(cli).find((fn) => fn.name === 'apkVariantProblem');
-    if (!variant || !/===\s*['"]test['"]/.test(variant.body) || !/===\s*['"]off['"]/.test(variant.body)) report.problem({ file: cliRel, line: 1, rule: 'e2e-ads-off', message: "apkVariantProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: androidFix(cliRel) });
+    // Its own test/off check, or the answer of simulator.ts's e2eBuildProblem for Android (whose
+    // test/off check the iOS e2e-ads-off rule holds).
+    const isOwnCheck = variant !== undefined && /===\s*['"]test['"]/.test(variant.body) && /===\s*['"]off['"]/.test(variant.body);
+    const isSharedCheck = variant !== undefined && /\breturn\s+e2eBuildProblem\s*\([^;]*['"]android['"]\s*\)/.test(variant.body);
+    if (!isOwnCheck && !isSharedCheck) report.problem({ file: cliRel, line: 1, rule: 'e2e-ads-off', message: "apkVariantProblem does not accept exactly appVariant 'test' with adsMode 'off'", fix: androidFix(cliRel) });
   }
   const deviceRel = `${ANDROID_E2E_DIR}/android-e2e-device.ts`;
   const device = codes.get(deviceRel);
@@ -418,9 +439,8 @@ function checkAndroidCapture(root, codes, report) {
   }
   const capture = codes.get(ANDROID_CAPTURE);
   if (capture !== undefined) {
-    const ratio = /\bMAX_DIFF_RATIO\s*=\s*([0-9.eE+-]+)/.exec(capture);
-    const passes = /maxDiffRatio\s*:\s*MAX_DIFF_RATIO\b/.test(capture);
-    if (!ratio || !(Number(ratio[1]) <= 0.002) || !passes) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'screenshot-tolerance', message: ratio ? `MAX_DIFF_RATIO is ${ratio[1]}${passes ? '' : ' or comparePng does not receive it'}, not at most 0.002` : 'has no MAX_DIFF_RATIO', fix: "Restore const MAX_DIFF_RATIO = 0.002 and maxDiffRatio: MAX_DIFF_RATIO: the same tolerance as on iOS; it changes only with the owner's agreement (Gate-Change trailer)." });
+    const tolerance = toleranceProblem(root, ANDROID_CAPTURE, capture, "Restore const MAX_DIFF_RATIO = 0.002 and maxDiffRatio: MAX_DIFF_RATIO: the same tolerance as on iOS; it changes only with the owner's agreement (Gate-Change trailer).");
+    if (tolerance !== null) report.problem(tolerance);
     if (!/\breadApkApp\s*\(/.test(capture)) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'e2e-ads-off', message: 'captures an APK it never checked (readApkApp refuses one that is not test/off)', fix: androidFix(ANDROID_CAPTURE) });
     if (!/\bfontScaleArgs\s*\(/.test(capture)) report.problem({ file: ANDROID_CAPTURE, line: 1, rule: 'deterministic-capture', message: 'does not set the font scale before capture (fontScaleArgs)', fix: androidFix(ANDROID_CAPTURE) });
   }
