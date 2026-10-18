@@ -19,6 +19,7 @@ import {
   isBootCompleted,
   parseAdbDevices,
   perfLogReaderOf,
+  runningSerialAmong,
   serialOf,
   type AdbDevice,
 } from '@e07/tooling/android/emulators.ts';
@@ -64,14 +65,13 @@ function runningSerialOf(
   devices: readonly AdbDevice[],
   name: string,
 ): string | null {
-  for (const { serial } of devices.filter((device) => device.serial.startsWith('emulator-'))) {
-    const answer = execFileSync(host.tools.adb, adbArgs(serial, ['emu', 'avd', 'name']), {
+  return runningSerialAmong(devices, name, (serial) =>
+    execFileSync(host.tools.adb, adbArgs(serial, ['emu', 'avd', 'name']), {
       encoding: 'utf8',
       env: host.env,
-    });
-    if (answer.split('\n')[0]?.trim() === name) return serial;
-  }
-  return null;
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }),
+  );
 }
 
 /**
