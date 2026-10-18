@@ -5,6 +5,7 @@
 import { join } from 'node:path';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { readFlagPairs } from '@e07/tooling/build/flag-pairs.ts';
 import { isGameId } from '@e07/tooling/build/game-id.ts';
 
 export {
@@ -33,22 +34,9 @@ export const EMU_BUILD_USAGE = [
 
 const FLAGS = new Set(['--app', '--variant', '--ads', '--avd']);
 
-function readFlags(argv: readonly string[]): ReadonlyMap<string, string> {
-  const flags = new Map<string, string>();
-  for (let index = 0; index < argv.length; index += 2) {
-    const flag = argv[index] ?? '';
-    const value = argv[index + 1];
-    if (!FLAGS.has(flag) || value === undefined || value.startsWith('--')) {
-      throw new Error(`unexpected argument "${flag}". ${EMU_BUILD_USAGE}`);
-    }
-    flags.set(flag, value);
-  }
-  return flags;
-}
-
 /** Parses the CLI; the variant rules are the ones app.config.ts applies (forbidden pairs throw). */
 export function parseEmuBuildArgs(argv: readonly string[]): EmuBuildOptions {
-  const flags = readFlags(argv);
+  const flags = readFlagPairs(argv, FLAGS, EMU_BUILD_USAGE);
   const game = flags.get('--app');
   if (!isGameId(game)) {
     throw new Error(
@@ -109,7 +97,5 @@ export function saveFolderOf(packageName: string): string {
 export const BOOT_POLL_MS = 1000;
 export const BOOT_MAX_ATTEMPTS = 240;
 
-/** The Android package: io.applander.<game id without hyphens> (owner decision O4). */
-export function packageNameOf(game: string): string {
-  return `io.applander.${game.replaceAll('-', '')}`;
-}
+/** The Android package is the iOS bundle id: io.applander.<game id without hyphens> (owner decision O4). */
+export { appIdOf as packageNameOf } from '@e07/tooling/release/store-gate.ts';

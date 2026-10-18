@@ -3,8 +3,9 @@
 // Layer F sampler on Android. Usage: node packages/tooling/src/e2e/sample-sockets-android.ts
 // <package> <report> <serial>. run-e2e-android.ts spawns one per emulator of the run and kills it at
 // the end; any line in <report> fails the run. Once a second, on this emulator only: the app's uid
-// (cmd package list packages -U), whether it runs (pidof), and the four /proc/net socket tables,
-// keeping the uid's connections to anything but the device itself (android-socket-sampler.ts).
+// (cmd package list packages -U, until it is known: an installed app keeps its uid), then one adb
+// call for whether it runs (pidof) and the four /proc/net socket tables, keeping the uid's
+// connections to anything but the device itself (android-socket-sampler.ts).
 // After every sample it rewrites <report>.sampler-<serial>.json with the same status the iOS
 // sampler writes (network-runtime-layer.ts), so proveSamplersAlive judges both alike.
 import { appendFileSync, writeFileSync } from 'node:fs';
@@ -16,7 +17,7 @@ import {
   samplerStatusPath,
   samplerStatusText,
 } from '@e07/tooling/audit/network-runtime-layer.ts';
-import { packageUidArgs, pidofArgs, procNetArgs } from '@e07/tooling/e2e/android-device-args.ts';
+import { packageUidArgs, procNetArgs } from '@e07/tooling/e2e/android-device-args.ts';
 import { adbOn, androidEnv, type Device } from '@e07/tooling/e2e/android-e2e-device.ts';
 import {
   appConnections,
@@ -40,23 +41,19 @@ const device: Device = { serial, env, tools: toolsOf(env) };
 const statusFile = samplerStatusPath(report, [serial]);
 let status = NEW_SAMPLER_STATUS;
 
-/** pidof exits 1 when the app does not run: that is "not found", not an error. */
-function runningPid(): string | null {
-  try {
-    return pidOf(adbOn(device, pidofArgs(serial, packageName)));
-  } catch {
-    return null;
-  }
-}
+/** The app's uid, looked up until it is known (null before the APK is installed). */
+let uid: number | null = null;
 
 function sample(name: string, out: string): void {
   let pids = 0;
   let error: unknown = null;
   try {
-    const uid = appUidOf(adbOn(device, packageUidArgs(serial, name)), name);
-    pids = runningPid() === null ? 0 : 1;
+    uid ??= appUidOf(adbOn(device, packageUidArgs(serial, name)), name);
+    // pidof first, then the socket tables: pidOf reads the first line, parseProcNet the tables.
+    const output = adbOn(device, procNetArgs(serial, name));
+    pids = pidOf(output) === null ? 0 : 1;
     if (uid !== null) {
-      const lines = appConnections(parseProcNet(adbOn(device, procNetArgs(serial))), uid);
+      const lines = appConnections(parseProcNet(output), uid);
       for (const line of lines) appendFileSync(out, `${serial} ${line}\n`);
     }
   } catch (caught: unknown) {

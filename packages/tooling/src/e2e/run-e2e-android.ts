@@ -19,6 +19,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
+import { perfLogReader } from '@e07/tooling/android/emulator-device.ts';
 import { SAMPLER_PROOF_WAIT_MS } from '@e07/tooling/audit/network-runtime-layer.ts';
 import {
   ANDROID_E2E_USAGE,
@@ -29,7 +30,6 @@ import { DEFAULT_FONT_SCALE, fontScaleArgs } from '@e07/tooling/e2e/android-devi
 import {
   adbOn,
   androidEnv,
-  perfLogReader,
   readApkApp,
   startE2eEmulator,
   type AndroidApp,
@@ -46,6 +46,7 @@ import {
   trackSampler,
   type RunningSampler,
 } from '@e07/tooling/e2e/sampler-evidence.ts';
+import { perfLogOf } from '@e07/tooling/e2e/sim-perf.ts';
 
 const SOCKET_SAMPLER = join('packages', 'tooling', 'src', 'e2e', 'sample-sockets-android.ts');
 
@@ -69,10 +70,7 @@ function socketSamplers(app: AndroidApp, network: string): Samplers {
 async function evidenceSteps(run: AndroidRun): Promise<string[]> {
   const failures = await runAndroidFlows(run);
   if (run.cli.isFlowsOnly) return failures;
-  const { game, isWritingBaseline } = run.cli;
-  const { phone: device, maestro, app, out, readLog } = run;
-  const input = { game, device, maestro, app, out, isWritingBaseline, readLog };
-  failures.push(...(await runEmuPerfSteps(input)));
+  failures.push(...(await runEmuPerfSteps(run)));
   failures.push(...(await runAndroidLargeText(run)));
   return failures;
 }
@@ -87,7 +85,10 @@ async function startRun(cli: AndroidE2eOptions): Promise<Omit<AndroidRun, 'watch
   const request = { purpose: cli.phoneAvd, device: 'phone' as const, app, game: cli.game };
   const phone = startE2eEmulator(request, env);
   adbOn(phone, fontScaleArgs(phone.serial, DEFAULT_FONT_SCALE));
-  const readLog = perfLogReader(phone, app, join('apps', cli.game, 'build', 'emu-e2e-save'));
+  // adb root once: without it (a Play Store image) nothing can be measured, so it throws here.
+  const localDir = join('apps', cli.game, 'build', 'emu-e2e-save');
+  const readPayload = perfLogReader(phone, { packageName: app.id, localDir, whenNoRoot: 'throw' });
+  const readLog = (): unknown => perfLogOf(readPayload());
   const out = join('reports', 'e2e-android', cli.game);
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });

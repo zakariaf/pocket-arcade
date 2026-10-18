@@ -10,6 +10,7 @@ import {
   latestColdStart,
   median,
   perfBudgetsFrom,
+  perfLogOf,
   physFootprintFrom,
 } from './sim-perf.ts';
 
@@ -188,5 +189,22 @@ describe('judgeMemory', () => {
       isOver: false,
     });
     expect(judgeMemory(150 * 1_048_576 + 1, DEFAULT_PERF_BUDGETS).isOver).toBe(true);
+  });
+});
+
+describe('perfLogOf (the perf_log payload of save.db, read on both platforms)', () => {
+  it('parses the payload into its entries', () => {
+    expect(perfLogOf(' [{"kind":"cold-start","atEpochMs":5}]\n')).toStrictEqual([
+      { kind: 'cold-start', atEpochMs: 5 },
+    ]);
+  });
+
+  it('is empty before the first entry, when nothing could be read, and for a payload that is not JSON', () => {
+    expect([perfLogOf(null), perfLogOf(''), perfLogOf('\n'), perfLogOf('[{')]).toStrictEqual([
+      [],
+      [],
+      [],
+      [],
+    ]);
   });
 });

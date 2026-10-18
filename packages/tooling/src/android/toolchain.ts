@@ -118,15 +118,20 @@ function javaVersionOf(home: string): string {
   return `${result.stderr}${result.stdout}`;
 }
 
-/** Finds JDK 17 (JAVA_HOME, then Android Studio's JBR) and the SDK, proves the pins, returns the env. */
+/**
+ * Finds JDK 17 (JAVA_HOME, then Android Studio's JBR) and the SDK, proves the pins, returns the env.
+ * The candidates are asked in order and the first JDK 17 wins; only when none is, all are listed.
+ */
 export function selectAndroidToolchain(base: ToolEnv): NodeJS.ProcessEnv {
   const homes = [base['JAVA_HOME'], STUDIO_JBR].filter(
     (home): home is string => home !== undefined && existsSync(join(home, 'bin', 'java')),
   );
-  const javaHome = pickJavaHome(
-    homes.map((home) => ({ home, versionOutput: javaVersionOf(home) })),
-    JDK_MAJOR,
-  );
+  const javaHome =
+    homes.find((home) => javaMajorOf(javaVersionOf(home)) === JDK_MAJOR) ??
+    pickJavaHome(
+      homes.map((home) => ({ home, versionOutput: javaVersionOf(home) })),
+      JDK_MAJOR,
+    );
   const androidHome = androidHomeOf(base, homedir());
   const problems = sdkProblems(androidHome, existsSync);
   if (problems.length > 0) {

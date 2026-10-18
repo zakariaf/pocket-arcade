@@ -7,8 +7,10 @@ import {
   demoModeCommands,
   emulatorArgs,
   freeConsolePort,
+  isAvdPurpose,
   isBootCompleted,
   parseAdbDevices,
+  perfLogReaderOf,
   serialOf,
 } from './emulators.ts';
 import { ANDROID_PINS } from './toolchain.ts';
@@ -28,6 +30,19 @@ describe('avdName', () => {
 
   it('rejects a purpose that is not kebab-case', () => {
     expect(() => avdName('Pixel 8')).toThrow('must be kebab-case');
+  });
+});
+
+describe('isAvdPurpose', () => {
+  it('accepts a kebab-case purpose and nothing else (the --avd option of every CLI)', () => {
+    expect(['smoke', 'e2e-phone', 'shots-2'].map(isAvdPurpose)).toStrictEqual([true, true, true]);
+    expect(['Pixel 8', '-smoke', 'e2e--phone', 'smoke-', ''].map(isAvdPurpose)).toStrictEqual([
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
   });
 });
 
@@ -146,5 +161,45 @@ describe('demoModeCommands', () => {
       'hhmm',
       '0941',
     ]);
+  });
+});
+
+describe('perfLogReaderOf (save.db pulled with adb root)', () => {
+  type Calls = string[];
+  const opsOf = (calls: Calls, overrides: Partial<Record<'root' | 'pull', () => void>> = {}) => ({
+    root: overrides.root ?? (() => calls.push('root')),
+    pull: overrides.pull ?? (() => calls.push('pull')),
+    payload: () => {
+      calls.push('payload');
+      return '[{"kind":"cold-start"}]';
+    },
+  });
+  const refuse = (): void => {
+    throw new Error('adbd cannot run as root in production builds');
+  };
+
+  it('becomes root once, then pulls the save again for every read', () => {
+    const calls: Calls = [];
+    const read = perfLogReaderOf(opsOf(calls), 'null');
+    expect([read(), read()]).toStrictEqual(['[{"kind":"cold-start"}]', '[{"kind":"cold-start"}]']);
+    expect(calls).toStrictEqual(['root', 'pull', 'payload', 'pull', 'payload']);
+  });
+
+  it('reads null while the save cannot be pulled yet', () => {
+    const calls: Calls = [];
+    expect(perfLogReaderOf(opsOf(calls, { pull: refuse }), 'null')()).toBeNull();
+    expect(calls).toStrictEqual(['root']);
+  });
+
+  it('reads null without pulling when root failed and the caller can do without the log (the build)', () => {
+    const calls: Calls = [];
+    expect(perfLogReaderOf(opsOf(calls, { root: refuse }), 'null')()).toBeNull();
+    expect(calls).toStrictEqual([]);
+  });
+
+  it('throws at once when root failed and the caller needs the log (e2e:android)', () => {
+    expect(() => perfLogReaderOf(opsOf([], { root: refuse }), 'throw')).toThrow(
+      'adb root failed (adbd cannot run as root in production builds): the perf log needs the google_apis image of an e07-android-* AVD',
+    );
   });
 });

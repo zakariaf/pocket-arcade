@@ -4,10 +4,12 @@
 // and --avd <purpose> runs on this session's own emulators e07-android-<purpose> and
 // e07-android-<purpose>-tablet instead of the shared defaults. Also the APK's variant check: E2E
 // runs only a test build with ADS_MODE=off (requireAdsOffTestApk reads assets/app.config).
-import { parseArgs } from 'node:util';
+import { isLanguage, LANGUAGES } from '@e07/shell/i18n/languages.ts';
+import { isAvdPurpose } from '@e07/tooling/android/emulators.ts';
 
-import { driverPortOf } from './e2e-cli.ts';
+import { driverPortOf, readOptions, type OptionSpec, type ReadOptions } from './e2e-cli.ts';
 import { MATRIX_DEVICES, type MatrixDevice } from './screenshots-cli.ts';
+import { e2eBuildProblem } from './simulator.ts';
 
 export const ANDROID_E2E_USAGE = [
   'usage: npm run e2e:android -- --app <game-id> [--avd <purpose>] [--driver-port <n>] [--apk <app-release.apk>] [--flows-only] [--write-perf-baseline] [--include-tags <tags>]',
@@ -64,10 +66,9 @@ export type CliParse<T> =
   | { readonly kind: 'error'; readonly message: string }
   | { readonly kind: 'run'; readonly options: T };
 
-type Spec = Readonly<Record<string, { readonly type: 'string' | 'boolean' }>>;
-type Read = { readonly values: ReadonlyMap<string, string>; readonly flags: ReadonlySet<string> };
+type Read = ReadOptions<string>;
 
-const E2E_SPEC: Spec = {
+const E2E_SPEC: OptionSpec = {
   app: { type: 'string' },
   avd: { type: 'string' },
   'driver-port': { type: 'string' },
@@ -76,7 +77,7 @@ const E2E_SPEC: Spec = {
   'write-perf-baseline': { type: 'boolean' },
   'include-tags': { type: 'string' },
 };
-const SHOTS_SPEC: Spec = {
+const SHOTS_SPEC: OptionSpec = {
   app: { type: 'string' },
   avd: { type: 'string' },
   'driver-port': { type: 'string' },
@@ -86,33 +87,6 @@ const SHOTS_SPEC: Spec = {
   langs: { type: 'string' },
   'font-scale': { type: 'string' },
 };
-const LANGS = ['en', 'de', 'fa', 'ckb'];
-const PURPOSE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-/** Every option and its value, or the first problem in the runner's words. */
-function readArgs(argv: readonly string[], spec: Spec): Read | string {
-  const { tokens } = parseArgs({
-    args: [...argv],
-    options: spec,
-    strict: false,
-    allowPositionals: true,
-    tokens: true,
-  });
-  const values = new Map<string, string>();
-  const flags = new Set<string>();
-  for (const token of tokens) {
-    if (token.kind !== 'option')
-      return `unexpected argument ${token.kind === 'positional' ? token.value : '--'}`;
-    const option = spec[token.name];
-    if (option === undefined) return `unknown option ${token.rawName}`;
-    if (option.type === 'boolean') flags.add(token.name);
-    else if (token.value === undefined || token.value.startsWith('--'))
-      return `${token.rawName} needs a value`;
-    else values.set(token.name, token.value);
-  }
-  return { values, flags };
-}
-
 type Common = {
   readonly game: string;
   readonly driverPort: number | undefined;
@@ -126,7 +100,7 @@ function commonOf(read: Read): Common | string {
   const driverPort = driverPortOf(read.values.get('driver-port'));
   if (typeof driverPort === 'string') return driverPort;
   const avd = read.values.get('avd');
-  if (avd !== undefined && !PURPOSE.test(avd)) {
+  if (avd !== undefined && !isAvdPurpose(avd)) {
     return `--avd ${avd}: pass a kebab-case purpose`;
   }
   return { game, driverPort, avd };
@@ -134,11 +108,11 @@ function commonOf(read: Read): Common | string {
 
 function parseWith<T>(
   argv: readonly string[],
-  spec: Spec,
+  spec: OptionSpec,
   build: (read: Read, common: Common) => T | string,
 ): CliParse<T> {
   if (argv.includes('--help') || argv.includes('-h')) return { kind: 'help' };
-  const read = readArgs(argv, spec);
+  const read = readOptions(argv, spec);
   if (typeof read === 'string') return { kind: 'error', message: read };
   const common = commonOf(read);
   if (typeof common === 'string') return { kind: 'error', message: common };
@@ -175,10 +149,9 @@ function matrixOf(
   const devices = devicesText.split(',');
   if (!devices.every(isDevice))
     return `--devices ${devicesText}: use phone, tablet or phone,tablet`;
-  const langsText = read.values.get('langs') ?? LANGS.join(',');
+  const langsText = read.values.get('langs') ?? LANGUAGES.join(',');
   const langs = langsText.split(',');
-  if (!langs.every((lang) => LANGS.includes(lang)))
-    return `--langs ${langsText}: use en, de, fa and ckb only`;
+  if (!langs.every(isLanguage)) return `--langs ${langsText}: use en, de, fa and ckb only`;
   const fontScale = read.values.get('font-scale') ?? '1.0';
   if (fontScale !== '1.0' && fontScale !== '2.0')
     return `--font-scale ${fontScale}: use 1.0 or 2.0`;
@@ -216,8 +189,7 @@ export function apkVariantProblem(appConfig: string, game: string): string | nul
   } catch {
     extra = {};
   }
-  const variant = typeof extra['appVariant'] === 'string' ? extra['appVariant'] : 'unknown';
-  const ads = typeof extra['adsMode'] === 'string' ? extra['adsMode'] : 'unknown';
-  if (variant === 'test' && ads === 'off') return null;
-  return `e2e:android needs a test build with ADS_MODE=off, this one is ${variant}/${ads}: run npm run build:android:emu -- --app ${game} --variant test --ads off`;
+  const textOf = (value: unknown): string => (typeof value === 'string' ? value : 'unknown');
+  const build = { appVariant: textOf(extra['appVariant']), adsMode: textOf(extra['adsMode']) };
+  return e2eBuildProblem(build, game, 'android');
 }
