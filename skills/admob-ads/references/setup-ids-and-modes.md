@@ -85,7 +85,7 @@ ads: {
 
 The Android entry has the same shape (`{ appId, units: { banner, interstitial, rewarded } }`) and its own ids: AdMob makes one app per platform, so the Android app id and units always differ from the iOS ones.
 
-- The values above are placeholders in the documented format (`ca-app-pub-<16 digits>~<10 digits>` for the app, `/<10 digits>` for units). Until the owner supplies real IDs, only `APP_VARIANT=test` and `store` + `ADS_MODE=off` can build: `assertLiveIds` throws for `live`.
+- The values above are placeholders in the documented format (`ca-app-pub-<16 digits>~<10 digits>` for the app, `/<10 digits>` for units). They pass `assertLiveIds` (it refuses only a malformed id or Google's sample publisher), so a `live` config of them still resolves; every ship gate refuses them by name instead (`owner-placeholder`, then `OWNER STEPS PENDING: G5`, on Android `GP5`: check-sim-app, check-emu-app, the store-artifact and store-AAB gates and both release preflights). Until the owner supplies real IDs, only `APP_VARIANT=test` and `store` + `ADS_MODE=off` builds are made.
 - Real IDs are not secrets (they ship in every store build), but app code never imports `game.config.ts`: it reads only what `withShell` embeds in `expo.extra`.
 - The policy numbers are the spec 8.8 defaults. They are configuration, never hard-coded in `ad-policy.ts`.
 
