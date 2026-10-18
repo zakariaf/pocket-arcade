@@ -1032,7 +1032,10 @@
               "packages/shell/src/app/press-feedback-context*",
               "packages/shell/src/i18n/use-localized-text-style*",
               "apps/line-siege/src/theme/**",
-              "test/integration/toybox-palettes.test.ts"
+              "test/integration/toybox-palettes.test.ts",
+              "packages/shell/src/ui/use-text-room*",
+              "packages/shell/src/ui/font-scale-curve*",
+              "packages/shell/src/ui/use-scaled-size*"
             ]
           },
           {
@@ -1197,7 +1200,10 @@
               "packages/shell/src/screens/debug/debug-rows.ts",
               "packages/shell/src/game-host/game-top-bar*",
               "packages/shell/src/testing/**",
-              "packages/shell/src/ui/screen-body*"
+              "packages/shell/src/ui/screen-body*",
+              "packages/shell/src/app/modal-layer*",
+              "packages/shell/src/app/build-number*",
+              "packages/shell/src/ui/use-body-bottom-top-up*"
             ]
           },
           {
@@ -1217,7 +1223,8 @@
             "paths": [
               "packages/shell/src/app/parity/**",
               "packages/shell/src/app/parity-launch-marker*",
-              "packages/shell/src/app/parity-startup*"
+              "packages/shell/src/app/parity-startup*",
+              "packages/shell/src/app/parity-marker*"
             ]
           },
           {
@@ -1296,7 +1303,8 @@
           "premium-purchase",
           "game-audio-and-haptics",
           "toybox-design-system",
-          "android-release-play"
+          "android-release-play",
+          "android-emulator-build"
         ],
         "proof": "`node packages/tooling/src/art/render-art.ts --app line-siege --check` exits 0 and `check-app-art.mjs . --app line-siege` (code-drawn-art-and-icons) prints RESULT: PASS; `npx tsc --noEmit -p packages/shell`, `npm run -s check:fast` and `npm run test:coverage` are green; `check-ads.mjs .` (admob-ads), `check-premium.mjs .` (premium-purchase) and `check-design-system.mjs .` (toybox-design-system) print RESULT: PASS with no SKIP line (the plugin list is in); `check-perf-code.mjs .` (performance-budgets) prints RESULT: PASS with only the slice line for Home's mark (`SKIP packages/shell/src/screens/home/use-home-model.ts [perf-layer] S4 not in shell-slice.json`); `check-audio-haptics.mjs .` (game-audio-and-haptics) prints RESULT: PASS with only the toggle's slice line (S11 and S6); `APP_VARIANT=test ADS_MODE=off npx expo config` in apps/line-siege resolves every plugin; `npm run audit:network` passes (before the first prebuild it says `SKIPPED pods/config layers: run npx expo prebuild first` and counts 0 failures); `check-gate-wiring.mjs .` (quality-gates) prints RESULT: PASS with only the e2e:ios and screenshots:ios (step 10) and release:ios (step 11) script-target lines; `npm run build:ios:sim -- --app line-siege --variant test --ads off` succeeds (it runs audit:privacy after prebuild)",
         "copies": [
@@ -1304,7 +1312,9 @@
             "skill": "architecture-and-boundaries",
             "paths": [
               "packages/shell/src/config/with-shell*",
-              "packages/shell/src/config/shell-plugins*"
+              "packages/shell/src/config/shell-plugins*",
+              "packages/shell/src/config/main-application*",
+              "packages/shell/src/config/google-telemetry*"
             ],
             "swap": true,
             "note": "swap: the final with-shell.ts and its test replace the bootstrap's phase-0 pair (commit trailer Spec-Change: with-shell final composer (phase 0 placeholder replaced))"
@@ -1348,6 +1358,12 @@
               "packages/tooling/src/build/**",
               "packages/tooling/src/ios/**",
               "packages/tooling/src/e2e/maestro-args*"
+            ]
+          },
+          {
+            "skill": "android-emulator-build",
+            "paths": [
+              "packages/tooling/src/android/toolchain*"
             ]
           }
         ],
