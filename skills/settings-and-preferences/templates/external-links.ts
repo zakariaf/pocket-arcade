@@ -42,18 +42,24 @@ export type StoreIds = {
   readonly androidPackage: string | undefined;
 };
 
+/** The links to the game's store, tried in order: Google Play's page on Android, else `appStore`'s. */
+function storeUrlsOf(
+  ids: StoreIds,
+  appStore: (appStoreId: string | undefined) => string | null,
+): readonly string[] | null {
+  if (ids.os === 'android') return playStoreUrls(ids.androidPackage);
+  const url = appStore(ids.appStoreId);
+  return url === null ? null : [url];
+}
+
 /** S11's Rate, tried in order: the App Store's review page on iOS, Google Play's page on Android. */
 export function storeReviewUrlsOf(ids: StoreIds): readonly string[] | null {
-  if (ids.os === 'android') return playStoreUrls(ids.androidPackage);
-  const url = storeReviewUrl(ids.appStoreId);
-  return url === null ? null : [url];
+  return storeUrlsOf(ids, storeReviewUrl);
 }
 
 /** S14's "please update", tried in order: the App Store page on iOS, Google Play's page on Android. */
 export function storeUpdateUrlsOf(ids: StoreIds): readonly string[] | null {
-  if (ids.os === 'android') return playStoreUrls(ids.androidPackage);
-  const url = storePageUrl(ids.appStoreId);
-  return url === null ? null : [url];
+  return storeUrlsOf(ids, storePageUrl);
 }
 
 /** The phone's mail app with the support address, and the version in the subject. */
