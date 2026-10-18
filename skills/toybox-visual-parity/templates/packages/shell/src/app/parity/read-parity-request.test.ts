@@ -1,7 +1,7 @@
 // packages/shell/src/app/parity/read-parity-request.test.ts
 import { PARITY_LAUNCH_ARGUMENT, readParityRequest } from './read-parity-request.ts';
 
-import type { SettingsReader } from './read-parity-request.ts';
+import type { SettingsReader } from './parity-launch-extra.ts';
 
 function settingsWith(values: Readonly<Record<string, unknown>>): SettingsReader {
   return { get: (key) => values[key] };

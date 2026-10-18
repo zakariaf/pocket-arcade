@@ -9,12 +9,11 @@ import { parityDateProblem } from './parity-fixture.ts';
 import { androidLaunchExtras } from './parity-launch-extra.ts';
 import { parseParityRequest } from './parity-request.ts';
 
+import type { SettingsReader } from './parity-launch-extra.ts';
 import type { ParityParseResult } from './parity-request.ts';
 
 /** The launch argument capture-app.mjs passes (without its leading dash). */
 export const PARITY_LAUNCH_ARGUMENT = 'parity';
-
-export type SettingsReader = { readonly get: (key: string) => unknown };
 
 const NOT_TEXT: ParityParseResult = { ok: false, error: 'the -parity launch argument is not text' };
 

@@ -9,14 +9,14 @@ import { requireOptionalNativeModule } from 'expo';
 export type ParityLaunchModule = { readonly getLaunchExtra: (key: string) => string | null };
 
 /** The shape read-parity-request.ts reads launch values through (React Native Settings on iOS). */
-export type LaunchExtrasReader = { readonly get: (key: string) => unknown };
+export type SettingsReader = { readonly get: (key: string) => unknown };
 
 /** A reader over the module's extras; without the module (Jest, a build without it) every value is null. */
-export function launchExtrasReader(module: ParityLaunchModule | null): LaunchExtrasReader {
+export function launchExtrasReader(module: ParityLaunchModule | null): SettingsReader {
   return { get: (key) => module?.getLaunchExtra(key) ?? null };
 }
 
 /** This launch's intent extras, through the Shell's ParityLaunch module. */
-export function androidLaunchExtras(): LaunchExtrasReader {
+export function androidLaunchExtras(): SettingsReader {
   return launchExtrasReader(requireOptionalNativeModule<ParityLaunchModule>('ParityLaunch'));
 }
