@@ -1,10 +1,11 @@
 // packages/tooling/src/audit/network-native-layer.ts
 // Layer C: network-capable native code in every autolinked module, iOS (Swift, Objective-C, C)
 // and Android (Kotlin, Java). Android's HTTP clients are their own category, httpClient.
-import { execFileSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
+import { promisify } from 'node:util';
 
 import { addFinding } from './network-baseline.ts';
 
@@ -108,33 +109,36 @@ export function moduleRootsOf(
   return roots;
 }
 
-function autolinking(appDir: string, args: readonly string[]): unknown {
-  const json = execFileSync('npx', ['expo-modules-autolinking', ...args], {
+const execFileAsync = promisify(execFile);
+
+async function autolinking(appDir: string, args: readonly string[]): Promise<unknown> {
+  const { stdout } = await execFileAsync('npx', ['expo-modules-autolinking', ...args], {
     cwd: appDir,
     encoding: 'utf8',
   });
-  return JSON.parse(json) as unknown;
+  return JSON.parse(stdout) as unknown;
 }
 
-/** Every native module of the app on iOS and on Android (a module may support only one). */
-export function nativeModuleRoots(appDir: string): Map<string, string> {
+/**
+ * Every native module of the app on iOS and on Android (a module may support only one). The four
+ * autolinking runs are independent and run together; the roots keep the iOS-then-Android order.
+ */
+export async function nativeModuleRoots(appDir: string): Promise<Map<string, string>> {
   const reactNative = installedPackageRoot(appDir, 'react-native');
-  const rootsFor = (rnPlatform: string, expoPlatform: string): Map<string, string> =>
+  const linking = (command: string, platform: string): Promise<unknown> =>
+    autolinking(appDir, [command, '--platform', platform, '--json']);
+  const [iosRn, iosExpo, androidRn, androidExpo] = await Promise.all([
+    linking('react-native-config', 'ios'),
+    linking('resolve', 'apple'),
+    linking('react-native-config', 'android'),
+    linking('resolve', 'android'),
+  ]);
+  const rootsFor = (rn: unknown, expo: unknown): Map<string, string> =>
     moduleRootsOf(reactNative, {
-      rn: autolinking(appDir, [
-        'react-native-config',
-        '--platform',
-        rnPlatform,
-        '--json',
-      ]) as AutolinkingOutput['rn'],
-      expo: autolinking(appDir, [
-        'resolve',
-        '--platform',
-        expoPlatform,
-        '--json',
-      ]) as AutolinkingOutput['expo'],
+      rn: rn as AutolinkingOutput['rn'],
+      expo: expo as AutolinkingOutput['expo'],
     });
-  return new Map([...rootsFor('ios', 'apple'), ...rootsFor('android', 'android')]);
+  return new Map([...rootsFor(iosRn, iosExpo), ...rootsFor(androidRn, androidExpo)]);
 }
 
 function scanFile(path: string, owner: string, findings: Map<string, Set<string>>): void {
