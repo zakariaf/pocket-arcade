@@ -1,0 +1,11 @@
+// packages/tooling/src/clock/system-clock.ts
+// The ONLY tooling module that reads the wall clock (the ESLint config exempts exactly this file
+// from the Node-code clock ban): every other tooling module receives the time as a value.
+export function nowEpochSeconds(): number {
+  return Math.floor(Date.now() / 1000);
+}
+
+// Today's UTC date as YYYY-MM-DD (the release-age exclude check compares against it).
+export function todayIso(): string {
+  return new Date(Date.now()).toISOString().slice(0, 10);
+}

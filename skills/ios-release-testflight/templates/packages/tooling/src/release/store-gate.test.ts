@@ -149,6 +149,18 @@ describe('app ids, placeholders and the tracking text (owner decisions O1 and O4
     expect(ownerStepsPendingLine(problems)).toBe('OWNER STEPS PENDING: G3, G5');
   });
 
+  it("names G5 for Google's test unit ids in a live build: it would show test ads and earn nothing", () => {
+    const facts = {
+      ...CLEAN_STORE,
+      adUnits: ['ca-app-pub-7310520968431056/4417703951', 'ca-app-pub-3940256099942544/1712485313'],
+    };
+    const problems = storeGateProblems(facts, STORE);
+    expect(problems).toStrictEqual([
+      "[owner-placeholder] extra.adUnits is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1712485313 (owner step G5)",
+    ]);
+    expect(ownerStepsPendingLine(problems)).toBe('OWNER STEPS PENDING: G5');
+  });
+
   it('lists only the steps still pending, and nothing without an owner placeholder', () => {
     const offStore = {
       ...CLEAN_STORE,
