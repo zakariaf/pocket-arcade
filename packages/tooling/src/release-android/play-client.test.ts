@@ -164,6 +164,21 @@ describe('the stops', () => {
     expect(google.requests).toHaveLength(4);
   });
 
+  it('stops on a token answer without an access_token, naming the token response, before any API call', async () => {
+    const noToken = {
+      status: 200,
+      text: JSON.stringify({ token_type: 'Bearer', expires_in: 3599 }),
+    };
+    const google = fakeGoogle([noToken, OK_EDIT, OK_BUNDLE, OK_TRACK, OK_COMMIT]);
+    const run = uploadToInternal(client(google.http), new Uint8Array([1]), null);
+    await expect(run).rejects.toMatchObject({ name: 'PlayStop', reason: 'http-error' });
+    await expect(run).rejects.toThrow(
+      'token stopped: http-error (HTTP 200): the token response has no access_token',
+    );
+    await expect(run).rejects.not.toThrow('permission');
+    expect(google.requests).toHaveLength(1);
+  });
+
   it('names the API not enabled for the project', async () => {
     const disabled = {
       status: 403,
