@@ -226,7 +226,7 @@ const editedMap = (dir) => {
   const env = { ...process.env, FAKE_ANDROID_LOG: log, FAKE_ANDROID_STATE_DIR: scratch() };
   const run = spawnSync(process.execPath, [join(HERE, 'setup-parity-emu.mjs'), '--appearance', 'light', '--boot-timeout', '5', '--log-dir', scratch(), ...avdHome(dir), ...emuFakes], { cwd: dir, env, encoding: 'utf8' });
   const calls = existsSync(log) ? readFileSync(log, 'utf8').split('\n').filter(Boolean) : [];
-  const afterStart = calls.slice(calls.findIndex((line) => line.startsWith('emulator -avd')) + 1).filter((line) => line.startsWith('adb '));
+  const afterStart = calls.slice(calls.findIndex((line) => /^emulator -avd e07-android-parity /.test(line)) + 1).filter((line) => line.startsWith('adb '));
   const problems = [];
   if (run.status !== 0) problems.push(`setup-parity-emu exited ${run.status}: ${(run.stdout + run.stderr).trim().split('\n').at(-1)}`);
   if (afterStart[0] !== 'adb -s emulator-5554 shell getprop sys.boot_completed') problems.push(`the first adb call after the start is "${afterStart[0]}", not the boot poll of emulator-5554`);
