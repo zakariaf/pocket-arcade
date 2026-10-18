@@ -101,6 +101,7 @@ On Google Play (`npm run release:android`), the same: stop, never retry, one mes
 - HTTP 401 or 403 from the Android Publisher API (`auth`: the service account is not invited for this app, lacks "Release apps to testing tracks", or its key was deleted: human step GP3).
 - The Android Publisher API is not enabled in the service account's project (`api-not-enabled`: human step GP3).
 - App not found, HTTP 404 (`app-not-found`: no Play Console app yet, or its first upload is not done: human steps GP1 and GP7).
+- A draft app, HTTP 400 "Only releases with status draft may be created on draft app." (`draft-app`: the app was never rolled out, so the API cannot release it; never resent as a draft: the owner uploads this gated AAB in the Console and rolls it out, human step GP7, and the API uploads every later build).
 - Missing policy declarations (`policy-declarations`: App content is incomplete: human step GP4).
 - A version code that was already used (`version-code-used`: never lower or reuse the number; a new release run takes the next shared build number).
 
