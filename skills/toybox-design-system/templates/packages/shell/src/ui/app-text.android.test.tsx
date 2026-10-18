@@ -4,7 +4,7 @@
 // half below the descent, so a Vazirmatn line's overflow is already centred on its line box, as in
 // Chrome. iOS puts all of it above the line, which is why the guard moves iOS text down by half the
 // overflow; the same shift on Android drew S2's Persian title 2 pt below the design (E18-T20).
-import { screen } from '@testing-library/react-native';
+import { fireEvent, screen } from '@testing-library/react-native';
 import { PixelRatio, StyleSheet } from 'react-native';
 
 import { isolate, RLM } from '@e07/shell/i18n/bidi.ts';
@@ -94,6 +94,33 @@ describe('AppText on Android', () => {
       screen.getByTestId('privacy-policy.section.purchase.body').props['textBreakStrategy'],
     ).toBe('simple');
   });
+  it('keeps every word whole in a balanced title Android draws with break points (spec 8.11, 15.1)', async () => {
+    // Android draws the title with a zero-width space after each in-word hyphen, and reports its
+    // lines as drawn. A probe that split "left" kept the line count; read against the text as
+    // written, the lines spelled another text, so the word-split guard said nothing.
+    await renderWithShell(<AppText text="Right-to-left layout" variant="title" testID="x.title" />);
+    const title = (): ReturnType<typeof screen.getByTestId> => screen.getByTestId('x.title');
+    const lines = (...parts: readonly (readonly [string, number])[]): unknown => ({
+      nativeEvent: { lines: parts.map(([text, width]) => ({ text, width })) },
+    });
+    await fireEvent(title(), 'layout', { nativeEvent: { layout: { width: 300, height: 88 } } });
+    await fireEvent(
+      title(),
+      'textLayout',
+      lines(['Right-\u200Bto-\u200Bleft ', 250], ['layout', 90]),
+    );
+    // The first probe: floor(min((170 + 300) / 2, 249.5)) = 235, a 65 pt pad at the end.
+    expect(title()).toHaveStyle({ paddingEnd: 65 });
+
+    await fireEvent(
+      title(),
+      'textLayout',
+      lines(['Right-\u200Bto-\u200Ble', 230], ['ft layout', 120]),
+    );
+
+    expect(StyleSheet.flatten(title().props['style'])?.paddingEnd).toBeUndefined();
+  });
+
   it('lays a Persian text without letters right to left, as a TextView did (spec N11)', async () => {
     await renderWithShell(
       <AppText text="۲۸ / ۲۷۰" variant="number" testID="stats.levels-card.stars.value" />,

@@ -10,6 +10,8 @@ import {
   PDI,
   RLM,
   stripIsolates,
+  WORD_JOINER,
+  ZERO_WIDTH_SPACE,
 } from './bidi.ts';
 
 describe('isolate', () => {
@@ -42,6 +44,17 @@ describe('isInvisibleMark', () => {
     for (const code of [0x061c, 0x200d, 0x200e, 0x200f, 0x2066, 0x2067, 0x2068, 0x2069, 0xfeff]) {
       expect(isInvisibleMark(String.fromCodePoint(code))).toBe(true);
     }
+  });
+
+  it("finds the break marks Android's text carries too: the zero-width space and the word joiner", () => {
+    // line-breaks.ts draws them (a break point after an in-word hyphen, a no-break space held by
+    // word joiners), and the balanced wrap reads Android's lines as drawn (spec 15.1).
+    expect(
+      [0x200b, 0x2060].map((code) => isInvisibleMark(String.fromCodePoint(code))),
+    ).toStrictEqual([true, true]);
+    expect([ZERO_WIDTH_SPACE, WORD_JOINER].map((mark) => mark.codePointAt(0))).toStrictEqual([
+      0x200b, 0x2060,
+    ]);
   });
 
   it('treats letters, digits, spaces and the zero-width non-joiner as drawn text', () => {

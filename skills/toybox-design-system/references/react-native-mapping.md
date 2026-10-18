@@ -24,7 +24,8 @@
 | `packages/shell/src/theme/theme-set.ts`, `theme-context.ts`, `use-theme.ts`, `make-styles.ts`, `theme-provider.tsx`, `contrast.ts` | the four themes built once, context, hook, style factory, provider, WCAG maths | yes |
 | `packages/shell/src/i18n/fonts.ts` | `FONT_FAMILIES`, `scriptFontFor(language, weight, face)` (synced from the library; the RTL skill ships the same file) | yes |
 | `packages/shell/src/i18n/use-localized-text-style.ts` | family, size, pixel-snapped line height (`snapToPixels`), tracking, direction, alignment (synced from the library; the RTL skill ships the same file) | yes |
-| `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`) | yes |
+| `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`); it works out the text it draws (a brand name isolated, Android's marks) first, and the balanced wrap and the room measure that text | yes |
+| `packages/shell/src/ui/use-text-room.ts` | `useTextRoom(text, { guard, lineHeight, numberOfLines })`: AppText's room under its last line and the layout handlers that count its lines (`fitOf`, `countOf`, `afterReport`) | yes |
 | `packages/shell/src/ui/use-scaled-size.ts`, `font-scale-curve.ts` | `useScaledSize()`: the size the phone draws a text size or line height at (linear and capped at `MAX_TEXT_SCALE` = 200 % on iOS and Android before 14; on Android 14 and later along AOSP's font scale curves, a port of `FontScaleConverterFactory`); AppText's room and the quiet underline grow with it | yes |
 | `packages/shell/src/ui/use-balanced-wrap.ts` | `useBalancedWrap(isEnabled, text, align)`: the design's `text-wrap: balance` for display text | yes |
 | `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash; `isStretched` in a dialog row) | yes |

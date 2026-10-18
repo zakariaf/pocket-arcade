@@ -13,17 +13,36 @@ export function stripIsolates(text: string): string {
   return text.replaceAll(FSI, '').replaceAll(PDI, '');
 }
 
-// Marks drawn as nothing: ALM, ZWJ, LRM, RLM, the four isolates and the BOM. Text measuring (the
-// balanced wrap's word breaks) looks through them; only this file spells bidi controls out.
-const INVISIBLE_MARK = /[؜‍‎‏⁦-⁩﻿]/u;
-
-/** True for a character drawn as nothing (a bidi mark or isolate, a joiner, the BOM). */
-export function isInvisibleMark(char: string): boolean {
-  return INVISIBLE_MARK.test(char);
-}
-
 // U+200F RIGHT-TO-LEFT MARK: a strong right-to-left character drawn as nothing.
 export const RLM = '\u200F';
+// U+200B ZERO WIDTH SPACE: a line break point drawn as nothing (after an in-word hyphen, Android).
+export const ZERO_WIDTH_SPACE = '\u200B';
+// U+2060 WORD JOINER: no line break here, drawn as nothing (around a no-break space, Android).
+export const WORD_JOINER = '\u2060';
+
+/**
+ * The one table of marks drawn as nothing: ALM, the zero-width space, ZWJ, LRM, RLM, the four
+ * isolates, the word joiner and the BOM. Text measuring (the balanced wrap's word breaks) looks
+ * through them, and line-breaks.ts draws its marks from here; only this file spells them out.
+ */
+const INVISIBLE_MARKS: ReadonlySet<string> = new Set([
+  '\u061C',
+  ZERO_WIDTH_SPACE,
+  '\u200D',
+  '\u200E',
+  RLM,
+  '\u2066',
+  '\u2067',
+  FSI,
+  PDI,
+  WORD_JOINER,
+  '\uFEFF',
+]);
+
+/** True for a character drawn as nothing (a bidi mark or isolate, a joiner, a break mark, the BOM). */
+export function isInvisibleMark(char: string): boolean {
+  return INVISIBLE_MARKS.has(char);
+}
 
 const STRONG_RTL =
   /[\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Syriac}\p{Script=Thaana}\p{Script=Nko}]/u;
