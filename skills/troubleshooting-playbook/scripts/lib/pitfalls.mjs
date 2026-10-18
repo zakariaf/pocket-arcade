@@ -240,6 +240,8 @@ function airplaneOutsideAndroid(ctx) {
   for (const rel of flows.filter((flow) => !androidOnly.has(flow))) {
     const body = ctx.read(rel);
     for (const match of body.matchAll(/\bsetAirplaneMode\b/g)) {
+      // A YAML comment that names the command runs nothing (the sub-flow's own header says why).
+      if (body.slice(body.lastIndexOf('\n', match.index) + 1, match.index).includes('#')) continue;
       const line = lineOf(body, match.index);
       if (!blocks.get(rel).guarded.has(line)) findings.push({ file: rel, line, message: 'setAirplaneMode outside a runFlow guarded by when: platform: Android: it does nothing on the iOS simulator; on iOS use the Simulate offline debug switch' });
     }

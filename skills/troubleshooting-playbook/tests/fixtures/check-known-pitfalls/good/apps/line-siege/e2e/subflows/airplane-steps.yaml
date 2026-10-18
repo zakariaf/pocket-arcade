@@ -1,0 +1,17 @@
+# A sub-flow the Android runner starts on its own (not through a runFlow file:), like the repo's
+# packages/shell/e2e/subflows/airplane-mode.yaml. Maestro's setAirplaneMode works on Android only,
+# so each step sits in a runFlow guarded by platform: Android; this comment names the command.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      platform: Android
+      true: ${AIRPLANE == 'enabled'}
+    commands:
+      - setAirplaneMode: enabled
+- runFlow:
+    when:
+      platform: Android
+      true: ${AIRPLANE == 'disabled'}
+    commands:
+      - setAirplaneMode: disabled
