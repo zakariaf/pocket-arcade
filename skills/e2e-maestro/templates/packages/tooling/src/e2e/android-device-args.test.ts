@@ -166,4 +166,15 @@ describe('the device settings of a run', () => {
     expect(args.slice(0, 3)).toStrictEqual(['-s', SERIAL, 'shell']);
     expect(args[3]).toBe('for f in tcp tcp6 udp udp6; do echo "## $f"; cat /proc/net/$f; done');
   });
+
+  it("puts the app's pidof before the socket tables in the same call (the sampler's one adb call a second)", () => {
+    expect(procNetArgs(SERIAL, PACKAGE)).toStrictEqual([
+      ...['-s', SERIAL, 'shell'],
+      `pidof ${PACKAGE}; for f in tcp tcp6 udp udp6; do echo "## $f"; cat /proc/net/$f; done`,
+    ]);
+  });
+
+  it('refuses a package name the device shell would read as more than a name', () => {
+    expect(() => procNetArgs(SERIAL, 'io.applander.x; rm -rf /')).toThrow('is not a package name');
+  });
 });

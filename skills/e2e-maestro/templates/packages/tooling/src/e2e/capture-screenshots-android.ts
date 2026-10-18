@@ -6,12 +6,12 @@
 // each with the animations off and the demo-mode status bar at 9:41 (stillScreenCommands), light and
 // dark through cmd uimode night, font_scale 1.0 or 2.0. Each PNG is compared with
 // apps/<game>/e2e/baselines-android/<device>/<lang>-<theme>[-font-scale-2.0]/<screen>.png (the iOS
-// baselines stay apart) at the same tolerance, MAX_DIFF_RATIO = 0.002. A combination that fails is
+// baselines stay apart) at the same tolerance (screenshot-compare.ts). A combination that fails is
 // recorded and the next one still runs; reports/screenshots-android/summary.json and its gallery
 // are always written; a bad command line or an APK that is not test/off exits 2 without a stack.
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { globSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import {
   ANDROID_SHOTS_USAGE,
@@ -21,7 +21,6 @@ import {
 import { fontScaleArgs, themeCommands } from '@e07/tooling/e2e/android-device-args.ts';
 import {
   adbOn,
-  androidAppEnv,
   androidEnv,
   readApkApp,
   runMaestroAndroid,
@@ -32,79 +31,53 @@ import {
 } from '@e07/tooling/e2e/android-e2e-device.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
+  checkShot,
+  combosOf,
+  jobOf,
+  rawDirOf,
+  type Combo,
+  type ShotLayout,
+} from '@e07/tooling/e2e/screenshot-compare.ts';
+import {
   captureEach,
   captureFailureRow,
   matrixOutcome,
 } from '@e07/tooling/e2e/screenshot-matrix.ts';
 import { MATRIX_FLOW, type MatrixDevice } from '@e07/tooling/e2e/screenshots-cli.ts';
-import { NEW_BASELINE, writeGallery, type GalleryRow } from '@e07/tooling/e2e/write-gallery.ts';
+import { appEnv } from '@e07/tooling/e2e/simulator.ts';
+import { writeGallery, type GalleryRow } from '@e07/tooling/e2e/write-gallery.ts';
 import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 
-const MAX_DIFF_RATIO = 0.002;
 const REPORTS = join('reports', 'screenshots-android');
 
 type Cli = AndroidShotsOptions & { readonly app: AndroidApp };
-type Combo = {
-  readonly device: MatrixDevice;
-  readonly lang: string;
-  readonly theme: 'light' | 'dark';
-};
 
-const comboDir = (cli: Cli, combo: Combo): string =>
-  join(
-    combo.device,
-    `${combo.lang}-${combo.theme}${cli.fontScale === '1.0' ? '' : `-font-scale-${cli.fontScale}`}`,
-  );
-const baselineDirOf = (cli: Cli, combo: Combo): string =>
-  join('apps', cli.game, 'e2e', 'baselines-android', comboDir(cli, combo));
-const rawDir = (cli: Cli, combo: Combo): string => join(REPORTS, 'raw', comboDir(cli, combo));
+/** Android keeps baselines-android/ and reports/screenshots-android/ apart from iOS's. */
+function layoutOf(cli: Cli): ShotLayout {
+  return {
+    game: cli.game,
+    baselines: 'baselines-android',
+    reports: REPORTS,
+    suffix: cli.fontScale === '1.0' ? '' : `-font-scale-${cli.fontScale}`,
+    isUpdate: cli.isUpdate,
+    compare: comparePng,
+  };
+}
 
 /** One combination's screenshots; a Maestro run that fails throws (its job's capture-failed row). */
-async function capture(cli: Cli, maestro: AndroidMaestroDevice, combo: Combo): Promise<string[]> {
-  const outDir = rawDir(cli, combo);
+async function capture(
+  cli: Cli,
+  target: { readonly maestro: AndroidMaestroDevice; readonly env: NodeJS.ProcessEnv },
+  combo: Combo,
+): Promise<string[]> {
+  const outDir = rawDirOf(layoutOf(cli), combo);
   rmSync(outDir, { recursive: true, force: true });
   const vars = ['-e', `LANG=${combo.lang}`, '-e', `THEME=${combo.theme}`];
-  const status = await runMaestroAndroid(maestro, [
-    'test',
-    MATRIX_FLOW,
-    '--test-output-dir',
-    outDir,
-    ...androidAppEnv(cli.app),
-    ...vars,
-  ]);
+  const args = ['test', MATRIX_FLOW, '--test-output-dir', outDir, ...appEnv(cli.app), ...vars];
+  const status = await runMaestroAndroid(target.maestro, args, target.env);
   if (status !== 0) throw new Error(`screenshots: maestro exited ${String(status)}, see ${outDir}`);
   return globSync(join(outDir, '**', '*.png'));
 }
-
-function check(cli: Cli, combo: Combo, actual: string): GalleryRow {
-  const baselineDir = baselineDirOf(cli, combo);
-  const baseline = join(baselineDir, basename(actual));
-  const label = `${comboDir(cli, combo)}/${basename(actual, '.png')}`;
-  if (cli.isUpdate) {
-    mkdirSync(baselineDir, { recursive: true });
-    copyFileSync(actual, baseline);
-    return { label, actual, baseline, result: NEW_BASELINE };
-  }
-  const diffPath = join(REPORTS, 'diff', comboDir(cli, combo), basename(actual));
-  const result = comparePng(readFileSync(actual), {
-    baselinePath: baseline,
-    diffPath,
-    maxDiffRatio: MAX_DIFF_RATIO,
-  });
-  return { label, actual, baseline, result };
-}
-
-const jobOf = (cli: Cli, combo: Combo, run: () => Promise<GalleryRow[]>) => ({
-  label: comboDir(cli, combo),
-  outDir: rawDir(cli, combo),
-  baselineDir: baselineDirOf(cli, combo),
-  run,
-});
-
-const combosOf = (cli: Cli, device: MatrixDevice): Combo[] =>
-  (['light', 'dark'] as const).flatMap((theme) =>
-    cli.langs.map((lang) => ({ device, lang, theme })),
-  );
 
 /** The device's emulator, its font scale and one driver port for every capture on it. */
 async function startDevice(cli: Cli, device: MatrixDevice, env: NodeJS.ProcessEnv) {
@@ -124,14 +97,15 @@ async function runDevice(
   device: MatrixDevice,
   env: NodeJS.ProcessEnv,
 ): Promise<GalleryRow[]> {
-  const combos = combosOf(cli, device);
+  const layout = layoutOf(cli);
+  const combos = combosOf(cli.langs, device);
   let started: Awaited<ReturnType<typeof startDevice>>;
   try {
     started = await startDevice(cli, device, env);
   } catch (error: unknown) {
     return combos.map((combo) =>
       captureFailureRow(
-        jobOf(cli, combo, () => Promise.resolve([])),
+        jobOf(layout, combo, () => Promise.resolve([])),
         error,
       ),
     );
@@ -139,10 +113,10 @@ async function runDevice(
   const { emulator, maestro } = started;
   return captureEach(
     combos.map((combo) =>
-      jobOf(cli, combo, async () => {
+      jobOf(layout, combo, async () => {
         for (const args of themeCommands(emulator.serial, combo.theme)) adbOn(emulator, args);
-        const shots = await capture(cli, maestro, combo);
-        return shots.map((actual) => check(cli, combo, actual));
+        const shots = await capture(cli, { maestro, env }, combo);
+        return shots.map((actual) => checkShot(layout, combo, actual));
       }),
     ),
   );

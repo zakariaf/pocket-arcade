@@ -100,9 +100,21 @@ export function pidofArgs(serial: string, packageName: string): string[] {
   return shell(serial, 'pidof', packageName);
 }
 
-/** The four socket tables in one call, each after a "## <table>" marker (android-socket-sampler.ts). */
-export function procNetArgs(serial: string): string[] {
-  return shell(serial, 'for f in tcp tcp6 udp udp6; do echo "## $f"; cat /proc/net/$f; done');
+/** An Android package name: letters, digits, _ and dots, nothing the device's sh would read. */
+const PACKAGE_NAME = /^[A-Za-z][\w]*(\.[A-Za-z][\w]*)+$/;
+const PROC_NET = 'for f in tcp tcp6 udp udp6; do echo "## $f"; cat /proc/net/$f; done';
+
+/**
+ * The four socket tables in one call, each after a "## <table>" marker (android-socket-sampler.ts).
+ * With `pidOfPackage`, the app's pidof output comes first in the same call: pidOf reads it, and
+ * parseProcNet skips everything before the first marker.
+ */
+export function procNetArgs(serial: string, pidOfPackage?: string): string[] {
+  if (pidOfPackage === undefined) return shell(serial, PROC_NET);
+  if (!PACKAGE_NAME.test(pidOfPackage)) {
+    throw new Error(`"${pidOfPackage}" is not a package name the device shell can take as it is`);
+  }
+  return shell(serial, `pidof ${pidOfPackage}; ${PROC_NET}`);
 }
 
 /** Android's text size: 1.0, or 2.0 for the 200 % pass. */

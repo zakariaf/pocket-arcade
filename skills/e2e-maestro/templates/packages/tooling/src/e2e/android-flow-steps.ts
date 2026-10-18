@@ -9,7 +9,7 @@
 //    iterating) runs one call without airplane mode.
 // 4. large text: the a11y flows at font_scale 2.0 in en and fa, on the phone, then on the tablet
 //    (the phone's app stopped first, the tablet with a socket sampler of its own).
-import { existsSync, globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
@@ -20,20 +20,25 @@ import {
 } from '@e07/tooling/e2e/android-device-args.ts';
 import {
   adbOn,
-  androidAppEnv,
   runMaestroAndroid,
   startE2eEmulator,
   type AndroidApp,
   type AndroidMaestroDevice,
   type Device,
 } from '@e07/tooling/e2e/android-e2e-device.ts';
-import { mergeJunitReports } from '@e07/tooling/e2e/junit-merge.ts';
+import {
+  allFlows,
+  largeTextFlows,
+  mergeJunitInto,
+  reportArgs,
+} from '@e07/tooling/e2e/flow-files.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
   flowCallsOf,
   saveBenchmarkEvidenceOf,
   saveBenchmarkFileText,
 } from '@e07/tooling/e2e/save-benchmark-evidence.ts';
+import { appEnv } from '@e07/tooling/e2e/simulator.ts';
 
 import type { AndroidE2eOptions } from '@e07/tooling/e2e/android-cli.ts';
 
@@ -56,10 +61,6 @@ const AIRPLANE_FLOW = join('packages', 'shell', 'e2e', 'subflows', 'airplane-mod
 const LARGE_TEXT_LANGS = ['en', 'fa'] as const;
 const EXCLUDE = '--exclude-tags';
 
-const reportArgs = (dir: string): string[] => [
-  ...['--format', 'JUNIT', '--output', join(dir, 'junit.xml'), '--test-output-dir', dir],
-];
-
 type FlowCall = {
   readonly flows: readonly string[];
   readonly dir: string;
@@ -71,28 +72,14 @@ function testFlows(run: AndroidRun, call: FlowCall): Promise<number> {
   mkdirSync(call.dir, { recursive: true });
   const { app, cli } = run;
   const args = ['test', ...call.flows, ...reportArgs(call.dir), ...call.tags];
-  return runMaestroAndroid(run.maestro, [...args, ...androidAppEnv(app), ...cli.maestroArgs]);
-}
-
-/** Adds a call's test cases to junit.xml; a report that cannot be merged is a failure line. */
-function mergeInto(out: string, dir: string): string | null {
-  const extra = join(dir, 'junit.xml');
-  if (!existsSync(extra)) return null; // Maestro wrote nothing: its exit code fails the step
-  const junit = join(out, 'junit.xml');
-  const main = existsSync(junit) ? readFileSync(junit, 'utf8') : '';
-  try {
-    writeFileSync(junit, mergeJunitReports(main, readFileSync(extra, 'utf8')));
-    return null;
-  } catch (error: unknown) {
-    return `flows: ${error instanceof Error ? error.message : String(error)} (see ${dir})`;
-  }
+  return runMaestroAndroid(run.maestro, [...args, ...appEnv(app), ...cli.maestroArgs], run.env);
 }
 
 /** The offline journeys under real airplane mode, which is turned off again whatever happens. */
 async function offlineFlows(run: AndroidRun, flows: readonly string[]): Promise<number> {
   const airplane = (mode: string): Promise<number> => {
-    const args = ['test', AIRPLANE_FLOW, ...androidAppEnv(run.app), '-e', `AIRPLANE=${mode}`];
-    return runMaestroAndroid(run.maestro, args);
+    const args = ['test', AIRPLANE_FLOW, ...appEnv(run.app), '-e', `AIRPLANE=${mode}`];
+    return runMaestroAndroid(run.maestro, args, run.env);
   };
   if ((await airplane('enabled')) !== 0) return 1;
   try {
@@ -106,25 +93,21 @@ async function offlineFlows(run: AndroidRun, flows: readonly string[]): Promise<
 /** Step 1; one failure line per failed call or unmergeable report. */
 export async function runAndroidFlows(run: AndroidRun): Promise<string[]> {
   const { cli, out } = run;
-  const flows = [
-    ...globSync('packages/shell/e2e/flows/*/*.yaml'),
-    ...globSync(`apps/${cli.game}/e2e/flows/*/*.yaml`),
-  ].sort();
-  const { others, benchmark } = flowCallsOf(flows, cli.maestroArgs);
+  const { others, benchmark } = flowCallsOf(allFlows(cli.game), cli.maestroArgs);
   const isFiltered = cli.maestroArgs.length > 0;
   const excluded = isFiltered ? 'quarantine,a11y' : 'quarantine,a11y,offline';
   const statuses = [await testFlows(run, { flows: others, dir: out, tags: [EXCLUDE, excluded] })];
   const merges: (string | null)[] = [];
   if (!isFiltered) {
     statuses.push(await offlineFlows(run, others));
-    merges.push(mergeInto(out, join(out, 'offline-flows')));
+    merges.push(mergeJunitInto(out, join(out, 'offline-flows')));
   }
   if (benchmark !== null) {
     const dir = join(out, 'save-benchmark-flow');
     statuses.push(await testFlows(run, { flows: [benchmark], dir, tags: [EXCLUDE, 'quarantine'] }));
     const evidence = saveBenchmarkEvidenceOf(run.readLog(), [benchmark]);
     writeFileSync(join(out, 'save-benchmark.json'), saveBenchmarkFileText(evidence));
-    merges.push(mergeInto(out, dir));
+    merges.push(mergeJunitInto(out, dir));
   }
   const failed = statuses.filter((status) => status !== 0);
   return [
@@ -143,41 +126,47 @@ function startTablet(run: AndroidRun): Device {
   return tablet;
 }
 
-/** The a11y flows at font_scale 2.0 on one emulator, in en and fa. */
-async function largeTextOn(run: AndroidRun, key: string, maestro: AndroidMaestroDevice) {
-  const flows = [
-    ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
-    ...globSync(`apps/${run.cli.game}/e2e/flows/a11y/*.yaml`),
-  ].sort();
+/** One emulator of step 4: the a11y flows at font_scale 2.0 in en and fa, then back to 1.0. */
+type LargeTextTarget = {
+  readonly key: 'phone' | 'tablet';
+  readonly device: Device;
+  readonly maestro: AndroidMaestroDevice;
+};
+
+async function largeTextOn(
+  run: AndroidRun,
+  flows: readonly string[],
+  target: LargeTextTarget,
+): Promise<string[]> {
+  const { key, device, maestro } = target;
+  adbOn(device, fontScaleArgs(device.serial, LARGE_FONT_SCALE));
   const failures: string[] = [];
   for (const lang of LARGE_TEXT_LANGS) {
     const dir = join(run.out, 'large-text', `${key}-${lang}`);
     mkdirSync(dir, { recursive: true });
     const args = ['test', ...flows, ...reportArgs(dir), '--include-tags', 'a11y'];
-    const env = [EXCLUDE, 'quarantine', ...androidAppEnv(run.app), '-e', `LANG=${lang}`];
-    if ((await runMaestroAndroid(maestro, [...args, ...env])) !== 0) {
+    const env = [EXCLUDE, 'quarantine', ...appEnv(run.app), '-e', `LANG=${lang}`];
+    if ((await runMaestroAndroid(maestro, [...args, ...env], run.env)) !== 0) {
       failures.push(`large text: ${key} ${lang} failed, see ${dir}`);
     }
   }
+  adbOn(device, fontScaleArgs(device.serial, DEFAULT_FONT_SCALE));
+  adbOn(device, forceStopArgs(device.serial, run.app.id));
   return failures;
 }
 
-/** Step 4: the phone, then the tablet; the font scale back to 1.0 afterwards. */
+/** Step 4: the phone, then the tablet (its own driver port); the a11y flows are listed once. */
 export async function runAndroidLargeText(run: AndroidRun): Promise<string[]> {
-  const hasFlows =
-    globSync('packages/shell/e2e/flows/a11y/*.yaml').length +
-      globSync(`apps/${run.cli.game}/e2e/flows/a11y/*.yaml`).length >
-    0;
-  if (!hasFlows) return [];
-  const failures: string[] = [];
-  for (const key of ['phone', 'tablet'] as const) {
-    const device = key === 'phone' ? run.phone : startTablet(run);
-    const port = run.cli.driverPort ?? (await freeDriverPort());
-    const maestro = key === 'phone' ? run.maestro : { serial: device.serial, driverPort: port };
-    adbOn(device, fontScaleArgs(device.serial, LARGE_FONT_SCALE));
-    failures.push(...(await largeTextOn(run, key, maestro)));
-    adbOn(device, fontScaleArgs(device.serial, DEFAULT_FONT_SCALE));
-    adbOn(device, forceStopArgs(device.serial, run.app.id));
-  }
-  return failures;
+  const flows = largeTextFlows(run.cli.game);
+  if (flows.length === 0) return [];
+  const onPhone = { key: 'phone', device: run.phone, maestro: run.maestro } as const;
+  const failures = await largeTextOn(run, flows, onPhone);
+  const tablet = startTablet(run);
+  const driverPort = run.cli.driverPort ?? (await freeDriverPort());
+  const onTablet = {
+    key: 'tablet',
+    device: tablet,
+    maestro: { serial: tablet.serial, driverPort },
+  } as const;
+  return [...failures, ...(await largeTextOn(run, flows, onTablet))];
 }

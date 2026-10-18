@@ -68,6 +68,17 @@ export function coldStartEntries(perfLog: unknown): ColdStartEntry[] {
   return rows.sort((a, b) => a.atEpochMs - b.atEpochMs);
 }
 
+/** The perf_log payload of a test build's save.db as its entries ([] when empty or unreadable). */
+export function perfLogOf(payload: string | null): unknown {
+  const text = payload?.trim() ?? '';
+  if (text === '') return [];
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return []; // a payload cut while the app wrote it: the next read tries again
+  }
+}
+
 /**
  * The newest cold start, or null. A launch has been measured once this is newer than before the
  * launch (compare atEpochMs, not counts: the log is a ring buffer of 200 entries).
