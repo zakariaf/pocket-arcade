@@ -17,9 +17,14 @@ export type AdbDevice = { readonly serial: string; readonly state: string };
 
 const PURPOSE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
+/** A kebab-case AVD purpose (`smoke`, `e2e-phone`): what every --avd option takes. */
+export function isAvdPurpose(purpose: string): boolean {
+  return PURPOSE.test(purpose);
+}
+
 /** `smoke` -> `e07-android-smoke`. Every AVD this tooling touches carries the prefix. */
 export function avdName(purpose: string): string {
-  if (!PURPOSE.test(purpose)) {
+  if (!isAvdPurpose(purpose)) {
     throw new Error(`AVD purpose "${purpose}" must be kebab-case, for example "smoke"`);
   }
   return `${AVD_PREFIX}${purpose}`;
@@ -107,4 +112,44 @@ export function demoModeCommands(): string[][] {
     demo('network', '-e', 'wifi', 'show', '-e', 'level', '4', '-e', 'mobile', 'hide'),
     demo('notifications', '-e', 'visible', 'false'),
   ];
+}
+
+/** The device side of the perf-log reader (emulator-device.ts gives it adb). */
+export type PerfLogOps = {
+  /** Root, then wait for the device again: throws on a Play Store image. */
+  readonly root: () => void;
+  /** Pulls the app's SQLite folder: throws until the app has written it. */
+  readonly pull: () => void;
+  /** The perf_log payload of the pulled save.db, or null. */
+  readonly payload: () => string | null;
+};
+
+/**
+ * The test build's perf log, read again on every call: null until it can be read. Root comes first
+ * and once; when it fails, `whenNoRoot` decides: 'null' (build:android:emu waits for a still screen
+ * instead) or 'throw' (e2e:android cannot measure without the log).
+ */
+export function perfLogReaderOf(
+  ops: PerfLogOps,
+  whenNoRoot: 'null' | 'throw',
+): () => string | null {
+  try {
+    ops.root();
+  } catch (error: unknown) {
+    if (whenNoRoot === 'throw') {
+      const why = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `adb root failed (${why}): the perf log needs the google_apis image of an e07-android-* AVD`,
+      );
+    }
+    return () => null;
+  }
+  return () => {
+    try {
+      ops.pull();
+      return ops.payload();
+    } catch {
+      return null; // not written yet, or unreadable: the next poll tries again
+    }
+  };
 }

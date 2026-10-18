@@ -7,11 +7,12 @@
 // pin the demo-mode status bar, install, launch, wait until ready (the perf log's cold start or a
 // still screen, never a fixed sleep) and screenshot with adb exec-out screencap -p. Every step logs
 // to apps/<game>/build/logs/<step>.log; the first failing step stops the run (exit 1).
-import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import {
   adb,
+  perfLogReader,
   screencap,
   startEmulator,
   toolsOf,
@@ -33,28 +34,14 @@ import {
   READY_MAX_ATTEMPTS,
   READY_POLL_MS,
   readyReason,
-  saveFolderOf,
   screenshotPath,
   variantEnv,
 } from '@e07/tooling/build/emu-build-plan.ts';
 import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
-import { readPerfLogPayload } from '@e07/tooling/ios/sim-app.ts';
-import { runToolStep, sleepMs, tailOf } from '@e07/tooling/ios/tool-step.ts';
-
-import type { StepCommand, StepContext } from '@e07/tooling/ios/tool-step.ts';
+import { runStepOrThrow, sleepMs } from '@e07/tooling/ios/tool-step.ts';
 
 /** The repo or the Mac is not ready for a build (exit 2): nothing was prebuilt, built or started. */
 class PreflightError extends Error {}
-
-function runStep(name: string, command: StepCommand, context: StepContext): void {
-  console.log(`build:android:emu: ${name} ...`);
-  const result = runToolStep(name, command, context);
-  if (result.status !== 0) {
-    throw new Error(
-      `step "${name}" failed (exit ${String(result.status)}), see ${result.logFile}:\n${tailOf(result.output, 30)}`,
-    );
-  }
-}
 
 /** Before the clean prebuild: the game, JDK 17, the SDK pins and the emulator's image. */
 function preflight(appDir: string): NodeJS.ProcessEnv {
@@ -82,28 +69,6 @@ function preflight(appDir: string): NodeJS.ProcessEnv {
   return env;
 }
 
-/** The perf log of a test build: save.db pulled with adb root (google_apis image), or null. */
-function perfLogReader(device: Device, packageName: string, appDir: string): () => string | null {
-  const local = join(appDir, 'build', 'emu-save');
-  let isRoot = true;
-  try {
-    adb(device, ['root']);
-    adb(device, ['wait-for-device']);
-  } catch {
-    isRoot = false;
-  }
-  return () => {
-    if (!isRoot) return null;
-    rmSync(local, { recursive: true, force: true });
-    try {
-      adb(device, ['pull', saveFolderOf(packageName), local]);
-    } catch {
-      return null;
-    }
-    return readPerfLogPayload(join(local, 'save.db'));
-  };
-}
-
 type ReadyTarget = {
   readonly device: Device;
   readonly perfLog: () => string | null;
@@ -125,10 +90,7 @@ function waitAndScreenshot(target: ReadyTarget, out: string): string {
       screenUnchanged: isSame,
       launchedAtEpochMs,
     });
-    if (reason !== null) {
-      screencap(device, out);
-      return reason;
-    }
+    if (reason !== null) return reason; // `out` holds the screen that was judged ready
     previous = current;
   }
   throw new Error(
@@ -146,14 +108,17 @@ function main(): number {
   const appDir = join('apps', options.game);
   const env = { ...preflight(appDir), ...variantEnv(options.variant) };
   const context = { appDir, env };
-  runStep('prebuild', { file: 'npx', args: PREBUILD_ANDROID_ARGS }, context);
-  runStep('gradle', { file: join('android', 'gradlew'), args: gradleEmuArgs() }, context);
+  const cli = 'build:android:emu';
+  runStepOrThrow(cli, { name: 'prebuild', file: 'npx', args: PREBUILD_ANDROID_ARGS }, context);
+  const gradlew = join('android', 'gradlew');
+  runStepOrThrow(cli, { name: 'gradle', file: gradlew, args: gradleEmuArgs() }, context);
   const apk = apkPath(appDir);
-  const device = startEmulator(options.purpose, env, appDir);
+  const device = startEmulator(options.purpose, env, { appDir });
   waitForBoot(device);
   const packageName = packageNameOf(options.game);
   adb(device, installArgs(apk));
-  const perfLog = perfLogReader(device, packageName, appDir);
+  const localDir = join(appDir, 'build', 'emu-save');
+  const perfLog = perfLogReader(device, { packageName, localDir, whenNoRoot: 'null' });
   const launchedAtEpochMs = nowEpochSeconds() * 1000;
   adb(device, launchArgs(packageName));
   const out = screenshotPath(options);
