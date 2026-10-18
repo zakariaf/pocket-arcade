@@ -12,6 +12,7 @@ import {
   motionOf,
 } from '@e07/shell/game-host/board-host-model.ts';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
+import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
 import { GameBoardHost } from '@e07/shell/game-host/game-board-host.tsx';
 import { useGameSession } from '@e07/shell/game-host/game-session-store.ts';
 import { useBoardSelection } from '@e07/shell/game-host/use-board-selection.ts';
@@ -57,9 +58,7 @@ export type BoardPorts = {
   readonly frameTime?: () => BoardFrameTime | undefined;
 };
 
-/** Digits and Latin labels on the canvas: the embedded Vazirmatn (the expo-font plugin ships it). */
-const NUMBER_FAMILY = 'Vazirmatn';
-const NUMBER_STYLE = { weight: 400, width: 5, slant: 0 } as const;
+/** Digits and Latin labels on the canvas: the bundled Vazirmatn (board-number-font.ts). */
 const NUMBER_SIZE = 18;
 
 /**
@@ -86,7 +85,7 @@ function boardHostFor<T extends ShellGameTypes>(
   // Once per opened run, on the JS thread: unit paths and scratch paints, never per frame.
   const kit = makeBoardKit(Skia, {
     paths: board.buildPaths(Skia),
-    numberTypeface: Skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE),
+    numberTypeface: boardNumberTypeface(),
     numberSize: NUMBER_SIZE,
   });
   return function BoardHost({ testID, coachTargets = NO_COACH }: BoardHostProps): ReactNode {

@@ -1,9 +1,13 @@
 {
   "platforms": ["apple", "android"],
   "apple": {
-    "modules": ["ProcessStartModule"]
+    "modules": ["ProcessStartModule", "BoardFontModule"]
   },
   "android": {
-    "modules": ["io.applander.e07shell.ProcessStartModule", "io.applander.shell.ParityLaunchModule"]
+    "modules": [
+      "io.applander.e07shell.ProcessStartModule",
+      "io.applander.e07shell.BoardFontModule",
+      "io.applander.shell.ParityLaunchModule"
+    ]
   }
 }

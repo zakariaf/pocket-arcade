@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
+import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
 import { makeScene } from '@e07/shell/game-host/board-scene.ts';
 import { IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
@@ -22,8 +23,6 @@ import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell
 import type { ComponentType, ReactNode } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 
-const NUMBER_FAMILY = 'Vazirmatn';
-const NUMBER_STYLE = { weight: 400, width: 5, slant: 0 } as const;
 const NUMBER_SIZE = 18;
 
 // The canvas fills the picture; the picture keeps its aspect (the S13 size contract), so it never
@@ -43,7 +42,7 @@ function lazyKitOf<T extends ShellGameTypes>(game: ShellGameModule<T>): () => Re
   return () => {
     kit ??= makeBoardKit(Skia, {
       paths: board.buildPaths(Skia),
-      numberTypeface: Skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE),
+      numberTypeface: boardNumberTypeface(),
       numberSize: NUMBER_SIZE,
     });
     return kit;
