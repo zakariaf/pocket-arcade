@@ -199,7 +199,7 @@ describe('perfLogReaderOf (save.db pulled with adb root)', () => {
 
   it('throws at once when root failed and the caller needs the log (e2e:android)', () => {
     expect(() => perfLogReaderOf(opsOf([], { root: refuse }), 'throw')).toThrow(
-      'adb root failed (adbd cannot run as root in production builds): the perf log needs the google_apis image of an e07-android-* AVD',
+      'root on the emulator failed (adbd cannot run as root in production builds): the perf log needs the google_apis image of an e07-android-* AVD',
     );
   });
 });

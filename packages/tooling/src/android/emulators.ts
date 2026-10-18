@@ -139,7 +139,7 @@ export function perfLogReaderOf(
     if (whenNoRoot === 'throw') {
       const why = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `adb root failed (${why}): the perf log needs the google_apis image of an e07-android-* AVD`,
+        `root on the emulator failed (${why}): the perf log needs the google_apis image of an e07-android-* AVD`,
       );
     }
     return () => null;
