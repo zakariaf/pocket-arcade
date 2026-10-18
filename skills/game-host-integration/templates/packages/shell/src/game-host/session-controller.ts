@@ -49,6 +49,8 @@ export type ControllerDeps<TState, TMove, TEvent> = RunEndContext<TState, TMove,
   readonly feedback: FeedbackPorts;
   /** The tutorial run: each step accepts only its expected move (tutorial-script.ts). */
   readonly isMoveAccepted?: (move: TMove, moveCount: number) => boolean;
+  /** The tutorial run: the step waits for one exact move, so a refused try is counted. */
+  readonly expectsMove?: (moveCount: number) => boolean;
 };
 
 type Extras<TMove> = ViewExtras<TMove>;
@@ -197,13 +199,16 @@ function addPlayTime<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>)
   if (ms > 0) dispatch({ type: 'add-play-time', ms });
 }
 
-/** A move from intentToMove is played unless the tutorial's script expects another one. */
-function isAccepted<TState, TMove, TEvent>(
-  deps: ControllerDeps<TState, TMove, TEvent>,
-  move: TMove,
-  moveCount: number,
-): boolean {
-  return deps.isMoveAccepted?.(move, moveCount) ?? true;
+/**
+ * A tutorial step that waits for its move refused a try (a wrong drop, a tap that is no move):
+ * count it for the view, so the coach nudges instead of staying silent. Never while paused.
+ */
+function noteRefusal<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
+  const { session } = parts.store.getState();
+  if (session.status !== 'playing' || parts.deps.expectsMove?.(session.moveCount) !== true) return;
+  const { refused } = parts.extras.getState();
+  const count = refused?.atSeq === session.eventSeq ? refused.count + 1 : 1;
+  parts.extras.setState({ refused: { count, atSeq: session.eventSeq } });
 }
 
 function run<TState, TMove, TEvent>(
@@ -215,9 +220,10 @@ function run<TState, TMove, TEvent>(
   switch (command.type) {
     case 'intent': {
       const move = parts.deps.engine.intentToMove(session.state, command.intent);
-      if (move !== null && isAccepted(parts.deps, move, session.moveCount)) {
+      // A move is played unless the tutorial's script expects another one.
+      if (move !== null && (parts.deps.isMoveAccepted?.(move, session.moveCount) ?? true)) {
         dispatch({ type: 'apply-move', move });
-      }
+      } else noteRefusal(parts);
       return;
     }
     case 'hint':

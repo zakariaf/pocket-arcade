@@ -28,6 +28,8 @@ export type ViewExtras<TMove> = {
   readonly summary: RunSummary | null;
   readonly hint: { readonly move: TMove; readonly atSeq: number } | null;
   readonly fixture: ViewFixture | null;
+  /** The tutorial's refused tries at one eventSeq (the step on screen); none otherwise. */
+  readonly refused?: { readonly count: number; readonly atSeq: number } | null;
 };
 
 /** The game's parts the view needs (the controller's dependencies fit). */
@@ -57,6 +59,7 @@ function playedViewOf<TState, TMove, TEvent>(
     loseReasonKey: outcome.kind === 'lost' ? outcome.reasonKey : null,
     summary: extras.summary,
     eventSeq: session.eventSeq,
+    ...(extras.refused?.atSeq === session.eventSeq ? { refusedMoves: extras.refused.count } : {}),
   };
 }
 

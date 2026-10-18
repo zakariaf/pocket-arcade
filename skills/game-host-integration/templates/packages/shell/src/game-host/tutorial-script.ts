@@ -57,6 +57,32 @@ export function isTutorialMoveAccepted<TMove>(
   return isSameMove(move, step.expect.move);
 }
 
+/**
+ * Step `moveCount` waits for one exact move (an 'any-move' step and the free play after the script
+ * do not): a try it refuses there, a wrong drop or a tap that is no move, earns the coach's nudge.
+ */
+export function expectsScriptedMove<TMove>(
+  steps: readonly TutorialStep<TMove>[],
+  moveCount: number,
+): boolean {
+  return steps[moveCount]?.expect.kind === 'move';
+}
+
+/** What a tutorial run's controller gets from the script (session-controller.ts). */
+export type TutorialRules<TMove> = {
+  readonly isMoveAccepted: (move: TMove, moveCount: number) => boolean;
+  readonly expectsMove: (moveCount: number) => boolean;
+};
+
+export function tutorialRulesOf<TMove>(
+  steps: readonly TutorialStep<TMove>[],
+): TutorialRules<TMove> {
+  return {
+    isMoveAccepted: (move, moveCount) => isTutorialMoveAccepted(steps, move, moveCount),
+    expectsMove: (moveCount) => expectsScriptedMove(steps, moveCount),
+  };
+}
+
 /** One S13 page as screens see it: the goal line and the step sentence, as catalog keys. */
 export type HowToPlayPage = {
   readonly titleId: MessageId;

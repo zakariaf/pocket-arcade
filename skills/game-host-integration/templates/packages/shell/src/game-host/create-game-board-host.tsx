@@ -12,6 +12,8 @@ import {
   motionOf,
 } from '@e07/shell/game-host/board-host-model.ts';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
+import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
+import { boardCoachOf, coachGameOf } from '@e07/shell/game-host/coach-pointer.ts';
 import { GameBoardHost } from '@e07/shell/game-host/game-board-host.tsx';
 import { useGameSession } from '@e07/shell/game-host/game-session-store.ts';
 import { useBoardSelection } from '@e07/shell/game-host/use-board-selection.ts';
@@ -26,14 +28,15 @@ import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
 import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardColors, ViewFormat } from '@e07/shell/game-host/board-types.ts';
+import type { CoachHandLook } from '@e07/shell/game-host/draw-coach-hand.ts';
 import type { BoardClockTrace, BoardFrameTime } from '@e07/shell/game-host/game-board-host.tsx';
 import type {
   BoardHostFactory,
   BoardHostInput,
   BoardHostProps,
 } from '@e07/shell/game-host/game-host.ts';
-import type { ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
+import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell-game-module.ts';
 import type { AudioPort } from '@e07/shell/services/audio/audio-port.ts';
 import type { ErrorLogPort } from '@e07/shell/services/error-log/error-log-port.ts';
 import type { HapticsPort } from '@e07/shell/services/haptics/haptics-port.ts';
@@ -57,9 +60,7 @@ export type BoardPorts = {
   readonly frameTime?: () => BoardFrameTime | undefined;
 };
 
-/** Digits and Latin labels on the canvas: the embedded Vazirmatn (the expo-font plugin ships it). */
-const NUMBER_FAMILY = 'Vazirmatn';
-const NUMBER_STYLE = { weight: 400, width: 5, slant: 0 } as const;
+/** Digits and Latin labels on the canvas: the bundled Vazirmatn (board-number-font.ts). */
 const NUMBER_SIZE = 18;
 
 /**
@@ -68,12 +69,39 @@ const NUMBER_SIZE = 18;
  */
 const ignoreHover = (): void => undefined;
 
-const NO_COACH: readonly BoardTarget[] = [];
-
 const ANNOUNCEMENTS = {
   selected: 'game-screen.board.selected.a11y-announcement',
   unselected: 'game-screen.board.unselected.a11y-announcement',
 } as const;
+
+type BoardLook<TToken extends string> = {
+  readonly colors: BoardColors<TToken>;
+  /** The tutorial hand: the Toybox pop paint, outlined in its own ink (onPop). */
+  readonly handLook: CoachHandLook;
+  readonly format: ViewFormat;
+  readonly label: string;
+};
+
+/** The board's colours, number format and spoken label at `state`, for the theme and language. */
+function useBoardLook<T extends ShellGameTypes>(
+  game: ShellGameModule<T>,
+  state: T['state'],
+): BoardLook<T['token']> {
+  const theme = useTheme();
+  const t = useT();
+  const language = useLanguage();
+  const digits = useSettingsStore(selectDigits);
+  const { board } = game.presentation;
+  // React Compiler memoizes these on their inputs (theme, colour-blind mode, language, digits).
+  const colors = makeBoardColors(Skia, game.presentation.art.palettes, {
+    scheme: theme.scheme,
+    isColorBlind: theme.mode === 'colorBlind',
+  });
+  const format = { formatNumber: createNumberFormatter(localeTagFor(language, digits)) };
+  const label = gameMessageText(t, board.describe(board.toView(state, format)));
+  const handLook = { fill: Skia.Color(theme.colors.pop), ink: Skia.Color(theme.colors.onPop) };
+  return { colors, handLook, format, label };
+}
 
 function boardHostFor<T extends ShellGameTypes>(
   input: BoardHostInput<T>,
@@ -86,12 +114,13 @@ function boardHostFor<T extends ShellGameTypes>(
   // Once per opened run, on the JS thread: unit paths and scratch paints, never per frame.
   const kit = makeBoardKit(Skia, {
     paths: board.buildPaths(Skia),
-    numberTypeface: Skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE),
+    numberTypeface: boardNumberTypeface(),
     numberSize: NUMBER_SIZE,
   });
-  return function BoardHost({ testID, coachTargets = NO_COACH }: BoardHostProps): ReactNode {
+  const coachGame = coachGameOf(game);
+  return function BoardHost(props: BoardHostProps): ReactNode {
     const result = useGameSession(controller.store, (state) => selectResult(state.session));
-    const theme = useTheme();
+    const coach = boardCoachOf(coachGame, result.state, props);
     const t = useT();
     const announce = useAnnounce();
     const selection = useBoardSelection({
@@ -101,25 +130,21 @@ function boardHostFor<T extends ShellGameTypes>(
       announce: (change) => {
         announce(t(ANNOUNCEMENTS[change]));
       },
-      coachTargets,
+      coachTargets: coach.cells,
     });
-    const language = useLanguage();
-    const digits = useSettingsStore(selectDigits);
+    const { colors, handLook, format, label } = useBoardLook(game, result.state);
+    const hand =
+      coach.hand === null
+        ? null
+        : { hand: coach.hand, cells: coach.cells, look: handLook, replay: props.coachReplay ?? 0 };
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();
     const isFullscreenAdShowing = useIsFullscreenAdShowing(lifecycle);
-    // React Compiler memoizes these on their inputs (theme, colour-blind mode, language, digits).
-    const colors = makeBoardColors(Skia, game.presentation.art.palettes, {
-      scheme: theme.scheme,
-      isColorBlind: theme.mode === 'colorBlind',
-    });
-    const format = { formatNumber: createNumberFormatter(localeTagFor(language, digits)) };
-    const label = gameMessageText(t, board.describe(board.toView(result.state, format)));
     const traceClock = ports.traceClock?.();
     const onFrameTime = ports.frameTime?.();
     return (
-      <BoardDirectionView isMirroredInRtl={board.isMirroredInRtl} testID={testID}>
+      <BoardDirectionView isMirroredInRtl={board.isMirroredInRtl} testID={props.testID}>
         <GameBoardHost
           board={board}
           buildTimeline={game.engine.buildTimeline}
@@ -144,6 +169,7 @@ function boardHostFor<T extends ShellGameTypes>(
           isLayoutProbeOn={ports.isLayoutProbeOn?.() === true}
           {...(traceClock === undefined ? {} : { traceClock })}
           {...(onFrameTime === undefined ? {} : { onFrameTime })}
+          coach={hand}
         />
       </BoardDirectionView>
     );
