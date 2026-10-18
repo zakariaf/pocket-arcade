@@ -3,6 +3,7 @@
 import { join } from 'node:path';
 
 import { resolveBuildVariant, type BuildVariant } from '@e07/shell/config/app-variant.ts';
+import { readFlagPairs } from '@e07/tooling/build/flag-pairs.ts';
 import { isGameId } from '@e07/tooling/build/game-id.ts';
 import { maestroGlobalArgs } from '@e07/tooling/e2e/maestro-args.ts';
 import {
@@ -59,19 +60,6 @@ export function isHelpRequest(argv: readonly string[]): boolean {
   return argv.includes('--help') || argv.includes('-h');
 }
 
-function readFlags(argv: readonly string[]): ReadonlyMap<string, string> {
-  const flags = new Map<string, string>();
-  for (let index = 0; index < argv.length; index += 2) {
-    const flag = argv[index] ?? '';
-    const value = argv[index + 1];
-    if (!FLAGS.has(flag) || value === undefined || value.startsWith('--')) {
-      throw new Error(`unexpected argument "${flag}". ${SIM_BUILD_USAGE}`);
-    }
-    flags.set(flag, value);
-  }
-  return flags;
-}
-
 /** The root testID of the link's screen= (a game example state shows game.screen or result.screen). */
 export function linkWaitFor(query: string): string | null {
   const screen = /(?:^|&)screen=([a-z-]+)/.exec(query)?.[1];
@@ -101,7 +89,7 @@ const isDriverPort = (port: number): boolean =>
 
 /** Parses the CLI; the variant rules are the ones app.config.ts applies (forbidden pairs throw). */
 export function parseSimBuildArgs(argv: readonly string[]): SimBuildOptions {
-  const flags = readFlags(argv);
+  const flags = readFlagPairs(argv, FLAGS, SIM_BUILD_USAGE);
   const game = flags.get('--app');
   if (!isGameId(game)) {
     throw new Error(

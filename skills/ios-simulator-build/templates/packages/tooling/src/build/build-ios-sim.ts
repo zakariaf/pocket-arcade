@@ -55,7 +55,7 @@ import {
   type AppOnDisk,
   type Simctl,
 } from '@e07/tooling/ios/simulators.ts';
-import { runToolStep, sleepMs, tailOf } from '@e07/tooling/ios/tool-step.ts';
+import { runStepOrThrow, sleepMs } from '@e07/tooling/ios/tool-step.ts';
 import { selectXcode } from '@e07/tooling/ios/toolchain.ts';
 
 import type { StepCommand, StepContext } from '@e07/tooling/ios/tool-step.ts';
@@ -65,13 +65,7 @@ class PreflightError extends Error {}
 
 /** Runs one step with its output in build/logs/<step>.log; throws with the log's tail on failure. */
 function runStep(name: string, command: StepCommand, context: StepContext): void {
-  console.log(`build:ios:sim: ${name} ...`);
-  const result = runToolStep(name, command, context);
-  if (result.status !== 0) {
-    throw new Error(
-      `step "${name}" failed (exit ${String(result.status)}), see ${result.logFile}:\n${tailOf(result.output, 30)}`,
-    );
-  }
+  runStepOrThrow('build:ios:sim', { ...command, name }, context);
 }
 
 /** The path a DerivedData folder recorded: info.plist's WorkspacePath, else a .pcm's cache path. */
