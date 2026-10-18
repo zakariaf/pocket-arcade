@@ -216,6 +216,30 @@ const editedMap = (dir) => {
   console.log(`ok   the Android device profile's system image is the shared pin (${SYSTEM_IMAGE})`);
 }
 
+// While a new parity emulator boots, setup-parity-emu polls only its own serial (adb -s
+// emulator-<port> shell getprop sys.boot_completed) and asks adb for the AVD behind it once, after
+// the boot: listing every emulator and its AVD name on each poll cost two adb calls per emulator per
+// second. The apply case's calls are logged by the fakes, in a state folder of their own.
+{
+  const dir = join(FIXTURES, 'setup-parity-emu-apply', 'good');
+  const log = join(scratch(), 'calls.log');
+  const env = { ...process.env, FAKE_ANDROID_LOG: log, FAKE_ANDROID_STATE_DIR: scratch() };
+  const run = spawnSync(process.execPath, [join(HERE, 'setup-parity-emu.mjs'), '--appearance', 'light', '--boot-timeout', '5', '--log-dir', scratch(), ...avdHome(dir), ...emuFakes], { cwd: dir, env, encoding: 'utf8' });
+  const calls = existsSync(log) ? readFileSync(log, 'utf8').split('\n').filter(Boolean) : [];
+  const afterStart = calls.slice(calls.findIndex((line) => line.startsWith('emulator -avd')) + 1).filter((line) => line.startsWith('adb '));
+  const problems = [];
+  if (run.status !== 0) problems.push(`setup-parity-emu exited ${run.status}: ${(run.stdout + run.stderr).trim().split('\n').at(-1)}`);
+  if (afterStart[0] !== 'adb -s emulator-5554 shell getprop sys.boot_completed') problems.push(`the first adb call after the start is "${afterStart[0]}", not the boot poll of emulator-5554`);
+  const listings = afterStart.filter((line) => line === 'adb devices').length;
+  if (listings !== 1) problems.push(`adb devices ran ${listings} times after the start, not once after the boot`);
+  if (problems.length) {
+    for (const p of problems) console.log(`FAIL scripts/setup-parity-emu.mjs [boot-poll] ${p} Fix: Poll adb -s emulator-<port> shell getprop sys.boot_completed while booting, then check the AVD name once.`);
+    console.log(`RESULT: FAIL (${problems.length} problems)`);
+    process.exit(1);
+  }
+  console.log('ok   setup-parity-emu polls only its own serial while booting and checks the AVD name once after');
+}
+
 // A scrolled capture's failing element is cropped from the design window the capture shows: for S11
 // at scroll 1170 the settings.version crop must start at screen y 844 (page y 2013), not at the
 // Display group that sits at y 844 of the unscrolled page.

@@ -124,13 +124,15 @@ run(async () => {
     mkdirSync(resolve(options['log-dir']), { recursive: true });
     emulator.start(name, port, logPath);
     step(`starting ${name} on emulator-${port} (cold boot, no window; log ${join(options['log-dir'], `${name}.log`)})`);
+    // Poll only the serial this start owns; which AVD answers there is asked once, after the boot.
+    const booting = adb.on(`emulator-${port}`);
     const began = Date.now();
     while (Date.now() - began < bootTimeoutMs) {
-      running = runningEmulators(adb).filter((e) => e.avd === name && e.state === 'device');
-      if (running.length && adb.on(running[0].serial).shell('getprop', 'sys.boot_completed').stdout.trim() === '1') break;
+      if (booting.shell('getprop', 'sys.boot_completed').stdout.trim() === '1') break;
       await sleep(1000);
     }
-    if (!running.length) fail(`${name} did not come up within ${options['boot-timeout']} s`, `Read ${logPath}; a cold first boot takes 1-2 minutes on this Mac.`);
+    running = runningEmulators(adb).filter((e) => e.serial === booting.serial && e.avd === name && e.state === 'device');
+    if (!running.length) fail(`${name} did not come up on emulator-${port} within ${options['boot-timeout']} s`, `Read ${logPath}; a cold first boot takes 1-2 minutes on this Mac.`);
   }
   const serial = running[0].serial;
   const sh = adb.on(serial).shell;
