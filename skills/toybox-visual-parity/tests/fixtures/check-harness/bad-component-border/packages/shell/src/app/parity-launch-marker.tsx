@@ -4,8 +4,9 @@
 // nonce: store builds never provide one. With a nonce it renders an invisible 1 x 1 pt accessible
 // element whose testID is parity.launch.<nonce>; capture-app.mjs refuses a dump without it
 // ("hierarchy from another simulator"). A modal layer hides everything outside it from the
-// accessibility tree, so the Scrim, the Result overlay and the consent cover each render one
-// inside their modal root, and the parity root renders one for every other frame.
+// accessibility tree, so the Scrim, the Result overlay and the ModalLayer (the consent cover and
+// every other layer) each render one inside their modal root, and the parity root renders one for
+// every other frame.
 import { createContext, use } from 'react';
 import { StyleSheet, View } from 'react-native';
 
