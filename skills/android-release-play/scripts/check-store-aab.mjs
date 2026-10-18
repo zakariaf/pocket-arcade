@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
 import { parseProtoXml, signatureOf } from './lib/aab.mjs';
 import { findElements, metaDataValue } from './lib/manifest-tree.mjs';
-import { ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
+import { adUnitFields, ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 import { readZipEntry, readZipIndex } from './lib/zip.mjs';
 
 const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~3347511713';
@@ -143,8 +143,7 @@ function checkConfig({ zip, where, options, report }) {
     if (extra[key] !== want) report.problem({ file, rule: 'constants-variant', message: `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, fix: 'Export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole build.' });
   }
   const links = options.variant === 'store' ? (extra.game?.links ?? {}) : {};
-  const units = typeof extra.adUnits === 'object' && extra.adUnits !== null ? Object.entries(extra.adUnits) : [];
-  for (const [field, value] of [...units.map(([slot, unit]) => [`extra.adUnits.${slot}`, unit]), ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host], ['extra.game.links.supportEmail', links.supportEmail]]) {
+  for (const [field, value] of [...adUnitFields(extra.adUnits, 'android'), ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host], ['extra.game.links.supportEmail', links.supportEmail]]) {
     const placeholder = ownerPlaceholderOf(value);
     if (placeholder !== null) report.problem(ownerPlaceholderProblem({ entry: placeholder, where: field, file }));
   }

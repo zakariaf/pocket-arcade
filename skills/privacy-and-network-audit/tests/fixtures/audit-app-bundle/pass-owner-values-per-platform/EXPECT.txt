@@ -1,0 +1,2 @@
+REHEARSAL: not a release gate
+audit-app-bundle: 4 artefacts checked, 0 problems

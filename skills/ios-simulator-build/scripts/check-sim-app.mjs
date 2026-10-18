@@ -9,7 +9,7 @@ import { join, relative } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { plistGet, readPlist } from './lib/plist.mjs';
-import { bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
+import { adUnitFields, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
@@ -119,10 +119,9 @@ function checkConstants({ where, options, report }) {
 /** The scaffold values the owner replaces (G5: AdMob units; G3 in store builds: the links), by field. */
 function checkOwnerPlaceholders(extra, { where, options, report }) {
   const file = `${where}/EXConstants.bundle/app.config`;
-  const units = typeof extra.adUnits === 'object' && extra.adUnits !== null ? Object.entries(extra.adUnits) : [];
   const links = options.variant === 'store' ? (extra.game?.links ?? {}) : {};
   const values = [
-    ...units.map(([slot, unit]) => [`extra.adUnits.${slot}`, unit]),
+    ...adUnitFields(extra.adUnits, 'ios'),
     ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host],
     ['extra.game.links.supportEmail', links.supportEmail],
   ];

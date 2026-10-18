@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, requireDir, requireFile, run, walk } from './check-lib.mjs';
 import { parseXmlPlist, readPlist } from './lib/plist.mjs';
-import { bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
+import { adUnitFields, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
@@ -123,9 +123,9 @@ run(async () => {
       if (extra.adsMode !== adsMode) report.problem({ file: 'EXConstants.bundle/app.config', rule: 'extra-ads-mode', message: `extra.adsMode is ${JSON.stringify(extra.adsMode)}, expected "${adsMode}"`, fix: 'Export the variables for the whole run; a mixed build is not shippable.' });
       const hasUnits = extra.adUnits !== undefined && extra.adUnits !== null;
       if (hasUnits !== (adsMode === 'live')) report.problem({ file: 'EXConstants.bundle/app.config', rule: 'extra-ad-units', message: hasUnits ? `extra.adUnits is present in an ADS_MODE=${adsMode} build` : 'extra.adUnits is missing in a live build', fix: 'withShell writes adUnits only when ADS_MODE=live (adUnitsExtra).' });
-      for (const [slot, unit] of Object.entries(hasUnits ? extra.adUnits : {})) {
+      for (const [field, unit] of adUnitFields(extra.adUnits, 'ios')) {
         const unitPlaceholder = ownerPlaceholderOf(unit);
-        if (unitPlaceholder !== null) report.problem(ownerPlaceholderProblem({ entry: unitPlaceholder, where: `extra.adUnits.${slot}`, file: 'EXConstants.bundle/app.config' }));
+        if (unitPlaceholder !== null) report.problem(ownerPlaceholderProblem({ entry: unitPlaceholder, where: field, file: 'EXConstants.bundle/app.config' }));
       }
       const links = extra.game?.links;
       if (variant === 'store' && links) {

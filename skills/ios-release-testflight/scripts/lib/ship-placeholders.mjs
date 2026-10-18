@@ -95,6 +95,22 @@ export function ownerPlaceholderOf(value) {
   return PLACEHOLDERS.find((item) => item.ownerStep !== null && item.matches(value)) ?? null;
 }
 
+/**
+ * The live AdMob units a built app's expo.extra.adUnits holds for one platform ('ios' or 'android'),
+ * as [field, value] pairs for ownerPlaceholderOf. withShell writes them per platform,
+ * { ios: { banner, interstitial, rewarded }, android: { ... } | null } (ads-config.ts adUnitsExtra),
+ * so a gate reads only the entry of the platform its artefact is for (field extra.adUnits.<platform>.<slot>);
+ * the flat { banner, interstitial, rewarded } of earlier builds is read as it is (field extra.adUnits.<slot>).
+ */
+export function adUnitFields(adUnits, platform) {
+  if (typeof adUnits !== 'object' || adUnits === null) return [];
+  const isPerPlatform = 'ios' in adUnits || 'android' in adUnits;
+  const units = isPerPlatform ? adUnits[platform] : adUnits;
+  if (typeof units !== 'object' || units === null) return [];
+  const prefix = isPerPlatform ? `extra.adUnits.${platform}` : 'extra.adUnits';
+  return Object.entries(units).map(([slot, unit]) => [`${prefix}.${slot}`, unit]);
+}
+
 /** The placeholder's name for a message (owner placeholders and com.example.*), or null. */
 export function placeholderName(value) {
   return placeholdersIn(String(value ?? ''))[0]?.name ?? null;

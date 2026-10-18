@@ -16,7 +16,7 @@ import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
 import { parseBadging, parseXmlTree } from './lib/apk.mjs';
 import { findElements, metaDataValue } from './lib/manifest-tree.mjs';
 import { dominantColour, readPng } from './lib/png.mjs';
-import { ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
+import { adUnitFields, ANDROID_AD_IDS_MISSING, appIdOf, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem } from './lib/ship-placeholders.mjs';
 import { readZipEntry, readZipIndex } from './lib/zip.mjs';
 
 const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~3347511713';
@@ -130,9 +130,8 @@ function checkConstants(context) {
   for (const [key, want] of [['appVariant', options.variant], ['adsMode', options.ads]]) {
     if (extra[key] !== want) report.problem({ file, rule: 'constants-variant', message: `extra.${key} is "${extra[key] ?? 'missing'}", expected "${want}"`, fix: 'The variables changed between prebuild and Gradle: export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole run and rebuild.' });
   }
-  const units = typeof extra.adUnits === 'object' && extra.adUnits !== null ? Object.entries(extra.adUnits) : [];
   const links = options.variant === 'store' ? (extra.game?.links ?? {}) : {};
-  const values = [...units.map(([slot, unit]) => [`extra.adUnits.${slot}`, unit]), ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host], ['extra.game.links.supportEmail', links.supportEmail]];
+  const values = [...adUnitFields(extra.adUnits, 'android'), ['extra.game.links.privacyPolicy.host', links.privacyPolicy?.host], ['extra.game.links.supportEmail', links.supportEmail]];
   for (const [field, value] of values) {
     const placeholder = ownerPlaceholderOf(value);
     if (placeholder !== null) report.problem(ownerPlaceholderProblem({ entry: placeholder, where: field, file }));
