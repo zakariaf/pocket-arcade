@@ -6,8 +6,11 @@
 // (an emulator build, a keyless rehearsal) the release stays on the debug key, and the store-AAB
 // gate refuses such a bundle. The key and its passwords are only ever read by Gradle.
 
-/** E07_<GAME>_UPLOAD_ (line-siege -> E07_LINE_SIEGE_UPLOAD_). */
-function prefixOf(game: string): string {
+/**
+ * E07_<GAME>_UPLOAD_ (line-siege -> E07_LINE_SIEGE_UPLOAD_): the one prefix of the game's upload-key
+ * Gradle properties, which release:android's aab-signing.ts names too.
+ */
+export function uploadPropertyPrefixOf(game: string): string {
   return `E07_${game.toUpperCase().replaceAll('-', '_')}_UPLOAD_`;
 }
 
@@ -34,7 +37,7 @@ const RELEASE_SIGNING =
 /** app/build.gradle with the upload signing config added; unchanged when it is already there. */
 export function addUploadSigning(gradle: string, game: string): string {
   if (gradle.includes('signingConfigs.upload')) return gradle;
-  const prefix = prefixOf(game);
+  const prefix = uploadPropertyPrefixOf(game);
   if (!SIGNING_BLOCK.test(gradle)) {
     throw new Error(
       'app/build.gradle has no signingConfigs block: React Native changed its template',

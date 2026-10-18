@@ -6,6 +6,8 @@
 // the path, the property names and the file's stat are handled.
 import { join, relative } from 'node:path';
 
+import { uploadPropertyPrefixOf } from '@e07/shell/config/upload-signing.ts';
+
 export const UPLOAD_KEY_ALIAS = 'upload';
 
 export type SigningPropertyNames = {
@@ -22,9 +24,9 @@ export function uploadKeyPathOf(game: string, home: string): string {
   return join(home, '.android-keys', `${game}-upload.jks`);
 }
 
-/** E07_<GAME>_UPLOAD_*: the release build's signing config reads these Gradle properties. */
+/** E07_<GAME>_UPLOAD_*: the release build's signing config (upload-signing.ts) reads these. */
 export function signingPropertyNames(game: string): SigningPropertyNames {
-  const prefix = `E07_${game.toUpperCase().replaceAll('-', '_')}_UPLOAD_`;
+  const prefix = uploadPropertyPrefixOf(game);
   return {
     storeFile: `${prefix}STORE_FILE`,
     storePassword: `${prefix}STORE_PASSWORD`,

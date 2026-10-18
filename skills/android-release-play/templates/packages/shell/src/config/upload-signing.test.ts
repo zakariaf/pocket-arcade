@@ -1,5 +1,5 @@
 // packages/shell/src/config/upload-signing.test.ts
-import { addUploadSigning } from './upload-signing.ts';
+import { addUploadSigning, uploadPropertyPrefixOf } from './upload-signing.ts';
 
 /** The signing part of the app/build.gradle that React Native 0.86's template writes. */
 const TEMPLATE = [
@@ -66,5 +66,12 @@ describe('addUploadSigning', () => {
     expect(() => addUploadSigning('android {\n}\n', 'line-siege')).toThrow(
       'app/build.gradle has no signingConfigs block',
     );
+  });
+});
+
+describe('uploadPropertyPrefixOf', () => {
+  it("names the game's own Gradle property prefix, hyphens as underscores", () => {
+    expect(uploadPropertyPrefixOf('line-siege')).toBe('E07_LINE_SIEGE_UPLOAD_');
+    expect(uploadPropertyPrefixOf('tap-flip-2')).toBe('E07_TAP_FLIP_2_UPLOAD_');
   });
 });

@@ -1,4 +1,6 @@
 // packages/tooling/src/release-android/aab-signing.test.ts
+import { addUploadSigning } from '@e07/shell/config/upload-signing.ts';
+
 import {
   keystoreProblems,
   keytoolGenerateArgs,
@@ -23,6 +25,29 @@ describe('signingPropertyNames', () => {
       keyAlias: 'E07_LINE_SIEGE_UPLOAD_KEY_ALIAS',
       keyPassword: 'E07_LINE_SIEGE_UPLOAD_KEY_PASSWORD',
     });
+  });
+});
+
+describe('signingPropertyNames and the upload-signing plugin', () => {
+  it('names exactly the Gradle properties the plugin writes into app/build.gradle', () => {
+    const gradle = [
+      'android {',
+      '    signingConfigs {',
+      '        debug {',
+      '        }',
+      '    }',
+      '    buildTypes {',
+      '        release {',
+      '            signingConfig signingConfigs.debug',
+      '        }',
+      '    }',
+      '}',
+      '',
+    ].join('\n');
+    const written = addUploadSigning(gradle, 'line-siege');
+    const read = [...written.matchAll(/project\.(?:property|hasProperty)\('([A-Z0-9_]+)'\)/g)];
+    const names = Object.values(signingPropertyNames('line-siege'));
+    expect([...new Set(read.map((match) => match[1]))].sort()).toStrictEqual([...names].sort());
   });
 });
 
