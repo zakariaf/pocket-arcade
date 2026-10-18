@@ -116,12 +116,12 @@ ads: {
 },
 ```
 
-The values above are the new-game scaffold's placeholders in the documented format (publisher `1234567890123456`). They look valid, so `assertLiveIds` rejects them by name (FINAL H.4), and so do `check-game-app --stage complete` and the release gates: a game is not complete until the owner supplies the real IDs (step A2, owner step G5 in `docs/14`). The complete stage fails the same way on the scaffold's other owner placeholders, the privacy host `example.com` and the support address `support@example.com` (owner step G3; FINAL H.20, L14). Until the owner supplies real IDs, only `APP_VARIANT=test` (and `store` + `ADS_MODE=off`) can build: `assertLiveIds` throws for anything else.
+The values above are the new-game scaffold's placeholders in the documented format (publisher `1234567890123456`). They look valid, so `assertLiveIds` (which refuses only a malformed id or Google's sample publisher) lets them through, and `check-game-app --stage complete` and the release gates reject them by name (FINAL H.4): a game is not complete until the owner supplies the real IDs (step A2, owner step G5 in `docs/14`). The complete stage fails the same way on the scaffold's other owner placeholders, the privacy host `example.com` and the support address `support@example.com` (owner step G3; FINAL H.20, L14). Until the owner supplies real IDs, a live build of them still resolves its config, but every ship gate stops it on its `owner-placeholder` lines (`OWNER STEPS PENDING: G5`, on Android `GP5`), so only `APP_VARIANT=test` (and `store` + `ADS_MODE=off`) builds are used (corrected on 2026-10-18 to match the admob-ads skill's `ads-config.ts`).
 
 ```ts
 // packages/shell/src/config/ads-config.ts
 // Runs in Node inside app.config.ts (type stripping): erasable TypeScript, explicit .ts imports.
-// ADS_MODE itself is resolved and validated by app-variant.ts (docs/14).
+// ADS_MODE itself is resolved and validated by app-variant.ts (APP_VARIANT x ADS_MODE matrix).
 import type { AdsMode } from './app-variant.ts';
 
 export type AdmobUnitIds = {
@@ -143,31 +143,30 @@ export const GOOGLE_SAMPLE_APP_IDS = {
   android: `ca-app-pub-${GOOGLE_SAMPLE_PUBLISHER}~3347511713`,
 } as const;
 
-// The new-game scaffold's placeholder publisher: valid in format, never real (FINAL H.4).
-const PLACEHOLDER_PUBLISHER = '1234567890123456';
-
 const APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 const UNIT_ID = /^ca-app-pub-\d{16}\/\d{10}$/;
 
 export function assertLiveIds(ids: AdmobPlatformIds): void {
-  const all = [ids.appId, ...Object.values(ids.units)];
-  const isValid = APP_ID.test(ids.appId) && all.slice(1).every((unit) => UNIT_ID.test(unit));
-  const isSample = all.some((id) => id.includes(GOOGLE_SAMPLE_PUBLISHER));
-  const isPlaceholder = all.some((id) => id.includes(PLACEHOLDER_PUBLISHER));
-  if (!isValid || isSample || isPlaceholder) {
-    throw new Error(`invalid live AdMob ids: ${JSON.stringify(ids)}`);
-  }
+  const units = Object.values(ids.units);
+  const isValid = APP_ID.test(ids.appId) && units.every((unit) => UNIT_ID.test(unit));
+  const isSample = [ids.appId, ...units].some((id) => id.includes(GOOGLE_SAMPLE_PUBLISHER));
+  if (!isValid || isSample) throw new Error(`invalid live AdMob ids: ${JSON.stringify(ids)}`);
 }
 
 export type AdmobPluginOptions = {
   readonly iosAppId: string;
-  readonly androidAppId: string;
+  // Absent only in a live build without the game's Android ids (owner step GP5): never the sample.
+  readonly androidAppId?: string;
   readonly delayAppMeasurementInit: true;
   readonly skAdNetworkItems: readonly string[];
 };
 
 // The SDK is linked in every variant, so Info.plist always needs an app ID (missing = crash).
-// No userTrackingUsageDescription: expo-tracking-transparency's plugin writes that key (rule 21).
+// A live build without ads.ids.android gets no Android app id at all, never Google's sample: an
+// Android build of it is unusable and the Android gates name owner step GP5, while iOS releases of
+// a game that is not on Android yet still build.
+// No userTrackingUsageDescription: Apple's ATT text (owner decision O1) has one writer, the
+// expo-tracking-transparency plugin entry and withShell's locales (shell-plugins.ts, with-shell.ts).
 export function admobPluginOptions(
   mode: AdsMode,
   ids: AdmobGameIds,
@@ -176,24 +175,34 @@ export function admobPluginOptions(
   const isLive = mode === 'live';
   if (isLive) assertLiveIds(ids.ios);
   if (isLive && ids.android !== null) assertLiveIds(ids.android);
+  const androidAppId = isLive ? ids.android?.appId : GOOGLE_SAMPLE_APP_IDS.android;
   return {
     iosAppId: isLive ? ids.ios.appId : GOOGLE_SAMPLE_APP_IDS.ios,
-    androidAppId:
-      isLive && ids.android !== null ? ids.android.appId : GOOGLE_SAMPLE_APP_IDS.android,
+    ...(androidAppId === undefined ? {} : { androidAppId }),
     delayAppMeasurementInit: true,
     skAdNetworkItems,
   };
 }
 
+// The live units per platform: readAdsExtra picks Platform.OS's entry, so an Android build never
+// shows ads from the iOS units (null until the game's Android AdMob app exists, owner step GP5).
+export type AdUnitsExtra = {
+  readonly ios: AdmobUnitIds;
+  readonly android: AdmobUnitIds | null;
+};
+
 // withShell writes this as expo.extra.adUnits. Real unit IDs reach the runtime ONLY when live.
-export function adUnitsExtra(mode: AdsMode, ids: AdmobGameIds): AdmobUnitIds | null {
-  return mode === 'live' ? ids.ios.units : null;
+export function adUnitsExtra(mode: AdsMode, ids: AdmobGameIds): AdUnitsExtra | null {
+  if (mode !== 'live') return null;
+  assertLiveIds(ids.ios);
+  if (ids.android !== null) assertLiveIds(ids.android);
+  return { ios: ids.ios.units, android: ids.android?.units ?? null };
 }
 ```
 
-How `withShell` uses it (docs/02 section 9.1 has the complete file): it computes `adsMode = game.ads.isEnabled ? variant.adsMode : 'off'`, its plugin list (`shellPlugins`) passes `admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)` to `react-native-google-mobile-ads`, and `extra` gets `appVariant`, `adsMode` and, only when `adUnitsExtra(adsMode, game.ads.ids)` returns units (`ADS_MODE=live`), `adUnits`. The key is omitted otherwise, never `null` (docs/02 rule 10).
+How `withShell` uses it (docs/02 section 9.1 has the complete file): it computes `adsMode = game.ads.isEnabled ? variant.adsMode : 'off'`, its plugin list (`shellPlugins`) passes `admobPluginOptions(adsMode, game.ads.ids, SKADNETWORK_IDS)` to `react-native-google-mobile-ads`, and `extra` gets `appVariant`, `adsMode` and, only when `adUnitsExtra(adsMode, game.ads.ids)` returns units (`ADS_MODE=live`), `adUnits`. The key is omitted otherwise, never `null` (docs/02 rule 10). `adUnits` holds the live units per platform, `{ ios, android }`, with `android` `null` until the game's Android AdMob app exists (owner step GP5), and `readAdsExtra` picks the entry of `Platform.OS`, so an Android build never shows ads from the iOS units. A live build without `ads.ids.android` gets no Android app id at all, never Google's sample id: an Android build of it is unusable and the Android ship gates name GP5, while iOS releases still build (the admob-ads skill's `ads-config.ts` and `read-ads-extra.ts`, copied above; corrected on 2026-10-18 under L14).
 
-What the plugin writes (read in `plugin/src/index.ts` of 17.2.0, and seen in a prebuilt `Info.plist`): `GADApplicationIdentifier`, `GADDelayAppMeasurementInit`, `SKAdNetworkItems` (it only **adds** missing IDs) and, only if given, `NSUserTrackingUsageDescription` (the Shell never gives it; `expo-tracking-transparency`'s plugin writes the key, rule 21). The Android keys (`APPLICATION_ID`, `DELAY_APP_MEASUREMENT_INIT`, `OPTIMIZE_INITIALIZATION`, `OPTIMIZE_AD_LOADING`) are written too; the last two default to `true`. The plugin warns (does not fail) when an app ID is missing, which is why `withShell` always passes one.
+What the plugin writes (read in `plugin/src/index.ts` of 17.2.0, and seen in a prebuilt `Info.plist`): `GADApplicationIdentifier`, `GADDelayAppMeasurementInit`, `SKAdNetworkItems` (it only **adds** missing IDs) and, only if given, `NSUserTrackingUsageDescription` (the Shell never gives it; `expo-tracking-transparency`'s plugin writes the key, rule 21). The Android keys (`APPLICATION_ID`, `DELAY_APP_MEASUREMENT_INIT`, `OPTIMIZE_INITIALIZATION`, `OPTIMIZE_AD_LOADING`) are written too; the last two default to `true`. The plugin warns (does not fail) when an app ID is missing, which is why `withShell` always passes one, with one exception: a live build without the game's Android ids gets no Android app id (above), so it can never ship with Google's sample id.
 
 Test IDs (platform-aware, from the library's `TestIds`, identical to Google's demo units on 2026-09-26):
 
@@ -210,6 +219,7 @@ At runtime the Shell reads the mode and units from `expo.extra` (embedded in the
 ```ts
 // packages/shell/src/services/ads/read-ads-extra.ts
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 import type { AdsExtra } from './ads-factory.ts';
 import type { AdUnitIds } from './ads-port.ts';
@@ -223,14 +233,24 @@ function isUnitIds(value: unknown): value is AdUnitIds {
   );
 }
 
+// withShell embeds the live units per platform ({ ios, android }, adUnitsExtra): this platform's
+// entry only, so an Android build never shows ads from the iOS units (spec 8.8, F3).
+function unitsFor(units: unknown, os: string): AdUnitIds | null {
+  if (typeof units !== 'object' || units === null) return null;
+  const mine: unknown = Reflect.get(units, os);
+  return isUnitIds(mine) ? mine : null;
+}
+
 // expo.extra is embedded in the app at build time (withShell writes adsMode and adUnits).
 // Anything unexpected falls back to 'off': a broken config must never show real ads.
-export function readAdsExtra(extra: unknown = Constants.expoConfig?.extra): AdsExtra {
+export function readAdsExtra(
+  extra: unknown = Constants.expoConfig?.extra,
+  os: string = Platform.OS,
+): AdsExtra {
   if (typeof extra !== 'object' || extra === null) return { adsMode: 'off', adUnits: null };
   const mode: unknown = Reflect.get(extra, 'adsMode');
-  const units: unknown = Reflect.get(extra, 'adUnits');
   const adsMode = MODES.find((candidate) => candidate === mode) ?? 'off';
-  return { adsMode, adUnits: isUnitIds(units) ? units : null };
+  return { adsMode, adUnits: unitsFor(Reflect.get(extra, 'adUnits'), os) };
 }
 ```
 

@@ -122,6 +122,7 @@ Component-level rules (buttons, `AppText`, icons, lists, the theme) are in doc 0
 | Draw calls per frame, busiest frame | per game (Line Siege 200), never > 1,000 | doc 08's recording-canvas test ([3.5](#35-draw-call-budget)) | `npm run test` |
 | Minified JS, store build | ≤ 6,000,000 bytes, ≤ +10% vs baseline | `expo export --no-bytecode` | `npm run audit:network` |
 | Memory after the smoke flow | ≤ 150 MB `phys_footprint` | `footprint <pid>` on the simulator | `npm run e2e:ios` |
+| Memory after the smoke flow, Android | ≤ 150 MB private dirty + swap PSS (the same `memoryFootprintMbMax`; never total PSS, which also counts the clean mapped `.apk`, `.dex` and `.so` code and is kept only as information) | `dumpsys meminfo <package>` on the emulator after a relaunch | `npm run e2e:android` (the performance-budgets skill, rule 1; lead decision 2026-10-17, written here on 2026-10-18 under L14) |
 | Level-grid tiles mounted | ≤ 150 | doc 05 rule 41 | review |
 | Touch target | ≥ 44 pt | RNTL `toHaveStyle`, board layout test | `npm run test` |
 | Text scale cap | 2.0 | `AppText` + Maestro at AX5 ([3.9](#39-testing-accessibility)) | a11y flow + `npm run screenshots:ios -- --text-size …` |
