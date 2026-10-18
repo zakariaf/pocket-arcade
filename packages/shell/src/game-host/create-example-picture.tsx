@@ -67,6 +67,11 @@ function examplePictureFor<T extends ShellGameTypes>(
     const page = game.teaching.howToPlay[pageIndex];
     if (page === undefined) return null;
     const view = board.toView(page.example, format);
+    const pointed = coachPointerOf(coach, page.example, page.pointer);
+    const handLook = {
+      fill: Skia.Color(theme.colors.pop),
+      ink: Skia.Color(theme.colors.onPop),
+    };
     const colors = makeBoardColors(Skia, game.presentation.art.palettes, {
       scheme: theme.scheme,
       isColorBlind: theme.mode === 'colorBlind',
@@ -83,14 +88,16 @@ function examplePictureFor<T extends ShellGameTypes>(
             now: 0,
             layout: board.layout({ ...size, view, isMirrored }),
             pointer: IDLE_POINTER,
-            highlight: {
-              selected: null,
-              hinted: coachPointerOf(coach, page.example, page.pointer).cells,
-            },
+            highlight: { selected: null, hinted: pointed.cells },
             colors,
             kit,
             draw: board.draw,
             onError: () => undefined,
+            // The page's pointing hand rests at its end, as under reduced motion.
+            coach:
+              pointed.hand === null
+                ? null
+                : { hand: pointed.hand, cells: pointed.cells, phase: 1, look: handLook },
           });
     return (
       <View

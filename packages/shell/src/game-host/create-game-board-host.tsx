@@ -29,6 +29,7 @@ import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import type { BoardColors, ViewFormat } from '@e07/shell/game-host/board-types.ts';
+import type { CoachHandLook } from '@e07/shell/game-host/draw-coach-hand.ts';
 import type { BoardClockTrace, BoardFrameTime } from '@e07/shell/game-host/game-board-host.tsx';
 import type {
   BoardHostFactory,
@@ -75,6 +76,8 @@ const ANNOUNCEMENTS = {
 
 type BoardLook<TToken extends string> = {
   readonly colors: BoardColors<TToken>;
+  /** The tutorial hand: the Toybox pop paint, outlined in its own ink (onPop). */
+  readonly handLook: CoachHandLook;
   readonly format: ViewFormat;
   readonly label: string;
 };
@@ -96,7 +99,8 @@ function useBoardLook<T extends ShellGameTypes>(
   });
   const format = { formatNumber: createNumberFormatter(localeTagFor(language, digits)) };
   const label = gameMessageText(t, board.describe(board.toView(state, format)));
-  return { colors, format, label };
+  const handLook = { fill: Skia.Color(theme.colors.pop), ink: Skia.Color(theme.colors.onPop) };
+  return { colors, handLook, format, label };
 }
 
 function boardHostFor<T extends ShellGameTypes>(
@@ -128,7 +132,11 @@ function boardHostFor<T extends ShellGameTypes>(
       },
       coachTargets: coach.cells,
     });
-    const { colors, format, label } = useBoardLook(game, result.state);
+    const { colors, handLook, format, label } = useBoardLook(game, result.state);
+    const hand =
+      coach.hand === null
+        ? null
+        : { hand: coach.hand, cells: coach.cells, look: handLook, replay: 0 };
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();
@@ -161,6 +169,7 @@ function boardHostFor<T extends ShellGameTypes>(
           isLayoutProbeOn={ports.isLayoutProbeOn?.() === true}
           {...(traceClock === undefined ? {} : { traceClock })}
           {...(onFrameTime === undefined ? {} : { onFrameTime })}
+          coach={hand}
         />
       </BoardDirectionView>
     );
