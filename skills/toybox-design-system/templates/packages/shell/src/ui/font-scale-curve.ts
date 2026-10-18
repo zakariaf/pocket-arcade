@@ -39,6 +39,19 @@ function keyOf(fontScale: number): number {
 
 type Point = readonly [sp: number, dp: number];
 
+/** A converter as points: TABLE_SP paired with the dp each is drawn at. */
+function pointsOf(toDp: readonly number[]): readonly Point[] {
+  return TABLE_SP.map((sp, index): Point => [sp, toDp[index] ?? sp]);
+}
+
+/** Every table as points, made once. */
+const TABLE_POINTS: ReadonlyMap<number, readonly Point[]> = new Map(
+  [...TABLES].map(([key, toDp]) => [key, pointsOf(toDp)]),
+);
+
+/** The identity, for a key without a table. */
+const IDENTITY_POINTS = pointsOf(TABLE_SP);
+
 /** The segment `sp` falls in: from (0, 0) below the first point. */
 function segmentOf(sp: number, points: readonly Point[]): readonly [Point, Point] {
   const upper = Math.max(
@@ -50,8 +63,7 @@ function segmentOf(sp: number, points: readonly Point[]): readonly [Point, Point
 }
 
 /** FontScaleConverterImpl.lookupAndInterpolate, sp to dp, for a size of 0 or more. */
-function lookup(sp: number, fromSp: readonly number[], toDp: readonly number[]): number {
-  const points = fromSp.map((value, index): Point => [value, toDp[index] ?? value]);
+function lookup(sp: number, points: readonly Point[]): number {
   const [lastSp, lastDp] = points.at(-1) ?? [1, 1];
   // Past the table: the last pair's ratio, linearly.
   if (sp >= lastSp) return sp * (lastDp / lastSp);
@@ -61,32 +73,49 @@ function lookup(sp: number, fromSp: readonly number[], toDp: readonly number[]):
 }
 
 /** FontScaleConverterFactory.forScale: a table, two interpolated, or null for linear scaling. */
-function tableFor(fontScale: number): readonly number[] | null {
+function convertedFor(fontScale: number): readonly Point[] | null {
   const key = keyOf(fontScale);
-  const exact = TABLES.get(key);
+  const exact = TABLE_POINTS.get(key);
   if (exact !== undefined) return exact;
   const higher = KEYS.findIndex((candidate) => candidate > key);
   if (higher <= 0) return null;
   const startKey = KEYS[higher - 1] ?? 0;
   const endKey = KEYS[higher] ?? 0;
-  const start = TABLES.get(startKey) ?? TABLE_SP;
-  const end = TABLES.get(endKey) ?? TABLE_SP;
+  const start = TABLE_POINTS.get(startKey) ?? IDENTITY_POINTS;
+  const end = TABLE_POINTS.get(endKey) ?? IDENTITY_POINTS;
   const point = Math.min(
     1,
     Math.max(0, (fontScale - startKey / 100) / ((endKey - startKey) / 100)),
   );
-  return TABLE_SP.map((sp) => {
-    const startDp = lookup(sp, TABLE_SP, start);
-    return startDp + (lookup(sp, TABLE_SP, end) - startDp) * point;
-  });
+  return pointsOf(
+    TABLE_SP.map((sp) => {
+      const startDp = lookup(sp, start);
+      return startDp + (lookup(sp, end) - startDp) * point;
+    }),
+  );
+}
+
+/** The converted points per font scale, made once each: a phone has one font scale at a time. */
+const CURVES = new Map<number, readonly Point[] | null>();
+
+/**
+ * The points Android 14+ converts sp to dp along for a font scale (null: linear), made on the
+ * first call for that scale and handed back as the same array after.
+ */
+export function curveFor(fontScale: number): readonly Point[] | null {
+  if (fontScale < MIN_CURVED_SCALE) return null;
+  const cached = CURVES.get(fontScale);
+  if (cached !== undefined) return cached;
+  const curve = convertedFor(fontScale);
+  CURVES.set(fontScale, curve);
+  return curve;
 }
 
 /** The dp Android 14+ draws `sp` at for the phone's font scale (before React Native's cap). */
 export function androidSpToDp(sp: number, fontScale: number): number {
-  if (fontScale < MIN_CURVED_SCALE) return sp * fontScale;
-  const table = tableFor(fontScale);
-  if (table === null) return sp * fontScale;
-  return Math.sign(sp) * lookup(Math.abs(sp), TABLE_SP, table);
+  const curve = curveFor(fontScale);
+  if (curve === null) return sp * fontScale;
+  return Math.sign(sp) * lookup(Math.abs(sp), curve);
 }
 
 /**
