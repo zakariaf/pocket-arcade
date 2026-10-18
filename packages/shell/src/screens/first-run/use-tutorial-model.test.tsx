@@ -103,6 +103,18 @@ describe('useTutorialModel', () => {
     expect(save.doc().run?.ref).toStrictEqual({ kind: 'tutorial' });
   });
 
+  it("hands the board the step's own pointer, which the board turns into every cell it fills", async () => {
+    // Spec S13: one pointer per step. The board resolves it through the game (coachPointerOf),
+    // so a drag marks every cell of the block, not only the cell it drops on.
+    const { result, send } = await tutorial();
+    expect(result.current.coachPointer).toStrictEqual({
+      kind: 'target',
+      target: { regionId: 'board', col: 0, row: 0 },
+    });
+    await send({ type: 'pause' });
+    expect(result.current.coachPointer).toBeNull();
+  });
+
   it('accepts only the step it expects, then shows the next step with Skip', async () => {
     const { result, send } = await tutorial();
     await send({ type: 'intent', intent: tapColumn(1) });

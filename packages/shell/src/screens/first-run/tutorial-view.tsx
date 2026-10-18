@@ -39,7 +39,11 @@ export function TutorialView({ model }: TutorialViewProps): ReactNode {
       </View>
       <View style={styles.board} testID="tutorial.board">
         {BoardHost === null ? null : (
-          <BoardHost testID="game.board-canvas" coachTargets={model.coachTargets} />
+          <BoardHost
+            testID="game.board-canvas"
+            coachTargets={model.coachTargets}
+            coachPointer={model.coachPointer}
+          />
         )}
       </View>
       <View style={styles.coach}>

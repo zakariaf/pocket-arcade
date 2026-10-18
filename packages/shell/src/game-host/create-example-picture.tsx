@@ -8,9 +8,9 @@ import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts
 import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
 import { makeScene } from '@e07/shell/game-host/board-scene.ts';
 import { IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
+import { coachGameOf, coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
 import { examplePictureAspectOf } from '@e07/shell/game-host/example-picture-aspect.ts';
 import { recordBoard } from '@e07/shell/game-host/record-board.ts';
-import { exampleHighlightOf } from '@e07/shell/game-host/tutorial-script.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -55,6 +55,8 @@ function examplePictureFor<T extends ShellGameTypes>(
   const board = game.presentation.board;
   const aspectRatio = examplePictureAspectOf(board);
   const kitOf = lazyKitOf(game);
+  // A page's pointer marks what the tutorial's does: the slot and every cell the move fills.
+  const coach = coachGameOf(game);
   return function ExamplePicture({ pageIndex }: ExamplePictureProps): ReactNode {
     const kit = kitOf();
     const theme = useTheme();
@@ -81,7 +83,10 @@ function examplePictureFor<T extends ShellGameTypes>(
             now: 0,
             layout: board.layout({ ...size, view, isMirrored }),
             pointer: IDLE_POINTER,
-            highlight: exampleHighlightOf(page.pointer),
+            highlight: {
+              selected: null,
+              hinted: coachPointerOf(coach, page.example, page.pointer).cells,
+            },
             colors,
             kit,
             draw: board.draw,

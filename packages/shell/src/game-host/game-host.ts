@@ -32,9 +32,9 @@ import {
   isTutorialMoveAccepted,
 } from '@e07/shell/game-host/tutorial-script.ts';
 
+import type { BoardHostProps } from './board-host-props.ts';
 import type { HostCounter } from './host-counter.ts';
 import type { LevelPack } from '@e07/game-kit/contract/levels.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { CreditEntry } from '@e07/shell/art/credit-entry.ts';
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { FullscreenGate } from '@e07/shell/game-host/fullscreen-gate.ts';
@@ -56,11 +56,7 @@ import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
 import type { SectionWrite } from '@e07/shell/stores/update-and-publish.ts';
 import type { ComponentType, ReactNode } from 'react';
 
-export type BoardHostProps = {
-  readonly testID: string;
-  /** The Tutorial screen's pointer cells, outlined on the board with the hinted ones. */
-  readonly coachTargets?: readonly BoardTarget[];
-};
+export type { BoardHostProps } from './board-host-props.ts';
 
 type Controller<T extends ShellGameTypes> = SessionController<T['state'], T['move'], T['event']>;
 
