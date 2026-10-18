@@ -4,7 +4,7 @@
 // (L10), and never a tracking prompt (L14). Lint bans importing the SDKs in tests, so the test
 // reads the mocks with jest.requireMock (after an explicit jest.mock).
 import { act, screen, userEvent } from '@testing-library/react-native';
-import { Platform } from 'react-native';
+import { BackHandler, DeviceEventEmitter, Platform } from 'react-native';
 
 import { useBannerSlot } from '@e07/shell/app/use-ad-context.ts';
 import { createFakeAds } from '@e07/shell/services/ads/fake-ads.ts';
@@ -139,6 +139,16 @@ async function renderMoment(options: Options = {}): Promise<{ readonly calls: st
   return { calls };
 }
 
+type HostNode = { readonly parent: HostNode | null; readonly props: Record<string, unknown> };
+
+/** The nearest ancestor that hides its subtree from TalkBack (Android's focus trap), if any. */
+function trapAbove(node: HostNode): HostNode | null {
+  for (let at = node.parent; at !== null; at = at.parent) {
+    if (at.props['importantForAccessibility'] === 'no-hide-descendants') return at;
+  }
+  return null;
+}
+
 function expectNoTrackingPrompt(): void {
   expect(tracking.getTrackingPermissionsAsync).not.toHaveBeenCalled();
   expect(tracking.requestTrackingPermissionsAsync).not.toHaveBeenCalled();
@@ -166,6 +176,43 @@ describe('ConsentMoment on Android', () => {
     expectNoTrackingPrompt();
     expect(screen.queryByTestId('consent.screen')).toBeNull();
     expect(screen.getByTestId('probe.banner')).toHaveTextContent('banner');
+  });
+
+  it('keeps S3 up on the system back, and the press never reaches the navigator under it (spec 5, S3)', async () => {
+    // S3 has no Back control and is no route: the spec's "system back does what Back does" leaves
+    // nothing to do, and the press must not go back on the screen under the cover.
+    const exitApp = jest.spyOn(BackHandler, 'exitApp').mockImplementation(() => undefined);
+    const navigatorBack = jest.fn(() => true);
+    const subscription = BackHandler.addEventListener('hardwareBackPress', navigatorBack);
+    try {
+      const { calls } = await renderMoment();
+      await act(() => {
+        DeviceEventEmitter.emit('hardwareBackPress', {});
+      });
+      await act(flushMicrotasks);
+
+      expect(screen.getByTestId('consent.screen')).toBeOnTheScreen();
+      expect(navigatorBack).not.toHaveBeenCalled();
+      expect(exitApp).not.toHaveBeenCalled();
+      expect(AdsConsent.loadAndShowConsentFormIfRequired).not.toHaveBeenCalled();
+      expect(calls).toStrictEqual([]);
+    } finally {
+      subscription.remove();
+    }
+  });
+
+  it('hides the screen behind S3 from TalkBack, and shows it again after (spec 8.11, S3)', async () => {
+    // The cover's accessibilityViewIsModal is iOS-only; TalkBack walked from S3 onto Home behind it.
+    const user = userEvent.setup();
+    await renderMoment();
+    const behind = screen.getByTestId('probe.banner', { includeHiddenElements: true });
+    const cover = screen.getByTestId('consent.screen');
+    expect([trapAbove(behind) !== null, trapAbove(cover) !== null]).toStrictEqual([true, false]);
+
+    await user.press(screen.getByRole('button', { name: 'Choose options' }));
+    await act(flushMicrotasks);
+    const home = screen.getByTestId('probe.banner');
+    expect(trapAbove(home) !== null).toBe(false);
   });
 
   it('initializes with no intro, no form and no prompt where the form is not required', async () => {

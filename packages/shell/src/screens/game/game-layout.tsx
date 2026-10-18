@@ -1,6 +1,7 @@
 // packages/shell/src/screens/game/game-layout.tsx
 import { StyleSheet, View } from 'react-native';
 
+import { ModalLayer } from '@e07/shell/app/modal-layer.tsx';
 import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
 
 import type { ReactNode } from 'react';
@@ -15,7 +16,6 @@ export type GameLayoutProps = {
 };
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
   board: { flex: 1, marginTop: 4, marginInline: 14 },
 });
 
@@ -23,27 +23,22 @@ const styles = StyleSheet.create({
  * S5 frame: the game top bar, then the board area (the game's). No banner and no stickers
  * over the board, ever. GameScreen (navigation-and-routing) renders this in place of a bare View.
  * The overlay is a sibling of the safe-area frame, so Pause's scrim and Result's own ScreenFrame
- * cover the whole screen (status bar and home indicator too) and are inset once, not twice.
- * While an overlay is up, the frame behind it is hidden from TalkBack: the overlays' own
- * accessibilityViewIsModal is iOS-only, and on Android only what lies behind can be hidden. The
- * wrapper stays and only its value changes, so the board never remounts.
+ * cover the whole screen (status bar and home indicator too) and are inset once, not twice. It is
+ * drawn in a ModalLayer: VoiceOver stays on it, and TalkBack cannot reach the board behind it,
+ * which stays mounted. The system back goes on to Game's own Back (Pause opens or resumes).
  */
 export function GameLayout({ topBar, board, overlay }: GameLayoutProps): ReactNode {
-  const isCovered = overlay !== null && overlay !== undefined && overlay !== false;
   return (
-    <View style={styles.fill}>
-      <View
-        style={styles.fill}
-        importantForAccessibility={isCovered ? 'no-hide-descendants' : 'auto'}
-      >
+    <ModalLayer
+      behind={
         <ScreenFrame testID="game.screen">
           {topBar}
           <View style={styles.board} testID="game.board">
             {board}
           </View>
         </ScreenFrame>
-      </View>
-      {overlay}
-    </View>
+      }
+      layer={overlay}
+    />
   );
 }
