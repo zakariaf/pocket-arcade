@@ -5,6 +5,7 @@
 // after such a hyphen gives Android the same break point and draws nothing.
 
 import { asRtlParagraph, WORD_JOINER, ZERO_WIDTH_SPACE } from '@e07/shell/i18n/bidi.ts';
+import { FONT_FAMILIES } from '@e07/shell/i18n/fonts.ts';
 
 const IN_WORD_HYPHEN = /(?<=\p{L})-(?=\p{L})/gu;
 
@@ -25,12 +26,25 @@ export function withFontSpaces(text: string): string {
   return text.replace(NO_BREAK_SPACE, `${WORD_JOINER} ${WORD_JOINER}`);
 }
 
+/** The bundled faces without a U+00A0 glyph: Lilita One (toybox-font-glyphs.test.ts reads the TTFs). */
+const WITHOUT_NO_BREAK_SPACE: ReadonlySet<string> = new Set([FONT_FAMILIES.display]);
+
+/** Whether a face draws its own no-break space (Rubik and Vazirmatn, as wide as their space). */
+export function hasOwnNoBreakSpace(fontFamily: string): boolean {
+  return !WITHOUT_NO_BREAK_SPACE.has(fontFamily);
+}
+
 /**
  * The marks Android needs to draw a text as the design does: a break point after each in-word
- * hyphen, a no-break space in the text's own font, and in a right-to-left paragraph a right-to-left mark before a text without a strong
+ * hyphen, a no-break space in the text's own font (only for a face without one: isNoBreakSpaceDrawn
+ * false), and in a right-to-left paragraph a right-to-left mark before a text without a strong
  * letter (React Native's prepared layout reads it left to right, where a TextView did not).
  */
-export function androidMarksOf(text: string, isRtlParagraph: boolean): string {
-  const breakable = withHyphenBreaks(withFontSpaces(text));
+export function androidMarksOf(
+  text: string,
+  isRtlParagraph: boolean,
+  isNoBreakSpaceDrawn = false,
+): string {
+  const breakable = withHyphenBreaks(isNoBreakSpaceDrawn ? text : withFontSpaces(text));
   return isRtlParagraph ? asRtlParagraph(breakable) : breakable;
 }

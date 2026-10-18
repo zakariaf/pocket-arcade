@@ -6,7 +6,12 @@ import fc from 'fast-check';
 
 import { RLM } from '@e07/shell/i18n/bidi.ts';
 
-import { androidMarksOf, withFontSpaces, withHyphenBreaks } from './line-breaks.ts';
+import {
+  androidMarksOf,
+  hasOwnNoBreakSpace,
+  withFontSpaces,
+  withHyphenBreaks,
+} from './line-breaks.ts';
 
 const ZWSP = '​';
 
@@ -81,5 +86,25 @@ describe('androidMarksOf', () => {
     expect(androidMarksOf('right-to-left', true)).toBe(`right-${ZWSP}to-${ZWSP}left`);
     expect(androidMarksOf('چپ-به-راست', true)).toBe(`چپ-${ZWSP}به-${ZWSP}راست`);
     expect(androidMarksOf('1,99\u00A0€', false)).toBe('1,99\u2060 \u2060€');
+  });
+});
+
+describe('a face that draws its own no-break space', () => {
+  // Rubik and Vazirmatn have a U+00A0 glyph as wide as their space (toybox-font-glyphs.test.ts):
+  // only Lilita One needs the word joiners (spec 15.1).
+  it('keeps the no-break space for Rubik and Vazirmatn, and still marks the rest', () => {
+    expect(androidMarksOf('62\u00A0%', false, true)).toBe('62\u00A0%');
+    expect(androidMarksOf('E-Mail für 1,99\u00A0€', false, true)).toBe(
+      `E-${ZWSP}Mail für 1,99\u00A0€`,
+    );
+    expect(androidMarksOf('62\u00A0%', false, false)).toBe('62\u2060 \u2060%');
+  });
+
+  it('knows Lilita One as the one bundled face without it', () => {
+    expect(
+      ['LilitaOne', 'Rubik-Regular', 'Rubik-Bold', 'Vazirmatn-Regular', 'Vazirmatn-Bold'].map(
+        hasOwnNoBreakSpace,
+      ),
+    ).toStrictEqual([false, true, true, true, true]);
   });
 });
