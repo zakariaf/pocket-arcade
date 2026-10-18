@@ -6,6 +6,7 @@ import fc from 'fast-check';
 
 import {
   androidSpToDp,
+  curveFor,
   isCurvedScalingOn,
   MAX_TEXT_SCALE,
   scaledSizeOf,
@@ -108,5 +109,21 @@ describe('isCurvedScalingOn', () => {
 
   it('caps at the same 200 % as maxFontSizeMultiplier', () => {
     expect(MAX_TEXT_SCALE).toBe(2);
+  });
+});
+
+describe('curveFor (the converted points, made once per font scale)', () => {
+  it('hands back the same points for the same font scale, so a lookup allocates nothing', () => {
+    expect(curveFor(1.4)).toBe(curveFor(1.4));
+    expect(curveFor(2)).toBe(curveFor(2));
+  });
+
+  it('pins the 200 % table and the interpolated 1.4 points at 14 sp', () => {
+    expect(curveFor(2)?.[3]).toStrictEqual([14, 26]);
+    expect(curveFor(1.4)?.[3]?.[1]).toBeCloseTo(20.4, 4);
+  });
+
+  it('is null where Android scales linearly: below the first curve and past the last table', () => {
+    expect([curveFor(1), curveFor(1.03), curveFor(2.5)]).toStrictEqual([null, null, null]);
   });
 });
