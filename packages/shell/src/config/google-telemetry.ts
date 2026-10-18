@@ -12,16 +12,17 @@
 // declared: JobScheduler.schedule() throws for an undeclared service, so removing them could crash.
 // Purchases are untouched: billing talks to the Play Store app over IPC, not through datatransport.
 
-import type { AndroidManifest } from './backup-rules.ts';
+import { updateMainApplication } from './main-application.ts';
+
+import type { AndroidManifest, MainApplication } from './main-application.ts';
 
 export const TRANSPORT_BACKEND_DISCOVERY =
   'com.google.android.datatransport.runtime.backends.TransportBackendDiscovery';
 export const CCT_BACKEND_META_DATA =
   'backend:com.google.android.datatransport.cct.CctBackendFactory';
 
-type Application = NonNullable<AndroidManifest['manifest']['application']>[number];
-type Service = NonNullable<Application['service']>[number];
-type MetaData = NonNullable<Application['meta-data']>[number];
+type Service = NonNullable<MainApplication['service']>[number];
+type MetaData = NonNullable<MainApplication['meta-data']>[number];
 
 const REMOVAL: Service & { readonly 'meta-data': MetaData[] } = {
   $: { 'android:name': TRANSPORT_BACKEND_DISCOVERY, 'tools:node': 'merge' },
@@ -36,13 +37,10 @@ export function applyNoGoogleTelemetry(manifest: AndroidManifest): AndroidManife
   if (manifest.manifest.$['xmlns:tools'] === undefined) {
     throw new Error('AndroidManifest.xml has no xmlns:tools: run ensureToolsAvailable first');
   }
-  const [main, ...rest] = manifest.manifest.application ?? [];
-  if (main === undefined) {
-    throw new Error('AndroidManifest.xml has no <application>: prebuild did not write the app');
-  }
-  const others = (main.service ?? []).filter(
-    (service) => service.$['android:name'] !== TRANSPORT_BACKEND_DISCOVERY,
-  );
-  const application = { ...main, service: [...others, REMOVAL] };
-  return { ...manifest, manifest: { ...manifest.manifest, application: [application, ...rest] } };
+  return updateMainApplication(manifest, (main) => {
+    const others = (main.service ?? []).filter(
+      (service) => service.$['android:name'] !== TRANSPORT_BACKEND_DISCOVERY,
+    );
+    return { ...main, service: [...others, REMOVAL] };
+  });
 }
