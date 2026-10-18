@@ -21,7 +21,7 @@ A service account (owner step GP3) signs a JWT, which Google exchanges for an ac
 | `aud` | `https://oauth2.googleapis.com/token` |
 | `iat`, `exp` | now, and now plus 3600 seconds |
 
-`POST https://oauth2.googleapis.com/token` with `content-type: application/x-www-form-urlencoded`, `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer` and `assertion=<jwt>` answers `{ "access_token": "...", "expires_in": 3599 }`. The token is kept in the client's closure for the run and sent as `authorization: Bearer <token>`; it is never logged. The token endpoint is a constant of `play-client.ts`, never read from the key file.
+`POST https://oauth2.googleapis.com/token` with `content-type: application/x-www-form-urlencoded`, `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer` and `assertion=<jwt>` answers `{ "access_token": "...", "expires_in": 3599 }`. The token is kept in the client's closure for the run and sent as `authorization: Bearer <token>`; it is never logged. A 2xx answer without a non-empty `access_token` stops at once (`token stopped: http-error (HTTP 200): the token response has no access_token`), before any API call: an empty bearer would come back as a 401 that wrongly blames the service account's permissions. The token endpoint is a constant of `play-client.ts`, never read from the key file.
 
 ## The four calls
 

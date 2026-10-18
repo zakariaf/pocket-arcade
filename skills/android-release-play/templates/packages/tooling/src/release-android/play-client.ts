@@ -35,6 +35,7 @@ export const PLAY_STOP_REASONS = [
   'http-error',
 ] as const;
 export type PlayStopReason = (typeof PLAY_STOP_REASONS)[number];
+const HTTP_ERROR: PlayStopReason = 'http-error';
 
 /** Which call stopped, with its HTTP status. */
 export type StopAt = { readonly step: string; readonly status: number };
@@ -88,7 +89,7 @@ export function playStopOf(step: string, response: HttpResponse): PlayStop {
   if (/declaration|policy/i.test(text)) {
     return new PlayStop('policy-declarations', at, detail);
   }
-  return new PlayStop('http-error', at, detail);
+  return new PlayStop(HTTP_ERROR, at, detail);
 }
 
 function base64url(value: unknown): string {
@@ -107,6 +108,26 @@ export function serviceJwt(account: ServiceAccount, nowSeconds: number): string 
   return `${unsigned}.${account.signRs256(unsigned)}`;
 }
 
+/** A 2xx answer's JSON; any other answer is the stop playStopOf names. */
+function answerOf(step: string, response: HttpResponse): unknown {
+  if (response.status < 200 || response.status > 299) throw playStopOf(step, response);
+  return JSON.parse(response.text) as unknown;
+}
+
+/**
+ * The token endpoint's access_token. A 2xx answer without one would send "Bearer " and come back
+ * as a 401 that blames the service account's permissions, so it stops here, naming the token
+ * response.
+ */
+function accessTokenOf(response: HttpResponse): string {
+  const answer = answerOf('token', response);
+  const token: unknown =
+    typeof answer === 'object' && answer !== null ? Reflect.get(answer, 'access_token') : undefined;
+  if (typeof token === 'string' && token !== '') return token;
+  const at = { step: 'token', status: response.status };
+  throw new PlayStop(HTTP_ERROR, at, 'the token response has no access_token');
+}
+
 export type PlayClient = {
   readonly packageName: string;
   readonly call: (
@@ -122,24 +143,21 @@ export function createPlayClient(input: {
   readonly nowSeconds: () => number;
 }): PlayClient {
   let token: string | null = null;
-  const send = async (step: string, request: HttpRequest): Promise<unknown> => {
-    const response = await input.http(request);
-    if (response.status < 200 || response.status > 299) throw playStopOf(step, response);
-    return JSON.parse(response.text) as unknown;
-  };
+  const send = async (step: string, request: HttpRequest): Promise<unknown> =>
+    answerOf(step, await input.http(request));
   const accessToken = async (): Promise<string> => {
     if (token !== null) return token;
     const form = new URLSearchParams({
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
       assertion: serviceJwt(input.account, input.nowSeconds()),
     });
-    const answer = (await send('token', {
+    const response = await input.http({
       method: 'POST',
       url: PLAY_TOKEN_URL,
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: form.toString(),
-    })) as { access_token?: string };
-    token = answer.access_token ?? '';
+    });
+    token = accessTokenOf(response);
     return token;
   };
   return {
