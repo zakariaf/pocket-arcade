@@ -3,7 +3,11 @@
 // HTTP. The allowlist is the one the APK and store-AAB gates use (privacy-and-network-audit's
 // audit-repo checks that this copy matches it): INTERNET, ACCESS_NETWORK_STATE, AD_ID, BILLING,
 // VIBRATE, plus what the ads SDK declares (Privacy Sandbox, WorkManager) and androidx.core's
-// receiver permission for the app's own package.
+// receiver permission for the app's own package. Also no datatransport CCT backend: Google Play
+// Billing logs its events through it, and it uploads them over HTTPS from the app's own process
+// (E18-T24); withShell's with-no-google-telemetry plugin removes the meta-data this audit looks for.
+import { CCT_BACKEND_META_DATA } from '@e07/shell/config/google-telemetry.ts';
+
 export const ANDROID_PERMISSION_ALLOWLIST: readonly string[] = [
   'android.permission.INTERNET',
   'android.permission.ACCESS_NETWORK_STATE',
@@ -20,13 +24,6 @@ export const ANDROID_PERMISSION_ALLOWLIST: readonly string[] = [
 ];
 
 const PACKAGE_PREFIX = '<package>.';
-
-/**
- * Google Play Billing logs its events through Google's datatransport library, whose CCT backend
- * uploads them over HTTPS from the app's own process (E18-T24). withShell's
- * with-no-google-telemetry plugin removes this meta-data, so the merged manifest must not hold it.
- */
-const CCT_BACKEND_META_DATA = 'backend:com.google.android.datatransport.cct.CctBackendFactory';
 
 function attribute(element: string, name: string): string | null {
   return new RegExp(`\\b${name}\\s*=\\s*"([^"]*)"`).exec(element)?.[1] ?? null;

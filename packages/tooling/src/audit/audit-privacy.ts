@@ -10,9 +10,10 @@
 // Tracking Transparency first (owner decision O1).
 // `npm run audit:privacy -- --platform android [--app <game-id>]` prints Google Play's Data safety
 // answers instead (spec 4.2 point 1), for every app or the one named; it needs no prebuild.
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 
 import { dataSafetyAnswers } from './data-safety.ts';
 import { isAdsEnabled } from './network-config-layer.ts';
@@ -95,26 +96,36 @@ function prebuiltGameIds(): string[] {
   return readdirSync('apps').filter((id) => existsSync(join('apps', id, 'ios', 'Pods')));
 }
 
+const execFileAsync = promisify(execFile);
+
 // The store build's config, as the network audit reads it (ads on unless the game turns them off).
-function storeConfig(gameId: string): ExpoConfigLike {
-  const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
-    cwd: join('apps', gameId),
-    env: {
-      ...process.env,
-      APP_VARIANT: 'store',
-      EXPO_PUBLIC_APP_VARIANT: 'store',
-      ADS_MODE: 'off',
+async function storeConfig(gameId: string): Promise<ExpoConfigLike> {
+  const { stdout } = await execFileAsync(
+    'npx',
+    ['expo', 'config', '--json', '--type', 'prebuild'],
+    {
+      cwd: join('apps', gameId),
+      env: {
+        ...process.env,
+        APP_VARIANT: 'store',
+        EXPO_PUBLIC_APP_VARIANT: 'store',
+        ADS_MODE: 'off',
+      },
+      encoding: 'utf8',
     },
-    encoding: 'utf8',
-  });
-  return JSON.parse(json) as ExpoConfigLike;
+  );
+  return JSON.parse(stdout) as ExpoConfigLike;
 }
 
-function printDataSafety(gameIds: readonly string[]): void {
-  for (const gameId of gameIds) {
-    const answers = dataSafetyAnswers({ gameId, isAdsEnabled: isAdsEnabled(storeConfig(gameId)) });
+/** Every game's config is read at once (independent npx runs); the answers print in game order. */
+async function printDataSafety(gameIds: readonly string[]): Promise<void> {
+  const configs = await Promise.all(gameIds.map(storeConfig));
+  gameIds.forEach((gameId, index) => {
+    const config = configs[index];
+    if (config === undefined) return;
+    const answers = dataSafetyAnswers({ gameId, isAdsEnabled: isAdsEnabled(config) });
     for (const line of answers) console.error(line);
-  }
+  });
 }
 
 const argument = (name: string): string | undefined => {
@@ -125,7 +136,7 @@ const appId = argument('--app');
 if (argument('--platform') === 'android') {
   const allApps = existsSync('apps') ? readdirSync('apps').filter((id) => !id.startsWith('.')) : [];
   const gameIds = appId === undefined ? allApps : [appId];
-  printDataSafety(gameIds);
+  await printDataSafety(gameIds);
   process.exitCode = gameIds.length > 0 ? 0 : 1;
 } else {
   const gameIds = appId === undefined ? prebuiltGameIds() : [appId];

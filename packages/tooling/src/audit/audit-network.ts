@@ -6,10 +6,12 @@
 // Android: once apps/<game>/android/ exists, the Gradle layer reads the release runtime classpath
 // (`./gradlew :app:dependencies`), and after a Release build the merged manifest is checked
 // (permissions on the allowlist, no cleartext); without them, SKIPPED lines.
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 
+import { selectAndroidToolchain } from '@e07/tooling/android/toolchain.ts';
 import { findBannedPackages, inventoryFromLockfile } from '@e07/tooling/deps/banned-packages.ts';
 
 import { manifestProblems } from './android-manifest-audit.ts';
@@ -35,15 +37,6 @@ const STORE_ENV = {
   ADS_MODE: 'off',
 };
 
-// Gradle runs on JDK 17: JAVA_HOME, or Android Studio's JBR (android-emulator-build's choice).
-const STUDIO_JBR = '/Applications/Android Studio.app/Contents/jbr/Contents/Home';
-const GRADLE_ENV = {
-  ...STORE_ENV,
-  JAVA_HOME: process.env['JAVA_HOME'] ?? STUDIO_JBR,
-  EXPO_NO_TELEMETRY: '1',
-  CI: '1',
-};
-
 function readBaseline(name: string): Baseline {
   return JSON.parse(readFileSync(join(BASELINES, name), 'utf8')) as Baseline;
 }
@@ -67,18 +60,26 @@ function jsProblems(outDir: string): string[] {
   ];
 }
 
-/** Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. */
-function nativeAndPodProblems(appDir: string): string[] {
+const execFileAsync = promisify(execFile);
+
+/**
+ * Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. The
+ * autolinking runs and `expo config` are independent and run together.
+ */
+async function nativeAndPodProblems(appDir: string): Promise<string[]> {
+  const [roots, { stdout: json }] = await Promise.all([
+    nativeModuleRoots(appDir),
+    execFileAsync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
+      cwd: appDir,
+      env: STORE_ENV,
+      encoding: 'utf8',
+    }),
+  ]);
   const native = compareToBaseline(
-    nativeNetworkFindings(nativeModuleRoots(appDir)),
+    nativeNetworkFindings(roots),
     readBaseline('native-baseline.json'),
   );
   const lock = join(appDir, 'ios', 'Podfile.lock');
-  const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
-    cwd: appDir,
-    env: STORE_ENV,
-    encoding: 'utf8',
-  });
   const podfileLock = existsSync(lock) ? readFileSync(lock, 'utf8') : null;
   const config = JSON.parse(json) as ExpoConfigLike;
   return [...native, ...podAndConfigProblems({ podfileLock, config })];
@@ -94,11 +95,12 @@ function mergedReleaseManifest(androidDir: string): string | null {
   return found === undefined ? null : join(intermediates, found);
 }
 
+/** Gradle on android-emulator-build's toolchain (JDK 17, the pinned SDK), with the store variables. */
 function gradleDump(androidDir: string): string {
   const args = [':app:dependencies', '--configuration', 'releaseRuntimeClasspath', '-q'];
   return execFileSync(join(androidDir, 'gradlew'), args, {
     cwd: androidDir,
-    env: GRADLE_ENV,
+    env: selectAndroidToolchain(STORE_ENV),
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
   });
@@ -124,11 +126,12 @@ function androidProblems(appDir: string): string[] {
   return [...gradle, ...manifestLines];
 }
 
-function auditApp(gameId: string): string[] {
+async function auditApp(gameId: string): Promise<string[]> {
   const appDir = join(ROOT, 'apps', gameId);
   const outDir = join(ROOT, 'dist-audit', gameId);
   exportBundle(appDir, outDir);
-  return [...jsProblems(outDir), ...nativeAndPodProblems(appDir), ...androidProblems(appDir)].map(
+  const nativeAndPods = await nativeAndPodProblems(appDir);
+  return [...jsProblems(outDir), ...nativeAndPods, ...androidProblems(appDir)].map(
     (p) => `${gameId}: ${p}`,
   );
 }
@@ -142,7 +145,8 @@ function bannedPackageProblems(): string[] {
 }
 
 const gameIds = readdirSync(join(ROOT, 'apps')).filter((name) => !name.startsWith('.'));
-const problems = [...bannedPackageProblems(), ...gameIds.flatMap(auditApp)];
+const problems = bannedPackageProblems();
+for (const gameId of gameIds) problems.push(...(await auditApp(gameId)));
 for (const line of problems) console.error(line);
 const failures = problems.filter((line) => !line.includes('SKIPPED') && !line.includes('STALE'));
 console.error(`audit:network: ${String(failures.length)} failure(s)`);
