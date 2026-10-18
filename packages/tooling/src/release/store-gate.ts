@@ -6,12 +6,14 @@
 // Every variant also carries the app id io.applander.<game id without hyphens> (owner decision O4),
 // no scaffold placeholder, and Apple's tracking prompt text in Info.plist and every app language
 // (owner decision O1). A placeholder is an '[owner-placeholder] ...' problem naming its owner step
-// (G5: the AdMob ids; G3: the store build's links); ownerStepsPendingLine gives the line the release
-// stops with ('OWNER STEPS PENDING: G3, G5'). Until the owner supplies them, those are the only
-// problems a release of the pilot can stop on here.
+// (G5: the AdMob ids, Google's sample units in a live build included; G3: the store build's links);
+// ownerStepsPendingLine gives the line the release stops with ('OWNER STEPS PENDING: G3, G5'). Until
+// the owner supplies them, those are the only problems a release of the pilot can stop on here.
 import type { BuildVariant } from '@e07/shell/config/app-variant.ts';
 
 export const SAMPLE_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
+/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts) only. */
+const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
 const LIVE_APP_ID = /^ca-app-pub-\d{16}~\d{10}$/;
 
 /** The owner step that replaces a scaffold value (human steps G3 and G5); null: the agent fixes it. */
@@ -202,10 +204,22 @@ function appIdProblem(facts: ArtifactFacts, expected: GateExpectation): string {
   return id === wanted ? '' : `CFBundleIdentifier ${id} is not ${wanted}`;
 }
 
+/**
+ * A live build's AdMob unit from Google's sample publisher: G5 is still pending (a live build with
+ * Google's test ids shows test ads and earns nothing), or ''.
+ */
+function sampleUnitProblem(unit: string): string {
+  if (!unit.startsWith(SAMPLE_PUBLISHER)) return '';
+  return `${OWNER_PLACEHOLDER}extra.adUnits is Google's sample (test) AdMob id ${unit} (owner step G5)`;
+}
+
 /** The AdMob units (live builds) in every variant, the links in store builds: owner steps G5 and G3. */
 function placeholderProblems(facts: ArtifactFacts, isStore: boolean): string[] {
   return [
-    ...facts.adUnits.map((unit) => ownerPlaceholderProblem('extra.adUnits', unit)),
+    ...facts.adUnits.map((unit) => {
+      const placeholder = ownerPlaceholderProblem('extra.adUnits', unit);
+      return placeholder === '' ? sampleUnitProblem(unit) : placeholder;
+    }),
     ...(isStore
       ? [
           ownerPlaceholderProblem('extra.game.links.privacyPolicy.host', facts.privacyHost),
