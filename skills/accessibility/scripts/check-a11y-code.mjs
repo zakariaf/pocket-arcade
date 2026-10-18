@@ -200,25 +200,42 @@ function bodyOf(masked, tag) {
   return { from: tag.end + 1, to: masked.length };
 }
 
+/** A component file: a .tsx file that is not a test. */
+const isComponentFile = (rel) => rel.endsWith('.tsx') && !/\.test\.tsx$/.test(rel);
+
+/**
+ * Every file read and scanned once, for all the passes: rel -> { source, masked, code (comments
+ * stripped), tags (findJsxTags, component files only), tagNames (the set of their names) }.
+ */
+function parseFiles(root, files) {
+  const parsed = new Map();
+  for (const rel of files) {
+    const source = readFileSync(join(root, rel), 'utf8');
+    const masked = maskCode(source);
+    const tags = isComponentFile(rel) ? findJsxTags(source, masked) : [];
+    parsed.set(rel, { source, masked, code: source.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), tags, tagNames: new Set(tags.map((tag) => tag.name)) });
+  }
+  return parsed;
+}
+
+/** The parsed component files, as [{ rel, masked, tagNames, ... }]. */
+function componentFiles(parsed) {
+  return [...parsed].filter(([rel]) => isComponentFile(rel)).map(([rel, file]) => ({ rel, ...file }));
+}
+
 /**
  * Names of components that render a pressable: raw Pressable/Touchable*, or a component exported
  * by a file that renders one (Button -> RaisedSurface -> Pressable), followed to a fixed point.
  */
-function findPressableNames(root, files) {
-  const sources = files
-    .filter((rel) => rel.endsWith('.tsx') && !/\.test\.tsx$/.test(rel))
-    .map((rel) => {
-      const source = readFileSync(join(root, rel), 'utf8');
-      const masked = maskCode(source);
-      return { masked, tags: new Set(findJsxTags(source, masked).map((tag) => tag.name)) };
-    });
+function findPressableNames(parsed) {
+  const sources = componentFiles(parsed);
   const names = new Set(PRESSABLES);
   const done = new Set();
   let changed = true;
   while (changed) {
     changed = false;
     for (const file of sources) {
-      if (done.has(file) || ![...file.tags].some((name) => names.has(name))) continue;
+      if (done.has(file) || ![...file.tagNames].some((name) => names.has(name))) continue;
       done.add(file);
       changed = true;
       for (const m of file.masked.matchAll(/export\s+(?:function|const)\s+([A-Z][\w$]*)/g)) names.add(m[1]);
@@ -231,14 +248,8 @@ function findPressableNames(root, files) {
  * Files whose components are modal: they set accessibilityViewIsModal (or render <Modal>), or
  * render a component exported by such a file (DialogFrame -> DialogCard), followed to a fixed point.
  */
-function findModalFiles(root, files) {
-  const sources = files
-    .filter((rel) => rel.endsWith('.tsx') && !/\.test\.tsx$/.test(rel))
-    .map((rel) => {
-      const source = readFileSync(join(root, rel), 'utf8');
-      const masked = maskCode(source);
-      return { rel, masked, tags: new Set(findJsxTags(source, masked).map((tag) => tag.name)) };
-    });
+function findModalFiles(parsed) {
+  const sources = componentFiles(parsed);
   const modalNames = new Set();
   const modalFiles = new Set();
   let changed = true;
@@ -246,7 +257,7 @@ function findModalFiles(root, files) {
     changed = false;
     for (const file of sources) {
       if (modalFiles.has(file.rel)) continue;
-      const isModal = /\baccessibilityViewIsModal\b|<Modal\b/.test(file.masked) || [...file.tags].some((name) => modalNames.has(name));
+      const isModal = /\baccessibilityViewIsModal\b|<Modal\b/.test(file.masked) || [...file.tagNames].some((name) => modalNames.has(name));
       if (!isModal) continue;
       modalFiles.add(file.rel);
       changed = true;
@@ -260,13 +271,11 @@ function findModalFiles(root, files) {
  * The render graph of the non-test .tsx files: file -> the files whose exported components it
  * renders as JSX tags (renders), and the reverse (renderedBy).
  */
-function renderGraph(root, files) {
+function renderGraph(parsed) {
   const nodes = new Map();
   const exportedBy = new Map();
-  for (const rel of files.filter((file) => file.endsWith('.tsx') && !/\.test\.tsx$/.test(file))) {
-    const source = readFileSync(join(root, rel), 'utf8');
-    const masked = maskCode(source);
-    nodes.set(rel, { code: source.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), masked, tags: new Set(findJsxTags(source, masked).map((tag) => tag.name)) });
+  for (const { rel, code, masked, tagNames } of componentFiles(parsed)) {
+    nodes.set(rel, { code, masked, tags: tagNames });
     for (const m of masked.matchAll(/export\s+(?:function|const)\s+([A-Z][\w$]*)/g)) exportedBy.set(m[1], [...(exportedBy.get(m[1]) ?? []), rel]);
   }
   const renders = new Map([...nodes.keys()].map((rel) => [rel, new Set()]));
@@ -322,18 +331,18 @@ run(async () => {
   const files = collectFiles(root);
   if (files.length === 0) fail(`nothing to check: no .ts/.tsx files under ${rootArg}/packages/shell/src or apps/*/src`, 'Run from the app repo root, or pass it as the argument.');
   const report = createReporter({ name: 'check-a11y-code', json: options.json });
-  const modalFiles = findModalFiles(root, files);
-  const pressableNames = findPressableNames(root, files);
+  const parsed = parseFiles(root, files);
+  const modalFiles = findModalFiles(parsed);
+  const pressableNames = findPressableNames(parsed);
   const shown = (rel) => toPosix(relative(process.cwd(), join(root, rel))) || rel;
-  const graph = renderGraph(root, files);
+  const graph = renderGraph(parsed);
   const androidTrapDue = existsSync(join(root, ANDROID_TRAP_DUE.file));
   if (!androidTrapDue && files.some((rel) => OVERLAY_FILE.test(basename(rel)))) {
     report.skip({ file: ANDROID_TRAP_DUE.file, rule: 'modal-overlay', message: `Android focus trap (importantForAccessibility behind each overlay): due at Android step ${ANDROID_TRAP_DUE.step}: ${ANDROID_TRAP_DUE.file} not yet created` });
   }
 
   for (const rel of files) {
-    const source = readFileSync(join(root, rel), 'utf8');
-    const masked = maskCode(source);
+    const { source, masked, tags } = parsed.get(rel);
     const isTest = /\.test\.tsx?$/.test(rel);
     const problem = (index, rule, message, fix) => report.problem({ file: shown(rel), line: lineOf(source, index), rule, message, fix });
     const inCode = (regex, cb) => {
@@ -371,7 +380,7 @@ run(async () => {
     if (!rel.endsWith('.tsx')) continue;
 
     const sizes = styleSizes(source, masked);
-    for (const tag of findJsxTags(source, masked)) {
+    for (const tag of tags) {
       const attrs = jsxAttributes(source, tag, masked);
       // A spread can supply an attribute when it spreads a whole object ({...props}) or names it.
       const spreads = [...attrs].filter(([k]) => k.startsWith('...')).map(([, v]) => v.value.replace(/^\.\.\./, '').trim());
@@ -398,7 +407,7 @@ run(async () => {
       const isAccessible = !/^\{?\s*false\s*\}?$/.test(attrs.get('accessible')?.value?.trim() ?? '');
       if (isAccessible && !tag.selfClosing) {
         const body = bodyOf(masked, tag);
-        const inner = findJsxTags(source, masked).find((other) => other.start > body.from && other.start < body.to && pressableNames.has(other.name));
+        const inner = tags.find((other) => other.start > body.from && other.start < body.to && pressableNames.has(other.name));
         if (inner) {
           problem(inner.start, 'nested-pressable', `<${inner.name}> sits inside an accessible <${tag.name}>, so VoiceOver reads only the outer element and never reaches this key`, 'Make them siblings: the card opener is an absolutely filled Pressable (role button, label joining the card\'s visible texts, which hide from VoiceOver) under the card\'s content, and the key is a separate element above it (references/roles-labels-and-voiceover.md, "Card that opens a screen plus its own key").');
         }
