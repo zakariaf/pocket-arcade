@@ -78,6 +78,17 @@ describe('AppText on Android', () => {
     expect(text.props['accessibilityLabel']).toBe('62\u00A0%');
   });
 
+  it('keeps the no-break space in a Rubik or Vazirmatn text, which draws its own (spec 15.1)', async () => {
+    // Only Lilita One lacks U+00A0; Rubik and Vazirmatn draw it as wide as their space.
+    await renderWithShell(
+      <AppText text={'Gewinnquote 62\u00A0%'} testID="stats.overview-card.win-rate.label" />,
+    );
+
+    const text = screen.getByTestId('stats.overview-card.win-rate.label');
+    expect(text).toHaveTextContent('Gewinnquote 62\u00A0%');
+    expect(text.props['accessibilityLabel']).toBeUndefined();
+  });
+
   it('fills each line before breaking, as the design does, not with the paragraph-optimal breaker (spec 15.1)', async () => {
     await renderWithShell(
       <AppText

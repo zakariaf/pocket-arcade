@@ -9,7 +9,7 @@ import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { MAX_TEXT_SCALE } from './font-scale-curve.ts';
-import { androidMarksOf } from './line-breaks.ts';
+import { androidMarksOf, hasOwnNoBreakSpace } from './line-breaks.ts';
 import { useBalancedWrap } from './use-balanced-wrap.ts';
 import { useTextRoom } from './use-text-room.ts';
 
@@ -182,14 +182,24 @@ function isBalancedOf(style: TypeStyle, variant: TypeVariant): boolean {
 /** What the Text draws, and whether Android's marks were added to it (read as written then). */
 type Drawn = { readonly shown: string; readonly isMarked: boolean };
 
+/** What decides the drawn text: the text as written and how it is set. */
+type DrawnInput = {
+  readonly text: string;
+  readonly textDirection: Direction | undefined;
+  readonly face: TypeStyle['face'];
+  readonly fontFamily: TextStyle['fontFamily'];
+};
+
 /**
  * What the Text draws: game names (Latin brand names) isolated so an RTL sentence cannot reorder
- * them, then Android's marks.
+ * them, then Android's marks (a no-break space rewritten only for a face without one).
  */
-function drawnTextOf(style: TypeStyle, direction: Direction, props: AppTextProps): Drawn {
-  const text = style.face === 'brand' ? isolate(props.text) : props.text;
+function drawnTextOf(input: DrawnInput, layoutDirection: Direction): Drawn {
+  const text = input.face === 'brand' ? isolate(input.text) : input.text;
   if (Platform.OS !== 'android') return { shown: text, isMarked: false };
-  const shown = androidMarksOf(text, direction === 'rtl' && props.textDirection !== 'ltr');
+  const isRtlParagraph = layoutDirection === 'rtl' && input.textDirection !== 'ltr';
+  const isNoBreakSpaceDrawn = hasOwnNoBreakSpace(input.fontFamily ?? '');
+  const shown = androidMarksOf(text, isRtlParagraph, isNoBreakSpaceDrawn);
   return { shown, isMarked: shown !== text };
 }
 
@@ -201,7 +211,12 @@ export function AppText(props: AppTextProps): ReactNode {
   const localized = useLocalizedTextStyle(localizedOptions(style, props));
   // What the Text draws comes first: its layouts report the drawn text's lines (Android's marks
   // included), so the balanced wrap and the room measure that text, never the one written.
-  const drawn = drawnTextOf(style, useDirection(), props);
+  const { text: written, textDirection } = props;
+  const { fontFamily } = localized;
+  const drawn = drawnTextOf(
+    { text: written, textDirection, face: style.face, fontFamily },
+    useDirection(),
+  );
   // Display text wraps balanced where the design sets .d (text-wrap: balance).
   const balance = useBalancedWrap(
     isBalancedOf(style, variant),
