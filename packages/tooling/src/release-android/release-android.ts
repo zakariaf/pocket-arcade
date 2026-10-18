@@ -16,9 +16,9 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { selectAndroidToolchain } from '@e07/tooling/android/toolchain.ts';
-import { variantEnv } from '@e07/tooling/build/emu-build-plan.ts';
+import { PREBUILD_ANDROID_ARGS, variantEnv } from '@e07/tooling/build/emu-build-plan.ts';
 import { nowEpochSeconds } from '@e07/tooling/clock/system-clock.ts';
-import { runToolStep, tailOf } from '@e07/tooling/ios/tool-step.ts';
+import { runStepOrThrow } from '@e07/tooling/ios/tool-step.ts';
 import { bumpBuildNumber, buildTag } from '@e07/tooling/release/build-number.ts';
 import { keystoreProblems, uploadKeyPathOf } from '@e07/tooling/release-android/aab-signing.ts';
 import {
@@ -43,10 +43,7 @@ import {
   type OwnerValues,
   type ReleaseAndroidOptions,
 } from '@e07/tooling/release-android/release-android-plan.ts';
-import {
-  assertUnusedVersionCode,
-  nextVersionCode,
-} from '@e07/tooling/release-android/version-code.ts';
+import { nextVersionCode } from '@e07/tooling/release-android/version-code.ts';
 
 import type { Http } from '@e07/tooling/release-android/play-client.ts';
 
@@ -102,8 +99,8 @@ function bumpAndCommit(game: string, config: GameValues): number {
   const tags = git(['tag', '--list', `${game}/v*`])
     .split('\n')
     .filter(Boolean);
+  // Above the config and every upload tag of the game: never a used number.
   const versionCode = nextVersionCode({ game, configBuildNumber: config.buildNumber, tags });
-  assertUnusedVersionCode(versionCode, game, tags);
   const file = join('apps', game, 'game.config.ts');
   const bump = bumpBuildNumber(readFileSync(file, 'utf8'));
   if (bump.next !== versionCode) {
@@ -123,20 +120,9 @@ function bumpAndCommit(game: string, config: GameValues): number {
   return versionCode;
 }
 
-type Step = { readonly name: string; readonly file: string; readonly args: readonly string[] };
-
-function runStep(step: Step, context: { appDir: string; env: NodeJS.ProcessEnv }): void {
-  console.log(`release:android: ${step.name} ...`);
-  const result = runToolStep(step.name, { file: step.file, args: step.args }, context);
-  if (result.status !== 0) {
-    throw new Error(
-      `step "${step.name}" failed (exit ${String(result.status)}), see ${result.logFile}:\n${tailOf(result.output, 30)}`,
-    );
-  }
-}
-
-function sha256Of(path: string): string {
-  return createHash('sha256').update(readFileSync(path)).digest('hex');
+/** The AAB's sha256, from bytes read once (the upload sends the same bytes). */
+function sha256Of(bytes: Buffer): string {
+  return createHash('sha256').update(bytes).digest('hex');
 }
 
 async function build(options: ReleaseAndroidOptions, config: GameValues): Promise<number> {
@@ -145,16 +131,15 @@ async function build(options: ReleaseAndroidOptions, config: GameValues): Promis
   const appDir = join('apps', options.game);
   const env = { ...selectAndroidToolchain(process.env), ...variantEnv(STORE_VARIANT) };
   const context = { appDir, env };
-  const prebuildArgs = ['expo', 'prebuild', '--platform', 'android', '--clean'];
-  runStep({ name: 'prebuild', file: 'npx', args: prebuildArgs }, context);
+  const cli = 'release:android';
+  runStepOrThrow(cli, { name: 'prebuild', file: 'npx', args: PREBUILD_ANDROID_ARGS }, context);
+  const bundleArgs = ['-p', 'android', ...BUNDLE_RELEASE_ARGS];
   const gradlew = join('android', 'gradlew');
-  runStep(
-    { name: 'bundle', file: gradlew, args: ['-p', 'android', ...BUNDLE_RELEASE_ARGS] },
-    context,
-  );
+  runStepOrThrow(cli, { name: 'bundle', file: gradlew, args: bundleArgs }, context);
   const aab = aabPath(appDir);
+  const sha256 = sha256Of(readFileSync(aab));
   console.log(
-    `release:android: built ${aab} (versionCode ${String(versionCode)}, sha256 ${sha256Of(aab)})`,
+    `release:android: built ${aab} (versionCode ${String(versionCode)}, sha256 ${sha256})`,
   );
   console.log(
     `release:android: next, the store-AAB gate (android-release-play's check-store-aab.mjs): --aab ${aab} --variant store --ads live --version ${config.version} --build ${String(versionCode)} --game ${options.game} --stamp ${gateStampPath(appDir)} .`,
@@ -183,9 +168,10 @@ async function upload(options: ReleaseAndroidOptions, config: GameValues): Promi
   const aab = aabPath(appDir);
   if (!existsSync(aab))
     throw new StopError(`${aab} not found: run the build first (without --resume)`);
+  const bytes = readFileSync(aab);
   const problems = uploadProblems({
     stamp: readStamp(gateStampPath(appDir)),
-    aabSha256: sha256Of(aab),
+    aabSha256: sha256Of(bytes),
     versionCode: config.buildNumber,
   });
   if (problems.length > 0) throw new StopError(`nothing was uploaded:\n  ${problems.join('\n  ')}`);
@@ -196,7 +182,7 @@ async function upload(options: ReleaseAndroidOptions, config: GameValues): Promi
     packageName: config.bundleId,
     nowSeconds: nowEpochSeconds,
   });
-  const versionCode = await uploadToInternal(client, readFileSync(aab), options.notes);
+  const versionCode = await uploadToInternal(client, bytes, options.notes);
   const tag = buildTag(options.game, config.version, versionCode);
   git(['tag', tag]);
   console.log(

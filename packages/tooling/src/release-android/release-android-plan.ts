@@ -4,6 +4,7 @@
 // ever written: promoting a release is the owner's step in the Play Console.
 import { join } from 'node:path';
 
+import { readFlagPairs } from '@e07/tooling/build/flag-pairs.ts';
 import { isGameId } from '@e07/tooling/build/game-id.ts';
 
 export type ReleaseAndroidOptions = {
@@ -43,21 +44,8 @@ export const RELEASE_ANDROID_USAGE = [
 
 const FLAGS = new Set(['--app', '--track', '--notes', '--resume']);
 
-function readFlags(argv: readonly string[]): ReadonlyMap<string, string> {
-  const flags = new Map<string, string>();
-  for (let index = 0; index < argv.length; index += 2) {
-    const flag = argv[index] ?? '';
-    const value = argv[index + 1];
-    if (!FLAGS.has(flag) || value === undefined || value.startsWith('--')) {
-      throw new Error(`unexpected argument "${flag}". ${RELEASE_ANDROID_USAGE}`);
-    }
-    flags.set(flag, value);
-  }
-  return flags;
-}
-
 export function parseReleaseAndroidArgs(argv: readonly string[]): ReleaseAndroidOptions {
-  const flags = readFlags(argv);
+  const flags = readFlagPairs(argv, FLAGS, RELEASE_ANDROID_USAGE);
   const game = flags.get('--app');
   if (!isGameId(game)) {
     throw new Error(`--app <game-id> is required. ${RELEASE_ANDROID_USAGE}`);
