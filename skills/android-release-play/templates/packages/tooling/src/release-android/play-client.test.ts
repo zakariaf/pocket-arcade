@@ -152,6 +152,18 @@ describe('the stops', () => {
     );
   });
 
+  it('stops on an app that is still a draft: the owner uploads this AAB in the Console once (GP7)', async () => {
+    const draft = {
+      status: 400,
+      text: '{"error":{"code":400,"message":"Only releases with status draft may be created on draft app.","status":"INVALID_ARGUMENT"}}',
+    };
+    const google = fakeGoogle([OK_TOKEN, OK_EDIT, OK_BUNDLE, draft]);
+    const run = uploadToInternal(client(google.http), new Uint8Array([1]), null);
+    await expect(run).rejects.toMatchObject({ name: 'PlayStop', reason: 'draft-app' });
+    await expect(run).rejects.toThrow('GP7');
+    expect(google.requests).toHaveLength(4);
+  });
+
   it('names the API not enabled for the project', async () => {
     const disabled = {
       status: 403,

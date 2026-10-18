@@ -26,7 +26,7 @@ Everything only the owner can do for an Android release, with its id, why it is 
 | GP6 | The Premium product | Play Console, Line Siege, Monetise with Play, Products, In-app products (one-time products), Create product: Product ID `io.applander.linesiege.premium` (never reusable), Name "Premium", Description "No ads, ever. One-time purchase.", Default price EUR 1.99 (owner decision O2) with Google's local prices for the other countries; Save, Activate. Google allows products only after a build with the BILLING permission has been uploaded, so GP6 follows GP7 | Premium shows "store unavailable" in Play-installed builds |
 | GP7 | Testers and the first upload | Play Console, Line Siege, Test and release, Testing, Internal testing, Testers: create an e-mail list with the testers; Setup, License testing: the same accounts, licence response RESPOND_NORMALLY. Then Internal testing, Create new release: upload the AAB Claude built and gated (`apps/line-siege/android/app/build/outputs/bundle/release/app-release.aab`), release name, notes, Next, Save and publish to internal testing | Claude keeps the gated AAB and its stamp ready |
 
-Whether the Play API can upload the very first bundle of a new app is verified on the first real run; the default is that the owner does the first upload (GP7) in the Console, and the API does every later one.
+The Play API cannot roll out the first release of a new app: while the app is a draft Google refuses a completed release ("Only releases with status draft may be created on draft app."), and `release:android` stops with `draft-app`. So the owner does the first upload (GP7) in the Console, and the API does every later one.
 
 ## The order
 

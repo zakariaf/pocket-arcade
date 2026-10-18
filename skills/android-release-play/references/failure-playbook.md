@@ -52,6 +52,7 @@ Symptom, cause and action for every failure of an Android release seen or expect
 | `api-not-enabled` | the Android Publisher API is off in the service account's project | stop: the owner enables it (GP3) |
 | `auth` (401/403) | the service account is not invited for this app, lacks "Release apps to testing tracks", or its key was deleted | stop: the owner fixes the permission or makes a new key (GP3) |
 | `app-not-found` (404) | no app in the Console, or the first upload is not done | stop: GP1, then the owner's first upload (GP7) |
+| `draft-app` (400 "Only releases with status draft may be created on draft app.") | the app has never been rolled out, so Google takes only draft releases | stop, never retried and never resent as a draft: the owner uploads this gated AAB in the Console and rolls it out (GP7); the next build goes through the API |
 | `version-code-used` | the number was used by an earlier upload | a new run 1 (never lower `buildNumber`) |
 | `policy-declarations` | App content incomplete | stop: the owner completes GP4 |
 | `no store-AAB gate stamp` / `sha256 differs` | the gate did not pass on these bytes | run the gate on this AAB; a changed AAB needs a new run 1 |
