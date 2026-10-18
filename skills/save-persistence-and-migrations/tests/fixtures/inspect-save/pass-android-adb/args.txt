@@ -1,0 +1,1 @@
+--platform android --serial emulator-5554 --bundle-id io.applander.linesiege --game-id line-siege --max-version 1 --sdk ../../kill-test/fake-sdk

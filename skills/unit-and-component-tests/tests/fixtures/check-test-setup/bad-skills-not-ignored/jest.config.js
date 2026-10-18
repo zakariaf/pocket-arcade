@@ -1,6 +1,7 @@
 // jest.config.js — the ONE Jest config for the monorepo (run from the repo root).
-// Projects: 'unit' (jest-expo iOS env, everything except goldens and sims)
-//           'golden' (Skia CanvasKit env, *.golden.test.ts only).
+// Projects: 'unit' (jest-expo iOS env, everything except goldens, sims and *.android.test.*)
+//           'unit-android' (jest-expo Android env, *.android.test.ts(x) only: Platform.OS is 'android')
+//           'golden' (Skia CanvasKit env, *.golden.test.ts only; on the iOS preset, so no .snap.android).
 // Bot simulations (*.sim.test.ts) are NOT here: they run via jest.sim.config.js (`npm run test:sim`).
 const fs = require('node:fs');
 const path = require('node:path');
@@ -71,6 +72,10 @@ const TEST_ROOTS = ['<rootDir>/{apps,packages}/*/src/**/', '<rootDir>/test/**/']
 // the plugin's output cannot pass inside a mutation run.
 const IS_MUTATION_RUN = process.env.STRYKER_MUTATOR_WORKER !== undefined;
 
+// A test that needs Platform.OS === 'android' is named <unit>.android.test.ts(x): only the
+// unit-android project runs it, and the iOS project never does (there it would see 'ios').
+const ANDROID_TEST = '\\.android\\.test\\.';
+
 const unitProject = {
   ...SHARED,
   displayName: 'unit',
@@ -79,11 +84,22 @@ const unitProject = {
     ...SHARED.testPathIgnorePatterns,
     '\\.golden\\.test\\.',
     '\\.sim\\.test\\.',
+    ANDROID_TEST,
     ...(IS_MUTATION_RUN ? ['/quality/worklet-transform\\.test\\.'] : []),
   ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 
+const unitAndroidProject = {
+  ...SHARED,
+  displayName: 'unit-android',
+  preset: 'jest-expo/android',
+  testMatch: TEST_ROOTS.map((root) => `${root}*.android.test.{ts,tsx}`),
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+};
+
+// Goldens keep SHARED's iOS preset: its snapshot resolver writes .snap.ios, and a second
+// platform would write a second set (.snap.android) of the same frozen data.
 const goldenProject = {
   ...SHARED,
   displayName: 'golden',
@@ -118,7 +134,7 @@ const coverageThreshold = {
 
 /** @type {import('jest').Config} */
 module.exports = {
-  projects: [unitProject, goldenProject],
+  projects: [unitProject, unitAndroidProject, goldenProject],
   collectCoverageFrom: [
     '<rootDir>/{apps,packages}/*/src/**/*.{ts,tsx}',
     '!<rootDir>/packages/tooling/**',

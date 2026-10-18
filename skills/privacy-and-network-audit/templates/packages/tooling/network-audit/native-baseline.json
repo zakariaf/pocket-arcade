@@ -1,26 +1,26 @@
 {
   "react-native": {
-    "categories": ["urlSession", "webSocket"],
-    "reason": "capability present, unused; our use of it is lint-banned"
+    "categories": ["urlSession", "webSocket", "httpClient", "webView"],
+    "reason": "capability present, unused; our use of it is lint-banned (Android: OkHttp networking, image and dev-support modules; webView is an accessibility check for WebView views, none is created)"
   },
   "expo": {
-    "categories": ["urlSession", "webSocket"],
-    "reason": "capability present, unused; our use of it is lint-banned"
+    "categories": ["urlSession", "webSocket", "httpClient"],
+    "reason": "capability present, unused; our use of it is lint-banned (Android: the expo/fetch module on OkHttp)"
   },
   "expo-modules-core": {
-    "categories": ["urlSession", "webSocket"],
-    "reason": "capability present, unused; our use of it is lint-banned"
+    "categories": ["urlSession", "webSocket", "httpClient"],
+    "reason": "capability present, unused; our use of it is lint-banned (Android: the dev-tools network inspector on OkHttp)"
   },
   "expo-modules-jsi": {
     "categories": ["urlSession"],
     "reason": "capability present, unused; our use of it is lint-banned"
   },
   "expo-asset": {
-    "categories": ["urlSession"],
+    "categories": ["urlSession", "httpClient"],
     "reason": "remote asset download path, unused (assets are bundled); lint bans remote URLs"
   },
   "expo-file-system": {
-    "categories": ["urlSession"],
+    "categories": ["urlSession", "httpClient"],
     "reason": "transitive Expo dependency; its download API is lint-banned"
   },
   "@expo/dom-webview": {
@@ -28,11 +28,19 @@
     "reason": "DOM components runtime, unused; web views are lint-banned"
   },
   "@expo/log-box": {
-    "categories": ["webView", "urlSession"],
+    "categories": ["webView", "urlSession", "httpClient"],
     "reason": "development error overlay, inactive in Release builds"
   },
   "expo-constants": {
     "categories": ["webView"],
     "reason": "reads the user agent through a web view class, no network use"
+  },
+  "react-native-screens": {
+    "categories": ["webView"],
+    "reason": "Android: checks whether a child view is a WebView (focus handling); creates none, no network use"
+  },
+  "react-native-worklets": {
+    "categories": ["httpClient"],
+    "reason": "Android: the worklet networking module on OkHttp, unused; our worklets never call fetch (lint-banned)"
   }
 }

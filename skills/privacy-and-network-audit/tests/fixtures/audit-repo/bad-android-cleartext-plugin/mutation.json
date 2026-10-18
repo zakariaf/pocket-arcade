@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/plugins/with-http.ts",
+      "content": "// packages/shell/plugins/with-http.ts (fixture: a plugin that allows plain HTTP)\nimport { withAndroidManifest } from 'expo/config-plugins';\n\nexport default function withHttp(config: object): object {\n  return withAndroidManifest(config, (mod) => {\n    mod.modResults.manifest.application[0].$['android:usesCleartextTraffic'] = 'true';\n    return mod;\n  });\n}\n"
+    }
+  }
+]

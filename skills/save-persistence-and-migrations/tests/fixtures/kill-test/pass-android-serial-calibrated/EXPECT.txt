@@ -1,0 +1,4 @@
+run: adb -s emulator-5554 root
+calibration: first save write
+round 2: killed pid 4242
+kill-test: 2 kill rounds checked, 0 problems

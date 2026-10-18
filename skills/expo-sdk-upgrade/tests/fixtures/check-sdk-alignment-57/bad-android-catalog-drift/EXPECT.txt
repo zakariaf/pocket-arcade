@@ -1,0 +1,4 @@
+android-toolchain
+compileSdk is 37 in the installed React Native (node_modules/react-native/gradle/libs.versions.toml), but SDK 57's Android line says 36
+agp is 8.13.0 in the installed React Native (node_modules/react-native/gradle/libs.versions.toml), but SDK 57's Android line says 8.12.0
+gradle is 9.4.0 in node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties, but SDK 57's Android line says 9.3.1

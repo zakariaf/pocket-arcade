@@ -24,7 +24,7 @@ Copy `packages/shell/src/services/{ads,consent,connectivity}/*` and `packages/sh
 
 ```ts
 const errorLog = createSqliteErrorLogAdapter(driver, clock);
-const adsExtra = readAdsExtra(); // { adsMode, adUnits } embedded at build time
+const adsExtra = readAdsExtra(); // { adsMode, adUnits }: this platform's live units, embedded at build time
 const ads = createAdsPort(adsExtra, (error) => {
   errorLog.record('ads', error);
 });
@@ -77,8 +77,8 @@ banner: { renderBanner: ads.renderBanner, isAllowed: shouldShowBanner(adConfig, 
 ```
 
 ```tsx
-// home-view.tsx: const bannerBandStyle = useBannerBandStyle(); (the Toybox band from ui/use-banner-band-style.ts:
-// paddingBlock 6, 2 pt dashed rules, ad fill)
+// home-view.tsx: const bannerBandStyle = usePinnedBannerBandStyle(); (the Toybox band from ui/use-banner-band-style.ts:
+// paddingBlock 6, 2 pt dashed rules, ad fill; pinned under the body, it ends 34 pt above the edge)
 <AdBannerSlot
   testID="home.banner-ad"
   renderBanner={model.banner.renderBanner}

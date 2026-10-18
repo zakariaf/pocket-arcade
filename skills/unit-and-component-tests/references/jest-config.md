@@ -97,14 +97,24 @@ The branch applies only to the files Stryker instrumented (an `overrides` entry 
 
 ## jest.config.js, part by part
 
-Exactly two projects: `unit` (preset `jest-expo/ios`, everything except goldens and sims) and `golden` (Skia's CanvasKit environment, `*.golden.test.ts` only). Skia's environment replaces React Native's export conditions, so it must never be the global environment. Bot sims run only through `jest.sim.config.js`.
+Exactly three projects, each test file in exactly one of them:
+
+| Project | Preset and environment | Runs | Why |
+|---|---|---|---|
+| `unit` | `jest-expo/ios` | every `*.test.ts(x)` except goldens, sims and `*.android.test.*` (`ANDROID_TEST` in its `testPathIgnorePatterns`) | the iOS-first default: `Platform.OS` is `'ios'` |
+| `unit-android` | `jest-expo/android` (jest-expo ships it; nothing to install) | only `<unit>.android.test.ts(x)` under the same `TEST_ROOTS` | `Platform.OS` is `'android'` and `Platform.select` takes the `android` branch, so an Android-only behaviour (the Back button, Play Billing fields, Android ad unit ids) is proven where it runs |
+| `golden` | Skia's CanvasKit environment, SHARED's `jest-expo/ios` preset | `*.golden.test.ts` only | pixels and frozen data are platform-independent; the iOS preset's snapshot resolver writes `.snap.ios`, and a second preset would write a second set (`.snap.android`) of the same frozen goldens |
+
+Skia's environment replaces React Native's export conditions, so it must never be the global environment. Bot sims run only through `jest.sim.config.js`.
+
+An Android test is named `<unit>.android.test.ts(x)` and sits next to its unit like any test; it loads the same `jest.setup.ts` (Gesture Handler, Worklets, Reanimated, the central Skia mock) and the same root `__mocks__`. A test whose behaviour is the same on both platforms stays a plain `<unit>.test.ts(x)` in `unit`: never copy a test into an `.android.test` twin. Run one with `npx jest <file> --ci --selectProjects unit-android`; `npm test` and `npm run test:coverage` run all three projects, and the Android tests count toward the same coverage. Verified on 2026-10-12 in a copy of the repo: the probe `packages/shell/src/testing/platform.android.test.ts` (`expect(Platform.OS).toBe('android')`) passes in `unit-android`, is not listed by `--selectProjects unit --listTests`, and fails with `Expected: "android" Received: "ios"` under the old two-project config; the `unit` (491 suites, 3129 tests) and `golden` (5 suites, 67 tests, 18 snapshots) counts were unchanged and no `.snap.android` file was written. `check-test-setup.mjs` rules `jest-projects`, `jest-android-test-in-ios`, `jest-unit-android-project` and `jest-golden-project` (the iOS preset) hold this shape.
 
 - **`process.env.TZ = 'UTC'`** at the top: every worker inherits it, so date code never depends on the Mac's time zone.
 - **`transformIgnorePatterns`**: React Native, Expo, Skia and FormatJS ship untranspiled Flow or ESM (react-intl 12 is `"type": "module"`). The pattern is a prefix match, so `react-native` also covers every `react-native-*` library and `expo` every `expo-*` module. Overriding a preset key replaces the preset's array, so the two jest-expo exclusions (`react-native-reanimated/plugin/`, `@react-native/babel-preset/`) are copied in.
 - **`moduleNameMapper`** maps `@e07/<package>/<path>` straight to `<rootDir>/packages/<package>/src/<path>` (and `@e07/<game-id>/…` to `apps/<game-id>/src/…`). Without it, Stryker's sandbox imports the original files through the `node_modules` workspace symlinks and reports "NoCoverage" or false survivors (verified on `daily-seed.ts`). It also keeps Jest independent of how npm links workspaces. So tests import workspace code by package name, never by a relative path that leaves their workspace.
 - **`modulePathIgnorePatterns` / `testPathIgnorePatterns`**: generated native projects (`apps/*/ios|android|build|dist`), `coverage`, `reports`, `tools`, `skills`, `.claude` and `.stryker-tmp` are invisible to Jest. The skills folder lives in the repo, and its templates and fixtures hold `package.json` files named `@e07/shell` and copies of `__mocks__/expo-iap.ts`; without the ignore, jest-haste-map prints "Haste module naming collision" and "duplicate manual mock found: expo-iap" and may apply a fixture's mock instead of the root one (verified). `jest.sim.config.js` ignores the same three folders.
 - **`clearMocks` + `restoreMocks`**: call counts reset before each test; implementations given to `jest.fn(impl)` in root `__mocks__` survive (verified with Jest 29.7).
-- **`setupFiles`** (both projects): the Shell's FormatJS polyfill module (`packages/shell/src/i18n/intl-polyfills.ts`) runs before the framework, exactly like the first import of the app entry, so Jest (V8 ICU) and Hermes format identically, in pixel goldens too.
+- **`setupFiles`** (every project): the Shell's FormatJS polyfill module (`packages/shell/src/i18n/intl-polyfills.ts`) runs before the framework, exactly like the first import of the app entry, so Jest (V8 ICU) and Hermes format identically, in pixel goldens too.
 - **`TEST_ROOTS`**: colocated tests in `{apps,packages}/*/src/**` and the root `test/**`.
 - **`IS_MUTATION_RUN`**: the one test that checks the Worklets plugin's output (`packages/tooling/src/quality/worklet-transform.test.ts`) is skipped inside Stryker workers, which compile without that plugin.
 - **`coverageThreshold`**: see `coverage-and-mutation.md`. Keys join the config only when `fs.globSync` finds a non-test source file, so an empty repo never fails with "Coverage data for ./packages/... was not found".
@@ -112,7 +122,7 @@ Exactly two projects: `unit` (preset `jest-expo/ios`, everything except goldens 
 
 ## jest.setup.ts
 
-Runs after the framework is installed, in the `unit` project only: Gesture Handler's `jestSetup`, the Worklets mock (`jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'))`) and `require('react-native-reanimated').setUpTests()`. `react-native-reanimated/jest/resolver` does not exist in 4.5.1 (newer docs describe it); use the docs for the installed version.
+Runs after the framework is installed, in the `unit` and `unit-android` projects only (never `golden`): Gesture Handler's `jestSetup`, the Worklets mock (`jest.mock('react-native-worklets', () => require('react-native-worklets/src/mock'))`) and `require('react-native-reanimated').setUpTests()`. `react-native-reanimated/jest/resolver` does not exist in 4.5.1 (newer docs describe it); use the docs for the installed version.
 
 It also holds the one central Skia mock. Skia's native module does not load in the `unit` project (`Native Skia Module failed to correctly install JSI Bindings!`), and the Shell draws with Skia in the logo tile, the empty-stats picture, the hazard strip (which the debug screen and every screen with one pulls in), the board canvas and the real-time host. So `jest.mock('@shopify/react-native-skia', ...)` in `jest.setup.ts` makes every Skia component (`Canvas`, `Group`, `Path`, `Picture`, `DashPathEffect`, any other capitalised export) render as an inert host element named `Skia<Component>` that keeps its props, so `testID`, `accessibilityRole` and `accessibilityLabel` stay queryable. Every `Skia.*` factory and lower-case helper (`vec`, `rect`, `matchFont`) returns an inert object that accepts any call, and the loading hooks (`useFont`, `useImage`, any `use*`) return `null`, which is what the real hooks return while loading. Rules for it:
 
@@ -151,6 +161,7 @@ Bot simulations only (`npm run test:sim`), never pre-commit or `npm test`. Plain
 | One title | `npx jest --ci -t 'clears the column'` |
 | Tests related to staged files | `npx jest --ci --findRelatedTests <files>` |
 | Only the unit project | `npx jest --ci --selectProjects unit` (a path goes before the flag: `npx jest --ci <file> --selectProjects unit`) |
+| Only the Android tests | `npx jest --ci --selectProjects unit-android` (one file: `npx jest --ci <file>.android.test.ts --selectProjects unit-android`) |
 | Coverage with the gate | `npm run test:coverage` |
 | Replay an order-dependent failure | `npx jest --ci --randomize --seed=<printed seed> -i` |
 | Sims | `npm run test:sim` |
@@ -179,6 +190,7 @@ A new runtime dependency that ships only ESM (or Flow, or untranspiled TypeScrip
 | `jest-haste-map: duplicate manual mock found: expo-iap` or `Haste module naming collision: @e07/shell` | Jest indexes `skills/` or `.claude/` (skill fixtures hold copies) | the `skills` and `\\.claude` entries of the ignore lists in both Jest configs (`check-test-setup.mjs` rule `jest-ignored-paths`) |
 | `npx jest --selectProjects unit <file>` runs every suite | `--selectProjects` swallowed the path as a second project name | `npx jest --ci <file> --selectProjects unit` |
 | `Native Skia Module failed to correctly install JSI Bindings!` | the `unit` project loaded the real Skia: `jest.setup.ts` lacks the central Skia mock, or a test called `jest.requireActual('@shopify/react-native-skia')` | copy the Skia block of `templates/jest.setup.ts` (`check-test-setup.mjs` rule `skia-unit-mock`); draw modules import Skia types only and get objects through `kit`; pixel tests go to the `golden` project |
+| An Android test sees `Platform.OS` `'ios'`, or a `.snap.android` file appears | the file is not named `<unit>.android.test.ts(x)` (so `unit` runs it), the `unit` project lacks the `ANDROID_TEST` ignore, or a project other than `unit-android` uses `jest-expo/android` | the three projects of `templates/jest.config.js` (`check-test-setup.mjs` rules `jest-android-test-in-ios`, `jest-unit-android-project`, `jest-golden-project`); delete the stray `.snap.android` |
 | A pixel golden is fully transparent or empty | the `golden` project loads `jest.setup.ts`, whose inert Skia mock replaced CanvasKit | only `@shopify/react-native-skia/jestSetup.js` in the golden `setupFilesAfterEnv` |
 
 ## Flaky Jest tests

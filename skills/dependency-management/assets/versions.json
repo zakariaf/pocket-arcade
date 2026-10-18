@@ -126,7 +126,7 @@
       "spec": "~57.0.22",
       "install": "expo",
       "where": "apps",
-      "why": "has ios.enableSceneSupport (needs expo >= 57.0.23)",
+      "why": "has ios.enableSceneSupport (needs expo >= 57.0.23); on Android it sets kotlinVersion 2.1.20, React Native 0.86.3's Kotlin (androidToolchain), installed by the Android port (Android step 2)",
       "native": true
     },
     "expo-constants": {
@@ -707,5 +707,19 @@
     "react-native-audio-api",
     "react-native-google-mobile-ads",
     "expo-iap"
-  ]
+  ],
+  "androidToolchain": {
+    "$comment": "The Android build toolchain of Expo SDK 57 / React Native 0.86.3, read on 2026-10-12 from the installed packages: node_modules/react-native/gradle/libs.versions.toml (the version catalog Expo's root-project plugin uses: minSdk, targetSdk, compileSdk, buildTools, ndkVersion, agp, kotlin), node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties (Gradle) and ReactAndroid's jvmToolchain(17) (JDK). No installed package names a CMake version for an app build (ReactAndroid's own 3.30.5 is only for building React Native from source); 3.22.1 is the SDK package the Android build preflight requires (android-emulator-build), installed on the build Mac on 2026-10-12. These move only with an Expo SDK (expo-sdk-upgrade), never one by one.",
+    "jdk": "17",
+    "compileSdk": 36,
+    "targetSdk": 36,
+    "minSdk": 24,
+    "buildTools": "36.0.0",
+    "ndk": "27.1.12297006",
+    "cmake": "3.22.1",
+    "agp": "8.12.0",
+    "gradle": "9.3.1",
+    "kotlin": "2.1.20",
+    "kotlinVia": "expo-build-properties ~57.0.22 (android.kotlinVersion)"
+  }
 }

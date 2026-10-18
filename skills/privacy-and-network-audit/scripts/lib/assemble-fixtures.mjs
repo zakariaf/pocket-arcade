@@ -4,7 +4,7 @@
 // mutation.json. So the self-test also proves that the templates pass the checkers.
 // Not an entry point.
 
-import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { makeTempDir } from '../check-lib.mjs';
@@ -36,6 +36,10 @@ function applyMutation(dir, ops, label) {
       writeFile(dir, op.json.file, `${JSON.stringify(data, null, 2)}\n`);
     } else if (op.write) {
       writeFile(dir, op.write.file, op.write.content);
+    } else if (op.move) {
+      if (!existsSync(join(dir, op.move.from))) throw new Error(`${label}: ${op.move.from} does not exist; update its mutation.json`);
+      mkdirSync(dirname(join(dir, op.move.to)), { recursive: true });
+      renameSync(join(dir, op.move.from), join(dir, op.move.to));
     } else if (op.delete) {
       if (!existsSync(join(dir, op.delete))) throw new Error(`${label}: ${op.delete} does not exist; update its mutation.json`);
       rmSync(join(dir, op.delete), { recursive: true });

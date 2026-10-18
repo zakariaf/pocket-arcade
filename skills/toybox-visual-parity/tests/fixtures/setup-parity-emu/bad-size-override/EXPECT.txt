@@ -1,0 +1,2 @@
+[emu-size]
+Override size: 1080x2400

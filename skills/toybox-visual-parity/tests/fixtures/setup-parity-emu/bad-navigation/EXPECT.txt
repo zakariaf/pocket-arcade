@@ -1,0 +1,2 @@
+[emu-navigation]
+gesture navigation is off

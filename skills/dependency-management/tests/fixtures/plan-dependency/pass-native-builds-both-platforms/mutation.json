@@ -1,0 +1,6 @@
+[
+  { "json": { "file": "apps/alpha/package.json", "path": ["dependencies", "expo-tracking-transparency"], "value": null } },
+  { "json": { "file": "apps/beta/package.json", "path": ["dependencies", "expo-tracking-transparency"], "value": null } },
+  { "json": { "file": "packages/shell/package.json", "path": ["peerDependencies", "expo-tracking-transparency"], "value": null } },
+  { "json": { "file": "package.json", "path": ["overrides", "expo-tracking-transparency"], "value": null } }
+]

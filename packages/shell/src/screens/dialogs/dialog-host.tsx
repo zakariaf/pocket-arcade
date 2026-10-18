@@ -1,4 +1,6 @@
 // packages/shell/src/screens/dialogs/dialog-host.tsx
+import { useHardwareBack } from '@e07/shell/navigation/use-hardware-back.ts';
+
 import { NewerSaveDialog } from './newer-save-dialog.tsx';
 import { ResetProgressDialog } from './reset-progress-dialog.tsx';
 import { ResetStatsDialog } from './reset-stats-dialog.tsx';
@@ -21,6 +23,8 @@ export type DialogHostProps = {
  * Every button closes the dialog; the action button runs its callback first.
  */
 export function DialogHost({ request, onClose, isReducedMotion }: DialogHostProps): ReactNode {
+  // Android's system back is the open dialog's cancel; every S14 cancel (Cancel, Later, OK) closes.
+  useHardwareBack(request === null ? null : onClose);
   if (request === null) return null;
   const closeAfter = (action: () => void) => (): void => {
     action();

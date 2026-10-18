@@ -3,6 +3,7 @@
 ## Contents
 
 - Dynamic Type: what iOS sends and what the app does
+- Font size on Android: font scale 2.0
 - Layout rules at large text
 - Toybox large-text layouts
 - Reduce motion: one source of truth
@@ -23,6 +24,21 @@ React Native's iOS `fontScale` per content-size category (from `RCTAccessibility
 - `AppText` renders every text with `maxFontSizeMultiplier={2}`: text grows up to **200 %** (the product's requirement) and no further. Verified: the cap holds text at 2× in a screenshot at the largest size.
 - Never `allowFontScaling={false}`, never a different `maxFontSizeMultiplier`, never raw font sizes (use type roles).
 
+## Font size on Android: font scale 2.0
+
+Android has no content-size categories: the system font size is one number, `font_scale` (Settings > Display > Font size; up to 2.0 on Android 14 and later, so on the API 35 emulator image). React Native reports it as `fontScale` (`useWindowDimensions()`), and the same `AppText` cap applies: text grows to 200 % and no further, `isLargeText` is true from 1.35 as on iOS.
+
+- The 200 % pass on the emulator sets the scale by adb on the AVD's own serial, never on a device the session did not start, and resets it afterwards:
+
+```sh
+adb -s "$SERIAL" shell settings put system font_scale 2.0   # the 200 % pass
+adb -s "$SERIAL" shell settings put system font_scale 1.0   # back to normal afterwards
+```
+
+- The e2e-maestro Android runner does this in its large-text step for the `a11y` flows (en and fa, phone and tablet AVDs), as the iOS runner does with `content_size`; the screenshot matrix's large-text set uses the same scale.
+- Every layout rule below holds on Android unchanged; Android sizes are dp, the same numbers as pt.
+- Not yet confirmed on the emulator: the `fontScale` React Native reads at `font_scale 2.0` (expected 2.0). The first Android large-text run checks it and records it here.
+
 ## Layout rules at large text
 
 - Use `minHeight`, not a fixed `height`, on containers of text.
@@ -40,13 +56,13 @@ The mockup has no large-text frames, so these are the chosen layouts at `isLarge
 - level tiles grow in height with the font (the grid stays 6 columns on phones);
 - the hero key grows taller (minimum 80 pt).
 
-Check them in screenshots at `accessibility-extra-extra-extra-large` in en and fa: nothing clipped or overlapping, nothing truncated.
+Check them in screenshots at `accessibility-extra-extra-extra-large` in en and fa: nothing clipped or overlapping, nothing truncated. On Android the same check runs at font scale 2.0 ("Font size on Android" above; `npm run screenshots:android -- --font-scale 2.0` for the matrix).
 
 Clipping also happens at normal size when a Persian line box is too short: iOS cuts glyphs at the line box where Chrome (the design references) lets them overflow. At line height 1.0 the tops of Vazirmatn's digits on every fa level tile were cut off, so the level number now uses 1.45 in fa and ckb (the theme's `TYPE_STYLES.levelNumber`, a token-file change, lead decision L2). The 44 pt score (`TYPE_STYLES.scoreValue`: S7, the endless and daily results) lost the tops of its Persian digits the same way and uses 1.45 too (lead decision L9); keep only minimum heights around both, never a fixed row height. Beyond the line box, `AppText`'s overflow guard centres a Vazirmatn line's overflow as Chrome does, since iOS puts it all above the line and clips it (toybox-design-system). In fa and ckb screenshots look at the tops and bottoms of digits and of marks such as madda and hamza, not only at wrapping; a clipped glyph is a defect, never a waiver.
 
 ## Reduce motion: one source of truth
 
-- `useReduceMotion()` (`packages/shell/src/app/use-reduce-motion.ts`) resolves the Settings row "Reduce motion" (`system` / `on` / `off`, default `system`) against the phone's switch in `systemA11yStore`. `resolveReduceMotion(preference, isSystemOn)` is pure and tested.
+- `useReduceMotion()` (`packages/shell/src/app/use-reduce-motion.ts`) resolves the Settings row "Reduce motion" (`system` / `on` / `off`, default `system`) against the phone's switch in `systemA11yStore`. On Android the phone's switch is "Remove animations": React Native's `isReduceMotionEnabled` is true when the global transition animation scale is 0 (read in the React Native 0.86 Android source), so the same store and hook serve both platforms. Any 0 counts, so an emulator whose three animation scales are set to 0 for E2E runs (`adb -s <serial> shell settings put global transition_animation_scale 0`) runs with the phone's reduce motion on: with the row at `system` the app shows the reduce-motion alternatives below, which is what those runs must expect. `resolveReduceMotion(preference, isSystemOn)` is pure and tested.
 - Never use Reanimated's `useReducedMotion()`: it is a constant captured at module load (read in the 4.5.1 source), so it ignores the setting and live changes.
 - `<MotionConfig />` at the root sets Reanimated's global `ReducedMotionConfig` (`ReduceMotion.Always` / `Never`), so every `withTiming`/`withSpring`/layout animation that keeps the default `reduceMotion: ReduceMotion.System` follows the Shell setting. In development builds it logs "Reduced motion setting is overwritten with mode …", which is expected.
 - Board animations do not go through it: they use `buildTimeline(events, isReduced ? 'reduced' : 'full')` — no screen shake, no particles, no zoom, no parallax, no overshoot.

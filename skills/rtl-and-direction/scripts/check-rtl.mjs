@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
-import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, UsageError, createReporter, dueSkipReason, fail, lineOf, parseArgs, run, toPosix, walk } from './check-lib.mjs';
+import { REPO_SCAN_IGNORES, SHELL_DUE_TARGETS, UsageError, createReporter, dueSkipReason, fail, lineOf, maskComments, parseArgs, run, toPosix, walk } from './check-lib.mjs';
 import { findCalls, findClosing, findImports, findJsxTags, jsxAttributes, maskCode } from './lib/source-scan.mjs';
 
 const SPEC = {
@@ -29,6 +29,9 @@ const SPEC = {
     '  writing-direction       writingDirection set outside use-localized-text-style.ts',
     '  reload-outside-direction reloadAppAsync outside direction.ts, or expo-updates at all',
     '  expo-localization-rtl   supportsRTL / forcesRTL in an app or Shell config',
+    '  android-supports-rtl    android:supportsRtl (or supportsRtl) set to false in an app config, the Shell config or a',
+    '                          Shell config plugin (not their tests, which may plant false as input): Android then',
+    '                          ignores forceRTL and fa/ckb stay left-to-right',
     '  text-import             Text imported from react-native outside ui/app-text.tsx',
     '  number-format           Intl.NumberFormat with a literal, undefined or missing locale (use localeTagFor)',
     '  bidi-in-source          raw or escaped bidi controls / ALM outside i18n/bidi.ts (also an LRE/LRM put around a',
@@ -88,6 +91,11 @@ const LTR_TEXT_FIX =
 function isTest(rel) {
   return /\.test\.tsx?$/.test(rel) || rel.includes('__mocks__/');
 }
+
+/** Android's manifest attribute (or a config key of that name) turned off; the Expo template sets it true. */
+const SUPPORTS_RTL_OFF = /\b(?:android:)?supportsRtl['"]?\s*\]?\s*[:=]\s*['"]?false\b/;
+const SUPPORTS_RTL_OFF_MESSAGE = 'android:supportsRtl is set to false: Android then ignores forceRTL, so Persian and Sorani stay left-to-right after the restart';
+const SUPPORTS_RTL_OFF_FIX = "Keep android:supportsRtl=\"true\" (the Expo template's value): remove the override, or set 'true' if a plugin must write it.";
 
 function collectFiles(root) {
   const files = [];
@@ -177,6 +185,8 @@ run(async () => {
     if (rel.endsWith('.json')) {
       const match = /"(supportsRTL|forcesRTL)"/.exec(source);
       if (match) problem(match.index, 'expo-localization-rtl', `${match[1]} is set in the app config`, 'Give expo-localization supportedLocales only; the Shell owns direction (forceRTL + reload).');
+      const off = SUPPORTS_RTL_OFF.exec(source);
+      if (off) problem(off.index, 'android-supports-rtl', SUPPORTS_RTL_OFF_MESSAGE, SUPPORTS_RTL_OFF_FIX);
       continue;
     }
     const masked = maskCode(source);
@@ -222,6 +232,9 @@ run(async () => {
     }
     if (/(^|\/)(app\.config\.ts|plugins\/|config\/)/.test(rel) || rel.startsWith('packages/shell/src/config/')) {
       code(/\b(supportsRTL|forcesRTL)\b/g, (m) => problem(m.index, 'expo-localization-rtl', `${m[1]} is set for expo-localization`, 'Give expo-localization supportedLocales only; supportsRTL/forcesRTL would undo an in-app language choice at every launch.'));
+      // A test may plant supportsRtl false as input to prove the plugin turns it back on.
+      const off = test ? null : SUPPORTS_RTL_OFF.exec(maskComments(source));
+      if (off) problem(off.index, 'android-supports-rtl', SUPPORTS_RTL_OFF_MESSAGE, SUPPORTS_RTL_OFF_FIX);
     }
     if (!rel.startsWith('packages/shell/src/i18n/') && !test) {
       for (const call of findCalls(masked, '(?:new\\s+)?Intl\\.NumberFormat')) {

@@ -1,0 +1,20 @@
+{
+ "android": {
+  "emulators": [
+   {
+    "serial": "emulator-5554",
+    "avd": "e07-android-parity",
+    "state": "device"
+   },
+   {
+    "serial": "emulator-5556",
+    "avd": "e07-android-smoke",
+    "state": "device"
+   }
+  ],
+  "screenshots": [
+   "../../check-parity-android/good/app.png"
+  ]
+ },
+ "hierarchy": "../../fakes/hierarchy-home-android.json"
+}

@@ -11,7 +11,7 @@ import { Icon } from './icons/icon.tsx';
 import { LevelTileBob } from './level-tile-bob.tsx';
 import { RaisedSurface } from './raised-surface.tsx';
 import { RatingStars } from './rating-stars.tsx';
-import { dieCutRing, focusRing, tiltedLayer } from './toybox-styles.ts';
+import { dieCutRing, dieCutTiltedLayer, focusRing } from './toybox-styles.ts';
 
 import type { Theme } from '@e07/shell/theme/theme-types.ts';
 import type { ReactNode } from 'react';
@@ -90,7 +90,7 @@ function flag(theme: Theme, testID: string): ReactNode {
   const shell = SHELL_COLORS[theme.scheme];
   return (
     <View
-      {...tiltedLayer(FLAG.rotate, [
+      {...dieCutTiltedLayer(FLAG.rotate, [
         styles.flag,
         { backgroundColor: shell.gold, borderColor: shell.toyInk },
         dieCutRing(FLAG.ring, shell.cut),

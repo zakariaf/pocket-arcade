@@ -4,7 +4,9 @@
 // tools (jest-expo, eslint-config-expo, @react-native/*, @types/react, test-renderer) on the same line,
 // held-back tools unchanged, one version of every native module, the Jest config the SDK needs,
 // Gesture Handler API matching its major, config plugin imports the SDK resolves, no React Native API
-// the SDK removed, scene support only where Xcode and the SDK need it, no stale Skia approval.
+// the SDK removed, scene support only where Xcode and the SDK need it, no stale Skia approval, and
+// the Android toolchain (React Native's version catalog, the repo's Android pins, the Shell's
+// expo-build-properties options) on the SDK line's Android entry.
 // With --target-sdk it also scans for the next SDK: code to fix before the move fails the check, and
 // changes that can only land in the move commit are printed as "todo" lines.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-sdk-alignment.mjs . [--target-sdk 58]
@@ -17,7 +19,7 @@ import { createReporter, fail, lineOf, maskComments, parseArgs, requireDir, run,
 
 const SPEC = {
   name: 'check-sdk-alignment',
-  summary: 'Checks that every app, the Shell and the root tooling of the Pocket Arcade repo sit on one Expo SDK line (module map specifiers, overrides, SDK-tracking dev tools, held-back tools), that source code uses only APIs that line supports (Gesture Handler major, removed React Native APIs), and that Xcode scene support is set exactly when needed. --target-sdk <n> adds a readiness scan: the code to change for the next SDK.',
+  summary: 'Checks that every app, the Shell and the root tooling of the Pocket Arcade repo sit on one Expo SDK line (module map specifiers, overrides, SDK-tracking dev tools, held-back tools), that source code uses only APIs that line supports (Gesture Handler major, removed React Native APIs), that Xcode scene support is set exactly when needed, and that the Android toolchain (compileSdk, AGP, NDK, Gradle, Kotlin, JDK) matches the line. --target-sdk <n> adds a readiness scan: the code to change for the next SDK.',
   usage: '[repo-root] [options]',
   options: {
     root: { type: 'string', value: 'dir', help: 'The app repo root (same as the positional argument; default ".")' },
@@ -29,7 +31,7 @@ const SPEC = {
   details: [
     'Rules: sdk-unknown sdk-lockstep app-lockstep module-map core-pins overrides sdk-tooling',
     '  rn-tooling react-line held-back duplicate-native jest-config gesture-api config-plugin-import',
-    '  removed-rn-api scene-support xcode skia-approval',
+    '  removed-rn-api scene-support xcode skia-approval android-toolchain',
   ].join('\n'),
 };
 
@@ -217,6 +219,106 @@ function checkJestConfig(repo, context, add) {
   }
 }
 
+const ANDROID_CATALOG = 'node_modules/react-native/gradle/libs.versions.toml';
+const ANDROID_WRAPPER = 'node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties';
+const ANDROID_PINS_FILE = 'packages/tooling/src/android/toolchain.ts';
+const ANDROID_LINE_KEYS = ['compileSdk', 'targetSdk', 'minSdk', 'buildTools', 'ndk', 'cmake', 'agp', 'gradle', 'kotlin', 'jdk'];
+/** The key React Native's version catalog uses for each line key it pins. */
+const CATALOG_KEYS = { compileSdk: 'compileSdk', targetSdk: 'targetSdk', minSdk: 'minSdk', buildTools: 'buildTools', ndk: 'ndkVersion', agp: 'agp', kotlin: 'kotlin' };
+const PIN_KEYS = ['compileSdk', 'targetSdk', 'minSdk', 'buildTools', 'ndk', 'cmake'];
+/** expo-build-properties android options that restate a line value. */
+const CONFIG_KEYS = { kotlinVersion: 'kotlin', compileSdkVersion: 'compileSdk', targetSdkVersion: 'targetSdk', buildToolsVersion: 'buildTools' };
+
+function readText(root, rel) {
+  const file = join(root, rel);
+  return existsSync(file) ? readFileSync(file, 'utf8') : null;
+}
+
+/** React Native's [versions] table and its Gradle wrapper: what the installed React Native builds Android with. */
+function catalogFacts(root) {
+  const facts = [];
+  const catalog = readText(root, ANDROID_CATALOG);
+  if (catalog !== null) {
+    const end = catalog.search(/^\[libraries\]/m);
+    const table = end < 0 ? catalog : catalog.slice(0, end);
+    for (const [key, name] of Object.entries(CATALOG_KEYS)) {
+      const match = new RegExp(`^${name}\\s*=\\s*"([^"]+)"`, 'm').exec(table);
+      if (match) facts.push({ kind: 'catalog', file: ANDROID_CATALOG, line: lineOf(catalog, match.index), key, label: key, value: match[1] });
+    }
+  }
+  const wrapper = readText(root, ANDROID_WRAPPER);
+  const gradle = wrapper && /^distributionUrl=.*gradle-(\d+(?:\.\d+)+)-(?:bin|all)\.zip/m.exec(wrapper);
+  if (gradle) facts.push({ kind: 'wrapper', file: ANDROID_WRAPPER, line: lineOf(wrapper, gradle.index), key: 'gradle', label: 'gradle', value: gradle[1] });
+  return { facts, sources: [catalog === null ? null : ANDROID_CATALOG, wrapper === null ? null : ANDROID_WRAPPER].filter(Boolean) };
+}
+
+/** The repo's own pins (android-emulator-build's toolchain.ts) and the Android options of the Shell config. */
+function repoFacts(root, files) {
+  const facts = [];
+  const sources = [];
+  const pins = readText(root, ANDROID_PINS_FILE);
+  if (pins !== null) {
+    sources.push(ANDROID_PINS_FILE);
+    const text = maskComments(pins);
+    const jdk = /\bJDK_MAJOR\s*=\s*(\d+)/.exec(text);
+    if (jdk) facts.push({ kind: 'pins', file: ANDROID_PINS_FILE, line: lineOf(text, jdk.index), key: 'jdk', label: 'JDK', setting: 'JDK_MAJOR', value: jdk[1] });
+    const start = text.search(/\bANDROID_PINS\s*=/);
+    const block = start < 0 ? '' : text.slice(start, text.indexOf('}', start) + 1);
+    for (const key of PIN_KEYS) {
+      const match = new RegExp(`\\b${key}\\s*:\\s*['"]?([\\w.]+)['"]?`).exec(block);
+      if (match) facts.push({ kind: 'pins', file: ANDROID_PINS_FILE, line: lineOf(text, start + match.index), key, label: key, setting: `ANDROID_PINS.${key}`, value: match[1] });
+    }
+  }
+  const configFiles = files.filter((file) => /^(packages\/shell\/(src\/config|plugins)\/|apps\/[^/]+\/app\.config\.ts$)/.test(file) && !/\.test\.tsx?$/.test(file));
+  for (const rel of configFiles) {
+    const text = maskComments(readFileSync(join(root, rel), 'utf8'));
+    let found = false;
+    for (const [option, key] of Object.entries(CONFIG_KEYS)) {
+      for (const match of text.matchAll(new RegExp(`\\b${option}\\s*:\\s*['"]?([\\w.]+)['"]?`, 'g'))) {
+        facts.push({ kind: 'config', file: rel, line: lineOf(text, match.index), key, label: option, value: match[1] });
+        found = true;
+      }
+    }
+    if (found) sources.push(rel);
+  }
+  return { facts, sources };
+}
+
+const ANDROID_FIX = {
+  catalog: (sdk) => `The installed React Native builds Android with another toolchain than SDK ${sdk}'s line says: in the move commit, copy the new values from ${ANDROID_CATALOG} and the Gradle wrapper into the "android" entry of SDK ${sdk} in assets/sdk-lines.json, with the dependency-management versions table (androidToolchain) and ${ANDROID_PINS_FILE}. Never edit android/ or install an SDK package to match.`,
+  pins: (sdk, fact, want) => `Set ${fact.setting} in ${ANDROID_PINS_FILE} to ${want}: the Android pins move only with the SDK line, in the move commit (android-emulator-build's preflight checks the SDK parts against them).`,
+  config: (sdk, fact, want) => `Set expo-build-properties android.${fact.label} to ${want}, or drop the option where React Native's catalog already gives the value; the Kotlin must be React Native's (another one breaks the Expo modules' KSP build).`,
+};
+
+/** The Android toolchain the repo states (React Native's catalog, the repo's pins, the Shell config) against the SDK line. */
+function checkAndroid(repo, files, context, add) {
+  const { sdk, line, target, targetLine } = context;
+  const installed = catalogFacts(repo.root);
+  const own = repoFacts(repo.root, files);
+  const facts = [...installed.facts, ...own.facts];
+  const sources = [...installed.sources, ...own.sources];
+  if (sources.length === 0) {
+    console.log(`android  no Android toolchain facts (${ANDROID_CATALOG}, ${ANDROID_PINS_FILE}): android-toolchain rule skipped`);
+    return;
+  }
+  if (target !== null && targetLine && !targetLine.android) moveTimeReporter(true, add)(sources[0], 1, 'android-toolchain', `SDK ${target} has no Android line yet`, `In the move commit, add an "android" entry to SDK ${target} in assets/sdk-lines.json from the new React Native's ${ANDROID_CATALOG}, its Gradle wrapper and ReactAndroid's jvmToolchain, and run build:android:emu and e2e:android for every Android port.`);
+  if (!line) return;
+  const want = line.android;
+  if (!want) return add(sources[0], 1, 'android-toolchain', `this skill has no Android line for Expo SDK ${sdk}, but the repo builds Android (${sources.join(', ')})`, `Add an "android" entry to SDK ${sdk} in assets/sdk-lines.json, read from ${ANDROID_CATALOG}, the Gradle wrapper and ReactAndroid's jvmToolchain, in the move commit.`);
+  console.log(`android  SDK ${sdk}'s Android line: ${ANDROID_LINE_KEYS.map((key) => `${key} ${want[key]}`).join(', ')}`);
+  console.log(`android  checked: ${sources.join(', ')}`);
+  for (const fact of facts) {
+    const expected = String(want[fact.key]);
+    if (fact.value === expected) continue;
+    const says = `but SDK ${sdk}'s Android line says ${expected}`;
+    const message = fact.kind === 'catalog' ? `${fact.label} is ${fact.value} in the installed React Native (${fact.file}), ${says}`
+      : fact.kind === 'wrapper' ? `${fact.label} is ${fact.value} in ${fact.file}, ${says}`
+      : fact.kind === 'pins' ? `pins ${fact.label} ${fact.value}, ${says}`
+      : `sets ${fact.label} ${fact.value}, ${says}`;
+    add(fact.file, fact.line, 'android-toolchain', message, (ANDROID_FIX[fact.kind] ?? ANDROID_FIX.catalog)(sdk, fact, expected));
+  }
+}
+
 /**
  * The version the apps install: the lockfile copy inside the apps' specifier (4.26.2 for "~4.26.0"),
  * the newest of them when several are; the range floor only when no copy satisfies it.
@@ -279,5 +381,6 @@ run(async () => {
   checkDuplicates(repo, map, first, add);
   checkScene(repo, files, context, add);
   checkSkiaApproval(repo, context, add);
+  checkAndroid(repo, files, context, add);
   return report.finish({ checked: repo.apps.length + 1 + files.length, unit: 'manifests and source files' });
 });

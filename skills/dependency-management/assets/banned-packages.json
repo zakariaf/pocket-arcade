@@ -62,6 +62,21 @@
       "reason": "Analytics (N2)."
     },
     {
+      "pattern": "(^|[/-])(play|app)-integrity($|-)",
+      "scope": "anywhere",
+      "reason": "Play Integrity (Android): every verdict is a request to Google's servers (N2, N3); the app proves nothing to a server, it has none."
+    },
+    {
+      "pattern": "(^|[/-])install-referrer($|-)",
+      "scope": "anywhere",
+      "reason": "Play Install Referrer (Android): install attribution, which is tracking (N2)."
+    },
+    {
+      "pattern": "^(expo-firebase-(analytics|core)|react-native-(appsflyer|adjust|branch|fbsdk-next)|mixpanel-react-native|posthog-react-native|@posthog/.+|appcenter(-.+)?)$",
+      "scope": "anywhere",
+      "reason": "Analytics and attribution SDKs, on Android as on iOS (N2)."
+    },
+    {
       "pattern": "^(react-native-webview|expo-web-browser)$",
       "scope": "anywhere",
       "reason": "Web views are a network surface (N3); @expo/dom-webview comes with expo and is allowed installed but banned from imports."

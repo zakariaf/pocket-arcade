@@ -10,6 +10,7 @@ import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeFacts, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
 import { isCropOnly } from './lib/gates.mjs';
 import { DEFAULTS } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, PLATFORM_OPTION, platformOf, platformOption } from './lib/platform.mjs';
 import { changesForFrame } from './lib/reference-changes.mjs';
 import { RUN_FILES, findRunDirs, readRun, readWaivers } from './lib/runs.mjs';
 
@@ -26,16 +27,17 @@ const SPEC = {
     'entry to fill in.',
   usage: '(--frame <key>... | --screen <S4>... | --all) [options] | --draft <run-dir> [--from-ledger] [--date YYYY-MM-DD]',
   options: {
+    platform: PLATFORM_OPTION,
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) to sign off (s4-home, s4-home-premium, ...)' },
     screen: { type: 'string', multiple: true, value: 'id', help: 'Screen id(s): every frame of the screen (S4 = s4-home + s4-home-premium)' },
     all: { type: 'boolean', help: 'Every frame of the design' },
     game: { type: 'string', value: 'id', help: 'Design game id', default: 'lineSiege' },
     themes: { type: 'string', value: 'list', help: 'Themes required (default light,dark: the done set; fewer is iteration only and fails "narrowed")', default: THEMES.join(',') },
     langs: { type: 'string', value: 'list', help: 'Languages required (default en,fa: the done set; add de,ckb before a release; fewer fails "narrowed")', default: REQUIRED_LANGS.join(',') },
-    runs: { type: 'string', value: 'dir', help: 'Run folder root', default: '.parity' },
+    runs: { type: 'string', value: 'dir', help: 'Run folder root (default: .parity, on Android .parity/android)' },
     ledger: { type: 'string', value: 'file', help: 'Sign-off ledger', default: 'parity/signoff.json' },
     waivers: { type: 'string', value: 'file', help: 'Waiver file', default: 'parity/waivers.json' },
-    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
+    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set of the platform, assets/reference or assets/reference-android)' },
     draft: { type: 'string', value: 'run-dir', help: 'Print a ledger entry skeleton for this run (after make-sheet.mjs) and exit' },
     'from-ledger': { type: 'boolean', help: 'With --draft: copy the recorded differences of the previous entry for the same frame and variant (eye checks stay open)' },
     date: { type: 'string', value: 'YYYY-MM-DD', help: "With --draft: the entry's date (default: today's local calendar day, the product's own 'today' rule, never the UTC day)" },
@@ -57,6 +59,13 @@ const SPEC = {
     '  node check-signoff.mjs --screen S4',
     '  node check-signoff.mjs --draft .parity/lineSiege/s4-home/dark-fa',
     '  node check-signoff.mjs --draft .parity/lineSiege/s4-home/dark-fa --from-ledger   (after a rebuild: keep the differences)',
+    '  node check-signoff.mjs --platform android --screen S4',
+    '  node check-signoff.mjs --draft .parity/android/lineSiege/s4-home/dark-fa',
+    '',
+    'Android (--platform android) signs off the runs under .parity/android against the Android set (the same done set:',
+    'light and dark x en and fa, never narrowed). Every ledger entry carries "platform" (an entry without it is iOS), so',
+    'an iOS look never signs an Android run off; a run of the other platform fails wrong-platform, and a run checked',
+    'against the other platform\'s references fails wrong-reference. Only waivers of the platform are listed.',
     '',
     'A draft is dated with the local calendar day of the Mac (at 01:17 in Berlin on 1 October it is 2026-10-01, not',
     "the UTC day 2026-09-30), the same day the waivers' reportedToOwner and the reports use; --date YYYY-MM-DD sets it.",
@@ -116,6 +125,7 @@ function draftEntry(options, show) {
   const changed = Object.entries(sheets.files ?? {}).filter(([name, hash]) => !existsSync(join(dir, name)) || sha256(readFileSync(join(dir, name))) !== hash).map(([name]) => name);
   if (changed.length) report.problem({ file: show(sheetsPath), rule: 'stale-sheet', message: `${show(dir)}: ${changed.slice(0, 3).join(', ')} missing or changed since make-sheet.mjs wrote them`, fix: 'Run make-sheet.mjs again, look at the new sheets, then draft.' });
   const entry = {
+    platform: r.info.platform,
     game: r.info.game,
     frame: r.info.frame,
     theme: r.info.theme,
@@ -131,12 +141,12 @@ function draftEntry(options, show) {
     const ledgerPath = resolve(options.ledger);
     const ledger = readLedger(ledgerPath);
     for (const message of ledger.problems) report.problem({ file: show(ledgerPath), rule: 'ledger-invalid', message, fix: 'Start from the skill\'s templates/parity/signoff.json.' });
-    const previous = ledger.entries.find((e) => e.frame === entry.frame && e.theme === entry.theme && e.lang === entry.lang && (e.game ?? 'lineSiege') === entry.game && (e.scrollY ?? 0) === entry.scrollY);
+    const previous = ledger.entries.find((e) => platformOf(e) === entry.platform && e.frame === entry.frame && e.theme === entry.theme && e.lang === entry.lang && (e.game ?? 'lineSiege') === entry.game && (e.scrollY ?? 0) === entry.scrollY);
     if (previous) {
       entry.differences = (previous.differences ?? []).map((d) => ({ ...d }));
       report.note(`copied ${entry.differences.length} recorded difference${entry.differences.length === 1 ? '' : 's'} from the entry of ${previous.date ?? '?'} (sheet ${String(previous.sheetSha256 ?? '?').slice(0, 8)}); every eye check is open again`);
     } else if (!ledger.problems.length) {
-      report.note(`no earlier entry for ${entry.frame} ${entry.theme}-${entry.lang}${entry.scrollY ? ` y${entry.scrollY}` : ''} in ${show(ledgerPath)}: nothing copied`);
+      report.note(`no earlier ${entry.platform} entry for ${entry.frame} ${entry.theme}-${entry.lang}${entry.scrollY ? ` y${entry.scrollY}` : ''} in ${show(ledgerPath)}: nothing copied`);
     }
   }
   if (report.count === 0) {
@@ -162,10 +172,13 @@ run(async () => {
   keys = [...new Set(keys)];
   if (!keys.length) fail('nothing to sign off: pass --frame, --screen or --all', 'Run: node check-signoff.mjs --help');
   for (const k of keys) if (!frames.has(k)) fail(`unknown frame "${k}"`, `Use one of: ${[...frames.keys()].join(', ')}`);
+  const platform = platformOption(options.platform);
+  const defaults = PLATFORM_DEFAULTS[platform];
   const themes = listOption(options.themes, THEMES);
   const langs = listOption(options.langs, REQUIRED_LANGS);
   const narrowed = !THEMES.every((t) => themes.includes(t)) || !REQUIRED_LANGS.every((l) => langs.includes(l));
-  const runsRoot = resolve(options.runs);
+  const runsRoot = resolve(options.runs ?? defaults.runs);
+  const referenceRoot = options.reference ?? defaults.reference;
   const ledgerPath = resolve(options.ledger);
   const ledger = readLedger(ledgerPath);
   const waiverFile = readWaivers(resolve(options.waivers));
@@ -176,7 +189,7 @@ run(async () => {
   let checked = 0;
   const needsFacts = keys.some((k) => Object.keys(frames.get(k).variants ?? {}).length > 0 && frames.get(k).kind !== 'mock-only');
   const facts = needsFacts ? readGameFacts(resolve(options.facts), { app: options.app ?? null, game: options.game }) : null;
-  const refManifestPath = join(resolve(options.reference ?? DEFAULTS.reference), options.game, 'manifest.json');
+  const refManifestPath = join(resolve(referenceRoot), options.game, 'manifest.json');
   const refManifest = existsSync(refManifestPath) ? JSON.parse(readFileSync(refManifestPath, 'utf8')) : null;
   const changeNotes = [];
   for (const key of keys) {
@@ -204,7 +217,7 @@ run(async () => {
         }) : [];
         const problem = (rule, message, fix) => report.problem({ file: show(dirs[0] ?? join(frameRoot, tag)), rule, message: `${where}: ${message}`, fix });
         if (!dirs.length) {
-          problem('not-captured', 'no run folder', `Capture it: node capture-app.mjs --frame ${key} --theme ${theme} --lang ${lang} --bundle-id <id>`);
+          problem('not-captured', 'no run folder', `Capture it: node capture-app.mjs${platform === 'ios' ? '' : ` --platform ${platform}`} --frame ${key} --theme ${theme} --lang ${lang} --bundle-id <id>`);
           cells.push(`${tag} missing`);
           continue;
         }
@@ -215,6 +228,12 @@ run(async () => {
         for (const dir of dirs) {
           const r = readRun(dir, { referenceRoot: options.reference });
           const reportPath = join(dir, RUN_FILES.report);
+          // An iOS capture never signs an Android frame off (or the other way round).
+          if (r.info.platform !== platform) {
+            problem('wrong-platform', `${show(dir)} is an ${r.info.platform} capture, but this is the ${platform} sign-off`, `Capture it on the ${platform === 'android' ? 'parity emulator (capture-app.mjs --platform android, into .parity/android)' : 'parity simulator (capture-app.mjs, into .parity)'}.`);
+            ok = false;
+            continue;
+          }
           if (r.reference.name !== wantedName) {
             problem('reference-variant', `${show(dir)} was captured against ${r.reference.name}, but the game facts select ${wantedName}`, `Capture again with run-parity.mjs (it reads ${show(resolve(options.facts))}).`);
             ok = false;
@@ -226,6 +245,12 @@ run(async () => {
             continue;
           }
           const rep = JSON.parse(readFileSync(reportPath, 'utf8'));
+          // The report names the set it was checked against (none: the iOS set).
+          if (platformOf(rep.reference) !== platform) {
+            problem('wrong-reference', `${show(dir)} was checked against the ${platformOf(rep.reference)} reference set, not the ${platform} one`, `Check it against the ${platform} set: node check-parity.mjs ${show(dir)} (the default follows the run's platform; never pass the other set to --reference).`);
+            ok = false;
+            continue;
+          }
           // Only a real simulator capture counts: not a design-as-app run, not a borrowed image.
           const appSha = existsSync(r.app) ? sha256(readFileSync(r.app)) : null;
           if (r.info.source === 'design-as-app' || !r.info.bundleId || typeof r.info.app === 'string') {
@@ -275,9 +300,9 @@ run(async () => {
             ok = false;
             continue;
           }
-          const entry = ledger.entries.find((e) => e.frame === key && e.theme === theme && e.lang === lang && (e.game ?? 'lineSiege') === options.game && (e.scrollY ?? 0) === r.info.scrollY);
+          const entry = ledger.entries.find((e) => platformOf(e) === platform && e.frame === key && e.theme === theme && e.lang === lang && (e.game ?? 'lineSiege') === options.game && (e.scrollY ?? 0) === r.info.scrollY);
           if (!entry) {
-            problem('not-looked', `${show(dir)}: no sign-off entry in ${show(ledgerPath)}`, `Read the sheets, then add the entry: node check-signoff.mjs --draft ${show(dir)}`);
+            problem('not-looked', `${show(dir)}: no ${platform} sign-off entry in ${show(ledgerPath)}${platform === 'ios' ? '' : ' (an entry without "platform" is an iOS look)'}`, `Read the sheets, then add the entry: node check-signoff.mjs --draft ${show(dir)}`);
             ok = false;
             continue;
           }
@@ -331,8 +356,8 @@ run(async () => {
   }
   for (const line of changeNotes) report.note(line);
   for (const line of table) report.note(line);
-  for (const w of waiverFile.waivers.filter((x) => keys.includes(x.frame))) {
-    report.note(`waiver ${w.index} [${w.class}] ${w.frame} ${w.testID} ${w.rule}${w.langs ? ` (${w.langs.join(', ')})` : ''}: ${w.class === 'design-artefact' ? `mockup CSS ${w.designCause}` : w.class === 'platform-text-shaping' ? `glyphs ${w.glyphs}` : 'platform limit'}; owner told ${w.reportedToOwner}`);
+  for (const w of waiverFile.waivers.filter((x) => keys.includes(x.frame) && platformOf(x) === platform)) {
+    report.note(`waiver ${w.index} [${w.class}]${platform === 'ios' ? '' : ` ${platform}`} ${w.frame} ${w.testID} ${w.rule}${w.langs ? ` (${w.langs.join(', ')})` : ''}: ${w.class === 'design-artefact' ? `mockup CSS ${w.designCause}` : w.class === 'platform-text-shaping' ? `glyphs ${w.glyphs}` : 'platform limit'}; owner told ${w.reportedToOwner}`);
   }
   return report.finish({ checked, unit: 'frame variants' });
 });

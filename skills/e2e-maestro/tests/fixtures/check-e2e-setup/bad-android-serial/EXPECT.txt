@@ -1,0 +1,2 @@
+packages/tooling/src/e2e/android-device-args.ts:109 [android-serial] fontScaleArgs builds adb arguments without -s <serial>
+packages/tooling/src/e2e/capture-screenshots-android.ts:115 [android-serial] an adb spawn whose arguments do not come from deviceAdbArgs()

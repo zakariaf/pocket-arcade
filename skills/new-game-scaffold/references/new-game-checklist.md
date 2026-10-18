@@ -10,6 +10,7 @@ Everything between "the owner picked the next game" and "the game ships", in ord
 - Proving the game is complete
 - The owner's per-game steps
 - Release
+- Android, once the game's iOS version has shipped
 
 ## Before code (owner and agent together)
 
@@ -107,3 +108,27 @@ Ask for them in one message, each with the step id, the one action, and the defa
 ## Release
 
 `npm run release:ios -- --app <game-id> --variant test` once the owner's blocking steps (G1 to G5) are done, then the store build (ios-release-testflight). The play-test, the native review of the fa and ckb texts and listening to the sound previews are the owner's own steps: every report lists them under "Owner steps (not blocking)", and no gate waits for them. Uploads, App Store Connect changes and pushes are outward-facing: ask first.
+
+## Android, once the game's iOS version has shipped
+
+Android follows a game once its iOS version has shipped (the spec: "iOS FIRST, then Android ... Android follows once the iOS version of a game has shipped"), so it never holds up the iOS release. The app id is the same (`io.applander.<game id without hyphens>` is also the Android package, owner decision O4), and the build number is shared with iOS: it is Android's `versionCode`, so a release of either platform takes the next number.
+
+Port the game in the Android order, Android steps 1 to 8 of pocket-arcade-index's build order "Android port" (each step's copy manifest and done-when commands are there), each step test-first:
+
+| Android step | Skills |
+|---|---|
+| 1 Tooling and the Android Jest project | android-emulator-build, privacy-and-network-audit, unit-and-component-tests, quality-gates, performance-budgets |
+| 2 Configuration and art | architecture-and-boundaries, dependency-management, code-drawn-art-and-icons, rtl-and-direction, save-persistence-and-migrations |
+| 3 Services | admob-ads, premium-purchase, game-audio-and-haptics, performance-budgets |
+| 4 Platform behaviour | navigation-and-routing, rtl-and-direction, toybox-design-system |
+| 5 First builds, audits and the kill test | android-emulator-build, save-persistence-and-migrations, privacy-and-network-audit, performance-budgets |
+| 6 Screens on the Android profile | toybox-visual-parity, toybox-screens, android-emulator-build |
+| 7 E2E and the screenshot matrix | e2e-maestro, accessibility, admob-ads |
+| 8 Release tooling and internal testing | android-release-play, git-commits-and-reporting |
+
+Steps 1 to 4 bring shared tooling, Shell and configuration files: they are copied once, when the first game is ported, and a later game reruns their checks with its own id. Steps 5 to 8 are every game's own: its Android builds, audits and kill test; its screens, E2E flows and screenshot matrix; its release to Google Play internal testing.
+
+`--stage complete` stays the iOS completeness check. A game whose iOS version is complete passes it with `ads.ids.android: null` (no Android AdMob app yet; the self-test's complete good case is exactly that). The Android AdMob ids are owner step GP5, and the Android gates own it: android-emulator-build's `check-emu-app.mjs` on a store build with live ads, and android-release-play's `check-release-setup-android.mjs` and `check-store-aab.mjs`, end with an `owner-placeholder` line for GP5 and the `OWNER STEPS PENDING` line until the owner sends the four ids.
+
+The owner's Google Play steps are O10 once (the Google Play developer account) and GP1 to GP7 per game (the Play Console app, Play App Signing and the upload key, the service account, App content, the AdMob Android app, the Premium product, testers and the first upload; android-release-play's human steps). Ask for them in one message when the port starts, each with its default; none of them blocks the port, and only the upload waits for them.
+

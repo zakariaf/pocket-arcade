@@ -3,15 +3,22 @@
 // E2E) plus the banned-package check. Exports each app as a STORE bundle into
 // dist-audit/<game-id>/ (also read by audit:licenses). The config layer runs on every call; the
 // pods layer needs `npx expo prebuild` first (ios/Podfile.lock), otherwise a SKIPPED line.
-import { execFileSync } from 'node:child_process';
+// Android: once apps/<game>/android/ exists, the Gradle layer reads the release runtime classpath
+// (`./gradlew :app:dependencies`), and after a Release build the merged manifest is checked
+// (permissions on the allowlist, no cleartext); without them, SKIPPED lines.
+import { execFile, execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 
+import { selectAndroidToolchain } from '@e07/tooling/android/toolchain.ts';
 import { findBannedPackages, inventoryFromLockfile } from '@e07/tooling/deps/banned-packages.ts';
 
+import { manifestProblems } from './android-manifest-audit.ts';
 import { readBundleModules } from './bundle-modules.ts';
 import { podAndConfigProblems } from './network-app-layers.ts';
 import { compareToBaseline } from './network-baseline.ts';
+import { gradleProblems } from './network-gradle-layer.ts';
 import { jsNetworkFindings } from './network-js-layer.ts';
 import { nativeModuleRoots, nativeNetworkFindings } from './network-native-layer.ts';
 import { storeBundleProblems } from './release-bundle-checks.ts';
@@ -53,28 +60,80 @@ function jsProblems(outDir: string): string[] {
   ];
 }
 
-/** Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. */
-function nativeAndPodProblems(appDir: string): string[] {
+const execFileAsync = promisify(execFile);
+
+/**
+ * Layer C, then D and E: the config layer runs on every call; only the pods need a prebuild. The
+ * autolinking runs and `expo config` are independent and run together.
+ */
+async function nativeAndPodProblems(appDir: string): Promise<string[]> {
+  const [roots, { stdout: json }] = await Promise.all([
+    nativeModuleRoots(appDir),
+    execFileAsync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
+      cwd: appDir,
+      env: STORE_ENV,
+      encoding: 'utf8',
+    }),
+  ]);
   const native = compareToBaseline(
-    nativeNetworkFindings(nativeModuleRoots(appDir)),
+    nativeNetworkFindings(roots),
     readBaseline('native-baseline.json'),
   );
   const lock = join(appDir, 'ios', 'Podfile.lock');
-  const json = execFileSync('npx', ['expo', 'config', '--json', '--type', 'prebuild'], {
-    cwd: appDir,
-    env: STORE_ENV,
-    encoding: 'utf8',
-  });
   const podfileLock = existsSync(lock) ? readFileSync(lock, 'utf8') : null;
   const config = JSON.parse(json) as ExpoConfigLike;
   return [...native, ...podAndConfigProblems({ podfileLock, config })];
 }
 
-function auditApp(gameId: string): string[] {
+/** The merged release manifest under app/build/intermediates, or null before a Release build. */
+function mergedReleaseManifest(androidDir: string): string | null {
+  const intermediates = join(androidDir, 'app', 'build', 'intermediates');
+  if (!existsSync(intermediates)) return null;
+  const found = readdirSync(intermediates, { recursive: true, encoding: 'utf8' }).find((file) =>
+    /^merged_manifests?\/release\/.*AndroidManifest\.xml$/.test(file),
+  );
+  return found === undefined ? null : join(intermediates, found);
+}
+
+/** Gradle on android-emulator-build's toolchain (JDK 17, the pinned SDK), with the store variables. */
+function gradleDump(androidDir: string): string {
+  const args = [':app:dependencies', '--configuration', 'releaseRuntimeClasspath', '-q'];
+  return execFileSync(join(androidDir, 'gradlew'), args, {
+    cwd: androidDir,
+    env: selectAndroidToolchain(STORE_ENV),
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+}
+
+/** Layer D on Android (Gradle artifacts) and the merged manifest, after prebuild and build. */
+function androidProblems(appDir: string): string[] {
+  const androidDir = join(appDir, 'android');
+  if (!existsSync(androidDir)) {
+    return ['SKIPPED gradle layer: run npx expo prebuild --platform android first'];
+  }
+  let gradle: string[];
+  try {
+    gradle = gradleProblems(gradleDump(androidDir), readBaseline('gradle-baseline.json'));
+  } catch (error) {
+    gradle = [`gradle layer could not run: ${String(error).split('\n')[0] ?? ''}`];
+  }
+  const manifest = mergedReleaseManifest(androidDir);
+  const manifestLines =
+    manifest === null
+      ? ['SKIPPED manifest layer: no merged release manifest (run npm run build:android:emu first)']
+      : manifestProblems(readFileSync(manifest, 'utf8')).map((problem) => `manifest: ${problem}`);
+  return [...gradle, ...manifestLines];
+}
+
+async function auditApp(gameId: string): Promise<string[]> {
   const appDir = join(ROOT, 'apps', gameId);
   const outDir = join(ROOT, 'dist-audit', gameId);
   exportBundle(appDir, outDir);
-  return [...jsProblems(outDir), ...nativeAndPodProblems(appDir)].map((p) => `${gameId}: ${p}`);
+  const nativeAndPods = await nativeAndPodProblems(appDir);
+  return [...jsProblems(outDir), ...nativeAndPods, ...androidProblems(appDir)].map(
+    (p) => `${gameId}: ${p}`,
+  );
 }
 
 // Banned packages anywhere in the lockfile (HTTP clients: direct only).
@@ -86,7 +145,8 @@ function bannedPackageProblems(): string[] {
 }
 
 const gameIds = readdirSync(join(ROOT, 'apps')).filter((name) => !name.startsWith('.'));
-const problems = [...bannedPackageProblems(), ...gameIds.flatMap(auditApp)];
+const problems = bannedPackageProblems();
+for (const gameId of gameIds) problems.push(...(await auditApp(gameId)));
 for (const line of problems) console.error(line);
 const failures = problems.filter((line) => !line.includes('SKIPPED') && !line.includes('STALE'));
 console.error(`audit:network: ${String(failures.length)} failure(s)`);

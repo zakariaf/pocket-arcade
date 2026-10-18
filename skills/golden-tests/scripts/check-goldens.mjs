@@ -47,7 +47,7 @@ const SPEC = {
 // The shared repo-scan ignores (skills/, .claude/, node_modules, Pods, each app's generated ios/, android/,
 // build/, out/) plus generated reports.
 const IGNORE = [...REPO_SCAN_IGNORES, 'apps/*/dist/**', 'reports/**', 'coverage/**', 'tools/**', 'dist-audit/**', '.stryker-tmp/**'];
-const GATED = ['**/*.golden.test.ts.snap.ios', '**/__snapshots__/*.golden.test.ts.snap', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'test/goldens/boards/skia-golden.ts'];
+const GATED = ['**/*.golden.test.ts.snap.ios', '**/__snapshots__/*.golden.test.ts.snap', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'apps/*/e2e/baselines-android/**', 'test/goldens/boards/skia-golden.ts'];
 const COMPONENT_TREE = /^\s*<[A-Z][A-Za-z0-9.]*(\s|>|\/>|$)|"props":\s*\{|^\s*style=\{/m;
 const UPDATE = /\bjest\b[^\n"']*?(?:\s-u\b|--update-?[sS]napshot\b|--ci[= ]false\b)|(?:capture-screenshots-ios|render-board-previews|screenshots:ios)[^\n"']*?--update\b/;
 

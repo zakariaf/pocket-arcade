@@ -60,10 +60,10 @@ import type { ComponentType } from 'react';
  */
 export type ShellLaunch = {
   /**
-   * Right after hydrateSave, before the game host and the stores: rewrite the document (fixture
-   * player data) and move the test date (the parity harness's applyParityData).
+   * After hydrateSave, before the game host and the stores: the fixture player data, the test date
+   * and an empty error log through the one save.db connection (the harness's applyParityData).
    */
-  readonly prepareSave?: (save: SaveService, simulatedClock: SimulatedClock | null) => void;
+  readonly prepareSave?: (save: SaveService, clock: SimulatedClock | null, db: SqlDriver) => void;
   /** A stand-in store port (a fixture price) instead of StoreKit (parityStorePort). */
   readonly purchasePort?: (productId: string) => PurchasePort;
   /** A stand-in ads port: no SDK, a drawn banner (parityAdsPort). */
@@ -161,7 +161,7 @@ function openSave<T extends ShellGameTypes>(
     gameId: config.game.id,
     appVersion: config.appVersion,
   });
-  input.launch?.prepareSave?.(hydrated.save, clocks.simulated);
+  input.launch?.prepareSave?.(hydrated.save, clocks.simulated, adapters.saveDriver);
   if (input.directionPlan === 'give-up') {
     errorLog.record('boot', new Error(`direction-restart-failed: ${input.language}`));
   }

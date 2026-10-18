@@ -1,6 +1,6 @@
 # Boot hydration, SQL tests and the kill test
 
-How the save is read at startup (synchronously, before the first frame, and never written before the direction check), how the real SQL is tested on Node, and how the simulator kill test proves the whole write path.
+How the save is read at startup (synchronously, before the first frame, and never written before the direction check), how the real SQL is tested on Node, and how the simulator (and Android emulator) kill test proves the whole write path.
 
 ## Contents
 
@@ -10,7 +10,7 @@ How the save is read at startup (synchronously, before the first frame, and neve
 - The composition root
 - The clock adapter
 - Tests on node:sqlite
-- The kill test
+- The kill test (and on Android)
 - inspect-save: reading a save.db
 - What has been verified
 
@@ -116,9 +116,24 @@ Jest proves the SQL; only killing the real app proves the whole write path (spec
 
 The agent's own foreground `sleep` may be blocked; the script waits with `Atomics.wait`, and end-to-end flows use their own waits.
 
+### The kill test on Android
+
+The same test runs on an Android emulator with `--platform android`, against the Release test-variant APK (built by the Android emulator build work):
+
+`node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --platform android --create --app apps/<game-id>/android/app/build/outputs/apk/release/app-release.apk --bundle-id io.applander.<id> --game-id <game-id> --repo .`
+
+- `--create` makes the AVD `e07-android-kill-test` with `avdmanager create avd --name e07-android-kill-test --package "system-images;android-35;google_apis;arm64-v8a" --device pixel_8` (answering `no` to the hardware-profile prompt; an AVD of that name left by a crashed run is reused), starts it headless with `emulator -avd e07-android-kill-test -port <port> -no-snapshot -no-boot-anim -no-audio -no-window` on the first free even console port from 5554, and polls `adb -s emulator-<port> shell getprop sys.boot_completed` every second (up to 4 minutes) until it reads `1`. At the end, also after a failure, it runs `adb -s <serial> emu kill`, waits until `adb devices` no longer lists the serial, and `avdmanager delete avd --name e07-android-kill-test`. `--serial <serial>` uses a running dedicated emulator instead (it must be listed by `adb devices`; never another project's AVD).
+- The image must be `google_apis`, never `google_apis_playstore`: the script runs `adb -s <serial> root` and proves it with `adb -s <serial> shell id -u` = `0`; a Play Store image answers "adbd cannot run as root in production builds", and the run stops with exit 2 (root is what lets it read a Release app's private folder without `run-as`, which needs a debuggable build).
+- `--app` must be an `.apk` (`adb -s <serial> install -r`, which keeps the app's data like a store update). The package id is the same `io.applander.<game id without hyphens>` as the iOS bundle id, passed as `--bundle-id`.
+- Calibration: `am force-stop`, then `stat -c '%s %Y'` of `/data/data/<package>/files/SQLite/save.db-wal`, then `am start -n <package>/.MainActivity`, then the same `stat` every few milliseconds until the WAL exists non-empty or its size or time changed (the device clock is not the Mac's, so before and after are compared; `isAndroidWalWrite`). The step rule is the iOS one (`killStepMs`).
+- Each round is `am force-stop` (a cold start) followed by one device shell line that launches, waits and kills on the device, with no adb round trip between launch and kill: `am start -n <package>/.MainActivity >/dev/null 2>&1; sleep <s>; pid=$(pidof <package>); if [ -n "$pid" ]; then kill -9 $pid; ...`. A round whose app had already exited is reported and still counts.
+- Then `adb -s <serial> pull /data/data/<package>/files/SQLite/ <tmp>` copies `save.db` with its `-wal` and `-shm` (adb nests the folder inside an existing destination), the copy is inspected exactly like the iOS one (with `--repo`, both slots are decoded by the app's `decodeSlot`), and the copy is deleted.
+- Every adb call names its device (`adb -s <serial>`); the SDK is `--sdk`, else `ANDROID_HOME`, else `ANDROID_SDK_ROOT`, else `~/Library/Android/sdk`. A missing `adb`, emulator, avdmanager or (for `--create`) system image stops the run with exit 2 and names the `sdkmanager` package: the script never downloads.
+- `--dry-run` prints every command (`would run: ...`, `<serial>` and `<port>` stand for the values a real run finds) and ends with exit 2. The self-test runs the Android path against fake `adb`, `emulator` and `avdmanager` programs (`tests/fixtures/kill-test/fake-sdk/`) that read each case's `scenario.json` and never reach a device; it has not yet run on a real emulator (the first real run is the Android build's kill-test step).
+
 ## inspect-save: reading a save.db
 
-`node ${CLAUDE_SKILL_DIR}/scripts/inspect-save.mjs <save.db | dump.sql> --game-id <id> [--max-version <n>]`, or `--udid <id> --bundle-id <id>` to read the installed app's file. It always works on a copy (the app's files are never opened in place), prints one line per slot (`schema`, `writeCount`, bytes, app version) and fails on: `no-save-table`, `slot-missing`, `checksum`, `json`, `schema-version` (payload vs row), `newer-version`, `game-id`, `journal-mode` (not WAL) and `quarantine` (rows present; `--allow-quarantine` after a planned damage test). With `--deep --repo .` it also decodes each slot with the app's own `decodeSlot` (valibot schema and migrations) and reports `decode`.
+`node ${CLAUDE_SKILL_DIR}/scripts/inspect-save.mjs <save.db | dump.sql> --game-id <id> [--max-version <n>]`, or `--udid <id> --bundle-id <id>` to read the installed app's file. It always works on a copy (the app's files are never opened in place), prints one line per slot (`schema`, `writeCount`, bytes, app version) and fails on: `no-save-table`, `slot-missing`, `checksum`, `json`, `schema-version` (payload vs row), `newer-version`, `game-id`, `journal-mode` (not WAL) and `quarantine` (rows present; `--allow-quarantine` after a planned damage test). With `--deep --repo .` it also decodes each slot with the app's own `decodeSlot` (valibot schema and migrations) and reports `decode`. On Android, `--platform android --serial <serial> --bundle-id <package>` runs `adb -s <serial> root` (a google_apis image), pulls `/data/data/<package>/files/SQLite/` into a temporary folder, inspects that copy and deletes it; by hand, `adb -s <serial> root` then `adb -s <serial> pull /data/data/<package>/files/SQLite/ <folder>` and `inspect-save.mjs <folder>/save.db` (or `<folder>/SQLite/save.db` when `<folder>` existed before the pull) do the same.
 
 ## What has been verified
 

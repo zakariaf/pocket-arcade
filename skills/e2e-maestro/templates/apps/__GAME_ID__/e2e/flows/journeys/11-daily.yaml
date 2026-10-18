@@ -36,7 +36,8 @@ tags: [__GAME_ID__, daily]
 - assertVisible:
     id: 'result.come-back-note'
 - takeScreenshot: __GAME_ID__-daily-won
-- killApp
+# A real process death on both platforms (on Android killApp spares the foreground app).
+- runFlow: ../../../../../packages/shell/e2e/subflows/kill-app.yaml
 - launchApp:
     stopApp: false
 - runFlow:

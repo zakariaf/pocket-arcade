@@ -1,6 +1,7 @@
 // packages/tooling/src/release/store-gate.test.ts
 import {
   appIdOf,
+  iosAdUnitsOf,
   ownerStepsPendingLine,
   PLACEHOLDERS,
   SAMPLE_APP_ID,
@@ -149,6 +150,18 @@ describe('app ids, placeholders and the tracking text (owner decisions O1 and O4
     expect(ownerStepsPendingLine(problems)).toBe('OWNER STEPS PENDING: G3, G5');
   });
 
+  it("names G5 for Google's test unit ids in a live build: it would show test ads and earn nothing", () => {
+    const facts = {
+      ...CLEAN_STORE,
+      adUnits: ['ca-app-pub-7310520968431056/4417703951', 'ca-app-pub-3940256099942544/1712485313'],
+    };
+    const problems = storeGateProblems(facts, STORE);
+    expect(problems).toStrictEqual([
+      "[owner-placeholder] extra.adUnits is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1712485313 (owner step G5)",
+    ]);
+    expect(ownerStepsPendingLine(problems)).toBe('OWNER STEPS PENDING: G5');
+  });
+
   it('lists only the steps still pending, and nothing without an owner placeholder', () => {
     const offStore = {
       ...CLEAN_STORE,
@@ -172,5 +185,51 @@ describe('app ids, placeholders and the tracking text (owner decisions O1 and O4
       'Info.plist has no NSUserTrackingUsageDescription (the tracking prompt would crash the app)',
       'fa.lproj/InfoPlist.strings has no NSUserTrackingUsageDescription',
     ]);
+  });
+});
+
+describe('iosAdUnitsOf', () => {
+  const IOS = {
+    banner: 'ca-app-pub-7310520968431056/4417703951',
+    interstitial: 'ca-app-pub-7310520968431056/8165377272',
+    rewarded: 'ca-app-pub-7310520968431056/2913050594',
+  };
+  const ANDROID = {
+    banner: 'ca-app-pub-7310520968431056/1000000001',
+    interstitial: 'ca-app-pub-7310520968431056/1000000002',
+    rewarded: 'ca-app-pub-7310520968431056/1000000003',
+  };
+
+  it("reads the iOS entry of withShell's per-platform extra.adUnits (ads-config.ts adUnitsExtra)", () => {
+    expect(iosAdUnitsOf({ ios: IOS, android: ANDROID })).toStrictEqual(Object.values(IOS));
+    expect(iosAdUnitsOf({ ios: IOS, android: null })).toStrictEqual(Object.values(IOS));
+  });
+
+  it('fails a live build whose iOS units are the placeholders (owner step G5)', () => {
+    const extra = {
+      ios: { ...IOS, rewarded: 'ca-app-pub-1234567890123456/3333333333' },
+      android: ANDROID,
+    };
+    const problems = storeGateProblems({ ...CLEAN_STORE, adUnits: iosAdUnitsOf(extra) }, STORE);
+    expect(problems).toStrictEqual([
+      '[owner-placeholder] extra.adUnits is the placeholder AdMob rewarded unit ca-app-pub-1234567890123456/3333333333 (owner step G5)',
+    ]);
+  });
+
+  it("fails a live build whose iOS units are Google's sample units", () => {
+    const extra = {
+      ios: { ...IOS, banner: 'ca-app-pub-3940256099942544/2435281174' },
+      android: null,
+    };
+    const problems = storeGateProblems({ ...CLEAN_STORE, adUnits: iosAdUnitsOf(extra) }, STORE);
+    expect(problems).toStrictEqual([
+      "[owner-placeholder] extra.adUnits is Google's sample (test) AdMob id ca-app-pub-3940256099942544/2435281174 (owner step G5)",
+    ]);
+  });
+
+  it('reads no unit from an Android-only entry, a missing entry or anything that is not an object', () => {
+    expect(iosAdUnitsOf({ ios: null, android: ANDROID })).toStrictEqual([]);
+    expect(iosAdUnitsOf(undefined)).toStrictEqual([]);
+    expect(iosAdUnitsOf('ca-app-pub-1234567890123456/3333333333')).toStrictEqual([]);
   });
 });

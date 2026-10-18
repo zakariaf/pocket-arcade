@@ -64,7 +64,7 @@ Details
 <commands, file lists, red runs, anything technical>
 ```
 
-`templates/evidence-slice.md` and `templates/evidence-release.md` hold this shape with `__PLACEHOLDERS__`; the examples show both filled in.
+`templates/evidence-slice.md` and `templates/evidence-release.md` hold this shape with `__PLACEHOLDERS__`; the examples show both filled in. `templates/evidence-release-play.md` is the release form for Google Play internal testing (after `npm run release:android`): the same sections, with the Android E2E and design-match lines, the store-AAB gate line (versionCode = the shared build number) and the owner's play-test from the internal track (GP7).
 
 ## Slice form and release form
 
@@ -81,7 +81,7 @@ Details
 | Owner steps (not blocking) | required: the fa and ckb review, the play-test, the sound previews | required: the same three |
 | Not tested or not verified | required | required |
 
-For a release, also open the screenshot gallery for the owner (`open reports/screenshots/index.html`) and list the manual checks: the play-test with the TestFlight purchase test (G6), listening to the sound previews (G9) and the review of the fa and ckb texts (R3) under "Owner steps (not blocking)", and the VoiceOver spot check (R2) under "Not tested or not verified". The one request of a release report is the owner's "ship" (R1), because the release tag and the submission leave the Mac; it never waits for the play-test.
+For a release, also open the screenshot gallery for the owner (`open reports/screenshots/index.html`) and list the manual checks: the play-test with the TestFlight purchase test (G6), listening to the sound previews (G9) and the review of the fa and ckb texts (R3) under "Owner steps (not blocking)", and the VoiceOver spot check (R2) under "Not tested or not verified". The one request of a release report is the owner's "ship" (R1), because the release tag and the submission leave the Mac; it never waits for the play-test. A Google Play release lists the play-test from the internal track with the purchase test as a license tester (GP7) instead of G6 and the TalkBack spot check instead of R2; promoting the build beyond internal testing is the owner's step in the Play Console.
 
 **A keyless rehearsal is not release evidence.** Without the owner's signing key, a store archive built with `CODE_SIGNING_ALLOWED=NO` may be checked with `check-store-artifact --unsigned`, which prints `REHEARSAL: not a release gate`. Mention such a run only under "Not tested or not verified" (or Details); a Checks line or any other line that cites it fails rule `rehearsal-not-evidence`.
 

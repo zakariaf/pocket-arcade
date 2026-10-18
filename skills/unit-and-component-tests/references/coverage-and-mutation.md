@@ -27,7 +27,7 @@ Coverage proves code ran; mutation testing proves the tests would notice if it w
 | `./packages/shell/src/services/save/` | 95 | 95 | 95 | 90 |
 | `./apps/*/src/rules/**/*.ts` | 95 | 95 | 95 | 90 |
 
-`npm run test:coverage` (`jest --ci --coverage --randomize`) runs both projects and fails below these numbers; `verify` includes it. The thresholds are gated values: lowering one is never a fix.
+`npm run test:coverage` (`jest --ci --coverage --randomize`) runs all three projects and fails below these numbers; `verify` includes it. The thresholds are gated values: lowering one is never a fix.
 
 ## Coverage at every build step
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // check-test-setup.mjs: checks the test infrastructure of a Pocket Arcade repo without running Jest:
 // exact test-tool pins and one React, the canonical test scripts, babel.config.js with the Stryker
-// branch, jest.config.js (two projects, workspace mapper, UTC, mocks reset, coverage gates),
+// branch, jest.config.js (three projects: unit, unit-android, golden; workspace mapper, UTC, mocks reset, coverage gates),
 // jest.setup.ts (with the central Skia mock), jest.sim.config.js, stryker.config.json,
 // tsconfig.stryker.json, the root vendor mocks and the renderWithShell helper.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-test-setup.mjs [repo-root]
@@ -36,10 +36,13 @@ const SPEC = {
     '  jest-config-missing       no jest.config.js at the repo root',
     '  jest-config-load          jest.config.js or jest.sim.config.js throws when loaded',
     '  jest-tz                   a Jest config does not set process.env.TZ = \'UTC\'',
-    '  jest-projects             not exactly two projects named unit and golden',
+    '  jest-projects             not exactly three projects named unit, unit-android and golden',
     '  jest-unit-project         unit: preset jest-expo/ios, jest.setup.ts, goldens and sims ignored',
-    '  jest-golden-project       golden: Skia jestEnv + jestSetup, *.golden.test.ts only, and not jest.setup.ts (its inert',
-    '                            Skia mock would blank every pixel golden)',
+    '  jest-android-test-in-ios  the iOS project (unit) would run an *.android.test.ts(x) file (there Platform.OS is',
+    '                            "ios", so the Android test proves nothing or fails)',
+    '  jest-unit-android-project unit-android: preset jest-expo/android, jest.setup.ts, *.android.test.ts(x) only',
+    '  jest-golden-project       golden: Skia jestEnv + jestSetup, *.golden.test.ts only, not jest.setup.ts (its inert',
+    '                            Skia mock would blank every pixel golden), and the iOS preset (no .snap.android)',
     '  jest-workspace-mapper     no moduleNameMapper from @e07/<package>/ to <rootDir>/packages/<package>/src/',
     '  jest-transform            transformIgnorePatterns does not let Babel transpile RN, Expo, Skia, navigation and FormatJS',
     '  jest-mock-reset           clearMocks and restoreMocks are not both true',
@@ -284,6 +287,9 @@ function loadConfig(root, rel, report) {
   }
 }
 
+/** The three Jest projects: iOS unit tests, Android unit tests, data and pixel goldens. */
+const PROJECT_NAMES = ['unit', 'unit-android', 'golden'];
+
 const list = (value) => (Array.isArray(value) ? value : value === undefined ? [] : [value]);
 
 function checkSetupFiles(root, rel, project, report) {
@@ -332,8 +338,39 @@ function checkUnit(rel, unit, report) {
   if (!match.includes('/test/') || !/\{apps,packages\}|apps|packages/.test(match)) problem('unit testMatch does not cover {apps,packages}/*/src and the root test/ folder', 'Copy TEST_ROOTS and testMatch from templates/jest.config.js.');
 }
 
+/** A sample Android-only test: the iOS project must never run it. */
+const ANDROID_SAMPLE = 'packages/shell/src/testing/platform.android.test.ts';
+
+function checkAndroidTestNotInIos(root, rel, unit, report) {
+  const base = String(unit.rootDir ?? root);
+  const ignores = list(unit.testPathIgnorePatterns).map((pattern) => {
+    try {
+      return new RegExp(String(pattern).replaceAll('<rootDir>', base));
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+  if (ignores.some((re) => re.test(join(base, ANDROID_SAMPLE)))) return;
+  report.problem({ file: rel, line: 1, rule: 'jest-android-test-in-ios', message: `the iOS project "unit" runs ${ANDROID_SAMPLE} (its testPathIgnorePatterns do not leave out *.android.test.*)`, fix: "Add ANDROID_TEST ('\\\\.android\\\\.test\\\\.') to the unit testPathIgnorePatterns, as templates/jest.config.js does: only unit-android runs those files, with Platform.OS 'android'." });
+}
+
+const ANDROID_GLOB = /\*\.android\.test\.(\{ts,tsx\}|tsx?)$/;
+
+function checkUnitAndroid(rel, project, report) {
+  const problem = (message, fix) => report.problem({ file: rel, line: 1, rule: 'jest-unit-android-project', message, fix });
+  if (project.preset !== 'jest-expo/android') problem(`unit-android preset is ${JSON.stringify(project.preset)}, not "jest-expo/android"`, "Set preset: 'jest-expo/android' in the unit-android project (jest-expo ships it); only then is Platform.OS 'android' in its tests.");
+  if (!list(project.setupFilesAfterEnv).includes('<rootDir>/jest.setup.ts')) problem('unit-android does not load <rootDir>/jest.setup.ts', "Add setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'] (Gesture Handler, Worklets, Reanimated and the central Skia mock).");
+  const matches = list(project.testMatch).map(String);
+  if (matches.length === 0 || !matches.every((glob) => ANDROID_GLOB.test(glob))) {
+    problem('unit-android testMatch matches more than *.android.test.ts(x)', 'Use TEST_ROOTS.map((root) => `${root}*.android.test.{ts,tsx}`): every other test runs once, in the iOS project.');
+  } else if (!matches.some((glob) => glob.includes('/test/')) || !matches.some((glob) => /\{apps,packages\}|apps|packages/.test(glob))) {
+    problem('unit-android testMatch does not cover {apps,packages}/*/src and the root test/ folder', 'Copy TEST_ROOTS and the unit-android testMatch from templates/jest.config.js.');
+  }
+}
+
 function checkGolden(rel, golden, report) {
   const problem = (message, fix) => report.problem({ file: rel, line: 1, rule: 'jest-golden-project', message, fix });
+  if (golden.preset !== 'jest-expo/ios') problem(`golden preset is ${JSON.stringify(golden.preset)}, not "jest-expo/ios"`, "Keep SHARED's preset jest-expo/ios in the golden project: its snapshot resolver writes .snap.ios, and another platform would write a second set of the frozen goldens (.snap.android).");
   if (golden.testEnvironment !== '@shopify/react-native-skia/jestEnv.js') problem(`golden testEnvironment is ${JSON.stringify(golden.testEnvironment)}`, 'Use testEnvironment: \'@shopify/react-native-skia/jestEnv.js\' (CanvasKit) in the golden project only.');
   if (!list(golden.setupFilesAfterEnv).includes('@shopify/react-native-skia/jestSetup.js')) problem('golden does not load @shopify/react-native-skia/jestSetup.js', 'Add it to the golden setupFilesAfterEnv.');
   if (list(golden.setupFilesAfterEnv).includes('<rootDir>/jest.setup.ts')) problem('golden loads <rootDir>/jest.setup.ts, whose inert Skia mock replaces CanvasKit', 'Load only @shopify/react-native-skia/jestSetup.js in the golden project; jest.setup.ts belongs to the unit project.');
@@ -419,13 +456,16 @@ function checkJest(root, report) {
   if (!config) return;
   const projects = list(config.projects);
   const names = projects.map((project) => project?.displayName);
-  if (projects.length !== 2 || !names.includes('unit') || !names.includes('golden')) {
-    report.problem({ file: rel, line: 1, rule: 'jest-projects', message: `projects are [${names.map(String).join(', ')}], not exactly unit and golden`, fix: 'Use projects: [unitProject, goldenProject] from templates/jest.config.js; sims run through jest.sim.config.js.' });
+  if (projects.length !== PROJECT_NAMES.length || !PROJECT_NAMES.every((name) => names.includes(name))) {
+    report.problem({ file: rel, line: 1, rule: 'jest-projects', message: `projects are [${names.map(String).join(', ')}], not exactly unit and golden plus unit-android`, fix: 'Use projects: [unitProject, unitAndroidProject, goldenProject] from templates/jest.config.js (unit-android runs only *.android.test.ts(x), where Platform.OS is "android"); sims run through jest.sim.config.js.' });
   }
   for (const project of projects) if (project && typeof project === 'object') checkProjectCommon(root, rel, project, report);
   const unit = projects.find((project) => project?.displayName === 'unit');
+  const unitAndroid = projects.find((project) => project?.displayName === 'unit-android');
   const golden = projects.find((project) => project?.displayName === 'golden');
   if (unit) checkUnit(rel, unit, report);
+  if (unit) checkAndroidTestNotInIos(root, rel, unit, report);
+  if (unitAndroid) checkUnitAndroid(rel, unitAndroid, report);
   if (golden) checkGolden(rel, golden, report);
   checkThresholds(rel, text, config, report);
   if (usesHelper) checkDeviceOnly(root, rel, config, report);

@@ -1,0 +1,3 @@
+[hit-slop]
+close-button.tsx:22
+in an Android-only branch

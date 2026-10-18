@@ -372,6 +372,27 @@ const AUDIO_CASES = {
     replace(dir, HAPTICS, 'fire(cue).catch(() => undefined);', 'void fire(cue);');
     return ['[haptic-safety]', `${HAPTICS}:1`, '.catch(() => undefined)'];
   },
+  'haptic-android': (dir) => {
+    replace(dir, HAPTICS, 'return performAndroidHapticsAsync(\n        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,\n      );', 'return performAndroidHapticsAsync(AndroidHaptics.Long_Press);');
+    return ['[haptic-android]', `${HAPTICS}:${lineOf(dir, HAPTICS, 'AndroidHaptics.Long_Press') - 1}`, "cue 'selection' calls performAndroidHapticsAsync(AndroidHaptics.Long_Press)"];
+  },
+  // The E18 review finding: Segment_Tick unguarded is silent on every phone below Android 14.
+  'haptic-android-api': (dir) => {
+    replace(dir, HAPTICS, 'return performAndroidHapticsAsync(\n        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,\n      );', 'return performAndroidHapticsAsync(AndroidHaptics.Segment_Tick);');
+    return ['[haptic-android]', `${HAPTICS}:${lineOf(dir, HAPTICS, 'AndroidHaptics.Segment_Tick') - 1}`, "cue 'selection' calls performAndroidHapticsAsync(AndroidHaptics.Segment_Tick), expected performAndroidHapticsAsync(api>=34?AndroidHaptics.Segment_Tick:AndroidHaptics.Clock_Tick)"];
+  },
+  'haptic-android-unused': (dir) => {
+    replace(dir, HAPTICS, "return Platform.OS === 'android' ? fireAndroid(cue) : fireIos(cue);", 'return fireIos(cue);');
+    return ['[haptic-android]', `${HAPTICS}:1`, "does not play the Android column when Platform.OS is 'android'"];
+  },
+  'audio-focus': (dir) => {
+    replace(dir, ADAPTER, "    if (Platform.OS !== 'ios') return this.graph;\n", '');
+    return ['[audio-focus]', `${ADAPTER}:${lineOf(dir, ADAPTER, 'AudioManager.observeAudioInterruptions(true)')}`, 'also runs on Android'];
+  },
+  'audio-focus-type': (dir) => {
+    replace(dir, ADAPTER, 'AudioManager.observeAudioInterruptions(true);', "AudioManager.observeAudioInterruptions('gain');");
+    return ['[audio-focus]', `${ADAPTER}:${lineOf(dir, ADAPTER, "observeAudioInterruptions('gain')")}`, 'names an audio focus type'];
+  },
   'sim-haptic': (dir) => {
     const rel = `apps/${GAME}/src/sim/demo-sim.ts`;
     write(dir, rel, `// ${rel}\n'worklet';\n\nexport function stepDemo(sim: { hits: number }, haptics: { play: (cue: 'heavy') => void }): void {\n  sim.hits += 1;\n  haptics.play('heavy');\n}\n`);

@@ -8,10 +8,15 @@
 // Also prints the App Privacy questionnaire input, with the tracking answers: Device ID is
 // collected, linked and used for tracking by the third-party ads SDK, and the app asks App
 // Tracking Transparency first (owner decision O1).
-import { execFileSync } from 'node:child_process';
+// `npm run audit:privacy -- --platform android [--app <game-id>]` prints Google Play's Data safety
+// answers instead (spec 4.2 point 1), for every app or the one named; it needs no prebuild.
+import { execFile, execFileSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 
+import { dataSafetyAnswers } from './data-safety.ts';
+import { isAdsEnabled } from './network-config-layer.ts';
 import {
   localPodManifestPaths,
   mergeReasons,
@@ -20,6 +25,7 @@ import {
   trackingAnswers,
 } from './privacy-manifest.ts';
 
+import type { ExpoConfigLike } from './network-config-layer.ts';
 import type { PodManifest, PrivacyManifest } from './privacy-manifest.ts';
 
 /**
@@ -90,8 +96,51 @@ function prebuiltGameIds(): string[] {
   return readdirSync('apps').filter((id) => existsSync(join('apps', id, 'ios', 'Pods')));
 }
 
-const appIndex = process.argv.indexOf('--app');
-const gameIds = appIndex >= 0 ? [process.argv[appIndex + 1] ?? ''] : prebuiltGameIds();
-if (gameIds.length === 0) console.error('audit:privacy: no prebuilt app (run npx expo prebuild)');
-const failures = gameIds.reduce((sum, id) => sum + auditApp(join('apps', id)), 0);
-process.exitCode = gameIds.length > 0 && failures === 0 ? 0 : 1;
+const execFileAsync = promisify(execFile);
+
+// The store build's config, as the network audit reads it (ads on unless the game turns them off).
+async function storeConfig(gameId: string): Promise<ExpoConfigLike> {
+  const { stdout } = await execFileAsync(
+    'npx',
+    ['expo', 'config', '--json', '--type', 'prebuild'],
+    {
+      cwd: join('apps', gameId),
+      env: {
+        ...process.env,
+        APP_VARIANT: 'store',
+        EXPO_PUBLIC_APP_VARIANT: 'store',
+        ADS_MODE: 'off',
+      },
+      encoding: 'utf8',
+    },
+  );
+  return JSON.parse(stdout) as ExpoConfigLike;
+}
+
+/** Every game's config is read at once (independent npx runs); the answers print in game order. */
+async function printDataSafety(gameIds: readonly string[]): Promise<void> {
+  const configs = await Promise.all(gameIds.map(storeConfig));
+  gameIds.forEach((gameId, index) => {
+    const config = configs[index];
+    if (config === undefined) return;
+    const answers = dataSafetyAnswers({ gameId, isAdsEnabled: isAdsEnabled(config) });
+    for (const line of answers) console.error(line);
+  });
+}
+
+const argument = (name: string): string | undefined => {
+  const index = process.argv.indexOf(name);
+  return index >= 0 ? process.argv[index + 1] : undefined;
+};
+const appId = argument('--app');
+if (argument('--platform') === 'android') {
+  const allApps = existsSync('apps') ? readdirSync('apps').filter((id) => !id.startsWith('.')) : [];
+  const gameIds = appId === undefined ? allApps : [appId];
+  await printDataSafety(gameIds);
+  process.exitCode = gameIds.length > 0 ? 0 : 1;
+} else {
+  const gameIds = appId === undefined ? prebuiltGameIds() : [appId];
+  if (gameIds.length === 0) console.error('audit:privacy: no prebuilt app (run npx expo prebuild)');
+  const failures = gameIds.reduce((sum, id) => sum + auditApp(join('apps', id)), 0);
+  process.exitCode = gameIds.length > 0 && failures === 0 ? 0 : 1;
+}

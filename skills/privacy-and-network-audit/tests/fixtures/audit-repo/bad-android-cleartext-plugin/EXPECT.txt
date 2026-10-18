@@ -1,0 +1,2 @@
+[android-cleartext]
+packages/shell/plugins/with-http.ts:6

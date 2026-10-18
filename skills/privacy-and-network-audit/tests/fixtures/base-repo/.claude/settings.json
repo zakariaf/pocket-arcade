@@ -5,7 +5,11 @@
       "Read(**/*.p8)",
       "Read(**/AuthKey_*)",
       "Read(**/*.p12)",
-      "Read(**/*.mobileprovision)"
+      "Read(**/*.mobileprovision)",
+      "Read(~/.android-keys/**)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(**/play-service-account.json)"
     ]
   }
 }

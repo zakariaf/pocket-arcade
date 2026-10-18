@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "*",
     "@shopify/react-native-skia": "*",
     "expo": "*",
+    "expo-build-properties": "*",
     "expo-constants": "*",
     "expo-font": "*",
     "expo-haptics": "*",

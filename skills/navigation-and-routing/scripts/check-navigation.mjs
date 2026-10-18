@@ -75,6 +75,18 @@ const SPEC = {
     '                             theme of step 7); before step 7 the rule prints SKIP "due at Shell step 7:',
     '                             packages/shell/src/app/start-shell.ts not yet created"',
     '  slice-present              --complete: shell-slice.json still exists (a slice never ships)',
+    '',
+    'Android rules (the system back: spec 5). They apply once the Android port has started (jest.config.js',
+    'declares the unit-android project, Android step 1); before that they print SKIP "Android port not',
+    'started". From then on they print SKIP "due at Android step 4: <file> not yet created" until the Android',
+    'back test exists, and are strict once it exists or with --complete:',
+    '  android-back               screens/game/game-screen-back.android.test.tsx presses the system back',
+    '                             (a \'hardwareBackPress\' device event) on Game, and navigation/use-hardware-back.ts',
+    '                             lands with its use-hardware-back.android.test.tsx',
+    '  dialog-back                screens/dialogs/dialog-host.tsx calls useHardwareBack(...): with an S14 dialog',
+    '                             open the system back is its cancel and the screen behind stays',
+    '(gesture-off stays the iOS swipe rule: Android has no swipe-back on the native stack; its back gesture',
+    'is the system back, which React Navigation already turns into goBack().)',
   ].join('\n'),
 };
 
@@ -383,6 +395,52 @@ function checkGuardFiles(ctx, root) {
   }
 }
 
+/** The Android back files of Android step 4 (the first one is the step's marker). */
+const ANDROID_BACK_TEST = 'packages/shell/src/screens/game/game-screen-back.android.test.tsx';
+const ANDROID_BACK_FILES = [
+  ANDROID_BACK_TEST,
+  'packages/shell/src/navigation/use-hardware-back.ts',
+  'packages/shell/src/navigation/use-hardware-back.android.test.tsx',
+];
+const DIALOG_HOST = 'packages/shell/src/screens/dialogs/dialog-host.tsx';
+
+/** True once jest.config.js declares the unit-android project (the Android port's step 1). */
+function hasAndroidProject(root) {
+  const config = join(root, 'jest.config.js');
+  return existsSync(config) && /displayName\s*:\s*['"]unit-android['"]/.test(read(config));
+}
+
+/** Why the Android back rules are not checked yet, or null when they are due. */
+function androidBackSkipReason(ctx, root) {
+  if (!hasAndroidProject(root)) return 'Android port not started: jest.config.js declares no unit-android project (Android step 1)';
+  if (ctx.isComplete || existsSync(join(root, ANDROID_BACK_TEST))) return null;
+  return `due at Android step 4: ${ANDROID_BACK_TEST} not yet created`;
+}
+
+function checkAndroidBack(ctx, root) {
+  if (root === null) return;
+  const reason = androidBackSkipReason(ctx, root);
+  if (reason !== null) {
+    ctx.report.skip({ file: shownPath(join(root, ANDROID_BACK_TEST)), rule: 'android-back', message: reason });
+    if (existsSync(join(root, DIALOG_HOST))) ctx.report.skip({ file: shownPath(join(root, DIALOG_HOST)), rule: 'dialog-back', message: reason });
+    return;
+  }
+  for (const file of ANDROID_BACK_FILES) {
+    if (existsSync(join(root, file))) continue;
+    ctx.report.problem({ file: shownPath(join(root, file)), line: 1, rule: 'android-back', message: `${file} is missing: nothing proves the Android system back (spec 5: on Game it opens Pause, in Pause it resumes)`, fix: `Copy templates/${basename(file)} from navigation-and-routing (Android step 4), with its test; it runs in the unit-android project.` });
+  }
+  const test = join(root, ANDROID_BACK_TEST);
+  if (existsSync(test) && !/['"]hardwareBackPress['"]/.test(read(test))) {
+    ctx.report.problem({ file: shownPath(test), line: 1, rule: 'android-back', message: "the Android back test never presses the system back (no 'hardwareBackPress' device event): goBack() through a ref proves nothing about the back button", fix: "Press it as Android delivers it: DeviceEventEmitter.emit('hardwareBackPress', {}) inside act() (templates/game-screen-back.android.test.tsx)." });
+  }
+  const host = join(root, DIALOG_HOST);
+  if (!existsSync(host)) return;
+  if (!screenRule(ctx, 'S14', { file: shownPath(host), rule: 'dialog-back' })) return;
+  if (!/\buseHardwareBack\s*\(/.test(read(host))) {
+    ctx.report.problem({ file: shownPath(host), line: 1, rule: 'dialog-back', message: 'an open S14 dialog ignores the Android system back: the press reaches the navigator and leaves the screen behind the dialog', fix: 'Call useHardwareBack(request === null ? null : onClose) in DialogHost before its early return (navigation/use-hardware-back.ts; every S14 cancel, Later and OK closes the dialog).' });
+  }
+}
+
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
   const { root, src } = locate(positionals[0] ?? '.');
@@ -403,6 +461,7 @@ run(async () => {
     if (ctx.checked === 0) return report.notApplicable(`${noShellApp}: no Shell or app source to scan for navigators`);
   } else {
     checkNavigationFolder(ctx, src, shownPath(src));
+    checkAndroidBack(ctx, root);
   }
   return report.finish({ checked: ctx.checked, unit: 'files' });
 });

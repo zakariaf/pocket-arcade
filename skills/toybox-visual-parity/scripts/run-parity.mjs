@@ -11,6 +11,7 @@ import { TOOLING_OPTION, toolingArgs } from './lib/deps.mjs';
 import { FACTS_FILE, REQUIRED_LANGS, THEMES, describeFacts, describeReference, listOption, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
 import { scrollPlan } from './lib/gates.mjs';
 import { DEFAULTS, SCRIPTS_DIR, readJson } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, PLATFORM_OPTION, platformOption } from './lib/platform.mjs';
 import { RUN_FILES, defaultRunDir, runDirName } from './lib/runs.mjs';
 import { driverPortOf, freeDriverPort } from './lib/tools.mjs';
 
@@ -23,22 +24,25 @@ const SPEC = {
     'sheets to read. --recheck skips the capture and re-checks the runs already in --root.',
   usage: '(--frame <key>... | --screen <id>...) --bundle-id <id> [options]',
   options: {
+    platform: PLATFORM_OPTION,
     frame: { type: 'string', multiple: true, value: 'key', help: 'Design frame key(s), e.g. s4-home' },
     screen: { type: 'string', multiple: true, value: 'id', help: 'Screen id(s): every frame of the screen (S12 = 9 frames)' },
     'bundle-id': { type: 'string', value: 'id', help: "The test build's bundle identifier (needed unless --recheck)" },
     themes: { type: 'string', value: 'list', help: 'Themes', default: THEMES.join(',') },
     langs: { type: 'string', value: 'list', help: 'Languages (add de,ckb before a release; narrowing is for iteration, the sign-off needs en and fa)', default: REQUIRED_LANGS.join(',') },
     game: { type: 'string', value: 'id', help: 'Design game id of the app', default: 'lineSiege' },
-    root: { type: 'string', value: 'dir', help: 'Run folder root', default: '.parity' },
-    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set)' },
+    root: { type: 'string', value: 'dir', help: 'Run folder root (default: .parity, on Android .parity/android)' },
+    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set of the platform, assets/reference or assets/reference-android)' },
     waivers: { type: 'string', value: 'file', help: 'Waiver file', default: 'parity/waivers.json' },
     recheck: { type: 'boolean', help: 'Do not capture; check and draw the existing runs again' },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
-    device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    device: { type: 'string', value: 'file', help: 'Device profile (default: the platform\'s, assets/device/iphone16pro.json or android-phone.json)' },
     xcrun: { type: 'string', value: 'path', help: 'xcrun to use (passed to capture-app.mjs)' },
+    adb: { type: 'string', value: 'path', help: 'Android: adb to use (passed to capture-app.mjs)' },
+    serial: { type: 'string', value: 'serial', help: 'Android: the emulator serial (passed to capture-app.mjs; it must run the --name AVD)' },
     maestro: { type: 'string', value: 'path', help: 'maestro to use (passed to capture-app.mjs)' },
-    name: { type: 'string', value: 'name', help: "Simulator name (passed to capture-app.mjs; default: the device profile's, e07-parity)" },
+    name: { type: 'string', value: 'name', help: "Simulator name, or the AVD name on Android (passed to capture-app.mjs; default: the device profile's, e07-parity or e07-android-parity)" },
     'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port (passed to capture-app.mjs; default: $PARITY_MAESTRO_PORT, else a free port picked for this run)" },
     facts: { type: 'string', value: 'file', help: "The app's game facts: which reference variant a frame uses", default: FACTS_FILE },
     app: { type: 'string', value: 'id', help: 'App id in the facts file (needed when it lists several apps)' },
@@ -58,6 +62,10 @@ const SPEC = {
     '  node run-parity.mjs --frame s11-settings --themes dark --langs fa --bundle-id <id> --name e07-parity   (iteration only)',
     '  node run-parity.mjs --screen S4 --recheck',
     '  node run-parity.mjs --screen S11 --bundle-id <id> --name e07-parity-b --tooling .parity/tooling',
+    '  node run-parity.mjs --platform android --screen S4 --bundle-id io.applander.linesiege --name e07-android-parity-b',
+    '',
+    'Android (--platform android): the same loop on this session\'s parity emulator (setup-parity-emu.mjs) against the',
+    'Android set (assets/reference-android) and the Android profile, with the runs in .parity/android/.',
     '',
     'Frames with reference variants (s11-settings, s6-pause, s7-result-win, s14-reset-all-progress) use the variant',
     'the app\'s facts in parity/game-facts.json select (variants compose: s6-pause--no-music--no-hints), and the',
@@ -88,6 +96,9 @@ function scrollOffsets(layoutPath, device) {
 
 run(async () => {
   const { options } = parseArgs(process.argv.slice(2), SPEC);
+  const platform = platformOption(options.platform);
+  const defaults = PLATFORM_DEFAULTS[platform];
+  const devicePath = resolve(options.device ?? defaults.device);
   const { frames } = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });
   let keys = listOption(options.frame, []);
   for (const id of listOption(options.screen, [])) {
@@ -110,12 +121,13 @@ run(async () => {
   const boardArgs = boardCacheDir ? ['--board-cache', `${boardCacheDir}/board.json`] : [];
   const themes = listOption(options.themes, THEMES);
   const langs = listOption(options.langs, REQUIRED_LANGS);
-  const device = readJson(resolve(options.device), 'device profile');
-  const referenceRoot = resolve(options.reference ?? DEFAULTS.reference);
-  const runsRoot = resolve(options.root);
+  const device = readJson(devicePath, 'device profile');
+  const referenceRoot = resolve(options.reference ?? defaults.reference);
+  const runsRoot = resolve(options.root ?? defaults.runs);
   const show = (p) => relative(process.cwd(), p) || '.';
-  const shared = ['--map', resolve(options.map), '--frames', resolve(options.frames), '--device', resolve(options.device)];
-  const refArgs = options.reference ? ['--reference', referenceRoot] : [];
+  const shared = ['--map', resolve(options.map), '--frames', resolve(options.frames), '--device', devicePath];
+  // The platform's own set always: check-parity would otherwise default by the run's platform too.
+  const refArgs = options.reference || platform !== 'ios' ? ['--reference', referenceRoot] : [];
   const report = createReporter({ name: 'run-parity' });
   const table = [];
   const sheets = [];
@@ -151,7 +163,10 @@ run(async () => {
           const relay = (result) => result.problems.forEach((p) => report.problem({ ...p, message: `${label}: ${p.message}` }));
           if (!options.recheck) {
             const extra = [
+              '--platform', platform,
               ...(options.xcrun ? ['--xcrun', options.xcrun] : []),
+              ...(options.adb ? ['--adb', options.adb] : []),
+              ...(options.serial ? ['--serial', options.serial] : []),
               ...(options.maestro ? ['--maestro', options.maestro] : []),
               ...(options.name ? ['--name', options.name] : []),
               '--driver-port', String(driverPort),
@@ -169,10 +184,10 @@ run(async () => {
             table.push(`${label.padEnd(40)} NOT CAPTURED`);
             continue;
           }
-          const check = runScript('check-parity.mjs', [dir, '--waivers', resolve(options.waivers), '--device', resolve(options.device), ...factsArgs, ...refArgs, '--map', resolve(options.map), '--frames', resolve(options.frames), ...tooling]);
+          const check = runScript('check-parity.mjs', [dir, '--waivers', resolve(options.waivers), '--device', devicePath, ...factsArgs, ...refArgs, '--map', resolve(options.map), '--frames', resolve(options.frames), ...tooling]);
           if (check.status === 2) fail(`check-parity.mjs stopped on ${label}: ${check.error}`, check.errorFix ?? 'Fix the input it names, then run again.');
           relay(check);
-          const sheet = runScript('make-sheet.mjs', [dir, '--device', resolve(options.device), ...refArgs, ...tooling]);
+          const sheet = runScript('make-sheet.mjs', [dir, '--device', devicePath, ...refArgs, ...tooling]);
           if (sheet.status !== 0) relay(sheet);
           else sheets.push(show(join(dir, 'sheet.png')));
           const first = check.problems[0];

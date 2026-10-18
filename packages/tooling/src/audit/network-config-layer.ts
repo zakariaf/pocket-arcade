@@ -7,7 +7,11 @@
 // expo-tracking-transparency plugin's userTrackingPermission (Info.plist, en) and withShell's
 // locales.<lang>.ios.NSUserTrackingUsageDescription (InfoPlist.strings). It has one source: the
 // AdMob plugin's own userTrackingUsageDescription stays unset.
+// Android: android.permissions only from the allowlist (a library's extra permission goes into
+// android.blockedPermissions), and no cleartext traffic through expo-build-properties.
 import { LANGUAGES } from '@e07/shell/i18n/languages.ts';
+
+import { ANDROID_PERMISSION_ALLOWLIST } from './android-manifest-audit.ts';
 
 export type PluginEntry = string | readonly [string, unknown];
 type LocaleEntry = { readonly ios?: Readonly<Record<string, unknown>> };
@@ -17,6 +21,10 @@ export type ExpoConfigLike = {
   readonly ios?: {
     readonly infoPlist?: Record<string, unknown>;
     readonly onside?: { readonly enabled?: boolean };
+  };
+  readonly android?: {
+    readonly permissions?: readonly string[];
+    readonly blockedPermissions?: readonly string[];
   };
   readonly locales?: Readonly<Record<string, LocaleEntry | string>>;
   readonly extra?: { readonly game?: { readonly adPolicy?: { readonly isAdsEnabled?: boolean } } };
@@ -50,7 +58,7 @@ function expoIapProblems(config: ExpoConfigLike): string[] {
 }
 
 /** Ads are on unless the game's extra says isAdsEnabled: false; the AdMob plugin must be listed. */
-function isAdsEnabled(config: ExpoConfigLike): boolean {
+export function isAdsEnabled(config: ExpoConfigLike): boolean {
   return (
     hasPlugin(config, 'react-native-google-mobile-ads') &&
     config.extra?.game?.adPolicy?.isAdsEnabled !== false
@@ -87,8 +95,33 @@ function attProblems(config: ExpoConfigLike): string[] {
   return problems;
 }
 
+// Expo accepts short names (VIBRATE) for android.permission.* entries.
+const fullPermission = (name: string): string =>
+  name.includes('.') ? name : `android.permission.${name}`;
+
+function androidProblems(config: ExpoConfigLike): string[] {
+  const blocked = new Set((config.android?.blockedPermissions ?? []).map(fullPermission));
+  const problems = (config.android?.permissions ?? [])
+    .map(fullPermission)
+    .filter((name) => !blocked.has(name) && !ANDROID_PERMISSION_ALLOWLIST.includes(name))
+    .map((name) => `android.permissions has ${name}, which is not on the allowlist`);
+  const buildProperties = pluginOptions(config, 'expo-build-properties');
+  const android: unknown =
+    typeof buildProperties === 'object' && buildProperties !== null
+      ? Reflect.get(buildProperties, 'android')
+      : undefined;
+  if (
+    typeof android === 'object' &&
+    android !== null &&
+    Reflect.get(android, 'usesCleartextTraffic') === true
+  ) {
+    problems.push('expo-build-properties android.usesCleartextTraffic must not be true');
+  }
+  return problems;
+}
+
 export function configProblems(config: ExpoConfigLike): string[] {
-  const problems = [...expoIapProblems(config), ...attProblems(config)];
+  const problems = [...expoIapProblems(config), ...attProblems(config), ...androidProblems(config)];
   if (config.updates?.enabled !== false) problems.push('expo.updates.enabled must be false');
   const ats: unknown = config.ios?.infoPlist?.['NSAppTransportSecurity'];
   if (

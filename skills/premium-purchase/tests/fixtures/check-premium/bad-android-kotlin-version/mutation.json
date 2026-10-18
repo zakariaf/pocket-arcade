@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/shell/src/config/shell-plugins.ts",
+      "find": "kotlinVersion: '2.1.20'",
+      "with": "kotlinVersion: '2.0.21'"
+    }
+  }
+]

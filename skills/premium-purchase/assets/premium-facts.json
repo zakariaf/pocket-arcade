@@ -5,6 +5,16 @@
     "version": "5.8.0",
     "fallback": "5.6.3"
   },
+  "android": {
+    "verified": "2026-10-16",
+    "openiapGoogle": "3.6.0",
+    "playBilling": "9.1.0",
+    "kotlinVersion": "2.1.20",
+    "buildPropertiesPlugin": "expo-build-properties",
+    "productType": "managed product (one-time, non-consumable: acknowledged, never consumed)",
+    "refundDecision": "owner default (a), E18-T01: a Play refund leaves no dated evidence on the phone, so absence never revokes Premium",
+    "acknowledgeWindowDays": 3
+  },
   "adapter": {
     "file": "packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts",
     "allowedImports": [

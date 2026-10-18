@@ -1,0 +1,2 @@
+banned
+react-native-play-install-referrer is banned

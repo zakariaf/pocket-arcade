@@ -11,7 +11,7 @@ Turns an error into a proven fix fast: look the failure up in the catalogue of e
 
 1. **Look it up before you diagnose.** Run `find-fix.mjs` with the exact first error line before touching code. Many fixes here are counter-intuitive (a Metro cache that ignores the variant, a frame clock that resets on restart) and were expensive to find; guessing repeats that cost.
 2. **Fix the cause, never the check.** No widened tolerance, skipped or deleted test, `eslint-disable`, raised limit, regenerated golden or loosened version to make a failure go away. A green gate over a real bug ships the bug.
-3. **Rows marked owner are stops.** Keychain, agreements, 401/403, a missing app record, the Xcode licence, `sudo`, consoles and product decisions: send the owner one message (the step, the exact error line, the one action needed) and wait. Retrying can lock the account or burn build numbers; the decisions are the owner's. The owner's personal checks (the review of fa and ckb texts, the play-test, listening to the sound previews) are not stops: list them under "Owner steps (not blocking)" and keep working (`open-owner-personal-checks`).
+3. **Rows marked owner are stops.** Keychain, agreements, 401/403 (App Store Connect or the Android Publisher API), a missing app record, the Xcode licence, `sudo`, consoles and product decisions: send the owner one message (the step, the exact error line, the one action needed) and wait. Retrying can lock the account or burn build numbers; the decisions are the owner's. The owner's personal checks (the review of fa and ckb texts, the play-test, listening to the sound previews) are not stops: list them under "Owner steps (not blocking)" and keep working (`open-owner-personal-checks`).
 4. **When an entry names a skill, load that skill for the fix.** The catalogue gives the diagnosis; the owning skill has the full procedure, templates and checks that prove the fix.
 5. **A fix is proven only by rerunning the command that failed, then the area's gate.** "The error went away once" is not evidence; the same command passing, and then `check:fast`, `verify`, the simulator build or the release gate, is.
 6. **Treat `open` entries as the current decision, not as bugs.** Their fix is the agreed fallback. Tell the owner when you hit one; never settle it silently.
@@ -25,7 +25,7 @@ Turns an error into a proven fix fast: look the failure up in the catalogue of e
 2. **Look it up:** `node ${CLAUDE_SKILL_DIR}/scripts/find-fix.mjs --text "<first error line>"`. Also try two or three plain words for what you see ("banner never appears"), `--log <file>` for a whole log (error patterns only), or `--id <id>` for an id another checker printed. Every `MATCH` prints the cause, the fix, the status and the owning skill.
 3. **Act on the match.** Marked `stop and ask the owner`: send the stop message and end the step. Names a skill: load it and apply the fix with its procedure. Otherwise apply the fix directly. The full table of the area is in its reference (below); read it when the match is close but not exact.
 4. **No match, or the fix did not work:** read [references/diagnosing-new-failures.md](references/diagnosing-new-failures.md) and follow its loop: reproduce cleanly, change one thing at a time, suspect the newest change first, make a minimal repro in a scratch copy for library bugs.
-5. **Scan for known pitfalls** before a first simulator build, a release, a dependency or SDK bump, a new game, and whenever failures repeat: `node ${CLAUDE_SKILL_DIR}/scripts/check-known-pitfalls.mjs .` from the repo root. Each `FAIL` line names the file, the catalogue id, the fix and the cause; fix and rerun until `RESULT: PASS`.
+5. **Scan for known pitfalls** before a first simulator or emulator build, a release, a dependency or SDK bump, a new game, and whenever failures repeat: `node ${CLAUDE_SKILL_DIR}/scripts/check-known-pitfalls.mjs .` from the repo root. Each `FAIL` line names the file, the catalogue id, the fix and the cause; fix and rerun until `RESULT: PASS`.
 6. **Verify:** rerun the failing command, then the area's gate (`npm run -s check:fast`, `npm run verify`, `npm run build:ios:sim -- --app <game>`, or the release gate).
 7. **Record:** add or correct the entry in `assets/known-failures.json` (field rules in the diagnosing reference), run `node ${CLAUDE_SKILL_DIR}/scripts/check-catalogue.mjs --write`, then `check-catalogue.mjs` without flags. Add the exact first error line as one line of `tests/fixtures/find-fix-text/good/queries.txt`, so the self-test proves `find-fix.mjs` finds it. If you added a pitfall rule, add its planted bug to a `tests/fixtures/check-known-pitfalls/bad-*` folder. Then run `node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs`.
 8. **Report** in plain words: what failed, the cause, the fix, the evidence (the passing command and the `RESULT` lines), the catalogue id, and any owner action still needed.
@@ -48,6 +48,7 @@ The catalogue by area (each reference is a generated table: ID, symptom, cause, 
 | perf | [references/performance-and-accessibility.md](references/performance-and-accessibility.md) | cold start, budgets, contrast, text scaling |
 | skills | [references/claude-code-and-skills.md](references/claude-code-and-skills.md) | skills that do not load, trigger or run |
 | open | [references/open-risks.md](references/open-risks.md) | unverified behaviour and owner decisions, with the fallback until settled |
+| android | [references/android-build-and-release.md](references/android-build-and-release.md) | JDK, SDK, NDK and Gradle, the variant inside Gradle, emulator and adb, upload-key signing, the store-AAB gate, the Play API stops, the Android gaps of the iOS-first Shell |
 
 ## Definition of done
 
@@ -86,9 +87,10 @@ The catalogue by area (each reference is a generated table: ID, symptom, cause, 
 | [references/performance-and-accessibility.md](references/performance-and-accessibility.md) | Generated table: perf area | Workflow step 3, perf and a11y findings |
 | [references/claude-code-and-skills.md](references/claude-code-and-skills.md) | Generated table: skills area | Workflow step 3, a skill misbehaves |
 | [references/open-risks.md](references/open-risks.md) | Generated table: open risks and owner decisions | Workflow step 3, and before telling the owner about an open item |
-| `assets/known-failures.json` | The catalogue: 14 areas and every entry (the one place entries are written) | Workflow step 7 |
+| [references/android-build-and-release.md](references/android-build-and-release.md) | Generated table: android area | Workflow step 3, Android build, emulator and Google Play failures |
+| `assets/known-failures.json` | The catalogue: 15 areas and every entry (the one place entries are written) | Workflow step 7 |
 | `scripts/find-fix.mjs` | Looks up error text, a log or an id; exit 1 when nothing is known | Workflow step 2 |
-| `scripts/check-known-pitfalls.mjs` | Scans the app repo for the known failures visible in files (variants, banned packages, clock, selectors, configs, flows, export options) | Workflow step 5 and the definition of done |
+| `scripts/check-known-pitfalls.mjs` | Scans the app repo for the known failures visible in files (variants, banned packages, clock, selectors, configs, flows, export options, a committed android/, the emulator image, Gradle without the variant) | Workflow step 5 and the definition of done |
 | `scripts/check-catalogue.mjs` | Validates the catalogue, renders (`--write`) and checks the area references, checks pitfall ids | Workflow step 7 |
 | `scripts/lib/catalogue.mjs` | Catalogue loader, validator and renderer | When changing the entry format |
 | `scripts/lib/pitfalls.mjs` | The pitfall rules, one per catalogue id | Workflow step 7, to add a rule |

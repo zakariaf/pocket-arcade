@@ -23,13 +23,18 @@
 // and reports/perf/sim-perf-log.json. --flows-only (while iterating) runs step 1 only; it is never
 // the evidence run.
 import { execFileSync, spawn } from 'node:child_process';
-import { existsSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
 import { SAMPLER_PROOF_WAIT_MS } from '@e07/tooling/audit/network-runtime-layer.ts';
 import { E2E_USAGE, parseE2eCli } from '@e07/tooling/e2e/e2e-cli.ts';
-import { mergeJunitReports } from '@e07/tooling/e2e/junit-merge.ts';
+import {
+  allFlows,
+  largeTextFlows,
+  mergeJunitInto,
+  reportArgs,
+} from '@e07/tooling/e2e/flow-files.ts';
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
 import {
   proveSamplersAlive,
@@ -107,22 +112,9 @@ function cliOf(options: E2eOptions): Cli {
   };
 }
 
-/** JUnit report and per-flow artefacts of one Maestro run into `dir`. */
-const reportArgs = (dir: string): string[] => [
-  ...['--format', 'JUNIT', '--output', join(dir, 'junit.xml'), '--test-output-dir', dir],
-];
-
 /** A simulator of the run with its one driver port: the session's own, else one free port. */
 async function deviceOf(cli: Cli, udid: string): Promise<MaestroDevice> {
   return { udid, driverPort: cli.driverPort ?? (await freeDriverPort()) };
-}
-
-/** The a11y flows of step 4 (the Shell's and the game's). */
-function largeTextFlows(game: string): string[] {
-  return [
-    ...globSync('packages/shell/e2e/flows/a11y/*.yaml'),
-    ...globSync(`apps/${game}/e2e/flows/a11y/*.yaml`),
-  ].sort();
 }
 
 /** One `maestro test` call of the flows step, reported into `dir`; its exit code. */
@@ -138,42 +130,21 @@ function testFlows(run: E2eRun, flows: readonly string[], dir: string): Promise<
 }
 
 /**
- * Adds the benchmark call's test case to reports/e2e/<game-id>/junit.xml (one report for the step);
- * a report that cannot be merged is a failure of the step, never a crash of the run.
- */
-function mergeBenchmarkJunit(out: string, dir: string): string | null {
-  const extra = join(dir, 'junit.xml');
-  if (!existsSync(extra)) return null; // Maestro wrote no report: its exit code already fails the step
-  const junit = join(out, 'junit.xml');
-  const main = existsSync(junit) ? readFileSync(junit, 'utf8') : '';
-  try {
-    writeFileSync(junit, mergeJunitReports(main, readFileSync(extra, 'utf8')));
-    return null;
-  } catch (error: unknown) {
-    return `flows: ${error instanceof Error ? error.message : String(error)} (see ${dir})`;
-  }
-}
-
-/**
  * Step 1: every flow of the Shell and the game, except quarantined and a11y (step 4) ones; S15's
  * save benchmark flow in a call of its own after the others, its perf-log entry kept right after it
  * (save-benchmark.json) and its test case added to junit.xml.
  */
 async function runFlows(run: E2eRun): Promise<string[]> {
   const { cli, simctl, udid, app, out } = run;
-  // Maestro does not recurse into sub-folders: list the <area>/<nn>-<name>.yaml files explicitly.
-  const flows = [
-    ...globSync('packages/shell/e2e/flows/*/*.yaml'),
-    ...globSync(`apps/${cli.game}/e2e/flows/*/*.yaml`),
-  ].sort();
-  const { others, benchmark } = flowCallsOf(flows, cli.rest);
+  // Maestro does not recurse into sub-folders: allFlows lists the <area>/<nn>-<name>.yaml files.
+  const { others, benchmark } = flowCallsOf(allFlows(cli.game), cli.rest);
   const statuses = others.length === 0 ? [] : [await testFlows(run, others, out)];
   let mergeFailure: string | null = null;
   if (benchmark !== null) {
     const dir = join(out, 'save-benchmark-flow');
     statuses.push(await testFlows(run, [benchmark], dir));
     recordSaveBenchmark({ sim: { simctl, udid }, app, out }, [benchmark]);
-    mergeFailure = mergeBenchmarkJunit(out, dir);
+    mergeFailure = mergeJunitInto(out, dir);
   }
   const failed = statuses.filter((status) => status !== 0);
   return [

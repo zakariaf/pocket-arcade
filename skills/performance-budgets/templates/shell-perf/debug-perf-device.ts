@@ -8,6 +8,7 @@ import { Platform } from 'react-native';
 import { createExpoSqliteSqlDriver } from '@e07/shell/services/save/expo-sqlite-sql-driver.ts';
 import { createSqliteSaveStore } from '@e07/shell/services/save/sqlite-save-store.ts';
 
+import { perfReportHeaderOf } from './perf-report-header.ts';
 import { deviceNow } from './save-benchmark.ts';
 import { sharePerfReport } from './share-perf-report.ts';
 
@@ -23,20 +24,14 @@ export type PerfDevice = {
   readonly openScratchStore: (fileName: string) => ScratchSaveStore;
   /** High-resolution ms for the benchmark. */
   readonly now: () => number;
-  /** App id, version, build number and platform for the shared report. */
+  /** App id, version, build number and platform for the shared report (the Android package and versionCode on Android). */
   readonly header: () => PerfReportHeader;
-  /** The iOS share sheet with the whole log (nothing is sent by our code). */
+  /** The system share sheet with the whole log (nothing is sent by our code). */
   readonly share: (log: PerfLog, header: PerfReportHeader) => Promise<void>;
 };
 
 function perfReportHeader(): PerfReportHeader {
-  const config = Constants.expoConfig;
-  return {
-    appId: config?.ios?.bundleIdentifier ?? 'unknown',
-    appVersion: config?.version ?? 'unknown',
-    buildNumber: config?.ios?.buildNumber ?? 'unknown',
-    deviceModel: `${Platform.OS} ${String(Platform.Version)}`,
-  };
+  return perfReportHeaderOf(Constants.expoConfig, Platform);
 }
 
 /** The real save layer (the same SQLite writes as the player's save) on a scratch file. */

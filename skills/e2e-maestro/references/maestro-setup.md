@@ -61,7 +61,7 @@ tools/maestro/bin/maestro --device "$UDID" --driver-host-port "$PORT" hierarchy
 
 ## Commands that are verified on 2.10.0
 
-`launchApp: { clearState, clearKeychain, stopApp }`, `killApp` (process death, for the save-survives-a-kill check), `stopApp`, `openLink`, `runFlow: { file, env }` and `runFlow: { when: { visible }, commands }`, the short `runFlow: <file>` form, `extendedWaitUntil` (with `visible: { id }` and `timeout`), `assertVisible` / `assertNotVisible` with `id` and an optional `text` regex, `tapOn: { id }` and `tapOn: { point: 'x,y' }` (a point tap reaches a Skia canvas gesture in a Release build), `copyTextFrom: { id }`, `evalScript: ${...}` (JavaScript with `maestro.copiedText` and a shared `output` object), `assertTrue`, `waitForAnimationToEnd: { timeout }`, `takeScreenshot: <name>`, and a `# comment` line between steps.
+`launchApp: { clearState, clearKeychain, stopApp }`, `killApp` (process death on iOS, for the save-survives-a-kill check; on Android it is `am kill`, which spares the foreground app, so flows kill through `subflows/kill-app.yaml`, `stopApp` there), `stopApp`, `openLink`, `runFlow: { file, env }` and `runFlow: { when: { visible }, commands }`, the short `runFlow: <file>` form, `extendedWaitUntil` (with `visible: { id }` and `timeout`), `assertVisible` / `assertNotVisible` with `id` and an optional `text` regex, `tapOn: { id }` and `tapOn: { point: 'x,y' }` (a point tap reaches a Skia canvas gesture in a Release build), `copyTextFrom: { id }`, `evalScript: ${...}` (JavaScript with `maestro.copiedText` and a shared `output` object), `assertTrue`, `waitForAnimationToEnd: { timeout }`, `takeScreenshot: <name>`, and a `# comment` line between steps.
 
 Facts learned the hard way:
 

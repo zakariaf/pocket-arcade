@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "platform": "android",
+  "name": "Android parity phone 402 x 874 dp",
+  "avdName": "e07-android-parity",
+  "systemImage": "system-images;android-35;google_apis;arm64-v8a",
+  "apiLevel": 35,
+  "baseDevice": "pixel_8",
+  "hardware": {
+    "hw.lcd.width": "1206",
+    "hw.lcd.height": "2622",
+    "hw.lcd.density": "480",
+    "hw.keyboard": "no",
+    "hw.mainKeys": "no",
+    "showDeviceFrame": "no"
+  },
+  "points": { "width": 402, "height": 874 },
+  "scale": 3,
+  "pixels": { "width": 1206, "height": 2622 },
+  "safeArea": { "top": 44, "bottom": 24 },
+  "statusBarHeight": 44,
+  "navigationBar": {
+    "mode": "gestural",
+    "height": 24,
+    "overlay": "com.android.internal.systemui.navbar.gestural"
+  },
+  "masks": [
+    {
+      "name": "status-bar",
+      "x": 0,
+      "y": 0,
+      "width": 402,
+      "height": 44,
+      "why": "Android's status bar (demo mode: 09:41, full battery, Wi-Fi, no notifications) replaces the design's drawn iOS one; the app draws edge to edge under it."
+    },
+    {
+      "name": "gesture-handle",
+      "x": 120,
+      "y": 850,
+      "width": 162,
+      "height": 24,
+      "why": "Gesture navigation draws its handle over the app (screencap includes it) and the design render hides the home indicator. Content never sits here (the body keeps a 34 dp bottom inset, the 24 dp navigation inset included)."
+    }
+  ],
+  "languages": {
+    "en": { "appLocale": "en-US" },
+    "de": { "appLocale": "de-DE" },
+    "fa": { "appLocale": "fa-IR" },
+    "ckb": { "appLocale": "ckb-IQ" }
+  },
+  "demoMode": [
+    ["clock", "-e", "hhmm", "0941"],
+    ["battery", "-e", "level", "100", "-e", "plugged", "false"],
+    ["network", "-e", "wifi", "show", "-e", "level", "4", "-e", "mobile", "hide"],
+    ["notifications", "-e", "visible", "false"]
+  ],
+  "fontScale": "1.0",
+  "screenshot": {
+    "format": "png",
+    "command": "adb -s <serial> exec-out screencap -p",
+    "navigationHandleDrawn": true
+  },
+  "referenceSet": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 44 dp status bar (the system image's punch-hole cutout sets it) and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
+  "measured": "Measured on the first capture (E18-T20, 2026-10-16, e07-android-parity-t20 on the pinned google_apis API 35 image): the image draws a punch-hole display cutout (DisplayCutout insets top 132 px), so the status bar and the safe top are 44 dp, not the 24 dp of a screen without a cutout that T07 assumed; the gesture navigation bar is 24 dp (72 px) as assumed. setup-parity-emu.mjs --check proves the size and density, a capture proves the insets (every element 20 pt low against a 24 dp profile). A different measured inset is a deliberate profile change: the lead re-renders assets/reference-android with a referenceChanges entry (A1, 2026-10-16)."
+}

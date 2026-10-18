@@ -6,7 +6,24 @@
     "iosPods": {
       "Google-Mobile-Ads-SDK": "13.6.0",
       "GoogleUserMessagingPlatform": "3.1.0"
+    },
+    "android": {
+      "source": "react-native-google-mobile-ads 17.2.0 package.json sdkVersions.android (checked 2026-10-12)",
+      "googleMobileAds": "25.4.0",
+      "googleUmp": "4.0.0",
+      "minSdk": 24,
+      "compileSdk": 36,
+      "targetSdk": 36
     }
+  },
+  "android": {
+    "decidedBy": "E18, 2026-10-12: a live build never carries Google's sample app id (F1), the live units are per platform (F3), no tracking prompt off iOS (L14)",
+    "adsConfig": "packages/shell/src/config/ads-config.ts",
+    "readAdsExtra": "packages/shell/src/services/ads/read-ads-extra.ts",
+    "sampleAppId": "ca-app-pub-3940256099942544~3347511713",
+    "adIdPermission": "com.google.android.gms.permission.AD_ID",
+    "pluginsDir": "packages/shell/plugins",
+    "ownerStep": "GP5"
   },
   "adapters": {
     "packages/shell/src/services/ads/admob-ads-adapter.ts": [

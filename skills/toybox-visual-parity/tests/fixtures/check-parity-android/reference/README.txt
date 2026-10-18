@@ -1,0 +1,2 @@
+The Android stand-in reference for the self-test: s4-home light-en rendered by shoot-design.mjs --device assets/device/android-phone.json (manifest "platform": "android"). check-parity-android/good/app.png is the same render (design-as-app), so a correct Android run passes every gate.
+s11c-privacy-policy light-en (png and layout.json) is a copy of the committed assets/reference-android set, for the real S11c capture at y107 in pass-tall-measured-cascade and bad-tall-inferred-cascade.

@@ -1,0 +1,7 @@
+wm size reset
+wm density reset
+night mode no (was "yes")
+font_scale 1.0 (was "1.15")
+gesture navigation on
+demo mode on
+serial emulator-5554

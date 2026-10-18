@@ -1,5 +1,7 @@
 // packages/shell/src/app/parity-launch-marker.test.tsx
 // no-shell-context: the marker reads only its own context.
+// allow-style-assertion: the marker's place is its contract: Maestro's Android dump drops a node
+// under the system bars, so it must sit in the middle of its parent.
 import { render, screen } from '@testing-library/react-native';
 
 import {
@@ -26,6 +28,22 @@ describe('ParityLaunchMarker', () => {
       'accessibilityLabel',
       '3f9a0c1d2e4b',
     );
+  });
+
+  it("sits clear of the system bars, which hide what lies under them from Android's accessibility tree", async () => {
+    await render(
+      <ParityLaunchContext value="3f9a0c1d2e4b">
+        <ParityLaunchMarker />
+      </ParityLaunchContext>,
+    );
+
+    // Android marks a node under the status bar's window (the top 44 dp, cutout included) or the
+    // navigation bar's not visible to the user, and Maestro's dump drops it.
+    expect(screen.getByTestId('parity.launch.3f9a0c1d2e4b')).toHaveStyle({
+      position: 'absolute',
+      top: '50%',
+      start: '50%',
+    });
   });
 
   it('builds the testID the capture script looks for', () => {

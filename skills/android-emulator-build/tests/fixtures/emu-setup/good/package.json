@@ -1,0 +1,8 @@
+{
+  "name": "e07",
+  "private": true,
+  "scripts": {
+    "build:ios:sim": "node packages/tooling/src/build/build-ios-sim.ts",
+    "build:android:emu": "node packages/tooling/src/build/build-android-emu.ts"
+  }
+}

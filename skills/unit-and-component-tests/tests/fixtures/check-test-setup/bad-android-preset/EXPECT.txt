@@ -1,0 +1,2 @@
+[jest-unit-android-project]
+unit-android preset is "jest-expo/ios", not "jest-expo/android"

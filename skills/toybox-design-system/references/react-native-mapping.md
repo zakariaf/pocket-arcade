@@ -6,6 +6,7 @@
 - ColorTokens, palettes and Shell constants
 - makeStyles recipes
 - Static hard shadows, die-cut rings, focus rings
+- The tilt primitive (both platforms)
 - RaisedSurface: the only press implementation
 - Outlines, dashed states and the group tab
 - RTL rules specific to Toybox
@@ -23,11 +24,13 @@
 | `packages/shell/src/theme/theme-set.ts`, `theme-context.ts`, `use-theme.ts`, `make-styles.ts`, `theme-provider.tsx`, `contrast.ts` | the four themes built once, context, hook, style factory, provider, WCAG maths | yes |
 | `packages/shell/src/i18n/fonts.ts` | `FONT_FAMILIES`, `scriptFontFor(language, weight, face)` (synced from the library; the RTL skill ships the same file) | yes |
 | `packages/shell/src/i18n/use-localized-text-style.ts` | family, size, pixel-snapped line height (`snapToPixels`), tracking, direction, alignment (synced from the library; the RTL skill ships the same file) | yes |
-| `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`) | yes |
+| `packages/shell/src/ui/app-text.tsx` | the only text component (the Persian overflow guard, balanced display text, tabular figures, `onLineCount`); it works out the text it draws (a brand name isolated, Android's marks) first, and the balanced wrap and the room measure that text | yes |
+| `packages/shell/src/ui/use-text-room.ts` | `useTextRoom(text, { guard, lineHeight, numberOfLines })`: AppText's room under its last line and the layout handlers that count its lines (`fitOf`, `countOf`, `afterReport`) | yes |
+| `packages/shell/src/ui/use-scaled-size.ts`, `font-scale-curve.ts` | `useScaledSize()`: the size the phone draws a text size or line height at (linear and capped at `MAX_TEXT_SCALE` = 200 % on iOS and Android before 14; on Android 14 and later along AOSP's font scale curves, a port of `FontScaleConverterFactory`); AppText's room and the quiet underline grow with it | yes |
 | `packages/shell/src/ui/use-balanced-wrap.ts` | `useBalancedWrap(isEnabled, text, align)`: the design's `text-wrap: balance` for display text | yes |
 | `packages/shell/src/ui/raised-surface.tsx` | the pressable key (shadow, sink, squash; `isStretched` in a dialog row) | yes |
 | `packages/shell/src/ui/edged-face.tsx` | `EdgedFace`: a solid-edged face painted in its edge colour with its fill laid inside the edge (radius minus edge width); a fill under the edge bleeds a pale 1/3 pt hairline past the antialiased rounded corner onto the hard shadow. It sets its own border (width, colour, radius) and paint from its props (edge colour default `colors.border`, fill default `colors.surface`); callers pass only layout. RaisedSurface's solid faces and toybox-components' DialogCard draw through it | yes |
-| `packages/shell/src/ui/toybox-styles.ts` | `hardShadow()`, `dieCutRing()`, `focusRing()` | yes |
+| `packages/shell/src/ui/toybox-styles.ts` | `hardShadow()`, `dieCutRing()`, `focusRing()`, the tilt primitive (`tilt()`, `TILTED_LAYER` with the iOS and Android layer flags, `tiltedLayer()`; `DIE_CUT_TILTED_LAYER` and `dieCutTiltedLayer()` for parts with the die-cut ring, iOS's flag only) | yes |
 | `packages/shell/src/testing/test-palette.ts` | the fixture palette for component tests (not a Toybox paint) | yes |
 | `packages/shell/src/testing/toybox-palette-checks.ts` | `checkToyboxPalette()` | yes |
 | `apps/<game>/src/theme/palette.ts` | the game's `PALETTE` | `write-palette.mjs` |
@@ -101,6 +104,12 @@ React Native 0.86 (New Architecture) has CSS-like `boxShadow` and `outline*` sty
 - `focusRing(color)`: `outline: 3px solid; outline-offset: 2px`, following the border radius.
 
 Never use iOS `shadowRadius` / `shadowOpacity` / `shadowOffset` or Android `elevation`: they blur (`no-blur-shadow`).
+
+## The tilt primitive (both platforms)
+
+Printed parts turn only through `ui/toybox-styles.ts`: `<View {...tiltedLayer(deg, style)}>` (static) or `tilt(deg)` in an animated style beside `{...TILTED_LAYER}` (the sticker's slap). Fabric draws a border from an image stretched with nearest filtering, so a turned edge steps at device pixels unless the part is drawn flat into one layer and that layer is turned with filtering. Each platform reads only its own flag, so `TILTED_LAYER` carries both: `shouldRasterizeIOS: true` (iOS rasterizes the layer) and `renderToHardwareTextureAndroid: true` (Android renders the View and its children into one GPU texture). Without the Android flag a tilted sticker, art tile or calendar renders with jagged edges on Android while iOS stays smooth. `toybox-styles.test.ts` pins both flags; toybox-components' `check-components` (`tilt-raster`) fails a primitive that lacks either one and any part that writes either flag by hand.
+
+**Parts with the die-cut ring** (`dieCutRing`, an outset box-shadow drawn outside the part's box: sticker, art tile, Premium art, level flag) are the exception. Android's hardware texture is the size of the View's box, so it cut the ring off there: white wedges in the corners and no ring along the edges (S2 on the parity emulator, E18-T20). Without the texture Android draws the turned ring and edge smoothly (measured on the emulator), so these parts turn through `dieCutTiltedLayer(deg, style)`, or spread `DIE_CUT_TILTED_LAYER` beside an animated `tilt()`: `{ shouldRasterizeIOS: true }`, every prop iOS reads unchanged (`toybox-styles.test.ts` proves it against `tiltedLayer`). toybox-components' `die-cut-texture` rule fails a ringed part on the textured layer.
 
 ## RaisedSurface
 

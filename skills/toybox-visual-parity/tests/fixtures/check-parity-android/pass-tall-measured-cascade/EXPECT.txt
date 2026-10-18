@@ -1,0 +1,2 @@
+scroll measured by the app: 107.0 pt (parity.scroll.107.00); the median element shift reads 83.7 pt
+1 of 1 runs pass

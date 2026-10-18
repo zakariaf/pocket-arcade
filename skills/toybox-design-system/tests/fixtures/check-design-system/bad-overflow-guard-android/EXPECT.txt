@@ -1,0 +1,3 @@
+[overflow-guard-android]
+packages/shell/src/ui/app-text.tsx:
+moves Persian lines down on Android too

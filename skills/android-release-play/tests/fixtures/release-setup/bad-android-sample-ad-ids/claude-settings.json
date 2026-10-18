@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(~/.appstoreconnect/**)",
+      "Read(**/*.p8)",
+      "Read(~/.android-keys/**)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(**/play-service-account.json)"
+    ]
+  }
+}

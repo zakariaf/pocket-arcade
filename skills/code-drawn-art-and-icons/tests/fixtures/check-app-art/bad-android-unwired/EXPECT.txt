@@ -1,0 +1,3 @@
+art-config.ts [art-unwired] withShell does not add the Android adaptive icon
+art-config.ts [art-unwired] withShell does not add the Android 12 splash icon
+splash-grounds.ts [art-unwired] no accent colour for demo-game

@@ -8,7 +8,7 @@
 - Creating the product with the API
 - Remaining steps
 - Human steps
-- Android later
+- Android
 
 ## Product rules
 
@@ -56,6 +56,6 @@ Ask the owner, in plain words, and wait:
 - **First release:** on the version page, add Premium under "In-App Purchases and Subscriptions" before submitting.
 - **Per game:** the Tier 3 TestFlight test (buy, cancel, reinstall + restore).
 
-## Android later
+## Android
 
-A Play Console managed product with the same ID, license testers, and an internal test track (billing works only for Play-installed builds). expo-iap 5.8.0 uses Play Billing 9.1.0; Android builds need Kotlin 2.1.20 via `expo-build-properties`.
+The Play Console product (GP6: the same id, EUR 1.99 default price with Google's local prices, no Family Sharing setting), license testers and Play-installed builds are in [google-play-billing.md](google-play-billing.md). The ASC script above is iOS-only; the Play product is the owner's Console step.

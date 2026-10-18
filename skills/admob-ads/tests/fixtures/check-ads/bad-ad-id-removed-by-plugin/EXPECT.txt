@@ -1,0 +1,3 @@
+[ad-id-permission]
+packages/shell/plugins/with-no-ad-id.ts
+AD_ID

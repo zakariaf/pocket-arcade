@@ -1,0 +1,2 @@
+apps/tile-drop/src/rules/outcome.Android.test.ts [file-kebab]
+apps/tile-drop/src/levels/daily-seed.android.golden.test.ts [test-file] test suffix ".android.golden.test"

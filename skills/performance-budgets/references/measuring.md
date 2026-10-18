@@ -12,7 +12,9 @@ How each budget is measured, what the templates do, and the exact commands.
 - Draw-call budget
 - Bundle size
 - Memory footprint
+- Android memory: private dirty + swap
 - The owner's steps
+- The owner's steps on Android
 
 ## Frame-time recorder
 
@@ -36,12 +38,20 @@ Files: `frame-histogram.ts`, `frame-report.ts`, `use-frame-recorder.ts` (templat
 ```
 
 - `p50UpToMs` / `p95UpToMs` are bucket upper bounds (9, 17, 25, 34, 50, 100); a percentile in the slowest bucket is `Infinity`, which JSON writes as `null`, and `check-perf-report.mjs` fails it.
-- `sharePerfReport(log, header)` opens the iOS share sheet with `{ appId, appVersion, buildNumber, deviceModel, entries }`. Performance data stays on the phone and leaves only through the share sheet: the app itself sends nothing.
+- `sharePerfReport(log, header)` opens the system share sheet (iOS or Android) with `{ appId, appVersion, buildNumber, deviceModel, entries }`. `perfReportHeaderOf` (`perf-report-header.ts`) fills the header from the platform the app runs on: on iOS the bundle identifier and `buildNumber`, on Android the `package` and `versionCode` (the same shared build number); `deviceModel` is `Platform.OS Platform.Version`, such as `ios 26.5` or `android 35`, and `check-perf-report.mjs` prints `platform: android` for an Android report. Performance data stays on the phone and leaves only through the share sheet: the app itself sends nothing.
 - On the simulator Claude reads the row directly:
 
 ```sh
 DATA=$(xcrun simctl get_app_container "$UDID" "$BUNDLE_ID" data)
 sqlite3 "$DATA/Documents/SQLite/save.db" "SELECT payload FROM perf_log WHERE id = 1" > reports/perf/sim-perf-log.json
+```
+
+- On the Android emulator (a `google_apis` image allows `adb root`, so a Release APK needs no `run-as`) Claude pulls the app's `files/SQLite/` folder, WAL included, and reads the same row:
+
+```sh
+adb -s "$SERIAL" root
+adb -s "$SERIAL" pull "/data/data/$PACKAGE/files/SQLite/" reports/perf/emu-save/
+sqlite3 reports/perf/emu-save/save.db "SELECT payload FROM perf_log WHERE id = 1" > reports/perf/emu-perf-log.json
 ```
 
 - `check-perf-report.mjs <report.json>` judges either form against the budgets.
@@ -71,7 +81,8 @@ The device side is `DEVICE_PERF` (`app/perf/debug-perf-device.ts`, device-only):
 ## Cold-start log
 
 - **Why a native module:** React Native's own startup marks begin when the JS bundle starts loading, not when the process starts. Measured on the simulator (66 cold launches of a probe app): process start -> first frame had a median of 539 ms, and 484 ms of it passed before the app's JS module ran; JS then took a median of 30 ms. JS-only timing would miss about 90 % of the cold start.
-- `packages/shell/ios/ProcessStartModule.swift` (template) reads the process start time from the kernel (`sysctl KERN_PROC_PID`, `p_starttime`) as epoch ms; `packages/shell/expo-module.config.json` and `packages/shell/ios/E07Shell.podspec` make the Shell an Expo module package (autolinking found the pod `E07Shell` and the Swift code compiled and ran in a Release simulator build). `process-start.ts` returns null in Jest, on Android until ported, or on a sysctl failure.
+- `packages/shell/ios/ProcessStartModule.swift` (template) reads the process start time from the kernel (`sysctl KERN_PROC_PID`, `p_starttime`) as epoch ms; `packages/shell/expo-module.config.json` and `packages/shell/ios/E07Shell.podspec` make the Shell an Expo module package (autolinking found the pod `E07Shell` and the Swift code compiled and ran in a Release simulator build). `process-start.ts` returns null in Jest, in a build without the native module, or on a failed read (-1).
+- On Android `packages/shell/android/src/main/java/io/applander/e07shell/ProcessStartModule.kt` (template, Android step 3) declares the same Expo module: `Name("ProcessStart")` and `Function("getProcessStartEpochMs")`, so `process-start.ts` reads both platforms with one call. It takes `Process.getStartUptimeMillis()` (API 24+, the uptime at which the process started) from `SystemClock.uptimeMillis()` and subtracts that age from `System.currentTimeMillis()`, giving epoch ms like the Swift module. `packages/shell/android/build.gradle` applies `expo-module-gradle-plugin` with `namespace "io.applander.e07shell"`, and `expo-module.config.json` lists `"platforms": ["apple", "android"]` with `android.modules` `io.applander.e07shell.ProcessStartModule`, which autolinking registers in the next prebuild. Without them every Android cold-start entry has `totalMs: null`, and `check-perf-report.mjs` fails `cold-start-runs` with a hint to copy the Kotlin module. Not yet confirmed in a build: the Kotlin module compiling and autolinking; the first Android emulator build (Android step 5) proves it.
 - `markJsEntry()` runs once in `startShell` (`start-shell.ts`), right after `readParityLaunch()`, never at module scope (a pure in-memory mark; after a direction reload the new runtime marks again).
 - Home calls `useColdStartMark(perfLog)` once its data is on screen: one frame later (`requestAnimationFrame`) it records `{ nativeMs, jsMs, totalMs }` once per process. `perfLog` is null in store builds.
 
@@ -82,6 +93,7 @@ The layer lands in two halves. **The JS half at Shell step 7**, as Shell core to
 | Piece | File | Owner | What it does |
 |---|---|---|---|
 | The shell-native module (Shell step 8) | `packages/shell/expo-module.config.json`, `packages/shell/ios/E07Shell.podspec`, `packages/shell/ios/ProcessStartModule.swift` | this skill (`templates/shell-native/`) | the process start time |
+| The Android half of the module (Android step 3) | `packages/shell/android/build.gradle`, `packages/shell/android/src/main/java/io/applander/e07shell/ProcessStartModule.kt`, and the `android` entry of `expo-module.config.json` | this skill (`templates/shell-native/android/`) | the process start time on Android |
 | The perf layer (Shell step 7) | `packages/shell/src/app/perf/` (every file of `templates/shell-perf/`) | this skill | marks, perf log, recorder, benchmark, share, the debug menu's actions |
 | The JS entry mark | `packages/shell/src/app/start-shell.ts`: `markJsEntry()` inside `startShell`, right after `readParityLaunch()` | rtl-and-direction | the first JS timestamp of the launch |
 | The perf log | `packages/shell/src/app/create-debug-parts.ts`: `TEST_ONLY.createPerfLog(saveDriver)`, exposed on `DebugServices` as `perfLog` | e2e-maestro | test builds keep the log in `save.db`; store builds have no debug parts |
@@ -90,9 +102,10 @@ The layer lands in two halves. **The JS half at Shell step 7**, as Shell core to
 | The debug menu's Performance actions | `createDebugPerfActions` in the test-only pair, and `TEST_ONLY.createDebugPerfActions({ perfLog, nowMs })` in `createDebugParts`, exposed on `DebugServices`; the S15 Performance section's rows call it | e2e-maestro | record frames, run the save benchmark, share, the summary line |
 | The feedback evidence | `TEST_ONLY.recordAudioFeedback(audio, { perfLog, nowMs })` and `recordHapticsFeedback(haptics, { perfLog, nowMs })` (game-audio-and-haptics' `services/audio/recording-feedback.ts`) around the audio and haptics ports in `createDebugParts`, appending to the perf log | e2e-maestro | `feedback` entries: the win sound and the success haptic of the level-1 flow |
 
-`check-perf-code.mjs` rule `perf-layer` fails while any of these is missing: the JS half once `start-shell.ts` exists and the native half once the plugin list exists (before that each prints a `SKIP` line; the Home mark skips while S4 is outside `shell-slice.json`, everything with `"screens": []`); rule `debug-perf-wired` fails while `createDebugPerfActions` is not in the test-only pair or `createDebugParts` never builds it, and e2e-maestro's `check-e2e-setup.mjs` fails on the same gaps before an E2E run. The app/perf files belong to the Shell core of every slice: the composition root and the debug kit import them.
+`check-perf-code.mjs` rule `perf-layer` fails while any of these is missing: the JS half once `start-shell.ts` exists, the native half once the plugin list exists, and the Android half once Android step 3 has copied game-audio-and-haptics' `packages/shell/src/services/haptics/expo-haptics-adapter.android.test.ts` (a missing file, an `expo-module.config.json` without the Android module, a Gradle file without the Expo plugin and namespace, a Kotlin module not on `Process.getStartUptimeMillis()`, or a Kotlin `Name`/`Function` that differs from the Swift module) (before that each prints a `SKIP` line; the Home mark skips while S4 is outside `shell-slice.json`, everything with `"screens": []`); rule `debug-perf-wired` fails while `createDebugPerfActions` is not in the test-only pair or `createDebugParts` never builds it, and e2e-maestro's `check-e2e-setup.mjs` fails on the same gaps before an E2E run. The app/perf files belong to the Shell core of every slice: the composition root and the debug kit import them.
 - A launch that flips the layout direction and reloads is slower by design: label those runs and leave them out of the budget.
 - **Simulator run** (Release test build, after the smoke flows): `npm run e2e:ios -- --app <game>` does this in its cold-start step (the e2e-maestro runner; results in `reports/e2e/<game>/perf.json`): it opens Home through the debug link, then 6 times `xcrun simctl terminate <udid> <bundleId>`, `xcrun simctl launch <udid> <bundleId>` and a wait until the perf log has a newer `cold-start` entry (read with the `sqlite3` command above), saves the payload as `reports/perf/sim-perf-log.json`, and writes the baseline on the first run. By hand, the same payload is judged with `node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs reports/perf/sim-perf-log.json --root . --sim-baseline <medianMs>`: it takes the latest 6 launches, drops the first as warm-up, and compares the median of the other 5 with the baseline × `coldStartSimRegressionFactor` (1.2); no frames entry is needed. The baseline is committed as `perf-baselines/cold-start-sim-<game>.json` = `{ "medianMs": <n> }`: the first accepted run writes it; a slower new baseline needs the owner's approval and a `Gate-Change:` trailer. Reference: host `simctl launch` -> first frame median 648 ms; process start -> first frame median 539 ms.
+- **Emulator run** (Release APK, test variant, Android step 7): `npm run e2e:android -- --app <game>` (the e2e-maestro runner) does the same on the `e07-android-*` AVD by its serial: 6 times `adb -s <serial> shell am force-stop <package>` and `adb -s <serial> shell am start -W -n <package>/.MainActivity` (its `TotalTime` is kept beside the entry as a cross-check), a wait for a newer `cold-start` entry (read with the `adb pull` above), the payload saved as `reports/perf/emu-perf-log.json`. By hand: `node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs reports/perf/emu-perf-log.json --root . --emu-baseline <medianMs>` drops the first launch and compares the median of the other 5 with `perf-baselines/cold-start-emu-<game>.json` × `coldStartEmuRegressionFactor` (1.2). The emulator baseline is its own file: the emulator's numbers are never compared with the simulator's or with the 1,000 ms device budget. The first accepted run writes it (a `Gate-Change:` trailer); a slower new one needs the owner's approval.
 - The perf log survives app updates (it is a ring buffer of 200 entries in `save.db`), so `check-perf-report.mjs` judges only the latest 5 cold starts of a device report (`--min-launches`); the owner's 5 relaunches must be the last launches before sharing.
 
 ## Save-write performance
@@ -112,7 +125,11 @@ The layer lands in two halves. **The JS half at Shell step 7**, as Shell core to
 ```sh
 cd apps/<game> && npx expo export --platform ios --no-bytecode --output-dir ../../reports/perf/export-ios
 node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs reports/perf/export-ios --root . --baseline perf-baselines/bundle-ios-<game>.json
+cd apps/<game> && npx expo export --platform android --no-bytecode --output-dir ../../reports/perf/export-android
+node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs reports/perf/export-android --root . --platform android --baseline perf-baselines/bundle-android-<game>.json
 ```
+
+- Each platform has its own bundle (`_expo/static/js/<platform>/`) and its own baseline file; both stay under the same `bundleJsBytesMax` cap and `bundleGrowthMaxRatio`. An export without the asked platform's `.js` stops with exit 2 and the export command to run. The APK and the AAB have no size budget of their own: their size is native libraries and assets, and the store gate (android-release-play) judges what goes into them.
 
 - First run: add `--write-baseline` and commit the baseline file. An approved growth: rewrite it with a `Gate-Change:` trailer.
 - Measured (SDK 57): services spike without FormatJS polyfills 1,136,696 B minified JS / 1,813,398 B Hermes bytecode; with the forced polyfills (en, de, fa, ckb) 1,983,418 B / 2,404,414 B; benchmark probe with Skia, Reanimated, RNGH, audio and FlashList 2,314,613 B / 3,155,700 B. The polyfills cost 0.85 MB of JS and load in 11 ms on the simulator — accepted because Hermes lacks `PluralRules`, `Locale` and numbering systems. Hermes memory-maps bytecode, so size matters mostly through the module initialisation it implies.
@@ -121,6 +138,16 @@ node ${CLAUDE_SKILL_DIR}/scripts/check-bundle-size.mjs reports/perf/export-ios -
 ## Memory footprint
 
 After the smoke flow on the simulator: `phys_footprint` must stay ≤ 150 MB (footprint's MB, 1,048,576 bytes). `npm run e2e:ios` measures it in its memory step: it plays the game's smoke flows again, finds the app's process on that simulator (`pgrep -f 'Devices/<udid>/.*/<App>\.app/<App>'`) and runs `footprint --pid <pid> -j <file> -f bytes --noCategories` (no `sudo` for simulator apps); the result is in `reports/e2e/<game>/perf.json`. Costs to keep in mind: one Skia `<Canvas>` (48 × 15 pt at 3×) ≈ 0.18 MB and ≈ 2.8 ms to mount; a rasterized 24 pt icon at 3× is a 0.3–1.4 KB PNG; a pre-rendered texture costs w × h × 4 bytes (1024² = 4 MB); one second of mono float audio at 48 kHz is 192 KB.
+
+## Android memory: private dirty + swap
+
+Android has no `phys_footprint`. Its like is the `TOTAL` row's **Private Dirty** of `dumpsys meminfo` plus the swapped-out part (**TOTAL SWAP PSS**, 0 where the device reports none), judged against the same 150 MB budget, the one key `memoryFootprintMbMax` of both platforms (lead decision, 2026-10-17). Why not total PSS: `phys_footprint` is the dirty and compressed memory without clean file-backed pages, while total PSS also counts the clean, reclaimable mapped code (`.apk`, `.dex`, `.so`). On the API 35 emulator (E18-T24, Line Siege after the smoke flow and a relaunch) total PSS was 211 MB, of which about 82 MB was that code (`.apk mmap` 31 MB: the stored `librnskia.so`, `libreactnative.so` and the 5.3 MB Hermes bundle mapped from the APK; `.dex mmap` 28 MB, R8 off; `.so mmap` 12 MB), and private dirty + swap was 111 MB. After the smoke flow on the emulator, the e2e-maestro runner (`npm run e2e:android`, Android step 7) reads:
+
+```sh
+adb -s "$SERIAL" shell dumpsys meminfo "$PACKAGE"
+```
+
+and reads the table by its column names (`Pss Total`, `Private Dirty`, `SwapPss Dirty`) and the App Summary's `TOTAL PSS:` and `TOTAL SWAP PSS:` (KB; an MB is 1,024 KB) into `reports/e2e-android/<game>/memory.json`; private dirty + swap over `memoryFootprintMbMax` fails the run, and total PSS stays beside it as information. RSS (larger, it counts shared pages in full) is not the budget either. Confirmed on API 35 (E18-T24): `        TOTAL   216122   113616    88808      426   300640    98611    78725    15545` under the `Pss Private Private SwapPss Rss Heap Heap Heap` / `Total Dirty Clean Dirty Total Size Alloc Free` header, and `TOTAL PSS:   216122 ... TOTAL SWAP PSS:      426`. The emulator shows regressions only, as the simulator does.
 
 ## The owner's steps
 
@@ -132,3 +159,14 @@ A human step with a TestFlight **test** build, before each release (tell the own
 4. Debug menu -> Performance -> "Share performance report" -> AirDrop it to the Mac or paste it into the chat.
 
 Claude saves it as `reports/perf/<device>-<version>-<build>.json` and runs `check-perf-report.mjs` on it.
+
+## The owner's steps on Android
+
+The same human step for an Android release, with the **test** build from Google Play internal testing on the owner's Android phone (tell the owner when it is ready to install):
+
+1. Debug menu (S15) -> Performance -> switch on "Record frame times".
+2. Play 5 levels normally (a real-time game: at least 60 s).
+3. Close the app from Recents (swipe it away) and open it again, 5 times (5 cold starts), and run "Run save benchmark" once.
+4. Debug menu -> Performance -> "Share performance report" -> Quick Share or e-mail it to the Mac, or paste it into the chat.
+
+Claude saves it as `reports/perf/android-<device>-<version>-<build>.json` and runs `node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs <report.json> --root .`: the header shows the Android package, `versionCode` and `android <API level>`, and the budgets are the device ones (cold start under 1,000 ms, hitch rate, p95 frame, save benchmark). A launch without a process-start time (`totalMs: null`) means the Kotlin module is missing from that build. Swiping the app from Recents ends its process on stock Android; if a report shows fewer than 5 cold starts, ask the owner to use Settings -> Apps -> <game> -> Force stop instead.

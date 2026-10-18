@@ -1,0 +1,7 @@
+{
+  "$comment": "Ids the demo game's own flows use beyond the screen map.",
+  "testIDs": {
+    "game.combo-label": "Game screen: the combo counter the demo draws.",
+    "result.stars-1": "S7 stars after action=win-level on level 1: testing.examples.win() scores 140 against thresholds 0 / 150 / 180 (print-level-line.ts prints it)."
+  }
+}

@@ -12,6 +12,7 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createReporter, fail, parseArgs, readShellSlice, REPO_SCAN_IGNORES, requireDir, run, sliceSkipReason, walk } from './check-lib.mjs';
+import { androidE2eSkipReason } from './lib/android-e2e.mjs';
 import { commandOf, parseFlow } from './lib/maestro-yaml.mjs';
 
 const SPEC = {
@@ -81,6 +82,13 @@ const SPEC = {
     '  ads-smoke-testid     an ads-smoke flow has no id: step (only system UI and text), so it proves nothing about the app',
     '  run-command-device   a Maestro command line (test, hierarchy, record) in a flow\'s comments does not name --device <udid> and',
     '                       --driver-host-port <port> before the command (another session\'s simulator could answer)',
+    '  platform-guard       a step that exists on one platform only runs outside a runFlow guarded by that platform',
+    '                       (when: platform: Android or iOS). Android only: back, pressKey: back, setAirplaneMode and',
+    '                       toggleAirplaneMode (on iOS they do nothing, so the iOS run passes without proving anything).',
+    "                       iOS only: Apple's tracking prompt (text 'Ask App Not to Track' or 'Allow Tracking'), which",
+    '                       never shows on Android, and killApp (on Android it is am kill, which spares the foreground',
+    '                       app: use subflows/kill-app.yaml). Due at Android step 7 (once any Android E2E file exists); before',
+    '                       that, a file with such a step prints one not-yet-due SKIP line',
     '  maestro-syntax       (--syntax) maestro check-syntax rejects the file',
     '  flows-missing        no flow exists although the whole Shell is built (no shell-slice.json): the end-to-end',
     '                       step is due. Sub-flows, the matrix, storekit/ and ads-smoke/ are no flows. With',
@@ -331,6 +339,58 @@ function checkSelectors(rel, parsed, report) {
     if ((isTextScalar || isTextMap) && !hasSystemUiComment(parsed.comments, line)) report.problem({ file: rel, line, rule: 'text-selector', message: `${key} selects by visible text ("${String(isTextScalar ? value : value.text).slice(0, 40)}")`, fix: 'Select by id (testID): flows run unchanged in four languages. Only OS-owned UI may use text, under a "# system-ui: <why>" comment.' });
     if (key === 'retry' && !hasSystemUiComment(parsed.comments, line)) report.problem({ file: rel, line, rule: 'retry-app-assertion', message: 'retry: wraps steps', fix: 'Fix the wait (extendedWaitUntil on an id) or the setup instead; retry only around OS-owned UI, under a "# system-ui: <why>" comment.' });
   });
+}
+
+const ANDROID_ONLY_COMMANDS = new Set(['back', 'setAirplaneMode', 'toggleAirplaneMode']);
+/** Apple's App Tracking Transparency prompt: system UI that exists on iOS only. */
+const IOS_ONLY_TEXT = /App Not to Track|Allow Tracking/i;
+
+/** The selector texts of one step (not of nested commands: those are walked with their own guard). */
+function stepTexts(name, arg) {
+  const texts = [];
+  if (typeof arg === 'string' && SELECTOR_COMMANDS.has(name)) texts.push(arg);
+  const walkValue = (value) => {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return;
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'commands' || key === 'when') continue;
+      if (typeof child === 'string' && (key === 'text' || key === 'visible' || key === 'notVisible' || SELECTOR_COMMANDS.has(key))) texts.push(child);
+      else walkValue(child);
+    }
+  };
+  walkValue(arg);
+  return texts;
+}
+
+/** Steps that exist on one platform only, outside a runFlow guarded by when: platform: <it>. */
+function platformGuardFindings(steps, platform = null, found = []) {
+  if (!Array.isArray(steps)) return found;
+  steps.forEach((step, index) => {
+    const { name, arg } = commandOf(step);
+    const line = steps.lines?.[index] ?? 0;
+    const where = platform === null ? 'outside a runFlow with when: platform:' : `inside a runFlow guarded by platform: ${platform}`;
+    const isAndroidOnly = ANDROID_ONLY_COMMANDS.has(name) || (name === 'pressKey' && /^back$/i.test(String(arg)));
+    if (isAndroidOnly && platform?.toLowerCase() !== 'android') found.push({ line, message: `${name} runs on Android only (on iOS it does nothing), ${where}`, platform: 'Android' });
+    if (name === 'killApp' && platform?.toLowerCase() !== 'ios') found.push({ line, message: `killApp runs ${where}; on Android it is am kill, which never ends the foreground app (the relaunch finds it still running, so a save-survives-a-kill check proves nothing)`, platform: 'iOS', fix: 'Run packages/shell/e2e/subflows/kill-app.yaml instead (killApp under when: platform: iOS, stopApp, which is am force-stop, under when: platform: Android; references/flows.md, "Both platforms").' });
+    if (platform?.toLowerCase() !== 'ios') {
+      const text = stepTexts(name, arg).find((value) => IOS_ONLY_TEXT.test(value));
+      if (text !== undefined) found.push({ line, message: `"${text}" is Apple's tracking prompt, iOS only (it never shows on Android), ${where}`, platform: 'iOS' });
+    }
+    if (arg && typeof arg === 'object' && Array.isArray(arg.commands)) {
+      const guard = name === 'runFlow' && typeof arg.when?.platform === 'string' ? arg.when.platform : platform;
+      platformGuardFindings(arg.commands, guard, found);
+    }
+  });
+  return found;
+}
+
+function checkPlatformGuard(rel, parsed, androidSkip, report) {
+  const found = platformGuardFindings(parsed.steps);
+  if (found.length === 0) return;
+  if (androidSkip !== null) {
+    report.skip({ file: rel, rule: 'platform-guard', message: androidSkip });
+    return;
+  }
+  for (const item of found) report.problem({ file: rel, line: item.line, rule: 'platform-guard', message: item.message, fix: item.fix ?? `Wrap it in - runFlow: { when: { platform: ${item.platform} }, commands: [...] } (flows run unchanged on both platforms; references/flows.md, "Both platforms").` });
 }
 
 /**
@@ -661,6 +721,7 @@ run(async () => {
     return parsedFiles.get(fileRel);
   };
   const slice = readShellSlice(root);
+  const androidSkip = androidE2eSkipReason(root);
   // Every game is checked for its mode flows, also one with no flow at all (a complete Shell only:
   // in a partial Shell the flows are not due yet); checkModeFlows skips a game without game.config.ts.
   const flowsByGame = new Map(slice === null ? [...gameIds].map((game) => [game, []]) : []);
@@ -695,6 +756,7 @@ run(async () => {
     checkQuarantine(rel, tags, parsed, today, report);
     checkSteps(rel, info, parsed, tags, params, report);
     checkSelectors(rel, parsed, report);
+    checkPlatformGuard(rel, parsed, androidSkip, report);
     checkOpenAlertGuard(rel, parsed, report);
     checkRunCommands(rel, parsed.comments, report);
     if (info.kind === 'ads-smoke') checkAdsSmoke(rel, parsed, report);

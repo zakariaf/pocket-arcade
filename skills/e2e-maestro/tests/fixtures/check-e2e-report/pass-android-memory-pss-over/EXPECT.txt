@@ -1,0 +1,2 @@
+RESULT: PASS
+Memory (emulator): private dirty + swap 111.4 MB after the smoke flow and a relaunch (budget 150 MB; total PSS 211.1 MB, information only)

@@ -81,10 +81,14 @@ const UDID = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
  * XCUITest driver port. Never "booted", a name, or Maestro's default port: in round 3 a hierarchy
  * call answered from another session's simulator.
  */
-export function maestroGlobalArgs({ udid, driverPort }) {
-  if (!UDID.test(String(udid ?? ''))) fail(`"${udid}" is not a simulator UDID`, 'Pass the UDID of this session\'s own simulator (setup-parity-sim.mjs prints it).');
+export function maestroGlobalArgs({ udid, serial, driverPort }) {
+  // Android: the emulator's adb serial (Maestro 2.10.0 hands the same driver host port to its Android
+  // connection, so two sessions' emulators never share a driver either).
+  if (serial !== undefined) {
+    if (!/^emulator-\d{4,5}$/.test(String(serial))) fail(`"${serial}" is not an emulator serial`, 'Pass the serial of this session\'s own parity emulator (setup-parity-emu.mjs prints it).');
+  } else if (!UDID.test(String(udid ?? ''))) fail(`"${udid}" is not a simulator UDID`, 'Pass the UDID of this session\'s own simulator (setup-parity-sim.mjs prints it).');
   if (!Number.isInteger(driverPort) || driverPort < 1024 || driverPort > 65535) fail(`driver port "${driverPort}" is not a port from 1024 to 65535`, 'Pass --driver-port, or let capture-app pick a free one.');
-  return ['--device', udid, '--driver-host-port', String(driverPort)];
+  return ['--device', serial ?? udid, '--driver-host-port', String(driverPort)];
 }
 
 /** One Maestro command with this run's global arguments in front: maestroArgs(target, 'hierarchy'). */

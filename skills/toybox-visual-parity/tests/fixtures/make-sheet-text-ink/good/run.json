@@ -1,0 +1,18 @@
+{
+ "frame": "s4-home",
+ "theme": "light",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "platform": "android",
+ "source": "self-test fixture",
+ "note": "Real Android capture of S4 in light fa (E18-T20) with a text-ink failure on home.stats-button: the label آمار sits inside the key whose bounds carry the testID. The app side of the crop must show the label where the app draws it (the text run: its screen rect), not the key corner at the bounds origin.",
+ "hierarchyPxPerPt": 3,
+ "nonce": "36c62a3d0b34",
+ "hierarchyNonce": "parity.launch.36c62a3d0b34",
+ "appSha256": "7c8b0c7d1387976adc4df40dfdd23188fed0b6c256a7b6f87fc58093bfbe32d0",
+ "reference": {
+  "image": "../../../../assets/reference-android/lineSiege/light-fa/s4-home.png",
+  "layout": "../../../../assets/reference-android/lineSiege/light-fa/s4-home.layout.json"
+ }
+}

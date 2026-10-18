@@ -208,15 +208,26 @@ export function findSimulatorBuild(game: string, override: string | undefined): 
 /** The variant a build was made with (withShell's expo.extra, embedded in EXConstants.bundle). */
 export type BuildVariantInfo = { readonly appVariant: unknown; readonly adsMode: unknown };
 
+/** Each platform's runner and the build command that makes the build it runs. */
+const E2E_BUILDS = {
+  ios: { runner: 'e2e:ios', builder: 'build:ios:sim' },
+  android: { runner: 'e2e:android', builder: 'build:android:emu' },
+} as const;
+
 /**
  * E2E runs only a test-variant build with ads off: the debug link and S15 exist, and neither
  * Google's consent form, Apple's tracking prompt nor an ad SDK socket can cover a screen or fill
  * network.txt (ConsentPort never asks with ads mode off). Null when the build fits.
  */
-export function e2eBuildProblem(build: BuildVariantInfo, game: string): string | null {
+export function e2eBuildProblem(
+  build: BuildVariantInfo,
+  game: string,
+  platform: 'ios' | 'android' = 'ios',
+): string | null {
   if (build.appVariant === 'test' && build.adsMode === 'off') return null;
   const found = `${String(build.appVariant)}/${String(build.adsMode)}`;
-  return `e2e:ios needs a test build with ADS_MODE=off, this one is ${found}: run npm run build:ios:sim -- --app ${game} --variant test --ads off`;
+  const { runner, builder } = E2E_BUILDS[platform];
+  return `${runner} needs a test build with ADS_MODE=off, this one is ${found}: run npm run ${builder} -- --app ${game} --variant test --ads off`;
 }
 
 /** Reads the build's expo.extra (EXConstants.bundle) and throws when the build is not test/off. */
@@ -255,8 +266,8 @@ export async function runMaestro(device: MaestroDevice, args: readonly string[])
   return spawnSync(MAESTRO_BIN, command, { stdio: 'inherit', env: maestroEnv() }).status ?? 1;
 }
 
-/** The -e values every flow reads: the app's bundle id and URL scheme. */
-export function appEnv(app: AppInfo): string[] {
+/** The -e values every flow reads: the app's bundle id (Android: package) and URL scheme. */
+export function appEnv(app: Pick<AppInfo, 'id' | 'scheme'>): string[] {
   return ['-e', `APP_ID=${app.id}`, '-e', `APP_SCHEME=${app.scheme}`];
 }
 

@@ -1,0 +1,2 @@
+[waiver-invalid]
+an Android waiver names its class

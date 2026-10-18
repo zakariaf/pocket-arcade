@@ -1,0 +1,2 @@
+[jest-unit-android-project]
+unit-android testMatch matches more than *.android.test.ts(x)

@@ -1,0 +1,2 @@
+the e07-android-parity emulator is not running
+setup-parity-emu.mjs

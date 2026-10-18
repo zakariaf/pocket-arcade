@@ -1,0 +1,16 @@
+{
+ "version": 1,
+ "frame": "s10-statistics",
+ "variant": null,
+ "referenceName": "s10-statistics",
+ "kind": "phone-tall",
+ "theme": "dark",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 418,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "A real Release capture of S10 dark-fa at scroll 418 on the e07-android-parity emulator (E18-T21). Android reports accessibility bounds clipped to the visible part, so the Best and Line Siege cards come back cut at the body window; they are judged by their visible edges. The fixture waiver stands in for the title's Vazirmatn width."
+}

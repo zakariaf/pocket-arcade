@@ -7,8 +7,11 @@ import { join } from 'node:path';
 
 import { makeTempDir, removeTempDir, runSelftest } from './check-lib.mjs';
 
-/** Extra arguments a fixture keeps in args.json (none when the file is absent). */
-const extra = (dir) => (existsSync(join(dir, 'args.json')) ? JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8')) : []);
+/** Extra arguments a fixture keeps in args.json (none when the file is absent); ./name is that fixture's file. */
+const extra = (dir) =>
+  (existsSync(join(dir, 'args.json')) ? JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8')) : []).map((arg) =>
+    arg.startsWith('./') ? join(dir, arg.slice(2)) : arg,
+  );
 
 const temps = [];
 process.on('exit', () => temps.forEach((dir) => removeTempDir(dir)));

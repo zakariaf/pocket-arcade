@@ -1,0 +1,3 @@
+[harness-android-launch]
+packages/shell/src/app/launch-info.ts
+asks for the ParityLaunch native module outside app/parity/

@@ -1,0 +1,6 @@
+[
+  {
+    "prompt": "add a pop sound and a short vibration when a piece lands",
+    "expect": "sound-maker"
+  }
+]

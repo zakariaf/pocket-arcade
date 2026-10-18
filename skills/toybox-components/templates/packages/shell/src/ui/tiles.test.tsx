@@ -301,6 +301,57 @@ describe('Stickers and art', () => {
     for (const piece of pieces) expect(piece).toHaveProp('shouldRasterizeIOS', true);
   });
 
+  it('gives every tilted printed part its Android hardware layer, except the die-cut ones', async () => {
+    const hidden = { includeHiddenElements: true } as const;
+    await renderWithShell(
+      <>
+        <Sticker text="Phone language" size="sm" tiltDeg={3} testID="language-choice.phone-badge" />
+        <ArtTile icon="globe" testID="language-choice.art" />
+        <LevelTile
+          numberText="12"
+          state={{ kind: 'current' }}
+          label="Level 12: no stars yet"
+          onPress={jest.fn()}
+          testID="levels.level-tile.12"
+          isReducedMotion
+          width={54}
+        />
+        <WeekStrip
+          testID="daily.week-strip"
+          dayTestIDBase="daily.week-day"
+          days={[{ letter: 'Sun', state: 'today', isToday: true, label: 'Today' }]}
+          todayTagText="Today"
+        />
+        <CalendarTile monthText="Sep" dayText="27" testID="daily.today-card.calendar" />
+        <PremiumArt testID="premium.art" />
+        <Confetti isReducedMotion isHiddenBySetting={false} testID="premium.confetti" />
+      </>,
+    );
+
+    // Android ignores shouldRasterizeIOS: without its own flag the same parts turn with stepped
+    // edges there. TILTED_LAYER carries both, so every part that turns through the primitive has both.
+    for (const testID of ['daily.week-day.1.today-tag', 'daily.today-card.calendar']) {
+      const part = screen.getByTestId(testID, hidden);
+      expect(part).toHaveProp('renderToHardwareTextureAndroid', true);
+      expect(part).toHaveProp('shouldRasterizeIOS', true);
+    }
+    // A die-cut part draws its ring outside its box, and Android's texture is the size of the box:
+    // it cut the ring off (E18-T20). These keep iOS's layer and never get Android's texture.
+    for (const testID of [
+      'language-choice.phone-badge',
+      'language-choice.art',
+      'levels.level-tile.12.flag',
+      'premium.art',
+    ]) {
+      const part = screen.getByTestId(testID, hidden);
+      expect(part).not.toHaveProp('renderToHardwareTextureAndroid');
+      expect(part).toHaveProp('shouldRasterizeIOS', true);
+    }
+    const pieces = screen.getByTestId('premium.confetti', hidden).children;
+    expect(pieces.length).toBeGreaterThan(0);
+    for (const piece of pieces) expect(piece).toHaveProp('renderToHardwareTextureAndroid', true);
+  });
+
   it('keeps art tiles, Premium art and confetti decorative', async () => {
     await renderWithShell(
       <>

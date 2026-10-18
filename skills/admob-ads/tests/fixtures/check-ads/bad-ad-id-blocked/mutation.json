@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/config/android-permissions.ts",
+      "content": "// packages/shell/src/config/android-permissions.ts (fixture: the Android permission lists withShell writes)\nconst ALLOWED = ['android.permission.INTERNET', 'com.google.android.gms.permission.AD_ID'];\nconst BLOCKED = ['android.permission.RECORD_AUDIO', 'com.google.android.gms.permission.AD_ID'];\n\nexport const ANDROID_PERMISSIONS = { permissions: ALLOWED, blockedPermissions: BLOCKED };\n"
+    }
+  }
+]

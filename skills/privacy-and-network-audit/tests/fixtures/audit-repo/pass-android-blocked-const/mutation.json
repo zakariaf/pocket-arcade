@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "packages/shell/src/config/android-config.ts",
+      "content": "// packages/shell/src/config/android-config.ts\nexport const ANDROID_PERMISSIONS: readonly string[] = [\"android.permission.INTERNET\"];\n\nexport const BLOCKED_ANDROID_PERMISSIONS: readonly string[] = [\n  \"android.permission.READ_EXTERNAL_STORAGE\",\n  \"android.permission.RECORD_AUDIO\",\n];\n\nexport function androidConfig(): Record<string, unknown> {\n  return { permissions: [...ANDROID_PERMISSIONS], blockedPermissions: [...BLOCKED_ANDROID_PERMISSIONS] };\n}\n"
+    }
+  }
+]

@@ -1,0 +1,1 @@
+reports/e2e-android/demo/network.txt:1 [network-sockets] the app opened a non-loopback socket: emulator-5554 udp uid 10190

@@ -1,0 +1,4 @@
+SKIP packages/tooling/src/e2e/run-e2e-android.ts [android-runner-missing] due at Android step 7: packages/tooling/src/e2e/run-e2e-android.ts not yet created
+SKIP package.json [e2e-script] npm run e2e:android: due at Android step 7: packages/tooling/src/e2e/run-e2e-android.ts not yet created
+SKIP package.json [e2e-script] npm run screenshots:android: due at Android step 7: packages/tooling/src/e2e/capture-screenshots-android.ts not yet created
+0 problems

@@ -1,11 +1,14 @@
 // packages/shell/src/ui/screen-body.tsx
-import { createContext, use, useRef } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { createContext, use, useRef, useState } from 'react';
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 
 import { LAYOUT } from '@e07/shell/theme/tokens.ts';
 
+import { bodyBottomPaddingOf } from './use-body-bottom-top-up.ts';
+
 import type { ComponentRef, ReactNode } from 'react';
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 /** Toybox block gaps: 14 by default, Settings 20, Privacy policy and Licences 18, Statistics 16. */
 export type ScreenBodyGap = 'default' | 'settings' | 'long' | 'stats';
@@ -35,7 +38,8 @@ export type ScreenBodyProps = {
    */
   readonly hasTopOverhang?: boolean;
   /**
-   * Opens the body scrolled to this offset, without animation (iOS clamps it to the maximum).
+   * Opens the body scrolled to this offset, without animation (iOS clamps it to the maximum;
+   * Android scrolls a frame after each content or layout change).
    * Defaults to ScreenScrollTargetContext; only test builds set either.
    */
   readonly scrollToY?: number;
@@ -47,6 +51,18 @@ export type ScreenBodyProps = {
  * offset. Nothing provides it in a store build, and ui/ never imports test-only code itself.
  */
 export const ScreenScrollTargetContext = createContext<number | undefined>(undefined);
+
+/** Draws the offset, in points, that a body's ScrollView reported last (its contentOffset.y). */
+export type RenderScrollMarker = (y: number) => ReactNode;
+
+/**
+ * Test builds only: the parity harness provides what draws the offset a body really reached (its
+ * invisible parity.scroll.<y> marker), so a capture measures the scroll instead of inferring it from
+ * element positions. With it, the body listens to its scroll and draws the marker next to the
+ * ScrollView once it has scrolled; nothing provides it in a store build, so a store body neither
+ * listens nor draws anything more.
+ */
+export const ScreenScrollMarkerContext = createContext<RenderScrollMarker | undefined>(undefined);
 
 /** Room above the body for a tilted sticker's corner (137 x sin 2 deg = 4.8) and its 3.5 pt ring. */
 const OVERHANG_ROOM = 10;
@@ -71,11 +87,27 @@ const styles = StyleSheet.create({
   overhangContent: { paddingTop: LAYOUT.bodyPaddingTop + OVERHANG_ROOM },
 });
 
-/** Under the home indicator: max(34, inset). Otherwise ScreenFrame insets it; top up to 34. */
-function bottomPaddingOf(isUnderHomeIndicator: boolean, insetBottom: number): number {
-  return isUnderHomeIndicator
-    ? Math.max(LAYOUT.bodyPaddingBottom, insetBottom)
-    : Math.max(0, LAYOUT.bodyPaddingBottom - insetBottom);
+type ReachedScrollMarker = {
+  /** onScroll for the ScrollView in a test build that measures its scroll; nothing otherwise. */
+  readonly scrollProps: {
+    readonly onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  };
+  /** The marker of the offset the body reached, once it has scrolled; null otherwise. */
+  readonly marker: ReactNode;
+};
+
+/** Test builds only: the offset the body reached and its marker; nothing in a store build. */
+function useReachedScrollMarker(): ReachedScrollMarker {
+  const renderMarker = use(ScreenScrollMarkerContext);
+  const [reachedY, setReachedY] = useState<number | null>(null);
+  if (renderMarker === undefined) return { scrollProps: {}, marker: null };
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>): void => {
+    setReachedY(event.nativeEvent.contentOffset.y);
+  };
+  return {
+    scrollProps: { onScroll: handleScroll },
+    marker: reachedY === null ? null : renderMarker(reachedY),
+  };
 }
 
 /**
@@ -89,17 +121,25 @@ export function ScreenBody(props: ScreenBodyProps): ReactNode {
   const paddingBottom =
     props.isAboveBanner === true
       ? GAPS[gap]
-      : bottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
+      : bodyBottomPaddingOf(props.isUnderHomeIndicator === true, insetBottom);
   const isOverhang = props.hasTopOverhang === true;
   const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
   const harnessScrollY = use(ScreenScrollTargetContext);
   const scrollToY = props.scrollToY ?? harnessScrollY ?? 0;
   // From both callbacks: the first layout happens before the safe-area insets arrive, so the frame
   // is too tall and iOS clamps the offset; the later layout (same content size) scrolls again.
-  const handleScrollTarget = (): void => {
-    if (scrollToY > 0) scroll.current?.scrollTo({ y: scrollToY, animated: false });
+  // Android runs a view command before the mount items of its batch and clamps scrollTo to the
+  // content it has then, so there the body scrolls a frame later, once the grown content is mounted.
+  const scrollToTarget = (): void => {
+    scroll.current?.scrollTo({ y: scrollToY, animated: false });
   };
-  return (
+  const handleScrollTarget = (): void => {
+    if (scrollToY <= 0) return;
+    if (Platform.OS === 'android') requestAnimationFrame(scrollToTarget);
+    else scrollToTarget();
+  };
+  const { scrollProps, marker } = useReachedScrollMarker();
+  const body = (
     <ScrollView
       ref={scroll}
       onContentSizeChange={handleScrollTarget}
@@ -111,8 +151,18 @@ export function ScreenBody(props: ScreenBodyProps): ReactNode {
         isOverhang ? styles.overhangContent : null,
       ]}
       {...(testID === undefined ? {} : { testID })}
+      {...scrollProps}
     >
       {children}
     </ScrollView>
+  );
+  // The marker sits next to the ScrollView, not inside it: a child of the content would scroll off
+  // the screen, and Maestro does not list what is off the screen. The tree has this shape from the
+  // first render, so the marker's arrival never remounts the ScrollView.
+  return (
+    <>
+      {body}
+      {marker}
+    </>
   );
 }

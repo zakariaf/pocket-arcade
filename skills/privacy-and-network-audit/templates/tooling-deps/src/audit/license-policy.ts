@@ -82,3 +82,21 @@ export function licenseProblems(
     return [`${name}: licence "${String(license)}" is not allowed and has no exception entry`];
   });
 }
+
+/**
+ * The source maps `npm run audit:network` exports for every app under `dist-audit/<game-id>/`: the
+ * iOS bundle always, and the Android bundle once the game is ported to Android. Both ship, so both
+ * are audited.
+ */
+export const LICENSE_MAP_GLOBS: readonly string[] = [
+  'dist-audit/*/_expo/static/js/ios/*.map',
+  'dist-audit/*/_expo/static/js/android/*.map',
+];
+
+/** The maps to audit: the files named on the command line, else every iOS and Android export map. */
+export function licenseMapFiles(
+  argv: readonly string[],
+  glob: (pattern: string) => readonly string[],
+): readonly string[] {
+  return argv.length > 0 ? argv : LICENSE_MAP_GLOBS.flatMap((pattern) => glob(pattern));
+}

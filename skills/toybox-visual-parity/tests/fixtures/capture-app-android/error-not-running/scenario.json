@@ -1,0 +1,11 @@
+{
+ "android": {
+  "emulators": [
+   {
+    "serial": "emulator-5556",
+    "avd": "e07-android-smoke",
+    "state": "device"
+   }
+  ]
+ }
+}

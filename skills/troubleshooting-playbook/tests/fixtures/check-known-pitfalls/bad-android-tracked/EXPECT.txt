@@ -1,0 +1,3 @@
+[android-native-folder-committed]
+apps/line-siege/android/app/build.gradle
+is tracked by git

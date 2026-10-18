@@ -56,6 +56,9 @@ const SPEC = {
     '                       "with-shell final composer (phase 0 placeholder replaced)", needs none)',
     '  trailer-placement    a trailer sits outside the last paragraph (git would not read it)',
     '  placeholder-left     a __PLACEHOLDER__ from templates/commit-message.txt is still in the message',
+  '  build-number-reused  (--range and --log only) two "chore(<game-id>): build <n>" release commits of one game',
+  '                       carry the same number: release:ios and release:android share one build number',
+  '                       (= versionCode). The commit-msg hook sees one message, so only a history shows this',
     '  sample-mismatch      (--samples) a sample gives other rule ids than the shared list says: the hook and',
     '                       this checker have drifted',
     '',
@@ -80,7 +83,7 @@ const DIRECTED_SWAP_TRAILERS = ['with-shell final composer (phase 0 placeholder 
 const NOT_IMPERATIVE = new Set('added adds adding fixed fixes fixing updated updates updating changed changes changing removed removes removing created creates creating improved improves improving refactored refactors refactoring implemented implements implementing made makes making moved moves moving renamed renames renaming deleted deletes deleting introduced introduces introducing bumped bumps bumping upgraded upgrades upgrading replaced replaces replacing cleaned cleans cleaning wrote writes writing merged merges merging tested tests testing'.split(' '));
 const VAGUE = /^(wip|misc|stuff|update|updates|changes|change|fix|fixes|tweak|tweaks|cleanup|work|progress|temp|tmp)$/i;
 // The gated paths of the platform, used when the repo has no quality-gates.json yet.
-const DEFAULT_GATED = ['quality-gates.json', 'eslint.config.mjs', 'tsconfig.base.json', 'tsconfig.json', '**/tsconfig.json', 'jest.config.js', 'jest.sim.config.js', 'stryker.config.json', 'knip.json', 'lefthook.yml', '.prettierrc.json', '.prettierignore', '.npmrc', '.claude/settings.json', 'packages/tooling/network-audit/**', 'packages/tooling/license-exceptions.json', 'packages/tooling/scripts/install-maestro.sh', 'babel.config.js', 'jest.setup.ts', 'tsconfig.stryker.json', 'test/goldens/boards/skia-golden.ts', '**/__snapshots__/*.golden.test.ts.snap', '**/*.golden.test.ts.snap.ios', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'perf-baselines/**', '**/fixtures/save-v*.json', 'parity/waivers.json', 'parity/game-facts.json', 'packages/tooling/src/quality/verify-plan.ts', 'packages/tooling/src/quality/run-verify.ts', 'packages/tooling/src/quality/shell-slice.ts', 'packages/tooling/src/quality/device-only.ts'];
+const DEFAULT_GATED = ['quality-gates.json', 'eslint.config.mjs', 'tsconfig.base.json', 'tsconfig.json', '**/tsconfig.json', 'jest.config.js', 'jest.sim.config.js', 'stryker.config.json', 'knip.json', 'lefthook.yml', '.prettierrc.json', '.prettierignore', '.npmrc', '.claude/settings.json', 'packages/tooling/network-audit/**', 'packages/tooling/license-exceptions.json', 'packages/tooling/scripts/install-maestro.sh', 'babel.config.js', 'jest.setup.ts', 'tsconfig.stryker.json', 'test/goldens/boards/skia-golden.ts', '**/__snapshots__/*.golden.test.ts.snap', '**/*.golden.test.ts.snap.ios', '**/__image_snapshots__/**', 'apps/*/e2e/baselines/**', 'apps/*/e2e/baselines-android/**', 'perf-baselines/**', '**/fixtures/save-v*.json', 'parity/waivers.json', 'parity/game-facts.json', 'packages/tooling/src/quality/verify-plan.ts', 'packages/tooling/src/quality/run-verify.ts', 'packages/tooling/src/quality/shell-slice.ts', 'packages/tooling/src/quality/device-only.ts'];
 
 function git(repo, args) {
   const result = spawnSync('git', ['-C', repo, ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
@@ -204,6 +207,21 @@ function checkMessage(report, where, message, files, context) {
   });
 }
 
+// The release commit both release:ios and release:android make before a build.
+const BUILD_COMMIT = /^chore\((?<game>[a-z0-9]+(?:-[a-z0-9]+)*)\): build (?<build>\d+)$/;
+
+/** History only: one game's release commits never repeat a build number (iOS and Android share it). */
+function checkBuildNumbers(report, commits) {
+  const seen = new Map();
+  for (const commit of commits) {
+    const match = BUILD_COMMIT.exec(commit.message.split('\n')[0] ?? '');
+    if (!match) continue;
+    const key = `${match.groups.game} ${Number(match.groups.build)}`;
+    if (seen.has(key)) report.problem({ file: commit.sha, line: 1, rule: 'build-number-reused', message: `reuses build ${Number(match.groups.build)} of ${match.groups.game} (also ${seen.get(key)})`, fix: 'Build numbers come only from npm run release:ios or release:android and are shared by both platforms: the next release takes one above the highest number of the config and every upload tag.' });
+    else seen.set(key, commit.sha);
+  }
+}
+
 /** The message as git stores it: no comment lines, nothing below the scissors, no trailing space. */
 function normalizeMessage(raw) {
   const cut = /^# -+ >8 -+$/m.exec(raw);
@@ -258,5 +276,6 @@ run(async () => {
     if (commits.length === 0) fail('the log or range holds no commits', 'Pass a range that contains the new commits, for example main..HEAD.');
   }
   for (const commit of commits) checkMessage(report, commit.sha, commit.message, commit.files, { scopes, gated });
+  if (!options.message) checkBuildNumbers(report, commits);
   return report.finish({ checked: commits.length, unit: 'commit messages' });
 });

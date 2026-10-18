@@ -1,0 +1,3 @@
+[keystore-ignored]
+.gitignore
+does not ignore *.jks

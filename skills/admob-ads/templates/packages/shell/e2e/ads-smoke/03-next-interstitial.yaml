@@ -27,10 +27,10 @@ tags: [ads-smoke]
       WAIT_FOR: 'result.next-button'
 - tapOn:
     id: 'result.next-button'
-# system-ui: Google's test interstitial covers the app; its "Test mode" label proves it is a test
+# system-ui: Google's test interstitial covers the app; its "Test mode" (iOS) or "Test Ad" (Android) label proves it is a test
 # ad (its "This is an interstitial test ad." text wraps, which a single-line match misses).
 - extendedWaitUntil:
-    visible: 'Test mode'
+    visible: 'Test mode|Test Ad'
     timeout: 30000
 - runFlow:
     file: ../subflows/close-test-ad.yaml

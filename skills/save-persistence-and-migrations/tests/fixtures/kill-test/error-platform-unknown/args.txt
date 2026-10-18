@@ -1,0 +1,1 @@
+--platform windows --bundle-id io.applander.linesiege --game-id line-siege

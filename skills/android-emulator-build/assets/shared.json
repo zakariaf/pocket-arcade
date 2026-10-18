@@ -1,0 +1,8 @@
+[
+  { "from": "scripts/check-lib.mjs", "to": "scripts/check-lib.mjs" },
+  { "from": "scripts/lib/ship-placeholders.mjs", "to": "scripts/lib/ship-placeholders.mjs" },
+  { "from": "scripts/lib/png.mjs", "to": "scripts/lib/png.mjs" },
+  { "from": "scripts/lib/zip.mjs", "to": "scripts/lib/zip.mjs" },
+  { "from": "scripts/lib/manifest-tree.mjs", "to": "scripts/lib/manifest-tree.mjs" },
+  { "from": "android/permission-allowlist.json", "to": "assets/permission-allowlist.json" }
+]

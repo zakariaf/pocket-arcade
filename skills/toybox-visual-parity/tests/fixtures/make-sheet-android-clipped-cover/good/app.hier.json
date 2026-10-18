@@ -1,0 +1,3235 @@
+{
+ "attributes": {},
+ "children": [
+  {
+   "attributes": {
+    "ignoreBoundsFiltering": "false"
+   },
+   "children": [
+    {
+     "attributes": {
+      "text": "",
+      "accessibilityText": "",
+      "hintText": "",
+      "ignoreBoundsFiltering": "false",
+      "resource-id": "",
+      "clickable": "false",
+      "bounds": "[0,0][1206,132]",
+      "enabled": "true",
+      "focused": "false",
+      "checked": "false",
+      "scrollable": "false",
+      "selected": "false",
+      "class": "android.widget.FrameLayout",
+      "important-for-accessibility": "true",
+      "error": ""
+     },
+     "children": [
+      {
+       "attributes": {
+        "text": "",
+        "accessibilityText": "",
+        "hintText": "",
+        "ignoreBoundsFiltering": "false",
+        "resource-id": "com.android.systemui:id/status_bar_launch_animation_container",
+        "clickable": "false",
+        "bounds": "[0,0][1206,132]",
+        "enabled": "true",
+        "focused": "false",
+        "checked": "false",
+        "scrollable": "false",
+        "selected": "false",
+        "class": "android.widget.FrameLayout",
+        "important-for-accessibility": "false",
+        "error": ""
+       },
+       "children": [],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      },
+      {
+       "attributes": {
+        "text": "",
+        "accessibilityText": "",
+        "hintText": "",
+        "ignoreBoundsFiltering": "false",
+        "resource-id": "com.android.systemui:id/status_bar_container",
+        "clickable": "false",
+        "bounds": "[0,0][1206,132]",
+        "enabled": "true",
+        "focused": "false",
+        "checked": "false",
+        "scrollable": "false",
+        "selected": "false",
+        "class": "android.widget.FrameLayout",
+        "important-for-accessibility": "false",
+        "error": ""
+       },
+       "children": [
+        {
+         "attributes": {
+          "text": "",
+          "accessibilityText": "",
+          "hintText": "",
+          "ignoreBoundsFiltering": "false",
+          "resource-id": "com.android.systemui:id/status_bar",
+          "clickable": "false",
+          "bounds": "[0,0][1206,132]",
+          "enabled": "true",
+          "focused": "false",
+          "checked": "false",
+          "scrollable": "false",
+          "selected": "false",
+          "class": "android.widget.FrameLayout",
+          "important-for-accessibility": "true",
+          "error": ""
+         },
+         "children": [
+          {
+           "attributes": {
+            "text": "",
+            "accessibilityText": "",
+            "hintText": "",
+            "ignoreBoundsFiltering": "false",
+            "resource-id": "com.android.systemui:id/status_bar_contents",
+            "clickable": "false",
+            "bounds": "[0,0][1146,132]",
+            "enabled": "true",
+            "focused": "false",
+            "checked": "false",
+            "scrollable": "false",
+            "selected": "false",
+            "class": "android.widget.LinearLayout",
+            "important-for-accessibility": "false",
+            "error": ""
+           },
+           "children": [
+            {
+             "attributes": {
+              "text": "",
+              "accessibilityText": "",
+              "hintText": "",
+              "ignoreBoundsFiltering": "false",
+              "resource-id": "com.android.systemui:id/status_bar_start_side_container",
+              "clickable": "false",
+              "bounds": "[48,1][530,132]",
+              "enabled": "true",
+              "focused": "false",
+              "checked": "false",
+              "scrollable": "false",
+              "selected": "false",
+              "class": "android.widget.FrameLayout",
+              "important-for-accessibility": "false",
+              "error": ""
+             },
+             "children": [
+              {
+               "attributes": {
+                "text": "",
+                "accessibilityText": "",
+                "hintText": "",
+                "ignoreBoundsFiltering": "false",
+                "resource-id": "com.android.systemui:id/status_bar_start_side_content",
+                "clickable": "false",
+                "bounds": "[48,1][232,132]",
+                "enabled": "true",
+                "focused": "false",
+                "checked": "false",
+                "scrollable": "false",
+                "selected": "false",
+                "class": "android.widget.FrameLayout",
+                "important-for-accessibility": "false",
+                "error": ""
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "text": "",
+                  "accessibilityText": "",
+                  "hintText": "",
+                  "ignoreBoundsFiltering": "false",
+                  "resource-id": "com.android.systemui:id/status_bar_start_side_except_heads_up",
+                  "clickable": "false",
+                  "bounds": "[48,1][232,132]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "checked": "false",
+                  "scrollable": "false",
+                  "selected": "false",
+                  "class": "android.widget.LinearLayout",
+                  "important-for-accessibility": "false",
+                  "error": ""
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "text": "9:41",
+                    "accessibilityText": "9:41 PM",
+                    "hintText": "",
+                    "ignoreBoundsFiltering": "false",
+                    "resource-id": "com.android.systemui:id/clock",
+                    "clickable": "false",
+                    "bounds": "[48,42][166,91]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "checked": "false",
+                    "scrollable": "false",
+                    "selected": "false",
+                    "class": "android.widget.TextView",
+                    "important-for-accessibility": "true",
+                    "error": ""
+                   },
+                   "children": [],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  },
+                  {
+                   "attributes": {
+                    "text": "",
+                    "accessibilityText": "",
+                    "hintText": "",
+                    "ignoreBoundsFiltering": "false",
+                    "resource-id": "com.android.systemui:id/notification_icon_area",
+                    "clickable": "false",
+                    "bounds": "[166,1][232,132]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "checked": "false",
+                    "scrollable": "false",
+                    "selected": "false",
+                    "class": "android.widget.FrameLayout",
+                    "important-for-accessibility": "false",
+                    "error": ""
+                   },
+                   "children": [],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            },
+            {
+             "attributes": {
+              "text": "",
+              "accessibilityText": "",
+              "hintText": "",
+              "ignoreBoundsFiltering": "false",
+              "resource-id": "com.android.systemui:id/cutout_space_view",
+              "clickable": "false",
+              "bounds": "[530,1][652,132]",
+              "enabled": "true",
+              "focused": "false",
+              "checked": "false",
+              "scrollable": "false",
+              "selected": "false",
+              "class": "android.view.View",
+              "important-for-accessibility": "false",
+              "error": ""
+             },
+             "children": [],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            },
+            {
+             "attributes": {
+              "text": "",
+              "accessibilityText": "",
+              "hintText": "",
+              "ignoreBoundsFiltering": "false",
+              "resource-id": "com.android.systemui:id/status_bar_end_side_container",
+              "clickable": "false",
+              "bounds": "[652,1][1134,132]",
+              "enabled": "true",
+              "focused": "false",
+              "checked": "false",
+              "scrollable": "false",
+              "selected": "false",
+              "class": "android.widget.FrameLayout",
+              "important-for-accessibility": "false",
+              "error": ""
+             },
+             "children": [
+              {
+               "attributes": {
+                "text": "",
+                "accessibilityText": "",
+                "hintText": "",
+                "ignoreBoundsFiltering": "false",
+                "resource-id": "com.android.systemui:id/status_bar_end_side_content",
+                "clickable": "false",
+                "bounds": "[1019,1][1134,132]",
+                "enabled": "true",
+                "focused": "false",
+                "checked": "false",
+                "scrollable": "false",
+                "selected": "false",
+                "class": "android.widget.LinearLayout",
+                "important-for-accessibility": "false",
+                "error": ""
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "text": "",
+                  "accessibilityText": "",
+                  "hintText": "",
+                  "ignoreBoundsFiltering": "false",
+                  "resource-id": "com.android.systemui:id/system_icons",
+                  "clickable": "false",
+                  "bounds": "[1019,33][1134,99]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "checked": "false",
+                  "scrollable": "false",
+                  "selected": "false",
+                  "class": "android.widget.LinearLayout",
+                  "important-for-accessibility": "true",
+                  "error": ""
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "text": "",
+                    "accessibilityText": "",
+                    "hintText": "",
+                    "ignoreBoundsFiltering": "false",
+                    "resource-id": "",
+                    "clickable": "false",
+                    "bounds": "[1028,33][1099,99]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "checked": "false",
+                    "scrollable": "false",
+                    "selected": "false",
+                    "class": "android.widget.LinearLayout",
+                    "important-for-accessibility": "false",
+                    "error": ""
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "text": "",
+                      "accessibilityText": "",
+                      "hintText": "",
+                      "ignoreBoundsFiltering": "false",
+                      "resource-id": "com.android.systemui:id/wifi_combo",
+                      "clickable": "false",
+                      "bounds": "[1028,33][1081,99]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "checked": "false",
+                      "scrollable": "false",
+                      "selected": "false",
+                      "class": "android.widget.FrameLayout",
+                      "important-for-accessibility": "false",
+                      "error": ""
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "text": "",
+                        "accessibilityText": "",
+                        "hintText": "",
+                        "ignoreBoundsFiltering": "false",
+                        "resource-id": "com.android.systemui:id/wifi_group",
+                        "clickable": "false",
+                        "bounds": "[1036,33][1081,99]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "checked": "false",
+                        "scrollable": "false",
+                        "selected": "false",
+                        "class": "android.widget.LinearLayout",
+                        "important-for-accessibility": "false",
+                        "error": ""
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "text": "",
+                          "accessibilityText": "",
+                          "hintText": "",
+                          "ignoreBoundsFiltering": "false",
+                          "resource-id": "com.android.systemui:id/wifi_combo",
+                          "clickable": "false",
+                          "bounds": "[1036,43][1081,88]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "checked": "false",
+                          "scrollable": "false",
+                          "selected": "false",
+                          "class": "android.widget.FrameLayout",
+                          "important-for-accessibility": "false",
+                          "error": ""
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "text": "",
+                            "accessibilityText": "Wifi signal full.,No internet",
+                            "hintText": "",
+                            "ignoreBoundsFiltering": "false",
+                            "resource-id": "com.android.systemui:id/wifi_signal",
+                            "clickable": "false",
+                            "bounds": "[1036,43][1081,88]",
+                            "enabled": "true",
+                            "focused": "false",
+                            "checked": "false",
+                            "scrollable": "false",
+                            "selected": "false",
+                            "class": "android.widget.ImageView",
+                            "important-for-accessibility": "true",
+                            "error": ""
+                           },
+                           "children": [],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "clickable": false,
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  },
+                  {
+                   "attributes": {
+                    "text": "",
+                    "accessibilityText": "Battery 100 percent.",
+                    "hintText": "",
+                    "ignoreBoundsFiltering": "false",
+                    "resource-id": "com.android.systemui:id/battery",
+                    "clickable": "false",
+                    "bounds": "[1099,46][1122,85]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "checked": "false",
+                    "scrollable": "false",
+                    "selected": "false",
+                    "class": "android.widget.LinearLayout",
+                    "important-for-accessibility": "true",
+                    "error": ""
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "text": "",
+                      "accessibilityText": "",
+                      "hintText": "",
+                      "ignoreBoundsFiltering": "false",
+                      "resource-id": "",
+                      "clickable": "false",
+                      "bounds": "[1099,46][1122,85]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "checked": "false",
+                      "scrollable": "false",
+                      "selected": "false",
+                      "class": "android.widget.ImageView",
+                      "important-for-accessibility": "false",
+                      "error": ""
+                     },
+                     "children": [],
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "clickable": false,
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "clickable": false,
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      },
+      {
+       "attributes": {
+        "text": "",
+        "accessibilityText": "",
+        "hintText": "",
+        "ignoreBoundsFiltering": "false",
+        "resource-id": "com.android.systemui:id/container",
+        "clickable": "false",
+        "bounds": "[0,0][1206,84]",
+        "enabled": "true",
+        "focused": "false",
+        "checked": "false",
+        "scrollable": "false",
+        "selected": "false",
+        "class": "android.widget.FrameLayout",
+        "important-for-accessibility": "false",
+        "error": ""
+       },
+       "children": [],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "clickable": false,
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    },
+    {
+     "attributes": {
+      "text": "",
+      "accessibilityText": "",
+      "hintText": "",
+      "ignoreBoundsFiltering": "false",
+      "resource-id": "",
+      "clickable": "false",
+      "bounds": "[0,0][1206,2622]",
+      "enabled": "true",
+      "focused": "false",
+      "checked": "false",
+      "scrollable": "false",
+      "selected": "false",
+      "class": "android.widget.FrameLayout",
+      "important-for-accessibility": "true",
+      "error": ""
+     },
+     "children": [
+      {
+       "attributes": {
+        "text": "",
+        "accessibilityText": "",
+        "hintText": "",
+        "ignoreBoundsFiltering": "false",
+        "resource-id": "",
+        "clickable": "false",
+        "bounds": "[0,0][1206,2622]",
+        "enabled": "true",
+        "focused": "false",
+        "checked": "false",
+        "scrollable": "false",
+        "selected": "false",
+        "class": "android.widget.LinearLayout",
+        "important-for-accessibility": "false",
+        "error": ""
+       },
+       "children": [
+        {
+         "attributes": {
+          "text": "",
+          "accessibilityText": "",
+          "hintText": "",
+          "ignoreBoundsFiltering": "false",
+          "resource-id": "",
+          "clickable": "false",
+          "bounds": "[0,0][1206,2622]",
+          "enabled": "true",
+          "focused": "false",
+          "checked": "false",
+          "scrollable": "false",
+          "selected": "false",
+          "class": "android.widget.FrameLayout",
+          "important-for-accessibility": "false",
+          "error": ""
+         },
+         "children": [
+          {
+           "attributes": {
+            "text": "",
+            "accessibilityText": "",
+            "hintText": "",
+            "ignoreBoundsFiltering": "false",
+            "resource-id": "io.applander.linesiege:id/action_bar_root",
+            "clickable": "false",
+            "bounds": "[0,0][1206,2622]",
+            "enabled": "true",
+            "focused": "false",
+            "checked": "false",
+            "scrollable": "false",
+            "selected": "false",
+            "class": "android.widget.LinearLayout",
+            "important-for-accessibility": "false",
+            "error": ""
+           },
+           "children": [
+            {
+             "attributes": {
+              "text": "",
+              "accessibilityText": "",
+              "hintText": "",
+              "ignoreBoundsFiltering": "false",
+              "resource-id": "android:id/content",
+              "clickable": "false",
+              "bounds": "[0,0][1206,2622]",
+              "enabled": "true",
+              "focused": "false",
+              "checked": "false",
+              "scrollable": "false",
+              "selected": "false",
+              "class": "android.widget.FrameLayout",
+              "important-for-accessibility": "false",
+              "error": ""
+             },
+             "children": [
+              {
+               "attributes": {
+                "text": "",
+                "accessibilityText": "",
+                "hintText": "",
+                "ignoreBoundsFiltering": "false",
+                "resource-id": "",
+                "clickable": "false",
+                "bounds": "[0,0][1206,2622]",
+                "enabled": "true",
+                "focused": "false",
+                "checked": "false",
+                "scrollable": "false",
+                "selected": "false",
+                "class": "android.widget.FrameLayout",
+                "important-for-accessibility": "false",
+                "error": ""
+               },
+               "children": [
+                {
+                 "attributes": {
+                  "text": "",
+                  "accessibilityText": "",
+                  "hintText": "",
+                  "ignoreBoundsFiltering": "false",
+                  "resource-id": "",
+                  "clickable": "false",
+                  "bounds": "[0,0][1206,2622]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "checked": "false",
+                  "scrollable": "false",
+                  "selected": "false",
+                  "class": "android.view.ViewGroup",
+                  "important-for-accessibility": "false",
+                  "error": ""
+                 },
+                 "children": [
+                  {
+                   "attributes": {
+                    "text": "",
+                    "accessibilityText": "",
+                    "hintText": "",
+                    "ignoreBoundsFiltering": "false",
+                    "resource-id": "",
+                    "clickable": "false",
+                    "bounds": "[0,0][1206,2622]",
+                    "enabled": "true",
+                    "focused": "false",
+                    "checked": "false",
+                    "scrollable": "false",
+                    "selected": "false",
+                    "class": "android.view.ViewGroup",
+                    "important-for-accessibility": "false",
+                    "error": ""
+                   },
+                   "children": [
+                    {
+                     "attributes": {
+                      "text": "",
+                      "accessibilityText": "",
+                      "hintText": "",
+                      "ignoreBoundsFiltering": "false",
+                      "resource-id": "",
+                      "clickable": "false",
+                      "bounds": "[0,0][1206,2622]",
+                      "enabled": "true",
+                      "focused": "false",
+                      "checked": "false",
+                      "scrollable": "false",
+                      "selected": "false",
+                      "class": "android.view.ViewGroup",
+                      "important-for-accessibility": "false",
+                      "error": ""
+                     },
+                     "children": [
+                      {
+                       "attributes": {
+                        "text": "",
+                        "accessibilityText": "",
+                        "hintText": "",
+                        "ignoreBoundsFiltering": "false",
+                        "resource-id": "",
+                        "clickable": "false",
+                        "bounds": "[0,0][1206,2622]",
+                        "enabled": "true",
+                        "focused": "false",
+                        "checked": "false",
+                        "scrollable": "false",
+                        "selected": "false",
+                        "class": "android.widget.ScrollView",
+                        "important-for-accessibility": "true",
+                        "error": ""
+                       },
+                       "children": [
+                        {
+                         "attributes": {
+                          "text": "",
+                          "accessibilityText": "",
+                          "hintText": "",
+                          "ignoreBoundsFiltering": "false",
+                          "resource-id": "",
+                          "clickable": "false",
+                          "bounds": "[0,0][1206,2622]",
+                          "enabled": "true",
+                          "focused": "false",
+                          "checked": "false",
+                          "scrollable": "false",
+                          "selected": "false",
+                          "class": "android.view.ViewGroup",
+                          "important-for-accessibility": "false",
+                          "error": ""
+                         },
+                         "children": [
+                          {
+                           "attributes": {
+                            "text": "",
+                            "accessibilityText": "",
+                            "hintText": "",
+                            "ignoreBoundsFiltering": "false",
+                            "resource-id": "",
+                            "clickable": "false",
+                            "bounds": "[0,0][1206,2622]",
+                            "enabled": "true",
+                            "focused": "false",
+                            "checked": "false",
+                            "scrollable": "false",
+                            "selected": "false",
+                            "class": "android.view.ViewGroup",
+                            "important-for-accessibility": "false",
+                            "error": ""
+                           },
+                           "children": [
+                            {
+                             "attributes": {
+                              "text": "",
+                              "accessibilityText": "",
+                              "hintText": "",
+                              "ignoreBoundsFiltering": "false",
+                              "resource-id": "debug.screen",
+                              "clickable": "false",
+                              "bounds": "[0,0][1206,2622]",
+                              "enabled": "true",
+                              "focused": "false",
+                              "checked": "false",
+                              "scrollable": "false",
+                              "selected": "false",
+                              "class": "android.view.ViewGroup",
+                              "important-for-accessibility": "true",
+                              "error": ""
+                             },
+                             "children": [
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "debug.hazard-strip",
+                                "clickable": "false",
+                                "bounds": "[0,132][1206,192]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.view.ViewGroup",
+                                "important-for-accessibility": "false",
+                                "error": ""
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "text": "",
+                                  "accessibilityText": "",
+                                  "hintText": "",
+                                  "ignoreBoundsFiltering": "false",
+                                  "resource-id": "",
+                                  "clickable": "false",
+                                  "bounds": "[0,132][1206,192]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "checked": "false",
+                                  "scrollable": "false",
+                                  "selected": "false",
+                                  "class": "android.view.ViewGroup",
+                                  "important-for-accessibility": "false",
+                                  "error": ""
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "",
+                                    "clickable": "false",
+                                    "bounds": "[0,132][1206,192]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.View",
+                                    "important-for-accessibility": "false",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "clickable": false,
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "debug.top-bar",
+                                "clickable": "false",
+                                "bounds": "[0,192][1206,390]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.view.ViewGroup",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "Back",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "debug.top-bar.back-button",
+                                "clickable": "true",
+                                "bounds": "[48,213][192,357]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.widget.Button",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "text": "",
+                                  "accessibilityText": "",
+                                  "hintText": "",
+                                  "ignoreBoundsFiltering": "false",
+                                  "resource-id": "",
+                                  "clickable": "false",
+                                  "bounds": "[48,213][192,357]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "checked": "false",
+                                  "scrollable": "false",
+                                  "selected": "false",
+                                  "class": "android.view.ViewGroup",
+                                  "important-for-accessibility": "false",
+                                  "error": ""
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "",
+                                    "clickable": "false",
+                                    "bounds": "[48,225][192,357]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.ViewGroup",
+                                    "important-for-accessibility": "false",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "",
+                                    "clickable": "false",
+                                    "bounds": "[48,213][192,357]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.ViewGroup",
+                                    "important-for-accessibility": "false",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "",
+                                    "clickable": "false",
+                                    "bounds": "[57,222][183,348]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.ViewGroup",
+                                    "important-for-accessibility": "false",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "",
+                                    "clickable": "false",
+                                    "bounds": "[84,249][156,321]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.widget.ImageView",
+                                    "important-for-accessibility": "false",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "clickable": false,
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "clickable": true,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "Debug menu",
+                                "accessibilityText": "",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "debug.top-bar.title",
+                                "clickable": "false",
+                                "bounds": "[228,241][816,331]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.view.View",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "Test build",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "debug.top-bar.badge",
+                                "clickable": "false",
+                                "bounds": "[849,230][1161,340]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.widget.TextView",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "text": "",
+                                  "accessibilityText": "",
+                                  "hintText": "",
+                                  "ignoreBoundsFiltering": "false",
+                                  "resource-id": "",
+                                  "clickable": "false",
+                                  "bounds": "[877,247][936,306]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "checked": "false",
+                                  "scrollable": "false",
+                                  "selected": "false",
+                                  "class": "android.widget.ImageView",
+                                  "important-for-accessibility": "false",
+                                  "error": ""
+                                 },
+                                 "children": [],
+                                 "clickable": false,
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                },
+                                {
+                                 "attributes": {
+                                  "text": "Test build",
+                                  "accessibilityText": "",
+                                  "hintText": "",
+                                  "ignoreBoundsFiltering": "false",
+                                  "resource-id": "",
+                                  "clickable": "false",
+                                  "bounds": "[949,256][1127,320]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "checked": "false",
+                                  "scrollable": "false",
+                                  "selected": "false",
+                                  "class": "android.view.ViewGroup",
+                                  "important-for-accessibility": "true",
+                                  "error": ""
+                                 },
+                                 "children": [],
+                                 "clickable": false,
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "",
+                                "clickable": "false",
+                                "bounds": "[0,390][1206,2622]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "true",
+                                "selected": "false",
+                                "class": "android.widget.ScrollView",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [
+                                {
+                                 "attributes": {
+                                  "text": "",
+                                  "accessibilityText": "",
+                                  "hintText": "",
+                                  "ignoreBoundsFiltering": "false",
+                                  "resource-id": "",
+                                  "clickable": "false",
+                                  "bounds": "[0,390][1206,2622]",
+                                  "enabled": "true",
+                                  "focused": "false",
+                                  "checked": "false",
+                                  "scrollable": "false",
+                                  "selected": "false",
+                                  "class": "android.view.ViewGroup",
+                                  "important-for-accessibility": "false",
+                                  "error": ""
+                                 },
+                                 "children": [
+                                  {
+                                   "attributes": {
+                                    "text": "",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "debug.list",
+                                    "clickable": "false",
+                                    "bounds": "[60,390][1146,2517]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.ViewGroup",
+                                    "important-for-accessibility": "true",
+                                    "error": ""
+                                   },
+                                   "children": [
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Give stars",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.give-stars-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,390][1137,468]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.give-stars-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,390][225,438]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,390][201,414]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Give stars",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.give-stars-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,390][999,416]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,390][1095,411]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Set date, ⁨Sunday⁩, 27 ⁨Sep⁩",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.set-date-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,468][1137,648]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.set-date-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,504][225,618]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,528][201,594]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Set date",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.set-date-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,528][641,596]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "⁨Sunday⁩, 27 ⁨Sep⁩",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.set-date-row.value",
+                                        "clickable": "false",
+                                        "bounds": "[677,531][999,591]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,531][1095,591]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Show level seed and game state",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.show-state-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,648][1137,848]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.show-state-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,694][225,808]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,718][201,784]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Show level seed and game state",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.show-state-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,684][999,819]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,721][1095,781]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Always show test ads",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.ads-always-test-switch",
+                                      "clickable": "true",
+                                      "bounds": "[69,848][1137,1028]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "true",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Switch",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-always-test-switch.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,884][225,998]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,908][201,974]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Always show test ads",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-always-test-switch.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,908][885,976]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-always-test-switch.toggle",
+                                        "clickable": "false",
+                                        "bounds": "[921,887][1095,995]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[1002,902][1080,980]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.view.ViewGroup",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "text": "",
+                                            "accessibilityText": "",
+                                            "hintText": "",
+                                            "ignoreBoundsFiltering": "false",
+                                            "resource-id": "",
+                                            "clickable": "false",
+                                            "bounds": "[1019,919][1064,964]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "checked": "false",
+                                            "scrollable": "false",
+                                            "selected": "false",
+                                            "class": "android.widget.ImageView",
+                                            "important-for-accessibility": "false",
+                                            "error": ""
+                                           },
+                                           "children": [],
+                                           "clickable": false,
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": true,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Never show ads",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.ads-never-switch",
+                                      "clickable": "true",
+                                      "bounds": "[69,1028][1137,1208]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Switch",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-never-switch.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,1064][225,1178]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,1088][201,1154]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Never show ads",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-never-switch.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,1088][885,1156]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.ads-never-switch.toggle",
+                                        "clickable": "false",
+                                        "bounds": "[921,1067][1095,1175]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[936,1082][1014,1160]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.view.ViewGroup",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "text": "",
+                                            "accessibilityText": "",
+                                            "hintText": "",
+                                            "ignoreBoundsFiltering": "false",
+                                            "resource-id": "",
+                                            "clickable": "false",
+                                            "bounds": "[953,1099][998,1144]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "checked": "false",
+                                            "scrollable": "false",
+                                            "selected": "false",
+                                            "class": "android.widget.ImageView",
+                                            "important-for-accessibility": "false",
+                                            "error": ""
+                                           },
+                                           "children": [],
+                                           "clickable": false,
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Premium on (no purchase)",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.premium-switch",
+                                      "clickable": "true",
+                                      "bounds": "[69,1208][1137,1408]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Switch",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.premium-switch.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,1254][225,1368]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,1278][201,1344]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Premium on (no purchase)",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.premium-switch.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,1244][885,1379]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.premium-switch.toggle",
+                                        "clickable": "false",
+                                        "bounds": "[921,1257][1095,1365]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[936,1272][1014,1350]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.view.ViewGroup",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "text": "",
+                                            "accessibilityText": "",
+                                            "hintText": "",
+                                            "ignoreBoundsFiltering": "false",
+                                            "resource-id": "",
+                                            "clickable": "false",
+                                            "bounds": "[953,1289][998,1334]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "checked": "false",
+                                            "scrollable": "false",
+                                            "selected": "false",
+                                            "class": "android.widget.ImageView",
+                                            "important-for-accessibility": "false",
+                                            "error": ""
+                                           },
+                                           "children": [],
+                                           "clickable": false,
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Force language, direction and digits, ⁨en · ltr · 123⁩",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.force-locale-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,1408][1137,1608]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.force-locale-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,1454][225,1568]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,1478][201,1544]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Force language, direction and digits",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.force-locale-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,1444][718,1579]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "⁨en · ltr · 123⁩",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.force-locale-row.value",
+                                        "clickable": "false",
+                                        "bounds": "[754,1481][999,1541]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,1481][1095,1541]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Simulate offline",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.offline-switch",
+                                      "clickable": "true",
+                                      "bounds": "[69,1608][1137,1788]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Switch",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.offline-switch.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,1644][225,1758]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,1668][201,1734]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Simulate offline",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.offline-switch.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,1668][885,1736]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.offline-switch.toggle",
+                                        "clickable": "false",
+                                        "bounds": "[921,1647][1095,1755]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[936,1662][1014,1740]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.view.ViewGroup",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [
+                                          {
+                                           "attributes": {
+                                            "text": "",
+                                            "accessibilityText": "",
+                                            "hintText": "",
+                                            "ignoreBoundsFiltering": "false",
+                                            "resource-id": "",
+                                            "clickable": "false",
+                                            "bounds": "[953,1679][998,1724]",
+                                            "enabled": "true",
+                                            "focused": "false",
+                                            "checked": "false",
+                                            "scrollable": "false",
+                                            "selected": "false",
+                                            "class": "android.widget.ImageView",
+                                            "important-for-accessibility": "false",
+                                            "error": ""
+                                           },
+                                           "children": [],
+                                           "clickable": false,
+                                           "enabled": true,
+                                           "focused": false,
+                                           "checked": false,
+                                           "selected": false
+                                          }
+                                         ],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Export save as text",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.export-save-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,1788][1137,1968]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.export-save-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,1824][225,1938]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,1848][201,1914]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Export save as text",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.export-save-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,1848][999,1916]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,1851][1095,1911]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Import save from text",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.import-save-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,1968][1137,2148]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.import-save-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,2004][225,2118]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,2028][201,2094]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Import save from text",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.import-save-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,2028][999,2096]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,2031][1095,2091]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Error log, 0",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.error-log-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,2148][1137,2328]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.error-log-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,2184][225,2298]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,2208][201,2274]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Error log",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.error-log-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,2208][934,2276]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "0",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.error-log-row.value",
+                                        "clickable": "false",
+                                        "bounds": "[970,2211][999,2271]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,2211][1095,2271]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    },
+                                    {
+                                     "attributes": {
+                                      "text": "",
+                                      "accessibilityText": "Font test page",
+                                      "hintText": "",
+                                      "ignoreBoundsFiltering": "false",
+                                      "resource-id": "debug.font-test-row",
+                                      "clickable": "true",
+                                      "bounds": "[69,2328][1137,2508]",
+                                      "enabled": "true",
+                                      "focused": "false",
+                                      "checked": "false",
+                                      "scrollable": "false",
+                                      "selected": "false",
+                                      "class": "android.widget.Button",
+                                      "important-for-accessibility": "true",
+                                      "error": ""
+                                     },
+                                     "children": [
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.font-test-row.icon",
+                                        "clickable": "false",
+                                        "bounds": "[111,2364][225,2478]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [
+                                        {
+                                         "attributes": {
+                                          "text": "",
+                                          "accessibilityText": "",
+                                          "hintText": "",
+                                          "ignoreBoundsFiltering": "false",
+                                          "resource-id": "",
+                                          "clickable": "false",
+                                          "bounds": "[135,2388][201,2454]",
+                                          "enabled": "true",
+                                          "focused": "false",
+                                          "checked": "false",
+                                          "scrollable": "false",
+                                          "selected": "false",
+                                          "class": "android.widget.ImageView",
+                                          "important-for-accessibility": "false",
+                                          "error": ""
+                                         },
+                                         "children": [],
+                                         "clickable": false,
+                                         "enabled": true,
+                                         "focused": false,
+                                         "checked": false,
+                                         "selected": false
+                                        }
+                                       ],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "Font test page",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "debug.font-test-row.label",
+                                        "clickable": "false",
+                                        "bounds": "[261,2388][999,2456]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.view.ViewGroup",
+                                        "important-for-accessibility": "true",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      },
+                                      {
+                                       "attributes": {
+                                        "text": "",
+                                        "accessibilityText": "",
+                                        "hintText": "",
+                                        "ignoreBoundsFiltering": "false",
+                                        "resource-id": "",
+                                        "clickable": "false",
+                                        "bounds": "[1035,2391][1095,2451]",
+                                        "enabled": "true",
+                                        "focused": "false",
+                                        "checked": "false",
+                                        "scrollable": "false",
+                                        "selected": "false",
+                                        "class": "android.widget.ImageView",
+                                        "important-for-accessibility": "false",
+                                        "error": ""
+                                       },
+                                       "children": [],
+                                       "clickable": false,
+                                       "enabled": true,
+                                       "focused": false,
+                                       "checked": false,
+                                       "selected": false
+                                      }
+                                     ],
+                                     "clickable": true,
+                                     "enabled": true,
+                                     "focused": false,
+                                     "checked": false,
+                                     "selected": false
+                                    }
+                                   ],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  },
+                                  {
+                                   "attributes": {
+                                    "text": "0",
+                                    "accessibilityText": "",
+                                    "hintText": "",
+                                    "ignoreBoundsFiltering": "false",
+                                    "resource-id": "debug.network-attempts",
+                                    "clickable": "false",
+                                    "bounds": "[72,2583][99,2622]",
+                                    "enabled": "true",
+                                    "focused": "false",
+                                    "checked": "false",
+                                    "scrollable": "false",
+                                    "selected": "false",
+                                    "class": "android.view.ViewGroup",
+                                    "important-for-accessibility": "true",
+                                    "error": ""
+                                   },
+                                   "children": [],
+                                   "clickable": false,
+                                   "enabled": true,
+                                   "focused": false,
+                                   "checked": false,
+                                   "selected": false
+                                  }
+                                 ],
+                                 "clickable": false,
+                                 "enabled": true,
+                                 "focused": false,
+                                 "checked": false,
+                                 "selected": false
+                                }
+                               ],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              },
+                              {
+                               "attributes": {
+                                "text": "",
+                                "accessibilityText": "163.00",
+                                "hintText": "",
+                                "ignoreBoundsFiltering": "false",
+                                "resource-id": "parity.scroll.163.00",
+                                "clickable": "false",
+                                "bounds": "[603,1377][606,1380]",
+                                "enabled": "true",
+                                "focused": "false",
+                                "checked": "false",
+                                "scrollable": "false",
+                                "selected": "false",
+                                "class": "android.view.ViewGroup",
+                                "important-for-accessibility": "true",
+                                "error": ""
+                               },
+                               "children": [],
+                               "clickable": false,
+                               "enabled": true,
+                               "focused": false,
+                               "checked": false,
+                               "selected": false
+                              }
+                             ],
+                             "clickable": false,
+                             "enabled": true,
+                             "focused": false,
+                             "checked": false,
+                             "selected": false
+                            }
+                           ],
+                           "clickable": false,
+                           "enabled": true,
+                           "focused": false,
+                           "checked": false,
+                           "selected": false
+                          }
+                         ],
+                         "clickable": false,
+                         "enabled": true,
+                         "focused": false,
+                         "checked": false,
+                         "selected": false
+                        }
+                       ],
+                       "clickable": false,
+                       "enabled": true,
+                       "focused": false,
+                       "checked": false,
+                       "selected": false
+                      }
+                     ],
+                     "clickable": false,
+                     "enabled": true,
+                     "focused": false,
+                     "checked": false,
+                     "selected": false
+                    }
+                   ],
+                   "clickable": false,
+                   "enabled": true,
+                   "focused": false,
+                   "checked": false,
+                   "selected": false
+                  }
+                 ],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                },
+                {
+                 "attributes": {
+                  "text": "",
+                  "accessibilityText": "5a4b74765314",
+                  "hintText": "",
+                  "ignoreBoundsFiltering": "false",
+                  "resource-id": "parity.launch.5a4b74765314",
+                  "clickable": "false",
+                  "bounds": "[603,1311][606,1314]",
+                  "enabled": "true",
+                  "focused": "false",
+                  "checked": "false",
+                  "scrollable": "false",
+                  "selected": "false",
+                  "class": "android.view.ViewGroup",
+                  "important-for-accessibility": "true",
+                  "error": ""
+                 },
+                 "children": [],
+                 "clickable": false,
+                 "enabled": true,
+                 "focused": false,
+                 "checked": false,
+                 "selected": false
+                }
+               ],
+               "clickable": false,
+               "enabled": true,
+               "focused": false,
+               "checked": false,
+               "selected": false
+              }
+             ],
+             "clickable": false,
+             "enabled": true,
+             "focused": false,
+             "checked": false,
+             "selected": false
+            }
+           ],
+           "clickable": false,
+           "enabled": true,
+           "focused": false,
+           "checked": false,
+           "selected": false
+          }
+         ],
+         "clickable": false,
+         "enabled": true,
+         "focused": false,
+         "checked": false,
+         "selected": false
+        }
+       ],
+       "clickable": false,
+       "enabled": true,
+       "focused": false,
+       "checked": false,
+       "selected": false
+      }
+     ],
+     "clickable": false,
+     "enabled": true,
+     "focused": false,
+     "checked": false,
+     "selected": false
+    }
+   ],
+   "clickable": false,
+   "enabled": false,
+   "focused": false,
+   "checked": false,
+   "selected": false
+  }
+ ]
+}

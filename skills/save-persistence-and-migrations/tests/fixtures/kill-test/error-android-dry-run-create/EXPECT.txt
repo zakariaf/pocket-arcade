@@ -1,0 +1,9 @@
+would run: avdmanager create avd --name e07-android-kill-test --package system-images;android-35;google_apis;arm64-v8a --device pixel_8
+would run: emulator -avd e07-android-kill-test -port <port> -no-snapshot -no-boot-anim -no-audio -no-window
+would run: adb -s <serial> root
+would run: adb -s <serial> install -r app-release.apk
+kill -9
+would run: adb -s <serial> pull /data/data/io.applander.linesiege/files/SQLite/
+would run: adb -s <serial> emu kill
+would run: avdmanager delete avd --name e07-android-kill-test
+dry run: printed the plan for 12 rounds

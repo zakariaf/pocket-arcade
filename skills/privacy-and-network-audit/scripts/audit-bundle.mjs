@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // audit-bundle.mjs: layer B of the spec N3 audit plus the JS half of the release audit, on the
-// output of `npx expo export --platform ios --no-bytecode --source-maps true`. The source map
+// output of `npx expo export --platform ios|android --no-bytecode --source-maps true`. The source map
 // names the owner of every shipped module, so findings are attributed per npm package.
-// Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/audit-bundle.mjs --export dist-audit/<game-id> [--variant store] .
+// Run from the repo root: node ${CLAUDE_SKILL_DIR}/scripts/audit-bundle.mjs --export dist-audit/<game-id> [--variant store] [--platform ios|android] .
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -13,11 +13,12 @@ import { createReporter, fail, parseArgs, requireDir, requireFile, run } from '.
 const SPEC = {
   name: 'audit-bundle',
   summary: 'Audits a shipped JS bundle (expo export output with its source map): first-party network code fails at once, third-party network capabilities must be in the reasoned baseline, and a store bundle must carry no test-only code, no StoreKit test code, no debug screens and no Google sample ad IDs outside the AdMob library.',
-  usage: '--export <dir> [--baseline <json>] [--variant store|test] [--json] [repo-root]',
+  usage: '--export <dir> [--baseline <json>] [--variant store|test] [--platform ios|android] [--json] [repo-root]',
   options: {
-    export: { type: 'string', value: 'dir', help: 'Output folder of npx expo export (holds _expo/static/js/ios/*.js.map)' },
+    export: { type: 'string', value: 'dir', help: 'Output folder of npx expo export (holds _expo/static/js/<platform>/*.js.map)' },
     baseline: { type: 'string', value: 'file', help: 'JS baseline (default: <repo-root>/packages/tooling/network-audit/js-baseline.json)' },
     variant: { type: 'string', default: 'store', value: 'store|test', help: 'Which build the export is; store adds the release checks' },
+    platform: { type: 'string', default: 'ios', value: 'ios|android', help: 'Which export to read (npx expo export --platform ios or android)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
   positionals: { min: 0, max: 1 },
@@ -27,6 +28,7 @@ const SPEC = {
     'The remote URLs of packages/shell/src/config/external-links.ts (the file the lint URL rule exempts) are not first-party-network; any other finding in it is.',
     'STALE baseline entries (in the baseline, not found) are printed as notes and do not fail.',
     'Make the export with: APP_VARIANT=store EXPO_PUBLIC_APP_VARIANT=store ADS_MODE=off npx expo export --platform ios --no-bytecode --source-maps true --output-dir dist-audit/<game-id>',
+    'Android: the same with --platform android (and --output-dir dist-audit/<game-id>-android), then --platform android here.',
   ].join('\n'),
 };
 
@@ -42,9 +44,9 @@ function packageOf(source) {
   return /node_modules\/((?:@[^/]+\/)?[^/]+)\//.exec(source)?.[1] ?? null;
 }
 
-function readModules(exportDir) {
-  const dir = join(exportDir, '_expo', 'static', 'js', 'ios');
-  if (!existsSync(dir)) fail(`no iOS bundle in ${dir}`, 'Export with: npx expo export --platform ios --no-bytecode --source-maps true --output-dir <dir>.');
+function readModules(exportDir, platform) {
+  const dir = join(exportDir, '_expo', 'static', 'js', platform);
+  if (!existsSync(dir)) fail(`no ${platform === 'ios' ? 'iOS' : 'android'} bundle in ${dir}`, `Export with: npx expo export --platform ${platform} --no-bytecode --source-maps true --output-dir <dir>.`);
   const mapFile = readdirSync(dir).find((file) => file.endsWith('.js.map'));
   if (!mapFile) fail(`no source map in ${dir}`, 'Export with --source-maps true.');
   let map;
@@ -54,7 +56,7 @@ function readModules(exportDir) {
     fail(`${mapFile} is not JSON (${error.message})`, 'Re-export the bundle.');
   }
   if (!Array.isArray(map.sources) || !Array.isArray(map.sourcesContent)) fail(`${mapFile} has no sourcesContent`, 'Export with --source-maps true (the map must embed the sources).');
-  return { mapFile: `_expo/static/js/ios/${mapFile}`, modules: map.sources.map((source, i) => ({ source, content: map.sourcesContent[i] ?? '' })) };
+  return { mapFile: `_expo/static/js/${platform}/${mapFile}`, modules: map.sources.map((source, i) => ({ source, content: map.sourcesContent[i] ?? '' })) };
 }
 
 run(async () => {
@@ -62,6 +64,7 @@ run(async () => {
   const root = positionals[0] ?? '.';
   if (!options.export) fail('--export is required', 'Pass the expo export output folder, for example --export dist-audit/line-siege.');
   if (!['store', 'test'].includes(options.variant)) fail(`--variant ${options.variant} is not store or test`, 'Use --variant store (default) or --variant test.');
+  if (!['ios', 'android'].includes(options.platform)) fail(`--platform ${options.platform} is not ios or android`, 'Use --platform ios (default) or --platform android.');
   const exportDir = requireDir(options.export, 'export folder');
   const baselinePath = requireFile(options.baseline ?? resolve(root, 'packages', 'tooling', 'network-audit', 'js-baseline.json'), 'JS baseline');
   let baseline;
@@ -70,7 +73,7 @@ run(async () => {
   } catch (error) {
     fail(`the baseline is not JSON (${error.message})`, 'Restore it from the template.');
   }
-  const { mapFile, modules } = readModules(exportDir);
+  const { mapFile, modules } = readModules(exportDir, options.platform);
   const report = createReporter({ name: 'audit-bundle', json: options.json });
   const findings = new Map();
   for (const { source, content } of modules) {

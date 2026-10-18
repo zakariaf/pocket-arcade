@@ -6,9 +6,12 @@
 // test-only-entry.ts and wired into the Shell's startup through TEST_ONLY, the component specs draw
 // the edge widths the references draw, capture output is gitignored, the waiver and sign-off
 // files are well formed, every frame state has its opener in the hook that owns it, the frozen-motion
-// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn (by
-// the parity root and inside every modal root), and parity/game-facts.json holds each app's facts
+// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn once (by
+// the parity root and inside the ModalLayer's layer, never again by the Scrim or Result overlay in it), every ScreenBody draws the scroll offset it reached
+// (parity.scroll.<y>, the measured scroll of a tall capture), and parity/game-facts.json holds each app's facts
 // (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
+// On Android the request arrives as the launch intent's extra "parity", read through the Shell's
+// ParityLaunch native module by the harness only (rule harness-android-launch).
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -25,6 +28,8 @@ const STARTUP = 'packages/shell/src/app/parity-startup.tsx';
 /** Where the held S1 splash is registered (rtl-and-direction's start-shell template). */
 const HELD_SPLASH_FILE = 'packages/shell/src/app/start-shell.ts';
 const SPECS = 'packages/shell/src/ui/component-specs.json';
+/** The common scrolling body (toybox-screens' template), which draws the measured scroll marker. */
+const SCREEN_BODY = 'packages/shell/src/ui/screen-body.tsx';
 const FILES = {
   plans: `${PARITY_DIR}/parity-plans.ts`,
   request: `${PARITY_DIR}/parity-request.ts`,
@@ -38,6 +43,7 @@ const FILES = {
   start: `${PARITY_DIR}/parity-start.ts`,
   errorView: `${PARITY_DIR}/parity-error-view.tsx`,
   root: `${PARITY_DIR}/parity-root.tsx`,
+  scrollMarker: `${PARITY_DIR}/parity-scroll-marker.tsx`,
   startup: STARTUP,
   marker: 'packages/shell/src/app/parity-launch-marker.tsx',
   entry: 'packages/shell/src/app/test-only-entry.ts',
@@ -116,6 +122,23 @@ const FRAME_STATES = {
   's15-debug-menu': 'debug-ads-always-test',
 };
 
+/**
+ * The Android launch path (harness-android-launch): capture-app.mjs --platform android starts the
+ * activity with "am start ... --es parity <query>"; the Kotlin module ParityLaunch hands the extra to
+ * parity-launch-extra.ts, which read-parity-request.ts uses when Platform.OS is android. Each file and
+ * what it must say; nothing outside app/parity/ (tests aside) asks for the module.
+ */
+const ANDROID_LAUNCH = [
+  { file: `${PARITY_DIR}/parity-launch-extra.ts`, needs: [/\brequireOptionalNativeModule\b[^;]*\(\s*'ParityLaunch'\s*\)/, /\bgetLaunchExtra\b/], says: "asks the Shell's native module for the launch extra (requireOptionalNativeModule('ParityLaunch'), getLaunchExtra)" },
+  { file: `${PARITY_DIR}/read-parity-request.ts`, needs: [/Platform\.OS\s*===\s*'android'/, /\bandroidLaunchExtras\s*\(/], says: 'reads the Android launch (Platform.OS android, androidLaunchExtras())' },
+  { file: 'packages/shell/src/app/parity-startup.android.test.tsx', needs: [/'ParityLaunch'/, /\breadParityLaunch\s*\(/], says: "tests readParityLaunch() with the ParityLaunch module's extra on Android" },
+  { file: 'packages/shell/android/src/main/java/io/applander/shell/ParityLaunchModule.kt', needs: [/Name\("ParityLaunch"\)/, /getStringExtra\(/], says: 'defines the native module ParityLaunch reading the launch intent\'s string extra' },
+];
+const ANDROID_LAUNCH_MODULE = 'io.applander.shell.ParityLaunchModule';
+const EXPO_MODULE_CONFIG = 'packages/shell/expo-module.config.json';
+/** A request for the ParityLaunch native module (any of expo's lookups). */
+const PARITY_LAUNCH_LOOKUP = /\brequire(?:Optional)?NativeModule\b[^;]*\(\s*['"]ParityLaunch['"]\s*\)/;
+
 /** Wiring outside the harness: file, the call it must make, the screens that need it. */
 const WIRING = [
   { name: 'isParityMotionFrozen', file: 'packages/shell/src/app/use-reduce-motion.ts', pattern: /\bisParityMotionFrozen\s*\(/, screens: null, fix: 'useReduceMotion() returns true while TEST_ONLY?.isParityMotionFrozen() is true (the one frozen-motion switch); the saved setting stays as it is.' },
@@ -124,13 +147,19 @@ const WIRING = [
 
 /**
  * The modal roots of the Shell: a modal layer hides everything outside it from the accessibility
- * tree Maestro reads, so each draws the launch's nonce marker inside itself (the parity root draws
- * one for every other frame). The screen decides whether the file is due in a partial Shell.
+ * tree Maestro reads, so the ModalLayer every overlay is drawn in draws the launch's nonce marker
+ * inside its layer (the parity root draws one for every other frame). The Scrim and the Result
+ * overlay are modal too, but they are always drawn inside a ModalLayer's layer, and on Android the
+ * modal flag is ignored: a marker of their own was a second parity.launch.<nonce> element in the
+ * dump, so they draw none (one marker per layer). The screen decides whether the file is due in a
+ * partial Shell.
  */
 const MODAL_ROOTS = [
+  { file: 'packages/shell/src/app/modal-layer.tsx', screen: 'S3', what: 'the ModalLayer (the S3 consent cover, and the layer every overlay is drawn in)' },
+];
+const LAYERED_MODAL_ROOTS = [
   { file: 'packages/shell/src/ui/scrim.tsx', screen: 'S14', what: 'the Scrim (S6 Pause and the S14 dialogs)' },
   { file: 'packages/shell/src/screens/result/result-overlay.tsx', screen: 'S7', what: 'the Result overlay (S7)' },
-  { file: 'packages/shell/src/app/consent-moment.tsx', screen: 'S3', what: 'the consent cover (S3)' },
 ];
 
 /** The startup steps (parity-startup.tsx) the Shell calls; a harness nobody applies draws nothing. */
@@ -160,7 +189,8 @@ const SPEC = {
     'Checks the app repo for screen parity: the test-only parity harness (packages/shell/src/app/parity/) has one plan ' +
     'per design frame with the right root testID, reads the -parity launch argument, is reachable only through ' +
     'test-only-entry.ts and is called from the Shell (TEST_ONLY?.readParityRequest()), .parity/ is gitignored, and ' +
-    'parity/waivers.json and parity/signoff.json are well formed.',
+    'parity/waivers.json and parity/signoff.json are well formed. On Android the request is the launch intent\'s extra ' +
+    '"parity", read through the Shell\'s ParityLaunch module by the harness only (harness-android-launch).',
   usage: '[app-repo-root] [options]',
   options: {
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
@@ -474,6 +504,33 @@ run(async () => {
     }
   }
 
+  // 4a''. The Android launch path: every file of it, the module registered, and test-only (the
+  // module is asked for only inside app/parity/, which only the test-only entry reaches).
+  const androidFix = "Copy the skill's Android launch path: templates/packages/shell/src/app/parity/parity-launch-extra.ts and read-parity-request.ts, templates/packages/shell/src/app/parity-startup.android.test.tsx and templates/packages/shell/android/src/main/java/io/applander/shell/ParityLaunchModule.kt, and list the module in packages/shell/expo-module.config.json (android.modules).";
+  for (const part of ANDROID_LAUNCH) {
+    checked += 1;
+    const text = read(part.file);
+    if (text === null) problem(part.file, 0, 'harness-android-launch', `does not exist, so an Android parity launch (--es parity) opens no frame`, androidFix);
+    else if (!part.needs.every((re) => re.test(part.file.endsWith('.kt') ? text : maskComments(text)))) problem(part.file, 0, 'harness-android-launch', `does not ${part.says.replace(/^\w+/, (verb) => ({ asks: 'ask', reads: 'read', tests: 'test', defines: 'define' })[verb] ?? verb)}`, androidFix);
+  }
+  checked += 1;
+  const moduleConfigText = read(EXPO_MODULE_CONFIG);
+  let moduleConfig = null;
+  try {
+    moduleConfig = moduleConfigText === null ? null : JSON.parse(moduleConfigText);
+  } catch {
+    moduleConfig = null;
+  }
+  const androidModules = moduleConfig?.android?.modules ?? [];
+  if (!(moduleConfig?.platforms ?? []).includes('android') || !androidModules.includes(ANDROID_LAUNCH_MODULE)) {
+    problem(EXPO_MODULE_CONFIG, 0, 'harness-android-launch', `${moduleConfigText === null ? 'does not exist' : 'does not register'} the Android module ${ANDROID_LAUNCH_MODULE} (platforms has "android", android.modules lists it), so the app has no ParityLaunch module`, androidFix);
+  }
+  for (const rel of sources) {
+    if (isTest(rel) || rel.startsWith(`${PARITY_DIR}/`)) continue;
+    const clean = maskComments(readFileSync(join(root, rel), 'utf8'));
+    if (PARITY_LAUNCH_LOOKUP.test(clean)) problem(rel, 0, 'harness-android-launch', 'asks for the ParityLaunch native module outside app/parity/, so a store build could read a parity request', 'Read the launch extra only through app/parity/parity-launch-extra.ts (reached through TEST_ONLY?.readParityRequest()).');
+  }
+
   // 4a. Wiring outside the harness: the frozen-motion switch and the board probe.
   for (const w of WIRING) {
     const skip = w.screens ? (w.screens.some((id) => !skipFor(id)) ? null : skipFor(w.screens[0])) : sliceSkipReason(slice);
@@ -490,8 +547,9 @@ run(async () => {
     if (!found) problem(w.file ?? 'packages/shell/src', 0, 'harness-not-wired', `${w.file ? 'does not call' : 'nothing in the Shell calls'} TEST_ONLY?.${w.name}()`, w.fix);
   }
 
-  // 4a'. The launch nonce marker: the parity root draws it and provides its context, and every modal
-  // root draws one inside itself (a modal layer hides the rest from the hierarchy), so capture-app
+  // 4a'. The launch nonce marker: the parity root draws it and provides its context, and the ModalLayer
+  // draws one inside its layer (a modal layer hides the rest from the hierarchy), the Scrim and the
+  // Result overlay none of their own (one marker per layer), so capture-app
   // can prove each dump came from its own launch. The held S1 splash is registered by start-shell
   // outside the Shell root, so start-shell wraps it in the parity root too (withParityRoot).
   if (texts.startup !== null && !wired.has('withParityRoot')) {
@@ -519,6 +577,37 @@ run(async () => {
     checked += 1;
     if (!/<ParityLaunchMarker\b/.test(maskComments(text))) {
       problem(m.file, 0, 'harness-launch-marker', `${m.what} is a modal root (accessibilityViewIsModal) but draws no <ParityLaunchMarker />, so a capture behind it has no nonce in its hierarchy`, 'Render <ParityLaunchMarker /> (packages/shell/src/app/parity-launch-marker.tsx) as the first child of the modal View: it draws nothing outside a parity capture.');
+    }
+  }
+  for (const m of LAYERED_MODAL_ROOTS) {
+    const text = read(m.file);
+    const skip = skipFor(m.screen);
+    if (text === null || skip) {
+      if (skip) report.skip({ file: m.file, rule: 'harness-launch-marker-once', message: skip });
+      continue;
+    }
+    checked += 1;
+    if (/<ParityLaunchMarker\b/.test(maskComments(text))) {
+      problem(m.file, 0, 'harness-launch-marker-once', `${m.what} draws its own <ParityLaunchMarker />, but it is always drawn inside a ModalLayer whose layer draws one: Android ignores the modal flag, so the dump holds two parity.launch.<nonce> elements`, 'Remove the marker (and its import): copy the template again; the ModalLayer (app/modal-layer.tsx) draws the one marker per layer.');
+    }
+  }
+
+  // 4a''. The measured scroll: the parity root hands every ScreenBody renderParityScrollMarker, and
+  // the body draws it with the contentOffset its ScrollView reported, so check-parity measures a tall
+  // capture's scroll instead of inferring it from element shifts (a waived cascade moves those).
+  if (texts.root !== null) {
+    checked += 1;
+    const clean = maskComments(texts.root);
+    if (!/<ScreenScrollMarkerContext\s+value=\{renderParityScrollMarker\}/.test(clean)) {
+      problem(FILES.root, 0, 'harness-scroll-marker', 'does not provide ScreenScrollMarkerContext with renderParityScrollMarker, so no ScreenBody draws the offset it reached and check-parity can only infer a tall capture\'s scroll from element shifts', "Copy the template parity-root.tsx and parity-scroll-marker.tsx again (<ScreenScrollMarkerContext value={renderParityScrollMarker}> around the children).");
+    }
+  }
+  const body = read(SCREEN_BODY);
+  if (body !== null) {
+    checked += 1;
+    const clean = maskComments(body);
+    if (!/\buse\(\s*ScreenScrollMarkerContext\s*\)/.test(clean) || !/\bonScroll\b/.test(clean) || !/contentOffset\.y\b/.test(clean)) {
+      problem(SCREEN_BODY, 0, 'harness-scroll-marker', 'does not draw the scroll marker of ScreenScrollMarkerContext (use(ScreenScrollMarkerContext), onScroll, contentOffset.y), so a tall capture has no measured scroll', "Copy toybox-screens' template ui/screen-body.tsx (with its test): in a test build it listens to onScroll and draws the harness's marker next to the ScrollView.");
     }
   }
 

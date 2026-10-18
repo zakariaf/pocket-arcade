@@ -1,0 +1,17 @@
+{
+ "version": 1,
+ "frame": "s11c-privacy-policy",
+ "variant": null,
+ "referenceName": "s11c-privacy-policy",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 107,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "The same real S11c light-en y107 capture with the scroll marker taken out of the dump, as a capture made with an older harness: the scroll is inferred from the median element shift (83.7 pt), so it still fails scroll-mismatch even with the cascade's waivers. Old captures keep the inferred check.",
+ "app": "../pass-tall-measured-cascade/app.png"
+}

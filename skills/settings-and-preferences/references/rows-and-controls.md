@@ -103,7 +103,7 @@ All four languages (en, de, fa, ckb) exist for every key in the Shell catalogs; 
 
 - Reducer: one example per action + the volume property (`settings-reducer.test.ts`).
 - Store: persist-then-publish and clamping (`settings-store.test.ts`).
-- Rows: visibility rules (`settings-rows.test.ts`).
+- Rows: visibility rules (`settings-rows.test.ts`); on Android the Vibration row follows the real haptics adapter's `isSupported` through `useSettingsContext` (`settings-rows.android.test.ts`, the `unit-android` project).
 - Handlers: each row sends its one action (`settings-preference-actions.test.ts`).
 - Model hook: language value, digit previews, live update (`use-settings-model.test.tsx`).
 - Effects: audio (`connect-audio-settings.test.ts`), language and digits (`localized-root.test.tsx`), reduce motion (`use-reduce-motion.test.ts`), language restart plan (`language-change.test.ts`).

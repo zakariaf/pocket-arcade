@@ -11,6 +11,7 @@ import { useStore } from 'zustand';
 
 import { GameStartupSplash } from '@e07/shell/app/game-startup-splash.tsx';
 import { systemA11yStore } from '@e07/shell/app/system-a11y-store.ts';
+import { ThemedStatusBar } from '@e07/shell/app/themed-status-bar.tsx';
 import { isParityMotionFrozen } from '@e07/shell/app/use-reduce-motion.ts';
 import { DirectionProvider } from '@e07/shell/i18n/direction-context.tsx';
 import { I18nProvider } from '@e07/shell/i18n/i18n-provider.tsx';
@@ -79,6 +80,7 @@ export function createStartupSplash(input: StartupSplashInput): ComponentType {
               was written left to right: its full stop stood at the right end of the line). */}
           <DirectionProvider direction={direction}>
             <ThemeContext value={theme}>
+              <ThemedStatusBar />
               <GameStartupSplash
                 logo={game.presentation.art.logo}
                 nameId={game.identity.nameId}

@@ -1,0 +1,3 @@
+report: io.applander.demogame 1.0.0 (12) on android 34
+platform: android
+cold start: median 705 ms of 5 launches

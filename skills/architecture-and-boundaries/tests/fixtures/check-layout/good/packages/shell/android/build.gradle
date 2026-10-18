@@ -1,0 +1,2 @@
+// The Shell's local Expo module (cold start): its own Gradle file, the only one outside generated android/.
+apply plugin: 'com.android.library'

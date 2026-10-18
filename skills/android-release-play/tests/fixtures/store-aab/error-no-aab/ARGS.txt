@@ -1,0 +1,1 @@
+--aab no-such.aab --variant store --ads live --version 1.0.0 --build 10 --game line-siege --tags-list tags.txt .

@@ -1,5 +1,8 @@
 // packages/shell/src/app/read-version-text.test.ts
 // no-shell-context: reads expo-constants only (mocked with the pilot's test build values).
+import { Platform } from 'react-native';
+
+import { buildNumberOf } from './build-number.ts';
 import { readVersionText, versionTextOf } from './read-version-text.ts';
 
 let mockParityBuildNumber: string | null = null;
@@ -28,5 +31,18 @@ describe('readVersionText', () => {
 
   it('shows the version alone when the build number is unknown', () => {
     expect(versionTextOf('1.2.0', undefined)).toBe('1.2.0');
+  });
+
+  it("reads Android's versionCode where iOS reads its build number (spec S11b)", () => {
+    const config = { ios: { buildNumber: '8' }, android: { versionCode: 9 } };
+    expect(buildNumberOf(config, 'ios')).toBe('8');
+    expect(buildNumberOf(config, 'android')).toBe('9');
+    expect(buildNumberOf({ ios: { buildNumber: '8' } }, 'android')).toBeUndefined();
+    expect(buildNumberOf(null, 'ios')).toBeUndefined();
+  });
+
+  it('joins the marketing version and the versionCode on Android', () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+    expect(readVersionText()).toBe('1.0.0 (8)');
   });
 });

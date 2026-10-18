@@ -1,0 +1,6 @@
+{
+  ".claude/settings.json": "{\n  \"permissions\": {\n    \"deny\": [\n      \"Read(~/.appstoreconnect/**)\",\n      \"Read(**/*.p8)\",\n      \"Read(**/AuthKey_*)\",\n      \"Read(**/*.p12)\",\n      \"Read(**/*.mobileprovision)\"\n    ]\n  }\n}",
+  "skills/demo-skill/tests/fixtures/bad-key/AuthKey_PLANTED.p8": "not a real key (a skill fixture)",
+  "skills/demo-skill/tests/fixtures/bad-key/handover.md": true,
+  "apps/line-siege/ios/Pods/Demo/AuthKey_POD.p8": "generated native folder"
+}

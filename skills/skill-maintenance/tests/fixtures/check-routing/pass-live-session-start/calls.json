@@ -1,0 +1,5 @@
+[
+  { "name": "Bash", "input": { "command": "git status && git log --oneline -10 && git diff --stat" } },
+  { "name": "Skill", "input": { "skill": "pocket-arcade-index" } },
+  { "name": "Skill", "input": { "skill": "sound-maker" } }
+]

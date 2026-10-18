@@ -68,12 +68,18 @@ const SPEC = {
     '                         the face edges (position absolute, top, bottom, start and end 0, row)',
     '  confetti-ltr           the Confetti band lacks direction: \'ltr\': its pieces (placed with start: x) mirror in',
     '                         right-to-left languages, while the design scatters them from the left in every language',
-    '  tilt-raster            a printed part turns outside the one tilt primitive (toybox-styles.ts): a rotate or',
-    '                         shouldRasterizeIOS written by hand, an animated tilt() without TILTED_LAYER, or',
+    '  tilt-raster            a printed part turns outside the one tilt primitive (toybox-styles.ts): a rotate,',
+    '                         shouldRasterizeIOS or renderToHardwareTextureAndroid written by hand, a TILTED_LAYER',
+    '                         that lacks either flag (each platform reads only its own), an animated tilt() without TILTED_LAYER, or',
     '                         TILTED_LAYER without an animated tilt(); static parts spread tiltedLayer(deg, style),',
     '                         which owns the turn and the rasterized layer (an unrasterized turned View steps its',
     '                         edges and inner borders at device pixels, the S9 calendar\'s month band); result',
     '                         stars pop upright and Skia paths turn inside their canvas',
+    '  die-cut-texture        a part that draws the die-cut ring (dieCutRing, an outset box-shadow) turns through',
+    '                         tiltedLayer or spreads TILTED_LAYER, so Android renders it into a hardware texture the',
+    '                         size of its box and cuts the ring off there (white corner wedges, no ring: S2 on the',
+    '                         emulator); it turns through dieCutTiltedLayer or spreads DIE_CUT_TILTED_LAYER (iOS\'s',
+    '                         layer only), and DIE_CUT_TILTED_LAYER never holds renderToHardwareTextureAndroid',
     '',
     'Example: node check-components.mjs .   (from the app repo root)',
   ].join('\n'),
@@ -272,13 +278,59 @@ const TILT_RASTER_EXEMPT = new Set(['picture-path.tsx', 'result-stars.tsx']);
 const TILT_PRIMITIVE = 'toybox-styles.ts';
 const TILT_RASTER_FIX = "Turn the part through the one tilt primitive in './toybox-styles.ts': spread {...tiltedLayer(deg, style)} on the View that turns; a tilt that animates turns with tilt(deg) in its animated style and spreads {...TILTED_LAYER} (as the templates do).";
 
+/** Each platform reads only its own layer flag, so the primitive's TILTED_LAYER must hold both. */
+const TILT_LAYER_FLAGS = [
+  { flag: 'shouldRasterizeIOS', platform: 'iOS' },
+  { flag: 'renderToHardwareTextureAndroid', platform: 'Android' },
+];
+
+const DIE_CUT_FIX = "Turn a part whose style carries dieCutRing through dieCutTiltedLayer(deg, style) (an animated tilt spreads {...DIE_CUT_TILTED_LAYER}), as toybox-design-system's toybox-styles.ts template and the art tile, sticker, Premium art and level flag templates do.";
+
+/** The die-cut layer: iOS's flag only, because Android's texture cuts an outset ring off at the box. */
+function checkDieCutPrimitive(report, file, text) {
+  const layer = /\bexport\s+const\s+DIE_CUT_TILTED_LAYER\s*=\s*\{([^}]*)\}/.exec(text);
+  if (layer === null) return;
+  if (!/\bshouldRasterizeIOS\s*:\s*true\b/.test(layer[1])) {
+    report.problem({ file, line: lineOf(text, layer.index), rule: 'die-cut-texture', message: 'DIE_CUT_TILTED_LAYER lacks shouldRasterizeIOS: on iOS a die-cut part would turn without one rasterized layer', fix: 'DIE_CUT_TILTED_LAYER = { shouldRasterizeIOS: true } (toybox-design-system\'s toybox-styles.ts template).' });
+  }
+  if (/\brenderToHardwareTextureAndroid\b/.test(layer[1])) {
+    report.problem({ file, line: lineOf(text, layer.index), rule: 'die-cut-texture', message: "DIE_CUT_TILTED_LAYER holds renderToHardwareTextureAndroid: Android renders a die-cut part into a texture the size of its box and cuts its outset ring off there (white corner wedges, no ring)", fix: 'DIE_CUT_TILTED_LAYER = { shouldRasterizeIOS: true } (toybox-design-system\'s toybox-styles.ts template).' });
+  }
+}
+
+/** A part with the die-cut ring never turns through the layer that gives Android its texture. */
+function checkDieCutTexture(report, file, text) {
+  const ring = /\bdieCutRing\s*\(/.exec(text);
+  if (ring === null) return;
+  const textured = /\btiltedLayer\s*\(|\.\.\.TILTED_LAYER\b/.exec(text);
+  if (textured === null) return;
+  report.problem({ file, line: lineOf(text, textured.index), rule: 'die-cut-texture', message: "a part that draws the die-cut ring (dieCutRing) turns through the layer that gives Android its hardware texture, which is the size of the part's box and cuts the outset ring off there (white corner wedges, no ring along the edges)", fix: DIE_CUT_FIX });
+}
+
+/** The primitive itself (a stand-in without TILTED_LAYER is only checked for existence). */
+function checkTiltPrimitive(report, file, text) {
+  checkDieCutPrimitive(report, file, text);
+  const layer = /\bexport\s+const\s+TILTED_LAYER\s*=\s*\{([^}]*)\}/.exec(text);
+  if (layer === null) return;
+  for (const { flag, platform } of TILT_LAYER_FLAGS) {
+    if (new RegExp(`\\b${flag}\\s*:\\s*true\\b`).test(layer[1])) continue;
+    report.problem({ file, line: lineOf(text, layer.index), rule: 'tilt-raster', message: `TILTED_LAYER lacks ${flag}: on ${platform} every tilted printed part turns without one filtered layer, so its edges and inner borders step at device pixels`, fix: "Copy toybox-styles.ts from toybox-design-system's template: TILTED_LAYER = { shouldRasterizeIOS: true, renderToHardwareTextureAndroid: true }." });
+  }
+}
+
 /** A printed part that tilts is one rasterized layer, turned only through the tilt primitive (tiltedLayer, or tilt with TILTED_LAYER). */
 function checkTiltRaster(report, file, text, name) {
-  if (name === TILT_PRIMITIVE || TILT_RASTER_EXEMPT.has(name)) return;
+  if (name === TILT_PRIMITIVE) {
+    checkTiltPrimitive(report, file, text);
+    return;
+  }
+  if (TILT_RASTER_EXEMPT.has(name)) return;
+  checkDieCutTexture(report, file, text);
   scan(report, file, text, 'tilt-raster', /\bshouldRasterizeIOS\b/g, { message: () => 'a layer rasterized by hand instead of through the one tilt primitive', fix: TILT_RASTER_FIX });
+  scan(report, file, text, 'tilt-raster', /\brenderToHardwareTextureAndroid\b/g, { message: () => "Android's hardware layer (renderToHardwareTextureAndroid) written by hand instead of through the one tilt primitive", fix: TILT_RASTER_FIX });
   scan(report, file, text, 'tilt-raster', /\brotate\s*:/g, { message: () => "a turn written by hand is not one rasterized layer through the tilt primitive, so iOS steps its turned edges and inner borders at device pixels (the S9 calendar's month band)", fix: TILT_RASTER_FIX });
   const animated = /\btilt\s*\(/.exec(text);
-  const raster = /\.\.\.TILTED_LAYER\b/.exec(text);
+  const raster = /\.\.\.(?:DIE_CUT_)?TILTED_LAYER\b/.exec(text);
   if (animated && !raster) {
     report.problem({ file, line: lineOf(text, animated.index), rule: 'tilt-raster', message: 'an animated tilt is not one rasterized layer: tilt() turns a View that does not spread TILTED_LAYER', fix: TILT_RASTER_FIX });
   }

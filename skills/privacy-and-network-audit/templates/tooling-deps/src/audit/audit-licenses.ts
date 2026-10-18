@@ -1,13 +1,19 @@
 // packages/tooling/src/audit/audit-licenses.ts
 // `npm run audit:licenses`: every npm package that ends up in a release JS bundle must carry an
-// allowed licence. Input: the source maps written by `npm run audit:network` (expo export).
+// allowed licence. Input: the source maps written by `npm run audit:network` (expo export), the iOS
+// export of every app and the Android export of every ported app.
 import { existsSync, globSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { licenseProblems, packageRootOf, type LicenseException } from './license-policy.ts';
+import {
+  LICENSE_MAP_GLOBS,
+  licenseMapFiles,
+  licenseProblems,
+  packageRootOf,
+  type LicenseException,
+} from './license-policy.ts';
 
 const EXCEPTIONS_FILE = 'packages/tooling/license-exceptions.json';
-const DEFAULT_MAPS = 'dist-audit/*/_expo/static/js/ios/*.map';
 
 type SourceMap = { readonly sources: readonly string[] };
 type PackageJson = { readonly name?: string; readonly license?: unknown };
@@ -35,10 +41,10 @@ function shippedLicenses(mapFiles: readonly string[]): ReadonlyMap<string, strin
 }
 
 function main(argv: readonly string[]): number {
-  const mapFiles = argv.length > 0 ? argv : globSync(DEFAULT_MAPS);
+  const mapFiles = licenseMapFiles(argv, (pattern) => globSync(pattern));
   if (mapFiles.length === 0) {
     console.error(
-      `audit:licenses: no source maps at ${DEFAULT_MAPS}; run npm run audit:network first`,
+      `audit:licenses: no source maps at ${LICENSE_MAP_GLOBS.join(' or ')}; run npm run audit:network first`,
     );
     return 1;
   }

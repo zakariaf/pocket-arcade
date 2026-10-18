@@ -1,0 +1,8 @@
+[
+  {
+    "write": {
+      "file": "apps/demo-game/upload-key.jks",
+      "content": "not a real key\n"
+    }
+  }
+]

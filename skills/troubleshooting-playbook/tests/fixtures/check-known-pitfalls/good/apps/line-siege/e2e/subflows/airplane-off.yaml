@@ -1,0 +1,4 @@
+appId: io.applander.linesiege
+---
+# Run only from an Android-guarded runFlow.
+- setAirplaneMode: disabled

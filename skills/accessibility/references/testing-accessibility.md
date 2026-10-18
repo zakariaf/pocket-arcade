@@ -1,13 +1,15 @@
 # Testing accessibility
 
-Automated checks catch missing roles, names, sizes and contrast; screenshots catch clipping at 200 %; only a person with VoiceOver can judge whether the spoken output makes sense. All three are required.
+Automated checks catch missing roles, names, sizes and contrast; screenshots catch clipping at 200 %; only a person with VoiceOver (and, for the Android build, TalkBack) can judge whether the spoken output makes sense. All three are required on each platform the game ships on.
 
 ## Contents
 
 - Component and screen tests (RNTL)
 - The tests to keep
 - Large text on the simulator (Maestro)
+- Large text on the Android emulator
 - The owner's VoiceOver checklist
+- The owner's TalkBack spot check (R2 on Android)
 - Turning a report into a test
 
 ## Component and screen tests (RNTL)
@@ -57,7 +59,10 @@ xcrun simctl ui "$UDID" content_size large
 - Maestro 2.10.0 was verified on this simulator at `accessibility-extra-extra-extra-large`: `launchApp`, `assertVisible` and `tapOn` by `id`, and `takeScreenshot`.
 - Read each screenshot (the Read tool) for clipped or overlapping text, truncated labels, and rows that should have stacked. The screenshot matrix also runs at this size (`npm run screenshots:ios -- --app <game> --text-size accessibility-extra-extra-extra-large`).
 
-## The owner's VoiceOver checklist
+## Large text on the Android emulator
+
+The same `a11y` flows run on the Android AVDs (`e07-android-<purpose>`) at font scale 2.0, in en and fa. `npm run e2e:android -- --app <game>` does it in its large-text step (the e2e-maestro Android runner: `adb -s <serial> shell settings put system font_scale 2.0` before the flows, `1.0` after; every adb and Maestro call names the AVD's serial), and writes the screenshots to `reports/e2e-android/<game>/large-text/<phone|tablet>-<en|fa>/`. The flow file is the same one (`packages/shell/e2e/flows/a11y/`): its steps use testIDs only, which work on both platforms. Read each screenshot as on iOS, and compare with the Toybox design and the iOS run: the text should wrap and stack the same way, since dp and pt carry the same numbers.
+
 
 A human step: the owner runs it once per release candidate, on a TestFlight build, in **English and Persian** (about 15 minutes). Tell the owner when a build is ready for it; do not claim it passed without the owner's report.
 
@@ -73,6 +78,22 @@ Setup, once: Settings → Accessibility → Accessibility Shortcut → VoiceOver
 8. **Premium:** the price is read in the local currency, and "busy" is announced while a purchase is in progress.
 9. **Result screen:** the result and the stars are read before the Next button.
 
+## The owner's TalkBack spot check (R2 on Android)
+
+The same human step as the VoiceOver checklist (R2), on the Android release candidate from the Play internal track, in **English and Persian**, about 15 minutes. List it under "Owner steps (not blocking)" in every Android slice and release report; never claim it passed without the owner's report.
+
+Setup, once: Settings > Accessibility > TalkBack > TalkBack shortcut (both volume keys held for 3 seconds switch it on and off). Gestures: swipe right = next, swipe left = previous, double-tap = activate, swipe down then left (or the system back) = back, double-tap and hold = long press.
+
+1. **Launch.** The first thing read is the screen's title. No element is read as just "button".
+2. **Language screen (first launch):** each language is listed by name (TalkBack may read an autonym with the phone's voice; note what is heard).
+3. **Home:** swiping visits elements in visual order (in Persian from the top right). The Play button reads its label and "button".
+4. **Levels:** a tile reads its number and stars; a locked tile says it is locked.
+5. **Game:** the board reads its summary; after a move a short announcement is heard. TalkBack's back gesture opens Pause instead of leaving the game.
+6. **Pause, Result and dialogs:** while open, swiping never reaches the board or the screen behind them (the Android focus trap).
+7. **Settings:** switches say on or off; volume changes with the volume keys while the slider has focus; "Reset all progress" can be confirmed without holding.
+8. **Premium:** the price is read from Google Play in the local currency; "busy" is announced during a purchase.
+9. **Result screen:** the result and the stars are read before the Next button.
+
 ## Turning a report into a test
 
-The owner reports each problem as: screen, language, what was expected, what was heard. Turn each into a failing RNTL or Maestro test first (red), then fix it (green); report back with the test name as evidence.
+The owner reports each problem as: screen, language, platform (VoiceOver or TalkBack), what was expected, what was heard. Turn each into a failing RNTL or Maestro test first (red), then fix it (green); report back with the test name as evidence.

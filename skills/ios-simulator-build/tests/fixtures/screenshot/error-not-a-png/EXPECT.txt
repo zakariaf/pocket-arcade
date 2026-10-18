@@ -1,0 +1,3 @@
+ERROR [bad-input]
+is not a PNG file
+Pass the PNG that xcrun simctl io <udid> screenshot wrote.

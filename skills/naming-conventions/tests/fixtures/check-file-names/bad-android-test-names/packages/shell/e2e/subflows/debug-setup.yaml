@@ -1,0 +1,4 @@
+# packages/shell/e2e/subflows/debug-setup.yaml
+appId: ${APP_ID}
+---
+- openLink: '${APP_SCHEME}://debug/setup?${QUERY}'

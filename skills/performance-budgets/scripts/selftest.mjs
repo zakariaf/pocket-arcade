@@ -13,4 +13,8 @@ await runSelftest(import.meta.url, [
   // The simulator regression run: a committed baseline of 600 ms, 6 launches, the first dropped.
   { script: 'check-perf-report.mjs', fixtures: '../tests/fixtures/check-perf-report-sim', args: (dir) => [join(dir, 'report.json'), '--root', dir, '--sim-baseline', '600'] },
   { script: 'check-bundle-size.mjs', fixtures: '../tests/fixtures/check-bundle-size', args: (dir) => [join(dir, 'dist'), '--root', dir, '--baseline', join(dir, 'baseline.json')] },
+  // The emulator regression run (Android): a committed baseline of 900 ms, 6 launches, the first dropped.
+  { script: 'check-perf-report.mjs', fixtures: '../tests/fixtures/check-perf-report-emu', args: (dir) => [join(dir, 'report.json'), '--root', dir, '--emu-baseline', '900'] },
+  // An Android export (npx expo export --platform android --no-bytecode).
+  { script: 'check-bundle-size.mjs', fixtures: '../tests/fixtures/check-bundle-size-android', args: (dir) => [join(dir, 'dist'), '--root', dir, '--baseline', join(dir, 'baseline.json'), '--platform', 'android'] },
 ]);

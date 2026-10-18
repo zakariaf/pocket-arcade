@@ -35,7 +35,7 @@ Every touch on a Pocket Arcade board goes through one Shell hook, `useBoardGestu
 6. **Run the tests:** `npx jest packages/shell/src/game-host packages/game-kit/src/geom apps/<game-id>/src/rules apps/<game-id>/src/board --ci --selectProjects unit --coverage --collectCoverageFrom='apps/<game-id>/src/rules/**/*.ts' --coverageThreshold='{}'` (paths first: `--selectProjects` takes several values and would swallow them; only `npm run test:coverage` judges the thresholds). Gesture tests follow [references/testing-gestures.md](references/testing-gestures.md) (`fireGestureHandler`, `act()`, the mock traps).
 7. **Lint, format and type-check:** `npx eslint --fix` and `npx prettier --write` on the new files (import order and wrapping depend on the game id), then `npx tsc -p apps/<game-id> --noEmit`.
 8. **Run the check** `node ${CLAUDE_SKILL_DIR}/scripts/check-board-input.mjs .` (or `node ${CLAUDE_SKILL_DIR}/scripts/check-board-input.mjs . --game <game-id>`), fix every `FAIL` line (each names the file, the rule and the fix) and rerun until it prints `RESULT: PASS`. `SKIP` lines count as a pass.
-9. **Touch it for real.** On a Release simulator build, tap, drag and swipe the board, including cells on the outer edge, check the ghost and hover preview follow the finger and the block lands on the ghost's cell, and try tap-then-tap. When upgrading Expo, follow [references/rngh-v3-migration.md](references/rngh-v3-migration.md).
+9. **Touch it for real.** On a Release simulator build, tap, drag and swipe the board, including cells on the outer edge, check the ghost and hover preview follow the finger and the block lands on the ghost's cell, and try tap-then-tap. On Android (Android step 6, the emulator build) do the same, and also swipe in from each screen edge: that is the system back, which opens Pause and moves no piece ("Android: the system back and edge swipes" in the input-pipeline reference; never exclude system gestures). When upgrading Expo, follow [references/rngh-v3-migration.md](references/rngh-v3-migration.md).
 
 ## Definition of done
 
@@ -65,7 +65,7 @@ Every touch on a Pocket Arcade board goes through one Shell hook, `useBoardGestu
 
 | File | What it is | Read/run when |
 |---|---|---|
-| [references/input-pipeline.md](references/input-pipeline.md) | Pipeline, InputIntent, hitTest, composition and thresholds, pan modes per game, pointer/hover, RTL, 44 pt, a11y and E2E taps | Workflow step 1, before any input work |
+| [references/input-pipeline.md](references/input-pipeline.md) | Pipeline, InputIntent, hitTest, composition and thresholds, pan modes per game, pointer/hover, RTL, 44 pt, the Android edge-swipe back, a11y and E2E taps | Workflow step 1, before any input work |
 | [references/intent-to-move.md](references/intent-to-move.md) | Rules and patterns for `intentToMove` (place, slide, aim, select-then-target, flag) and its tests | Step 3 |
 | [references/testing-gestures.md](references/testing-gestures.md) | Jest set-up, what each test proves, driving gestures, mock traps | Step 6, and when a gesture test misbehaves |
 | [references/stick-input.md](references/stick-input.md) | Integer stick commands for real-time games and their tests | Step 1 for real-time games |

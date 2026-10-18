@@ -18,7 +18,7 @@ const SPEC = {
     text: { type: 'string', multiple: true, help: 'Error text or a description of what you see (regex and keyword match)' },
     log: { type: 'string', multiple: true, help: 'A log file; only the error patterns are matched (no keywords)' },
     id: { type: 'string', multiple: true, help: 'Print this catalogue entry' },
-    area: { type: 'string', help: 'Limit to one area (build, release, deps, lint, testing, engine, i18n, services, state, parity, gates, perf, skills, open)' },
+    area: { type: 'string', help: 'Limit to one area (build, release, deps, lint, testing, engine, i18n, services, state, parity, gates, perf, skills, open, android)' },
     limit: { type: 'string', default: '5', help: 'Most entries to print per query' },
     catalogue: { type: 'string', help: 'Catalogue JSON (default: this skill\'s assets/known-failures.json)' },
     json: { type: 'boolean', help: 'Also print the problems as JSON' },

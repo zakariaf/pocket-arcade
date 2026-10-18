@@ -36,7 +36,7 @@ const SPEC = {
     '                    createFakeX, x-port.ts -> type XPort, stores/x-store.ts -> useXStore, x-reducer.ts -> xReducer,',
     '                    plugins/with-x.ts -> withX)',
     '  port-file         a type ending in Port is declared outside its <port>-port.ts file',
-    '  test-file         .spec files, __tests__ folders, or a test suffix other than .test/.golden.test/.sim.test/.perf.test',
+    '  test-file         .spec files, __tests__ folders, or a test suffix other than .test/.android.test/.golden.test/.sim.test/.perf.test',
     '  fake-file         a mock or fake of our own named *.mock.ts, mock-*.ts or *-mock.ts (use fake-<port>.ts)',
     '  flow-file         an e2e flow not named e2e/flows/<area>/<nn>-<name>.yaml, a game flow numbered below 10,',
     '                    or a sub-flow in e2e/subflows/ that is not a kebab-case name',
@@ -97,7 +97,7 @@ function checkFilePatterns(rel, report) {
     report.problem({ file: rel, rule: 'test-file', message: 'spec file or __tests__ folder', fix: 'Colocate the test as <unit>.test.ts(x) next to the unit.' });
   } else if (isTs && name.includes('.test.')) {
     const suffix = name.slice(base.length + 1).replace(/\.tsx?$/, '');
-    if (!RULES.testSuffixes.includes(suffix)) report.problem({ file: rel, rule: 'test-file', message: `test suffix ".${suffix}"`, fix: 'Use <unit>.test.ts(x), <unit>.golden.test.ts, <unit>.sim.test.ts or <unit>.perf.test.ts.' });
+    if (!RULES.testSuffixes.includes(suffix)) report.problem({ file: rel, rule: 'test-file', message: `test suffix ".${suffix}"`, fix: 'Use <unit>.test.ts(x), <unit>.android.test.ts(x) (Android-only, the unit-android project), <unit>.golden.test.ts, <unit>.sim.test.ts or <unit>.perf.test.ts.' });
   }
   if (isTs && !inMocks && (/\.mock\.tsx?$/.test(name) || /^mock-/.test(base) || /-mock$/.test(base))) {
     report.problem({ file: rel, rule: 'fake-file', message: `"${name}" is a mock of our own code`, fix: 'Write an in-memory fake-<port>.ts exporting createFake<Port>(); root __mocks__/ is only for vendor SDKs.' });

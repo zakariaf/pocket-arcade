@@ -19,7 +19,7 @@ import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
 import { RatingStar } from './rating-star.tsx';
-import { dieCutRing, tilt, TILTED_LAYER } from './toybox-styles.ts';
+import { DIE_CUT_TILTED_LAYER, dieCutRing, tilt } from './toybox-styles.ts';
 
 import type { IconName } from './icons/icon-paths.ts';
 import type { Direction } from '@e07/shell/i18n/languages.ts';
@@ -156,7 +156,7 @@ export function Sticker(props: StickerProps): ReactNode {
   return (
     <Animated.View
       testID={props.testID}
-      {...TILTED_LAYER}
+      {...DIE_CUT_TILTED_LAYER}
       accessible
       accessibilityRole="text"
       accessibilityLabel={props.text}

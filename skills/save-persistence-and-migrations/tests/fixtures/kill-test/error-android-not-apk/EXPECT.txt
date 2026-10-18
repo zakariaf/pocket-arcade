@@ -1,0 +1,1 @@
+--app must be an .apk

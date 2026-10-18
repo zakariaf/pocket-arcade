@@ -1,0 +1,16 @@
+{
+ "version": 1,
+ "frame": "s11-settings",
+ "variant": "no-music",
+ "referenceName": "s11-settings--no-music",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 1068,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "note": "The pass-tall-clipped-sliver capture with the Privacy tab's reported bottom edge moved 3 pt down (9 px in app.hier.json): a box cut by a sliver at the top is still judged by its visible edge, so a moved edge fails bounds."
+}

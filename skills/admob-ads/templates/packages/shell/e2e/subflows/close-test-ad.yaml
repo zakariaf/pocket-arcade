@@ -1,25 +1,43 @@
 # packages/shell/e2e/subflows/close-test-ad.yaml — closes Google's full-screen test ad (admob-ads'
-# hand-run ads smoke flows, ADS_MODE=test builds only). POINT is the close key's point, top right
-# ('94%,9%' for the interstitial, '95%,9%' for the rewarded ad): Google's UI has no testID.
+# hand-run ads smoke flows, ADS_MODE=test builds only). Google's UI has no testID.
+# iOS: POINT is the close key's point, top right ('94%,9%' for the interstitial, '95%,9%' for the
+# rewarded ad); the ad's label reads "Test mode".
+# Android: the close key is a view whose text is "Close" (the ad's label reads "Test Ad", top
+# centre; the key sits at about 94%,3% on a 1080 x 2400 emulator, so the iOS point misses it). Seen
+# on the first Android ads smoke run, E18-T24, API 35.
 appId: ${APP_ID}
 ---
 - waitForAnimationToEnd
-# system-ui: the test ad's close key, top right (Google's UI, no testID).
-- tapOn:
-    point: '${POINT}'
-# system-ui: a tap before the close key is ready leaves the ad on screen: wait, tap again.
 - runFlow:
     when:
-      visible: 'Test mode'
+      platform: iOS
     commands:
-      - waitForAnimationToEnd
+      # system-ui: the test ad's close key, top right (Google's UI, no testID).
       - tapOn:
           point: '${POINT}'
-# system-ui: the test ad's "Test mode" label, once more (Google's UI, not app text).
+      # system-ui: a tap before the close key is ready leaves the ad on screen: wait, tap again.
+      - runFlow:
+          when:
+            visible: 'Test mode'
+          commands:
+            - waitForAnimationToEnd
+            - tapOn:
+                point: '${POINT}'
+      # system-ui: the test ad's "Test mode" label, once more (Google's UI, not app text).
+      - runFlow:
+          when:
+            visible: 'Test mode'
+          commands:
+            - waitForAnimationToEnd
+            - tapOn:
+                point: '${POINT}'
 - runFlow:
     when:
-      visible: 'Test mode'
+      platform: Android
     commands:
-      - waitForAnimationToEnd
-      - tapOn:
-          point: '${POINT}'
+      # system-ui: the Android test ad's close key ("Close", Google's UI, not app text).
+      - extendedWaitUntil:
+          visible: 'Close'
+          timeout: 30000
+      # system-ui: the Android test ad's close key.
+      - tapOn: 'Close'

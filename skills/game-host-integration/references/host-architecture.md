@@ -93,7 +93,7 @@ This skill's files, each with a test unless marked device-only:
 | `game-host/fullscreen-gate.ts`, `use-is-fullscreen-ad-showing.ts` | The ads layer's `GameLifecycle`: suspends the board while a full-screen ad shows |
 | `game-host/use-game-session-controls.ts` | The Game and Tutorial screens' hook: opens the run, follows its view, sends commands, starts the next run; in a parity capture it opens the game frame's state once (D31) |
 | `game-host/use-pause-on-background.ts` | Pauses a playing run when the app leaves the foreground or the screen loses focus |
-| `game-host/live-run-exit.ts` | `createLiveRunExit`, `LiveRunExitContext` and `useLiveRunExit`: the Game screen offers its Pause -> Home leave while its run is live to the exit the context holds (a test build's, which `createDebugParts` makes and `ShellNavigator` provides; null in a store build, which keeps no registry); a test build's debug link (e2e-maestro's `resetToFirstRoute`) leaves through it before it resets the stack |
+| `game-host/live-run-exit.ts`, `game-host/use-live-run-exit.ts` | `createLiveRunExit` and `LiveRunExitContext`, and in its own hook file `useLiveRunExit` (react-components-and-hooks: one hook per `use-<name>` file): the Game screen offers its Pause -> Home leave while its run is live to the exit the context holds (a test build's, which `createDebugParts` makes and `ShellNavigator` provides; null in a store build, which keeps no registry); a test build's debug link (e2e-maestro's `resetToFirstRoute`) leaves through it before it resets the stack |
 | `app/create-shell-app.tsx` | `createShellApp(input)`: the device adapters once, the parts once, the root component |
 | `app/create-shell-parts.ts` | `createShellParts(input, adapters)`: the boot order (below), testable with in-memory adapters; `ShellAdapters`, `ShellLaunch`; `recordAdLevelEnd` (the ads layer's part of the run-end update) |
 | `app/debug-switches.ts` | `debugSwitchesOf(parts)`: the host's test-build switches read through the debug parts (`isLayoutProbeOn`, also on in a parity `probe=board` launch; `seedOverride`; `openGame`, a Game route pushed on the first route alone); `debugFeedbackOf(parts, ports)`: the host's feedback ports, the debug parts' recorders once they exist (test builds), else the real ports |
@@ -104,7 +104,7 @@ This skill's files, each with a test unless marked device-only:
 | `app/leave-run-after-crash.ts` | The crash screen's Back to Home: the saved run stays, `resumeOnLaunch: false`, so a relaunch lands on Home |
 | `app/shell-features.tsx` | `ShellFeatures`: `GameHostProvider`, `PremiumScreenDepsProvider`, `PressFeedbackProvider` (the tap sound) and admob-ads' `ConsentMoment` (S3 over the app) around the navigator |
 | `app/shell-navigator.tsx` | `ShellNavigator`: `DebugServicesProvider`, `DialogProvider` (with `LoadOutcomeOpener`) and the themed `NavigationRoot` (split out for `jsx-max-depth` and `no-multi-comp`) |
-| `app/load-outcome-opener.tsx` | `LoadOutcomeOpener`: the S14 dialog the save's load outcome asks for, opened once over the first screen: "Progress restored" after `restored-from-backup`, "please update" (Update opens `storePageUrl(appStoreId)`) after `newer-version`, which plays read-only and so asks at every launch; nothing after `fresh`, `loaded`, `migrated` or `reset-after-damage`. `ShellApp` passes `hydrated.outcome`, or `null` after the crash screen's Back to Home |
+| `app/load-outcome-opener.tsx` | `LoadOutcomeOpener`: the S14 dialog the save's load outcome asks for, opened once over the first screen: "Progress restored" after `restored-from-backup`, "please update" (Update opens `storeUpdateUrlsOf(readStoreIds(appStoreId))`: the App Store page on iOS, Google Play's page of the game on Android, the Play Store app first and the web page after) after `newer-version`, which plays read-only and so asks at every launch; nothing after `fresh`, `loaded`, `migrated` or `reset-after-damage`. `ShellApp` passes `hydrated.outcome`, or `null` after the crash screen's Back to Home |
 | `screens/first-run/` | The Tutorial route: `tutorial-screen.tsx`, `tutorial-view.tsx`, `use-tutorial-model.ts`, `tutorial-coach.ts` |
 | `testing/tally-game.ts`, `testing/create-test-adapters.ts` | The tiny complete game the tests run against; the in-memory `ShellAdapters` |
 | `test/integration/game-host/<game-id>-debug-controls.test.ts` | Per game (template `__GAME_ID__`): `playTo` and `openExample` on the real module (its own win, lose, start and middle examples) |
@@ -271,7 +271,7 @@ Boot order (all synchronous, under the native splash), as `createShellParts` run
 
 | `ShellLaunch` member | When the root calls it | The parity harness's function |
 |---|---|---|
-| `prepareSave(save, simulatedClock)` | right after `hydrateSave`, before the host and the stores | `applyParityData({ parity, game, save, simulatedClock })` |
+| `prepareSave(save, simulatedClock, saveDriver)` | right after `hydrateSave`, before the host and the stores; `saveDriver` is `adapters.saveDriver`, the one save.db connection | `applyParityData({ parity, game, save, simulatedClock, saveDriver })`, which also empties the `error_log` table (`clearErrorLog`) |
 | `purchasePort(productId)` | building the Premium dependencies (the port is gated like the device's) | `parityStorePort(parity, productId)` |
 | `adsPort()` | building the services | `parityAdsPort(parity)` |
 | `initialState()` | instead of `resumeState(save.doc())` | `initialStateFor(parity, undefined)` (the frame's route) |
@@ -301,7 +301,7 @@ Where each import of the root comes from. Every `@e07/` file that a template in 
 | 7 | architecture-and-boundaries | `app/read-game-extra.ts`, `app/services-context.tsx` |
 | 7 | board-rendering-skia | `game-host/game-board-host.tsx` |
 | 7 | e2e-maestro | `app/create-debug-parts.ts`, `app/debug-link-routes.ts`, `app/debug-services-context.tsx`, `screens/debug/debug-services.ts`, `screens/debug/fake-debug-store.ts`, `screens/debug/simulated-clock.ts`, `screens/debug/simulated-connectivity.ts` |
-| 7 | game-host-integration | `app/connect-premium-reloads.ts`, `app/create-premium-deps.ts`, `app/create-shell-parts.ts`, `app/debug-switches.ts`, `app/device-adapters.ts`, `app/leave-run-after-crash.ts`, `app/load-outcome-opener.tsx`, `app/shell-app.tsx`, `app/shell-features.tsx`, `app/shell-navigator.tsx`, `game-host/create-example-picture.tsx`, `game-host/create-game-board-host.tsx`, `game-host/game-host-context.tsx`, `game-host/game-host.ts`, `game-host/live-run-exit.ts`, `game-host/open-session.ts`, `game-host/run-summary.ts`, `game-host/shell-game-module.ts`, `game-host/use-is-fullscreen-ad-showing.ts`, `testing/create-test-adapters.ts`, `testing/tally-game.ts` |
+| 7 | game-host-integration | `app/connect-premium-reloads.ts`, `app/create-premium-deps.ts`, `app/create-shell-parts.ts`, `app/debug-switches.ts`, `app/device-adapters.ts`, `app/leave-run-after-crash.ts`, `app/load-outcome-opener.tsx`, `app/shell-app.tsx`, `app/shell-features.tsx`, `app/shell-navigator.tsx`, `game-host/create-example-picture.tsx`, `game-host/create-game-board-host.tsx`, `game-host/game-host-context.tsx`, `game-host/game-host.ts`, `game-host/live-run-exit.ts`, `game-host/use-live-run-exit.ts`, `game-host/open-session.ts`, `game-host/run-summary.ts`, `game-host/shell-game-module.ts`, `game-host/use-is-fullscreen-ad-showing.ts`, `testing/create-test-adapters.ts`, `testing/tally-game.ts` |
 | 7 | i18n-strings-and-catalogs | `i18n/t-context.ts` |
 | 7 | navigation-and-routing | `navigation/navigation-root.tsx`, `navigation/navigation-theme.ts` |
 | 7 | performance-budgets | `app/perf/frame-histogram.ts`, `app/perf/perf-log.ts`, `app/perf/use-frame-recorder.ts` |
@@ -311,7 +311,7 @@ Where each import of the root comes from. Every `@e07/` file that a template in 
 | 7 | settings-and-preferences | `app/connect-audio-settings.ts`, `app/create-shell-haptics.ts`, `app/localized-root.tsx`, `config/external-links.ts` |
 | 7 | toybox-components | `ui/button.tsx` |
 | 7 | toybox-design-system | `app/press-feedback-context.tsx`, `theme/theme-set.ts`, `theme/use-theme.ts`, `ui/app-text.tsx` |
-| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `app/use-open-external.ts`, `screens/dialogs/dialog-request.ts` |
+| 7 | toybox-screens | `app/crash-screen.tsx`, `app/dialog-context.tsx`, `app/premium-screen-deps-context.tsx`, `app/read-store-ids.ts`, `app/use-open-external.ts`, `screens/dialogs/dialog-request.ts` |
 | 7 | unit-and-component-tests | `testing/render-with-shell.tsx` |
 
 In a partial Shell (`shell-slice.json`) the root is the same, and so is the **Shell core** it imports, whatever the slice: screens outside the slice have no route or view files, but these files are always there, because the composition root and startup import them (D36):

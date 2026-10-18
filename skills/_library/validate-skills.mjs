@@ -73,7 +73,7 @@ export const RULES = {
   'ref-toc': `references longer than ${TOC_THRESHOLD} lines start with a table of contents`,
   'no-project-ref': 'no project knowledge paths (docs/, design/, idea-hunt, spec.txt, SPEC.md, 99-final-decisions, /Users/, scratchpad, ../, other skill folders, CLAUDE_PROJECT_DIR)',
   'no-shouting': 'no ALL-CAPS shouting (MUST, NEVER, ALWAYS, IMPORTANT, ...) outside code',
-  'device-explicit': 'every documented or scripted maestro, simctl and xcodebuild call names its simulator: maestro --device <udid> before the command, a simctl UDID (never booted or all), xcodebuild -destination id=<udid>',
+  'device-explicit': 'every documented or scripted maestro, simctl, xcodebuild, adb and emulator call names its device: maestro --device <udid> before the command, a simctl UDID (never booted or all), xcodebuild -destination id=<udid>, adb -s <serial> before a device command (never adb kill-server), emulator -avd e07-android-<purpose>',
   layout: 'only SKILL.md, references/, templates/, examples/, scripts/, tests/, assets/; no symlinks or empty folders',
   'script-lib': 'scripts are Node .mjs entry points that import ./check-lib.mjs (selftest.mjs uses runSelftest)',
   'script-deps': 'scripts import only node: built-ins, relative files, or packages pinned in scripts/package.json (loaded with await import())',
@@ -326,8 +326,126 @@ function callFormHits(line) {
   return hits;
 }
 
+// Android follows the same rule. Every session's emulators hang off one adb server on this Mac, so
+// an adb command that reaches a device names it with -s <serial> before the command (-d and -e pick
+// "the only USB device" or "the only emulator", which is someone else's when two run), adb
+// kill-server is never run (it cuts every session's emulators off, with or without -s), and an
+// emulator start names this project's own AVD: -avd e07-android-<purpose> or @e07-android-<purpose>
+// (a variable is accepted, as a UDID variable is for simctl). Commands that run on the host or the
+// adb server name no device and pass without -s: devices, version, help, start-server, keygen, mdns,
+// connect, pair and disconnect; so do emulator -list-avds, -version, -help and -accel-check.
+const ADB_DEVICE_COMMANDS = new Set([
+  'shell', 'exec-out', 'install', 'install-multiple', 'install-multi-package', 'uninstall', 'push', 'pull', 'sync', 'logcat', 'bugreport',
+  'root', 'unroot', 'reboot', 'remount', 'emu', 'forward', 'reverse', 'get-state', 'get-serialno', 'get-devpath', 'sideload', 'tcpip',
+  'usb', 'jdwp', 'track-jdwp', 'disable-verity', 'enable-verity', 'backup', 'restore', 'reconnect', 'ppp', 'attach', 'detach',
+]);
+const isAdbDeviceCommand = (sub) => ADB_DEVICE_COMMANDS.has(sub) || /^wait-for-[a-z-]+$/.test(sub);
+// Global options before the command; these take a value.
+const ADB_VALUE_OPTIONS = new Set(['-s', '-t', '-H', '-P', '-L']);
+// Commands whose first operand is a word (adb shell getprop, adb emu kill), so a mention is told apart only by its arguments.
+const ADB_WORD_OPERAND = new Set(['shell', 'exec-out', 'emu']);
+const ADB_ARG_LIKE = /^(?:-|<|\$|"|'|\.{0,2}\/|[\w.@-]*\/|[\w-]+\.[\w.-]+|\w+:)/;
+const SHELL_SEPARATOR = /^(?:\||\|\||&&|;|>|>>|2>|2>&1)$/;
+const ADB_KILL_SERVER = { what: '"adb kill-server" stops the adb server every session\'s emulators use', fix: 'Never run adb kill-server (with or without -s): it disconnects every emulator on this Mac. For an offline device, keep polling it by serial (adb -s <serial> get-state), or shut down your own emulator with adb -s <serial> emu kill and start it again.' };
+const ADB_SERIAL_FIX = 'Write adb -s <serial> <command> ... (the serial comes before the command; in code build the arguments with adbArgs(serial, [...]) or pass \'-s\', serial first), so the call can only reach this session\'s emulator.';
+const EMULATOR_NO_DEVICE = /^-(?:list-avds|version|help(?:-[\w-]+)?|accel-check)$/;
+const EMULATOR_FIX = 'Start only this project\'s own AVD: emulator -avd e07-android-<purpose> ... (made with avdName(purpose)); never another project\'s AVD, whose state another session may need.';
+
+/** The words of one command, up to the first shell separator. */
+function commandTokens(text) {
+  const tokens = [];
+  for (const token of text.trim().split(/\s+/).filter(Boolean)) {
+    if (SHELL_SEPARATOR.test(token)) break;
+    tokens.push(token);
+    if (/[;|]$/.test(token)) break;
+  }
+  return tokens;
+}
+
+/** adb command lines in one span of command text: [{ index, what, fix }]. */
+function adbTextHits(text, { isCode }) {
+  const hits = [];
+  const word = /(?:^|[\s;&|(`"'=])((?:[\w.~${}-]*\/)*adb|"?\$\{?ADB\w*\}?"?)(?=\s)/g;
+  for (const match of text.matchAll(word)) {
+    const start = match.index + match[0].length - match[1].length;
+    const tokens = commandTokens(text.slice(start + match[1].length));
+    let serial = false;
+    let i = 0;
+    while (i < tokens.length && tokens[i].startsWith('-')) {
+      if (tokens[i] === '-s') serial = true;
+      i += ADB_VALUE_OPTIONS.has(tokens[i]) ? 2 : 1;
+    }
+    if (i >= tokens.length) continue;
+    const raw = tokens[i];
+    const sub = cleanToken(raw);
+    const rest = tokens.slice(i + 1);
+    if (sub === 'kill-server') {
+      // "adb kill-server stops every session's ..." describes it; a command ends after it.
+      if (isCode || rest.length === 0 || raw !== sub) hits.push({ index: start, ...ADB_KILL_SERVER });
+      continue;
+    }
+    if (serial || !isAdbDeviceCommand(sub)) continue;
+    // A word after shell, exec-out or emu is its command (adb shell getprop); "adb shell ..." is a mention.
+    const isCommandLine = isCode || (raw === sub && rest.length > 0 && ((ADB_WORD_OPERAND.has(sub) && /^[A-Za-z]/.test(rest[0])) || ADB_ARG_LIKE.test(rest[0])));
+    if (isCommandLine) hits.push({ index: start, what: `"adb ${sub}" without -s <serial> before the command`, fix: ADB_SERIAL_FIX });
+  }
+  return hits;
+}
+
+/** emulator command lines in one span of command text: [{ index, what, fix }]. */
+function emulatorTextHits(text) {
+  const hits = [];
+  const word = /(?:^|[\s;&|(`"'=])((?:[\w.~${}-]*\/)*emulator|"?\$\{?EMULATOR\w*\}?"?)(?=\s)/g;
+  for (const match of text.matchAll(word)) {
+    const start = match.index + match[0].length - match[1].length;
+    const tokens = commandTokens(text.slice(start + match[1].length)).map(cleanToken);
+    // "emulator" is also an English word: a command line starts with an option or an @avd.
+    if (!tokens.length || !/^[-@]/.test(tokens[0]) || tokens.some((token) => EMULATOR_NO_DEVICE.test(token))) continue;
+    const avdAt = tokens.indexOf('-avd');
+    const named = avdAt !== -1 ? { name: tokens[avdAt + 1] ?? '', shown: `-avd ${tokens[avdAt + 1] ?? ''}` } : tokens[0].startsWith('@') ? { name: tokens[0].slice(1), shown: tokens[0] } : null;
+    if (!named) {
+      hits.push({ index: start, what: '"emulator" starts a device without -avd e07-android-<purpose>', fix: EMULATOR_FIX });
+      continue;
+    }
+    if (/^\$/.test(named.name) || named.name.startsWith('e07-android-')) continue;
+    hits.push({ index: start, what: `"emulator ${named.shown}" is not an e07-android-<purpose> AVD`, fix: EMULATOR_FIX });
+  }
+  return hits;
+}
+
+/** adb and emulator calls written as code: execFileSync(adbPath, ['shell', ...]), spawn(emulatorBin, ['-avd', ...]). */
+function androidCallFormHits(line) {
+  const hits = [];
+  if (!/\badbArgs\s*\(/.test(line)) {
+    const adbFirst = /\b(?:execFileSync|execFile|spawnSync|spawn|exec)\s*\(\s*(?:(?:[\w$]+\.)*(?:adb|ADB)\w*|['"](?:[^'"\s]*\/)?adb['"])\s*,\s*\[\s*(['"])([\w-]+)\1/g;
+    const adbHelper = /\badb\s*\(\s*\[?\s*(['"])([\w-]+)\1/g;
+    for (const match of [...line.matchAll(adbFirst), ...line.matchAll(adbHelper)]) {
+      const sub = match[2];
+      if (sub === 'kill-server') hits.push({ index: match.index, ...ADB_KILL_SERVER });
+      else if (isAdbDeviceCommand(sub)) hits.push({ index: match.index, what: `an adb "${sub}" call without '-s', <serial> first`, fix: ADB_SERIAL_FIX });
+    }
+  }
+  const emulatorCall = /\b(?:execFileSync|execFile|spawnSync|spawn|exec)\s*\(\s*(?:(?:[\w$]+\.)*(?:emulator|EMULATOR)\w*|['"](?:[^'"\s]*\/)?emulator['"])\s*,\s*\[([^\]]*)\]/g;
+  for (const match of line.matchAll(emulatorCall)) {
+    const args = match[1];
+    if (/['"]-(?:list-avds|version|help|accel-check)['"]/.test(args)) continue;
+    const avd = /['"]-avd['"]\s*,\s*(?:(['"])([^'"]*)\1)?/.exec(args);
+    const at = /^\s*['"]@([^'"]*)['"]/.exec(args);
+    const name = avd ? avd[2] : at?.[1];
+    if (avd && avd[2] === undefined) continue;
+    if (name === undefined) hits.push({ index: match.index, what: 'an emulator call without -avd e07-android-<purpose>', fix: EMULATOR_FIX });
+    else if (!name.startsWith('e07-android-')) hits.push({ index: match.index, what: `an emulator call on "${name}", not an e07-android-<purpose> AVD`, fix: EMULATOR_FIX });
+  }
+  return hits;
+}
+
+/** Every device-explicit hit in one span of command text. */
+function spanHits(text, { isCode }) {
+  return [...maestroTextHits(text, { isCode }), ...simctlTextHits(text), ...destinationHits(text), ...callFormHits(text), ...adbTextHits(text, { isCode }), ...emulatorTextHits(text), ...androidCallFormHits(text)];
+}
+
 /**
- * Calls in one file that reach a simulator without naming it. kind 'md' reads fenced code lines
+ * Calls in one file that reach a simulator or emulator without naming it. kind 'md' reads fenced code lines
  * and inline code spans (a forbidding sentence or an Anti-patterns section names a command
  * without running it); kind 'script' reads every line. Returns [{ line, what, fix }].
  */
@@ -344,7 +462,7 @@ export function findImplicitDeviceCalls(text, { kind = 'md' } = {}) {
     const bindsDevice = /\bmaestro(?:Global)?Args\s*\(/.test(text) || /\b(?:make|create)\w*Maestro\w*\s*\([^)]*\b(?:udid|device)\b/i.test(text);
     lines.forEach((line, i) => {
       const calls = callFormHits(line).filter((hit) => !(bindsDevice && hit.what.startsWith('a maestro')));
-      const hits = [...maestroTextHits(line, { isCode: false }), ...simctlTextHits(line), ...destinationHits(line), ...calls];
+      const hits = [...maestroTextHits(line, { isCode: false }), ...simctlTextHits(line), ...destinationHits(line), ...calls, ...adbTextHits(line, { isCode: false }), ...emulatorTextHits(line), ...androidCallFormHits(line)];
       push(i + 1, hits.filter((hit) => !negated(line.slice(0, hit.index))));
     });
     return found;
@@ -369,7 +487,7 @@ export function findImplicitDeviceCalls(text, { kind = 'md' } = {}) {
         return;
       }
       continued = null;
-      push(start.line, [...maestroTextHits(start.text, { isCode: true }), ...simctlTextHits(start.text), ...destinationHits(start.text), ...callFormHits(start.text)]);
+      push(start.line, spanHits(start.text, { isCode: true }));
       return;
     }
     if (opener) {
@@ -382,7 +500,7 @@ export function findImplicitDeviceCalls(text, { kind = 'md' } = {}) {
     for (const span of line.matchAll(/(`+)([\s\S]*?)\1/g)) {
       if (negated(line.slice(0, span.index))) continue;
       const code = span[2];
-      push(i + 1, [...maestroTextHits(code, { isCode: false }), ...simctlTextHits(code), ...destinationHits(code), ...callFormHits(code)]);
+      push(i + 1, spanHits(code, { isCode: false }));
     }
   });
   return found;

@@ -25,6 +25,10 @@ export function parityCss(device) {
     '*,*::before,*::after{animation-duration:0s !important;animation-delay:0s !important;transition-duration:0s !important;transition-delay:0s !important;caret-color:transparent !important}',
     '.parity-pin{position:fixed !important;left:0 !important;top:0 !important;z-index:2147483647 !important;margin:0 !important}',
     '.mini.parity-pin{left:-10px !important;top:-10px !important}',
+    // Android has no Dynamic Island, and its status bar is 44 dp (the emulator's cutout): the design's island and its iOS
+    // clock and icons would sit over the top bar, and the device mask covers the bar anyway, so the
+    // Android set draws neither. iOS keeps exactly the lines above.
+    ...(device.platform === 'android' ? ['.island{display:none !important}', '.sb>*{visibility:hidden !important}'] : []),
   ].join('\n');
 }
 

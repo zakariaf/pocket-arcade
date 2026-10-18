@@ -67,7 +67,7 @@ Makes every change to a Pocket Arcade skill land finished: built to the authorin
 | `scripts/check-routing.mjs` | Routing evals, offline ranking or live with Claude Code | Workflow steps 1 and 7 |
 | `scripts/lib/skill-md.mjs` | SKILL.md reader used by the checkers | Never by hand |
 | `scripts/lib/router.mjs` | The offline ranking used by check-routing | When tuning the offline router |
-| `scripts/lib/live-route.mjs` | Runs `claude -p` and reads the first tool call | Never by hand |
+| `scripts/lib/live-route.mjs` | Runs `claude -p` and reads the first deciding tool call, past the AGENTS.md session start | Never by hand |
 | `scripts/selftest.mjs` | Proves all four scripts pass good fixtures and catch every planted bug | After changing a script or the scaffold |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |

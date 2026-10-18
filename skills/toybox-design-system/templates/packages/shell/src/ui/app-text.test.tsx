@@ -7,7 +7,8 @@ import { TEXT_ALIGN } from '@e07/shell/i18n/use-localized-text-style.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { TEST_PALETTE } from '@e07/shell/testing/test-palette.ts';
 
-import { AppText, afterReport, countOf, fitOf } from './app-text.tsx';
+import { AppText } from './app-text.tsx';
+import { afterReport, countOf, fitOf } from './use-text-room.ts';
 
 import type { useWindowDimensions } from 'react-native';
 
@@ -322,6 +323,29 @@ describe('AppText', () => {
     const name = screen.getByTestId('home.name');
     expect(name).toHaveTextContent(`${FSI}Line Siege${PDI}`);
     expect(name).toHaveStyle({ fontFamily: 'LilitaOne', fontSize: 28 });
+  });
+
+  it('keeps a hyphenated text as written on iOS, which breaks after the hyphen itself', async () => {
+    await renderWithShell(
+      <AppText text="public-domain sources" testID="about.art-sound-row.label" />,
+    );
+
+    const text = screen.getByTestId('about.art-sound-row.label');
+    expect(text).toHaveTextContent('public-domain sources');
+    expect(text.props['accessibilityLabel']).toBeUndefined();
+  });
+
+  it('keeps a game name and Persian digits as written on iOS, with no label of their own', async () => {
+    await renderWithShell(
+      <>
+        <AppText text="Line Siege" variant="gameNameHome" testID="home.name" />
+        <AppText text="۲۸ / ۲۷۰" testID="stats.levels-card.stars.value" />
+      </>,
+      { language: 'fa' },
+    );
+
+    expect(screen.getByTestId('home.name').props['accessibilityLabel']).toBeUndefined();
+    expect(screen.getByTestId('stats.levels-card.stars.value')).toHaveTextContent('۲۸ / ۲۷۰');
   });
 
   it('paints tones from the theme', async () => {

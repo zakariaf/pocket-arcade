@@ -1,6 +1,8 @@
 // __mocks__/react-native-google-mobile-ads.ts — applied automatically to every Jest project (root
 // manual mock for a node module). Only the two AdMob adapters import the library; a test
 // that asserts on it calls jest.mock() + jest.requireMock(). Mirrors the 17.2.0 surface the adapters use.
+import { Platform } from 'react-native';
+
 type ConsentInfo = {
   status: 'UNKNOWN' | 'REQUIRED' | 'NOT_REQUIRED' | 'OBTAINED';
   canRequestAds: boolean;
@@ -83,14 +85,24 @@ export const BannerAdSize = {
   LARGE_ANCHORED_ADAPTIVE_BANNER: 'LARGE_ANCHORED_ADAPTIVE_BANNER',
 } as const;
 
-// iOS values of the library's TestIds (jest-expo/ios); keep in sync on every GMA upgrade.
-export const TestIds = {
+// The library's TestIds per platform (lib/commonjs/TestIds.js picks them with Platform.select), so
+// the iOS projects see the iOS values and the unit-android project the Android ones; keep in sync
+// on every GMA upgrade.
+const IOS_TEST_IDS = {
   ADAPTIVE_BANNER: 'ca-app-pub-3940256099942544/2435281174',
   BANNER: 'ca-app-pub-3940256099942544/2934735716',
   INTERSTITIAL: 'ca-app-pub-3940256099942544/4411468910',
   REWARDED: 'ca-app-pub-3940256099942544/1712485313',
   REWARDED_INTERSTITIAL: 'ca-app-pub-3940256099942544/6978759866',
 } as const;
+const ANDROID_TEST_IDS = {
+  ADAPTIVE_BANNER: 'ca-app-pub-3940256099942544/9214589741',
+  BANNER: 'ca-app-pub-3940256099942544/6300978111',
+  INTERSTITIAL: 'ca-app-pub-3940256099942544/1033173712',
+  REWARDED: 'ca-app-pub-3940256099942544/5224354917',
+  REWARDED_INTERSTITIAL: 'ca-app-pub-3940256099942544/5354046379',
+} as const;
+export const TestIds = Platform.OS === 'android' ? ANDROID_TEST_IDS : IOS_TEST_IDS;
 
 export const InterstitialAd = { createForAdRequest: jest.fn(createMockAd) };
 export const RewardedAd = { createForAdRequest: jest.fn(createMockAd) };

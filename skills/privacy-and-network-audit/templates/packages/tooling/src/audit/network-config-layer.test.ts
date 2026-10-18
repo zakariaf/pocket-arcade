@@ -88,3 +88,30 @@ describe('configProblems (layer E)', () => {
     ]);
   });
 });
+
+describe('configProblems on Android (layer E)', () => {
+  it('accepts allowlisted permissions, short names and blocked extras', () => {
+    const android = {
+      permissions: ['android.permission.INTERNET', 'VIBRATE', 'com.android.vending.BILLING'],
+      blockedPermissions: ['android.permission.RECORD_AUDIO'],
+    };
+    expect(configProblems({ ...STORE, android })).toStrictEqual([]);
+  });
+
+  it('flags a permission outside the allowlist that is not blocked', () => {
+    const android = { permissions: ['android.permission.INTERNET', 'READ_CONTACTS'] };
+    expect(configProblems({ ...STORE, android })).toStrictEqual([
+      'android.permissions has android.permission.READ_CONTACTS, which is not on the allowlist',
+    ]);
+  });
+
+  it('flags cleartext traffic set through expo-build-properties', () => {
+    const plugins = [
+      ...(STORE.plugins ?? []),
+      ['expo-build-properties', { android: { usesCleartextTraffic: true } }],
+    ] as const;
+    expect(configProblems({ ...STORE, plugins })).toStrictEqual([
+      'expo-build-properties android.usesCleartextTraffic must not be true',
+    ]);
+  });
+});

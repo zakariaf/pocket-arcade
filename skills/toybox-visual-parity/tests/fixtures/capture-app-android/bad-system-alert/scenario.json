@@ -1,0 +1,8 @@
+{
+ "android": {
+  "screenshots": [
+   "../../check-parity-android/good/app.png"
+  ]
+ },
+ "hierarchy": "../../fakes/hierarchy-anr-android.json"
+}

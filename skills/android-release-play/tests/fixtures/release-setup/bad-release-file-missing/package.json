@@ -1,0 +1,8 @@
+{
+  "name": "e07",
+  "private": true,
+  "scripts": {
+    "release:ios": "node packages/tooling/src/release/release-ios.ts",
+    "release:android": "node packages/tooling/src/release-android/release-android.ts"
+  }
+}

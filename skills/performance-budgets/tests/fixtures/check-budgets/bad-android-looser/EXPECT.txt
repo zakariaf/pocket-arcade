@@ -1,0 +1,2 @@
+[budget-looser]
+perf.coldStartEmuRegressionFactor is 1.5, looser than the budget 1.2

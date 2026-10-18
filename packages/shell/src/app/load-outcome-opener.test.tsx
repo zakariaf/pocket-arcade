@@ -1,6 +1,6 @@
 // packages/shell/src/app/load-outcome-opener.test.tsx
 import { fireEvent, screen } from '@testing-library/react-native';
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 
 import { GameHostProvider } from '@e07/shell/game-host/game-host-context.tsx';
 import { createFakeErrorLog } from '@e07/shell/services/error-log/fake-error-log.ts';
@@ -27,6 +27,15 @@ jest.mock('@e07/shell/app/read-game-extra.ts', () => ({
     ...(mockAppStoreId === undefined ? {} : { appStoreId: mockAppStoreId }),
   }),
 }));
+
+// The test build's expo-constants: the Android package Google Play knows the game by.
+jest.mock(
+  'expo-constants',
+  () =>
+    jest.requireActual<Record<string, unknown>>('@e07/shell/testing/test-game-extra.ts')[
+      'TEST_EXPO_CONSTANTS'
+    ],
+);
 
 const NEWER_SAVE = { gameName: 'Tally', onUpdate: () => undefined };
 const newerSave = () => NEWER_SAVE;
@@ -90,6 +99,20 @@ describe('LoadOutcomeOpener', () => {
     expect(openUrl.mock.calls.map(([url]) => new URL(url).pathname)).toStrictEqual([
       '/app/id6740000001',
     ]);
+  });
+
+  it("opens the game's Google Play page for Update on Android, in the Play Store app first (spec S14)", async () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+    mockAppStoreId = '6740000001';
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined);
+    await renderOutcome({ kind: 'newer-version', found: 9 });
+    await fireEvent.press(await screen.findByTestId('newer-save-dialog.update-button'));
+    expect(
+      openUrl.mock.calls.map(([url]) => {
+        const { protocol, host, search } = new URL(url);
+        return [protocol, host, search];
+      }),
+    ).toStrictEqual([['market:', 'details', '?id=io.applander.linesiege']]);
   });
 
   it('opens no dialog after a normal load', async () => {

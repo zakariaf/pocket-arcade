@@ -8,8 +8,11 @@ import { join, relative, resolve } from 'node:path';
 import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { FACTS_FILE, LANGS, THEMES, describeFacts, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor } from './lib/frames.mjs';
-import { parseMaestroHierarchy } from './lib/hierarchy.mjs';
+import { parseMaestroHierarchy, scrollMarkersOf } from './lib/hierarchy.mjs';
+import { makeAdb, runningEmulators } from './lib/android.mjs';
+import { demoModeCommands } from './lib/android-emu.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, PLATFORM_OPTION, platformOf, platformOption } from './lib/platform.mjs';
 import { RUN_FILES, defaultRunDir } from './lib/runs.mjs';
 import { driverPortOf, findSimulator, freeDriverPort, maestroArgs, makeMaestro, makeSimctl, sleep } from './lib/tools.mjs';
 
@@ -20,11 +23,17 @@ const launchMarker = (nonce) => `parity.launch.${nonce}`;
 // Transparency), other permission prompts, and the "Open in ...?" alert of a deep link. The held S3
 // consent moment in particular asks neither Google's form nor Apple's prompt.
 const SYSTEM_ALERT = /Ask App Not to Track|to track your activity|Would Like to|Don[’']t Allow|Allow Once|^Open in [“"]/;
+// Android's own dialogs: a permission prompt, the "isn't responding" and "keeps stopping" dialogs
+// (an ANR or a crash behind the frame), and the "Open with" chooser of a link.
+const ANDROID_SYSTEM_ALERT = /^Allow .* to |Don[’']t allow|While using the app|Only this time|isn[’']t responding|keeps stopping|has stopped|^Open with$/;
 
 /** The first system-alert text in a dump, or null. */
-function systemAlertIn(parsed) {
-  return parsed.labels.find((label) => SYSTEM_ALERT.test(label)) ?? null;
+function systemAlertIn(parsed, platform = 'ios') {
+  return parsed.labels.find((label) => SYSTEM_ALERT.test(label) || (platform === 'android' && ANDROID_SYSTEM_ALERT.test(label))) ?? null;
 }
+
+/** The launch output of "am start -W" names an error on its own line (am exits 0 anyway). */
+const AM_START_ERROR = /^(Error|Exception)[: ].*$/m;
 
 const SPEC = {
   name: 'capture-app',
@@ -40,21 +49,24 @@ const SPEC = {
     'dump must contain (the marker parity.launch.<nonce>): a dump without it came from another simulator (exit 2).',
   usage: '--bundle-id <id> --frame <key> --theme light|dark --lang en|fa [options]',
   options: {
-    'bundle-id': { type: 'string', value: 'id', help: 'The app\'s iOS bundle identifier (test build)' },
+    platform: PLATFORM_OPTION,
+    'bundle-id': { type: 'string', value: 'id', help: "The app's bundle identifier (test build; on Android its package, the same io.applander.<id>)" },
     frame: { type: 'string', value: 'key', help: 'Design frame key, e.g. s4-home' },
     theme: { type: 'string', value: 'light|dark', help: 'Theme' },
     lang: { type: 'string', value: 'code', help: 'Language: en, de, fa or ckb' },
     game: { type: 'string', value: 'id', help: 'Design game id of the app', default: 'lineSiege' },
     scroll: { type: 'string', value: 'pt', help: 'Scroll offset for tall frames (passed as scrollY)', default: '0' },
-    root: { type: 'string', value: 'dir', help: 'Run folder root; the run goes to <root>/<game>/<frame>/<theme>-<lang>[-y<scroll>]', default: '.parity' },
+    root: { type: 'string', value: 'dir', help: 'Run folder root; the run goes to <root>/<game>/<frame>/<theme>-<lang>[-y<scroll>] (default: .parity, on Android .parity/android)' },
     out: { type: 'string', value: 'dir', help: 'Exact run folder (overrides --root)' },
     'settle-ms': { type: 'string', value: 'ms', help: 'Longest wait for a still screen (default: the frame\'s settleMs or 8000)' },
     'no-hierarchy': { type: 'boolean', help: 'Skip maestro hierarchy (then write app.layout.json from an in-app reporter yourself)' },
-    name: { type: 'string', value: 'name', help: 'Simulator name (default: the device profile\'s, e07-parity)' },
-    device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    name: { type: 'string', value: 'name', help: "Simulator name, or the AVD name on Android (default: the device profile's, e07-parity or e07-android-parity)" },
+    serial: { type: 'string', value: 'serial', help: 'Android: the emulator serial (default: the one running the --name AVD); it must run that AVD' },
+    device: { type: 'string', value: 'file', help: 'Device profile (default: assets/device/iphone16pro.json, on Android android-phone.json)' },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     xcrun: { type: 'string', value: 'path', help: 'xcrun to use (default: xcrun on PATH, or $PARITY_XCRUN)' },
+    adb: { type: 'string', value: 'path', help: 'Android: adb to use (default: $PARITY_ADB, <sdk>/platform-tools/adb)' },
     maestro: { type: 'string', value: 'path', help: 'maestro to use (default: $MAESTRO_BIN, PATH, ~/.maestro/bin/maestro)' },
     'driver-port': { type: 'string', value: 'port', help: "Maestro's XCUITest driver port for this session (default: $PARITY_MAESTRO_PORT, else a free port for this run)" },
     facts: { type: 'string', value: 'file', help: `The app's game facts (picks a frame's reference variant)`, default: FACTS_FILE },
@@ -74,9 +86,19 @@ const SPEC = {
     'without it stops the capture (exit 2, "hierarchy from another simulator"). run.json records the UDID, the port and',
     'both nonces.',
     '',
+    'Android (--platform android): the same capture on this session\'s parity emulator (setup-parity-emu.mjs, AVD',
+    'e07-android-parity[-<key>], found by --name, or the given --serial, which must run that AVD: "wrong-serial"). Every',
+    'adb call names the serial (-s). Night mode follows --theme, demo mode is sent before the launch, the language is the',
+    'app\'s locale (cmd locale set-app-locales), and the launch is "am start -S -W -n <package>/.MainActivity --es',
+    'parity <query>": the launch intent\'s extra that the harness reads in test builds. Screenshots come from',
+    '"adb -s <serial> exec-out screencap -p". Maestro gets --device <serial> --driver-host-port <port>; its bounds are pixels, so',
+    'run.json records "hierarchyPxPerPt" (the density). A dump without the marker is "hierarchy from another device".',
+    'The run goes to .parity/android/<game>/... and run.json says "platform": "android".',
+    '',
     'Example:',
     '  node capture-app.mjs --bundle-id io.applander.linesiege --frame s4-home --theme dark --lang fa --name e07-parity',
     '  node capture-app.mjs --bundle-id io.applander.linesiege --frame s11-settings --theme light --lang en --scroll 573',
+    '  node capture-app.mjs --platform android --bundle-id io.applander.linesiege --frame s4-home --theme dark --lang fa --name e07-android-parity-b',
     '',
     'Reference variants: s11-settings, s6-pause, s7-result-win and s14-reset-all-progress have variants chosen by the',
     'app\'s facts (hasMusic, winLine, hasHints) in parity/game-facts.json; the variants a frame\'s facts match compose',
@@ -102,7 +124,10 @@ run(async () => {
   const scrollY = Number(options.scroll);
   // Whole points: the harness's parser refuses anything else (and would show its error view).
   if (!Number.isInteger(scrollY) || scrollY < 0) fail(`--scroll must be whole points >= 0, got "${options.scroll}"`, 'Pass e.g. --scroll 600.');
-  const device = readJson(resolve(options.device), 'device profile');
+  const platform = platformOption(options.platform);
+  const isAndroid = platform === 'android';
+  const device = readJson(resolve(options.device ?? PLATFORM_DEFAULTS[platform].device), 'device profile');
+  if (platformOf(device) !== platform) fail(`the device profile ${device.name} is for ${platformOf(device)}, not ${platform}`, 'Drop --device: the default follows --platform.');
   const { frames, manifest } = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });
   const frame = frames.get(options.frame);
   if (!frame) fail(`unknown frame "${options.frame}"`, `Use one of: ${[...frames.keys()].join(', ')}`);
@@ -115,43 +140,91 @@ run(async () => {
   const settleMs = Number(options['settle-ms'] ?? frame.settleMs ?? 8000);
   const givenPort = driverPortOf(options['driver-port']);
   const driverPort = givenPort ?? (await freeDriverPort());
-  const simctl = makeSimctl(options.xcrun);
-  const name = options.name ?? device.simulatorName;
-  const sim = findSimulator(simctl, name).find((f) => f.runtime === device.runtime && f.device.state === 'Booted');
-  if (!sim) fail(`the ${name} simulator is not booted`, `Run: node setup-parity-sim.mjs --appearance ${options.theme}`);
-  const udid = sim.device.udid;
-  const outDir = resolve(options.out ?? defaultRunDir(resolve(options.root), { game: options.game, frame: frame.key, theme: options.theme, lang: options.lang, scrollY }));
+  const simctl = isAndroid ? null : makeSimctl(options.xcrun);
+  const name = options.name ?? (isAndroid ? device.avdName : device.simulatorName);
+  let udid;
+  let adb = null;
+  let wrongSerial = null;
+  if (isAndroid) {
+    // This session's emulator, by the AVD it runs: never "the first device adb lists".
+    const tools = makeAdb({ adb: options.adb });
+    const emulators = runningEmulators(tools);
+    const ready = emulators.filter((e) => e.state === 'device');
+    if (options.serial) {
+      const given = ready.find((e) => e.serial === options.serial);
+      if (!given) fail(`no running emulator ${options.serial}`, `Run: node setup-parity-emu.mjs --appearance ${options.theme}${options.name ? ` --name ${name}` : ''} (it prints the serial).`);
+      if (given.avd !== name) wrongSerial = given;
+      udid = given.serial;
+    } else {
+      const mine = ready.filter((e) => e.avd === name);
+      if (mine.length === 0) fail(`the ${name} emulator is not running`, `Run: node setup-parity-emu.mjs --appearance ${options.theme}${options.name ? ` --name ${name}` : ''}`);
+      if (mine.length > 1) fail(`${name} runs on ${mine.length} serials (${mine.map((e) => e.serial).join(', ')})`, 'Shut down the extra one of your own (adb -s <serial> emu kill), or pass --serial.');
+      udid = mine[0].serial;
+    }
+    adb = tools.on(udid);
+  } else {
+    const sim = findSimulator(simctl, name).find((f) => f.runtime === device.runtime && f.device.state === 'Booted');
+    if (!sim) fail(`the ${name} simulator is not booted`, `Run: node setup-parity-sim.mjs --appearance ${options.theme}`);
+    udid = sim.device.udid;
+  }
+  const outDir = resolve(options.out ?? defaultRunDir(resolve(options.root ?? PLATFORM_DEFAULTS[platform].runs), { game: options.game, frame: frame.key, theme: options.theme, lang: options.lang, scrollY }));
   mkdirSync(outDir, { recursive: true });
   const report = createReporter({ name: 'capture-app' });
   const file = relative(process.cwd(), join(outDir, RUN_FILES.app)) || RUN_FILES.app;
   const problem = (rule, message, fix) => report.problem({ file, rule, message, fix });
   const step = (text) => report.note(`step  ${text}`);
   report.note(`reference ${describeReference(frame.key, variant)}${facts ? ` from ${relative(process.cwd(), facts.path) || facts.path} (app ${facts.app}: ${describeFacts(facts.facts)})` : ''}`);
-  report.note(`simulator ${name} ${udid}, Maestro driver port ${driverPort}${givenPort ? ' (given)' : ' (free port for this run)'}`);
+  report.note(`${isAndroid ? 'emulator' : 'simulator'} ${name} ${udid}, Maestro driver port ${driverPort}${givenPort ? ' (given)' : ' (free port for this run)'}`);
+  if (wrongSerial) {
+    problem('wrong-serial', `${udid} runs the AVD ${wrongSerial.avd ?? '(unknown)'}, not ${name}: a capture there would judge another session's device (its size, its app build)`, `Pass this session's own serial (setup-parity-emu.mjs --name ${name} prints it), or drop --serial: the capture finds the emulator by its AVD.`);
+    return report.finish({ checked: 1, unit: 'captures' });
+  }
 
-  // 1. The simulator shows the right appearance and a clean status bar.
-  if (simctl('ui', udid, 'appearance').stdout.trim() !== options.theme) {
+  // 1. The device shows the right appearance and a clean status bar.
+  if (isAndroid) {
+    const night = options.theme === 'dark' ? 'yes' : 'no';
+    if (!adb.shell('cmd', 'uimode', 'night').stdout.includes(`Night mode: ${night}`)) {
+      step(`night mode ${night}`);
+      adb.shell('cmd', 'uimode', 'night', night);
+    }
+    // Demo mode is lost whenever SystemUI restarts: send it before every capture (a few broadcasts).
+    for (const words of demoModeCommands(device)) adb.shell(...words);
+  } else if (simctl('ui', udid, 'appearance').stdout.trim() !== options.theme) {
     step(`appearance ${options.theme}`);
     simctl('ui', udid, 'appearance', options.theme);
   }
-  if (!simctl('status_bar', udid, 'list').stdout.includes(device.statusBarOverride.time)) {
+  if (!isAndroid && !simctl('status_bar', udid, 'list').stdout.includes(device.statusBarOverride.time)) {
     step('re-applying the status bar override (a reboot clears it)');
     simctl('status_bar', udid, 'override', ...STATUS_ARGS(device.statusBarOverride));
   }
 
   // 2. Nothing else in front (another app would add a "back to" breadcrumb to the status bar). Maestro's
   // XCUITest driver stays: stopping it makes the next hierarchy call reinstall it (20 s).
-  const running = simctl('spawn', udid, 'launchctl', 'list').stdout;
+  // (On Android "am start -S" force-stops the app and brings it to the front.)
+  const running = isAndroid ? '' : simctl('spawn', udid, 'launchctl', 'list').stdout;
   for (const m of running.matchAll(/UIKitApplication:([A-Za-z0-9.-]+)\[/g)) {
     if (m[1] !== options['bundle-id'] && !m[1].startsWith('dev.mobile.maestro-driver')) simctl('terminate', udid, m[1]);
   }
 
   // 3. Launch straight into the frame. Arguments are separate words (no shell), so "(fa)" arrives intact.
-  const langArgs = device.languages?.[options.lang] ?? { appleLanguages: `(${options.lang})`, appleLocale: options.lang };
+  const langArgs = device.languages?.[options.lang] ?? { appleLanguages: `(${options.lang})`, appleLocale: options.lang, appLocale: options.lang };
   // Each launch gets a fresh nonce; the dump that follows must contain its marker.
   const launchWith = (extra) => {
     const nonce = randomBytes(6).toString('hex');
     const query = new URLSearchParams({ frame: frame.key, theme: options.theme, lang: options.lang, game: options.game, ...(manifest.launchDefaults ?? {}), ...extra, nonce });
+    if (isAndroid) {
+      // The app's own locale (Android 13+), then a cold start with the request as the launch intent's
+      // string extra "parity" (the harness reads it through the Shell's ParityLaunch module).
+      adb.shell('cmd', 'locale', 'set-app-locales', options['bundle-id'], '--user', 'current', '--locales', langArgs.appLocale);
+      const args = ['am', 'start', '-S', '-W', '-n', `${options['bundle-id']}/.MainActivity`, '--es', 'parity', query.toString()];
+      step(`launch ${options['bundle-id']} on ${udid} (locale ${langArgs.appLocale}) ${args.join(' ')}`);
+      const launched = adb.shell(...args);
+      const error = AM_START_ERROR.exec(`${launched.stdout}\n${launched.stderr}`)?.[0];
+      if (launched.status !== 0 || error) {
+        fail(`the app did not launch: ${error ?? (launched.stderr || launched.stdout).trim().split('\n')[0]}`, `Install the test build first: adb -s ${udid} install -r <app-release.apk> (and check --bundle-id).`);
+      }
+      return { args: ['--locales', langArgs.appLocale, ...args], nonce };
+    }
     const args = ['-AppleLanguages', langArgs.appleLanguages, '-AppleLocale', langArgs.appleLocale, '-parity', query.toString()];
     step(`launch ${options['bundle-id']} on ${udid} ${args.join(' ')}`);
     const launched = simctl('launch', '--terminate-running-process', udid, options['bundle-id'], ...args);
@@ -191,6 +264,14 @@ run(async () => {
   // shot(): one screenshot. simctl's own notes ("Detected file type", "Note: No display specified")
   // are not the error, so the message quotes the other stderr lines; one transient failure is retried.
   const shot = (path) => {
+    if (isAndroid) {
+      // exec-out (not shell): the PNG arrives byte for byte.
+      let r = adb.buffer('exec-out', 'screencap', '-p');
+      if (r.status !== 0 || r.stdout.length === 0) r = adb.buffer('exec-out', 'screencap', '-p');
+      if (r.status !== 0 || r.stdout.length === 0) fail(`adb screencap failed twice (exit ${String(r.status)}): ${r.stderr.trim().slice(0, 300) || 'no output'}`, 'Check that the emulator is booted (setup-parity-emu.mjs --check) and not showing a crash dialog.');
+      writeFileSync(path, r.stdout);
+      return r.stdout;
+    }
     let r = simctl('io', udid, 'screenshot', '--type=png', path);
     if (r.status !== 0 || !existsSync(path)) r = simctl('io', udid, 'screenshot', '--type=png', path);
     if (r.status !== 0 || !existsSync(path)) {
@@ -220,7 +301,10 @@ run(async () => {
     return report.finish({ checked: 1, unit: 'captures' });
   };
   const maestro = options['no-hierarchy'] ? null : makeMaestro(options.maestro);
-  const target = { udid, driverPort };
+  const target = isAndroid ? { serial: udid, driverPort } : { udid, driverPort };
+  // Maestro lists Android bounds in pixels: divided by the density they are points like the design's.
+  const pxPerPt = isAndroid ? device.scale : 1;
+  const where = isAndroid ? 'device' : 'simulator';
   if (!options['no-hierarchy'] && !maestro) fail('Maestro is not installed', 'Install Maestro 2.10 (see the e2e-maestro skill), or set $MAESTRO_BIN; Java 17 must be available.');
   // A dump belongs to this launch only when it holds the launch's nonce marker: without it, the
   // XCUITest driver that answered serves another simulator (round 3: another session's Settings).
@@ -240,7 +324,7 @@ run(async () => {
         cleanTmp();
         return fail(`maestro hierarchy did not print JSON (exit ${r.status}): ${(r.stderr || r.stdout).trim().split('\n').slice(-1)[0]}`, maestro.javaHome ? 'Run the same command by hand to see the error.' : 'Maestro needs Java 17: set JAVA_HOME.');
       }
-      const parsed = parseMaestroHierarchy(json);
+      const parsed = parseMaestroHierarchy(json, { pxPerPt });
       if (parsed.elements.has(launchMarker(nonce))) return json;
       if (dump < MARKER_DUMPS) {
         step(`the dump has no ${launchMarker(nonce)} yet (${parsed.elements.size} elements; the app's tree may not be attached): reading it again in 2 s`);
@@ -250,8 +334,10 @@ run(async () => {
       cleanTmp();
       writeFileSync(join(outDir, 'rejected.hier.json'), `${JSON.stringify(json, null, 1)}\n`);
       return fail(
-        `hierarchy from another simulator: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}), in ${MARKER_DUMPS} dumps in a row; the last was kept as rejected.hier.json`,
-        'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or a modal root lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
+        `hierarchy from another ${where}: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}), in ${MARKER_DUMPS} dumps in a row; the last was kept as rejected.hier.json`,
+        isAndroid
+          ? 'Give this session its own emulator (setup-parity-emu.mjs --name e07-android-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, the test build does not read the launch extra (check-harness.mjs, rule harness-android-launch) or its ModalLayer lacks ParityLaunchMarker (harness-launch-marker).'
+          : 'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or its ModalLayer lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
       );
     }
   };
@@ -274,7 +360,7 @@ run(async () => {
       const probeSettled = await settle(null);
       if (!probeSettled.stable) return unstable(probeSettled.previous);
       step('maestro hierarchy of the board probe');
-      const probed = parseMaestroHierarchy(await dumpHierarchy(probeLaunch.nonce));
+      const probed = parseMaestroHierarchy(await dumpHierarchy(probeLaunch.nonce), { pxPerPt });
       const text = probed.elements.get('game.board-layout')?.label ?? null;
       let parsed = null;
       try {
@@ -309,6 +395,7 @@ run(async () => {
   // again and dump again (3 attempts).
   let hierarchy = null;
   let systemAlert = null;
+  let scrollMarkers = [];
   if (maestro) {
     let accepted = false;
     for (let attempt = 1; attempt <= 3 && !accepted; attempt += 1) {
@@ -327,8 +414,13 @@ run(async () => {
     }
     if (!accepted) problem('changed-during-capture', 'the screen changed while the hierarchy was read, 3 times in a row, so bounds and pixels may not match', 'Stop timers and animations in parity mode (the harness freezes them), then capture again.');
     writeFileSync(join(outDir, RUN_FILES.hier), `${JSON.stringify(hierarchy, null, 1)}\n`);
-    const parsed = parseMaestroHierarchy(hierarchy);
-    systemAlert = systemAlertIn(parsed);
+    const parsed = parseMaestroHierarchy(hierarchy, { pxPerPt });
+    systemAlert = systemAlertIn(parsed, platform);
+    // The offset each ScreenBody reached (parity.scroll.<y>): check-parity measures a tall capture's
+    // scroll by it, and infers it from the element shifts only when no body drew one (an old harness).
+    scrollMarkers = scrollMarkersOf(parsed);
+    if (scrollMarkers.length) step(scrollMarkers.map((m) => `the body reached ${m.y.toFixed(2)} pt (${m.testID})`).join('; '));
+    else if (scrollY > 0) step(`no parity.scroll marker in the dump, so check-parity infers this capture's scroll from the element shifts (copy the harness's parity-root.tsx and toybox-screens' screen-body.tsx: check-harness rule harness-scroll-marker)`);
     if (systemAlert) problem('system-alert', `a system alert is on screen: "${systemAlert}"`, 'Nothing may ask the system in a parity launch: the held consent moment (S3) never requests Google\'s form or Apple\'s tracking prompt, and captures never use deep links. Dismiss it, find what asked, and capture again.');
     const reached = frame.root && (parsed.elements.has(frame.root) || (frame.modal && parsed.elements.has(frame.modal.reachedBy)));
     if (frame.root && !reached) {
@@ -344,7 +436,7 @@ run(async () => {
   writeFileSync(join(outDir, RUN_FILES.app), stable);
   const { PNG_WIDTH, PNG_HEIGHT } = { PNG_WIDTH: stable.readUInt32BE(16), PNG_HEIGHT: stable.readUInt32BE(20) };
   if (PNG_WIDTH !== device.pixels.width || PNG_HEIGHT !== device.pixels.height) {
-    problem('capture-size', `the screenshot is ${PNG_WIDTH} x ${PNG_HEIGHT}, not ${device.pixels.width} x ${device.pixels.height}`, `Use the ${name} simulator (${device.name}); run setup-parity-sim.mjs.`);
+    problem('capture-size', `the screenshot is ${PNG_WIDTH} x ${PNG_HEIGHT}, not ${device.pixels.width} x ${device.pixels.height}`, isAndroid ? `Use the ${name} emulator (${device.name}); run setup-parity-emu.mjs --check (no wm size or density override).` : `Use the ${name} simulator (${device.name}); run setup-parity-sim.mjs.`);
   }
   const info = {
     version: 1,
@@ -357,10 +449,12 @@ run(async () => {
     game: options.game,
     scrollY,
     bundleId: options['bundle-id'],
-    simulator: { name, udid, runtime: device.runtime, driverPort },
+    ...(isAndroid
+      ? { platform, emulator: { avd: name, serial: udid, systemImage: device.systemImage, driverPort }, hierarchyPxPerPt: pxPerPt }
+      : { simulator: { name, udid, runtime: device.runtime, driverPort } }),
     launchArgs,
     nonce,
-    ...(maestro ? { hierarchyNonce: launchMarker(nonce), systemAlert } : {}),
+    ...(maestro ? { hierarchyNonce: launchMarker(nonce), systemAlert, scrollMarkers } : {}),
     ...(facts ? { facts: { file: relative(process.cwd(), facts.path) || facts.path, app: facts.app, ...facts.facts } } : {}),
     ...(board ? { board } : {}),
     capturedAt: new Date().toISOString(),

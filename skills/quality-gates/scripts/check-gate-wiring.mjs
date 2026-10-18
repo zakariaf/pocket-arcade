@@ -30,12 +30,17 @@ const SPEC = {
     '                          build:ios:sim (step 8), e2e:ios and',
     '                          screenshots:ios (step 10, SHELL_DUE_TARGETS.e2e), release:ios (step 11,',
     '                          SHELL_DUE_TARGETS.release); every other target (verify, audit:licenses, new-game)',
-    '                          exists from Shell step 1 and is a problem when missing',
+    '                          exists from Shell step 1 and is a problem when missing. The Android scripts\' targets',
+    '                          print "due at Android step <n>" instead: build:android:emu (step 1), e2e:android and',
+    '                          screenshots:android (step 7), release:android (step 8); an Android script missing',
+    '                          from package.json is an npm-script problem and gets no target line',
     '  npm-script              a canonical npm script is missing or differs from the baseline',
     '  eslint-cache            a root npm script runs eslint with --cache: the cache keys each result on the',
     '                          file alone, so a test written before its module replays import/no-unresolved',
     '                          and type-aware errors after the module appears (lint the whole repo uncached)',
-    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry',
+    '  gate-weakened           quality-gates.json holds a value weaker than the baseline, or lost an entry; the',
+    '                          Android budget (perf.coldStartEmuRegressionFactor) prints',
+    '                          "due at Android step 1" while packages/tooling/src/build/build-android-emu.ts is missing',
     '  claude-settings         .claude/settings.json lost a deny/ask rule, a hook, or allows a bypass',
     '  lefthook                a pre-commit, commit-msg or pre-push job is missing, changed or skipped',
     '  npmrc                   .npmrc lacks min-release-age=7, engine-strict=true or save-exact=true',
@@ -51,7 +56,8 @@ const SPEC = {
     '                          baseline does not have (each baseline entry has a documented reason)',
     '',
     'The repo root is the optional positional argument (default "."). A fresh skeleton (Shell step 1) passes',
-    'with seven script-target SKIP lines, one per target a later step builds; each disappears at its step:',
+    'with eleven script-target SKIP lines, one per target a later step builds (seven Shell steps, four Android',
+    'steps); each disappears at its step:',
     '  node check-gate-wiring.mjs .',
     '--pending <path> is still accepted: it turns that target\'s SKIP line into a note.',
     '',
@@ -95,6 +101,34 @@ const DUE_SCRIPT_TARGETS = [
   { target: { file: 'packages/tooling/src/e2e/capture-screenshots-ios.ts', step: SHELL_DUE_TARGETS.e2e.step }, owner: 'e2e-maestro' },
   { target: SHELL_DUE_TARGETS.release, owner: 'ios-release-testflight' },
 ];
+/**
+ * The Android scripts' targets, with the Android port step that creates each one (the "Android port"
+ * order, steps 1-8, run once a game's iOS version has shipped) and the skill that copies it. The
+ * canonical scripts include them from Shell step 1, so a fresh repo carries the scripts long before
+ * their targets: while a target is missing the script-target rule prints a not-yet-due SKIP. A repo
+ * whose package.json lacks an Android script gets its npm-script FAIL and no target line.
+ */
+const ANDROID_DUE_TARGETS = [
+  { target: { file: 'packages/tooling/src/build/build-android-emu.ts', step: 1 }, owner: 'android-emulator-build' },
+  { target: { file: 'packages/tooling/src/e2e/run-e2e-android.ts', step: 7 }, owner: 'e2e-maestro' },
+  { target: { file: 'packages/tooling/src/e2e/capture-screenshots-android.ts', step: 7 }, owner: 'e2e-maestro' },
+  { target: { file: 'packages/tooling/src/release-android/release-android.ts', step: 8 }, owner: 'android-release-play' },
+];
+
+/**
+ * The Android budgets (performance-budgets) join quality-gates.json at Android step 1, with the Android
+ * build tooling: while packages/tooling/src/build/build-android-emu.ts is missing, a missing one prints a
+ * not-yet-due SKIP; from then on it fails like any lost entry. A present value is compared as usual.
+ */
+const ANDROID_BUDGET_KEYS = ['perf.coldStartEmuRegressionFactor'];
+
+/**
+ * Why an Android script's target is not yet due, or null when it exists: the Android form of
+ * check-lib's dueSkipReason, 'due at Android step <step>: <file> not yet created'.
+ */
+function androidDueSkipReason(root, target) {
+  return existsSync(join(root, target.file)) ? null : `due at Android step ${target.step}: ${target.file} not yet created`;
+}
 const NODE_TARGET = /^node\s+(\S+\.(?:ts|mjs|js))(?:\s|$)/;
 const LINTER_OPTIONS = [/noInlineConfig:\s*true/, /reportUnusedDisableDirectives:\s*'error'/, /reportUnusedInlineConfigs:\s*'error'/];
 
@@ -144,18 +178,27 @@ function checkEslintCache(root, report) {
  */
 function checkScriptTargets(root, pending, report) {
   const baseline = readJson(join(TEMPLATES, 'package-scripts.json'));
+  let scripts = {};
+  try {
+    scripts = readJson(join(root, 'package.json')).scripts ?? {};
+  } catch {
+    // checkScripts already reported the unreadable package.json.
+  }
   let checked = 0;
   for (const [name, command] of Object.entries(baseline)) {
     const rel = NODE_TARGET.exec(command)?.[1];
     if (rel === undefined) continue;
+    const android = ANDROID_DUE_TARGETS.find((item) => item.target.file === rel);
+    if (android && scripts[name] === undefined) continue;
     checked += 1;
     if (existsSync(join(root, rel))) continue;
-    const due = DUE_SCRIPT_TARGETS.find((item) => item.target.file === rel);
+    const due = android ?? DUE_SCRIPT_TARGETS.find((item) => item.target.file === rel);
+    const stepName = android ? 'Android step' : 'Shell step';
     if (due && pending.has(rel)) {
-      report.note(`note: ${rel} is pending (${due.owner} builds it at Shell step ${due.target.step}); npm run ${name} fails until it exists`);
+      report.note(`note: ${rel} is pending (${due.owner} builds it at ${stepName} ${due.target.step}); npm run ${name} fails until it exists`);
       continue;
     }
-    const reason = due ? dueSkipReason(root, due.target) : null;
+    const reason = android ? androidDueSkipReason(root, android.target) : due ? dueSkipReason(root, due.target) : null;
     if (reason) report.skip({ file: 'package.json', rule: 'script-target', message: `npm run ${name}: ${reason} (${due.owner} copies it)` });
     else report.problem({ file: 'package.json', line: 1, rule: 'script-target', message: `npm run ${name} runs ${rel}, which does not exist`, fix: `Copy ${rel} from the skill that ships it (the bootstrap writes it at Shell step 1); a script must never point at a missing file.` });
   }
@@ -177,7 +220,12 @@ function checkQualityGates(root, report) {
   const actual = tryJson(root, 'quality-gates.json', report);
   if (!actual) return;
   if (JSON.stringify(actual).includes(GAME_PLACEHOLDER)) report.problem({ file: 'quality-gates.json', line: 1, rule: 'gate-weakened', message: `still holds the ${GAME_PLACEHOLDER} placeholder`, fix: 'Replace __GAME_ID__ with the pilot app id (the folder under apps/ that holds src/rules/gate-probe.ts).' });
+  const androidBudgetsDue = androidDueSkipReason(root, ANDROID_DUE_TARGETS[0].target);
   for (const { path, message } of findWeaker(baselineGates(actual), actual)) {
+    if (androidBudgetsDue && ANDROID_BUDGET_KEYS.includes(path) && message.startsWith('is missing')) {
+      report.skip({ file: 'quality-gates.json', rule: 'gate-weakened', message: `${path}: ${androidBudgetsDue} (performance-budgets adds it)` });
+      continue;
+    }
     report.problem({ file: 'quality-gates.json', line: 1, rule: 'gate-weakened', message: `${path} ${message}`, fix: 'Restore the baseline value; a gate changes only with the owner\'s agreement, in one commit with the gate and a Gate-Change: trailer.' });
   }
 }

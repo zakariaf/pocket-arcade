@@ -1,0 +1,3 @@
+[touch-target]
+close-button.tsx
+styles.box is only 36 pt wide on Android

@@ -37,7 +37,7 @@ When `check-sdk-trigger.mjs` reports `FAIL [upgrade-due]` (the move is due and n
 >
 > Not verified: TestFlight builds on a real iPhone (that is the next release's first step).
 
-Evidence kept under `reports/` for the record: `sdk-trigger.json` (the npm facts of the `upgrade-due` run), the `check-sdk-alignment.mjs` output (`RESULT: PASS`), the trigger check after the move (`RESULT: PASS`: no move due), `expo-doctor` per app (20/20 checks), `npm ls react react-native react-native-reanimated react-native-worklets` (one version each), the `npm run verify` log, the simulator and E2E logs, and the screenshot diff summary.
+Evidence kept under `reports/` for the record: `sdk-trigger.json` (the npm facts of the `upgrade-due` run), the `check-sdk-alignment.mjs` output (`RESULT: PASS`), the trigger check after the move (`RESULT: PASS`: no move due), `expo-doctor` per app (20/20 checks), `npm ls react react-native react-native-reanimated react-native-worklets` (one version each), the `npm run verify` log, the simulator, emulator and E2E logs (the Android build of the upgrade for every Android port: `build:android:emu` and `e2e:android`), and the screenshot diff summary.
 
 ## The move commit
 
@@ -50,7 +50,8 @@ jest-expo, eslint-config-expo, @react-native/*, @types/react and
 test-renderer follow; root overrides pin one copy of each native core.
 Board gestures use the Gesture Handler 3 hooks; config plugins import
 expo/config-plugins; Jest uses the Reanimated resolver. verify,
-simulator builds, E2E and the screenshot matrix pass for every app;
+simulator builds, E2E and the screenshot matrix pass for every app, and
+the Android build and E2E for every Android port;
 12 board goldens re-accepted after review (Skia 2.11 anti-aliasing).
 
 Gate-Change: Jest resolver and re-accepted goldens for Expo SDK 58

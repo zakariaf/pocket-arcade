@@ -19,7 +19,7 @@ import { join, relative } from 'node:path';
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireDir, run, toPosix, walk } from './check-lib.mjs';
 import { parsePlistXml, plistGet, readPlist } from './lib/plist.mjs';
 import { NOT_BUILT_TESTID, partialShellProblems } from './lib/shell-complete.mjs';
-import { bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
+import { adUnitFields, bundleIdProblem, finishWithOwnerSteps, ownerPlaceholderOf, ownerPlaceholderProblem, placeholdersInText } from './lib/ship-placeholders.mjs';
 import { trackingTextProblems } from './lib/tracking-text.mjs';
 
 export { PLACEHOLDERS } from './lib/ship-placeholders.mjs';
@@ -132,9 +132,9 @@ function checkVariant(ctx) {
   const isLive = typeof appId === 'string' && LIVE_APP_ID.test(appId) && appId !== SAMPLE_APP_ID;
   if (appIdPlaceholder !== null) ctx.ownerPlaceholder('Info.plist', appIdPlaceholder, 'Info.plist GADApplicationIdentifier');
   else if (options.ads === 'live' ? !isLive : appId !== SAMPLE_APP_ID) problem('Info.plist', 'ad-app-id', `GADApplicationIdentifier is "${appId ?? 'missing'}", expected ${options.ads === 'live' ? "the game's real AdMob app ID" : 'the Google sample ID'}`, 'Live builds take the real ID from game.config.ts (owner step G5); every other build uses the sample ID.');
-  for (const [slot, unit] of Object.entries(extra.adUnits ?? {})) {
+  for (const [field, unit] of adUnitFields(extra.adUnits, 'ios')) {
     const unitPlaceholder = ownerPlaceholderOf(unit);
-    if (unitPlaceholder !== null) ctx.ownerPlaceholder('EXConstants.bundle/app.config', unitPlaceholder, `extra.adUnits.${slot}`);
+    if (unitPlaceholder !== null) ctx.ownerPlaceholder('EXConstants.bundle/app.config', unitPlaceholder, field);
   }
   const idProblem = bundleIdProblem(info.CFBundleIdentifier, options.game ?? null);
   if (idProblem !== null) problem('Info.plist', 'bundle-id', `CFBundleIdentifier ${idProblem}`, 'game.config.ts bundleId is io.applander.<game id without hyphens> (owner decision O4; withShell refuses any other); prebuild with --clean and archive again.');

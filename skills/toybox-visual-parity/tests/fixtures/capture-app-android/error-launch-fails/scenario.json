@@ -1,0 +1,9 @@
+{
+ "android": {
+  "launchFails": true,
+  "screenshots": [
+   "../../check-parity-android/good/app.png"
+  ]
+ },
+ "hierarchy": "../../fakes/hierarchy-home-android.json"
+}

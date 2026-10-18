@@ -61,9 +61,33 @@
 //                     while S15 is outside shell-slice.json; harness-debug-flags: a parity launch
 //                     clears the saved debug flags before the debug services restore them
 //
+// Added 2026-10-16 (E18-T07, Android), against the fake adb, emulator and avdmanager:
+//   check-parity      an Android run against the Android set passes; one against the iOS set (and an
+//                     iOS run against the Android set) fails wrong-reference; Android bounds in pixels
+//                     without hierarchyPxPerPt fail bounds; an iOS waiver never covers an Android run
+//                     (waiver-platform); an Android waiver without its class is invalid
+//   check-signoff     --platform android: the full Android set passes; narrowed, an iOS ledger entry,
+//                     an iOS capture (wrong-platform) and an iOS-checked report (wrong-reference) fail
+//   capture-app       --platform android: a capture on the wrong serial, an Android system dialog, a
+//                     dump without this launch's nonce, no emulator, a launch that fails
+//   setup-parity-emu  --check: every emu-* rule; apply: creates and pins the AVD, refuses duplicates
+//                     and a running emulator with the wrong geometry; never another AVD name
+//   run-parity        --platform android end to end, and a wrong serial
+//   check-harness     the Android launch path is wired and only app/parity/ asks for the module
+//
+// Added 2026-10-17 (E18, between T22 and T23: the measured scroll):
+//   check-parity      a tall capture whose ScreenBody drew parity.scroll.<y> is judged at that
+//                     measured scroll (an agreeing marker passes; one 20 pt off fails scroll-mismatch
+//                     although the elements sit at the target; two markers that disagree fail); an
+//                     Android S11c en capture at y107 whose waived extra line moves most elements
+//                     passes with its marker, and the same dump without it still fails the inferred
+//                     scroll-mismatch (old captures keep the median)
+//   capture-app       records the dump's scroll markers in run.json and names the offset reached
+//   check-harness     harness-scroll-marker: the parity root provides the marker, ScreenBody draws it
+//
 //   node selftest.mjs [--tooling <repo>/.parity/tooling]
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -121,10 +145,21 @@ const scratch = () => {
 };
 const extraArgs = (dir) => (existsSync(join(dir, 'args.json')) ? JSON.parse(readFileSync(join(dir, 'args.json'), 'utf8')) : null);
 const fakes = ['--xcrun', join(FAKES, 'fake-xcrun.mjs')];
+// The Android fakes: adb, emulator and avdmanager share one state per fixture folder (scenario.json
+// overlaid on one ready e07-android-parity emulator), kept under FAKE_ANDROID_STATE_DIR.
+const androidFakes = ['--adb', join(FAKES, 'fake-adb.mjs'), '--maestro', join(FAKES, 'fake-maestro.mjs')];
+const emuFakes = ['--sdk', join(FAKES, 'android-sdk'), '--adb', join(FAKES, 'fake-adb.mjs'), '--emulator', join(FAKES, 'fake-emulator.mjs'), '--avdmanager', join(FAKES, 'fake-avdmanager.mjs')];
+// The AVD folder of a case: a scratch copy of its avd/ (apply mode writes config.ini there).
+const avdHome = (dir) => {
+  const home = scratch();
+  if (existsSync(join(dir, 'avd'))) cpSync(join(dir, 'avd'), home, { recursive: true });
+  return ['--avd-home', home];
+};
 // The fake xcrun writes each launch's nonce here and the fake maestro puts its marker into the dump,
 // as the app's parity root does (every child script inherits the variable).
 const fakeStateDir = mkdtempSync(join(tmpdir(), 'toybox-visual-parity-fake-'));
 process.env.FAKE_PARITY_STATE = join(fakeStateDir, 'launch.json');
+process.env.FAKE_ANDROID_STATE_DIR = join(fakeStateDir, 'android');
 // map-edit.json { "dropTestID": "<id>" }: a copy of the skill's testID map without that element, so a
 // map change that reaches a reference (one element fewer measured) must show as drift.
 const editedMap = (dir) => {
@@ -168,6 +203,67 @@ const editedMap = (dir) => {
   console.log(`ok   type-role floors: ${pinned} sizes in gates.mjs equal the evidence table in what-exact-means.md`);
 }
 
+// The Android system image is pinned once, in the shared android-emu.mjs: the device profile the
+// parity emulator is made from must name the same package.
+{
+  const { SYSTEM_IMAGE } = await import('./lib/android-emu.mjs');
+  const profile = JSON.parse(readFileSync(join(HERE, '..', 'assets', 'device', 'android-phone.json'), 'utf8'));
+  if (profile.systemImage !== SYSTEM_IMAGE) {
+    console.log(`FAIL assets/device/android-phone.json [system-image-pin] systemImage is ${profile.systemImage}, the shared pin is ${SYSTEM_IMAGE} Fix: Change both together (the pin lives in _library/shared/scripts/lib/android-emu.mjs).`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log(`ok   the Android device profile's system image is the shared pin (${SYSTEM_IMAGE})`);
+}
+
+// While a new parity emulator boots, setup-parity-emu polls only its own serial (adb -s
+// emulator-<port> shell getprop sys.boot_completed) and asks adb for the AVD behind it once, after
+// the boot: listing every emulator and its AVD name on each poll cost two adb calls per emulator per
+// second. The apply case's calls are logged by the fakes, in a state folder of their own.
+{
+  const dir = join(FIXTURES, 'setup-parity-emu-apply', 'good');
+  const log = join(scratch(), 'calls.log');
+  const env = { ...process.env, FAKE_ANDROID_LOG: log, FAKE_ANDROID_STATE_DIR: scratch() };
+  const run = spawnSync(process.execPath, [join(HERE, 'setup-parity-emu.mjs'), '--appearance', 'light', '--boot-timeout', '5', '--log-dir', scratch(), ...avdHome(dir), ...emuFakes], { cwd: dir, env, encoding: 'utf8' });
+  const calls = existsSync(log) ? readFileSync(log, 'utf8').split('\n').filter(Boolean) : [];
+  const afterStart = calls.slice(calls.findIndex((line) => /^emulator -avd e07-android-parity /.test(line)) + 1).filter((line) => line.startsWith('adb '));
+  const problems = [];
+  if (run.status !== 0) problems.push(`setup-parity-emu exited ${run.status}: ${(run.stdout + run.stderr).trim().split('\n').at(-1)}`);
+  if (afterStart[0] !== 'adb -s emulator-5554 shell getprop sys.boot_completed') problems.push(`the first adb call after the start is "${afterStart[0]}", not the boot poll of emulator-5554`);
+  const listings = afterStart.filter((line) => line === 'adb devices').length;
+  if (listings !== 1) problems.push(`adb devices ran ${listings} times after the start, not once after the boot`);
+  if (problems.length) {
+    for (const p of problems) console.log(`FAIL scripts/setup-parity-emu.mjs [boot-poll] ${p} Fix: Poll adb -s emulator-<port> shell getprop sys.boot_completed while booting, then check the AVD name once.`);
+    console.log(`RESULT: FAIL (${problems.length} problems)`);
+    process.exit(1);
+  }
+  console.log('ok   setup-parity-emu polls only its own serial while booting and checks the AVD name once after');
+}
+
+// Android's clipped bounds are rebuilt once, by unclipBodyBounds (lib/hierarchy.mjs), for the gates
+// and the sheets alike: a box cut at the body window's edge gets its design height back from the
+// visible edge, a box clear of both edges is left alone (null).
+{
+  const { unclipBodyBounds } = await import('./lib/hierarchy.mjs');
+  const window = { top: 100, bottom: 700 };
+  const at = (box, top, height) => JSON.stringify(unclipBodyBounds(box, { top, height, window, tolerance: 2 }));
+  const cases = [
+    ['a box inside the window is not cut', at({ y: 200, h: 80 }, 200, 80), 'null'],
+    ['a box cut at the top keeps its visible bottom edge', at({ y: 100, h: 50 }, 70, 80), '{"y":70,"h":80,"cut":"top"}'],
+    ['a box cut at the bottom keeps its visible top edge', at({ y: 650, h: 50 }, 650, 80), '{"y":650,"h":80,"cut":"bottom"}'],
+    ['a box cut at both edges sits where the scroll puts it', at({ y: 100, h: 600 }, 40, 900), '{"y":40,"h":900,"cut":"top and bottom"}'],
+    ['a sliver past the top edge is cut too (E18-T22)', at({ y: 101, h: 47 }, 98.5, 49), '{"y":99,"h":49,"cut":"top"}'],
+    ['a box at the edge that belongs there is not cut', at({ y: 100, h: 80 }, 100, 80), 'null'],
+  ];
+  const problems = cases.filter(([, actual, want]) => actual !== want).map(([what, actual, want]) => `${what}: got ${actual}, want ${want}`);
+  if (problems.length) {
+    for (const p of problems) console.log(`FAIL scripts/lib/hierarchy.mjs [unclip-bounds] ${p} Fix: Rebuild a cut box from its visible edge and the design height; leave an uncut one alone.`);
+    console.log(`RESULT: FAIL (${problems.length} problems)`);
+    process.exit(1);
+  }
+  console.log(`ok   unclipBodyBounds rebuilds Android's clipped boxes (${cases.length} cases)`);
+}
+
 // A scrolled capture's failing element is cropped from the design window the capture shows: for S11
 // at scroll 1170 the settings.version crop must start at screen y 844 (page y 2013), not at the
 // Display group that sits at y 844 of the unscrolled page.
@@ -181,6 +277,37 @@ const editedMap = (dir) => {
     process.exit(1);
   }
   console.log('ok   make-sheet crops a scrolled bounds failure from the window the capture shows');
+}
+
+// A text-ink failure of a label inside a larger element (S4's Statistics key in fa on Android) is
+// cropped where the app draws the text run, not at the key's bounds: the app side must show the
+// label آمار, not the key's top corner.
+{
+  const out = scratch();
+  const run = spawnSync(process.execPath, [join(HERE, 'make-sheet.mjs'), join(FIXTURES, 'make-sheet-text-ink', 'good'), '--out', out], { encoding: 'utf8' });
+  const want = 'crops/home.stats-button.png: design 190,544 | app 190,544';
+  if (run.status !== 0 || !run.stdout.includes(want)) {
+    console.log(`FAIL tests/fixtures/make-sheet-text-ink/good [crop-text-run] make-sheet.mjs exited ${run.status} without "${want}" Fix: Crop a text-ink failure's app side at the text run's screen rect (problem.viewRect), not at its element's bounds.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log('ok   make-sheet crops a text-ink failure at the text run, not at its element');
+}
+
+// A crop-only part of a scrolled Android capture is placed through its cover, and Android reports a
+// cover that runs past the body window cut at the window's edge (S15's debug.list at y 130 instead
+// of -27.6 at scroll 163, E18-T23): the eye page must place the Error log icon through the cover
+// rebuilt from its visible bottom edge (app y 728), not 157 pt lower.
+{
+  const out = scratch();
+  const run = spawnSync(process.execPath, [join(HERE, 'make-sheet.mjs'), join(FIXTURES, 'make-sheet-android-clipped-cover', 'good'), '--out', out], { encoding: 'utf8' });
+  const want = "debug.error-log-row.icon: placed through debug.list, which Android cut at the body window's top: app 37,728";
+  if (run.status !== 0 || !run.stdout.includes(want)) {
+    console.log(`FAIL tests/fixtures/make-sheet-android-clipped-cover/good [eye-clipped-cover] make-sheet.mjs exited ${run.status} without "${want}" Fix: Rebuild a cover Android cut at the body window from its visible edge (as the gates do) before placing a crop-only part through it.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log('ok   make-sheet places crop-only parts through an Android cover cut at the body window');
 }
 
 // frames-edit.json { "frame", "variant", "derive" }: a copy of the skill's frames manifest whose variant
@@ -430,6 +557,36 @@ await runSelftest(import.meta.url, [
     script: 'run-parity.mjs',
     fixtures: '../tests/fixtures/run-parity-session',
     args: (dir) => ['--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity', 'reference'), '--waivers', join(dir, 'waivers.json'), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs'), ...(extraArgs(dir) ?? [])],
+  },
+  {
+    script: 'check-parity.mjs',
+    fixtures: '../tests/fixtures/check-parity-android',
+    args: (dir) => [dir, '--waivers', join(dir, 'waivers.json'), '--no-write'],
+  },
+  {
+    script: 'check-signoff.mjs',
+    fixtures: '../tests/fixtures/check-signoff-android',
+    args: (dir) => ['--platform', 'android', ...(extraArgs(dir) ?? ['--frame', 's4-home']), '--reference', join(dir, '..', 'reference')],
+  },
+  {
+    script: 'capture-app.mjs',
+    fixtures: '../tests/fixtures/capture-app-android',
+    args: (dir) => ['--platform', 'android', '--bundle-id', 'io.applander.linesiege', '--frame', 's4-home', '--theme', 'light', '--lang', 'en', '--out', scratch(), '--settle-ms', '2000', ...androidFakes, ...(extraArgs(dir) ?? [])],
+  },
+  {
+    script: 'setup-parity-emu.mjs',
+    fixtures: '../tests/fixtures/setup-parity-emu',
+    args: (dir) => ['--appearance', 'light', '--check', ...avdHome(dir), ...emuFakes],
+  },
+  {
+    script: 'setup-parity-emu.mjs',
+    fixtures: '../tests/fixtures/setup-parity-emu-apply',
+    args: (dir) => ['--appearance', 'light', '--boot-timeout', '5', '--log-dir', scratch(), ...avdHome(dir), ...emuFakes],
+  },
+  {
+    script: 'run-parity.mjs',
+    fixtures: '../tests/fixtures/run-parity-android',
+    args: (dir) => ['--platform', 'android', '--frame', 's4-home', '--themes', 'light', '--langs', 'en', '--bundle-id', 'io.applander.linesiege', '--root', scratch(), '--reference', join(dir, '..', '..', 'check-parity-android', 'reference'), '--waivers', join(dir, 'waivers.json'), ...androidFakes, ...(extraArgs(dir) ?? [])],
   },
   {
     script: 'check-harness.mjs',

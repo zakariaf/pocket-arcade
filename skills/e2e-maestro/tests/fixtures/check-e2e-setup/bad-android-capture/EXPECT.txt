@@ -1,0 +1,2 @@
+packages/tooling/src/e2e/capture-screenshots-android.ts:1 [screenshot-tolerance] MAX_DIFF_RATIO is 0.01
+packages/tooling/src/e2e/android-device-args.ts:1 [deterministic-capture] stillScreenCommands does not set transition_animation_scale to 0

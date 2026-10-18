@@ -11,9 +11,10 @@ import { MIN_TOUCH, STROKE } from '@e07/shell/theme/tokens.ts';
 import { typeStyleOf } from '@e07/shell/theme/type-styles.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
-import { AppText, useTextScale } from './app-text.tsx';
+import { AppText } from './app-text.tsx';
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
+import { useScaledSize } from './use-scaled-size.ts';
 
 import type { TextLine } from './app-text.tsx';
 import type { IconName } from './icons/icon-paths.ts';
@@ -141,12 +142,12 @@ export function QuietButton(props: QuietButtonProps): ReactNode {
     lineHeight: NUDGE.lineHeight,
     align: 'center',
   });
-  // iOS draws the label at the text size (up to 200 %): its font and line grow, the bar's 5 pt
-  // offset and 2 pt thickness do not (CSS px).
-  const scale = useTextScale();
+  // The phone draws the label at the text size (up to 200 %; along Android 14's curve there): its
+  // font and line grow, the bar's 5 pt offset and 2 pt thickness do not (CSS px).
+  const scaled = useScaledSize();
   const underlineTop = quietUnderlineTop(
-    NUDGE.fontSize * scale,
-    (text.lineHeight ?? NUDGE.fontSize) * scale,
+    scaled(NUDGE.fontSize),
+    scaled(text.lineHeight ?? NUDGE.fontSize),
     (text.fontFamily ?? '').startsWith('Vazirmatn'),
   );
   const isRtl = useDirection() === 'rtl';

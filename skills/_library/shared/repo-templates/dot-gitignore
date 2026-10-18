@@ -4,10 +4,14 @@ expo-env.d.ts
 apps/*/ios/
 apps/*/android/
 apps/*/build/
+# Gradle builds the Shell's Kotlin module in place (packages/shell/android/build/)
+packages/*/android/build/
 apps/*/dist/
 apps/*/sfx-preview/
 coverage/
 reports/
+# Skill fixtures and examples carry their own reports/ folders; keep them in git
+!skills/**/reports/
 dist-audit/
 /tools/
 .stryker-tmp/
@@ -18,6 +22,7 @@ dist-audit/
 *.mobileprovision
 *.keystore
 *.jks
+play-service-account.json
 AuthKey_*
 ApiKey_*
 *.xcarchive

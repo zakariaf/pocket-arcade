@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+// Fake adb for the kill-test and inspect-save self-tests: never touches a device. It reads the case's
+// scenario.json from the working folder (the fixture folder the self-test runs in):
+//   { "devices": ["emulator-5554"], "root": "ok" | "refused", "saveSql": "save.sql", "firstWriteAfterPolls": 2 }
+// `pull <device dir> <dest>` writes <dest>/SQLite/save.db from the scenario's SQL dump; the WAL `stat`
+// reports no file until firstWriteAfterPolls polls after the last `am start` (state in a temp file
+// keyed by the calling script's pid).
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+
+const scenario = JSON.parse(readFileSync(join(process.cwd(), 'scenario.json'), 'utf8'));
+const argv = process.argv.slice(2);
+const say = (text) => process.stdout.write(`${text}\n`);
+const stop = (text) => {
+  process.stderr.write(`${text}\n`);
+  process.exit(1);
+};
+
+if (argv[0] === 'devices') {
+  say('List of devices attached');
+  for (const serial of scenario.devices ?? []) say(`${serial}\tdevice`);
+  process.exit(0);
+}
+if (argv[0] !== '-s' || argv[1] === undefined) stop(`fake adb: every call needs -s <serial>: ${argv.join(' ')}`);
+const [, , command, ...rest] = argv;
+const statePath = join(tmpdir(), `fake-adb-${process.ppid}.json`);
+const state = existsSync(statePath) ? JSON.parse(readFileSync(statePath, 'utf8')) : { polls: -1 };
+const save = () => writeFileSync(statePath, JSON.stringify(state));
+
+if (command === 'root') {
+  if (scenario.root === 'refused') say('adbd cannot run as root in production builds');
+  else say('restarting adbd as root');
+} else if (command === 'wait-for-device' || command === 'install' || command === 'emu') {
+  if (command === 'install') say('Success');
+} else if (command === 'pull') {
+  const dest = rest[1];
+  mkdirSync(join(dest, 'SQLite'), { recursive: true });
+  const db = new DatabaseSync(join(dest, 'SQLite', 'save.db'));
+  db.exec(readFileSync(join(process.cwd(), scenario.saveSql), 'utf8'));
+  db.close();
+  rmSync(statePath, { force: true });
+  say(`${rest[0]}: 1 file pulled`);
+} else if (command === 'shell') {
+  const line = rest.join(' ');
+  if (line === 'getprop sys.boot_completed') say('1');
+  else if (line === 'id -u') say(scenario.root === 'refused' ? '2000' : '0');
+  else if (line.includes('kill -9')) say('killed 4242');
+  else if (line.startsWith('am start')) {
+    state.polls = 0;
+    save();
+    say('Starting: Intent');
+  } else if (line.startsWith('stat ')) {
+    if (state.polls < 0 || state.polls < (scenario.firstWriteAfterPolls ?? 2)) {
+      if (state.polls >= 0) state.polls += 1;
+      save();
+      stop(`stat: '${rest.at(-1)}': No such file or directory`);
+    }
+    say('32992 1760000000');
+  } else if (line.startsWith('am force-stop')) say('');
+  else stop(`fake adb: unexpected shell command: ${line}`);
+} else {
+  stop(`fake adb: unexpected command: ${argv.join(' ')}`);
+}

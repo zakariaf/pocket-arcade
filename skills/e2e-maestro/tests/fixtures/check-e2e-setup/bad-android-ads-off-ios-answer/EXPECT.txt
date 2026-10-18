@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/android-cli.ts:1 [e2e-ads-off] apkVariantProblem does not accept exactly appVariant 'test' with adsMode 'off'

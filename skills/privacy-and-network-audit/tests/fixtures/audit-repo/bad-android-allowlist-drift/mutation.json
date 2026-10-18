@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/audit/android-manifest-audit.ts",
+      "find": "  'android.permission.VIBRATE',\n",
+      "with": "  'android.permission.VIBRATE',\n  'android.permission.CAMERA',\n"
+    }
+  }
+]

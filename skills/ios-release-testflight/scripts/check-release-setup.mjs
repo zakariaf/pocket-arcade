@@ -31,7 +31,9 @@ const SPEC = {
     '                      decision O4), and no com.example.* id',
     '  owner-placeholder   a scaffold value the owner replaces, by field: the AdMob app',
     '                      ca-app-pub-1234567890123456~1234567890 and units /1111111111, /2222222222, /3333333333 (owner',
-    '                      step G5), the privacy host example.com and support@example.com (owner step G3). The line before',
+    "                      step G5), Google's sample (test) ids ca-app-pub-3940256099942544 in ads.ids.ios (G5 too: a live",
+    '                      build would show test ads), the privacy host example.com and support@example.com (owner step',
+    '                      G3). The line before',
     "                      RESULT is then 'OWNER STEPS PENDING: G3, G5' (the steps still pending) and the result stays FAIL:",
     '                      until the owner supplies them these are the only expected FAIL lines',
     '  npm-script          root package.json release:ios runs packages/tooling/src/release/release-ios.ts',
@@ -57,6 +59,9 @@ const IGNORE = ['node_modules', 'ios', 'android', 'build', 'dist', '.expo', 'cov
 const EXPORT_BASE = { method: 'app-store-connect', destination: 'export', signingStyle: 'automatic', manageAppVersionAndBuildNumber: false, uploadSymbols: true };
 const PREREQ_SCRIPTS = ['verify', 'audit:privacy', 'audit:network'];
 const SECRET_LINES = ['*.p8', 'AuthKey_*', 'ApiKey_*', '*.p12', '*.mobileprovision', '*.xcarchive', '*.ipa'];
+/** Google's sample AdMob publisher: its test ids belong to test builds (ads-config.ts), never in game.config.ts. */
+const SAMPLE_PUBLISHER = 'ca-app-pub-3940256099942544';
+const SAMPLE_ID = new RegExp(String.raw`(\w+)\s*:\s*['"\`](${SAMPLE_PUBLISHER}[~/]\d+)['"\`]`, 'g');
 const DENY_RULES = ['Read(~/.appstoreconnect/**)', 'Read(**/*.p8)', 'Read(**/AuthKey_*)', 'Read(**/*.p12)', 'Read(**/*.mobileprovision)'];
 // Built from parts so this checker's own source never contains the text it hunts for.
 const PRIVATE_KEY_TEXT = new RegExp(['-----BEGIN ', '(?:EC |RSA )?', 'PRIVATE KEY-----'].join(''));
@@ -123,6 +128,25 @@ function checkAppIds(ctx, full, source, game) {
     if (found.entry.ownerStep === null) ctx.problem(full, lineOf(source, found.index), 'game-config', `holds ${found.name} (${found.value})`, 'A release never ships a scaffold placeholder; owner decision O4: io.applander.<game id>.');
     else ctx.report.problem(ownerPlaceholderProblem({ entry: found.entry, file: full, line: lineOf(source, found.index) }));
   }
+  for (const sample of sampleIosAdIds(source)) ctx.report.problem(ownerPlaceholderProblem({ entry: sample.entry, file: full, line: lineOf(source, sample.index) }));
+}
+
+/**
+ * Google's sample (test) AdMob ids in ads.ids.ios: owner step G5 is still pending, since a live build
+ * with them shows test ads and earns nothing. An id belongs to the nearest `ios:` or `android:` key
+ * before it (Android's ids are android-release-play's GP5); the field is the key in front of it.
+ */
+function sampleIosAdIds(source) {
+  const found = [];
+  for (const match of source.matchAll(SAMPLE_ID)) {
+    const before = source.slice(0, match.index);
+    const platform = [...before.matchAll(/\b(ios|android)\s*:/g)].at(-1)?.[1];
+    if (platform !== 'ios') continue;
+    const [, key, value] = match;
+    const field = key === 'appId' ? 'ads.ids.ios.appId' : `ads.ids.ios.units.${key}`;
+    found.push({ index: match.index, entry: { field, value, name: "Google's sample (test) AdMob id", ownerStep: 'G5' } });
+  }
+  return found;
 }
 
 function checkScriptsAndSigning(ctx) {

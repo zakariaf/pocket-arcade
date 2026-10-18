@@ -9,6 +9,7 @@
 - Wiring into withShell and expo.extra
 - What the config plugin writes
 - Google's test IDs
+- Android: ids per mode, the SDK versions, AD_ID
 - Reading the mode at runtime
 - SKAdNetwork identifiers and the refresh script
 - Lint guards already in the repo config
@@ -21,7 +22,9 @@
 | `react-native-google-mobile-ads` | 17.2.0 exact | peers: `expo >=47`, `react-native >=0.86.0`; rollback target 16.5.0 |
 | Google Mobile Ads iOS SDK (pod) | 13.6.0 | resolved by 17.2.0 |
 | GoogleUserMessagingPlatform (pod) | 3.1.0 | the UMP consent SDK |
-| Android (later) | GMA 25.4.0, UMP 4.0.0, minSdk 24, compile/target 36 | from the package's `sdkVersions` |
+| Google Mobile Ads Android SDK | 25.4.0 | the package's `sdkVersions.android.googleMobileAds` (checked 2026-10-12) |
+| UMP Android SDK | 4.0.0 | `sdkVersions.android.googleUmp` |
+| Android levels | minSdk 24, compileSdk 36, targetSdk 36 (build tools 36.0.0) | `sdkVersions.android`; the app's own levels come from the Android build (android-emulator-build) |
 | `expo-network` | ~57.0.2 | the `ConnectivityPort` adapter |
 | `expo-constants` | SDK 57 | reads `expo.extra` at runtime |
 
@@ -40,10 +43,10 @@ Why exactly 17.2.0: v17 is where fixes land and it had three releases in eight d
 
 | `APP_VARIANT` | `ADS_MODE` | Debug menu, deep links | Ad app ID / units | Where it can go |
 |---|---|---|---|---|
-| `test` (default) | `test` (default) | compiled in | Google sample app ID `ca-app-pub-3940256099942544~1458002511` and `TestIds.*` | simulator, internal TestFlight |
+| `test` (default) | `test` (default) | compiled in | Google sample app ID (iOS `ca-app-pub-3940256099942544~1458002511`, Android `ca-app-pub-3940256099942544~3347511713`) and `TestIds.*` | simulator, emulator, internal TestFlight |
 | `test` | `off` | compiled in | sample app ID, ads never initialised | screenshots, E2E, runtime network audit |
-| `store` | `live` (default) | compiled out | the game's real IDs from `game.config.ts` | TestFlight and the App Store |
-| `store` | `off` | compiled out | sample app ID in Info.plist, ads never initialised (spec 4.3 "ads off" game) | same |
+| `store` | `live` (default) | compiled out | the game's real IDs from `game.config.ts`, per platform; Android: `ads.ids.android`, and without it no Android app id at all (owner step GP5) | TestFlight and the App Store; Google Play |
+| `store` | `off` | compiled out | sample app ID in Info.plist and the manifest, ads never initialised (spec 4.3 "ads off" game) | same |
 | `test` | `live` | forbidden | real ads in a debug build | none |
 | `store` | `test` | forbidden | test ads in a store build | none |
 
@@ -75,12 +78,14 @@ ads: {
         rewarded: 'ca-app-pub-1234567890123456/3333333333',
       },
     },
-    android: null, // iOS first; filled when Android starts
+    android: null, // iOS first; the owner's Android AdMob app and its 3 units (GP5) fill it
   },
 },
 ```
 
-- The values above are placeholders in the documented format (`ca-app-pub-<16 digits>~<10 digits>` for the app, `/<10 digits>` for units). Until the owner supplies real IDs, only `APP_VARIANT=test` and `store` + `ADS_MODE=off` can build: `assertLiveIds` throws for `live`.
+The Android entry has the same shape (`{ appId, units: { banner, interstitial, rewarded } }`) and its own ids: AdMob makes one app per platform, so the Android app id and units always differ from the iOS ones.
+
+- The values above are placeholders in the documented format (`ca-app-pub-<16 digits>~<10 digits>` for the app, `/<10 digits>` for units). They pass `assertLiveIds` (it refuses only a malformed id or Google's sample publisher), so a `live` config of them still resolves; every ship gate refuses them by name instead (`owner-placeholder`, then `OWNER STEPS PENDING: G5`, on Android `GP5`: check-sim-app, check-emu-app, the store-artifact and store-AAB gates and both release preflights). Until the owner supplies real IDs, only `APP_VARIANT=test` and `store` + `ADS_MODE=off` builds are made.
 - Real IDs are not secrets (they ship in every store build), but app code never imports `game.config.ts`: it reads only what `withShell` embeds in `expo.extra`.
 - The policy numbers are the spec 8.8 defaults. They are configuration, never hard-coded in `ad-policy.ts`.
 
@@ -90,10 +95,12 @@ ads: {
 
 - `GOOGLE_SAMPLE_APP_IDS`: Google's sample app IDs (iOS `~1458002511`, Android `~3347511713`). The only place in our code where the sample publisher `3940256099942544` may appear.
 - `assertLiveIds(ids)`: throws unless the app ID and all three unit IDs match the formats and none contains the sample publisher.
-- `admobPluginOptions(mode, ids, skAdNetworkItems)`: `iosAppId` is the game's app ID only when `live`, otherwise the sample; `delayAppMeasurementInit: true`; the SKAdNetwork list. The SDK is linked in every variant, so Info.plist always needs an app ID (a missing `GADApplicationIdentifier` crashes at launch). It never returns `userTrackingUsageDescription`: Apple's tracking prompt text is written once, by the `expo-tracking-transparency` plugin entry and `withShell`'s locales (references/consent-flow.md, "App Tracking Transparency").
-- `adUnitsExtra(mode, ids)`: the unit IDs for `expo.extra.adUnits`, only when `live` (and validated); `null` otherwise.
+- `admobPluginOptions(mode, ids, skAdNetworkItems)`: `iosAppId` is the game's app ID only when `live`, otherwise the sample; `androidAppId` is the game's Android app id when `live` (validated), the Android sample in `test` and `off`, and absent in a `live` build whose `ads.ids.android` is `null`: never Google's sample in a live build (`check-ads` rule `android-ids`); `delayAppMeasurementInit: true`; the SKAdNetwork list. The SDK is linked in every variant, so Info.plist always needs an app ID (a missing `GADApplicationIdentifier` crashes at launch). It never returns `userTrackingUsageDescription`: Apple's tracking prompt text is written once, by the `expo-tracking-transparency` plugin entry and `withShell`'s locales (references/consent-flow.md, "App Tracking Transparency").
+- `adUnitsExtra(mode, ids)`: the unit IDs for `expo.extra.adUnits` per platform, `{ ios: <units>, android: <units> | null }`, only when `live` (each validated); `null` otherwise. `readAdsExtra` takes the entry of `Platform.OS`, so a live Android build never shows ads from the iOS units, and gets none while `ads.ids.android` is `null` (`check-ads` rule `android-units`).
 
-`ads-config.test.ts` proves: sample IDs and no units in `test`/`off`; the game's IDs in `live`; an iOS-only game (Android `null`) is accepted; sample or malformed IDs throw in `live`.
+`ads-config.test.ts` proves: sample IDs and no units in `test`/`off`; the game's IDs in `live`; an iOS-only game (Android `null`) is accepted with its iOS values unchanged; sample or malformed IDs throw in `live`; and on Android: the Android sample app id in `test` and `off`, the game's Android app id in `live`, no Android app id at all in a live build without Android ids, and the units per platform.
+
+Why no sample in a live build: a store build on Google's sample app serves no real ads and breaks AdMob's policy for published apps. The plugin then writes no `APPLICATION_ID`, so that Android build is not shippable: android-emulator-build's `check-emu-app` and android-release-play's `check-store-aab` and `check-release-setup-android` report it as owner step GP5 (`owner-placeholder`, `OWNER STEPS PENDING: GP5`), while iOS releases of the same game still build.
 
 ## Wiring into withShell and expo.extra
 
@@ -123,8 +130,8 @@ The same plugin list holds Apple's tracking prompt (owner decision O1), right af
 Read in the 17.2.0 plugin source and seen in a prebuilt `Info.plist`:
 
 - `GADApplicationIdentifier` (from `iosAppId`), `GADDelayAppMeasurementInit`, `SKAdNetworkItems` (it only adds IDs that are missing) and, only if given, `NSUserTrackingUsageDescription` (never given: the `expo-tracking-transparency` plugin writes it, and Expo writes each language's `InfoPlist.strings` from `withShell`'s locales; seen in a 2026-09-30 build: the base `Info.plist` holds the en text and `en.lproj`, `de.lproj`, `fa.lproj`, `ckb.lproj` hold the four texts).
-- Android keys `APPLICATION_ID`, `DELAY_APP_MEASUREMENT_INIT`, `OPTIMIZE_INITIALIZATION`, `OPTIMIZE_AD_LOADING` (the last two default to `true`).
-- The plugin only warns (does not fail) when an app ID is missing, which is why `admobPluginOptions` always returns one.
+- Android manifest meta-data `com.google.android.gms.ads.APPLICATION_ID` (from `androidAppId`), `DELAY_APP_MEASUREMENT_INIT`, `OPTIMIZE_INITIALIZATION`, `OPTIMIZE_AD_LOADING` (the last two default to `true`).
+- The plugin only warns (does not fail) when an app ID is missing ("The native Google Mobile Ads SDK will crash on Android without it"), which is why `admobPluginOptions` always returns an iOS one, and an Android one in every build except a live build without the game's Android ids (that build must never ship; the Android gates stop it as GP5).
 
 ## Google's test IDs
 
@@ -136,17 +143,31 @@ Platform-aware values of the library's `TestIds` (identical to Google's demo uni
 | Interstitial | `ca-app-pub-3940256099942544/4411468910` | `ca-app-pub-3940256099942544/1033173712` |
 | Rewarded | `ca-app-pub-3940256099942544/1712485313` | `ca-app-pub-3940256099942544/5224354917` |
 
-Code never types these strings: `admob-ads-adapter.ts` reads `TestIds.ADAPTIVE_BANNER`, `TestIds.INTERSTITIAL` and `TestIds.REWARDED` into `ADMOB_TEST_UNITS`. Simulators are test devices automatically, and a physical device in a test build still gets test units, so no `testDeviceIdentifiers` are needed.
+Code never types these strings: `admob-ads-adapter.ts` reads `TestIds.ADAPTIVE_BANNER`, `TestIds.INTERSTITIAL` and `TestIds.REWARDED` into `ADMOB_TEST_UNITS`, and the library picks the platform's values (`Platform.select`). Simulators and emulators are test devices automatically, and a physical device in a test build still gets test units, so no `testDeviceIdentifiers` are needed. The root Jest mock carries both sets the same way: the `unit-android` project sees the Android values.
 
 The library's own `TestIds` module is bundled into every app (Metro does not tree-shake), so the sample publisher ID is present in every JS bundle inside `node_modules/react-native-google-mobile-ads/`. Release checks therefore attribute it by module; they never grep the raw bundle.
 
+## Android: ids per mode, the SDK versions, AD_ID
+
+| Build | Android app id (manifest `APPLICATION_ID`) | Units (`expo.extra.adUnits.android`) |
+|---|---|---|
+| `test` + `test` | Google's sample `ca-app-pub-3940256099942544~3347511713` | none: `ADMOB_TEST_UNITS` from `TestIds` (Android values) |
+| `test` or `store` + `off` | the sample | none; ads never initialised |
+| `store` + `live` with `ads.ids.android` | the game's Android app id | the game's three Android units |
+| `store` + `live` without `ads.ids.android` | none at all (never the sample) | `null`: owner step GP5 pending, not shippable |
+
+- Versions come from the package's own `sdkVersions.android`: GMA 25.4.0, UMP 4.0.0, minSdk 24, compile and target 36. Nothing in our config sets them; the Android build reads them.
+- `com.google.android.gms.permission.AD_ID` is declared by the ads SDK and by the `expo-tracking-transparency` plugin (its Android half adds only that permission). Ads need it (the advertising id for frequency capping and, with consent, personalisation), so nothing may block or strip it: not `android.blockedPermissions`, not `withBlockedPermissions`, not a `tools:node="remove"` plugin (`check-ads` rule `ad-id-permission`). Play's Data safety form then declares "Device or other IDs" for advertising (privacy-and-network-audit owns that form).
+- No SKAdNetwork on Android: the list is iOS-only (`Info.plist`), the manifest gets nothing from it.
+- Real Android ids, like the iOS ones, reach the app only through `expo.extra`; the AdMob console steps for the Android app are in references/console-privacy-troubleshooting.md (GP5).
+
 ## Reading the mode at runtime
 
-`read-ads-extra.ts` reads `Constants.expoConfig.extra` (embedded at build time). Anything unexpected falls back to `off`, because a broken config must never show real ads. `ads-factory.ts` (`createAdsPort(extra, onAdError)`) then returns:
+`read-ads-extra.ts` reads `Constants.expoConfig.extra` (embedded at build time) and, of `extra.adUnits`, only the entry of `Platform.OS` (`readAdsExtra(extra, os)`; tests pass `os`). Anything unexpected falls back to `off` or to no units, because a broken config must never show real ads. `ads-factory.ts` (`createAdsPort(extra, onAdError)`) then returns:
 
 - `off`: the fake adapter with every slot empty and nothing ever requested (spec 4.3, screenshots, E2E).
 - `test`: the AdMob adapter with `ADMOB_TEST_UNITS`.
-- `live`: the AdMob adapter with `extra.adUnits`; it throws when they are missing (a `withShell` bug).
+- `live`: the AdMob adapter with this platform's `extra.adUnits`; it throws when they are missing (a `withShell` bug on iOS; on Android a live build without the game's Android ids, which the Android gates refuse as GP5).
 
 The consent port follows the same mode: `createConsentPort(adsMode, { onError })` (`consent-factory.ts`) returns a port that never calls Google UMP and never shows Apple's tracking prompt when `adsMode` is `off`, and the AdMob consent adapter otherwise.
 

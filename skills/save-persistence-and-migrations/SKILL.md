@@ -16,7 +16,7 @@ Everything the player owns is one versioned JSON document, validated on every lo
 5. **Change the format only through a new schema version, one pure frozen `vK-to-vK+1` step, and new frozen fixtures with checksums.** Never edit a shipped `save-doc-vN.ts`, section file, fixture or checksum, and commit the change with a `Gate-Change:` trailer. Old saves on real phones must keep upgrading exactly as tested.
 6. **Premium never turns off without an explicit revocation date, and never in a reset.** `keepPremiumUnlessRevoked` guards every writer; "Reset all progress" keeps settings, language, first-run flags, ads and Premium.
 7. **At boot, write nothing before the direction check; the language peek is read-only; hydrate synchronously before the first render.** Module code runs again after a direction reload, so an early write would happen twice.
-8. **Checkpoint the WAL (`wal_checkpoint(TRUNCATE)`) when the app goes to the background.** The device backup then copies one self-contained `save.db`.
+8. **Checkpoint the WAL (`wal_checkpoint(TRUNCATE)`) when the app goes to the background, and keep the save in the device backup (D5, spec 8.6).** iOS backs up `Documents/SQLite/` by itself; on Android, Auto Backup keeps `allowBackup: true` with backup rules (`backup_rules.xml` and `data_extraction_rules.xml`) that include exactly `SQLite/save.db`, `-wal` and `-shm` of the files domain. The backup then copies one self-contained `save.db`, and progress follows the player to a new phone with no network request of ours.
 9. **Test the real SQL on `node:sqlite` through `SqlDriver`, and finish every change to the write path or boot with the simulator kill test.** Jest proves the SQL; only a real kill proves the app.
 
 ## Workflow
@@ -27,7 +27,7 @@ Everything the player owns is one versioned JSON document, validated on every lo
 4. The stored shape changes: read [references/migrations-and-fixtures.md](references/migrations-and-fixtures.md) and follow "Adding version N+1" in order, imitating `examples/save-v2/` (schema v2, step, step test with a fast-check property, default doc, fixtures, checksums). A new version is permanent for players once shipped: name it in the report to the owner.
 5. Boot or kill-test work: read [references/boot-and-kill-test.md](references/boot-and-kill-test.md) (boot order, peek, `hydrateSave`, `resumeState`, SQL tests, kill test).
 6. Run the tests: `npx jest packages/shell/src/services/save packages/shell/src/app/hydrate-save.test.ts packages/shell/src/app/use-checkpoint-on-background.test.ts test/integration/save --ci --selectProjects unit --coverage --collectCoverageFrom='packages/shell/src/services/save/**/*.ts' --coverageThreshold='{}'` (paths first; only `npm run test:coverage` judges the thresholds) and `npx tsc -p packages/shell --noEmit` (plus `npx tsc -p .` for the root `test/` program).
-7. When the write path, the schema or the boot changed and a Release test-variant simulator build exists: `node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --create --app <App.app> --bundle-id <id> --game-id <game-id> --repo .` must print `RESULT: PASS`; inspect any save.db with `node ${CLAUDE_SKILL_DIR}/scripts/inspect-save.mjs`. Without a build, say in the report that the kill test is still owed.
+7. When the write path, the schema or the boot changed and a Release test-variant simulator build exists: `node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --create --app <App.app> --bundle-id <id> --game-id <game-id> --repo .` must print `RESULT: PASS`; inspect any save.db with `node ${CLAUDE_SKILL_DIR}/scripts/inspect-save.mjs`. On Android, with a Release test-variant APK: `node ${CLAUDE_SKILL_DIR}/scripts/kill-test.mjs --platform android --create --app <app-release.apk> --bundle-id <package> --game-id <game-id> --repo .` (a `google_apis` emulator; `--serial <serial>` for a running dedicated one), and `inspect-save.mjs --platform android --serial <serial> --bundle-id <package>` reads the app's `files/SQLite/` over adb. Without a build, say in the report that the kill test is still owed.
 8. Run `node ${CLAUDE_SKILL_DIR}/scripts/check-save-layer.mjs .` from the repo root; fix every `FAIL` line and rerun until it prints `RESULT: PASS`.
 
 ## Definition of done
@@ -64,21 +64,23 @@ Everything the player owns is one versioned JSON document, validated on every lo
 | [references/boot-and-kill-test.md](references/boot-and-kill-test.md) | Boot sequence, peek, hydrateSave, composition root, clock adapter, SQL tests, kill test, inspect-save, verified facts | Workflow steps 5 and 7 |
 | `templates/packages/shell/src/services/save/` | Driver port and drivers, SaveStore (SQLite and fake), SQL, checksum, codec, load plan, SaveService, resets, peek, schema v1, migrations, fixtures, and their tests | Workflow step 2 |
 | `templates/packages/shell/src/services/clock/` | `clock-port.ts`, `system-clock-adapter.ts` (the one file that reads `Date`), `fake-clock.ts` and their tests, synced from the library (do not edit here) | Workflow step 2 |
-| `templates/packages/shell/src/services/error-log/` | `sqlite-error-log-adapter.ts` (newest 200 rows), plus `error-log-port.ts`, `fake-error-log.ts` and its test synced from the library | Workflow step 2 |
+| `templates/packages/shell/src/services/error-log/` | `sqlite-error-log-adapter.ts` (newest 200 rows; `clearErrorLog(driver)` empties the table for a parity capture, never a newer app's save.db), plus `error-log-port.ts`, `fake-error-log.ts` and its test synced from the library | Workflow step 2 |
 | `templates/packages/shell/src/app/` | `hydrate-save.ts` (`hydrateSave` over an injected `SaveStore`, `resumeState`), `use-checkpoint-on-background.ts`, and their tests | Workflow steps 2 and 5 |
 | `templates/test/integration/save/` | `node:sqlite` driver and the SQL integration tests | Workflow steps 2 and 6 |
 | `examples/save-v2/` | A complete v1-to-v2 change (schema, step, step test, defaults, fixtures, checksums) | Workflow step 4 |
 | `scripts/check-save-layer.mjs` | Static checker for the save layer, schemas, migration chain, fixture checksums and the newer-`save.db` boot path | Workflow step 8, and at the end |
-| `scripts/inspect-save.mjs` | Health check of a save.db, a .sql dump, or the simulator app's file | Workflow step 7, and when a save looks wrong |
-| `scripts/kill-test.mjs` | Simulator kill test: a calibration launch times the first save write, then launch and SIGKILL at growing delays over 1.5 x that, inspect | Workflow step 7 |
+| `scripts/inspect-save.mjs` | Health check of a save.db, a .sql dump, the simulator app's file, or with `--platform android` the emulator app's `files/SQLite/` pulled over adb | Workflow step 7, and when a save looks wrong |
+| `scripts/kill-test.mjs` | Kill test on an iOS simulator, or with `--platform android` on an emulator over adb (`e07-android-kill-test` on the google_apis image, `adb root`, `kill -9`, pull `files/SQLite/`): a calibration launch times the first save write, then launch and SIGKILL at growing delays over 1.5 x that, inspect | Workflow step 7 |
+| `scripts/lib/android-device.mjs` | The adb, emulator and avdmanager side of both scripts on Android: SDK tool paths, boot wait, root check, kill round, pull, teardown (proven by the self-test) | Never by hand |
+| `scripts/lib/android-emu.mjs` | The pinned system image, the SDK lookup, the `adb devices` list, the free console port (5554 to 5682) and the sleep (synced from the library, the same file toybox-visual-parity uses; do not edit here) | Never by hand |
 | `scripts/lib/save-db.mjs` | Stages a copy of save.db and judges its health (used by both scripts above) | Never by hand |
 | `scripts/lib/kill-plan.mjs` | The kill test's timing: the calibrated step and the first-write test (proven by the self-test) | Never by hand |
 | `scripts/lib/app-modules.mjs` | Imports the app's TypeScript modules for `inspect-save --deep` | Never by hand |
 | `scripts/lib/fixture-tree.mjs` | Builds the self-test trees (templates plus one planted bug) | Never by hand |
-| `scripts/selftest.mjs` | Proves check-save-layer and inspect-save pass good input and catch every planted bug | After changing a checker or a template |
+| `scripts/selftest.mjs` | Proves check-save-layer and inspect-save pass good input and catch every planted bug, the kill plan and the Android helpers, and the kill test's iOS and Android plans (dry runs) and Android runs against the fake SDK | After changing a checker or a template |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in (check-lib, the clock and error log files) | When adding a shared file |
-| `tests/fixtures/` | Planted-bug overlays for check-save-layer (with `support/`, the start-shell.ts stand-in that makes the boot files due) and SQL dumps for inspect-save | When adding a checker rule |
+| `tests/fixtures/` | Planted-bug overlays for check-save-layer (with `support/`, the start-shell.ts stand-in that makes the boot files due) SQL dumps for inspect-save (Android cases read a fake adb), and the kill-test cases with `kill-test/fake-sdk/` (fake adb, emulator, avdmanager that never reach a device) | When adding a checker rule |
 
 ## Related skills
 

@@ -1,0 +1,1 @@
+[bounds] settings.group.privacy.tab: geometry off: dx +0.0 dy +2.5

@@ -174,12 +174,13 @@ The perf layer lands in two halves: its JS half (`app/perf/*.ts`, `markJsEntry()
 
 ## game.board-layout
 
-Rendered only in test builds and only with `boardLayout=1`: one small `AppText` the board host renders next to the canvas, whose text is `JSON.stringify({ x, y, layout })`:
+Rendered only in test builds and only with `boardLayout=1`: one small `AppText` the board host renders next to the canvas, whose text is `JSON.stringify({ x, y, layout })`, plus `tapScale` where it is not 1:
 
 - `x`, `y`: the canvas's top-left corner in window points (`measureInWindow` on `game.board`);
-- `layout`: the game's `BoardLayout` for the current canvas size: `regions` (each with `id`, `x`, `y`, `cell` in canvas points, unmirrored), `width`, `height` and `isMirrored`.
+- `layout`: the game's `BoardLayout` for the current canvas size: `regions` (each with `id`, `x`, `y`, `cell` in canvas points, unmirrored), `width`, `height` and `isMirrored`;
+- `tapScale` (Android only): the density, because Maestro's point taps are pixels there and window points on iOS.
 
-A cell's centre on screen is `x + region.x + (col + 0.5) * region.cell` and `y + region.y + (row + 0.5) * region.cell`; when `isMirrored` is true, the horizontal centre is `x + layout.width - region.x - (col + 0.5) * region.cell`. The board work renders it: `packages/shell/src/game-host/board-layout-probe.tsx` wraps the canvas when `GameBoardHost` gets `isLayoutProbeOn`, which the Shell's board host factory (`createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn: () => debugParts.services?.isBoardLayoutOn() === true })`) passes only while `boardLayout=1` is set; store builds have no debug services, so it is always false there.
+A cell's tap point is `(x + region.x + (col + 0.5) * region.cell) * s` and `(y + region.y + (row + 0.5) * region.cell) * s`, with `s = tapScale || 1`; when `isMirrored` is true, the horizontal one is `(x + layout.width - region.x - (col + 0.5) * region.cell) * s`. The board work renders it: `packages/shell/src/game-host/board-layout-probe.tsx` wraps the canvas when `GameBoardHost` gets `isLayoutProbeOn`, which the Shell's board host factory (`createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn: () => debugParts.services?.isBoardLayoutOn() === true })`) passes only while `boardLayout=1` is set; store builds have no debug services, so it is always false there.
 
 `game.moves-label` is the same switch's second probe: the Game screen's moves probe (`screens/game/game-moves-probe.tsx`, shipped with the S5 Game screen) shows the run's move count as one small Text (`1` after the first move), so a flow proves a tap made a move and that it survived a kill.
 

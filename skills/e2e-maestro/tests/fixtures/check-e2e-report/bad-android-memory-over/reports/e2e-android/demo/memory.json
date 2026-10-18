@@ -1,0 +1,10 @@
+{
+  "footprintKb": 163840,
+  "footprintMb": 160,
+  "privateDirtyKb": 163000,
+  "swapPssKb": 840,
+  "totalPssKb": 143360,
+  "totalPssMb": 140,
+  "limitMb": 150,
+  "isOver": true
+}

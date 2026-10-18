@@ -100,10 +100,12 @@
     },
     {
       "name": "Build and release",
-      "why": "Release simulator builds, and the road to TestFlight.",
+      "why": "Release simulator and emulator builds, and the road to TestFlight and Google Play.",
       "skills": [
         "ios-simulator-build",
-        "ios-release-testflight"
+        "ios-release-testflight",
+        "android-emulator-build",
+        "android-release-play"
       ]
     }
   ],
@@ -152,9 +154,10 @@
         "react-components-and-hooks",
         "navigation-and-routing",
         "unit-and-component-tests",
-        "tdd-workflow"
+        "tdd-workflow",
+        "android-emulator-build"
       ],
-      "note": "Add the data skill of the screen: daily-and-statistics (S9, S10), settings-and-preferences (S11), premium-purchase (S12), game-host-integration (S5-S7)."
+      "note": "Add the data skill of the screen: daily-and-statistics (S9, S10), settings-and-preferences (S11), premium-purchase (S12), game-host-integration (S5-S7). On a ported game the screen is also signed off on the Android profile (android-emulator-build builds the emulator app)."
     },
     {
       "task": "Build the Settings screen or add a setting (S11)",
@@ -180,9 +183,10 @@
         "i18n-strings-and-catalogs",
         "toybox-visual-parity",
         "privacy-and-network-audit",
-        "tdd-workflow"
+        "tdd-workflow",
+        "android-release-play"
       ],
-      "note": "Every S12 state screen must pass visual parity; the App Store Connect steps are the owner's."
+      "note": "Every S12 state screen must pass visual parity; the App Store Connect steps are the owner's. On Android Premium goes through Google Play Billing; the Play product and license testers are android-release-play's."
     },
     {
       "task": "Add or change ads, consent, the ATT tracking permission or a rewarded perk",
@@ -193,9 +197,10 @@
         "settings-and-preferences",
         "privacy-and-network-audit",
         "unit-and-component-tests",
-        "tdd-workflow"
+        "tdd-workflow",
+        "android-emulator-build"
       ],
-      "note": "Ads never interrupt play (N8); on iOS the order is the S3 intro, Google's form when required, then Apple's ATT prompt, all before the first ad request; the AdMob console steps are the owner's."
+      "note": "Ads never interrupt play (N8); on iOS the order is the S3 intro, Google's form when required, then Apple's ATT prompt, all before the first ad request; the AdMob console steps are the owner's. On Android there is no tracking prompt (requestTracking answers 'unavailable'); the emulator build (android-emulator-build) proves the Android ids per mode."
     },
     {
       "task": "Add or restyle a Toybox component",
@@ -408,9 +413,10 @@
         "ios-simulator-build",
         "toybox-visual-parity",
         "privacy-and-network-audit",
-        "golden-tests"
+        "golden-tests",
+        "android-emulator-build"
       ],
-      "note": "Flows select by testID only; baselines change only on purpose."
+      "note": "Flows select by testID only; baselines change only on purpose. A ported game runs the same flows with e2e:android and screenshots:android on an e07-android emulator (android-emulator-build)."
     },
     {
       "task": "Prove a screen matches its Toybox design screenshot",
@@ -419,9 +425,10 @@
         "ios-simulator-build",
         "toybox-screens",
         "toybox-components",
-        "toybox-design-system"
+        "toybox-design-system",
+        "android-emulator-build"
       ],
-      "note": "Every built screen, light and dark, en and fa; never widen a tolerance."
+      "note": "Every built screen, light and dark, en and fa; never widen a tolerance. A ported game is also captured on the e07-android-parity emulator against the Android reference set (--platform android)."
     },
     {
       "task": "Build, run or smoke-test on the iOS simulator",
@@ -431,6 +438,30 @@
         "architecture-and-boundaries"
       ],
       "note": "Release builds of the test variant; look at the screenshot."
+    },
+    {
+      "task": "Port a game to Android",
+      "skills": [
+        "android-emulator-build",
+        "pocket-arcade-product-spec",
+        "architecture-and-boundaries",
+        "unit-and-component-tests",
+        "privacy-and-network-audit",
+        "toybox-visual-parity",
+        "e2e-maestro",
+        "tdd-workflow",
+        "git-commits-and-reporting"
+      ],
+      "note": "Once the game's iOS version has shipped: follow the Android port order (Android steps 1-8) in the build orders, loading each step's skills; the owner's Play steps (O10, GP1-GP7) never block a step."
+    },
+    {
+      "task": "Build, run or smoke-test on the Android emulator",
+      "skills": [
+        "android-emulator-build",
+        "troubleshooting-playbook",
+        "architecture-and-boundaries"
+      ],
+      "note": "Release APKs of the test and store variants on an e07-android emulator; check the APK and look at the screenshot."
     },
     {
       "task": "Release a game to TestFlight",
@@ -445,6 +476,17 @@
         "git-commits-and-reporting"
       ],
       "note": "Nothing leaves the Mac without the owner's word in this session; the owner's play-test, fa and ckb review and listening to the sound previews are listed as owner steps, never waited for."
+    },
+    {
+      "task": "Release a game to Google Play internal testing",
+      "skills": [
+        "android-release-play",
+        "premium-purchase",
+        "privacy-and-network-audit",
+        "android-emulator-build",
+        "git-commits-and-reporting"
+      ],
+      "note": "Signed AAB from a clean main, the store-AAB gate with its stamp, then the upload with the owner's word; the keyless rehearsal and a slice report until the Play steps are done."
     },
     {
       "task": "Add, upgrade or remove an npm package",
@@ -536,9 +578,10 @@
         "admob-ads",
         "premium-purchase",
         "e2e-maestro",
-        "dependency-management"
+        "dependency-management",
+        "android-emulator-build"
       ],
-      "note": "Baseline and allowlist changes need the owner; the ads SDK's Device ID used for tracking is an App Privacy answer, while the app's own manifest declares no tracking."
+      "note": "Baseline and allowlist changes need the owner; the ads SDK's Device ID used for tracking is an App Privacy answer, while the app's own manifest declares no tracking. A ported game adds the Gradle layer, the merged-manifest permissions and the Data safety answers after an Android prebuild (android-emulator-build)."
     },
     {
       "task": "A golden or snapshot test shows a diff",
@@ -798,7 +841,11 @@
               "__mocks__/**",
               "packages/shell/src/services/purchase/**",
               "packages/shell/src/stores/premium/**"
-            ]
+            ],
+            "exclude": [
+              "packages/shell/src/stores/premium/premium-flow.android.test.ts"
+            ],
+            "note": "premium-flow.android.test.ts imports the composition root (step 7) and runs only in unit-android: Android step 3 copies it"
           },
           {
             "skill": "game-audio-and-haptics",
@@ -981,10 +1028,14 @@
               "packages/shell/src/ui/edged-face*",
               "packages/shell/src/ui/toybox-styles*",
               "packages/shell/src/ui/use-balanced-wrap*",
+              "packages/shell/src/ui/line-breaks*",
               "packages/shell/src/app/press-feedback-context*",
               "packages/shell/src/i18n/use-localized-text-style*",
               "apps/line-siege/src/theme/**",
-              "test/integration/toybox-palettes.test.ts"
+              "test/integration/toybox-palettes.test.ts",
+              "packages/shell/src/ui/use-text-room*",
+              "packages/shell/src/ui/font-scale-curve*",
+              "packages/shell/src/ui/use-scaled-size*"
             ]
           },
           {
@@ -1136,6 +1187,7 @@
               "packages/shell/src/app/dialog-context*",
               "packages/shell/src/app/game-startup-splash.tsx",
               "packages/shell/src/app/premium-screen-deps-context.tsx",
+              "packages/shell/src/app/read-store-ids*",
               "packages/shell/src/app/read-version-text*",
               "packages/shell/src/app/startup-splash*",
               "packages/shell/src/app/use-game-extra*",
@@ -1148,7 +1200,10 @@
               "packages/shell/src/screens/debug/debug-rows.ts",
               "packages/shell/src/game-host/game-top-bar*",
               "packages/shell/src/testing/**",
-              "packages/shell/src/ui/screen-body*"
+              "packages/shell/src/ui/screen-body*",
+              "packages/shell/src/app/modal-layer*",
+              "packages/shell/src/app/build-number*",
+              "packages/shell/src/ui/use-body-bottom-top-up*"
             ]
           },
           {
@@ -1168,7 +1223,8 @@
             "paths": [
               "packages/shell/src/app/parity/**",
               "packages/shell/src/app/parity-launch-marker*",
-              "packages/shell/src/app/parity-startup*"
+              "packages/shell/src/app/parity-startup*",
+              "packages/shell/src/app/parity-marker*"
             ]
           },
           {
@@ -1246,7 +1302,9 @@
           "admob-ads",
           "premium-purchase",
           "game-audio-and-haptics",
-          "toybox-design-system"
+          "toybox-design-system",
+          "android-release-play",
+          "android-emulator-build"
         ],
         "proof": "`node packages/tooling/src/art/render-art.ts --app line-siege --check` exits 0 and `check-app-art.mjs . --app line-siege` (code-drawn-art-and-icons) prints RESULT: PASS; `npx tsc --noEmit -p packages/shell`, `npm run -s check:fast` and `npm run test:coverage` are green; `check-ads.mjs .` (admob-ads), `check-premium.mjs .` (premium-purchase) and `check-design-system.mjs .` (toybox-design-system) print RESULT: PASS with no SKIP line (the plugin list is in); `check-perf-code.mjs .` (performance-budgets) prints RESULT: PASS with only the slice line for Home's mark (`SKIP packages/shell/src/screens/home/use-home-model.ts [perf-layer] S4 not in shell-slice.json`); `check-audio-haptics.mjs .` (game-audio-and-haptics) prints RESULT: PASS with only the toggle's slice line (S11 and S6); `APP_VARIANT=test ADS_MODE=off npx expo config` in apps/line-siege resolves every plugin; `npm run audit:network` passes (before the first prebuild it says `SKIPPED pods/config layers: run npx expo prebuild first` and counts 0 failures); `check-gate-wiring.mjs .` (quality-gates) prints RESULT: PASS with only the e2e:ios and screenshots:ios (step 10) and release:ios (step 11) script-target lines; `npm run build:ios:sim -- --app line-siege --variant test --ads off` succeeds (it runs audit:privacy after prebuild)",
         "copies": [
@@ -1254,10 +1312,31 @@
             "skill": "architecture-and-boundaries",
             "paths": [
               "packages/shell/src/config/with-shell*",
-              "packages/shell/src/config/shell-plugins*"
+              "packages/shell/src/config/shell-plugins*",
+              "packages/shell/src/config/main-application*",
+              "packages/shell/src/config/google-telemetry*"
             ],
             "swap": true,
             "note": "swap: the final with-shell.ts and its test replace the bootstrap's phase-0 pair (commit trailer Spec-Change: with-shell final composer (phase 0 placeholder replaced))"
+          },
+          {
+            "skill": "architecture-and-boundaries",
+            "paths": [
+              "packages/shell/src/config/android-config*",
+              "packages/shell/src/config/backup-rules*",
+              "packages/shell/src/config/rtl-support*",
+              "packages/shell/plugins/with-backup-rules.ts",
+              "packages/shell/plugins/with-rtl-support.ts"
+            ],
+            "note": "the Android block and plugins the final withShell lists: Expo resolves every plugin path on every platform, so they land with it even before the Android port"
+          },
+          {
+            "skill": "android-release-play",
+            "paths": [
+              "packages/shell/src/config/upload-signing*",
+              "packages/shell/plugins/with-upload-signing.ts"
+            ],
+            "note": "the upload-signing plugin withShell's Android plugins list; it changes nothing until the game's upload key exists (Android step 8)"
           },
           {
             "skill": "performance-budgets",
@@ -1280,6 +1359,12 @@
               "packages/tooling/src/ios/**",
               "packages/tooling/src/e2e/maestro-args*"
             ]
+          },
+          {
+            "skill": "android-emulator-build",
+            "paths": [
+              "packages/tooling/src/android/toolchain*"
+            ]
           }
         ],
         "installs": [
@@ -1289,6 +1374,10 @@
           },
           {
             "package": "expo-splash-screen",
+            "where": "apps/line-siege"
+          },
+          {
+            "package": "expo-build-properties",
             "where": "apps/line-siege"
           }
         ],
@@ -1628,7 +1717,13 @@
               "packages/tooling/scripts/**",
               "packages/shell/e2e/**",
               "apps/__GAME_ID__/e2e/**"
-            ]
+            ],
+            "exclude": [
+              "packages/tooling/src/e2e/*-android.ts",
+              "packages/tooling/src/e2e/android-*",
+              "packages/tooling/src/e2e/emu-perf-steps.ts"
+            ],
+            "note": "the Android runners and their helpers wait for Android step 7"
           },
           {
             "skill": "admob-ads",
@@ -1882,7 +1977,13 @@
                   "packages/tooling/scripts/**",
                   "packages/shell/e2e/subflows/**",
                   "apps/__GAME_ID__/e2e/**"
-                ]
+                ],
+                "exclude": [
+                  "packages/tooling/src/e2e/*-android.ts",
+                  "packages/tooling/src/e2e/android-*",
+                  "packages/tooling/src/e2e/emu-perf-steps.ts"
+                ],
+                "note": "the Android runners and their helpers wait for Android step 7"
               }
             ],
             "installs": [
@@ -1905,6 +2006,319 @@
           "order": "shell",
           "through": 8
         }
+      },
+      {
+        "title": "Android port",
+        "intro": "For a game whose iOS version has shipped (spec Platforms: iOS first, then Android, from one code base): the Android side of Shell steps 8-12, in eight steps. The repo has passed every Shell step (the pilot) or the game's \"Every new game\" order, and nothing iOS changes: every iOS check of those orders stays green after each Android step. Each step copies exactly its manifest from the named skills' templates, tests included; a template the iOS order already copied is copied again only where its manifest names it, because the Android work changed it (for example with-shell.ts, ads-config.ts, the audio and haptics adapters). Android tests are named <unit>.android.test.ts(x) and run in the unit-android Jest project (jest-expo/android), which step 1 adds. Every adb, emulator and Maestro call names its device (-s <serial>, -avd e07-android-<purpose>); the emulators of other projects are never touched. The owner's Google Play steps (O10, GP1-GP7) never block a step: the Android gates name them as owner placeholders until they are done.",
+        "base": {
+          "order": "shell",
+          "through": 12
+        },
+        "steps": [
+          {
+            "step": "Android step 1, tooling and the Android Jest project: the four Android npm scripts from quality-gates' package-scripts.json (build:android:emu, e2e:android, screenshots:android, release:android) and the Android budget of its quality-gates.json (perf.coldStartEmuRegressionFactor 1.2; Android memory is judged by perf.memoryFootprintMbMax, as on iOS) join the repo in one commit with the trailer `Gate-Change: android npm scripts, android perf keys and the unit-android jest project (Android step 1)`; the shared jest.config.js with its third project unit-android (unit never runs *.android.test.*); android-emulator-build's toolchain, emulator and build tooling; privacy-and-network-audit's Android audit layers (the Gradle layer, the merged-manifest audit and the Data safety answers); the .gitignore and .claude/settings.json deny rules for *.jks, *.keystore and play-service-account.json (the .claude/ write needs the owner's approval). The SDK parts android-emulator-build's preflight names (the system image, the NDK of dependency-management's Android toolchain row) are installed by sdkmanager only with the owner's word for the download",
+            "skills": [
+              "android-emulator-build",
+              "privacy-and-network-audit",
+              "unit-and-component-tests",
+              "quality-gates",
+              "performance-budgets",
+              "troubleshooting-playbook",
+              "git-commits-and-reporting"
+            ],
+            "proof": "`check-emu-setup.mjs .` (android-emulator-build), `check-test-setup.mjs .` (unit-and-component-tests), `audit-repo.mjs .` (privacy-and-network-audit), `check-known-pitfalls.mjs .` (troubleshooting-playbook) and `check-budgets.mjs .` (performance-budgets) print RESULT: PASS; `npx jest --ci --selectProjects unit-android` passes; `check-gate-wiring.mjs .` (quality-gates) prints RESULT: PASS with only the script-target SKIP lines of e2e:android and screenshots:android (due at Android step 7) and release:android (due at Android step 8); `npm run -s check:fast` is green",
+            "copies": [
+              {
+                "skill": "unit-and-component-tests",
+                "paths": [
+                  "jest.config.js"
+                ]
+              },
+              {
+                "skill": "android-emulator-build",
+                "paths": [
+                  "packages/tooling/src/android/**",
+                  "packages/tooling/src/build/emu-build-plan*",
+                  "packages/tooling/src/build/build-android-emu.ts"
+                ]
+              },
+              {
+                "skill": "privacy-and-network-audit",
+                "paths": [
+                  "packages/tooling/src/audit/network-gradle-layer*",
+                  "packages/tooling/src/audit/android-manifest-audit*",
+                  "packages/tooling/src/audit/data-safety*",
+                  "packages/tooling/src/audit/audit-network.ts",
+                  "packages/tooling/src/audit/audit-privacy.ts",
+                  "packages/tooling/src/audit/network-config-layer*",
+                  "packages/tooling/src/audit/network-native-layer*"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 2, configuration and art: architecture-and-boundaries' final withShell with its Android block (package and versionCode from the shared build number, Auto Backup limited to the save (D5), the permission allowlist and blocked permissions, automatic dark mode, supportsRtl) and its Android plugins, the upload-signing plugin of android-release-play, and shell-plugins.ts with expo-build-properties (Kotlin of dependency-management's Android toolchain row); admob-ads' per-platform live ad units (ads-config.ts and read-ads-extra.ts, which withShell's test pins: a live build without Android ids carries no Android app id and no sample id, owner step GP5); then render the Android icons and splash with `node packages/tooling/src/art/render-art.ts --app <game-id>` (the adaptive foreground and monochrome icons, the Android 12 splash icon and the Play icon). The ios block of the resolved config is unchanged",
+            "skills": [
+              "architecture-and-boundaries",
+              "dependency-management",
+              "code-drawn-art-and-icons",
+              "rtl-and-direction",
+              "save-persistence-and-migrations",
+              "admob-ads",
+              "android-release-play"
+            ],
+            "proof": "`check-layout.mjs .` and `check-boundaries.mjs .` (architecture-and-boundaries), `check-deps-policy.mjs .` (dependency-management), `check-rtl.mjs .` (rtl-and-direction), `check-save-layer.mjs .` (save-persistence-and-migrations) and `check-app-art.mjs . --app <game-id>` (code-drawn-art-and-icons) print RESULT: PASS; `node packages/tooling/src/art/render-art.ts --app <game-id> --check` exits 0; `APP_VARIANT=test ADS_MODE=off npx expo config` in apps/<game-id> resolves every plugin, and its ios block equals the one before this step; `npx tsc --noEmit -p packages/shell` and `npm run -s check:fast` are green",
+            "copies": [
+              {
+                "skill": "architecture-and-boundaries",
+                "paths": [
+                  "packages/shell/src/config/with-shell*",
+                  "packages/shell/src/config/shell-plugins*",
+                  "packages/shell/src/config/android-config*",
+                  "packages/shell/src/config/backup-rules*",
+                  "packages/shell/src/config/rtl-support*",
+                  "packages/shell/plugins/with-backup-rules.ts",
+                  "packages/shell/plugins/with-rtl-support.ts",
+                  "packages/shell/plugins/with-app-variant-marker.ts"
+                ]
+              },
+              {
+                "skill": "android-release-play",
+                "paths": [
+                  "packages/shell/src/config/upload-signing*",
+                  "packages/shell/plugins/with-upload-signing.ts"
+                ]
+              },
+              {
+                "skill": "admob-ads",
+                "paths": [
+                  "packages/shell/src/config/ads-config*",
+                  "packages/shell/src/services/ads/read-ads-extra*"
+                ]
+              },
+              {
+                "skill": "code-drawn-art-and-icons",
+                "paths": [
+                  "packages/tooling/src/art/**",
+                  "packages/shell/src/config/art-config*"
+                ]
+              }
+            ],
+            "installs": [
+              {
+                "package": "expo-build-properties",
+                "where": "each ported app (apps/<game-id>)"
+              }
+            ],
+            "generates": [
+              {
+                "tool": "node packages/tooling/src/art/render-art.ts --app <game-id> (code-drawn-art-and-icons)",
+                "paths": [
+                  "apps/__GAME_ID__/assets/generated/*.png"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 3, services: the consent adapter's Android case (Google's form with no tracking prompt: requestTracking answers 'unavailable', L14), Premium through Google Play Billing (acknowledged only after Premium is saved, a pending purchase never granted, absence never revokes), the Android haptics column with the Vibration row that follows it, and no audio focus (spec 8.7), and the native half of the cold-start layer on Android (the Kotlin ProcessStartModule, listed in expo-module.config.json beside the iOS module)",
+            "skills": [
+              "admob-ads",
+              "premium-purchase",
+              "game-audio-and-haptics",
+              "settings-and-preferences",
+              "performance-budgets"
+            ],
+            "proof": "`check-ads.mjs .` and `check-ad-behaviour.mjs .` (admob-ads), `check-premium.mjs .` and `check-premium-behaviour.mjs .` (premium-purchase), `check-audio-haptics.mjs .` (game-audio-and-haptics), `check-settings.mjs .` (settings-and-preferences) and `check-perf-code.mjs .` (performance-budgets) print RESULT: PASS; `npx jest --ci --selectProjects unit-android` passes",
+            "copies": [
+              {
+                "skill": "admob-ads",
+                "paths": [
+                  "packages/shell/src/services/consent/admob-consent-adapter*",
+                  "packages/shell/src/services/ads/admob-ads-adapter.android.test.ts",
+                  "packages/shell/src/app/consent-moment.android.test.tsx",
+                  "__mocks__/react-native-google-mobile-ads.ts"
+                ]
+              },
+              {
+                "skill": "premium-purchase",
+                "paths": [
+                  "packages/shell/src/services/purchase/expo-iap-purchase-adapter*",
+                  "packages/shell/src/stores/premium/premium-flow.android.test.ts"
+                ]
+              },
+              {
+                "skill": "game-audio-and-haptics",
+                "paths": [
+                  "packages/shell/src/services/audio/audio-api-audio-adapter*",
+                  "packages/shell/src/services/haptics/expo-haptics-adapter*"
+                ]
+              },
+              {
+                "skill": "settings-and-preferences",
+                "paths": [
+                  "packages/shell/src/screens/settings/settings-rows.android.test.ts"
+                ]
+              },
+              {
+                "skill": "performance-budgets",
+                "paths": [
+                  "packages/shell/android/**",
+                  "packages/shell/src/app/perf/process-start*",
+                  "packages/shell/src/app/perf/debug-perf-device*",
+                  "packages/shell/src/app/perf/share-perf-report*",
+                  "packages/shell/src/app/perf/perf-report-header*"
+                ]
+              }
+            ],
+            "generates": [
+              {
+                "tool": "copy shell-native/expo-module.config.json (performance-budgets), now with the android module",
+                "paths": [
+                  "packages/shell/expo-module.config.json"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 4, platform behaviour: the system back (hardware and gesture) through React Navigation, opening Pause on the Game screen and cancelling an open dialog (spec 5); the direction switch on Android (supportsRtl, forceRTL and one reloadAppAsync after the save); the tilt layer's Android flag; TalkBack kept inside Pause, Result and the dialogs by the host that draws them; the Settings links to Google Play and the versionCode in the version text (S11, S11b)",
+            "skills": [
+              "navigation-and-routing",
+              "rtl-and-direction",
+              "toybox-design-system",
+              "toybox-components",
+              "toybox-screens",
+              "settings-and-preferences",
+              "accessibility"
+            ],
+            "proof": "`check-navigation.mjs . --complete` (navigation-and-routing), `check-rtl.mjs .` (rtl-and-direction), `check-design-system.mjs .` (toybox-design-system), `check-components.mjs .` (toybox-components), `check-screens.mjs .` (toybox-screens), `check-settings.mjs .` (settings-and-preferences) and `check-a11y-code.mjs .` (accessibility) print RESULT: PASS; `npx jest --ci --selectProjects unit-android` and `npm run -s check:fast` are green",
+            "copies": [
+              {
+                "skill": "navigation-and-routing",
+                "paths": [
+                  "packages/shell/src/navigation/use-hardware-back*",
+                  "packages/shell/src/screens/game/game-screen-back.android.test.tsx"
+                ]
+              },
+              {
+                "skill": "rtl-and-direction",
+                "paths": [
+                  "packages/shell/src/i18n/direction.android.test.ts"
+                ]
+              },
+              {
+                "skill": "toybox-design-system",
+                "paths": [
+                  "packages/shell/src/ui/toybox-styles*"
+                ]
+              },
+              {
+                "skill": "toybox-components",
+                "paths": [
+                  "packages/shell/src/ui/scrim.tsx",
+                  "packages/shell/src/ui/tiles.test.tsx"
+                ]
+              },
+              {
+                "skill": "toybox-screens",
+                "paths": [
+                  "packages/shell/src/app/dialog-context*",
+                  "packages/shell/src/app/read-version-text*",
+                  "packages/shell/src/screens/dialogs/dialog-host*",
+                  "packages/shell/src/app/use-open-external*",
+                  "packages/shell/src/app/read-store-ids*",
+                  "packages/shell/src/screens/game/game-layout*",
+                  "packages/shell/src/screens/result/result-overlay.tsx",
+                  "packages/shell/src/screens/settings/use-settings-links*",
+                  "packages/shell/src/testing/test-game-extra.ts"
+                ]
+              },
+              {
+                "skill": "settings-and-preferences",
+                "paths": [
+                  "packages/shell/src/config/external-links*"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 5, first builds, audits and the kill test: the first Release emulator builds of both variants on this session's e07-android AVD (`npm run build:android:emu -- --app <game-id> --variant test --ads off`, then `--variant store`), the network audit with its Gradle layer after the prebuild, the privacy audit's Data safety answers, the kill test on a google_apis image, and the cold-start and memory budgets. The iOS simulator build of the same commit still passes",
+            "skills": [
+              "android-emulator-build",
+              "save-persistence-and-migrations",
+              "privacy-and-network-audit",
+              "performance-budgets",
+              "ios-simulator-build"
+            ],
+            "proof": "both builds print `ready (...)`; `check-emu-app.mjs . --app <game-id> --variant test` (android-emulator-build) prints RESULT: PASS, and `--variant store` ends only with owner-placeholder lines and `OWNER STEPS PENDING` (GP5 and the iOS G3, G5 still pending); `kill-test.mjs --platform android --app <apk> --bundle-id <package> --create` (save-persistence-and-migrations) prints RESULT: PASS; `npm run audit:network` reports 0 failures with the Gradle layer; `check-budgets.mjs .` (performance-budgets) prints RESULT: PASS; `check-sim-app.mjs . --app <game-id>` (ios-simulator-build) still prints RESULT: PASS"
+          },
+          {
+            "step": "Android step 6, screens on the Android profile: the parity harness's Android launch path (the launch intent's parity extra read by the Shell's native module in test builds only), then every screen S1-S15 captured on the e07-android-parity emulator and signed off against the Android reference set in light and dark, en and fa, at every scroll offset (de and ckb before a release); an Android difference is fixed or waived with \"platform\": \"android\", never tolerated by a wider number",
+            "skills": [
+              "toybox-visual-parity",
+              "toybox-screens",
+              "android-emulator-build",
+              "e2e-maestro"
+            ],
+            "proof": "`check-harness.mjs .` (toybox-visual-parity) prints RESULT: PASS; `check-signoff.mjs --platform android --all` (toybox-visual-parity) prints RESULT: PASS for the four variants; the iOS sign-off ledger is unchanged",
+            "copies": [
+              {
+                "skill": "toybox-visual-parity",
+                "paths": [
+                  "packages/shell/src/app/parity-startup.android.test.tsx",
+                  "packages/shell/src/app/parity/parity-launch-extra*",
+                  "packages/shell/src/app/parity/read-parity-request.ts",
+                  "packages/shell/android/src/main/java/io/applander/shell/**"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 7, E2E and the screenshot matrix: the Android runners (one runner for the same flows, the socket sampler, cold start through am start -W, total PSS, the large-text set at font_scale 2.0), then the evidence run and the matrix on the phone and tablet AVDs; the six ads-smoke flows run by hand on an ADS_MODE=test build, with the tracking-prompt steps only on iOS",
+            "skills": [
+              "e2e-maestro",
+              "accessibility",
+              "admob-ads",
+              "android-emulator-build"
+            ],
+            "proof": "`check-e2e-setup.mjs .` and `check-flows.mjs .` (e2e-maestro) print RESULT: PASS; `npm run e2e:android -- --app <game-id>` passes with an empty network.txt; `check-e2e-report.mjs . --app <game-id> --platform android` (e2e-maestro) prints RESULT: PASS, and with `--screenshots` after `npm run screenshots:android -- --app <game-id>`; `check-gate-wiring.mjs .` (quality-gates) prints only the release:android script-target SKIP line (due at Android step 8)",
+            "copies": [
+              {
+                "skill": "e2e-maestro",
+                "paths": [
+                  "packages/tooling/src/e2e/android-*",
+                  "packages/tooling/src/e2e/*-android.ts",
+                  "packages/tooling/src/e2e/emu-perf-steps.ts",
+                  "packages/tooling/src/e2e/write-gallery.ts",
+                  "packages/shell/e2e/subflows/**"
+                ]
+              },
+              {
+                "skill": "admob-ads",
+                "paths": [
+                  "packages/shell/e2e/ads-smoke/**"
+                ]
+              }
+            ]
+          },
+          {
+            "step": "Android step 8, the release tooling and internal testing: android-release-play's release pipeline (the AAB through bundleRelease, the upload-key signing check, the store-AAB gate and its stamp, the Android Publisher client, versionCode from the shared build number); then, on main, the gated store AAB and its upload to internal testing, or, while the owner's Play steps are pending, the keyless rehearsal and a slice report. `npm run release:android` makes the `chore(<game-id>): build <n>` commit and the `<game-id>/vX.Y.Z+<n>` tag, and nothing leaves this Mac without the owner's word",
+            "skills": [
+              "android-release-play",
+              "git-commits-and-reporting",
+              "privacy-and-network-audit",
+              "premium-purchase"
+            ],
+            "proof": "`check-release-setup-android.mjs .` (android-release-play) prints RESULT: PASS or ends only with owner-placeholder lines; `check-gate-wiring.mjs .` (quality-gates) prints RESULT: PASS with no Android script-target line; then `check-store-aab.mjs` (android-release-play) on the signed AAB, `check-commits.mjs . --range main..HEAD` and `check-tags.mjs .` (git-commits-and-reporting) print RESULT: PASS",
+            "copies": [
+              {
+                "skill": "android-release-play",
+                "paths": [
+                  "packages/tooling/src/release-android/**"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "verifyGreen": {

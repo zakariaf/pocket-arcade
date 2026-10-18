@@ -1,0 +1,10 @@
+{
+ "android": {
+  "night": "yes",
+  "fontScale": "1.15",
+  "gestural": false,
+  "demoAllowed": "null",
+  "wmSizeOverride": "1080x2400",
+  "wmDensityOverride": "420"
+ }
+}

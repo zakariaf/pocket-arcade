@@ -1,0 +1,21 @@
+{
+ "version": 1,
+ "frame": "s4-home",
+ "kind": "phone",
+ "theme": "dark",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "bundleId": "io.applander.linesiege",
+ "platform": "android",
+ "emulator": {
+  "avd": "e07-android-parity",
+  "serial": "emulator-5554",
+  "systemImage": "system-images;android-35;google_apis;arm64-v8a",
+  "driverPort": 22187
+ },
+ "hierarchyPxPerPt": 3,
+ "launchArgs": [],
+ "capturedAt": "2026-10-12T12:00:00.000Z",
+ "appSha256": "956555b6fbd9451e0c628dd8acb1e6f42710b294c39aedca3e86684ac4384f80"
+}

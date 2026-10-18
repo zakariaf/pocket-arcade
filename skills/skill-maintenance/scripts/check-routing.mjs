@@ -18,7 +18,7 @@ const DEFAULT_EVALS = join(dirname(fileURLToPath(import.meta.url)), '..', 'asset
 
 const SPEC = {
   name: 'check-routing',
-  summary: 'Runs routing evals: for each prompt, is the expected skill chosen? Offline it ranks skills by description words (expected skill must be in the top --top); --live runs claude -p and reads the first Skill call.',
+  summary: 'Runs routing evals: for each prompt, is the expected skill chosen? Offline it ranks skills by description words (expected skill must be in the top --top); --live runs claude -p and reads the first deciding call (past the AGENTS.md session start).',
   usage: '--skills-root <dir> [options]',
   options: {
     'skills-root': { type: 'string', help: 'Folder holding the skill folders (required; usually skills)' },
@@ -31,6 +31,7 @@ const SPEC = {
     live: { type: 'boolean', help: 'Ask Claude Code (claude -p) instead of the offline ranker; costs model calls' },
     runs: { type: 'string', default: '1', help: 'Live: runs per prompt; an eval passes when at least half choose the expected skill' },
     repo: { type: 'string', default: '.', help: 'Live: the repo folder claude runs in (its .claude/skills are what is tested)' },
+    claude: { type: 'string', default: 'claude', help: 'Live: the Claude Code command (the self-test passes a scripted stand-in)' },
     json: { type: 'boolean', help: 'Also print the problems as JSON' },
   },
   positionals: { min: 0, max: 0 },
@@ -97,7 +98,7 @@ run(async () => {
     }
     const chosen = [];
     for (let i = 0; i < runs; i += 1) {
-      const result = await routeLive(item.prompt, { cwd: resolve(options.repo) });
+      const result = await routeLive(item.prompt, { cwd: resolve(options.repo), claude: options.claude.includes('/') ? resolve(options.claude) : options.claude });
       if (result.error && result.firstTool === null && /not installed|exited|within/.test(result.error)) fail(`live routing cannot run: ${result.error}`, 'Install and sign in to Claude Code, run from the repo root, or drop --live.');
       chosen.push(result.skill);
     }

@@ -9,6 +9,7 @@ import { ThemeProvider } from '@e07/shell/theme/theme-provider.tsx';
 import { MotionConfig } from './motion-config.tsx';
 import { ShellErrorBoundary } from './shell-error-boundary.tsx';
 import { watchSystemA11y } from './system-a11y-store.ts';
+import { ThemedStatusBar } from './themed-status-bar.tsx';
 
 import type { ThemeSet } from '@e07/shell/theme/theme-set.ts';
 import type { ReactNode } from 'react';
@@ -40,6 +41,7 @@ export function ShellProviders(props: ShellProvidersProps): ReactNode {
       <SafeAreaProvider>
         <ThemeProvider themes={themes}>
           <MotionConfig />
+          <ThemedStatusBar />
           <ShellErrorBoundary onError={onError} renderFallback={renderFallback}>
             {children}
           </ShellErrorBoundary>

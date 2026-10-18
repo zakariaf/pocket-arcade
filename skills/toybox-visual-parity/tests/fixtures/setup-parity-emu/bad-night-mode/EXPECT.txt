@@ -1,0 +1,2 @@
+[emu-night-mode]
+night mode is "yes", not "no"

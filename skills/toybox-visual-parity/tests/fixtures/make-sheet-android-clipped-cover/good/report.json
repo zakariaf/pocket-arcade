@@ -1,0 +1,444 @@
+{
+ "version": 1,
+ "result": "PASS",
+ "frame": "s15-debug-menu",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 163,
+ "platform": "android",
+ "boundsSource": "maestro",
+ "createdAt": "2026-10-17T12:39:56.369Z",
+ "tolerances": {
+  "boundsPt": 2,
+  "fillChannelDelta": 3,
+  "borderPt": 0.5,
+  "inkSizePt": 1,
+  "inkCentrePt": 2,
+  "layoutNoisePt": 0.9,
+  "blobThicknessPt": 1.5,
+  "blobMinPixels": 24,
+  "alignSearchPx": 6,
+  "pixelmatchThreshold": 0.1,
+  "textPadPt": 2,
+  "inkPadPt": 2,
+  "inkDistance": 96,
+  "inkSearchPx": 12,
+  "anchorReachPt": [
+   12,
+   36
+  ],
+  "anchorEdgeLuma": 24,
+  "anchorMinEdgePt": 3,
+  "fillInsetPt": 2,
+  "minVisiblePt": 8
+ },
+ "reference": {
+  "image": "../../../../../skills/toybox-visual-parity/assets/reference-android/lineSiege/light-en/s15-debug-menu.png",
+  "platform": "android",
+  "imageSha256": "3729eaade724c11d34c1207538c30895cfa32049000f90281e129a2dd932a51e",
+  "layoutSha256": "75c1fa3ab78db63b55d98699afb9313af69b69c5004a961cfcad4d5055bbd4c0"
+ },
+ "app": {
+  "imageSha256": "90133a1c7773ab70db8758eba47004e2827699291891d9e050108ece80a2d6d0",
+  "boundsSha256": "03c1bcadda7c2daa0afcf5b6953184ef383e7d1f40e4b09b3692a081c4160ced"
+ },
+ "checked": {
+  "bounds": 18,
+  "text": 2,
+  "fill": 3,
+  "border": 1,
+  "text-ink": 21,
+  "structure": 3
+ },
+ "coverage": [
+  "debug.ads-always-test-switch",
+  "debug.ads-never-switch",
+  "debug.error-log-row",
+  "debug.export-save-row",
+  "debug.font-test-row",
+  "debug.force-locale-row",
+  "debug.import-save-row",
+  "debug.list",
+  "debug.offline-switch",
+  "debug.premium-switch",
+  "debug.screen",
+  "debug.set-date-row",
+  "debug.show-state-row",
+  "debug.top-bar",
+  "debug.top-bar.back-button",
+  "debug.top-bar.badge",
+  "debug.top-bar.title"
+ ],
+ "offscreen": [
+  "debug.jump-to-level-row",
+  "debug.unlock-all-row"
+ ],
+ "stats": {
+  "scrollShiftPt": -163,
+  "scrollSource": "measured",
+  "scrollMarker": "parity.scroll.163.00",
+  "inferredScrollShiftPt": -163.4,
+  "textInk": [
+   {
+    "owner": "debug.top-bar.title",
+    "text": "Debug menu",
+    "font": "400 27px Lilita One",
+    "role": "Lilita One 27",
+    "dx": -0.29,
+    "dy": 0.67,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.29,
+     "dy": 0.49
+    }
+   },
+   {
+    "owner": "debug.top-bar.badge",
+    "text": "Test build",
+    "font": "400 14px Lilita One",
+    "role": "Lilita One 14",
+    "dx": -0.02,
+    "dy": -0.01,
+    "dw": 0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.08,
+     "dy": -0.07
+    }
+   },
+   {
+    "owner": "debug.set-date-row.label",
+    "text": "Set date",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": -0.34,
+    "dy": 0.05,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.34,
+     "dy": 0.68
+    }
+   },
+   {
+    "owner": "debug.set-date-row.value",
+    "text": "Sunday",
+    "font": "400 15px Rubik",
+    "role": "Rubik 15",
+    "dx": -0.23,
+    "dy": 0.99,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": -0.23,
+     "dy": 1.62
+    }
+   },
+   {
+    "owner": "debug.set-date-row.value",
+    "text": ", 27",
+    "font": "400 15px Rubik",
+    "role": "Rubik 15",
+    "dx": -0.07,
+    "dy": 1.16,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": -0.07,
+     "dy": 1.79
+    }
+   },
+   {
+    "owner": "debug.set-date-row.value",
+    "text": "Sep",
+    "font": "400 15px Rubik",
+    "role": "Rubik 15",
+    "dx": 0.01,
+    "dy": 1.01,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.01,
+     "dy": 1.64
+    }
+   },
+   {
+    "owner": "debug.show-state-row.label",
+    "text": "Show level seed and game state",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.77,
+    "dy": 0,
+    "dw": 0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.77,
+     "dy": 0.63
+    }
+   },
+   {
+    "owner": "debug.show-state-row.label",
+    "text": "Show level seed and game state",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": -0.13,
+    "dy": 0.74,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.13,
+     "dy": 1.04
+    }
+   },
+   {
+    "owner": "debug.ads-always-test-switch.label",
+    "text": "Always show test ads",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": -0.04,
+    "dy": 0.02,
+    "dw": 0.67,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.04,
+     "dy": 0.32
+    }
+   },
+   {
+    "owner": "debug.ads-never-switch.label",
+    "text": "Never show ads",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.39,
+    "dy": 0.03,
+    "dw": 0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.39,
+     "dy": 0.33
+    }
+   },
+   {
+    "owner": "debug.premium-switch.label",
+    "text": "Premium on (no purchase)",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.81,
+    "dy": 0.05,
+    "dw": -0.33,
+    "dh": -0.33,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.81,
+     "dy": 0.35
+    }
+   },
+   {
+    "owner": "debug.premium-switch.label",
+    "text": "Premium on (no purchase)",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": -0.08,
+    "dy": 0.71,
+    "dw": 0,
+    "dh": -0.33,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.08,
+     "dy": 0.67
+    }
+   },
+   {
+    "owner": "debug.force-locale-row.label",
+    "text": "Force language, direction and digits",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.36,
+    "dy": 0.01,
+    "dw": -0.67,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.36,
+     "dy": -0.03
+    }
+   },
+   {
+    "owner": "debug.force-locale-row.label",
+    "text": "Force language, direction and digits",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.12,
+    "dy": 0.39,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.12,
+     "dy": 0.36
+    }
+   },
+   {
+    "owner": "debug.force-locale-row.value",
+    "text": "en · ltr · 123",
+    "font": "400 15px Rubik",
+    "role": "Rubik 15",
+    "dx": -0.39,
+    "dy": 1.4,
+    "dw": 0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.06,
+     "dy": 1.36
+    }
+   },
+   {
+    "owner": "debug.offline-switch.label",
+    "text": "Simulate offline",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.14,
+    "dy": 1.05,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.14,
+     "dy": 0.68
+    }
+   },
+   {
+    "owner": "debug.export-save-row.label",
+    "text": "Export save as text",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.23,
+    "dy": 1.05,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.23,
+     "dy": 0.68
+    }
+   },
+   {
+    "owner": "debug.import-save-row.label",
+    "text": "Import save from text",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.34,
+    "dy": 1.06,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.34,
+     "dy": 0.69
+    }
+   },
+   {
+    "owner": "debug.error-log-row.label",
+    "text": "Error log",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.62,
+    "dy": 1.02,
+    "dw": 0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.62,
+     "dy": 0.65
+    }
+   },
+   {
+    "owner": "debug.error-log-row.value",
+    "text": "0",
+    "font": "400 15px Rubik",
+    "role": "Rubik 15",
+    "dx": 0.3,
+    "dy": 0.96,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.3,
+     "dy": 0.59
+    }
+   },
+   {
+    "owner": "debug.font-test-row.label",
+    "text": "Font test page",
+    "font": "400 17px Rubik",
+    "role": "Rubik 17",
+    "dx": 0.81,
+    "dy": 1.04,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.81,
+     "dy": 0.67
+    }
+   }
+  ]
+ },
+ "problems": [],
+ "waived": [],
+ "notes": [
+  "debug.list: Android reports only its visible part (cut at the body window's top); judged by its visible edges",
+  "debug.give-stars-row: Android reports only its visible part (cut at the body window's top); judged by its visible edges",
+  "debug.hazard-strip: crop-only (hidden from VoiceOver); its pixels are compared in the crop of debug.screen",
+  "debug.jump-to-level-row.icon: crop-only (inside debug.jump-to-level-row); its pixels are compared in the crop of debug.list",
+  "debug.jump-to-level-row.label: crop-only (inside debug.jump-to-level-row); its pixels are compared in the crop of debug.list",
+  "debug.jump-to-level-row.value: crop-only (inside debug.jump-to-level-row); its pixels are compared in the crop of debug.list",
+  "debug.unlock-all-row.icon: crop-only (inside debug.unlock-all-row); its pixels are compared in the crop of debug.list",
+  "debug.unlock-all-row.label: crop-only (inside debug.unlock-all-row); its pixels are compared in the crop of debug.list",
+  "debug.give-stars-row.icon: crop-only (inside debug.give-stars-row); its pixels are compared in the crop of debug.list",
+  "debug.give-stars-row.label: crop-only (inside debug.give-stars-row); its pixels are compared in the crop of debug.list",
+  "debug.set-date-row.icon: crop-only (inside debug.set-date-row); its pixels are compared in the crop of debug.list",
+  "debug.set-date-row.label: crop-only (inside debug.set-date-row); its pixels are compared in the crop of debug.list",
+  "debug.set-date-row.value: crop-only (inside debug.set-date-row); its pixels are compared in the crop of debug.list",
+  "debug.show-state-row.icon: crop-only (inside debug.show-state-row); its pixels are compared in the crop of debug.list",
+  "debug.show-state-row.label: crop-only (inside debug.show-state-row); its pixels are compared in the crop of debug.list",
+  "debug.ads-always-test-switch.icon: crop-only (inside debug.ads-always-test-switch); its pixels are compared in the crop of debug.list",
+  "debug.ads-always-test-switch.label: crop-only (inside debug.ads-always-test-switch); its pixels are compared in the crop of debug.list",
+  "debug.ads-always-test-switch.toggle: crop-only (inside debug.ads-always-test-switch); its pixels are compared in the crop of debug.list",
+  "debug.ads-never-switch.icon: crop-only (inside debug.ads-never-switch); its pixels are compared in the crop of debug.list",
+  "debug.ads-never-switch.label: crop-only (inside debug.ads-never-switch); its pixels are compared in the crop of debug.list",
+  "debug.ads-never-switch.toggle: crop-only (inside debug.ads-never-switch); its pixels are compared in the crop of debug.list",
+  "debug.premium-switch.icon: crop-only (inside debug.premium-switch); its pixels are compared in the crop of debug.list",
+  "debug.premium-switch.label: crop-only (inside debug.premium-switch); its pixels are compared in the crop of debug.list",
+  "debug.premium-switch.toggle: crop-only (inside debug.premium-switch); its pixels are compared in the crop of debug.list",
+  "debug.force-locale-row.icon: crop-only (inside debug.force-locale-row); its pixels are compared in the crop of debug.list",
+  "debug.force-locale-row.label: crop-only (inside debug.force-locale-row); its pixels are compared in the crop of debug.list",
+  "debug.force-locale-row.value: crop-only (inside debug.force-locale-row); its pixels are compared in the crop of debug.list",
+  "debug.offline-switch.icon: crop-only (inside debug.offline-switch); its pixels are compared in the crop of debug.list",
+  "debug.offline-switch.label: crop-only (inside debug.offline-switch); its pixels are compared in the crop of debug.list",
+  "debug.offline-switch.toggle: crop-only (inside debug.offline-switch); its pixels are compared in the crop of debug.list",
+  "debug.export-save-row.icon: crop-only (inside debug.export-save-row); its pixels are compared in the crop of debug.list",
+  "debug.export-save-row.label: crop-only (inside debug.export-save-row); its pixels are compared in the crop of debug.list",
+  "debug.import-save-row.icon: crop-only (inside debug.import-save-row); its pixels are compared in the crop of debug.list",
+  "debug.import-save-row.label: crop-only (inside debug.import-save-row); its pixels are compared in the crop of debug.list",
+  "debug.error-log-row.icon: crop-only (inside debug.error-log-row); its pixels are compared in the crop of debug.list",
+  "debug.error-log-row.label: crop-only (inside debug.error-log-row); its pixels are compared in the crop of debug.list",
+  "debug.error-log-row.value: crop-only (inside debug.error-log-row); its pixels are compared in the crop of debug.list",
+  "debug.font-test-row.icon: crop-only (inside debug.font-test-row); its pixels are compared in the crop of debug.list",
+  "debug.font-test-row.label: crop-only (inside debug.font-test-row); its pixels are compared in the crop of debug.list"
+ ]
+}

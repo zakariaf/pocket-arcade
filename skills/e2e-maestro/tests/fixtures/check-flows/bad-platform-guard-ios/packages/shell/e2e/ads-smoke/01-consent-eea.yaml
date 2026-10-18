@@ -1,0 +1,24 @@
+# packages/shell/e2e/ads-smoke/01-consent-eea.yaml — admob-ads' ads smoke test, run by hand on an
+# ADS_MODE=test build after a fresh install started with xcrun simctl launch <udid> <bundle id>:
+#   tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> packages/shell/e2e/ads-smoke/01-consent-eea.yaml
+appId: ${APP_ID}
+name: In the EEA, S3 shows, then Google's form, then Apple's prompt, then the banner
+tags: [ads-smoke]
+---
+- runFlow:
+    file: ../subflows/debug-setup.yaml
+    env:
+      QUERY: 'geo=eea&lang=en&firstRun=0&screen=home'
+      WAIT_FOR: 'consent.screen'
+- tapOn:
+    id: 'consent.continue-button'
+# system-ui: Google's UMP form and Apple's tracking prompt are not app UI.
+- tapOn:
+    text: 'Consent'
+# system-ui: Apple's tracking prompt.
+- tapOn:
+    text: 'Ask App Not to Track'
+- extendedWaitUntil:
+    visible:
+      id: 'home.screen'
+    timeout: 15000

@@ -62,6 +62,7 @@ describe('shellPlugins', () => {
       'expo-localization',
       'expo-font',
       'expo-iap',
+      'expo-build-properties',
       'react-native-google-mobile-ads',
       'expo-tracking-transparency',
       'react-native-audio-api',
@@ -92,6 +93,14 @@ describe('shellPlugins', () => {
     expect(plugins).toContain('expo-iap');
     expect(plugins).toContain('expo-sqlite');
     expect(plugins).toContain(AUDIO_API_PLUGIN);
+  });
+
+  it("pins Kotlin to React Native's 2.1.20 through expo-build-properties, in every ads mode", () => {
+    for (const mode of ['off', 'test', 'live'] as const) {
+      expect(entryNamed(shellPlugins(GAME, mode), 'expo-build-properties')).toStrictEqual({
+        android: { kotlinVersion: '2.1.20' },
+      });
+    }
   });
 
   it('passes Google sample app ids in test builds and the game ids in live builds', () => {

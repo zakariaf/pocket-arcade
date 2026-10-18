@@ -1,0 +1,19 @@
+# packages/shell/e2e/subflows/airplane-mode.yaml — sub-flow, never run by e2e:ios (not under flows/).
+# e2e:android runs it on its own around the offline-tagged journeys (spec 15.2: real airplane mode on
+# Android): AIRPLANE=enabled before them, AIRPLANE=disabled after them, whatever happened. Maestro's
+# setAirplaneMode works on Android only (iOS simulators have no airplane mode: there offline=1 and the
+# socket sampler are the proof), so each step sits in a runFlow guarded by platform: Android.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      platform: Android
+      true: ${AIRPLANE == 'enabled'}
+    commands:
+      - setAirplaneMode: enabled
+- runFlow:
+    when:
+      platform: Android
+      true: ${AIRPLANE == 'disabled'}
+    commands:
+      - setAirplaneMode: disabled

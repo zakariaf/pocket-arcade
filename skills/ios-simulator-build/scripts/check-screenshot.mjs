@@ -45,7 +45,7 @@ const SPEC = {
     '  png-size      the image has the pixel size of the simulator model it was taken on',
     '  blank-screen  below the status bar, no single colour covers 99% of the image',
     '  system-banner a light system banner (a notification) covers the top of the app: rows in the top band',
-    '                that are light grey from 2.5% to 97.5% of the width but not at the edges (a heuristic;',
+    '                that are light (grey, or tinted by the app under the iOS 26 glass) from 2.5% to 97.5% of the width but not at the edges (a heuristic;',
     '                --no-banner-check after reading the PNG when the light band is the app\'s own)',
     '',
     'A folder argument checks every .png inside it (not recursive).',
@@ -95,7 +95,7 @@ run(async () => {
   const files = collect(positionals);
   for (const file of files) {
     const shown = toPosix(relative(process.cwd(), file)) || file;
-    const image = readPng(file);
+    const image = readPng(file, { source: 'xcrun simctl io <udid> screenshot' });
     if (image.width !== width || image.height !== height) {
       report.problem({ file: shown, rule: 'png-size', message: `is ${image.width}x${image.height}, expected ${width}x${height} (${options.size ?? options.device})`, fix: 'Take the screenshot on the e07- simulator of the expected model, or pass the model it was taken on with --device.' });
     }

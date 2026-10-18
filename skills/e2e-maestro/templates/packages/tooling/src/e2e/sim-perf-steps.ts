@@ -26,6 +26,7 @@ import {
   judgeMemory,
   latestColdStart,
   perfBudgetsFrom,
+  perfLogOf,
   physFootprintFrom,
   type ColdStartEntry,
   type ColdStartResult,
@@ -60,9 +61,11 @@ export type PerfStepInput = {
 };
 
 type StepError = { readonly error: string };
+/** What a flow needs of the app (iOS AppInfo, Android AndroidApp): its id and its URL scheme. */
+type FlowApp = Pick<AppInfo, 'id' | 'scheme'>;
 
-// Every measured launch opens Home in English, so no launch reloads for a direction change.
-const HOME_QUERY =
+/** The cold-start link on both platforms: Home in English, so no launch reloads for direction. */
+export const HOME_QUERY =
   'lang=en&theme=light&seed=42&date=2026-09-26&ads=off&firstRun=0&reduceMotion=1&screen=home';
 const COLD_START_TIMEOUT_MS = 30_000;
 const POLL_MS = 250;
@@ -85,10 +88,9 @@ function perfLogReader(sim: Sim, app: AppInfo): PerfLogReader {
   return () => {
     try {
       database ??= saveDatabaseOf(appDataDir(sim, app));
-      const payload = readPerfLogPayload(database)?.trim() ?? '';
-      return payload === '' ? [] : (JSON.parse(payload) as unknown);
+      return perfLogOf(readPerfLogPayload(database));
     } catch {
-      return []; // no container yet, or a payload that is not JSON
+      return []; // no container yet
     }
   };
 }
@@ -245,7 +247,7 @@ export async function measureMemory(
  * quarantined flows, like the flows and large-text steps (check-flows never lets a smoke flow be
  * quarantined, so this only keeps the three steps alike).
  */
-export function memoryFlowArgs(flows: readonly string[], dir: string, app: AppInfo): string[] {
+export function memoryFlowArgs(flows: readonly string[], dir: string, app: FlowApp): string[] {
   return [
     'test',
     ...flows,

@@ -1,0 +1,2 @@
+[emu-density]
+Override density: 420

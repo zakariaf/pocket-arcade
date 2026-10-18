@@ -1,0 +1,5 @@
+[die-cut-texture]
+packages/shell/src/ui/toybox-styles.ts:
+DIE_CUT_TILTED_LAYER holds renderToHardwareTextureAndroid
+packages/shell/src/ui/art-tile.tsx:
+turns through the layer that gives Android its hardware texture

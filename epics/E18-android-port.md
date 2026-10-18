@@ -616,7 +616,7 @@ For this epic:
 - **Tests first:** There is no code. The message is checked before it is sent: `check-report.mjs --kind request` must pass.
 - **Build:** Fill in git-commits-and-reporting's `templates/owner-request.md` as `reports/android/play-steps-request.md`. Each step has its id and its exact click path from android-release-play's human-steps reference:
   - **O10:** the Google Play developer account (fee and identity verification).
-  - **GP1:** the Play Console app "Line Siege": App, Free, with in-app purchases, default language en-US. The package `io.applander.linesiege` is fixed by the first upload.
+  - **GP1:** the Play Console app "Line Siege": Game, Free, with in-app purchases, default language en-US. The package `io.applander.linesiege` is fixed by the first upload.
   - **GP2:** Play App Signing, with Google holding the app-signing key. The default: Claude generates the upload key at `~/.android-keys/line-siege-upload.jks`; say "no" to use your own.
   - **GP3:** a service account with release rights for this app only. Its JSON key is saved at `~/.android-keys/play-service-account.json` with chmod 600, and is never pasted into the chat.
   - **GP4:** App content:
@@ -697,13 +697,13 @@ For this epic:
     - `userInterfaceStyle` is `'automatic'`;
     - the `ios` block equals its value before this task (a snapshot taken on `main`).
   - `packages/shell/src/config/shell-plugins.test.ts` proves the `expo-build-properties` entry carries premium-purchase's Kotlin version, and that the iOS entries and their order are unchanged.
-  - `packages/shell/plugins/with-backup-rules.test.ts` proves the plugin writes `backup_rules.xml` (Android 11 and lower) and `data_extraction_rules.xml` (12 and higher), both keeping `SQLite/save.db`, `save.db-wal` and `save.db-shm`, and sets both manifest attributes.
-  - `packages/shell/plugins/with-app-variant-marker.test.ts` proves the `E07AppVariant` manifest meta-data is written for each variant.
+  - architecture-and-boundaries' `android-config.test.ts`, `backup-rules.test.ts` and `rtl-support.test.ts` (in `packages/shell/src/config/`, where Jest runs them: it never runs tests under `packages/shell/plugins/`) prove the Android block and plugin list, that `backup_rules.xml` (Android 11 and lower) and `data_extraction_rules.xml` (12 and higher) both keep `SQLite/save.db`, `save.db-wal` and `save.db-shm` and set both manifest attributes, and `supportsRtl`; android-release-play's `upload-signing.test.ts` proves the release signing config.
+  - The `E07AppVariant` manifest meta-data has no Jest test (the plugin calls Expo's manifest helpers directly): a test-variant prebuild with the old plugin shows no meta-data, and a prebuild of each variant with the new one shows `E07AppVariant` with that variant (check-emu-app's `variant` rule proves it on the APK at T19).
   - Run them against typed stubs, so the red is an assertion diff: `npx jest packages/shell/src/config packages/shell/plugins --ci --selectProjects unit`.
 - **Build:**
   1. Save the config from before the change: `(cd apps/line-siege && APP_VARIANT=test ADS_MODE=off npx expo config --json) > reports/android/config-before.json`.
-  2. Install `expo-build-properties`: run `node skills/dependency-management/scripts/plan-dependency.mjs expo-build-properties --root . --online` and its printed steps. Then `npm approve-scripts --allow-scripts-pending` and `(cd apps/line-siege && npx expo install --check && npx expo-doctor)`. Confirm that `expo-system-ui` is in `apps/line-siege/package.json`; if it is missing, plan it the same way. Commit the manifests and the lockfile alone, as `build(deps): add expo-build-properties to line-siege`.
-  3. Copy architecture-and-boundaries' updated `with-shell.ts`, `shell-plugins.ts`, `templates/with-backup-rules.ts` and `with-app-variant-marker.ts` over the stubs.
+  2. Install `expo-build-properties`: run `node skills/dependency-management/scripts/plan-dependency.mjs expo-build-properties --root . --online` and its printed steps. Then `npm approve-scripts --allow-scripts-pending` and `(cd apps/line-siege && npx expo install --check && npx expo-doctor)`. Confirm that `expo-system-ui` is in `apps/line-siege/package.json`; if it is missing, plan it the same way. The manifests and the lockfile are committed with the `shell-plugins.ts` line that uses the package (dependency-management: a package lands with the code that needs it, or `unused-dependency` fails), as `feat(shell): pin kotlin 2.1.20 for play billing via build properties`.
+  3. Copy the files of pocket-arcade-index's Android step 2 manifest over the stubs: architecture-and-boundaries' `with-shell.ts`, `shell-plugins.ts`, `android-config.ts`, `backup-rules.ts`, `rtl-support.ts`, `with-backup-rules.ts`, `with-rtl-support.ts` and `with-app-variant-marker.ts`, and android-release-play's `upload-signing.ts` and `with-upload-signing.ts`. The template `with-shell.test.ts`'s per-platform ad units come with admob-ads' `ads-config.ts` in T15, so this task adds only its Android cases.
   4. Commit `feat(shell): configure the android app through withshell`, with the spec lines 8.6, 11 and N3 in the body (`node skills/pocket-arcade-product-spec/scripts/spec-lookup.mjs 8.6 11 N3`).
 - **Done when:**
   - `npx jest packages/shell/src/config packages/shell/plugins --ci --selectProjects unit` passes, and `npx tsc --noEmit -p packages/shell` passes.
@@ -725,7 +725,7 @@ For this epic:
   - the 512 px Play icon, which the owner needs for the Play Console.
 - **Skills:** `code-drawn-art-and-icons`, `architecture-and-boundaries`, `tdd-workflow`, `git-commits-and-reporting`.
 - **Tests first:**
-  - Android cases in `packages/tooling/src/art/art-cli.test.ts`: `--app line-siege` writes `android-icon-foreground.png`, `android-icon-monochrome.png`, `android-splash-icon.png` and `play-icon-512.png` at their sizes; `--check` exits 1 when one is missing or stale.
+  - code-drawn-art-and-icons' `packages/tooling/src/art/art-outputs.test.ts` (the outputs and the Android geometry: `android-icon-foreground.png`, `android-icon-monochrome.png`, `android-splash-icon.png`, `android-splash-icon-dark.png` and `play-icon-512.png` at their sizes, each glyph inside its safe circle); `art-cli.test.ts` is unchanged. With the new `render-art.ts` copied, `--check` exits 1 while one is missing or stale.
   - Android cases in `packages/shell/src/config/art-config.test.ts`: `android.adaptiveIcon` (foreground, monochrome, and the background from the game's accent) and the Android splash entry appear only for a game `render-art.ts` has drawn.
   - `node skills/code-drawn-art-and-icons/scripts/check-app-art.mjs . --app line-siege` is red: `art-missing` for the four Android PNGs.
   - `node packages/tooling/src/art/render-art.ts --app line-siege --check` exits 1.
@@ -802,13 +802,14 @@ For this epic:
   - Sound mixes with the player's own music and stops in the background (8.7).
   - Cold start is measured from process start on Android too, through a Kotlin module in the Shell, so every game inherits it.
 - **Skills:** `game-audio-and-haptics`, `settings-and-preferences`, `performance-budgets`, `unit-and-component-tests`, `tdd-workflow`, `git-commits-and-reporting`.
-- **Tests first:**
+- **Tests first:** Copy each test from pocket-arcade-index's Android step 3 manifest.
   - `packages/shell/src/services/haptics/expo-haptics-adapter.android.test.ts`: each `HapticCue` maps to `performAndroidHapticsAsync` with the cue table's `AndroidHaptics` type; Vibration off makes no call; the 40 ms throttle; every call ends in `.catch`; `isSupported` follows the haptics reference.
-  - `packages/shell/src/services/audio/audio-api-audio-adapter.android.test.ts`: no audio-focus request that would stop other audio; suspend and resume on interruptions and on background; `dispose()` before a reload.
-  - `packages/shell/src/screens/settings/settings-rows.android.test.ts`: the Vibration row is visible exactly when `haptics.isSupported`.
+  - `packages/shell/src/services/audio/audio-api-audio-adapter.android.test.ts`: no audio-focus request that would stop other audio (on Android the adapter observes no interruptions at all, since that request is what stops the player's music); `dispose()` resolves with no focus to give back. Suspending in the background is `useAudioLifecycle`'s, proven on every platform by `use-audio-lifecycle.test.ts`. The template's `audio-api-audio-adapter.test.ts` adds the iOS case (interruptions still observed there).
+  - `packages/shell/src/screens/settings/settings-rows.android.test.ts` (settings-and-preferences' template): the Vibration row is visible exactly when `haptics.isSupported`, through `useSettingsContext` and the real Android haptics adapter.
+  - performance-budgets' `process-start.test.ts` and `perf-report-header.test.ts` (in `packages/shell/src/app/perf/`): the process start read through the one module on both platforms, and the shared perf report naming the Play package and versionCode on Android.
   - `node skills/performance-budgets/scripts/check-perf-code.mjs .` is red: `[perf-layer]` names the missing Android half under `packages/shell/android/`.
-  - `npx jest packages/shell/src/app/perf --ci --selectProjects unit-android` stays green, because `process-start.ts` answers null in Jest.
-- **Build:** Add the adapters' Android paths. Copy performance-budgets' `templates/shell-native/android/` into `packages/shell/android/`, and the updated `templates/shell-native/expo-module.config.json` over `packages/shell/expo-module.config.json`. Never edit `apps/line-siege/android/`. Commit `feat(shell): vibrate, play sound and mark cold start on android`, with 8.7 in the body.
+  - `npx jest packages/shell/src/app/perf --ci --selectProjects unit` stays green: `process-start.ts` answers null in Jest (no native module). There is no Android test under `app/perf/`, so a `unit-android` run of that folder alone finds no tests and exits 1.
+- **Build:** Add the adapters' Android paths. Copy performance-budgets' `templates/shell-native/android/` into `packages/shell/android/`, the updated `templates/shell-native/expo-module.config.json` over `packages/shell/expo-module.config.json`, and the rest of the step's perf files (`process-start.ts`, `debug-perf-device.ts`, `share-perf-report.ts`, `perf-report-header.ts`, with their tests). Never edit `apps/line-siege/android/`. Commit one behaviour per commit (tdd-workflow rule 2): the haptics, the audio focus, the cold-start module and the perf report header each as their own `feat(shell)` or `fix(shell)`, with 8.7 (sound and vibration) or S1 (cold start) in the body; a test whose behaviour already held is committed as `test(shell)`, proven by a planted break recorded under `reports/e18/`.
 - **Done when:**
   - `npx jest packages/shell/src/services/haptics packages/shell/src/services/audio --ci --selectProjects unit` and `npx jest --ci --selectProjects unit-android` pass.
   - These print `RESULT: PASS`:
@@ -825,17 +826,18 @@ For this epic:
   - Choosing Persian or Sorani restarts into right-to-left exactly once (N6).
   - The Toybox fonts and Vazirmatn draw from the first frame, offline (7.6).
   - All fixes are in the Shell (N5).
-- **Skills:** `navigation-and-routing`, `rtl-and-direction`, `toybox-design-system`, `board-gestures-and-input`, `accessibility`, `tdd-workflow`, `git-commits-and-reporting`.
-- **Tests first:**
-  - `packages/shell/src/screens/game/game-screen-back.android.test.tsx`, from navigation-and-routing's Android template, using `BackHandler.mockPressBack()`: back while playing opens Pause; back in Pause resumes; a finished run leaves normally; only the Pause Home button leaves a live run.
-  - `packages/shell/src/navigation/hardware-back.android.test.tsx`:
-    - on S8, S9, S10, S11, S11a-d, S12, S13 and S15, back does what the Back control does;
-    - with an S14 dialog open, back runs the dialog's cancel and the screen behind stays;
+- **Skills:** `navigation-and-routing`, `rtl-and-direction`, `toybox-design-system`, `toybox-components`, `toybox-screens`, `settings-and-preferences`, `game-host-integration`, `board-gestures-and-input`, `accessibility`, `tdd-workflow`, `git-commits-and-reporting`.
+- **Tests first:** Copy each test from pocket-arcade-index's Android step 4 manifest.
+  - `packages/shell/src/screens/game/game-screen-back.android.test.tsx`, from navigation-and-routing's Android template. React Native 0.86 has no `BackHandler.mockPressBack()`: the test presses the system back as Android delivers it, `DeviceEventEmitter.emit('hardwareBackPress', {})`, and watches `BackHandler.exitApp` for the press nobody handles: back while playing opens Pause; back in Pause resumes; a finished run leaves normally; only the Pause Home button leaves a live run.
+  - `packages/shell/src/navigation/use-hardware-back.android.test.tsx` (navigation-and-routing) and `packages/shell/src/screens/dialogs/dialog-host.android.test.tsx` (toybox-screens):
+    - on every other route the system back is React Navigation's own `goBack()`, with no Shell code (navigation-and-routing, "Android: the system back"); `game-screen-back.android.test.tsx` proves that listener on Game and Home;
+    - with an S14 dialog open, back runs the dialog's cancel and the screen behind stays (the dialog host's `useHardwareBack`);
     - on Home, the press is not handled, so Android moves the app to the background.
   - `packages/shell/src/i18n/direction.android.test.ts`: on Android the restart calls `allowRTL`, `forceRTL` and `reloadAppAsync` once, after the save write; the guard turns a second attempt into `give-up`.
-  - `packages/shell/src/i18n/fonts.android.test.ts`: every family the type roles name equals a bundled TTF's base name, because Android resolves families by file name; fa and ckb use Vazirmatn; no `fontWeight` with a custom family.
-  - `node skills/navigation-and-routing/scripts/check-navigation.mjs . --complete` is red on T09's Android rule.
-- **Build:** Fix only where a test is red: the navigation, the dialog host's back handling, `direction.ts`, or the theme's font names. Never fix it inside a game. Commit each behaviour on its own (`fix(shell): ...` or `feat(shell): ...`), with spec 5, N6 or 7.6 in the body.
+  - The fonts on Android: `direction.android.test.ts`'s last case pins every family to its TTF's base name (Android resolves families by file name) and fa and ckb to Vazirmatn; `check-design-system` proves the bundled TTFs and bans `fontWeight` with a custom family. App tests cannot read the TTF files (no `node:fs` in app tests), so there is no separate `fonts.android.test.ts`.
+  - The rest of the step's tests: toybox-design-system's `toybox-styles.test.ts` and toybox-components' `tiles.test.tsx` (every tilted printed part also gets `renderToHardwareTextureAndroid`), toybox-screens' `dialog-context.test.tsx` and `game-layout.test.tsx` (TalkBack kept inside Pause, Result and the dialogs: what lies behind gets `importantForAccessibility="no-hide-descendants"`), `read-version-text.test.ts` (the versionCode), `read-store-ids.test.ts`, `use-open-external.test.tsx` and `use-settings-links.test.tsx` with settings-and-preferences' `external-links.test.ts` (Rate opens Google Play), and game-host-integration's `load-outcome-opener.test.tsx` (S14's Update opens Google Play on Android).
+  - `node skills/navigation-and-routing/scripts/check-navigation.mjs . --complete` is red on T09's Android rule; `check-a11y-code`, `check-components` and `check-screens` are red on the TalkBack trap and the tilt flag.
+- **Build:** Fix only where a test is red: the navigation, the dialog host's back handling, `direction.ts`, the theme's font names, and the rest of Android step 4's manifest (the TalkBack trap, the tilt flag, the store links and the version text). Never fix it inside a game. Commit each behaviour on its own (`fix(shell): ...` or `feat(shell): ...`), with spec 5, N6, 7.6, 8.11, S11 or S14 in the body.
 - **Done when:**
   - `npx jest packages/shell/src/navigation packages/shell/src/screens/game --ci --selectProjects unit` and `npx jest --ci --selectProjects unit-android` pass.
   - These print `RESULT: PASS`:
@@ -843,7 +845,8 @@ For this epic:
     - `node skills/rtl-and-direction/scripts/check-rtl.mjs .`;
     - `node skills/toybox-design-system/scripts/check-design-system.mjs .`;
     - `node skills/board-gestures-and-input/scripts/check-board-input.mjs .`;
-    - `node skills/accessibility/scripts/check-a11y-code.mjs .`.
+    - `node skills/accessibility/scripts/check-a11y-code.mjs .`;
+    - `node skills/toybox-components/scripts/check-components.mjs .`, `node skills/toybox-screens/scripts/check-screens.mjs . --all` and `node skills/settings-and-preferences/scripts/check-settings.mjs .`.
   - `npm run -s check:fast` is green. The device proof comes in T19 (fonts on screen) and T24 (`03-language-switch` and back on the emulator).
 
 ### E18-T19 · First Release emulator builds, audits and the kill test (Android step 5)
@@ -870,7 +873,7 @@ For this epic:
      - send the app to the background (it checkpoints the WAL);
      - `adb -s <serial> root`, then pull the save folder T08 recorded (expo-sqlite's `SQLite/` in the app's files directory): `adb -s <serial> pull /data/data/io.applander.linesiege/files/SQLite/ reports/android/save/`;
      - `node skills/save-persistence-and-migrations/scripts/inspect-save.mjs reports/android/save/save.db --game-id line-siege --deep --repo .`.
-  7. Run the audits against the prebuild: `npm run audit:network` (its Gradle layer runs now), `npm run audit:privacy -- --app line-siege --platform android` (keep the Data safety answers for the report and for GP4), `node skills/privacy-and-network-audit/scripts/audit-repo.mjs .` and `node skills/privacy-and-network-audit/scripts/audit-bundle.mjs --export dist-audit/line-siege-android --variant store .`.
+  7. Run the audits against the prebuild: `npm run audit:network` (its Gradle layer runs now), `npm run audit:privacy -- --app line-siege --platform android` (keep the Data safety answers for the report and for GP4), `node skills/privacy-and-network-audit/scripts/audit-repo.mjs .`, and the Android store export with its audit: in `apps/line-siege`, `APP_VARIANT=store EXPO_PUBLIC_APP_VARIANT=store ADS_MODE=off npx expo export --platform android --no-bytecode --source-maps true --output-dir ../../dist-audit/line-siege-android`, then from the repo root `node skills/privacy-and-network-audit/scripts/audit-bundle.mjs --export dist-audit/line-siege-android --platform android --variant store .` (without `--platform android` it reads the iOS export).
   8. Run `node skills/performance-budgets/scripts/check-budgets.mjs .`.
   9. Check that iOS is unchanged: `npm run build:ios:sim -- --app line-siege --variant test --ads off`, then `node skills/ios-simulator-build/scripts/check-sim-app.mjs --app apps/line-siege/build/dd/Build/Products/Release-iphonesimulator/LineSiege.app --variant test --ads off --game line-siege`.
   10. Shut down only this task's emulators, by serial (`adb -s <serial> emu kill`). Commit only if a fix was needed.

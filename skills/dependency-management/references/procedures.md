@@ -37,7 +37,7 @@ The exact steps for every kind of dependency change, with the commands and the t
 6. If it has a config plugin, add one line to `shellPlugins` in `packages/shell/src/config/shell-plugins.ts` (the Shell's one plugin list; `with-shell.ts` spreads it), with a comment naming the owning skill (never a second list, never `ios/`).
 7. In every app: `npx expo install --check` and `npx expo-doctor`.
 8. `node ${CLAUDE_SKILL_DIR}/scripts/check-deps-policy.mjs .` until `RESULT: PASS`, then `npm run -s check:fast`.
-9. Native package: a clean prebuild and `npm run build:ios:sim` for every app, plus `npm run audit:network` and `npm run audit:privacy` (a new native module is a new network and privacy surface). Purchases: also the Tier-2 StoreKit tests.
+9. Native package: a clean prebuild and `npm run build:ios:sim` for every app, and `npm run build:android:emu` for every app with an Android port, plus `npm run audit:network` and `npm run audit:privacy` (a new native module is a new network and privacy surface). Purchases: also the Tier-2 StoreKit tests.
 
 ## Add a package that is not in the table
 
@@ -56,7 +56,7 @@ After a yes: add a row to `assets/versions.json` **and** `references/versions.md
 3. Update the table row (both files) to the new version, and its root override and companions with it (a Shell peer's override, the ten `@typescript-eslint/*` overrides for `typescript-eslint`).
 4. Apply the change to **all apps together** (Expo-managed: `npx expo install <pkg>@<new table spec>` in each app, or `npx expo install --fix` once every expected version is at least 7 days old; others: `npm install <pkg>@<new> -w …`).
 5. If the package's install script changed, re-review and re-approve (`npm approve-scripts <pkg>` rewrites the pinned approval); `check-deps-policy.mjs` reports a `stale-approval` otherwise.
-6. `npm run verify`; pre-1.0 and native packages also a simulator smoke run (`npm run build:ios:sim` for every app); purchases the Tier-2 StoreKit tests; Skia also re-renders goldens (review, then a `Gate-Change:` trailer).
+6. `npm run verify`; pre-1.0 and native packages also a simulator smoke run (`npm run build:ios:sim` for every app) and an emulator smoke run (`npm run build:android:emu` for every app with an Android port); purchases the Tier-2 StoreKit tests; Skia also re-renders goldens (review, then a `Gate-Change:` trailer).
 7. `check-deps-policy.mjs .` passes; commit the table rows, manifests and lockfile together.
 
 Expo SDK majors (57 to 58) are not an upgrade of one package: they move every Expo-managed package at once and follow the `expo-sdk-upgrade` skill.
@@ -75,7 +75,7 @@ Once a month, and before each release:
 1. In each app, `npx expo install --check`.
 2. At the root, `npm outdated`.
 3. For each candidate: age check, changelog, then the upgrade steps above.
-4. All apps together; then `npm run verify`, `npm run build:ios:sim` for every app, `npm run e2e:ios`, and a screenshot-diff review.
+4. All apps together; then `npm run verify`, `npm run build:ios:sim` for every app, `npm run e2e:ios`, and a screenshot-diff review; for every app with an Android port also `npm run build:android:emu` and `npm run e2e:android`.
 5. Update the table and commit. Delete any dated exclude block whose date has passed.
 
 ## Commands that behave differently from what training data suggests

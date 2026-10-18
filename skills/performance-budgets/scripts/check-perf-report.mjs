@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // check-perf-report.mjs: judges a performance report exported from a test build (debug menu >
-// Performance > "Share performance report", or the perf_log row read from the simulator) against
-// the budgets: cold start, frame times, hitch rate and the save benchmark.
+// Performance > "Share performance report", or the perf_log row read from the simulator or the
+// Android emulator) against the budgets: cold start, frame times, hitch rate and the save benchmark.
+// iOS and Android reports have the same shape; the header's deviceModel names the platform.
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/check-perf-report.mjs <report.json> [--root <app repo>]
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -13,10 +14,11 @@ import { loadBudgets, median } from './lib/budgets.mjs';
 const SPEC = {
   name: 'check-perf-report',
   summary: 'Checks an exported performance report ({ appId, appVersion, buildNumber, deviceModel, entries } or a bare entries array) against the perf budgets in quality-gates.json (or the product defaults).',
-  usage: '<report.json> [--root <dir>] [--sim-baseline <ms>] [--min-launches <n>]',
+  usage: '<report.json> [--root <dir>] [--sim-baseline <ms> | --emu-baseline <ms>] [--min-launches <n>]',
   options: {
     root: { type: 'string', default: '.', value: 'dir', help: 'App repo root (reads quality-gates.json for the budgets)' },
     'sim-baseline': { type: 'string', value: 'ms', help: 'Simulator run: drop the first of the latest n+1 launches (warm-up), compare their median with this baseline x coldStartSimRegressionFactor, and need no frames entry' },
+    'emu-baseline': { type: 'string', value: 'ms', help: 'Android emulator run: as --sim-baseline, against perf-baselines/cold-start-emu-<game>.json x coldStartEmuRegressionFactor' },
     'min-launches': { type: 'string', default: '5', value: 'n', help: 'Cold-start launches in the median: the latest n entries (older ones may be earlier builds)' },
     json: { type: 'boolean', help: 'Also print the problems as one JSON line' },
   },
@@ -24,7 +26,8 @@ const SPEC = {
   details: [
     'Rules:',
     '  report-shape     entries must be { kind, label, atEpochMs, data } objects',
-    '  cold-start-runs  fewer cold-start entries with a total than --min-launches (+1 with --sim-baseline)',
+    '  cold-start-runs  fewer cold-start entries with a total than --min-launches (+1 with a baseline run); on',
+    '                   Android a null total means the Kotlin ProcessStartModule is missing',
     '  cold-start       median totalMs of the latest --min-launches cold starts is over the budget',
     '  frame-data       no "frames" entry: record frame times while playing (device reports only)',
     '  hitch-rate       a frames entry has hitchMsPerS over the budget',
@@ -32,6 +35,7 @@ const SPEC = {
     '  save-write-p95   a save-benchmark entry has p95 at or over the budget',
     '',
     'Example: node check-perf-report.mjs reports/perf/iphone-1.0.0-12.json --root .',
+    '         node check-perf-report.mjs reports/perf/emu-perf-log.json --root . --emu-baseline <medianMs>',
   ].join('\n'),
 };
 
@@ -63,8 +67,14 @@ run(async () => {
   });
   if (parsed && !Array.isArray(parsed)) console.log(`report: ${parsed.appId ?? '?'} ${parsed.appVersion ?? '?'} (${parsed.buildNumber ?? '?'}) on ${parsed.deviceModel ?? '?'}`);
 
-  const isSim = options['sim-baseline'] !== undefined;
-  if (isSim && !(Number(options['sim-baseline']) > 0)) fail(`--sim-baseline must be a positive number of ms, got ${options['sim-baseline']}`, 'Pass the medianMs of the committed simulator baseline.');
+  if (options['sim-baseline'] !== undefined && options['emu-baseline'] !== undefined) fail('--sim-baseline and --emu-baseline name two different runs', 'Pass the one baseline of the run the report comes from.');
+  const isEmu = options['emu-baseline'] !== undefined;
+  // A baseline run (simulator or emulator): the first launch is a warm-up and no frames are needed.
+  const isSim = options['sim-baseline'] !== undefined || isEmu;
+  const baselineMs = Number(isEmu ? options['emu-baseline'] : options['sim-baseline']);
+  const isAndroid = isEmu || /^android\b/i.test(String(parsed?.deviceModel ?? ''));
+  if (isAndroid) console.log(`platform: android${isEmu ? ' (emulator run)' : ''}`);
+  if (isSim && !(baselineMs > 0)) fail(`--${isEmu ? 'emu' : 'sim'}-baseline must be a positive number of ms, got ${isEmu ? options['emu-baseline'] : options['sim-baseline']}`, `Pass the medianMs of the committed ${isEmu ? 'emulator' : 'simulator'} baseline.`);
   if (!(minLaunches >= 1)) fail(`--min-launches must be a positive number, got ${options['min-launches']}`, 'Pass --min-launches 5.');
   // The perf log is a ring buffer that survives app updates: judge only the latest launches, in time order.
   const coldRuns = valid.filter((e) => e.kind === 'cold-start' && typeof e.data.totalMs === 'number').sort((a, b) => (a.atEpochMs ?? 0) - (b.atEpochMs ?? 0));
@@ -72,15 +82,22 @@ run(async () => {
   const coldCount = valid.filter((e) => e.kind === 'cold-start').length;
   if (coldCount > 0 || isSim) {
     if (coldRuns.length < needed) {
-      problem('cold-start-runs', `${coldRuns.length} cold-start runs with a process-start time (need ${needed})`, isSim ? `Launch ${needed} times (terminate, launch, wait for the cold-start entry); the first is dropped as warm-up.` : 'Force-quit and relaunch the app until it has 5 cold starts (skip launches that flipped direction).');
+      const relaunch = isEmu
+        ? `Launch ${needed} times (adb -s <serial> shell am force-stop <package>, then am start -W, and wait for the cold-start entry); the first is dropped as warm-up.`
+        : isSim
+          ? `Launch ${needed} times (terminate, launch, wait for the cold-start entry); the first is dropped as warm-up.`
+          : 'Force-quit and relaunch the app until it has 5 cold starts (skip launches that flipped direction).';
+      const nullTotals = isAndroid && coldCount > coldRuns.length ? ' On Android a null totalMs means process-start.ts found no Kotlin ProcessStartModule: copy templates/shell-native/android/ (perf-layer) and rebuild.' : '';
+      problem('cold-start-runs', `${coldRuns.length} cold-start runs with a process-start time (need ${needed})`, `${relaunch}${nullTotals}`);
     } else {
       const used = coldRuns.slice(-needed).slice(isSim ? 1 : 0).map((e) => e.data.totalMs);
       const med = median(used);
-      const limit = isSim ? Number(options['sim-baseline']) * budgets.coldStartSimRegressionFactor : budgets.coldStartHomeMsMax;
+      const limit = isSim ? baselineMs * (isEmu ? budgets.coldStartEmuRegressionFactor : budgets.coldStartSimRegressionFactor) : budgets.coldStartHomeMsMax;
       const note = coldRuns.length > used.length ? ` (the latest ${used.length} of ${coldRuns.length} recorded${isSim ? ', first of the run dropped' : ''})` : '';
       console.log(`cold start: median ${Math.round(med)} ms of ${used.length} launches${note} (limit ${Math.round(limit)} ms)`);
       const over = isSim ? med > limit : med >= limit;
-      if (over) problem('cold-start', `median cold start ${Math.round(med)} ms is over ${Math.round(limit)} ms`, 'Move work out of module scope and the Splash (ads, consent, store, textures start after Home is interactive); compare nativeMs and jsMs to see which side grew.');
+      const against = isEmu ? ' (the emulator baseline x coldStartEmuRegressionFactor)' : isSim ? ' (the simulator baseline x coldStartSimRegressionFactor)' : '';
+      if (over) problem('cold-start', `median cold start ${Math.round(med)} ms is over ${Math.round(limit)} ms${against}`, 'Move work out of module scope and the Splash (ads, consent, store, textures start after Home is interactive); compare nativeMs and jsMs to see which side grew.');
     }
   }
 

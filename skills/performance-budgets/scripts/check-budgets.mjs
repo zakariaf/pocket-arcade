@@ -7,7 +7,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, parseArgs, run, toPosix } from './check-lib.mjs';
-import { PERF_BUDGETS } from './lib/budgets.mjs';
+import { ANDROID_BUDGETS_DUE, ANDROID_BUDGET_KEYS, PERF_BUDGETS } from './lib/budgets.mjs';
 
 const SPEC = {
   name: 'check-budgets',
@@ -21,7 +21,9 @@ const SPEC = {
   positionals: { min: 0, max: 0 },
   details: [
     'Rules:',
-    '  budget-missing   a perf budget key is absent or not a positive number',
+    '  budget-missing   a perf budget key is absent or not a positive number (the Android keys',
+    `                   ${ANDROID_BUDGET_KEYS.join(', ')} are due at Android step ${ANDROID_BUDGETS_DUE.step},`,
+    `                   once ${ANDROID_BUDGETS_DUE.file} exists: a SKIP line before)`,
     '  budget-looser    a budget is looser than the product budget (tighter is always fine)',
     '  budget-unknown   a perf key this skill does not know (typo?)',
     '',
@@ -53,8 +55,13 @@ run(async () => {
     const index = text.indexOf(`"${key}"`);
     return index === -1 ? 1 : text.slice(0, index).split('\n').length;
   };
+  const androidDue = existsSync(join(root, ANDROID_BUDGETS_DUE.file));
   for (const [key, [value, direction]] of Object.entries(PERF_BUDGETS)) {
     const got = perf[key];
+    if (got === undefined && ANDROID_BUDGET_KEYS.includes(key) && !androidDue) {
+      report.skip({ file: shown, rule: 'budget-missing', message: `perf.${key}: due at Android step ${ANDROID_BUDGETS_DUE.step}: ${ANDROID_BUDGETS_DUE.file} not yet created` });
+      continue;
+    }
     if (typeof got !== 'number' || !(got > 0)) {
       report.problem({ file: shown, line: lineOfKey(key), rule: 'budget-missing', message: `perf.${key} is ${JSON.stringify(got)}`, fix: `Set "${key}": ${value}.` });
       continue;

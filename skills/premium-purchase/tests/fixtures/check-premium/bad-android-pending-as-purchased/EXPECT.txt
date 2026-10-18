@@ -1,0 +1,3 @@
+[android-pending]
+packages/shell/src/services/purchase/expo-iap-purchase-adapter.ts
+pending

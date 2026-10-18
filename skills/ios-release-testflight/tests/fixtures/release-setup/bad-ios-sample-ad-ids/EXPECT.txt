@@ -1,0 +1,5 @@
+apps/line-siege/game.config.ts:10 [owner-placeholder] ads.ids.ios.appId is Google's sample (test) AdMob id ca-app-pub-3940256099942544~1458002511 (owner step G5)
+apps/line-siege/game.config.ts:12 [owner-placeholder] ads.ids.ios.units.banner is Google's sample (test) AdMob id ca-app-pub-3940256099942544/2934735716 (owner step G5)
+apps/line-siege/game.config.ts:14 [owner-placeholder] ads.ids.ios.units.rewarded is Google's sample (test) AdMob id ca-app-pub-3940256099942544/1712485313 (owner step G5)
+OWNER STEPS PENDING: G5
+RESULT: FAIL (3 problems)

@@ -1,0 +1,22 @@
+{
+ "version": 1,
+ "frame": "s15-debug-menu",
+ "variant": null,
+ "referenceName": "s15-debug-menu",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 163,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "scrollMarkers": [
+  {
+   "testID": "parity.scroll.163.00",
+   "y": 163
+  }
+ ],
+ "source": "self-test fixture",
+ "note": "Real Android capture of S15 at scrollY 163 (E18-T23). Android reports debug.list cut at the body window top (y 130 pt, the list really starts at -27.6 pt), so a crop-only row icon placed through that cut cover landed 157 pt low on the eye pages; it must be placed through the cover rebuilt from its visible bottom edge.",
+ "referenceRoot": "../../check-parity-android/reference"
+}

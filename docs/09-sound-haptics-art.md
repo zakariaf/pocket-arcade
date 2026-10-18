@@ -971,10 +971,12 @@ export function shouldPulse(gate: HapticGate): boolean {
 // packages/shell/src/services/haptics/expo-haptics-adapter.ts
 // The ONLY file that imports expo-haptics.
 import {
+  AndroidHaptics,
   ImpactFeedbackStyle,
   NotificationFeedbackType,
   impactAsync,
   notificationAsync,
+  performAndroidHapticsAsync,
   selectionAsync,
 } from 'expo-haptics';
 import { Platform } from 'react-native';
@@ -986,12 +988,12 @@ import type { HapticCue, HapticsPort } from './haptics-port.ts';
 export type HapticsDeps = {
   /** Current value of the Vibration setting (read at call time). */
   readonly isEnabled: () => boolean;
-  /** ClockPort.nowMs (epoch ms, docs/02); never Date.now(). */
+  /** ClockPort.nowMs (epoch ms); never Date.now(). */
   readonly nowMs: () => number;
 };
 
-/** The mapping table from docs/09-sound-haptics-art.md, as code. */
-function fire(cue: HapticCue): Promise<void> {
+/** The haptic cue table's iOS column, as code (one iOS call per cue). */
+function fireIos(cue: HapticCue): Promise<void> {
   switch (cue) {
     case 'selection':
       return selectionAsync();
@@ -1010,7 +1012,46 @@ function fire(cue: HapticCue): Promise<void> {
   }
 }
 
-/** iPads have no Taptic Engine; phones do. Android (later) is treated as supported. */
+/**
+ * The cue table's Android column: View haptic feedback (no Vibrator, no VIBRATE needed). expo-haptics
+ * rejects a type the phone's API level lacks (Segment_Tick before API 34, Confirm and Reject before
+ * API 30), so an older phone gets a type every level offers (Clock_Tick, Virtual_Key, Long_Press).
+ */
+function fireAndroid(cue: HapticCue): Promise<void> {
+  const api = Number(Platform.Version);
+  switch (cue) {
+    case 'selection':
+      return performAndroidHapticsAsync(
+        api >= 34 ? AndroidHaptics.Segment_Tick : AndroidHaptics.Clock_Tick,
+      );
+    case 'light':
+      return performAndroidHapticsAsync(AndroidHaptics.Context_Click);
+    case 'medium':
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Confirm : AndroidHaptics.Virtual_Key,
+      );
+    case 'heavy':
+      return performAndroidHapticsAsync(AndroidHaptics.Long_Press);
+    case 'success':
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Confirm : AndroidHaptics.Virtual_Key,
+      );
+    case 'warning':
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Reject : AndroidHaptics.Long_Press,
+      );
+    case 'error':
+      return performAndroidHapticsAsync(
+        api >= 30 ? AndroidHaptics.Reject : AndroidHaptics.Long_Press,
+      );
+  }
+}
+
+function fire(cue: HapticCue): Promise<void> {
+  return Platform.OS === 'android' ? fireAndroid(cue) : fireIos(cue);
+}
+
+/** iPads have no Taptic Engine; phones do. Android phones and tablets are treated as supported. */
 function hasHaptics(): boolean {
   return Platform.OS === 'ios' ? !Platform.isPad : true;
 }
@@ -1024,6 +1065,8 @@ export function createExpoHapticsAdapter(deps: HapticsDeps): HapticsPort {
       const nowMs = deps.nowMs();
       if (!isSupported || !shouldPulse({ isEnabled: deps.isEnabled(), lastAtMs, nowMs })) return;
       lastAtMs = nowMs;
+      // Expo documents that haptics silently do nothing in Low Power Mode and similar states:
+      // a failed pulse is the expected fallback, never an error for the player.
       fire(cue).catch(() => undefined);
     },
   };
@@ -1070,15 +1113,17 @@ describe('shouldPulse', () => {
 
 ### 6.2 The mapping table
 
-| `HapticCue` | iOS call (expo-haptics 57.0.3) | Use for | Android later (`performAndroidHapticsAsync`) |
+| `HapticCue` | iOS call (expo-haptics 57.0.3) | Use for | Android (`performAndroidHapticsAsync`, expo-haptics 57.0.3) |
 |---|---|---|---|
-| `selection` | `selectionAsync()` | toggles, picker steps, tray selection | `AndroidHaptics.Segment_Tick` |
-| `light` | `impactAsync(ImpactFeedbackStyle.Light)` | place a piece, move a tile | `AndroidHaptics.Context_Click` |
-| `medium` | `impactAsync(ImpactFeedbackStyle.Medium)` | line or column clear, merge, capture | `AndroidHaptics.Confirm` |
-| `heavy` | `impactAsync(ImpactFeedbackStyle.Heavy)` | big combo, breach, explosion | `AndroidHaptics.Long_Press` |
-| `success` | `notificationAsync(NotificationFeedbackType.Success)` | level won, daily done | `AndroidHaptics.Confirm` |
-| `warning` | `notificationAsync(NotificationFeedbackType.Warning)` | illegal move rejected, last life | `AndroidHaptics.Reject` |
-| `error` | `notificationAsync(NotificationFeedbackType.Error)` | level lost | `AndroidHaptics.Reject` |
+| `selection` | `selectionAsync()` | toggles, picker steps, tray selection | `Segment_Tick` from API 34, else `Clock_Tick` |
+| `light` | `impactAsync(ImpactFeedbackStyle.Light)` | place a piece, move a tile | `Context_Click` (every level) |
+| `medium` | `impactAsync(ImpactFeedbackStyle.Medium)` | line or column clear, merge, capture | `Confirm` from API 30, else `Virtual_Key` |
+| `heavy` | `impactAsync(ImpactFeedbackStyle.Heavy)` | big combo, breach, explosion | `Long_Press` (every level) |
+| `success` | `notificationAsync(NotificationFeedbackType.Success)` | level won, daily done | `Confirm` from API 30, else `Virtual_Key` |
+| `warning` | `notificationAsync(NotificationFeedbackType.Warning)` | illegal move rejected, last life | `Reject` from API 30, else `Long_Press` |
+| `error` | `notificationAsync(NotificationFeedbackType.Error)` | level lost | `Reject` from API 30, else `Long_Press` |
+
+On Android the column is View haptic feedback, never the `Vibrator` calls. expo-haptics rejects a type the phone's API level lacks (`Segment_Tick` from Android 14, API 34; `Confirm` and `Reject` from Android 11, API 30), and the rejection would end in the adapter's `.catch(() => undefined)` with the pulse silently lost, so the adapter reads `Number(Platform.Version)` and plays each newer type only from its level, falling back to `Clock_Tick`, `Virtual_Key` or `Long_Press`, which every level has (the game-audio-and-haptics skill's cue table, which this table copies, corrected on 2026-10-18 under L14).
 
 Rules of use:
 
@@ -1534,7 +1579,7 @@ docs/10 owns the font files (`apps/<game>/assets/fonts/Vazirmatn-{Regular,Bold}.
 | Content | one simple glyph inside the central 62 %; no text, no photos, no fake gloss or shadows | review; HIG "Let the system handle blurring and other visual effects" |
 | Sizes | only 1024; Xcode derives every other size from a single-size icon | Apple: apps "can auto-generate all icon variations from a single 1024×1024 pixel image" |
 | Config | `icon` + `ios.icon: { light, dark, tinted }` | prebuild output (section 3) |
-| Android (later) | `android.adaptiveIcon` foreground = logo variant, background = palette colour, monochrome = a white glyph | add outputs when Android starts |
+| Android | `android.adaptiveIcon`: `android-icon-foreground.png` on transparency with the glyph inside the 66 dp circle of 108 dp, the game's accent as background, `android-icon-monochrome.png` one white colour on alpha; the Android 12 splash icons inside the 192 dp circle of 288 dp; the opaque `play-icon-512.png` for the Play Console | `render-art.ts` from Android step 2 and `check-app-art.mjs` (the code-drawn-art-and-icons skill, rule 7; corrected on 2026-10-18 under L14) |
 
 ## 9. Licences and credits for S11d
 

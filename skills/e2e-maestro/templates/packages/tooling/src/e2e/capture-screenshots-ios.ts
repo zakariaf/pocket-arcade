@@ -3,22 +3,31 @@
 // (--help prints every option; --sim captures on this session's own e07-<purpose> and
 // e07-<purpose>-tablet instead of the shared e07-shots-phone and e07-shots-tablet: screenshots-cli.ts)
 // 4 languages x light/dark x phone/tablet. Maestro captures (it waits for the UI to settle); comparePng
-// checks each PNG against apps/<game>/e2e/baselines/<device>/<lang>-<theme>[-<text size>]/<screen>.png.
+// checks each PNG against apps/<game>/e2e/baselines/<device>/<lang>-<theme>[-<text size>]/<screen>.png
+// at MAX_DIFF_RATIO, the tolerance screenshots:android shares (screenshot-compare.ts).
 // Every capture names its simulator's UDID and a driver port of its own (runMaestro). A combination
 // that fails is recorded and the next one still runs (screenshot-matrix.ts): summary.json and the
 // gallery are always written, and the run exits 1 with the list of failed combinations; a bad
 // command line or a missing build exits 2 with the message and no stack.
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, globSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { globSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { freeDriverPort } from '@e07/tooling/e2e/maestro-args.ts';
+import {
+  checkShot,
+  combosOf,
+  jobOf,
+  rawDirOf,
+  type Combo,
+  type ShotLayout,
+} from '@e07/tooling/e2e/screenshot-compare.ts';
 import {
   captureEach,
   captureFailureRow,
   matrixOutcome,
 } from '@e07/tooling/e2e/screenshot-matrix.ts';
-import { NEW_BASELINE, writeGallery, type GalleryRow } from '@e07/tooling/e2e/write-gallery.ts';
+import { writeGallery, type GalleryRow } from '@e07/tooling/e2e/write-gallery.ts';
 import { comparePng } from '@e07/tooling/visual/compare-png.ts';
 
 import { parseScreenshotsCli, SCREENSHOTS_USAGE, shotSimulatorName } from './screenshots-cli.ts';
@@ -38,7 +47,6 @@ import {
 
 const MODELS = { phone: 'iPhone 17 Pro Max', tablet: 'iPad Pro 13-inch (M5)' } as const;
 const DEFAULT_TEXT_SIZE = 'large';
-const MAX_DIFF_RATIO = 0.002;
 
 type Cli = {
   readonly game: string;
@@ -53,19 +61,22 @@ type Cli = {
   /** --sim <purpose>: this session's own simulators (else the shared capture simulators). */
   readonly sim: string | undefined;
 };
-type Combo = { readonly device: string; readonly lang: string; readonly theme: 'light' | 'dark' };
 
-function comboDir(cli: Cli, combo: Combo): string {
-  const suffix = cli.textSize === DEFAULT_TEXT_SIZE ? '' : `-${cli.textSize}`;
-  return join(combo.device, `${combo.lang}-${combo.theme}${suffix}`);
+/** iOS keeps apps/<game>/e2e/baselines/ and reports/screenshots/ (screenshot-compare.ts). */
+function layoutOf(cli: Cli): ShotLayout {
+  return {
+    game: cli.game,
+    baselines: 'baselines',
+    reports: join('reports', 'screenshots'),
+    suffix: cli.textSize === DEFAULT_TEXT_SIZE ? '' : `-${cli.textSize}`,
+    isUpdate: cli.isUpdate,
+    compare: comparePng,
+  };
 }
-
-const rawDir = (cli: Cli, combo: Combo): string =>
-  join('reports', 'screenshots', 'raw', comboDir(cli, combo));
 
 /** One combination's screenshots; a Maestro run that fails throws (its job's capture-failed row). */
 async function capture(cli: Cli, device: MaestroDevice, combo: Combo): Promise<string[]> {
-  const outDir = rawDir(cli, combo);
+  const outDir = rawDirOf(layoutOf(cli), combo);
   const vars = {
     APP_ID: cli.app.id,
     APP_SCHEME: cli.app.scheme,
@@ -79,24 +90,6 @@ async function capture(cli: Cli, device: MaestroDevice, combo: Combo): Promise<s
   ]);
   if (status !== 0) throw new Error(`screenshots: maestro exited ${String(status)}, see ${outDir}`);
   return globSync(join(outDir, '**', '*.png'));
-}
-
-function check(cli: Cli, combo: Combo, actual: string): GalleryRow {
-  const relativeDir = comboDir(cli, combo);
-  const baseline = join('apps', cli.game, 'e2e', 'baselines', relativeDir, basename(actual));
-  const label = `${relativeDir}/${basename(actual, '.png')}`;
-  if (cli.isUpdate) {
-    mkdirSync(join('apps', cli.game, 'e2e', 'baselines', relativeDir), { recursive: true });
-    copyFileSync(actual, baseline);
-    return { label, actual, baseline, result: NEW_BASELINE };
-  }
-  const diffPath = join('reports', 'screenshots', 'diff', relativeDir, basename(actual));
-  const result = comparePng(readFileSync(actual), {
-    baselinePath: baseline,
-    diffPath,
-    maxDiffRatio: MAX_DIFF_RATIO,
-  });
-  return { label, actual, baseline, result };
 }
 
 /** The command line, or the exit code when it asked for the usage or was wrong. */
@@ -117,18 +110,6 @@ function parseCli(): Cli | number {
   };
 }
 
-const combosOf = (cli: Cli, device: 'phone' | 'tablet'): Combo[] =>
-  (['light', 'dark'] as const).flatMap((theme) =>
-    cli.langs.map((lang) => ({ device, lang, theme })),
-  );
-
-/** The combination's job: its label and folders, and its capture once `run` gets the simulator. */
-function jobOf(cli: Cli, combo: Combo, run: () => Promise<GalleryRow[]>) {
-  const relativeDir = comboDir(cli, combo);
-  const baselineDir = join('apps', cli.game, 'e2e', 'baselines', relativeDir);
-  return { label: relativeDir, outDir: rawDir(cli, combo), baselineDir, run };
-}
-
 /** A simulator that never got ready: each of its combinations fails with that error. */
 async function startDevice(cli: Cli, simctl: Simctl, device: 'phone' | 'tablet') {
   const udid = startSimulator(simctl, shotSimulatorName(device, cli.sim), MODELS[device]);
@@ -144,14 +125,15 @@ async function runDevice(
   simctl: Simctl,
   device: 'phone' | 'tablet',
 ): Promise<GalleryRow[]> {
-  const combos = combosOf(cli, device);
+  const layout = layoutOf(cli);
+  const combos = combosOf(cli.langs, device);
   let started: Awaited<ReturnType<typeof startDevice>>;
   try {
     started = await startDevice(cli, simctl, device);
   } catch (error: unknown) {
     return combos.map((combo) =>
       captureFailureRow(
-        jobOf(cli, combo, () => Promise.resolve([])),
+        jobOf(layout, combo, () => Promise.resolve([])),
         error,
       ),
     );
@@ -159,10 +141,10 @@ async function runDevice(
   const { sim, maestroDevice } = started;
   return captureEach(
     combos.map((combo) =>
-      jobOf(cli, combo, async () => {
+      jobOf(layout, combo, async () => {
         setAppearance(sim, combo.theme);
         const shots = await capture(cli, maestroDevice, combo);
-        return shots.map((actual) => check(cli, combo, actual));
+        return shots.map((actual) => checkShot(layout, combo, actual));
       }),
     ),
   );

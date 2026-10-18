@@ -97,10 +97,14 @@ Folders are canonical. Files listed are the ones other parts rely on.
       src/config/         NODE WORLD: with-shell.ts shell-plugins.ts game-config.ts game-extra.ts
                           privacy-manifest.ts ads-config.ts skadnetwork-ids.ts
                           app-variant.ts external-links.ts
+                          android-config.ts backup-rules.ts rtl-support.ts upload-signing.ts
+                          prepared-text-layout.ts google-telemetry.ts
       plugins/            local Expo config plugins: with-<capability>.ts (default export)
       e2e/flows/<area>/   Shell journeys every game runs (01-09); e2e/subflows/ shared sub-flows
       ios/  expo-module.config.json   the ProcessStart native module behind the cold-start log;
                           the only native code the apps ship
+      android/            its Kotlin half (Android step 3): the only Kotlin, Gradle and
+                          manifest files outside the generated apps/<id>/android/
     tooling/              @e07/tooling: Node scripts
       src/                one folder per area, CLIs included: build/ release/ asc/ ios/ e2e/ visual/
                           audit/ deps/ quality/ i18n/ ads/ storekit/ clock/ git/ hooks/ save/ art/

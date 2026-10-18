@@ -1,0 +1,1 @@
+packages/tooling/src/e2e/run-e2e-android.ts:1 [runner-steps] there is no large-text step (runAndroidLargeText)

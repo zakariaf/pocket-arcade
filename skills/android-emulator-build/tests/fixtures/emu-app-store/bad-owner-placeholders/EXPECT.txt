@@ -1,0 +1,3 @@
+[owner-placeholder] extra.game.links.privacyPolicy.host
+[owner-placeholder] extra.game.links.supportEmail
+OWNER STEPS PENDING: G3

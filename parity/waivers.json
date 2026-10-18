@@ -251,6 +251,1708 @@
       "langs": ["fa"],
       "reason": "Its three two-line Vazirmatn texts (title 25/36.25, body 17/25.5, key label 17/24.65) snap each line box to the 1/3-pt device pixel grid on iOS, so the centred card measures 353.33 pt tall against Chrome's 352 pt (1.33 pt taller, 2 px at each edge) while every text, the art and the keys match their bounds and ink. A pre-listed platform waiver of the parity skill.",
       "reportedToOwner": "2026-09-30"
+    },
+    {
+      "frame": "s3-consent-moment",
+      "testID": "consent.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 18 pt Rubik line 1.4 pt wider than Chrome (ink 350.7 vs 349.3 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/consent.body.png."
+    },
+    {
+      "frame": "s3-consent-moment",
+      "testID": "consent.footnote",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 13 pt Rubik line 1.3 pt wider than Chrome (ink 354.0 vs 352.7 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/consent.footnote.png."
+    },
+    {
+      "frame": "s4-home",
+      "testID": "home.endless-card.description",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 14 pt Rubik line 1.7 pt wider than Chrome (ink 218.7 vs 217.0 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/home.endless-card.description.png."
+    },
+    {
+      "frame": "s4-home-premium",
+      "testID": "home.endless-card.description",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 14 pt Rubik line 1.7 pt wider than Chrome (ink 218.7 vs 217.0 pt, gate 1 pt): same Rubik-Regular.ttf, same size and line box, the same line breaks, subpixel and linear text already on through React Native's CustomStyleSpan; Android's glyph advances for Rubik add up wider at 3x and no style changes advances (nudging glyphs is banned). iOS passes it. Evidence: reports/e18/android-waiver-candidates.json and the run's crops/home.endless-card.description.png."
+    },
+    {
+      "frame": "s4-home",
+      "testID": "home.stats-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 15 narrower than Chrome's HarfBuzz with the same font file: the word is 1.3 pt narrower in light fa (21.0 vs 22.3 pt, gate 1 pt) and 1.0 pt in dark fa (passes); box, position and colour match, and no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the light-fa run's crops/home.stats-button.png."
+    },
+    {
+      "frame": "s4-home-premium",
+      "testID": "home.stats-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-16",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 15 narrower than Chrome's HarfBuzz with the same font file: the word is 1.3 pt narrower in light fa (21.0 vs 22.3 pt, gate 1 pt) and 1.0 pt in dark fa (passes); box, position and colour match, and no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the light-fa run's crops/home.stats-button.png."
+    },
+    {
+      "frame": "s10-statistics",
+      "testID": "stats.top-bar.title",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 27 narrower than Chrome's HarfBuzz with the same font file: the top-bar title is 1.3 pt narrower in light and dark fa at every scroll offset (39.3 vs 40.7 pt, gate 1 pt), the class T20 found on Home's Statistics key; box, position and colour match, no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the fa runs' crops/stats.top-bar.title.png."
+    },
+    {
+      "frame": "s10-statistics-empty",
+      "testID": "stats.top-bar.title",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform-text-shaping",
+      "glyphs": "آ",
+      "langs": ["fa"],
+      "reason": "Android shapes the alef with madda of آمار (U+0622) in Vazirmatn-Bold 27 narrower than Chrome's HarfBuzz with the same font file: the top-bar title is 1.3 pt narrower in light and dark fa at every scroll offset (39.3 vs 40.7 pt, gate 1 pt), the class T20 found on Home's Statistics key; box, position and colour match, no style changes mark shaping. Evidence: reports/e18/android-waiver-candidates.json and the fa runs' crops/stats.top-bar.title.png."
+    },
+    {
+      "frame": "s10-statistics-empty",
+      "testID": "stats.empty-state.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays this 16 pt Rubik line 1.7 pt wider than Chrome (ink 280.7 vs 279.0 pt, gate 1 pt) in light and dark en: same Rubik-Regular.ttf, size, line box and line break, subpixel and linear text on through React Native's CustomStyleSpan, no letter-spacing; Android's advance and kerning sums for Rubik come out wider (Chrome measures this class 1.3-1.7 pt narrower with kerning, wider without). iOS passes it. Evidence: the en runs' crops/stats.empty-state.body.png."
+    },
+    {
+      "frame": "s10-statistics",
+      "testID": "stats.best-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The Best card's list rows come out 44.33-44.67 pt on Android against the design's 44.8 (the row content is the 22 pt Lilita One value line, 74 px, and the key line under its Chrome baseline drop, identical code on iOS): the rule above the fifth row sits 0.7 pt high on screen and 1.3 pt relative to the card's top (gate 1.5 pt blobs; 1.3 pt measured), every rule within 0.7 pt of its design line (reports/e18 rule scan: app 584.33, 629, 673.33, 718, 762.33 vs design 584, 629, 673, 718, 763). Text line boxes, not a style: the chromeBaseline model is pinned at a 4.7 pt drop by its test. Evidence: crops/stats.best-card.png of light-en, dark-en and their y374 captures."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.streak-rule",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the 15 pt Rubik line \"Play every day to grow your streak.\" 2.67 pt wider than Chrome (ink 241.3 vs 238.7 pt): same font file, size, box (48 pt start after the 20 pt chain icon and 8 pt gap) and line; Chrome measures the line 241.02 pt with kerning and 245.27 without, so Android's advance and kerning sums sit between. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "themes": ["light"],
+      "langs": ["fa"],
+      "reason": "In the one-line Vazirmatn 15 sentence around the bidi-isolated price (از بازی لذت می‌برید؟ تبلیغات را با ⁨€۱٫۹۹⁩ حذف کنید.), Android puts the first run 2.2-2.4 pt closer to the price than Chrome while the price and the last run sit within 0.4 pt: the space around the FSI/PDI isolate comes out narrower. Dark fa passes (gate 2 pt)."
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.continue-offer",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.14",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.15",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.16",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.17",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.18",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.19",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.20",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.21",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.22",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.23",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.24",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.25",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.26",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.27",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.28",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.29",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.30",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.pack.2",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.1.mark",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-day.7.mark",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.week-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.0-3.0 pt blobs on the dashes). The iOS pre-listed dashed-edge waiver, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. On Android the tile is dx +1.1 dy -1.9 dw -2.1 dh +3.7 pt off and its number 2.2 pt low in light en. The iOS pre-listed design-artefact pair, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup, so its drawn box is 55.8 x 58.3 instead of 53.7 x 62",
+      "reason": "The frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94); the app shows the tapped tile at rest with its focus ring, as the S8 spec says. On Android the tile is dx +1.1 dy -1.9 dw -2.1 dh +3.7 pt off and its number 2.2 pt low in light en. The iOS pre-listed design-artefact pair, for Android."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13.number",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)}",
+      "themes": ["light"],
+      "langs": ["en"],
+      "reason": "The number of the mid-press tile 13 sits 2.2 pt lower in light en because the mockup squashes the tile; the app tile is at rest."
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["fa"],
+      "reason": "The month sits on the tilted calendar tile; in dark fa Chrome's antialiased tile-edge pixels next to the word count as ink in the design (ink height 23.0 pt) while the app's edge does not (16.7 pt). The word itself matches (crop). The iOS pre-listed waiver, for Android."
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "langs": ["en"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "langs": ["en"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text (the same artefact L5 fixed in the S11 footer only)",
+      "langs": ["en"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck string has it; the mockup splits it into two flex items with a 6 px gap. On Android the chip is 2.7 pt narrower and the version 2.4-2.6 pt nearer the start, as on iOS. The iOS pre-listed design-artefact waiver, for Android."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.intro",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The 17 pt Rubik intro line is 1.3-1.7 pt wider than Chrome (ink 354.0 vs 352.3 pt light, 244.3 vs 243.0 pt dark; gate 1 pt); box, position and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.ads",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.ads.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.ads.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.ads.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.purchase",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.purchase.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.purchase.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.backup",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.backup.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.backup.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.contact",
+      "rule": "missing",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.contact.title",
+      "rule": "missing",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.screen",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.summary-card",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.summary-card.label",
+      "rule": "missing",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.game",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.game.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.game.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.game.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 345.3 vs 344.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.purchase.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 329.3 vs 328.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.backup.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "The 16 pt Rubik paragraph's widest measured line is 316.3 vs 314.0 pt in Chrome (gate 1 pt); box and line breaks match. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.summary-card.label",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign)."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.summary-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "The 21 pt Vazirmatn-Bold summary is a balanced (.d) text. Chrome's widths equal Android's (\"در کار نیست و خود بازی هیچ \" 246.43 vs 246.42 pt), but the app's balanced-wrap search probes whole points and stops at a width where the second line still holds \"هیچ\" (about 241.7 pt), while Chrome's narrowest width keeping three lines (about 241.5 pt, the first line's) pushes it to the third line. Same line count and box; light and dark fa. Follow-up after E18: search on the 1/3-pt grid (changes iOS titles, needs its own iOS re-sign)."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.contact",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.contact.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.contact.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.updated",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the sixth line of the 16 pt Rubik ads paragraph, \"Where the law requires it, you are asked first. You\", 362.77 pt wide, past the 362 pt box (Chrome: 360.86 pt), so \"You\" opens a seventh line: the ads section is 24 pt taller and every section below it 23.5 pt lower; at the last offset (y107) the body scrolls 83.7 pt instead of 107 for the same reason, which moves the sections above it by -23.6 pt in the comparison. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled Rubik-Regular.ttf at 16 px: the per-word sums equal Android's line widths from onTextLayout within 0.04 pt (334.94 vs 334.91, 334.59 vs 334.56, 364.77 vs 364.74, 356.51 vs 356.48), while Chrome's whole-run widths are 1.1-1.9 pt narrower. No app style sets letter-spacing or features. With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.107.00 at the last offset), the sections that are below the screen at scroll 0 (the 'missing' waivers above) are on screen at y107 and are judged at the real scroll: they show the same 23.3 pt shift."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.software",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.software.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store.tab",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.react-native-google-mobile-ads",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.google-mobile-ads-sdk",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.expo-iap",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.tab",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.game-sounds",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Each Persian licence row is 0.17 pt taller than the design (70.67 vs 70.5, 68.67 vs 68.5 pt): its 25.5 pt Vazirmatn label line is snapped to the 1/3 pt pixel grid (25.67 pt). With the scroll measured (E18, between T22 and T23: the app reports parity.scroll.402.00 and parity.scroll.743.00, exactly the offsets asked), the rows lower on the page sit 2.1 to 2.6 pt below their design place, just over the 2 pt bounds gate; the inferred scroll used to absorb this drift (740.8 for 743). Box sizes and widths match within 0.5 pt; iOS drifts 1.5 pt on the same page. No app style sets a line height other than the type role's."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds",
+      "rule": "bounds",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.tab",
+      "rule": "bounds",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.list",
+      "rule": "bounds",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.game-sounds",
+      "rule": "bounds",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "iOS, as on Android: the Persian licence rows are a little taller than the design (the 25.5 pt Vazirmatn label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sounds group at the bottom is 2.3 to 2.5 pt below its design place, just over the 2 pt bounds gate (Maestro's whole-point iOS bounds add up to 0.5 pt); the inferred scroll used to absorb this drift (759.5 for 761). Sizes match within 0.6 pt."
+    },
+    {
+      "frame": "s12-premium",
+      "testID": "premium.benefit.support.label",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the first line of this 17 pt Rubik text, \"Support the developer of this\", 1.4 pt wider than Chrome (ink 229.7 vs 228.3 pt, gate 1 pt) in light-en and dark-en: same Rubik-Regular.ttf, size, box and line breaks. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled font at 17 px: the whole line 229.58 pt, the per-word sum 231.11 pt (reports/e18/t23-rubik-widths.txt), the class T22 measured on S11c (2bf97ad8). No app style sets letter-spacing or features; nudging glyphs is banned."
+    },
+    {
+      "frame": "s12-store-unavailable-offline",
+      "testID": "premium.unavailable-note.label",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the first line of this 17 pt Rubik text, \"Connect to the internet to buy or\", 1.7 pt wider than Chrome (ink 259.7 vs 258.0 pt, gate 1 pt) in light-en and dark-en: same Rubik-Regular.ttf, size, box and line breaks. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled font at 17 px: the whole line 259.34 pt, the per-word sum 260.92 pt (reports/e18/t23-rubik-widths.txt), the class T22 measured on S11c (2bf97ad8). No app style sets letter-spacing or features; nudging glyphs is banned."
+    },
+    {
+      "frame": "s12-store-unavailable-offline",
+      "testID": "premium.buy-button",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "reason": "The disabled Buy key has a dashed edge: React Native on Android draws a dashed border with its own dash length and corner phase (no style sets them); Chrome's dashes sit elsewhere, so the edge differs along the dashes only (2.7-3.0 pt blobs on the dashes, 118-119 of them, in light and dark x en and fa; the key's box, 362 x 80 pt at y 216, the icon and the label match). The iOS pre-listed dashed-edge waiver of this key, for Android, as T21 copied it for S7, S8 and S9."
+    },
+    {
+      "frame": "s12-pending-approval",
+      "testID": "premium.pending-detail",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the first line of this 17 pt Rubik text, \"Premium turns on by itself as soon as the\", 1.4 pt wider than Chrome (ink 324.7 vs 323.3 pt, gate 1 pt) in light-en and dark-en: same Rubik-Regular.ttf, size, box and line breaks. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled font at 17 px: the whole line 325.38 pt, the per-word sum 327.05 pt (reports/e18/t23-rubik-widths.txt), the class T22 measured on S11c (2bf97ad8). No app style sets letter-spacing or features; nudging glyphs is banned."
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.goal",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the first line of this 17 pt Rubik text, \"Stop every monster before it reaches your\", 1.3 pt wider than Chrome (ink 332.3 vs 331.0 pt, gate 1 pt) in light-en and dark-en: same Rubik-Regular.ttf, size, box and line breaks. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled font at 17 px: the whole line 331.84 pt, the per-word sum 333.22 pt (reports/e18/t23-rubik-widths.txt), the class T22 measured on S11c (2bf97ad8). No app style sets letter-spacing or features; nudging glyphs is banned."
+    },
+    {
+      "frame": "s14-progress-restored",
+      "testID": "save-restored-dialog.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["en"],
+      "reason": "Android lays the first line of this 17 pt Rubik text, \"Your progress couldn’t be loaded. A\", 1.3 pt wider than Chrome (ink 278.0 vs 276.7 pt, gate 1 pt) in dark-en (light-en passes at the gate's edge): same Rubik-Regular.ttf, size, box and line breaks. Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run. Measured in Chrome with the bundled font at 17 px: the whole line 277.73 pt, the per-word sum 278.63 pt (reports/e18/t23-rubik-widths.txt), the class T22 measured on S11c (2bf97ad8). No app style sets letter-spacing or features; nudging glyphs is banned."
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["fa"],
+      "reason": "Its three two-line Vazirmatn texts (title 25/36.25, body 17/25.5, key label 17/24.65) snap each line box to the 1/3-pt device pixel grid on Android as on iOS, so the centred card measures 353.33 pt tall (app bounds 1060 px at 3x) against Chrome's 352.78 pt, and its bottom edge and hard shadow sit 1.3 pt off (one or two 1.3 pt blobs at +340 pt) while every text, the art and both keys pass their bounds, text and ink in light-fa and dark-fa. The iOS pre-listed platform waiver of this card in fa, for Android."
+    },
+    {
+      "frame": "s3-consent-moment",
+      "testID": "consent.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Wähl vor der ersten Werbung deine\" is 288.59 pt as one run and 290.28 pt word by word. The German first line's ink is 1.3-1.7 pt wider than the design (gate 1 pt); box, breaks and colour match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.game.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Statistik und deine Einstellungen werden nur auf\" is 361.72 pt as one run and 362.67 pt word by word in a 362 pt column. So Android moves \"auf\" to the next line of the game section (the line ends 28 pt shorter); the ads body's line is 1.6 pt wider for the same reason, and the moved word leaves a 1.3 pt blob on the page. The lead-approved S11c en class, in German. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.section.ads.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Statistik und deine Einstellungen werden nur auf\" is 361.72 pt as one run and 362.67 pt word by word in a 362 pt column. So Android moves \"auf\" to the next line of the game section (the line ends 28 pt shorter); the ads body's line is 1.6 pt wider for the same reason, and the moved word leaves a 1.3 pt blob on the page. The lead-approved S11c en class, in German. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s11c-privacy-policy",
+      "testID": "privacy-policy.screen",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Statistik und deine Einstellungen werden nur auf\" is 361.72 pt as one run and 362.67 pt word by word in a 362 pt column. So Android moves \"auf\" to the next line of the game section (the line ends 28 pt shorter); the ads body's line is 1.6 pt wider for the same reason, and the moved word leaves a 1.3 pt blob on the page. The lead-approved S11c en class, in German. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.vazirmatn.description",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Schrift für persische und Sorani-Texte\" is 248.06 pt as one run and 248.72 pt word by word. Android also splits the shaping run at the break point after the in-word hyphen (withHyphenBreaks), so the line's ink is 1.6 pt wider than the design (gate 1 pt); breaks and box match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s12-error",
+      "testID": "premium.error-note.label",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Der Kauf konnte nicht abgeschlossen\" is 293.94 pt as one run and 294.77 pt word by word. One line's ink is 1.3 pt wider than the design in dark de (light de within the gate); box and breaks match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s12-pending-approval",
+      "testID": "premium.pending-detail",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Premium wird automatisch aktiviert,\" is 286.45 pt as one run and 286.89 pt word by word. The last line's ink is 1.3 pt wider than the design in dark de (light de within the gate); box and breaks match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.goal",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Halte jedes Monster auf, bevor es deine Mauer\" is 362.41 pt as one run and 363.31 pt word by word in a 362 pt column. So \"Mauer\" moves to the second line, as on iOS (the E17 de candidate of this element, CoreText); the words, size and colour match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.screen",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Android (Minikin) shapes each word and each space on its own, so Rubik's kerning pairs across a space are lost; Chrome shapes the whole run (the T22 class, 2bf97ad8). Measured in Chrome with the bundled Rubik-Regular.ttf: \"Halte jedes Monster auf, bevor es deine Mauer\" is 362.41 pt as one run and 363.31 pt word by word in a 362 pt column. So \"Mauer\" moves to the second line, as on iOS (the E17 de candidate of this element, CoreText); the words, size and colour match. No app style sets letter-spacing or features (reports/e18/t23-deckb-widths.txt)."
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.step-text",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Android lays the Sorani text out a little wider than Chrome's HarfBuzz with the same Vazirmatn file, and the line sits on a break boundary, so Android breaks one word earlier than the design (the same element fails on iOS: the E17 ckb candidate). The words, size and colour match. Dark ckb only (light ckb within the gate)."
+    },
+    {
+      "frame": "s14-reset-all-progress",
+      "testID": "reset-progress-dialog.body",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Android lays the Sorani text out a little wider than Chrome's HarfBuzz with the same Vazirmatn file, and the line sits on a break boundary, so Android breaks one word earlier than the design (the same element fails on iOS: the E17 ckb candidate). The words, size and colour match. Light ckb only (dark ckb within the gate)."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.software",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.software.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store.tab",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.react-native-google-mobile-ads",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.google-mobile-ads-sdk",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.expo-iap",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.tab",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.list",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.game-sounds",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Each pixel-snapped Vazirmatn licence row is 0.17 pt taller than the design (25.5 pt line snapped to 25.67 at 3x), so the groups lower down the page drift 2.1-2.6 pt at the scrolled offsets (y402, y743) in Sorani as in Persian; the T22 / scroll-gate fa waivers of this element, for ckb."
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.ads-store.list",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "The German licence rows come out up to a third of a point taller than the design's on Android (pixel-snapped line boxes at 3x), so at y642 a row rule of the ads list sits 1.3 pt off (one 1.3 pt blob, every element within its bounds); the class of the S10 Best card rows (T21, 39)."
+    },
+    {
+      "frame": "s10-statistics",
+      "testID": "stats.best-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "The T21 Android waiver of this element (39), in German: the Best card's rows come out 44.33-44.67 pt against the design's 44.8, so a rule sits 1.3 pt off at y407 (one blob); text line boxes, not a style."
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de", "ckb"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart (the Android en waivers 68-70 and the E17 de candidates; in ckb the chip is 2 pt narrower, dx +2.0 dw -2.0). A design question for the owner.",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart (the Android en waivers 68-70 and the E17 de candidates; in ckb the chip is 2 pt narrower, dx +2.0 dw -2.0). A design question for the owner.",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "reason": "The app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart (the Android en waivers 68-70 and the E17 de candidates; in ckb the chip is 2 pt narrower, dx +2.0 dw -2.0). A design question for the owner.",
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.title",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.body",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.buttons",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "bounds",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.scrim",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt key: the mockup lets the one long word overflow the key, Android (like iOS, the E17 ckb candidate) wraps it, so both keys and the centred card grow 25 pt and every part of the dialog moves 12.6 pt; the copy-deck text is unchanged until the owner gives a shorter label.",
+      "designCause": ".btn{min-width:0} with the label .bl in one line box: Chrome draws the overflowing word past the key edge instead of wrapping it"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "reason": "The app shows the store's price as Intl formats it, \"1,99 €\" with a no-break space (on Android drawn as a space held by word joiners, d8acafd8), so the line breaks before the price (\"…für / 1,99 €.\"); the mockup breaks inside the price (\"…für 1 / ,99 €.\"). Breaking a price apart is the mockup's artefact (the E17 de candidate). Box, words and underlines match.",
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome may break the line inside the price"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.screen",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "reason": "The app shows the store's price as Intl formats it, \"1,99 €\" with a no-break space (on Android drawn as a space held by word joiners, d8acafd8), so the line breaks before the price (\"…für / 1,99 €.\"); the mockup breaks inside the price (\"…für 1 / ,99 €.\"). Breaking a price apart is the mockup's artefact (the E17 de candidate). Box, words and underlines match.",
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome may break the line inside the price"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Chrome skips the underline around descenders (text-decoration-skip-ink: auto), so its bar breaks under the descender of ڕ and the design run's ink box reaches 17.3 pt; the app draws its 2 pt underline as a View that runs through the descender (13.7-14.3 pt); the line's ink extents match. The E17 ckb candidate, on Android."
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card.label",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with a score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break; the words, size and colour match (the E17 de candidate, the same on Android)."
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card",
+      "rule": "structure",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with a score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break; the words, size and colour match (the E17 de candidate, the same on Android)."
+    },
+    {
+      "frame": "s8-levels",
+      "testID": "levels.level-tile.13.number",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "reason": "The Android en waiver of this element (66), in light de: the frame draws tile 13 frozen mid-press (scaled 1.04 x 0.94), so its number sits 2.2 pt low against the app's tile at rest.",
+      "designCause": ".lt.is-pressed{transform:translateY(3px) scale(1.04,.94)} keeps the tapped locked tile squashed in the mockup"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "platform": "android",
+      "reportedToOwner": "2026-10-17",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "The Android fa waiver of this element (67), in dark ckb: the design's tilted month band edge is antialiased into the run's ink box (22.3 pt high), while the app's band edge does not reach it (16.7 pt); the word ئەیلوول, its size and colour match."
+    },
+    {
+      "frame": "s6-pause",
+      "testID": "pause.dialog",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "CoreText lays the Sorani Home label \"پەڕەی سەرەکی\" about 1.4 pt wider than Chrome with the same Vazirmatn-Regular.ttf, so the centred icon-and-label row of pause.home-button shifts and the home icon sits 0.7 pt from its design place: one 1.3 pt structure blob (6.0 x 5.3 pt at +223,+427) in light and dark ckb (close-prep capture 2026-10-18, same numbers as E17). fa matches exactly; no app style changes glyph advances.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome breaks the line inside the price (\"…für 1,99 / €.\")",
+      "reason": "The app shows the store price as Intl formats it, \"1,99 €\" with a no-break space, isolated in the sentence (FSI/PDI), so its line breaks before the price (\"…für / 1,99 €.\"); breaking a price apart is the mockup's artefact. Measured 2026-10-18 in light and dark de: first line ink 255.3 vs 263.7 pt, \"1,99 €\" 13.7 vs 26.3 pt, the trailing \".\" on the next line, and the second-line underline a 46 x 2 pt structure blob at +193,+829.3. Box, words and one underline per line match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.screen",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome breaks the line inside the price (\"…für 1,99 / €.\")",
+      "reason": "The app shows the store price as Intl formats it, \"1,99 €\" with a no-break space, isolated in the sentence (FSI/PDI), so its line breaks before the price (\"…für / 1,99 €.\"); breaking a price apart is the mockup's artefact. Measured 2026-10-18 in light and dark de: first line ink 255.3 vs 263.7 pt, \"1,99 €\" 13.7 vs 26.3 pt, the trailing \".\" on the next line, and the second-line underline a 46 x 2 pt structure blob at +193,+829.3. Box, words and one underline per line match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Chrome skips the underline around descenders (text-decoration-skip-ink: auto, the default; the mockup sets nothing), so its bar breaks under the descender of ڕ and the design run's ink box reaches 17.3 pt; iOS cannot draw a 2 pt underline, so QuietButton draws it as a View that runs through the descender: ink height 14.7 vs 17.3 pt, dx -11.0 in light and dark ckb (2026-10-18). The line's ink extents and the words match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card.label",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with its own score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break, whose second line is longer than the app's whole first line. Measured 2026-10-18 in light and dark de: first-line ink 141.7 vs 184.3 pt (dx -22.3), and the moved word \"sind\" as a 3.3 pt structure blob (10.7 x 14.7 pt) on the reason card. Words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with its own score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break, whose second line is longer than the app's whole first line. Measured 2026-10-18 in light and dark de: first-line ink 141.7 vs 184.3 pt (dx -22.3), and the moved word \"sind\" as a 3.3 pt structure blob (10.7 x 14.7 pt) on the reason card. Words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["ckb"],
+      "reason": "The pre-listed dark fa cause, in Sorani: the month sits on the calendar tile tilted by .cal{transform:rotate(-3deg)}, and iOS draws a rotated view's edges without antialiasing (React Native exposes no allowsEdgeAntialiasing), so Chrome's antialiased band edge next to \"ئەیلوول\" counts as ink in the design window (22.3 pt) and the app's stepped edge does not (16.7 pt), dark ckb only (light ckb passes), 2026-10-18. The word itself matches.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The same .chip gap artefact in Sorani (\"وەشانی 1.0.0 (8)\"): every gate passes in light and dark ckb, but the look pass sees the app chip 1.4 pt narrower and the number 1.0 pt nearer the label than the mockup's 6 px flex gap draws (light-ckb, 2026-10-18; recorded as the one open difference of that run). Proposed so the difference can be recorded as waived; the fa runs show the same in-gate gap and were signed without it.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.screen",
+      "rule": "fill",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["ckb"],
+      "reason": "iOS snaps each Vazirmatn line box to the 1/3 pt grid, so the Sorani credits and support cards end 0.9 to 1.5 pt lower than Chrome draws them (every element inside the 2 pt bounds gate). In dark ckb the ground and the card fill cover nearly equal areas, and the root's most frequent colour tips from ground #1B1943 to card #2B2862: design ground 44.07 % vs card 43.84 %, app ground 43.87 % vs card 44.00 % of the gate's samples (2026-10-18). Colours themselves match; dark de keeps a 4-point lead and passes.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.tab",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.list",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.game-sounds",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.goal",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "CoreText lays the German goal text a little wider than Chrome's HarfBuzz with the same Rubik font file, and the first line fills 361.0 of Chrome's 362 pt (\"…bevor es deine Mauer\"), so iOS moves \"Mauer\" to the second line: first-line ink 306.7 vs 361.0 pt (dx -26.8) and a 1.7 pt structure blob (7.7 x 12 pt at +119.3,+161.3) on the moved word, light and dark de (2026-10-18). No app style changes glyph advances; words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.screen",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "CoreText lays the German goal text a little wider than Chrome's HarfBuzz with the same Rubik font file, and the first line fills 361.0 of Chrome's 362 pt (\"…bevor es deine Mauer\"), so iOS moves \"Mauer\" to the second line: first-line ink 306.7 vs 361.0 pt (dx -26.8) and a 1.7 pt structure blob (7.7 x 12 pt at +119.3,+161.3) on the moved word, light and dark de (2026-10-18). No app style changes glyph advances; words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.step-text",
+      "rule": "text-ink",
+      "class": "platform-text-shaping",
+      "langs": ["ckb"],
+      "glyphs": "و ۆ ڕ ی",
+      "reason": "Line breaks now match (the E17 \"earlier break\" cause no longer holds). CoreText draws the descender tails of the first line's و ۆ ڕ ی 0.3 to 0.7 pt higher than Chrome's HarfBuzz with the same Vazirmatn-Bold.ttf, so in the design they reach into the second line's measured window (rows 506.0 to 509.7) and count as its ink, and in the app they do not: second-line ink height 24.7 vs 33.7 pt, width within 0.33 pt, light and dark ckb (2026-10-18). No style changes mark or descender shaping.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-reset-all-progress",
+      "testID": "reset-progress-dialog.body",
+      "rule": "text-ink",
+      "class": "platform-text-shaping",
+      "langs": ["ckb"],
+      "glyphs": "ڕ ێ ر ز",
+      "reason": "Line breaks now match (the E17 \"earlier break\" cause no longer holds). The marks below the second line (the small v of ڕ U+0695 and ێ U+06CE, and the tails of ڕ ر ز) reach into the last line's measured box in the app, where CoreText sets line 2 1.59 pt and line 3 about 1.05 pt lower than Chrome, inside the gate: last-line ink height 28.7 vs 21.3 pt (dh +7.33, dx -0.05), light and dark ckb (2026-10-18). Same Vazirmatn-Regular.ttf; no style changes mark shaping.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.title",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.body",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.buttons",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.scrim",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
     }
   ]
 }

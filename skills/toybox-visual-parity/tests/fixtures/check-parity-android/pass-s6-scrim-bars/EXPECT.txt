@@ -1,0 +1,2 @@
+reference s6-pause--no-music--no-hints (variant no-music--no-hints, chosen by the game facts)
+1 of 1 runs pass

@@ -6,6 +6,7 @@
 - Numbers outside messages
 - The Numbers setting
 - Bidi isolation
+- Android: a text without a strong letter
 - An LTR text in an RTL row
 - Vazirmatn
 - Line heights and letter-spacing
@@ -60,9 +61,17 @@ Settings has a "Numbers" row: Automatic / Latin / Local. Each option shows a liv
 - Free text interpolated into a sentence (a pack name, a formatted date, the autonym in "System (فارسی)", a game name) is wrapped in U+2068 FIRST STRONG ISOLATE … U+2069 POP DIRECTIONAL ISOLATE, so its own direction cannot reorder the sentence. `t()` does this for every `*Name`/`*Text` placeholder; other free text uses `isolate()` from `bidi.ts`.
 - Verified: in fa, `levels.pack.locked` with `packName: 'Beginnings'` keeps the Latin name in place; on iOS 26.5 with Vazirmatn the isolates render invisibly (no tofu).
 - Numbers are never isolated (they are formatted inside the sentence and take its digits); select keys are never isolated (the match would fail).
-- **No bidi controls anywhere else:** not in catalogs (U+202A–U+202E, U+2066–U+2069), not in source code (raw or as `\u` escapes, except in `bidi.ts`), and never the Arabic Letter Mark U+061C, which Vazirmatn lacks, or LRM/RLM (U+200E/U+200F) as a layout fix.
+- **No bidi controls anywhere else:** not in catalogs (U+202A–U+202E, U+2066–U+2069), not in source code (raw or as `\u` escapes, except in `bidi.ts`), and never the Arabic Letter Mark U+061C, which Vazirmatn lacks, or LRM/RLM (U+200E/U+200F) as a layout fix. The one exception is `asRtlParagraph()` in `bidi.ts`, which AppText applies on Android only (next section).
 - Game names stay Latin in every language (brand names), in the Latin display face, isolated LTR inside RTL text.
 - Tests compare with `FSI`/`PDI` in the expected string, or strip them with `stripIsolates()`.
+
+## Android: a text without a strong letter
+
+React Native's prepared text layout (Android, the `with-prepared-text-layout` plugin of architecture-and-boundaries) draws the very layout React Native measured, and that layout reads its paragraph direction with `FIRSTSTRONG_LTR` (`TextLayoutManager.buildLayout` never sets a text direction). A TextView in a right-to-left layout used to read it first-strong-then-RTL. Most texts are unaffected. A text with no strong letter outside isolates came out left to right in fa and ckb: S10's "۲۸ / ۲۷۰" and "×۶", and the Home and S9 date "{weekdayName}، {day} {monthName}", whose names are isolated (E18-T22).
+
+- **Fix:** on Android in a right-to-left layout, AppText puts U+200F RIGHT-TO-LEFT MARK before such a text: `asRtlParagraph()` in `bidi.ts`, through `androidMarksOf()` in `ui/line-breaks.ts`. `firstStrongDirection()` skips isolates, as Android does. A single number ("۵۸", "۱٫۹۹") reads the same either way and stays as written, and so does any text with a strong letter, Persian, Sorani or English. The Text's accessibility label is the text as written. Vazirmatn has the mark (U+200F), so it draws as nothing; iOS is unchanged.
+- **Never** type the mark into a catalog or a screen. It belongs only in `bidi.ts`, and AppText adds it.
+- Tests: `bidi.test.ts` pins `firstStrongDirection` and `asRtlParagraph` (with a pinned date of isolated names and a property); `app-text.android.test.tsx` pins fa digits, a ckb date and the mixed and English texts left as written; `app-text.test.tsx` pins iOS as written.
 
 ## An LTR text in an RTL row
 

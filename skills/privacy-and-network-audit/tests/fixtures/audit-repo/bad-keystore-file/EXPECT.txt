@@ -1,0 +1,2 @@
+[secret-file]
+apps/demo-game/upload-key.jks

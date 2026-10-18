@@ -27,9 +27,9 @@ RESULT: PASS
 
 - The description, 267 characters, verb first, trigger words, and two hand-offs:
   `Checks App Store listing texts (name, subtitle, description, keywords, What's New) of each Pocket Arcade game for prices and other platforms. Use when writing or changing store texts. Not for in-app copy (i18n-strings-and-catalogs) or uploads (ios-release-testflight).`
-- Two rules, each with its reason: "**No prices in any listing text.** Prices differ per storefront and change; Apple rejects metadata that states them (guideline 2.3.7)." and "**No other platforms.** Naming Android or Google Play in an iOS listing breaks guideline 2.3.10 and blocks the release."
+- Two rules, each with its reason: "**No prices in any listing text.** Prices differ per storefront and change; Apple rejects metadata that states them (guideline 2.3.7)." and "**No other store in a listing.** The games ship on both stores, but an App Store listing that names Android or Google Play breaks guideline 2.3.10 and blocks the release." (The Google Play listing has the mirror rule: it names neither iOS nor the App Store.)
 - The reference renamed to `references/listing-rules.md` (field limits, the two guidelines, a worked example), with the Files table and workflow step 1 updated to the new name.
-- The checker's rules in `scripts/check-rules.mjs`: `include: ['*.txt']`, `no-price` with `/[€$£]\s?\d|\d+[.,]\d{2}\s?(?:€|EUR|USD|\$)/`, `no-other-platform` with `/\b(?:Android|Google Play)\b/i`, and plain-text files scanned without comment masking.
+- The checker's rules in `scripts/check-rules.mjs`: `include: ['*.txt']`, `no-price` with `/[€$£]\s?\d|\d+[.,]\d{2}\s?(?:€|EUR|USD|\$)/`, `no-other-platform` with `/\b(?:Android|Google Play)\b/i` on the App Store texts (a Google Play listing would be checked with `/\b(?:iOS|iPhone|iPad|App Store)\b/i` instead, since only the other store's name is wrong in a listing), and plain-text files scanned without comment masking.
 - Fixtures from real listing text: `good/` (a clean English description), `bad-price/` ("Premium ohne Werbung für nur 1,99 €.", EXPECT `[no-price]` and `apps/line-siege/store/de/description.txt:1`), `bad-other-platform/` ("Also on Google Play.", EXPECT `[no-other-platform]` and the file at line 2). The scaffold's example fixtures were deleted.
 
 **3. Prove it.**

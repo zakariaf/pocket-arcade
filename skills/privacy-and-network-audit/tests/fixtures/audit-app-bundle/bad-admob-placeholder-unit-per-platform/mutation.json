@@ -1,0 +1,23 @@
+[
+ {
+  "json": {
+   "file": "DemoGame.app/EXConstants.bundle/app.config",
+   "path": [
+    "extra",
+    "adUnits"
+   ],
+   "value": {
+    "ios": {
+     "banner": "ca-app-pub-7310520968431056/4417703951",
+     "interstitial": "ca-app-pub-1234567890123456/2222222222",
+     "rewarded": "ca-app-pub-7310520968431056/2913050594"
+    },
+    "android": {
+     "banner": "ca-app-pub-1111222233334444/1000000001",
+     "interstitial": "ca-app-pub-1111222233334444/1000000002",
+     "rewarded": "ca-app-pub-1111222233334444/1000000003"
+    }
+   }
+  }
+ }
+]

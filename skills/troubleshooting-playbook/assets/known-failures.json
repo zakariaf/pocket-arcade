@@ -70,6 +70,11 @@
       "title": "Open risks and owner decisions",
       "file": "references/open-risks.md",
       "intro": "Known unknowns: behaviour not yet verified, and decisions only the owner can make. Each row says what to do until it is settled."
+    },
+    "android": {
+      "title": "Android: toolchain, emulator and Google Play",
+      "file": "references/android-build-and-release.md",
+      "intro": "Failures of the Android port: JDK, SDK, NDK and Gradle, prebuild, the variant inside Gradle, the emulator and adb, upload-key signing, the store-AAB gate, the Android Publisher API, and the Android gaps found in the iOS-first Shell. Rows marked \"owner\" are stops: send one message and never retry. Most rows come from Expo's, Gradle's and Google's documentation and wait for the first real Android build and release to be confirmed."
     }
   },
   "entries": [
@@ -303,7 +308,7 @@
       "topic": "Prebuild",
       "symptom": "Prebuild warns: Install expo-system-ui in your project to enable this feature",
       "cause": "Android-only: userInterfaceStyle 'automatic' needs expo-system-ui",
-      "fix": "Ignore on iOS; add expo-system-ui when Android starts (knip then needs it listed)",
+      "fix": "Ignore on iOS; Android needs expo-system-ui for userInterfaceStyle automatic: keep it in every app's package.json (npx expo install, listed for knip)",
       "match": [
         "Install expo-system-ui"
       ],
@@ -1700,8 +1705,8 @@
       "area": "testing",
       "topic": "Maestro",
       "symptom": "setAirplaneMode does nothing on the iOS simulator",
-      "cause": "iOS simulators have no airplane mode (Android-only command)",
-      "fix": "Use the test build's Simulate offline debug switch",
+      "cause": "iOS simulators have no airplane mode; on the Android emulator setAirplaneMode is the real offline switch the offline journey uses",
+      "fix": "On iOS use the test build's Simulate offline debug switch; on Android put setAirplaneMode inside a runFlow guarded by when: platform: Android (or a sub-flow only that block runs)",
       "match": [
         "setAirplaneMode"
       ],
@@ -3736,7 +3741,7 @@
       "topic": "Goldens",
       "symptom": "jest -u writes golden snapshots to *.snap.ios files that the gate does not know",
       "cause": "The jest-expo/ios preset adds the platform suffix next to the test",
-      "fix": "Keep **/*.golden.test.ts.snap.ios in gatedPaths (add *.snap.android when Android starts); commit with a Gate-Change trailer",
+      "fix": "Keep **/*.golden.test.ts.snap.ios in gatedPaths and commit with a Gate-Change trailer; goldens stay in the iOS-preset golden project on Android too, so no *.snap.android is ever written (one appearing means a golden ran in the unit-android project: move it back)",
       "match": [],
       "status": "verified",
       "owner": false,
@@ -4236,7 +4241,7 @@
       "topic": "Gestures",
       "symptom": "Gestures in RTL on Android are unverified",
       "cause": "Only iOS was probed; gesture coordinates are physical",
-      "fix": "Re-run the gesture tests and a play-test in RTL when Android starts",
+      "fix": "Run the gesture tests and an RTL play-test on the e07-android emulator in the Android port's screens step (Android step 6); until then treat RTL gestures on Android as unproven",
       "match": [],
       "status": "open",
       "owner": false,
@@ -6598,6 +6603,866 @@
       "status": "documented",
       "owner": false,
       "skill": "i18n-strings-and-catalogs"
+    },
+    {
+      "id": "android-jdk-17-missing",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "JDK 17 is not installed (found: ...): build:android:emu stops with exit 2",
+      "cause": "Neither JAVA_HOME nor Android Studio's bundled JBR is a JDK 17, which Gradle and the Android Gradle plugin need",
+      "fix": "Owner step: install Android Studio (its JBR is JDK 17); the tooling points JAVA_HOME at the JBR per process; never switch the Mac's default Java",
+      "match": [
+        "JDK 17 is not installed"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-gradle-wrong-jdk",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "Unsupported class file major version 65, or \"... requires Java 17\" from Gradle",
+      "cause": "Gradle started on JDK 21 or 11 instead of 17 (a hand run that skipped the tooling's environment)",
+      "fix": "Run through the tooling, which sets JAVA_HOME to the JBR (androidToolEnv); for a hand run export JAVA_HOME to the JBR; never change the global Java",
+      "match": [
+        "Unsupported class file major version",
+        "requires Java 17"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-ndk-pinned-missing",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "NDK 27.1.12297006 is missing (exit 2), \"NDK not configured\", or the first Gradle build starts downloading an NDK",
+      "cause": "Expo SDK 57 and React Native 0.86.3 pin NDK 27.1.12297006 in React Native's version catalog; this Mac has only NDK 28.2.13676358, and a bypassed preflight lets Gradle download about 1 GB by itself",
+      "fix": "Ask the lead or owner first (a download), then sdkmanager \"ndk;27.1.12297006\"; never force NDK 28 through a config plugin, which leaves React Native's tested toolchain",
+      "match": [
+        "NDK 27\\.1\\.12297006 is missing",
+        "NDK not configured"
+      ],
+      "status": "open",
+      "owner": true,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-cmake-missing",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "CMake '3.22.1' was not found",
+      "cause": "CMake 3.22.1, which the native modules' builds name, is missing from the SDK",
+      "fix": "Ask first (a download), then sdkmanager \"cmake;3.22.1\"",
+      "match": [
+        "CMake '?3\\.22\\.1'? was not found"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-system-image-missing",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "missing $ANDROID_HOME/system-images/android-35/google_apis/arm64-v8a (exit 2)",
+      "cause": "The pinned emulator image is not installed; this Mac has only the Play Store image android-35/google_apis_playstore_ps16k",
+      "fix": "Ask first (a download), then sdkmanager \"system-images;android-35;google_apis;arm64-v8a\"; never fall back to the Play Store image",
+      "match": [
+        "system-images/android-35/google_apis/arm64-v8a"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-sdk-licence-prompt",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "sdkmanager stops at Accept? (y/N)",
+      "cause": "A licence of the package being installed is not accepted yet",
+      "fix": "Stop: the owner accepts licences; never answer the prompt yourself",
+      "match": [
+        "Accept\\? \\(y/N\\)"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-sdk-location",
+      "area": "android",
+      "topic": "Toolchain",
+      "symptom": "SDK location not found. Define a valid SDK location with an ANDROID_HOME environment variable",
+      "cause": "Gradle ran without ANDROID_HOME (a hand run outside the tooling)",
+      "fix": "Run through npm run build:android:emu, which sets it; for a hand run export ANDROID_HOME=~/Library/Android/sdk",
+      "match": [
+        "SDK location not found"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-native-folder-committed",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "A hand edit in apps/<game>/android/ vanished, or android/ files show up in git status or a commit",
+      "cause": "android/ is generated by expo prebuild --clean on every build (Continuous Native Generation): edits there are erased, and a committed copy drifts from app.config.ts",
+      "fix": "Keep apps/*/android/ in .gitignore and out of git (git rm -r --cached apps/<game>/android); put the setting in withShell or a config plugin in packages/shell/plugins/",
+      "match": [],
+      "status": "documented",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-shell-module-build-untracked",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "After the first Gradle build, git status shows ?? packages/shell/android/build/ and npm run -s check:fast prints Prettier [warn] lines for its JSON files",
+      "cause": "Gradle builds the Shell's local Kotlin module (the cold-start ProcessStartModule) where it lives, so its outputs land in packages/shell/android/build/, which .gitignore did not list",
+      "fix": "Add packages/*/android/build/ to .gitignore (the shared template has it; android-emulator-build's check-emu-setup rule gitignore checks it); never commit or format the folder",
+      "match": [
+        "packages/shell/android/build"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-default-permissions",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "Prebuild writes default permissions (SYSTEM_ALERT_WINDOW, READ_EXTERNAL_STORAGE) into the manifest; the gate reports uses-permission ... is not on the allowlist",
+      "cause": "android.permissions is not set, so Expo's template defaults stay; or a module added a permission",
+      "fix": "withShell's permission allowlist and blockedPermissions; a new permission also changes the Data safety answers (owner step GP4)",
+      "match": [
+        "SYSTEM_ALERT_WINDOW",
+        "READ_EXTERNAL_STORAGE",
+        "uses-permission \\S+ is not on the allowlist"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-kotlin-ksp-mismatch",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "Kotlin ... is not supported by Expo modules, or a KSP version error",
+      "cause": "A Kotlin version without a matching KSP release",
+      "fix": "Keep kotlinVersion at React Native's 2.1.20 through expo-build-properties (~57.0.22) in shell-plugins.ts; never pick a Kotlin by hand",
+      "match": [
+        "is not supported by Expo modules",
+        "KSP version"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-gradle-classpath-offline",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "Could not resolve all files for configuration ':app:releaseRuntimeClasspath'",
+      "cause": "The first build ran offline, or a Maven artifact is missing; the first build also downloads the Gradle 9.3.1 distribution and the Maven dependencies (build tooling, not the app, so N3 is untouched)",
+      "fix": "Rerun with the network; the first build fills ~/.gradle/caches, later builds are offline",
+      "match": [
+        "Could not resolve all files for configuration"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-merge-resources-icon",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "Execution failed for task ':app:mergeReleaseResources' after an icon change",
+      "cause": "A generated icon path that the native project names no longer exists",
+      "fix": "Rerun render-art.ts, then prebuild with --clean",
+      "match": [
+        "mergeReleaseResources"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "code-drawn-art-and-icons"
+    },
+    {
+      "id": "android-gradle-metaspace",
+      "area": "android",
+      "topic": "Prebuild and Gradle",
+      "symptom": "java.lang.OutOfMemoryError: Metaspace during the Gradle build",
+      "cause": "The Gradle daemon's default heap is too small for a full native build",
+      "fix": "The template's gradle.properties sets org.gradle.jvmargs; if it is missing, raise it through a config plugin, never in android/",
+      "match": [
+        "OutOfMemoryError: Metaspace"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-gradle-variant-env",
+      "area": "android",
+      "topic": "Variants",
+      "symptom": "A store APK or AAB contains SHELL_TEST_BUILD_ONLY (gate rule test-code: store build contains ... / store bundle contains ...)",
+      "cause": "Gradle's createBundleReleaseJsAndAssets runs Metro, which inlines EXPO_PUBLIC_APP_VARIANT and keys cacheVersion on it; Gradle ran without the variant variables, or Metro reused test-build transforms",
+      "fix": "Key metro.config.js cacheVersion on the variant, export APP_VARIANT, EXPO_PUBLIC_APP_VARIANT and ADS_MODE once for the whole run (variantEnv) and pass them to Gradle, then rebuild from a clean prebuild",
+      "match": [
+        "store (?:build|bundle) contains SHELL_TEST_BUILD_ONLY"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-test-apk-no-sentinel",
+      "area": "android",
+      "topic": "Variants",
+      "symptom": "test build does not contain SHELL_TEST_BUILD_ONLY (or test bundle lacks it): it was bundled as a store build",
+      "cause": "Built with EXPO_PUBLIC_APP_VARIANT=store, or from a stale Metro cache",
+      "fix": "Export the test variant for the whole run and rebuild",
+      "match": [
+        "test build does not contain SHELL_TEST_BUILD_ONLY",
+        "test bundle lacks SHELL_TEST_BUILD_ONLY"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-constants-variant",
+      "area": "android",
+      "topic": "Variants",
+      "symptom": "extra.adsMode is \"test\", expected \"off\" (gate rule constants-variant)",
+      "cause": "ADS_MODE or the variant changed between prebuild and Gradle, whose expo-constants task embeds app.config's extra",
+      "fix": "One environment for the whole run; rebuild from a clean prebuild",
+      "match": [
+        "extra\\.\\w+ is \"[^\"]*\", expected \""
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-variant-meta-data",
+      "area": "android",
+      "topic": "Variants",
+      "symptom": "meta-data E07AppVariant is missing (gate rule variant)",
+      "cause": "The variant marker plugin has no Android half yet, or prebuild did not run",
+      "fix": "with-app-variant-marker.ts writes E07AppVariant as manifest meta-data too; prebuild with --clean",
+      "match": [
+        "meta-data E07AppVariant is"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-adb-more-than-one-device",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "adb: more than one device/emulator",
+      "cause": "An adb call without -s <serial>",
+      "fix": "Every adb call through adbArgs(serial, ...) with the emulator-<port> serial; never a bare adb",
+      "match": [
+        "more than one device/emulator"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-adb-device-offline",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "adb: device offline right after the emulator starts",
+      "cause": "The device is listed before adbd is up",
+      "fix": "Keep polling adb -s <serial> shell getprop sys.boot_completed; it fails until the device is online",
+      "match": [
+        "device offline"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-play-store-image",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "adbd cannot run as root in production builds (the kill test or save inspection cannot adb root)",
+      "cause": "A Play Store system image (google_apis_playstore) was used: it has no adb root",
+      "fix": "Pin system-images;android-35;google_apis;arm64-v8a for every check and AVD e07-android-<purpose>; never use the Play Store image",
+      "match": [
+        "adbd cannot run as root",
+        "google_apis_playstore"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-emulator-x86",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "PANIC: Missing emulator engine program for 'x86' CPU",
+      "cause": "An x86 system image on Apple silicon",
+      "fix": "Use the pinned arm64-v8a google_apis image",
+      "match": [
+        "Missing emulator engine program"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-avd-running-twice",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "emulator: ERROR: Running multiple emulators with the same AVD",
+      "cause": "The AVD already runs under another serial",
+      "fix": "Reuse it (adb -s <serial> emu avd name finds which serial runs it); never start a second copy, and never touch another project's AVD",
+      "match": [
+        "Running multiple emulators with the same AVD"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-emulator-hvf",
+      "area": "android",
+      "topic": "Emulator and adb",
+      "symptom": "The emulator never finishes booting; emulator.log shows HVF error",
+      "cause": "The Mac's hypervisor is busy (another VM is running)",
+      "fix": "Stop your own other emulators; if it persists, report it (never stop other projects' emulators)",
+      "match": [
+        "HVF error"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-blank-screenshot",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "White or black emulator screenshot: n% of the screen is #ffffff, the app crashed, is still loading or drew nothing",
+      "cause": "The JS crashed at start, or the app had not drawn yet",
+      "fix": "adb -s <serial> logcat -d -s ReactNativeJS:V AndroidRuntime:E, fix the cause, relaunch, wait for the ready signal and screenshot again",
+      "match": [
+        "of the screen is #[0-9a-fA-F]+: the app crashed"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-missing-admob-app-id",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "Crash at launch: Missing application ID. AdMob publisher ID expected",
+      "cause": "No com.google.android.gms.ads.APPLICATION_ID meta-data in the manifest",
+      "fix": "Every non-live build carries Google's sample app id; check withShell and ADS_MODE, then prebuild again",
+      "match": [
+        "Missing application ID\\. AdMob publisher ID expected"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "android-live-sample-app-id",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "com.google.android.gms.ads.APPLICATION_ID is Google's sample id in a live build (gate rule ad-app-id: expected the game's own AdMob Android app id)",
+      "cause": "ads-config.ts falls back to Google's Android sample app id when ads.ids.android is null, even in a live build (finding F1)",
+      "fix": "A live build without Android ids carries no app id at all, never the sample; the owner supplies the AdMob Android app and its 3 units (GP5)",
+      "match": [
+        "expected the game's own AdMob Android app id"
+      ],
+      "status": "open",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "android-font-roboto",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "Titles drawn in Roboto, not Lilita One, on Android",
+      "cause": "Android resolves a font family by its file name, not by the PostScript name iOS uses",
+      "fix": "Name font families by their file name (check-design-system)",
+      "match": [],
+      "status": "documented",
+      "owner": false,
+      "skill": "toybox-design-system"
+    },
+    {
+      "id": "android-rtl-left-to-right",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "fa and ckb screens laid out left to right on Android (gate rule supports-rtl)",
+      "cause": "application android:supportsRtl is missing from the manifest",
+      "fix": "withShell sets android:supportsRtl; prebuild with --clean",
+      "match": [
+        "android:supportsRtl is"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-debug-signed",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "The Play bundle is signed with the Android debug key (keytool -printcert shows CN=Android Debug; gate rule signing)",
+      "cause": "React Native's template signs release builds with the debug key: with-upload-signing.ts is not in withShell's Android block, or the E07_<GAME>_UPLOAD_* properties are missing from ~/.gradle/gradle.properties (finding F17)",
+      "fix": "List ['./plugins/with-upload-signing.ts', { game: game.id }] in withShell; ask the owner to check that the properties exist (never open the file)",
+      "match": [
+        "CN=Android Debug",
+        "signed with the Android debug key"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-signing-template-changed",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "app/build.gradle has no release signingConfig line (at prebuild)",
+      "cause": "React Native changed its app template, so addUploadSigning finds nothing to replace",
+      "fix": "Update addUploadSigning and its test to the new template, test-first",
+      "match": [
+        "has no release signingConfig line"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-keystore-password",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "Keystore was tampered with, or password was incorrect",
+      "cause": "A wrong upload-key password in ~/.gradle/gradle.properties",
+      "fix": "Stop: the owner checks the four E07_<GAME>_UPLOAD_* properties; never open the keystore or the properties file",
+      "match": [
+        "Keystore was tampered with"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-sign-release-bundle",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "Execution failed for task ':app:signReleaseBundle'",
+      "cause": "The upload store file path in E07_<GAME>_UPLOAD_STORE_FILE is wrong",
+      "fix": "Stop: the owner checks E07_<GAME>_UPLOAD_STORE_FILE",
+      "match": [
+        "signReleaseBundle"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-upload-key-missing",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "no upload key at ~/.android-keys/<game>-upload.jks (owner step GP2)",
+      "cause": "The upload key does not exist yet",
+      "fix": "Ask for GP2's go, then generate it with keytool outside the repo; never commit, print or copy it",
+      "match": [
+        "no upload key at"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-key-file-mode",
+      "area": "android",
+      "topic": "Signing",
+      "symptom": "... has mode 644, expected 600 (the upload key or the service-account JSON)",
+      "cause": "The key file is readable by other users",
+      "fix": "chmod 600 the file; never open it",
+      "match": [
+        "has mode \\d+, expected 600"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-release-preflight",
+      "area": "android",
+      "topic": "Release preflight and the store-AAB gate",
+      "symptom": "release:android stops: releases come from main, this is <branch> / the working tree is not clean / npm run verify is not green on this commit",
+      "cause": "The release commits the build number, so it starts only from a clean, green main",
+      "fix": "Merge to main, commit the work, fix the red gate's cause; then rerun",
+      "match": [
+        "releases come from main",
+        "the working tree is not clean",
+        "npm run verify is not green"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-owner-steps-pending",
+      "area": "android",
+      "topic": "Release preflight and the store-AAB gate",
+      "symptom": "OWNER STEPS PENDING: G3, GP5 (gate rule owner-placeholder) before a Play release",
+      "cause": "game.config.ts still has the scaffold links (G3) or no Android AdMob ids (GP5)",
+      "fix": "Stop: ask for G3 and GP5 in one message; meanwhile run the keyless rehearsal and report it as not verified",
+      "match": [
+        "OWNER STEPS PENDING: [^\\n]*GP\\d"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-build-number-behind-tags",
+      "area": "android",
+      "topic": "Release preflight and the store-AAB gate",
+      "symptom": "versionCode N is not above <game>/vX.Y.Z+M (buildNumber behind the tags)",
+      "cause": "A tag carries a higher build number than game.config.ts; iOS and Android share one build-number sequence",
+      "fix": "Raise buildNumber to above the highest tag in its own commit, then rerun; never lower or reuse a number",
+      "match": [
+        "versionCode \\d+ is not above",
+        "is behind the tags"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-target-sdk-low",
+      "area": "android",
+      "topic": "Release preflight and the store-AAB gate",
+      "symptom": "targetSdkVersion is ..., below 36 (gate rule target-sdk)",
+      "cause": "The Expo SDK or React Native levels were overridden",
+      "fix": "Keep compileSdk and targetSdk 36 and minSdk 24 from the Expo SDK; never lower them",
+      "match": [
+        "targetSdkVersion is \\S+, below"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-play-api-not-enabled",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped: api-not-enabled (HTTP 403)",
+      "cause": "The Android Publisher API is off in the service account's Google Cloud project",
+      "fix": "Stop: the owner enables the API (GP3); never retry",
+      "match": [
+        "stopped: api-not-enabled",
+        "SERVICE_DISABLED"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-play-auth",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped: auth (HTTP 401 or 403) (permission or key of the service account)",
+      "cause": "The service account is not invited for this app, lacks \"Release apps to testing tracks\", or its key was deleted",
+      "fix": "Stop: the owner fixes the permission or makes a new key (GP3); never retry, never print the key",
+      "match": [
+        "stopped: auth \\(HTTP 40[13]\\)"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-play-app-not-found",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped: app-not-found (HTTP 404)",
+      "cause": "No app with this package in the Play Console, or the owner's first manual upload has not happened",
+      "fix": "Stop: GP1, then the owner's first upload to internal testing (GP7)",
+      "match": [
+        "stopped: app-not-found"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-version-code-used",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped: version-code-used (Version code N has already been used)",
+      "cause": "An earlier upload already used this versionCode",
+      "fix": "Start a new run 1, which takes the next build number; never lower buildNumber",
+      "match": [
+        "stopped: version-code-used",
+        "has already been used"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-play-policy-declarations",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped: policy-declarations",
+      "cause": "App content (privacy policy, ads, Data safety, content rating, target audience) is incomplete",
+      "fix": "Stop: the owner completes App content (GP4)",
+      "match": [
+        "stopped: policy-declarations"
+      ],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-aab-stamp-missing",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "no store-AAB gate stamp, or the stamp's sha256 differs from the AAB",
+      "cause": "The store-AAB gate did not pass on these exact bytes",
+      "fix": "Run the gate on this AAB; a changed AAB needs a new run 1",
+      "match": [
+        "no store-AAB gate stamp",
+        "sha256 differs"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-play-network",
+      "area": "android",
+      "topic": "Google Play upload",
+      "symptom": "release:android: upload stopped on a network error or timeout",
+      "cause": "The Mac is offline or Google is slow",
+      "fix": "Ask before one retry; a half-done Play edit expires by itself",
+      "match": [],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-testers-no-build",
+      "area": "android",
+      "topic": "After the upload",
+      "symptom": "Internal testers do not see the build on Google Play",
+      "cause": "They are not on the internal testers list, or have not opted in through the link",
+      "fix": "The owner adds them (GP7) and shares the opt-in link",
+      "match": [],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-premium-unavailable",
+      "area": "android",
+      "topic": "After the upload",
+      "symptom": "Premium shows store unavailable on a tester's phone",
+      "cause": "The one-time product (GP6) is not active yet, the app was not installed from Play, or the account is not a license tester",
+      "fix": "The owner activates GP6 and adds license testers (GP7); test only with the Play-installed build",
+      "match": [],
+      "status": "documented",
+      "owner": true,
+      "skill": "android-release-play"
+    },
+    {
+      "id": "android-ads-never-fill",
+      "area": "android",
+      "topic": "After the upload",
+      "symptom": "Ads never fill in the Play build",
+      "cause": "A new AdMob Android app needs Google's review, or app-ads.txt is not verified",
+      "fix": "Nothing in the build changes; the owner checks the AdMob app (GP5)",
+      "match": [],
+      "status": "documented",
+      "owner": true,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "android-live-ad-units-ios",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "A live Android build requests ads with the iOS ad unit ids",
+      "cause": "adUnitsExtra() returns ids.ios.units for every live build (finding F3)",
+      "fix": "Per-platform adUnits in ads-config.ts, with Android cases in its test (check-ads android-units)",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "android-ad-backgrounds-app",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "After a fullscreen ad on Android the game pauses or does not resume",
+      "cause": "A fullscreen ad starts its own Activity, so AppState leaves active; usePauseOnBackground and the fullscreen gate assume iOS, where the app stays active (finding F14)",
+      "fix": "An Android test that the game resumes after an ad, and the pause-on-background hook ignoring the ad's own background",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "admob-ads"
+    },
+    {
+      "id": "android-talkback-behind-overlay",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "TalkBack reads and focuses the screen behind an open dialog, scrim or result overlay",
+      "cause": "accessibilityViewIsModal is iOS-only; Android gets no focus trap from it (finding F6)",
+      "fix": "Hide the content behind an open overlay from TalkBack (importantForAccessibility no-hide-descendants), proven with an Android test",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "accessibility"
+    },
+    {
+      "id": "android-tilt-jagged",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "Tilted Toybox parts render with jagged edges on Android",
+      "cause": "The tilt layer sets only shouldRasterizeIOS (finding F7)",
+      "fix": "Add renderToHardwareTextureAndroid to the tilted layer beside shouldRasterizeIOS",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "toybox-components"
+    },
+    {
+      "id": "android-settings-links-app-store",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "On Android the Settings store links open the App Store, and the version line shows the iOS build number",
+      "cause": "external-links.ts and use-settings-links.ts know only App Store links, and read-version-text.ts reads ios.buildNumber (finding F8)",
+      "fix": "Per-platform store links and the Android versionCode in the version line",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "settings-and-preferences"
+    },
+    {
+      "id": "android-cold-start-null",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "check-perf-report fails cold-start on Android: the process start time is null",
+      "cause": "process-start.ts returns null on Android until the Kotlin process-start module exists (finding F9)",
+      "fix": "The Android process-start module; the emulator cold start comes from am start -W TotalTime",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "performance-budgets"
+    },
+    {
+      "id": "android-licence-audit-ios-only",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "audit:licenses passes without reading the Android bundle's packages",
+      "cause": "audit-licenses.ts reads only the iOS source maps (finding F15)",
+      "fix": "Read the Android source maps too",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "quality-gates"
+    },
+    {
+      "id": "android-gate-wiring-not-due",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "check-gate-wiring fails an Android script (build:android:emu, e2e:android, screenshots:android, release:android) whose target file does not exist yet",
+      "cause": "The not-yet-due list knew only Shell steps (finding F12)",
+      "fix": "The target prints SKIP ... due at Android step <n>: <target> not yet created until its Android step; a missing Android script stays a FAIL",
+      "match": [
+        "due at Android step"
+      ],
+      "status": "documented",
+      "owner": false,
+      "skill": "quality-gates"
+    },
+    {
+      "id": "android-owner-steps-gp-hidden",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "The OWNER STEPS PENDING line never names a GP step",
+      "cause": "The shared ship-placeholders collected only owner step G<n> ids (finding F4)",
+      "fix": "Fixed: it collects G steps first, then GP steps; keep the GP5 text in the placeholder list",
+      "match": [],
+      "status": "verified",
+      "owner": false,
+      "skill": "android-emulator-build"
+    },
+    {
+      "id": "android-validator-adb-serial",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "A skill that runs adb without -s passes the library validator",
+      "cause": "The validator's device-explicit rule covers maestro, simctl and xcodebuild only (finding F11)",
+      "fix": "The Android skills' own checkers (adb-serial) cover the repo tooling; write every adb call as adb -s <serial> and every emulator call with -avd e07-android-<purpose>",
+      "match": [],
+      "status": "open",
+      "owner": false,
+      "skill": "skill-maintenance"
+    },
+    {
+      "id": "android-edge-swipe-back",
+      "area": "android",
+      "topic": "Gaps of the iOS-first Shell",
+      "symptom": "An edge swipe on the board opens Pause on Android",
+      "cause": "With gesture navigation an edge swipe is the system back, which the Shell maps to Pause",
+      "fix": "Expected: no gesture exclusion; keep board gestures clear of the screen edges",
+      "match": [],
+      "status": "documented",
+      "owner": false,
+      "skill": "board-gestures-and-input"
+    },
+    {
+      "id": "android-text-bounds-wrap",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "On Android 15+ a text's last word wraps onto a second line and is clipped (a Persian group tab drew two lines in a one-line box) while onTextLayout reports one line",
+      "cause": "An app targeting SDK 35+ gets the compat change USE_BOUNDS_FOR_WIDTH (63938206): a TextView wraps by its glyph bounds, while React Native 0.86 measures a Text by its advances, so a line whose ink overhangs its advance fits the measured box and wraps when drawn. Proof: adb -s <serial> shell am compat disable USE_BOUNDS_FOR_WIDTH <package> draws it on one line",
+      "fix": "Keep withShell's with-prepared-text-layout plugin: it forces React Native's enablePreparedTextLayout on in MainApplication.kt after loadReactNative(this), so the view draws the layout React Native measured; reset any compat override (am compat reset) before judging a capture; never pad or shrink the text. Side effect of the prepared layout: its StaticLayout reads the paragraph direction first-strong-LTR, so in fa and ckb a text without a strong letter outside isolates (\"۲۸ / ۲۷۰\", a date of isolated names) draws left to right; AppText's androidMarksOf adds the right-to-left mark (android-prepared-layout-ltr)",
+      "match": [
+        "USE_BOUNDS_FOR_WIDTH"
+      ],
+      "status": "verified",
+      "owner": false,
+      "skill": "architecture-and-boundaries"
+    },
+    {
+      "id": "android-hyphen-no-break",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "A hyphenated word moves whole to the next line on Android (\"right-to-left\", \"public-domain\") where the design and iOS end the line after the hyphen",
+      "cause": "Android's line breaker ends a line after a hyphen-minus inside a word only with hyphenation on; Chrome and iOS break there by the Unicode rule HY",
+      "fix": "AppText draws a zero-width space after each hyphen between two letters on Android (line-breaks.ts) and keeps the text as written as its accessibility label; never edit the catalog strings or turn on hyphenation",
+      "match": [],
+      "status": "verified",
+      "owner": false,
+      "skill": "toybox-design-system"
+    },
+    {
+      "id": "android-prepared-layout-ltr",
+      "area": "android",
+      "topic": "The app on the emulator",
+      "symptom": "In Persian or Sorani on Android a text of digits and signs (\"۲۸ / ۲۷۰\", \"×۶\") or a date of isolated names draws left to right, its parts in the wrong order",
+      "cause": "React Native's prepared text layout (with-prepared-text-layout) draws the layout TextLayoutManager measured, whose StaticLayout never sets a text direction and so reads FIRSTSTRONG_LTR; a TextView in a right-to-left layout read first strong, then RTL",
+      "fix": "AppText on Android, in a right-to-left layout, starts a text without a strong letter outside isolates with U+200F (asRtlParagraph in bidi.ts through androidMarksOf); a single number stays as written; never type the mark into catalogs or screens",
+      "match": [],
+      "status": "verified",
+      "owner": false,
+      "skill": "rtl-and-direction"
     }
   ]
 }

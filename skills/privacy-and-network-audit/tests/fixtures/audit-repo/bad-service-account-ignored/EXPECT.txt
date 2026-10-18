@@ -1,0 +1,2 @@
+[keystore-ignored]
+does not ignore play-service-account.json

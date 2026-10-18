@@ -145,6 +145,15 @@ describe('e2eBuildProblem', () => {
       `e2e:ios needs a test build with ADS_MODE=off, this one is ${String(appVariant)}/${String(adsMode)}: run npm run build:ios:sim -- --app line-siege --variant test --ads off`,
     );
   });
+
+  it('names the Android runner and its build for an APK (e2e:android)', () => {
+    expect(e2eBuildProblem({ appVariant: 'store', adsMode: 'live' }, 'line-siege', 'android')).toBe(
+      'e2e:android needs a test build with ADS_MODE=off, this one is store/live: run npm run build:android:emu -- --app line-siege --variant test --ads off',
+    );
+    expect(
+      e2eBuildProblem({ appVariant: 'test', adsMode: 'off' }, 'line-siege', 'android'),
+    ).toBeNull();
+  });
 });
 
 describe('the simulator layer e2e shares with build:ios:sim', () => {

@@ -1,9 +1,11 @@
 // packages/tooling/src/audit/network-native-layer.ts
-// Layer C: network-capable native code in every autolinked iOS module.
-import { execFileSync } from 'node:child_process';
+// Layer C: network-capable native code in every autolinked module, iOS (Swift, Objective-C, C)
+// and Android (Kotlin, Java). Android's HTTP clients are their own category, httpClient.
+import { execFile } from 'node:child_process';
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
+import { promisify } from 'node:util';
 
 import { addFinding } from './network-baseline.ts';
 
@@ -11,12 +13,16 @@ import type { Findings } from './network-baseline.ts';
 
 const NATIVE_PATTERNS: Readonly<Record<string, RegExp>> = {
   urlSession: /\b(NS)?URLSession\b|\bNSURLConnection\b/,
-  webSocket: /URLSessionWebSocketTask|SRWebSocket|SocketRocket/,
+  httpClient:
+    /\bjava\.net\.HttpURLConnection\b|\bjavax\.net\.ssl\.HttpsURLConnection\b|\bokhttp3\b|\bCronetEngine\b|\bcom\.android\.volley\b|\bio\.ktor\.client\b/,
+  webSocket:
+    /URLSessionWebSocketTask|SRWebSocket|SocketRocket|\bokhttp3\.WebSocket\b|\bnewWebSocket\s*\(|\borg\.java_websocket\b/,
   lowLevelSocket:
-    /\bCFSocket|\bCFStreamCreatePairWithSocket|\bNWConnection\b|\bnw_connection_|\bgetaddrinfo\(/,
-  webView: /\bWKWebView\b|\bSFSafariViewController\b|\bASWebAuthenticationSession\b/,
+    /\bCFSocket|\bCFStreamCreatePairWithSocket|\bNWConnection\b|\bnw_connection_|\bgetaddrinfo\(|\bjava\.net\.(?:Socket|DatagramSocket|ServerSocket)\b|\bjava\.nio\.channels\.(?:Socket|Datagram)Channel\b/,
+  webView:
+    /\bWKWebView\b|\bSFSafariViewController\b|\bASWebAuthenticationSession\b|\bandroid\.webkit\.WebView\b|\bandroidx\.browser\.customtabs\b/,
 };
-const SOURCE = /\.(swift|m|mm|h|c|cpp)$/;
+const SOURCE = /\.(swift|m|mm|h|c|cpp|kt|java)$/;
 
 /**
  * Every native source file under dir. Symlinks are never followed: npm workspace links (an app
@@ -59,16 +65,33 @@ export function installedPackageRoot(appDir: string, name: string): string {
 export type AutolinkingOutput = {
   readonly rn: {
     readonly dependencies?: Readonly<
-      Record<string, { readonly root: string; readonly platforms?: { readonly ios?: unknown } }>
+      Record<
+        string,
+        {
+          readonly root: string;
+          readonly platforms?: { readonly ios?: unknown; readonly android?: unknown };
+        }
+      >
     >;
   };
   readonly expo: {
     readonly modules?: readonly {
       readonly packageName: string;
       readonly pods?: readonly { readonly podspecDir: string }[];
+      readonly projects?: readonly { readonly sourceDir: string }[];
     }[];
   };
 };
+
+type RnDependency = NonNullable<AutolinkingOutput['rn']['dependencies']>[string];
+type ExpoModule = NonNullable<AutolinkingOutput['expo']['modules']>[number];
+
+const hasNativePlatform = (dep: RnDependency): boolean =>
+  dep.platforms?.ios !== undefined || dep.platforms?.android !== undefined;
+
+// iOS: the podspec folder; Android: the Gradle project folder (both inside the package).
+const nativeDirOf = (module: ExpoModule): string | undefined =>
+  module.pods?.[0]?.podspecDir ?? module.projects?.[0]?.sourceDir;
 
 /** name -> package root, from React Native autolinking and Expo module resolution. */
 export function moduleRootsOf(
@@ -77,38 +100,45 @@ export function moduleRootsOf(
 ): Map<string, string> {
   const roots = new Map<string, string>([['react-native', reactNativeRoot]]);
   for (const [name, dep] of Object.entries(output.rn.dependencies ?? {})) {
-    if (dep.platforms?.ios !== undefined) roots.set(name, dep.root);
+    if (hasNativePlatform(dep)) roots.set(name, dep.root);
   }
   for (const module of output.expo.modules ?? []) {
-    const podspecDir = module.pods?.[0]?.podspecDir;
-    if (podspecDir !== undefined) roots.set(module.packageName, packageRootOf(podspecDir));
+    const nativeDir = nativeDirOf(module);
+    if (nativeDir !== undefined) roots.set(module.packageName, packageRootOf(nativeDir));
   }
   return roots;
 }
 
-function autolinking(appDir: string, args: readonly string[]): unknown {
-  const json = execFileSync('npx', ['expo-modules-autolinking', ...args], {
+const execFileAsync = promisify(execFile);
+
+async function autolinking(appDir: string, args: readonly string[]): Promise<unknown> {
+  const { stdout } = await execFileAsync('npx', ['expo-modules-autolinking', ...args], {
     cwd: appDir,
     encoding: 'utf8',
   });
-  return JSON.parse(json) as unknown;
+  return JSON.parse(stdout) as unknown;
 }
 
-export function nativeModuleRoots(appDir: string): Map<string, string> {
-  return moduleRootsOf(installedPackageRoot(appDir, 'react-native'), {
-    rn: autolinking(appDir, [
-      'react-native-config',
-      '--platform',
-      'ios',
-      '--json',
-    ]) as AutolinkingOutput['rn'],
-    expo: autolinking(appDir, [
-      'resolve',
-      '--platform',
-      'apple',
-      '--json',
-    ]) as AutolinkingOutput['expo'],
-  });
+/**
+ * Every native module of the app on iOS and on Android (a module may support only one). The four
+ * autolinking runs are independent and run together; the roots keep the iOS-then-Android order.
+ */
+export async function nativeModuleRoots(appDir: string): Promise<Map<string, string>> {
+  const reactNative = installedPackageRoot(appDir, 'react-native');
+  const linking = (command: string, platform: string): Promise<unknown> =>
+    autolinking(appDir, [command, '--platform', platform, '--json']);
+  const [iosRn, iosExpo, androidRn, androidExpo] = await Promise.all([
+    linking('react-native-config', 'ios'),
+    linking('resolve', 'apple'),
+    linking('react-native-config', 'android'),
+    linking('resolve', 'android'),
+  ]);
+  const rootsFor = (rn: unknown, expo: unknown): Map<string, string> =>
+    moduleRootsOf(reactNative, {
+      rn: rn as AutolinkingOutput['rn'],
+      expo: expo as AutolinkingOutput['expo'],
+    });
+  return new Map([...rootsFor(iosRn, iosExpo), ...rootsFor(androidRn, androidExpo)]);
 }
 
 function scanFile(path: string, owner: string, findings: Map<string, Set<string>>): void {

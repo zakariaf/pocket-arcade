@@ -1,0 +1,28 @@
+==> commit 869cf24be856c2cdda435ed26ee72c4c4cffb6ef
+chore(line-siege): build 8
+
+Release-Variant: store
+
+==> files
+
+apps/line-siege/game.config.ts
+==> commit 810dda5a98ca2fa54ba6f61e184c69e35576118c
+chore(line-siege): build 9
+
+Release-Variant: test
+
+==> files
+
+apps/line-siege/game.config.ts
+==> commit 0e0c1d724b75009d97396a0bc4073672f7d0aa89
+chore(line-siege): build 9
+
+Release-Variant: store
+
+==> files
+
+apps/line-siege/game.config.ts
+==> commit 95a0adb377ed86778aebd1348be38c3516e9cb33
+Merge branch 'other'
+
+==> files

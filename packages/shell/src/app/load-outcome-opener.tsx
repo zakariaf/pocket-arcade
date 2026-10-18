@@ -1,7 +1,8 @@
 // packages/shell/src/app/load-outcome-opener.tsx
 // The S14 dialog the save's load outcome asks for, opened once over the first screen (spec 8.6 and
 // 8.14): "Progress restored" when the save fell back to its backup copy, "please update" when the
-// save comes from a newer app version (the app then plays read-only, so this shows at every launch).
+// save comes from a newer app version (the app then plays read-only, so this shows at every launch);
+// its Update opens the store's page of the game: the App Store on iOS, Google Play on Android.
 // ShellNavigator mounts it inside the dialog host while there is an outcome; ShellApp passes
 // hydrated.outcome, or null after the crash screen's "Back to Home" so a remounted tree never asks
 // twice.
@@ -9,8 +10,9 @@ import { useEffect, useEffectEvent } from 'react';
 
 import { useOpenDialog } from '@e07/shell/app/dialog-context.tsx';
 import { readGameExtra } from '@e07/shell/app/read-game-extra.ts';
+import { readStoreIds } from '@e07/shell/app/read-store-ids.ts';
 import { useOpenExternal } from '@e07/shell/app/use-open-external.ts';
-import { storePageUrl } from '@e07/shell/config/external-links.ts';
+import { storeUpdateUrlsOf } from '@e07/shell/config/external-links.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -48,7 +50,7 @@ export function LoadOutcomeOpener({ outcome }: LoadOutcomeOpenerProps): ReactNod
   const t = useT();
   const { nameId } = useGameHost();
   const handleUpdate = (): void => {
-    open(storePageUrl(readGameExtra().appStoreId));
+    open(storeUpdateUrlsOf(readStoreIds(readGameExtra().appStoreId)));
   };
   const openOnce = useEffectEvent(() => {
     const request = loadOutcomeRequest(outcome, () => ({

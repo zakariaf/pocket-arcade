@@ -538,6 +538,60 @@ test('validator: device-explicit finds maestro, simctl and xcodebuild calls that
   assert.deepEqual(script("const maestro = makeMaestro(options.maestro);\nlet r = maestro('hierarchy');"), ['2 a maestro "hierarchy" call without "--device", <udid> before the command']);
 });
 
+test('validator: device-explicit finds adb calls without -s <serial>, adb kill-server, and emulator starts without an e07-android AVD', () => {
+  const md = (text) => findImplicitDeviceCalls(text, { kind: 'md' }).map((hit) => `${hit.line} ${hit.what}`);
+  const script = (text) => findImplicitDeviceCalls(text, { kind: 'script' }).map((hit) => `${hit.line} ${hit.what}`);
+  const noSerial = (sub) => `"adb ${sub}" without -s <serial> before the command`;
+  const killServer = '"adb kill-server" stops the adb server every session\'s emulators use';
+  const notOurs = (name) => `"emulator ${name}" is not an e07-android-<purpose> AVD`;
+  // Flagged in markdown: fenced command lines (with continuations) and inline code.
+  assert.deepEqual(md('```sh\nadb shell getprop sys.boot_completed\n```'), [`2 ${noSerial('shell')}`]);
+  assert.deepEqual(md('```sh\nadb root\n```'), [`2 ${noSerial('root')}`]);
+  assert.deepEqual(md('```sh\n~/Library/Android/sdk/platform-tools/adb install \\\n  -r apps/a/android/app/build/outputs/apk/release/app-release.apk\n```'), [`2 ${noSerial('install')}`]);
+  assert.deepEqual(md('Take it: `adb exec-out screencap -p > shot.png`.'), [`1 ${noSerial('exec-out')}`]);
+  assert.deepEqual(md('Pick the emulator: `adb -e shell am start -W -n io.applander.linesiege/.MainActivity`'), [`1 ${noSerial('shell')}`]);
+  assert.deepEqual(md('Read the log: `adb -d logcat -d -s ReactNativeJS:V`'), [`1 ${noSerial('logcat')}`]);
+  assert.deepEqual(md('```sh\n"$ADB" uninstall io.applander.linesiege\n```'), [`2 ${noSerial('uninstall')}`]);
+  assert.deepEqual(md('If adb hangs, run `adb kill-server`, then build again.'), [`1 ${killServer}`]);
+  assert.deepEqual(md('```sh\nadb -s emulator-5554 kill-server\n```'), [`2 ${killServer}`]);
+  assert.deepEqual(md('```sh\nemulator -avd Pixel_8a_API_35 -no-window\n```'), [`2 ${notOurs('-avd Pixel_8a_API_35')}`]);
+  assert.deepEqual(md('```sh\n$ANDROID_HOME/emulator/emulator -no-snapshot -no-window\n```'), ['2 "emulator" starts a device without -avd e07-android-<purpose>']);
+  assert.deepEqual(md('Start it: `emulator @MindForge_Android_390x844 -no-audio`'), [`1 ${notOurs('@MindForge_Android_390x844')}`]);
+  // Not flagged: a named serial, commands that name no device, mentions, prohibitions, anti-patterns.
+  for (const text of [
+    '```sh\nadb -s emulator-5554 shell getprop sys.boot_completed\nadb -s "$SERIAL" install -r "$APK"\nadb -s emulator-<port> emu kill\n```',
+    '`adb -s <serial> exec-out screencap -p` writes a PNG; `adb -s emulator-5554 root` then `adb -s emulator-5554 pull /data/data/x/files/SQLite/ out/`',
+    '`adb devices` lists running devices; `adb version` prints 35.0.2; `adb start-server`; `adb help`',
+    'A `google_apis` image allows `adb root`; every `adb shell` call names its serial.',
+    'The shell form in a string (`adb shell ...`) is read too.',
+    'The tooling reads adb root output and prints adb install failures.',
+    'Never `adb kill-server`: other sessions share the adb server.',
+    '| never `adb kill-server`, never `emulator -wipe-data` on a shared AVD | cuts off every session |',
+    '## Anti-patterns\n\n- **`adb shell ...` without `-s`, or `adb kill-server` to fix an offline device.** Name the serial.',
+    '```sh\nemulator -avd e07-android-smoke -port 5554 -no-snapshot -no-window\n$ANDROID_HOME/emulator/emulator -avd "$AVD" -no-audio\nemulator @e07-android-parity -no-window\n```',
+    '`emulator -avd e07-android-<purpose> -port <port>`; `emulator -list-avds` lists them; `emulator -version`',
+    'Run it on an emulator. The emulator 35.1.20 is installed; `adb -s emulator-5554 emu avd name` names it.',
+    'PANIC: Missing emulator engine program for x86 CPU; `emulator: ERROR: Running multiple emulators with the same AVD`',
+  ]) assert.deepEqual(md(text), [], text);
+  // Scripts: call forms and command strings.
+  assert.deepEqual(script("execFileSync(adbPath, ['shell', 'getprop', 'sys.boot_completed']);"), ['1 an adb "shell" call without \'-s\', <serial> first']);
+  assert.deepEqual(script("spawnSync('adb', ['install', '-r', apk]);"), ['1 an adb "install" call without \'-s\', <serial> first']);
+  assert.deepEqual(script("spawnSync('adb', ['kill-server']);"), [`1 ${killServer}`]);
+  assert.deepEqual(script("fail('offline', 'Run: adb kill-server');"), [`1 ${killServer}`]);
+  assert.deepEqual(script("fail('no device', 'Run: adb shell getprop sys.boot_completed');"), [`1 ${noSerial('shell')}`]);
+  assert.deepEqual(script("spawn(emulatorBin, ['-avd', 'Pixel_8a_API_35', '-no-window']);"), ['1 an emulator call on "Pixel_8a_API_35", not an e07-android-<purpose> AVD']);
+  for (const text of [
+    "execFileSync(adbPath, ['-s', serial, 'shell', 'getprop', 'sys.boot_completed']);",
+    "execFileSync(adbPath, adbArgs(serial, ['install', '-r', apk]));",
+    "spawnSync('adb', ['devices']); spawnSync('adb', ['version']);",
+    "found.push({ message: 'adb kill-server stops every session\\'s emulator connections' });",
+    "'  adb-serial      every adb call names -s <serial>; `adb devices` and `adb version` may go without; never kill-server',",
+    "spawn(emulatorBin, ['-avd', avdName(purpose), '-port', String(port)]); spawn(emulatorBin, ['-avd', 'e07-android-smoke']);",
+    "spawnSync(emulatorBin, ['-list-avds']);",
+    "fail('png', 'Pass the PNG that adb -s <serial> exec-out screencap -p wrote.');",
+  ]) assert.deepEqual(script(text), [], text);
+});
+
 // ---------------------------------------------------------------------------------------------
 // 2-3. Validator
 // ---------------------------------------------------------------------------------------------

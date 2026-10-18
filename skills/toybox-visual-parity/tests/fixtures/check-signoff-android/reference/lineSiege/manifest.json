@@ -1,0 +1,6 @@
+{
+ "version": 1,
+ "game": "lineSiege",
+ "platform": "android",
+ "set": "Self-test stand-in of the Android reference set (check-signoff reads only the hashes)."
+}

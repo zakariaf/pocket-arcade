@@ -15,6 +15,7 @@ Where flows live, how they are named and tagged, how they select elements and se
 - A game's mode flows: daily, continue, endless
 - The continue offer and the endless result (lead decision L11)
 - The ads smoke flows (admob-ads, ADS_MODE=test)
+- Both platforms: platform guards
 - Taps and stars from the game: print-level-line
 - Ending smoke flows: no network
 - Waiting without sleeping
@@ -119,26 +120,27 @@ One link per setup is enough, also right after `launchApp: { clearState: true }`
 Templates in `templates/packages/shell/e2e/flows/` (all pass `maestro check-syntax`). Copy them at Shell step 10, once every screen they reach is built: in a partial Shell (`shell-slice.json`) a flow that reaches a screen outside the slice cannot run, and `check-flows` prints `SKIP <flow> [slice] <S-id> not in shell-slice.json` for it instead of checking it (flow 01 reaches S2 and the tutorial, 02 reaches S9 and S10, 03 reaches S8 and S11a, 04 reaches S15).
 
 - `smoke/01-first-launch.yaml`: S1 → S2 → the tutorial. Clears state and keychain, picks English, continues, waits for `tutorial.screen`, asserts the skip button is not offered on the first tutorial, screenshots, asserts no network.
-- `journeys/02-core-journey-offline.yaml` (spec 15 item 2, offline via `offline=1`): Home without a banner ad → Play → win through `action=win-level` → Next → `killApp` and relaunch → the Pause overlay offers Resume (the save survived process death, spec 15 item 6) → Home → Daily → Stats → back, then no network. Home's daily card has two accessible parts (lead decision L7): the card body `home.daily-card` opens S9 Daily challenge (also once today is done), and the Play key `home.daily-card.play-button`, a separate button above it, starts today's run. The journey taps `home.daily-card` and waits for `daily.screen`; the title, date, streak and icon are crop-only parts covered by the card (select the card, never them).
+- `journeys/02-core-journey-offline.yaml` (spec 15 item 2, offline via `offline=1`): Home without a banner ad → Play → win through `action=win-level` → Next → `subflows/kill-app.yaml` and relaunch → the Pause overlay offers Resume (the save survived process death, spec 15 item 6) → Home → Daily → Stats → back, then no network. Home's daily card has two accessible parts (lead decision L7): the card body `home.daily-card` opens S9 Daily challenge (also once today is done), and the Play key `home.daily-card.play-button`, a separate button above it, starts today's run. The journey taps `home.daily-card` and waits for `daily.screen`; the title, date, streak and icon are crop-only parts covered by the card (select the card, never them).
 - `rtl/03-language-switch.yaml` (S11a): Settings → Language → Persian → "Restart to apply" → Home again after the reload → the seeded 3-star level 1 still shows 3 stars, screenshot in Persian.
 - `smoke/04-debug-performance.yaml` (S15, test builds): `screen=debug`, scroll to and tap `debug.perf-benchmark-row` ("Run save benchmark": the largest realistic save written 300 times into a scratch database, never the player's `save.db`), then wait until `debug.perf-summary` shows `save p95 <n> ms`, then no network. The runner runs it in a Maestro call of its own after the other flows of the flows step (`flowCallsOf`), so it reads the perf log right after it, whatever flow sorts last, and keeps the entry in `reports/e2e/<game-id>/save-benchmark.json`; `check-e2e-report` rule `save-benchmark` needs 300 writes and a p95 under `quality-gates.json` `perf.saveWriteP95MsMax` (5 ms). It is a smoke flow, so it never quarantines.
 
 ## A game's flows and board taps
 
-A Skia canvas has no accessibility nodes, so the board is tapped by coordinates. With `boardLayout=1` the test build renders `game.board-layout`, a small Text holding `JSON.stringify({ x, y, layout })`: `x`, `y` are the canvas's top-left corner in window points and `layout` is the game's `BoardLayout` (regions in canvas points, unmirrored, plus `isMirrored`). The flow reads it and computes cell centres:
+A Skia canvas has no accessibility nodes, so the board is tapped by coordinates. With `boardLayout=1` the test build renders `game.board-layout`, a small Text holding `JSON.stringify({ x, y, layout })`, plus `tapScale` on Android: `x`, `y` are the canvas's top-left corner in window points, `layout` is the game's `BoardLayout` (regions in canvas points, unmirrored, plus `isMirrored`), and `tapScale` is the density. Maestro's `tapOn: { point }` is in window points on iOS and in pixels on Android, so every point is multiplied by `tapScale || 1` (E18-T24: without it the level-1 tray tap at window point 80,809 landed near the top of a 1080 x 2400 emulator and the move never happened). The flow reads it and computes cell centres:
 
 ```yaml
 - copyTextFrom:
     id: 'game.board-layout'
 - evalScript: ${output.board = JSON.parse(maestro.copiedText)}
 - evalScript: ${output.grid = output.board.layout.regions.find((region) => region.id === 'board')}
-# Cell centre = canvas origin + region origin + (col + 0.5) * cell (this board does not mirror).
-- evalScript: ${output.cell20 = Math.round(output.board.x + output.grid.x + 2.5 * output.grid.cell) + ',' + Math.round(output.board.y + output.grid.y + 0.5 * output.grid.cell)}
+- evalScript: ${output.scale = output.board.tapScale || 1}
+# Cell centre = (canvas origin + region origin + (col + 0.5) * cell) * scale (no mirroring here).
+- evalScript: ${output.cell20 = Math.round((output.board.x + output.grid.x + 2.5 * output.grid.cell) * output.scale) + ',' + Math.round((output.board.y + output.grid.y + 0.5 * output.grid.cell) * output.scale)}
 - tapOn:
     point: ${output.cell20}
 ```
 
-For a mirrored board (`isMirrored` true) the horizontal centre is `x + layout.width - region.x - (col + 0.5) * region.cell`. A tap-then-tap board (Line Siege: a tray slot, then a board cell) makes each move with two taps, select first.
+For a mirrored board (`isMirrored` true) the horizontal centre is `(x + layout.width - region.x - (col + 0.5) * region.cell) * scale`. A tap-then-tap board (Line Siege: a tray slot, then a board cell) makes each move with two taps, select first.
 
 Maestro reads each `evalScript` line as YAML first: `: ` (colon and space) inside it starts a mapping and `maestro check-syntax` fails ("Parsing Failed"). No ternary `cond ? a : b` there; use arithmetic such as `Number(output.tray.cols > 1)`, or quote the whole scalar.
 
@@ -150,7 +152,7 @@ Verified on Maestro 2.10.0 with the real Shell (Line Siege, iPhone 17 Pro Max, i
 
 1. `launchApp` with `clearState`, then one setup link: `lang=en&theme=light&seed=42&level=1&ads=off&firstRun=0&reduceMotion=1&boardLayout=1&screen=game`, `WAIT_FOR: game.board-layout`.
 2. The first move by taps (`__FROM_REGION_ID__`/`__FROM_COL__`/`__FROM_ROW__` is the select tap of a tap-then-tap game; a one-tap game deletes the FROM taps and keeps TO), then `game.moves-label` shows `1`.
-3. `killApp`, `launchApp: { stopApp: false }`: the saved run reopens on Pause; Resume; `game.moves-label` still shows `1`.
+3. `runFlow: <…>/subflows/kill-app.yaml`, `launchApp: { stopApp: false }`: the saved run reopens on Pause; Resume; `game.moves-label` still shows `1`.
 4. `action=win-level` in its own link, `WAIT_FOR: result.screen`: the game host ends the level exactly like a real win.
 5. `result.stars-__WIN_STARS__`: the stars the game's `testing.examples.win()` earns on level 1 (Line Siege: score 180 against 0 / 150 / 180, so 3). List `result.stars-<n>` with that reason in `apps/<game-id>/e2e/testids.json`.
 6. A screenshot, then the stars reach progress: `screen=levels`, `levels.level-tile.1` with `text: '.*[^0-9]__WIN_STARS__ .*'` (the tile's VoiceOver label, "Level 1: 3 stars": the stars are crop-only parts inside the tile, and the count followed by a space never matches the level's own number), then a tap on `levels.level-tile.2` (the tile under test) opens `game.screen` with `game.mode-label` showing level 2, and `levels.locked-toast` never shows. `check-flows` rule `progress-after-win` asks for these steps in a game smoke flow that wins a level.
@@ -192,6 +194,34 @@ The same happens when a shown offer becomes hidden (offline, a load error) and w
 `packages/shell/e2e/ads-smoke/<nn>-<name>.yaml` holds admob-ads' smoke test of the ads-on build: S3, Google's form and Apple's prompt in order (`geo=eea`), Apple's prompt alone (`geo=other`), the banner, the rewarded continue with its board assertion (`game.board-frame`, test builds with `boardLayout=1`). They run by hand on an `ADS_MODE=test` build, never through `e2e:ios` (whose `requireAdsOffTestBuild` refuses ads-on builds, and whose flow list never includes `ads-smoke/`; `check-e2e-setup` rule `e2e-ads-off`). Start each from a fresh install with `xcrun simctl launch <udid> <bundle id>`: Maestro's `launchApp` grants the App Tracking Transparency answer, so Apple's prompt would never show. Reset the tracking answer too (`xcrun simctl privacy <udid> reset all <bundle id>`): it survives `simctl uninstall`, and without the reset Apple's prompt did not show after a reinstall (verified 2026-10-01: the `geo=eea` run after a `geo=other` run went from Google's form straight to Home). What Google shows comes from the AdMob account: Google's sample app id (every `ADS_MODE=test` build) has an IDFA explainer message, so outside the EEA (`geo=other`, `IABTCF_gdprApplies` 0) S3 and Google's "Our app wants to stay free for you" message (one `Continue` button) came before Apple's prompt, and in the EEA (`geo=eea`, `IABTCF_gdprApplies` 1) S3 came before Google's consent form (`Consent`) (verified 2026-10-01 on the Line Siege pilot). The owner's account publishes no IDFA explainer (ios-release-testflight's owner step G5), so a live build outside the EEA shows Apple's prompt alone. Run each with `tools/maestro/bin/maestro --device <udid> --driver-host-port <port> test -e APP_ID=<bundle id> -e APP_SCHEME=<scheme> <flow>` on this session's own `e07-*` simulator.
 
 `check-flows` checks them like every flow (header, names, ids, debug queries, `open-alert-guard`, `--syntax`) plus: no `launchApp` (`ads-smoke-launch`), the first setup link sets `geo=eea` or `geo=other` (`ads-smoke-geo`: otherwise Google's form depends on the Mac's network location), at least one `id:` step (`ads-smoke-testid`), the `ads-smoke` tag, and a run command written in a comment names `--device` and `--driver-host-port` before `test` (`run-command-device`). The no-network rule does not apply: ads open sockets on purpose.
+
+## Both platforms: platform guards
+
+The same flow files run on the iOS simulator (`e2e:ios`) and on the Android emulator (`e2e:android`); they never fork into an iOS and an Android copy. A step that exists on one platform only goes in a `runFlow` guarded by that platform:
+
+```yaml
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - assertVisible:
+          id: 'home.screen'
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # system-ui: Apple's tracking prompt.
+      - tapOn: 'Ask App Not to Track'
+```
+
+**Killing the app.** Maestro's `killApp` ends the process on iOS, but on Android it is `am kill`, which only ends processes that are safe to kill and never the foreground app: in E18-T24 the app kept running (logcat: no process death, the relaunch intent delivered to the running activity), the relaunch came back to the same Game screen, and the kill checks failed (`pause.resume-button` never showed) or proved nothing. Every kill goes through `packages/shell/e2e/subflows/kill-app.yaml`: `killApp` under `when: platform: iOS`, `stopApp` (`am force-stop`, a real process death of the foreground app) under `when: platform: Android`. `check-flows` fails a `killApp` outside an iOS guard (`platform-guard`).
+
+- **Android only:** `back` and `pressKey: back` (the system Back), `setAirplaneMode` and `toggleAirplaneMode` (real airplane mode; iOS simulators have none, so on iOS they do nothing and the flow would pass without proving anything). `subflows/airplane-mode.yaml` guards each of its steps itself.
+- **iOS only:** Apple's App Tracking Transparency prompt (`Ask App Not to Track`, `Allow Tracking`): Android has no such prompt, so an unguarded wait for it fails every Android run. Google's UMP form shows on both platforms and needs no guard.
+- `check-flows` rule `platform-guard` finds an unguarded step, or one guarded by the other platform. It is due at Android step 7 (once any Android E2E file exists); before that a file with such a step prints one not-yet-due `SKIP` line.
+- A debug link needs no guard: `debug-setup.yaml`'s `Open in .*\?` alert guard never matches on Android, where a VIEW intent asks nothing.
+- Hand-run ads smoke flows on Android start the fresh install with `adb -s <serial> shell am start -n <package>/.MainActivity` (no `launchApp`, as on iOS) and run with `--device <serial> --driver-host-port <port>`.
 
 ## Taps and stars from the game: print-level-line
 

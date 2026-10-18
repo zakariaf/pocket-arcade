@@ -46,6 +46,7 @@ The generator writes these files from `templates/repo/`. This reference explains
 | `audit:licenses` | licence of every package in the release bundles | needs `audit:network`'s exports |
 | `new-game` | `packages/tooling/src/scaffold/new-game.ts`, written by the bootstrap: forwards `npm run new-game -- <args>` to the new-game-scaffold skill's generator in `skills/` (or the `.claude/skills/` link) | yes, once the skills folder is in the repo |
 | `audit:network`, `audit:privacy`, `i18n:verify`, `e2e:ios`, `screenshots:ios`, `build:ios:sim`, `release:ios` | tooling scripts built by later skills | pending |
+| `build:android:emu`, `e2e:android`, `screenshots:android`, `release:android` | Android tooling scripts built by the Android port (android-emulator-build, e2e-maestro, android-release-play) | pending |
 
 - `devDependencies`: exactly the tools the configs reference, each pinned exactly. `allowScripts` is written by `npm approve-scripts` after the first install.
 - Never add `expo`, `react`, `react-native` or any native module at the root: they belong to the apps (autolinking and `npx expo install --check` only see an app's own dependencies).

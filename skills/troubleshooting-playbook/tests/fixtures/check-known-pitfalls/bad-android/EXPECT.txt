@@ -1,0 +1,10 @@
+[android-native-folder-committed]
+.gitignore:1
+does not ignore apps/*/android/
+[android-play-store-image]
+packages/tooling/src/android/toolchain.ts:4
+[android-gradle-variant-env]
+packages/tooling/src/build/build-android-emu.ts:7
+[testing-maestro-airplane]
+apps/line-siege/e2e/offline/01-airplane.yaml:15
+apps/line-siege/e2e/offline/02-unguarded.yaml:8

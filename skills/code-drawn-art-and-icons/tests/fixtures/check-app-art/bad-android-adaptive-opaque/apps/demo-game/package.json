@@ -1,0 +1,5 @@
+{
+  "name": "@e07/demo-game",
+  "private": true,
+  "dependencies": { "expo": "~57.0.25", "expo-splash-screen": "~57.0.9" }
+}

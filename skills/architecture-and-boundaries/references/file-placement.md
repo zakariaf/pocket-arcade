@@ -38,6 +38,8 @@ Where every kind of file goes, and the step-by-step recipes for adding a Shell s
 | Config composer (Node world) | `packages/shell/src/config/` | `with-shell.ts` |
 | Local Expo config plugin | `packages/shell/plugins/with-<capability>.ts` | `with-storekit-test.ts` |
 | Native code (Expo module) | `packages/shell/ios/`, `packages/shell/expo-module.config.json` | `ProcessStartModule.swift` |
+| Native Android code (the same module's Kotlin half, its `build.gradle` and manifest) | `packages/shell/android/` | `ProcessStartModule.kt` |
+| A native Android setting (permission, backup, manifest attribute, Gradle property) | `withShell`'s Android block (`packages/shell/src/config/android-config.ts`) or a plugin in `packages/shell/plugins/` | `android-config.ts`, `with-backup-rules.ts` |
 | Fonts | `apps/<id>/assets/fonts/` | `Vazirmatn-Regular.ttf` |
 | Shell catalogs | `packages/shell/src/i18n/catalogs/<lang>.json` | `catalogs/fa.json` |
 | Game rules (pure) | `apps/<id>/src/rules/` | `apply-move.ts` |
@@ -61,7 +63,7 @@ Where every kind of file goes, and the step-by-step recipes for adding a Shell s
 | Node script, CLI or module (never directly in `src/`) | `packages/tooling/src/<area>/<verb>-<noun>.ts` | `save/inspect-save.ts`, `art/render-art.ts` |
 | Vendor SDK mock for Jest | root `__mocks__/<package>.ts` | `__mocks__/expo-iap.ts` |
 
-`check-layout.mjs` (`placement`, `folders`, `port-triple`) checks the rows that can be checked by path: screens only under `screens/` (plus `app/crash-screen.tsx` and `navigation/not-built-screen.tsx`); the test-only debug module `screens/debug/` (S15, reached only through `TEST_ONLY`) may keep its own debug-store port and fake beside each other, outside `services/` and `stores/`, ports, adapters and fakes only under `services/<port>/`, domain stores under `stores/`, reducers under `stores/` or `game-host/`, config-plugin code under `plugins/` or `config/`, Node-API tests under the root `test/`, the canonical top-level folders, and a port file plus a fake next to every adapter.
+`check-layout.mjs` (`placement`, `folders`, `port-triple`) checks the rows that can be checked by path: screens only under `screens/` (plus `app/crash-screen.tsx` and `navigation/not-built-screen.tsx`); the test-only debug module `screens/debug/` (S15, reached only through `TEST_ONLY`) may keep its own debug-store port and fake beside each other, outside `services/` and `stores/`, ports, adapters and fakes only under `services/<port>/`, domain stores under `stores/`, reducers under `stores/` or `game-host/`, config-plugin code under `plugins/` or `config/`, Node-API tests under the root `test/`, the canonical top-level folders, and a port file plus a fake next to every adapter. For Android it also checks (`android-committed`, `kotlin-placement`, `android-setting`) that the generated `apps/<id>/android/` is ignored and never tracked, that Kotlin lives only in `packages/shell/android/`, and that no `app.json` `android` block, Gradle or manifest file, or Android config-plugin mod (`withAndroidManifest`, `withAppBuildGradle`, `AndroidConfig`, ...) sits outside `withShell` (`packages/shell/src/config/`) and `packages/shell/plugins/`.
 
 ## Recipe: add a Shell screen
 

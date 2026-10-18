@@ -5,6 +5,9 @@
 // layout this hook searches that width from the Text's own line measurements and applies it as a
 // pad at the text's end, so the element keeps the full width the design measures.
 import { useState } from 'react';
+import { Platform } from 'react-native';
+
+import { isInvisibleMark } from '@e07/shell/i18n/bidi.ts';
 
 import type { TextAlignToken } from '@e07/shell/i18n/use-localized-text-style.ts';
 import type { LayoutChangeEvent, TextLayoutEvent, TextStyle } from 'react-native';
@@ -102,17 +105,15 @@ export function nextSearch(
   return probeFrom({ ...search, steps, hi: width - search.pad, widest }, width);
 }
 
-/** Marks drawn as nothing (bidi isolates and marks, joiners): a break looks through them. */
-const INVISIBLE = /[\u061C\u200D\u200E\u200F\u2066-\u2069\uFEFF]/u;
 const SPACE = /\s/u;
 /** A line may end after a space, a hyphen, a dash or a slash, as CSS breaks lines. */
 const BREAK_AFTER = /[\s\-\u00AD\u2010\u2012-\u2015/]/u;
 
-/** The nearest visible character before (step -1) or from (step 1) a position, if any. */
+/** The nearest visible character (bidi marks and joiners are looked through) before (step -1) or from (step 1) a position, if any. */
 function visibleAt(text: string, from: number, step: 1 | -1): string | undefined {
   for (let at = from; at >= 0 && at < text.length; at += step) {
     const char = text.charAt(at);
-    if (!INVISIBLE.test(char)) return char;
+    if (!isInvisibleMark(char)) return char;
   }
   return undefined;
 }
@@ -193,6 +194,15 @@ export function advance(measure: Measure, isWordBroken = false): Measure {
   return { ...measure, search: nextSearch(search, width, { lineWidths, isWordBroken }) };
 }
 
+/**
+ * Android lets a line's trailing space hang past the room but counts it in the line width that
+ * onTextLayout reports, so a probe can keep a line that reads wider than the room (S13's Persian
+ * step 2 kept "... تا در مسیر " at 256 pt: 251.98 pt of text plus its 5.30 pt space, reported as
+ * 257.24). That layout is the probe's own: Fabric sends a text layout only for a new layout, in
+ * order, so nothing on Android is stale.
+ */
+const IS_TRAILING_SPACE_COUNTED = Platform.OS === 'android';
+
 /** Slack for sub-point rounding between the line widths and the laid-out width. */
 const LINE_SLACK = 0.5;
 
@@ -201,8 +211,12 @@ const LINE_SLACK = 0.5;
  * layout twice). A line wider than the room the current pad leaves proves the layout is not for
  * this pad; one that fits wraps the same at this pad (greedy wrapping), so it counts.
  */
-export function isStale(measure: Measure, lineWidths: readonly number[]): boolean {
-  if (measure.width === 0) return false;
+export function isStale(
+  measure: Measure,
+  lineWidths: readonly number[],
+  isTrailingSpaceCounted = IS_TRAILING_SPACE_COUNTED,
+): boolean {
+  if (measure.width === 0 || isTrailingSpaceCounted) return false;
   const room = measure.width - (measure.search?.pad ?? 0);
   return lineWidths.some((line) => line > room + LINE_SLACK);
 }

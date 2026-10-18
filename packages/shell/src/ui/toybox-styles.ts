@@ -28,10 +28,15 @@ export function focusRing(color: string): ViewStyle {
  * The raster half of the tilt primitive. Fabric draws a border from an image it stretches with
  * nearest filtering, so a turned edge, and an inner border such as the calendar's month band, steps
  * at device pixels; a rasterized layer is resampled smoothly when it turns, as Chrome draws the
- * references. Static tilts get it from tiltedLayer; only a tilt that animates (the sticker's slap)
- * spreads it itself, and turns with tilt() in its animated style.
+ * references. Each platform reads only its own flag: iOS rasterizes the layer
+ * (shouldRasterizeIOS), Android renders it into one GPU texture (renderToHardwareTextureAndroid).
+ * Static tilts get both from tiltedLayer; only a tilt that animates (the sticker's slap) spreads
+ * it itself, and turns with tilt() in its animated style.
  */
-export const TILTED_LAYER = { shouldRasterizeIOS: true } as const;
+export const TILTED_LAYER = {
+  shouldRasterizeIOS: true,
+  renderToHardwareTextureAndroid: true,
+} as const;
 
 /** One entry of a transform list (rotate, translateY, scale ...). */
 export type TransformEntry = Exclude<NonNullable<ViewStyle['transform']>, string>[number];
@@ -47,12 +52,35 @@ export function tilt(deg: number): TransformEntry {
  * Today tag, art and logo tiles, the calendar, Premium art, confetti):
  * `<View {...tiltedLayer(deg, styles.part)} testID=...>`. It owns both halves: the turn (after the
  * part's own style, then any `after` transforms, as CSS `rotate() translateY()`) and the one
- * rasterized layer that turns smoothly.
+ * rasterized layer (both platforms' flags) that turns smoothly.
  */
 export function tiltedLayer(
   deg: number,
   style?: StyleProp<ViewStyle>,
   after: readonly TransformEntry[] = [],
-): { readonly shouldRasterizeIOS: true; readonly style: StyleProp<ViewStyle> } {
+): typeof TILTED_LAYER & { readonly style: StyleProp<ViewStyle> } {
   return { ...TILTED_LAYER, style: [style, { transform: [tilt(deg), ...after] }] };
+}
+
+/**
+ * The layer of a part that carries the die-cut ring (dieCutRing: an outset box-shadow, drawn outside
+ * the part's own box): iOS's half of TILTED_LAYER only. Android renders a View with
+ * renderToHardwareTextureAndroid into a texture the size of its box, which cut the ring off there:
+ * white wedges in the corners and no ring along the edges (S2's globe tile and "Phone language"
+ * sticker on the emulator, E18-T20). Without the texture Android draws the turned ring and edges
+ * smoothly, so a die-cut part leaves it out; every prop iOS reads stays TILTED_LAYER's.
+ */
+export const DIE_CUT_TILTED_LAYER = { shouldRasterizeIOS: true } as const;
+
+/**
+ * tiltedLayer for a part whose style carries dieCutRing (art tiles, Premium art, the level flag):
+ * the same turn and iOS layer, without Android's hardware texture (DIE_CUT_TILTED_LAYER). A die-cut
+ * part that animates its tilt (the sticker's slap) spreads DIE_CUT_TILTED_LAYER itself.
+ */
+export function dieCutTiltedLayer(
+  deg: number,
+  style?: StyleProp<ViewStyle>,
+  after: readonly TransformEntry[] = [],
+): typeof DIE_CUT_TILTED_LAYER & { readonly style: StyleProp<ViewStyle> } {
+  return { ...DIE_CUT_TILTED_LAYER, style: [style, { transform: [tilt(deg), ...after] }] };
 }

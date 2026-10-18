@@ -1,0 +1,2 @@
+no android .js bundle
+npx expo export --platform android --no-bytecode

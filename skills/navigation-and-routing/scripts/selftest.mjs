@@ -2,7 +2,8 @@
 // selftest.mjs: proves check-navigation.mjs on three suites: the full Shell (tests/fixtures/good and
 // bad-*), a partial Shell with shell-slice.json (tests/fixtures/slice/), and a game-first repo whose
 // slice lists no screens (tests/fixtures/game-first/). Each good tree passes; each bad-* tree fails
-// with the lines of its EXPECT.txt (SKIP lines included).
+// with the lines of its EXPECT.txt (SKIP lines included). A top-level case named *-complete runs with
+// --complete (the Android back rules are strict there).
 // Run: node ${CLAUDE_SKILL_DIR}/scripts/selftest.mjs
 
 import { basename } from 'node:path';
@@ -10,7 +11,11 @@ import { basename } from 'node:path';
 import { runSelftest } from './check-lib.mjs';
 
 await runSelftest(import.meta.url, [
-  { script: 'check-navigation.mjs', fixtures: '../tests/fixtures', args: () => [] },
+  {
+    script: 'check-navigation.mjs',
+    fixtures: '../tests/fixtures',
+    args: (dir) => (basename(dir).endsWith('-complete') ? ['--complete'] : []),
+  },
   {
     script: 'check-navigation.mjs',
     fixtures: '../tests/fixtures/slice',

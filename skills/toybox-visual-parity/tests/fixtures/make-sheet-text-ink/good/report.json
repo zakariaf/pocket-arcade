@@ -1,0 +1,430 @@
+{
+ "version": 1,
+ "result": "FAIL",
+ "frame": "s4-home",
+ "kind": "phone",
+ "theme": "light",
+ "lang": "fa",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "platform": "android",
+ "boundsSource": "maestro",
+ "createdAt": "2026-10-16T20:07:17.739Z",
+ "tolerances": {
+  "boundsPt": 2,
+  "fillChannelDelta": 3,
+  "borderPt": 0.5,
+  "inkSizePt": 1,
+  "inkCentrePt": 2,
+  "layoutNoisePt": 0.9,
+  "blobThicknessPt": 1.5,
+  "blobMinPixels": 24,
+  "alignSearchPx": 6,
+  "pixelmatchThreshold": 0.1,
+  "textPadPt": 2,
+  "inkPadPt": 2,
+  "inkDistance": 96,
+  "inkSearchPx": 12,
+  "anchorReachPt": [
+   12,
+   36
+  ],
+  "anchorEdgeLuma": 24,
+  "anchorMinEdgePt": 3,
+  "fillInsetPt": 2,
+  "minVisiblePt": 8
+ },
+ "reference": {
+  "image": "../../../../assets/reference-android/lineSiege/light-fa/s4-home.png",
+  "platform": "android",
+  "imageSha256": "2723fbe805fb3205cf1f184abc726cebac07eb4dac9638cc20568802d2c28ce2",
+  "layoutSha256": "90c039ced58255c8b977029e97e58d33a56e7c202245993778e774da2b1b983a"
+ },
+ "app": {
+  "imageSha256": "7c8b0c7d1387976adc4df40dfdd23188fed0b6c256a7b6f87fc58093bfbe32d0",
+  "boundsSha256": "c41a162c182c9faf4a015af46db14a55482c58931515e0244ed3acb026e4e084"
+ },
+ "checked": {
+  "bounds": 14,
+  "text": 6,
+  "fill": 10,
+  "border": 9,
+  "text-ink": 21,
+  "structure": 10
+ },
+ "coverage": [
+  "home.banner-ad",
+  "home.brand-lock",
+  "home.daily-card",
+  "home.daily-card.play-button",
+  "home.endless-card",
+  "home.game-name",
+  "home.how-to-play-button",
+  "home.levels-button",
+  "home.play-button",
+  "home.premium-button",
+  "home.screen",
+  "home.settings-button",
+  "home.stats-button",
+  "home.top-bar"
+ ],
+ "offscreen": [],
+ "stats": {
+  "scrollShiftPt": 0,
+  "textInk": [
+   {
+    "owner": "home.game-name",
+    "text": "Line Siege",
+    "font": "400 28px Lilita One",
+    "role": "Lilita One 28",
+    "dx": -0.14,
+    "dy": 0.66,
+    "dw": 0,
+    "dh": -0.67,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.25,
+     "dy": 0.96
+    }
+   },
+   {
+    "owner": "home.play-button",
+    "text": "ادامه – مرحلهٔ ۱۲",
+    "font": "700 25px Vazirmatn",
+    "role": "Vazirmatn 25",
+    "dx": -0.03,
+    "dy": 0.34,
+    "dw": -0.33,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": -0.03,
+     "dy": 0.34
+    }
+   },
+   {
+    "owner": "home.play-button",
+    "text": "ادامه – مرحلهٔ ۱۲",
+    "font": "700 25px Vazirmatn",
+    "role": "Vazirmatn 25",
+    "dx": 0.27,
+    "dy": 0.34,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.27,
+     "dy": 0.34
+    }
+   },
+   {
+    "owner": "home.daily-card.title",
+    "text": "چالش روزانه",
+    "font": "700 21px Vazirmatn",
+    "role": "Vazirmatn 21",
+    "dx": 0.43,
+    "dy": 0.31,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.43,
+     "dy": 0.31
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "یکشنبه",
+    "font": "400 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.01,
+    "dy": 1.32,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.01,
+     "dy": 1.32
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "، ۲۷",
+    "font": "400 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.55,
+    "dy": 1.33,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": -0.55,
+     "dy": 1.33
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "، ۲۷",
+    "font": "400 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.22,
+    "dy": 1.32,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.11,
+     "dy": 1.32
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "، ۲۷",
+    "font": "400 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.33,
+    "dy": 1.33,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0,
+     "dy": 1.33
+    }
+   },
+   {
+    "owner": "home.daily-card.date",
+    "text": "سپتامبر",
+    "font": "400 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.05,
+    "dy": 1.31,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": -0.05,
+     "dy": 1.31
+    }
+   },
+   {
+    "owner": "home.daily-card.streak",
+    "text": "۵ روز پیاپی",
+    "font": "700 14px Vazirmatn",
+    "role": "Vazirmatn 14",
+    "dx": 0.03,
+    "dy": 0.32,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.03,
+     "dy": 0.66
+    }
+   },
+   {
+    "owner": "home.daily-card.streak",
+    "text": "۵ روز پیاپی",
+    "font": "700 14px Vazirmatn",
+    "role": "Vazirmatn 14",
+    "dx": 0.31,
+    "dy": 0.31,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.02,
+     "dy": 0.65
+    }
+   },
+   {
+    "owner": "home.daily-card.play-button",
+    "text": "چالش امروز را بازی کنید",
+    "font": "700 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.41,
+    "dy": 0.38,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.08,
+     "dy": 0.32
+    }
+   },
+   {
+    "owner": "home.endless-card.label",
+    "text": "بی‌پایان – رکورد ۴٬۲۱۰",
+    "font": "700 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": 0.06,
+    "dy": 0.69,
+    "dw": -0.33,
+    "dh": 0,
+    "anchor": "pixels-y",
+    "maestro": {
+     "dx": 0.06,
+     "dy": 0.63
+    }
+   },
+   {
+    "owner": "home.endless-card.label",
+    "text": "بی‌پایان – رکورد ۴٬۲۱۰",
+    "font": "700 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": 0.08,
+    "dy": 0.69,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.08,
+     "dy": 0.63
+    }
+   },
+   {
+    "owner": "home.endless-card.description",
+    "text": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردت",
+    "font": "400 14px Vazirmatn",
+    "role": "Vazirmatn 14",
+    "dx": -0.58,
+    "dy": 0.65,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.58,
+     "dy": 0.59
+    }
+   },
+   {
+    "owner": "home.endless-card.description",
+    "text": "تا وقتی نباخته‌اید بازی کنید، بعد رکوردت",
+    "font": "400 14px Vazirmatn",
+    "role": "Vazirmatn 14",
+    "dx": -0.05,
+    "dy": 1.02,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.05,
+     "dy": 0.62
+    }
+   },
+   {
+    "owner": "home.levels-button",
+    "text": "مراحل",
+    "font": "700 15px Vazirmatn",
+    "role": "Vazirmatn 15",
+    "dx": -0.37,
+    "dy": 0.01,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.37,
+     "dy": 0.25
+    }
+   },
+   {
+    "owner": "home.stats-button",
+    "text": "آمار",
+    "font": "700 15px Vazirmatn",
+    "role": "Vazirmatn 15",
+    "dx": 0.74,
+    "dy": 0.21,
+    "dw": -1.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.74,
+     "dy": 0.45
+    }
+   },
+   {
+    "owner": "home.how-to-play-button",
+    "text": "راهنمای بازی",
+    "font": "700 15px Vazirmatn",
+    "role": "Vazirmatn 15",
+    "dx": -0.01,
+    "dy": -0.1,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.01,
+     "dy": 0.15
+    }
+   },
+   {
+    "owner": "home.premium-button.label",
+    "text": "پریمیوم",
+    "font": "700 17px Vazirmatn",
+    "role": "Vazirmatn 17",
+    "dx": -0.01,
+    "dy": 0.66,
+    "dw": -0.33,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": -0.01,
+     "dy": 0.24
+    }
+   },
+   {
+    "owner": "home.premium-button.description",
+    "text": "حذف تبلیغات",
+    "font": "400 14px Vazirmatn",
+    "role": "Vazirmatn 14",
+    "dx": 0.15,
+    "dy": 1.05,
+    "dw": 0,
+    "dh": 0,
+    "anchor": "pixels",
+    "maestro": {
+     "dx": 0.15,
+     "dy": 1.3
+    }
+   }
+  ],
+  "pixelDiffPercent": 0.66
+ },
+ "problems": [
+  {
+   "rule": "text-ink",
+   "testID": "home.stats-button",
+   "message": "home.stats-button: text \"آمار\": ink width 21.0 vs design 22.3 pt (size, weight, family, letter-spacing or wrapping)",
+   "fix": "Use the design's text style (700 15px Vazirmatn) and alignment.",
+   "rect": {
+    "text": "آمار",
+    "x": 190.2,
+    "y": 544.08,
+    "w": 21.59,
+    "h": 23,
+    "owner": "home.stats-button",
+    "font": "700 15px Vazirmatn"
+   },
+   "viewRect": {
+    "x": 190.2,
+    "y": 544.1666666666667,
+    "w": 21.59,
+    "h": 23
+   }
+  }
+ ],
+ "waived": [],
+ "notes": [
+  "home.logo: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.screen",
+  "home.daily-card.icon: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.daily-card",
+  "home.daily-card.title: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.daily-card",
+  "home.daily-card.date: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.daily-card",
+  "home.daily-card.streak: crop-only (hidden from VoiceOver); its pixels are compared in the crop of home.daily-card",
+  "home.endless-card.icon: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.endless-card.label: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.endless-card.description: crop-only (inside home.endless-card); its pixels are compared in the crop of home.endless-card",
+  "home.premium-button.icon: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button",
+  "home.premium-button.label: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button",
+  "home.premium-button.description: crop-only (inside home.premium-button); its pixels are compared in the crop of home.premium-button"
+ ]
+}

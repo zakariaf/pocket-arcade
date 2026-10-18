@@ -2,7 +2,7 @@
 // The e2e:ios command line: --help prints every option and runs nothing, a bad command line is a
 // usage error (exit 2, the usage line, no stack), and the runner's options are read out of the
 // Maestro test options it passes on.
-import { driverPortOf, E2E_USAGE, parseE2eCli } from './e2e-cli.ts';
+import { driverPortOf, E2E_USAGE, parseE2eCli, readOptions } from './e2e-cli.ts';
 
 describe('parseE2eCli', () => {
   it('asks for the usage on --help or -h, wherever it stands', () => {
@@ -79,5 +79,31 @@ describe('driverPortOf (e2e:ios and screenshots:ios)', () => {
     expect(driverPortOf('80')).toBe('--driver-port 80 is not a port from 1024 to 65535');
     expect(driverPortOf('70000')).toBe('--driver-port 70000 is not a port from 1024 to 65535');
     expect(driverPortOf('7e3')).toBe('--driver-port 7e3 is not a port number');
+  });
+});
+
+describe('readOptions (the token loop of e2e:ios, e2e:android and screenshots:android)', () => {
+  const SPEC = { app: { type: 'string' }, update: { type: 'boolean' } } as const;
+
+  it('reads each option with its value and each flag', () => {
+    const read = readOptions(['--app', 'line-siege', '--update'], SPEC);
+    expect(typeof read === 'string' ? read : [[...read.values], [...read.flags]]).toStrictEqual([
+      [['app', 'line-siege']],
+      ['update'],
+    ]);
+  });
+
+  it("names the first problem in the runner's words", () => {
+    expect(
+      [['--sim', 'x'], ['--app'], ['--app', '--update'], ['line-siege'], ['--', 'x']].map((argv) =>
+        readOptions(argv, SPEC),
+      ),
+    ).toStrictEqual([
+      'unknown option --sim',
+      '--app needs a value',
+      '--app needs a value',
+      'unexpected argument line-siege',
+      'unexpected argument --',
+    ]);
   });
 });

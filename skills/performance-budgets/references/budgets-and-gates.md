@@ -16,9 +16,10 @@ The numbers every game must stay within, where each is measured, and how a budge
 |---|---|---|
 | **The owner's iPhone** (TestFlight test build) | The truth: cold start, frame times and save time on real hardware at 120 Hz | The owner, from the debug menu; Claude reads the exported JSON |
 | **The iOS simulator** (Release, test variant) | Regressions: launch time, memory footprint, layouts at 200 % text | Claude, with the tooling scripts and Maestro |
+| **The Android emulator** (Release APK, test variant, `e07-android-*` AVD) | Regressions on Android: launch time, private dirty + swap memory, layouts at font scale 2.0 | Claude, with the tooling scripts and Maestro |
 | **Jest** | Fast guards that fail a commit: save write time, draw calls per frame, re-render boundaries | Claude, through `npm run verify` |
 
-The simulator is not a device: it runs on the Mac's CPU and caps at 60 fps, so its numbers are only compared with earlier simulator numbers. Measure only **Release** builds of the test variant ("JavaScript thread performance suffers greatly when running in dev mode").
+The simulator is not a device: it runs on the Mac's CPU and caps at 60 fps, so its numbers are only compared with earlier simulator numbers. The emulator is the same on Android: its numbers are compared only with earlier emulator numbers (its own baseline file), never with the simulator's or the device budget. For an Android release the owner's Android phone (internal-testing test build) is the truth, judged by the same device budgets. Measure only **Release** builds of the test variant ("JavaScript thread performance suffers greatly when running in dev mode").
 
 ## The budget table
 
@@ -26,12 +27,14 @@ The simulator is not a device: it runs on the Mac's CPU and caps at 60 fps, so i
 |---|---|---|---|
 | Cold start, process start -> Home interactive | < 1,000 ms (median of 5, device) | cold-start log | owner, each release |
 | Cold start on the simulator | ≤ 1.2 × committed baseline | cold-start log read from the simulator | the e2e run |
+| Cold start on the Android emulator | ≤ 1.2 × committed baseline (`coldStartEmuRegressionFactor`, `perf-baselines/cold-start-emu-<game>.json`) | cold-start log (Kotlin `ProcessStartModule`) read from the emulator | the Android e2e run |
 | Hitch rate while animating | ≤ 10 ms/s | frame-time recorder | owner play test |
 | p95 frame time while animating | ≤ 17 ms (the recorder reports 17 as an upper bound) | frame-time recorder | owner play test |
 | Save write p95 | < 5 ms | Jest perf test + on-device benchmark | `npm run test`, release |
 | Draw calls per frame, busiest frame | per game (Line Siege 200), never > 1,000 | the game's `draw-board.test.ts` recording canvas | `npm run test` |
-| Minified JS, store build | ≤ 6,000,000 bytes, ≤ +10 % vs baseline | `expo export --no-bytecode` | the network audit / release |
+| Minified JS, store build | ≤ 6,000,000 bytes, ≤ +10 % vs baseline, per platform (`perf-baselines/bundle-<platform>-<game>.json`) | `expo export --no-bytecode` (`--platform ios` or `android`) | the network audit / release |
 | Memory after the smoke flow | ≤ 150 MB `phys_footprint` | `footprint <pid>` on the simulator | the e2e run |
+| Memory after the smoke flow, Android | ≤ 150 MB private dirty + swap PSS (the same `memoryFootprintMbMax`; total PSS is information only, it counts the clean mapped code) | `dumpsys meminfo <package>` on the emulator | the Android e2e run |
 | Level-grid tiles mounted | ≤ 150 | one `ScrollView`, pack tabs above 150 | review |
 | Skia canvases per screen outside the board | ≤ 8 | code review, `check-perf-code.mjs` | review |
 | Touch target / text scale / contrast / colour-blind | 44 pt / 2.0 / 4.5 and 3 / 0.07 | accessibility checks | `npm run test` |
@@ -47,6 +50,7 @@ Tests and scripts read the budgets from one checked-in file (`templates/quality-
   "perf": {
     "coldStartHomeMsMax": 1000,
     "coldStartSimRegressionFactor": 1.2,
+    "coldStartEmuRegressionFactor": 1.2,
     "hitchMsPerSecondMax": 10,
     "frameP95MsMax": 17,
     "saveWriteP95MsMax": 5,
@@ -67,7 +71,7 @@ Tests and scripts read the budgets from one checked-in file (`templates/quality-
 }
 ```
 
-`check-budgets.mjs` fails when a key is missing, not a positive number, unknown, or looser than the value above.
+`check-budgets.mjs` fails when a key is missing, not a positive number, unknown, or looser than the value above. The Android key `coldStartEmuRegressionFactor` joins the file at Android step 1 with the Android build tooling, with a `Gate-Change:` trailer: until `packages/tooling/src/build/build-android-emu.ts` exists a missing Android key prints a `SKIP ... due at Android step 1` line; from then on it fails like any other. It is not a loosening: it adds a budget, and the iOS values stay as they are. Android memory has no key of its own: `memoryFootprintMbMax` is the one memory budget of both platforms (the earlier `memoryPssMbMax` judged total PSS, a different quantity, and is now an unknown key; E18-T24).
 
 ## Changing a budget
 
@@ -77,4 +81,4 @@ Tests and scripts read the budgets from one checked-in file (`templates/quality-
 
 ## Budgets that are first estimates
 
-The 6 MB bundle cap, the 150 MB memory cap and the 1,000 draw-call ceiling are first estimates from probes. Tighten them after the pilot game's first owner report, with a `Gate-Change:` trailer. Reference points measured on SDK 57: a probe app's footprint was 42 MB (66 MB with 90 Skia canvases); a scene of about 265 draw calls re-recorded every frame held 60 fps on the simulator.
+The 6 MB bundle cap, the 150 MB memory cap (footprint: `phys_footprint`, Android private dirty + swap) and the 1,000 draw-call ceiling are first estimates from probes. Tighten them after the pilot game's first owner report, with a `Gate-Change:` trailer. Reference points measured on SDK 57: a probe app's footprint was 42 MB (66 MB with 90 Skia canvases); a scene of about 265 draw calls re-recorded every frame held 60 fps on the simulator.

@@ -1,2 +1,2 @@
 [music-default]
-packages/shell/src/services/audio/audio-api-audio-adapter.ts:175
+packages/shell/src/services/audio/audio-api-audio-adapter.ts:180

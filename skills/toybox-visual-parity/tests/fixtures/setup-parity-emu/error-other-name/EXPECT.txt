@@ -1,0 +1,2 @@
+refuses the AVD "Pixel_8a_API_35"
+e07-android-parity

@@ -5,8 +5,9 @@
 // find a cell: the probe publishes the board's geometry as one small text, `game.board-layout` =
 // JSON.stringify({ x, y, layout }), where x and y are the canvas's top-left corner in window
 // points and layout is the current BoardLayout (regions in canvas points, unmirrored, plus
-// isMirrored). An E2E flow reads it with copyTextFrom and taps x + region.x + (col + 0.5) *
-// region.cell; a parity capture reads it once to mask the board of S5, S6 and S7, which have no
+// isMirrored). An E2E flow reads it with copyTextFrom and taps (x + region.x + (col + 0.5) *
+// region.cell) * tapScale: Maestro's point taps are window points on iOS and pixels on Android, so
+// on Android the text also carries tapScale, the density (E18-T24). A parity capture reads it once to mask the board of S5, S6 and S7, which have no
 // board reference. The frame clips and the text wraps inside it, so the probe never draws over
 // the Shell chrome that parity compares.
 // Given the clock's scene and now, it also publishes `game.board-frame` = {"seq":<n>,"settled":<b>}:
@@ -15,7 +16,7 @@
 // waits for settled true after a move, a continue or a full-screen ad; a board whose clock stopped
 // early keeps settled false (the frozen board after a rewarded continue, 2026-10-01).
 import { useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { PixelRatio, Platform, StyleSheet, View } from 'react-native';
 import { useAnimatedReaction } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -72,9 +73,15 @@ const measureInWindow: MeasureOrigin = (view, done) => {
   });
 };
 
-/** The text a flow parses. */
-export function boardLayoutText(origin: BoardOrigin, layout: BoardLayout): string {
-  return JSON.stringify({ x: origin.x, y: origin.y, layout });
+/** Maestro's tap units per window point: 1 on iOS (points), the density on Android (pixels). */
+export function tapScaleOf(os: string, pixelRatio: number): number {
+  return os === 'android' ? pixelRatio : 1;
+}
+
+/** The text a flow parses; tapScale joins it only where it is not 1. */
+export function boardLayoutText(origin: BoardOrigin, layout: BoardLayout, tapScale = 1): string {
+  const base = { x: origin.x, y: origin.y, layout };
+  return JSON.stringify(tapScale === 1 ? base : { ...base, tapScale });
 }
 
 export function BoardLayoutProbe(props: BoardLayoutProbeProps): ReactNode {
@@ -100,7 +107,7 @@ export function BoardLayoutProbe(props: BoardLayoutProbeProps): ReactNode {
       {origin !== null && current !== null && current.width > 0 ? (
         <View style={styles.probe} pointerEvents="none">
           <AppText
-            text={boardLayoutText(origin, current)}
+            text={boardLayoutText(origin, current, tapScaleOf(Platform.OS, PixelRatio.get()))}
             variant="caption"
             testID="game.board-layout"
           />

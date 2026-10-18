@@ -1,0 +1,3 @@
+android-toolchain
+packages/shell/src/config/with-shell.ts
+sets kotlinVersion 2.2.0, but SDK 57's Android line says 2.1.20

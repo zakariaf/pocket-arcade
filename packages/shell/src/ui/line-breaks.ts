@@ -1,0 +1,53 @@
+// packages/shell/src/ui/line-breaks.ts
+// The design (Chrome) and iOS may end a line after a hyphen-minus inside a word, as Unicode line
+// breaking allows (rule HY): "right-to- / left", "public- / domain". Android's line breaker breaks
+// there only with hyphenation on, which would also hyphenate every other word. A zero-width space
+// after such a hyphen gives Android the same break point and draws nothing.
+
+import { asRtlParagraph, WORD_JOINER, ZERO_WIDTH_SPACE } from '@e07/shell/i18n/bidi.ts';
+import { FONT_FAMILIES } from '@e07/shell/i18n/fonts.ts';
+
+const IN_WORD_HYPHEN = /(?<=\p{L})-(?=\p{L})/gu;
+
+/** The text with a zero-width break point after each hyphen between two letters. */
+export function withHyphenBreaks(text: string): string {
+  // Most texts have no hyphen: skip the regex then (AppText draws every text through here).
+  if (!text.includes('-')) return text;
+  return text.replace(IN_WORD_HYPHEN, `-${ZERO_WIDTH_SPACE}`);
+}
+
+const NO_BREAK_SPACE = /\u00A0/gu;
+
+/**
+ * The text with each no-break space drawn as a plain space between two word joiners. Intl writes
+ * German numbers and prices with U+00A0 ("62 %", "1,99 €"), and Lilita One has no such glyph:
+ * Android then takes it from a fallback font whose space is wider (1.7 pt at 30 pt, E18-T23),
+ * where Chrome and iOS draw the font's own space. The joiners keep the line unbroken there.
+ */
+export function withFontSpaces(text: string): string {
+  if (!text.includes('\u00A0')) return text;
+  return text.replace(NO_BREAK_SPACE, `${WORD_JOINER} ${WORD_JOINER}`);
+}
+
+/** The bundled faces without a U+00A0 glyph: Lilita One (toybox-font-glyphs.test.ts reads the TTFs). */
+const WITHOUT_NO_BREAK_SPACE: ReadonlySet<string> = new Set([FONT_FAMILIES.display]);
+
+/** Whether a face draws its own no-break space (Rubik and Vazirmatn, as wide as their space). */
+export function hasOwnNoBreakSpace(fontFamily: string): boolean {
+  return !WITHOUT_NO_BREAK_SPACE.has(fontFamily);
+}
+
+/**
+ * The marks Android needs to draw a text as the design does: a break point after each in-word
+ * hyphen, a no-break space in the text's own font (only for a face without one: isNoBreakSpaceDrawn
+ * false), and in a right-to-left paragraph a right-to-left mark before a text without a strong
+ * letter (React Native's prepared layout reads it left to right, where a TextView did not).
+ */
+export function androidMarksOf(
+  text: string,
+  isRtlParagraph: boolean,
+  isNoBreakSpaceDrawn = false,
+): string {
+  const breakable = withHyphenBreaks(isNoBreakSpaceDrawn ? text : withFontSpaces(text));
+  return isRtlParagraph ? asRtlParagraph(breakable) : breakable;
+}

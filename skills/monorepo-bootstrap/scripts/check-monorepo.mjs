@@ -62,7 +62,7 @@ const BANNED = [
   [/^eslint-plugin-react-compiler$/, 'superseded by eslint-plugin-react-hooks 7'],
   [/^(axios|ky|got|node-fetch|cross-fetch)$/, 'our code makes no HTTP requests (N3)'],
 ];
-const PENDING_OWNER = { 'i18n:verify': 'i18n-strings-and-catalogs', 'audit:network': 'privacy-and-network-audit', 'audit:privacy': 'privacy-and-network-audit', 'e2e:ios': 'e2e-maestro', 'screenshots:ios': 'e2e-maestro', 'build:ios:sim': 'ios-simulator-build', 'release:ios': 'ios-release-testflight' };
+const PENDING_OWNER = { 'i18n:verify': 'i18n-strings-and-catalogs', 'audit:network': 'privacy-and-network-audit', 'audit:privacy': 'privacy-and-network-audit', 'e2e:ios': 'e2e-maestro', 'screenshots:ios': 'e2e-maestro', 'build:ios:sim': 'ios-simulator-build', 'release:ios': 'ios-release-testflight', 'e2e:android': 'e2e-maestro', 'screenshots:android': 'e2e-maestro', 'build:android:emu': 'android-emulator-build', 'release:android': 'android-release-play' };
 
 const template = (rel) => readFileSync(join(TEMPLATES, 'repo', rel), 'utf8');
 // The canonical root npm scripts, shared with the quality-gates skill (synced from the library).

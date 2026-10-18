@@ -423,17 +423,24 @@ export function sliceSkipReason(slice, screenId = null) {
  * to dueSkipReason: dueSkipReason(root, SHELL_DUE_TARGETS.plugins).
  *   plugins   the one native plugin list (expo-font, ads, IAP, audio, tracking entries,   step 8
  *             the native perf module)
- *   catalogs  the Shell's English catalog (catalog-key rules)                             step 6
+ *   catalogLinter  the catalog linter behind npm run i18n:verify (verify-catalogs.ts),   step 6
+ *             which reads the Shell's four catalogs: once it exists a missing catalog is a
+ *             problem (never use a catalog itself as the trigger: its absence would skip the
+ *             check that should catch it)
  *   boot      the Shell boot file start-shell.ts, which lands with the composition root   step 7
  *             (rules on hydration, the background checkpoint, the startup splash, UI
  *             feedback and the JS half of the perf layer, app/perf/*.ts)
+ *   e2e       the E2E runner run-e2e-ios.ts (the e2e:ios script and its flows)             step 10
+ *   release   the release pipeline release-ios.ts (the release:ios script)                 step 11
  * A perf rule splits in two: its JS half (app/perf/*.ts, markJsEntry inside startShell) waits for
  * .boot, and its native half (the process-start module and its plugin entry) waits for .plugins.
  */
 export const SHELL_DUE_TARGETS = Object.freeze({
   plugins: Object.freeze({ file: 'packages/shell/src/config/shell-plugins.ts', step: 8 }),
-  catalogs: Object.freeze({ file: 'packages/shell/src/i18n/catalogs/en.json', step: 6 }),
+  catalogLinter: Object.freeze({ file: 'packages/tooling/src/i18n/verify-catalogs.ts', step: 6 }),
   boot: Object.freeze({ file: 'packages/shell/src/app/start-shell.ts', step: 7 }),
+  e2e: Object.freeze({ file: 'packages/tooling/src/e2e/run-e2e-ios.ts', step: 10 }),
+  release: Object.freeze({ file: 'packages/tooling/src/release/release-ios.ts', step: 11 }),
 });
 
 /**

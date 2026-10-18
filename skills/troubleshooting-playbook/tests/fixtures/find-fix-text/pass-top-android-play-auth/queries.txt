@@ -1,0 +1,1 @@
+release:android: upload stopped: auth (HTTP 403): The caller does not have permission (permission or key of the service account) Not retried: send the owner this line and wait.

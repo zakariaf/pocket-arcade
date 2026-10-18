@@ -1,11 +1,11 @@
 // packages/shell/src/app/parity/parity-root.test.tsx
 // no-shell-context: ParityFrameRoot provides its own contexts and reads nothing else from the Shell.
-import { render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { use } from 'react';
 import { View } from 'react-native';
 
 import { ForcedAdPlacementsContext } from '@e07/shell/app/use-ad-context.ts';
-import { ScreenScrollTargetContext } from '@e07/shell/ui/screen-body.tsx';
+import { ScreenBody, ScreenScrollTargetContext } from '@e07/shell/ui/screen-body.tsx';
 
 import { PARITY_PLANS } from './parity-plans.ts';
 import { ParityFrameRoot } from './parity-root.tsx';
@@ -68,6 +68,22 @@ describe('ParityFrameRoot', () => {
     );
 
     expect(screen.getByTestId('parity.launch.3f9a0c1d2e4b')).toBeOnTheScreen();
+  });
+
+  it('gives every ScreenBody the scroll marker, which shows the offset the body reached', async () => {
+    await render(
+      <ParityFrameRoot request={requestFor('s11d-licences', 743)}>
+        <ScreenBody testID="licences.body">
+          <View />
+        </ScreenBody>
+      </ParityFrameRoot>,
+    );
+
+    await fireEvent.scroll(screen.getByTestId('licences.body'), {
+      nativeEvent: { contentOffset: { x: 0, y: 743 } },
+    });
+
+    expect(screen.getByTestId('parity.scroll.743.00')).toBeOnTheScreen();
   });
 
   it('draws no marker for a launch without a nonce', async () => {

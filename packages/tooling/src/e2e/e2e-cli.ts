@@ -54,35 +54,42 @@ const OPTIONS = {
   'write-perf-baseline': { type: 'boolean' },
   'include-tags': { type: 'string' },
 } as const;
-type OptionName = keyof typeof OPTIONS;
 
-const isOption = (name: string): name is OptionName => Object.hasOwn(OPTIONS, name);
+/** How node:util parseArgs reads each option of a runner's command line. */
+export type OptionSpec = Readonly<Record<string, { readonly type: 'string' | 'boolean' }>>;
 
-type Read = {
-  readonly values: ReadonlyMap<OptionName, string>;
-  readonly flags: ReadonlySet<OptionName>;
+/** The options read out of a command line: each value, and each flag that was given. */
+export type ReadOptions<TName extends string> = {
+  readonly values: ReadonlyMap<TName, string>;
+  readonly flags: ReadonlySet<TName>;
 };
 
 /**
  * Every option and its value, or the first problem. parseArgs reads the tokens leniently, so this
  * names each problem in the runner's words (an unknown option, a missing value, a stray word).
+ * Shared by e2e:ios, e2e:android and screenshots:android (android-cli.ts).
  */
-function readArgs(argv: readonly string[]): Read | string {
+export function readOptions<TSpec extends OptionSpec>(
+  argv: readonly string[],
+  spec: TSpec,
+): ReadOptions<Extract<keyof TSpec, string>> | string {
+  type Name = Extract<keyof TSpec, string>;
+  const isName = (name: string): name is Name => Object.hasOwn(spec, name);
   const { tokens } = parseArgs({
     args: [...argv],
-    options: OPTIONS,
+    options: spec,
     strict: false,
     allowPositionals: true,
     tokens: true,
   });
-  const values = new Map<OptionName, string>();
-  const flags = new Set<OptionName>();
+  const values = new Map<Name, string>();
+  const flags = new Set<Name>();
   for (const token of tokens) {
     if (token.kind !== 'option') {
       return `unexpected argument ${token.kind === 'positional' ? token.value : '--'}`;
     }
-    if (!isOption(token.name)) return `unknown option ${token.rawName}`;
-    if (OPTIONS[token.name].type === 'boolean') {
+    if (!isName(token.name)) return `unknown option ${token.rawName}`;
+    if (spec[token.name]?.type === 'boolean') {
       flags.add(token.name);
     } else if (token.value === undefined || token.value.startsWith('--')) {
       return `${token.rawName} needs a value`;
@@ -112,7 +119,7 @@ export function driverPortOf(text: string | undefined): number | undefined | str
 
 export function parseE2eCli(argv: readonly string[]): E2eCliParse {
   if (argv.includes('--help') || argv.includes('-h')) return { kind: 'help' };
-  const read = readArgs(argv);
+  const read = readOptions(argv, OPTIONS);
   if (typeof read === 'string') return { kind: 'error', message: read };
   const game = read.values.get('app');
   if (game === undefined) return { kind: 'error', message: 'missing --app <game-id>' };

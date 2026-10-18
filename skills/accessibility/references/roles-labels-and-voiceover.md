@@ -1,6 +1,6 @@
-# Roles, labels, targets and VoiceOver
+# Roles, labels, targets, VoiceOver and TalkBack
 
-What every interactive element must expose, how the Toybox components map to accessibility roles, how the board is spoken, and how overlays and other languages behave.
+What every interactive element must expose, how the Toybox components map to accessibility roles, how the board is spoken, and how overlays and other languages behave, on iOS (VoiceOver) and Android (TalkBack).
 
 ## Contents
 
@@ -13,6 +13,7 @@ What every interactive element must expose, how the Toybox components map to acc
 - The board for VoiceOver
 - Announcements
 - Order, overlays and languages
+- TalkBack on Android
 
 ## The pressable checklist
 
@@ -24,11 +25,11 @@ Screens use the Shell's Toybox `ui/` components (`Button`, `IconButton`, `LevelT
 | `accessibilityLabel` | the translated visible text, or the required `label` prop for icon-only buttons; a row whose own children render its texts (label, value, description) may leave it out, and VoiceOver reads those texts in order |
 | `accessibilityHint` | only when the result is not obvious from the label, translated |
 | `accessibilityState` | `{ disabled, busy }`, plus `selected` / `checked` for toggles, tabs, segments and options; also set `disabled` on the `Pressable` |
-| size | its own box at least 44 × 44 pt (`MIN_TOUCH`), never `hitSlop` |
+| size | its own box at least 44 × 44 pt (`MIN_TOUCH`; dp on Android), never `hitSlop`, also not in an Android-only branch |
 | `testID` | `<screen>.<element>` in kebab-case |
 | feedback | `style={(state) => [styles.base, state.pressed && styles.pressed]}` |
 
-Why: VoiceOver reads role, name and state; RNTL's `getByRole('button', { name })`, `toBeDisabled()` and `toBeBusy()` assert them.
+Why: VoiceOver and TalkBack read role, name and state; RNTL's `getByRole('button', { name })`, `toBeDisabled()` and `toBeBusy()` assert them.
 
 ## Roles and states per component (Toybox)
 
@@ -42,7 +43,7 @@ Why: VoiceOver reads role, name and state; RNTL's `getByRole('button', { name })
 | Pack tabs | `tab` | pack name | `selected` |
 | Group tabs, top-bar titles, panel headings, section titles | `header` (`AppText isHeader`) | the title | — |
 | Board | `image` | `t()` of `board.describe(view)` | updated with every view |
-| Pause, dialogs, sheets | the overlay root with `accessibilityViewIsModal` (for every Toybox dialog, the `Scrim`) | the title | — |
+| Pause, dialogs, sheets | the overlay root with `accessibilityViewIsModal` (for every Toybox dialog, the `Scrim`; iOS), plus the Android focus trap on the container behind it | the title | — |
 | Stars, week marks, chart columns, splash loader | labelled with their deck keys (`result.win.stars.a11y-label`, `daily.week.day-*.a11y-label`, `stats.week.bar.a11y-label`, `splash.loading.a11y-label`) | — | — |
 | Decorative art, logos, pager dots, the calendar tile | hidden (`accessible={false}` / `importantForAccessibility="no"` on the art) | — | — |
 
@@ -56,6 +57,7 @@ Why: VoiceOver reads role, name and state; RNTL's `getByRole('button', { name })
 ## Touch targets
 
 - Every Shell touch target's own box is at least **44 × 44 pt** (`MIN_TOUCH`): `minWidth`/`minHeight` or `width`/`height` on the `Pressable` itself. Do not use `hitSlop` to reach 44: it is invisible in layout and overlaps neighbours.
+- **The same rule on Android, in dp.** React Native lays out in dp on Android as in pt on iOS, so `MIN_TOUCH` is 44 dp there: one rule on both platforms. Android's own guidance asks for 48 dp; the Toybox sizes already give most targets 48 or more (keys, icon buttons, rows), and the 44 dp ones (game top-bar buttons, quiet buttons, level tiles' width) stay as designed: a box is never grown with `hitSlop` to reach 48, and never shrunk below 44 on Android. A `Platform.select({ android: ... })` or `Platform.OS === 'android' ? ... : ...` branch that gives a pressable's style a smaller box, or that carries a `hitSlop`, is the same mistake hidden from the iOS layout: `check-a11y-code` resolves each platform's branch and fails `touch-target` ("... on Android") or `hit-slop` ("in an Android-only branch").
 - Toybox sizes: keys 48–94 pt tall, icon buttons 48 pt (44 in the game top bar), rows 60 pt, the hero key 80 pt (grows with large text), level tiles about 51.7 × 62 pt, quiet buttons 44 pt.
 - Level tiles are 6 equal columns (about 51.7 pt wide on a 390 pt phone, never below 44 pt) and 62 pt tall; at large text they grow taller with the font (`minHeight`, not a fixed `height`), the grid stays 6 columns on phones.
 - Boards expose their smallest hit region (cell size + 2 × the hit slop of the board's own gesture code); each game has a Jest test asserting it is at least 44 pt at 402 × 874 pt. An exception needs the owner's sign-off in the game's design pass.
@@ -93,5 +95,24 @@ Results and important events are announced with `useAnnounce()` (`packages/shell
 - **VoiceOver order equals visual order.** Do not reorder with absolute positioning over the reading order; in RTL the order starts at the top right.
 - **Overlays** (Pause, dialogs, sheets, the S7 result drawn over the board) set `accessibilityViewIsModal` on their root, so VoiceOver cannot wander into the screen or board behind them. For every Toybox dialog the root is the shared `Scrim`, which sets it; a dialog that renders the `Scrim` is modal through it. Never put the flag on the `DialogCard` inside the scrim: a modal child hides its ancestors' identifiers, so the scrim's testID and the screen under it dropped out of the accessibility tree and every S14 capture failed "screen not reached". `check-a11y-code` (`modal-overlay`) follows the component, and toybox-components' `modal-root` rule keeps the flag on the scrim.
 - **The two-finger scrub ("Z")** on the Game screen opens Pause instead of leaving the game. The scrub asks the native stack to go back, and the Game screen's `usePreventRemove` (navigation-and-routing) already turns a Back while playing into Pause, and a Back in Pause into Resume. The owner's VoiceOver checklist (step 5) confirms it on the phone; if the scrub does nothing there, add `onAccessibilityEscape` (calling the same pause action) to the Game screen's root view.
+- **Overlays on Android.** `accessibilityViewIsModal` is iOS-only: TalkBack ignores it and walks from the dialog onto the board or the screen behind it. `importantForAccessibility` hides only a view's own subtree, so the Android trap cannot sit in the overlay: the container that holds the content behind the overlay sets `importantForAccessibility={overlay === null ? 'auto' : 'no-hide-descendants'}` on the view around that content. In the Shell that is `game-layout.tsx` (the board and top bar behind Pause and Result; the board stays mounted), `dialog-context.tsx` (the screens behind every S14 dialog) and `consent-moment.tsx` (the app behind S3), and all three draw it through toybox-screens' one `ModalLayer` (`app/modal-layer.tsx`: the trap on the View behind, `accessibilityViewIsModal` on the layer's View, and the Android system back for a layer above the navigator). The overlay keeps `accessibilityViewIsModal` for iOS; neither half replaces the other. `check-a11y-code` (`modal-overlay`) demands both: the iOS flag through the overlay's own file (or a component it renders), and, from Android step 4 on, the trap in a file that renders the overlay (directly or through other files) or in a component that the overlay's direct renderer also renders (the layout it hands the overlay to), or in the `ModalLayer` such a file draws the overlay in; never in an overlay-named file itself. An overlay inside React Native's `<Modal>` is its own window and trapped on both platforms.
 - **Text in another language than the UI** (the autonyms in S2 and S11a) sets `accessibilityLanguage` on the element VoiceOver focuses (`RaisedSurface labelLanguage={code}`, `ListRow labelLanguage={code}`), so Persian is not read with an English voice. `AppText language={code}` alone is not enough inside a labelled pressable: VoiceOver reads the pressable's label in the UI voice and never the inner text's language.
 - The first thing read on each screen is its title; nothing is read as just "button".
+
+## TalkBack on Android
+
+The same props serve both screen readers; what differs is listed here.
+
+| Topic | iOS (VoiceOver) | Android (TalkBack) |
+|---|---|---|
+| Role, name, hint, state | `accessibilityRole`, `accessibilityLabel`, `accessibilityHint`, `accessibilityState` | the same props; TalkBack speaks the role in its own words ("button", "switch", "on"/"off", "heading" for `header`) |
+| Sliders | `adjustable` + increment/decrement actions; one-finger swipe up/down | the same declared actions: React Native maps `adjustable` to a seek bar and increment/decrement to TalkBack's scroll-forward/backward actions (the volume keys while the slider has focus), so without them TalkBack cannot change the value either |
+| Hold alternatives | `accessibilityActions` (`activate`) | the same actions: TalkBack's double-tap-and-hold is a long press, the declared action is the alternative |
+| Modal overlays | `accessibilityViewIsModal` on the overlay root | `importantForAccessibility` `no-hide-descendants` on the container behind the overlay (above) |
+| Hidden decoration | `accessibilityElementsHidden` | `importantForAccessibility="no-hide-descendants"` (or `"no"` for one view); set both, as the daily card does |
+| Other-language text | `accessibilityLanguage` | iOS-only, ignored on Android: TalkBack reads with its own text-to-speech language, so an autonym in another script may be read with the wrong voice; the visible text stays right, and the owner's TalkBack check records what is heard |
+| Announcements | `useAnnounce()` while VoiceOver runs | the same hook: `isScreenReaderEnabled` is true while TalkBack runs, and `announceForAccessibility` speaks through TalkBack |
+| Back | two-finger scrub opens Pause | TalkBack's back gesture and the system back are the hardware back: on Game it opens Pause (navigation-and-routing) |
+| Touch target | 44 pt | 44 dp, the same rule |
+
+TalkBack moves in the same order as VoiceOver (layout order; in RTL from the top right). Its spoken output is judged only by the owner's TalkBack spot check (testing reference, R2 on Android).

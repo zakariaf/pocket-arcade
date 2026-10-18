@@ -1,5 +1,5 @@
 {
-  "$comment": "What each Expo SDK line expects of the packages that move with it. Read by check-sdk-alignment.mjs and check-sdk-trigger.mjs. Version fields ending in a minor (\"19.3\") are prefixes; full versions are exact. SDK 57 is the verified set (2026-09-26). SDK 58 comes from expo 58.0.0-preview.7 and the Expo versions API, read on 2026-09-28: confirm every value against the stable release (node_modules/expo/bundledNativeModules.json and the versions API) and update this file in the same commit as the move. A new SDK (59 and later) needs its own entry before check-sdk-alignment.mjs accepts it.",
+  "$comment": "What each Expo SDK line expects of the packages that move with it. Read by check-sdk-alignment.mjs and check-sdk-trigger.mjs. Version fields ending in a minor (\"19.3\") are prefixes; full versions are exact. SDK 57 is the verified set (2026-09-26). SDK 58 comes from expo 58.0.0-preview.7 and the Expo versions API, read on 2026-09-28: confirm every value against the stable release (node_modules/expo/bundledNativeModules.json and the versions API) and update this file in the same commit as the move. A new SDK (59 and later) needs its own entry before check-sdk-alignment.mjs accepts it. android: the SDK line's Android build toolchain, read from the installed packages (React Native's node_modules/react-native/gradle/libs.versions.toml, the Gradle wrapper of @react-native/gradle-plugin, ReactAndroid's jvmToolchain); cmake is the SDK package the Android build preflight requires. null means not yet known: fill it from the new React Native in the move commit; until then check-sdk-alignment.mjs fails an Android repo on that SDK.",
   "sdks": {
     "57": {
       "status": "current, verified 2026-09-26",
@@ -18,6 +18,18 @@
       "xcodeMin": "26.0",
       "xcodeMaxWithoutSceneSupport": "26",
       "sceneSupportMinExpo": "57.0.23",
+      "android": {
+        "compileSdk": 36,
+        "targetSdk": 36,
+        "minSdk": 24,
+        "buildTools": "36.0.0",
+        "ndk": "27.1.12297006",
+        "cmake": "3.22.1",
+        "agp": "8.12.0",
+        "gradle": "9.3.1",
+        "kotlin": "2.1.20",
+        "jdk": 17
+      },
       "removedReactNativeApis": []
     },
     "58": {
@@ -48,6 +60,7 @@
       "xcodeMin": "26.4",
       "xcodeMaxWithoutSceneSupport": null,
       "sceneSupportMinExpo": null,
+      "android": null,
       "removedReactNativeApis": [
         {
           "id": "InteractionManager",

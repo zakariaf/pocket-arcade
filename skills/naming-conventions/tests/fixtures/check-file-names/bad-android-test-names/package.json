@@ -1,0 +1,31 @@
+{
+  "name": "demo-games",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "verify": "node tool.ts",
+    "check:fast": "node tool.ts",
+    "format": "node tool.ts",
+    "format:check": "node tool.ts",
+    "lint": "node tool.ts",
+    "typecheck": "node tool.ts",
+    "test": "node tool.ts",
+    "test:golden": "node tool.ts",
+    "test:sim": "node tool.ts",
+    "test:coverage": "node tool.ts",
+    "test:mutation": "node tool.ts",
+    "knip": "node tool.ts",
+    "audit:network": "node tool.ts",
+    "audit:privacy": "node tool.ts",
+    "audit:licenses": "node tool.ts",
+    "i18n:verify": "node tool.ts",
+    "e2e:ios": "node tool.ts",
+    "screenshots:ios": "node tool.ts",
+    "build:ios:sim": "node tool.ts",
+    "release:ios": "node tool.ts",
+    "new-game": "node tool.ts"
+  }
+}

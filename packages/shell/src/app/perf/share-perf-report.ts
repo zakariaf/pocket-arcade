@@ -1,5 +1,5 @@
 // packages/shell/src/app/perf/share-perf-report.ts
-// device-only: covered by the debug menu's "Share performance report" on the simulator (the iOS share sheet)
+// device-only: covered by the debug menu's "Share performance report" on the simulator and the emulator (the system share sheet)
 import { Share } from 'react-native';
 
 import type { PerfLog } from './perf-log.ts';
@@ -12,8 +12,8 @@ export type PerfReportHeader = {
 };
 
 /**
- * Debug menu (S15, test builds) > Performance > "Share performance report". Opens the iOS share
- * sheet with JSON; the owner AirDrops or pastes it to Claude. Nothing is sent by our code (N3).
+ * Debug menu (S15, test builds) > Performance > "Share performance report". Opens the system share
+ * sheet with JSON; the owner AirDrops, Quick Shares or pastes it to Claude. Nothing is sent by our code (N3).
  * The debug menu reaches it through the test-only entry, which knip cannot follow.
  * @public
  */

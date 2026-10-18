@@ -1,0 +1,23 @@
+[
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": ["packages", "node_modules/some-lib/node_modules/react-native-play-install-referrer"],
+      "value": { "version": "1.1.8" }
+    }
+  },
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": ["packages", "node_modules/react-native-google-play-integrity"],
+      "value": { "version": "1.0.0" }
+    }
+  },
+  {
+    "json": {
+      "file": "package-lock.json",
+      "path": ["packages", "node_modules/react-native-appsflyer"],
+      "value": { "version": "6.16.2" }
+    }
+  }
+]

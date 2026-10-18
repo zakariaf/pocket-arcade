@@ -1,0 +1,22 @@
+{
+ "version": 1,
+ "frame": "s11c-privacy-policy",
+ "variant": null,
+ "referenceName": "s11c-privacy-policy",
+ "kind": "phone-tall",
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 107,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "scrollMarkers": [
+  {
+   "testID": "parity.scroll.107.00",
+   "y": 107
+  }
+ ],
+ "note": "A real Release capture of S11c light-en at the last offset (scrollY 107) on the e07-android-parity-t21 emulator (E18, between T22 and T23). Android lays one more line in the ads paragraph, so every section below it sits 23.5 pt lower and the median element shift reads 83.7 pt; the body really is at 107, as the app's marker parity.scroll.107.00 says. Judged at that measured scroll, the run passes with the per-element waivers of that cascade (copies of the proposals in reports/e18/android-waiver-candidates.json, tasks T22 and scroll-gate)."
+}

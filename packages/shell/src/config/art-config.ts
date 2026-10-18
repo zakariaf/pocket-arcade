@@ -11,8 +11,16 @@ type PluginEntry = NonNullable<ExpoConfig['plugins']>[number];
 const GENERATED = './assets/generated';
 /** The splash logo PNG is 1024 px and represents 200 pt (the S1 logo tile with its ring). */
 export const SPLASH_IMAGE_WIDTH = 200;
+/** Android 12 draws the splash icon on a 288 dp canvas and masks it to its central 192 dp circle. */
+export const ANDROID_SPLASH_IMAGE_WIDTH = 288;
 
-export type SplashColors = { readonly light: string; readonly dark: string };
+/** A drawn game's S1 ground (its palette background), light and dark, and its light accent. */
+export type SplashColors = {
+  readonly light: string;
+  readonly dark: string;
+  /** The Android adaptive icon's background (the light icon's full-bleed colour). */
+  readonly accent: string;
+};
 
 /** Splash = the game's logo tile on its ground (S1), light and dark: pass PALETTE backgrounds. */
 export function splashPlugin(ground: SplashColors): PluginEntry {
@@ -23,11 +31,17 @@ export function splashPlugin(ground: SplashColors): PluginEntry {
       imageWidth: SPLASH_IMAGE_WIDTH,
       backgroundColor: ground.light,
       dark: { image: `${GENERATED}/splash-logo-dark.png`, backgroundColor: ground.dark },
+      // Android 12+: the tile sized to fit the masking circle; the grounds come from above.
+      android: {
+        image: `${GENERATED}/android-splash-icon.png`,
+        imageWidth: ANDROID_SPLASH_IMAGE_WIDTH,
+        dark: { image: `${GENERATED}/android-splash-icon-dark.png` },
+      },
     },
   ];
 }
 
-/** Root `icon` (Android and fallbacks) and `ios.icon` with the iOS 18+ appearances. */
+/** Root `icon` (Android 7 and fallbacks), `ios.icon` with the iOS 18+ appearances, Android's layers. */
 export const ICON_CONFIG = {
   icon: `${GENERATED}/icon-light.png`,
   iosIcon: {
@@ -35,17 +49,26 @@ export const ICON_CONFIG = {
     dark: `${GENERATED}/icon-dark.png`,
     tinted: `${GENERATED}/icon-tinted.png`,
   },
+  androidLayers: {
+    foregroundImage: `${GENERATED}/android-icon-foreground.png`,
+    monochromeImage: `${GENERATED}/android-icon-monochrome.png`,
+  },
 } as const satisfies {
   readonly icon: string;
   readonly iosIcon: NonNullable<ExpoConfig['ios']>['icon'];
+  readonly androidLayers: NonNullable<ExpoConfig['android']>['adaptiveIcon'];
 };
 
-/** Adds the generated icon and splash to a composed config, appending to its one plugin list. */
+/** Adds the generated icons and splash to a composed config, appending to its one plugin list. */
 export function withArt(config: ExpoConfig, ground: SplashColors): ExpoConfig {
   return {
     ...config,
     icon: ICON_CONFIG.icon,
     ios: { ...config.ios, icon: ICON_CONFIG.iosIcon },
+    android: {
+      ...config.android,
+      adaptiveIcon: { ...ICON_CONFIG.androidLayers, backgroundColor: ground.accent },
+    },
     plugins: [...(config.plugins ?? []), splashPlugin(ground)],
   };
 }

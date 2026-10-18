@@ -1,0 +1,14 @@
+{
+ "version": 1,
+ "frame": "s4-home",
+ "variant": null,
+ "theme": "light",
+ "lang": "en",
+ "game": "lineSiege",
+ "scrollY": 0,
+ "platform": "android",
+ "hierarchyPxPerPt": 3,
+ "referenceRoot": "../reference",
+ "source": "self-test",
+ "app": "../good/app.png"
+}

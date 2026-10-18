@@ -6,7 +6,7 @@ import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import { COMPONENT_SPECS } from './component-specs.ts';
 import { Icon } from './icons/icon.tsx';
-import { dieCutRing, tiltedLayer } from './toybox-styles.ts';
+import { dieCutRing, dieCutTiltedLayer } from './toybox-styles.ts';
 
 import type { IconName } from './icons/icon-paths.ts';
 import type { ReactNode } from 'react';
@@ -45,7 +45,7 @@ export function ArtTile({
   const side = SIZE[size];
   return (
     <View
-      {...tiltedLayer(ART.rotate, [
+      {...dieCutTiltedLayer(ART.rotate, [
         styles.tile,
         { width: side, height: side, backgroundColor: fills[paint], borderColor: shell.toyInk },
         dieCutRing(ART.ring, shell.cut),

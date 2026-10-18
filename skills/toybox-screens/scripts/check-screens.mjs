@@ -87,7 +87,11 @@ const SPEC = {
     '  screen-test-audit    the screen\'s tests never call findInaccessiblePressables, or a block of its view test',
     '                       (<name>-view/-page/-overlay/-screen.test.tsx, dialogs.test.tsx) renders without it',
     '  overlay-not-modal    an overlay drawn over the Game board (S6 Pause, S7 Result) does not keep',
-    '                       VoiceOver inside it (accessibilityViewIsModal, or a DialogCard, which sets it)',
+    '                       VoiceOver inside it (accessibilityViewIsModal, or a DialogCard, which sets it); or',
+    '                       on Android, the host beside an overlay (screens/game/game-layout.tsx for S6 and S7,',
+    '                       app/dialog-context.tsx for S14) never hides what lies behind it from TalkBack',
+    '                       (importantForAccessibility "no-hide-descendants" while the overlay is up, itself or',
+    '                       through the ModalLayer it draws the overlay in, app/modal-layer.tsx)',
     '  screen-not-built     a screen named with --screen (or any, with --all, or any in shell-slice.json) has no code',
     '  route-model-hook     a route file (home-screen.tsx, pause-overlay.tsx, ...) calls no use-<screen>-model hook',
     '  model-hook-missing   a route file imports ./use-<name>.ts, which does not exist',
@@ -413,6 +417,46 @@ function checkOverlayModal(screen, code, report) {
   report.problem({ file: SCREEN_PATHS[screen.id][0].replace(/\/\*$/, '/'), rule: 'overlay-not-modal', message: `${screen.id} covers the Game board but never sets accessibilityViewIsModal, so VoiceOver can wander onto the board underneath`, fix: 'Set accessibilityViewIsModal on the overlay\'s full-screen View (result-overlay.tsx does), or draw it in a DialogCard, which sets it.' });
 }
 
+/**
+ * The Android half of overlay-not-modal. accessibilityViewIsModal is iOS-only, and
+ * importantForAccessibility hides a View's own subtree, never a sibling: so the component that
+ * draws the overlay beside a screen hides that screen while the overlay is up. S6 and S7 sit beside
+ * the Game frame (game-layout.tsx), the S14 dialogs beside the navigator (dialog-context.tsx).
+ */
+const OVERLAY_TRAP_HOSTS = {
+  S6: 'packages/shell/src/screens/game/game-layout.tsx',
+  S7: 'packages/shell/src/screens/game/game-layout.tsx',
+  S14: 'packages/shell/src/app/dialog-context.tsx',
+};
+/** The literal attribute, or the value chosen in an expression ({covered ? 'no-hide-descendants' : 'auto'}). */
+const ANDROID_TRAP = /\bimportantForAccessibility="no-hide-descendants"|\bimportantForAccessibility=\{[^}]*'no-hide-descendants'/;
+/** The one layer primitive the hosts draw their overlay in: it holds the trap for them. */
+const MODAL_LAYER = 'packages/shell/src/app/modal-layer.tsx';
+
+/** The last root's copy of a repo file (a fixture's file replaces the template's), or undefined. */
+function newestCopy(roots, rel) {
+  return [...roots].reverse().map((root) => join(root, rel)).find((abs) => existsSync(abs));
+}
+
+/** The host hides what lies behind: itself, or through the ModalLayer it draws the overlay in. */
+function isTrapped(roots, hostText) {
+  if (ANDROID_TRAP.test(hostText)) return true;
+  const layer = /<ModalLayer\b/.test(hostText) ? newestCopy(roots, MODAL_LAYER) : undefined;
+  return layer !== undefined && ANDROID_TRAP.test(readFileSync(layer, 'utf8'));
+}
+
+function checkOverlayTrap(roots, screen, report) {
+  const host = OVERLAY_TRAP_HOSTS[screen.id];
+  if (host === undefined) return;
+  const found = newestCopy(roots, host);
+  if (found === undefined) {
+    report.skip({ file: host, rule: 'overlay-not-modal', message: `${screen.id}'s Android focus trap is checked once ${host} exists (it lands with the Shell core)` });
+    return;
+  }
+  if (isTrapped(roots, readFileSync(found, 'utf8'))) return;
+  report.problem({ file: host, rule: 'overlay-not-modal', message: `${screen.id} keeps TalkBack inside it only on iOS: accessibilityViewIsModal is iOS-only, and nothing hides the screen behind it on Android, so TalkBack walks onto it`, fix: "Draw the overlay in a ModalLayer (app/modal-layer.tsx: <ModalLayer behind={...} layer={overlay} />), whose View holding what lies behind sets importantForAccessibility={<covered> ? 'no-hide-descendants' : 'auto'} (the value changes, the View stays, so nothing remounts), as the templates' game-layout.tsx and dialog-context.tsx do." });
+}
+
 
 const HOOK_IMPORT = /from\s+'\.\/(use-[a-z0-9-]+)\.ts'/g;
 const MODEL_HOOK_CALL = /\buse[A-Z][A-Za-z0-9]*Model\s*\(/;
@@ -725,6 +769,7 @@ run(async () => {
     checkCopyKeys(ctx, screen, code, report);
     checkFiles(screen, code, report);
     checkModelHooks(roots, screen, report);
+    checkOverlayTrap(roots, screen, report);
     checkGameWiring(screen, code, report);
     checkDailyOpener(screen, code, report);
     checkHintFact(screen, code, report);

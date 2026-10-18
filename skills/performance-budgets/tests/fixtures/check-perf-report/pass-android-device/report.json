@@ -1,0 +1,80 @@
+{
+ "appId": "io.applander.demogame",
+ "appVersion": "1.0.0",
+ "buildNumber": "12",
+ "deviceModel": "android 34",
+ "entries": [
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600000000,
+   "data": {
+    "nativeMs": 640,
+    "jsMs": 60,
+    "totalMs": 700
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600001000,
+   "data": {
+    "nativeMs": 660,
+    "jsMs": 60,
+    "totalMs": 720
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600002000,
+   "data": {
+    "nativeMs": 630,
+    "jsMs": 60,
+    "totalMs": 690
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600003000,
+   "data": {
+    "nativeMs": 650,
+    "jsMs": 60,
+    "totalMs": 710
+   }
+  },
+  {
+   "kind": "cold-start",
+   "label": "home",
+   "atEpochMs": 1790600004000,
+   "data": {
+    "nativeMs": 645,
+    "jsMs": 60,
+    "totalMs": 705
+   }
+  },
+  {
+   "kind": "frames",
+   "label": "play",
+   "atEpochMs": 1790600100000,
+   "data": {
+    "frames": 3600,
+    "refreshHz": 60,
+    "p95UpToMs": 16.7,
+    "hitchMsPerS": 2
+   }
+  },
+  {
+   "kind": "save-benchmark",
+   "label": "save-write",
+   "atEpochMs": 1790600200000,
+   "data": {
+    "p50": 0.8,
+    "p95": 1.9,
+    "max": 3.1,
+    "writes": 300
+   }
+  }
+ ]
+}

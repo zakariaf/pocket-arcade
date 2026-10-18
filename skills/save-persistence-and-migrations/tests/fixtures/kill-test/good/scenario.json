@@ -1,0 +1,12 @@
+{
+  "devices": [
+    "emulator-5554"
+  ],
+  "avds": [
+    "Pixel_8a_API_35",
+    "MindForge_Android_390x844"
+  ],
+  "root": "ok",
+  "saveSql": "save.sql",
+  "firstWriteAfterPolls": 2
+}

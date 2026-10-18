@@ -14,7 +14,7 @@
   "testTitle": "^(can|[a-z]+s)\\b",
   "booleanPrefixes": ["is", "has", "can", "should", "did", "will", "was"],
   "grabBagNames": ["util", "utils", "helper", "helpers", "misc", "common", "shared", "stuff"],
-  "testSuffixes": ["test", "golden.test", "sim.test", "perf.test"],
+  "testSuffixes": ["test", "android.test", "golden.test", "sim.test", "perf.test"],
   "languages": ["en", "de", "fa", "ckb"],
   "canonical": {
     "ports": ["AdsPort", "PurchasePort", "SaveStore", "SqlDriver", "ClockPort", "ConnectivityPort", "AudioPort", "HapticsPort", "ConsentPort", "ErrorLogPort"],

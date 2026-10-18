@@ -1,0 +1,4 @@
+apps/demo-game/assets/generated/android-icon-foreground.png [art-missing]
+apps/demo-game/assets/generated/android-icon-monochrome.png [art-missing]
+apps/demo-game/assets/generated/android-splash-icon-dark.png [art-missing]
+apps/demo-game/assets/generated/play-icon-512.png [art-missing]

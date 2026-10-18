@@ -1,0 +1,1 @@
+SKIP quality-gates.json [budget-missing] perf.coldStartEmuRegressionFactor: due at Android step 1: packages/tooling/src/build/build-android-emu.ts not yet created

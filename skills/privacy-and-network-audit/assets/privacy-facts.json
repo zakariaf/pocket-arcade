@@ -91,8 +91,26 @@
   },
   "privacyManifestFile": "packages/shell/src/config/privacy-manifest.ts",
   "gitignorePatterns": ["*.p8", "AuthKey_*", "ApiKey_*", "*.p12", "*.mobileprovision", "*.xcarchive", "*.ipa"],
-  "secretFilePattern": "(\\.p8|\\.p12|\\.mobileprovision)$|(^|/)(AuthKey|ApiKey)_[^/]*$",
+  "secretFilePattern": "(\\.p8|\\.p12|\\.mobileprovision|\\.jks|\\.keystore)$|(^|/)(AuthKey|ApiKey)_[^/]*$|(^|/)play-service-account\\.json$",
   "denyRules": ["Read(~/.appstoreconnect/**)", "Read(**/*.p8)", "Read(**/AuthKey_*)", "Read(**/*.p12)", "Read(**/*.mobileprovision)"],
+  "android": {
+    "verified": "2026-10-12",
+    "keyGitignorePatterns": ["*.jks", "*.keystore", "play-service-account.json"],
+    "keyDenyRules": ["Read(~/.android-keys/**)", "Read(**/*.jks)", "Read(**/*.keystore)", "Read(**/play-service-account.json)"],
+    "keyHome": "~/.android-keys/",
+    "pluginDir": "packages/shell/plugins",
+    "manifestAuditFile": "packages/tooling/src/audit/android-manifest-audit.ts",
+    "gradleLayerFile": "packages/tooling/src/audit/network-gradle-layer.ts",
+    "gradleArtifactAllowlist": [
+      "com.google.android.gms:play-services-ads",
+      "com.google.android.gms:play-services-ads-lite",
+      "com.google.android.gms:play-services-ads-identifier",
+      "com.google.android.ump:user-messaging-platform",
+      "com.android.billingclient:billing",
+      "com.android.billingclient:billing-ktx",
+      "io.github.hyochan.openiap:openiap-google"
+    ]
+  },
   "npmScripts": {
     "audit:network": "node packages/tooling/src/audit/audit-network.ts",
     "audit:privacy": "node packages/tooling/src/audit/audit-privacy.ts",

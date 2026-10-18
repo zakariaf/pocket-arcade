@@ -1,0 +1,2 @@
+[ads-config]
+live without Android ids: no Android app id

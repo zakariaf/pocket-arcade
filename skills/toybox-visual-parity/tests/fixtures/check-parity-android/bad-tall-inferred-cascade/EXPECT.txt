@@ -1,0 +1,2 @@
+[scroll-mismatch] privacy-policy.screen: the body is scrolled by 83.7 pt but the capture asked for scrollY 107
+inferred from the median element shift (the capture has no parity.scroll marker)

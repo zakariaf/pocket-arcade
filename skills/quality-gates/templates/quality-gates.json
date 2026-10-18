@@ -239,6 +239,10 @@
         "Read(**/AuthKey_*)",
         "Read(**/*.p12)",
         "Read(**/*.mobileprovision)",
+        "Read(~/.android-keys/**)",
+        "Read(**/*.jks)",
+        "Read(**/*.keystore)",
+        "Read(**/play-service-account.json)",
         "Bash(git commit *--no-verify*)",
         "Bash(git commit -n *)",
         "Bash(git push *--no-verify*)"
@@ -376,6 +380,7 @@
   "perf": {
     "coldStartHomeMsMax": 1000,
     "coldStartSimRegressionFactor": 1.2,
+    "coldStartEmuRegressionFactor": 1.2,
     "hitchMsPerSecondMax": 10,
     "frameP95MsMax": 17,
     "saveWriteP95MsMax": 5,
@@ -419,6 +424,7 @@
     "**/*.golden.test.ts.snap.ios",
     "**/__image_snapshots__/**",
     "apps/*/e2e/baselines/**",
+    "apps/*/e2e/baselines-android/**",
     "perf-baselines/**",
     "**/fixtures/save-v*.json",
     "parity/waivers.json",

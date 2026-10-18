@@ -7,8 +7,9 @@ import { createReporter, fail, parseArgs, run, sha256 } from './check-lib.mjs';
 import { TOOLING_OPTION, loadImageDeps, toolingDirOf } from './lib/deps.mjs';
 import { FACTS_FILE, describeFacts, describeReference, loadCatalogue, readGameFacts, referenceName, variantFor, withMapMetadata, withModal } from './lib/frames.mjs';
 import { TOLERANCES, compareRun } from './lib/gates.mjs';
-import { parseAppLayout, parseMaestroHierarchy } from './lib/hierarchy.mjs';
+import { parseAppLayout, parseMaestroHierarchy, scrollMarkersOf } from './lib/hierarchy.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
+import { PLATFORM_DEFAULTS, platformOf } from './lib/platform.mjs';
 import { readPng } from './lib/png.mjs';
 import { RUN_FILES, applyWaivers, findRunDirs, prelistedWaiverFor, readRun, readWaivers } from './lib/runs.mjs';
 
@@ -23,9 +24,9 @@ const SPEC = {
   usage: '<run-dir>... | --runs <folder> [options]',
   options: {
     runs: { type: 'string', value: 'folder', help: 'Check every run folder (holding run.json) under this folder' },
-    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set in assets/reference/; a run.json may name its own)' },
+    reference: { type: 'string', value: 'dir', help: 'Reference root (default: the committed set of the run\'s platform, assets/reference/ or assets/reference-android/; a run.json may name its own)' },
     waivers: { type: 'string', value: 'file', help: 'Waiver file', default: 'parity/waivers.json' },
-    device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    device: { type: 'string', value: 'file', help: 'Device profile (default: the run\'s platform, assets/device/iphone16pro.json or android-phone.json)' },
     map: { type: 'string', value: 'file', help: 'Screen testID map (element metadata: checks, parts, masks)', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     'no-write': { type: 'boolean', help: 'Do not write report.json' },
@@ -48,6 +49,11 @@ const SPEC = {
     'masks the board rectangle its run.json holds (capture-app\'s probe=board); a run without one stops with exit 2.',
     'Then run make-sheet.mjs on the same run folder and look at the sheet.',
     '',
+    'An Android run (run.json "platform": "android", from capture-app.mjs --platform android) is compared with the',
+    'Android set (assets/reference-android) at the Android profile\'s geometry; one checked against a set for another',
+    'platform fails wrong-reference. Only waivers of the run\'s platform apply: an Android run needs "platform":',
+    '"android" in the waiver (waiver-platform names an iOS waiver that would have covered it).',
+    '',
     'Examples:',
     '  node check-parity.mjs .parity/lineSiege/s4-home/light-en',
     '  node check-parity.mjs --runs .parity/lineSiege/s4-home',
@@ -63,7 +69,12 @@ run(async () => {
     dirs.push(...findRunDirs(root));
   }
   if (dirs.length === 0) fail('nothing to check: pass run folders or --runs <folder>', 'Run: node check-parity.mjs --help');
-  const device = readJson(resolve(options.device), 'device profile');
+  // One profile per platform: --device for every run, else the profile of each run's platform.
+  const devices = {};
+  const deviceFor = (platform) => {
+    devices[platform] ??= readJson(resolve(options.device ?? PLATFORM_DEFAULTS[platform].device), 'device profile');
+    return devices[platform];
+  };
   const { PNG, pixelmatch } = await loadImageDeps(toolingDirOf(options));
   const report = createReporter({ name: 'check-parity', json: options.json });
   const show = (p) => relative(process.cwd(), p) || '.';
@@ -81,6 +92,17 @@ run(async () => {
     const runInfo = readRun(dir, { referenceRoot: options.reference });
     const { info } = runInfo;
     const file = show(runInfo.app);
+    const device = deviceFor(info.platform);
+    // An Android capture is judged only against the Android set (and an iOS one only against the iOS
+    // set): the geometry, the insets and the status bar differ.
+    if (runInfo.reference.platform !== info.platform) {
+      report.problem({ file, rule: 'wrong-reference', message: `an ${info.platform} run checked against the ${runInfo.reference.platform} reference set (${show(runInfo.reference.image)})`, fix: `Check it against the ${info.platform} set: drop --reference (the default follows the run's platform) or pass ${info.platform === 'android' ? 'assets/reference-android' : 'assets/reference'}.` });
+      continue;
+    }
+    if (platformOf(device) !== info.platform) {
+      report.problem({ file, rule: 'wrong-reference', message: `an ${info.platform} run checked with the ${platformOf(device)} device profile ${device.name}`, fix: "Drop --device (the default follows the run's platform)." });
+      continue;
+    }
     const frame = catalogue.frames.get(info.frame);
     // The reference a frame with variants must be compared with comes from the app's facts.
     if (frame && Object.keys(frame.variants ?? {}).length > 0) {
@@ -117,15 +139,17 @@ run(async () => {
     const appImg = readPng(PNG, runInfo.app, 'app capture');
     const boundsPath = runInfo.appLayout ?? runInfo.hier;
     const boundsJson = readJson(boundsPath, 'app bounds');
-    const bounds = runInfo.appLayout ? parseAppLayout(boundsJson) : parseMaestroHierarchy(boundsJson);
+    const bounds = runInfo.appLayout ? parseAppLayout(boundsJson) : parseMaestroHierarchy(boundsJson, { pxPerPt: info.hierarchyPxPerPt ?? 1 });
     const board = frame?.board ? { ...frame.board, rect: info.board.rect, source: info.board.source } : null;
-    const result = compareRun({ design: { img: designImg, layout }, app: { img: appImg, bounds }, device, pixelmatch, scrollY: info.scrollY, board, reachedBy: frame?.modal?.reachedBy ?? null, boardMask: frame?.boardMask ?? null });
-    const { kept, waived, unused } = applyWaivers(result.problems, waiverFile.waivers, info);
+    const result = compareRun({ design: { img: designImg, layout }, app: { img: appImg, bounds }, device, pixelmatch, scrollY: info.scrollY, board, reachedBy: frame?.modal?.reachedBy ?? null, boardMask: frame?.boardMask ?? null, scrollMarkers: scrollMarkersOf(bounds) });
+    const { kept, waived, unused, otherPlatform } = applyWaivers(result.problems, waiverFile.waivers, info);
     runs += 1;
     const c = result.checked;
     report.note(`run   ${show(dir)}: ${info.frame} (${layout.kind}) ${info.theme}-${info.lang} ${info.game}${info.scrollY ? ` scrollY ${info.scrollY}` : ''} [${bounds.source}]`);
     report.note(`      reference ${runInfo.reference.name}${info.variant ? ` (variant ${info.variant}, chosen by the game facts)` : ''}`);
     report.note(`      checked: bounds ${c.bounds}, text ${c.text}, fill ${c.fill}, border ${c.border}, text-ink ${c['text-ink']}, structure ${c.structure}${result.stats.pixelDiffPercent !== undefined ? `; whole-screen pixel diff ${result.stats.pixelDiffPercent} % (report only, never a gate)` : ''}`);
+    if (result.stats.scrollSource === 'measured') report.note(`      scroll measured by the app: ${(-result.stats.scrollShiftPt).toFixed(1)} pt (${result.stats.scrollMarker})${result.stats.inferredScrollShiftPt !== undefined ? `; the median element shift reads ${(-result.stats.inferredScrollShiftPt).toFixed(1)} pt` : ''}`);
+    else if (result.stats.scrollSource === 'inferred') report.note(`      scroll inferred from the median element shift: ${(-result.stats.scrollShiftPt).toFixed(1)} pt (${result.stats.scrollMarkersDisagree ? `its ${result.stats.scrollMarkersDisagree} scroll markers disagree` : 'no parity.scroll marker in this capture'})`);
     if (result.offscreen.length) report.note(`      off-screen in this capture (capture another scroll position): ${result.offscreen.length} elements, first ${result.offscreen.slice(0, 5).join(', ')}`);
     for (const n of result.notes.slice(0, 12)) report.note(`      note  ${n}`);
     if (result.notes.length > 12) report.note(`      note  ... ${result.notes.length - 12} more in report.json`);
@@ -135,6 +159,11 @@ run(async () => {
       // A few problems are known platform limits or mockup artefacts with a pre-listed waiver.
       const pre = prelistedWaiverFor(p, info);
       report.problem({ file, rule: p.rule, message: p.message, fix: pre ? `${p.fix} This element has a pre-listed ${pre.class} waiver (${pre.cause}): when its crop shows only that, copy the entry from the skill's templates/parity/waivers.json into parity/waivers.json (signoff-and-waivers.md, "Pre-listed waivers").` : p.fix });
+    }
+    // A waiver of the other platform never covers a run; say which one would have, so it is not
+    // mistaken for a broken match (an Android difference needs its own Android waiver, or a fix).
+    for (const { problem: p, waiver: w } of otherPlatform) {
+      report.problem({ file, rule: 'waiver-platform', message: `waiver ${w.index} (${w.testID} ${w.rule}) is a${w.platform === 'ios' ? 'n iOS' : 'n Android'} waiver${w.platform === 'ios' ? ' (it names no "platform": "android")' : ''}, so it does not cover this ${info.platform} run's [${p.rule}] ${p.testID}`, fix: info.platform === 'android' ? 'Fix the app on Android; if Android truly cannot draw it, add a waiver of its own with "platform": "android", its class and the reason (signoff-and-waivers.md, "Android waivers").' : 'Fix the app on iOS, or add an iOS waiver (no "platform" field).' });
     }
     if (kept.length === 0) passed += 1;
     if (!options['no-write']) {
@@ -147,10 +176,11 @@ run(async () => {
         lang: info.lang,
         game: info.game,
         scrollY: info.scrollY,
+        ...(info.platform === 'ios' ? {} : { platform: info.platform }),
         boundsSource: bounds.source,
         createdAt: new Date().toISOString(),
         tolerances: TOLERANCES,
-        reference: { image: relative(dir, runInfo.reference.image), imageSha256: sha256(readFileSync(runInfo.reference.image)), layoutSha256: sha256(readFileSync(refLayoutPath)) },
+        reference: { image: relative(dir, runInfo.reference.image), ...(runInfo.reference.platform === 'ios' ? {} : { platform: runInfo.reference.platform }), imageSha256: sha256(readFileSync(runInfo.reference.image)), layoutSha256: sha256(readFileSync(refLayoutPath)) },
         app: { imageSha256: sha256(readFileSync(runInfo.app)), boundsSha256: sha256(readFileSync(boundsPath)) },
         checked: result.checked,
         coverage: result.coverage,

@@ -109,6 +109,54 @@ describe('native modules (layer C)', () => {
     expect([...roots.keys()]).toStrictEqual(['react-native', 'other']);
   });
 
+  it('reads the Kotlin and Java sources of a module too (Android)', () => {
+    write(
+      'node_modules/hoisted-native/ReactAndroid/src/main/java/com/facebook/Net.kt',
+      'import okhttp3.OkHttpClient\nval socket = client.newWebSocket(request, listener)',
+    );
+    write(
+      'node_modules/root-pod/android/src/main/java/expo/RootPod.java',
+      'import java.net.Socket;\nimport android.webkit.WebView;',
+    );
+    const roots = new Map([
+      ['react-native', at('node_modules/hoisted-native')],
+      ['root-pod', at('node_modules/root-pod')],
+    ]);
+    expect(nativeNetworkFindings(roots)).toStrictEqual(
+      new Map([
+        ['react-native', new Set(['urlSession', 'httpClient', 'webSocket'])],
+        ['root-pod', new Set(['webView', 'lowLevelSocket'])],
+      ]),
+    );
+  });
+
+  it('keeps the modules that support Android, from both autolinking outputs', () => {
+    write('node_modules/android-only/package.json', '{ "name": "android-only" }');
+    write('node_modules/android-only/android/build.gradle', '');
+    const roots = moduleRootsOf(at('node_modules/hoisted-native'), {
+      rn: {
+        dependencies: {
+          'android-only': { root: at('node_modules/android-only'), platforms: { android: {} } },
+        },
+      },
+      expo: {
+        modules: [
+          {
+            packageName: 'root-pod',
+            projects: [{ sourceDir: at('node_modules/root-pod/android') }],
+          },
+        ],
+      },
+    });
+    expect(roots).toStrictEqual(
+      new Map([
+        ['react-native', at('node_modules/hoisted-native')],
+        ['android-only', at('node_modules/android-only')],
+        ['root-pod', at('node_modules/root-pod')],
+      ]),
+    );
+  });
+
   it('skips every symlink, so a workspace link or a dangling header cannot crash the walk', () => {
     expect(sourceFiles(at('node_modules/@e07'))).toStrictEqual([]);
     expect(sourceFiles(at('apps/game'))).toStrictEqual([

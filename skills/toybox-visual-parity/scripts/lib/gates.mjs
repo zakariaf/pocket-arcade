@@ -11,6 +11,7 @@
 // Global pixel-difference percentages and SSIM are reported only: correct builds scored 0.13-0.51 %
 // and SSIM 0.983-0.995, overlapping real defects. Never widen these numbers to make a screen pass;
 // the self-test has fixtures on both sides of each boundary and fails if they move.
+import { unclipBodyBounds } from './hierarchy.mjs';
 import { hex } from './png.mjs';
 
 export const TOLERANCES = Object.freeze({
@@ -65,6 +66,20 @@ export function textRoleFloor(font) {
   const floorPt = probed ?? Math.max(...Object.values(table));
   const centrePt = Math.max(TOLERANCES.inkCentrePt, Math.ceil((floorPt + TOLERANCES.layoutNoisePt) * 10 - 1e-9) / 10);
   return { role: `${family} ${size}${probed === undefined ? ' (not probed: family maximum)' : ''}`, floorPt, centrePt };
+}
+
+// React Native on Android (0.86.3, BaseViewManager.updateViewContentDescription) appends the state
+// descriptions that AccessibilityNodeInfo has no field for to an element's contentDescription, joined
+// with ", ": "busy" (accessibilityState.busy) and "mixed" (checked: 'mixed'), in the phone's locale
+// from its own res/views/uimanager/values*/strings.xml (en, de, fa; ckb has no table and falls back to
+// en). Maestro lists that contentDescription as the label, so a busy key reads "Loading price…, busy"
+// while the screen shows "Loading price…". Only these exact suffixes are read off, and only on Android.
+export const ANDROID_RN_STATE_SUFFIXES = ['busy', 'mixed', 'in Gebrauch', 'gemischt', 'مشغول', 'ترکیب‌شده'];
+export function withoutAndroidStateSuffix(label, want) {
+  for (const suffix of ANDROID_RN_STATE_SUFFIXES) {
+    if (label === `${want}, ${suffix}`) return { label: want, suffix };
+  }
+  return { label, suffix: null };
 }
 
 const RULE_ORDER = ['capture-size', 'screen-not-reached', 'scroll-mismatch', 'duplicate-testid', 'missing', 'bounds', 'text', 'fill', 'border', 'text-ink', 'structure'];
@@ -842,10 +857,12 @@ function applyBoardMask({ board, layout, byId, pairs, design, app, S }) {
  *   design { img, layout }   reference image + layout.json (points, frame coordinates)
  *   app    { img, bounds }   capture + parsed bounds (parseMaestroHierarchy / parseAppLayout)
  *   device                   device profile; pixelmatch: the pixelmatch function
+ *   scrollMarkers            [{ testID, y }]: the offsets the app's ScreenBody reported
+ *                            (scrollMarkersOf); a tall frame's scroll is then measured, not inferred
  * Returns { problems, notes, checked, coverage, offscreen, stats }. Problems are ordered in the
  * order they should be fixed: screen reached, missing, geometry, text, colour, type, structure.
  */
-export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null, boardMask = null }) {
+export function compareRun({ design, app, device, pixelmatch, scrollY = null, board = null, reachedBy = null, boardMask = null, scrollMarkers = [] }) {
   const T = TOLERANCES;
   const S = device.scale;
   const layout = design.layout;
@@ -885,7 +902,9 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   const sizeOk = isPhone ? fullScreen : app.img.width === px.width && app.img.height <= px.height;
   if (!sizeOk) {
     add('capture-size', null, `app.png is ${app.img.width} x ${app.img.height} px; the parity device (${device.name}) captures ${px.width} x ${px.height}`,
-      `Capture on the "${device.simulatorName}" simulator with capture-app.mjs (setup-parity-sim.mjs creates it).`);
+      device.platform === 'android'
+        ? `Capture on the "${device.avdName}" emulator with capture-app.mjs --platform android (setup-parity-emu.mjs creates it).`
+        : `Capture on the "${device.simulatorName}" simulator with capture-app.mjs (setup-parity-sim.mjs creates it).`);
     return finish();
   }
   const viewH = app.img.height / S;
@@ -942,27 +961,68 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
   // frame the body is visible only between the fixed header and the pinned banner (headerBottom and
   // bodyBottom, screen coordinates): body pixels outside that window are hidden in the app and are
   // never compared, and an element counts as covered only when it was fully inside it.
+  // Android reports accessibility bounds clipped to what is visible (iOS reports the whole frame), so
+  // a body element of a tall frame that runs past the body window comes back cut at the window's
+  // edge. The scroll is read only from elements clear of both edges, and a cut box is rebuilt below
+  // from its visible edge and the design's height: only the edges on screen are judged, and the
+  // element still counts as covered only where it is wholly on screen.
+  const clipsBounds = device.platform === 'android' && geo.tall;
+  const atTop = (a) => clipsBounds && Math.abs(a.y - geo.headerBottom) <= T.boundsPt;
+  const atBottom = (a) => clipsBounds && Math.abs(a.y + a.h - geo.bodyBottom) <= T.boundsPt;
   const pairs = new Map();
   const bodyShifts = [];
   for (const el of designEls) {
     const a = app.bounds.elements.get(el.testID);
     if (!a) continue;
     pairs.set(el.testID, { el, a });
-    if (geo.inBody(el) && el.rect.h < viewH) bodyShifts.push(a.y - el.rect.y);
+    if (geo.inBody(el) && el.rect.h < viewH && !atTop(a) && !atBottom(a)) bodyShifts.push(a.y - el.rect.y);
   }
   bodyShifts.sort((p, q) => p - q);
-  const scrollShift = bodyShifts.length ? bodyShifts[Math.floor(bodyShifts.length / 2)] : 0;
+  const inferredShift = bodyShifts.length ? bodyShifts[Math.floor(bodyShifts.length / 2)] : 0;
+  // The scroll of a tall capture is measured when the app reports it: the parity harness draws the
+  // contentOffset its ScreenBody reached as parity.scroll.<y>. The median element shift is only the
+  // fallback for a capture without that marker (an older harness): a waived text-layout difference
+  // that moves most visible elements (S11c en: one more ads line, 23.5 pt) or rows that drift by
+  // pixel snapping (S11d fa) moves the median, although the body scrolled where it was asked (E18).
+  const markerValues = [...new Set(scrollMarkers.map((m) => Math.round(m.y * 100) / 100))];
+  const measured = geo.tall && markerValues.length === 1 ? markerValues[0] : null;
+  const scrollShift = measured !== null ? -measured : inferredShift;
   const inBody = (r) => kind === 'phone-tall' && r.y >= topBarBottom;
   const expectedY = (el) => (geo.isPinned(el) ? el.rect.y + geo.pinShift : geo.inBody(el) ? el.rect.y + scrollShift : el.rect.y);
   viewShift = (el) => expectedY(el) - el.rect.y;
   stats.scrollShiftPt = Math.round(scrollShift * 10) / 10;
+  if (geo.tall) {
+    stats.scrollSource = measured !== null ? 'measured' : 'inferred';
+    if (measured !== null) stats.scrollMarker = scrollMarkers.find((m) => Math.round(m.y * 100) / 100 === measured).testID;
+    if (bodyShifts.length) stats.inferredScrollShiftPt = Math.round(inferredShift * 10) / 10;
+    if (markerValues.length > 1) stats.scrollMarkersDisagree = markerValues.length;
+  }
+  const fixScroll = "The parity harness must scroll the screen's ScrollView to scrollY without animation, after the content has laid out; then capture again.";
+  // Two bodies that report different offsets (a ScreenBody of a screen under the frame's own) leave
+  // the scroll unmeasured: nothing guesses which one the capture shows.
+  if (geo.tall && markerValues.length > 1) {
+    const listed = [...scrollMarkers].sort((p, q) => p.y - q.y).map((m) => `${m.testID} at ${round1(m.y)} pt`).join(', ');
+    add('scroll-mismatch', layout.root, `${markerValues.length} scroll markers disagree (${listed}): more than one ScreenBody reported its scroll, so the capture's scroll is not measured`,
+      "Only the frame's own ScreenBody may be in the capture's hierarchy: a screen under it must not draw a parity.scroll marker (check that the navigator detaches the screens below), then capture again.");
+  }
   // The capture shows the scroll offset it asked for (clamped to the end of the design's scroll):
   // a harness that ignores scrollY would otherwise pass every offset with the same top screen.
-  if (geo.tall && scrollY !== null && bodyShifts.length) {
+  if (geo.tall && scrollY !== null && (measured !== null || bodyShifts.length)) {
     const wanted = Math.min(scrollY, Math.max(0, (layout.size?.h ?? viewH) - viewH));
     if (Math.abs(scrollShift + wanted) > T.boundsPt) {
-      add('scroll-mismatch', layout.root, `the body is scrolled by ${round1(Math.max(0, -scrollShift))} pt but the capture asked for scrollY ${scrollY} (${round1(wanted)} pt within the design's scroll height)`,
-        "The parity harness must scroll the screen's ScrollView to scrollY without animation, after the content has laid out; then capture again.");
+      const source = measured !== null
+        ? `; measured by the app's ${stats.scrollMarker} marker`
+        : `; inferred from the median element shift (${markerValues.length > 1 ? 'its scroll markers disagree' : 'the capture has no parity.scroll marker'})`;
+      add('scroll-mismatch', layout.root, `the body is scrolled by ${round1(measured !== null ? measured : Math.max(0, -scrollShift))} pt but the capture asked for scrollY ${scrollY} (${round1(wanted)} pt within the design's scroll height)${source}`, fixScroll);
+    }
+  }
+  if (clipsBounds) {
+    for (const [id, { el, a }] of pairs) {
+      if (!geo.inBody(el)) continue;
+      const real = unclipBodyBounds(a, { top: expectedY(el), height: el.rect.h, window: { top: geo.headerBottom, bottom: geo.bodyBottom }, tolerance: T.boundsPt });
+      if (real === null) continue;
+      pairs.set(id, { el, a: { ...a, y: real.y, h: real.h } });
+      notes.push(`${id}: Android reports only its visible part (cut at the body window's ${real.cut}); judged by its visible edges`);
     }
   }
   const windowH = geo.bodyBottom - geo.headerBottom;
@@ -1074,7 +1134,9 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
       continue;
     }
     checked.text += 1;
-    if (normText(a.label) !== want) {
+    const read = device.platform === 'android' ? withoutAndroidStateSuffix(normText(a.label), want) : { label: normText(a.label), suffix: null };
+    if (read.suffix) notes.push(`${el.testID}: Android's state description ", ${read.suffix}" read off the label (React Native appends it for TalkBack)`);
+    if (read.label !== want) {
       add('text', el.testID, `text "${normText(a.label)}" but the design says "${want}"`,
         'Use the copy-deck key the design uses, with the same numbers, spaces and punctuation, and the fixture values of this frame.', { rect: el.rect });
     }
@@ -1392,7 +1454,11 @@ export function compareRun({ design, app, device, pixelmatch, scrollY = null, bo
     // Where the app hides this element (fixed header, pinned banner), mapped into design
     // coordinates at the element's measured offset, widened by the alignment search.
     const hidden = toDesign(hiddenFor(el).map((r) => pad(r, T.alignSearchPx / S)), a.x - el.rect.x, a.y - el.rect.y);
-    const designExclude = [...textRects.map((r) => pad(r, T.textPadPt)), ...maskedDesign, ...coveredBy(el), ...children, ...hidden].map(toCrop);
+    // The device's own bars (status bar, home indicator or gesture bar) are never compared: left in,
+    // the app's clock and handle, which the design does not draw, pulled a full-screen crop's
+    // alignment off by 1.7 pt (the Android S6 scrim, E18-T21).
+    const bars = toDesign(deviceMasks, a.x - el.rect.x, a.y - el.rect.y);
+    const designExclude = [...textRects.map((r) => pad(r, T.textPadPt)), ...maskedDesign, ...coveredBy(el), ...children, ...hidden, ...bars].map(toCrop);
     const ignore = new Uint8Array(crop.w * crop.h);
     for (const r of designExclude) {
       for (let y = Math.max(0, Math.floor(r.y)); y < Math.min(crop.h, Math.ceil(r.y + r.h)); y += 1) {

@@ -41,6 +41,7 @@ export const gameConfig: GameConfig = {
           rewarded: 'ca-app-pub-7777777777777777/6666666666',
         },
       },
+      // No Android AdMob app yet: --stage complete is the iOS completeness check, and the Android gates own GP5.
       android: null,
     },
   },

@@ -1,0 +1,1 @@
+ERROR [bad-input] --ads test is not allowed with --variant store

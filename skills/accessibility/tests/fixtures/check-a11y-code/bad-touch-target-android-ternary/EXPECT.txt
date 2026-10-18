@@ -1,0 +1,3 @@
+[touch-target]
+close-button.tsx
+styles.ring is only 40 pt wide on Android

@@ -1,0 +1,11 @@
+run: avdmanager create avd --name e07-android-kill-test --package system-images;android-35;google_apis;arm64-v8a --device pixel_8
+run: emulator -avd e07-android-kill-test -port 5556
+run: adb -s emulator-5556 root
+run: adb -s emulator-5556 install -r app-release.apk
+round 3: killed pid 4242 after 300 ms
+run: adb -s emulator-5556 pull /data/data/io.applander.linesiege/files/SQLite/
+current: ok
+backup: ok
+run: adb -s emulator-5556 emu kill
+run: avdmanager delete avd --name e07-android-kill-test
+kill-test: 3 kill rounds checked, 0 problems

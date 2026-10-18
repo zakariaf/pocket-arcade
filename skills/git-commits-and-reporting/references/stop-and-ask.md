@@ -6,7 +6,7 @@ Stopping is not failing. For each case below, stop that line of work, send the o
 
 - When to stop and ask
 - The owner's human steps (IDs to name)
-- Release stops: errors that are never retried
+- Release stops: errors that are never retried (App Store, Google Play)
 - How to write the message
 
 ## When to stop and ask
@@ -18,9 +18,9 @@ Stopping is not failing. For each case below, stop that line of work, send the o
 | A change would touch a gated path (quality gates, goldens, baselines, fixtures, `.npmrc`, network baselines, parity waivers and game facts) other than by an intended, explained change | ask; an agreed change goes in one commit with a `Gate-Change:` trailer |
 | The spec is contradicted, ambiguous or silent about something a player would see | quote the spec lines, give the options with a recommended default, keep working; never trade away N1-N12 |
 | Two of the project's instructions disagree | follow the one that owns the topic, say so in the report, and name the other so it gets fixed |
-| Irreversible or outward-facing actions: an App Store Connect upload, submitting for review, creating or changing App Store Connect records (Premium product, age rating, tester groups), pushing branches or tags, force-pushing or rewriting pushed history, deleting files, data or simulators this session did not create, sending anything to a third party | ask first, unless the owner asked for exactly this action in this session; submit for review only after the owner says "submit" |
+| Irreversible or outward-facing actions: an App Store Connect upload, a Google Play upload, submitting for review, promoting a Play build beyond the internal track, creating or changing App Store Connect or Play Console records (Premium product, age rating, tester groups, App content), pushing branches or tags, force-pushing or rewriting pushed history, deleting files, data or simulators this session did not create, sending anything to a third party | ask first, unless the owner asked for exactly this action in this session; submit for review only after the owner says "submit" |
 | A release stop (next section) | stop, do not retry, do not switch signing methods; one message with the step and the exact error line |
-| Anything that would read, print, copy, move or commit the App Store Connect `.p8` key, a JWT or a password | never; if a task seems to need it, ask |
+| Anything that would read, print, copy, move or commit the App Store Connect `.p8` key, the Google Play service-account JSON, an upload keystore (`.jks`), a JWT or a password | never; if a task seems to need it, ask |
 | A new dependency outside the documented procedure, a banned package, a held-back major version, an early release-age exception | ask, unless the dependency procedure covers it exactly |
 | An open owner decision becomes blocking | use the documented default and say so; ask when the default no longer works |
 | The owner's personal checks: the review of the fa and ckb texts, the play-test, listening to the sound previews (G6, G7, G9, R3) | these are not stop-and-ask items: never stop or wait for them; list each under "Owner steps (not blocking)" in every slice and release report (`check-report.mjs` rule `owner-steps-listed`) and keep working |
@@ -42,7 +42,7 @@ Once, per owner and Mac:
 | O7 | Fallback only: sign in once in Xcode > Settings > Accounts if the first API-key archive cannot create the development certificate |
 | O8 | Only when it happens: unlock the login keychain (`errSecInternalComponent`) |
 | O9 | AdMob account and payments profile, the published GDPR/TCF consent message, and blocking controls (A1, A3, A4) |
-| O10 | Later: the Google Play developer account |
+| O10 | The Google Play developer account (once Android starts): play.google.com/console/signup, a personal or an organisation account, the one-time registration fee and Google's identity verification (an organisation also needs a D-U-N-S number), then a payments profile (Play Console, Setup, Payments profile) so paid in-app products can be sold |
 
 Per game:
 
@@ -58,6 +58,20 @@ Per game:
 | G7 | Review the Persian and Sorani texts (Claude writes natural drafts). The owner does it personally; not blocking: listed, never waited for |
 | G9 | Listen to the game's sound previews (`reports/sfx/<game-id>/*.wav`) and feel the haptics on a phone. The owner does it personally; not blocking: listed, never waited for |
 | G8 | Approve the store listing (texts, screenshots, age rating answers) |
+
+Per game on Google Play (Android follows once the game's iOS version has shipped; ask for them in one message, each with its default):
+
+| ID | Step |
+|---|---|
+| GP1 | The Play Console app: All apps, Create app, with the app name, default language English (United States), Game, Free; the package `io.applander.<game id without hyphens>` (owner decision O4) is fixed by the first upload. Meanwhile Claude builds and rehearses |
+| GP2 | Play App Signing and the upload key: Google holds the app-signing key; Claude generates the upload key with keytool at `~/.android-keys/<game-id>-upload.jks` (chmod 600) and writes its four properties into `~/.gradle/gradle.properties` when the owner says go (or the owner puts their own key there) |
+| GP3 | The service account: enable the Google Play Android Developer API in a Google Cloud project, create a service account with a JSON key saved as `~/.android-keys/play-service-account.json` (chmod 600), and invite it in Play Console, Users and permissions, for this app only, with "Release apps to testing tracks" and "View app information". Uploads wait; the build and the gate do not |
+| GP4 | App content: privacy policy (the G3 URL), ads yes, app access, the IARC content rating, target audience 13 and over (D8), Data safety (the answers privacy-and-network-audit prints for Android), Advertising ID for advertising |
+| GP5 | The AdMob Android app and its 3 ad units (banner, interstitial, rewarded); send the 4 ids. Until then builds use Google's test ids and a live build fails `owner-placeholder` (GP5) |
+| GP6 | The Premium product: Monetise with Play, In-app products, product id `<package>.premium` (never reusable), name "Premium", EUR 1.99 (owner decision O2), Activate; possible only after a build with the BILLING permission was uploaded, so after GP7. Until then Premium shows "store unavailable" in Play-installed builds |
+| GP7 | Testers and the first upload: the internal testing tester list and License testing (RESPOND_NORMALLY), then the owner uploads the first gated AAB in the Console; the API does every later upload. Meanwhile Claude keeps the gated AAB and its stamp ready |
+
+The Android play-test from the internal track (with the purchase test as a license tester), the TalkBack spot check, the fa and ckb review and the sound previews are the owner's own checks: listed under "Owner steps (not blocking)", never waited for.
 
 Per release:
 
@@ -81,6 +95,15 @@ Stop, do not retry, do not switch signing methods, and send one message with the
 - A missing app record (human step G2).
 - HTTP 401 (`NOT_AUTHORIZED`: wrong key or issuer ID, revoked key, clock skew) or 403 (`FORBIDDEN_ERROR`: key role below Admin or an individual key; human step O3).
 - A processing state `INVALID` or `FAILED` (ask the owner to forward Apple's email; fix, then rebuild with a new build number).
+
+On Google Play (`npm run release:android`), the same: stop, never retry, one message with the step and the exact error line:
+
+- HTTP 401 or 403 from the Android Publisher API (`auth`: the service account is not invited for this app, lacks "Release apps to testing tracks", or its key was deleted: human step GP3).
+- The Android Publisher API is not enabled in the service account's project (`api-not-enabled`: human step GP3).
+- App not found, HTTP 404 (`app-not-found`: no Play Console app yet, or its first upload is not done: human steps GP1 and GP7).
+- A draft app, HTTP 400 "Only releases with status draft may be created on draft app." (`draft-app`: the app was never rolled out, so the API cannot release it; never resent as a draft: the owner uploads this gated AAB in the Console and rolls it out, human step GP7, and the API uploads every later build).
+- Missing policy declarations (`policy-declarations`: App content is incomplete: human step GP4).
+- A version code that was already used (`version-code-used`: never lower or reuse the number; a new release run takes the next shared build number).
 
 ## How to write the message
 

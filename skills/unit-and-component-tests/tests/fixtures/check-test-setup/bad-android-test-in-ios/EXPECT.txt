@@ -1,0 +1,2 @@
+[jest-android-test-in-ios]
+the iOS project "unit" runs packages/shell/src/testing/platform.android.test.ts

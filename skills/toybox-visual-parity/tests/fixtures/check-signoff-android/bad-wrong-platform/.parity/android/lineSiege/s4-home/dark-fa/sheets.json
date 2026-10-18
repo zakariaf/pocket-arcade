@@ -1,0 +1,13 @@
+{
+ "version": 1,
+ "frame": "s4-home",
+ "theme": "dark",
+ "lang": "fa",
+ "game": "lineSiege",
+ "reportSha256": "9f8d7ff426e9264146d38991fe06861b9939cdf855a85b8263f01b791f9147a5",
+ "files": {
+  "sheet.png": "93ee99e862dc2af3272534774bb1b34a372f249bb31793497ebbc0b96d10d4b8",
+  "zoom-1.png": "eaab3e2c1f78fbe80f7893fb1658275db805f0eedc4d5637d5edc0adca037379",
+  "eye-1.png": "4b587c346d8824e273d4217fc293fb4436a73adeffdc021f3fb4ed75cfb9d773"
+ }
+}

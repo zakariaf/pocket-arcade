@@ -1,0 +1,9 @@
+[
+  {
+    "replace": {
+      "file": "packages/tooling/src/audit/network-gradle-layer.ts",
+      "find": "  'com.android.billingclient:billing-ktx',\n",
+      "with": "  'com.android.billingclient:billing-ktx',\n  'com.squareup.okhttp3:okhttp',\n"
+    }
+  }
+]

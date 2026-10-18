@@ -1,0 +1,4 @@
+[
+  { "name": "Bash", "input": { "command": "git status && npm run build:android:emu -- --app demo" } },
+  { "name": "Skill", "input": { "skill": "sound-maker" } }
+]

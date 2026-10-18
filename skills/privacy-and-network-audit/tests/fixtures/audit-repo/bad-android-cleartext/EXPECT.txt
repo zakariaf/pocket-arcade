@@ -1,0 +1,3 @@
+[android-cleartext]
+packages/shell/src/config/shell-plugins.ts
+usesCleartextTraffic
