@@ -4,8 +4,8 @@
 // one edit uploads the AAB, puts exactly its versionCode on the internal track and commits.
 // Release tooling only: the app itself never calls the network (N3). Every non-2xx answer is a
 // PlayStop: stop and ask, never retry (401/403, the API not enabled, an app the Console does not
-// have yet, a used version code, missing policy declarations). Errors name the reason, never the
-// token or a header.
+// have yet, a draft app whose first release is the owner's, a used version code, missing policy
+// declarations). Errors name the reason, never the token or a header.
 import type { ServiceAccount } from '@e07/tooling/release-android/play-credentials.ts';
 
 export const PLAY_TOKEN_URL = 'https://oauth2.googleapis.com/token';
@@ -29,6 +29,7 @@ export const PLAY_STOP_REASONS = [
   'auth',
   'api-not-enabled',
   'app-not-found',
+  'draft-app',
   'version-code-used',
   'policy-declarations',
   'http-error',
@@ -59,6 +60,14 @@ function detailOf(text: string): string {
   }
 }
 
+/**
+ * A new app stays a draft until its first release is rolled out, and Google refuses a completed
+ * release on it (400 "Only releases with status draft may be created on draft app."): the owner's
+ * first upload in the Console, owner step GP7. The edit is never committed, so nothing is spent.
+ */
+const DRAFT_APP_STEP =
+  '(the app is still a draft: the owner uploads this AAB once in the Play Console, Testing > Internal testing > Create new release, and rolls it out, owner step GP7; later builds go through the API)';
+
 export function playStopOf(step: string, response: HttpResponse): PlayStop {
   const { status, text } = response;
   const at = { step, status };
@@ -70,6 +79,9 @@ export function playStopOf(step: string, response: HttpResponse): PlayStop {
     return new PlayStop('auth', at, `${detail} (permission or key of the service account)`);
   }
   if (status === 404) return new PlayStop('app-not-found', at, detail);
+  if (/status draft may be created on draft app/i.test(text)) {
+    return new PlayStop('draft-app', at, `${detail} ${DRAFT_APP_STEP}`);
+  }
   if (/version code .*already been used/i.test(text)) {
     return new PlayStop('version-code-used', at, detail);
   }
