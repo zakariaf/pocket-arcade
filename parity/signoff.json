@@ -697,8 +697,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c335f899415ed7d8d68281b859b2a2c4e95410bbe510080898c1962df15ada43",
-      "date": "2026-10-16",
+      "sheetSha256": "559e27c0b16d2fe63d78838d4ca6d79a3b6fe362679d8986fd54b304f80e8185",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1070,13 +1070,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s11-settings",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 475,
-      "sheetSha256": "96c9a94afb2a7e07266cec2210b443396cb96cae12283646001ae59851d82a59",
-      "date": "2026-10-17",
+      "sheetSha256": "c2a6d4e7d7ceb7d244f5a1bbf27be01c7f3eae7e3b91fb73dfb107cc07b3f76b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1740,13 +1741,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-premium",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c7f2156cc174255d0c02109100d43faffb838956de1b42436c0722fd381e6e78",
-      "date": "2026-10-11",
+      "sheetSha256": "b94445c69beed2a31f6cf256d55e13ff9fe43f224de196678dd1009be4362fb7",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1780,13 +1782,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-premium",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "666a3ab6c8a4a1617d656dacd04af1916437d477b91651272d6a516e5b1fa934",
-      "date": "2026-10-12",
+      "sheetSha256": "83734af2100c9e7ff702813e63c1529e162b10af211fc181f8622e0d1b701906",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1800,13 +1803,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-premium",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "bece2f5144a765b3b035a508e0a47b11d22ee37ba801fab88fa6847e24882201",
-      "date": "2026-10-12",
+      "sheetSha256": "e00baef92a09c661280a614683b8de4045ecc6c3917eb2060601d5fe91a9dd8c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1820,13 +1824,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-loading-price",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c1a01f8318bb0cc70703a78b871613a3be6cc14b35212f48f1c59fa0c9e4f667",
-      "date": "2026-10-11",
+      "sheetSha256": "5fb018aa43c9f88f818ae98435bcc9ddbda927f604f15d575057b44f413e3421",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1840,13 +1845,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-loading-price",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5bdfc31460facde5dabe9f40121c0b236a1bcd9ef2bd095f0baa67a67e45cb38",
-      "date": "2026-10-12",
+      "sheetSha256": "c6c5652f1de851dffaadd3df5d1d8ccd8ec678768968d9c74139538efbd688fc",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1860,13 +1866,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-loading-price",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "bdc5a792200c2575d314ce013e20cb2011e2177f93dd0622bbbc195cfdbe6267",
-      "date": "2026-10-11",
+      "sheetSha256": "e369fe673627fa99b9a754f8f8542eb8a685b741fde326f9d750ce4552343d9a",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1880,13 +1887,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-loading-price",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "c8844d793840a0fb19bc3880b6fddbaf5dfb07ee02c34257eeb2f2c142d5a77d",
-      "date": "2026-10-12",
+      "sheetSha256": "6cf651a1001e5598dd66ab8c751a3a6c33051502810d788d19c553ca8b50e898",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1900,13 +1908,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-store-unavailable-offline",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "04e7795579ec184612ae66a92487e047213c75c3286f1f594256b8c848956fff",
-      "date": "2026-10-12",
+      "sheetSha256": "90413b6fa978ac5020ffd5f08ff26d92caa36c29c5379d6ac7b998d1e6e4816f",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1925,13 +1934,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-store-unavailable-offline",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "0e93ca1c60bb852265278b17f11fa9e9d79cae519241f23edfb6de408d1d3719",
-      "date": "2026-10-12",
+      "sheetSha256": "1d391d35fd85e471c590f5776ee178101ad464a31e86bff5e699a7f0e2900f4c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1950,13 +1960,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-store-unavailable-offline",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "e06f96c865fa38cd55be32707facc6e200eeb7cb3c1a7c14dc84f8ee384c3c4e",
-      "date": "2026-10-12",
+      "sheetSha256": "ce8747fa75c7c28f73afa08948bc3a9a7a33d4d08176d575a4d39e5207682953",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -1975,13 +1986,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-store-unavailable-offline",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "2e34dea4731b41aa3939b161d014685096cf14792b3d1dbd94bd5a8e93dd2727",
-      "date": "2026-10-12",
+      "sheetSha256": "4083a1765a9b4677b6721fa0f369e55c92714f7908285daad992a664910a2c20",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2000,13 +2012,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-purchase-in-progress",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "94d085be0b0f2b2872cf8c3076884f63b5cd0e8d805771c24c3794dfa27b6aec",
-      "date": "2026-10-12",
+      "sheetSha256": "bd5e4cb54668c6b16231f371ef85b1ed035dd6e20bb9610c85afff9013d7c98c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2040,13 +2053,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-purchase-in-progress",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d3b5e5017fa1788952fca93b09d8b6d31403e1001df1ff40943462fb7c4ecba7",
-      "date": "2026-10-12",
+      "sheetSha256": "269e1374b5092a2cc37560ad3af77c59a096bc78609f851aabf91a1aa8161133",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2060,13 +2074,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-purchase-in-progress",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "d592e4c81b0c8505155ebae470386784c682455401ce8ab7d40a5147bf6bf589",
-      "date": "2026-10-12",
+      "sheetSha256": "1edf249523be23307066365e12c051c248637520ab7bf9510a9f634ae1b16f6d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2080,13 +2095,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-pending-approval",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "665de35dc68712710ad2d9fdf8df628c858f23b46107d0f92a5161077c6246e7",
-      "date": "2026-10-12",
+      "sheetSha256": "f236e8db621de7ca46eccc688f4066dab76af10bbad460c7b94ab039057c735d",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2100,13 +2116,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-pending-approval",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "780972c14c3d1c82c422b45faa1f103f488c8d56accc1ad8d47d1daa50c7e9cc",
-      "date": "2026-10-11",
+      "sheetSha256": "54030b3c315e6cc201c417c73f0a91f02d36d9daef596edd2f7bc1697d3b25ce",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2120,13 +2137,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-pending-approval",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "e109564d0d9df58dead32e300c3fdace0a1b870c4ccb202c95c65641fad78856",
-      "date": "2026-10-12",
+      "sheetSha256": "078786667aad3264a0036f4fe70c161816c5287b908fa665732b4af7feb3fe80",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2140,13 +2158,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-pending-approval",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "12f37a083037b82d8c9c6a437a007188fe415f3a08aa8598e3e447328bbd5918",
-      "date": "2026-10-12",
+      "sheetSha256": "12b84f5858c6a5174e1eba91d2f99d705b210249d9bf779a06b26018c91eeda5",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2160,13 +2179,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-success",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "5ce051b12eb0a1e0220eef7244bd1c48fbb8e41a1ffd6064f0bc48fa5c8863af",
-      "date": "2026-10-12",
+      "sheetSha256": "8a259e8047d235ad1544cee7e951da54ce00d32f67cc8e2e8d66998bc847796c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2180,13 +2200,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-success",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "ae076a1abe165647e52e67d41fd924714119b494201387dc0b4a6f7259fd7769",
-      "date": "2026-10-12",
+      "sheetSha256": "0c5216650d34e9b81796dfd235bc1c0b6f964d8b3931593c15654db9dd579d4a",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2200,13 +2221,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-success",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4fd15591187e921d8708845751548176137dacdeb3157c155d92b3506ad3fee0",
-      "date": "2026-10-11",
+      "sheetSha256": "61c303b74204ce7ccf55e471bf60d99b16a0c1568cf2c3e84d4c027c9914489e",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2240,13 +2262,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-error",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "5ffd5c851bd6a9545c7f62fe0a116b464475d3137819ed6bf39df52f9748f1f4",
-      "date": "2026-10-12",
+      "sheetSha256": "243cb173480787c1fd276d337cf406987602e046e76241607b2f39f29d26696a",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2260,13 +2283,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-error",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "e3e1e88aadc6dcfb66f674b6c73c927a9f75503c21876f078677ed44c7b3f82a",
-      "date": "2026-10-12",
+      "sheetSha256": "6a0f7da16b83229d1786b9698c7f8f55020da683948f33fa762098e39d20d8df",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2280,13 +2304,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-error",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "6e11149f2114faee672fb063de4449e4adbf55e2b88ead885d7845ffc1cb70c8",
-      "date": "2026-10-12",
+      "sheetSha256": "b4ebfe4405c91ba7b28f4e4d0583fbcf6c7bb8c3a036bc3111da572db1df7a55",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2300,13 +2325,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-error",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "5aef9e5880f93231b262b03c0b97e68b65e0acfc602c0815428eca9b9e5a840c",
-      "date": "2026-10-12",
+      "sheetSha256": "378a01a607c46593756ef373bb3f201413c837b663b5d6c30f833e04c7cd17a1",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2320,13 +2346,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-already-owned",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "9b3ef00220e0454b54e64d1b42f070395122bd4848c31f24e65882fcfee85bc7",
-      "date": "2026-10-12",
+      "sheetSha256": "fba2d811582624c5aac74fe18f37984917115433dc6fdfc797f0522b1b83a149",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2340,13 +2367,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-already-owned",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "316bd4d61f95ba88425ad20fe135784141358e2a8843f42bfa08ac53f0a20e50",
-      "date": "2026-10-12",
+      "sheetSha256": "798a318ea146a02b951e4de7386f3272f5a98ef4f957bf0d3dc5ebe0ae09352c",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2360,13 +2388,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-already-owned",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "d53450408b3157cbdf865c64d1723d18054f2eeefac7b000eb3980d157b3d7a2",
-      "date": "2026-10-12",
+      "sheetSha256": "d7f0df58861c6abf2c2b207ab7f747567a10cedfaa34f34e31ea6718e3c49389",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2380,13 +2409,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-already-owned",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "d91c4f1713c69aece61b60864666c371f934ed3e9646f085e0622b3ad658267b",
-      "date": "2026-10-12",
+      "sheetSha256": "ef118334cb6ca0aaf3b7110ed554c909f80b906025205f26ef506b01427ab0b4",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2400,13 +2430,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-restore-results-toasts",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "f6ed92ec992d53b6068f1ba734baf323c996824617f490026e19a520e26e00b7",
-      "date": "2026-10-12",
+      "sheetSha256": "41b550893b674346ddbee2bcbac43e6b069b8462570aee72921bdcd4cb7857b1",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2425,13 +2456,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-restore-results-toasts",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "7d467e4b3bb67fcdb9e44443677aff6e884e699de8571ff824a1166f9882f71d",
-      "date": "2026-10-12",
+      "sheetSha256": "3ffa45ed62408e6fffe1a7088c3438ef1dff74036005d77d36f2da8589eaa214",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2450,13 +2482,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-restore-results-toasts",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "6c33c608319d8451f77d5eb9677dcf29300b674fed545715fec2fe19275d0979",
-      "date": "2026-10-12",
+      "sheetSha256": "8c1fe23f35907a970825cc920d5cab352e965de80d1719febc9e21ca91f3808b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2475,13 +2508,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s12-restore-results-toasts",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "b3cd96824c38d7489f7d976051fed0bc2561810600acbd34ef0bfa7a32901066",
-      "date": "2026-10-12",
+      "sheetSha256": "44f4865d1ea9b381a82f29cfb2d8d16dc205f74394438390850c758608e55eec",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png"],
       "eyeChecks": {
         "icons": "match",
@@ -2608,13 +2642,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s15-debug-menu",
       "theme": "light",
       "lang": "en",
       "scrollY": 181,
-      "sheetSha256": "75b635b94a7662c67255f33c795b0ef8e71631505a907dab5b82a39d3ffe6d47",
-      "date": "2026-10-12",
+      "sheetSha256": "34dd38695c86abef0c57f8bcfc2e712d1ed89e8d1841855fb3bf6ee879f3d16e",
+      "date": "2026-10-18",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -2633,8 +2668,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [],
-      "note": "Lead decision 2026-10-11: the extra \"0\" under the list is debug.network-attempts, the test-only probe e2e-maestro keeps on purpose (debug-deep-link reference: \"only networkAttempts stays Latin, because every smoke flow asserts 0 and the design draws no counter\"); signed as the 2026-10-10 en/fa entries were, not a waiver."
+      "differences": []
     },
     {
       "game": "lineSiege",
@@ -2722,13 +2756,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s15-debug-menu",
       "theme": "dark",
       "lang": "en",
       "scrollY": 181,
-      "sheetSha256": "d9e4c736ac684e10e638a0853a6dc10bf853c534885843dfd09a89e94da59ce7",
-      "date": "2026-10-12",
+      "sheetSha256": "2c17b595828909d7e4a859a2d1506e26ee17039f0c7541a6f30840ac3c843338",
+      "date": "2026-10-18",
       "looked": [
         "sheet.png",
         "zoom-1.png",
@@ -2747,8 +2782,7 @@
         "direction": "match",
         "feel": "match"
       },
-      "differences": [],
-      "note": "Lead decision 2026-10-11: the extra \"0\" under the list is debug.network-attempts, the test-only probe e2e-maestro keeps on purpose (debug-deep-link reference: \"only networkAttempts stays Latin, because every smoke flow asserts 0 and the design draws no counter\"); signed as the 2026-10-10 en/fa entries were, not a waiver."
+      "differences": []
     },
     {
       "game": "lineSiege",
@@ -3015,13 +3049,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s14-progress-restored",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "4edef1c42bc3f660c49a81662d3df95786923f5023e3f5358adceda75764adc5",
-      "date": "2026-10-12",
+      "sheetSha256": "e6c12913e9728ddf286e38a9451a435721b3dca79b3d5d33a826743d09652ee4",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -3044,13 +3079,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s14-progress-restored",
       "theme": "light",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "0a5ab11a020e31af84d534bbf23f64a81ff611fd92e2721e2c075f1a0d4f7c48",
-      "date": "2026-10-12",
+      "sheetSha256": "c9018762d933c62026f49a4373b39fcd533d31bc8a42cb5cc821a0477f4f15d7",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -3073,13 +3109,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s14-progress-restored",
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "23342081176f602557fc4180e3942ee26fcafb757a3b45b0e8b964439f38b72b",
-      "date": "2026-10-12",
+      "sheetSha256": "e39381764d90e2d3c1d75e8b9fb6af0679c980d3a2aa1328a042c517947a8f72",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -3093,13 +3130,14 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s14-progress-restored",
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "2562b60aa2bc61f357252e91933a5ff2629e81a128a0b8da17409feff28650bc",
-      "date": "2026-10-12",
+      "sheetSha256": "03bfa1320301a1f718f71d8b3dc0407fb5c898efa6a5cd1c774702696f2c8859",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -5237,24 +5275,30 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s11d-licences",
       "theme": "dark",
       "lang": "ckb",
       "scrollY": 761,
-      "sheetSha256": "0e7dd6bfcc52089bc208e3ddee164777d94cde78f8bec7be9d1a7a7350a0c247",
-      "date": "2026-10-12",
+      "sheetSha256": "35cb417f05dd457155606768e7265e9fe834c91150d8329adddd3cb339fa4509",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "The Sounds group and its row sit 2.3-2.5 pt low at the measured scroll 761: each pixel-snapped Sorani licence row is a little taller than the design; the iOS ckb bounds waivers of the licence elements in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -5362,24 +5406,30 @@
       "differences": []
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s11d-licences",
       "theme": "light",
       "lang": "ckb",
       "scrollY": 761,
-      "sheetSha256": "dd43041492cc2553a9070250dab645b437a5c3fc1acd67e73aa209c6fbf67bd0",
-      "date": "2026-10-12",
+      "sheetSha256": "7eb96a1b498e0ca934a5e842f330a98a5fe4f11662be3e13464cc2b95e80c7c5",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
-        "pictures": "match",
+        "pictures": "n/a",
         "shadows": "match",
         "alignment": "match",
         "wrapping": "match",
         "direction": "match",
         "feel": "match"
       },
-      "differences": []
+      "differences": [
+        {
+          "what": "The Sounds group and its row sit 2.3-2.5 pt low at the measured scroll 761: each pixel-snapped Sorani licence row is a little taller than the design; the iOS ckb bounds waivers of the licence elements in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
     },
     {
       "platform": "ios",
@@ -6279,8 +6329,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "9f723d0a302de936150c3981a8cdf85d36b5191e4def9c7be2a0101ecbe5dbc7",
-      "date": "2026-10-17",
+      "sheetSha256": "abfa4183f6cf4ba1b60deec1fed590728725d0a54edeb178e2def2d4deefc9b7",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -6452,8 +6502,8 @@
       "theme": "dark",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "e27d4fdcc23dba2a17d2b7556ed17d8c3d98edb5b436610058142eb6c590a1d1",
-      "date": "2026-10-17",
+      "sheetSha256": "f4dda991a74c769e7be0ba47ad7e10ea5c5a8ef84969a9c535af4352f80d723b",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -6504,8 +6554,8 @@
       "theme": "dark",
       "lang": "fa",
       "scrollY": 0,
-      "sheetSha256": "fc3ab2241a047c9c8a20f34b86224389d86b9593fa580202f69c1ac404d43af3",
-      "date": "2026-10-17",
+      "sheetSha256": "eaae612a5bc41929ecadcdbfc7852b5f0c91e5a7c7cc9791e6e95e65758f3dfe",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -14975,8 +15025,8 @@
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "c920903cd1fb33945e5effa2c7ae49b167d3f2a056f98146b68561b30bfbaa4a",
-      "date": "2026-10-17",
+      "sheetSha256": "3e8263da953c44adb04ccae2674c762533938a12c1055378cc41a1639517fb80",
+      "date": "2026-10-18",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
@@ -16288,6 +16338,572 @@
         },
         {
           "what": "Tagline a fraction of a point wider on Android; the same two-line break as the design.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b1ce12747faffb97d41b733a8ebc0e40c29fa932f3927e5f0d20006235247895",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Sorani credits and support cards end 0.9 to 1.5 pt lower than the design: iOS snaps each Vazirmatn line box to the 1/3 pt grid (every element inside the 2 pt bounds gate); in dark ckb the ground and card fill cover different rows, which the iOS dark ckb fill waiver of about.screen covers",
+          "status": "waived"
+        },
+        {
+          "what": "about.version-chip: the mockup's .chip{display:inline-flex;gap:6px} draws \"وەشانی\" and \"1.0.0 (8)\" as two flex items 6 px apart, the app one text with one space (copy deck), so the chip is about 1.4 pt narrower and the number sits nearer the label; the iOS ckb design-artefact waiver of about.version-chip in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "eefc30e3e47ed72dd6fc53c33426fc2bdb0d2968864fbf94d437c17fb4331672",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "about.version-chip: the mockup draws \"Version\" and the number as two flex items 6 px apart, the app one text with one space (copy deck), so the chip is 3 pt narrower and the number sits 2.6 pt nearer the label (bounds, text-ink and structure); the iOS de design-artefact waivers in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "2f747e77ec7e5971c55a97981afcb66759a304923a07c088757b0e6ac56ee557",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "about.version-chip: the mockup's .chip{display:inline-flex;gap:6px} draws \"وەشانی\" and \"1.0.0 (8)\" as two flex items 6 px apart, the app one text with one space (copy deck), so the chip is about 1.4 pt narrower and the number sits nearer the label; the iOS ckb design-artefact waiver of about.version-chip in parity/waivers.json",
+          "status": "waived"
+        },
+        {
+          "what": "The Sorani credits and support cards end 0.9 to 1.5 pt lower than the design: iOS snaps each Vazirmatn line box to the 1/3 pt grid (every element inside the 2 pt bounds gate)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s11b-about-and-credits",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "ee947ba18191d12b63d683a8cea2bdabc4bfaf62db7fcb5096d195dd8c1c6477",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "about.version-chip: the mockup draws \"Version\" and the number as two flex items 6 px apart, the app one text with one space (copy deck), so the chip is 3 pt narrower and the number sits 2.6 pt nearer the label (bounds, text-ink and structure); the iOS de design-artefact waivers in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "8817d2e5d487ef67a3a4b919f9ac8038baa67f42336e5fc110cb67cc491d845e",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "how-to-play.step-text: CoreText draws the descender tails of the first line's Sorani letters a fraction of a point higher than Chrome's HarfBuzz with the same Vazirmatn-Bold, so the text ink is shorter than the design's (same line breaks); the iOS ckb platform-text-shaping waiver in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "acb4ce269894f249ad19c4193e392fb0d9c78fe4f4520a44db48c2972c1845e3",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: CoreText moves \"Mauer\" to the goal's second line; the iOS de platform waiver covers it",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "how-to-play.goal: CoreText lays the German goal a little wider than Chrome, so iOS moves \"Mauer\" to the second line (\"…bevor es deine / Mauer erreicht.\" against the design's \"…deine Mauer / erreicht.\"); the iOS de platform waivers of how-to-play.goal text-ink and how-to-play.screen structure in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "c093d5a0c7132e480e84988f8a3121649aed935aa6b1b59cb836805db063a0ff",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "how-to-play.step-text: CoreText draws the descender tails of the first line's Sorani letters a fraction of a point higher than Chrome's HarfBuzz with the same Vazirmatn-Bold, so the text ink is shorter than the design's (same line breaks); the iOS ckb platform-text-shaping waiver in parity/waivers.json",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "8ea957e0cdb71d0b28149ad717e74d64ea2ac5d3fb9323e8e4c267c5aaaea294",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: CoreText lays the German goal wider, so \"Mauer\" moves to the second line (iOS de platform waiver)",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "how-to-play.goal: CoreText lays \"Halte jedes Monster auf, bevor es deine Mauer erreicht.\" a little wider than Chrome with the same Rubik file, so \"Mauer\" moves to the second line and the screen structure follows (iOS de platform waivers, text-ink and structure)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "1536d653cd557f287b6e66db89e16d933446e0e379deb3a0a0b817c15d84c39f",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "reset-progress-dialog.body: same line breaks; CoreText draws the marks below the second line (the v of U+0695 and U+06CE, the tails of the descenders) a little higher than Chrome, so the ink box is shorter (iOS ckb platform-text-shaping waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s14-reset-all-progress",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "bc10e68980e161d17d44bb818958df2fe86a9d651273452906dd823329d8f4b5",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "reset-progress-dialog.body: same line breaks; CoreText draws the marks below the second line (the v of U+0695 and U+06CE, the tails of the descenders) a little higher than Chrome, so the ink box is shorter (iOS ckb platform-text-shaping waiver)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "b3172547d319ec59bc52c2f528577af514195b9f200ec254b24814bdcc2b0488",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "waived: the Sorani restart key label wraps to three lines, so the card is taller and starts higher (iOS ckb design-artefact waiver)",
+        "wrapping": "waived: the mockup lets the Sorani restart label overflow its 152 pt key; the app wraps it to three lines (iOS ckb design-artefact waiver)",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "restart-dialog: the Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit its 152 pt key; the mockup lets \"دەستپێبکەرەوە\" overflow past the key, the app wraps the label to three lines, so the keys and the card are about 25 pt taller and the card starts 12.6 pt higher (iOS ckb design-artefact waivers: bounds, text-ink, structure)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s14-restart-to-apply",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "eb1915b8c66995df98971671c50659111f64bb7be11fad0206e52ff0a1fe3d84",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "waived: the Sorani restart key label wraps to three lines, so the card is taller and starts higher (iOS ckb design-artefact waiver)",
+        "wrapping": "waived: the mockup lets the Sorani restart label overflow its 152 pt key; the app wraps it to three lines (iOS ckb design-artefact waiver)",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "restart-dialog: the Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit its 152 pt key; the mockup lets \"دەستپێبکەرەوە\" overflow past the key, the app wraps the label to three lines, so the keys and the card are about 25 pt taller and the card starts 12.6 pt higher (iOS ckb design-artefact waivers: bounds, text-ink, structure)",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "48e12a47fceaf35c99f217aa17e0a218bc0a7509c44fa7990f6a5a38dae6b165",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pause.dialog: CoreText lays the Sorani Home label \"پەڕەی سەرەکی\" about 1.4 pt wider than Chrome, so the centred icon-and-label row sits a hair to the side (iOS ckb platform waiver, structure); the game board is masked",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s6-pause",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "fb06af00e08668481dd6d0cf1b0c49b56d9ac9b9de860a95ddbbdca3cda0d66e",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "n/a",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "pause.dialog: CoreText lays the Sorani Home label \"پەڕەی سەرەکی\" about 1.4 pt wider than Chrome, so the centred icon-and-label row sits a hair to the side (iOS ckb platform waiver, structure); the game board is masked",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "9300e72807246a838f3d752ad96082de1d755bd287f082eab29a07cdf270f719",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: the reason card breaks after \"sind\", an iOS platform waiver (balance)",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The reason card breaks \"Die Monster sind / durchgebrochen\" where Chrome's balance breaks \"Die Monster / sind durchgebrochen\" (iOS platform waiver: no balanced width gives Chrome's break); words, size and colour match.",
+          "status": "waived"
+        },
+        {
+          "what": "The continue offer's dashed edge: React Native's iOS dashes have their own length and corner phase (pre-listed platform waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "e9473cc0de7d23f42e1b1145ea195111e3e3f90b5b1c467f4fbb17e388a8b00c",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: the reason card breaks after \"sind\", an iOS platform waiver (balance)",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The reason card breaks \"Die Monster sind / durchgebrochen\" where Chrome's balance breaks \"Die Monster / sind durchgebrochen\" (iOS platform waiver: no balanced width gives Chrome's break); words, size and colour match.",
+          "status": "waived"
+        },
+        {
+          "what": "The continue offer's dashed edge: React Native's iOS dashes have their own length and corner phase (pre-listed platform waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "aeb9129612cb480236f96d834be1f0494b38dacfcf4af94476726583519f6368",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Premium nudge's underline is a drawn 2 pt bar that runs through the descender of ڕ, where Chrome skips ink around it (iOS platform waiver); words and line match.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "dark",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "86e8d406bc7ce0870b45677f3382f0416cd4aa34abd69b2d9c9a1b96f0cdc19e",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: the nudge breaks before the isolated price, an iOS design-artefact waiver",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Premium nudge breaks before the isolated price (\"... für / 1,99 €.\") where the mockup breaks the price apart (\"... für 1,99 / €.\"), one underline per line (iOS design-artefact waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "ed11fd3119941343954a47e7eb5517af0dd48bd25aa1eec992c04b0fafa63784",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Premium nudge's underline is a drawn 2 pt bar that runs through the descender of ڕ, where Chrome skips ink around it (iOS platform waiver); words and line match.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "de",
+      "scrollY": 0,
+      "sheetSha256": "2888e98f932151773eea286d95b924b432b7f768f33e5caef8ee548a7e341cb5",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "waived: the nudge breaks before the isolated price, an iOS design-artefact waiver",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The Premium nudge breaks before the isolated price (\"... für / 1,99 €.\") where the mockup breaks the price apart (\"... für 1,99 / €.\"), one underline per line (iOS design-artefact waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "lineSiege",
+      "frame": "s9-daily-challenge",
+      "theme": "dark",
+      "lang": "ckb",
+      "scrollY": 0,
+      "sheetSha256": "a1b598a8583373d15aea82b66b9960158e9d42c934850b911201e65b52c5bd20",
+      "date": "2026-10-18",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "match",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The tilted calendar's month band edge is drawn without antialiasing on iOS, so the month's ink window is shorter than Chrome's (iOS platform waiver, dark ckb); the word matches.",
+          "status": "waived"
+        },
+        {
+          "what": "The missed and today marks and the legend's missed swatch are dashed: iOS dash length and corner phase differ from Chrome's (pre-listed platform waivers).",
           "status": "waived"
         }
       ]
