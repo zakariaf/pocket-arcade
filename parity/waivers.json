@@ -1643,6 +1643,316 @@
       "class": "platform",
       "langs": ["ckb"],
       "reason": "The Android fa waiver of this element (67), in dark ckb: the design's tilted month band edge is antialiased into the run's ink box (22.3 pt high), while the app's band edge does not reach it (16.7 pt); the word ئەیلوول, its size and colour match."
+    },
+    {
+      "frame": "s6-pause",
+      "testID": "pause.dialog",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "CoreText lays the Sorani Home label \"پەڕەی سەرەکی\" about 1.4 pt wider than Chrome with the same Vazirmatn-Regular.ttf, so the centred icon-and-label row of pause.home-button shifts and the home icon sits 0.7 pt from its design place: one 1.3 pt structure blob (6.0 x 5.3 pt at +223,+427) in light and dark ckb (close-prep capture 2026-10-18, same numbers as E17). fa matches exactly; no app style changes glyph advances.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome breaks the line inside the price (\"…für 1,99 / €.\")",
+      "reason": "The app shows the store price as Intl formats it, \"1,99 €\" with a no-break space, isolated in the sentence (FSI/PDI), so its line breaks before the price (\"…für / 1,99 €.\"); breaking a price apart is the mockup's artefact. Measured 2026-10-18 in light and dark de: first line ink 255.3 vs 263.7 pt, \"1,99 €\" 13.7 vs 26.3 pt, the trailing \".\" on the next line, and the second-line underline a 46 x 2 pt structure blob at +193,+829.3. Box, words and one underline per line match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.screen",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": "the mockup fixture \"priceText\":{\"de\":\"1,99 €\"} writes the price with a plain U+0020 space, so Chrome breaks the line inside the price (\"…für 1,99 / €.\")",
+      "reason": "The app shows the store price as Intl formats it, \"1,99 €\" with a no-break space, isolated in the sentence (FSI/PDI), so its line breaks before the price (\"…für / 1,99 €.\"); breaking a price apart is the mockup's artefact. Measured 2026-10-18 in light and dark de: first line ink 255.3 vs 263.7 pt, \"1,99 €\" 13.7 vs 26.3 pt, the trailing \".\" on the next line, and the second-line underline a 46 x 2 pt structure blob at +193,+829.3. Box, words and one underline per line match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-win",
+      "testID": "result.premium-button",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "Chrome skips the underline around descenders (text-decoration-skip-ink: auto, the default; the mockup sets nothing), so its bar breaks under the descender of ڕ and the design run's ink box reaches 17.3 pt; iOS cannot draw a 2 pt underline, so QuietButton draws it as a View that runs through the descender: ink height 14.7 vs 17.3 pt, dx -11.0 in light and dark ckb (2026-10-18). The line's ink extents and the words match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card.label",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with its own score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break, whose second line is longer than the app's whole first line. Measured 2026-10-18 in light and dark de: first-line ink 141.7 vs 184.3 pt (dx -22.3), and the moved word \"sind\" as a 3.3 pt structure blob (10.7 x 14.7 pt) on the reason card. Words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s7-result-lose",
+      "testID": "result.reason-card",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "Chrome's text-wrap: balance picks its breaks with its own score (\"Die Monster / sind durchgebrochen\"); the app balances by the narrowest width that keeps two lines (\"Die Monster sind / durchgebrochen\"), and no width can produce Chrome's break, whose second line is longer than the app's whole first line. Measured 2026-10-18 in light and dark de: first-line ink 141.7 vs 184.3 pt (dx -22.3), and the moved word \"sind\" as a 3.3 pt structure blob (10.7 x 14.7 pt) on the reason card. Words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s9-daily-challenge",
+      "testID": "daily.today-card.calendar.month",
+      "rule": "text-ink",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["ckb"],
+      "reason": "The pre-listed dark fa cause, in Sorani: the month sits on the calendar tile tilted by .cal{transform:rotate(-3deg)}, and iOS draws a rotated view's edges without antialiasing (React Native exposes no allowsEdgeAntialiasing), so Chrome's antialiased band edge next to \"ئەیلوول\" counts as ink in the design window (22.3 pt) and the app's stepped edge does not (16.7 pt), dark ckb only (light ckb passes), 2026-10-18. The word itself matches.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["de"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The pre-listed en artefact in German: the app writes \"Version 1.0.0 (8)\" as one text with one space, as the copy deck has it; the mockup splits it into two flex items 6 px apart. Measured 2026-10-18 in light and dark de: the chip 148 vs 151 pt wide (dw -3.0, dy -0.6), \"1.0.0 (8)\" dx -2.6/-2.7 pt, and the gap as a 4.7 (light) / 2.0 (dark) pt structure blob, 7.7 x 30 pt, at the chip's end.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.version-chip",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".chip{display:inline-flex;align-items:center;gap:6px;...} makes \"Version \" and the <bdi> version two flex items 6 px apart, so the chip is 3 px wider than the one-space text",
+      "reason": "The same .chip gap artefact in Sorani (\"وەشانی 1.0.0 (8)\"): every gate passes in light and dark ckb, but the look pass sees the app chip 1.4 pt narrower and the number 1.0 pt nearer the label than the mockup's 6 px flex gap draws (light-ckb, 2026-10-18; recorded as the one open difference of that run). Proposed so the difference can be recorded as waived; the fa runs show the same in-gate gap and were signed without it.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11b-about-and-credits",
+      "testID": "about.screen",
+      "rule": "fill",
+      "class": "platform",
+      "themes": ["dark"],
+      "langs": ["ckb"],
+      "reason": "iOS snaps each Vazirmatn line box to the 1/3 pt grid, so the Sorani credits and support cards end 0.9 to 1.5 pt lower than Chrome draws them (every element inside the 2 pt bounds gate). In dark ckb the ground and the card fill cover nearly equal areas, and the root's most frequent colour tips from ground #1B1943 to card #2B2862: design ground 44.07 % vs card 43.84 %, app ground 43.87 % vs card 44.00 % of the gate's samples (2026-10-18). Colours themselves match; dark de keeps a 4-point lead and passes.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.tab",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.group.sounds.list",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s11d-licences",
+      "testID": "licences.entry-row.game-sounds",
+      "rule": "bounds",
+      "class": "platform",
+      "langs": ["ckb"],
+      "reason": "iOS, as for the pre-listed fa waivers of these elements: the Vazirmatn licence rows are a little taller than the design (the 25.5 pt label line snapped to the pixel grid), so the rows near the end of the page sit lower. With the scroll measured (the app reports parity.scroll.761.00, exactly the offset asked), the Sorani Sounds group at the bottom is 2.3 to 2.5 pt below its design place in light and dark ckb at y761 (group and tab dy +2.3, list and row +2.5), just over the 2 pt bounds gate; sizes match within 0.8 pt (2026-10-18). Not a scroll mismatch: the offset is measured, not inferred.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.goal",
+      "rule": "text-ink",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "CoreText lays the German goal text a little wider than Chrome's HarfBuzz with the same Rubik font file, and the first line fills 361.0 of Chrome's 362 pt (\"…bevor es deine Mauer\"), so iOS moves \"Mauer\" to the second line: first-line ink 306.7 vs 361.0 pt (dx -26.8) and a 1.7 pt structure blob (7.7 x 12 pt at +119.3,+161.3) on the moved word, light and dark de (2026-10-18). No app style changes glyph advances; words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.screen",
+      "rule": "structure",
+      "class": "platform",
+      "langs": ["de"],
+      "reason": "CoreText lays the German goal text a little wider than Chrome's HarfBuzz with the same Rubik font file, and the first line fills 361.0 of Chrome's 362 pt (\"…bevor es deine Mauer\"), so iOS moves \"Mauer\" to the second line: first-line ink 306.7 vs 361.0 pt (dx -26.8) and a 1.7 pt structure blob (7.7 x 12 pt at +119.3,+161.3) on the moved word, light and dark de (2026-10-18). No app style changes glyph advances; words, size and colour match.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s13-how-to-play",
+      "testID": "how-to-play.step-text",
+      "rule": "text-ink",
+      "class": "platform-text-shaping",
+      "langs": ["ckb"],
+      "glyphs": "و ۆ ڕ ی",
+      "reason": "Line breaks now match (the E17 \"earlier break\" cause no longer holds). CoreText draws the descender tails of the first line's و ۆ ڕ ی 0.3 to 0.7 pt higher than Chrome's HarfBuzz with the same Vazirmatn-Bold.ttf, so in the design they reach into the second line's measured window (rows 506.0 to 509.7) and count as its ink, and in the app they do not: second-line ink height 24.7 vs 33.7 pt, width within 0.33 pt, light and dark ckb (2026-10-18). No style changes mark or descender shaping.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-reset-all-progress",
+      "testID": "reset-progress-dialog.body",
+      "rule": "text-ink",
+      "class": "platform-text-shaping",
+      "langs": ["ckb"],
+      "glyphs": "ڕ ێ ر ز",
+      "reason": "Line breaks now match (the E17 \"earlier break\" cause no longer holds). The marks below the second line (the small v of ڕ U+0695 and ێ U+06CE, and the tails of ڕ ر ز) reach into the last line's measured box in the app, where CoreText sets line 2 1.59 pt and line 3 about 1.05 pt lower than Chrome, inside the gate: last-line ink height 28.7 vs 21.3 pt (dh +7.33, dx -0.05), light and dark ckb (2026-10-18). Same Vazirmatn-Regular.ttf; no style changes mark shaping.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.title",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.body",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.buttons",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "bounds",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "text-ink",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.scrim",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.card",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.later-button",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
+    },
+    {
+      "frame": "s14-restart-to-apply",
+      "testID": "restart-dialog.restart-button",
+      "rule": "structure",
+      "class": "design-artefact",
+      "langs": ["ckb"],
+      "designCause": ".btn{display:inline-flex;...min-width:0;...} with .btn .bl{min-width:0}, .dlg-b .btn{flex:1 1 120px} and no overflow-wrap or word-break: Chrome lets the one long word \"دەستپێبکەرەوە\" overflow the 152 pt key instead of breaking it",
+      "reason": "The Sorani key label \"ئێستا دەستپێبکەرەوە\" does not fit the 152 pt dialog key: the mockup draws \"ئێستا\" on one line and lets \"دەستپێبکەرەوە\" overflow past the key edge, while iOS breaks inside the word (\"ئێستا / دەستپێبکە / رەوە\"), so the keys are 100 vs 75.3 pt (+24.7), the centred card 378 vs 352.8 pt (+25.2) and every part of the dialog moves 12.1 to 13.1 pt up, light and dark ckb (2026-10-18, same numbers as E17). The copy-deck text is unchanged until the owner gives a shorter label; overflowing text past a key edge is the mockup's artefact.",
+      "reportedToOwner": "2026-10-18"
     }
   ]
 }
