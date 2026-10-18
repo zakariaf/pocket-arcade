@@ -4,8 +4,8 @@
 // placements forced open (useAdContext), the scroll offset of a tall frame and the marker that shows
 // the offset a body really reached (ScreenBody: parity.scroll.<y>, which check-parity measures the
 // scroll by) and this launch's nonce (ParityLaunchMarker). The root draws the marker parity.launch.<nonce> itself; a
-// modal layer (the Scrim, the Result overlay, the consent cover) hides everything outside it from
-// the accessibility tree, so each modal root draws a ParityLaunchMarker too.
+// modal layer hides everything outside it from the accessibility tree, so the ModalLayer every
+// overlay is drawn in draws a ParityLaunchMarker in its layer too (one per layer).
 import { ParityLaunchContext, ParityLaunchMarker } from '@e07/shell/app/parity-launch-marker.tsx';
 import { ForcedAdPlacementsContext } from '@e07/shell/app/use-ad-context.ts';
 import {

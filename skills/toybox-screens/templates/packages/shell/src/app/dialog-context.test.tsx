@@ -1,6 +1,7 @@
 // packages/shell/src/app/dialog-context.test.tsx
 import { screen, userEvent } from '@testing-library/react-native';
 
+import { ParityLaunchContext, parityLaunchTestID } from '@e07/shell/app/parity-launch-marker.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { Button } from '@e07/shell/ui/button.tsx';
@@ -73,6 +74,23 @@ describe('DialogProvider', () => {
     await user.press(screen.getByTestId('reset-stats-dialog.cancel-button'));
     const reopened = screen.getByTestId('stats.reset-button');
     expect(trapAbove(reopened)).toBeNull();
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it("draws the parity launch's marker once for an open dialog: its layer's, none in the Scrim", async () => {
+    // On Android the modal flag is ignored, so a second marker in the Scrim was a duplicate element.
+    const user = userEvent.setup();
+    await renderWithShell(
+      <ParityLaunchContext value="n7">
+        <DialogProvider>
+          <ResetEntry onReset={jest.fn()} />
+        </DialogProvider>
+      </ParityLaunchContext>,
+    );
+    await user.press(screen.getByTestId('stats.reset-button'));
+
+    const markers = screen.getAllByTestId(parityLaunchTestID('n7'), { includeHiddenElements: true });
+    expect(markers).toHaveLength(1);
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });

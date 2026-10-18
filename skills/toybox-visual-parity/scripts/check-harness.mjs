@@ -6,8 +6,8 @@
 // test-only-entry.ts and wired into the Shell's startup through TEST_ONLY, the component specs draw
 // the edge widths the references draw, capture output is gitignored, the waiver and sign-off
 // files are well formed, every frame state has its opener in the hook that owns it, the frozen-motion
-// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn (by
-// the parity root and inside every modal root), every ScreenBody draws the scroll offset it reached
+// switch, the board probe and the consent hold are wired, every launch's nonce marker is drawn once (by
+// the parity root and inside the ModalLayer's layer, never again by the Scrim or Result overlay in it), every ScreenBody draws the scroll offset it reached
 // (parity.scroll.<y>, the measured scroll of a tall capture), and parity/game-facts.json holds each app's facts
 // (hasMusic, winLine, hasHints), pinned to the game module by apps/<id>/src/parity-game-facts.test.ts.
 // On Android the request arrives as the launch intent's extra "parity", read through the Shell's
@@ -147,13 +147,19 @@ const WIRING = [
 
 /**
  * The modal roots of the Shell: a modal layer hides everything outside it from the accessibility
- * tree Maestro reads, so each draws the launch's nonce marker inside itself (the parity root draws
- * one for every other frame). The screen decides whether the file is due in a partial Shell.
+ * tree Maestro reads, so the ModalLayer every overlay is drawn in draws the launch's nonce marker
+ * inside its layer (the parity root draws one for every other frame). The Scrim and the Result
+ * overlay are modal too, but they are always drawn inside a ModalLayer's layer, and on Android the
+ * modal flag is ignored: a marker of their own was a second parity.launch.<nonce> element in the
+ * dump, so they draw none (one marker per layer). The screen decides whether the file is due in a
+ * partial Shell.
  */
 const MODAL_ROOTS = [
+  { file: 'packages/shell/src/app/modal-layer.tsx', screen: 'S3', what: 'the ModalLayer (the S3 consent cover, and the layer every overlay is drawn in)' },
+];
+const LAYERED_MODAL_ROOTS = [
   { file: 'packages/shell/src/ui/scrim.tsx', screen: 'S14', what: 'the Scrim (S6 Pause and the S14 dialogs)' },
   { file: 'packages/shell/src/screens/result/result-overlay.tsx', screen: 'S7', what: 'the Result overlay (S7)' },
-  { file: 'packages/shell/src/app/modal-layer.tsx', screen: 'S3', what: 'the ModalLayer (the S3 consent cover, and the layer every overlay is drawn in)' },
 ];
 
 /** The startup steps (parity-startup.tsx) the Shell calls; a harness nobody applies draws nothing. */
@@ -541,8 +547,9 @@ run(async () => {
     if (!found) problem(w.file ?? 'packages/shell/src', 0, 'harness-not-wired', `${w.file ? 'does not call' : 'nothing in the Shell calls'} TEST_ONLY?.${w.name}()`, w.fix);
   }
 
-  // 4a'. The launch nonce marker: the parity root draws it and provides its context, and every modal
-  // root draws one inside itself (a modal layer hides the rest from the hierarchy), so capture-app
+  // 4a'. The launch nonce marker: the parity root draws it and provides its context, and the ModalLayer
+  // draws one inside its layer (a modal layer hides the rest from the hierarchy), the Scrim and the
+  // Result overlay none of their own (one marker per layer), so capture-app
   // can prove each dump came from its own launch. The held S1 splash is registered by start-shell
   // outside the Shell root, so start-shell wraps it in the parity root too (withParityRoot).
   if (texts.startup !== null && !wired.has('withParityRoot')) {
@@ -570,6 +577,18 @@ run(async () => {
     checked += 1;
     if (!/<ParityLaunchMarker\b/.test(maskComments(text))) {
       problem(m.file, 0, 'harness-launch-marker', `${m.what} is a modal root (accessibilityViewIsModal) but draws no <ParityLaunchMarker />, so a capture behind it has no nonce in its hierarchy`, 'Render <ParityLaunchMarker /> (packages/shell/src/app/parity-launch-marker.tsx) as the first child of the modal View: it draws nothing outside a parity capture.');
+    }
+  }
+  for (const m of LAYERED_MODAL_ROOTS) {
+    const text = read(m.file);
+    const skip = skipFor(m.screen);
+    if (text === null || skip) {
+      if (skip) report.skip({ file: m.file, rule: 'harness-launch-marker-once', message: skip });
+      continue;
+    }
+    checked += 1;
+    if (/<ParityLaunchMarker\b/.test(maskComments(text))) {
+      problem(m.file, 0, 'harness-launch-marker-once', `${m.what} draws its own <ParityLaunchMarker />, but it is always drawn inside a ModalLayer whose layer draws one: Android ignores the modal flag, so the dump holds two parity.launch.<nonce> elements`, 'Remove the marker (and its import): copy the template again; the ModalLayer (app/modal-layer.tsx) draws the one marker per layer.');
     }
   }
 

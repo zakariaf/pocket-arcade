@@ -336,8 +336,8 @@ run(async () => {
       return fail(
         `hierarchy from another ${where}: the dump has no ${launchMarker(nonce)}, the marker of this launch on ${udid} (driver port ${driverPort}), in ${MARKER_DUMPS} dumps in a row; the last was kept as rejected.hier.json`,
         isAndroid
-          ? 'Give this session its own emulator (setup-parity-emu.mjs --name e07-android-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, the test build does not read the launch extra (check-harness.mjs, rule harness-android-launch) or a modal root lacks ParityLaunchMarker (harness-launch-marker).'
-          : 'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or a modal root lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
+          ? 'Give this session its own emulator (setup-parity-emu.mjs --name e07-android-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, the test build does not read the launch extra (check-harness.mjs, rule harness-android-launch) or its ModalLayer lacks ParityLaunchMarker (harness-launch-marker).'
+          : 'Give this session its own simulator (--name e07-parity-<key>) and let capture-app pick a free driver port (or pass an unused --driver-port). If the app never shows the marker, its parity root or its ModalLayer lacks ParityLaunchMarker (check-harness.mjs, rule harness-launch-marker).',
       );
     }
   };

@@ -3,6 +3,8 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ParityLaunchContext, parityLaunchTestID } from '@e07/shell/app/parity-launch-marker.tsx';
+import { GameLayout } from '@e07/shell/screens/game/game-layout.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
 import { COMPONENT_SPECS } from '@e07/shell/ui/component-specs.ts';
@@ -320,5 +322,20 @@ describe('ResultOverlay', () => {
       });
       expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
     }
+  });
+});
+
+describe('ResultOverlay in the Game layout', () => {
+  it("draws the parity launch's marker once: the layer's, none of its own", async () => {
+    // On Android the modal flag is ignored, so a second marker in the overlay was a duplicate element.
+    await renderWithShell(
+      <ParityLaunchContext value="n7">
+        <GameLayout topBar={null} board={null} overlay={<ResultOverlay model={WIN} />} />
+      </ParityLaunchContext>,
+    );
+
+    const markers = screen.getAllByTestId(parityLaunchTestID('n7'), { includeHiddenElements: true });
+    expect(markers).toHaveLength(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 });
