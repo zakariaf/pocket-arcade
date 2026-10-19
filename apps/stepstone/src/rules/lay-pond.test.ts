@@ -37,6 +37,14 @@ describe('layPond', () => {
     );
   });
 
+  it('ends the route early and lays no trap when the pond has no free cell left', () => {
+    const tiny = { side: 2, kinds: ['king'], routeHops: 9, decoys: 2, minPar: 1 } as const;
+    const { state } = layPond(tiny, seedRng(4));
+    expect(state.cells.filter((cell) => cell === 'king')).toHaveLength(3);
+    expect(state.cells.filter((cell) => cell === 'flag')).toHaveLength(1);
+    expect(state.par).toBe(1);
+  });
+
   it('draws on from the stream it is given (the next pond differs)', () => {
     const first = layPond(TUNING.levelRows[0], seedRng(1));
     const second = layPond(TUNING.levelRows[0], first.rng);
