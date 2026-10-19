@@ -135,10 +135,15 @@ function reachable(starts, byRel, stop) {
   return seen;
 }
 
+/** The engine functions that run during play (create.ts runs once, before it). */
+const PLAY_ENGINE_FILES = Object.keys(RULE_FILES).filter((file) => file !== 'create.ts');
+
 /**
- * The rules files that run during play: everything outside create.ts that is not reached only
- * through create.ts. A layout helper only create.ts imports (an opening module) draws at create
- * time, so it needs no RNG in the state; a file a play-time file reaches does.
+ * The rules files that run during play: the play-time engine functions (listMoves, applyMove,
+ * outcome, even when create.ts calls them, for example to prove its layout winnable), everything
+ * else outside create.ts that is not reached only through create.ts, and all they import. A layout
+ * helper only create.ts imports (an opening module) draws at create time, so it needs no RNG in
+ * the state; a file a play-time file reaches does.
  */
 function playTimeFiles(files) {
   const nonTest = files.filter((file) => !file.isTest);
@@ -146,7 +151,8 @@ function playTimeFiles(files) {
   const create = nonTest.find((file) => file.rel.endsWith('/create.ts'));
   if (create === undefined) return nonTest;
   const createOnly = reachable([create], byRel, null);
-  const roots = nonTest.filter((file) => !createOnly.has(file));
+  const isPlayEngine = (file) => PLAY_ENGINE_FILES.some((name) => file.rel.endsWith(`/${name}`));
+  const roots = nonTest.filter((file) => !createOnly.has(file) || isPlayEngine(file));
   return [...reachable(roots, byRel, create)];
 }
 
