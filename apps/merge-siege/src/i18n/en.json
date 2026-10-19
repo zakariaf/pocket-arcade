@@ -1,0 +1,22 @@
+{
+  "merge-siege.goal": "Smash every enemy before one reaches your bottom row.",
+  "merge-siege.how-to-play.step-1": "Swipe to slide all your tiles at once.",
+  "merge-siege.how-to-play.step-2": "Two equal tiles merge into one bigger tile.",
+  "merge-siege.how-to-play.step-3": "A tile smashes any enemy with the same number or a smaller one.",
+  "merge-siege.how-to-play.step-4": "Enemies march down as you swipe. Keep them off your bottom row.",
+  "merge-siege.lose.overrun": "The enemies overran the board",
+  "merge-siege.name": "Merge Siege",
+  "merge-siege.pack-name.1": "Outer gate",
+  "merge-siege.pack-name.2": "Inner wall",
+  "merge-siege.pack-name.3": "Grand keep",
+  "merge-siege.progress": "Enemies {smashed, number} / {total, number}",
+  "merge-siege.stats.biggest-tile": "Biggest tile",
+  "merge-siege.stats.enemies-smashed": "Enemies smashed",
+  "merge-siege.stats.tiles-merged": "Tiles merged",
+  "merge-siege.tagline": "Merge your tiles. Smash the siege.",
+  "merge-siege.tutorial.step-1": "Swipe up to send your tiles at the enemies.",
+  "merge-siege.tutorial.step-2": "Equal tiles merge. Swipe sideways to join them.",
+  "merge-siege.tutorial.step-3": "A bigger tile smashes a bigger enemy. Swipe up!",
+  "merge-siege.tutorial.step-4": "Smash the last enemy before it reaches your bottom row.",
+  "merge-siege.win-title": "The siege is broken!"
+}
