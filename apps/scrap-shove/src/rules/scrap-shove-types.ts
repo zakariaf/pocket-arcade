@@ -84,6 +84,13 @@ export type ScrapShoveEvent =
       readonly heapId: number;
       readonly isByPlayer: boolean;
     }
+  | {
+      readonly kind: 'scrap-smashed';
+      readonly heapId: number;
+      readonly at: Cell;
+      /** The heavy robot that could not shove the heap and smashed it. */
+      readonly byRobotId: number;
+    }
   | { readonly kind: 'robots-stepped'; readonly steps: readonly RobotStep[] }
   | {
       readonly kind: 'robots-crashed';

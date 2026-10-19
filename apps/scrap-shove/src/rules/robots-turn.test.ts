@@ -88,15 +88,23 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
     ]);
   });
 
-  it('stops a heavy robot whose heap would hit the player, the wall or another heap', () => {
+  it('smashes the heap a heavy robot cannot shove (the player, the wall or another heap behind it), and the robot stays put', () => {
     const toPlayer = waitOn(['.....', '.....', '..h..', '...#.', '....@']);
     expect(boardText(toPlayer.state, 5)).toBe(
-      ['.....', '.....', '..h..', '...#.', '....@'].join('\n'),
+      ['.....', '.....', '..h..', '.....', '....@'].join('\n'),
     );
+    expect(toPlayer.events.at(-1)).toStrictEqual({
+      kind: 'scrap-smashed',
+      heapId: 2,
+      at: { col: 3, row: 3 },
+      byRobotId: 1,
+    });
     const toWall = waitOn(['.#...@', 'h.....', '......', '......', '......', '......']);
     expect(toWall.state.robots).toStrictEqual([{ id: 2, kind: 'heavy', col: 0, row: 1 }]);
+    expect(toWall.state.heaps).toStrictEqual([]);
     const toHeap = waitOn(['......', '......', '..h##@', '......', '......', '......']);
     expect(toHeap.state.robots).toStrictEqual([{ id: 1, kind: 'heavy', col: 2, row: 2 }]);
+    expect(toHeap.state.heaps).toStrictEqual([{ id: 3, col: 4, row: 2, isShoved: false }]);
   });
 
   it('crushes a robot behind the heap a heavy robot shoves', () => {

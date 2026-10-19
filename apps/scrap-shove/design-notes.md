@@ -30,9 +30,10 @@ The rules, as proposed:
 - **Pieces:** the player, scrap heaps, and three robot kinds:
   - **normal:** one step toward the player each turn (one king step: across, along or diagonal);
   - **fast:** two steps each turn (it steps again after every robot has stepped once);
-  - **heavy:** one step each turn; scrap does not wreck it, it shoves the heap ahead of it (and waits
-    when the heap cannot move); a robot that runs into it breaks down where it stood. Only a heap
-    shoved onto it scraps it. This is the design fix (section 15).
+  - **heavy:** one step each turn; scrap does not wreck it, it shoves the heap ahead of it; a heap
+    it cannot shove (you, the wall or another heap behind it) it smashes to pieces and stays put; a
+    robot that runs into it breaks down where it stood. Only a heap shoved onto it scraps it. This
+    is the design fix (section 15).
 - **Your turn:** tap one of the up to eight squares next to you to step there, or tap yourself to
   wait. Stepping onto a heap shoves it one square further the same way; a heap cannot be shoved off
   the board or into another heap. A heap shoved onto a robot crushes it (any kind).
@@ -202,8 +203,8 @@ What is kept, and why:
 - **B, heavy robots:** the only option that moves the twist number to about one per run. A heavy
   robot cannot be wrecked by a crash or by walking into scrap, so every floor with a heavy robot can
   only be won by shoving a heap onto it: the twist becomes the way to win, not a rare extra. It even
-  sets itself up: a heavy robot pushes a heap toward you until the heap is next to you, then waits,
-  and you shove it back.
+  sets itself up: a heavy robot pushes a heap toward you until the heap is next to you, and you
+  shove it back before it smashes the heap on its next turn.
 - **A, heaps in the robots' paths:** alone it does not lift the twist (0.19), but with B it puts one
   heap in each heavy robot's lane and the rest ahead of the normal robots, which lifts the twist from
   0.90 to 1.12 and the win rate from 49 % to 74 %.
@@ -213,6 +214,13 @@ What is kept, and why:
 
 The real rules are measured again in E20-T06; if the kill test fails there after reasonable tuning,
 the owner decides between a rule change and dropping the game (E20-T06's Owner line).
+
+**Measured in E20-T06 (the real rules, 100 seeds per cell).** The first sim run found floors that
+never end: once only heavy robots were left, each waiting behind scrap it could not shove, the
+player could wait for ever (greedy runs hit the 400-move cap 2, 1, 3 and 10 times on the four rows).
+So a heavy robot now smashes a heap it cannot shove and stays put: no cap hit since, and the twist
+gets a clear one-turn window ("shove it back now"). On the easiest row the greedy player then wins
+66 %, reaches the first crash within 3 moves in 100 % of runs and sees 1.10 twists per run.
 
 If the owner rejects the heavy robot: the twist stays near 0.3 per run, the kill test fails, and the
 epic closes as dropped.

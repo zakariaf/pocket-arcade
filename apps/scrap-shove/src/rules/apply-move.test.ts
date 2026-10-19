@@ -43,7 +43,7 @@ function hasSoundFloor(state: ScrapShoveState): boolean {
 }
 
 const PAST_TENSE_KEBAB =
-  /^[a-z]+(-[a-z]+)*-(stepped|waited|shoved|crushed|crashed|caught|cleared|reverted)$/;
+  /^[a-z]+(-[a-z]+)*-(stepped|waited|shoved|smashed|crushed|crashed|caught|cleared|reverted)$/;
 
 describe('applyMove (turn-based: apply the move, then animate its events)', () => {
   it('steps the player, then lets the robots step (spec 13: step or shove, then every robot steps)', () => {

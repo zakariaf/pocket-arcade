@@ -2,8 +2,9 @@
 // The robots' turn: every robot steps toward the player, the nearest first (ties by id), so a robot
 // never runs into one that was about to move away; then the fast robots step once more. A robot
 // that steps onto scrap is wrecked (a heavy one shoves the heap instead, crushing any robot behind
-// it); two robots on one square crash into a heap; a robot that runs into a heavy one breaks down
-// on its own square. A robot that steps onto the player catches them and the turn stops.
+// it, or smashes a heap it cannot shove); two robots on one square crash into a heap; a robot that
+// runs into a heavy one breaks down on its own square. A robot that steps onto the player catches
+// them and the turn stops.
 import {
   beyond,
   distanceBetween,
@@ -78,10 +79,25 @@ function isShoveBlocked(turn: Turn, target: Cell): boolean {
   return isOff || heapAt(floor, target) !== null || isSameCell(target, floor.player);
 }
 
-/** A heavy robot shoves the heap ahead of it; a robot behind the heap is crushed. Waits when stuck. */
+/**
+ * A heavy robot that cannot shove its heap smashes it to pieces and stays put: no heap shields
+ * the player for ever, so every floor ends (the bots found endless standoffs without this).
+ */
+function smashHeap(turn: Turn, robot: Robot, heap: Heap): Turn {
+  const smashed: ScrapShoveEvent = {
+    kind: 'scrap-smashed',
+    heapId: heap.id,
+    at: cellOf(heap),
+    byRobotId: robot.id,
+  };
+  const heaps = turn.floor.heaps.filter((piece) => piece.id !== heap.id);
+  return withEvents({ ...stepped(turn, robot, robot), floor: { ...turn.floor, heaps } }, [smashed]);
+}
+
+/** A heavy robot shoves the heap ahead of it; a robot behind the heap is crushed. */
 function heavyShove(turn: Turn, robot: Robot, heap: Heap): Turn {
   const target = beyond(robot, heap);
-  if (isShoveBlocked(turn, target)) return stepped(turn, robot, robot);
+  if (isShoveBlocked(turn, target)) return smashHeap(turn, robot, heap);
   const { floor } = turn;
   const victim = robotAt(floor, target);
   const heaps = floor.heaps.map((piece) =>
