@@ -3,13 +3,13 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Poker Drop
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
 - Focus ring
 - Dark theme rules ("toy chest at night")
-- Painting a new game (the other 23 apps)
+- Painting a new game (the games not in the design yet)
 - Mock-only colours (never built)
 
 The machine-readable source is `assets/toybox-tokens.json` (`color.games`, `color.shell`, `color.fixed`). Scripts read it; never retype a hex value by hand, generate the palette with `scripts/write-palette.mjs`.
@@ -89,6 +89,26 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#FF8A3D` Rust | `#FF9A55` Hot rust |
 | onPop | onPop | `#1D1B3A` | `#261C45` |
 
+### Poker Drop
+
+Added by its own design pass (2026-10-19): a lilac card-room felt with ruby hearts and a green table.
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#CDBDF4` Velvet wash | `#1E1640` Velvet night |
+| surface | surface | `#FCFAFF` Card stock | `#2E2460` Card box |
+| sunken | sunken | `#EAE3FB` | `#261D50` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#F6F2FF` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#C3B8F0` Lavender |
+| outline | border | `#1D1B3A` | `#E9E2FF` |
+| shadow | shadow | `#1D1B3A` | `#090616` |
+| accent | primary | `#FF5C7A` Ruby | `#FF7690` Glow ruby |
+| onAccent | onPrimary | `#1D1B3A` | `#1E1640` |
+| pop | pop | `#4CD08A` Felt | `#5EE09B` Night felt |
+| onPop | onPop | `#1D1B3A` | `#1E1640` |
+
+The light sunken is lighter than halfway between ground and surface: danger text needs 4.5:1 on it (`#E5DCFA` measured 4.36:1).
+
 ## Shell constants
 
 They never change with the game and live in `SHELL_COLORS[scheme]` (`packages/shell/src/theme/shell-colors.ts`); read them in `makeStyles` with `const shell = SHELL_COLORS[theme.scheme];`.
@@ -139,7 +159,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only three games have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+The design games (the token file's `color.games`) have Toybox paints there: `write-palette.mjs --game <id>` writes them. A game's own design pass adds its paint to the token file first (then the library's shared copy is refreshed and synced). Before that, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).

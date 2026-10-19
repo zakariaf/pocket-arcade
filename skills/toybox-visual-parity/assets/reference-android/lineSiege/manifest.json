@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "design": "ebcd9d1acced5d4dd1e2f12ce7cf8b645a1d514673523fd054e6a904c656f280",
   "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "1c287947c5c7f2fc7bc9693f466a5a7964abd1fb1badb439ed81452d0c725c57",
+  "frames": "6bb7e65772e1b0abe995cbee649cff6c2b7d5b0971d644eceafa0d4c7d16d884",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1644,6 +1644,14 @@
    ],
    "what": "Every Android render and layout re-rendered with the measured safe top of 44 dp instead of 24 dp: everything below the status bar sits 20 dp lower, the status-bar mask is 44 dp tall. Nothing else in the design moved; the iOS set in assets/reference is unchanged.",
    "why": "The first Android capture (E18-T20) measured the parity emulator's insets as the device profile asks: the pinned google_apis API 35 image draws a punch-hole cutout, so its status bar is 44 dp (132 px); every S2 element sat exactly 20 pt low against the 24 dp profile. A measured inset is a profile change by the skill's own rule (lead, 2026-10-16)."
+  },
+  {
+   "id": "G-poker-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Poker Drop added to the design as a design game: its light and dark paint and logo layers in the token file (color.games.pokerDrop, logos.games.pokerDrop), its texts in the copy deck (games.pokerDrop: name, tagline, goal, progress line, win title, lose reason, three counter labels, four how-to-play and four tutorial steps, three pack names, in en, de, fa and ckb), its game switcher entry, palette, logo, sample statistics and how-to-play picture in the mockup. No Line Siege frame draws it: no committed reference moved.",
+   "why": "spec 13: each game gets its own design pass, approved by the owner, before it is built. Drafted by E27-T01 on 2026-10-19 with the proposed paint, logo and texts; the owner approves it in the lead's combined message (the fa and ckb texts stay drafts for the owner's own review, O6)."
   }
  ]
 }

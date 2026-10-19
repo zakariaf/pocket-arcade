@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
-  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
-  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
+  "design": "ebcd9d1acced5d4dd1e2f12ce7cf8b645a1d514673523fd054e6a904c656f280",
+  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
+  "frames": "6bb7e65772e1b0abe995cbee649cff6c2b7d5b0971d644eceafa0d4c7d16d884",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1802,6 +1802,14 @@
    "variants": [],
    "what": "Every layout.json and the manifest were re-rendered with the round-4 renderer and map: each text run records its own tilt, the S14 progress-restored layout records the banner mask of Home under the dialog, the S12 state cards no longer pair their stand-in heading with premium.top-bar.title, and the map metadata gained the card surface of home.daily-card (L7, no pixel change) and the hint key's hasHints condition. Apart from the changes above, all 124 other PNGs are byte-identical.",
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
+  },
+  {
+   "id": "G-poker-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Poker Drop added to the design as a design game: its light and dark paint and logo layers in the token file (color.games.pokerDrop, logos.games.pokerDrop), its texts in the copy deck (games.pokerDrop: name, tagline, goal, progress line, win title, lose reason, three counter labels, four how-to-play and four tutorial steps, three pack names, in en, de, fa and ckb), its game switcher entry, palette, logo, sample statistics and how-to-play picture in the mockup. No Line Siege frame draws it: no committed reference moved.",
+   "why": "spec 13: each game gets its own design pass, approved by the owner, before it is built. Drafted by E27-T01 on 2026-10-19 with the proposed paint, logo and texts; the owner approves it in the lead's combined message (the fa and ckb texts stay drafts for the owner's own review, O6)."
   }
  ]
 }

@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "pokerDrop": {
+        "gameStats": ["836", "97", "×4"],
+        "progressMid": "3 / 8",
+        "progressFull": "8 / 8",
+        "progressMidParams": { "made": 3, "total": 8 },
+        "progressFullParams": { "made": 8, "total": 8 },
+        "loseReasonId": "poker-drop.lose.well-full"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "pokerDrop": {
+        "hands-made": 836,
+        "big-hands": 97,
+        "biggest-cascade": 4
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "pokerDrop": {
+          "progressMid": { "made": 3, "total": 8 },
+          "progressFull": { "made": 8, "total": 8 },
+          "loseReasonId": "poker-drop.lose.well-full"
         }
       }
     }
