@@ -28,7 +28,6 @@ function modelWith(overrides: Partial<TutorialModel> = {}): TutorialModel {
     BoardHost: ProbeBoard,
     welcomeText: 'Welcome to Tally!',
     coachText: 'Tap the left column to add one.',
-    coachTargets: [TARGET],
     coachPointer: { kind: 'target', target: TARGET },
     nudgeText: null,
     coachReplay: 0,

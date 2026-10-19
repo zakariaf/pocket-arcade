@@ -80,22 +80,14 @@ export function coachPointerOf<TState, TMove>(
   }
 }
 
-/** What a board host gets from its screen (BoardHostProps' coach members). */
-export type BoardCoachProps = {
-  readonly coachTargets?: readonly BoardTarget[];
-  readonly coachPointer?: TutorialPointer | null;
-};
-
 /**
- * A board host's coach: its pointer resolved through the game (null while the coach shows none),
- * or, from a screen that names only cells, those cells outlined without a hand.
+ * A board host's coach: its screen's pointer (BoardHostProps.coachPointer) resolved through the
+ * game; none while the coach shows none (null) or from a screen that has no coach (undefined).
  */
 export function boardCoachOf<TState, TMove>(
   game: CoachGame<TState, TMove>,
   state: TState,
-  props: BoardCoachProps,
+  pointer: TutorialPointer | null | undefined,
 ): CoachPointer {
-  if (props.coachPointer !== undefined) return coachPointerOf(game, state, props.coachPointer);
-  const cells = props.coachTargets ?? [];
-  return cells.length === 0 ? NO_COACH : { cells, hand: null };
+  return coachPointerOf(game, state, pointer ?? null);
 }

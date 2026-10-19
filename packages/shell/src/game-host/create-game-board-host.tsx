@@ -120,7 +120,7 @@ function boardHostFor<T extends ShellGameTypes>(
   const coachGame = coachGameOf(game);
   return function BoardHost(props: BoardHostProps): ReactNode {
     const result = useGameSession(controller.store, (state) => selectResult(state.session));
-    const coach = boardCoachOf(coachGame, result.state, props);
+    const coach = boardCoachOf(coachGame, result.state, props.coachPointer);
     const t = useT();
     const announce = useAnnounce();
     const selection = useBoardSelection({

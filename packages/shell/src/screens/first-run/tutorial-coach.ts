@@ -2,11 +2,8 @@
 // The Tutorial route's coach as plain data (spec S13): which scripted step the run is on, the
 // sentence and pointer of that step, whether Skip shows, and when the tutorial is over. Pure, so
 // plain Jest proves every stage; use-tutorial-model.ts turns it into texts and actions.
-import { pointerTargets } from '@e07/shell/game-host/tutorial-script.ts';
-
 import type { MessageId } from '@e07/game-kit/contract/messages.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { SessionView } from '@e07/shell/game-host/session-view.ts';
 import type { TutorialCoachStep } from '@e07/shell/game-host/tutorial-script.ts';
 
@@ -19,8 +16,6 @@ export type TutorialCoach = {
   readonly stepIndex: number;
   /** The game's sentence for this step while the stage is 'step', else null. */
   readonly messageId: MessageId | null;
-  /** The board cells the pointer names (outlined on the board); empty unless the stage is 'step'. */
-  readonly targets: readonly BoardTarget[];
   /**
    * The step's own pointer while the stage is 'step', else null: the board host resolves it
    * through the game (coachPointerOf) into the cells it marks and the pointing hand.
@@ -29,8 +24,6 @@ export type TutorialCoach = {
   /** Spec S13: no Skip before the second step, and none once the tutorial is over. */
   readonly isSkipShown: boolean;
 };
-
-const NO_TARGETS: readonly BoardTarget[] = [];
 
 function stageOf(steps: readonly TutorialCoachStep[], view: SessionView | null): TutorialStage {
   if (view === null || view.status === 'won' || view.status === 'lost') return 'done';
@@ -55,7 +48,6 @@ export function tutorialCoachOf(
     stage,
     stepIndex,
     messageId: step?.messageId ?? null,
-    targets: step === undefined ? NO_TARGETS : pointerTargets(step.pointer),
     pointer: step?.pointer ?? null,
     isSkipShown: stage !== 'done' && moveCount >= 1,
   };

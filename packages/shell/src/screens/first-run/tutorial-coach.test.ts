@@ -38,7 +38,6 @@ describe('tutorialCoachOf', () => {
       stage: 'step',
       stepIndex: 0,
       messageId: 'probe.tutorial.step-1',
-      targets: [CORNER],
       pointer: { kind: 'target', target: CORNER },
       isSkipShown: false,
     });
