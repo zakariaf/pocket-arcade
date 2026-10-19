@@ -46,8 +46,20 @@ The rules of version 1, in plain words:
 - **Score:** each hand scores its points times its cascade step (step 1 x1, step 2 x2, ...):
   two pair 20, three of a kind 30, straight 40, flush 50, full house 70, four of a kind 100,
   straight flush 150. The points live in the tuning file (`poker-drop-tuning.ts`).
+- **The rising row:** after every few drops (the tuning row's `riseEvery`: 8 drops on the easiest
+  levels, fewer on harder ones) a new row of five cards rises from the bottom of the well and every
+  card moves up one row; its hands burst like any other. A rise that would push a card past the
+  top fills the well. In the endless run the rows rise one drop sooner every 40 drops, down to every
+  third drop, so every run ends. The board shows the drops left before the next rise.
 - **A level** asks for a number of hands (the goal, "Hands 3 / 8" in the top bar). Reaching it wins
   the level at once; the score decides the stars.
+
+Why the rising row (added during E27-T05, before any rules commit): the first sims of the rules
+without it showed no pressure at all. Two pair or better forms so often in 20 lines of a 5 x 6 well
+that the greedy bot won every level of every row (100 %) and never ended an endless run (90 of 100
+runs hit the 400-drop cap), so choices mattered only for random play. A row that rises every few
+drops is the pressure of the classic drop puzzles (the well fills unless hands keep it low), keeps
+"The well is full" the one way of losing, and gives the endless run its end.
 
 ## 2. Classification
 
@@ -55,7 +67,7 @@ The rules of version 1, in plain words:
 Drop, Poker Drop cascades, Bank Shot"). The cascade of bursts and falling cards runs inside
 `applyMove` with the game kit's fixed step (1/120 s): the dropped card falls, lines burst, the cards
 above fall with the same gravity, and the result is an ordinary event list with timestamps
-(`card-dropped`, `hand-burst`, `cards-fell`, each with `atMs`), stopped at `maxTicks`. Saving, undo,
+(`card-dropped`, `hand-burst`, `cards-fell`, `row-rose`, each with `atMs`), stopped at `maxTicks`. Saving, undo,
 bots and goldens stay turn-based: a move is one tap on a column.
 
 If the owner prefers instant cascades (no fall), only the timeline changes; the rules stay.
@@ -124,7 +136,8 @@ shows busy; a hidden offer means none, so the result shows at once (L11). Undo n
 ## 10. Ways of losing
 
 **One: `poker-drop.lose.well-full`, "The well is full"** (S7: a short, friendly reason). The run
-is lost when no column has room for the card in hand. An endless run ends only this way.
+is lost when no column has room for the card in hand, or when a rising row would push a card past
+the top. An endless run ends only this way.
 
 ## 11. Counters (2 to 4)
 
@@ -158,15 +171,16 @@ no music, so S6 and S11 drop the Music rows and parity uses the `--no-music` ref
 
 The tuning file has four rows on the 0..100 scale (rows picked with `rowFor`: 0-24, 25-49, 50-74,
 75-99) and the endless row at 100. Each row sets the deck (lowest rank), the prepared opening (how
-many bottom rows are dealt, how many are prepared two pairs), the hand goal and the points:
+many bottom rows are dealt, how many are prepared two pairs), the rising row's interval, the hand
+goal and the points (E27-T07 tunes them with the sims):
 
-| Row         | Deck                | Opening                     | Goal          | Intent                                    |
-| ----------- | ------------------- | --------------------------- | ------------- | ----------------------------------------- |
-| 0 (easiest) | 9 to ace (24 cards) | 2 rows dealt, both prepared | about 6 hands | a warm-up a reasonable player always wins |
-| 1           | 7 to ace (32 cards) | 2 rows, 1 prepared          | about 8       | random play starts to lose                |
-| 2           | 5 to ace (40 cards) | 3 rows, 1 prepared          | about 8       | needs planning                            |
-| 3 (hardest) | 2 to ace (52 cards) | 3 rows, 1 prepared          | about 8       | greedy play loses often                   |
-| endless     | 2 to ace            | 2 rows, none prepared       | 0 (never won) | lasts until the well fills                |
+| Row         | Deck                | Opening                     | Rises every                                   | Goal          | Intent                                    |
+| ----------- | ------------------- | --------------------------- | --------------------------------------------- | ------------- | ----------------------------------------- |
+| 0 (easiest) | 9 to ace (24 cards) | 2 rows dealt, both prepared | 8 drops                                       | 6 hands       | a warm-up a reasonable player always wins |
+| 1           | 7 to ace (32 cards) | 2 rows, 1 prepared          | 7 drops                                       | 8             | random play starts to lose                |
+| 2           | 5 to ace (40 cards) | 2 rows, 1 prepared          | 6 drops                                       | 8             | needs planning                            |
+| 3 (hardest) | 2 to ace (52 cards) | 2 rows, 1 prepared          | 5 drops                                       | 8             | greedy play loses often                   |
+| endless     | 2 to ace            | 2 rows, none prepared       | 10, then 1 sooner every 40 drops (at least 3) | 0 (never won) | lasts until the well fills                |
 
 Proposed bands: the greedy bot wins at least 90 % of the easiest row and 25 % to 60 % of the
 hardest, and its win rate falls by at least 0.05 per row; the random bot wins clearly less than the
@@ -180,9 +194,10 @@ hand at least once per run. The opening is built for it from the seed: the gap c
 the bottom row holds two pairs, so the first drop into the gap bursts them; with a second prepared
 two-pair row above it, the fall makes the second hand at once (payoff event `hand-burst`; twist
 event: a `hand-burst` at cascade step 2 or more). A toy of these rules (seeded, 100 runs per cell,
-in the session scratchpad, not shipped) measured: easiest row, greedy first burst within 3 drops in
-100 % of runs, 1.1 cascades per run; hardest row, random 16 %, greedy 69 %, lookahead 98 % wins;
-endless, greedy median 68 drops. E27-T07 replaces these numbers with the real sims.
+in the session scratchpad, not shipped) measured, with the rising row: easiest row, greedy first
+burst within 3 drops in 100 % of runs and 1.6 cascades per run; hardest row, random 0 %, greedy
+68 %, lookahead 80 % wins; endless, greedy median 54 drops, every run ended. E27-T07 replaces these
+numbers with the real sims.
 
 If the owner changes a band, only the tuning file and `balance-bands.json` change (and the packs are
 regenerated with a `Gate-Change:` trailer).
