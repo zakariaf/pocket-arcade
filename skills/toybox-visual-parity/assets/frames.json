@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "mergeSiege": {
+        "gameStats": ["1,532", "2,876", "512"],
+        "progressMid": "5 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "smashed": 5, "total": 12 },
+        "progressFullParams": { "smashed": 12, "total": 12 },
+        "loseReasonId": "merge-siege.lose.overrun"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "mergeSiege": {
+        "enemies-smashed": 1532,
+        "tiles-merged": 2876,
+        "biggest-tile": 512
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "mergeSiege": {
+          "progressMid": { "smashed": 5, "total": 12 },
+          "progressFull": { "smashed": 12, "total": 12 },
+          "loseReasonId": "merge-siege.lose.overrun"
         }
       }
     }

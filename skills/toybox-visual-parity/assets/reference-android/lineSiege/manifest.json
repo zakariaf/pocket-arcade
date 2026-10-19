@@ -3,7 +3,7 @@
  "game": "lineSiege",
  "platform": "android",
  "set": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 44 dp status bar (the system image's punch-hole cutout sets it) and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
- "rendered": "2026-10-16",
+ "rendered": "2026-10-19",
  "renderer": {
   "chrome": "155.0.8059.84",
   "playwright": "1.63.0",
@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "design": "9f88b0b37d31fcfa780a2961e36992e88a7e99129755286f6030f9e39c11d8fb",
   "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "1c287947c5c7f2fc7bc9693f466a5a7964abd1fb1badb439ed81452d0c725c57",
+  "frames": "7b26e09eff1342d393f4f73c7a5614c648d2ccfc8713e29b5942555042528cf8",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1644,6 +1644,14 @@
    ],
    "what": "Every Android render and layout re-rendered with the measured safe top of 44 dp instead of 24 dp: everything below the status bar sits 20 dp lower, the status-bar mask is 44 dp tall. Nothing else in the design moved; the iOS set in assets/reference is unchanged.",
    "why": "The first Android capture (E18-T20) measured the parity emulator's insets as the device profile asks: the pinned google_apis API 35 image draws a punch-hole cutout, so its status bar is 44 dp (132 px); every S2 element sat exactly 20 pt low against the 24 dp profile. A measured inset is a profile change by the skill's own rule (lead, 2026-10-16)."
+  },
+  {
+   "id": "G-merge-siege",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Merge Siege added to the design as a design game. No frame or variant changed: the design and frames inputs of this manifest were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: its design pass, drafted on 2026-10-19 with the proposed defaults; the owner approves it with the E22-T01 message (pending), and the drafted design applies meanwhile"
   }
  ]
 }

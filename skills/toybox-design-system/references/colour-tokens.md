@@ -3,13 +3,13 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Merge Siege
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
 - Focus ring
 - Dark theme rules ("toy chest at night")
-- Painting a new game (the other 23 apps)
+- Painting a new game (the apps the token file does not paint yet)
 - Mock-only colours (never built)
 
 The machine-readable source is `assets/toybox-tokens.json` (`color.games`, `color.shell`, `color.fixed`). Scripts read it; never retype a hex value by hand, generate the palette with `scripts/write-palette.mjs`.
@@ -89,6 +89,22 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#FF8A3D` Rust | `#FF9A55` Hot rust |
 | onPop | onPop | `#1D1B3A` | `#261C45` |
 
+### Merge Siege
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#FFD6B8` Peach wash | `#2B1838` Plum night |
+| surface | surface | `#FFFBF7` Cream | `#3F2550` Plum lid |
+| sunken | sunken | `#FFE8D7` | `#351E44` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#FBF4FF` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#B49CC8` Lavender dusk |
+| outline | border | `#1D1B3A` | `#F1E4FF` |
+| shadow | shadow | `#1D1B3A` | `#0E0614` |
+| accent | primary | `#A98BFF` Grape | `#B9A0FF` Glow grape |
+| onAccent | onPrimary | `#1D1B3A` | `#2B1838` |
+| pop | pop | `#63DDB0` Mint | `#74EBC0` Glow mint |
+| onPop | onPop | `#1D1B3A` | `#2B1838` |
+
 ## Shell constants
 
 They never change with the game and live in `SHELL_COLORS[scheme]` (`packages/shell/src/theme/shell-colors.ts`); read them in `makeStyles` with `const shell = SHELL_COLORS[theme.scheme];`.
@@ -139,7 +155,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only three games have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+The token file paints the design games (the four above, and every game a later design pass adds there); for them `write-palette.mjs --game <id>` reads the paint from the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).

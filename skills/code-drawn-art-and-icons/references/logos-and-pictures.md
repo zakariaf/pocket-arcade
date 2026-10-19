@@ -5,7 +5,7 @@
 - Where logos appear
 - GAME_ART: how the Shell gets the logo and the credits
 - The logo grid and the six roles
-- The three painted games' logos
+- The painted games' logos
 - Designing a logo for a new game
 - The logo tile (frame) per place
 - The rating star (two colours)
@@ -57,17 +57,18 @@ Logos use a `viewBox 0 0 48 48` and are drawn at 88 % of the tile's content box.
 
 A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: `LogoArt` in `packages/shell/src/art/logo-art.ts`; each game exports `LOGO_ART` from `apps/<game>/src/art/logo-art.ts`; `logoOps()` expands roles into paint operations (a fill before its edge) for both the in-app canvas and the Node art script.
 
-## The three painted games' logos
+## The painted games' logos
 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
+- **Merge Siege** (its design pass, `logos.games.mergeSiege` in `assets/toybox-tokens.json`): a white spiky enemy (`w`) with two ink eyes (`k`), a white tile (`w`) with two ink up-chevrons (`kl`) smashing into it, and a pop spark where they meet (`p`).
 
-`check-icons-and-logos` fails if these three differ from the Toybox data.
+Every game the token file paints has its logo there (`logos.games`), and `check-icons-and-logos` fails if the game's `LOGO_ART` differs from it.
 
 ## Designing a logo for a new game
 
-The other games have no logo yet. Draw one with the same recipe, then show it to the owner (a new logo is a design decision):
+A game outside the token file has no logo yet. Draw one with the same recipe, then show it to the owner (a new logo is a design decision):
 
 1. One object that says what the toy is (a wall, a sheep, a robot), seen from the front or slightly tilted, filling about 80 % of the 48 grid; keep 2 units clear at the edges.
 2. White bodies with toy-ink edges (`w`), ink details as 2.6 lines (`kl`) or solid ink (`k`), one or two pop accents (`p` or `pl`). No text, no gradients, no more than about eight layers.
