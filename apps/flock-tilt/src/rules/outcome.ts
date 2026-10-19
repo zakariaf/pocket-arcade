@@ -17,6 +17,12 @@ export function winScore(state: FlockTiltState): number {
   return state.sheep.length * TUNING.pointsPerSheep + spare * TUNING.pointsPerSpareTilt;
 }
 
+/** The score the top bar shows while playing and the result shows at the end. */
+export function runScore(state: FlockTiltState): number {
+  const penned = state.sheep.filter((sheep) => sheep.status === 'penned').length;
+  return penned === state.sheep.length ? winScore(state) : penned * TUNING.pointsPerSheep;
+}
+
 /** Won beats lost: the last sheep can drop in on the last tilt of the budget. */
 export function outcome(state: FlockTiltState): Outcome {
   const status = fieldStatus(state);

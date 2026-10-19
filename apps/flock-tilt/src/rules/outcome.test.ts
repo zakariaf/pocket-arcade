@@ -8,7 +8,7 @@ import { create } from './create.ts';
 import { parseField } from './field-text.ts';
 import { TUNING } from './flock-tilt-tuning.ts';
 import { listMoves } from './list-moves.ts';
-import { outcome } from './outcome.ts';
+import { outcome, runScore } from './outcome.ts';
 
 import type { FlockTiltState } from './flock-tilt-types.ts';
 
@@ -80,6 +80,27 @@ describe('outcome (spec 10 RULES: "Is it over?: win, lose (with a reason), or st
       }),
       { numRuns: 40 },
     );
+  });
+});
+
+describe('runScore', () => {
+  it('counts the penned sheep while playing, and the win score once every sheep is in', () => {
+    const playing = stateOf(['s.s.o'], {
+      sheep: [
+        { id: 0, cell: 4, status: 'penned' },
+        { id: 1, cell: 2, status: 'field' },
+      ],
+    });
+    expect(runScore(playing)).toBe(TUNING.pointsPerSheep);
+    const won = stateOf(['s.s.o'], {
+      sheep: [
+        { id: 0, cell: 4, status: 'penned' },
+        { id: 1, cell: 4, status: 'penned' },
+      ],
+      tilts: 7,
+    });
+    expect(runScore(won)).toBe(GOLDEN_WIN_SCORE);
+    expect(runScore(stateOf(['s...o']))).toBe(0);
   });
 });
 
