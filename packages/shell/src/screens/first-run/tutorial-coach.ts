@@ -5,6 +5,7 @@
 import { pointerTargets } from '@e07/shell/game-host/tutorial-script.ts';
 
 import type { MessageId } from '@e07/game-kit/contract/messages.ts';
+import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { SessionView } from '@e07/shell/game-host/session-view.ts';
 import type { TutorialCoachStep } from '@e07/shell/game-host/tutorial-script.ts';
@@ -20,6 +21,11 @@ export type TutorialCoach = {
   readonly messageId: MessageId | null;
   /** The board cells the pointer names (outlined on the board); empty unless the stage is 'step'. */
   readonly targets: readonly BoardTarget[];
+  /**
+   * The step's own pointer while the stage is 'step', else null: the board host resolves it
+   * through the game (coachPointerOf) into the cells it marks and the pointing hand.
+   */
+  readonly pointer: TutorialPointer | null;
   /** Spec S13: no Skip before the second step, and none once the tutorial is over. */
   readonly isSkipShown: boolean;
 };
@@ -50,6 +56,7 @@ export function tutorialCoachOf(
     stepIndex,
     messageId: step?.messageId ?? null,
     targets: step === undefined ? NO_TARGETS : pointerTargets(step.pointer),
+    pointer: step?.pointer ?? null,
     isSkipShown: stage !== 'done' && moveCount >= 1,
   };
 }

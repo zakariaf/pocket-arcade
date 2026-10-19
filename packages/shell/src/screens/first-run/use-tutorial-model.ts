@@ -23,7 +23,6 @@ import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { BoardHostProps } from '@e07/shell/game-host/game-host.ts';
 import type { SessionView } from '@e07/shell/game-host/session-view.ts';
-import type { TutorialCoachStep } from '@e07/shell/game-host/tutorial-script.ts';
 import type { GameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import type { TFunction } from '@e07/shell/i18n/create-t.ts';
 import type { GameParams } from '@e07/shell/navigation/route-params.ts';
@@ -125,14 +124,6 @@ function useCoachNudge(
   return { nudgeText, coachReplay: refused };
 }
 
-/** The step's own pointer while the coach shows a step, else null. */
-function pointerOf(
-  steps: readonly TutorialCoachStep[],
-  coach: TutorialCoach,
-): TutorialPointer | null {
-  return coach.stage === 'step' ? (steps[coach.stepIndex]?.pointer ?? null) : null;
-}
-
 export function useTutorialModel(): TutorialModel {
   const t = useT();
   const host = useGameHost();
@@ -153,7 +144,7 @@ export function useTutorialModel(): TutorialModel {
     coachText,
     coachTargets: coach.targets,
     ...nudge,
-    coachPointer: pointerOf(host.tutorialSteps, coach),
+    coachPointer: coach.pointer,
     continueKey:
       coach.stage === 'step'
         ? null
