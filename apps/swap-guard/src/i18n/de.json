@@ -1,0 +1,22 @@
+{
+  "swap-guard.goal": "Sorg dafür, dass jeder Gegner getroffen wird, ohne selbst getroffen zu werden.",
+  "swap-guard.how-to-play.step-1": "Markierte Felder zeigen, wo jeder Gegner zuschlägt.",
+  "swap-guard.how-to-play.step-2": "Tipp auf ein Feld neben dir, um mit dem, was dort steht, die Plätze zu tauschen.",
+  "swap-guard.how-to-play.step-3": "Dann schlagen alle zu. Wer auf einem markierten Feld steht, wird getroffen.",
+  "swap-guard.how-to-play.step-4": "Tausch Gegner in die Schläge und bleib selbst nie auf einem markierten Feld.",
+  "swap-guard.lose.hit": "Ein Schlag hat dich getroffen",
+  "swap-guard.name": "Swap Guard",
+  "swap-guard.pack-name.1": "Torhaus",
+  "swap-guard.pack-name.2": "Burghof",
+  "swap-guard.pack-name.3": "Thronsaal",
+  "swap-guard.progress": "Gegner {defeated, number} / {total, number}",
+  "swap-guard.stats.double-hits": "Doppeltreffer",
+  "swap-guard.stats.enemies-defeated": "Besiegte Gegner",
+  "swap-guard.stats.swaps-made": "Getauschte Plätze",
+  "swap-guard.tagline": "Tausch die Plätze. Lass sie sich gegenseitig treffen.",
+  "swap-guard.tutorial.step-1": "Ein Schlag kommt auf dich zu. Tipp auf den Gegner neben dir und tausch!",
+  "swap-guard.tutorial.step-2": "Sie haben sich gegenseitig getroffen! Geh jetzt hinter den letzten Gegner.",
+  "swap-guard.tutorial.step-3": "Tausch mit ihm. Jetzt zielt sein Schlag auf dich.",
+  "swap-guard.tutorial.step-4": "Tausch zurück: Er läuft in seinen eigenen Schlag!",
+  "swap-guard.win-title": "Alle Gegner besiegt!"
+}

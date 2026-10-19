@@ -1,0 +1,22 @@
+{
+  "swap-guard.goal": "Make every enemy get hit, without being hit yourself.",
+  "swap-guard.how-to-play.step-1": "Shaded squares show where each enemy will strike.",
+  "swap-guard.how-to-play.step-2": "Tap a square next to you to swap places with what stands there.",
+  "swap-guard.how-to-play.step-3": "Then every strike lands. Anyone on a shaded square is hit.",
+  "swap-guard.how-to-play.step-4": "Swap enemies into strikes, and never stop on one yourself.",
+  "swap-guard.lose.hit": "A strike hit you",
+  "swap-guard.name": "Swap Guard",
+  "swap-guard.pack-name.1": "Gatehouse",
+  "swap-guard.pack-name.2": "Courtyard",
+  "swap-guard.pack-name.3": "Throne room",
+  "swap-guard.progress": "Enemies {defeated, number} / {total, number}",
+  "swap-guard.stats.double-hits": "Double hits",
+  "swap-guard.stats.enemies-defeated": "Enemies defeated",
+  "swap-guard.stats.swaps-made": "Swaps made",
+  "swap-guard.tagline": "Swap places. Let them hit each other.",
+  "swap-guard.tutorial.step-1": "A strike is coming for you. Tap the enemy next to you to swap!",
+  "swap-guard.tutorial.step-2": "They hit each other! Now step behind the last enemy.",
+  "swap-guard.tutorial.step-3": "Swap with it. Now its strike points at you.",
+  "swap-guard.tutorial.step-4": "Swap back: it walks into its own strike!",
+  "swap-guard.win-title": "All enemies down!"
+}
