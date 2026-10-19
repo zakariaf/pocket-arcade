@@ -3,6 +3,7 @@ import { boardCoachOf, coachGameOf, coachPointerOf, NO_COACH } from './coach-poi
 
 import type { CoachGame } from './coach-pointer.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
+import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 
 /** A column of 3 cells (0 empty, 1 filled) and one tray slot holding a vertical two. */
@@ -64,20 +65,20 @@ describe('coachPointerOf', () => {
 });
 
 describe('boardCoachOf', () => {
-  it("resolves a board host's pointer, or outlines its given cells without a hand", () => {
+  /** What a board host shows for its screen's pointer (the Game screen leaves it out). */
+  function hostCoach(coachPointer?: TutorialPointer | null) {
+    return boardCoachOf(COLUMN_GAME, GAP_AT_1, coachPointer === undefined ? {} : { coachPointer });
+  }
+
+  it("resolves a board host's pointer, and shows none when its screen names none", () => {
     const pointer = { kind: 'drag', from: SLOT, to: cell(1) } as const;
-    expect(boardCoachOf(COLUMN_GAME, GAP_AT_1, { coachPointer: pointer }).cells).toStrictEqual([
-      SLOT,
-      cell(1),
-      cell(2),
-    ]);
-    expect(boardCoachOf(COLUMN_GAME, GAP_AT_1, { coachTargets: [cell(0)] })).toStrictEqual({
+    expect(hostCoach(pointer).cells).toStrictEqual([SLOT, cell(1), cell(2)]);
+    expect(hostCoach({ kind: 'target', target: cell(0) })).toStrictEqual({
       cells: [cell(0)],
-      hand: null,
+      hand: { from: null, to: cell(0) },
     });
-    expect(boardCoachOf(COLUMN_GAME, GAP_AT_1, {})).toBe(NO_COACH);
-    const paused = { coachTargets: [cell(0)], coachPointer: null };
-    expect(boardCoachOf(COLUMN_GAME, GAP_AT_1, paused)).toBe(NO_COACH);
+    expect(hostCoach()).toBe(NO_COACH);
+    expect(hostCoach(null)).toBe(NO_COACH);
   });
 });
 

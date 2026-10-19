@@ -13,9 +13,9 @@ import type { ReactNode } from 'react';
 
 const TARGET = { regionId: 'board', col: 0, row: 0 };
 
-/** Stands in for the game's board host: shows how many cells the coach points at. */
-function ProbeBoard({ testID, coachTargets = [] }: BoardHostProps): ReactNode {
-  return <AppText testID={testID} text={`${String(coachTargets.length)} pointed`} />;
+/** Stands in for the game's board host: shows how many pointers the coach hands it. */
+function ProbeBoard({ testID, coachPointer = null }: BoardHostProps): ReactNode {
+  return <AppText testID={testID} text={`${coachPointer === null ? '0' : '1'} pointed`} />;
 }
 
 /** Stands in for the game's board host: shows the kind of pointer the board gets. */
