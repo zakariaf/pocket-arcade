@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-09-28 1`] = `
+"seed 2634031061 difficulty 45 wave 14 next e4 in column 4
+.   .   .   .   .
+.   .   .   e2  .
+.   .   e2  .   .
+.   .   .   .   .
+.   .   .   2   .
+4   .   2   .   ."
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
+"seed 180494531 difficulty 45 wave 14 next e8 in column 4
+.   .   .   .   .
+.   .   .   e2  .
+.   e2  .   .   .
+.   .   .   .   .
+.   .   .   2   .
+.   2   .   .   4"
+`;
+
+exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
+"seed 3998248991 difficulty 45 wave 14 next e8 in column 3
+.   .   .   .   .
+.   .   .   e2  .
+.   .   e2  .   .
+.   .   .   .   .
+.   .   .   2   .
+.   .   2   .   4"
+`;
+
+exports[`level table goldens keeps the frozen board of level 1 1`] = `
+"seed 3004672306 difficulty 0 wave 8 next e2 in column 4
+.   .   .   .   .
+.   .   e2  .   .
+.   e2  .   .   .
+.   .   .   .   .
+.   .   2   .   .
+.   2   .   .   4
+{"kind":"score","thresholds":[0,280,336]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 30 1`] = `
+"seed 876264528 difficulty 32 wave 14 next e8 in column 4
+.   .   .   .   .
+.   .   e2  .   .
+.   e2  .   .   .
+.   .   .   .   .
+.   .   2   .   .
+4   2   .   .   .
+{"kind":"score","thresholds":[0,676,811]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 31 1`] = `
+"seed 723061932 difficulty 33 wave 14 next e4 in column 1
+.   .   .   .   .
+.   .   e2  .   .
+e2  .   .   .   .
+.   .   .   .   .
+.   .   2   .   .
+2   .   .   4   .
+{"kind":"score","thresholds":[0,736,883]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 60 1`] = `
+"seed 517625538 difficulty 65 wave 16 next e4 in column 3
+.   .   .   .   .
+.   e2  .   .   .
+e2  .   .   .   .
+.   .   .   .   .
+.   2   .   .   .
+2   .   .   4   .
+{"kind":"score","thresholds":[0,872,1046]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 61 1`] = `
+"seed 974105204 difficulty 66 wave 16 next e4 in column 4
+.   .   .   .   .
+.   .   .   .   e2
+.   .   e2  .   .
+.   .   .   .   .
+.   .   .   .   2
+4   .   2   .   .
+{"kind":"score","thresholds":[0,876,1051]}"
+`;
+
+exports[`level table goldens keeps the frozen board of level 90 1`] = `
+"seed 1475437306 difficulty 99 wave 18 next e4 in column 1
+.   .   .   .   .
+.   .   e2  .   .
+.   .   .   e2  .
+.   .   .   .   .
+.   .   2   .   .
+.   .   .   2   4
+{"kind":"score","thresholds":[0,1144,1372]}"
+`;
