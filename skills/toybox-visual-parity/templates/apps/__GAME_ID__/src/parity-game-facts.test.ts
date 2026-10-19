@@ -6,6 +6,7 @@
 // Shell's own helpers (the rules the game host uses); check-harness.mjs (toybox-visual-parity) keeps
 // PARITY_GAME_FACTS equal to the JSON entry. Set both to this game's facts; a change of either needs
 // a Gate-Change trailer (parity/game-facts.json is a gated path).
+import { PARITY_FIXTURE } from '@e07/shell/app/parity/parity-fixture.ts';
 import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
 
 import { __GAME_CAMEL__Game as game } from './index.ts';
@@ -20,7 +21,8 @@ const PARITY_GAME_FACTS = {
 
 describe('the parity game facts of __GAME_ID__', () => {
   it('names a design game whose references exist', () => {
-    expect(['lineSiege', 'flockTilt', 'scrapShove']).toContain(PARITY_GAME_FACTS.designGame);
+    // The design games are the ones the parity fixture draws Game frames for (never a typed list).
+    expect(Object.keys(PARITY_FIXTURE.gameFrame.games)).toContain(PARITY_GAME_FACTS.designGame);
   });
 
   it('says whether the game has music exactly as its sound bank does', () => {

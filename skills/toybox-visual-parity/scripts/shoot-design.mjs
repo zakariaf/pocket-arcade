@@ -6,7 +6,7 @@ import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireFile, run, sha256 } from './check-lib.mjs';
 import { CHROME_ARGS, TOOLING_OPTION, launchChrome, loadImageDeps, loadPlaywright, playwrightVersion, toolingDirOf } from './lib/deps.mjs';
-import { LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
+import { DESIGN_GAMES, LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, readDesignGames, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
 import { referenceChangeProblems } from './lib/reference-changes.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS, platformOf } from './lib/platform.mjs';
@@ -31,9 +31,10 @@ const SPEC = {
     'as-app': { type: 'boolean', help: 'With --out: also write design-as-app runs (<out>/runs/...) that check-parity must pass with 0 problems' },
     theme: { type: 'string', multiple: true, value: 'light|dark', help: 'Theme(s) to render (default: light and dark)' },
     lang: { type: 'string', multiple: true, value: 'en|de|fa|ckb', help: 'Language(s) to render (default: en and fa)' },
-    game: { type: 'string', value: 'id', help: 'Design game id: lineSiege, flockTilt or scrapShove', default: 'lineSiege' },
+    game: { type: 'string', value: 'id', help: `Design game id, one of the token file's games (${DESIGN_GAMES.join(', ')})`, default: 'lineSiege' },
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) such as s4-home (default: every frame)' },
     design: { type: 'string', value: 'file', help: 'Design HTML', default: DEFAULTS.design },
+    tokens: { type: 'string', value: 'file', help: 'Toybox token file whose color.games are the design games', default: DEFAULTS.tokens },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
@@ -106,6 +107,8 @@ run(async () => {
   const modes = [options.out ? 'out' : null, options['update-reference'] ? 'update' : null, options.check ? 'check' : null].filter(Boolean);
   if (modes.length !== 1) fail('nothing to do: pass exactly one of --out <dir>, --update-reference or --check', 'Run: node shoot-design.mjs --help');
   if (options['as-app'] && !options.out) fail('--as-app needs --out <dir>', 'Pass --out .parity/self (or another folder).');
+  const designGames = readDesignGames(resolve(options.tokens));
+  if (!designGames.includes(options.game)) fail(`game "${options.game}" is not a design game of the token file (${designGames.join(', ')})`, "Use a design game id; a new game becomes one through its design pass (refresh-shared.mjs, then sync-shared.mjs).");
   const designPath = requireFile(resolve(options.design), 'design HTML');
   const device = readJson(resolve(options.device), 'device profile');
   const { frames, designFacts, manifest: framesManifest } = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });

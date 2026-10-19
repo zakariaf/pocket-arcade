@@ -96,7 +96,28 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+
+/**
+ * The design games are the games the Toybox token file paints (color.games, in its order). Each must
+ * also have its logo layers (logos.games.<id>): a game without them is not drawn in the design, so a
+ * token file that names one stops with exit 2. A game's design pass adds both; nobody lists games here.
+ */
+export function designGamesOf(tokens, where = DEFAULTS.tokens) {
+  const games = Object.keys(tokens?.color?.games ?? {});
+  if (games.length === 0) fail(`the token file ${where} paints no game (color.games is empty or missing)`, "Use the skill's assets/toybox-tokens.json (synced from the library's shared token file).");
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) fail(`the token file ${where}: design game ${game} has no logo layers (logos.games.${game})`, "A design game's design pass adds its paint and its logo layers together; add the layers or remove the game.");
+  }
+  return games;
+}
+
+/** The design games of a token file (default: the skill's synced copy). */
+export function readDesignGames(path = DEFAULTS.tokens) {
+  return designGamesOf(readJson(path, 'token file'), path);
+}
+
+export const DESIGN_GAMES = readDesignGames();
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).
