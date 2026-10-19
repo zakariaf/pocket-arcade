@@ -55,12 +55,19 @@ export const TUNING = {
   lineLength: 5,
   /** Points per hand kind, before the cascade step multiplies them (step 2 counts double). */
   handPoints: {
+    /** Two pair, the weakest hand that bursts (more = a higher score for the commonest hand). */
     'two-pair': 20,
+    /** Three of a kind. */
     'three-of-a-kind': 30,
+    /** Five ranks in a run (the ace high or low). */
     straight: 40,
+    /** Five cards of one suit. */
     flush: 50,
+    /** Three of a kind and a pair. */
     'full-house': 70,
+    /** Four (or five) of one rank. */
     'four-of-a-kind': 100,
+    /** A straight in one suit, the best hand. */
     'straight-flush': 150,
   },
   /** Endless: every endlessRampEvery drops the rows rise one drop sooner (lower = harder). */
