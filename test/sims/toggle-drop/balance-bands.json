@@ -1,0 +1,106 @@
+{
+  "gameId": "toggle-drop",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.9,
+      "max": 1,
+      "why": "The first row is the warm-up: a reasonable player wins its boards (1.0 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.85,
+      "max": 1,
+      "why": "A calm puzzle: a player who traces each ball's path wins nearly every board (0.99 measured); the challenge is winning at par for three stars."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.6,
+      "max": 0.9,
+      "why": "The warm-up row forgives random drops (0.78 measured: six balls for two cups)."
+    },
+    {
+      "policy": "random",
+      "difficulty": 25,
+      "metric": "winRate",
+      "min": 0.55,
+      "max": 0.8,
+      "why": "Two spare balls still forgive some random drops (0.68 measured)."
+    },
+    {
+      "policy": "random",
+      "difficulty": 50,
+      "metric": "winRate",
+      "min": 0.25,
+      "max": 0.55,
+      "why": "With one spare ball random drops lose most boards (0.40 measured)."
+    },
+    {
+      "policy": "random",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.15,
+      "max": 0.45,
+      "why": "Naive play loses the hardest boards: four cups, one spare ball (0.30 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "medianMoves",
+      "min": 2,
+      "max": 3,
+      "why": "An easiest board takes two drops (2 measured), one per cup."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "medianMoves",
+      "min": 6,
+      "max": 9,
+      "why": "A hardest board takes about seven drops (7 measured), still a short level."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianScore",
+      "min": 1,
+      "max": 3,
+      "why": "A reasonable player keeps balls in hand on the second row (2 measured)."
+    },
+    {
+      "policy": "lookahead",
+      "difficulty": 25,
+      "metric": "winRate",
+      "min": 0.9,
+      "max": 1,
+      "why": "The far-sighted player wins the second row too (1.0 measured)."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "medianMoves", "direction": "up", "minStep": 1 },
+  "skillGap": {
+    "difficulty": 50,
+    "metric": "winRate",
+    "order": ["random", "greedy"],
+    "better": "higher",
+    "minStep": 0.3
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": null,
+  "notes": "Toggle Drop, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75), 100 seeds. Every board is built around a hidden winning line, with one cup that no first drop reaches, so every win needs a switch an earlier ball flipped (the twist). The first run showed the twist only 0.30 times per greedy run on the easiest row; after the twist-cup fix it is 1.0 per run (2 to 3.6 on harder rows), and the greedy bot fills its first cup on the first drop of every easiest board (the kill test passes). Spare balls were then cut row by row (4, 2, 1, 1, the last row with four cups and a seven-drop line) so random drops win 0.78, 0.68, 0.40 and 0.30 of the rows: naive play loses more as the rows rise. A reasonable player wins nearly every board (1.0 to 0.96): the state is in plain sight, so tracing each ball's path finds the line; the levels get longer instead (median 2, 4, 5 and 7 drops: the curve). The lookahead bot wins no more than greedy (1.0 on the second row): looking one drop ahead already finds the line, so the skill gap is between random drops and a reasonable player (0.40 against 0.96 on the third row). Stars against par, not winning, are where skill shows; the level plan keeps the boards a random player wins too often out of the packs. Proposed until the owner's play-test."
+}
