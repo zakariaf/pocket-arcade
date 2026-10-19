@@ -1,0 +1,22 @@
+{
+  "poker-drop.goal": "Make poker hands in any line before the well fills up.",
+  "poker-drop.how-to-play.step-1": "Tap a column to drop the next card into it.",
+  "poker-drop.how-to-play.step-2": "Five cards in a line, across, up or diagonal, make a poker hand.",
+  "poker-drop.how-to-play.step-3": "Two pair or better bursts: the cards that make the hand pop.",
+  "poker-drop.how-to-play.step-4": "Cards above fall down and can make a new hand.",
+  "poker-drop.lose.well-full": "The well is full",
+  "poker-drop.name": "Poker Drop",
+  "poker-drop.pack-name.1": "First deal",
+  "poker-drop.pack-name.2": "Full house",
+  "poker-drop.pack-name.3": "Royal flush",
+  "poker-drop.progress": "Hands {made, number} / {total, number}",
+  "poker-drop.stats.big-hands": "Big hands",
+  "poker-drop.stats.biggest-cascade": "Biggest cascade",
+  "poker-drop.stats.hands-made": "Hands made",
+  "poker-drop.tagline": "Drop cards. Make hands. Watch them burst.",
+  "poker-drop.tutorial.step-1": "Tap the gap to drop your card there.",
+  "poker-drop.tutorial.step-2": "Two pair! The cards that make the hand burst.",
+  "poker-drop.tutorial.step-3": "The cards above fell and made another hand: a cascade!",
+  "poker-drop.tutorial.step-4": "Make the hands the level asks for before the well fills up.",
+  "poker-drop.win-title": "All hands made!"
+}
