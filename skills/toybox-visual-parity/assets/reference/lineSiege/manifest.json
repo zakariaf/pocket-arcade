@@ -1,9 +1,9 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-09-30",
+ "rendered": "2026-10-19",
  "renderer": {
-  "chrome": "154.0.8037.58",
+  "chrome": "155.0.8059.84",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
-  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
-  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
+  "design": "ffba9c5223231109960e258a97cb77b45825fddff9e623fc031edf93c2b544d2",
+  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
+  "frames": "f78a5380d0734c1e3b14a116a475c1903f3aa3948263f89c642c42eb860c114c",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1802,6 +1802,14 @@
    "variants": [],
    "what": "Every layout.json and the manifest were re-rendered with the round-4 renderer and map: each text run records its own tilt, the S14 progress-restored layout records the banner mask of Home under the dialog, the S12 state cards no longer pair their stand-in heading with premium.top-bar.title, and the map metadata gained the card surface of home.daily-card (L7, no pixel change) and the hint key's hasHints condition. Apart from the changes above, all 124 other PNGs are byte-identical.",
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
+  },
+  {
+   "id": "G-snare-snake",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Snare Snake added to the design as a design game: its paint, logo and texts in the mockup, the token file and the copy deck, and its sample counters in the fixture. The manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en, which came out byte-identical; no committed PNG or layout moved. Chrome 155 (installed after the 2026-09-30 render) moves 156 pixels of s7-result-win and s7-result-win--score in light-fa and dark-fa on its own: that drift is left for the lead and is not re-rendered here.",
+   "why": "spec 13: its design pass (epic E21-T01), drafted 2026-10-19 with the proposed defaults; the owner's approval comes with the design notes, and the drafted design applies until then."
   }
  ]
 }

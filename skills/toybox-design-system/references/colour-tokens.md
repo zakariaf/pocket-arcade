@@ -3,13 +3,13 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
 - Focus ring
 - Dark theme rules ("toy chest at night")
-- Painting a new game (the other 23 apps)
+- Painting a new game (the other 22 apps)
 - Mock-only colours (never built)
 
 The machine-readable source is `assets/toybox-tokens.json` (`color.games`, `color.shell`, `color.fixed`). Scripts read it; never retype a hex value by hand, generate the palette with `scripts/write-palette.mjs`.
@@ -89,6 +89,22 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#FF8A3D` Rust | `#FF9A55` Hot rust |
 | onPop | onPop | `#1D1B3A` | `#261C45` |
 
+### Snare Snake
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#C9B8F0` Lilac wash | `#10302B` Jungle night |
+| surface | surface | `#FCFAFF` Petal | `#173E36` Fern |
+| sunken | sunken | `#EAE3FB` | `#14372F` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#F0FFF9` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#8FBFAE` Mist |
+| outline | border | `#1D1B3A` | `#D4F7EA` |
+| shadow | shadow | `#1D1B3A` | `#04120F` |
+| accent | primary | `#3FA34D` Snake green | `#6CCB5F` Glow green |
+| onAccent | onPrimary | `#1D1B3A` | `#10302B` |
+| pop | pop | `#FF6F9F` Berry | `#FF8DB8` Glow berry |
+| onPop | onPop | `#1D1B3A` | `#10302B` |
+
 ## Shell constants
 
 They never change with the game and live in `SHELL_COLORS[scheme]` (`packages/shell/src/theme/shell-colors.ts`); read them in `makeStyles` with `const shell = SHELL_COLORS[theme.scheme];`.
@@ -139,7 +155,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only three games have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).
