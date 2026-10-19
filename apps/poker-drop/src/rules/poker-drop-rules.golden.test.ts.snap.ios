@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the rules golden keeps the event stream and the final state of seed 1 at difficulty 0 1`] = `
+"move 1: drop in column 2
+    0 card-dropped {"card":20,"col":2,"fromRow":6,"row":2,"landMs":333}
+  333 card-dealt {"hand":33,"next":46}
+move 2: drop in column 0
+    0 card-dropped {"card":33,"col":0,"fromRow":6,"row":2,"landMs":333}
+  333 card-dealt {"hand":46,"next":36}
+move 3: drop in column 4
+    0 card-dropped {"card":46,"col":4,"fromRow":6,"row":0,"landMs":408}
+  408 hand-burst {"step":1,"hand":"two-pair","lineKind":"row","line":[0,1,2,3,4],"cells":[0,1,2,3],"cards":[48,24,35,37],"points":20}
+  708 cards-fell {"step":1,"falls":[{"card":21,"col":0,"fromRow":1,"toRow":0,"landMs":875},{"card":33,"col":0,"fromRow":2,"toRow":1,"landMs":875},{"card":49,"col":1,"fromRow":1,"toRow":0,"landMs":875},{"card":23,"col":2,"fromRow":1,"toRow":0,"landMs":875},{"card":20,"col":2,"fromRow":2,"toRow":1,"landMs":875},{"card":34,"col":3,"fromRow":1,"toRow":0,"landMs":875}]}
+  875 hand-burst {"step":2,"hand":"two-pair","lineKind":"row","line":[0,1,2,3,4],"cells":[0,1,2,3],"cards":[21,49,23,34],"points":40}
+ 1175 cards-fell {"step":2,"falls":[{"card":33,"col":0,"fromRow":1,"toRow":0,"landMs":1342},{"card":20,"col":2,"fromRow":1,"toRow":0,"landMs":1342}]}
+ 1342 card-dealt {"hand":36,"next":38}
+move 4: drop in column 1
+    0 card-dropped {"card":36,"col":1,"fromRow":6,"row":0,"landMs":408}
+  408 card-dealt {"hand":38,"next":8}
+move 5: drop in column 3
+    0 card-dropped {"card":38,"col":3,"fromRow":6,"row":0,"landMs":408}
+  408 hand-burst {"step":1,"hand":"three-of-a-kind","lineKind":"row","line":[0,1,2,3,4],"cells":[0,2,4],"cards":[33,20,46],"points":30}
+  708 card-dealt {"hand":8,"next":25}
+move 6: drop in column 2
+    0 card-dropped {"card":8,"col":2,"fromRow":6,"row":0,"landMs":408}
+  408 card-dealt {"hand":25,"next":47}
+move 7: drop in column 0
+    0 card-dropped {"card":25,"col":0,"fromRow":6,"row":0,"landMs":408}
+  408 card-dealt {"hand":47,"next":12}
+move 8: drop in column 4
+    0 card-dropped {"card":47,"col":4,"fromRow":6,"row":0,"landMs":408}
+  408 hand-burst {"step":1,"hand":"two-pair","lineKind":"row","line":[0,1,2,3,4],"cells":[0,2,3,4],"cards":[25,8,38,47],"points":20}
+  708 row-rose {"cards":[11,10,50,9,7],"landMs":908}
+  908 card-dealt {"hand":12,"next":22}
+move 9: drop in column 1
+    0 card-dropped {"card":12,"col":1,"fromRow":6,"row":2,"landMs":333}
+  333 card-dealt {"hand":22,"next":51}
+move 10: drop in column 3
+    0 card-dropped {"card":22,"col":3,"fromRow":6,"row":1,"landMs":375}
+  375 card-dealt {"hand":51,"next":11}
+move 11: drop in column 2
+    0 card-dropped {"card":51,"col":2,"fromRow":6,"row":1,"landMs":375}
+  375 card-dealt {"hand":11,"next":24}
+move 12: drop in column 2
+    0 card-dropped {"card":11,"col":2,"fromRow":6,"row":2,"landMs":333}
+  333 card-dealt {"hand":24,"next":22}
+final {"difficulty":0,"cells":[11,10,50,9,7,null,36,51,22,null,null,12,11,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"hand":24,"next":22,"pile":[49,12,34,46,23,10,9,20,36,25,38,21,35,50,8,7,48,33,51,37,47],"goal":6,"handsMade":4,"score":110,"drops":12,"hasOverflowed":false,"hasContinued":false,"rng":[273508198,1090408531,2716226113,2041432104]}"
+`;
