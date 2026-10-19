@@ -159,7 +159,7 @@ is hit or hurt.
   Then up to `decoys` two-stone traps are laid beside the route, nearer the flag, where a route
   stone's hop reaches them: a lure stone that looks like a step forward and whose only hop leads to
   a stone that strands the frog. Every other cell is open water. Par is the shortest route (BFS
-  over stones); a pond shorter than the row's `minPar` is laid again (at most 24 times).
+  over stones); a pond shorter than the row's `minPar` is laid again (at most 64 times).
 - **Events (past tense):** `player-stepped` (from, to, kind used, kinds used so far),
   `stone-sank` (cell), `move-kind-changed` (from kind, to kind, whether the kind is new this run),
   `goal-reached` (cell, moves, par), `frog-stranded` (cell, when no stone is left in reach).
