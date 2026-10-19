@@ -28,8 +28,8 @@ export type ViewExtras<TMove> = {
   readonly summary: RunSummary | null;
   readonly hint: { readonly move: TMove; readonly atSeq: number } | null;
   readonly fixture: ViewFixture | null;
-  /** The tutorial's refused tries at one eventSeq (the step on screen); none otherwise. */
-  readonly refused?: { readonly count: number; readonly atSeq: number } | null;
+  /** The tutorial's refused tries at one eventSeq (the step on screen); null otherwise. */
+  readonly refused: { readonly count: number; readonly atSeq: number } | null;
 };
 
 /** The game's parts the view needs (the controller's dependencies fit). */
