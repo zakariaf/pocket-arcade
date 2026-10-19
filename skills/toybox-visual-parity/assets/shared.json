@@ -6,5 +6,6 @@
   { "from": "screen-testids.json", "to": "assets/screen-testids.json" },
   { "from": "fonts/", "to": "assets/design/fonts/" },
   { "from": "repo-templates/packages/shell/src/app/test-only-api.ts", "to": "templates/packages/shell/src/app/test-only-api.ts" },
-  { "from": "repo-templates/packages/shell/src/app/test-only-entry.ts", "to": "templates/packages/shell/src/app/test-only-entry.ts" }
+  { "from": "repo-templates/packages/shell/src/app/test-only-entry.ts", "to": "templates/packages/shell/src/app/test-only-entry.ts" },
+  { "from": "toybox-tokens.json", "to": "assets/toybox-tokens.json" }
 ]

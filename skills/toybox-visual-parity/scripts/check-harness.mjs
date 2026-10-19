@@ -17,7 +17,7 @@ import { join, resolve } from 'node:path';
 
 import { REPO_SCAN_IGNORES, createReporter, maskComments, parseArgs, readShellSlice, requireDir, run, sliceSkipReason, walk } from './check-lib.mjs';
 import { compareComponentBorders, referenceLayouts } from './lib/component-borders.mjs';
-import { DESIGN_GAMES, FACT_VALUES, FACTS_FILE, loadCatalogue } from './lib/frames.mjs';
+import { designGames, FACT_VALUES, FACTS_FILE, loadCatalogue, useTokens } from './lib/frames.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { readWaivers } from './lib/runs.mjs';
 
@@ -196,6 +196,7 @@ const SPEC = {
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     reference: { type: 'string', value: 'dir', help: 'Reference root whose .layout.json borders the component specs must match', default: DEFAULTS.reference },
+    tokens: { type: 'string', value: 'file', help: 'Toybox token file whose color.games are the design games (each needs its logo layers)', default: DEFAULTS.tokens },
   },
   positionals: { min: 0, max: 1 },
   details: [
@@ -320,7 +321,7 @@ function checkGameFacts({ root, slice, frames, report, problem, read }) {
   for (const [id, entry] of Object.entries(json.games)) {
     const at = `games.${id}`;
     if (!existsSync(join(root, 'apps', id))) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}: there is no app folder apps/${id}`, 'Key each entry by its app id (the apps/<id> folder).');
-    if (!DESIGN_GAMES.includes(entry?.designGame)) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.designGame must be one of ${DESIGN_GAMES.join(', ')}`, 'Name the design game whose references the app is compared with.');
+    if (!designGames().includes(entry?.designGame)) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.designGame must be one of ${designGames().join(', ')}`, 'Name the design game whose references the app is compared with.');
     for (const [key, values] of Object.entries(FACT_VALUES)) {
       if (!values.includes(entry?.[key])) problem(FACTS_FILE, 0, 'harness-game-facts', `${at}.${key} must be ${values.map((v) => JSON.stringify(v)).join(' or ')}`, 'Set the fact from the game module (the test pins it).');
     }
@@ -353,6 +354,7 @@ function checkGameFacts({ root, slice, frames, report, problem, read }) {
 
 run(async () => {
   const { options, positionals } = parseArgs(process.argv.slice(2), SPEC);
+  useTokens(resolve(options.tokens));
   const root = requireDir(resolve(positionals[0] ?? '.'), 'app repo root');
   requireDir(join(root, 'packages', 'shell'), 'packages/shell (the Shell package of the app repo)');
   const { frames, manifest } = loadCatalogue({ mapPath: resolve(options.map), framesPath: resolve(options.frames) });

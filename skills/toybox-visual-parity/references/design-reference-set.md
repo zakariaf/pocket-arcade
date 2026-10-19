@@ -121,7 +121,8 @@ Captures pick the reference from the app's facts in `parity/game-facts.json` (pa
 
 ## Other games, other languages
 
-- The committed set is Line Siege in en and fa, the minimum every screen must pass. For Flock Tilt or Scrap Shove (the other design games), or for de and ckb before a release, render references on demand into the app repo: `node ${CLAUDE_SKILL_DIR}/scripts/shoot-design.mjs --out .parity/design --game flockTilt --lang de,ckb`, and pass `--reference .parity/design` to `check-parity.mjs` / `run-parity.mjs` / `check-signoff.mjs`.
+- The design games are the games the Toybox token file paints (`assets/toybox-tokens.json`, `color.games`, each with its logo layers in `logos.games`): Line Siege, Flock Tilt, Scrap Shove and every game whose design pass added it there. A new design game needs no script change: its design pass adds its paint, logo, texts (the copy deck in the design HTML) and its sample counters (`frames.json` `fixture` and `fixtureSave`, and the harness template `parity-fixture-save.json`); a painted game without logo layers stops every script with exit 2.
+- The committed set is Line Siege in en and fa, the minimum every screen must pass. For any other design game (Flock Tilt, Scrap Shove, ...), or for de and ckb before a release, render references on demand into the app repo: `node ${CLAUDE_SKILL_DIR}/scripts/shoot-design.mjs --out .parity/design --game flockTilt --lang de,ckb`, and pass `--reference .parity/design` to `check-parity.mjs` / `run-parity.mjs` / `check-signoff.mjs`.
 - A game that is not in the design has no reference of its own: its Shell screens are proven in the Line Siege app (the Shell is shared code) and its palette by the `toybox-design-system` checks; its screens still get a look pass.
 
 ## When the references change (and when they never do)
