@@ -6,7 +6,6 @@
 // Shell's own helpers (the rules the game host uses); check-harness.mjs (toybox-visual-parity) keeps
 // PARITY_GAME_FACTS equal to the JSON entry. Set both to this game's facts; a change of either needs
 // a Gate-Change trailer (parity/game-facts.json is a gated path).
-import { PARITY_FIXTURE } from '@e07/shell/app/parity/parity-fixture.ts';
 import { hasHintsOf, hasMusicOf, isScoreRatedOf } from '@e07/shell/game-host/game-facts.ts';
 
 import { __GAME_CAMEL__Game as game } from './index.ts';
@@ -20,9 +19,10 @@ const PARITY_GAME_FACTS = {
 } as const;
 
 describe('the parity game facts of __GAME_ID__', () => {
-  it('names a design game whose references exist', () => {
-    // The design games are the ones the parity fixture draws Game frames for (never a typed list).
-    expect(Object.keys(PARITY_FIXTURE.gameFrame.games)).toContain(PARITY_GAME_FACTS.designGame);
+  it('names its design game by the camelCase id the design uses', () => {
+    // Which games the design draws is data (the Toybox token file's color.games), so no list is
+    // typed here: check-harness.mjs (rule harness-game-facts) proves the token file paints this one.
+    expect(PARITY_GAME_FACTS.designGame).toMatch(/^[a-z]+(?:[A-Z][a-z0-9]*)*$/);
   });
 
   it('says whether the game has music exactly as its sound bank does', () => {
