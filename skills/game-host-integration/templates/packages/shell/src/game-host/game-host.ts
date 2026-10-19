@@ -246,7 +246,9 @@ function controllerFor<T extends ShellGameTypes>(
     feedback: deps.feedback,
     ...(deps.extendRunEnd === undefined ? {} : { extendRunEnd: deps.extendRunEnd }),
     // The tutorial run plays its script: each step accepts only its expected move.
-    ...(session.ref.kind === 'tutorial' ? tutorialRulesOf(game.teaching.tutorial.steps) : {}),
+    ...(session.ref.kind === 'tutorial'
+      ? { tutorial: tutorialRulesOf(game.teaching.tutorial.steps) }
+      : {}),
   };
   return createSessionController(controllerDeps, session);
 }

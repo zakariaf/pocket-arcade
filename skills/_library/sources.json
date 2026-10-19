@@ -4949,11 +4949,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/game-host.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/game-host.ts",
-            "sha256": "0eaeb9b7f9574df094b177d03bb98b4df112c40e82dad4ff9252f01c3883111a"
+            "sha256": "6537b063990f9fb3d845b34020b86c08973f17ca7984651c794a314c3dcfa158"
           }
         ]
       },
@@ -5178,20 +5178,29 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-controller.ts",
-            "sha256": "ac6af696e32e7416bb931a5f143337c6d9ab089f780de8cdb6a5c49233c9a0dc"
+            "sha256": "2b0ff8d25c69d4ce902ee2f76179cfa33c32339975ee37fb2ec875f48cf53805"
+          }
+        ]
+      },
+      "templates/packages/shell/src/game-host/session-view-of.test.ts": {
+        "recorded": "2026-10-19",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-view-of.test.ts",
+            "sha256": "c833f0a663e52d02f9145e742875bc5807fdad311e351bc886a2f9238ecdd69c"
           }
         ]
       },
       "templates/packages/shell/src/game-host/session-view-of.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-view-of.ts",
-            "sha256": "b0ade36847951bd512487c16d8f591885633c8f0a77a9a04d955a84315861d9c"
+            "sha256": "a80d62fc579a1ba5e9660dcb73c9ef2307b8e17d5e917f8eb75aa365ec81847d"
           }
         ]
       },
