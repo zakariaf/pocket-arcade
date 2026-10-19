@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the rules golden of swap-guard keeps the event stream and the final state of seed 1 at difficulty 0 1`] = `
+"seed 1 difficulty 0 swaps 7 score 100 outcome {"kind":"lost","reasonKey":"swap-guard.lose.hit"}
+.. a^ .. .. ..
+.. .. .. sv a<
+.. .. .. G. ..
+.. .. .. .. ..
+.. .. .. .. ..
+swapped 13 -> 19 with a tile
+struck 0:[13] 1:[8]
+defeated 0 on 8
+swapped 19 -> 18 with a tile
+struck 1:[8,7,6,5]
+swapped 18 -> 22 with a tile
+struck 1:[8,7,6,5]
+swapped 22 -> 16 with a tile
+struck 1:[8,7,6,5]
+swapped 16 -> 15 with a tile
+struck 1:[8,7,6,5]
+swapped 15 -> 11 with a tile
+struck 1:[8,7,6,5]
+swapped 11 -> 6 with a tile
+struck 1:[8,7,6,5]
+guard hit on 6 by 1
+.. a^ .. .. ..
+.. X. .. .. a<
+.. .. .. .. ..
+.. .. .. .. ..
+.. .. .. .. .."
+`;
