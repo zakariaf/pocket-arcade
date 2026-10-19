@@ -1032,6 +1032,142 @@
           "ckb": "شاری ڕۆبۆتەکان"
         }
       ]
+    },
+    "mergeSiege": {
+      "id": "merge-siege",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Merge Siege",
+        "de": "Merge Siege",
+        "fa": "Merge Siege",
+        "ckb": "Merge Siege"
+      },
+      "tagline": {
+        "en": "Merge your tiles. Smash the siege.",
+        "de": "Verschmelz deine Kacheln. Zerschlag die Belagerung.",
+        "fa": "کاشی‌ها را ادغام کنید و محاصره را بشکنید.",
+        "ckb": "کاشییەکان یەک بخە و گەمارۆکە بشکێنە."
+      },
+      "goal": {
+        "en": "Smash every enemy before one reaches your bottom row.",
+        "de": "Zerschlag jeden Gegner, bevor einer deine unterste Reihe erreicht.",
+        "fa": "همهٔ دشمنان را پیش از اینکه یکی به ردیف پایینی شما برسد، درهم بکوبید.",
+        "ckb": "هەموو دوژمنەکان تێکبشکێنە پێش ئەوەی یەکێکیان بگاتە ڕیزی خوارەوەت."
+      },
+      "progress": {
+        "en": "Enemies {smashed, number} / {total, number}",
+        "de": "Gegner {smashed, number} / {total, number}",
+        "fa": "دشمن {smashed, number} / {total, number}",
+        "ckb": "دوژمن {smashed, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "The siege is broken!",
+        "de": "Die Belagerung ist gebrochen!",
+        "fa": "محاصره شکسته شد!",
+        "ckb": "گەمارۆکە شکێندرا!"
+      },
+      "loseReason": {
+        "en": "The enemies overran the board",
+        "de": "Die Gegner haben das Feld überrannt",
+        "fa": "دشمنان صفحه را تسخیر کردند",
+        "ckb": "دوژمنەکان تەختەکەیان داگیر کرد"
+      },
+      "stats": {
+        "enemiesSmashed": {
+          "en": "Enemies smashed",
+          "de": "Zerschlagene Gegner",
+          "fa": "دشمنان درهم‌کوبیده",
+          "ckb": "دوژمنی تێکشکاو"
+        },
+        "tilesMerged": {
+          "en": "Tiles merged",
+          "de": "Verschmolzene Kacheln",
+          "fa": "کاشی‌های ادغام‌شده",
+          "ckb": "کاشیی یەکخراو"
+        },
+        "biggestTile": {
+          "en": "Biggest tile",
+          "de": "Größte Kachel",
+          "fa": "بزرگ‌ترین کاشی",
+          "ckb": "گەورەترین کاشی"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Swipe to slide all your tiles at once.",
+          "de": "Wisch, um alle deine Kacheln auf einmal zu schieben.",
+          "fa": "انگشتتان را بکشید تا همهٔ کاشی‌ها با هم سر بخورند.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی هەموو کاشییەکانت پێکەوە بخلیسکێن."
+        },
+        {
+          "en": "Two equal tiles merge into one bigger tile.",
+          "de": "Zwei gleiche Kacheln verschmelzen zu einer größeren.",
+          "fa": "دو کاشی هم‌عدد با هم یکی می‌شوند و کاشی بزرگ‌تری می‌سازند.",
+          "ckb": "دوو کاشیی وەک یەک دەبنە یەک کاشیی گەورەتر."
+        },
+        {
+          "en": "A tile smashes any enemy with the same number or a smaller one.",
+          "de": "Eine Kachel zerschlägt jeden Gegner mit gleicher oder kleinerer Zahl.",
+          "fa": "هر کاشی، دشمنی با عدد برابر یا کوچک‌تر را درهم می‌کوبد.",
+          "ckb": "کاشی هەر دوژمنێک بە ژمارەی یەکسان یان بچووکتر تێکدەشکێنێت."
+        },
+        {
+          "en": "Enemies march down as you swipe. Keep them off your bottom row.",
+          "de": "Die Gegner rücken vor, während du wischst. Halte sie von deiner untersten Reihe fern.",
+          "fa": "دشمنان همراه با کشیدن‌های شما پایین می‌آیند. نگذارید به ردیف پایینی برسند.",
+          "ckb": "دوژمنەکان لەگەڵ ڕاکێشانەکانت دادەبەزن. مەهێڵە بگەنە ڕیزی خوارەوەت."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Swipe up to send your tiles at the enemies.",
+          "de": "Wisch nach oben und schick deine Kacheln auf die Gegner.",
+          "fa": "انگشتتان را به بالا بکشید تا کاشی‌ها به دشمنان بخورند.",
+          "ckb": "پەنجە بۆ سەرەوە ڕابکێشە بۆ ئەوەی کاشییەکانت بەر دوژمنەکان بکەون."
+        },
+        {
+          "en": "Equal tiles merge. Swipe sideways to join them.",
+          "de": "Gleiche Kacheln verschmelzen. Wisch zur Seite, um sie zu verbinden.",
+          "fa": "کاشی‌های هم‌عدد ادغام می‌شوند. به پهلو بکشید تا یکی شوند.",
+          "ckb": "کاشیی وەک یەک یەک دەگرن. بۆ لاوە ڕایبکێشە بۆ ئەوەی یەک ببن."
+        },
+        {
+          "en": "A bigger tile smashes a bigger enemy. Swipe up!",
+          "de": "Eine größere Kachel zerschlägt einen größeren Gegner. Wisch nach oben!",
+          "fa": "کاشی بزرگ‌تر دشمن بزرگ‌تر را درهم می‌کوبد. به بالا بکشید!",
+          "ckb": "کاشیی گەورەتر دوژمنی گەورەتر تێکدەشکێنێت. بۆ سەرەوە ڕایبکێشە!"
+        },
+        {
+          "en": "Smash the last enemy before it reaches your bottom row.",
+          "de": "Zerschlag den letzten Gegner, bevor er deine unterste Reihe erreicht.",
+          "fa": "آخرین دشمن را پیش از رسیدن به ردیف پایینی درهم بکوبید.",
+          "ckb": "دوا دوژمن تێکبشکێنە پێش ئەوەی بگاتە ڕیزی خوارەوەت."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Outer gate",
+          "de": "Äußeres Tor",
+          "fa": "دروازهٔ بیرونی",
+          "ckb": "دەروازەی دەرەوە"
+        },
+        {
+          "en": "Inner wall",
+          "de": "Innere Mauer",
+          "fa": "دیوار درونی",
+          "ckb": "دیواری ناوەوە"
+        },
+        {
+          "en": "Grand keep",
+          "de": "Großer Bergfried",
+          "fa": "برج اصلی",
+          "ckb": "قەڵای سەرەکی"
+        }
+      ]
     }
   },
   "licenceEntries": [
