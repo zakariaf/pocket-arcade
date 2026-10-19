@@ -6,10 +6,11 @@ import fc from 'fast-check';
 import { jsonShapeProblems } from '@e07/game-kit/testing/json-shape.ts';
 
 import { boardText } from './board-text.ts';
-import { create } from './create.ts';
+import { create, firstWinnable, startLayout } from './create.ts';
 import { distanceBetween, isSameCell, stepToward } from './floor-squares.ts';
 import { outcome } from './outcome.ts';
-import { knobsFor } from './scrap-shove-tuning.ts';
+import { TUNING, knobsFor } from './scrap-shove-tuning.ts';
+import { solveFloor } from './solve-floor.ts';
 
 import type { Cell, ScrapShoveState } from './scrap-shove-types.ts';
 
@@ -65,6 +66,28 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
       [6, 1, 2],
       [7, 2, 3],
     ]);
+  });
+
+  it('lays out only floors the solver proves winnable (spec 8.1: no level is impossible)', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        expect(solveFloor(create(seed, difficulty), TUNING.createMaxNodes).kind).toBe('solved');
+      }),
+      { numRuns: 40 },
+    );
+  });
+
+  it('tries the next layout of the seed stream when the first cannot be won', () => {
+    const first = firstWinnable(startLayout(39), knobsFor(0), { attempts: 1, maxNodes: 60_000 });
+    expect(solveFloor(first, 60_000).kind).toBe('unsolvable');
+    expect(create(39, 0)).not.toStrictEqual(first);
+    expect(create(39, 0).player).toStrictEqual(first.player);
+  });
+
+  it('keeps the last layout tried when none is proven within the budget', () => {
+    const third = firstWinnable(startLayout(1), knobsFor(0), { attempts: 3, maxNodes: 0 });
+    expect(third).not.toStrictEqual(create(1, 0));
+    expect(third.robots).toHaveLength(5);
   });
 
   it('clamps difficulties outside 0..100', () => {

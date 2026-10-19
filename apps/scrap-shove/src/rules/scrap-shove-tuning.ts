@@ -44,6 +44,10 @@ export const TUNING = {
   heapLeadSteps: 2,
   /** Random heaps start at least this far from the player. */
   heapStartDistance: 2,
+  /** Layouts create() tries from the seed's stream until the solver proves one winnable. */
+  createAttempts: 20,
+  /** Solver nodes that prove a layout winnable (an easy floor needs a few hundred). */
+  createMaxNodes: 60_000,
   /** Points per robot scrapped (the score in the top bar). */
   pointsPerRobot: 10,
   /** Per-difficulty knobs (the table above). */

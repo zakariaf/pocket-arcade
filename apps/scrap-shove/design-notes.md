@@ -42,7 +42,8 @@ The rules, as proposed:
   (the heap stays); two robots on one square crash and leave one heap; a robot that runs into a heavy
   robot breaks down on its own square (a new heap there). Then the fast robots step once more by the
   same rules.
-- **Won:** every robot of the floor is scrap. **Lost:** a robot reaches your square.
+- **Won:** every robot of the floor is scrap. **Lost:** a robot reaches your square. Every floor is
+  proven winnable before it is shown (section 16).
 - **Arrows:** each robot shows its next step as a faint arrow, so every outcome is visible before the
   tap (the toy's arrows).
 
@@ -235,6 +236,12 @@ The daily level is `create(dailySeed(date, salt), 45)` (spec 8.3: "The level num
 local date plus the game's own salt, run through the same generator as normal levels, at a medium
 difficulty"), with the salt the scaffold suggested in E20-T03, `0xd628`, fixed forever in E20-T07
 (`src/levels/scrap-shove-levels.ts`).
+
+The daily is not screened by the level plan, and about one raw layout in eight at the middle
+difficulties cannot be won (measured before E20-T07). So `create` itself lays out floors from the
+seed's random stream until the breadth-first solver proves one winnable (at most 20 layouts, 60,000
+solver nodes each; a solve takes a few milliseconds): every level, every daily and every floor the
+bots play can be won (spec 8.1: "no level is impossible").
 
 ## 17. App identity
 
