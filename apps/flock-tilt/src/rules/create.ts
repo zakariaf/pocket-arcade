@@ -4,7 +4,7 @@
 // tuning row's par band, so every field, the daily included, can be won, and the state carries par.
 import { nextInt, nextU32, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
-import { solveField } from './field-search.ts';
+import { sheepBlocks, solveField } from './field-search.ts';
 import { TUNING, knobsFor } from './flock-tilt-tuning.ts';
 import { DIRECTIONS, stepFrom } from './tilt-field.ts';
 
@@ -86,6 +86,16 @@ function startState(field: Field, par: number): FlockTiltState {
   };
 }
 
+/**
+ * The par of a drawn field create keeps, or null: the search wins it inside the row's par band and
+ * its shortest line stops a sheep against another sheep (the twist shows from the first field).
+ */
+function keptPar(field: Field, knobs: DifficultyKnobs): number | null {
+  const solution = solveField(field, knobs.maxPar, TUNING.searchNodes);
+  if (solution === null || solution.par < knobs.minPar) return null;
+  return sheepBlocks(field, solution.line) >= TUNING.minSheepBlocks ? solution.par : null;
+}
+
 /** create with an explicit number of draws (tests reach the prepared fallback field with 0). */
 export function createWithin(
   seed: number,
@@ -97,11 +107,8 @@ export function createWithin(
   for (let attempt = 0; attempt < drawAttempts; attempt += 1) {
     const drawn = drawField(rng, knobs);
     rng = drawn.rng;
-    const field = drawn.field;
-    const solution = field === null ? null : solveField(field, knobs.maxPar, TUNING.searchNodes);
-    if (field !== null && solution !== null && solution.par >= knobs.minPar) {
-      return startState(field, solution.par);
-    }
+    const par = drawn.field === null ? null : keptPar(drawn.field, knobs);
+    if (drawn.field !== null && par !== null) return startState(drawn.field, par);
   }
   return startState(fallbackField(knobs), 1);
 }

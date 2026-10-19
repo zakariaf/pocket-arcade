@@ -6,7 +6,7 @@ import { bfsSolve } from '@e07/game-kit/solver/bfs-solve.ts';
 
 import { DIRECTIONS, tiltField } from './tilt-field.ts';
 
-import type { Direction, Field, Flock } from './flock-tilt-types.ts';
+import type { Blocker, Direction, Field, Flock } from './flock-tilt-types.ts';
 import type { SearchProblem } from '@e07/game-kit/solver/search-problem.ts';
 
 /** A shortest way to pen every sheep: its length is par. */
@@ -47,6 +47,23 @@ function fieldProblem(field: Field, maxPar: number): SearchProblem<FlockNode, Di
     isDeadEnd: (node) => node.isLost || node.depth > maxPar,
     key: fieldKey,
   };
+}
+
+/** How many times a line of tilts stops a sheep against another sheep (the twist). */
+export function sheepBlocks(field: Field, line: readonly Direction[]): number {
+  let flock: Flock = field;
+  let blocks = 0;
+  for (const direction of line) {
+    const tilted = tiltField({ ...field, ...flock }, direction);
+    const stopped = tilted.slides.filter((slide) => isSheepBlock(slide.animal, slide.stoppedBy));
+    blocks += stopped.length;
+    flock = tilted;
+  }
+  return blocks;
+}
+
+function isSheepBlock(animal: 'sheep' | 'wolf', stoppedBy: Blocker): boolean {
+  return animal === 'sheep' && stoppedBy === 'sheep';
 }
 
 /** Breadth-first search for the fewest tilts that pen every sheep without losing one. */

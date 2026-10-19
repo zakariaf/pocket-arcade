@@ -6,7 +6,7 @@ import { TUNING, knobsFor } from './flock-tilt-tuning.ts';
 describe('knobsFor', () => {
   it('picks the row whose lower bound is the largest at or below the difficulty (0, 25, 50, 75)', () => {
     const sheep = [0, 24, 25, 49, 50, 74, 75, 99].map((difficulty) => knobsFor(difficulty).sheep);
-    expect(sheep).toStrictEqual([2, 2, 3, 3, 4, 4, 5, 5]);
+    expect(sheep).toStrictEqual([3, 3, 4, 4, 5, 5, 6, 6]);
   });
 
   it('clamps difficulties outside the scale to the first and the last row', () => {
@@ -35,6 +35,10 @@ describe('knobsFor', () => {
       expect(row.maxPar).toBeLessThanOrEqual(8);
       expect(row.minPar).toBeLessThanOrEqual(row.maxPar);
     }
+  });
+
+  it('asks every field to need one sheep to stop against another (the twist, at once)', () => {
+    expect(TUNING.minSheepBlocks).toBe(1);
   });
 
   it('gives a tilt budget far above the largest par (undo gives tilts back)', () => {

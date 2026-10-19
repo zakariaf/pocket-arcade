@@ -28,11 +28,11 @@ function eventLine(event: FlockTiltEvent): string {
 }
 
 describe('flock-tilt rules golden', () => {
-  it('keeps the event stream of a won line (up, right, down, right)', () => {
-    expect(playedLine(['up', 'right', 'down', 'right'])).toMatchSnapshot();
+  it('keeps the event stream of a won line (down, left, down, left)', () => {
+    expect(playedLine(['down', 'left', 'down', 'left'])).toMatchSnapshot();
   });
 
-  it('keeps the event stream of a line the wolf ends (up, left, up, right)', () => {
-    expect(playedLine(['up', 'left', 'up', 'right'])).toMatchSnapshot();
+  it('keeps the event stream of a line the wolf ends (up, right, up, left)', () => {
+    expect(playedLine(['up', 'right', 'up', 'left'])).toMatchSnapshot();
   });
 });

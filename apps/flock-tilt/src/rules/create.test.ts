@@ -2,7 +2,7 @@
 import fc from 'fast-check';
 
 import { create, createWithin } from './create.ts';
-import { solveField } from './field-search.ts';
+import { sheepBlocks, solveField } from './field-search.ts';
 import { fieldStatus } from './field-status.ts';
 import { fieldText } from './field-text.ts';
 import { TUNING, knobsFor } from './flock-tilt-tuning.ts';
@@ -64,7 +64,7 @@ describe('create (turn-based, 4-way swipe; spec 10 RULES: "Start state for a lev
   });
 
   it('adds sheep and a second wolf in the harder rows', () => {
-    expect([0, 25, 50, 75].map((d) => create(3, d).sheep.length)).toStrictEqual([2, 3, 4, 5]);
+    expect([0, 25, 50, 75].map((d) => create(3, d).sheep.length)).toStrictEqual([3, 4, 5, 6]);
     expect([0, 25, 50, 75].map((d) => create(3, d).wolves.length)).toStrictEqual([1, 1, 1, 2]);
   });
 
@@ -100,6 +100,17 @@ describe('create (turn-based, 4-way swipe; spec 10 RULES: "Start state for a lev
       );
     });
 
+    it('makes only fields whose shortest line stops a sheep against another sheep (the twist)', () => {
+      fc.assert(
+        fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+          const state = create(seed, difficulty);
+          const line = solveField(state, 8, TUNING.searchNodes)?.line ?? [];
+          expect(sheepBlocks(state, line)).toBeGreaterThanOrEqual(TUNING.minSheepBlocks);
+        }),
+        { numRuns: 40 },
+      );
+    });
+
     it('makes only fields the search wins at the recorded par, inside the row band', () => {
       fc.assert(
         fc.property(seedArb, difficultyArb, (seed, difficulty) => {
@@ -121,13 +132,13 @@ describe('create (turn-based, 4-way swipe; spec 10 RULES: "Start state for a lev
 });
 
 const GOLDEN_SEED_1_FIELD = [
-  '.#s...#',
-  '..##..#',
-  '..##..w',
-  '.......',
-  '....s..',
-  '.......',
-  '..#..o.',
+  '#..#...',
+  '......#',
+  '...s...',
+  '#.#s...',
+  '.os....',
+  '..##.#.',
+  '....w..',
 ];
 
-const GOLDEN_SEED_1_PAR = 3;
+const GOLDEN_SEED_1_PAR = 4;

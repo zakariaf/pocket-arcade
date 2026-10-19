@@ -1,7 +1,7 @@
 // apps/flock-tilt/src/rules/field-search.test.ts
 import fc from 'fast-check';
 
-import { fieldKey, solveField } from './field-search.ts';
+import { fieldKey, sheepBlocks, solveField } from './field-search.ts';
 import { parseField } from './field-text.ts';
 import { tiltField } from './tilt-field.ts';
 
@@ -76,6 +76,19 @@ describe('solveField (spec 8.1: the solver also calculates par)', () => {
         }),
       );
     });
+  });
+});
+
+describe('sheepBlocks (spec 13: "sheep are each other\'s blockers")', () => {
+  it('counts every sheep a line of tilts stops against another sheep', () => {
+    const field = parseField(['.ss..', '.....', '....o']);
+    expect(sheepBlocks(field, ['right'])).toBe(1);
+    expect(sheepBlocks(field, ['right', 'left'])).toBe(2);
+  });
+
+  it('counts no stop against a rock, the fence, the pen or a wolf', () => {
+    expect(sheepBlocks(parseField(['s..#.', '.....', 'w...o']), ['right', 'down'])).toBe(0);
+    expect(sheepBlocks(parseField(['s....', '....o']), [])).toBe(0);
   });
 });
 

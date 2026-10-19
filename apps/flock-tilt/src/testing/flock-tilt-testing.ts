@@ -26,8 +26,8 @@ export const FLOCK_TILT_TESTING: TestingSpec<FlockTiltState, FlockTiltMove> = {
   bot: flockTiltBot,
   examples: {
     start: START,
-    middle: () => played(['up', 'right']),
-    win: () => played(['up', 'right', 'down', 'right']),
-    lose: () => played(['up', 'left', 'up', 'right']),
+    middle: () => played(['down', 'left']),
+    win: () => played(['down', 'left', 'down', 'left']),
+    lose: () => played(['up', 'right', 'up', 'left']),
   },
 };

@@ -165,23 +165,30 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
   stay gentle for the age rating."
 - If the owner answers differently: `--violence-rating INFREQUENT_OR_MILD` in `game.config.ts`.
 
-## Bands (proposed; the sims fix the numbers in E19-T06, the owner's play-test approves them)
+## Bands (measured in E19-T06, proposed until the owner's play-test)
 
 - **Difficulty rows** on the 0..99 scale (lower bounds 0, 25, 50, 75; the sims sample each):
 
   | Row   | Sheep | Wolves | Rocks | Par band |
   | ----- | ----- | ------ | ----- | -------- |
-  | 0-24  | 2     | 1      | 6-8   | 3-4      |
-  | 25-49 | 3     | 1      | 6-8   | 4-5      |
-  | 50-74 | 4     | 1      | 5-7   | 5-6      |
-  | 75-99 | 5     | 2      | 5-7   | 6-8      |
+  | 0-24  | 3     | 1      | 6-8   | 3-4      |
+  | 25-49 | 4     | 1      | 6-8   | 4-5      |
+  | 50-74 | 5     | 1      | 5-7   | 5-6      |
+  | 75-99 | 6     | 2      | 5-7   | 6-8      |
 
-- **Curve:** the greedy bot's win rate falls row by row.
+  The first sim run (2, 3, 4, 5 sheep) showed the twist almost never in the easiest row: two sheep
+  met 0.15 times per greedy run. So every row has one sheep more, and `create` keeps only fields
+  whose shortest line stops a sheep against another sheep (`minSheepBlocks` 1 in the tuning file):
+  the twist shows from the first field.
+
+- **Curve:** the tilts a field takes rise row by row (greedy median 4, 5, 7, 9); the greedy win rate
+  falls gently (0.79, 0.76, 0.71, 0.68), because a calm puzzle stays winnable while its plans grow.
 - **Skill gap:** random < greedy < lookahead by a clear step ("A random swiper wins only about 12% of
-  fields and takes about 2x par when it does", spec 13).
+  fields and takes about 2x par when it does", spec 13): 0.19, 0.76, 0.93 in the second row.
 - **Kill test (fun within seconds):** on the easiest field the first sheep is penned within 1 to 3
   tilts in at least 90 % of the greedy bot's runs (payoff: `sheep-penned`), and the twist happens at
   least once per run (twist: a sheep stopped by another sheep, or by the wolf, in `animals-slid`).
+  Measured: 94 % within 3 tilts, 1.87 twists per run.
 - **Level quality** (spec 13 risk: "samey puzzles without a quality score"): the level plan rejects
   fields whose par is below the row's band and fields a random swiper wins too often.
 - If the owner answers differently: bands and rows move in the tuning file with a sim run, and the
@@ -202,6 +209,6 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
   "No tilts left" (it cannot happen from a field the search won, but the rule keeps every run
   finite and `listMoves` empty exactly when the run is over).
 - **`create`** draws up to 2000 fields from the seed's sfc32 stream and keeps the first one the
-  search wins inside its row's par band (the design prototype, 200 seeds a row: 7 draws on average in the easiest row, 92 in the
+  search wins inside its row's par band, with a sheep stopping against another sheep on the way (the design prototype, 200 seeds a row: 7 draws on average in the easiest row, 92 in the
   hardest, none ever used up on 800 seeds); if none is kept it uses a prepared field one tilt from
   won (never seen; a test reaches it on purpose).
