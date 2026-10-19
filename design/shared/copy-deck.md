@@ -7,7 +7,7 @@
 | Section | Contents |
 |---|---|
 | `meta` | Languages, direction, autonyms, `numberLocales` (digit tags), the ICU subset, a glossary, `samples` and `sampleOverrides` (values for every placeholder), `renderNotes`, and `screens` (which keys each screen uses). |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`. Each has a name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners and 3 pack names. |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `pokerDrop` (added 2026-10-19 by its design pass, E27). Each has a name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners and 3 pack names. |
 | `licenceEntries` | Example rows for S11d. Component and licence names are not translated. The sound row points to string keys. |
 | `strings` | 288 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`. |
 
@@ -50,6 +50,7 @@ Ordered roughly by how visible they are.
 | `settings.numbers.local` | محلی | Would "فارسی" be clearer for ۰-۹? |
 | `games.lineSiege.stats.biggestCombo` | بزرگ‌ترین کمبو | Is the gamer loanword acceptable? |
 | Flock Tilt texts | آغل، کج کردن، انگشتتان را بکشید | Pen, tilt and swipe wording. |
+| Poker Drop texts | چاه، دست، دو جفت، می‌ترکد، زنجیره، فول هاوس، رویال فلاش | Is "چاه" right for the well, "دست" for a poker hand and "زنجیره" for a cascade? Keep the hand names as loanwords? |
 | `settings.colour-blind.label` | رنگ‌های مناسب کوررنگی | Natural? |
 | `pause.title`, `result.endless.title`, `result.lose.title` | بازی متوقف شد، دور تمام شد، این بار نشد | Natural? |
 | `premium.error` | خرید انجام نشد. هیچ مبلغی از شما کسر نشد. | Natural? |
@@ -64,6 +65,7 @@ Ordered roughly by how visible they are.
 | Line Siege texts (goal, loseReason, stats, howToPlay, tutorial) | دێو، دێوەکان دیوارەکەیان بەزاند | Is "دێو" right for a monster, and "بەزاندن" for breaking through? |
 | Flock Tilt texts | گەوڕ، لار بکەرەوە، پەنجە ڕابکێشە، دەخلیسکێت | Is "گەوڕ" right for a sheep pen? Check tilt, swipe and slide wording. |
 | Scrap Shove texts | ئاسنی کۆن، پاڵی پێوە بنێیت، پێکدادان، بەر یەکتر بکەون | Scrap, shove and crash wording. |
+| Poker Drop texts | بیر، دەست، دوو جووت، دەتەقێتەوە، زنجیرە، فول هاوس، ڕۆیاڵ فلاش | Well, poker hand, burst and cascade wording; hand names as loanwords? |
 | `settings.hints.label`, `premium.benefit.free-perks` | ئاماژە | Is this the right word for a game hint? |
 | `daily.streak.*`, `stats.best.win-streak` | زنجیرە، ۵ ڕۆژ لەسەر یەک، هێشتا زنجیرەت نییە | Streak wording. |
 | `premium.small-print` | بێ ئابوونە | Is "ئابوونە" right for a subscription? The alternative is "بەشداریکردن". |

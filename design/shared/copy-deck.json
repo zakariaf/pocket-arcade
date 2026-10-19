@@ -1032,6 +1032,142 @@
           "ckb": "شاری ڕۆبۆتەکان"
         }
       ]
+    },
+    "pokerDrop": {
+      "id": "poker-drop",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Poker Drop",
+        "de": "Poker Drop",
+        "fa": "Poker Drop",
+        "ckb": "Poker Drop"
+      },
+      "tagline": {
+        "en": "Drop cards. Make hands. Watch them burst.",
+        "de": "Karten fallen lassen. Blätter bilden. Platzen lassen.",
+        "fa": "کارت بیندازید، دست بسازید، بترکانید.",
+        "ckb": "کارت بەربدەوە، دەست دروست بکە، بیتەقێنەوە."
+      },
+      "goal": {
+        "en": "Make poker hands in any line before the well fills up.",
+        "de": "Bilde Pokerblätter in jeder Linie, bevor der Schacht voll ist.",
+        "fa": "پیش از پر شدن چاه، در هر خطی دست پوکر بسازید.",
+        "ckb": "پێش ئەوەی بیرەکە پڕ ببێت، لە هەر هێڵێکدا دەستی پۆکەر دروست بکە."
+      },
+      "progress": {
+        "en": "Hands {made, number} / {total, number}",
+        "de": "Blätter {made, number} / {total, number}",
+        "fa": "دست {made, number} / {total, number}",
+        "ckb": "دەست {made, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "All hands made!",
+        "de": "Alle Blätter geschafft!",
+        "fa": "همهٔ دست‌ها ساخته شد!",
+        "ckb": "هەموو دەستەکان دروست کران!"
+      },
+      "loseReason": {
+        "en": "The well is full",
+        "de": "Der Schacht ist voll",
+        "fa": "چاه پر شد",
+        "ckb": "بیرەکە پڕ بوو"
+      },
+      "stats": {
+        "handsMade": {
+          "en": "Hands made",
+          "de": "Gebildete Blätter",
+          "fa": "دست‌های ساخته‌شده",
+          "ckb": "دەستە دروستکراوەکان"
+        },
+        "bigHands": {
+          "en": "Big hands",
+          "de": "Starke Blätter",
+          "fa": "دست‌های بزرگ",
+          "ckb": "دەستە گەورەکان"
+        },
+        "biggestCascade": {
+          "en": "Biggest cascade",
+          "de": "Größte Kaskade",
+          "fa": "بزرگ‌ترین زنجیره",
+          "ckb": "گەورەترین زنجیرە"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Tap a column to drop the next card into it.",
+          "de": "Tipp auf eine Spalte, um die nächste Karte hineinfallen zu lassen.",
+          "fa": "روی یک ستون بزنید تا کارت بعدی در آن بیفتد.",
+          "ckb": "دەست لە ستوونێک بدە بۆ ئەوەی کارتی داهاتوو تێیدا بکەوێت."
+        },
+        {
+          "en": "Five cards in a line, across, up or diagonal, make a poker hand.",
+          "de": "Fünf Karten in einer Linie, waagrecht, senkrecht oder diagonal, bilden ein Pokerblatt.",
+          "fa": "پنج کارت در یک خط، افقی، عمودی یا مورب، یک دست پوکر می‌سازند.",
+          "ckb": "پێنج کارت لە یەک هێڵدا، ئاسۆیی، ستوونی یان لار، دەستێکی پۆکەر دروست دەکەن."
+        },
+        {
+          "en": "Two pair or better bursts: the cards that make the hand pop.",
+          "de": "Zwei Paare oder besser platzen: Die Karten des Blatts verschwinden.",
+          "fa": "دو جفت یا بهتر می‌ترکد: کارت‌هایی که دست را می‌سازند می‌ترکند.",
+          "ckb": "دوو جووت یان باشتر دەتەقێتەوە: ئەو کارتانەی دەستەکە دروست دەکەن دەتەقنەوە."
+        },
+        {
+          "en": "Cards above fall down and can make a new hand.",
+          "de": "Karten darüber fallen nach und können ein neues Blatt bilden.",
+          "fa": "کارت‌های بالایی پایین می‌افتند و می‌توانند دست تازه‌ای بسازند.",
+          "ckb": "کارتەکانی سەرەوە دەکەونە خوارەوە و دەتوانن دەستێکی نوێ دروست بکەن."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Tap the gap to drop your card there.",
+          "de": "Tipp auf die Lücke, um deine Karte dort fallen zu lassen.",
+          "fa": "روی جای خالی بزنید تا کارتتان آنجا بیفتد.",
+          "ckb": "دەست لە بۆشاییەکە بدە بۆ ئەوەی کارتەکەت لەوێ بکەوێت."
+        },
+        {
+          "en": "Two pair! The cards that make the hand burst.",
+          "de": "Zwei Paare! Die Karten des Blatts platzen.",
+          "fa": "دو جفت! کارت‌های این دست می‌ترکند.",
+          "ckb": "دوو جووت! کارتەکانی دەستەکە دەتەقنەوە."
+        },
+        {
+          "en": "The cards above fell and made another hand: a cascade!",
+          "de": "Die Karten darüber sind nachgefallen und bilden ein neues Blatt: eine Kaskade!",
+          "fa": "کارت‌های بالایی افتادند و دست دیگری ساختند: زنجیره!",
+          "ckb": "کارتەکانی سەرەوە کەوتن و دەستێکی تریان دروست کرد: زنجیرە!"
+        },
+        {
+          "en": "Make the hands the level asks for before the well fills up.",
+          "de": "Bilde die Blätter, die das Level verlangt, bevor der Schacht voll ist.",
+          "fa": "پیش از پر شدن چاه، دست‌هایی را که مرحله می‌خواهد بسازید.",
+          "ckb": "پێش پڕبوونی بیرەکە، ئەو دەستانە دروست بکە کە ئاستەکە دەیەوێت."
+        }
+      ],
+      "packs": [
+        {
+          "en": "First deal",
+          "de": "Erstes Blatt",
+          "fa": "دست اول",
+          "ckb": "دەستی یەکەم"
+        },
+        {
+          "en": "Full house",
+          "de": "Full House",
+          "fa": "فول هاوس",
+          "ckb": "فول هاوس"
+        },
+        {
+          "en": "Royal flush",
+          "de": "Royal Flush",
+          "fa": "رویال فلاش",
+          "ckb": "ڕۆیاڵ فلاش"
+        }
+      ]
     }
   },
   "licenceEntries": [
