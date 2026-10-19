@@ -5,7 +5,7 @@
 // Pure, like applyMove; a second continue in the same run, or a continue of a run that was not
 // lost, throws.
 import { enemyAt, isSameSquare } from './board-squares.ts';
-import { TUNING, knobsFor } from './jump-chain-tuning.ts';
+import { TUNING, marchEveryFor } from './jump-chain-tuning.ts';
 import { outcome } from './outcome.ts';
 
 import type {
@@ -40,7 +40,7 @@ export function continueAfterLoss(lost: JumpChainState): JumpChainResult {
     state: {
       ...lost,
       enemies,
-      marchIn: knobsFor(lost.difficulty).marchEvery,
+      marchIn: marchEveryFor(lost.difficulty, lost.nextRank),
       hasContinued: true,
     },
     events: [{ kind: 'ranks-stepped-back', shifts }],

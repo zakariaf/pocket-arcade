@@ -6,7 +6,7 @@ import fc from 'fast-check';
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 
 import { create } from './create.ts';
-import { knobsFor } from './jump-chain-tuning.ts';
+import { TUNING, knobsFor, marchEveryFor } from './jump-chain-tuning.ts';
 import { WAITING_ROW, advanceRanks, marchRanks } from './march.ts';
 
 import type { JumpChainState, Square } from './jump-chain-types.ts';
@@ -91,6 +91,20 @@ describe('advanceRanks', () => {
     expect(next.enemies.filter((enemy) => enemy.row === WAITING_ROW).length).toBeGreaterThan(0);
     expect(events.map((event) => event.kind)).toStrictEqual(['ranks-advanced', 'rank-spawned']);
     expect(WAITING_ROW).toBe(-1);
+  });
+
+  it('restarts the endless march sooner once many ranks have come (the run always ends)', () => {
+    const start = create(3, ENDLESS_DIFFICULTY);
+    const late = {
+      ...start,
+      piece: { col: 0, row: 8 },
+      marchIn: 0,
+      nextRank: 4 * TUNING.endlessRampRanks,
+    };
+    expect(advanceRanks(late).state.marchIn).toBe(
+      marchEveryFor(ENDLESS_DIFFICULTY, late.nextRank + 1),
+    );
+    expect(advanceRanks(late).state.marchIn).toBeLessThan(TUNING.endlessRow.marchEvery);
   });
 
   it('keeps every enemy on its column and an odd row, and the ids unique', () => {

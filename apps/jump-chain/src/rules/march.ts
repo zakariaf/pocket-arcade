@@ -7,7 +7,7 @@
 import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 
 import { SIDE_ROW, enemyAt, hasEnemyOnBoard, isSameSquare } from './board-squares.ts';
-import { TUNING, knobsFor } from './jump-chain-tuning.ts';
+import { TUNING, knobsFor, marchEveryFor } from './jump-chain-tuning.ts';
 import { makeRank } from './ranks.ts';
 
 import type {
@@ -70,8 +70,9 @@ function march(
 ): { state: JumpChainState; didMove: boolean } {
   const marched = marchRanks(state);
   if (marched.shifts.length > 0) events.push({ kind: 'ranks-advanced', shifts: marched.shifts });
-  const restarted = { ...marched.state, marchIn: knobsFor(state.difficulty).marchEvery };
-  return { state: spawnIfDue(restarted, events), didMove: marched.shifts.length > 0 };
+  const spawned = spawnIfDue(marched.state, events);
+  const marchIn = marchEveryFor(state.difficulty, spawned.nextRank);
+  return { state: { ...spawned, marchIn }, didMove: marched.shifts.length > 0 };
 }
 
 /**

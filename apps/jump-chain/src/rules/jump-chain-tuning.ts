@@ -37,9 +37,9 @@ const ENDLESS_ROW = {
   /** Each square of a new rank holds an enemy at this chance in percent (higher = harder). */
   fill: 70,
   /** The ranks advance after every Nth move (lower = harder). */
-  marchEvery: 3,
+  marchEvery: 4,
   /** The odd row the front rank starts on; ranks are made up to the first row above the board. */
-  frontRow: 5,
+  frontRow: 3,
 } as const satisfies DifficultyKnobs;
 
 export const TUNING = {
@@ -59,6 +59,10 @@ export const TUNING = {
   rankPoints: 50,
   /** Rows the one continue moves every enemy back up (spec 8.10: one rank row; more = kinder). */
   continueRows: 2,
+  /** Endless: every endlessRampRanks new ranks the march comes one move sooner (lower = a faster climb). */
+  endlessRampRanks: 6,
+  /** Endless: the march never comes sooner than every endlessFastestMarch moves (lower = harder). */
+  endlessFastestMarch: 2,
   /** Per-difficulty knobs (the tables above). */
   levelRows: LEVEL_ROWS,
   endlessRow: ENDLESS_ROW,
@@ -75,4 +79,15 @@ export function knobsFor(difficulty: number): DifficultyKnobs {
 /** Points of a chain of n jumps: jumpPoints x (1 + 2 + ... + n). */
 export function chainPoints(jumps: number): number {
   return (TUNING.jumpPoints * jumps * (jumps + 1)) / 2;
+}
+
+/**
+ * Moves between two advances: a level keeps its row's pace; the endless run starts at the endless
+ * row's pace and comes one move sooner every endlessRampRanks ranks it has made, never sooner than
+ * endlessFastestMarch, so the pressure keeps rising and every endless run ends.
+ */
+export function marchEveryFor(difficulty: number, ranksMade: number): number {
+  if (!isEndlessDifficulty(difficulty)) return knobsFor(difficulty).marchEvery;
+  const sooner = Math.floor(ranksMade / TUNING.endlessRampRanks);
+  return Math.max(TUNING.endlessFastestMarch, TUNING.endlessRow.marchEvery - sooner);
 }

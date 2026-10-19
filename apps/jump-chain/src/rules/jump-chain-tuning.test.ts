@@ -3,7 +3,7 @@ import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY, rowFor } from '@e07/game-kit/contract/difficulty.ts';
 
-import { TUNING, chainPoints, knobsFor } from './jump-chain-tuning.ts';
+import { TUNING, chainPoints, knobsFor, marchEveryFor } from './jump-chain-tuning.ts';
 
 describe('knobsFor (Jump Chain is turn-based: one difficulty scale 0..100)', () => {
   it('maps the level scale 0..99 onto the four rows in equal bands, easiest first', () => {
@@ -48,6 +48,10 @@ describe('knobsFor (Jump Chain is turn-based: one difficulty scale 0..100)', () 
     expect(third.ranks).toBe(second.ranks + 1);
   });
 
+  it("starts the endless front rank further up than a level's, so a run has room to build", () => {
+    expect(TUNING.endlessRow.frontRow).toBeLessThan(TUNING.levelRows[0].frontRow);
+  });
+
   it('starts every front rank on an odd row of the board, where the enemies stand', () => {
     for (const row of [...TUNING.levelRows, TUNING.endlessRow]) {
       expect(row.frontRow % 2).toBe(1);
@@ -63,6 +67,28 @@ describe('knobsFor (Jump Chain is turn-based: one difficulty scale 0..100)', () 
         );
       }),
     );
+  });
+});
+
+describe('marchEveryFor', () => {
+  it("keeps a level's march at its row's pace, however many ranks it made", () => {
+    expect(marchEveryFor(30, 40)).toBe(knobsFor(30).marchEvery);
+  });
+
+  it('brings the endless march one move sooner every endlessRampRanks ranks, never below the fastest', () => {
+    const start = TUNING.endlessRow.marchEvery;
+    const ramp = TUNING.endlessRampRanks;
+    expect(
+      [0, ramp - 1, ramp, 2 * ramp, 50 * ramp].map((ranks) =>
+        marchEveryFor(ENDLESS_DIFFICULTY, ranks),
+      ),
+    ).toStrictEqual([
+      start,
+      start,
+      start - 1,
+      Math.max(start - 2, TUNING.endlessFastestMarch),
+      TUNING.endlessFastestMarch,
+    ]);
   });
 });
 
