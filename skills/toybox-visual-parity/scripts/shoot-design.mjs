@@ -276,15 +276,17 @@ run(async () => {
       for (const message of referenceChangeProblems(refManifest, { frames, known: new Set(Object.keys(refManifest.files ?? {})) })) {
         report.problem({ file: where(refManifestPath), rule: 'reference-changes', message, fix: 'Each entry is { id, date (YYYY-MM-DD), frames, variants, what, why } naming frames and variants of this set (signoff-and-waivers.md).' });
       }
-      // The design and the device profile decide pixels: any change makes the set stale. The map and
-      // the frames manifest also carry metadata no render reads (component names, checks, the
-      // fixture): a change there is judged by the re-render itself, which compares every checked
-      // frame's pixels and measured layout. A full check proves the whole set; a partial one only
-      // the frames it re-rendered, and says so.
+      // The device profile decides every pixel: any change makes the set stale. The design holds
+      // every design game (a design pass adds one without touching this set), and the map and the
+      // frames manifest also carry metadata no render reads (component names, checks, the
+      // fixture): a change in any of the three is judged by the re-render itself, which compares
+      // every checked frame's pixels and measured layout (a design change that reaches this set is
+      // reference-drift). A full check proves the whole set; a partial one only the frames it
+      // re-rendered, and says so.
       const everything = keys.length === frames.size && THEMES.every((t) => themes.includes(t)) && (refManifest.langs ?? []).every((l) => langs.includes(l));
       for (const [input, hash] of Object.entries(manifest.inputs)) {
         if (refManifest.inputs?.[input] === hash) continue;
-        if (input === 'map' || input === 'frames') {
+        if (input === 'map' || input === 'frames' || input === 'design') {
           staleMetadata.push(input);
           continue;
         }
@@ -317,7 +319,7 @@ run(async () => {
       report.note(`re-rendered ${shots} frames in ${((Date.now() - started) / 1000).toFixed(1)} s and compared them with ${where(committed)}`);
       for (const input of staleMetadata) {
         report.note(everything
-          ? `the ${input} changed since the references were rendered; every reference re-rendered the same (pixels and measured layout) unless a problem above says otherwise, so the change is metadata only (check-parity reads element metadata from the current map)`
+          ? `the ${input} changed since the references were rendered; every reference re-rendered the same (pixels and measured layout) unless a problem above says otherwise, so the change ${input === 'design' ? 'did not reach this set (record it in referenceChanges)' : 'is metadata only (check-parity reads element metadata from the current map)'}`
           : `the ${input} changed since the references were rendered; only the ${shots} frame${shots === 1 ? '' : 's'} re-rendered here ${shots === 1 ? 'is' : 'are'} proven unaffected: run --check with no --frame, --theme or --lang to prove the rest`);
       }
     }
