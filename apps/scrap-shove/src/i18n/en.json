@@ -1,0 +1,22 @@
+{
+  "scrap-shove.goal": "Make every robot crash before one catches you.",
+  "scrap-shove.how-to-play.step-1": "Tap a square next to you to step there.",
+  "scrap-shove.how-to-play.step-2": "Walk into scrap to shove it.",
+  "scrap-shove.how-to-play.step-3": "After your move, every robot steps toward you.",
+  "scrap-shove.how-to-play.step-4": "Make robots crash into each other or into scrap.",
+  "scrap-shove.lose.caught": "A robot caught you",
+  "scrap-shove.name": "Scrap Shove",
+  "scrap-shove.pack-name.1": "Junkyard",
+  "scrap-shove.pack-name.2": "Factory floor",
+  "scrap-shove.pack-name.3": "Robot city",
+  "scrap-shove.progress": "Robots {wrecked, number} / {total, number}",
+  "scrap-shove.stats.biggest-crash": "Biggest crash",
+  "scrap-shove.stats.robots-scrapped": "Robots scrapped",
+  "scrap-shove.stats.scrap-shoved": "Scrap shoved",
+  "scrap-shove.tagline": "Outsmart the robots. Make them crash.",
+  "scrap-shove.tutorial.step-1": "Tap a square next to you to move.",
+  "scrap-shove.tutorial.step-2": "Each robot just took one step toward you.",
+  "scrap-shove.tutorial.step-3": "Step aside and let two robots crash!",
+  "scrap-shove.tutorial.step-4": "Walk into scrap to shove it at a robot.",
+  "scrap-shove.win-title": "All robots scrapped!"
+}
