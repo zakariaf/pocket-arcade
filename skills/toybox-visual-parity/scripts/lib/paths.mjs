@@ -14,6 +14,7 @@ export const DEFAULTS = Object.freeze({
   design: join(ASSETS_DIR, 'design', 'toybox.html'),
   map: join(ASSETS_DIR, 'screen-testids.json'),
   frames: join(ASSETS_DIR, 'frames.json'),
+  tokens: join(ASSETS_DIR, 'toybox-tokens.json'),
   device: join(ASSETS_DIR, 'device', 'iphone16pro.json'),
   reference: join(ASSETS_DIR, 'reference'),
 });

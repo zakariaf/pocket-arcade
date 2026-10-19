@@ -96,7 +96,24 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+/**
+ * The design games: every game of the Toybox token file (`color.games`, synced into
+ * assets/toybox-tokens.json), each with its logo layers (`logos.games.<game>`). A game added to the
+ * design is a design game without a code change; one without its logo has no references (exit 2).
+ */
+export function readDesignGames(tokensPath = DEFAULTS.tokens) {
+  const tokens = readJson(tokensPath, 'Toybox token file');
+  const games = Object.keys(tokens.color?.games ?? {});
+  if (!games.length) fail(`the Toybox token file ${tokensPath} has no design games (color.games)`, 'Restore the shared toybox-tokens.json (sync-shared.mjs).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) {
+      fail(`design game ${game} in ${tokensPath} has no logo layers (logos.games.${game})`, 'A design game needs its paint and its logo in the token file: add the logo to the design, then refresh-shared.mjs and sync-shared.mjs.');
+    }
+  }
+  return games;
+}
+export const DESIGN_GAMES = readDesignGames();
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).
