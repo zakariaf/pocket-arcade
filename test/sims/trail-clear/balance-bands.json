@@ -1,0 +1,105 @@
+{
+  "gameId": "trail-clear",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.9,
+      "max": 1,
+      "why": "The first row (a bag of 24 gentle tiles) is the warm-up: a reasonable player places every tile (1.0 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.1,
+      "max": 0.35,
+      "why": "The hardest row (36 knotty tiles, few helpful deals) is hard (0.2 measured), yet a reasonable player still wins some."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.35,
+      "max": 0.7,
+      "why": "Random placement still wins about half the warm-up levels (0.55 measured): the board is roomy there, but it scores less than half of a reasonable player."
+    },
+    {
+      "policy": "random",
+      "difficulty": 50,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.15,
+      "why": "From the third row random placement almost never fits the whole bag (0.04 measured): where a tile goes matters."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 24,
+      "max": 28,
+      "why": "A second-row level is its bag of 28 tiles (median 28 measured): a few minutes of play."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 50,
+      "metric": "medianScore",
+      "min": 550,
+      "max": 950,
+      "why": "A reasonable player scores about 760 on a third-row level, which sets its stars (two at the witness score)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "twistPerRun",
+      "min": 1.2,
+      "max": 3,
+      "why": "The double (one tile closes a road and a river) comes about twice per easy level (1.75 measured), the opening's first."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "medianScore",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 150
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": {
+    "policy": "greedy",
+    "difficulty": 100,
+    "bands": [
+      {
+        "metric": "medianMoves",
+        "min": 25,
+        "max": 60,
+        "why": "An endless run outlasts a level (median 37 placements measured) and still ends: the board fills."
+      },
+      {
+        "metric": "medianScore",
+        "min": 600,
+        "max": 1400,
+        "why": "A reasonable endless run scores more than a level (median 970 measured)."
+      },
+      {
+        "metric": "twistPerRun",
+        "min": 0.8,
+        "max": 3,
+        "why": "Doubles still come in the endless run (1.38 per run measured)."
+      }
+    ]
+  },
+  "notes": "Trail Clear, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75) and the endless run at 100, 100 seeds each. Greedy wins 1.0/0.88/0.65/0.2, random 0.55/0.17/0.04/0.02, lookahead 0.92 at the second row; the curve drops by 0.12, 0.23 and 0.45. Winning is placing the whole bag, so the skill gap is judged on the score the stars use: random 240 < greedy 710 < lookahead 960 at the second row. The opening deals the ford between a road end and a river end, so the greedy player closes two loops with its first tile in every run (first payoff within 3 placements: 1.0) and sees the double 1.75 times per easy level. The first sim showed random placement winning 0.65 of the warm-up and a second row barely harder than the first (greedy 0.94 after 1.0); the easiest row now deals fewer helpful tiles (40 -> 32 %) and the second row fewer end pieces (4 -> 3 each). The endless run lasts a median 37 placements (p10 22, p90 60), always ends with no room, and scores a median 970. Proposed until the owner's play-test (O6)."
+}

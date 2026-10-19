@@ -54,7 +54,7 @@ const GENTLE: TileWeights = {
   'road-fork': 0,
 };
 /** Fewer end pieces; the bridge appears (it only fits the inner cells). */
-const BRIDGES: TileWeights = { ...GENTLE, 'road-end': 4, 'river-end': 4, bridge: 1 };
+const BRIDGES: TileWeights = { ...GENTLE, 'road-end': 3, 'river-end': 3, bridge: 1 };
 /** An even mix with every two-terrain tile. */
 const MIXED: TileWeights = {
   'road-end': 3,
@@ -83,7 +83,7 @@ const KNOTTY: TileWeights = {
  * daily's 45 plays the second row. Columns as documented on DifficultyKnobs.
  */
 const LEVEL_ROWS = [
-  { bag: 24, helpfulShare: 40, weights: GENTLE },
+  { bag: 24, helpfulShare: 32, weights: GENTLE },
   { bag: 28, helpfulShare: 30, weights: BRIDGES },
   { bag: 32, helpfulShare: 25, weights: MIXED },
   { bag: 36, helpfulShare: 20, weights: KNOTTY },
