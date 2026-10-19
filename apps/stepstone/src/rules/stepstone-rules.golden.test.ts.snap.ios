@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the rules golden of stepstone keeps the event stream and the final pond of seed 1 at difficulty 0 1`] = `
+{
+  "events": [
+    {
+      "from": 2,
+      "kind": "player-stepped",
+      "kindsUsed": 2,
+      "moveKind": "rook",
+      "to": 12,
+    },
+    {
+      "cell": 2,
+      "kind": "stone-sank",
+      "stone": "rook",
+    },
+    {
+      "cell": 12,
+      "from": "rook",
+      "isNewKind": true,
+      "kind": "move-kind-changed",
+      "to": "king",
+    },
+    {
+      "from": 12,
+      "kind": "player-stepped",
+      "kindsUsed": 2,
+      "moveKind": "king",
+      "to": 18,
+    },
+    {
+      "cell": 12,
+      "kind": "stone-sank",
+      "stone": "king",
+    },
+    {
+      "from": 18,
+      "kind": "player-stepped",
+      "kindsUsed": 2,
+      "moveKind": "king",
+      "to": 14,
+    },
+    {
+      "cell": 18,
+      "kind": "stone-sank",
+      "stone": "king",
+    },
+    {
+      "cell": 14,
+      "kind": "goal-reached",
+      "moves": 3,
+      "par": 3,
+    },
+  ],
+  "final": "..~..
+.....
+..~.f
+..R~.
+.....",
+  "result": {
+    "kind": "won",
+    "score": 3,
+  },
+}
+`;
