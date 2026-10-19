@@ -31,7 +31,7 @@ A second deck change on 2026-09-30 (owner decision O1, the tracking prompt): the
 | Section | Contents |
 |---|---|
 | `meta` | languages, direction, autonyms (`languageNames`), `numberLocales` (digit tags), the ICU subset, a `glossary`, `samples` and `sampleOverrides` (a value for every placeholder, used by the mockup and useful in tests), `renderNotes`, and `screens` (which keys each screen uses) |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `jumpChain` (each design game): name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
 | `licenceEntries` | example rows for S11d (component and licence names are not translated) |
 | `strings` | 289 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`; all pass the catalog rules |
 
@@ -184,7 +184,7 @@ Ordered by visibility. Keep this list with the review sheet.
 |---|---|---|
 | `common.premium`, all Premium strings | پریمیەم | Spelling of the loanword. |
 | privacy texts (`settings.privacy-policy.label`, `consent.intro.*`, …) | تایبەتێتی | The usual word for privacy, or "تایبەتمەندی"? |
-| Line Siege, Flock Tilt, Scrap Shove texts | دێو، گەوڕ، ئاسنی کۆن … | Monster, pen, scrap, tilt, swipe and crash wording. |
+| Line Siege, Flock Tilt, Scrap Shove, Jump Chain texts | دێو، گەوڕ، ئاسنی کۆن، بەرد، ڕیز … | Monster, pen, scrap, tilt, swipe, crash, piece, rank and jump wording. |
 | `settings.hints.label`, `premium.benefit.free-perks` | ئاماژە | Right word for a game hint? |
 | `premium.small-print` | بێ ئابوونە | "ئابوونە" for subscription, or "بەشداریکردن"? |
 | Tone, all ckb | singular (تۆ) | OK, or the plural (ئێوە)? |

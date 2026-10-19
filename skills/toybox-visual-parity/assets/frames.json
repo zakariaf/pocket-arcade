@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "jumpChain": {
+        "gameStats": ["1,462", "318", "×5"],
+        "progressMid": "7 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "captured": 7, "total": 12 },
+        "progressFullParams": { "captured": 12, "total": 12 },
+        "loseReasonId": "jump-chain.lose.overrun"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "jumpChain": {
+        "pieces-captured": 1462,
+        "ranks-cleared": 318,
+        "longest-chain": 5
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "jumpChain": {
+          "progressMid": { "captured": 7, "total": 12 },
+          "progressFull": { "captured": 12, "total": 12 },
+          "loseReasonId": "jump-chain.lose.overrun"
         }
       }
     }

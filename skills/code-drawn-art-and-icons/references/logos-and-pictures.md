@@ -57,13 +57,14 @@ Logos use a `viewBox 0 0 48 48` and are drawn at 88 % of the tile's content box.
 
 A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: `LogoArt` in `packages/shell/src/art/logo-art.ts`; each game exports `LOGO_ART` from `apps/<game>/src/art/logo-art.ts`; `logoOps()` expands roles into paint operations (a fill before its edge) for both the in-app canvas and the Node art script.
 
-## The three painted games' logos
+## The painted games' logos
 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
+- **Jump Chain** (its Toybox logo, `logos.games.jumpChain` in the token file): a pop jump arc (`pl`), an ink checker (`k`), a white checker in mid-jump above it (`w`) with its rim line (`kl`), and a pop crown on top (`p`).
 
-`check-icons-and-logos` fails if these three differ from the Toybox data.
+`check-icons-and-logos` fails if any of these differs from the Toybox data (every game of the token file's `logos.games`).
 
 ## Designing a logo for a new game
 
