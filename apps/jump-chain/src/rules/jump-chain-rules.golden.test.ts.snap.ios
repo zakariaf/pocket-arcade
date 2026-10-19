@@ -31,9 +31,9 @@ move 5: jump 6,0
   piece-jumped #1 over 7 > 6,0
   enemies-captured [7] chain 1 +10
   rank-cleared 2 +50
-  ranks-advanced 0:5>7
 move 6: step 5,1
   piece-stepped 6,0 > 5,1
+  ranks-advanced 0:5>7
 move 7: step 4,0
   piece-stepped 5,1 > 4,0
 move 8: step 5,1
@@ -42,9 +42,13 @@ move 9: step 4,0
   piece-stepped 5,1 > 4,0
 move 10: step 3,1
   piece-stepped 4,0 > 3,1
+move 11: step 4,2
+  piece-stepped 3,1 > 4,2
+move 12: step 3,1
+  piece-stepped 4,2 > 3,1
   ranks-advanced 0:7>9
   side-reached [0]
-end: lost score 320 captured 7/8 ranks 2 moves 10
+end: lost score 320 captured 7/8 ranks 2 moves 12
 . . . .
  . P . 
 . . . .

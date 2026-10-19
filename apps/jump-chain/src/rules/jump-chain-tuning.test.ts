@@ -31,6 +31,12 @@ describe('knobsFor (Jump Chain is turn-based: one difficulty scale 0..100)', () 
     });
   });
 
+  it('lets the easiest row march only every 6 moves or slower: the warm-up', () => {
+    const [first, second] = TUNING.levelRows;
+    expect(first.marchEvery).toBeGreaterThanOrEqual(6);
+    expect(first.marchEvery).toBeGreaterThan(second.marchEvery);
+  });
+
   it('starts every front rank on an odd row of the board, where the enemies stand', () => {
     for (const row of [...TUNING.levelRows, TUNING.endlessRow]) {
       expect(row.frontRow % 2).toBe(1);
