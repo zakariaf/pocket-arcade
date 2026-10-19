@@ -24,6 +24,10 @@ describe('knobsFor', () => {
     expect(knobsFor(0)).toStrictEqual(GOLDEN_EASIEST_ROW);
   });
 
+  it('keeps the pinned hardest row (tuned by the bot sims: four cups, one spare ball)', () => {
+    expect(knobsFor(99)).toStrictEqual(GOLDEN_HARDEST_ROW);
+  });
+
   it('makes every row at least as big as the one before', () => {
     const keys = ['cols', 'rows', 'switchesPerRow', 'cups', 'witnessDrops'] as const;
     TUNING.levelRows.forEach((row, index) => {
@@ -48,4 +52,13 @@ const GOLDEN_EASIEST_ROW = {
   cups: 2,
   witnessDrops: 2,
   spareBalls: 4,
+};
+
+const GOLDEN_HARDEST_ROW = {
+  cols: 7,
+  rows: 5,
+  switchesPerRow: 3,
+  cups: 4,
+  witnessDrops: 7,
+  spareBalls: 1,
 };

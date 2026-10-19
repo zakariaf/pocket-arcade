@@ -106,22 +106,24 @@ The rules, exactly:
 
 **Proposed:** the daily is a level at difficulty 45 (a medium value, 8.3), with Toggle Drop's own salt `0xcbcb` (the scaffold's suggestion, fixed forever in `src/levels/toggle-drop-levels.ts` in E26-T08; never shared with another game).
 
-## 17. Bands and the kill test (proposed, for the bot sims of E26-T07)
+## 17. Bands and the kill test (tuned by the bot sims of E26-T07)
 
-Four tuning rows on the 0..99 scale (rowFor: 0-24, 25-49, 50-74, 75-99), each clearly harder:
+Four tuning rows on the 0..99 scale (rowFor: 0-24, 25-49, 50-74, 75-99). Every board is built around a hidden winning line of drops: its cups need exactly the balls that line lands in them, the first drop's landing always holds a cup (the early payoff), and one other cup is a landing no first drop reaches (only a switch an earlier ball flipped sends a ball there: the twist). The player gets the line's balls plus the spare ones.
 
-| Row | Columns | Peg rows | Switches per row | Cups (balls each needs) | Balls |
-| --- | ------- | -------- | ---------------- | ----------------------- | ----- |
-| 0   | 5       | 3        | 2                | 2 (1, 1)                | 6     |
-| 1   | 5       | 4        | 2                | 3 (1, 1, 1)             | 7     |
-| 2   | 6       | 4        | 3                | 3 (2, 1, 1)             | 8     |
-| 3   | 7       | 5        | 3                | 3 (2, 2, 1)             | 9     |
+| Row | Columns | Peg rows | Switches per row | Cups | Winning line (drops) | Spare balls | Balls |
+| --- | ------- | -------- | ---------------- | ---- | -------------------- | ----------- | ----- |
+| 0   | 5       | 3        | 2                | 2    | 2                    | 4           | 6     |
+| 1   | 5       | 4        | 2                | 3    | 4                    | 2           | 6     |
+| 2   | 6       | 4        | 3                | 3    | 5                    | 1           | 6     |
+| 3   | 7       | 5        | 3                | 4    | 7                    | 1           | 8     |
 
-- **Curve:** par rises from about 2 on the first levels to 6 to 8 on the last; the greedy bot's win rate falls monotonically across the rows; random play loses most boards beyond the first row ("naive bots should lose").
-- **Skill gap:** random < greedy < lookahead by a clear step.
-- **Opening:** the first cup of every board sits where one drop from the start lands, so a first payoff is always one drop away.
-- **Kill test:** on the easiest board the first cup fills within 1 to 3 drops in at least 90 % of greedy runs, and a switch flipped by one ball redirects a later ball into a cup (`ball-landed` with `cup` and `redirected`) at least once per run.
-- The numbers are the first guess; the sims tune them one knob at a time, and the bands stay `"proposed"` until the owner's play-test (O6).
+Measured (`reports/sim/toggle-drop.json`, 100 seeds per cell; the bands file `test/sims/toggle-drop/balance-bands.json` holds the margins):
+
+- **Curve:** the levels get longer: the greedy bot needs a median of 2, 4, 5 and 7 drops per row.
+- **Naive play loses more as the rows rise:** random drops win 0.78, 0.68, 0.40 and 0.30 of the rows.
+- **A reasonable player wins nearly every board** (1.0 to 0.96): the state is in plain sight, so tracing each ball's path finds the line; skill shows in winning at par for three stars. The lookahead bot wins no more than greedy, so the skill gap is random against a reasonable player (0.40 against 0.96 on the third row).
+- **Kill test (passes):** on the easiest board the greedy bot fills its first cup on the first drop in every run, and meets the twist once per run (2 to 3.6 times on the harder rows).
+- The bands stay `"proposed"` until the owner's play-test (O6). The level plan keeps the boards a random player wins too often out of the packs.
 
 ## 18. The risk, and what answers it
 

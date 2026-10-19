@@ -21,7 +21,7 @@ export type DifficultyKnobs = {
    * many drops, and its cups need as many balls as land there (more = longer puzzles).
    */
   readonly witnessDrops: number;
-  /** Balls given beyond the winning line (more = kinder). */
+  /** Balls given beyond the winning line (more = kinder; 0 = every ball must count). */
   readonly spareBalls: number;
 };
 
@@ -31,9 +31,9 @@ export type DifficultyKnobs = {
  */
 const LEVEL_ROWS = [
   { cols: 5, rows: 3, switchesPerRow: 2, cups: 2, witnessDrops: 2, spareBalls: 4 },
-  { cols: 5, rows: 4, switchesPerRow: 2, cups: 3, witnessDrops: 4, spareBalls: 3 },
-  { cols: 6, rows: 4, switchesPerRow: 3, cups: 3, witnessDrops: 5, spareBalls: 3 },
-  { cols: 7, rows: 5, switchesPerRow: 3, cups: 3, witnessDrops: 6, spareBalls: 3 },
+  { cols: 5, rows: 4, switchesPerRow: 2, cups: 3, witnessDrops: 4, spareBalls: 2 },
+  { cols: 6, rows: 4, switchesPerRow: 3, cups: 3, witnessDrops: 5, spareBalls: 1 },
+  { cols: 7, rows: 5, switchesPerRow: 3, cups: 4, witnessDrops: 7, spareBalls: 1 },
 ] as const satisfies readonly DifficultyKnobs[];
 
 export const TUNING = {
