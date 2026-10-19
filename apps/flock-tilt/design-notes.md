@@ -187,6 +187,19 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
 
 ## Classification and input in code (filled in E19-T04)
 
-- Turn-based; `engine.panMode` `'swipe'`; `selectRegions` `[]`; moves `{ kind: 'tilt', direction:
-'up' | 'down' | 'left' | 'right' }`; the state is plain JSON (no RNG kept: nothing is drawn after
-  `create`).
+- **Turn-based, a 4-way swipe on the field:** `engine.panMode` `'swipe'`, `selectRegions` `[]`.
+  A move is `{ kind: 'tilt', direction: 'up' | 'right' | 'down' | 'left' }`, listed in that fixed
+  order and only when the tilt moves at least one animal.
+- **The state** is plain JSON: the 7 x 7 ground (rocks, the pen), the sheep (id, cell, `field`,
+  `penned` or `lost`), the wolves (id, cell), the tilts made, the tilt budget, par, whether the
+  continue was used and the flock before the tilt that ended the run. No RNG is kept: nothing is
+  drawn after `create`.
+- **The order of a tilt:** the animal nearest the fence in the tilt's direction moves first; animals
+  in different lanes never meet, so ties only order the events (sheep first, then by id).
+- **A run always ends:** besides the two losses, a field where no tilt can move any animal counts as
+  "No tilts left" (it cannot happen from a field the search won, but the rule keeps every run
+  finite and `listMoves` empty exactly when the run is over).
+- **`create`** draws up to 2000 fields from the seed's sfc32 stream and keeps the first one the
+  search wins inside its row's par band (the design prototype, 200 seeds a row: 7 draws on average in the easiest row, 92 in the
+  hardest, none ever used up on 800 seeds); if none is kept it uses a prepared field one tilt from
+  won (never seen; a test reaches it on purpose).
