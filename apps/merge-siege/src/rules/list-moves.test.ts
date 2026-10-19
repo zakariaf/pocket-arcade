@@ -1,9 +1,15 @@
 // apps/merge-siege/src/rules/list-moves.test.ts
 // Spec 10 RULES: "The list of moves allowed in a state." A Merge Siege move is a 4-way swipe
 // (design notes, input: engine.panMode 'swipe'); it is legal when it changes the board.
+import fc from 'fast-check';
+
+import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+
+import { applyMove } from './apply-move.ts';
 import { parseBoard } from './board-text.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { outcome } from './outcome.ts';
 
 import type { MergeSiegeState } from './merge-siege-types.ts';
 
@@ -75,4 +81,30 @@ describe('listMoves (a 4-way swipe)', () => {
       listMoves(stateWith([...EMPTY.slice(0, 2), '. 2 . . .', ...EMPTY.slice(2)], { next: null })),
     ).toStrictEqual([]);
   });
+
+  describe('properties', () => {
+    it('lists each swipe at most once, and none exactly when the run is over', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 4_294_967_295 }),
+          fc.integer({ min: 0, max: 100 }),
+          fc.array(fc.nat(), { maxLength: 40 }),
+          (seed, difficulty, choices) => {
+            const { states } = playChoices(
+              { listMoves, applyMove },
+              create(seed, difficulty),
+              choices,
+            );
+            for (const state of states) expectListedOnceUntilOver(state);
+          },
+        ),
+      );
+    });
+  });
 });
+
+function expectListedOnceUntilOver(state: MergeSiegeState): void {
+  const listed = directions(state);
+  expect(new Set(listed).size).toBe(listed.length);
+  expect(listed.length === 0).toBe(outcome(state).kind !== 'playing');
+}
