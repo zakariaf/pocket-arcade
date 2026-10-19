@@ -51,15 +51,15 @@ describe('tutorialCoachOf', () => {
       'probe.tutorial.step-2',
       true,
     ]);
-    expect(coach.targets).toStrictEqual([SLOT, CORNER]);
+    expect(coach.pointer).toStrictEqual({ kind: 'drag', from: SLOT, to: CORNER });
   });
 
   it('hides the sentence and pointer while paused, keeping Skip', () => {
     const coach = tutorialCoachOf(STEPS, viewAt(1, 'paused'));
-    expect([coach.stage, coach.messageId, coach.targets, coach.isSkipShown]).toStrictEqual([
+    expect([coach.stage, coach.messageId, coach.pointer, coach.isSkipShown]).toStrictEqual([
       'paused',
       null,
-      [],
+      null,
       true,
     ]);
   });

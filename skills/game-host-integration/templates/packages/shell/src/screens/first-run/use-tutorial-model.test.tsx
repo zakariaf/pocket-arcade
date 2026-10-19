@@ -99,7 +99,10 @@ describe('useTutorialModel', () => {
     const model = result.current;
     expect(stripIsolates(model.welcomeText ?? '')).toBe('Welcome to Tally!');
     expect(model.coachText).toBe('Tap the left column to add one.');
-    expect(model.coachTargets).toStrictEqual([{ regionId: 'board', col: 0, row: 0 }]);
+    expect(model.coachPointer).toStrictEqual({
+      kind: 'target',
+      target: { regionId: 'board', col: 0, row: 0 },
+    });
     expect([model.skipKey, model.continueKey]).toStrictEqual([null, null]);
     expect(model.BoardHost).not.toBeNull();
     expect(save.doc().run?.ref).toStrictEqual({ kind: 'tutorial' });

@@ -4853,11 +4853,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/coach-pointer.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/coach-pointer.test.ts",
-            "sha256": "2c2ee226f78a88f57399a1f43efdcff878701f9d366428071ff606e0e3f1a9a2"
+            "sha256": "8dc8b7481556138e1e95fd809cdde07b29cdeb32c8a0a41e753ca3d623ebfda3"
           }
         ]
       },
@@ -5364,7 +5364,7 @@
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-coach.test.ts",
-            "sha256": "c22a8167fc153db818a331d367da8bb4a83317c8dafa3837291ff808f09c4612"
+            "sha256": "6861b3883cfdf25ff050e494903540c27e1ca03aeeeeccbcd7662fd94fb6911c"
           }
         ]
       },
@@ -5378,11 +5378,11 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-view.test.tsx": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
-            "sha256": "2951be89a186f78284a5ab9efb692cf39604365393d1a0267c11899278f0d0ee"
+            "sha256": "40c1bfa3bb63e226800e51b40717ff59bc48e7ad53c3e8df0afbad67b9db66cb"
           }
         ]
       },
@@ -5396,11 +5396,11 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.test.tsx": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.test.tsx",
-            "sha256": "cd40f818f10cc52306e2953e07e921d50ac5e09c32859ec934f79b3bf4fb338f"
+            "sha256": "e32433701aa5e32cb0c43fcd7280f5fb702ad1a3a1c826e168abc1ddd25110cc"
           }
         ]
       },
