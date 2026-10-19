@@ -5,6 +5,7 @@
   "swap-guard.how-to-play.step-3": "Dann schlagen alle zu. Wer auf einem markierten Feld steht, wird getroffen.",
   "swap-guard.how-to-play.step-4": "Tausch Gegner in die Schläge und bleib selbst nie auf einem markierten Feld.",
   "swap-guard.lose.hit": "Ein Schlag hat dich getroffen",
+  "swap-guard.lose.out-of-swaps": "Du hast keine Tauschzüge mehr",
   "swap-guard.name": "Swap Guard",
   "swap-guard.pack-name.1": "Torhaus",
   "swap-guard.pack-name.2": "Burghof",
