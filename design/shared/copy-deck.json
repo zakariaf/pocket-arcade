@@ -1032,6 +1032,136 @@
           "ckb": "شاری ڕۆبۆتەکان"
         }
       ]
+    },
+    "jumpChain": {
+      "id": "jump-chain",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Jump Chain",
+        "de": "Jump Chain",
+        "fa": "Jump Chain",
+        "ckb": "Jump Chain"
+      },
+      "tagline": {
+        "en": "Jump, then jump again. Clear the ranks.",
+        "de": "Spring und spring weiter. Räum die Reihen ab.",
+        "fa": "بپرید و باز هم بپرید. صف‌ها را پاک کنید.",
+        "ckb": "باز بدە و دووبارە باز بدە. ڕیزەکان پاک بکەرەوە."
+      },
+      "goal": {
+        "en": "Capture every enemy piece before the ranks reach your side.",
+        "de": "Schlag alle gegnerischen Steine, bevor die Reihen deine Seite erreichen.",
+        "fa": "همهٔ مهره‌های حریف را بگیرید، پیش از آنکه صف‌ها به سمت شما برسند.",
+        "ckb": "هەموو بەردەکانی دوژمن بگرە پێش ئەوەی ڕیزەکان بگەنە لای تۆ."
+      },
+      "progress": {
+        "en": "Captured {captured, number} / {total, number}",
+        "de": "Geschlagen {captured, number} / {total, number}",
+        "fa": "گرفته‌شده {captured, number} / {total, number}",
+        "ckb": "گیراو {captured, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Board cleared!",
+        "de": "Brett geräumt!",
+        "fa": "صفحه پاک شد!",
+        "ckb": "تەختەکە پاک کرایەوە!"
+      },
+      "loseReason": {
+        "en": "The enemy ranks reached your side",
+        "de": "Die gegnerischen Reihen haben deine Seite erreicht",
+        "fa": "صف‌های حریف به سمت شما رسیدند",
+        "ckb": "ڕیزەکانی دوژمن گەیشتنە لای تۆ"
+      },
+      "stats": {
+        "piecesCaptured": {
+          "en": "Pieces captured",
+          "de": "Geschlagene Steine",
+          "fa": "مهره‌های گرفته‌شده",
+          "ckb": "بەردی گیراو"
+        },
+        "ranksCleared": {
+          "en": "Ranks cleared",
+          "de": "Geräumte Reihen",
+          "fa": "صف‌های پاک‌شده",
+          "ckb": "ڕیزی پاککراو"
+        },
+        "longestChain": {
+          "en": "Longest chain",
+          "de": "Längste Kette",
+          "fa": "بلندترین زنجیره",
+          "ckb": "درێژترین زنجیرە"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Drag your piece one square diagonally, or tap where it should go.",
+          "de": "Zieh deinen Stein ein Feld schräg oder tipp auf das Zielfeld.",
+          "fa": "مهرهٔ خود را یک خانه مورب بکشید، یا روی خانهٔ مقصد بزنید.",
+          "ckb": "بەردەکەت خانەیەک بە لار ڕابکێشە، یان دەست لە خانەی مەبەست بدە."
+        },
+        {
+          "en": "Jump over an enemy next to you to capture it.",
+          "de": "Spring über einen Gegner neben dir, um ihn zu schlagen.",
+          "fa": "از روی مهرهٔ حریفِ کنارتان بپرید تا آن را بگیرید.",
+          "ckb": "بەسەر دوژمنێکی تەنیشتتدا باز بدە بۆ ئەوەی بیگریت."
+        },
+        {
+          "en": "Land next to the next enemy and keep jumping: one chain can capture a whole rank.",
+          "de": "Lande neben dem nächsten Gegner und spring weiter: Eine Kette kann eine ganze Reihe schlagen.",
+          "fa": "کنار حریف بعدی فرود بیایید و باز هم بپرید: یک زنجیره می‌تواند یک صف کامل را بگیرد.",
+          "ckb": "لە تەنیشت دوژمنی دواتر دابەزە و بەردەوام باز بدە: یەک زنجیرە دەتوانێت ڕیزێکی تەواو بگرێت."
+        },
+        {
+          "en": "Every few moves the enemy ranks advance. Don’t let them reach your side!",
+          "de": "Alle paar Züge rücken die gegnerischen Reihen vor. Lass sie nicht bis zu deiner Seite kommen!",
+          "fa": "هر چند حرکت یک بار صف‌های حریف جلو می‌آیند. نگذارید به سمت شما برسند!",
+          "ckb": "هەر چەند جووڵەیەک جارێک ڕیزەکانی دوژمن دێنە پێشەوە. مەهێڵە بگەنە لای تۆ!"
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Drag your piece one square up, next to the enemy.",
+          "de": "Zieh deinen Stein ein Feld nach oben, neben den Gegner.",
+          "fa": "مهرهٔ خود را یک خانه بالا ببرید، کنار حریف.",
+          "ckb": "بەردەکەت خانەیەک بەرەو سەرەوە ڕابکێشە، بۆ تەنیشت دوژمن."
+        },
+        {
+          "en": "Now jump! Drag over the enemies to capture them in a chain.",
+          "de": "Jetzt spring! Zieh über die Gegner, um sie in einer Kette zu schlagen.",
+          "fa": "حالا بپرید! از روی حریف‌ها بکشید تا آن‌ها را زنجیره‌وار بگیرید.",
+          "ckb": "ئێستا باز بدە! بەسەر دوژمنەکاندا ڕابکێشە بۆ ئەوەی بە زنجیرە بیانگریت."
+        },
+        {
+          "en": "The ranks advanced. Jump again before they reach your side.",
+          "de": "Die Reihen sind vorgerückt. Spring wieder, bevor sie deine Seite erreichen.",
+          "fa": "صف‌ها جلو آمدند. پیش از آنکه به سمت شما برسند، دوباره بپرید.",
+          "ckb": "ڕیزەکان هاتنە پێشەوە. پێش ئەوەی بگەنە لای تۆ دووبارە باز بدە."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Opening moves",
+          "de": "Eröffnung",
+          "fa": "شروع بازی",
+          "ckb": "دەستپێک"
+        },
+        {
+          "en": "Middle game",
+          "de": "Mittelspiel",
+          "fa": "وسط بازی",
+          "ckb": "ناوەڕاستی یاری"
+        },
+        {
+          "en": "Endgame",
+          "de": "Endspiel",
+          "fa": "پایان بازی",
+          "ckb": "کۆتایی یاری"
+        }
+      ]
     }
   },
   "licenceEntries": [
