@@ -55,7 +55,8 @@ function isStraight(ranks: readonly number[]): boolean {
 function groupHand(sizes: readonly number[]): HandKind {
   const most = Math.max(...sizes);
   const pairs = sizes.filter((size) => size === 2).length;
-  if (most === 4) return QUADS;
+  // Five of one rank (a fresh deck can deal a card again) counts as four of a kind.
+  if (most >= 4) return QUADS;
   if (most === 3) return pairs > 0 ? 'full-house' : 'three-of-a-kind';
   if (pairs === 2) return 'two-pair';
   return pairs === 1 ? 'pair' : 'high-card';

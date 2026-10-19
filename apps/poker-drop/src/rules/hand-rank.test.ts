@@ -40,6 +40,11 @@ describe('handOf', () => {
     expect(handOf(cards(text))).toBe(hand);
   });
 
+  it('reads five cards of one rank as four of a kind (a fresh deck can deal a card twice)', () => {
+    expect(handOf(cards('9c 9d 9h 9s 9c'))).toBe('four-of-a-kind');
+    expect(handOf(cards('Ks Ks Ks Ks Ks'))).toBe('four-of-a-kind');
+  });
+
   it('gives the same hand in any order of the line', () => {
     fc.assert(
       fc.property(fiveArb, (five) => {
