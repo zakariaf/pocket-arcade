@@ -37,6 +37,12 @@ describe('knobsFor (Jump Chain is turn-based: one difficulty scale 0..100)', () 
     expect(first.marchEvery).toBeGreaterThan(second.marchEvery);
   });
 
+  it("keeps the daily's row as small as the first, only marching sooner", () => {
+    const [first, second] = TUNING.levelRows;
+    expect(second.ranks).toBe(first.ranks);
+    expect(second.marchEvery).toBeLessThan(first.marchEvery);
+  });
+
   it('starts every front rank on an odd row of the board, where the enemies stand', () => {
     for (const row of [...TUNING.levelRows, TUNING.endlessRow]) {
       expect(row.frontRow % 2).toBe(1);

@@ -25,7 +25,7 @@ export type DifficultyKnobs = {
  */
 const LEVEL_ROWS = [
   { ranks: 3, fill: 85, marchEvery: 6, frontRow: 5 },
-  { ranks: 4, fill: 80, marchEvery: 4, frontRow: 5 },
+  { ranks: 3, fill: 80, marchEvery: 5, frontRow: 5 },
   { ranks: 5, fill: 75, marchEvery: 4, frontRow: 5 },
   { ranks: 6, fill: 70, marchEvery: 3, frontRow: 5 },
 ] as const satisfies readonly DifficultyKnobs[];
