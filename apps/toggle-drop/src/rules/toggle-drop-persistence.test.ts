@@ -1,0 +1,119 @@
+// apps/toggle-drop/src/rules/toggle-drop-persistence.test.ts
+import fc from 'fast-check';
+
+import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+
+import { applyMove } from './apply-move.ts';
+import { create } from './create.ts';
+import { listMoves } from './list-moves.ts';
+import { TOGGLE_DROP_PERSISTENCE, parseMove, parseState } from './toggle-drop-persistence.ts';
+
+import type { ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
+
+const RULES = { listMoves, applyMove };
+const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
+const difficultyArb = fc.integer({ min: 0, max: 99 });
+const choicesArb = fc.array(fc.nat(), { maxLength: 10 });
+
+/** The moves playChoices plays for these choices (the move line a save keeps). */
+function playedMoves(start: ToggleDropState, choices: readonly number[]): ToggleDropMove[] {
+  const moves: ToggleDropMove[] = [];
+  let state = start;
+  for (const choice of choices) {
+    const legal = listMoves(state);
+    const move = legal[choice % Math.max(legal.length, 1)];
+    if (move === undefined) break;
+    moves.push(move);
+    state = applyMove(state, move).state;
+  }
+  return moves;
+}
+
+/** A run through the JSON a save would hold. */
+const throughJson = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
+
+describe('parseState', () => {
+  // Spec 8.6 and N10: a saved run survives every kill and update; a run that no longer parses is
+  // dropped alone (8.14), never a crash.
+  it('returns every state legal play reaches unchanged, byte for byte, after a JSON round trip', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, choicesArb, (seed, difficulty, choices) => {
+        const { states } = playChoices(RULES, create(seed, difficulty), choices);
+        const parsed = states.map((state) => parseState(throughJson(state)));
+        expect(parsed).toStrictEqual(states);
+        expect(JSON.stringify(parsed)).toBe(JSON.stringify(states));
+      }),
+    );
+  });
+
+  it.each([
+    ['text', 'garbage'],
+    ['an array', [1, 2]],
+    ['a missing field', { ...create(1, 0), drops: undefined }],
+    ['a wrong field type', { ...create(1, 0), ballsLeft: '6' }],
+    ['a switch that is not -1, 0 or 1', { ...create(1, 0), pegs: create(1, 0).pegs.map(() => 2) }],
+    ['pegs of the wrong length', { ...create(1, 0), pegs: [0, 1] }],
+    [
+      'a flip count where there is no switch',
+      { ...create(1, 0), flips: create(1, 0).pegs.map((peg) => (peg === -1 ? 1 : 0)) },
+    ],
+    [
+      'a cup holding more than it needs',
+      { ...create(1, 0), filled: create(1, 0).needs.map((need) => need + 1) },
+    ],
+    ['a negative ball count', { ...create(1, 0), ballsLeft: -1 }],
+    ['a board wider than any tuning row', { ...create(1, 0), cols: 40 }],
+    ['an extra field', { ...create(1, 0), rng: [1, 2, 3, 4] }],
+  ])('refuses %s', (_name, json) => {
+    expect(parseState(throughJson(json))).toBeNull();
+  });
+});
+
+describe('parseMove', () => {
+  it('returns every legal move unchanged after a JSON round trip (property)', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        const moves = listMoves(create(seed, difficulty));
+        expect(moves.map((move) => parseMove(throughJson(move)))).toStrictEqual(moves);
+      }),
+    );
+  });
+
+  it.each([
+    ['null', null],
+    ['another kind', { kind: 'flip', col: 1 }],
+    ['a negative column', { kind: 'drop', col: -1 }],
+    ['a column no board has', { kind: 'drop', col: 12 }],
+    ['a fractional column', { kind: 'drop', col: 1.5 }],
+    ['an extra field', { kind: 'drop', col: 1, row: 0 }],
+  ])('refuses %s', (_name, json) => {
+    expect(parseMove(json)).toBeNull();
+  });
+});
+
+describe('TOGGLE_DROP_PERSISTENCE', () => {
+  it('rebuilds the same state by replaying the saved move line', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, choicesArb, (seed, difficulty, choices) => {
+        const start = create(seed, difficulty);
+        const played = playChoices(RULES, start, choices);
+        const saved = throughJson(playedMoves(start, choices));
+        const line = Array.isArray(saved) ? saved.map(parseMove) : [];
+        const replayed = line.reduce(
+          (state, move) => (move === null ? state : applyMove(state, move).state),
+          start,
+        );
+        expect(replayed).toStrictEqual(played.states.at(-1));
+      }),
+    );
+  });
+
+  it('drops a run saved in an older state version (version 1 has nothing to migrate)', () => {
+    expect(TOGGLE_DROP_PERSISTENCE.migrateState(create(1, 0), 0)).toBeNull();
+    expect(TOGGLE_DROP_PERSISTENCE.stateVersion).toBe(1);
+  });
+
+  it('saves after every move (a turn-based game)', () => {
+    expect(TOGGLE_DROP_PERSISTENCE.savePolicy).toStrictEqual({ kind: 'after-every-move' });
+  });
+});
