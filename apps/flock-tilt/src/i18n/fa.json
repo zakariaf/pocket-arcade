@@ -1,0 +1,22 @@
+{
+  "flock-tilt.goal": "همهٔ گوسفندها را به آغل برسانید.",
+  "flock-tilt.how-to-play.step-1": "برای کج کردن زمین، انگشتتان را روی صفحه بکشید.",
+  "flock-tilt.how-to-play.step-2": "همه‌چیز می‌لغزد تا به چیزی بخورد.",
+  "flock-tilt.how-to-play.step-3": "همهٔ گوسفندها را به آغل ببرید.",
+  "flock-tilt.how-to-play.step-4": "گوسفندها را از گرگ دور نگه دارید.",
+  "flock-tilt.lose.wolf-got-sheep": "گرگ یک گوسفند را گرفت",
+  "flock-tilt.name": "Flock Tilt",
+  "flock-tilt.pack-name.1": "چمنزار سبز",
+  "flock-tilt.pack-name.2": "تپه‌های سنگی",
+  "flock-tilt.pack-name.3": "سرزمین گرگ‌ها",
+  "flock-tilt.progress": "گوسفند {penned, number} / {total, number}",
+  "flock-tilt.stats.sheep-penned": "گوسفندهای به آغل رسیده",
+  "flock-tilt.stats.solved-at-par": "زمین‌های حل‌شده با کمترین حرکت",
+  "flock-tilt.stats.tilts-made": "دفعات کج کردن",
+  "flock-tilt.tagline": "زمین را کج کنید، همهٔ گوسفندها را به آغل ببرید.",
+  "flock-tilt.tutorial.step-1": "انگشتتان را به پایین بکشید تا زمین کج شود.",
+  "flock-tilt.tutorial.step-2": "همهٔ گوسفندها با هم لغزیدند!",
+  "flock-tilt.tutorial.step-3": "حالا دوباره کج کنید تا وارد آغل شوند.",
+  "flock-tilt.tutorial.step-4": "گیر کردید؟ برگرداندن حرکت رایگان است.",
+  "flock-tilt.win-title": "همهٔ گوسفندها در آغل‌اند!"
+}

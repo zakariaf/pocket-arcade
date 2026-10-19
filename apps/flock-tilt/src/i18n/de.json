@@ -1,0 +1,22 @@
+{
+  "flock-tilt.goal": "Bring jedes Schaf in den Pferch.",
+  "flock-tilt.how-to-play.step-1": "Wisch, um das Feld zu kippen.",
+  "flock-tilt.how-to-play.step-2": "Alles rutscht, bis es gegen etwas stößt.",
+  "flock-tilt.how-to-play.step-3": "Bring jedes Schaf in den Pferch.",
+  "flock-tilt.how-to-play.step-4": "Halte die Schafe vom Wolf fern.",
+  "flock-tilt.lose.wolf-got-sheep": "Der Wolf hat ein Schaf erwischt",
+  "flock-tilt.name": "Flock Tilt",
+  "flock-tilt.pack-name.1": "Grüne Wiese",
+  "flock-tilt.pack-name.2": "Felsige Hügel",
+  "flock-tilt.pack-name.3": "Wolfsland",
+  "flock-tilt.progress": "Schafe {penned, number} / {total, number}",
+  "flock-tilt.stats.sheep-penned": "Schafe im Pferch",
+  "flock-tilt.stats.solved-at-par": "Felder mit Par gelöst",
+  "flock-tilt.stats.tilts-made": "Kippzüge",
+  "flock-tilt.tagline": "Kipp das Feld. Hol jedes Schaf in den Pferch.",
+  "flock-tilt.tutorial.step-1": "Wisch nach unten, um das Feld zu kippen.",
+  "flock-tilt.tutorial.step-2": "Alle Schafe sind gleichzeitig gerutscht!",
+  "flock-tilt.tutorial.step-3": "Jetzt nochmal kippen – ab in den Pferch!",
+  "flock-tilt.tutorial.step-4": "Festgefahren? Rückgängig kostet nichts.",
+  "flock-tilt.win-title": "Alle Schafe im Pferch!"
+}
