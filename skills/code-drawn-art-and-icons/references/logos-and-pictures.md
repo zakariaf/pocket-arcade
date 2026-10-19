@@ -5,7 +5,7 @@
 - Where logos appear
 - GAME_ART: how the Shell gets the logo and the credits
 - The logo grid and the six roles
-- The three painted games' logos
+- The painted games' logos
 - Designing a logo for a new game
 - The logo tile (frame) per place
 - The rating star (two colours)
@@ -57,13 +57,14 @@ Logos use a `viewBox 0 0 48 48` and are drawn at 88 % of the tile's content box.
 
 A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: `LogoArt` in `packages/shell/src/art/logo-art.ts`; each game exports `LOGO_ART` from `apps/<game>/src/art/logo-art.ts`; `logoOps()` expands roles into paint operations (a fill before its edge) for both the in-app canvas and the Node art script.
 
-## The three painted games' logos
+## The painted games' logos
 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
+- **Toggle Drop** (the token file's `logos.games.toggleDrop`, added by its design pass on 2026-10-19): an ink post and base (`kl`), a white switch lever (`w`) rotated 16 degrees about (24, 26) on an ink pivot (`k`), a pop ball (`p`) with a white shine (`w0`) dropping onto its high end, and an ink flip arrow (`kl`).
 
-`check-icons-and-logos` fails if these three differ from the Toybox data.
+`check-icons-and-logos` fails if a painted game's logo differs from the Toybox data (every game of the token file's `logos.games`).
 
 ## Designing a logo for a new game
 

@@ -17,7 +17,7 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "design": "01ba656b7ccd4ed68b0c71d40fc767fd8c035270e918939afe43bd0eddc53743",
   "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
   "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
@@ -1802,6 +1802,14 @@
    "variants": [],
    "what": "Every layout.json and the manifest were re-rendered with the round-4 renderer and map: each text run records its own tilt, the S14 progress-restored layout records the banner mask of Home under the dialog, the S12 state cards no longer pair their stand-in heading with premium.top-bar.title, and the map metadata gained the card surface of home.daily-card (L7, no pixel change) and the hint key's hasHints condition. Apart from the changes above, all 124 other PNGs are byte-identical.",
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
+  },
+  {
+   "id": "G-toggle-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Toggle Drop added to the design as a design game: its paint in light and dark, its logo, its sample counters and its texts in en, de, fa and ckb, beside Line Siege, Flock Tilt and Scrap Shove. Only the design input (inputs.design) was recorded; no Line Siege frame or variant changed, and none was re-rendered.",
+   "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
   }
  ]
 }

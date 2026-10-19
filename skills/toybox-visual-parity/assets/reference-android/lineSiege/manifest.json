@@ -19,7 +19,7 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
+  "design": "01ba656b7ccd4ed68b0c71d40fc767fd8c035270e918939afe43bd0eddc53743",
   "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
   "frames": "1c287947c5c7f2fc7bc9693f466a5a7964abd1fb1badb439ed81452d0c725c57",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
@@ -1644,6 +1644,14 @@
    ],
    "what": "Every Android render and layout re-rendered with the measured safe top of 44 dp instead of 24 dp: everything below the status bar sits 20 dp lower, the status-bar mask is 44 dp tall. Nothing else in the design moved; the iOS set in assets/reference is unchanged.",
    "why": "The first Android capture (E18-T20) measured the parity emulator's insets as the device profile asks: the pinned google_apis API 35 image draws a punch-hole cutout, so its status bar is 44 dp (132 px); every S2 element sat exactly 20 pt low against the 24 dp profile. A measured inset is a profile change by the skill's own rule (lead, 2026-10-16)."
+  },
+  {
+   "id": "G-toggle-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Toggle Drop added to the design as a design game: its paint in light and dark, its logo, its sample counters and its texts in en, de, fa and ckb, beside Line Siege, Flock Tilt and Scrap Shove. Only the design input (inputs.design) was recorded; no Line Siege frame or variant changed, and none was re-rendered.",
+   "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
   }
  ]
 }

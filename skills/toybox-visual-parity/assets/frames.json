@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "toggleDrop": {
+        "gameStats": ["412", "1,938", "286"],
+        "progressMid": "1 / 3",
+        "progressFull": "3 / 3",
+        "progressMidParams": { "filled": 1, "total": 3 },
+        "progressFullParams": { "filled": 3, "total": 3 },
+        "loseReasonId": "toggle-drop.lose.out-of-balls"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "toggleDrop": {
+        "balls-dropped": 412,
+        "switches-flipped": 1938,
+        "cups-filled": 286
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "toggleDrop": {
+          "progressMid": { "filled": 1, "total": 3 },
+          "progressFull": { "filled": 3, "total": 3 },
+          "loseReasonId": "toggle-drop.lose.out-of-balls"
         }
       }
     }
