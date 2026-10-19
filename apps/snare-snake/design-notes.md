@@ -92,18 +92,19 @@ per run. If it fails after reasonable tuning, the owner decides between a rule c
    stays. A critter next to the snake freezes. The RNG state lives in the game state (spec 8.13).
 7. **Winning:** every critter of the level is caught. **Score:** each loop scores 10 x n x n for n critters
    (1 critter 10, 2 critters 40, 3 critters 90), plus 5 per move left at the win.
-8. **Losing:** the move budget is spent (30 moves on the easiest rows, up to 34) or the snake is tangled
+8. **Losing:** the move budget is spent (27 to 34 moves by row) or the snake is tangled
    (no allowed move: walls and critters on every free side).
 9. **Continue (once per run, after a loss):** the snake gets three more moves; when it was tangled, it also
    steps back one cell (its head segment is removed, so the cell it came from is free again).
 
 Tuning rows (`apps/snare-snake/src/rules/snare-snake-tuning.ts`, four rows on the 0 to 99 scale, the
-lower bound of each row in brackets), the starting point for E21-T06:
+lower bound of each row in brackets), as tuned in E21-T06 (the second row went from 30 to 27 moves so the greedy
+win rate falls by at least 0.1 per row):
 
 | Row    | Board  | Critters (in the nest) | Moves | Critters hop   | Grow every |
 | ------ | ------ | ---------------------- | ----- | -------------- | ---------- |
 | 1 (0)  | 7 x 8  | 4 (2)                  | 30    | every 2nd move | 3 moves    |
-| 2 (25) | 7 x 9  | 5 (1)                  | 30    | every 2nd move | 3 moves    |
+| 2 (25) | 7 x 9  | 5 (1)                  | 27    | every 2nd move | 3 moves    |
 | 3 (50) | 8 x 9  | 6 (1)                  | 32    | every move     | 3 moves    |
 | 4 (75) | 8 x 10 | 7 (1)                  | 34    | every move     | 4 moves    |
 

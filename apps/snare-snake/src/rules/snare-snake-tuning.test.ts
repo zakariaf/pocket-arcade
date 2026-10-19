@@ -11,6 +11,12 @@ describe('knobsFor', () => {
     expect(critters).toStrictEqual([4, 4, 5, 5, 6, 6, 7, 7]);
   });
 
+  it('gives each row its moves: the second row 27, so the greedy win rate falls by 0.1 or more per row', () => {
+    // Tuned with the sims (reports/sim/snare-snake.json): with 30 moves the second row left the
+    // greedy bot at 0.92, only 0.08 below the warm-up row; 27 gives 0.86 (steps 0.14, 0.14, 0.17).
+    expect(TUNING.levelRows.map((row) => row.maxMoves)).toStrictEqual([30, 27, 32, 34]);
+  });
+
   it('returns the row whose lower bound is the largest at or below the difficulty', () => {
     expect(knobsFor(45)).toStrictEqual(TUNING.levelRows[1]);
     expect(knobsFor(60)).toStrictEqual(TUNING.levelRows[2]);

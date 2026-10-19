@@ -32,7 +32,7 @@ export type DifficultyKnobs = {
  */
 const LEVEL_ROWS = [
   { cols: 7, rows: 8, critters: 4, nestCritters: 2, maxMoves: 30, hopEvery: 2, growEvery: 3 },
-  { cols: 7, rows: 9, critters: 5, nestCritters: 1, maxMoves: 30, hopEvery: 2, growEvery: 3 },
+  { cols: 7, rows: 9, critters: 5, nestCritters: 1, maxMoves: 27, hopEvery: 2, growEvery: 3 },
   { cols: 8, rows: 9, critters: 6, nestCritters: 1, maxMoves: 32, hopEvery: 1, growEvery: 3 },
   { cols: 8, rows: 10, critters: 7, nestCritters: 1, maxMoves: 34, hopEvery: 1, growEvery: 4 },
 ] as const satisfies readonly DifficultyKnobs[];
