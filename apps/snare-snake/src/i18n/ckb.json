@@ -1,0 +1,22 @@
+{
+  "snare-snake.goal": "پێش ئەوەی جووڵەکانت تەواو ببن، هەموو گیانلەبەرەکان بگرە.",
+  "snare-snake.how-to-play.step-1": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە خانەیەک بڕوات.",
+  "snare-snake.how-to-play.step-2": "گیانلەبەرەکان کاتێک مارەکە لە تەنیشتیانە، ناجووڵێن.",
+  "snare-snake.how-to-play.step-3": "سەری مارەکە بگەیەنە لەشی خۆی بۆ داخستنی ئەڵقەیەک.",
+  "snare-snake.how-to-play.step-4": "گیانلەبەرەکانی ناو ئەڵقەکە یان تەنیشتی دەگیرێن، و ئەڵقەکە بەشەکانی خۆی بەکاردەهێنێت.",
+  "snare-snake.lose.tangled": "مارەکە گرێی خوارد",
+  "snare-snake.name": "Snare Snake",
+  "snare-snake.pack-name.1": "باخچە",
+  "snare-snake.pack-name.2": "بەردە قەوزاوییەکان",
+  "snare-snake.pack-name.3": "دارستانی دڕک",
+  "snare-snake.progress": "گیانلەبەر {caught, number} / {total, number}",
+  "snare-snake.stats.critters-caught": "گیانلەبەری گیراو",
+  "snare-snake.stats.longest-snake": "درێژترین مار",
+  "snare-snake.stats.loops-closed": "ئەڵقەی داخراو",
+  "snare-snake.tagline": "مارەکە بکە بە ئەڵقە و گیانلەبەرەکان بگرە.",
+  "snare-snake.tutorial.step-1": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە بچێتە ناو کەلێنەکە.",
+  "snare-snake.tutorial.step-2": "بەردەوام بە؛ گیانلەبەرەکانی تەنیشتت ناجووڵێن.",
+  "snare-snake.tutorial.step-3": "ئێستا سەری مارەکە بگەیەنە لەشی و ئەڵقەکە دابخە!",
+  "snare-snake.tutorial.step-4": "گیران! ئەوانی تر بگرە پێش ئەوەی جووڵەکانت تەواو ببن.",
+  "snare-snake.win-title": "هەموو گیانلەبەرەکان گیران!"
+}
