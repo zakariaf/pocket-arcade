@@ -6,7 +6,7 @@
 // from the drag's start (a tray slot) to the gap and holds there, its fingertip pointing up into
 // the gap's lowest cell, so the hand below the tip never hides the cells to fill. Pure worklet:
 // reads only its arguments, allocates no Skia objects, reads no clock (the phase comes in).
-import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
+import { cellRect, isSameTarget } from '@e07/game-kit/geom/board-layout.ts';
 
 import type { RenderKit } from './board-types.ts';
 import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
@@ -43,14 +43,10 @@ const TIP_REACH = 0.3;
 
 type HandCoach = { readonly hand: CoachHand; readonly cells: readonly BoardTarget[] };
 
-function isSame(left: BoardTarget, right: BoardTarget): boolean {
-  return left.regionId === right.regionId && left.col === right.col && left.row === right.row;
-}
-
 /** The rect around the cells the move fills (the pointer's end cell when the move names none). */
 function gapRect(layout: BoardLayout, coach: HandCoach): Rect | null {
   const { from, to } = coach.hand;
-  const filled = coach.cells.filter((target) => from === null || !isSame(target, from));
+  const filled = coach.cells.filter((target) => !isSameTarget(target, from));
   let left = Infinity;
   let top = Infinity;
   let right = -Infinity;

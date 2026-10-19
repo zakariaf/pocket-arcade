@@ -2028,11 +2028,11 @@
         ]
       },
       "templates/shell/game-host/draw-coach-hand.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/draw-coach-hand.ts",
-            "sha256": "f06fe74b781c065ba13be57ecd38e76cb69b708b3e105c964f07e85b52d6cf87"
+            "sha256": "7d6647703069a07fba3be2c4ba7fed851971bb2de6baa72e9dcf112325617b47"
           }
         ]
       },
@@ -4862,11 +4862,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/coach-pointer.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-19",
         "sources": [
           {
             "path": "packages/shell/src/game-host/coach-pointer.ts",
-            "sha256": "d6cd5ef15884f41da37ec2f37508f2ec5f17254c99ef3eb810dac17d5f339609"
+            "sha256": "30b121f8a09eb1196791e8b115f5987c292231f49fc87b6eb19805b3253bdccf"
           }
         ]
       },

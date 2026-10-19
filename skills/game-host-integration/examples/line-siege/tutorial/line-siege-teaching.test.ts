@@ -8,11 +8,9 @@ import { applyMove } from '@e07/line-siege/rules/apply-move.ts';
 import { intentToMove } from '@e07/line-siege/rules/intent-to-move.ts';
 import { listMoves } from '@e07/line-siege/rules/list-moves.ts';
 import { outcome } from '@e07/line-siege/rules/outcome.ts';
-import { coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
+import { coachGameOf, coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
 
 import { LINE_SIEGE_TEACHING } from './line-siege-teaching.ts';
-
-import type { LineSiegeMove, LineSiegeState } from '@e07/line-siege/rules/line-siege-types.ts';
 
 describe('LINE_SIEGE_TEACHING', () => {
   it('teaches in 3 to 5 how-to-play pages drawn from playing examples', () => {
@@ -35,11 +33,7 @@ describe('LINE_SIEGE_TEACHING', () => {
     // Spec S13: one pointer, a drag from tray slot 1 to the gap. The vertical two fills column 7
     // rows 3 and 4; marking only row 3 made the gap look one cell tall (2026-10-18).
     const { start, steps } = LINE_SIEGE_TEACHING.tutorial;
-    const game = {
-      intentToMove,
-      targetsOfMove: (state: LineSiegeState, move: LineSiegeMove) =>
-        lineSiegeBoard.targetsOfMove?.(state, move) ?? [],
-    };
+    const game = coachGameOf({ engine: { intentToMove }, presentation: { board: lineSiegeBoard } });
     const coach = coachPointerOf(game, start, steps[0]?.pointer ?? null);
     expect(coach).toStrictEqual({
       cells: [
