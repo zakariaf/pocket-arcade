@@ -1,0 +1,272 @@
+[
+  {
+    "level": 1,
+    "seed": 3004672306,
+    "difficulty": 0,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 280, 336]
+    }
+  },
+  {
+    "level": 2,
+    "seed": 4025719811,
+    "difficulty": 1,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 236, 283]
+    }
+  },
+  {
+    "level": 3,
+    "seed": 406621156,
+    "difficulty": 2,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 376, 451]
+    }
+  },
+  {
+    "level": 4,
+    "seed": 1427668661,
+    "difficulty": 3,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 376, 451]
+    }
+  },
+  {
+    "level": 5,
+    "seed": 1854603822,
+    "difficulty": 4,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 216, 259]
+    }
+  },
+  {
+    "level": 6,
+    "seed": 2875651327,
+    "difficulty": 5,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 352, 422]
+    }
+  },
+  {
+    "level": 7,
+    "seed": 3012076304,
+    "difficulty": 6,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 340, 408]
+    }
+  },
+  {
+    "level": 8,
+    "seed": 3269885713,
+    "difficulty": 7,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 280, 336]
+    }
+  },
+  {
+    "level": 9,
+    "seed": 3676032522,
+    "difficulty": 8,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 368, 441]
+    }
+  },
+  {
+    "level": 10,
+    "seed": 2246579538,
+    "difficulty": 10,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 360, 432]
+    }
+  },
+  {
+    "level": 11,
+    "seed": 1802866758,
+    "difficulty": 11,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 200, 240]
+    }
+  },
+  {
+    "level": 12,
+    "seed": 3964284036,
+    "difficulty": 12,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 364, 436]
+    }
+  },
+  {
+    "level": 13,
+    "seed": 3267627043,
+    "difficulty": 13,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 348, 417]
+    }
+  },
+  {
+    "level": 14,
+    "seed": 1096511054,
+    "difficulty": 14,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 308, 369]
+    }
+  },
+  {
+    "level": 15,
+    "seed": 690364245,
+    "difficulty": 15,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 400, 480]
+    }
+  },
+  {
+    "level": 16,
+    "seed": 127236656,
+    "difficulty": 16,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 220, 264]
+    }
+  },
+  {
+    "level": 17,
+    "seed": 4264990623,
+    "difficulty": 17,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 280, 336]
+    }
+  },
+  {
+    "level": 18,
+    "seed": 2938728106,
+    "difficulty": 18,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 276, 331]
+    }
+  },
+  {
+    "level": 19,
+    "seed": 2511792945,
+    "difficulty": 20,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 256, 307]
+    }
+  },
+  {
+    "level": 20,
+    "seed": 1049268081,
+    "difficulty": 21,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 232, 278]
+    }
+  },
+  {
+    "level": 21,
+    "seed": 1476203242,
+    "difficulty": 22,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 356, 427]
+    }
+  },
+  {
+    "level": 22,
+    "seed": 2497250747,
+    "difficulty": 23,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 296, 355]
+    }
+  },
+  {
+    "level": 23,
+    "seed": 2636235580,
+    "difficulty": 24,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 316, 379]
+    }
+  },
+  {
+    "level": 24,
+    "seed": 4177389274,
+    "difficulty": 25,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 608, 729]
+    }
+  },
+  {
+    "level": 25,
+    "seed": 4084218246,
+    "difficulty": 26,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 656, 787]
+    }
+  },
+  {
+    "level": 26,
+    "seed": 3494614327,
+    "difficulty": 27,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 588, 705]
+    }
+  },
+  {
+    "level": 27,
+    "seed": 3668605275,
+    "difficulty": 28,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 544, 652]
+    }
+  },
+  {
+    "level": 28,
+    "seed": 357119513,
+    "difficulty": 30,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 776, 931]
+    }
+  },
+  {
+    "level": 29,
+    "seed": 784054674,
+    "difficulty": 31,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 648, 777]
+    }
+  },
+  {
+    "level": 30,
+    "seed": 876264528,
+    "difficulty": 32,
+    "stars": {
+      "kind": "score",
+      "thresholds": [0, 676, 811]
+    }
+  }
+]
