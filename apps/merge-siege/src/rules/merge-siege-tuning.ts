@@ -32,7 +32,7 @@ export type DifficultyKnobs = {
 const LEVEL_ROWS = [
   { goal: 8, marchEvery: 2, spawnEvery: 1, enemyWeights: [2, 2, 1, 0, 0] },
   { goal: 14, marchEvery: 2, spawnEvery: 1, enemyWeights: [2, 3, 2, 0, 0] },
-  { goal: 16, marchEvery: 2, spawnEvery: 1, enemyWeights: [2, 2, 2, 1, 0] },
+  { goal: 16, marchEvery: 2, spawnEvery: 1, enemyWeights: [1, 2, 3, 0, 0] },
   { goal: 18, marchEvery: 2, spawnEvery: 1, enemyWeights: [1, 2, 2, 1, 0] },
 ] as const satisfies readonly DifficultyKnobs[];
 

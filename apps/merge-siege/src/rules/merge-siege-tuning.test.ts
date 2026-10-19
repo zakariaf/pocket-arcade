@@ -45,6 +45,13 @@ describe('knobsFor (turn-based: the knobs of a difficulty)', () => {
     for (const row of TUNING.levelRows) expect(row.goal).toBeGreaterThan(2);
   });
 
+  it('keeps the 16s out of every level row but the hardest (the sims found a cliff with them)', () => {
+    const sixteen = ENEMY_VALUES.indexOf(16);
+    const weightsOf16 = TUNING.levelRows.map((row) => row.enemyWeights[sixteen]);
+    expect(weightsOf16.slice(0, -1)).toStrictEqual([0, 0, 0]);
+    expect(weightsOf16.at(-1)).toBeGreaterThan(0);
+  });
+
   it('weighs exactly the enemy numbers 2 to 32', () => {
     expect(ENEMY_VALUES).toStrictEqual([2, 4, 8, 16, 32]);
     for (const row of [...TUNING.levelRows, TUNING.endlessRow]) {
