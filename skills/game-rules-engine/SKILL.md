@@ -80,7 +80,7 @@ Makes every Pocket Arcade game's rules a pure, deterministic TypeScript engine b
 | `assets/template-catalog-keys.json` | Every catalog key the Tap Flip templates name, with its en, de, fa and ckb text | Step 4 |
 | `scripts/check-rules-engine.mjs` | Checker: kit files and current contract members, the exact fast-check pin its tests need, RNG goldens (run for real), purity, determinism, JSON state, events, throws, reason keys, catalog keys, tests, assembly with `panMode` and `selectRegions`, a seeded run of the rules, endless never won | Steps 2 and 9, and at the end |
 | `scripts/lib/` | `app-modules.mjs` (loads the repo's TypeScript), `ts-scan.mjs`, `kit-checks.mjs`, `rules-checks.mjs`, `engine-run.mjs`, `assemble-fixtures.mjs` | When changing the checker |
-| `scripts/selftest.mjs` | Proves the checker: the templates installed as a game must pass, 27 planted bugs must fail | After changing the checker or a template |
+| `scripts/selftest.mjs` | Proves the checker: the templates installed as a game must pass, 30 planted bugs must fail, and each `pass-*` change must still pass (a draw in a helper only `create.ts` imports) | After changing the checker or a template |
 | `scripts/check-lib.mjs` | Shared script helper, synced from the library (do not edit here) | Never by hand |
 | `assets/shared.json` | Declares the shared files this skill copies in | When adding a shared file |
 | `tests/fixtures/` | `check-rules-engine/bad-*/`: one planted bug each (`mutation.json`) and the expected output (`EXPECT.txt`) | When adding a rule to the checker |
