@@ -1032,6 +1032,142 @@
           "ckb": "شاری ڕۆبۆتەکان"
         }
       ]
+    },
+    "trailClear": {
+      "id": "trail-clear",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Trail Clear",
+        "de": "Trail Clear",
+        "fa": "Trail Clear",
+        "ckb": "Trail Clear"
+      },
+      "tagline": {
+        "en": "Match the edges. Close the loops.",
+        "de": "Leg Kante an Kante. Schließ die Schleifen.",
+        "fa": "لبه‌ها را جور کنید، حلقه‌ها را ببندید.",
+        "ckb": "لێوارەکان بگونجێنە، ئەڵقەکان دابخە."
+      },
+      "goal": {
+        "en": "Place every tile. Close roads and rivers to clear them.",
+        "de": "Leg jedes Plättchen. Schließ Straßen und Flüsse, um sie abzuräumen.",
+        "fa": "همهٔ کاشی‌ها را بگذارید. جاده‌ها و رودها را ببندید تا پاک شوند.",
+        "ckb": "هەموو کاشییەکان دابنێ. ڕێگا و ڕووبارەکان دابخە بۆ ئەوەی پاک ببنەوە."
+      },
+      "progress": {
+        "en": "Tiles {placed, number} / {total, number}",
+        "de": "Plättchen {placed, number} / {total, number}",
+        "fa": "کاشی {placed, number} / {total, number}",
+        "ckb": "کاشی {placed, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Every tile placed!",
+        "de": "Alle Plättchen gelegt!",
+        "fa": "همهٔ کاشی‌ها سر جایشان!",
+        "ckb": "هەموو کاشییەکان دانران!"
+      },
+      "loseReason": {
+        "en": "The tile fits nowhere",
+        "de": "Das Plättchen passt nirgends hin",
+        "fa": "این کاشی هیچ‌جا جا نمی‌شود",
+        "ckb": "ئەم کاشییە لە هیچ شوێنێک جێی نابێتەوە"
+      },
+      "stats": {
+        "loopsClosed": {
+          "en": "Loops closed",
+          "de": "Geschlossene Schleifen",
+          "fa": "حلقه‌های بسته‌شده",
+          "ckb": "ئەڵقە داخراوەکان"
+        },
+        "tilesPlaced": {
+          "en": "Tiles placed",
+          "de": "Gelegte Plättchen",
+          "fa": "کاشی‌های گذاشته‌شده",
+          "ckb": "کاشییە دانراوەکان"
+        },
+        "biggestLoop": {
+          "en": "Biggest loop",
+          "de": "Größte Schleife",
+          "fa": "بزرگ‌ترین حلقه",
+          "ckb": "گەورەترین ئەڵقە"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Drag the tile onto the board.",
+          "de": "Zieh das Plättchen aufs Spielfeld.",
+          "fa": "کاشی را روی صفحه بکشید.",
+          "ckb": "کاشییەکە ڕابکێشە سەر تەختەکە."
+        },
+        {
+          "en": "Edges must match: road to road, river to river.",
+          "de": "Die Kanten müssen passen: Straße an Straße, Fluss an Fluss.",
+          "fa": "لبه‌ها باید جور باشند: جاده به جاده، رود به رود.",
+          "ckb": "لێوارەکان دەبێت بگونجێن: ڕێگا بە ڕێگا، ڕووبار بە ڕووبار."
+        },
+        {
+          "en": "A road or river with no loose end is cleared.",
+          "de": "Eine Straße oder ein Fluss ohne offenes Ende wird abgeräumt.",
+          "fa": "جاده یا رودی که سرِ باز ندارد پاک می‌شود.",
+          "ckb": "ڕێگا یان ڕووبارێک کە سەری کراوەی نەبێت پاک دەبێتەوە."
+        },
+        {
+          "en": "One tile can close a road and a river at once.",
+          "de": "Ein Plättchen kann Straße und Fluss auf einmal schließen.",
+          "fa": "یک کاشی می‌تواند جاده و رود را با هم ببندد.",
+          "ckb": "یەک کاشی دەتوانێت ڕێگا و ڕووبار پێکەوە دابخات."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Drag this tile between the two ends.",
+          "de": "Zieh dieses Plättchen zwischen die beiden Enden.",
+          "fa": "این کاشی را بین دو سرِ باز بکشید.",
+          "ckb": "ئەم کاشییە ڕابکێشە نێوان هەردوو سەرەکە."
+        },
+        {
+          "en": "Pick how the tile faces, then place it.",
+          "de": "Wähl, wie das Plättchen liegt, und leg es hin.",
+          "fa": "جهت کاشی را انتخاب کنید و آن را بگذارید.",
+          "ckb": "ئاڕاستەی کاشییەکە هەڵبژێرە و دایبنێ."
+        },
+        {
+          "en": "Close a road or a river to clear its tiles.",
+          "de": "Schließ eine Straße oder einen Fluss, um die Plättchen abzuräumen.",
+          "fa": "یک جاده یا رود را ببندید تا کاشی‌هایش پاک شوند.",
+          "ckb": "ڕێگایەک یان ڕووبارێک دابخە بۆ ئەوەی کاشییەکانی پاک ببنەوە."
+        },
+        {
+          "en": "Place every tile to win. Keep room on the board!",
+          "de": "Leg alle Plättchen, um zu gewinnen. Lass Platz auf dem Feld!",
+          "fa": "برای بردن همهٔ کاشی‌ها را بگذارید. روی صفحه جا نگه دارید!",
+          "ckb": "بۆ بردنەوە هەموو کاشییەکان دابنێ. جێگا لەسەر تەختەکە بهێڵەرەوە!"
+        }
+      ],
+      "packs": [
+        {
+          "en": "Country lanes",
+          "de": "Feldwege",
+          "fa": "جاده‌های روستایی",
+          "ckb": "ڕێگا گوندییەکان"
+        },
+        {
+          "en": "River bends",
+          "de": "Flussbiegungen",
+          "fa": "پیچ‌های رودخانه",
+          "ckb": "پێچەکانی ڕووبار"
+        },
+        {
+          "en": "Crossroads",
+          "de": "Kreuzungen",
+          "fa": "چهارراه‌ها",
+          "ckb": "چوارڕێیانەکان"
+        }
+      ]
     }
   },
   "licenceEntries": [
