@@ -1,9 +1,11 @@
 {
+  "flock-tilt.continue.undo-tilt": "هەلێکی تر: دوایین لارکردنەوە دەگەڕێتەوە و لارکردنەوەی زیاترت پێ دەدرێت",
   "flock-tilt.goal": "هەموو مەڕەکان بگەیەنە ناو گەوڕەکە.",
   "flock-tilt.how-to-play.step-1": "پەنجە ڕابکێشە بۆ لارکردنەوەی زەوییەکە.",
   "flock-tilt.how-to-play.step-2": "هەموو شتێک دەخلیسکێت تا بەر شتێک دەکەوێت.",
   "flock-tilt.how-to-play.step-3": "هەموو مەڕەکان بخەرە ناو گەوڕەکە.",
   "flock-tilt.how-to-play.step-4": "مەڕەکان لە گورگەکە دوور بخەرەوە.",
+  "flock-tilt.lose.out-of-tilts": "ئیتر لارکردنەوە نەماوە",
   "flock-tilt.lose.wolf-got-sheep": "گورگەکە مەڕێکی گرت",
   "flock-tilt.name": "Flock Tilt",
   "flock-tilt.pack-name.1": "مێرگی سەوز",

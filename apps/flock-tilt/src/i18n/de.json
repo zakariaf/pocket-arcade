@@ -1,9 +1,11 @@
 {
+  "flock-tilt.continue.undo-tilt": "Noch ein Versuch: Der letzte Kippzug wird zurückgenommen und du bekommst mehr Kippzüge",
   "flock-tilt.goal": "Bring jedes Schaf in den Pferch.",
   "flock-tilt.how-to-play.step-1": "Wisch, um das Feld zu kippen.",
   "flock-tilt.how-to-play.step-2": "Alles rutscht, bis es gegen etwas stößt.",
   "flock-tilt.how-to-play.step-3": "Bring jedes Schaf in den Pferch.",
   "flock-tilt.how-to-play.step-4": "Halte die Schafe vom Wolf fern.",
+  "flock-tilt.lose.out-of-tilts": "Keine Kippzüge mehr",
   "flock-tilt.lose.wolf-got-sheep": "Der Wolf hat ein Schaf erwischt",
   "flock-tilt.name": "Flock Tilt",
   "flock-tilt.pack-name.1": "Grüne Wiese",

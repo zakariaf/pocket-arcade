@@ -1,9 +1,11 @@
 {
+  "flock-tilt.continue.undo-tilt": "یک فرصت دیگر: آخرین کج کردن برمی‌گردد و فرصت بیشتری برای کج کردن می‌گیرید",
   "flock-tilt.goal": "همهٔ گوسفندها را به آغل برسانید.",
   "flock-tilt.how-to-play.step-1": "برای کج کردن زمین، انگشتتان را روی صفحه بکشید.",
   "flock-tilt.how-to-play.step-2": "همه‌چیز می‌لغزد تا به چیزی بخورد.",
   "flock-tilt.how-to-play.step-3": "همهٔ گوسفندها را به آغل ببرید.",
   "flock-tilt.how-to-play.step-4": "گوسفندها را از گرگ دور نگه دارید.",
+  "flock-tilt.lose.out-of-tilts": "دیگر کج کردنی نمانده",
   "flock-tilt.lose.wolf-got-sheep": "گرگ یک گوسفند را گرفت",
   "flock-tilt.name": "Flock Tilt",
   "flock-tilt.pack-name.1": "چمنزار سبز",

@@ -26,8 +26,9 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
   tilt (the wolf right in front of it or right behind it) is lost: the toy's rule, "any sheep that
   ends up against it". A sheep beside a wolf across the tilt is safe. Nothing is ever hit on screen:
   the lost sheep is marked and the run ends.
-- **Win:** every sheep is in the pen. The win score is the number of tilts left in the field's tilt
-  budget (a whole number, at least 0).
+- **Win:** every sheep is in the pen. The score is 100 points per penned sheep (the top bar shows
+  it while playing); a win adds 10 points per tilt left of the 40-tilt budget (a whole number, at
+  least 0; the S7 win shows it, while the stars come from the moves against par).
 - **The tilt budget.** Every field ends after 40 tilts (the tuning file holds the number, five times
   the largest par). Undo gives the tilt back, so a player who undoes never meets it; it only ends a
   run that wanders without undoing. Reason: game-balance-and-bots rule 3 ("Every run has a hard move
@@ -125,7 +126,8 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
   can be offered, the result appears at once (S7)" (L11): while the ad loads the offer shows busy, and
   a hidden offer means none.
 - One continue per run, only after a loss; a second one is refused; undo never crosses it.
-- Text: `flock-tilt.continue.undo-tilt` "Take back the last tilt" (with the 10 extra tilts named).
+- Text: `flock-tilt.continue.undo-tilt` "One more go: the last tilt is taken back and you get more
+  tilts" (no digit in the sentence, so it needs no number format).
 - If the owner answers differently: `none` sets `isContinueAllowed` false.
 
 ## Ways of losing

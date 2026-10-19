@@ -1,5 +1,5 @@
 // apps/flock-tilt/src/rules/field-status.test.ts
-import { fieldStatus, hasAnyTilt } from './field-status.ts';
+import { endedStatus, fieldStatus, hasAnyTilt } from './field-status.ts';
 import { parseField } from './field-text.ts';
 
 import type { Sheep } from './flock-tilt-types.ts';
@@ -43,6 +43,17 @@ describe('fieldStatus', () => {
     expect(fieldStatus({ ...jammed, tilts: 0, tiltLimit: 40 })).toBe('playing');
     const boxed = parseField(['s#..o', '#...#', '...#w']);
     expect(fieldStatus({ ...boxed, tilts: 0, tiltLimit: 40 })).toBe('out-of-tilts');
+  });
+});
+
+describe('endedStatus', () => {
+  it('names the ends that need no tilt to be tried, and null otherwise', () => {
+    expect(endedStatus(withSheep([{ id: 0, cell: 4, status: 'penned' }]))).toBe('won');
+    expect(endedStatus(withSheep([{ id: 0, cell: 13, status: 'lost' }]))).toBe('wolf-got-sheep');
+    expect(endedStatus(withSheep(FIELD.sheep, 40))).toBe('out-of-tilts');
+    expect(endedStatus(withSheep(FIELD.sheep))).toBeNull();
+    const boxed = parseField(['s#..o', '#...#', '...#w']);
+    expect(endedStatus({ ...boxed, tilts: 0, tiltLimit: 40 })).toBeNull();
   });
 });
 

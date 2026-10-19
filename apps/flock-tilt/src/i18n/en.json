@@ -1,9 +1,11 @@
 {
+  "flock-tilt.continue.undo-tilt": "One more go: the last tilt is taken back and you get more tilts",
   "flock-tilt.goal": "Get every sheep into the pen.",
   "flock-tilt.how-to-play.step-1": "Swipe to tilt the field.",
   "flock-tilt.how-to-play.step-2": "Everything slides until it hits something.",
   "flock-tilt.how-to-play.step-3": "Get every sheep into the pen.",
   "flock-tilt.how-to-play.step-4": "Keep the sheep away from the wolf.",
+  "flock-tilt.lose.out-of-tilts": "No tilts left",
   "flock-tilt.lose.wolf-got-sheep": "The wolf got a sheep",
   "flock-tilt.name": "Flock Tilt",
   "flock-tilt.pack-name.1": "Green meadow",
