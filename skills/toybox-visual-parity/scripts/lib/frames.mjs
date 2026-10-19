@@ -96,7 +96,22 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+/**
+ * The design games: every game the Toybox token file paints (color.games, in its order), each drawn
+ * with its logo layers (logos.games). A game the design adds (its design pass) becomes a design game
+ * when the shared token file is refreshed; a painted game without a logo is not drawn yet: exit 2.
+ */
+export function loadDesignGames(path = DEFAULTS.tokens) {
+  const tokens = readJson(path, 'Toybox token file');
+  const games = Object.keys(tokens?.color?.games ?? {});
+  if (games.length === 0) fail(`${path} paints no game (color.games is empty)`, 'Pass the Toybox token file (the shared toybox-tokens.json).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) fail(`design game ${game} in ${path} has no logo layers (logos.games.${game})`, 'A design game has its paint and its logo: draw the logo into the design (and its token file) first.');
+  }
+  return games;
+}
+export const DESIGN_GAMES = loadDesignGames();
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).

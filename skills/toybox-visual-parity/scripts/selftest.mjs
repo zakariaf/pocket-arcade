@@ -42,7 +42,8 @@
 //                     top bar and the Pause dialog are still gated), a run captured against the
 //                     wrong variant, a pre-listed dashed-edge waiver that applies (and its absence)
 //   exit 2            a Game-route run without a board rectangle, a frame with variants and no
-//                     facts file, a facts file for another design game (never a guess)
+//                     facts file, a facts file for another design game (never a guess), a design
+//                     game in the token file without logo layers (the design games come from it)
 //   variants          the no-music Settings variant, chosen by the facts, passes check-parity; a real
 //                     dark fa capture whose list edge runs under a group tab passes the border gate
 //                     (the band ends at the outside colour), and the same edge 2 px thicker fails
@@ -399,6 +400,7 @@ function prettierJson(value, indent = 0, prefix = 0) {
     { name: 'facts file missing', script: 'check-parity.mjs', dir: 'exit2/facts-missing', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
     { name: 'facts without hasHints (never a guess)', script: 'check-parity.mjs', dir: 'exit2/facts-no-hints', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 2 },
     { name: 'packages missing from the --tooling folder', script: 'check-parity.mjs', dir: 'exit2/tooling-empty', args: ['.', '--waivers', 'none.json', '--no-write', '--tooling', fakeStateDir], exit: 2 },
+    { name: 'a design game without logo layers in the token file', script: 'shoot-design.mjs', dir: 'exit2/design-game-no-logo', args: ['--check', '--game', 'toggleDrop', '--frame', 's4-home', '--tokens', 'tokens.json'], exit: 2 },
     { name: 'facts of another design game', script: 'capture-app.mjs', dir: 'exit2/facts-wrong-game', args: ['--bundle-id', 'io.applander.linesiege', '--frame', 's11-settings', '--theme', 'light', '--lang', 'en', '--out', scratch(), ...fakes, '--maestro', join(FAKES, 'fake-maestro.mjs')], exit: 2 },
     { name: 'the no-music variant chosen by the facts', script: 'check-parity.mjs', dir: 'variants/s11-no-music-light-en', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music (variant no-music, chosen by the game facts)', '1 of 1 runs pass'] },
     { name: 'a real S11 capture whose list edge runs under the group tab (dark fa, scroll 1042)', script: 'check-parity.mjs', dir: 'variants/s11-no-music-dark-fa-y1042-tab-edge', args: ['.', '--waivers', 'none.json', '--no-write'], exit: 0, lines: ['reference s11-settings--no-music', '1 of 1 runs pass'] },

@@ -1,0 +1,1 @@
+[bad-input] design game toggleDrop in tokens.json has no logo layers (logos.games.toggleDrop)
