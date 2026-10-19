@@ -32,6 +32,12 @@ describe('knobsFor (the difficulty rows on the 0..100 scale)', () => {
     );
   });
 
+  it('gives the harder rows at most 3 swaps per enemy (the budgets the sims measured)', () => {
+    for (const row of TUNING.levelRows.slice(1)) {
+      expect(row.maxSwaps / row.enemies).toBeLessThanOrEqual(3);
+    }
+  });
+
   it('opens every row with a spear (the opening threat is a spear)', () => {
     for (const row of TUNING.levelRows) expect(row.kinds).toContain('spear');
   });

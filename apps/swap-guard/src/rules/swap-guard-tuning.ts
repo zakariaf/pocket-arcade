@@ -27,9 +27,9 @@ export type DifficultyKnobs = {
  */
 const LEVEL_ROWS = [
   { size: 5, enemies: 3, kinds: ['spear', 'archer'], maxSwaps: 12 },
-  { size: 5, enemies: 4, kinds: ['spear', 'archer'], maxSwaps: 14 },
-  { size: 6, enemies: 4, kinds: ['spear', 'archer', 'brute'], maxSwaps: 16 },
-  { size: 6, enemies: 5, kinds: ['spear', 'archer', 'brute'], maxSwaps: 18 },
+  { size: 5, enemies: 4, kinds: ['spear', 'archer'], maxSwaps: 12 },
+  { size: 6, enemies: 4, kinds: ['spear', 'archer', 'brute'], maxSwaps: 11 },
+  { size: 6, enemies: 5, kinds: ['spear', 'archer', 'brute'], maxSwaps: 14 },
 ] as const satisfies readonly DifficultyKnobs[];
 
 export const TUNING = {
