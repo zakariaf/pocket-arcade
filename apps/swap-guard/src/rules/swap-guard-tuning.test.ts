@@ -38,6 +38,15 @@ describe('knobsFor (the difficulty rows on the 0..100 scale)', () => {
     }
   });
 
+  it('brings in one enemy kind per row: spears, then archers, then brutes', () => {
+    expect(TUNING.levelRows.map((row) => row.kinds)).toStrictEqual([
+      ['spear'],
+      ['spear', 'archer'],
+      ['spear', 'archer', 'brute'],
+      ['spear', 'archer', 'brute'],
+    ]);
+  });
+
   it('opens every row with a spear (the opening threat is a spear)', () => {
     for (const row of TUNING.levelRows) expect(row.kinds).toContain('spear');
   });
