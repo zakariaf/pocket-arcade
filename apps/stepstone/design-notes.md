@@ -174,7 +174,7 @@ is hit or hurt.
 | ----- | ----- | ------------- | ---------- | ----------- | ----------- |
 | 0-24  | 5 x 5 | plus, ring    | 4 hops     | 4           | 3           |
 | 25-49 | 5 x 5 | plus, ring, × | 5 hops     | 5           | 4           |
-| 50-74 | 6 x 6 | all four      | 6 hops     | 7           | 5           |
+| 50-74 | 6 x 6 | all four      | 6 hops     | 5           | 5           |
 | 75-99 | 7 x 7 | all four      | 7 hops     | 9           | 6           |
 
 A first probe of these rules (100 ponds per row, before any code was committed) showed why the traps
@@ -182,6 +182,12 @@ are needed: with stones scattered at random, random tapping won 40 to 68 % of po
 greedy player about 100 %, with no gap to a player looking several hops ahead. With the route plus
 two-stone traps, random tapping won 70, 51, 17 and 14 % by row, the greedy player 79, 65, 35 and
 21 %, and a three-hop lookahead 100, 100, 94 and 88 %. The real sims (E24-T06) set the bands.
+
+**Measured (E24-T06, 100 seeds per row, `reports/sim/stepstone.json`):** the first run had a cliff
+into the third row (greedy 81, 65, 30, 21 %); with that row's traps tried cut from 7 to 5, the
+greedy player crosses 81, 65, 40 and 21 % of ponds, random tapping 73, 51, 23 and 14 %, and a
+two-hop lookahead 99, 96, 83 and 74 %. The proposed bands in `test/sims/stepstone/balance-bands.json`
+sit around these numbers.
 
 - Random play gets stuck often and wins clearly less than a reasonable player; the greedy bot (one
   hop ahead, heading for the flag by straight-line distance and keeping stones in reach) wins most

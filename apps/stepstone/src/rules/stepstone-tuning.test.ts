@@ -47,6 +47,6 @@ describe('knobsFor', () => {
 const GOLDEN_LEVEL_ROWS = [
   { side: 5, kinds: ['rook', 'king'], routeHops: 4, decoys: 4, minPar: 3 },
   { side: 5, kinds: ['rook', 'king', 'bishop'], routeHops: 5, decoys: 5, minPar: 4 },
-  { side: 6, kinds: ['rook', 'king', 'bishop', 'knight'], routeHops: 6, decoys: 7, minPar: 5 },
+  { side: 6, kinds: ['rook', 'king', 'bishop', 'knight'], routeHops: 6, decoys: 5, minPar: 5 },
   { side: 7, kinds: ['rook', 'king', 'bishop', 'knight'], routeHops: 7, decoys: 9, minPar: 6 },
 ];
