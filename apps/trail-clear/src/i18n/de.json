@@ -1,0 +1,22 @@
+{
+  "trail-clear.goal": "Leg jedes Plättchen. Schließ Straßen und Flüsse, um sie abzuräumen.",
+  "trail-clear.how-to-play.step-1": "Zieh das Plättchen aufs Spielfeld.",
+  "trail-clear.how-to-play.step-2": "Die Kanten müssen passen: Straße an Straße, Fluss an Fluss.",
+  "trail-clear.how-to-play.step-3": "Eine Straße oder ein Fluss ohne offenes Ende wird abgeräumt.",
+  "trail-clear.how-to-play.step-4": "Ein Plättchen kann Straße und Fluss auf einmal schließen.",
+  "trail-clear.lose.no-room": "Das Plättchen passt nirgends hin",
+  "trail-clear.name": "Trail Clear",
+  "trail-clear.pack-name.1": "Feldwege",
+  "trail-clear.pack-name.2": "Flussbiegungen",
+  "trail-clear.pack-name.3": "Kreuzungen",
+  "trail-clear.progress": "Plättchen {placed, number} / {total, number}",
+  "trail-clear.stats.biggest-loop": "Größte Schleife",
+  "trail-clear.stats.loops-closed": "Geschlossene Schleifen",
+  "trail-clear.stats.tiles-placed": "Gelegte Plättchen",
+  "trail-clear.tagline": "Leg Kante an Kante. Schließ die Schleifen.",
+  "trail-clear.tutorial.step-1": "Zieh dieses Plättchen zwischen die beiden Enden.",
+  "trail-clear.tutorial.step-2": "Wähl, wie das Plättchen liegt, und leg es hin.",
+  "trail-clear.tutorial.step-3": "Schließ eine Straße oder einen Fluss, um die Plättchen abzuräumen.",
+  "trail-clear.tutorial.step-4": "Leg alle Plättchen, um zu gewinnen. Lass Platz auf dem Feld!",
+  "trail-clear.win-title": "Alle Plättchen gelegt!"
+}

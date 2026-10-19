@@ -1,0 +1,22 @@
+{
+  "trail-clear.goal": "همهٔ کاشی‌ها را بگذارید. جاده‌ها و رودها را ببندید تا پاک شوند.",
+  "trail-clear.how-to-play.step-1": "کاشی را روی صفحه بکشید.",
+  "trail-clear.how-to-play.step-2": "لبه‌ها باید جور باشند: جاده به جاده، رود به رود.",
+  "trail-clear.how-to-play.step-3": "جاده یا رودی که سرِ باز ندارد پاک می‌شود.",
+  "trail-clear.how-to-play.step-4": "یک کاشی می‌تواند جاده و رود را با هم ببندد.",
+  "trail-clear.lose.no-room": "این کاشی هیچ‌جا جا نمی‌شود",
+  "trail-clear.name": "Trail Clear",
+  "trail-clear.pack-name.1": "جاده‌های روستایی",
+  "trail-clear.pack-name.2": "پیچ‌های رودخانه",
+  "trail-clear.pack-name.3": "چهارراه‌ها",
+  "trail-clear.progress": "کاشی {placed, number} / {total, number}",
+  "trail-clear.stats.biggest-loop": "بزرگ‌ترین حلقه",
+  "trail-clear.stats.loops-closed": "حلقه‌های بسته‌شده",
+  "trail-clear.stats.tiles-placed": "کاشی‌های گذاشته‌شده",
+  "trail-clear.tagline": "لبه‌ها را جور کنید، حلقه‌ها را ببندید.",
+  "trail-clear.tutorial.step-1": "این کاشی را بین دو سرِ باز بکشید.",
+  "trail-clear.tutorial.step-2": "جهت کاشی را انتخاب کنید و آن را بگذارید.",
+  "trail-clear.tutorial.step-3": "یک جاده یا رود را ببندید تا کاشی‌هایش پاک شوند.",
+  "trail-clear.tutorial.step-4": "برای بردن همهٔ کاشی‌ها را بگذارید. روی صفحه جا نگه دارید!",
+  "trail-clear.win-title": "همهٔ کاشی‌ها سر جایشان!"
+}
