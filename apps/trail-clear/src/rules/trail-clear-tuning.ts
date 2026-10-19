@@ -6,10 +6,29 @@
 // level packs exist regenerates them (generate-levels.ts) with a Gate-Change: trailer.
 import { isEndlessDifficulty, rowFor } from '@e07/game-kit/contract/difficulty.ts';
 
-import type { TileKind } from './trail-clear-types.ts';
-
 /** How often each kind is dealt (out of the row's sum); a kind with weight 0 is never dealt. */
-export type TileWeights = Readonly<Record<TileKind, number>>;
+export type TileWeights = {
+  /** A road that ends at a house: closes short roads (more = easier). */
+  readonly 'road-end': number;
+  /** A straight road (lengthens a road; fits the rim only along it). */
+  readonly 'road-straight': number;
+  /** A road bend (makes rings; more = longer, riskier loops). */
+  readonly 'road-bend': number;
+  /** A river that ends at a pond: closes short rivers (more = easier). */
+  readonly 'river-end': number;
+  /** A straight river (lengthens a river; fits the rim only along it). */
+  readonly 'river-straight': number;
+  /** A river bend (makes rings; more = longer, riskier loops). */
+  readonly 'river-bend': number;
+  /** A road end and a river end back to back: the double-maker (the twist). */
+  readonly ford: number;
+  /** A road over a river: no grass edge, fits only the inner cells (more = harder). */
+  readonly bridge: number;
+  /** A road bend and a river bend: no grass edge, inner cells only (more = harder). */
+  readonly 'twin-bend': number;
+  /** Three roads meeting: a road with three ends to close (more = harder). */
+  readonly 'road-fork': number;
+};
 
 /** The knobs that change with difficulty: one level row per band of 0..99, plus the endless row. */
 export type DifficultyKnobs = {
