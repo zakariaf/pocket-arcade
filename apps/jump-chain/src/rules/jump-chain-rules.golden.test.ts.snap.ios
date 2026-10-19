@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the rules of Jump Chain (golden) plays the frozen move line from seed 1 at difficulty 0 1`] = `
+"seed 1 difficulty 0
+. . . .
+ x x x 
+. . . .
+ x x x 
+. . . .
+ x . x 
+. . . .
+ . P . 
+. . . .
+ . . . 
+move 1: step 4,8
+  piece-stepped 3,7 > 4,8
+move 2: step 5,7
+  piece-stepped 4,8 > 5,7
+move 3: step 4,6
+  piece-stepped 5,7 > 4,6
+move 4: jump 6,4 4,2 2,0 0,2 2,4 4,2
+  piece-jumped #1 over 1 > 6,4
+  piece-jumped #2 over 4 > 4,2
+  piece-jumped #3 over 6 > 2,0
+  piece-jumped #4 over 5 > 0,2
+  piece-jumped #5 over 2 > 2,4
+  piece-jumped #6 over 3 > 4,2
+  enemies-captured [1,4,6,5,2,3] chain 6 +210
+  rank-cleared 1 +50
+move 5: jump 6,0
+  piece-jumped #1 over 7 > 6,0
+  enemies-captured [7] chain 1 +10
+  rank-cleared 2 +50
+  ranks-advanced 0:5>7
+move 6: step 5,1
+  piece-stepped 6,0 > 5,1
+move 7: step 4,0
+  piece-stepped 5,1 > 4,0
+move 8: step 5,1
+  piece-stepped 4,0 > 5,1
+move 9: step 4,0
+  piece-stepped 5,1 > 4,0
+move 10: step 3,1
+  piece-stepped 4,0 > 3,1
+  ranks-advanced 0:7>9
+  side-reached [0]
+end: lost score 320 captured 7/8 ranks 2 moves 10
+. . . .
+ . P . 
+. . . .
+ . . . 
+. . . .
+ . . . 
+. . . .
+ . . . 
+. . . .
+ x . . "
+`;
