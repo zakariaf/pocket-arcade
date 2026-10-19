@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "stepstone": {
+        "gameStats": ["1,342", "46", "×4"],
+        "progressMid": "3 / 7",
+        "progressFull": "7 / 7",
+        "progressMidParams": { "moves": 3, "par": 7 },
+        "progressFullParams": { "moves": 7, "par": 7 },
+        "loseReasonId": "stepstone.lose.stuck"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "stepstone": {
+        "tiles-stepped": 1342,
+        "levels-at-par": 46,
+        "kinds-used": 4
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "stepstone": {
+          "progressMid": { "moves": 3, "par": 7 },
+          "progressFull": { "moves": 7, "par": 7 },
+          "loseReasonId": "stepstone.lose.stuck"
         }
       }
     }
