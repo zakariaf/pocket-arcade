@@ -4,7 +4,7 @@ import fc from 'fast-check';
 import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { ALL_CELLS } from './board-cells.ts';
-import { bestClosure, dealTile, helpfulKinds, weightedKind } from './deal-tile.ts';
+import { bestClosure, dealTile, facesOpenEnd, helpfulKinds, weightedKind } from './deal-tile.ts';
 import { TILE_KINDS } from './tiles.ts';
 import { TUNING, knobsFor } from './trail-clear-tuning.ts';
 
@@ -25,6 +25,18 @@ const EMPTY = boardOf({});
 const DOUBLE_SPOT = boardOf({ 7: ['road-end', 2], 17: ['river-end', 0] });
 const ALWAYS_HELPFUL: DifficultyKnobs = { ...knobsFor(0), helpfulShare: 100 };
 const NEVER_HELPFUL: DifficultyKnobs = { ...knobsFor(0), helpfulShare: 0 };
+
+describe('facesOpenEnd', () => {
+  it('finds the empty cells a road or a river points into, and no other', () => {
+    const open = ALL_CELLS.filter((cell) => facesOpenEnd(DOUBLE_SPOT, cell));
+    expect(open).toStrictEqual([12]);
+    expect(ALL_CELLS.some((cell) => facesOpenEnd(EMPTY, cell))).toBe(false);
+  });
+
+  it('is false on a cell that holds a tile', () => {
+    expect(facesOpenEnd(boardOf({ 12: ['road-end', 0], 7: ['road-end', 2] }), 12)).toBe(false);
+  });
+});
 
 describe('bestClosure', () => {
   it('counts the loops the best placement of a kind closes (the double spot takes only a road-and-river tile)', () => {

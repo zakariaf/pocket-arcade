@@ -5,9 +5,9 @@
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { nextInt } from '@e07/game-kit/rng/sfc32.ts';
 
-import { ALL_CELLS } from './board-cells.ts';
-import { TILE_KINDS, distinctTurns, edgesOf } from './tiles.ts';
-import { closedLoopsAt, fits } from './trails.ts';
+import { ALL_CELLS, SIDES, neighbourOf, oppositeOf } from './board-cells.ts';
+import { GRASS, TILE_KINDS, distinctTurns, edgesOf } from './tiles.ts';
+import { closedLoopsAt, edgesAt, fits } from './trails.ts';
 
 import type { DifficultyKnobs } from './trail-clear-tuning.ts';
 import type { PlacedTile, TileKind } from './trail-clear-types.ts';
@@ -16,12 +16,25 @@ import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 type Cells = readonly (PlacedTile | null)[];
 type Dealt = { readonly tile: TileKind; readonly rng: RngState };
 
+/**
+ * True for an empty cell that a neighbour's road or river points into. Only such a cell can take a
+ * closing tile: a tile that touches no loose end closes nothing (its own ends face empty cells).
+ */
+export function facesOpenEnd(cells: Cells, cell: number): boolean {
+  if (pickAt(cells, cell) !== null) return false;
+  return SIDES.some((side) => {
+    const edges = edgesAt(cells, neighbourOf(cell, side));
+    return edges !== null && pickAt(edges, oppositeOf(side)) !== GRASS;
+  });
+}
+
 /** The most loops one placement of `kind` closes on this board (0, 1 or 2). */
 export function bestClosure(cells: Cells, kind: TileKind): number {
+  const candidates = ALL_CELLS.filter((cell) => facesOpenEnd(cells, cell));
   let best = 0;
   for (const turns of distinctTurns(kind)) {
     const edges = edgesOf(kind, turns);
-    for (const cell of ALL_CELLS.filter((index) => fits(cells, index, edges))) {
+    for (const cell of candidates.filter((index) => fits(cells, index, edges))) {
       const tile: PlacedTile = { kind, turns, placedAt: 0 };
       const placed = cells.map((old, index) => (index === cell ? tile : old));
       best = Math.max(best, closedLoopsAt(placed, cell).length);
