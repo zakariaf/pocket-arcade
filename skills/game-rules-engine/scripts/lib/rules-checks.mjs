@@ -36,6 +36,9 @@ const PAST_TENSE_WORDS = new Set([
   'grown', 'shown', 'flown', 'chosen', 'frozen', 'woken', 'risen', 'ridden', 'written', 'eaten',
   'fought', 'caught', 'taught', 'brought', 'bought', 'kept', 'slept', 'felt', 'meant', 'burnt',
   'over', 'froze', 'rose', 'rode', 'wrote', 'ate', 'became', 'came', 'went', 'got', 'gave', 'took',
+  'sank', 'sunk', 'swam', 'swum', 'sprang', 'sprung', 'rang', 'rung', 'sang', 'sung', 'stood', 'shook',
+  'shaken', 'flew', 'blew', 'grew', 'threw', 'knew', 'known', 'tore', 'torn', 'wore', 'worn', 'stole',
+  'stolen', 'drove', 'driven', 'woke', 'leapt', 'crept', 'dove', 'swore',
 ]);
 
 /** Past tense (heuristic): some word ends in -ed or is an irregular past form. */
@@ -106,6 +109,35 @@ export function checkRuleFiles(repo, gameId, report) {
   }
 }
 
+/** The play functions: what runs after create() (a continue's file name starts with "continue"). */
+const PLAY_ENTRIES = ['apply-move.ts', 'list-moves.ts', 'outcome.ts'];
+
+/**
+ * The rules files play reaches: the play entries and every rules file they import, by relative
+ * ('./x.ts') or package ('@e07/<id>/rules/x.ts') specifier. A generation helper only create() imports
+ * (its draws all happen before play) is not one of them.
+ */
+function playFiles(files, gameId) {
+  const folder = `apps/${gameId}/src/rules`;
+  const byRel = new Map(files.filter((file) => !file.isTest && file.rel.startsWith(`${folder}/`)).map((file) => [file.rel, file]));
+  const queue = [...byRel.keys()].filter((rel) => {
+    const name = rel.slice(folder.length + 1);
+    return PLAY_ENTRIES.includes(name) || name.startsWith('continue');
+  });
+  const seen = new Set();
+  while (queue.length > 0) {
+    const rel = queue.pop();
+    if (seen.has(rel)) continue;
+    seen.add(rel);
+    for (const { specifier, isType } of importsOf(byRel.get(rel).text)) {
+      if (isType) continue;
+      const local = specifier.startsWith('./') ? specifier.slice(2) : specifier.startsWith(`@e07/${gameId}/rules/`) ? specifier.slice(`@e07/${gameId}/rules/`.length) : null;
+      if (local !== null && byRel.has(`${folder}/${local}`)) queue.push(`${folder}/${local}`);
+    }
+  }
+  return [...seen].map((rel) => byRel.get(rel));
+}
+
 export function checkStateTypes(repo, gameId, files, report) {
   const typesRel = `apps/${gameId}/src/rules/${gameId}-types.ts`;
   const types = files.find((file) => file.rel === typesRel);
@@ -114,7 +146,7 @@ export function checkStateTypes(repo, gameId, files, report) {
   for (const { match, line } of matchesWithLines(text, /\b(Map|Set|WeakMap|Date|bigint|symbol)\b|\bclass\s/g)) {
     report.problem({ file: typesRel, line, rule: 'state-not-json', message: `uses ${match[0].trim()}; states, moves and events are saved and compared as JSON`, fix: 'Use plain objects, arrays, numbers, strings, booleans and null only.' });
   }
-  const drawsAfterCreate = files.filter((file) => !file.isTest && !file.rel.endsWith('/create.ts')).some((file) => importsOf(file.text).some(({ specifier, isType }) => !isType && specifier.endsWith('/rng/sfc32.ts')) && /\bnext(Int|U32|Unit)\s*\(/.test(bare(file.text)));
+  const drawsAfterCreate = playFiles(files, gameId).some((file) => importsOf(file.text).some(({ specifier, isType }) => !isType && specifier.endsWith('/rng/sfc32.ts')) && /\bnext(Int|U32|Unit)\s*\(/.test(bare(file.text)));
   if (drawsAfterCreate && !/\bRngState\b/.test(code(types.text))) {
     report.problem({ file: typesRel, line: 1, rule: 'rng-not-in-state', message: 'rules draw random numbers after create() but the state holds no RngState', fix: 'Keep `rng: RngState` in the state and thread it: const draw = nextInt(state.rng, n); ...{ rng: draw.state }.' });
   }
