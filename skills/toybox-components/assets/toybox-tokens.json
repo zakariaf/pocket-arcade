@@ -399,6 +399,130 @@
             }
           }
         }
+      },
+      "swapGuard": {
+        "names": {
+          "light": {
+            "ground": "Castle lilac",
+            "surface": "Parchment",
+            "ink": "Toy ink",
+            "inkSoft": "Pencil",
+            "accent": "Shield blue",
+            "pop": "Torch orange"
+          },
+          "dark": {
+            "ground": "Castle night",
+            "surface": "Battlement",
+            "ink": "Moonlight",
+            "inkSoft": "Dusk lilac",
+            "accent": "Glow shield",
+            "pop": "Torch flame"
+          }
+        },
+        "light": {
+          "ground": "#CCC0F4",
+          "surface": "#FBF9FF",
+          "sunken": "#EAE4FC",
+          "ink": "#1D1B3A",
+          "inkSoft": "#43406A",
+          "outline": "#1D1B3A",
+          "shadow": "#1D1B3A",
+          "accent": "#5C9DFF",
+          "onAccent": "#1D1B3A",
+          "pop": "#FFA94D",
+          "onPop": "#1D1B3A"
+        },
+        "dark": {
+          "ground": "#2A1838",
+          "surface": "#3D2552",
+          "sunken": "#331E45",
+          "ink": "#FBF2FF",
+          "inkSoft": "#D7BCEB",
+          "outline": "#F2E2FF",
+          "shadow": "#10061A",
+          "accent": "#7FB4FF",
+          "onAccent": "#2A1838",
+          "pop": "#FFB463",
+          "onPop": "#2A1838"
+        },
+        "colorTokens": {
+          "standard": {
+            "light": {
+              "background": "#CCC0F4",
+              "surface": "#FBF9FF",
+              "sunken": "#EAE4FC",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#5C9DFF",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#FFA94D",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2A1838",
+              "surface": "#3D2552",
+              "sunken": "#331E45",
+              "text": "#FBF2FF",
+              "textMuted": "#D7BCEB",
+              "primary": "#7FB4FF",
+              "onPrimary": "#2A1838",
+              "border": "#F2E2FF",
+              "danger": "#FF8593",
+              "icon": "#FBF2FF",
+              "starOn": "#FFD23F",
+              "starOff": "#D7BCEB",
+              "pop": "#FFB463",
+              "onPop": "#2A1838",
+              "shadow": "#10061A",
+              "focus": "#FF8AD8"
+            }
+          },
+          "colorBlind": {
+            "light": {
+              "background": "#CCC0F4",
+              "surface": "#FBF9FF",
+              "sunken": "#EAE4FC",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#5C9DFF",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#FFA94D",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2A1838",
+              "surface": "#3D2552",
+              "sunken": "#331E45",
+              "text": "#FBF2FF",
+              "textMuted": "#D7BCEB",
+              "primary": "#7FB4FF",
+              "onPrimary": "#2A1838",
+              "border": "#F2E2FF",
+              "danger": "#FF8593",
+              "icon": "#FBF2FF",
+              "starOn": "#FFD23F",
+              "starOff": "#D7BCEB",
+              "pop": "#FFB463",
+              "onPop": "#2A1838",
+              "shadow": "#10061A",
+              "focus": "#FF8AD8"
+            }
+          }
+        }
       }
     },
     "shell": {
@@ -2711,6 +2835,20 @@
         {
           "role": "kl",
           "d": "M26.5 19.5l6 6M32.5 19.5l-6 6M18 30.2h12"
+        }
+      ],
+      "swapGuard": [
+        {
+          "role": "w",
+          "d": "M24 5L39 10.5V23.5C39 32.5 32.8 39.4 24 43C15.2 39.4 9 32.5 9 23.5V10.5Z"
+        },
+        {
+          "role": "p",
+          "d": "M24 5V43C15.2 39.4 9 32.5 9 23.5V10.5Z"
+        },
+        {
+          "role": "kl",
+          "d": "M15.5 19H31.5M27.5 15L31.5 19L27.5 23M32.5 29.5H16.5M20.5 25.5L16.5 29.5L20.5 33.5"
         }
       ]
     }

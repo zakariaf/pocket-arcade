@@ -63,6 +63,14 @@
         "progressMidParams": { "wrecked": 4, "total": 6 },
         "progressFullParams": { "wrecked": 6, "total": 6 },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "swapGuard": {
+        "gameStats": ["1,146", "2,318", "87"],
+        "progressMid": "2 / 5",
+        "progressFull": "5 / 5",
+        "progressMidParams": { "defeated": 2, "total": 5 },
+        "progressFullParams": { "defeated": 5, "total": 5 },
+        "loseReasonId": "swap-guard.lose.hit"
       }
     }
   },
@@ -269,6 +277,11 @@
         "robots-scrapped": 947,
         "scrap-shoved": 1562,
         "biggest-crash": 4
+      },
+      "swapGuard": {
+        "enemies-defeated": 1146,
+        "swaps-made": 2318,
+        "double-hits": 87
       }
     },
     "hints": {
@@ -323,6 +336,11 @@
           "progressMid": { "wrecked": 4, "total": 6 },
           "progressFull": { "wrecked": 6, "total": 6 },
           "loseReasonId": "scrap-shove.lose.caught"
+        },
+        "swapGuard": {
+          "progressMid": { "defeated": 2, "total": 5 },
+          "progressFull": { "defeated": 5, "total": 5 },
+          "loseReasonId": "swap-guard.lose.hit"
         }
       }
     }

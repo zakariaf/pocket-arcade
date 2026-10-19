@@ -1,9 +1,9 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-09-30",
+ "rendered": "2026-10-19",
  "renderer": {
-  "chrome": "154.0.8037.58",
+  "chrome": "155.0.8059.84",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "ebe519d139db316118051e02fdaa5e4bace1a373c5bc4344cbdf13e8646e48ce",
-  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
-  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
+  "design": "134b99067e40ca290f6e6bbe7a6db264cf4c478c64838210fee1788ab05a229f",
+  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
+  "frames": "142e43c3b8c5389b4eb54e956f3b5648e84d23d2939fd13c77a4adda699f4c55",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -798,8 +798,8 @@
    "bytes": 12390
   },
   "dark-fa/s7-result-win--score.png": {
-   "sha256": "f073924f546dec0a1a751ac56dd3d4ba1923d8a309365c197158c4c80ab93fb8",
-   "bytes": 142599,
+   "sha256": "66b394d2086abc1df1666cf3663fa6fd68948034092ca87f4ece9139648d4325",
+   "bytes": 142603,
    "width": 1206,
    "height": 2622
   },
@@ -808,8 +808,8 @@
    "bytes": 12064
   },
   "dark-fa/s7-result-win.png": {
-   "sha256": "33667003d4e01d05a56a2c1ff10b682a5808c2db63d51560f973c9c58771efb1",
-   "bytes": 139876,
+   "sha256": "f560de743b6df7ff7914fb5f74796ca00f019ffa1128cec4ee9be6fa7db1f796",
+   "bytes": 139896,
    "width": 1206,
    "height": 2622
   },
@@ -1558,8 +1558,8 @@
    "bytes": 12397
   },
   "light-fa/s7-result-win--score.png": {
-   "sha256": "98c0745d16d26135d0e5abbb96f235a01d35d38e5af9434f46d9ffaa9d222d07",
-   "bytes": 138696,
+   "sha256": "ea08b91f86c72114015dd5b50afe9112dffd72f4d2b17bb3988ca788174d20aa",
+   "bytes": 138699,
    "width": 1206,
    "height": 2622
   },
@@ -1568,8 +1568,8 @@
    "bytes": 12071
   },
   "light-fa/s7-result-win.png": {
-   "sha256": "6db4c8c41bc5c20e021e16fa8df1120a0f09f738e488ae21d32d7474ce4aab04",
-   "bytes": 136298,
+   "sha256": "67e188cd78dc9102a1c9d252de3b27ca9879b628cdd4375116944e68da4a9428",
+   "bytes": 136302,
    "width": 1206,
    "height": 2622
   },
@@ -1802,6 +1802,26 @@
    "variants": [],
    "what": "Every layout.json and the manifest were re-rendered with the round-4 renderer and map: each text run records its own tilt, the S14 progress-restored layout records the banner mask of Home under the dialog, the S12 state cards no longer pair their stand-in heading with premium.top-bar.title, and the map metadata gained the card surface of home.daily-card (L7, no pixel change) and the hint key's hasHints condition. Apart from the changes above, all 124 other PNGs are byte-identical.",
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
+  },
+  {
+   "id": "G-swap-guard",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves",
+   "why": "spec 13: its design pass (E25-T01), drafted on 2026-10-19 with the proposed defaults; the owner approves it with the lead’s combined message"
+  },
+  {
+   "id": "R-chrome-155",
+   "date": "2026-10-19",
+   "frames": [
+    "s7-result-win"
+   ],
+   "variants": [
+    "s7-result-win--score"
+   ],
+   "what": "Re-rendered with Chrome 155.0.8059.84 (was 154.0.8037.58) when the Swap Guard design pass re-rendered the set: in fa (light and dark, base and score variant) 156 pixels of the Premium nudge line at the bottom of the win card moved (y 826 to 828 pt, a sub-pixel shift of the Persian text and its edge); no layout.json and no other PNG changed.",
+   "why": "A renderer change, not a design change: shoot-design --check had already flagged these four PNGs with the earlier design copy (G-swap-guard leaves every Line Siege frame as it was), and the crops of both renders look the same by eye."
   }
  ]
 }

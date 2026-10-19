@@ -201,6 +201,11 @@
       "robots-scrapped": 947,
       "scrap-shoved": 1562,
       "biggest-crash": 4
+    },
+    "swapGuard": {
+      "enemies-defeated": 1146,
+      "swaps-made": 2318,
+      "double-hits": 87
     }
   },
   "hints": {
@@ -273,6 +278,17 @@
           "total": 6
         },
         "loseReasonId": "scrap-shove.lose.caught"
+      },
+      "swapGuard": {
+        "progressMid": {
+          "defeated": 2,
+          "total": 5
+        },
+        "progressFull": {
+          "defeated": 5,
+          "total": 5
+        },
+        "loseReasonId": "swap-guard.lose.hit"
       }
     }
   }

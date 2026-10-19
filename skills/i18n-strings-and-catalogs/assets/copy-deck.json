@@ -1032,6 +1032,141 @@
           "ckb": "شاری ڕۆبۆتەکان"
         }
       ]
+    },
+    "swapGuard": {
+      "id": "swap-guard",
+      "modes": [
+        "levels",
+        "daily"
+      ],
+      "name": {
+        "en": "Swap Guard",
+        "de": "Swap Guard",
+        "fa": "Swap Guard",
+        "ckb": "Swap Guard"
+      },
+      "tagline": {
+        "en": "Swap places. Let them hit each other.",
+        "de": "Tausch die Plätze. Lass sie sich gegenseitig treffen.",
+        "fa": "جا عوض کنید تا دشمن‌ها به هم ضربه بزنند.",
+        "ckb": "شوێن بگۆڕەوە و با دوژمنەکان لە یەکتر بدەن."
+      },
+      "goal": {
+        "en": "Make every enemy get hit, without being hit yourself.",
+        "de": "Sorg dafür, dass jeder Gegner getroffen wird, ohne selbst getroffen zu werden.",
+        "fa": "کاری کنید همهٔ دشمن‌ها ضربه بخورند، بی‌آنکه خودتان ضربه بخورید.",
+        "ckb": "وا بکە هەموو دوژمنەکان زەبر بخۆن، بێ ئەوەی خۆت زەبر بخۆیت."
+      },
+      "progress": {
+        "en": "Enemies {defeated, number} / {total, number}",
+        "de": "Gegner {defeated, number} / {total, number}",
+        "fa": "دشمن {defeated, number} / {total, number}",
+        "ckb": "دوژمن {defeated, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "All enemies down!",
+        "de": "Alle Gegner besiegt!",
+        "fa": "همهٔ دشمن‌ها از پا درآمدند!",
+        "ckb": "هەموو دوژمنەکان کەوتن!"
+      },
+      "loseReason": {
+        "en": "A strike hit you",
+        "de": "Ein Schlag hat dich getroffen",
+        "fa": "ضربه‌ای به شما خورد",
+        "ckb": "زەبرێک بەر تۆ کەوت"
+      },
+      "stats": {
+        "enemiesDefeated": {
+          "en": "Enemies defeated",
+          "de": "Besiegte Gegner",
+          "fa": "دشمن‌های شکست‌خورده",
+          "ckb": "دوژمنە بەزێنراوەکان"
+        },
+        "swapsMade": {
+          "en": "Swaps made",
+          "de": "Getauschte Plätze",
+          "fa": "جابه‌جایی‌های انجام‌شده",
+          "ckb": "جێگۆڕکێی کراو"
+        },
+        "doubleHits": {
+          "en": "Double hits",
+          "de": "Doppeltreffer",
+          "fa": "ضربه‌های دوتایی",
+          "ckb": "زەبری دووانە"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Shaded squares show where each enemy will strike.",
+          "de": "Markierte Felder zeigen, wo jeder Gegner zuschlägt.",
+          "fa": "خانه‌های سایه‌دار نشان می‌دهند هر دشمن کجا ضربه می‌زند.",
+          "ckb": "خانە سێبەرکراوەکان نیشان دەدەن هەر دوژمنێک لە کوێ زەبر دەدات."
+        },
+        {
+          "en": "Tap a square next to you to swap places with what stands there.",
+          "de": "Tipp auf ein Feld neben dir, um mit dem, was dort steht, die Plätze zu tauschen.",
+          "fa": "روی خانه‌ای کنارتان بزنید تا با هر چه آنجاست جا عوض کنید.",
+          "ckb": "دەست لە خانەیەکی تەنیشتت بدە بۆ ئەوەی شوێن لەگەڵ ئەوەی لەوێیە بگۆڕیتەوە."
+        },
+        {
+          "en": "Then every strike lands. Anyone on a shaded square is hit.",
+          "de": "Dann schlagen alle zu. Wer auf einem markierten Feld steht, wird getroffen.",
+          "fa": "بعد همهٔ ضربه‌ها فرود می‌آیند. هر کس روی خانهٔ سایه‌دار باشد ضربه می‌خورد.",
+          "ckb": "دواتر هەموو زەبرەکان دەکەون. هەر کەسێک لەسەر خانەیەکی سێبەرکراو بێت زەبر دەخوات."
+        },
+        {
+          "en": "Swap enemies into strikes, and never stop on one yourself.",
+          "de": "Tausch Gegner in die Schläge und bleib selbst nie auf einem markierten Feld.",
+          "fa": "دشمن‌ها را به جای ضربه‌ها بفرستید و خودتان هرگز روی خانهٔ سایه‌دار نمانید.",
+          "ckb": "دوژمنەکان بنێرە ناو زەبرەکان و خۆت هەرگیز لەسەر خانەی سێبەرکراو مەمێنە."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "A strike is coming for you. Tap the enemy next to you to swap!",
+          "de": "Ein Schlag kommt auf dich zu. Tipp auf den Gegner neben dir und tausch!",
+          "fa": "ضربه‌ای به سمت شما می‌آید. روی دشمن کنارتان بزنید و جا عوض کنید!",
+          "ckb": "زەبرێک بەرەو تۆ دێت. دەست لە دوژمنی تەنیشتت بدە و شوێن بگۆڕەوە!"
+        },
+        {
+          "en": "They hit each other! Now step behind the last enemy.",
+          "de": "Sie haben sich gegenseitig getroffen! Geh jetzt hinter den letzten Gegner.",
+          "fa": "آن‌ها به هم ضربه زدند! حالا پشت آخرین دشمن بروید.",
+          "ckb": "لە یەکتریان دا! ئێستا بڕۆ پشت دوایین دوژمن."
+        },
+        {
+          "en": "Swap with it. Now its strike points at you.",
+          "de": "Tausch mit ihm. Jetzt zielt sein Schlag auf dich.",
+          "fa": "با او جا عوض کنید. حالا ضربه‌اش به سمت شماست.",
+          "ckb": "شوێنی لەگەڵ بگۆڕەوە. ئێستا زەبرەکەی ڕووی لە تۆیە."
+        },
+        {
+          "en": "Swap back: it walks into its own strike!",
+          "de": "Tausch zurück: Er läuft in seinen eigenen Schlag!",
+          "fa": "دوباره جا عوض کنید تا به ضربهٔ خودش بخورد!",
+          "ckb": "دووبارە شوێن بگۆڕەوە: دەچێتە ناو زەبرەکەی خۆیەوە!"
+        }
+      ],
+      "packs": [
+        {
+          "en": "Gatehouse",
+          "de": "Torhaus",
+          "fa": "دروازهٔ قلعه",
+          "ckb": "دەروازەی قەڵا"
+        },
+        {
+          "en": "Courtyard",
+          "de": "Burghof",
+          "fa": "حیاط قلعه",
+          "ckb": "حەوشەی قەڵا"
+        },
+        {
+          "en": "Throne room",
+          "de": "Thronsaal",
+          "fa": "تالار تخت",
+          "ckb": "هۆڵی تەخت"
+        }
+      ]
     }
   },
   "licenceEntries": [
