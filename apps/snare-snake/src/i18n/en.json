@@ -4,6 +4,7 @@
   "snare-snake.how-to-play.step-2": "Critters freeze when the snake is next to them.",
   "snare-snake.how-to-play.step-3": "Bump into your own body to close a loop.",
   "snare-snake.how-to-play.step-4": "Critters in or next to the loop are caught, and the loop uses up its segments.",
+  "snare-snake.lose.out-of-moves": "You ran out of moves",
   "snare-snake.lose.tangled": "The snake got tangled",
   "snare-snake.name": "Snare Snake",
   "snare-snake.pack-name.1": "Garden patch",
