@@ -27,9 +27,9 @@ export type DifficultyKnobs = {
  */
 const LEVEL_ROWS = [
   { goal: 6, minRank: 9, openingRows: 2, preparedRows: 2, riseEvery: 8 },
-  { goal: 8, minRank: 7, openingRows: 2, preparedRows: 1, riseEvery: 7 },
-  { goal: 8, minRank: 5, openingRows: 2, preparedRows: 1, riseEvery: 6 },
-  { goal: 8, minRank: 2, openingRows: 2, preparedRows: 1, riseEvery: 5 },
+  { goal: 8, minRank: 5, openingRows: 2, preparedRows: 1, riseEvery: 5 },
+  { goal: 8, minRank: 3, openingRows: 2, preparedRows: 1, riseEvery: 5 },
+  { goal: 8, minRank: 2, openingRows: 2, preparedRows: 1, riseEvery: 4 },
 ] as const satisfies readonly DifficultyKnobs[];
 
 /** The endless run (difficulty 100, ENDLESS_DIFFICULTY): the full deck, rising ever faster. */

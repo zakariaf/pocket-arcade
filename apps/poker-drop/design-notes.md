@@ -172,14 +172,14 @@ no music, so S6 and S11 drop the Music rows and parity uses the `--no-music` ref
 The tuning file has four rows on the 0..100 scale (rows picked with `rowFor`: 0-24, 25-49, 50-74,
 75-99) and the endless row at 100. Each row sets the deck (lowest rank), the prepared opening (how
 many bottom rows are dealt, how many are prepared two pairs), the rising row's interval, the hand
-goal and the points (E27-T07 tunes them with the sims):
+goal and the points, as E27-T07 tuned them with the sims (greedy wins 1.0, 0.89, 0.74, 0.5):
 
 | Row         | Deck                | Opening                     | Rises every                                   | Goal          | Intent                                    |
 | ----------- | ------------------- | --------------------------- | --------------------------------------------- | ------------- | ----------------------------------------- |
 | 0 (easiest) | 9 to ace (24 cards) | 2 rows dealt, both prepared | 8 drops                                       | 6 hands       | a warm-up a reasonable player always wins |
-| 1           | 7 to ace (32 cards) | 2 rows, 1 prepared          | 7 drops                                       | 8             | random play starts to lose                |
-| 2           | 5 to ace (40 cards) | 2 rows, 1 prepared          | 6 drops                                       | 8             | needs planning                            |
-| 3 (hardest) | 2 to ace (52 cards) | 2 rows, 1 prepared          | 5 drops                                       | 8             | greedy play loses often                   |
+| 1           | 5 to ace (40 cards) | 2 rows, 1 prepared          | 5 drops                                       | 8             | random play starts to lose                |
+| 2           | 3 to ace (48 cards) | 2 rows, 1 prepared          | 5 drops                                       | 8             | needs planning                            |
+| 3 (hardest) | 2 to ace (52 cards) | 2 rows, 1 prepared          | 4 drops                                       | 8             | greedy play loses often                   |
 | endless     | 2 to ace            | 2 rows, none prepared       | 10, then 1 sooner every 40 drops (at least 3) | 0 (never won) | lasts until the well fills                |
 
 Proposed bands: the greedy bot wins at least 90 % of the easiest row and 25 % to 60 % of the

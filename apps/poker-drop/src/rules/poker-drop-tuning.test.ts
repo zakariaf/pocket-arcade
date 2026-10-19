@@ -9,7 +9,7 @@ describe('knobsFor', () => {
     const minRanks = [0, 24, 25, 49, 50, 74, 75, 99].map(
       (difficulty) => knobsFor(difficulty).minRank,
     );
-    expect(minRanks).toStrictEqual([9, 9, 7, 7, 5, 5, 2, 2]);
+    expect(minRanks).toStrictEqual([9, 9, 5, 5, 3, 3, 2, 2]);
   });
 
   it('returns the endless row at difficulty 100: goal 0, never won', () => {
