@@ -3,7 +3,15 @@ import fc from 'fast-check';
 
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
-import { create, drawLayout, drawPegs, drawWitness, layoutFor, pickDistinct } from './create.ts';
+import {
+  create,
+  drawLayout,
+  drawPegs,
+  drawWitness,
+  layoutFor,
+  pickCups,
+  pickDistinct,
+} from './create.ts';
 import { areCupsFull, cupColumns } from './cups.ts';
 import { dropPath } from './drop-path.ts';
 import { knobsFor } from './toggle-drop-tuning.ts';
@@ -109,6 +117,41 @@ describe('create (simulate-then-replay: a tap drops a ball, its fall is simulate
   });
 });
 
+describe('create, the twist', () => {
+  it('keeps one cup out of reach of every first drop: winning takes a flipped switch (the twist)', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        const state = create(seed, difficulty);
+        const reachable = new Set(
+          Array.from({ length: state.cols }, (_, col) => dropPath(state, col).landing),
+        );
+        expect(cupColumns(state).filter((col) => !reachable.has(col)).length).toBeGreaterThan(0);
+      }),
+    );
+  });
+});
+
+describe('pickCups', () => {
+  const rng = seedRng(3);
+
+  it('keeps only the opening cup when one cup is asked for', () => {
+    expect(pickCups(rng, { landings: [2, 4, 1], reachable: new Set([2]) }, 1).cups).toStrictEqual([
+      2,
+    ]);
+  });
+
+  it('puts the second cup where no first drop lands', () => {
+    const pick = pickCups(rng, { landings: [2, 4, 1], reachable: new Set([2, 1]) }, 2);
+    expect(pick.cups).toStrictEqual([2, 4]);
+  });
+
+  it('refuses a line whose later landings are all reachable by a first drop', () => {
+    expect(
+      pickCups(rng, { landings: [2, 4, 1], reachable: new Set([1, 2, 4]) }, 2).cups,
+    ).toBeNull();
+  });
+});
+
 describe('pickDistinct', () => {
   it('draws distinct values of the pool, the same for the same seed', () => {
     const picked = pickDistinct(seedRng(4), [3, 5, 7, 9], 3);
@@ -163,4 +206,4 @@ describe('drawLayout', () => {
   });
 });
 
-const GOLDEN_SEED_1_BOARD = ['.<<..', '..<<.', '..<>.', '11___'].join('\n');
+const GOLDEN_SEED_1_BOARD = ['>..<.', '<>...', '..<.>', '_1_1_'].join('\n');

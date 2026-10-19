@@ -2,41 +2,41 @@
 
 exports[`the rules golden of toggle-drop keeps the events and the final board of seed 1 at difficulty 0 along a fixed line 1`] = `
 "seed 1, difficulty 0, line 1 4 0 3 2 2
-.<<..
-..<<.
-..<>.
-0/1 0/1 _ _ _
+>..<.
+<>...
+..<.>
+_ 0/1 _ 0/1 _
 balls left 6, drops 0
 drop 1
    0 ms ball-dropped col 1
- 167 ms switch-flipped col 1 row 0 now >
- 333 ms ball-passed col 0 row 1
- 500 ms ball-passed col 0 row 2
- 667 ms ball-landed col 0 cup
- 667 ms cup-filled col 0
+ 167 ms ball-passed col 1 row 0
+ 333 ms switch-flipped col 1 row 1 now <
+ 500 ms switch-flipped col 2 row 2 now >
+ 667 ms ball-landed col 1 cup
+ 667 ms cup-filled col 1
 drop 4
    0 ms ball-dropped col 4
  167 ms ball-passed col 4 row 0
  333 ms ball-passed col 4 row 1
- 500 ms ball-passed col 4 row 2
+ 500 ms switch-flipped col 4 row 2 now <
  667 ms ball-landed col 4 gutter
 drop 0
    0 ms ball-dropped col 0
- 167 ms ball-passed col 0 row 0
- 333 ms ball-passed col 0 row 1
+ 167 ms switch-flipped col 0 row 0 now <
+ 333 ms switch-flipped col 1 row 1 now >
  500 ms ball-passed col 0 row 2
- 667 ms ball-landed col 0 gutter
+ 667 ms ball-landed col 0 gutter redirected
 drop 3
    0 ms ball-dropped col 3
- 167 ms ball-passed col 3 row 0
- 333 ms switch-flipped col 3 row 1 now >
- 500 ms switch-flipped col 2 row 2 now >
- 667 ms ball-landed col 1 cup
- 667 ms cup-filled col 1
-.><..
-..<>.
-..>>.
-1/1 1/1 _ _ _
+ 167 ms switch-flipped col 3 row 0 now >
+ 333 ms ball-passed col 2 row 1
+ 500 ms switch-flipped col 2 row 2 now <
+ 667 ms ball-landed col 3 cup redirected
+ 667 ms cup-filled col 3
+<..>.
+<>...
+..<.<
+_ 1/1 _ 1/1 _
 balls left 2, drops 4
 outcome won 2"
 `;

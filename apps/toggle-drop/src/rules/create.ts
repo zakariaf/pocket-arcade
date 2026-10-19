@@ -71,32 +71,57 @@ export function drawWitness(
   return { values: landings, rng: state };
 }
 
+/** The cups a winning line picks (null: the line offers too few) and the advanced RNG. */
+type CupPick = { readonly cups: readonly number[] | null; readonly rng: RngState };
+
 /**
- * One seeded layout: pegs, a winning line of `witnessDrops` drops, and cups where that line lands.
- * The first drop's landing is always a cup (an early payoff); the other cups are drawn among the
- * line's other landings, and each cup needs exactly the balls of the line that land in it, so the
- * line wins the board. null when the line lands in fewer columns than the board has cups.
+ * The cups among a winning line's landings: the first drop's landing (an early payoff), then one
+ * landing that no first drop reaches (the twist: only a switch an earlier ball flipped sends a ball
+ * there), then the rest drawn among the line's other landings.
  */
-export function drawLayout(rng: RngState, knobs: DifficultyKnobs): LayoutDraw {
-  const drawn = drawPegs(rng, knobs);
-  const witness = drawWitness(drawn.rng, { ...knobs, pegs: drawn.pegs }, knobs.witnessDrops);
-  const opening = witness.values.slice(0, 1);
-  const others = [...new Set(witness.values.slice(1))]
+export function pickCups(
+  rng: RngState,
+  line: { readonly landings: readonly number[]; readonly reachable: ReadonlySet<number> },
+  count: number,
+): CupPick {
+  const opening = line.landings.slice(0, 1);
+  if (count <= 1) return { cups: opening, rng };
+  const others = [...new Set(line.landings.slice(1))]
     .filter((col) => !opening.includes(col))
     .sort((a, b) => a - b);
-  if (others.length < knobs.cups - 1) return { layout: null, rng: witness.rng };
-  const picked = pickDistinct(witness.rng, others, knobs.cups - 1);
-  const cups = new Set([...opening, ...picked.values]);
-  const needs = Array.from({ length: knobs.cols }, (_, col) =>
-    cups.has(col) ? witness.values.filter((landing) => landing === col).length : 0,
-  );
-  return { layout: { pegs: drawn.pegs, needs }, rng: picked.rng };
+  const flipOnly = others.filter((col) => !line.reachable.has(col));
+  if (flipOnly.length === 0 || others.length < count - 1) return { cups: null, rng };
+  const twist = pickDistinct(rng, flipOnly, 1);
+  const rest = others.filter((col) => !twist.values.includes(col));
+  const picked = pickDistinct(twist.rng, rest, count - 2);
+  return { cups: [...opening, ...twist.values, ...picked.values], rng: picked.rng };
 }
 
 /**
- * The seeded layout of a board: up to `layoutAttempts` draws until one gives every cup a landing;
- * after that a draw keeps only the opening cup, which always succeeds (never reached by the tuned
- * rows, whose lines land in enough columns long before).
+ * One seeded layout: pegs, a winning line of `witnessDrops` drops, and cups where that line lands
+ * (pickCups). Each cup needs exactly the balls of the line that land in it, so the line wins the
+ * board. null when the line lands in too few columns, or never where a first drop cannot reach.
+ */
+export function drawLayout(rng: RngState, knobs: DifficultyKnobs): LayoutDraw {
+  const drawn = drawPegs(rng, knobs);
+  const board = { ...knobs, pegs: drawn.pegs };
+  const witness = drawWitness(drawn.rng, board, knobs.witnessDrops);
+  const reachable = new Set(
+    Array.from({ length: knobs.cols }, (_, col) => dropPath(board, col).landing),
+  );
+  const pick = pickCups(witness.rng, { landings: witness.values, reachable }, knobs.cups);
+  if (pick.cups === null) return { layout: null, rng: pick.rng };
+  const cups = new Set(pick.cups);
+  const needs = Array.from({ length: knobs.cols }, (_, col) =>
+    cups.has(col) ? witness.values.filter((landing) => landing === col).length : 0,
+  );
+  return { layout: { pegs: drawn.pegs, needs }, rng: pick.rng };
+}
+
+/**
+ * The seeded layout of a board: up to `layoutAttempts` draws until one places every cup; after
+ * that a draw keeps only the opening cup, which always succeeds (never reached by the tuned rows,
+ * whose lines place their cups long before).
  */
 export function layoutFor(seed: number, knobs: DifficultyKnobs): Layout {
   let rng = seedRng(seed);
@@ -111,7 +136,8 @@ export function layoutFor(seed: number, knobs: DifficultyKnobs): Layout {
 /**
  * Start state from (seed, difficulty): the same pair gives the same board on every phone. The
  * board is built around a hidden winning line (its cups need exactly the balls that line lands
- * in them), so every board can be won, and the player gets that line's balls plus spare ones.
+ * in them), so every board can be won; one cup is out of reach of every first drop, so winning
+ * always takes a switch an earlier ball flipped; the player gets the line's balls plus spare ones.
  */
 export function create(seed: number, difficulty: number): ToggleDropState {
   const knobs = knobsFor(difficulty);

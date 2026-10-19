@@ -38,7 +38,7 @@ const LEVEL_ROWS = [
 
 export const TUNING = {
   /** Layouts create() may draw before it keeps the last one (each draw is seeded). */
-  layoutAttempts: 40,
+  layoutAttempts: 200,
   /** Per-difficulty knobs (the table above). */
   levelRows: LEVEL_ROWS,
 } as const;
