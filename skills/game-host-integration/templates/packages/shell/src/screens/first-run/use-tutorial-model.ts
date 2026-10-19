@@ -20,7 +20,6 @@ import { tutorialCoachOf } from './tutorial-coach.ts';
 
 import type { TutorialCoach } from './tutorial-coach.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { BoardHostProps } from '@e07/shell/game-host/game-host.ts';
 import type { SessionView } from '@e07/shell/game-host/session-view.ts';
 import type { GameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
@@ -38,8 +37,6 @@ export type TutorialModel = {
   readonly welcomeText: string | null;
   /** The step's sentence, "Tap to continue" while paused, "Nice! ..." once the script is over. */
   readonly coachText: string;
-  /** The cells the pointer names (its ends); the board host marks what coachPointer fills. */
-  readonly coachTargets: readonly BoardTarget[];
   /**
    * The step's pointer while the stage is 'step', else null. The board host resolves it through
    * the game (coachPointerOf): a drag marks the slot and every cell the block fills, and the
@@ -142,7 +139,6 @@ export function useTutorialModel(): TutorialModel {
     welcomeText:
       isFirstStep && nudge.nudgeText === null ? t('tutorial.welcome', { gameName }) : null,
     coachText,
-    coachTargets: coach.targets,
     ...nudge,
     coachPointer: coach.pointer,
     continueKey:

@@ -4844,29 +4844,29 @@
         ]
       },
       "templates/packages/shell/src/game-host/board-host-props.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-host-props.ts",
-            "sha256": "5475827b69eef9675dae944f7bb5954bcadb07037ade7f033ce78f04949ed33f"
+            "sha256": "35bbad3e82c2e6eb3b2979d4476629375d0ee615ecd757e92fa4dfde4dde85cb"
           }
         ]
       },
       "templates/packages/shell/src/game-host/coach-pointer.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/coach-pointer.test.ts",
-            "sha256": "8dc8b7481556138e1e95fd809cdde07b29cdeb32c8a0a41e753ca3d623ebfda3"
+            "sha256": "b4741f0c847619f2969bc00c33f5b4c9795b11270e687fd29cbe398eccf26d6a"
           }
         ]
       },
       "templates/packages/shell/src/game-host/coach-pointer.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/coach-pointer.ts",
-            "sha256": "30b121f8a09eb1196791e8b115f5987c292231f49fc87b6eb19805b3253bdccf"
+            "sha256": "97cc7ea3ef058401949225e25e2832c4a8ea1af04000eddf71aac91261c16608"
           }
         ]
       },
@@ -4880,11 +4880,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/create-game-board-host.tsx": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-game-board-host.tsx",
-            "sha256": "caf60bf9a8f9914bd644693292465c5ab25e415c29f10757cb02f5ab66bcc2fc"
+            "sha256": "0e4299249005066620a94465b3d35cd72fdc5b3ece72c44dc8b4fd599f7fc83b"
           }
         ]
       },
@@ -5360,38 +5360,38 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-coach.test.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-coach.test.ts",
-            "sha256": "6861b3883cfdf25ff050e494903540c27e1ca03aeeeeccbcd7662fd94fb6911c"
+            "sha256": "eb277d75f7a4aecd696dfb531fa156257fce5476349af8865e11f44daf88b2d6"
           }
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-coach.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-coach.ts",
-            "sha256": "fc4de9532798c7bf56c7e6567f00b83732ef08425cd986f758814bc70e70a050"
+            "sha256": "fd508eced4865dbbbc4b5b169a09bcaee2449ac79f9f465b1c6db26266b86f70"
           }
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-view.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
-            "sha256": "40c1bfa3bb63e226800e51b40717ff59bc48e7ad53c3e8df0afbad67b9db66cb"
+            "sha256": "c7e27cda1e9e95888e7b2bc7abfd44f238c173d7d5561bd66b780876ad47c21b"
           }
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-view.tsx": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.tsx",
-            "sha256": "8ea3c8618701490e2626d9442764421f46c7ab08f90e033384d60fcadfb14464"
+            "sha256": "ff96fca69a8dd3be0647e9ba2f76c49a14877ad41204e15cd4f46f0eb2ddfa5c"
           }
         ]
       },
@@ -5405,11 +5405,11 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
-            "sha256": "198aca1ee830a0d7a0b45f0981c1002dd1f6d256f83eeaff55b62ff0759af533"
+            "sha256": "7fb15d891f6678e484b29f9da175cc5b03707121fe99d21ef0baad0c5f1ffd50"
           }
         ]
       },

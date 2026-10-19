@@ -67,7 +67,7 @@ describe('coachPointerOf', () => {
 describe('boardCoachOf', () => {
   /** What a board host shows for its screen's pointer (the Game screen leaves it out). */
   function hostCoach(coachPointer?: TutorialPointer | null) {
-    return boardCoachOf(COLUMN_GAME, GAP_AT_1, coachPointer === undefined ? {} : { coachPointer });
+    return boardCoachOf(COLUMN_GAME, GAP_AT_1, coachPointer);
   }
 
   it("resolves a board host's pointer, and shows none when its screen names none", () => {

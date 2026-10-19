@@ -41,7 +41,6 @@ export function TutorialView({ model }: TutorialViewProps): ReactNode {
         {BoardHost === null ? null : (
           <BoardHost
             testID="game.board-canvas"
-            coachTargets={model.coachTargets}
             coachPointer={model.coachPointer}
             coachReplay={model.coachReplay}
           />
