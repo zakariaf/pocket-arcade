@@ -47,10 +47,10 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
   it('lays out one 8 x 8 floor with the player, all three robot kinds and scrap (spec 13: one grid size)', () => {
     const state = create(7, 99);
     expect([state.cols, state.rows]).toStrictEqual([8, 8]);
-    expect(kindCounts(state)).toStrictEqual([7, 2, 2]);
+    expect(kindCounts(state)).toStrictEqual([7, 2, 3]);
     expect(state.heaps).toHaveLength(4);
     expect(state).toMatchObject({
-      robotsTotal: 11,
+      robotsTotal: 12,
       caughtBy: null,
       rescue: null,
       hasContinued: false,
@@ -63,7 +63,7 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
       [4, 0, 1],
       [5, 1, 1],
       [6, 1, 2],
-      [7, 2, 2],
+      [7, 2, 3],
     ]);
   });
 

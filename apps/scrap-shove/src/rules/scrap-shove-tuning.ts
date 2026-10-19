@@ -28,7 +28,7 @@ const LEVEL_ROWS = [
   { normal: 4, fast: 0, heavy: 1, heaps: 3 },
   { normal: 5, fast: 1, heavy: 1, heaps: 3 },
   { normal: 6, fast: 1, heavy: 2, heaps: 4 },
-  { normal: 7, fast: 2, heavy: 2, heaps: 4 },
+  { normal: 7, fast: 2, heavy: 3, heaps: 4 },
 ] as const satisfies readonly DifficultyKnobs[];
 
 export const TUNING = {
