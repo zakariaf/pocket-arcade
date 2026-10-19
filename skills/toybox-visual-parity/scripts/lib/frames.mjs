@@ -5,7 +5,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 
 import { fail } from '../check-lib.mjs';
-import { DEFAULTS, readJson } from './paths.mjs';
+import { DEFAULTS, readJson, tokensFileOf } from './paths.mjs';
 
 export const THEMES = ['light', 'dark'];
 export const LANGS = ['en', 'de', 'fa', 'ckb'];
@@ -96,7 +96,33 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+
+/**
+ * The design games of a Toybox token file: its color.games, in the file's order (lineSiege,
+ * flockTilt, scrapShove, then every game a later design pass added). Each must carry its logo
+ * layers (logos.games.<game>), because its references draw the logo; a file without them, or
+ * without games, stops with exit 2.
+ */
+export function readDesignGames(path) {
+  const tokens = readJson(path, 'Toybox token file');
+  const games = Object.keys(tokens?.color?.games ?? {});
+  if (games.length === 0) fail(`the token file ${path} has no design games (color.games is empty)`, 'Restore the shared toybox-tokens.json (refresh-shared.mjs, then sync-shared.mjs).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) {
+      fail(`the token file ${path}: design game ${game} has no logo layers (logos.games.${game})`, "Add the game's logo layers to the Toybox token file with its colours (its design pass), then refresh-shared.mjs and sync-shared.mjs.");
+    }
+  }
+  return games;
+}
+
+let designGamesRead = null;
+
+/** The design games (readDesignGames of the token file), read once per run inside run(). */
+export function designGames() {
+  designGamesRead ??= readDesignGames(tokensFileOf());
+  return designGamesRead;
+}
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).
@@ -317,7 +343,7 @@ function checkGameFixture(manifest) {
   if (!f || !g) return;
   const same = [['currentLevel', 'level'], ['score', 'score'], ['movesCount', 'movesCount'], ['par', 'par']];
   for (const [a, b] of same) if (f[a] !== g[b]) fail(`frames.json fixture.${a} (${f[a]}) differs from fixtureSave.gameFrame.${b} (${g[b]})`, 'Keep the two descriptions of the design player equal.');
-  for (const game of DESIGN_GAMES) {
+  for (const game of designGames()) {
     const d = f.games?.[game];
     const s = g.games?.[game];
     if (!d || !s) fail(`frames.json has no game-frame fixture for ${game}`, 'Give fixture.games and fixtureSave.gameFrame.games every design game.');
@@ -365,7 +391,7 @@ export function readGameFacts(path, { app = null, game = null } = {}) {
     const entry = json.games[id];
     const at = `${path} games.${id}`;
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) fail(`${at}: the key must be the app id (kebab-case, as in apps/<id>)`, 'Use the app folder name.');
-    if (!entry || !DESIGN_GAMES.includes(entry.designGame)) fail(`${at}.designGame must be one of ${DESIGN_GAMES.join(', ')}`, 'Name the design game whose references this app is compared with.');
+    if (!entry || !designGames().includes(entry.designGame)) fail(`${at}.designGame must be one of ${designGames().join(', ')}`, 'Name the design game whose references this app is compared with.');
     const extra = Object.keys(entry).filter((k) => k !== 'designGame' && !FACT_VALUES[k]);
     if (extra.length) fail(`${at} has unknown fields ${extra.join(', ')}`, `An entry holds designGame, ${Object.keys(FACT_VALUES).join(' and ')}.`);
     const { designGame: _designGame, ...facts } = entry;

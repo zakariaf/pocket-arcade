@@ -18,9 +18,14 @@ const PARITY_GAME_FACTS = {
   hasHints: false,
 } as const;
 
+/** line-siege -> lineSiege: a design game's id in the Toybox design is its game id in camelCase. */
+function designGameOf(gameId: string): string {
+  return gameId.replace(/-([a-z0-9])/g, (_dash, letter: string) => letter.toUpperCase());
+}
+
 describe('the parity game facts of __GAME_ID__', () => {
-  it('names a design game whose references exist', () => {
-    expect(['lineSiege', 'flockTilt', 'scrapShove']).toContain(PARITY_GAME_FACTS.designGame);
+  it('names its own design game (spec 13: each game gets its own design pass)', () => {
+    expect(PARITY_GAME_FACTS.designGame).toBe(designGameOf(game.identity.id));
   });
 
   it('says whether the game has music exactly as its sound bank does', () => {
