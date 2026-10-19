@@ -158,17 +158,19 @@ The proposed difficulty curve, on the 0..100 scale with four tuning rows sampled
 | ------ | ------ | ---- | ----- | ----- |
 | 0-24   | 4      | 0    | 1     | 3     |
 | 25-49  | 5      | 1    | 1     | 3     |
-| 50-74  | 6      | 1    | 2     | 4     |
+| 50-74  | 7      | 1    | 2     | 4     |
 | 75-100 | 7      | 2    | 3     | 4     |
 
 The hardest row first had 2 heavy robots; with them the greedy win rate fell only 0.09 from the row
 before (0.32 to 0.23), so E20-T06 gave it a third (0.10). A third fast robot instead made it easier
-(0.34: fast robots crash sooner).
+(0.34: fast robots crash sooner). Once every floor was proven winnable (section 16), the third row
+won 0.39, only 0.09 below the second; a seventh normal robot brought it to 0.32 (three heaps
+instead of four barely moved it: 0.37).
 
 Bands (set from the sim runs in E20-T06, `status: proposed` until the owner's play-test): the
-greedy bot wins most of the easiest floors (0.66) and few of the hardest (0.10); random play wins
-none ("naive bots should lose"); random < greedy < lookahead by a clear step (0.00, 0.45, 0.77 on
-the second row); the greedy win rate falls with each row (0.66, 0.45, 0.32, 0.10).
+greedy bot wins most of the easiest floors (0.68) and few of the hardest (0.16); random play wins
+none ("naive bots should lose"); random < greedy < lookahead by a clear step (0.00, 0.48, 0.83 on
+the second row); the greedy win rate falls with each row (0.68, 0.48, 0.32, 0.16).
 
 The kill test (game-balance-and-bots rule 9), on the easiest floor:
 

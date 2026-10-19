@@ -14,7 +14,7 @@ describe('knobsFor', () => {
     const robots = [0, 24, 25, 49, 50, 74, 75, 99].map((difficulty) =>
       robotsOf(knobsFor(difficulty)),
     );
-    expect(robots).toStrictEqual([5, 5, 7, 7, 9, 9, 12, 12]);
+    expect(robots).toStrictEqual([5, 5, 7, 7, 10, 10, 12, 12]);
   });
 
   it('clamps difficulties outside the scale to the first and the last row', () => {

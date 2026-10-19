@@ -63,7 +63,7 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
     expect(counts).toStrictEqual([
       [4, 0, 1],
       [5, 1, 1],
-      [6, 1, 2],
+      [7, 1, 2],
       [7, 2, 3],
     ]);
   });
