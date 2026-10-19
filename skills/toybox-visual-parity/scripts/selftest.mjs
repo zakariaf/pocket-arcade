@@ -436,6 +436,34 @@ function prettierJson(value, indent = 0, prefix = 0) {
   console.log('ok   capture-app probes the board (probe=board), composes s6-pause--no-music--no-hints from the facts, and records the UDID, driver port and both launch nonces');
 }
 
+// The design games are read from the token file (color.games), never typed into a script: every game
+// there must have its logo layers (logos.games), and a token file whose game has none stops with
+// exit 2. The shipped token file gives the three painted games and every game a design pass added.
+{
+  const lib = pathToFileURL(join(HERE, 'lib', 'frames.mjs')).href;
+  const helper = pathToFileURL(join(HERE, 'check-lib.mjs')).href;
+  const call = (tokens) => spawnSync(process.execPath, ['--input-type=module', '-e', `const { run } = await import(${JSON.stringify(helper)}); const { designGames } = await import(${JSON.stringify(lib)}); await run(async () => { console.log('design games: ' + designGames(${tokens === null ? '' : JSON.stringify(tokens)}).join(', ')); });`], { encoding: 'utf8' });
+  const dir = join(FIXTURES, 'exit2', 'tokens-no-logo');
+  const bad = call(join(dir, 'toybox-tokens.json'));
+  const badOut = `${bad.stdout}${bad.stderr}`;
+  const want = readFileSync(join(dir, 'EXPECT.txt'), 'utf8').split('\n').filter(Boolean);
+  const missing = want.filter((line) => !badOut.includes(line));
+  if (bad.status !== 2 || missing.length) {
+    console.log(`FAIL tests/fixtures/exit2/tokens-no-logo [design-games] a token file whose game has no logo layers: exit ${bad.status} (want 2)${missing.length ? `, missing ${missing.map((m) => `"${m}"`).join(', ')}` : ''} Fix: Read the design games from color.games and refuse a game without logos.games layers.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  const good = call(null);
+  const shipped = JSON.parse(readFileSync(join(HERE, '..', 'assets', 'toybox-tokens.json'), 'utf8'));
+  const line = `design games: ${Object.keys(shipped.color.games).join(', ')}`;
+  if (good.status !== 0 || !`${good.stdout}`.includes(line) || !line.includes('lineSiege, flockTilt, scrapShove')) {
+    console.log(`FAIL assets/toybox-tokens.json [design-games] the shipped token file: exit ${good.status}, want "${line}" with lineSiege, flockTilt and scrapShove first Fix: Sync the shared token file (sync-shared.mjs) and read the design games from it.`);
+    console.log('RESULT: FAIL (1 problems)');
+    process.exit(1);
+  }
+  console.log(`ok   frames.mjs reads the design games from the token file (${line.slice('design games: '.length)}) and refuses one without logo layers (exit 2)`);
+}
+
 // The self-test itself takes the tooling folder both ways: --tooling <dir> and PARITY_TOOLING_DIR.
 // An empty folder makes each form stop before its first case with exit 2, naming that folder and
 // both install forms (so the folder reached the check, and nothing ran on missing packages).

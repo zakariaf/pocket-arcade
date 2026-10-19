@@ -12,15 +12,16 @@ import { __GAME_CAMEL__Game as game } from './index.ts';
 
 /** This game's entry of parity/game-facts.json. */
 const PARITY_GAME_FACTS = {
-  designGame: 'lineSiege',
+  designGame: '__GAME_CAMEL__',
   hasMusic: false,
   winLine: 'score',
   hasHints: false,
 } as const;
 
 describe('the parity game facts of __GAME_ID__', () => {
-  it('names a design game whose references exist', () => {
-    expect(['lineSiege', 'flockTilt', 'scrapShove']).toContain(PARITY_GAME_FACTS.designGame);
+  it('names its own design game, the one its design pass added (spec 13)', () => {
+    // check-harness.mjs proves the design game exists: a game of the Toybox token file.
+    expect(PARITY_GAME_FACTS.designGame).toBe('__GAME_CAMEL__');
   });
 
   it('says whether the game has music exactly as its sound bank does', () => {

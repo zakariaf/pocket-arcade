@@ -1,0 +1,3 @@
+ERROR [bad-input]
+the design game swapGuard of
+has no logo layers in logos.games

@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "name": "Toybox",
+    "about": "A planted defect: swapGuard has a paint in color.games but no logo layers in logos.games, so it is not a design game and the token file is refused (exit 2)."
+  },
+  "color": {
+    "games": {
+      "lineSiege": {
+        "light": { "ground": "#A5DAF3", "accent": "#FF6B4A", "pop": "#FFD23F" },
+        "dark": { "ground": "#1B1943", "accent": "#FF7D5E", "pop": "#FFD84D" }
+      },
+      "swapGuard": {
+        "light": { "ground": "#CCC0F4", "accent": "#5C9DFF", "pop": "#FFA94D" },
+        "dark": { "ground": "#2A1838", "accent": "#7FB4FF", "pop": "#FFB463" }
+      }
+    }
+  },
+  "logos": {
+    "viewBox": "0 0 48 48",
+    "games": {
+      "lineSiege": [{ "role": "w", "d": "M7 42V16h7.5v5.5h4.3V16h10.4v5.5h4.3V16H41v26z" }]
+    }
+  }
+}

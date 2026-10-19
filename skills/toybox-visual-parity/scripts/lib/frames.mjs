@@ -96,7 +96,26 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+
+/**
+ * The design games: every game of the shared Toybox token file's color.games (assets/toybox-tokens.json),
+ * in its order, never a list typed into a script. A design pass adds a game there with its paint and
+ * its logo, and the mockup draws both, so a game without logo layers in logos.games stops with exit 2.
+ */
+const DESIGN_GAMES_BY_FILE = new Map();
+export function designGames(tokensPath = DEFAULTS.tokens) {
+  const known = DESIGN_GAMES_BY_FILE.get(tokensPath);
+  if (known) return known;
+  const tokens = readJson(tokensPath, 'Toybox token file');
+  const games = Object.keys(tokens?.color?.games ?? {});
+  if (games.length === 0) fail(`the token file ${tokensPath} lists no game in color.games`, 'Sync the shared Toybox token file into the skill (sync-shared.mjs).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) fail(`the design game ${game} of ${tokensPath} has no logo layers in logos.games`, 'A design pass adds the paint and the logo together: draw the logo into the Toybox design, refresh the shared token file (refresh-shared.mjs), then sync-shared.mjs.');
+  }
+  DESIGN_GAMES_BY_FILE.set(tokensPath, games);
+  return games;
+}
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).
@@ -317,7 +336,7 @@ function checkGameFixture(manifest) {
   if (!f || !g) return;
   const same = [['currentLevel', 'level'], ['score', 'score'], ['movesCount', 'movesCount'], ['par', 'par']];
   for (const [a, b] of same) if (f[a] !== g[b]) fail(`frames.json fixture.${a} (${f[a]}) differs from fixtureSave.gameFrame.${b} (${g[b]})`, 'Keep the two descriptions of the design player equal.');
-  for (const game of DESIGN_GAMES) {
+  for (const game of designGames()) {
     const d = f.games?.[game];
     const s = g.games?.[game];
     if (!d || !s) fail(`frames.json has no game-frame fixture for ${game}`, 'Give fixture.games and fixtureSave.gameFrame.games every design game.');
@@ -365,7 +384,7 @@ export function readGameFacts(path, { app = null, game = null } = {}) {
     const entry = json.games[id];
     const at = `${path} games.${id}`;
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) fail(`${at}: the key must be the app id (kebab-case, as in apps/<id>)`, 'Use the app folder name.');
-    if (!entry || !DESIGN_GAMES.includes(entry.designGame)) fail(`${at}.designGame must be one of ${DESIGN_GAMES.join(', ')}`, 'Name the design game whose references this app is compared with.');
+    if (!entry || !designGames().includes(entry.designGame)) fail(`${at}.designGame must be one of ${designGames().join(', ')}`, 'Name the design game whose references this app is compared with.');
     const extra = Object.keys(entry).filter((k) => k !== 'designGame' && !FACT_VALUES[k]);
     if (extra.length) fail(`${at} has unknown fields ${extra.join(', ')}`, `An entry holds designGame, ${Object.keys(FACT_VALUES).join(' and ')}.`);
     const { designGame: _designGame, ...facts } = entry;

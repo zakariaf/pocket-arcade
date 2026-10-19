@@ -16,6 +16,7 @@ export const DEFAULTS = Object.freeze({
   frames: join(ASSETS_DIR, 'frames.json'),
   device: join(ASSETS_DIR, 'device', 'iphone16pro.json'),
   reference: join(ASSETS_DIR, 'reference'),
+  tokens: join(ASSETS_DIR, 'toybox-tokens.json'),
 });
 
 /** Read and parse a JSON file, or stop with exit 2 naming the file. */

@@ -31,7 +31,7 @@ const SPEC = {
     'as-app': { type: 'boolean', help: 'With --out: also write design-as-app runs (<out>/runs/...) that check-parity must pass with 0 problems' },
     theme: { type: 'string', multiple: true, value: 'light|dark', help: 'Theme(s) to render (default: light and dark)' },
     lang: { type: 'string', multiple: true, value: 'en|de|fa|ckb', help: 'Language(s) to render (default: en and fa)' },
-    game: { type: 'string', value: 'id', help: 'Design game id: lineSiege, flockTilt or scrapShove', default: 'lineSiege' },
+    game: { type: 'string', value: 'id', help: 'Design game id, a game of the token file (lineSiege, flockTilt, scrapShove, ...)', default: 'lineSiege' },
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) such as s4-home (default: every frame)' },
     design: { type: 'string', value: 'file', help: 'Design HTML', default: DEFAULTS.design },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
