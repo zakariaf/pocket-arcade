@@ -1,0 +1,21 @@
+{
+  "jump-chain.goal": "همهٔ مهره‌های حریف را بگیرید، پیش از آنکه صف‌ها به سمت شما برسند.",
+  "jump-chain.how-to-play.step-1": "مهرهٔ خود را یک خانه مورب بکشید، یا روی خانهٔ مقصد بزنید.",
+  "jump-chain.how-to-play.step-2": "از روی مهرهٔ حریفِ کنارتان بپرید تا آن را بگیرید.",
+  "jump-chain.how-to-play.step-3": "کنار حریف بعدی فرود بیایید و باز هم بپرید: یک زنجیره می‌تواند یک صف کامل را بگیرد.",
+  "jump-chain.how-to-play.step-4": "هر چند حرکت یک بار صف‌های حریف جلو می‌آیند. نگذارید به سمت شما برسند!",
+  "jump-chain.lose.overrun": "صف‌های حریف به سمت شما رسیدند",
+  "jump-chain.name": "Jump Chain",
+  "jump-chain.pack-name.1": "شروع بازی",
+  "jump-chain.pack-name.2": "وسط بازی",
+  "jump-chain.pack-name.3": "پایان بازی",
+  "jump-chain.progress": "گرفته‌شده {captured, number} / {total, number}",
+  "jump-chain.stats.longest-chain": "بلندترین زنجیره",
+  "jump-chain.stats.pieces-captured": "مهره‌های گرفته‌شده",
+  "jump-chain.stats.ranks-cleared": "صف‌های پاک‌شده",
+  "jump-chain.tagline": "بپرید و باز هم بپرید. صف‌ها را پاک کنید.",
+  "jump-chain.tutorial.step-1": "مهرهٔ خود را یک خانه بالا ببرید، کنار حریف.",
+  "jump-chain.tutorial.step-2": "حالا بپرید! از روی حریف‌ها بکشید تا آن‌ها را زنجیره‌وار بگیرید.",
+  "jump-chain.tutorial.step-3": "صف‌ها جلو آمدند. پیش از آنکه به سمت شما برسند، دوباره بپرید.",
+  "jump-chain.win-title": "صفحه پاک شد!"
+}

@@ -1,0 +1,21 @@
+{
+  "jump-chain.goal": "هەموو بەردەکانی دوژمن بگرە پێش ئەوەی ڕیزەکان بگەنە لای تۆ.",
+  "jump-chain.how-to-play.step-1": "بەردەکەت خانەیەک بە لار ڕابکێشە، یان دەست لە خانەی مەبەست بدە.",
+  "jump-chain.how-to-play.step-2": "بەسەر دوژمنێکی تەنیشتتدا باز بدە بۆ ئەوەی بیگریت.",
+  "jump-chain.how-to-play.step-3": "لە تەنیشت دوژمنی دواتر دابەزە و بەردەوام باز بدە: یەک زنجیرە دەتوانێت ڕیزێکی تەواو بگرێت.",
+  "jump-chain.how-to-play.step-4": "هەر چەند جووڵەیەک جارێک ڕیزەکانی دوژمن دێنە پێشەوە. مەهێڵە بگەنە لای تۆ!",
+  "jump-chain.lose.overrun": "ڕیزەکانی دوژمن گەیشتنە لای تۆ",
+  "jump-chain.name": "Jump Chain",
+  "jump-chain.pack-name.1": "دەستپێک",
+  "jump-chain.pack-name.2": "ناوەڕاستی یاری",
+  "jump-chain.pack-name.3": "کۆتایی یاری",
+  "jump-chain.progress": "گیراو {captured, number} / {total, number}",
+  "jump-chain.stats.longest-chain": "درێژترین زنجیرە",
+  "jump-chain.stats.pieces-captured": "بەردی گیراو",
+  "jump-chain.stats.ranks-cleared": "ڕیزی پاککراو",
+  "jump-chain.tagline": "باز بدە و دووبارە باز بدە. ڕیزەکان پاک بکەرەوە.",
+  "jump-chain.tutorial.step-1": "بەردەکەت خانەیەک بەرەو سەرەوە ڕابکێشە، بۆ تەنیشت دوژمن.",
+  "jump-chain.tutorial.step-2": "ئێستا باز بدە! بەسەر دوژمنەکاندا ڕابکێشە بۆ ئەوەی بە زنجیرە بیانگریت.",
+  "jump-chain.tutorial.step-3": "ڕیزەکان هاتنە پێشەوە. پێش ئەوەی بگەنە لای تۆ دووبارە باز بدە.",
+  "jump-chain.win-title": "تەختەکە پاک کرایەوە!"
+}
