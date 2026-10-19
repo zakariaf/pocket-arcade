@@ -6,7 +6,7 @@ import { join, relative, resolve } from 'node:path';
 
 import { createReporter, fail, makeTempDir, parseArgs, removeTempDir, requireFile, run, sha256 } from './check-lib.mjs';
 import { CHROME_ARGS, TOOLING_OPTION, launchChrome, loadImageDeps, loadPlaywright, playwrightVersion, toolingDirOf } from './lib/deps.mjs';
-import { LANGS, MAP_METADATA_KEYS, THEMES, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
+import { DESIGN_GAMES, LANGS, MAP_METADATA_KEYS, THEMES, designGamesOf, elementsForFacts, elementsForGame, listOption, loadCatalogue, mapMetadataOf, readDeck, referenceName, referenceNames, referencePlan } from './lib/frames.mjs';
 import { referenceChangeProblems } from './lib/reference-changes.mjs';
 import { DEFAULTS, readJson } from './lib/paths.mjs';
 import { PLATFORM_DEFAULTS, platformOf } from './lib/platform.mjs';
@@ -31,12 +31,13 @@ const SPEC = {
     'as-app': { type: 'boolean', help: 'With --out: also write design-as-app runs (<out>/runs/...) that check-parity must pass with 0 problems' },
     theme: { type: 'string', multiple: true, value: 'light|dark', help: 'Theme(s) to render (default: light and dark)' },
     lang: { type: 'string', multiple: true, value: 'en|de|fa|ckb', help: 'Language(s) to render (default: en and fa)' },
-    game: { type: 'string', value: 'id', help: 'Design game id: lineSiege, flockTilt or scrapShove', default: 'lineSiege' },
+    game: { type: 'string', value: 'id', help: `Design game id, one of the token file's color.games (${DESIGN_GAMES.join(', ')})`, default: 'lineSiege' },
     frame: { type: 'string', multiple: true, value: 'key', help: 'Frame key(s) such as s4-home (default: every frame)' },
     design: { type: 'string', value: 'file', help: 'Design HTML', default: DEFAULTS.design },
     map: { type: 'string', value: 'file', help: 'Screen testID map', default: DEFAULTS.map },
     frames: { type: 'string', value: 'file', help: 'Frames manifest', default: DEFAULTS.frames },
     device: { type: 'string', value: 'file', help: 'Device profile', default: DEFAULTS.device },
+    tokens: { type: 'string', value: 'file', help: 'Toybox token file whose color.games are the design games', default: DEFAULTS.tokens },
     reference: { type: 'string', value: 'dir', help: 'Reference root for --check / --update-reference (default: assets/reference, or assets/reference-android for an Android device profile)' },
     tooling: TOOLING_OPTION,
   },
@@ -112,6 +113,8 @@ run(async () => {
   const fixtureScore = framesManifest.fixture?.score ?? 1840;
   const deck = readDeck(designPath);
   const game = options.game;
+  const designGames = designGamesOf(resolve(options.tokens));
+  if (!designGames.includes(game)) fail(`game "${game}" is not a design game of the token file (${designGames.join(', ')})`, 'Use a design game id; a new game joins the design through its design pass (its paint and logo in the token file, then the shared copy refreshed and synced).');
   if (!deck.games?.[game]) fail(`game "${game}" is not in the design deck (${Object.keys(deck.games ?? {}).join(', ')})`, 'Use a design game id.');
   const themes = listOption(options.theme, THEMES);
   const langs = listOption(options.lang, ['en', 'fa']);

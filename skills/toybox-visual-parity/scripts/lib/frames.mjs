@@ -3,6 +3,7 @@
 //   assets/screen-testids.json  (shared) screens, variants, frame selectors, testIDs, checks
 //   assets/frames.json          (this skill) root testID, app state and launch notes per frame
 import { existsSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
 
 import { fail } from '../check-lib.mjs';
 import { DEFAULTS, readJson } from './paths.mjs';
@@ -96,7 +97,23 @@ export function loadCatalogue({ mapPath = DEFAULTS.map, framesPath = DEFAULTS.fr
 /** The game facts a reference can depend on, and their allowed values. */
 export const FACT_VALUES = Object.freeze({ hasMusic: [true, false], winLine: ['moves', 'score'], hasHints: [true, false] });
 export const FACTS_FILE = 'parity/game-facts.json';
-export const DESIGN_GAMES = ['lineSiege', 'flockTilt', 'scrapShove'];
+/**
+ * The design games: every game the Toybox token file paints (color.games), in its order. A game
+ * joins the design by its design pass (palette, logo, texts), never by a list in a script; each one
+ * must carry its logo layers (logos.games), or the token file is refused with exit 2.
+ */
+export function designGamesOf(tokensPath) {
+  const tokens = readJson(tokensPath, 'Toybox token file');
+  const games = Object.keys(tokens?.color?.games ?? {});
+  const name = basename(tokensPath);
+  if (games.length === 0) fail(`the token file ${name} paints no game (color.games is empty)`, 'Use the shared Toybox token file (sync-shared.mjs copies it into assets/).');
+  for (const game of games) {
+    const layers = tokens.logos?.games?.[game];
+    if (!Array.isArray(layers) || layers.length === 0) fail(`the token file ${name} gives the design game ${game} no logo layers`, `Give ${game} its 48-grid logo layers (logos.games.${game}) in the project's token file through its design pass, then refresh and sync the shared copy.`);
+  }
+  return games;
+}
+export const DESIGN_GAMES = designGamesOf(DEFAULTS.tokens);
 const DERIVE_OPS = ['hide', 'style', 'text'];
 // The decisions that asked for a variant: L1 (no music), L3 (the score line), L8 (no hint key) and
 // R3S-G17 (Settings under the S14 reset dialog without its Music rows).

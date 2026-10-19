@@ -1,0 +1,14 @@
+{
+  "color": {
+    "games": {
+      "lineSiege": { "light": { "ground": "#A5DAF3" }, "dark": { "ground": "#1B1943" } },
+      "pebbleDrop": { "light": { "ground": "#E8E2F7" }, "dark": { "ground": "#1F1A3A" } }
+    }
+  },
+  "logos": {
+    "games": {
+      "lineSiege": [{ "role": "w", "d": "M7 42V16h7.5v5.5h4.3V16h10.4v5.5h4.3V16H41v26z" }],
+      "pebbleDrop": []
+    }
+  }
+}

@@ -1,0 +1,1 @@
+ERROR [bad-input] the token file toybox-tokens.json gives the design game pebbleDrop no logo layers
