@@ -1,0 +1,22 @@
+{
+  "stepstone.goal": "Hop your frog across the stones to the flag.",
+  "stepstone.how-to-play.step-1": "The stone you stand on shows how you hop next.",
+  "stepstone.how-to-play.step-2": "Tap a stone your hop reaches to land there.",
+  "stepstone.how-to-play.step-3": "Each stone you leave sinks behind you.",
+  "stepstone.how-to-play.step-4": "Reach the flag within par for three stars.",
+  "stepstone.lose.stuck": "No stone can be reached",
+  "stepstone.name": "Stepstone",
+  "stepstone.pack-name.1": "Lily pond",
+  "stepstone.pack-name.2": "Misty creek",
+  "stepstone.pack-name.3": "River rapids",
+  "stepstone.progress": "Moves {moves, number} / par {par, number}",
+  "stepstone.stats.kinds-used": "Hop kinds used",
+  "stepstone.stats.levels-at-par": "Levels at par",
+  "stepstone.stats.tiles-stepped": "Stones stepped",
+  "stepstone.tagline": "Each stone picks your next hop.",
+  "stepstone.tutorial.step-1": "Tap a lit stone to hop there.",
+  "stepstone.tutorial.step-2": "This × stone hops you corner to corner.",
+  "stepstone.tutorial.step-3": "The stone you left has sunk, so plan ahead.",
+  "stepstone.tutorial.step-4": "Hop onto the flag to win!",
+  "stepstone.win-title": "Made it across!"
+}

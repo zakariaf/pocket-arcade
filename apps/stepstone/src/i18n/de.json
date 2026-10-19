@@ -1,0 +1,22 @@
+{
+  "stepstone.goal": "Bring deinen Frosch über die Steine zur Fahne.",
+  "stepstone.how-to-play.step-1": "Der Stein unter dir zeigt, wie du als Nächstes springst.",
+  "stepstone.how-to-play.step-2": "Tipp auf einen Stein in Sprungweite, um dort zu landen.",
+  "stepstone.how-to-play.step-3": "Jeder Stein, den du verlässt, versinkt hinter dir.",
+  "stepstone.how-to-play.step-4": "Erreiche die Fahne innerhalb von Par für drei Sterne.",
+  "stepstone.lose.stuck": "Kein Stein ist erreichbar",
+  "stepstone.name": "Stepstone",
+  "stepstone.pack-name.1": "Seerosenteich",
+  "stepstone.pack-name.2": "Nebelbach",
+  "stepstone.pack-name.3": "Stromschnellen",
+  "stepstone.progress": "Züge {moves, number} / Par {par, number}",
+  "stepstone.stats.kinds-used": "Genutzte Sprungarten",
+  "stepstone.stats.levels-at-par": "Level auf Par",
+  "stepstone.stats.tiles-stepped": "Betretene Steine",
+  "stepstone.tagline": "Jeder Stein bestimmt deinen nächsten Sprung.",
+  "stepstone.tutorial.step-1": "Tipp auf einen leuchtenden Stein, um hinzuspringen.",
+  "stepstone.tutorial.step-2": "Dieser ×-Stein lässt dich schräg springen.",
+  "stepstone.tutorial.step-3": "Der Stein hinter dir ist versunken, also plane voraus.",
+  "stepstone.tutorial.step-4": "Spring auf die Fahne, um zu gewinnen!",
+  "stepstone.win-title": "Sicher hinübergehüpft!"
+}

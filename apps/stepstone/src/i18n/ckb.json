@@ -1,0 +1,22 @@
+{
+  "stepstone.goal": "بۆقەکەت بەسەر بەردەکاندا بگەیەنە ئاڵاکە.",
+  "stepstone.how-to-play.step-1": "ئەو بەردەی لەسەری وەستاویت پیشانی دەدات چۆن باز دەدەیت.",
+  "stepstone.how-to-play.step-2": "دەست لەو بەردە بدە کە بازەکەت پێی دەگات بۆ ئەوەی لەوێ بنیشیتەوە.",
+  "stepstone.how-to-play.step-3": "هەر بەردێک جێی بهێڵیت، لە دواتەوە نوقم دەبێت.",
+  "stepstone.how-to-play.step-4": "بۆ سێ ئەستێرە، بە ئامانج یان کەمتر بگە بە ئاڵاکە.",
+  "stepstone.lose.stuck": "ناگەیتە هیچ بەردێک",
+  "stepstone.name": "Stepstone",
+  "stepstone.pack-name.1": "گۆمی نیلۆفەر",
+  "stepstone.pack-name.2": "جۆگەی تەماوی",
+  "stepstone.pack-name.3": "خوڕی ڕووبار",
+  "stepstone.progress": "جووڵە {moves, number} / ئامانج {par, number}",
+  "stepstone.stats.kinds-used": "جۆرە بازە بەکارهاتووەکان",
+  "stepstone.stats.levels-at-par": "ئاستەکان بە ئامانج",
+  "stepstone.stats.tiles-stepped": "بەردی تێپەڕیو",
+  "stepstone.tagline": "هەر بەردێک بازی داهاتووت دیاری دەکات.",
+  "stepstone.tutorial.step-1": "دەست لە بەردێکی ڕووناک بدە بۆ ئەوەی بازی بدەیتە سەری.",
+  "stepstone.tutorial.step-2": "ئەم بەردە × بە لاری بازت پێدەدات.",
+  "stepstone.tutorial.step-3": "بەردی پێشوو نوقم بوو، بۆیە پێشتر بیر بکەرەوە.",
+  "stepstone.tutorial.step-4": "باز بدە سەر ئاڵاکە بۆ بردنەوە!",
+  "stepstone.win-title": "گەیشتیتە ئەوبەر!"
+}
