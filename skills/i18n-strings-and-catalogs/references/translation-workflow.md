@@ -15,7 +15,7 @@ How new text is written in four languages, where the approved texts come from (t
 
 ## The copy deck is the source of screen text
 
-`assets/copy-deck.json` holds every visible text of the Shell screens S1-S4 and S6-S15 and of the first three games, in en, de, fa and ckb. The Toybox design mockup renders exactly these texts, so a screen matches its design screenshot only if its catalog texts equal the deck's. It is draft 1 (2026-09-27): **fa and ckb wait for the owner's own review** (owner decision O6: listed in every report under "Owner steps (not blocking)", never waited for).
+`assets/copy-deck.json` holds every visible text of the Shell screens S1-S4 and S6-S15 and of every design game (the first three, then each game a design pass added), in en, de, fa and ckb. The Toybox design mockup renders exactly these texts, so a screen matches its design screenshot only if its catalog texts equal the deck's. It is draft 1 (2026-09-27): **fa and ckb wait for the owner's own review** (owner decision O6: listed in every report under "Owner steps (not blocking)", never waited for).
 
 One deck change since then: on 2026-09-30 the lead reworded Line Siege's how-to-play step 4 and tutorial step 4 (decision L4), because the tuned game marches every few placements, not after every block. They now read "The monsters march closer every few blocks." and "Careful: the monsters march closer every few blocks." (de "Alle paar Blöcke rücken die Monster näher." and "Achtung: Alle paar Blöcke rücken die Monster näher."; the fa and ckb drafts are on the review list below). `copy-deck.mjs apply . --game line-siege --overwrite` brings an older game catalog up to date.
 
@@ -31,7 +31,7 @@ A second deck change on 2026-09-30 (owner decision O1, the tracking prompt): the
 | Section | Contents |
 |---|---|
 | `meta` | languages, direction, autonyms (`languageNames`), `numberLocales` (digit tags), the ICU subset, a `glossary`, `samples` and `sampleOverrides` (a value for every placeholder, used by the mockup and useful in tests), `renderNotes`, and `screens` (which keys each screen uses) |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, then each game a design pass added (`trailClear`, 2026-10-19), each with its kebab `id` and `modes`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
 | `licenceEntries` | example rows for S11d (component and licence names are not translated) |
 | `strings` | 289 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`; all pass the catalog rules |
 

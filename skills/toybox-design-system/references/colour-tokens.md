@@ -3,7 +3,7 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Trail Clear
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
@@ -89,6 +89,24 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#FF8A3D` Rust | `#FF9A55` Hot rust |
 | onPop | onPop | `#1D1B3A` | `#261C45` |
 
+### Trail Clear
+
+Added by its design pass (2026-10-19), a trail map: sand ground, river-blue keys, moss stickers.
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#F3D6A4` Trail sand | `#2B2030` Campfire night |
+| surface | surface | `#FFFBF3` Map paper | `#3E3045` Map case |
+| sunken | sunken | `#F9E8CB` | `#34283A` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#FFF6EC` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#B49A86` Dusk sand |
+| outline | border | `#1D1B3A` | `#FFE9CF` |
+| shadow | shadow | `#1D1B3A` | `#0E0910` |
+| accent | primary | `#4FA8F0` River blue | `#5BBCF5` Glow river |
+| onAccent | onPrimary | `#1D1B3A` | `#2B2030` |
+| pop | pop | `#A9DC6E` Moss | `#B5E57C` Glow moss |
+| onPop | onPop | `#1D1B3A` | `#2B2030` |
+
 ## Shell constants
 
 They never change with the game and live in `SHELL_COLORS[scheme]` (`packages/shell/src/theme/shell-colors.ts`); read them in `makeStyles` with `const shell = SHELL_COLORS[theme.scheme];`.
@@ -139,7 +157,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only three games have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+Only the games a design pass added to the token file (the tables above) have Toybox paints there. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).

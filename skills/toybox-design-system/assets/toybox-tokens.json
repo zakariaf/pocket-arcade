@@ -399,6 +399,130 @@
             }
           }
         }
+      },
+      "trailClear": {
+        "names": {
+          "light": {
+            "ground": "Trail sand",
+            "surface": "Map paper",
+            "ink": "Toy ink",
+            "inkSoft": "Pencil",
+            "accent": "River blue",
+            "pop": "Moss"
+          },
+          "dark": {
+            "ground": "Campfire night",
+            "surface": "Map case",
+            "ink": "Moonlight",
+            "inkSoft": "Dusk sand",
+            "accent": "Glow river",
+            "pop": "Glow moss"
+          }
+        },
+        "light": {
+          "ground": "#F3D6A4",
+          "surface": "#FFFBF3",
+          "sunken": "#F9E8CB",
+          "ink": "#1D1B3A",
+          "inkSoft": "#43406A",
+          "outline": "#1D1B3A",
+          "shadow": "#1D1B3A",
+          "accent": "#4FA8F0",
+          "onAccent": "#1D1B3A",
+          "pop": "#A9DC6E",
+          "onPop": "#1D1B3A"
+        },
+        "dark": {
+          "ground": "#2B2030",
+          "surface": "#3E3045",
+          "sunken": "#34283A",
+          "ink": "#FFF6EC",
+          "inkSoft": "#B49A86",
+          "outline": "#FFE9CF",
+          "shadow": "#0E0910",
+          "accent": "#5BBCF5",
+          "onAccent": "#2B2030",
+          "pop": "#B5E57C",
+          "onPop": "#2B2030"
+        },
+        "colorTokens": {
+          "standard": {
+            "light": {
+              "background": "#F3D6A4",
+              "surface": "#FFFBF3",
+              "sunken": "#F9E8CB",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#4FA8F0",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#A9DC6E",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2B2030",
+              "surface": "#3E3045",
+              "sunken": "#34283A",
+              "text": "#FFF6EC",
+              "textMuted": "#B49A86",
+              "primary": "#5BBCF5",
+              "onPrimary": "#2B2030",
+              "border": "#FFE9CF",
+              "danger": "#FF8593",
+              "icon": "#FFF6EC",
+              "starOn": "#FFD23F",
+              "starOff": "#B49A86",
+              "pop": "#B5E57C",
+              "onPop": "#2B2030",
+              "shadow": "#0E0910",
+              "focus": "#FF8AD8"
+            }
+          },
+          "colorBlind": {
+            "light": {
+              "background": "#F3D6A4",
+              "surface": "#FFFBF3",
+              "sunken": "#F9E8CB",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#4FA8F0",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#A9DC6E",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2B2030",
+              "surface": "#3E3045",
+              "sunken": "#34283A",
+              "text": "#FFF6EC",
+              "textMuted": "#B49A86",
+              "primary": "#5BBCF5",
+              "onPrimary": "#2B2030",
+              "border": "#FFE9CF",
+              "danger": "#FF8593",
+              "icon": "#FFF6EC",
+              "starOn": "#FFD23F",
+              "starOff": "#B49A86",
+              "pop": "#B5E57C",
+              "onPop": "#2B2030",
+              "shadow": "#0E0910",
+              "focus": "#FF8AD8"
+            }
+          }
+        }
       }
     },
     "shell": {
@@ -2711,6 +2835,20 @@
         {
           "role": "kl",
           "d": "M26.5 19.5l6 6M32.5 19.5l-6 6M18 30.2h12"
+        }
+      ],
+      "trailClear": [
+        {
+          "role": "w",
+          "d": "M8 5H20A3 3 0 0 1 23 8V20A3 3 0 0 1 20 23H8A3 3 0 0 1 5 20V8A3 3 0 0 1 8 5ZM28 5H40A3 3 0 0 1 43 8V20A3 3 0 0 1 40 23H28A3 3 0 0 1 25 20V8A3 3 0 0 1 28 5ZM8 25H20A3 3 0 0 1 23 28V40A3 3 0 0 1 20 43H8A3 3 0 0 1 5 40V28A3 3 0 0 1 8 25ZM28 25H40A3 3 0 0 1 43 28V40A3 3 0 0 1 40 43H28A3 3 0 0 1 25 40V28A3 3 0 0 1 28 25Z"
+        },
+        {
+          "role": "p",
+          "d": "M18.5 9.5H29.5A9 9 0 0 1 38.5 18.5V29.5A9 9 0 0 1 29.5 38.5H18.5A9 9 0 0 1 9.5 29.5V18.5A9 9 0 0 1 18.5 9.5ZM19.5 16A3.5 3.5 0 0 0 16 19.5V28.5A3.5 3.5 0 0 0 19.5 32H28.5A3.5 3.5 0 0 0 32 28.5V19.5A3.5 3.5 0 0 0 28.5 16Z"
+        },
+        {
+          "role": "kl",
+          "d": "M21.5 12.75h5M35.25 21.5v5M26.5 35.25h-5M12.75 26.5v-5"
         }
       ]
     }

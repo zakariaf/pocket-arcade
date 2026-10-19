@@ -1802,6 +1802,14 @@
    "variants": [],
    "what": "Every layout.json and the manifest were re-rendered with the round-4 renderer and map: each text run records its own tilt, the S14 progress-restored layout records the banner mask of Home under the dialog, the S12 state cards no longer pair their stand-in heading with premium.top-bar.title, and the map metadata gained the card surface of home.daily-card (L7, no pixel change) and the hint key's hasHints condition. Apart from the changes above, all 124 other PNGs are byte-identical.",
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
+  },
+  {
+   "id": "G-trail-clear",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Trail Clear added to the design as a design game: its light and dark paint, its logo, its sample statistics and how-to-play picture in the mockup, its paint and logo layers in the token file and its texts in the copy deck. No Line Siege reference changes: the lineSiege set draws Line Siege only.",
+   "why": "spec 13: each game gets its own design pass; Trail Clear's (E28-T01) was drawn with the proposed defaults on 2026-10-19 and goes on while the owner's approval comes back with the lead's combined message."
   }
  ]
 }
