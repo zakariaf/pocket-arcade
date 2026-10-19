@@ -60,6 +60,7 @@ The deck has one `loseReason` per game, but every way of losing gets its own key
 | `line-siege` | `line-siege.lose.broke-through` | The monsters broke through |
 | `flock-tilt` | `flock-tilt.lose.wolf-got-sheep` | The wolf got a sheep |
 | `scrap-shove` | `scrap-shove.lose.caught` | A robot caught you |
+| `jump-chain` | `jump-chain.lose.overrun` | The enemy ranks reached your side |
 
 `<id>.lose-reason` and `<id>.result.*` are retired key shapes: never write them. A game that is not in the deck starts with `<id>.lose.out-of-moves` (the scaffold's default `--lose-reason` slug) and renames it for its own reason. The Shell's own fallback for a missing reason stays `result.lose.reason.no-moves`.
 
