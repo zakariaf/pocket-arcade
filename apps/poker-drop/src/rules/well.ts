@@ -3,7 +3,7 @@
 // straight run (each row, five of a column, the long diagonals); gravity packs every column down.
 import { TUNING } from './poker-drop-tuning.ts';
 
-import type { Cell, LineKind } from './poker-drop-types.ts';
+import type { Card, Cell, LineKind } from './poker-drop-types.ts';
 
 export const COLS = TUNING.wellCols;
 export const ROWS = TUNING.wellRows;
@@ -50,6 +50,18 @@ function buildLines(): WellLine[] {
 /** Every line of the well in a fixed order: rows, then columns, then diagonals. */
 export const WELL_LINES: readonly WellLine[] = buildLines();
 
+/** True when the cell holds a card. */
+export function isCard(cell: Cell | undefined): cell is Card {
+  return typeof cell === 'number';
+}
+
+/** The card in a cell that must hold one; an empty cell there is a bug in the rules (RangeError). */
+export function cardIn(cells: readonly Cell[], index: number): Card {
+  const cell = cells[index];
+  if (!isCard(cell)) throw new RangeError(`cell ${String(index)} holds no card`);
+  return cell;
+}
+
 /** An empty well. */
 export function emptyWell(): Cell[] {
   return Array.from({ length: COLS * ROWS }, (): Cell => null);
@@ -80,8 +92,8 @@ export function settle(cells: readonly Cell[]): {
   for (let col = 0; col < COLS; col += 1) {
     let toRow = 0;
     for (let fromRow = 0; fromRow < ROWS; fromRow += 1) {
-      const card = cells[cellIndex(col, fromRow)] as Cell;
-      if (card === null) continue;
+      const card = cells[cellIndex(col, fromRow)];
+      if (!isCard(card)) continue;
       out[cellIndex(col, toRow)] = card;
       if (toRow !== fromRow) moves.push({ col, fromRow, toRow });
       toRow += 1;

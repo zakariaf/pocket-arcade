@@ -1,7 +1,18 @@
 // apps/poker-drop/src/rules/well.test.ts
 import fc from 'fast-check';
 
-import { COLS, ROWS, WELL_LINES, cellIndex, emptyWell, hasRoom, heightOf, settle } from './well.ts';
+import {
+  COLS,
+  ROWS,
+  WELL_LINES,
+  cardIn,
+  cellIndex,
+  emptyWell,
+  hasRoom,
+  heightOf,
+  isCard,
+  settle,
+} from './well.ts';
 
 import type { Cell } from './poker-drop-types.ts';
 
@@ -54,6 +65,17 @@ describe('heightOf and hasRoom', () => {
     expect([0, 1, 2, 3, 4].map((col) => heightOf(cells, col))).toStrictEqual([6, 2, 1, 0, 0]);
     expect(hasRoom(cells, 0)).toBe(false);
     expect(hasRoom(cells, 1)).toBe(true);
+  });
+});
+
+describe('isCard and cardIn', () => {
+  it('reads the card of a filled cell and refuses an empty or missing one', () => {
+    const cells = wellOf(['.....', '.....', '.....', '.....', '.....', '7....']);
+    expect(isCard(cells[0])).toBe(true);
+    expect(isCard(cells[1])).toBe(false);
+    expect(cardIn(cells, 0)).toBe(7);
+    expect(() => cardIn(cells, 1)).toThrow(RangeError);
+    expect(() => cardIn(cells, 99)).toThrow(RangeError);
   });
 });
 
