@@ -1,0 +1,21 @@
+{
+  "toggle-drop.goal": "پێش ئەوەی تۆپەکانت تەواو بن، هەموو سەبەتەکان پڕ بکەرەوە.",
+  "toggle-drop.how-to-play.step-1": "دەست لە ستوونێک بدە بۆ ئەوەی تۆپێک بەربێتەوە.",
+  "toggle-drop.how-to-play.step-2": "هەر دەسکێک تۆپەکە بەلای خۆیدا دەنێرێت و پاشان وەردەگەڕێت.",
+  "toggle-drop.how-to-play.step-3": "تۆپی دواتر بەر دەسکە وەرگەڕاوەکان دەکەوێت.",
+  "toggle-drop.how-to-play.step-4": "هەموو سەبەتەکان بە کەمترین تۆپ پڕ بکەرەوە.",
+  "toggle-drop.lose.out-of-balls": "تۆپەکانت تەواو بوون",
+  "toggle-drop.name": "Toggle Drop",
+  "toggle-drop.pack-name.1": "تەختەی گەرمبوونەوە",
+  "toggle-drop.pack-name.2": "حەوشەی دەسکەکان",
+  "toggle-drop.pack-name.3": "تاڤگەی گەورە",
+  "toggle-drop.progress": "سەبەتە {filled, number} / {total, number}",
+  "toggle-drop.stats.balls-dropped": "تۆپی بەردراوە",
+  "toggle-drop.stats.cups-filled": "سەبەتەی پڕکراو",
+  "toggle-drop.stats.switches-flipped": "دەسکی وەرگەڕاو",
+  "toggle-drop.tagline": "هەر دەسکێک وەردەگەڕێت. تۆپەکان بە پلان بەربدەوە.",
+  "toggle-drop.tutorial.step-1": "دەست لەم ستوونە بدە بۆ ئەوەی تۆپێک بەربێتەوە.",
+  "toggle-drop.tutorial.step-2": "دەسکەکە وەرگەڕا. دیسان لێرە بەری بدەوە!",
+  "toggle-drop.tutorial.step-3": "تۆپەکە بەلاکەی تردا ڕۆیشت! ئێستا دوایین سەبەتە پڕ بکەرەوە.",
+  "toggle-drop.win-title": "هەموو سەبەتەکان پڕ بوون!"
+}

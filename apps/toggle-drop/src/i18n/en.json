@@ -1,0 +1,21 @@
+{
+  "toggle-drop.goal": "Fill every cup before you run out of balls.",
+  "toggle-drop.how-to-play.step-1": "Tap a column to drop a ball.",
+  "toggle-drop.how-to-play.step-2": "Each switch sends the ball its way, then flips.",
+  "toggle-drop.how-to-play.step-3": "The next ball meets the flipped switches.",
+  "toggle-drop.how-to-play.step-4": "Fill every cup with as few balls as you can.",
+  "toggle-drop.lose.out-of-balls": "You ran out of balls",
+  "toggle-drop.name": "Toggle Drop",
+  "toggle-drop.pack-name.1": "Warm-up board",
+  "toggle-drop.pack-name.2": "Switchyard",
+  "toggle-drop.pack-name.3": "Grand cascade",
+  "toggle-drop.progress": "Cups {filled, number} / {total, number}",
+  "toggle-drop.stats.balls-dropped": "Balls dropped",
+  "toggle-drop.stats.cups-filled": "Cups filled",
+  "toggle-drop.stats.switches-flipped": "Switches flipped",
+  "toggle-drop.tagline": "Every switch flips. Plan your drops.",
+  "toggle-drop.tutorial.step-1": "Tap this column to drop a ball.",
+  "toggle-drop.tutorial.step-2": "The switch flipped. Drop here again!",
+  "toggle-drop.tutorial.step-3": "It went the other way! Now fill the last cup.",
+  "toggle-drop.win-title": "Every cup filled!"
+}

@@ -1,0 +1,21 @@
+{
+  "toggle-drop.goal": "Füll jeden Becher, bevor dir die Kugeln ausgehen.",
+  "toggle-drop.how-to-play.step-1": "Tipp auf eine Spalte, um eine Kugel fallen zu lassen.",
+  "toggle-drop.how-to-play.step-2": "Jede Weiche schickt die Kugel in ihre Richtung und kippt dann um.",
+  "toggle-drop.how-to-play.step-3": "Die nächste Kugel trifft auf die gekippten Weichen.",
+  "toggle-drop.how-to-play.step-4": "Füll jeden Becher mit so wenigen Kugeln wie möglich.",
+  "toggle-drop.lose.out-of-balls": "Dir sind die Kugeln ausgegangen",
+  "toggle-drop.name": "Toggle Drop",
+  "toggle-drop.pack-name.1": "Aufwärmbrett",
+  "toggle-drop.pack-name.2": "Weichenhof",
+  "toggle-drop.pack-name.3": "Große Kaskade",
+  "toggle-drop.progress": "Becher {filled, number} / {total, number}",
+  "toggle-drop.stats.balls-dropped": "Geworfene Kugeln",
+  "toggle-drop.stats.cups-filled": "Gefüllte Becher",
+  "toggle-drop.stats.switches-flipped": "Gekippte Weichen",
+  "toggle-drop.tagline": "Jede Weiche kippt. Plane deine Kugeln.",
+  "toggle-drop.tutorial.step-1": "Tipp auf diese Spalte, um eine Kugel fallen zu lassen.",
+  "toggle-drop.tutorial.step-2": "Die Weiche ist umgekippt. Lass hier noch eine fallen!",
+  "toggle-drop.tutorial.step-3": "Sie ging in die andere Richtung! Füll jetzt den letzten Becher.",
+  "toggle-drop.win-title": "Alle Becher voll!"
+}
