@@ -1,4 +1,5 @@
 {
+  "jump-chain.board.summary": "{enemiesCount, plural, one {# مهرهٔ حریف} other {# مهرهٔ حریف}} مانده، صف‌ها پس از {marchCount, plural, one {# حرکت} other {# حرکت}} پیش می‌آیند",
   "jump-chain.goal": "همهٔ مهره‌های حریف را بگیرید، پیش از آنکه صف‌ها به سمت شما برسند.",
   "jump-chain.how-to-play.step-1": "مهرهٔ خود را یک خانه مورب بکشید، یا روی خانهٔ مقصد بزنید.",
   "jump-chain.how-to-play.step-2": "از روی مهرهٔ حریفِ کنارتان بپرید تا آن را بگیرید.",

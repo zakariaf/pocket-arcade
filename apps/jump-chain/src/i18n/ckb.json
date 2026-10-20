@@ -1,4 +1,5 @@
 {
+  "jump-chain.board.summary": "{enemiesCount, plural, one {# بەردی دوژمن} other {# بەردی دوژمن}} ماوە، ڕیزەکان دوای {marchCount, plural, one {# جووڵە} other {# جووڵە}} دێنە پێشەوە",
   "jump-chain.goal": "هەموو بەردەکانی دوژمن بگرە پێش ئەوەی ڕیزەکان بگەنە لای تۆ.",
   "jump-chain.how-to-play.step-1": "بەردەکەت خانەیەک بە لار ڕابکێشە، یان دەست لە خانەی مەبەست بدە.",
   "jump-chain.how-to-play.step-2": "بەسەر دوژمنێکی تەنیشتتدا باز بدە بۆ ئەوەی بیگریت.",

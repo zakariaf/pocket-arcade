@@ -1,4 +1,5 @@
 {
+  "jump-chain.board.summary": "{enemiesCount, plural, one {# enemy piece} other {# enemy pieces}} left, the ranks advance in {marchCount, plural, one {# move} other {# moves}}",
   "jump-chain.goal": "Capture every enemy piece before the ranks reach your side.",
   "jump-chain.how-to-play.step-1": "Drag your piece one square diagonally, or tap where it should go.",
   "jump-chain.how-to-play.step-2": "Jump over an enemy next to you to capture it.",
