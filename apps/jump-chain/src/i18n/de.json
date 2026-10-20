@@ -1,5 +1,6 @@
 {
   "jump-chain.board.summary": "{enemiesCount, plural, one {# gegnerischer Stein} other {# gegnerische Steine}} übrig, die Reihen rücken in {marchCount, plural, one {# Zug} other {# Zügen}} vor",
+  "jump-chain.continue.step-back": "Noch ein Versuch: Die gegnerischen Reihen weichen eine Reihe zurück",
   "jump-chain.goal": "Schlag alle gegnerischen Steine, bevor die Reihen deine Seite erreichen.",
   "jump-chain.how-to-play.step-1": "Zieh deinen Stein ein Feld schräg oder tipp auf das Zielfeld.",
   "jump-chain.how-to-play.step-2": "Spring über einen Gegner neben dir, um ihn zu schlagen.",
@@ -11,6 +12,7 @@
   "jump-chain.pack-name.2": "Mittelspiel",
   "jump-chain.pack-name.3": "Endspiel",
   "jump-chain.progress": "Geschlagen {captured, number} / {total, number}",
+  "jump-chain.progress.endless": "Geschlagen {captured, number}",
   "jump-chain.stats.longest-chain": "Längste Kette",
   "jump-chain.stats.pieces-captured": "Geschlagene Steine",
   "jump-chain.stats.ranks-cleared": "Geräumte Reihen",

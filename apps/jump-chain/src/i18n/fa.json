@@ -1,5 +1,6 @@
 {
   "jump-chain.board.summary": "{enemiesCount, plural, one {# مهرهٔ حریف} other {# مهرهٔ حریف}} مانده، صف‌ها پس از {marchCount, plural, one {# حرکت} other {# حرکت}} پیش می‌آیند",
+  "jump-chain.continue.step-back": "یک فرصت دیگر: صف‌های حریف یک ردیف عقب می‌روند",
   "jump-chain.goal": "همهٔ مهره‌های حریف را بگیرید، پیش از آنکه صف‌ها به سمت شما برسند.",
   "jump-chain.how-to-play.step-1": "مهرهٔ خود را یک خانه مورب بکشید، یا روی خانهٔ مقصد بزنید.",
   "jump-chain.how-to-play.step-2": "از روی مهرهٔ حریفِ کنارتان بپرید تا آن را بگیرید.",
@@ -11,6 +12,7 @@
   "jump-chain.pack-name.2": "وسط بازی",
   "jump-chain.pack-name.3": "پایان بازی",
   "jump-chain.progress": "گرفته‌شده {captured, number} / {total, number}",
+  "jump-chain.progress.endless": "گرفته‌شده {captured, number}",
   "jump-chain.stats.longest-chain": "بلندترین زنجیره",
   "jump-chain.stats.pieces-captured": "مهره‌های گرفته‌شده",
   "jump-chain.stats.ranks-cleared": "صف‌های پاک‌شده",
