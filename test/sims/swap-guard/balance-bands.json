@@ -1,0 +1,58 @@
+{
+  "gameId": "swap-guard",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 60,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.8,
+      "max": 1,
+      "why": "The spears-only first row is the warm-up: a reasonable player wins nearly every board (0.90 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.3,
+      "max": 0.55,
+      "why": "Five enemies of three kinds on 6 x 6 with 14 swaps is hard (0.41 measured), yet a reasonable player still wins often."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.1,
+      "why": "Random swaps walk into strikes: naive play almost never wins even the first row (0.01 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 8,
+      "max": 13,
+      "why": "A row-1 board takes a handful of swaps (median 10 measured, budget 12), never a single one."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.08 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy"],
+    "better": "higher",
+    "minStep": 0.5
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 25, "minPerRun": 1 },
+  "endless": null,
+  "notes": "Swap Guard, four tuning rows on the 0..100 scale sampled at their lower bounds (0/25/50/75), 100 seeds. The first run (budgets 12/14/16/18, spears and archers in the first row) gave the greedy player 0.73/0.67/0.65/0.52: the middle rows hardly differed and the first row was no warm-up, because a lone archer at the edge cannot be sent into its own strike and the player walks until its swaps run out. Tightening the budgets of rows 1-3 to 12/11/14 and keeping the first row to spears gives 0.90/0.67/0.57/0.41, random 0.01/0/0/0. Every greedy run knocks out its first enemy on the first swap (the prepared opening) and makes one double hit per run. The skill gap is judged between random and greedy (0 against 0.67 at difficulty 25): the greedy player already reads one swap ahead (its evaluation counts the knock-outs one more safe swap can make, and walks behind spears and archers), so the two-ply lookahead adds little (0.70); the exact solver of the level packs proves how far skill can go. Losses are mostly a player out of swaps (10/29/42/55 per 100), a few a strike walked into. Proposed until the owner's play-test (O6)."
+}
