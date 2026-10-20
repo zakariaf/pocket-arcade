@@ -2,12 +2,13 @@
 // no-shell-context: the canvas takes everything as props (the layout probe stays off). Skia renders
 // as inert host elements in the unit project; the recorder and the gesture hook are recording
 // stand-ins, so this proves what reaches draw() and the gesture layer.
-import { render, screen } from '@testing-library/react-native';
+import { act, render, screen } from '@testing-library/react-native';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { BoardCanvas } from './board-canvas.tsx';
 import { makeScene } from './board-scene.ts';
 import { IDLE_POINTER } from './board-types.ts';
+import { COACH_HAND_LOOP_MS } from './draw-coach-hand.ts';
 
 import type {
   BoardColors,
@@ -16,20 +17,28 @@ import type {
   PointerSample,
   RenderKit,
 } from './board-types.ts';
+import type { BoardCoachHand } from './draw-coach-hand.ts';
 import type { RecordInput } from './record-board.ts';
 import type { BoardClock } from './use-board-clock.ts';
 import type { BoardGestureHandlers } from './use-board-gestures.ts';
+import type { SkColor } from '@shopify/react-native-skia';
 import type { ReactNode } from 'react';
 import type { Gesture } from 'react-native-gesture-handler';
 
 type View = { readonly cells: number };
 
 const mockRecorded: RecordInput<View, 'ink'>[] = [];
+/** The phase of every picture recorded for the tutorial's hand. */
+const mockHandPhases: number[] = [];
 const mockHandlers: BoardGestureHandlers[] = [];
 
 jest.mock('./record-board.ts', () => ({
   recordBoard: (_recorder: unknown, input: RecordInput<View, 'ink'>) => {
     mockRecorded.push(input);
+    return null;
+  },
+  recordCoachHand: (_recorder: unknown, _hand: unknown, phase: number) => {
+    mockHandPhases.push(phase);
     return null;
   },
 }));
@@ -55,7 +64,17 @@ const HIGHLIGHT: BoardHighlight = {
   hinted: [{ regionId: 'board', col: 3, row: 4 }],
 };
 
-function Harness(): ReactNode {
+/** One display frame: the first frame records both pictures before the hand starts gliding. */
+const FRAME_MS = 16;
+const INK = new Float32Array([0, 0, 0, 1]) as SkColor;
+/** The tutorial's hand from tray slot 0 to the board's first cell. */
+const HAND: BoardCoachHand = {
+  hand: { from: { regionId: 'tray', col: 0, row: 0 }, to: { regionId: 'board', col: 0, row: 0 } },
+  cells: [{ regionId: 'board', col: 0, row: 0 }],
+  look: { fill: INK, ink: INK },
+};
+
+function Harness({ coach = null }: { readonly coach?: BoardCoachHand | null }): ReactNode {
   const scene = useSharedValue(makeScene(1, { cells: 4 }, []));
   const now = useSharedValue(0);
   const clock = { scene, now } as unknown as BoardClock<View>;
@@ -72,6 +91,9 @@ function Harness(): ReactNode {
       onIntent={jest.fn()}
       onHover={jest.fn()}
       onDrawError={jest.fn()}
+      coach={coach}
+      coachReplay={0}
+      motion="full"
     />
   );
 }
@@ -79,6 +101,7 @@ function Harness(): ReactNode {
 describe('BoardCanvas', () => {
   beforeEach(() => {
     mockRecorded.length = 0;
+    mockHandPhases.length = 0;
     mockHandlers.length = 0;
   });
 
@@ -101,5 +124,22 @@ describe('BoardCanvas', () => {
   it("hands the board's drag lift and pan mode to the gesture layer", async () => {
     await render(<Harness />);
     expect(mockHandlers.at(-1)).toMatchObject({ panMode: 'drag', dragLiftPt: 40 });
+  });
+
+  it("draws the tutorial's hand as its own picture, so its glide never records the board again", async () => {
+    // Spec S13: the pointing hand glides from the slot to the gap. Only the hand's own picture
+    // follows its phase; the board's picture is recorded for the scene and the finger alone.
+    jest.useFakeTimers();
+    await render(<Harness coach={HAND} />);
+    await act(() => {
+      jest.advanceTimersByTime(FRAME_MS);
+    });
+    const [boardRecords, handRecords] = [mockRecorded.length, mockHandPhases.length];
+    await act(() => {
+      jest.advanceTimersByTime(COACH_HAND_LOOP_MS);
+    });
+    expect(mockRecorded).toHaveLength(boardRecords);
+    expect(mockHandPhases.length).toBeGreaterThan(handRecords + 2);
+    jest.useRealTimers();
   });
 });

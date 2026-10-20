@@ -65,7 +65,7 @@ const HOST_FILES = [
     'use-game-lifecycle.ts', 'use-game-lifecycle.test.ts', 'draw-coach-hand.ts', 'draw-coach-hand.test.ts',
     'board-number-typeface.ts', 'board-number-typeface.android.test.ts',
   ].map((f) => [`${GH}/${f}`, 'pure']),
-  ...['board-canvas.tsx', 'board-canvas.test.tsx', 'board-layout-probe.tsx', 'board-layout-probe.test.tsx', 'game-board-host.tsx', 'game-board-host.test.tsx', 'board-number-font.ts'].map((f) => [`${GH}/${f}`, 'shell']),
+  ...['board-canvas.tsx', 'board-canvas.test.tsx', 'coach-hand-layer.tsx', 'board-layout-probe.tsx', 'board-layout-probe.test.tsx', 'game-board-host.tsx', 'game-board-host.test.tsx', 'board-number-font.ts'].map((f) => [`${GH}/${f}`, 'shell']),
   // The BoardFont native module the board's digits face is read through (both platforms).
   ['packages/shell/ios/BoardFontModule.swift', 'shell'],
   ['packages/shell/android/src/main/java/io/applander/e07shell/BoardFontModule.kt', 'shell'],

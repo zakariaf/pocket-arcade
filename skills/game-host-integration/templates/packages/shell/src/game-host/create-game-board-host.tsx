@@ -134,9 +134,7 @@ function boardHostFor<T extends ShellGameTypes>(
     });
     const { colors, handLook, format, label } = useBoardLook(game, result.state);
     const hand =
-      coach.hand === null
-        ? null
-        : { hand: coach.hand, cells: coach.cells, look: handLook, replay: props.coachReplay ?? 0 };
+      coach.hand === null ? null : { hand: coach.hand, cells: coach.cells, look: handLook };
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();
@@ -170,6 +168,7 @@ function boardHostFor<T extends ShellGameTypes>(
           {...(traceClock === undefined ? {} : { traceClock })}
           {...(onFrameTime === undefined ? {} : { onFrameTime })}
           coach={hand}
+          coachReplay={props.coachReplay ?? 0}
         />
       </BoardDirectionView>
     );
