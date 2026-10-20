@@ -1,4 +1,5 @@
 {
+  "flock-tilt.board.summary": "In the pen: {penned, plural, one {# sheep} other {# sheep}} of {total, number}. {wolves, plural, one {# wolf} other {# wolves}} on the field.",
   "flock-tilt.continue.undo-tilt": "One more go: the last tilt is taken back and you get more tilts",
   "flock-tilt.goal": "Get every sheep into the pen.",
   "flock-tilt.how-to-play.step-1": "Swipe to tilt the field.",

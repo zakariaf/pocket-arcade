@@ -1,4 +1,5 @@
 {
+  "flock-tilt.board.summary": "Im Pferch: {penned, plural, one {# Schaf} other {# Schafe}} von {total, number}. {wolves, plural, one {# Wolf} other {# Wölfe}} auf der Weide.",
   "flock-tilt.continue.undo-tilt": "Noch ein Versuch: Der letzte Kippzug wird zurückgenommen und du bekommst mehr Kippzüge",
   "flock-tilt.goal": "Bring jedes Schaf in den Pferch.",
   "flock-tilt.how-to-play.step-1": "Wisch, um das Feld zu kippen.",

@@ -1,4 +1,5 @@
 {
+  "flock-tilt.board.summary": "در آغل: {penned, plural, one {# گوسفند} other {# گوسفند}} از {total, number}. {wolves, plural, one {# گرگ} other {# گرگ}} در دشت.",
   "flock-tilt.continue.undo-tilt": "یک فرصت دیگر: آخرین کج کردن برمی‌گردد و فرصت بیشتری برای کج کردن می‌گیرید",
   "flock-tilt.goal": "همهٔ گوسفندها را به آغل برسانید.",
   "flock-tilt.how-to-play.step-1": "برای کج کردن زمین، انگشتتان را روی صفحه بکشید.",

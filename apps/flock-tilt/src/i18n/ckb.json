@@ -1,4 +1,5 @@
 {
+  "flock-tilt.board.summary": "لە گەوڕەکەدا: {penned, plural, one {# مەڕ} other {# مەڕ}} لە {total, number}. {wolves, plural, one {# گورگ} other {# گورگ}} لە کێڵگەکەدا.",
   "flock-tilt.continue.undo-tilt": "هەلێکی تر: دوایین لارکردنەوە دەگەڕێتەوە و لارکردنەوەی زیاترت پێ دەدرێت",
   "flock-tilt.goal": "هەموو مەڕەکان بگەیەنە ناو گەوڕەکە.",
   "flock-tilt.how-to-play.step-1": "پەنجە ڕابکێشە بۆ لارکردنەوەی زەوییەکە.",
