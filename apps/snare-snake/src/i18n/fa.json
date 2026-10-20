@@ -1,4 +1,5 @@
 {
+  "snare-snake.board.summary": "جانورهای گرفته‌شده: {caught, number} / {total, number}، {movesLeft, plural, one {# حرکت} other {# حرکت}} باقی مانده",
   "snare-snake.goal": "پیش از تمام شدن حرکت‌ها، همهٔ جانورها را بگیرید.",
   "snare-snake.how-to-play.step-1": "انگشتتان را بکشید تا مار یک خانه جلو برود.",
   "snare-snake.how-to-play.step-2": "جانورها وقتی مار کنارشان باشد، از جایشان تکان نمی‌خورند.",
