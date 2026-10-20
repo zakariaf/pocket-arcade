@@ -66,8 +66,12 @@ export function parseState(json: unknown): StepstoneState | null {
   const cells = parseCells(json['cells'], counts.side * counts.side);
   const kindsUsed = parseKinds(json['kindsUsed']);
   if (cells === null || kindsUsed === null) return null;
-  const under = cells[counts.frog];
-  return under === 'water' || under === 'sunk' ? null : { ...counts, cells, kindsUsed };
+  const { side, frog, moves, par } = counts;
+  const under = cells[frog];
+  // The fields in StepstoneState's order, so a saved run writes back the same JSON text.
+  return under === 'water' || under === 'sunk'
+    ? null
+    : { side, cells, frog, moves, par, kindsUsed };
 }
 
 /** One logged move -> a typed move, or null (the Shell then drops only the undo history). */

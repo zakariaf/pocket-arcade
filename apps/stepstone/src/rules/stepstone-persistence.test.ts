@@ -61,6 +61,17 @@ describe('parseState', () => {
     );
   });
 
+  it('writes back the same JSON text, keys in the same order, for every state legal hops reach', () => {
+    fc.assert(
+      fc.property(seedArb, difficultyArb, choicesArb, (seed, difficulty, choices) => {
+        for (const state of statesOf(seed, difficulty, choices)) {
+          expect(JSON.stringify(parseState(viaJson(state)))).toBe(JSON.stringify(state));
+        }
+      }),
+      { numRuns: 50 },
+    );
+  });
+
   it('reads the frozen version 1 save of a small pond', () => {
     expect(parseState(GOLDEN_SAVE_V1)).toStrictEqual(GOLDEN_SAVE_V1);
   });
