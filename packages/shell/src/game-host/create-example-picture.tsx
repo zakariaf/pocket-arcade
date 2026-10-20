@@ -4,8 +4,8 @@ import { Canvas, Picture, Skia } from '@shopify/react-native-skia';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
-import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
+import { boardCoachHandOf, boardKitOf } from '@e07/shell/game-host/board-host-kit.ts';
+import { makeBoardColors } from '@e07/shell/game-host/board-kit.ts';
 import { makeScene } from '@e07/shell/game-host/board-scene.ts';
 import { IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 import { coachGameOf, coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
@@ -23,8 +23,6 @@ import type { ShellGameModule, ShellGameTypes } from '@e07/shell/game-host/shell
 import type { ComponentType, ReactNode } from 'react';
 import type { LayoutChangeEvent } from 'react-native';
 
-const NUMBER_SIZE = 18;
-
 // The canvas fills the picture; the picture keeps its aspect (the S13 size contract), so it never
 // measures 0 whatever its container does.
 const styles = StyleSheet.create({ fill: { flex: 1 }, picture: { alignSelf: 'stretch' } });
@@ -40,11 +38,7 @@ function lazyKitOf<T extends ShellGameTypes>(game: ShellGameModule<T>): () => Re
   const board = game.presentation.board;
   let kit: RenderKit | null = null;
   return () => {
-    kit ??= makeBoardKit(Skia, {
-      paths: board.buildPaths(Skia),
-      numberTypeface: boardNumberTypeface(),
-      numberSize: NUMBER_SIZE,
-    });
+    kit ??= boardKitOf(board);
     return kit;
   };
 }
@@ -68,10 +62,6 @@ function examplePictureFor<T extends ShellGameTypes>(
     if (page === undefined) return null;
     const view = board.toView(page.example, format);
     const pointed = coachPointerOf(coach, page.example, page.pointer);
-    const handLook = {
-      fill: Skia.Color(theme.colors.pop),
-      ink: Skia.Color(theme.colors.onPop),
-    };
     const colors = makeBoardColors(Skia, game.presentation.art.palettes, {
       scheme: theme.scheme,
       isColorBlind: theme.mode === 'colorBlind',
@@ -94,10 +84,7 @@ function examplePictureFor<T extends ShellGameTypes>(
             draw: board.draw,
             onError: () => undefined,
             // The page's pointing hand rests at its end, as under reduced motion.
-            restingHand:
-              pointed.hand === null
-                ? null
-                : { hand: pointed.hand, cells: pointed.cells, look: handLook },
+            restingHand: boardCoachHandOf(pointed, theme.colors),
           });
     return (
       <View
