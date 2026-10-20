@@ -2,10 +2,15 @@
 // One `it` per app: every game's palette passes the Toybox palette rules.
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
+import { PALETTE as TOGGLE_DROP } from '@e07/toggle-drop/theme/palette.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(LINE_SIEGE)).toStrictEqual([]);
+  });
+
+  it('keeps Toggle Drop readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(TOGGLE_DROP)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including
