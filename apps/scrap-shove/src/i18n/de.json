@@ -1,4 +1,5 @@
 {
+  "scrap-shove.board.summary": "{robotsCount, plural, one {# Roboter} other {# Roboter}} übrig, {heapsCount, plural, one {# Schrotthaufen} other {# Schrotthaufen}} am Boden",
   "scrap-shove.goal": "Lass jeden Roboter crashen, bevor einer dich erwischt.",
   "scrap-shove.how-to-play.step-1": "Tipp auf ein Feld neben dir, um dorthin zu gehen.",
   "scrap-shove.how-to-play.step-2": "Lauf gegen Schrott, um ihn zu schieben.",

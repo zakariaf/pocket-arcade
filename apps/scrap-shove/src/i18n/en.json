@@ -1,4 +1,5 @@
 {
+  "scrap-shove.board.summary": "{robotsCount, plural, one {# robot} other {# robots}} left, {heapsCount, plural, one {# scrap heap} other {# scrap heaps}} on the floor",
   "scrap-shove.goal": "Make every robot crash before one catches you.",
   "scrap-shove.how-to-play.step-1": "Tap a square next to you to step there.",
   "scrap-shove.how-to-play.step-2": "Walk into scrap to shove it.",
