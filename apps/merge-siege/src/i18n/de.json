@@ -1,4 +1,5 @@
 {
+  "merge-siege.continue.push-back": "Noch ein Versuch: Alle Gegner werden eine Reihe zurückgedrängt",
   "merge-siege.goal": "Zerschlag jeden Gegner, bevor einer deine unterste Reihe erreicht.",
   "merge-siege.how-to-play.step-1": "Wisch, um alle deine Kacheln auf einmal zu schieben.",
   "merge-siege.how-to-play.step-2": "Zwei gleiche Kacheln verschmelzen zu einer größeren.",
@@ -10,6 +11,7 @@
   "merge-siege.pack-name.2": "Innere Mauer",
   "merge-siege.pack-name.3": "Großer Bergfried",
   "merge-siege.progress": "Gegner {smashed, number} / {total, number}",
+  "merge-siege.progress.endless": "Gegner {smashed, number}",
   "merge-siege.stats.biggest-tile": "Größte Kachel",
   "merge-siege.stats.enemies-smashed": "Zerschlagene Gegner",
   "merge-siege.stats.tiles-merged": "Verschmolzene Kacheln",
