@@ -1,5 +1,6 @@
 {
   "poker-drop.board.summary": "{cardsCount, plural, one {# card} other {# cards}} in the well. In hand: {handRank, select, two {two} three {three} four {four} five {five} six {six} seven {seven} eight {eight} nine {nine} ten {ten} jack {jack} queen {queen} king {king} other {ace}} of {handSuit, select, spades {spades} hearts {hearts} diamonds {diamonds} other {clubs}}. A new row rises in {dropsCount, plural, one {# drop} other {# drops}}.",
+  "poker-drop.continue.clear-top": "One more go: the top row of the well clears",
   "poker-drop.goal": "Make poker hands in any line before the well fills up.",
   "poker-drop.how-to-play.step-1": "Tap a column to drop the next card into it.",
   "poker-drop.how-to-play.step-2": "Five cards in a line, across, up or diagonal, make a poker hand.",
@@ -11,6 +12,7 @@
   "poker-drop.pack-name.2": "Full house",
   "poker-drop.pack-name.3": "Royal flush",
   "poker-drop.progress": "Hands {made, number} / {total, number}",
+  "poker-drop.progress.endless": "Hands {made, number}",
   "poker-drop.stats.big-hands": "Big hands",
   "poker-drop.stats.biggest-cascade": "Biggest cascade",
   "poker-drop.stats.hands-made": "Hands made",

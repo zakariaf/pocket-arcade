@@ -1,5 +1,6 @@
 {
   "poker-drop.board.summary": "{cardsCount, plural, one {# کارت} other {# کارت}} در چاه. کارت در دست: {handRank, select, two {دو} three {سه} four {چهار} five {پنج} six {شش} seven {هفت} eight {هشت} nine {نه} ten {ده} jack {سرباز} queen {بی‌بی} king {شاه} other {آس}} {handSuit, select, spades {پیک} hearts {دل} diamonds {خشت} other {گشنیز}}. ردیف تازه پس از {dropsCount, plural, one {# کارت} other {# کارت}} دیگر بالا می‌آید.",
+  "poker-drop.continue.clear-top": "یک فرصت دیگر: ردیف بالای چاه خالی می‌شود",
   "poker-drop.goal": "پیش از پر شدن چاه، در هر خطی دست پوکر بسازید.",
   "poker-drop.how-to-play.step-1": "روی یک ستون بزنید تا کارت بعدی در آن بیفتد.",
   "poker-drop.how-to-play.step-2": "پنج کارت در یک خط، افقی، عمودی یا مورب، یک دست پوکر می‌سازند.",
@@ -11,6 +12,7 @@
   "poker-drop.pack-name.2": "فول هاوس",
   "poker-drop.pack-name.3": "رویال فلاش",
   "poker-drop.progress": "دست {made, number} / {total, number}",
+  "poker-drop.progress.endless": "دست {made, number}",
   "poker-drop.stats.big-hands": "دست‌های بزرگ",
   "poker-drop.stats.biggest-cascade": "بزرگ‌ترین زنجیره",
   "poker-drop.stats.hands-made": "دست‌های ساخته‌شده",

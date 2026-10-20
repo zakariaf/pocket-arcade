@@ -1,5 +1,6 @@
 {
   "poker-drop.board.summary": "{cardsCount, plural, one {# کارت} other {# کارت}} لە بیرەکەدا. کارتی دەست: {handRank, select, two {دوو} three {سێ} four {چوار} five {پێنج} six {شەش} seven {حەوت} eight {هەشت} nine {نۆ} ten {دە} jack {سەرباز} queen {شاژن} king {پاشا} other {ئاس}} {handSuit, select, spades {پیک} hearts {دڵ} diamonds {خشت} other {گوێز}}. ڕیزێکی نوێ دوای {dropsCount, plural, one {# کارتی تر} other {# کارتی تر}} بەرز دەبێتەوە.",
+  "poker-drop.continue.clear-top": "هەلێکی تر: ڕیزی سەرەوەی بیرەکە بەتاڵ دەبێتەوە",
   "poker-drop.goal": "پێش ئەوەی بیرەکە پڕ ببێت، لە هەر هێڵێکدا دەستی پۆکەر دروست بکە.",
   "poker-drop.how-to-play.step-1": "دەست لە ستوونێک بدە بۆ ئەوەی کارتی داهاتوو تێیدا بکەوێت.",
   "poker-drop.how-to-play.step-2": "پێنج کارت لە یەک هێڵدا، ئاسۆیی، ستوونی یان لار، دەستێکی پۆکەر دروست دەکەن.",
@@ -11,6 +12,7 @@
   "poker-drop.pack-name.2": "فول هاوس",
   "poker-drop.pack-name.3": "ڕۆیاڵ فلاش",
   "poker-drop.progress": "دەست {made, number} / {total, number}",
+  "poker-drop.progress.endless": "دەست {made, number}",
   "poker-drop.stats.big-hands": "دەستە گەورەکان",
   "poker-drop.stats.biggest-cascade": "گەورەترین زنجیرە",
   "poker-drop.stats.hands-made": "دەستە دروستکراوەکان",
