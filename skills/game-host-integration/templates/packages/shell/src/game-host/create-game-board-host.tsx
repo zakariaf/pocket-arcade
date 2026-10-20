@@ -6,30 +6,25 @@ import { Skia } from '@shopify/react-native-skia';
 import { useAnnounce } from '@e07/shell/app/use-announce.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { BoardDirectionView } from '@e07/shell/game-host/board-direction-view.tsx';
+import { boardCoachHandOf, boardKitOf } from '@e07/shell/game-host/board-host-kit.ts';
 import {
   boardHandlersFor,
   createMoveResultSelector,
   motionOf,
 } from '@e07/shell/game-host/board-host-model.ts';
-import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
-import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
+import { makeBoardColors } from '@e07/shell/game-host/board-kit.ts';
 import { boardCoachOf, coachGameOf } from '@e07/shell/game-host/coach-pointer.ts';
 import { GameBoardHost } from '@e07/shell/game-host/game-board-host.tsx';
 import { useGameSession } from '@e07/shell/game-host/game-session-store.ts';
 import { useBoardSelection } from '@e07/shell/game-host/use-board-selection.ts';
 import { useIsFullscreenAdShowing } from '@e07/shell/game-host/use-is-fullscreen-ad-showing.ts';
-import { createNumberFormatter } from '@e07/shell/i18n/create-number-formatter.ts';
-import { localeTagFor } from '@e07/shell/i18n/digits.ts';
 import { useDirection } from '@e07/shell/i18n/direction-context.tsx';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
-import { useLanguage } from '@e07/shell/i18n/language-context.tsx';
 import { useT } from '@e07/shell/i18n/t-context.ts';
-import { selectDigits } from '@e07/shell/stores/settings-selectors.ts';
-import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
+import { useNumberFormatter } from '@e07/shell/i18n/use-number-formatter.ts';
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
 
 import type { BoardColors, ViewFormat } from '@e07/shell/game-host/board-types.ts';
-import type { CoachHandLook } from '@e07/shell/game-host/draw-coach-hand.ts';
 import type { BoardClockTrace, BoardFrameTime } from '@e07/shell/game-host/game-board-host.tsx';
 import type {
   BoardHostFactory,
@@ -60,9 +55,6 @@ export type BoardPorts = {
   readonly frameTime?: () => BoardFrameTime | undefined;
 };
 
-/** Digits and Latin labels on the canvas: the bundled Vazirmatn (board-number-font.ts). */
-const NUMBER_SIZE = 18;
-
 /**
  * Hover previews are drawn on the UI thread from the pointer sample (frame.fx.pointer), so hover
  * changes need no JS work; the selection and the hint reach the board as its highlight.
@@ -76,8 +68,6 @@ const ANNOUNCEMENTS = {
 
 type BoardLook<TToken extends string> = {
   readonly colors: BoardColors<TToken>;
-  /** The tutorial hand: the Toybox pop paint, outlined in its own ink (onPop). */
-  readonly handLook: CoachHandLook;
   readonly format: ViewFormat;
   readonly label: string;
 };
@@ -89,18 +79,15 @@ function useBoardLook<T extends ShellGameTypes>(
 ): BoardLook<T['token']> {
   const theme = useTheme();
   const t = useT();
-  const language = useLanguage();
-  const digits = useSettingsStore(selectDigits);
+  const format = { formatNumber: useNumberFormatter() };
   const { board } = game.presentation;
-  // React Compiler memoizes these on their inputs (theme, colour-blind mode, language, digits).
+  // React Compiler memoizes these on their inputs (theme, colour-blind mode, the number format).
   const colors = makeBoardColors(Skia, game.presentation.art.palettes, {
     scheme: theme.scheme,
     isColorBlind: theme.mode === 'colorBlind',
   });
-  const format = { formatNumber: createNumberFormatter(localeTagFor(language, digits)) };
   const label = gameMessageText(t, board.describe(board.toView(state, format)));
-  const handLook = { fill: Skia.Color(theme.colors.pop), ink: Skia.Color(theme.colors.onPop) };
-  return { colors, handLook, format, label };
+  return { colors, format, label };
 }
 
 function boardHostFor<T extends ShellGameTypes>(
@@ -112,11 +99,7 @@ function boardHostFor<T extends ShellGameTypes>(
   const selectResult = createMoveResultSelector<T['state'], T['event']>();
   const handlers = boardHandlersFor(controller.handle, ports.errorLog);
   // Once per opened run, on the JS thread: unit paths and scratch paints, never per frame.
-  const kit = makeBoardKit(Skia, {
-    paths: board.buildPaths(Skia),
-    numberTypeface: boardNumberTypeface(),
-    numberSize: NUMBER_SIZE,
-  });
+  const kit = boardKitOf(board);
   const coachGame = coachGameOf(game);
   return function BoardHost(props: BoardHostProps): ReactNode {
     const result = useGameSession(controller.store, (state) => selectResult(state.session));
@@ -132,9 +115,8 @@ function boardHostFor<T extends ShellGameTypes>(
       },
       coachTargets: coach.cells,
     });
-    const { colors, handLook, format, label } = useBoardLook(game, result.state);
-    const hand =
-      coach.hand === null ? null : { hand: coach.hand, cells: coach.cells, look: handLook };
+    const { colors, format, label } = useBoardLook(game, result.state);
+    const hand = boardCoachHandOf(coach, useTheme().colors);
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();

@@ -4870,6 +4870,15 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/board-host-kit.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-host-kit.ts",
+            "sha256": "39cdbf390e5164fa939133a74122a9ff5be06dac8016eb7191c7369a9a8d8461"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/board-host-props.ts": {
         "recorded": "2026-10-20",
         "sources": [
@@ -4902,7 +4911,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-example-picture.tsx",
-            "sha256": "57dbfdf16416ce8ec7e255708e477f23c5c2290e219201b46af5f99c1739ca9b"
+            "sha256": "6a5092c89834ee4c5c2e99d72caae9d720b72034c656ecc28845ed7309bd317d"
           }
         ]
       },
@@ -4911,7 +4920,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-game-board-host.tsx",
-            "sha256": "49a69ff48d36bbc38347cab89b5d654cb215ee681501ce897d95fe09cc972ca7"
+            "sha256": "438dac9ca56ac83c4d0b5db4b1fccc5363ac2d7f130510dc50ae0b19297b81b4"
           }
         ]
       },

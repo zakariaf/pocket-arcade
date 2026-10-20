@@ -35,6 +35,7 @@ export const HOST_FILES = {
   'tutorial-script.ts': ['coachStepsOf', 'isTutorialMoveAccepted', 'expectsScriptedMove', 'tutorialRulesOf', 'TutorialRules', 'isSameMove', 'TutorialCoachStep', 'HowToPlayPage', 'howToPlayPagesOf', 'pointerTargets', 'exampleHighlightOf'],
   'coach-pointer.ts': ['coachPointerOf', 'boardCoachOf', 'coachGameOf', 'NO_COACH', 'CoachPointer', 'CoachGame'],
   'board-host-props.ts': ['BoardHostProps'],
+  'board-host-kit.ts': ['boardKitOf', 'boardCoachHandOf'],
   'create-example-picture.tsx': ['createExamplePicture'],
   'create-game-board-host.tsx': ['createGameBoardHost', 'BoardPorts'],
   'fullscreen-gate.ts': ['createFullscreenGate', 'FullscreenGate'],
