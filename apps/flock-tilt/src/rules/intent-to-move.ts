@@ -1,0 +1,49 @@
+// apps/flock-tilt/src/rules/intent-to-move.ts
+// Spec 13 controls: "swipe in 4 directions (or tap a side)". A swipe anywhere on the board tilts
+// the field that way; a tap on one of the four tilt keys beside the field tilts towards that key's
+// side (VoiceOver and one-handed play). Directions are physical: they never mirror in fa or ckb.
+import { listMoves } from './list-moves.ts';
+import { DIRECTIONS } from './tilt-field.ts';
+
+import type { Direction, FlockTiltMove, FlockTiltState } from './flock-tilt-types.ts';
+import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
+
+/**
+ * The four tilt keys' region ids: the board's TILT_KEY_REGIONS (board/board-ids.ts), which a board
+ * test pins to these. Rules never import the board, so the ids are written in both places.
+ */
+export const TILT_KEY_IDS: Readonly<Record<Direction, string>> = {
+  up: 'tilt-up',
+  right: 'tilt-right',
+  down: 'tilt-down',
+  left: 'tilt-left',
+};
+
+/** The tilt a key region stands for, or null for the field and anything else. */
+function keyDirection(regionId: string): Direction | null {
+  return DIRECTIONS.find((direction) => TILT_KEY_IDS[direction] === regionId) ?? null;
+}
+
+/** The tilt an intent points at, before legality. */
+function candidate(intent: InputIntent): Direction | null {
+  switch (intent.kind) {
+    case 'swipe':
+      return intent.direction;
+    case 'tap':
+      return keyDirection(intent.target.regionId);
+    case 'long-press':
+    case 'drag-end':
+    case 'aim':
+      return null;
+  }
+}
+
+/**
+ * Pure: an intent becomes a legal tilt or nothing. Legality is "listMoves(state) lists it" and
+ * nothing else, so a tilt that would move nothing and a finished run both give null.
+ */
+export function intentToMove(state: FlockTiltState, intent: InputIntent): FlockTiltMove | null {
+  const direction = candidate(intent);
+  if (direction === null) return null;
+  return listMoves(state).find((move) => move.direction === direction) ?? null;
+}
