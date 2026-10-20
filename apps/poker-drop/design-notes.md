@@ -231,3 +231,26 @@ change (E27-T02 records it as a `referenceChanges` entry).
   owner's App Store Connect record, Apple ID 6824608929).
 - Daily salt: `0x4ef1`, the scaffold's suggestion (E27-T03, `scaffold-game.mjs` plan of 2026-10-19), fixed forever in
   `src/levels/poker-drop-levels.ts` by E27-T08; never shared with another game.
+
+## 17. The board (E27-T10)
+
+- **Layout:** the 5 x 6 well in a sunken frame, as large as whole-point square cells allow, with a
+  deal strip above it on a phone (the next card over the first column, the card in hand over the
+  middle one, the rise counter over the last) and beside it on a wide canvas. The well is the only
+  tappable region; a 362 pt phone canvas gives 68 pt columns (S5, 8.11: 44 pt or more).
+- **Cards** are drawn in code (N9): an upright face with an ink edge, the index on top and the suit
+  as its own shape (spade, heart, diamond, club), so suits differ by shape as well as colour. The
+  colour-blind sets use a four-colour deck (Okabe-Ito: ink, vermillion, blue, green).
+- **Card indices stay Latin** (2 to 10, J, Q, K, A) in every language and digit setting: spec 7.3
+  lets a game declare a number a symbol that stays Latin, and a card index is one. The counts the
+  board draws (the drops before the next rise, the cascade badge "×2") follow the chosen digits.
+- **The replay:** the cascade simulated inside `applyMove` plays at the rules' own moments: the card
+  leaves the hand slot and falls, each hand's line flashes and its cards glow and fade, the cards
+  above fall, a "×2" badge pops on the second step, a rising row comes up out of the well's floor,
+  and the next card slides into the hand. Reduce motion halves every time and drops the particles,
+  the squash and the overshoot. The board never mirrors in fa and ckb (7.5).
+- **Sound cues** (the bank of E27-T14): `drop`, `burst-<hand>` for each hand kind (two-pair to
+  straight-flush), `cascade`, `rise`, `overflow` and `continue`.
+- **VoiceOver** reads one summary (8.11): the cards in the well, the card in hand in words and the
+  drops before a new row rises (`poker-drop.board.summary`, four languages; fa and ckb are drafts
+  for the owner's review, O6).

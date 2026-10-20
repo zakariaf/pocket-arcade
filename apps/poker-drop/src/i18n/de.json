@@ -1,4 +1,5 @@
 {
+  "poker-drop.board.summary": "{cardsCount, plural, one {# Karte} other {# Karten}} im Schacht. Auf der Hand: {handSuit, select, spades {Pik} hearts {Herz} diamonds {Karo} other {Kreuz}} {handRank, select, two {Zwei} three {Drei} four {Vier} five {Fünf} six {Sechs} seven {Sieben} eight {Acht} nine {Neun} ten {Zehn} jack {Bube} queen {Dame} king {König} other {Ass}}. Eine neue Reihe steigt in {dropsCount, plural, one {# Wurf} other {# Würfen}} auf.",
   "poker-drop.goal": "Bilde Pokerblätter in jeder Linie, bevor der Schacht voll ist.",
   "poker-drop.how-to-play.step-1": "Tipp auf eine Spalte, um die nächste Karte hineinfallen zu lassen.",
   "poker-drop.how-to-play.step-2": "Fünf Karten in einer Linie, waagrecht, senkrecht oder diagonal, bilden ein Pokerblatt.",
