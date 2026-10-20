@@ -2,7 +2,7 @@
 // Jump Chain v1 (spec 13: "Solo checkers: one piece against advancing enemy ranks; only multi-jump
 // chains clear them"). Everything stands on the dark squares of a 7 x 10 checkerboard. Your piece
 // jumps a diagonal neighbour onto the free square behind it, which captures that enemy, and a chain
-// keeps jumping the same way (every jump up, or every jump down). Every few moves the enemy ranks
+// keeps jumping in any diagonal, as a checkers king does. Every few moves the enemy ranks
 // advance one row (two squares straight down); an enemy that reaches the bottom row overruns your
 // side and the run is lost.
 import type { ApplyResult } from '@e07/game-kit/contract/game-engine.ts';
@@ -45,7 +45,7 @@ export type JumpChainState = {
 
 /**
  * A step one square diagonally (only when no jump exists), or a jump chain: the landing squares in
- * order, each two squares diagonally from the one before, all up or all down.
+ * order, each two squares diagonally from the one before, in any diagonal.
  */
 export type JumpChainMove =
   | { readonly kind: 'step'; readonly to: Square }
