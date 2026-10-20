@@ -33,11 +33,11 @@ Set the paint immediately before each draw call (`kit.fill.setColor(colors.color
 
 **Highlights.** The host passes a `BoardHighlight` (`{ selected, hinted }`, `EMPTY_HIGHLIGHT` when there is nothing) as a prop, and it reaches draw as `frame.highlight`. It is UI state (a tap-then-tap selection and the hinted move), never game state. Draw `selected` (Line Siege rings the selected tray slot) and each target of `hinted` (the template rings hinted cells; Line Siege draws the hinted block as a ghost and rings its slot). A board that can hint implements `targetsOfMove(state, move)` on its `GameBoard`, which the host calls with `controller.hintedMove()`.
 
-**Effect layers wait for their track.** `sampleTimeline` holds a track's `from` values until it starts, so a sample exists at moment 0 for every track of the turn. A layer that is a tween of something already visible (a cell's pop scale, a monster's row) may read those held values. A layer that only exists while its effect plays (a flash, a shockwave band, a glow, a particle burst, a shake) draws only when `entry.ageMs > 0` and `entry.progress < 1`; otherwise every flash and wave of the turn would show at full strength at moment 0, long before its event. The templates and the Line Siege example guard these layers with one helper:
+**Effect layers wait for their track.** `sampleTimeline` holds a track's `from` values until it starts, so a sample exists at moment 0 for every track of the turn. A layer that is a tween of something already visible (a cell's pop scale, a monster's row) may read those held values. A layer that only exists while its effect plays (a flash, a shockwave band, a glow, a particle burst, a shake) draws only when `entry.ageMs > 0` and `entry.progress !== 1`; otherwise every flash and wave of the turn would show at full strength at moment 0, long before its event. The end is exactly 1: every easing ends there, but `out-back` passes 1 on its way, so `progress < 1` would hide a popping badge or label in the middle of its pop. The templates guard these layers with one helper (Line Siege's copy compares `< 1`, which is the same for its effects, none of which overshoots):
 
 ```ts
 function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
+  return entry !== undefined && entry.ageMs > 0 && entry.progress !== 1;
 }
 ```
 
@@ -131,7 +131,7 @@ Boards are physical and never pixel-flip (`scaleX: -1` would mirror letters and 
 
 ## Particles and effects
 
-`sampleParticle(burst, index, ageMs)` is stateless: every particle position is a pure function of the burst spec, its index and its age, with direction and speed from `hashU32(seed, index)` and 16 committed unit vectors (no `Math.cos`). So bursts replay identically, render at any t in goldens and cost nothing when the clock stops. Bursts are tracks (`channel: 'burst'`), which is how reduced motion removes them. Use `burst.ageMs` for the age and draw only while `isPlaying(burst)` (`ageMs > 0` and `progress < 1`), like every effect layer (see "The rules of draw()").
+`sampleParticle(burst, index, ageMs)` is stateless: every particle position is a pure function of the burst spec, its index and its age, with direction and speed from `hashU32(seed, index)` and 16 committed unit vectors (no `Math.cos`). So bursts replay identically, render at any t in goldens and cost nothing when the clock stops. Bursts are tracks (`channel: 'burst'`), which is how reduced motion removes them. Use `burst.ageMs` for the age and draw only while `isPlaying(burst)` (`ageMs > 0` and `progress !== 1`), like every effect layer (see "The rules of draw()").
 
 Shake: a short track whose values offset the whole board with `canvas.translate`; drop it under reduced motion.
 

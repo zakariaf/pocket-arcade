@@ -114,6 +114,13 @@ describe('drawBoard', () => {
     expect(draw({ tracks, atMs: 200 }).texts).toStrictEqual(['۱۲']);
   });
 
+  it('keeps the label while its out-back pop overshoots, and drops it once the pop ends', () => {
+    const tracks = buildTimeline([{ kind: 'moves-added', count: 3 }], 'full');
+    // At 400 of 600 ms the eased progress is above 1: the pop is still playing.
+    expect(draw({ tracks, atMs: 400 }).texts).toStrictEqual(['۱۲']);
+    expect(draw({ tracks, atMs: 600 }).texts).toStrictEqual([]);
+  });
+
   it('rings each hinted cell of the host highlight', () => {
     const hinted = [{ regionId: 'board', col: 2, row: 2 }];
     const plain = draw({ tracks: [], atMs: 0 });

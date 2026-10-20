@@ -41,9 +41,13 @@ function boardRect(frame: Frame): Rect | null {
   return { x, y: first.y, width: cols * first.width, height: last.y + last.height - first.y };
 }
 
-/** An effect that is not a tween of something visible draws only once its track has started. */
+/**
+ * An effect that is not a tween of something visible draws only once its track has started and
+ * until it ends. Every easing ends exactly at 1, but out-back passes 1 on its way (the bonus pop),
+ * so "ended" is progress === 1, never progress >= 1.
+ */
 function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
+  return entry !== undefined && entry.ageMs > 0 && entry.progress !== 1;
 }
 
 /** Lit cells carry a shape (the unit mark) as well as a colour: never colour alone. */
