@@ -3,10 +3,11 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, heartEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawBursts, drawMonsters, drawVanishing } from './draw-monsters.ts';
-import { drawBlock, inset, INSET, isPlaying } from './draw-parts.ts';
+import { CORNER, drawBlock, inset, INSET, isPlaying } from './draw-parts.ts';
 import { drawGhost, drawHinted, drawTray } from './draw-tray.ts';
 import { lanePoint, wallRect } from './layout-board.ts';
 
@@ -24,14 +25,12 @@ function drawLanes(canvas: SkCanvas, frame: Frame): void {
     const top = cellRect(layout, { regionId: 'board', col: lane, row: 0 });
     if (far === null || near === null || top === null) continue;
     const y = far.y - far.step / 2;
-    kit.fill.setColor(colors.color.lane);
-    kit.fill.setAlphaf(lane % 2 === 0 ? 1 : 0.7);
+    setPaintColor(kit.fill, colors.color.lane, lane % 2 === 0 ? 1 : 0.7);
     canvas.drawRect(
       { x: top.x, y, width: top.width, height: near.y + near.step / 2 - y },
       kit.fill,
     );
   }
-  kit.fill.setAlphaf(1);
 }
 
 function drawHeart(
@@ -104,7 +103,7 @@ function drawCells(canvas: SkCanvas, frame: Frame): void {
     const rect = cellRect(layout, { regionId: 'board', ...at });
     if (rect === null) continue;
     const { fade, pop } = cellLook(frame, i, cellEntity(at.col, at.row));
-    const corner = rect.width * 0.14;
+    const corner = rect.width * CORNER;
     kit.fill.setColor(colors.color.cell);
     if (view.cells[i] !== 1)
       canvas.drawRRect({ rect: inset(rect, INSET), rx: corner, ry: corner }, kit.fill);
@@ -136,14 +135,12 @@ function drawWave(canvas: SkCanvas, frame: Frame, channel: 'shock' | 'push'): vo
   const near = lanePoint(layout, view, { lane: 0, row: view.laneRows - 1 });
   const wall = wallRect(layout, view);
   if (!isPlaying(wave) || near === null || wall === null) return;
-  kit.fill.setColor(colors.color.shock);
-  kit.fill.setAlphaf(1 - wave.progress);
+  setPaintColor(kit.fill, colors.color.shock, 1 - wave.progress);
   const y = wall.y - near.step * view.laneRows * wave.progress - near.step;
   canvas.drawRect(
     { x: wall.x, y, width: wall.width, height: near.step * (channel === 'push' ? 2 : 1) },
     kit.fill,
   );
-  kit.fill.setAlphaf(1);
 }
 
 /** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */
