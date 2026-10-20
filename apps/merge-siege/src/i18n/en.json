@@ -1,4 +1,5 @@
 {
+  "merge-siege.board.summary": "{tiles, plural, one {# tile} other {# tiles}}, the biggest {biggest, number}; {enemies, plural, one {# enemy} other {# enemies}} on the board",
   "merge-siege.continue.push-back": "One more go: every enemy is pushed back one row",
   "merge-siege.goal": "Smash every enemy before one reaches your bottom row.",
   "merge-siege.how-to-play.step-1": "Swipe to slide all your tiles at once.",

@@ -1,4 +1,5 @@
 {
+  "merge-siege.board.summary": "{tiles, plural, one {# Kachel} other {# Kacheln}}, die größte {biggest, number}; {enemies, plural, one {# Gegner} other {# Gegner}} auf dem Feld",
   "merge-siege.continue.push-back": "Noch ein Versuch: Alle Gegner werden eine Reihe zurückgedrängt",
   "merge-siege.goal": "Zerschlag jeden Gegner, bevor einer deine unterste Reihe erreicht.",
   "merge-siege.how-to-play.step-1": "Wisch, um alle deine Kacheln auf einmal zu schieben.",

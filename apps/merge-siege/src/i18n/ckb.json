@@ -1,4 +1,5 @@
 {
+  "merge-siege.board.summary": "{tiles, plural, one {# کاشی} other {# کاشی}}، گەورەترین {biggest, number}؛ {enemies, plural, one {# دوژمن} other {# دوژمن}} لەسەر تەختەکە",
   "merge-siege.continue.push-back": "هەلێکی تر: هەموو دوژمنەکان یەک ڕیز دەگەڕێنرێنەوە دواوە",
   "merge-siege.goal": "هەموو دوژمنەکان تێکبشکێنە پێش ئەوەی یەکێکیان بگاتە ڕیزی خوارەوەت.",
   "merge-siege.how-to-play.step-1": "پەنجە ڕابکێشە بۆ ئەوەی هەموو کاشییەکانت پێکەوە بخلیسکێن.",

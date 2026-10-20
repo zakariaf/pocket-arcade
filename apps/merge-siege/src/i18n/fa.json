@@ -1,4 +1,5 @@
 {
+  "merge-siege.board.summary": "{tiles, plural, one {# کاشی} other {# کاشی}}، بزرگ‌ترین {biggest, number}؛ {enemies, plural, one {# دشمن} other {# دشمن}} روی صفحه",
   "merge-siege.continue.push-back": "یک فرصت دیگر: همهٔ دشمنان یک ردیف عقب رانده می‌شوند",
   "merge-siege.goal": "همهٔ دشمنان را پیش از اینکه یکی به ردیف پایینی شما برسد، درهم بکوبید.",
   "merge-siege.how-to-play.step-1": "انگشتتان را بکشید تا همهٔ کاشی‌ها با هم سر بخورند.",
