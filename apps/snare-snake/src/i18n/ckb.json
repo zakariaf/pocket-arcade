@@ -1,5 +1,6 @@
 {
   "snare-snake.board.summary": "گیانلەبەری گیراو: {caught, number} / {total, number}، {movesLeft, plural, one {# جووڵە} other {# جووڵە}} ماوە",
+  "snare-snake.continue.step-back": "هەلێکی تر: چەند جووڵەیەکی زیاتر، و مارە گرێخواردووەکە خانەیەک دەگەڕێتەوە دواوە بۆ ئەوەی ئازاد ببێت",
   "snare-snake.goal": "پێش ئەوەی جووڵەکانت تەواو ببن، هەموو گیانلەبەرەکان بگرە.",
   "snare-snake.how-to-play.step-1": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە خانەیەک بڕوات.",
   "snare-snake.how-to-play.step-2": "گیانلەبەرەکان کاتێک مارەکە لە تەنیشتیانە، ناجووڵێن.",

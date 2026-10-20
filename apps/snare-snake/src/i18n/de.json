@@ -1,5 +1,6 @@
 {
   "snare-snake.board.summary": "Krabbler gefangen: {caught, number} / {total, number}, {movesLeft, plural, one {# Zug} other {# Züge}} übrig",
+  "snare-snake.continue.step-back": "Noch ein Versuch: ein paar Züge mehr, und eine verknotete Schlange rückt ein Feld zurück",
   "snare-snake.goal": "Fang jeden Krabbler, bevor deine Züge aufgebraucht sind.",
   "snare-snake.how-to-play.step-1": "Wisch, um die Schlange Feld für Feld zu lenken.",
   "snare-snake.how-to-play.step-2": "Krabbler erstarren, wenn die Schlange neben ihnen ist.",

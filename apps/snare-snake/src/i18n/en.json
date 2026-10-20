@@ -1,5 +1,6 @@
 {
   "snare-snake.board.summary": "Critters caught: {caught, number} / {total, number}, {movesLeft, plural, one {# move} other {# moves}} left",
+  "snare-snake.continue.step-back": "One more go: a few more moves, and a tangled snake steps back to get free",
   "snare-snake.goal": "Catch every critter before your moves run out.",
   "snare-snake.how-to-play.step-1": "Swipe to steer the snake one cell at a time.",
   "snare-snake.how-to-play.step-2": "Critters freeze when the snake is next to them.",
