@@ -18,7 +18,7 @@ import { LINE_SIEGE_TEACHING } from '@e07/line-siege/tutorial/line-siege-teachin
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
 import { boardNumberTypefaceOf } from '@e07/shell/game-host/board-number-typeface.ts';
 import { coachGameOf, coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
-import { drawCoachHand } from '@e07/shell/game-host/draw-coach-hand.ts';
+import { coachHandGlide, drawCoachHand } from '@e07/shell/game-host/draw-coach-hand.ts';
 import { paintBoardPng } from '@e07/shell/game-host/paint-board-png.ts';
 
 import { toMatchPixelGolden } from './skia-golden.ts';
@@ -53,14 +53,8 @@ function drawWithHand(scheme: 'light' | 'dark', phase: number) {
     lineSiegeBoard.draw(canvas, frame);
     const { hand } = COACH;
     if (hand === null) throw new Error('step 1 has a pointing hand');
-    drawCoachHand(canvas, {
-      hand,
-      cells: COACH.cells,
-      phase,
-      look,
-      layout: frame.layout,
-      kit: KIT,
-    });
+    const glide = coachHandGlide(frame.layout, { hand, cells: COACH.cells });
+    drawCoachHand(canvas, { glide, look, kit: KIT }, phase);
   };
 }
 

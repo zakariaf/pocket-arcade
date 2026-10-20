@@ -118,6 +118,8 @@ function props(
     onHover: jest.fn(),
     onFailure: jest.fn(),
     reportError: jest.fn(),
+    coach: null,
+    coachReplay: 0,
     ...extra,
   };
 }

@@ -1,7 +1,6 @@
 // packages/shell/src/game-host/draw-coach-hand.test.ts
-import { coachHandKey, coachHandPose, drawCoachHand } from './draw-coach-hand.ts';
+import { coachHandGlide, coachHandKey, coachHandPose, drawCoachHand } from './draw-coach-hand.ts';
 
-import type { CoachHandFrame } from './draw-coach-hand.ts';
 import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas, SkColor, SkPaint, SkRRect } from '@shopify/react-native-skia';
 
@@ -44,6 +43,20 @@ describe('coachHandPose', () => {
   });
 });
 
+describe('coachHandGlide', () => {
+  it("works out the hand's glide once per layout: from the slot's centre to its rest in the gap", () => {
+    expect(coachHandGlide(LAYOUT, DRAG)).toStrictEqual({
+      start: { x: 100, y: 220 },
+      rest: { x: 150, y: 118, size: 40 },
+    });
+    const target = { hand: { from: null, to: cell(0, 0) }, cells: [cell(0, 0)] };
+    expect(coachHandGlide(LAYOUT, target)).toStrictEqual({
+      start: null,
+      rest: { x: 30, y: 38, size: 40 },
+    });
+  });
+});
+
 describe('drawCoachHand', () => {
   function drawn(phase: number, layout: BoardLayout = LAYOUT): SkRRect[] {
     const rrects: SkRRect[] = [];
@@ -53,14 +66,12 @@ describe('drawCoachHand', () => {
     const canvas = new Proxy({}, { get: (_t, name) => methods[String(name)] ?? (() => undefined) });
     const paint = new Proxy({}, { get: () => () => undefined }) as SkPaint;
     const color = new Float32Array([1, 1, 1, 1]) as SkColor;
-    const frame: CoachHandFrame = {
-      ...DRAG,
-      phase,
+    const hand = {
+      glide: coachHandGlide(layout, DRAG),
       look: { fill: color, ink: color },
-      layout,
       kit: { fill: paint, stroke: paint },
     };
-    drawCoachHand(canvas as SkCanvas, frame);
+    drawCoachHand(canvas as SkCanvas, hand, phase);
     return rrects;
   }
 
