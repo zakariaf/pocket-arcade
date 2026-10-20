@@ -1,11 +1,16 @@
 // test/integration/toybox-palettes.test.ts
 // One `it` per app: every game's palette passes the Toybox palette rules.
+import { PALETTE as FLOCK_TILT } from '@e07/flock-tilt/theme/palette.ts';
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(LINE_SIEGE)).toStrictEqual([]);
+  });
+
+  it('keeps Flock Tilt readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(FLOCK_TILT)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including
