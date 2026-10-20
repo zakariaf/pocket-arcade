@@ -61,7 +61,9 @@ describe('applyMove (turn-based: apply the move, then animate its events)', () =
       { kind: 'player-stepped', from: { col: 2, row: 2 }, to: { col: 3, row: 2 } },
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 1, from: { col: 0, row: 0 }, to: { col: 1, row: 1 } }],
+        steps: [
+          { robotId: 1, robotKind: 'normal', from: { col: 0, row: 0 }, to: { col: 1, row: 1 } },
+        ],
       },
     ]);
   });

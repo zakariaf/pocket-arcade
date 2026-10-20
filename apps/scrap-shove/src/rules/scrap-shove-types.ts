@@ -61,8 +61,17 @@ export type ScrapShoveMove =
 /** How a robot was scrapped in a crash: into another robot, into scrap, or into a heavy robot. */
 export type CrashCause = 'robot' | 'scrap' | 'heavy';
 
-/** One robot's step of a robots' turn (from equals to when it waited). */
-export type RobotStep = { readonly robotId: number; readonly from: Cell; readonly to: Cell };
+/**
+ * One robot's step of a robots' turn (from equals to when it waited), with the robot's kind: a
+ * robot wrecked in this turn is gone from the final view, so the board draws its last step from
+ * the event alone.
+ */
+export type RobotStep = {
+  readonly robotId: number;
+  readonly robotKind: RobotKind;
+  readonly from: Cell;
+  readonly to: Cell;
+};
 
 /** Past tense, kebab-case, with every id and square the animation and the counters need. */
 export type ScrapShoveEvent =

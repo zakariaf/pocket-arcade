@@ -19,7 +19,9 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
       { kind: 'player-waited', at: { col: 2, row: 2 } },
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 1, from: { col: 0, row: 0 }, to: { col: 1, row: 1 } }],
+        steps: [
+          { robotId: 1, robotKind: 'normal', from: { col: 0, row: 0 }, to: { col: 1, row: 1 } },
+        ],
       },
     ]);
   });
@@ -30,11 +32,15 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
     expect(events.slice(1)).toStrictEqual([
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 1, from: { col: 0, row: 0 }, to: { col: 1, row: 1 } }],
+        steps: [
+          { robotId: 1, robotKind: 'fast', from: { col: 0, row: 0 }, to: { col: 1, row: 1 } },
+        ],
       },
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 1, from: { col: 1, row: 1 }, to: { col: 2, row: 2 } }],
+        steps: [
+          { robotId: 1, robotKind: 'fast', from: { col: 1, row: 1 }, to: { col: 2, row: 2 } },
+        ],
       },
     ]);
   });
@@ -76,7 +82,9 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
     expect(events.slice(1)).toStrictEqual([
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 1, from: { col: 1, row: 1 }, to: { col: 2, row: 2 } }],
+        steps: [
+          { robotId: 1, robotKind: 'heavy', from: { col: 1, row: 1 }, to: { col: 2, row: 2 } },
+        ],
       },
       {
         kind: 'scrap-shoved',
@@ -169,7 +177,9 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
     expect(events.slice(1)).toStrictEqual([
       {
         kind: 'robots-stepped',
-        steps: [{ robotId: 2, from: { col: 1, row: 1 }, to: { col: 2, row: 2 } }],
+        steps: [
+          { robotId: 2, robotKind: 'normal', from: { col: 1, row: 1 }, to: { col: 2, row: 2 } },
+        ],
       },
       { kind: 'player-caught', robotId: 2, at: { col: 2, row: 2 } },
     ]);

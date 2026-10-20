@@ -50,7 +50,10 @@ function withNewHeap(floor: Floor, at: Cell): Floor {
 function stepped(turn: Turn, robot: Robot, to: Cell): Turn {
   return {
     ...turn,
-    steps: [...turn.steps, { robotId: robot.id, from: cellOf(robot), to: cellOf(to) }],
+    steps: [
+      ...turn.steps,
+      { robotId: robot.id, robotKind: robot.kind, from: cellOf(robot), to: cellOf(to) },
+    ],
   };
 }
 

@@ -12,7 +12,7 @@ exports[`the rules golden keeps the event stream and the floors of seed 1 along 
 ...n....
 move 1: {"kind":"wait"}
 player-waited {"at":{"col":4,"row":4}}
-robots-stepped {"steps":[{"robotId":1,"from":{"col":1,"row":3},"to":{"col":2,"row":4}},{"robotId":2,"from":{"col":1,"row":4},"to":{"col":2,"row":4}},{"robotId":3,"from":{"col":3,"row":7},"to":{"col":4,"row":6}},{"robotId":4,"from":{"col":1,"row":6},"to":{"col":2,"row":5}},{"robotId":5,"from":{"col":5,"row":1},"to":{"col":4,"row":2}}]}
+robots-stepped {"steps":[{"robotId":1,"robotKind":"normal","from":{"col":1,"row":3},"to":{"col":2,"row":4}},{"robotId":2,"robotKind":"normal","from":{"col":1,"row":4},"to":{"col":2,"row":4}},{"robotId":3,"robotKind":"normal","from":{"col":3,"row":7},"to":{"col":4,"row":6}},{"robotId":4,"robotKind":"normal","from":{"col":1,"row":6},"to":{"col":2,"row":5}},{"robotId":5,"robotKind":"heavy","from":{"col":5,"row":1},"to":{"col":4,"row":2}}]}
 robots-crashed {"robotIds":[1,2],"at":{"col":2,"row":4},"cause":"robot","heapId":9,"isShovedScrap":false}
 .......#
 ........
@@ -26,7 +26,7 @@ move 2: {"kind":"shove","col":4,"row":3}
 player-stepped {"from":{"col":4,"row":4},"to":{"col":4,"row":3}}
 scrap-shoved {"heapId":6,"from":{"col":4,"row":3},"to":{"col":4,"row":2},"byRobotId":null}
 robot-crushed {"robotId":5,"robotKind":"heavy","at":{"col":4,"row":2},"heapId":6,"isByPlayer":true}
-robots-stepped {"steps":[{"robotId":4,"from":{"col":2,"row":5},"to":{"col":3,"row":4}},{"robotId":3,"from":{"col":4,"row":6},"to":{"col":4,"row":5}}]}
+robots-stepped {"steps":[{"robotId":4,"robotKind":"normal","from":{"col":2,"row":5},"to":{"col":3,"row":4}},{"robotId":3,"robotKind":"normal","from":{"col":4,"row":6},"to":{"col":4,"row":5}}]}
 .......#
 ........
 ....*...
@@ -37,7 +37,7 @@ robots-stepped {"steps":[{"robotId":4,"from":{"col":2,"row":5},"to":{"col":3,"ro
 ........
 move 3: {"kind":"step","col":3,"row":2}
 player-stepped {"from":{"col":4,"row":3},"to":{"col":3,"row":2}}
-robots-stepped {"steps":[{"robotId":4,"from":{"col":3,"row":4},"to":{"col":3,"row":3}},{"robotId":3,"from":{"col":4,"row":5},"to":{"col":3,"row":4}}]}
+robots-stepped {"steps":[{"robotId":4,"robotKind":"normal","from":{"col":3,"row":4},"to":{"col":3,"row":3}},{"robotId":3,"robotKind":"normal","from":{"col":4,"row":5},"to":{"col":3,"row":4}}]}
 .......#
 ........
 ...@*...
@@ -48,7 +48,7 @@ robots-stepped {"steps":[{"robotId":4,"from":{"col":3,"row":4},"to":{"col":3,"ro
 ........
 move 4: {"kind":"step","col":4,"row":1}
 player-stepped {"from":{"col":3,"row":2},"to":{"col":4,"row":1}}
-robots-stepped {"steps":[{"robotId":4,"from":{"col":3,"row":3},"to":{"col":4,"row":2}},{"robotId":3,"from":{"col":3,"row":4},"to":{"col":4,"row":3}}]}
+robots-stepped {"steps":[{"robotId":4,"robotKind":"normal","from":{"col":3,"row":3},"to":{"col":4,"row":2}},{"robotId":3,"robotKind":"normal","from":{"col":3,"row":4},"to":{"col":4,"row":3}}]}
 robots-crashed {"robotIds":[4],"at":{"col":4,"row":2},"cause":"scrap","heapId":6,"isShovedScrap":true}
 .......#
 ....@...
@@ -60,7 +60,7 @@ robots-crashed {"robotIds":[4],"at":{"col":4,"row":2},"cause":"scrap","heapId":6
 ........
 move 5: {"kind":"step","col":4,"row":0}
 player-stepped {"from":{"col":4,"row":1},"to":{"col":4,"row":0}}
-robots-stepped {"steps":[{"robotId":3,"from":{"col":4,"row":3},"to":{"col":4,"row":2}}]}
+robots-stepped {"steps":[{"robotId":3,"robotKind":"normal","from":{"col":4,"row":3},"to":{"col":4,"row":2}}]}
 robots-crashed {"robotIds":[3],"at":{"col":4,"row":2},"cause":"scrap","heapId":6,"isShovedScrap":true}
 floor-cleared {}
 ....@..#
