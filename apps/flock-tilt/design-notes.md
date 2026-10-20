@@ -154,9 +154,11 @@ Status: proposed on 2026-10-19; the defaults below apply until the owner answers
 
 ## Music
 
-- **None.** The sound bank has short synthesised sounds (tilt whoosh, bump thud, pen pop, a bleat
-  when a sheep is lost, win and lose jingles) and no music, so S6 and S11 drop the Music rows and
-  parity uses the `--no-music` references (L1); the game fact `hasMusic` is false.
+- **None.** The sound bank has four short synthesised sounds (tilt whoosh, bump thud, pen pop, a
+  bleat when a sheep is lost) and no music; the win and lose jingles are the Shell's `ui.win` and
+  `ui.lose`, played once by the game host's result step (game-audio-and-haptics' model). So S6 and
+  S11 drop the Music rows and parity uses the `--no-music` references (L1); the game fact
+  `hasMusic` is false.
 
 ## Age rating
 

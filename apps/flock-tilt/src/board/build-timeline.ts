@@ -107,15 +107,19 @@ function penned(id: number, arrivalMs: number, timing: Timing): Track[] {
   return timing.isFull ? [drop, burst] : [drop];
 }
 
-/** What a one-shot fade needs: which channel and entity, when, and its cue. */
+/** What a one-shot fade needs: which channel and entity, when, and its cue if it has one. */
 type Flash = Pick<Track, 'channel' | 'entityId' | 'startMs' | 'cue'>;
 
-/** A one-shot fade with its cue (a lost sheep, the cleared field, the run-out, the continue). */
+/** A one-shot fade (a lost sheep, the cleared field, the run-out, the continue). */
 function flash(at: Flash): Track {
   return { ...at, durationMs: FLASH_MS, easing: 'out-quad', from: [1], to: [0] };
 }
 
-/** The tracks of what a settled tilt caused, starting when the last animal stopped. */
+/**
+ * The tracks of what a settled tilt caused, starting when the last animal stopped. A won or lost
+ * field sounds once, through the Shell's ui.win and ui.lose (the game host's result step), and the
+ * continue follows the Shell's dialog, so those flashes carry no cue of their own.
+ */
 function settledTracks(event: FlockTiltEvent, settledMs: number, timing: Timing): Track[] {
   switch (event.kind) {
     case 'sheep-lost': {
@@ -124,17 +128,12 @@ function settledTracks(event: FlockTiltEvent, settledMs: number, timing: Timing)
     }
     case 'field-cleared': {
       const startMs = settledMs + DROP_MS * timing.scale;
-      const cue = { sound: 'win', haptic: 'success' } as const;
-      return [flash({ channel: 'glow', entityId: TURN_ENTITY, startMs, cue })];
+      return [flash({ channel: 'glow', entityId: TURN_ENTITY, startMs })];
     }
-    case 'tilts-ran-out': {
-      const cue = { sound: 'lose', haptic: 'error' } as const;
-      return [flash({ channel: 'tired', entityId: TURN_ENTITY, startMs: settledMs, cue })];
-    }
-    case 'tilt-taken-back': {
-      const cue = { sound: 'rewind', haptic: 'medium' } as const;
-      return [flash({ channel: 'rewind', entityId: TURN_ENTITY, startMs: 0, cue })];
-    }
+    case 'tilts-ran-out':
+      return [flash({ channel: 'tired', entityId: TURN_ENTITY, startMs: settledMs })];
+    case 'tilt-taken-back':
+      return [flash({ channel: 'rewind', entityId: TURN_ENTITY, startMs: 0 })];
     case SLID:
     case 'sheep-penned':
       return [];

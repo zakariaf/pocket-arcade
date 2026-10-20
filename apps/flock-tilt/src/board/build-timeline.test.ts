@@ -74,7 +74,7 @@ describe('buildTimeline', () => {
     expect(timelineEndMs(tracks)).toBeLessThan(timelineEndMs(buildTimeline(BUSIEST, 'full')));
   });
 
-  it('cues each beat once with its sound and haptic', () => {
+  it('cues each beat once with its sound and haptic, and leaves the win to the Shell', () => {
     const cues = buildTimeline([...BUSIEST], 'full')
       .map((track) => track.cue)
       .filter((cue) => cue !== undefined);
@@ -83,7 +83,6 @@ describe('buildTimeline', () => {
       { sound: 'bump' },
       { sound: 'pen', haptic: 'medium' },
       { sound: 'pen', haptic: 'medium' },
-      { sound: 'win', haptic: 'success' },
     ]);
     const lostCues = buildTimeline(LOST, 'reduced')
       .map((track) => track.cue)
@@ -91,11 +90,11 @@ describe('buildTimeline', () => {
     expect(lostCues).toContainEqual({ sound: 'bleat', haptic: 'warning' });
   });
 
-  it('cues the end of the tilts and the continue', () => {
+  it('plays no cue of its own for the end of the tilts and the continue (the Shell sounds them)', () => {
     const ranOut = buildTimeline([{ kind: 'tilts-ran-out', tilts: 40 }], 'full');
-    expect(ranOut.map((track) => track.cue)).toStrictEqual([{ sound: 'lose', haptic: 'error' }]);
+    expect(ranOut.map((track) => [track.channel, track.cue])).toStrictEqual([['tired', undefined]]);
     const back = buildTimeline([{ kind: 'tilt-taken-back', tiltsAdded: 10 }], 'full');
-    expect(back.map((track) => track.cue)).toStrictEqual([{ sound: 'rewind', haptic: 'medium' }]);
+    expect(back.map((track) => [track.channel, track.cue])).toStrictEqual([['rewind', undefined]]);
   });
 
   it('returns the same tracks for the same events', () => {
