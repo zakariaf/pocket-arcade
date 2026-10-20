@@ -16,8 +16,13 @@ export type DifficultyKnobs = {
   readonly enemies: number;
   /** The enemy kinds the board draws from (brutes strike all around: harder). */
   readonly kinds: readonly EnemyKind[];
-  /** The swap budget of a level (fewer = harder). */
+  /** The most swaps a start may need: create keeps only starts its planned line wins within it. */
   readonly maxSwaps: number;
+  /**
+   * Swaps a level gives beyond its planned line (fewer = harder): a start's budget is the planned
+   * line's length plus these, at most maxSwaps.
+   */
+  readonly spareSwaps: number;
 };
 
 /**
@@ -26,10 +31,10 @@ export type DifficultyKnobs = {
  * 45, the second row. Columns as documented on DifficultyKnobs.
  */
 const LEVEL_ROWS = [
-  { size: 5, enemies: 3, kinds: ['spear'], maxSwaps: 12 },
-  { size: 5, enemies: 4, kinds: ['spear', 'archer'], maxSwaps: 12 },
-  { size: 6, enemies: 4, kinds: ['spear', 'archer', 'brute'], maxSwaps: 11 },
-  { size: 6, enemies: 5, kinds: ['spear', 'archer', 'brute'], maxSwaps: 14 },
+  { size: 5, enemies: 3, kinds: ['spear'], maxSwaps: 12, spareSwaps: 3 },
+  { size: 5, enemies: 4, kinds: ['spear', 'archer'], maxSwaps: 12, spareSwaps: 1 },
+  { size: 6, enemies: 5, kinds: ['spear', 'archer', 'brute'], maxSwaps: 15, spareSwaps: 0 },
+  { size: 6, enemies: 6, kinds: ['spear', 'archer', 'brute'], maxSwaps: 18, spareSwaps: 0 },
 ] as const satisfies readonly DifficultyKnobs[];
 
 export const TUNING = {

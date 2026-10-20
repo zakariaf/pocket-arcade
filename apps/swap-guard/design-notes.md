@@ -34,7 +34,10 @@ The rules in full (v1, every number a default until the owner's play-test):
   that were shown before the swap, listed by enemy in a fixed order. An enemy struck in the same
   volley still strikes. Knocked-out enemies leave the board. Then the strikes are shown again from
   where everyone stands now (an archer's arrow now flies past a knocked-out blocker).
-- **Swaps.** Each level has a swap budget (12 to 18 by row), drawn on the board as a row of pips.
+- **Swaps.** Each level has a swap budget, drawn on the board as a row of pips: the swaps of a sure
+  line that `create` plans for the start, plus a few spare swaps that shrink with difficulty (3, 1, 0
+  and 0 by row). A start is kept only when that line exists, so no level and no daily is impossible
+  (spec 8.1); the exact par still comes from the BFS solver, often below the budget.
 - **Score.** 100 points per enemy knocked out, 50 more for each extra enemy in the same volley (the
   double hit), and on a win 10 points per swap left over.
 - **The opening.** Every level starts with the guard in a strike, next to an enemy whose own strike
@@ -159,6 +162,22 @@ over with no blood, no injury shown.
 | 1   | 25-49      | 5 x 5 | 4       | spear, archer        | 14    |
 | 2   | 50-74      | 6 x 6 | 4       | spear, archer, brute | 16    |
 | 3   | 75-99      | 6 x 6 | 5       | spear, archer, brute | 18    |
+
+**Tuned (E25-T06, the rows in `swap-guard-tuning.ts`).** The sims showed that some drawn starts
+could not be won at all (a lone brute, or a spear or archer whose back is to the edge), and that
+those impossible boards were most of the greedy player's losses. `create` now keeps only starts its
+planned line wins, and the budget is that line plus the spare swaps:
+
+| Row | Difficulty | Board | Enemies | Kinds                | Most swaps | Spare swaps |
+| --- | ---------- | ----- | ------- | -------------------- | ---------- | ----------- |
+| 0   | 0-24       | 5 x 5 | 3       | spear                | 12         | 3           |
+| 1   | 25-49      | 5 x 5 | 4       | spear, archer        | 12         | 1           |
+| 2   | 50-74      | 6 x 6 | 5       | spear, archer, brute | 15         | 0           |
+| 3   | 75-99      | 6 x 6 | 6       | spear, archer, brute | 18         | 0           |
+
+Brutes only ever open a level (as the partner of the double hit): no swap sends a lone brute into
+its own strike. The greedy player wins 0.98 / 0.89 / 0.66 / 0.51 of the four rows, random play none
+(`reports/sim/swap-guard.json`).
 
 A rules prototype (100 seeds per row, the scratch run behind these notes) measured: every row-0
 board solvable with par 4 to 8; the greedy bot winning about 0.64 / 0.52 / 0.38 / 0.32 of the four

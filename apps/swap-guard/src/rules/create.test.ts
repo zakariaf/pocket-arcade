@@ -5,6 +5,7 @@ import fc from 'fast-check';
 
 import { create, joinersOf, openingsOf, startFor } from './create.ts';
 import { outcome } from './outcome.ts';
+import { planLine } from './plan-line.ts';
 import { strikesOf, struckSquares } from './strikes.ts';
 import { knobsFor } from './swap-guard-tuning.ts';
 
@@ -20,6 +21,7 @@ const GOLDEN_KNOBS: DifficultyKnobs = {
   enemies: 4,
   kinds: ['spear', 'archer'],
   maxSwaps: 12,
+  spareSwaps: 2,
 };
 
 const LETTERS = { spear: 's', archer: 'a', brute: 'b' } as const;
@@ -65,8 +67,15 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
     expect(state.size).toBe(knobsFor(60).size);
     expect(state.enemies).toHaveLength(knobsFor(60).enemies);
     expect(state.enemyCount).toBe(knobsFor(60).enemies);
-    expect(state).toMatchObject({ swaps: 0, maxSwaps: knobsFor(60).maxSwaps, score: 0 });
+    expect(state).toMatchObject({ swaps: 0, score: 0 });
     expect(state).toMatchObject({ isHit: false, lastSwap: null, hasContinued: false });
+  });
+
+  it('falls back to the opening pair when no drawn start can be won within the swaps', () => {
+    const knobs = { size: 5, enemies: 3, kinds: ['spear'], maxSwaps: 1, spareSwaps: 0 } as const;
+    const state = startFor(1, knobs);
+    expect(state.enemies.map((e) => e.id)).toStrictEqual([0, 1]);
+    expect(state.enemyCount).toBe(2);
   });
 
   it('clamps difficulties outside 0..100', () => {
@@ -116,6 +125,14 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
       expect(layouts.size).toBeGreaterThan(55);
     });
 
+    it('fills every start with the enemies of its row (no fallback to the opening pair)', () => {
+      fc.assert(
+        fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+          expect(create(seed, difficulty).enemies).toHaveLength(knobsFor(difficulty).enemies);
+        }),
+      );
+    });
+
     it('starts every game unfinished, every piece on its own square, kinds from its row', () => {
       fc.assert(
         fc.property(seedArb, difficultyArb, (seed, difficulty) => {
@@ -123,6 +140,17 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
           expect(outcome(state).kind).toBe('playing');
           expect(new Set(squaresOf(state)).size).toBe(state.enemies.length + 1);
           for (const e of state.enemies) expect(knobsFor(difficulty).kinds).toContain(e.kind);
+        }),
+      );
+    });
+
+    it('gives each start its planned line plus the spare swaps of its row, within the cap', () => {
+      fc.assert(
+        fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+          const state = create(seed, difficulty);
+          const knobs = knobsFor(difficulty);
+          const planned = planLine({ ...state, maxSwaps: knobs.maxSwaps })?.length ?? Number.NaN;
+          expect(state.maxSwaps).toBe(Math.min(knobs.maxSwaps, planned + knobs.spareSwaps));
         }),
       );
     });
@@ -140,9 +168,9 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
 });
 
 const GOLDEN_SEED_1_BOARD = [
-  '.. a^ .. .. ..',
-  '.. .. .. sv a<',
-  '.. .. .. G. s<',
+  '.. .. s> .. ..',
+  '.. G. .. sv ..',
+  '.. s^ s< .. ..',
   '.. .. .. .. ..',
   '.. .. .. .. ..',
 ].join('\n');

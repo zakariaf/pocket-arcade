@@ -38,6 +38,15 @@ describe('knobsFor (the difficulty rows on the 0..100 scale)', () => {
     }
   });
 
+  it('gives every later row at most the spare swaps of the row before (whole, never negative)', () => {
+    TUNING.levelRows.forEach((row, index) => {
+      const before = TUNING.levelRows[index - 1] ?? row;
+      expect(Number.isInteger(row.spareSwaps)).toBe(true);
+      expect(row.spareSwaps).toBeGreaterThanOrEqual(0);
+      expect(row.spareSwaps).toBeLessThanOrEqual(before.spareSwaps);
+    });
+  });
+
   it('brings in one enemy kind per row: spears, then archers, then brutes', () => {
     expect(TUNING.levelRows.map((row) => row.kinds)).toStrictEqual([
       ['spear'],

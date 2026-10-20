@@ -1,11 +1,13 @@
 // apps/swap-guard/src/rules/create.ts
-// The start of a level from (seed, difficulty), built from the seeded RNG choice by choice, never by
-// trial and rejection: every choice is drawn from the list of choices that keep the start fair.
+// The start of a level from (seed, difficulty), built from the seeded RNG choice by choice: every
+// choice is drawn from the list of choices that keep the start fair, and a drawn start is kept only
+// when planLine can win it (the RNG goes on to the next draw otherwise, the same on every phone).
 import { clampDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { FACINGS, oppositeOf, stepFrom } from './board-grid.ts';
+import { planLine } from './plan-line.ts';
 import { strikesOf, struckSquares } from './strikes.ts';
 import { knobsFor } from './swap-guard-tuning.ts';
 
@@ -95,25 +97,14 @@ function draw<T>(rng: RngState, items: readonly T[]): { readonly item: T; readon
   return { item: pickAt(items, pick.value), rng: pick.state };
 }
 
-/** The start a seed makes with these knobs: the prepared opening, then calm joiners. */
-export function startFor(seed: number, knobs: DifficultyKnobs): SwapGuardState {
-  const partnerKind = draw(seedRng(seed), knobs.kinds);
-  const opening = draw(partnerKind.rng, openingsOf(knobs.size, partnerKind.item));
-  let rng = opening.rng;
-  let enemies: Enemy[] = [opening.item.threat, opening.item.partner];
-  while (enemies.length < knobs.enemies) {
-    const joiners = joinersOf(
-      { size: knobs.size, guard: opening.item.guard, enemies },
-      knobs.kinds,
-    );
-    if (joiners.length === 0) break;
-    const joiner = draw(rng, joiners);
-    rng = joiner.rng;
-    enemies = [...enemies, joiner.item];
-  }
+/** Starts drawn for one seed before falling back to the opening pair alone. */
+const MAX_DRAWS = 64;
+
+/** A start with these enemies, nothing played yet. */
+function startOf(knobs: DifficultyKnobs, guard: number, enemies: readonly Enemy[]): SwapGuardState {
   return {
     size: knobs.size,
-    guard: opening.item.guard,
+    guard,
     enemies,
     enemyCount: enemies.length,
     swaps: 0,
@@ -123,6 +114,59 @@ export function startFor(seed: number, knobs: DifficultyKnobs): SwapGuardState {
     lastSwap: null,
     hasContinued: false,
   };
+}
+
+/**
+ * One drawn start: the prepared opening (its partner of any kind of the row), then calm joiners
+ * (spears and archers: a brute only ever opens, as a partner, because no swap sends a lone brute
+ * into its own strike).
+ */
+function drawStart(
+  rng: RngState,
+  knobs: DifficultyKnobs,
+): { readonly state: SwapGuardState; readonly rng: RngState } {
+  const partnerKind = draw(rng, knobs.kinds);
+  const opening = draw(partnerKind.rng, openingsOf(knobs.size, partnerKind.item));
+  const joinerKinds = knobs.kinds.filter((kind) => kind !== 'brute');
+  let next = opening.rng;
+  let enemies: Enemy[] = [opening.item.threat, opening.item.partner];
+  while (enemies.length < knobs.enemies) {
+    const board = { size: knobs.size, guard: opening.item.guard, enemies };
+    const joiners = joinersOf(board, joinerKinds);
+    if (joiners.length === 0) break;
+    const joiner = draw(next, joiners);
+    next = joiner.rng;
+    enemies = [...enemies, joiner.item];
+  }
+  return { state: startOf(knobs, opening.item.guard, enemies), rng: next };
+}
+
+/** Swaps the opening pair alone needs: the double hit knocks out both at once. */
+const OPENING_SWAPS = 1;
+
+/** The start with its budget: the planned line's swaps plus the row's spare ones, within the cap. */
+function withBudget(
+  state: SwapGuardState,
+  planned: number,
+  knobs: DifficultyKnobs,
+): SwapGuardState {
+  return { ...state, maxSwaps: Math.min(knobs.maxSwaps, planned + knobs.spareSwaps) };
+}
+
+/**
+ * The start a seed makes with these knobs: the first drawn start that planLine wins within the cap
+ * (spec 8.1: no level is impossible, the daily included), with its budget. Should every draw fail,
+ * the last opening pair alone, which its double hit always wins.
+ */
+export function startFor(seed: number, knobs: DifficultyKnobs): SwapGuardState {
+  let drawn = drawStart(seedRng(seed), knobs);
+  for (let count = 1; count <= MAX_DRAWS; count += 1) {
+    const line = planLine(drawn.state);
+    if (line !== null) return withBudget(drawn.state, line.length, knobs);
+    drawn = drawStart(drawn.rng, knobs);
+  }
+  const pair = startOf(knobs, drawn.state.guard, drawn.state.enemies.slice(0, 2));
+  return withBudget(pair, OPENING_SWAPS, knobs);
 }
 
 /**
