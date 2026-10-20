@@ -1,5 +1,6 @@
 {
   "scrap-shove.board.summary": "{robotsCount, plural, one {# ڕۆبۆت} other {# ڕۆبۆت}} ماوە، {heapsCount, plural, one {# کۆمەڵە ئاسنی کۆن} other {# کۆمەڵە ئاسنی کۆن}} لەسەر زەوی",
+  "scrap-shove.continue.step-back": "هەلێکی تر: دوایین هەنگاوت دەگەڕێنرێتەوە",
   "scrap-shove.goal": "وا بکە هەموو ڕۆبۆتەکان تێکبشکێن پێش ئەوەی بتگرن.",
   "scrap-shove.how-to-play.step-1": "دەست لە خانەیەکی تەنیشتت بدە بۆ ئەوەی بچیتە ئەوێ.",
   "scrap-shove.how-to-play.step-2": "بەرەو ئاسنی کۆن بڕۆ بۆ ئەوەی پاڵی پێوە بنێیت.",

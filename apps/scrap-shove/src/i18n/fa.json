@@ -1,5 +1,6 @@
 {
   "scrap-shove.board.summary": "{robotsCount, plural, one {# ربات} other {# ربات}} باقی مانده، {heapsCount, plural, one {# تل قراضه} other {# تل قراضه}} روی زمین",
+  "scrap-shove.continue.step-back": "یک فرصت دیگر: آخرین قدمتان برگردانده می‌شود",
   "scrap-shove.goal": "کاری کنید همهٔ ربات‌ها پیش از اینکه به شما برسند، داغان شوند.",
   "scrap-shove.how-to-play.step-1": "روی یکی از خانه‌های کنارتان بزنید تا به آنجا بروید.",
   "scrap-shove.how-to-play.step-2": "به سمت قراضه حرکت کنید تا آن را هل بدهید.",
