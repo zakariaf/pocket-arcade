@@ -270,7 +270,7 @@ Notes that apply to every task here:
 - **Tests first:**
   - Copy game-rules-engine's `templates/apps/__GAME_ID__/src/rules/__GAME_ID__-persistence.test.ts` to `apps/stepstone/src/rules/stepstone-persistence.test.ts` and rewrite it for Stepstone: a fast-check property that every state reached by legal moves from any seed round-trips through `JSON.stringify` and `parseState` unchanged; every legal move round-trips through `parseMove`; a state with a wrong field type, a missing field, an out-of-range value or an extra field is refused with a reason; a move that names an impossible target is refused; a replay of the saved move line rebuilds the same state.
   - Red: a stub `parseState` that accepts anything.
-- **Build:** write `apps/stepstone/src/rules/stepstone-persistence.ts` (valibot schemas, as the template shows), wire it into `rules/stepstone-engine.ts` later (E24-T10), and commit `feat(stepstone): parse saved states and moves`.
+- **Build:** write `apps/stepstone/src/rules/stepstone-persistence.ts` (explicit checks that rebuild the typed value, as the template shows: rules import only game-kit and their own files, game-rules-engine rule 1, so valibot stays in the Shell's save layer), wire it into `rules/stepstone-engine.ts` later (E24-T10), and commit `feat(stepstone): parse saved states and moves`.
 - **Done when:** `npx jest apps/stepstone/src/rules/stepstone-persistence.test.ts --ci --selectProjects unit` passes; `node skills/game-rules-engine/scripts/check-rules-engine.mjs . --game stepstone` prints `RESULT: PASS`; `npm run -s check:fast` is green.
 
 ### E24-T09 · Board: view, timeline, palettes, layout, draw and pixel goldens (new-game step 7, part 1)
