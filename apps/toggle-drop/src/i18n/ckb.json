@@ -1,4 +1,5 @@
 {
+  "toggle-drop.board.summary": "{cupsCount, plural, one {# سەبەت} other {# سەبەت}}، {cupsLeft, plural, one {# سەبەت هێشتا پڕ نەکراوە} other {# سەبەت هێشتا پڕ نەکراوە}}",
   "toggle-drop.goal": "پێش ئەوەی تۆپەکانت تەواو بن، هەموو سەبەتەکان پڕ بکەرەوە.",
   "toggle-drop.how-to-play.step-1": "دەست لە ستوونێک بدە بۆ ئەوەی تۆپێک بەربێتەوە.",
   "toggle-drop.how-to-play.step-2": "هەر دەسکێک تۆپەکە بەلای خۆیدا دەنێرێت و پاشان وەردەگەڕێت.",

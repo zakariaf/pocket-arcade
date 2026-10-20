@@ -1,4 +1,5 @@
 {
+  "toggle-drop.board.summary": "{cupsCount, plural, one {# cup} other {# cups}}, {cupsLeft, plural, one {# still to fill} other {# still to fill}}",
   "toggle-drop.goal": "Fill every cup before you run out of balls.",
   "toggle-drop.how-to-play.step-1": "Tap a column to drop a ball.",
   "toggle-drop.how-to-play.step-2": "Each switch sends the ball its way, then flips.",

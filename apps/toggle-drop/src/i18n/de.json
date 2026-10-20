@@ -1,4 +1,5 @@
 {
+  "toggle-drop.board.summary": "{cupsCount, plural, one {# Becher} other {# Becher}}, {cupsLeft, plural, one {# noch zu füllen} other {# noch zu füllen}}",
   "toggle-drop.goal": "Füll jeden Becher, bevor dir die Kugeln ausgehen.",
   "toggle-drop.how-to-play.step-1": "Tipp auf eine Spalte, um eine Kugel fallen zu lassen.",
   "toggle-drop.how-to-play.step-2": "Jede Weiche schickt die Kugel in ihre Richtung und kippt dann um.",

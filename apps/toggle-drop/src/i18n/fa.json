@@ -1,4 +1,5 @@
 {
+  "toggle-drop.board.summary": "{cupsCount, plural, one {# سبد} other {# سبد}}، {cupsLeft, plural, one {# سبد هنوز پر نشده} other {# سبد هنوز پر نشده}}",
   "toggle-drop.goal": "پیش از تمام شدن توپ‌ها، همهٔ سبدها را پر کنید.",
   "toggle-drop.how-to-play.step-1": "روی یک ستون بزنید تا توپی بیفتد.",
   "toggle-drop.how-to-play.step-2": "هر اهرم توپ را به سمت خودش می‌فرستد و بعد برمی‌گردد.",
