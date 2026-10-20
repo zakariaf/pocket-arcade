@@ -1,4 +1,5 @@
 {
+  "stepstone.board.summary": "اندازهٔ برکه: {side, number} × {side, number}. قورباغه {hop, select, king {یک خانه به هر سو} rook {در خط راست} bishop {گوشه به گوشه} knight {به شکل L} other {به هیچ‌جا}} می‌پرد. {reachCount, plural, =0 {هیچ سنگی در دسترس نیست} one {# سنگ در دسترس است} other {# سنگ در دسترس است}}.",
   "stepstone.goal": "قورباغه را از روی سنگ‌ها تا پرچم ببرید.",
   "stepstone.how-to-play.step-1": "سنگی که رویش ایستاده‌اید نشان می‌دهد پرش بعدی‌تان چگونه است.",
   "stepstone.how-to-play.step-2": "روی سنگی که پرشتان به آن می‌رسد بزنید تا آنجا فرود بیایید.",

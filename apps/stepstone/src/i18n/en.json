@@ -1,4 +1,5 @@
 {
+  "stepstone.board.summary": "Pond size: {side, number} × {side, number}. The frog hops {hop, select, king {one step any way} rook {in straight lines} bishop {corner to corner} knight {in an L} other {nowhere}}. {reachCount, plural, =0 {No stone in reach} one {# stone in reach} other {# stones in reach}}.",
   "stepstone.goal": "Hop your frog across the stones to the flag.",
   "stepstone.how-to-play.step-1": "The stone you stand on shows how you hop next.",
   "stepstone.how-to-play.step-2": "Tap a stone your hop reaches to land there.",

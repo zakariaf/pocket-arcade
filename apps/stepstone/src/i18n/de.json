@@ -1,4 +1,5 @@
 {
+  "stepstone.board.summary": "Teichgröße: {side, number} × {side, number}. Der Frosch springt {hop, select, king {ein Feld in jede Richtung} rook {in geraden Linien} bishop {von Ecke zu Ecke} knight {im L} other {nirgendwohin}}. {reachCount, plural, =0 {Kein Stein in Reichweite} one {# Stein in Reichweite} other {# Steine in Reichweite}}.",
   "stepstone.goal": "Bring deinen Frosch über die Steine zur Fahne.",
   "stepstone.how-to-play.step-1": "Der Stein unter dir zeigt, wie du als Nächstes springst.",
   "stepstone.how-to-play.step-2": "Tipp auf einen Stein in Sprungweite, um dort zu landen.",

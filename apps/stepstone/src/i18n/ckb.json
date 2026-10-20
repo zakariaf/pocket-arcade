@@ -1,4 +1,5 @@
 {
+  "stepstone.board.summary": "قەبارەی گۆم: {side, number} × {side, number}. بۆقەکە {hop, select, king {یەک خانە بۆ هەر لایەک} rook {بە هێڵی ڕاست} bishop {گۆشە بۆ گۆشە} knight {بە شێوەی L} other {بۆ هیچ کوێیەک}} باز دەدات. {reachCount, plural, =0 {هیچ بەردێک لە بەردەست نییە} one {# بەرد لە بەردەستە} other {# بەرد لە بەردەستن}}.",
   "stepstone.goal": "بۆقەکەت بەسەر بەردەکاندا بگەیەنە ئاڵاکە.",
   "stepstone.how-to-play.step-1": "ئەو بەردەی لەسەری وەستاویت پیشانی دەدات چۆن باز دەدەیت.",
   "stepstone.how-to-play.step-2": "دەست لەو بەردە بدە کە بازەکەت پێی دەگات بۆ ئەوەی لەوێ بنیشیتەوە.",
