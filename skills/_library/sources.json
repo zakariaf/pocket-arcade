@@ -1924,12 +1924,25 @@
           }
         ]
       },
+      "templates/shell/game-host/board-kit.test.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-kit.test.ts",
+            "sha256": "a1f2a7cd63136875d41625d1556e552809290d709fea479b39f94b1c9cf28cd6"
+          }
+        ]
+      },
       "templates/shell/game-host/board-kit.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          },
+          {
+            "path": "packages/shell/src/game-host/board-kit.ts",
+            "sha256": "6baa323104a9341bdd1c7eb9d5a7240b53b79e6b77041622f43759f203fa2f7e"
           }
         ]
       },

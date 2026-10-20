@@ -3,8 +3,9 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
-import { drawBlock, drawPiece, drawRing, inset, INSET } from './draw-parts.ts';
+import { CORNER, drawBlock, drawPiece, drawRing, inset, INSET } from './draw-parts.ts';
 import { traySlotRect } from './layout-board.ts';
 
 import type { Frame } from './draw-parts.ts';
@@ -63,11 +64,9 @@ export function drawHinted(canvas: SkCanvas, frame: Frame): void {
       continue;
     }
     const cell = inset(rect, INSET);
-    const corner = cell.width * 0.14;
-    kit.fill.setColor(colors.color.ghost);
-    kit.fill.setAlphaf((colors.color.ghost[3] ?? 1) * HINT_TINT);
+    const corner = cell.width * CORNER;
+    setPaintColor(kit.fill, colors.color.ghost, HINT_TINT);
     canvas.drawRRect({ rect: cell, rx: corner, ry: corner }, kit.fill);
-    kit.fill.setAlphaf(1);
     const edge = rect.width * HINT_EDGE;
     drawRing(canvas, frame, {
       rect: inset(cell, HINT_EDGE / 2),

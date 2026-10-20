@@ -1,6 +1,8 @@
 // apps/line-siege/src/board/draw-parts.ts
 'worklet';
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
+
 import type { BoardToken } from './board-palettes.ts';
 import type { LineSiegeView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
@@ -11,7 +13,8 @@ import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
 /** The frame every Line Siege draw function receives. */
 export type Frame = DrawFrame<LineSiegeView, BoardToken>;
 
-const CORNER = 0.14;
+/** A block's corner radius, as a share of its width (blocks, rings and hinted cells). */
+export const CORNER = 0.14;
 /** Blocks sit this share of a cell inside it; their ink edge is this share of a cell wide. */
 export const INSET = 0.06;
 const EDGE = 0.05;
@@ -37,9 +40,8 @@ export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
 
 /**
  * A rounded block in `color`, edged in the wall ink (Toybox: fills carry an outline). `alpha` fades
- * fill and edge together, on top of the colour's own alpha: setColor sets a paint's alpha and
- * setAlphaf replaces it, so a translucent token (the ghost, half the block colour) kept full
- * alpha and drew exactly like a placed block when its alpha was simply set to 1.
+ * fill and edge together, on top of the colour's own alpha (setPaintColor), so a translucent token
+ * (the ghost, half the block colour) never draws like a placed block.
  */
 export function drawBlock(
   canvas: SkCanvas,
@@ -50,15 +52,11 @@ export function drawBlock(
   const { fill, stroke } = frame.kit;
   const alpha = (block.alpha ?? 1) * (block.color[3] ?? 1);
   const r = rect.width * CORNER;
-  fill.setColor(block.color);
-  fill.setAlphaf(alpha);
+  setPaintColor(fill, block.color, block.alpha ?? 1);
   canvas.drawRRect({ rect, rx: r, ry: r }, fill);
-  stroke.setColor(frame.colors.color.wall);
-  stroke.setAlphaf(alpha);
+  setPaintColor(stroke, frame.colors.color.wall, alpha);
   stroke.setStrokeWidth(Math.max(1, rect.width * EDGE));
   canvas.drawRRect({ rect, rx: r, ry: r }, stroke);
-  fill.setAlphaf(1);
-  stroke.setAlphaf(1);
 }
 
 /** A ring around a cell or a tray slot (selection and hints), in the wall ink unless told. */

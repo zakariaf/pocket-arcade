@@ -1,9 +1,11 @@
 // apps/line-siege/src/board/draw-hinted.test.ts
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
-import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
 import { LINE_SIEGE_TEACHING } from '@e07/line-siege/tutorial/line-siege-teaching.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 
+import { TURN_ENTITY } from './board-ids.ts';
+import { buildTimeline } from './build-timeline.ts';
 import { drawBoard } from './draw-board.ts';
 import { layoutBoard } from './layout-board.ts';
 import { toView } from './to-view.ts';
@@ -11,6 +13,7 @@ import { toView } from './to-view.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { LineSiegeView } from './to-view.ts';
 import type { BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
+import type { Track } from '@e07/game-kit/timeline/track.ts';
 import type {
   BoardColors,
   BoardHighlight,
@@ -93,11 +96,16 @@ function recording(): Recording {
   const { paint: fillPaint, state: fill } = fakePaint();
   const { paint: strokePaint, state: stroke } = fakePaint();
   const painted: Painted[] = [];
-  const drawRRect = (rrect: SkRRect, paint: SkPaint): void => {
+  const paintedWith = (rect: Rect, paint: SkPaint): void => {
     const state = paint === strokePaint ? stroke : fill;
-    painted.push({ rect: rrect.rect, isStroke: paint === strokePaint, ...state });
+    painted.push({ rect, isStroke: paint === strokePaint, ...state });
   };
-  const methods: Record<string, unknown> = { drawRRect };
+  const methods: Record<string, unknown> = {
+    drawRRect: (rrect: SkRRect, paint: SkPaint) => {
+      paintedWith(rrect.rect, paint);
+    },
+    drawRect: paintedWith,
+  };
   const canvas = new Proxy(
     {},
     { get: (_target, name) => methods[String(name)] ?? (() => undefined) },
@@ -129,9 +137,12 @@ function draw(input: {
   readonly view?: LineSiegeView;
   readonly highlight?: BoardHighlight;
   readonly pointer?: PointerSample;
+  readonly tracks?: readonly Track[];
+  readonly elapsedMs?: number;
 }): Painted[] {
   const { kit, canvas, painted } = recording();
-  const fx = { ...sampleTimeline([], 0), pointer: input.pointer ?? IDLE_POINTER };
+  const sample = sampleTimeline(input.tracks ?? [], input.elapsedMs ?? 0);
+  const fx = { ...sample, pointer: input.pointer ?? IDLE_POINTER };
   const view = input.view ?? START;
   const highlight = input.highlight ?? EMPTY_HIGHLIGHT;
   drawBoard(canvas, { view, fx, highlight, colors: COLORS, layout: LAYOUT, kit });
@@ -205,5 +216,21 @@ describe('the tutorial pointer on the Line Siege board', () => {
       paintedIn(draw({ pointer: dragging }), cell).filter((entry) => entry.token === 'ghost'),
     );
     expect(fills.map((entry) => entry.alpha)).toStrictEqual([0.5, 0.5]);
+  });
+});
+
+describe('the shockwave on the Line Siege board', () => {
+  it("fades from the shock token's own alpha, never from an opaque band", () => {
+    // Spec (Line Siege): a full line sends a shockwave up the lanes. Its token is translucent
+    // (board-palettes.json: shock B3, alpha 0.7), so the band fades from 0.7: setting its alpha
+    // to 1 - progress over the token's colour started it opaque, hiding the lanes behind it.
+    const tracks = buildTimeline([{ kind: 'shockwave-sent', rows: 1, damage: 2 }], 'full');
+    const shock = tracks.find((track) => track.channel === 'shock');
+    if (shock === undefined) throw new Error('a shockwave track');
+    const elapsedMs = shock.startMs + shock.durationMs / 4;
+    const progress = fxEntry(sampleTimeline(tracks, elapsedMs), 'shock', TURN_ENTITY)?.progress;
+    const bands = draw({ tracks, elapsedMs }).filter((entry) => entry.token === 'shock');
+    expect(bands).toHaveLength(1);
+    expect(bands[0]?.alpha).toBeCloseTo(0.7 * (1 - (progress ?? 0)), 6);
   });
 });
