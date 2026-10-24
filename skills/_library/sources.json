@@ -2014,11 +2014,11 @@
         ]
       },
       "templates/shell/game-host/board-types.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-types.ts",
-            "sha256": "3b8a23cb9316133804b27b639c60d39fbb49cdfd1098bad4ae8f8abd0cb4482b"
+            "sha256": "b499021d04fc77ce0a82f7d64f36d5a88f5f45eb99a6874dcb9654188171a994"
           }
         ]
       },
