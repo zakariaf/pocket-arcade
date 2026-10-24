@@ -1,5 +1,6 @@
 {
   "trail-clear.board.summary": "{tilesCount, plural, one {# tile} other {# tiles}} on the board, {looseEndsCount, plural, one {# loose end} other {# loose ends}}",
+  "trail-clear.continue.clear-row": "One more go: the oldest row of tiles is cleared",
   "trail-clear.goal": "Place every tile. Close roads and rivers to clear them.",
   "trail-clear.how-to-play.step-1": "Drag the tile onto the board.",
   "trail-clear.how-to-play.step-2": "Edges must match: road to road, river to river.",
@@ -11,6 +12,7 @@
   "trail-clear.pack-name.2": "River bends",
   "trail-clear.pack-name.3": "Crossroads",
   "trail-clear.progress": "Tiles {placed, number} / {total, number}",
+  "trail-clear.progress.endless": "Tiles {placed, number}",
   "trail-clear.stats.biggest-loop": "Biggest loop",
   "trail-clear.stats.loops-closed": "Loops closed",
   "trail-clear.stats.tiles-placed": "Tiles placed",

@@ -1,5 +1,6 @@
 {
   "trail-clear.board.summary": "{tilesCount, plural, one {# کاشی} other {# کاشی}} روی صفحه، {looseEndsCount, plural, one {# سرِ باز} other {# سرِ باز}}",
+  "trail-clear.continue.clear-row": "یک فرصت دیگر: قدیمی‌ترین ردیف کاشی‌ها پاک می‌شود",
   "trail-clear.goal": "همهٔ کاشی‌ها را بگذارید. جاده‌ها و رودها را ببندید تا پاک شوند.",
   "trail-clear.how-to-play.step-1": "کاشی را روی صفحه بکشید.",
   "trail-clear.how-to-play.step-2": "لبه‌ها باید جور باشند: جاده به جاده، رود به رود.",
@@ -11,6 +12,7 @@
   "trail-clear.pack-name.2": "پیچ‌های رودخانه",
   "trail-clear.pack-name.3": "چهارراه‌ها",
   "trail-clear.progress": "کاشی {placed, number} / {total, number}",
+  "trail-clear.progress.endless": "کاشی {placed, number}",
   "trail-clear.stats.biggest-loop": "بزرگ‌ترین حلقه",
   "trail-clear.stats.loops-closed": "حلقه‌های بسته‌شده",
   "trail-clear.stats.tiles-placed": "کاشی‌های گذاشته‌شده",

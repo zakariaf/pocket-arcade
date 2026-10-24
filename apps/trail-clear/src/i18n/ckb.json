@@ -1,5 +1,6 @@
 {
   "trail-clear.board.summary": "{tilesCount, plural, one {# کاشی} other {# کاشی}} لەسەر تەختەکە، {looseEndsCount, plural, one {# سەری کراوە} other {# سەری کراوە}}",
+  "trail-clear.continue.clear-row": "هەلێکی تر: کۆنترین ڕیزی کاشییەکان پاک دەبێتەوە",
   "trail-clear.goal": "هەموو کاشییەکان دابنێ. ڕێگا و ڕووبارەکان دابخە بۆ ئەوەی پاک ببنەوە.",
   "trail-clear.how-to-play.step-1": "کاشییەکە ڕابکێشە سەر تەختەکە.",
   "trail-clear.how-to-play.step-2": "لێوارەکان دەبێت بگونجێن: ڕێگا بە ڕێگا، ڕووبار بە ڕووبار.",
@@ -11,6 +12,7 @@
   "trail-clear.pack-name.2": "پێچەکانی ڕووبار",
   "trail-clear.pack-name.3": "چوارڕێیانەکان",
   "trail-clear.progress": "کاشی {placed, number} / {total, number}",
+  "trail-clear.progress.endless": "کاشی {placed, number}",
   "trail-clear.stats.biggest-loop": "گەورەترین ئەڵقە",
   "trail-clear.stats.loops-closed": "ئەڵقە داخراوەکان",
   "trail-clear.stats.tiles-placed": "کاشییە دانراوەکان",
