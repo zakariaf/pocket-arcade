@@ -62,7 +62,7 @@ A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: 
 - **Line Siege** (`templates/apps/line-siege/src/art/logo-art.ts`): a castle wall (`w`) with brick lines (`kl`) under a pop beam (`p`) rising from its tower.
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
-- **Snare Snake** (its design pass, 2026-10-19; the layers in the token file's `logos.games.snareSnake`): a white snake curled into a closed ring (`w`, a rounded square with a hole) with four segment lines (`kl`), a pop tongue (`pl`), the white head overlapping the ring's top end (`w`) with an ink eye (`k`) and its white glint (`w0`), and a pop ladybird inside the loop (`p`) with its ink wing line (`kl`) and spots (`k`).
+- **Snare Snake** (its design pass, 2026-10-19; the layers in the token file's `logos.games.snareSnake`): a white snake curled into a closed ring (`w`, a rounded square with a hole), a pop tongue (`pl`), the white head overlapping the ring's top end (`w`) with an ink eye (`k`) and its white glint (`w0`), a pop ladybird inside the loop (`p`), one ink-line layer (`kl`) holding the ring's four segment marks and the ladybird's wing line, and the ladybird's spots (`k`): eight layers, the recipe's limit.
 
 `check-icons-and-logos` fails if a design game's logo differs from the Toybox data.
 
