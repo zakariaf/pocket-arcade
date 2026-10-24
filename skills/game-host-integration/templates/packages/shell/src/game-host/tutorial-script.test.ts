@@ -2,11 +2,9 @@
 import {
   coachStepsOf,
   expectsScriptedMove,
-  exampleHighlightOf,
   howToPlayPagesOf,
   isSameMove,
   isTutorialMoveAccepted,
-  pointerTargets,
   tutorialRulesOf,
 } from './tutorial-script.ts';
 
@@ -77,25 +75,6 @@ describe('coachStepsOf', () => {
       },
       { messageId: 'tally.tutorial.any', pointer: { kind: 'none' } },
     ]);
-  });
-});
-
-describe('pointerTargets and exampleHighlightOf', () => {
-  const CORNER = { regionId: 'board', col: 0, row: 0 };
-  const SLOT = { regionId: 'tray', col: 1, row: 0 };
-
-  it('names the target, both ends of a drag, and no cell for the top bar or no pointer', () => {
-    expect(pointerTargets({ kind: 'target', target: CORNER })).toStrictEqual([CORNER]);
-    expect(pointerTargets({ kind: 'drag', from: SLOT, to: CORNER })).toStrictEqual([SLOT, CORNER]);
-    expect(pointerTargets({ kind: 'hud', element: 'undo' })).toStrictEqual([]);
-    expect(pointerTargets({ kind: 'none' })).toStrictEqual([]);
-  });
-
-  it("outlines an S13 picture's pointer cells as hinted, with nothing selected", () => {
-    expect(exampleHighlightOf({ kind: 'target', target: CORNER })).toStrictEqual({
-      selected: null,
-      hinted: [CORNER],
-    });
   });
 });
 

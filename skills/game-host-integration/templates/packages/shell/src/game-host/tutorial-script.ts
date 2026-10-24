@@ -1,15 +1,13 @@
 // packages/shell/src/game-host/tutorial-script.ts
 // The game's teaching as the Shell uses it (spec S13): which move each tutorial step accepts, the
 // steps and the how-to-play pages as plain data for the Tutorial route and S13 (the typed moves
-// and example states stay inside the game host's seam), and the cells a pointer names.
+// and example states stay inside the game host's seam).
 import type { MessageId } from '@e07/game-kit/contract/messages.ts';
 import type {
   HowToPlayStep,
   TutorialPointer,
   TutorialStep,
 } from '@e07/game-kit/contract/teaching.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
-import type { BoardHighlight } from '@e07/shell/game-host/board-types.ts';
 
 /** One coach step as the Tutorial screen sees it: one sentence and one pointer, no game types. */
 export type TutorialCoachStep = {
@@ -94,24 +92,4 @@ export function howToPlayPagesOf<TState>(
   pages: readonly HowToPlayStep<TState>[],
 ): readonly HowToPlayPage[] {
   return pages.map((page) => ({ titleId: page.titleId, bodyId: page.bodyId }));
-}
-
-const NO_TARGETS: readonly BoardTarget[] = [];
-
-/** The board cells a pointer names: its target, both ends of a drag, none for the top bar. */
-export function pointerTargets(pointer: TutorialPointer): readonly BoardTarget[] {
-  switch (pointer.kind) {
-    case 'target':
-      return [pointer.target];
-    case 'drag':
-      return [pointer.from, pointer.to];
-    case 'hud':
-    case 'none':
-      return NO_TARGETS;
-  }
-}
-
-/** An S13 picture outlines the page's pointer cells like a hinted move; nothing is selected. */
-export function exampleHighlightOf(pointer: TutorialPointer): BoardHighlight {
-  return { selected: null, hinted: pointerTargets(pointer) };
 }

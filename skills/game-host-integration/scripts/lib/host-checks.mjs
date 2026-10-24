@@ -32,7 +32,7 @@ export const HOST_FILES = {
   'result-model-of.ts': ['resultModelOf', 'ResultInput', 'ResultExtras', 'ResultGame'],
   'board-host-model.ts': ['createMoveResultSelector', 'motionOf', 'boardHandlersFor', 'BoardMoveResult', 'BoardSelection', 'selectedAt', 'routeIntent', 'hintedTargetsOf', 'highlightOf'],
   'use-board-selection.ts': ['useBoardSelection', 'BoardSelectionControls'],
-  'tutorial-script.ts': ['coachStepsOf', 'isTutorialMoveAccepted', 'expectsScriptedMove', 'tutorialRulesOf', 'TutorialRules', 'isSameMove', 'TutorialCoachStep', 'HowToPlayPage', 'howToPlayPagesOf', 'pointerTargets', 'exampleHighlightOf'],
+  'tutorial-script.ts': ['coachStepsOf', 'isTutorialMoveAccepted', 'expectsScriptedMove', 'tutorialRulesOf', 'TutorialRules', 'isSameMove', 'TutorialCoachStep', 'HowToPlayPage', 'howToPlayPagesOf'],
   'coach-pointer.ts': ['coachPointerOf', 'boardCoachOf', 'coachGameOf', 'NO_COACH', 'CoachPointer', 'CoachGame'],
   'board-host-props.ts': ['BoardHostProps'],
   'board-host-kit.ts': ['boardKitOf', 'boardCoachHandOf'],

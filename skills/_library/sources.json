@@ -5341,20 +5341,20 @@
         ]
       },
       "templates/packages/shell/src/game-host/tutorial-script.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/tutorial-script.test.ts",
-            "sha256": "3d26864d540173f4d70af15d59f49e63f26609d223b667030b91cafb97d86b5b"
+            "sha256": "bc233ee1bfde467c8762255139e64bfec30663c3c0609c7f284be2abf5d3f6ea"
           }
         ]
       },
       "templates/packages/shell/src/game-host/tutorial-script.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/tutorial-script.ts",
-            "sha256": "96874d11e2551604c0f3a9893b2ba88a7dea40676a869e6a28142197edf1b218"
+            "sha256": "051c44454f66d1bc9d41e6292d41f9921d0a8c803d212033fae6c6330394f2b0"
           }
         ]
       },

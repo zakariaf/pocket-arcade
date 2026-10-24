@@ -83,7 +83,7 @@ This skill's files, each with a test unless marked device-only:
 | `game-host/top-bar-model.ts` | `GameTopBarProps` for the Toybox top bar; mode and goal texts (S5) |
 | `game-host/result-model-of.ts` | The Toybox `ResultModel` for S7 (win title and logo from the host, par `null` for score-rated levels) |
 | `game-host/tutorial-beside-run.ts` | N10: `isTutorialBesideRun(save, ref)` (a tutorial opened while the save holds a run of another kind) and `runWritesOf`, the writers such a tutorial's controller gets (they write nothing), so a tutorial replay never replaces the saved run |
-| `game-host/tutorial-script.ts` | The game's teaching for the Shell: `isTutorialMoveAccepted`, `coachStepsOf`, `howToPlayPagesOf` (steps and pages without their typed moves and states), `pointerTargets`, `exampleHighlightOf` |
+| `game-host/tutorial-script.ts` | The game's teaching for the Shell: `isTutorialMoveAccepted`, `coachStepsOf`, `howToPlayPagesOf` (steps and pages without their typed moves and states) |
 | `game-host/board-host-model.ts` | The board host's pure parts: one `MoveResult` per `eventSeq`, the motion, intent and failure handlers, `routeIntent` (tap-then-tap), `hintedTargetsOf`, `highlightOf` |
 | `game-host/use-board-selection.ts` | `useBoardSelection`: the selection as board-host state, its VoiceOver news, the highlight |
 | `game-host/create-game-board-host.tsx` | `createGameBoardHost({ audio, haptics, errorLog, isLayoutProbeOn })`: the `BoardHostFactory` (device-only: needs Skia; its logic is in the two files above) |
