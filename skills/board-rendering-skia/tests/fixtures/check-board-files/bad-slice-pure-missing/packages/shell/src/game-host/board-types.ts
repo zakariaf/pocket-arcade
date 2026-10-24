@@ -1,5 +1,5 @@
 // packages/shell/src/game-host/board-types.ts
-import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { FxSample } from '@e07/game-kit/timeline/sample.ts';
 import type {
   SkCanvas,
@@ -122,4 +122,10 @@ export type GameBoard<TState, TView, TToken extends string, TMove = unknown> = {
   readonly dragLiftPt?: number;
   /** Optional: the board targets a move touches, so the host can outline the hinted move. */
   targetsOfMove?(state: TState, move: TMove): readonly BoardTarget[];
+  /**
+   * Optional worklet: where the board draws a target, for a board that draws some targets off
+   * their grid cell (Line Siege's tray slot `col + row`, a row or a column); default cellRect. The
+   * tutorial's pointing hand starts and ends where this says.
+   */
+  readonly targetRect?: (layout: BoardLayout, target: BoardTarget) => Rect | null;
 };

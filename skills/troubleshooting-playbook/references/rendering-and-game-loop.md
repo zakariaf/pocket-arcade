@@ -57,6 +57,7 @@ Failures in boards, animation clocks, worklets, determinism, gestures and state 
 |---|---|---|---|---|---|
 | `engine-canvas-onlayout` | Canvas onLayout does not fire on the New Architecture | Canvas onLayout is deprecated on Fabric | Use onSize or useCanvasSize() | verified | `board-rendering-skia` |
 | `engine-headless-fonts` | Text is missing in Jest golden images or headless renders | Skia's jestSetup mocks useFonts and matchFont to null | Load the TTF with Skia.Typeface.MakeFreeTypeFaceFromData in text golden tests | verified | `golden-tests` |
+| `engine-android-skia-app-fonts` | Numbers or text drawn on a Skia board are blank on Android but show on iOS (monster health pills empty) | The face came from Skia.FontMgr.System().matchFamilyStyle; Android's Skia font manager reads only /system/fonts and answers an app font with an empty face | Make the face from the bundled TTF's bytes on both platforms: boardNumberTypeface() through the BoardFont native module (board-rendering-skia, rule font-system-manager) | verified | `board-rendering-skia` |
 | `engine-skia-mutable-path` | Skia logs a deprecation warning for moveTo, addCircle or transform | Skia 2.6 moved to immutable paths; the old SkPath mutators still work but will be removed | Build paths once with Skia.PathBuilder.Make()...build() at unit size and place them with canvas.save/translate/scale/restore | verified | `board-rendering-skia` |
 
 ## Reanimated

@@ -30,6 +30,11 @@ export type SessionView = {
   readonly summary: RunSummary | null;
   /** Changes with every applied, undone or continued move (the board presents a new scene). */
   readonly eventSeq: number;
+  /**
+   * The tutorial only, while a scripted step waits for its move: the tries it refused since the
+   * step began (spec S13 is silent; the coach nudges once per refusal). Absent otherwise.
+   */
+  readonly refusedMoves?: number;
 };
 
 /** What screens and the board send. Paid perks (hint, continue) are sent only after payment. */
