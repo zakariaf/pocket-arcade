@@ -62,6 +62,8 @@ function buildPaths(skia: SkiaApi): Readonly<Partial<Record<string, SkPath>>> {
 export const flockTiltBoard: GameBoard<FlockTiltState, FlockTiltView, BoardToken, FlockTiltMove> = {
   // Spec 7.5: a board is a physical space; tilts are physical directions in every language.
   isMirroredInRtl: false,
+  // S13: the Toybox flock illustration is drawn in a 320 x 222 viewBox, taller than the default.
+  exampleAspect: 320 / 222,
   toView,
   layout: layoutBoard,
   draw: drawBoard,

@@ -29,6 +29,10 @@ describe('flockTiltBoard', () => {
     expect(flockTiltBoard.isMirroredInRtl).toBe(false);
   });
 
+  it('sizes the S13 how-to picture like the Toybox flock illustration, 320 x 222', () => {
+    expect(flockTiltBoard.exampleAspect).toBe(320 / 222);
+  });
+
   it('describes the field for VoiceOver with counted values (spec 8.11)', () => {
     expect(flockTiltBoard.describe(VIEW)).toStrictEqual({
       id: 'flock-tilt.board.summary',
