@@ -77,12 +77,15 @@ type Recording = {
   readonly kit: RenderKit;
   readonly canvas: SkCanvas;
   readonly painted: Painted[];
+  /** Each drawCircle's paint state (the burst's particles and the hit flash). */
+  readonly circles: FakePaint[];
 };
 
 function recording(): Recording {
   const { paint: fillPaint, state: fill } = fakePaint();
   const { paint: strokePaint, state: stroke } = fakePaint();
   const painted: Painted[] = [];
+  const circles: FakePaint[] = [];
   const paintedWith = (rect: Rect, paint: SkPaint): void => {
     const state = paint === strokePaint ? stroke : fill;
     painted.push({ rect, isStroke: paint === strokePaint, ...state });
@@ -92,6 +95,11 @@ function recording(): Recording {
       paintedWith(rrect.rect, paint);
     },
     drawRect: paintedWith,
+    // drawCircle(x, y, r, paint): only the paint is kept.
+    drawCircle: (...args: readonly unknown[]) => {
+      const paint = args[3];
+      circles.push({ ...(paint === strokePaint ? stroke : fill) });
+    },
   };
   const canvas = new Proxy(
     {},
@@ -105,7 +113,7 @@ function recording(): Recording {
     paths: { arrow: {} as SkPath, heart: {} as SkPath },
     labels: {},
   };
-  return { kit, canvas, painted };
+  return { kit, canvas, painted, circles };
 }
 
 const START = toView(LINE_SIEGE_TEACHING.tutorial.start, { formatNumber: String });
@@ -120,20 +128,29 @@ const COACHED: BoardHighlight = {
   hinted: [{ regionId: 'tray', col: 1, row: 0 }, ...GAP],
 };
 
-function draw(input: {
+type DrawInput = {
   readonly view?: LineSiegeView;
   readonly highlight?: BoardHighlight;
   readonly pointer?: PointerSample;
   readonly tracks?: readonly Track[];
   readonly elapsedMs?: number;
-}): Painted[] {
-  const { kit, canvas, painted } = recording();
+  readonly colors?: BoardColors<BoardToken>;
+};
+
+function drawRecorded(input: DrawInput): Recording {
+  const recorded = recording();
+  const { kit, canvas } = recorded;
   const sample = sampleTimeline(input.tracks ?? [], input.elapsedMs ?? 0);
   const fx = { ...sample, pointer: input.pointer ?? IDLE_POINTER };
   const view = input.view ?? START;
   const highlight = input.highlight ?? EMPTY_HIGHLIGHT;
-  drawBoard(canvas, { view, fx, highlight, colors: COLORS, layout: LAYOUT, kit });
-  return painted;
+  const colors = input.colors ?? COLORS;
+  drawBoard(canvas, { view, fx, highlight, colors, layout: LAYOUT, kit });
+  return recorded;
+}
+
+function draw(input: DrawInput): Painted[] {
+  return drawRecorded(input).painted;
 }
 
 function isInside(inner: Rect, outer: Rect): boolean {
@@ -219,5 +236,34 @@ describe('the shockwave on the Line Siege board', () => {
     const bands = draw({ tracks, elapsedMs }).filter((entry) => entry.token === 'shock');
     expect(bands).toHaveLength(1);
     expect(bands[0]?.alpha).toBeCloseTo(0.7 * (1 - (progress ?? 0)), 6);
+  });
+});
+
+describe('the defeat burst on the Line Siege board', () => {
+  it("fades each particle from the beam token's own alpha, never from an opaque one", () => {
+    // Spec (Line Siege): a defeated monster pops. Its particles take the beam token's colour; a
+    // translucent beam (here alpha 0.5) must stay translucent: setColor then setAlphaf(particle)
+    // replaced the token's alpha with the particle's, as the shockwave's band did.
+    const defeat = {
+      kind: 'monster-defeated',
+      monsterId: 1,
+      monsterKind: 'normal',
+      lane: 2,
+      row: 1,
+    } as const;
+    const tracks = buildTimeline([defeat], 'full');
+    const burst = tracks.find((track) => track.channel === 'burst');
+    if (burst === undefined) throw new Error('a burst track');
+    const elapsedMs = burst.startMs + burst.durationMs / 3;
+    const beam = COLORS.color.beam;
+    const halfBeam = new Float32Array([beam[0] ?? 0, 0, 0, 0.5]) as SkColor;
+    const translucent = { ...COLORS, color: { ...COLORS.color, beam: halfBeam } };
+    const opaque = drawRecorded({ tracks, elapsedMs }).circles;
+    const halved = drawRecorded({ tracks, elapsedMs, colors: translucent }).circles;
+    expect(opaque.length).toBeGreaterThan(0);
+    expect(halved.map((paint) => paint.token)).toStrictEqual(opaque.map(() => 'beam'));
+    halved.forEach((paint, i) => {
+      expect(paint.alpha).toBeCloseTo(0.5 * (opaque[i]?.alpha ?? 0), 6);
+    });
   });
 });
