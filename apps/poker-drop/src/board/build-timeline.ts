@@ -22,7 +22,7 @@ import { traceCards } from './card-tracks.ts';
 
 import type { CardPath, CardTrace, GoneCard } from './card-tracks.ts';
 import type { Motion, Track } from '@e07/game-kit/timeline/track.ts';
-import type { PokerDropEvent } from '@e07/poker-drop/rules/poker-drop-types.ts';
+import type { BurstingHand, PokerDropEvent } from '@e07/poker-drop/rules/poker-drop-types.ts';
 
 /** The busiest drop (a two-step cascade and a rising row with its own hand) plays within this. */
 export const TURN_BUDGET_MS = 3000;
@@ -147,6 +147,17 @@ type BurstAt = {
   readonly isLead: boolean;
 };
 
+/** Each hand kind's burst sound, written as literal ids so the sound bank's check can see them. */
+const BURST_SOUNDS: Readonly<Record<BurstingHand, { readonly sound: string }>> = {
+  'two-pair': { sound: 'burst-two-pair' },
+  'three-of-a-kind': { sound: 'burst-three-of-a-kind' },
+  straight: { sound: 'burst-straight' },
+  flush: { sound: 'burst-flush' },
+  'full-house': { sound: 'burst-full-house' },
+  'four-of-a-kind': { sound: 'burst-four-of-a-kind' },
+  'straight-flush': { sound: 'burst-straight-flush' },
+};
+
 /** The line flash; the step's leading hand carries its sound (a heavier haptic in a cascade). */
 function lineTrack(at: BurstAt, ends: readonly number[], timing: Timing): Track {
   const haptic = at.burst.step >= 2 ? ('heavy' as const) : ('medium' as const);
@@ -158,7 +169,7 @@ function lineTrack(at: BurstAt, ends: readonly number[], timing: Timing): Track 
     easing: 'out-quad',
     from: ends,
     to: ends,
-    ...(at.isLead ? { cue: { sound: `burst-${at.burst.hand}`, haptic } } : {}),
+    ...(at.isLead ? { cue: { ...BURST_SOUNDS[at.burst.hand], haptic } } : {}),
   };
 }
 
