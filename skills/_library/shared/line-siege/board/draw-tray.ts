@@ -6,7 +6,7 @@ import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { CORNER, drawBlock, drawPiece, drawRing, inset, INSET } from './draw-parts.ts';
-import { traySlotRect } from './layout-board.ts';
+import { targetRectOf, traySlotRect } from './layout-board.ts';
 
 import type { Frame } from './draw-parts.ts';
 import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
@@ -57,7 +57,7 @@ export function drawHinted(canvas: SkCanvas, frame: Frame): void {
   const { kit, colors } = frame;
   for (const target of frame.highlight.hinted) {
     const slot = slotOf(target);
-    const rect = slot === null ? cellRect(frame.layout, target) : traySlotRect(frame.layout, slot);
+    const rect = targetRectOf(frame.layout, target);
     if (rect === null) continue;
     if (slot !== null) {
       drawRing(canvas, frame, { rect: inset(rect, INSET / 2), width: rect.width * 0.03 });

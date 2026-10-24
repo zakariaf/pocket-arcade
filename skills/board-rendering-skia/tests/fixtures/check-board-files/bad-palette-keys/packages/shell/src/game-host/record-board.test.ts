@@ -1,4 +1,6 @@
 // packages/shell/src/game-host/record-board.test.ts
+import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
+
 import { makeScene } from './board-scene.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from './board-types.ts';
 import { coachHandGlide } from './draw-coach-hand.ts';
@@ -121,6 +123,7 @@ describe('recordBoard', () => {
       hand: { from: null, to: cell },
       cells: [cell],
       look: { fill: new Float32Array(4), ink: new Float32Array(4) },
+      targetRect: cellRect,
     };
     recordBoard(recorder, {
       ...input(() => {

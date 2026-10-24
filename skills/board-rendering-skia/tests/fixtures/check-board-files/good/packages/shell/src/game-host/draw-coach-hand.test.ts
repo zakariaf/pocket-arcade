@@ -1,4 +1,6 @@
 // packages/shell/src/game-host/draw-coach-hand.test.ts
+import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
+
 import {
   coachHandGlide,
   coachHandKey,
@@ -59,6 +61,25 @@ describe('coachHandGlide', () => {
     expect(coachHandGlide(LAYOUT, target)).toStrictEqual({
       start: null,
       rest: { x: 30, y: 38, size: 40 },
+    });
+  });
+});
+
+describe('coachHandGlide on a board that draws a target off its grid cell', () => {
+  it("starts on the slot where the board draws it (its targetRect), never on the slot's grid cell", () => {
+    // Spec S13: the hand glides from the tray slot to the gap. A wide Line Siege board lays its
+    // tray as a column, so slot 1 is drawn at (0, 1); its grid cell (1, 0) lies beside the tray.
+    const column: BoardLayout = {
+      ...LAYOUT,
+      regions: [LAYOUT.regions[0]!, { id: 'tray', x: 200, y: 10, cell: 60, cols: 1, rows: 3 }],
+    };
+    const slotRect = (layout: BoardLayout, target: BoardTarget) =>
+      target.regionId === 'tray'
+        ? cellRect(layout, { regionId: 'tray', col: 0, row: target.col + target.row })
+        : cellRect(layout, target);
+    expect(coachHandGlide(column, { ...DRAG, targetRect: slotRect })?.start).toStrictEqual({
+      x: 230,
+      y: 100,
     });
   });
 });

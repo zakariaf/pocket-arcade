@@ -5,6 +5,8 @@
 import { act, render, screen } from '@testing-library/react-native';
 import { useSharedValue } from 'react-native-reanimated';
 
+import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
+
 import { BoardCanvas } from './board-canvas.tsx';
 import { makeScene } from './board-scene.ts';
 import { IDLE_POINTER } from './board-types.ts';
@@ -72,6 +74,7 @@ const HAND: BoardCoachHand = {
   hand: { from: { regionId: 'tray', col: 0, row: 0 }, to: { regionId: 'board', col: 0, row: 0 } },
   cells: [{ regionId: 'board', col: 0, row: 0 }],
   look: { fill: INK, ink: INK },
+  targetRect: cellRect,
 };
 
 function Harness({ coach = null }: { readonly coach?: BoardCoachHand | null }): ReactNode {

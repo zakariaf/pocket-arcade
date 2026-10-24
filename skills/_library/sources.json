@@ -1647,11 +1647,11 @@
         ]
       },
       "examples/line-siege/line-siege-tutorial.golden.test.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "test/goldens/boards/line-siege-tutorial.golden.test.ts",
-            "sha256": "9777e52ed4f574ba5a242b77fba21de9cea267889b898d8caf0a4dad215e2914"
+            "sha256": "7b63b3f16eb8da8f566c9cc0d55e1b9a063c9b9030ce0ee5d82ce6902b982b51"
           }
         ]
       },
@@ -1916,11 +1916,11 @@
         ]
       },
       "templates/shell/game-host/board-canvas.test.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-canvas.test.tsx",
-            "sha256": "120619ee8724981ce4d96ff4e54f13c384e6a73a5c9210e080345afa0f1fcb35"
+            "sha256": "585f4da9ab65a02b21ac9ab58eed0dac4e8dbb65d04b66d62a4efbd40da6f8ff"
           }
         ]
       },
@@ -2014,11 +2014,11 @@
         ]
       },
       "templates/shell/game-host/board-types.ts": {
-        "recorded": "2026-10-03",
+        "recorded": "2026-10-24",
         "sources": [
           {
-            "path": "docs/08-game-engine.md",
-            "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+            "path": "packages/shell/src/game-host/board-types.ts",
+            "sha256": "3b8a23cb9316133804b27b639c60d39fbb49cdfd1098bad4ae8f8abd0cb4482b"
           }
         ]
       },
@@ -2072,7 +2072,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/draw-coach-hand.test.ts",
-            "sha256": "3b0f409f5c011524e7544205561c288c2970bc16728d3fbb620769470b03342e"
+            "sha256": "9c9c14123cf752ca9d92030b0d47a4e6cd4b5c86f64c1a94748f550407c58d71"
           }
         ]
       },
@@ -2081,7 +2081,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/draw-coach-hand.ts",
-            "sha256": "bfa2b47e43bb7d1c4441dcd696b3de0bf340cd5f664722982f53906f9fda3912"
+            "sha256": "b1ff0603c0105ea4a61db1735d806f2742823e3243de83c3d1c8b415b9cda40a"
           }
         ]
       },
@@ -2131,11 +2131,11 @@
         ]
       },
       "templates/shell/game-host/record-board.test.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/record-board.test.ts",
-            "sha256": "77b001d7229c4c52c20bf6e36d0d7b99744d63853ea653146ab36be831a881a3"
+            "sha256": "558444d710649e9e80606fbab52d3cd8891a1f72a49fec9f93e9d58a9e1d6f1f"
           }
         ]
       },
@@ -4911,11 +4911,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/board-host-kit.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-host-kit.ts",
-            "sha256": "39cdbf390e5164fa939133a74122a9ff5be06dac8016eb7191c7369a9a8d8461"
+            "sha256": "01e96c54d1b7c6f995e75a9f29a18f0c1eef91bd72b08f44289c315ae9abe068"
           }
         ]
       },
@@ -4947,20 +4947,20 @@
         ]
       },
       "templates/packages/shell/src/game-host/create-example-picture.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-example-picture.tsx",
-            "sha256": "6a5092c89834ee4c5c2e99d72caae9d720b72034c656ecc28845ed7309bd317d"
+            "sha256": "2f37bbadb42511e78e03f65563de292f9b260ec919881c177aade4e0a6a6e500"
           }
         ]
       },
       "templates/packages/shell/src/game-host/create-game-board-host.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/create-game-board-host.tsx",
-            "sha256": "438dac9ca56ac83c4d0b5db4b1fccc5363ac2d7f130510dc50ae0b19297b81b4"
+            "sha256": "85a4fa3d335a4ed1a244d869ad9b5efafb2e276cb349e527bb14472c23741ffc"
           }
         ]
       },

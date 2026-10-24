@@ -5,6 +5,7 @@
 // the digits font, and the tutorial's pointing hand in the theme's pop paint.
 import { Skia } from '@shopify/react-native-skia';
 
+import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
 import { boardNumberTypeface } from '@e07/shell/game-host/board-number-font.ts';
 
@@ -29,12 +30,17 @@ export function boardKitOf(
 /** The theme colours the hand is painted in: the Toybox pop paint and the ink drawn on it. */
 export type CoachHandColors = { readonly pop: string; readonly onPop: string };
 
-/** The tutorial's pointing hand for a resolved pointer, in the theme's pop paint; null without one. */
+/**
+ * The tutorial's pointing hand for a resolved pointer, in the theme's pop paint, placed where the
+ * board draws each target (board.targetRect, else cellRect); null without one.
+ */
 export function boardCoachHandOf(
   pointer: CoachPointer,
   colors: CoachHandColors,
+  board: Pick<GameBoard<unknown, unknown, string>, 'targetRect'>,
 ): BoardCoachHand | null {
   if (pointer.hand === null) return null;
   const look = { fill: Skia.Color(colors.pop), ink: Skia.Color(colors.onPop) };
-  return { hand: pointer.hand, cells: pointer.cells, look };
+  const targetRect = board.targetRect ?? cellRect;
+  return { hand: pointer.hand, cells: pointer.cells, look, targetRect };
 }

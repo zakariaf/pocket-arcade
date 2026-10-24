@@ -84,7 +84,7 @@ function examplePictureFor<T extends ShellGameTypes>(
             draw: board.draw,
             onError: () => undefined,
             // The page's pointing hand rests at its end, as under reduced motion.
-            restingHand: boardCoachHandOf(pointed, theme.colors),
+            restingHand: boardCoachHandOf(pointed, theme.colors, board),
           });
     return (
       <View

@@ -20,11 +20,18 @@ export type CoachHand = { readonly from: BoardTarget | null; readonly to: BoardT
 /** The hand's colours: the theme's pop paint and the ink drawn on it (onPop), in both schemes. */
 export type CoachHandLook = { readonly fill: SkColor; readonly ink: SkColor };
 
-/** The hand a board draws: its path, the cells its move fills (the gap it points into), its look. */
+/** Where the board draws a target (GameBoard.targetRect, else cellRect). Worklet. */
+export type TargetRect = (layout: BoardLayout, target: BoardTarget) => Rect | null;
+
+/**
+ * The hand a board draws: its path, the cells its move fills (the gap it points into), its look,
+ * and where the board draws each target (the slot may lie off its grid cell).
+ */
 export type BoardCoachHand = {
   readonly hand: CoachHand;
   readonly cells: readonly BoardTarget[];
   readonly look: CoachHandLook;
+  readonly targetRect: TargetRect;
 };
 
 /** Where the fingertip is (x, y: the top of the finger) and the hand's size (the end cell's). */
@@ -71,18 +78,20 @@ const GLIDE_SHARE = 0.6;
 /** How far the fingertip reaches into the gap's lowest cell, as a share of the cell. */
 const TIP_REACH = 0.3;
 
-type HandPath = Pick<BoardCoachHand, 'hand' | 'cells'>;
+/** The hand's path and cells; targetRect defaults to cellRect (a board that draws on its grid). */
+type HandPath = Pick<BoardCoachHand, 'hand' | 'cells'> & { readonly targetRect?: TargetRect };
 
 /** The rect around the cells the move fills (the pointer's end cell when the move names none). */
 function gapRect(layout: BoardLayout, coach: HandPath): Rect | null {
   const { from, to } = coach.hand;
+  const rectOf = coach.targetRect ?? cellRect;
   const filled = coach.cells.filter((target) => !isSameTarget(target, from));
   let left = Infinity;
   let top = Infinity;
   let right = -Infinity;
   let bottom = -Infinity;
   for (const target of filled.length === 0 ? [to] : filled) {
-    const rect = cellRect(layout, target);
+    const rect = rectOf(layout, target);
     if (rect === null) continue;
     left = Math.min(left, rect.x);
     top = Math.min(top, rect.y);
@@ -99,16 +108,17 @@ function glideOf(phase: number): number {
 }
 
 /**
- * The hand's glide on `layout`: from the slot's centre to the fingertip's rest, TIP_REACH inside
+ * The hand's glide on `layout`, each target where the board draws it: from the slot's centre to the fingertip's rest, TIP_REACH inside
  * the gap's lowest cell. Null before the board has a size. Worked out once per layout and cells.
  */
 export function coachHandGlide(layout: BoardLayout, coach: HandPath): CoachHandGlide | null {
+  const rectOf = coach.targetRect ?? cellRect;
   const gap = gapRect(layout, coach);
-  const end = cellRect(layout, coach.hand.to);
+  const end = rectOf(layout, coach.hand.to);
   if (gap === null || end === null) return null;
   const size = end.width;
   const rest = { x: gap.x + gap.width / 2, y: gap.y + gap.height - size * TIP_REACH, size };
-  const from = coach.hand.from === null ? null : cellRect(layout, coach.hand.from);
+  const from = coach.hand.from === null ? null : rectOf(layout, coach.hand.from);
   const start = from === null ? null : { x: from.x + from.width / 2, y: from.y + from.height / 2 };
   return { start, rest };
 }

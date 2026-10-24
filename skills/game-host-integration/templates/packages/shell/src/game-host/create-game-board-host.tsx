@@ -116,7 +116,7 @@ function boardHostFor<T extends ShellGameTypes>(
       coachTargets: coach.cells,
     });
     const { colors, format, label } = useBoardLook(game, result.state);
-    const hand = boardCoachHandOf(coach, useTheme().colors);
+    const hand = boardCoachHandOf(coach, useTheme().colors, board);
     const isRtl = useDirection() === 'rtl';
     const motion = motionOf(useReduceMotion());
     const isFocused = useIsFocused();
