@@ -5245,11 +5245,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/session-controller.ts": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-controller.ts",
-            "sha256": "2b0ff8d25c69d4ce902ee2f76179cfa33c32339975ee37fb2ec875f48cf53805"
+            "sha256": "1d342aefa4340440d7821985e40c409baedc920da6d9d609ac928548f2498f3b"
           }
         ]
       },
@@ -5332,11 +5332,11 @@
         ]
       },
       "templates/packages/shell/src/game-host/tutorial-refusals.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/tutorial-refusals.test.ts",
-            "sha256": "8c6a1bea050442e1a50968dfd8a5da5b6d48a6ba91ca9f2edd0f3d45e9fa9b25"
+            "sha256": "a5f946759dab033e8b94d5ad39a04e99564258ef2259b8a9c93b8dcdcd0ad939"
           }
         ]
       },
@@ -5345,7 +5345,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/tutorial-script.test.ts",
-            "sha256": "bc233ee1bfde467c8762255139e64bfec30663c3c0609c7f284be2abf5d3f6ea"
+            "sha256": "23d3e3ab189acb578cfd1543a380f590adc485054699eca81f2748b48cd17744"
           }
         ]
       },
@@ -5354,7 +5354,7 @@
         "sources": [
           {
             "path": "packages/shell/src/game-host/tutorial-script.ts",
-            "sha256": "051c44454f66d1bc9d41e6292d41f9921d0a8c803d212033fae6c6330394f2b0"
+            "sha256": "481c61ce1faa1c0da0ae582de1cb4663428ffeea5822ce25f65af1f10a147bf8"
           }
         ]
       },

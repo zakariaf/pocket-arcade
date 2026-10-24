@@ -53,6 +53,21 @@ describe('the tutorial run and the tries its script refuses', () => {
     expect(opened.handle.getView().refusedMoves).toBe(1);
   });
 
+  it('counts no refusal for a cancelled drag: dropped off the board or back on its own cell', () => {
+    // A drag the player lets go of off the board, or drops back where it started, is no try: only
+    // an intent that becomes a move the script rejects, or a press on a board cell, earns a nudge.
+    const opened = hostFor().openSession({ start: 'new', ref: { kind: 'tutorial' } });
+    if (opened === null) throw new Error('no tutorial');
+    const from = { regionId: 'board', col: 1, row: 0 };
+    for (const to of [null, from]) {
+      opened.handle.send({ type: 'intent', intent: { kind: 'drag-end', from, to } });
+    }
+    opened.handle.send({ type: 'intent', intent: { kind: 'swipe', direction: 'up', from } });
+    expect(opened.handle.getView().refusedMoves).toBeUndefined();
+    opened.handle.send(tap(1));
+    expect(opened.handle.getView().refusedMoves).toBe(1);
+  });
+
   it('counts no refusal while the tutorial is paused, nor in any other run', () => {
     const host = hostFor();
     const tutorial = host.openSession({ start: 'new', ref: { kind: 'tutorial' } });

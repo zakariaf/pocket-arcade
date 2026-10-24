@@ -200,7 +200,7 @@ function addPlayTime<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>)
 }
 
 /**
- * A tutorial step that waits for its move refused a try (a wrong drop, a tap that is no move):
+ * A tutorial step that waits for its move refused a try (a wrong move, a tap that is no move):
  * count it for the view, so the coach nudges instead of staying silent. Never while paused.
  */
 function noteRefusal<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
@@ -224,7 +224,7 @@ function run<TState, TMove, TEvent>(
       // A move is played unless the tutorial's script expects another one.
       if (move !== null && (parts.deps.tutorial?.isMoveAccepted(move, session.moveCount) ?? true)) {
         dispatch({ type: 'apply-move', move });
-      } else noteRefusal(parts);
+      } else if (parts.deps.tutorial?.isTry(command.intent, move) === true) noteRefusal(parts);
       return;
     }
     case 'hint':

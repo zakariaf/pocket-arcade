@@ -4,6 +4,7 @@ import {
   expectsScriptedMove,
   howToPlayPagesOf,
   isSameMove,
+  isTutorialTry,
   isTutorialMoveAccepted,
   tutorialRulesOf,
 } from './tutorial-script.ts';
@@ -56,6 +57,12 @@ describe('tutorialRulesOf', () => {
   });
 });
 
+describe('tutorialRulesOf isTry', () => {
+  it('hands the controller the refused-try rule, isTutorialTry', () => {
+    expect(tutorialRulesOf(STEPS).isTry).toBe(isTutorialTry);
+  });
+});
+
 describe('isSameMove', () => {
   it('compares plain-data moves by value, key order included or not', () => {
     expect(isSameMove({ kind: 'add', amount: 2 }, { amount: 2, kind: 'add' })).toBe(true);
@@ -75,6 +82,20 @@ describe('coachStepsOf', () => {
       },
       { messageId: 'tally.tutorial.any', pointer: { kind: 'none' } },
     ]);
+  });
+});
+
+describe('isTutorialTry', () => {
+  const CELL = { regionId: 'board', col: 1, row: 0 };
+
+  it('counts a wrong move and a press on a cell, never a cancelled drag, swipe or aim', () => {
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: CELL }, ADD_TWO)).toBe(true);
+    expect(isTutorialTry({ kind: 'tap', target: CELL, selected: null }, null)).toBe(true);
+    expect(isTutorialTry({ kind: 'long-press', target: CELL }, null)).toBe(true);
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: null }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: CELL }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'swipe', direction: 'up', from: CELL }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'aim', dx: 1, dy: 0 }, null)).toBe(false);
   });
 });
 
