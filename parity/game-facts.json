@@ -6,6 +6,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "stepstone": {
+      "designGame": "stepstone",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
     }
   }
 }
