@@ -13,6 +13,8 @@ import { ascField } from './asc-client.ts';
 import type { AscRequest, AscResponse } from './asc-client.ts';
 
 const EXIT_USAGE = 2;
+/** Where App Store Connect's links.next points; a next page anywhere else is refused. */
+export const ASC_ORIGIN = 'https://api.appstoreconnect.apple.com';
 const BUNDLE_IDS = 'bundleIds';
 
 export const BUNDLE_ID_USAGE =
@@ -34,14 +36,15 @@ export function bundleIdNameOf(gameId: string): string {
     .join(' ');
 }
 
-/** The game ids after each --app, or the first argument that is not a game id. */
+/** The game ids after each --app, or the first bad argument: a flag that is not --app, or the id. */
 function gamesOf(argv: readonly string[]): { games: string[] } | { bad: string } {
   const games: string[] = [];
   for (let index = 0; index < argv.length; index += 2) {
+    const flag = argv[index] ?? '';
     const value = argv[index + 1];
-    if (argv[index] !== '--app' || !isGameId(value)) {
-      return { bad: value ?? argv[index] ?? 'nothing' };
-    }
+    if (flag !== '--app') return { bad: flag };
+    if (value === undefined) return { bad: 'nothing after --app' };
+    if (!isGameId(value)) return { bad: value };
     games.push(value);
   }
   return games.length === 0 ? { bad: 'no --app' } : { games };
@@ -57,18 +60,34 @@ function okJson(response: AscResponse, bundleId: string): unknown {
   return response.json;
 }
 
+/** The path of an answer's links.next (an absolute App Store Connect URL), or null on the last page. */
+function nextPathOf(json: unknown): string | null {
+  const next = ascField(ascField(json, 'links'), 'next');
+  if (typeof next !== 'string') return null;
+  const url = new URL(next);
+  if (url.origin !== ASC_ORIGIN) throw new Error(`links.next leaves App Store Connect: ${next}`);
+  return `${url.pathname}${url.search}`;
+}
+
+/** The registered bundle id's id, read page by page (200 a page, following links.next). */
 async function registeredId(
   call: (request: AscRequest) => Promise<AscResponse>,
   bundleId: string,
 ): Promise<string | null> {
-  const path = `/v1/bundleIds?filter[identifier]=${encodeURIComponent(bundleId)}&fields[bundleIds]=identifier`;
-  const data = ascField(okJson(await call({ method: 'GET', path }), bundleId), 'data');
-  const list: readonly unknown[] = Array.isArray(data) ? data : [];
-  const match = list.find(
-    (item) => ascField(ascField(item, 'attributes'), 'identifier') === bundleId,
-  );
-  const id = ascField(match, 'id');
-  return typeof id === 'string' ? id : null;
+  let path: string | null =
+    `/v1/bundleIds?filter[identifier]=${encodeURIComponent(bundleId)}&fields[bundleIds]=identifier&limit=200`;
+  while (path !== null) {
+    const json = okJson(await call({ method: 'GET', path }), bundleId);
+    const data = ascField(json, 'data');
+    const list: readonly unknown[] = Array.isArray(data) ? data : [];
+    const match = list.find(
+      (item) => ascField(ascField(item, 'attributes'), 'identifier') === bundleId,
+    );
+    const id = ascField(match, 'id');
+    if (typeof id === 'string') return id;
+    path = nextPathOf(json);
+  }
+  return null;
 }
 
 /** Registers or keeps each game's bundle id; resolves the exit code (2: usage, key never read). */
