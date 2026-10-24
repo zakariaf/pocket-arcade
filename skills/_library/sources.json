@@ -1956,11 +1956,11 @@
         ]
       },
       "templates/shell/game-host/board-number-font.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-number-font.ts",
-            "sha256": "ef13d296375f080e889be9dcd1c0ce115d8473bfe97956db32ad46331dedbaa4"
+            "sha256": "9408ccd8f22a0085f3eab0a849611917f6810811de7ab2d9be79fc30a4f8b98d"
           }
         ]
       },
@@ -1973,12 +1973,21 @@
           }
         ]
       },
+      "templates/shell/game-host/board-number-typeface.test.ts": {
+        "recorded": "2026-10-24",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/board-number-typeface.test.ts",
+            "sha256": "8bf8fa17f70d94f4d9ed0ce924d29f20033cc78a02e49bae9882f982302cf28e"
+          }
+        ]
+      },
       "templates/shell/game-host/board-number-typeface.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-number-typeface.ts",
-            "sha256": "c5445a73a02aabd39fbdaed60086d47099b62db6dfa9f29cba2b677994981323"
+            "sha256": "461d3fa7571d095f387e730dab00a210011a98b0aca219ea3c50aac2094980be"
           }
         ]
       },

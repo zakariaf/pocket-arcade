@@ -33,3 +33,32 @@ export function boardNumberTypefaceOf(
   if (bytes === null || bytes.length === 0) return null;
   return skia.Typeface.MakeFreeTypeFaceFromData(skia.Data.fromBytes(bytes));
 }
+
+/** The family and style the iOS fallback asks the system font manager for. */
+const NUMBER_FAMILY = 'Vazirmatn';
+const NUMBER_STYLE = { weight: 400, width: 5, slant: 0 } as const;
+
+/**
+ * The digits face: from the bundled TTF's bytes first. Without them (no BoardFont module in the
+ * build, or no bytes), iOS falls back to the system font manager, which sees the fonts the
+ * expo-font plugin embeds (UIAppFonts). Android never does: its manager answers an app font with
+ * an empty face, which draws nothing, so it gets null (no digits) instead.
+ */
+export function boardNumberFaceOf(
+  skia: SkiaApi,
+  readFontBytes: FontBytesReader,
+  os: string,
+): SkTypeface | null {
+  const bundled = boardNumberTypefaceOf(skia, readFontBytes);
+  if (bundled !== null || os !== 'ios') return bundled;
+  return skia.FontMgr.System().matchFamilyStyle(NUMBER_FAMILY, NUMBER_STYLE);
+}
+
+/** Makes the face once it is found; while none is found, each call tries again (no null kept). */
+export function onceFound(make: () => SkTypeface | null): () => SkTypeface | null {
+  let face: SkTypeface | null = null;
+  return () => {
+    face ??= make();
+    return face;
+  };
+}
