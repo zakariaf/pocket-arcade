@@ -5,9 +5,6 @@
 // two EMPTY cells (column 7, rows 3 and 4), marked hollow, never drawn as a placed block.
 // Create or change baselines only with `npx jest <this file> --selectProjects golden -u`, after
 // looking at every PNG, and commit with a `Gate-Change:` trailer.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { Skia } from '@shopify/react-native-skia';
 
 import { BOARD_PALETTES } from '@e07/line-siege/board/board-palettes.ts';
@@ -16,11 +13,11 @@ import { intentToMove } from '@e07/line-siege/rules/intent-to-move.ts';
 import { PALETTE } from '@e07/line-siege/theme/palette.ts';
 import { LINE_SIEGE_TEACHING } from '@e07/line-siege/tutorial/line-siege-teaching.ts';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
-import { boardNumberTypefaceOf } from '@e07/shell/game-host/board-number-typeface.ts';
 import { coachGameOf, coachPointerOf } from '@e07/shell/game-host/coach-pointer.ts';
 import { coachHandGlide, drawCoachHand } from '@e07/shell/game-host/draw-coach-hand.ts';
 import { paintBoardPng } from '@e07/shell/game-host/paint-board-png.ts';
 
+import { goldenNumberTypeface } from './golden-font.ts';
 import { toMatchPixelGolden } from './skia-golden.ts';
 
 import type { BoardToken } from '@e07/line-siege/board/board-palettes.ts';
@@ -30,12 +27,9 @@ import type { SkCanvas } from '@shopify/react-native-skia';
 
 expect.extend({ toMatchImageSnapshot: toMatchPixelGolden });
 
-const FONTS = join(process.cwd(), 'apps/line-siege/assets/fonts');
 const KIT = makeBoardKit(Skia, {
   paths: lineSiegeBoard.buildPaths(Skia),
-  numberTypeface: boardNumberTypefaceOf(Skia, (fileName) =>
-    Uint8Array.from(readFileSync(join(FONTS, fileName))),
-  ),
+  numberTypeface: goldenNumberTypeface(Skia, 'line-siege'),
   numberSize: 18,
 });
 const { start, steps } = LINE_SIEGE_TEACHING.tutorial;

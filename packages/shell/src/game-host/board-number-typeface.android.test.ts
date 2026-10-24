@@ -1,36 +1,15 @@
 // packages/shell/src/game-host/board-number-typeface.android.test.ts
 import { Platform } from 'react-native';
 
+import { androidSkia } from '@e07/shell/game-host/testing/android-skia.ts';
+
 import {
   BOARD_NUMBER_FONT_FILE,
   boardNumberTypefaceOf,
   bundledFontReaderOf,
 } from './board-number-typeface.ts';
 
-import type { SkiaApi } from './board-types.ts';
-import type { SkTypeface } from '@shopify/react-native-skia';
-
 const BYTES = new Uint8Array([0, 1, 0, 0, 7]);
-/** What Skia's Android font manager answers for a family outside /system/fonts: an empty face. */
-const EMPTY_FACE = { kind: 'empty' } as unknown as SkTypeface;
-
-type FakeSkia = { readonly skia: SkiaApi; readonly made: unknown[] };
-
-/** Android's Skia: the system font manager knows only the phone's own fonts. */
-function androidSkia(): FakeSkia {
-  const made: unknown[] = [];
-  const systemManager = (): unknown => ({ matchFamilyStyle: () => EMPTY_FACE });
-  const makeFace = (data: unknown): unknown => {
-    made.push(data);
-    return { kind: 'bundled', data };
-  };
-  const skia = {
-    FontMgr: { System: systemManager },
-    Data: { fromBytes: (bytes: Uint8Array) => ({ bytes }) },
-    Typeface: { MakeFreeTypeFaceFromData: makeFace },
-  } as unknown as SkiaApi;
-  return { skia, made };
-}
 
 describe('the board number typeface on Android', () => {
   it('makes the digits face from the bundled font, which the system font manager cannot see', () => {
