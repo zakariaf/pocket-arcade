@@ -2,6 +2,7 @@
 // The game's teaching as the Shell uses it (spec S13): which move each tutorial step accepts, the
 // steps and the how-to-play pages as plain data for the Tutorial route and S13 (the typed moves
 // and example states stay inside the game host's seam).
+import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 import type { MessageId } from '@e07/game-kit/contract/messages.ts';
 import type {
   HowToPlayStep,
@@ -66,10 +67,21 @@ export function expectsScriptedMove<TMove>(
   return steps[moveCount]?.expect.kind === 'move';
 }
 
+/**
+ * Whether an intent the step did not play is a try it refused: any intent that became a move (the
+ * wrong one), or a press on a board cell (tap, long-press) that is no move. A drag, swipe or aim
+ * that is no move (let go off the board, dropped back on its own cell) is cancelled, never a try.
+ */
+export function isTutorialTry(intent: InputIntent, move: unknown): boolean {
+  return move !== null || intent.kind === 'tap' || intent.kind === 'long-press';
+}
+
 /** What a tutorial run's controller gets from the script (session-controller.ts). */
 export type TutorialRules<TMove> = {
   readonly isMoveAccepted: (move: TMove, moveCount: number) => boolean;
   readonly expectsMove: (moveCount: number) => boolean;
+  /** isTutorialTry: whether an intent the step did not play counts as a refused try. */
+  readonly isTry: (intent: InputIntent, move: TMove | null) => boolean;
 };
 
 export function tutorialRulesOf<TMove>(
@@ -78,6 +90,7 @@ export function tutorialRulesOf<TMove>(
   return {
     isMoveAccepted: (move, moveCount) => isTutorialMoveAccepted(steps, move, moveCount),
     expectsMove: (moveCount) => expectsScriptedMove(steps, moveCount),
+    isTry: isTutorialTry,
   };
 }
 
