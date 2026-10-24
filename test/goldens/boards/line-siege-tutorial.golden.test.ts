@@ -7,6 +7,7 @@
 // looking at every PNG, and commit with a `Gate-Change:` trailer.
 import { Skia } from '@shopify/react-native-skia';
 
+import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { BOARD_PALETTES } from '@e07/line-siege/board/board-palettes.ts';
 import { lineSiegeBoard } from '@e07/line-siege/board/line-siege-board.ts';
 import { intentToMove } from '@e07/line-siege/rules/intent-to-move.ts';
@@ -47,7 +48,8 @@ function drawWithHand(scheme: 'light' | 'dark', phase: number) {
     lineSiegeBoard.draw(canvas, frame);
     const { hand } = COACH;
     if (hand === null) throw new Error('step 1 has a pointing hand');
-    const glide = coachHandGlide(frame.layout, { hand, cells: COACH.cells });
+    const targetRect = lineSiegeBoard.targetRect ?? cellRect;
+    const glide = coachHandGlide(frame.layout, { hand, cells: COACH.cells, targetRect });
     drawCoachHand(canvas, { glide, look, kit: KIT }, phase);
   };
 }
