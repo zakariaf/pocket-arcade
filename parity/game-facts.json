@@ -6,6 +6,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "merge-siege": {
+      "designGame": "mergeSiege",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }
