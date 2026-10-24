@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { sheepEntity, wolfEntity } from './board-ids.ts';
 import { cellBox, drawUnitShape, indexBox, inset, isPlaying } from './draw-parts.ts';
@@ -94,10 +95,8 @@ function drawLostMarks(canvas: SkCanvas, frame: Frame, at: { entity: number; rec
     canvas.drawCircle(cx, cy, at.rect.width * 0.44, kit.stroke);
   }
   if (isPlaying(lost)) {
-    kit.fill.setColor(colors.color.lost);
-    kit.fill.setAlphaf((lost.values[0] ?? 0) * 0.5);
+    setPaintColor(kit.fill, colors.color.lost, (lost.values[0] ?? 0) * 0.5);
     canvas.drawCircle(cx, cy, at.rect.width * 0.5, kit.fill);
-    kit.fill.setAlphaf(1);
   }
 }
 

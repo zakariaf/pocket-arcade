@@ -4,6 +4,7 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { FENCE_SHARE, sheepEntity, TILT_KEY_REGIONS, TURN_ENTITY } from './board-ids.ts';
@@ -75,7 +76,6 @@ function drawPen(canvas: SkCanvas, frame: Frame, grid: Grid): void {
 /** A burst of straw and fleece from the pen when a sheep drops in (full motion only). */
 function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   const pen = indexBox(grid, frame, frame.view.pen);
-  frame.kit.fill.setColor(frame.colors.color.glow);
   for (const sheep of frame.view.sheep) {
     const burst = fxEntry(frame.fx, 'burst', sheepEntity(sheep.id));
     if (!isPlaying(burst)) continue;
@@ -91,11 +91,10 @@ function drawBursts(canvas: SkCanvas, frame: Frame, grid: Grid): void {
     };
     for (let i = 0; i < spec.count; i += 1) {
       const particle = sampleParticle(spec, i, burst.ageMs);
-      frame.kit.fill.setAlphaf(particle.alpha);
+      setPaintColor(frame.kit.fill, frame.colors.color.glow, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, grid.cell * 0.06, frame.kit.fill);
     }
   }
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** Whole-field washes: the glow of a cleared field, the dimming when the tilts ran out, the rewind. */
@@ -109,11 +108,9 @@ function drawWashes(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   for (const [channel, token, strength] of washes) {
     const entry = fxEntry(frame.fx, channel, TURN_ENTITY);
     if (!isPlaying(entry)) continue;
-    frame.kit.fill.setColor(frame.colors.color[token]);
-    frame.kit.fill.setAlphaf((entry.values[0] ?? 0) * strength);
+    setPaintColor(frame.kit.fill, frame.colors.color[token], (entry.values[0] ?? 0) * strength);
     canvas.drawRect(field, frame.kit.fill);
   }
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** One tilt key: a raised square with an ink edge and its arrow; the hinted key gets a ring. */

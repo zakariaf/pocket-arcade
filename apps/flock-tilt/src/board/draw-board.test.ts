@@ -201,3 +201,85 @@ describe('drawBoard', () => {
     expect(after.calls.get('drawCircle')).toBe((before.calls.get('drawCircle') ?? 0) + 1);
   });
 });
+
+/** A paint that remembers its alpha the way Skia does: setColor takes the colour's, setAlphaf replaces it. */
+function alphaPaint(): { paint: SkPaint; alpha: () => number } {
+  let alpha = 1;
+  const paint = {
+    setColor: (color: SkColor) => {
+      alpha = color[3] ?? 1;
+    },
+    setAlphaf: (value: number) => {
+      alpha = value;
+    },
+    setStrokeWidth: () => undefined,
+  } as unknown as SkPaint;
+  return { paint, alpha: () => alpha };
+}
+
+/** The fill alpha of every fill call of one kind on a frame where `token` has the given alpha. */
+function fillAlphas(
+  at: DrawAt & { token: BoardToken; tokenAlpha: number; call: string },
+): number[] {
+  const fill = alphaPaint();
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (name === at.call && args.at(-1) === fill.paint) seen.push(fill.alpha());
+        },
+    },
+  ) as SkCanvas;
+  const color = new Float32Array([0, 0, 0, at.tokenAlpha]) as SkColor;
+  const colors = { ...COLORS, color: { ...COLORS.color, [at.token]: color } };
+  const fx = { ...sampleTimeline(at.tracks, at.atMs), pointer: IDLE_POINTER };
+  const view = at.view ?? VIEW;
+  const kit = { ...KIT, fill: fill.paint };
+  drawBoard(canvas, { view, fx, highlight: EMPTY_HIGHLIGHT, colors, layout: LAYOUT, kit });
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  const glow = buildTimeline([{ kind: 'field-cleared', tilts: 4, par: 4 }], 'full');
+  const burstAt = TRACKS.find((track) => track.channel === 'burst')?.startMs ?? 0;
+  const lostView: FlockTiltView = {
+    ...VIEW,
+    sheep: [{ id: 1, cell: 7, status: 'lost' }],
+    wolves: [{ id: 0, cell: 8 }],
+  };
+  const lost = buildTimeline(
+    [{ kind: 'sheep-lost', id: 1, cell: 7, wolfId: 0, wolfCell: 8 }],
+    'full',
+  );
+  const cases = [
+    { name: 'the field wash', token: 'glow', call: 'drawRect', tracks: glow, atMs: 300 },
+    {
+      name: 'the pen burst',
+      token: 'glow',
+      call: 'drawCircle',
+      tracks: TRACKS,
+      atMs: burstAt + 100,
+    },
+    {
+      name: 'the lost flash',
+      token: 'lost',
+      call: 'drawCircle',
+      tracks: lost,
+      atMs: 60,
+      view: lostView,
+    },
+  ] as const;
+
+  it.each(cases)('keeps the token alpha under the fade of $name', (at) => {
+    const opaque = fillAlphas({ ...at, tokenAlpha: 1 });
+    const half = fillAlphas({ ...at, tokenAlpha: 0.5 });
+    const faded = opaque.filter((alpha) => alpha > 0 && alpha < 1);
+    expect(faded.length).toBeGreaterThan(0);
+    expect(half.filter((alpha) => alpha > 0 && alpha < 0.5)).toStrictEqual(
+      faded.map((alpha) => alpha * 0.5),
+    );
+  });
+});
