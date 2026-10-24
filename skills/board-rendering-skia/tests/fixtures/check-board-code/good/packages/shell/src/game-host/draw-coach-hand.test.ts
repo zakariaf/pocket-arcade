@@ -1,5 +1,11 @@
 // packages/shell/src/game-host/draw-coach-hand.test.ts
-import { coachHandGlide, coachHandKey, coachHandPose, drawCoachHand } from './draw-coach-hand.ts';
+import {
+  coachHandGlide,
+  coachHandKey,
+  coachHandPose,
+  drawCoachHand,
+  isCoachHandGliding,
+} from './draw-coach-hand.ts';
 
 import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas, SkColor, SkPaint, SkRRect } from '@shopify/react-native-skia';
@@ -86,6 +92,18 @@ describe('drawCoachHand', () => {
 
   it('draws nothing before the board has a size', () => {
     expect(drawn(1, { width: 0, height: 0, isMirrored: false, regions: [] })).toStrictEqual([]);
+  });
+});
+
+describe('isCoachHandGliding', () => {
+  it('glides only a drag hand with motion on: a plain target or reduced motion rests', () => {
+    // Spec S13: the hand glides from the slot to the gap; a plain target has nowhere to glide
+    // from, so its phase animation would change nothing on screen (8.11: reduce motion rests).
+    const target = { from: null, to: cell(0, 0) };
+    expect(isCoachHandGliding(DRAG.hand, 'full')).toBe(true);
+    expect(isCoachHandGliding(DRAG.hand, 'reduced')).toBe(false);
+    expect(isCoachHandGliding(target, 'full')).toBe(false);
+    expect(isCoachHandGliding(target, 'reduced')).toBe(false);
   });
 });
 

@@ -11,6 +11,7 @@ import { cellRect, isSameTarget } from '@e07/game-kit/geom/board-layout.ts';
 
 import type { RenderKit } from './board-types.ts';
 import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
+import type { Motion } from '@e07/game-kit/timeline/track.ts';
 import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
 
 /** The pointing hand: from where it starts (a drag's slot; null for a plain target) to its end. */
@@ -58,6 +59,11 @@ export function coachHandKey(
   const at = (target: BoardTarget | null): string =>
     target === null ? '-' : `${target.regionId}:${String(target.col)}:${String(target.row)}`;
   return `${at(from)}>${at(to)}#${String(coach.replay)}`;
+}
+
+/** Whether the hand's phase animates: only a drag's hand glides, and never under reduced motion. */
+export function isCoachHandGliding(hand: CoachHand, motion: Motion): boolean {
+  return hand.from !== null && motion !== 'reduced';
 }
 
 /** The share of a loop the glide takes; the hand then holds at the gap. */

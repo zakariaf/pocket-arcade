@@ -19,6 +19,7 @@ import {
   COACH_HAND_LOOPS,
   coachHandGlide,
   coachHandKey,
+  isCoachHandGliding,
 } from './draw-coach-hand.ts';
 import { recordCoachHand } from './record-board.ts';
 
@@ -31,21 +32,21 @@ import type { SharedValue } from 'react-native-reanimated';
 
 /**
  * The hand's phase: it glides from the slot to the gap COACH_HAND_LOOPS times, again each time
- * `key` changes (another hand, or a refused tutorial try), and rests at the gap under reduced
- * motion.
+ * `key` changes (another hand, or a refused tutorial try). It rests at the gap (null key) under
+ * reduced motion and for a plain target, which has no slot to glide from (isCoachHandGliding).
  */
-function useCoachHandPhase(key: string | null, motion: Motion): SharedValue<number> {
+function useCoachHandPhase(key: string | null): SharedValue<number> {
   const phase = useSharedValue(1);
   useEffect(() => {
     cancelAnimation(phase);
-    if (key === null || motion === 'reduced') {
+    if (key === null) {
       phase.set(1);
       return;
     }
     phase.set(0);
     const loop = withTiming(1, { duration: COACH_HAND_LOOP_MS, easing: Easing.linear });
     phase.set(withRepeat(loop, COACH_HAND_LOOPS, false));
-  }, [key, motion, phase]);
+  }, [key, phase]);
   return phase;
 }
 
@@ -67,7 +68,8 @@ export function CoachHandLayer({
   layout,
   kit,
 }: CoachHandLayerProps): ReactNode {
-  const phase = useCoachHandPhase(coachHandKey({ hand: hand.hand, replay }), motion);
+  const isGliding = isCoachHandGliding(hand.hand, motion);
+  const phase = useCoachHandPhase(isGliding ? coachHandKey({ hand: hand.hand, replay }) : null);
   // One recorder per hand layer, reused every frame; created in render, never at import time.
   const [recorder] = useState(() => Skia.PictureRecorder());
   const glide = useDerivedValue(() => coachHandGlide(layout.get(), hand));

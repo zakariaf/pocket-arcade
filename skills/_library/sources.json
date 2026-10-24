@@ -2014,11 +2014,11 @@
         ]
       },
       "templates/shell/game-host/coach-hand-layer.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/coach-hand-layer.tsx",
-            "sha256": "3aaa27350a8eacff0f63a58700c812b43b9789c4c7dd8cc3de85290504ebad39"
+            "sha256": "8b7216cb66bd0533ce8e4e088a54f61e687b9a538581284b5193343af0521937"
           }
         ]
       },
@@ -2059,20 +2059,20 @@
         ]
       },
       "templates/shell/game-host/draw-coach-hand.test.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/draw-coach-hand.test.ts",
-            "sha256": "214a3ae0e349b392af2d0f925fb4dd3b938af8bc40ab396545b54ad159ed63b5"
+            "sha256": "3b0f409f5c011524e7544205561c288c2970bc16728d3fbb620769470b03342e"
           }
         ]
       },
       "templates/shell/game-host/draw-coach-hand.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/game-host/draw-coach-hand.ts",
-            "sha256": "b8bbbb0233d0148c4875527c0c7a6e9b60bcc581376817a843db9ef707d3e340"
+            "sha256": "bfa2b47e43bb7d1c4441dcd696b3de0bf340cd5f664722982f53906f9fda3912"
           }
         ]
       },
