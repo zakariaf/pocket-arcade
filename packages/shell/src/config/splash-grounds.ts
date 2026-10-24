@@ -5,4 +5,5 @@ import type { SplashColors } from './art-config.ts';
 /** Each drawn game's S1 ground (its palette background), light and dark, for the native splash. */
 export const SPLASH_GROUNDS: Readonly<Partial<Record<string, SplashColors>>> = {
   'line-siege': { light: '#A5DAF3', dark: '#1B1943', accent: '#FF6B4A' },
+  'poker-drop': { light: '#CDBDF4', dark: '#1E1640', accent: '#FF5C7A' },
 };
