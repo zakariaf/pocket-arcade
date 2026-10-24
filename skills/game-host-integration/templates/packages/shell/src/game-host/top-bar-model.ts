@@ -74,7 +74,9 @@ function undoTool(input: TopBarInput): GameTool | null {
 function hintTool(input: TopBarInput): GameTool | null {
   const { view } = input;
   if (!view.isHintSupported || input.hintOffer === 'hidden') return null;
-  const isAvailable = view.status === 'playing' && !view.isHintShown;
+  // Paused counts as in play: the key rests under the Pause scrim as the S6 frame draws it.
+  const isInPlay = view.status === 'playing' || view.status === 'paused';
+  const isAvailable = isInPlay && !view.isHintShown;
   return { label: input.labels.hint, isAvailable, onPress: input.onHint };
 }
 
