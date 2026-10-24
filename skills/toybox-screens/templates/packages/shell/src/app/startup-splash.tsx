@@ -1,4 +1,5 @@
 // packages/shell/src/app/startup-splash.tsx
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -35,9 +36,11 @@ const styles = StyleSheet.create({
     paddingTop: LAYOUT.bodyPaddingTop,
   },
   name: { marginTop: 8 },
-  // CSS gives a wrapping text its whole 290 pt box; a React Native box shrinks to its longest line,
-  // which moved the centred Persian tagline 3.6 pt against its element. Keep the full box.
-  tagline: { width: 290, maxWidth: '100%' },
+  // .spl-tag is a centred flex item with max-width 290 px, so CSS fits a one-line tagline to its
+  // text. A wrapping one gets the whole 290 pt box, where a React Native box would shrink to its
+  // longest line (that moved the centred Persian tagline 3.6 pt against its element).
+  tagline: { maxWidth: 290 },
+  taglineWrapped: { width: 290, maxWidth: '100%' },
   loader: { alignSelf: 'center', paddingBottom: 44 },
 });
 
@@ -54,6 +57,12 @@ export function StartupSplash({
   const t = useT();
   const theme = useTheme();
   const bottomTopUp = useBodyBottomTopUp();
+  // The tagline that wrapped: its box takes the full 290 pt, a one-line tagline fits its text.
+  const [wrappedTagline, setWrappedTagline] = useState<string | null>(null);
+  const isWrapped = wrappedTagline === tagline;
+  const handleTaglineLines = (lines: number): void => {
+    setWrappedTagline(lines > 1 ? tagline : null);
+  };
   return (
     <ScreenFrame testID="splash.screen">
       <View style={[styles.page, { paddingBottom: bottomTopUp }]}>
@@ -68,9 +77,10 @@ export function StartupSplash({
               testID="splash.game-name"
             />
           </View>
-          <View style={styles.tagline}>
+          <View style={isWrapped ? styles.taglineWrapped : styles.tagline}>
             <AppText
               text={tagline}
+              onLineCount={handleTaglineLines}
               variant="splashTagline"
               tone="muted"
               align="center"
