@@ -56,7 +56,7 @@ Copy each file from `templates/` to the same path in the app repo; the code live
 - `packages/shell/src/screens/levels/levels-model.ts`
 - `packages/shell/src/screens/levels/levels-view.tsx`
 - `packages/shell/src/screens/levels/locked-pack-panel.tsx`
-- `packages/shell/src/screens/levels/pack-section.tsx`
+- `packages/shell/src/screens/levels/pack-section.tsx` and its test (at 200 % text, `isLargeText`, the heading takes the whole row and the level count wraps under it, instead of squeezing "Pack 1 – Green meadow" into three lines beside "30 levels")
 - `packages/shell/src/screens/levels/pack-tile.tsx`
 - `packages/shell/src/screens/levels/tile-width.ts` and its test
 - `packages/shell/src/screens/levels/levels-screen.tsx`
