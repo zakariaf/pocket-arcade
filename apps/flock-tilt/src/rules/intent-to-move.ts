@@ -2,8 +2,8 @@
 // Spec 13 controls: "swipe in 4 directions (or tap a side)". A swipe anywhere on the board tilts
 // the field that way; a tap on one of the four tilt keys beside the field tilts towards that key's
 // side (VoiceOver and one-handed play). Directions are physical: they never mirror in fa or ckb.
-import { listMoves } from './list-moves.ts';
-import { DIRECTIONS } from './tilt-field.ts';
+import { endedStatus } from './field-status.ts';
+import { DIRECTIONS, tiltField } from './tilt-field.ts';
 
 import type { Direction, FlockTiltMove, FlockTiltState } from './flock-tilt-types.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
@@ -39,11 +39,13 @@ function candidate(intent: InputIntent): Direction | null {
 }
 
 /**
- * Pure: an intent becomes a legal tilt or nothing. Legality is "listMoves(state) lists it" and
- * nothing else, so a tilt that would move nothing and a finished run both give null.
+ * Pure: an intent becomes a legal tilt or nothing. Legality is what listMoves lists (the run is
+ * not over and the tilt moves an animal), checked for this one direction only, so a tilt that
+ * would move nothing and a finished run both give null.
  */
 export function intentToMove(state: FlockTiltState, intent: InputIntent): FlockTiltMove | null {
   const direction = candidate(intent);
   if (direction === null) return null;
-  return listMoves(state).find((move) => move.direction === direction) ?? null;
+  const isLegal = endedStatus(state) === null && tiltField(state, direction).slides.length > 0;
+  return isLegal ? { kind: 'tilt', direction } : null;
 }
