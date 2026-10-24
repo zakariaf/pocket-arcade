@@ -26,6 +26,13 @@ const SPEC = {
     '  draw-pure              draw files import Skia types only and never create Skia objects or read clocks/random',
     '  skia-path-api          paths use Skia.PathBuilder (immutable), never Skia.Path.Make() + add*/moveTo mutators',
     '  measure-text           no SkFont.measureText (unimplemented in CanvasKit); sum glyph widths',
+    '  font-system-manager    no FontMgr.System().matchFamilyStyle for a board font: Android\'s manager reads only /system/fonts',
+    '                         (allowed only as board-number-typeface.ts\'s iOS fallback, behind os !== \'ios\')',
+    '                         and answers an app font with an empty face (blank monster digits, 2026-10-18); make the face',
+    '                         from the bundled TTF bytes (boardNumberTypefaceOf, board-number-font.ts)',
+    '  token-alpha            no setAlphaf right after setColor of a palette token: setAlphaf replaces the token\'s own',
+    '                         alpha, so a translucent token (a ghost, the shockwave) draws too strong; use',
+    '                         setPaintColor(paint, token, alpha) from board-kit.ts, which multiplies the two',
     '  canvas-onlayout        <Canvas onSize={sharedValue}>, never onLayout',
     '  text-direction         TextDirection.RTL is 0 (falsy): never combine it with && or ||',
     '  pixel-flip             boards never pixel-flip (scaleX -1); mirror positions in BoardLayout',
@@ -124,11 +131,23 @@ function checkDraw(ctx) {
   }
 }
 
+/**
+ * The one allowed system-font-manager call: board-number-typeface.ts's iOS fallback when the
+ * bundled bytes are missing (iOS's manager sees the app's embedded fonts; Android's never does),
+ * and only behind its `os !== 'ios'` guard.
+ */
+const FONT_FALLBACK_FILE = 'packages/shell/src/game-host/board-number-typeface.ts';
+function isIosFontFallback(rel, code) {
+  return rel === FONT_FALLBACK_FILE && /\bos\s*!==\s*['"]ios['"]/.test(code);
+}
+
 const PATTERN_RULES = [
   { rule: 'frame-clock', re: /\btimeSinceFirstFrame\b/g, runtimeOnly: true, message: 'uses timeSinceFirstFrame, which Reanimated resets to 0 whenever a frame callback is re-activated', fix: 'Stamp startAt = info.timestamp on the first frame (tickClock) and use elapsed = timestamp - startAt.' },
   { rule: 'worklets-api', re: /\brunOn(JS|UI)\b/g, runtimeOnly: false, message: 'uses the deprecated runOnJS/runOnUI', fix: 'Use scheduleOnRN(fn, ...args) / scheduleOnUI(fn, ...args) from react-native-worklets.' },
   { rule: 'skia-path-api', re: /\b[sS]kia\.Path\.Make\s*\(|\.add(Circle|Rect|RRect|Oval|Arc|Path|Poly)\s*\(/g, runtimeOnly: true, message: 'uses the mutable Skia path API (deprecated in Skia 2.6, to be removed)', fix: 'Build unit-size paths once with Skia.PathBuilder.Make()...build() (or Skia.Path.Circle) and place them with canvas.translate/scale.' },
   { rule: 'measure-text', re: /\.measureText\s*\(/g, runtimeOnly: false, message: 'uses SkFont.measureText, which CanvasKit (Jest, Node) does not implement', fix: 'Sum font.getGlyphWidths(font.getGlyphIDs(text)) as textWidth() in draw-centered-text.ts does.' },
+  { rule: 'font-system-manager', re: /FontMgr\.System\s*\(\s*\)\s*\.matchFamilyStyle\s*\(/g, runtimeOnly: true, allow: isIosFontFallback, message: "asks Skia's system font manager for a board font: on Android it reads only /system/fonts and answers an app font with an empty face, so every digit draws blank", fix: 'Make the face from the bundled TTF bytes on both platforms: boardNumberTypeface() (board-number-font.ts: boardNumberTypefaceOf with the BoardFont native module).' },
+  { rule: 'token-alpha', re: /\b([\w.]+)\.setColor\(\s*[^;()]*\.color\b(?:\.\w+|\[[^\]]+\])?\s*\)\s*;\s*\1\.setAlphaf\s*\(/g, runtimeOnly: true, message: "sets a palette token with setColor, then replaces the token's own alpha with setAlphaf: a translucent token (alpha below 1) draws too strong", fix: "Call setPaintColor(paint, token, alpha) (board-kit.ts): it sets the token and multiplies its alpha by yours." },
   { rule: 'text-direction', re: /(&&|\|\|)\s*TextDirection\.\w+|TextDirection\.\w+\s*(&&|\|\|)/g, runtimeOnly: false, message: 'combines TextDirection with && or ||, but TextDirection.RTL is 0 (falsy)', fix: 'Choose explicitly: isRtl ? TextDirection.RTL : TextDirection.LTR.' },
   { rule: 'interpolate-color', re: /\binterpolateColor\s*\(/g, runtimeOnly: true, message: 'uses Reanimated interpolateColor for a Skia colour', fix: 'Use Skia interpolateColors (a different colour format), or resolve colours once in the palette.' },
   { rule: 'reduced-motion-source', re: /\buseReducedMotion\s*\(/g, runtimeOnly: true, message: 'calls useReducedMotion(), which Reanimated reads once at app start, so a later Reduce motion change is missed', fix: "Take the Shell's Reduce motion setting (it defaults to the OS setting) and pass it as buildTimeline(events, motion)." },
@@ -139,6 +158,7 @@ function checkPatterns(ctx) {
   const { rel, code, report } = ctx;
   for (const spec of PATTERN_RULES) {
     if (spec.runtimeOnly && isTestFile(rel)) continue;
+    if (spec.allow?.(rel, code) === true) continue;
     for (const match of code.matchAll(spec.re)) report.problem({ file: rel, line: lineOf(code, match.index), rule: spec.rule, message: spec.message, fix: spec.fix });
   }
   if (BOARD_CODE.test(rel) && !isTestFile(rel)) {

@@ -24,6 +24,7 @@ import type {
   SessionHandle,
   SessionView,
 } from '@e07/shell/game-host/session-view.ts';
+import type { TutorialRules } from '@e07/shell/game-host/tutorial-script.ts';
 import type { FeedbackPorts } from '@e07/shell/services/audio/ui-feedback.ts';
 import type { SaveService } from '@e07/shell/services/save/save-service.ts';
 import type { SaveDoc } from '@e07/shell/services/save/schema/save-doc.ts';
@@ -47,11 +48,12 @@ export type ControllerDeps<TState, TMove, TEvent> = RunEndContext<TState, TMove,
   readonly writeRunEnd: (write: SectionWrite) => void;
   /** Audio and haptics: the move that decides the run plays the win or lose feedback once. */
   readonly feedback: FeedbackPorts;
-  /** The tutorial run: each step accepts only its expected move (tutorial-script.ts). */
-  readonly isMoveAccepted?: (move: TMove, moveCount: number) => boolean;
+  /**
+   * The tutorial run's script (tutorialRulesOf): each step accepts only its expected move, and a
+   * try refused by a step that waits for one exact move is counted. Other runs leave it out.
+   */
+  readonly tutorial?: TutorialRules<TMove>;
 };
-
-type Extras<TMove> = ViewExtras<TMove>;
 
 /** The typed controller: the erased handle for screens plus the typed parts for the board. */
 export type SessionController<TState, TMove, TEvent> = {
@@ -74,7 +76,7 @@ export type SessionController<TState, TMove, TEvent> = {
 type Parts<TState, TMove, TEvent> = {
   readonly deps: ControllerDeps<TState, TMove, TEvent>;
   readonly store: GameSessionStore<TState, TMove, TEvent>;
-  readonly extras: StoreApi<Extras<TMove>>;
+  readonly extras: StoreApi<ViewExtras<TMove>>;
   readonly playClock: PlayClock;
 };
 
@@ -120,7 +122,7 @@ type Persist<TState, TMove, TEvent> = (
  */
 function makePersist<TState, TMove, TEvent>(
   deps: ControllerDeps<TState, TMove, TEvent>,
-  extras: StoreApi<Extras<TMove>>,
+  extras: StoreApi<ViewExtras<TMove>>,
 ): Persist<TState, TMove, TEvent> {
   const writeTurn = createRunWriter<TState, TMove, TEvent>(deps.save, deps.persistence);
   return (session, action) => {
@@ -197,13 +199,17 @@ function addPlayTime<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>)
   if (ms > 0) dispatch({ type: 'add-play-time', ms });
 }
 
-/** A move from intentToMove is played unless the tutorial's script expects another one. */
-function isAccepted<TState, TMove, TEvent>(
-  deps: ControllerDeps<TState, TMove, TEvent>,
-  move: TMove,
-  moveCount: number,
-): boolean {
-  return deps.isMoveAccepted?.(move, moveCount) ?? true;
+/**
+ * A tutorial step that waits for its move refused a try (a wrong move, a tap that is no move):
+ * count it for the view, so the coach nudges instead of staying silent. Never while paused.
+ */
+function noteRefusal<TState, TMove, TEvent>(parts: Parts<TState, TMove, TEvent>): void {
+  const { session } = parts.store.getState();
+  const isScripted = parts.deps.tutorial?.expectsMove(session.moveCount) === true;
+  if (session.status !== 'playing' || !isScripted) return;
+  const { refused } = parts.extras.getState();
+  const count = refused?.atSeq === session.eventSeq ? refused.count + 1 : 1;
+  parts.extras.setState({ refused: { count, atSeq: session.eventSeq } });
 }
 
 function run<TState, TMove, TEvent>(
@@ -215,9 +221,10 @@ function run<TState, TMove, TEvent>(
   switch (command.type) {
     case 'intent': {
       const move = parts.deps.engine.intentToMove(session.state, command.intent);
-      if (move !== null && isAccepted(parts.deps, move, session.moveCount)) {
+      // A move is played unless the tutorial's script expects another one.
+      if (move !== null && (parts.deps.tutorial?.isMoveAccepted(move, session.moveCount) ?? true)) {
         dispatch({ type: 'apply-move', move });
-      }
+      } else if (parts.deps.tutorial?.isTry(command.intent, move) === true) noteRefusal(parts);
       return;
     }
     case 'hint':
@@ -287,6 +294,9 @@ function endWithState<TState, TMove, TEvent>(
   return true;
 }
 
+/** A run's extras before anything happened: no summary, hint, fixture or refused try. */
+const NO_EXTRAS: ViewExtras<never> = { summary: null, hint: null, fixture: null, refused: null };
+
 /**
  * One run's controller: reduce -> save -> publish through the session store, the run-end
  * record, hints, continue and leaving, behind a handle that names no game type.
@@ -295,7 +305,7 @@ export function createSessionController<TState, TMove, TEvent>(
   deps: ControllerDeps<TState, TMove, TEvent>,
   initial: Session<TState, TMove, TEvent>,
 ): SessionController<TState, TMove, TEvent> {
-  const extras = createStore<Extras<TMove>>()(() => ({ summary: null, hint: null, fixture: null }));
+  const extras = createStore<ViewExtras<TMove>>()(() => NO_EXTRAS);
   const persist = makePersist(deps, extras);
   const store = createGameSessionStore<TState, TMove, TEvent>({
     rules: deps.rules,

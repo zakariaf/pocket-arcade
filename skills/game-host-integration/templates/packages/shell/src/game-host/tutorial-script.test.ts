@@ -1,11 +1,12 @@
 // packages/shell/src/game-host/tutorial-script.test.ts
 import {
   coachStepsOf,
-  exampleHighlightOf,
+  expectsScriptedMove,
   howToPlayPagesOf,
   isSameMove,
+  isTutorialTry,
   isTutorialMoveAccepted,
-  pointerTargets,
+  tutorialRulesOf,
 } from './tutorial-script.ts';
 
 import type { TutorialStep } from '@e07/game-kit/contract/teaching.ts';
@@ -35,6 +36,33 @@ describe('isTutorialMoveAccepted', () => {
   });
 });
 
+describe('expectsScriptedMove', () => {
+  it('names the steps that wait for one exact move, where a refused try earns a nudge', () => {
+    expect([0, 1, 2].map((moveCount) => expectsScriptedMove(STEPS, moveCount))).toStrictEqual([
+      true,
+      false,
+      false,
+    ]);
+  });
+});
+
+describe('tutorialRulesOf', () => {
+  it("hands the tutorial run's controller both rules of the script", () => {
+    const rules = tutorialRulesOf(STEPS);
+    expect([rules.isMoveAccepted(ADD_ONE, 0), rules.isMoveAccepted(ADD_ONE, 1)]).toStrictEqual([
+      false,
+      true,
+    ]);
+    expect([rules.expectsMove(0), rules.expectsMove(1)]).toStrictEqual([true, false]);
+  });
+});
+
+describe('tutorialRulesOf isTry', () => {
+  it('hands the controller the refused-try rule, isTutorialTry', () => {
+    expect(tutorialRulesOf(STEPS).isTry).toBe(isTutorialTry);
+  });
+});
+
 describe('isSameMove', () => {
   it('compares plain-data moves by value, key order included or not', () => {
     expect(isSameMove({ kind: 'add', amount: 2 }, { amount: 2, kind: 'add' })).toBe(true);
@@ -57,22 +85,17 @@ describe('coachStepsOf', () => {
   });
 });
 
-describe('pointerTargets and exampleHighlightOf', () => {
-  const CORNER = { regionId: 'board', col: 0, row: 0 };
-  const SLOT = { regionId: 'tray', col: 1, row: 0 };
+describe('isTutorialTry', () => {
+  const CELL = { regionId: 'board', col: 1, row: 0 };
 
-  it('names the target, both ends of a drag, and no cell for the top bar or no pointer', () => {
-    expect(pointerTargets({ kind: 'target', target: CORNER })).toStrictEqual([CORNER]);
-    expect(pointerTargets({ kind: 'drag', from: SLOT, to: CORNER })).toStrictEqual([SLOT, CORNER]);
-    expect(pointerTargets({ kind: 'hud', element: 'undo' })).toStrictEqual([]);
-    expect(pointerTargets({ kind: 'none' })).toStrictEqual([]);
-  });
-
-  it("outlines an S13 picture's pointer cells as hinted, with nothing selected", () => {
-    expect(exampleHighlightOf({ kind: 'target', target: CORNER })).toStrictEqual({
-      selected: null,
-      hinted: [CORNER],
-    });
+  it('counts a wrong move and a press on a cell, never a cancelled drag, swipe or aim', () => {
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: CELL }, ADD_TWO)).toBe(true);
+    expect(isTutorialTry({ kind: 'tap', target: CELL, selected: null }, null)).toBe(true);
+    expect(isTutorialTry({ kind: 'long-press', target: CELL }, null)).toBe(true);
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: null }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'drag-end', from: CELL, to: CELL }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'swipe', direction: 'up', from: CELL }, null)).toBe(false);
+    expect(isTutorialTry({ kind: 'aim', dx: 1, dy: 0 }, null)).toBe(false);
   });
 });
 
