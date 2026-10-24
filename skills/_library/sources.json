@@ -5445,20 +5445,20 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-view.test.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
-            "sha256": "c7e27cda1e9e95888e7b2bc7abfd44f238c173d7d5561bd66b780876ad47c21b"
+            "sha256": "61547f8d2f997cf830fd4d445065294ea08c3e39ea4261247e0ecfa29e19ab44"
           }
         ]
       },
       "templates/packages/shell/src/screens/first-run/tutorial-view.tsx": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.tsx",
-            "sha256": "ff96fca69a8dd3be0647e9ba2f76c49a14877ad41204e15cd4f46f0eb2ddfa5c"
+            "sha256": "38f3b1e57d83e8355c60760c63da89109721848ffa939181d075a896db159e6c"
           }
         ]
       },
