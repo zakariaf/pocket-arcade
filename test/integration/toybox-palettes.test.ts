@@ -1,11 +1,17 @@
 // test/integration/toybox-palettes.test.ts
 // One `it` per app: every game's palette passes the Toybox palette rules.
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
+import { PALETTE as POKER_DROP } from '@e07/poker-drop/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(LINE_SIEGE)).toStrictEqual([]);
+  });
+
+  // spec 8.12: the Shell takes each game's own palette; spec 8.11 (O5): every text 4.5:1.
+  it('keeps Poker Drop readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(POKER_DROP)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including
