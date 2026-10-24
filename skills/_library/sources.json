@@ -5463,20 +5463,20 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.test.tsx": {
-        "recorded": "2026-10-19",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.test.tsx",
-            "sha256": "e32433701aa5e32cb0c43fcd7280f5fb702ad1a3a1c826e168abc1ddd25110cc"
+            "sha256": "74f7d7efb1b1d01b60984d470086433ab1458a0fcd5f22c84200cf530ab4af7a"
           }
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.ts": {
-        "recorded": "2026-10-20",
+        "recorded": "2026-10-24",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
-            "sha256": "7fb15d891f6678e484b29f9da175cc5b03707121fe99d21ef0baad0c5f1ffd50"
+            "sha256": "3c47918889f81cf3444782128541a7c4f40b37c0b339c90126822e2e30761e00"
           }
         ]
       },

@@ -44,9 +44,10 @@ export type TutorialModel = {
    */
   readonly coachPointer: TutorialPointer | null;
   /**
-   * "Follow the hand." over the step's sentence while the step has refused a try (spec S13 is
-   * silent: never a silent no-op, never an auto-skip); null otherwise, and while Hints during
-   * play (S11: tutorial tips and nudges) is off.
+   * The nudge over the step's sentence while the step has refused a try (spec S13 is silent:
+   * never a silent no-op, never an auto-skip): "Follow the hand." where the step draws a hand (a
+   * target or drag pointer), "Try again" where it draws none ('hud', 'none'). Null otherwise, and
+   * while Hints during play (S11: tutorial tips and nudges) is off.
    */
   readonly nudgeText: string | null;
   /** The refused tries at this step: each one makes the board's pointing hand play again. */
@@ -97,10 +98,17 @@ function useBackPauses(controls: GameSessionControls, isLeaving: () => boolean):
 
 type CoachNudge = Pick<TutorialModel, 'nudgeText' | 'coachReplay'>;
 
+/** Only a target or drag pointer draws the hand; any other step gets the pointer-neutral line. */
+function nudgeKeyOf(pointer: TutorialPointer | null): 'tutorial.follow-hand' | 'common.try-again' {
+  return pointer?.kind === 'target' || pointer?.kind === 'drag'
+    ? 'tutorial.follow-hand'
+    : 'common.try-again';
+}
+
 /**
  * The nudge after a try the step on screen refused, counted only while Hints during play is on
- * (S11): "Follow the hand." and the replay count, and VoiceOver and TalkBack hear the nudge and
- * the step's sentence once per refusal.
+ * (S11): "Follow the hand." (or "Try again" where no hand is drawn) and the replay count, and
+ * VoiceOver and TalkBack hear the nudge and the step's sentence once per refusal.
  */
 function useCoachNudge(
   coach: TutorialCoach,
@@ -111,7 +119,7 @@ function useCoachNudge(
   const announce = useAnnounce();
   const isNudgeOn = useHintsDuringPlay();
   const refused = isNudgeOn && coach.stage === 'step' ? (view?.refusedMoves ?? 0) : 0;
-  const nudgeText = refused > 0 ? t('tutorial.follow-hand') : null;
+  const nudgeText = refused > 0 ? t(nudgeKeyOf(coach.pointer)) : null;
   const speak = useEffectEvent(() => {
     if (nudgeText !== null) announce(`${nudgeText} ${coachText}`);
   });
