@@ -5458,7 +5458,7 @@
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/tutorial-view.test.tsx",
-            "sha256": "61547f8d2f997cf830fd4d445065294ea08c3e39ea4261247e0ecfa29e19ab44"
+            "sha256": "727d040274b31e9283e92a71409c409b454641290ff75a1985a18a0fc170845c"
           }
         ]
       },
