@@ -2534,13 +2534,14 @@
       ]
     },
     {
+      "platform": "ios",
       "game": "lineSiege",
       "frame": "s13-how-to-play",
       "theme": "light",
       "lang": "en",
       "scrollY": 0,
-      "sheetSha256": "7a8717ec83478489d482b6a0157a2f89723083196015a05f4c45f9c56cd45632",
-      "date": "2026-10-11",
+      "sheetSha256": "249f4e6b91a5a2b8eb9dc55dde79769d1e1d2cd8aba9040560196cabd7bc93b3",
+      "date": "2026-10-25",
       "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
       "eyeChecks": {
         "icons": "match",
