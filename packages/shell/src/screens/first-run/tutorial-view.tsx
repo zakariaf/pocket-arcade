@@ -51,7 +51,9 @@ export function TutorialView({ model }: TutorialViewProps): ReactNode {
           {model.welcomeText === null ? null : (
             <AppText text={model.welcomeText} variant="heading" testID="tutorial.welcome" />
           )}
-          {model.nudgeText === null ? null : <AppText text={model.nudgeText} variant="heading" />}
+          {model.nudgeText === null ? null : (
+            <AppText text={model.nudgeText} variant="heading" testID="tutorial.nudge" />
+          )}
           <AppText text={model.coachText} testID="tutorial.coach-text" />
         </Panel>
         {continueKey === null ? null : (
