@@ -2,9 +2,9 @@
 // The typeface the board draws its digits with (RenderKit.numberFont, spec 7.x fonts): the app's
 // bundled Vazirmatn, made from the TTF's own bytes on both platforms. Never ask Skia's system font
 // manager for it: on Android that manager reads only /system/fonts and answers a family it lacks
-// with an empty face, so every monster pill was drawn blank there (Pixel 8 profile, 2026-10-18),
-// while iOS (CoreText sees the plugin's UIAppFonts) drew them. One path on both platforms means
-// the simulator, the emulator and the pixel goldens all draw the digits the same way.
+// with an empty face, so every digit a board draws would be blank there, while iOS (CoreText sees
+// the plugin's UIAppFonts) draws them. One path on both platforms means the simulator, the
+// emulator and the pixel goldens all draw the digits the same way.
 import type { SkiaApi } from './board-types.ts';
 import type { SkTypeface } from '@shopify/react-native-skia';
 

@@ -5,6 +5,7 @@ import { LINE_SIEGE_TEACHING } from '@e07/line-siege/tutorial/line-siege-teachin
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 
 import { TURN_ENTITY } from './board-ids.ts';
+import { BOARD_PALETTES } from './board-palettes.ts';
 import { buildTimeline } from './build-timeline.ts';
 import { drawBoard } from './draw-board.ts';
 import { layoutBoard } from './layout-board.ts';
@@ -29,22 +30,8 @@ import type {
   SkRRect,
 } from '@shopify/react-native-skia';
 
-const TOKENS: readonly BoardToken[] = [
-  'background',
-  'lane',
-  'wall',
-  'cell',
-  'block',
-  'ghost',
-  'beam',
-  'shock',
-  'number',
-  'tray',
-  'heart',
-  'normal',
-  'armoured',
-  'fast',
-];
+/** Every token of the palette, in its own order. */
+const TOKENS = Object.keys(BOARD_PALETTES.light) as readonly BoardToken[];
 /** The palette's own alphas where it has one (board-palettes.json: ghost 80, cell 59, shock B3). */
 const OWN_ALPHA: Partial<Record<BoardToken, number>> = { ghost: 0.5, cell: 0.35, shock: 0.7 };
 /** Each token its own colour; red carries the token's index so a paint's colour names its token. */

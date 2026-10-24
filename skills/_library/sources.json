@@ -1628,12 +1628,21 @@
           }
         ]
       },
+      "examples/line-siege/golden-font.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "test/goldens/boards/golden-font.ts",
+            "sha256": "c4b35838a145cf7943bd9cfb17aa1fbd402a3a03246cb89668c885526f89836f"
+          }
+        ]
+      },
       "examples/line-siege/line-siege-board.golden.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "test/goldens/boards/line-siege-board.golden.test.ts",
-            "sha256": "5ac7fbf44bdcc94613a91820c86b6d574fdf902e94077a752979a9fdf7d35da6"
+            "sha256": "23e378824df35edbdcc7eac9093342d8eaf97ebd3563241ef4e7bb052ff9a134"
           }
         ]
       },
@@ -1642,7 +1651,7 @@
         "sources": [
           {
             "path": "test/goldens/boards/line-siege-tutorial.golden.test.ts",
-            "sha256": "6335edb4a98195fadfb051118120b15b6c7c66715cc498b5f94719f1085bdc36"
+            "sha256": "9777e52ed4f574ba5a242b77fba21de9cea267889b898d8caf0a4dad215e2914"
           }
         ]
       },
@@ -1956,20 +1965,20 @@
         ]
       },
       "templates/shell/game-host/board-number-typeface.android.test.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-number-typeface.android.test.ts",
-            "sha256": "b054be4c49f971e2db5843dc7288ca2562b807ba90493803624c5bc9c191c2a1"
+            "sha256": "54ce573dea0cf128784e7176a7f53929bd9a51e9d1537d403919fabc5a8c8344"
           }
         ]
       },
       "templates/shell/game-host/board-number-typeface.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-20",
         "sources": [
           {
             "path": "packages/shell/src/game-host/board-number-typeface.ts",
-            "sha256": "0becb7034ca8f852b6d6d01e94560e2fb42ff139a3ebeb8afcf87048a3b6f698"
+            "sha256": "c5445a73a02aabd39fbdaed60086d47099b62db6dfa9f29cba2b677994981323"
           }
         ]
       },
@@ -2136,6 +2145,15 @@
           {
             "path": "docs/08-game-engine.md",
             "sha256": "1bfbfebc419e540fefc95c7787cac2dcfe3c871438aa4d61ee858e84c1eb93e0"
+          }
+        ]
+      },
+      "templates/shell/game-host/testing/android-skia.ts": {
+        "recorded": "2026-10-20",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/testing/android-skia.ts",
+            "sha256": "a8c19acf5c665ca0410988c2e0e659b79290f1fdff0afd13338bbae704d5ed73"
           }
         ]
       },

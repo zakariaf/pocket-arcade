@@ -63,7 +63,7 @@ const HOST_FILES = [
     'run-board-frame.ts', 'run-board-frame.test.ts', 'use-board-clock.ts', 'record-board.ts', 'record-board.test.ts', 'draw-centered-text.ts',
     'draw-centered-text.test.ts', 'present-move.ts', 'present-move.test.ts', 'cue-scheduler.ts', 'cue-scheduler.test.ts', 'paint-board-png.ts',
     'use-game-lifecycle.ts', 'use-game-lifecycle.test.ts', 'draw-coach-hand.ts', 'draw-coach-hand.test.ts',
-    'board-number-typeface.ts', 'board-number-typeface.android.test.ts',
+    'board-number-typeface.ts', 'board-number-typeface.android.test.ts', 'testing/android-skia.ts',
   ].map((f) => [`${GH}/${f}`, 'pure']),
   ...['board-canvas.tsx', 'board-canvas.test.tsx', 'coach-hand-layer.tsx', 'board-layout-probe.tsx', 'board-layout-probe.test.tsx', 'game-board-host.tsx', 'game-board-host.test.tsx', 'board-number-font.ts'].map((f) => [`${GH}/${f}`, 'shell']),
   // The BoardFont native module the board's digits face is read through (both platforms).

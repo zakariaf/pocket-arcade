@@ -1,11 +1,9 @@
 // test/goldens/boards/line-siege-board.golden.test.ts
-// PIXEL GOLDEN (Jest 'golden' project, CanvasKit). It reads the font with node:fs, so it lives
-// under test/ (Node APIs are banned in apps/*/src); tolerance and diff folder come from skia-golden.ts.
+// PIXEL GOLDEN (Jest 'golden' project, CanvasKit). It reads the font with node:fs (golden-font.ts),
+// so it lives under test/ (Node APIs are banned in apps/*/src); tolerance and diff folder come from
+// skia-golden.ts.
 // Create or change baselines only with `npx jest <this file> --selectProjects golden -u`, after
 // looking at every PNG, and commit with a `Gate-Change:` trailer.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { Skia } from '@shopify/react-native-skia';
 
 import { timelineEndMs } from '@e07/game-kit/timeline/track.ts';
@@ -13,9 +11,9 @@ import { BOARD_PALETTES } from '@e07/line-siege/board/board-palettes.ts';
 import { buildTimeline } from '@e07/line-siege/board/build-timeline.ts';
 import { lineSiegeBoard } from '@e07/line-siege/board/line-siege-board.ts';
 import { makeBoardColors, makeBoardKit } from '@e07/shell/game-host/board-kit.ts';
-import { boardNumberTypefaceOf } from '@e07/shell/game-host/board-number-typeface.ts';
 import { paintBoardPng } from '@e07/shell/game-host/paint-board-png.ts';
 
+import { goldenNumberTypeface } from './golden-font.ts';
 import { toMatchPixelGolden } from './skia-golden.ts';
 
 import type { LineSiegeView } from '@e07/line-siege/board/to-view.ts';
@@ -23,17 +21,9 @@ import type { LineSiegeEvent } from '@e07/line-siege/rules/line-siege-types.ts';
 
 expect.extend({ toMatchImageSnapshot: toMatchPixelGolden });
 
-/**
- * The digits face comes the device's way (board-number-typeface.ts): from the bytes of the font
- * the app bundles, here read from its assets folder instead of the BoardFont native module.
- */
-const FONTS = join(process.cwd(), 'apps/line-siege/assets/fonts');
-const typeface = boardNumberTypefaceOf(Skia, (fileName) =>
-  Uint8Array.from(readFileSync(join(FONTS, fileName))),
-);
 const KIT = makeBoardKit(Skia, {
   paths: lineSiegeBoard.buildPaths(Skia),
-  numberTypeface: typeface,
+  numberTypeface: goldenNumberTypeface(Skia, 'line-siege'),
   numberSize: 16,
 });
 const COLORS = makeBoardColors(Skia, BOARD_PALETTES, { scheme: 'dark', isColorBlind: false });
