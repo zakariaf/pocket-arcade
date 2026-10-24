@@ -1,4 +1,5 @@
 {
+  "trail-clear.board.summary": "{tilesCount, plural, one {# کاشی} other {# کاشی}} لەسەر تەختەکە، {looseEndsCount, plural, one {# سەری کراوە} other {# سەری کراوە}}",
   "trail-clear.goal": "هەموو کاشییەکان دابنێ. ڕێگا و ڕووبارەکان دابخە بۆ ئەوەی پاک ببنەوە.",
   "trail-clear.how-to-play.step-1": "کاشییەکە ڕابکێشە سەر تەختەکە.",
   "trail-clear.how-to-play.step-2": "لێوارەکان دەبێت بگونجێن: ڕێگا بە ڕێگا، ڕووبار بە ڕووبار.",

@@ -1,4 +1,5 @@
 {
+  "trail-clear.board.summary": "{tilesCount, plural, one {# کاشی} other {# کاشی}} روی صفحه، {looseEndsCount, plural, one {# سرِ باز} other {# سرِ باز}}",
   "trail-clear.goal": "همهٔ کاشی‌ها را بگذارید. جاده‌ها و رودها را ببندید تا پاک شوند.",
   "trail-clear.how-to-play.step-1": "کاشی را روی صفحه بکشید.",
   "trail-clear.how-to-play.step-2": "لبه‌ها باید جور باشند: جاده به جاده، رود به رود.",

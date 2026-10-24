@@ -1,4 +1,5 @@
 {
+  "trail-clear.board.summary": "{tilesCount, plural, one {# tile} other {# tiles}} on the board, {looseEndsCount, plural, one {# loose end} other {# loose ends}}",
   "trail-clear.goal": "Place every tile. Close roads and rivers to clear them.",
   "trail-clear.how-to-play.step-1": "Drag the tile onto the board.",
   "trail-clear.how-to-play.step-2": "Edges must match: road to road, river to river.",

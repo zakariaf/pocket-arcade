@@ -1,4 +1,5 @@
 {
+  "trail-clear.board.summary": "{tilesCount, plural, one {# Plättchen} other {# Plättchen}} auf dem Spielfeld, {looseEndsCount, plural, one {# offenes Ende} other {# offene Enden}}",
   "trail-clear.goal": "Leg jedes Plättchen. Schließ Straßen und Flüsse, um sie abzuräumen.",
   "trail-clear.how-to-play.step-1": "Zieh das Plättchen aufs Spielfeld.",
   "trail-clear.how-to-play.step-2": "Die Kanten müssen passen: Straße an Straße, Fluss an Fluss.",
