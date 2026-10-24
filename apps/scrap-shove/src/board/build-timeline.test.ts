@@ -159,7 +159,9 @@ describe('buildTimeline', () => {
     );
   });
 
-  it('cues each beat with its sound and haptic', () => {
+  // The result feedback (ui.win + success, ui.lose + error) is the Shell's, played once for the
+  // deciding move (spec 8.7); the board cues what the player sees: the catch, never the result.
+  it('cues each beat with its sound and haptic, and leaves the win and lose feedback to the Shell', () => {
     const lost = eventsOf(['....', '.n..', '..@.', '....'], { kind: 'wait' });
     const won = eventsOf(['n.n.', '....', '....', '.@..'], { kind: 'wait' });
     const cues = [BUSY, lost, won, [{ kind: 'step-reverted' } as const]].map((events) =>
@@ -178,12 +180,8 @@ describe('buildTimeline', () => {
         { sound: 'smash' },
         { sound: 'robot-step' },
       ],
-      [{ sound: 'robot-step' }, { sound: 'lose', haptic: 'error' }],
-      [
-        { sound: 'robot-step' },
-        { sound: 'crash', haptic: 'medium' },
-        { sound: 'win', haptic: 'success' },
-      ],
+      [{ sound: 'robot-step' }, { sound: 'caught' }],
+      [{ sound: 'robot-step' }, { sound: 'crash', haptic: 'medium' }],
       [{ haptic: 'medium' }],
     ]);
   });

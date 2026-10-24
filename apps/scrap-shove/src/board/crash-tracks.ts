@@ -153,7 +153,10 @@ export function scrapSmashed(event: EventOf<'scrap-smashed'>, pass: Pass, timing
   ];
 }
 
-/** The player was caught at the end of the phase: a red flash on their square. */
+/**
+ * The player was caught at the end of the phase: a red flash on their square and the grab sound.
+ * The lose sound and its error pulse are the Shell's, played once for the deciding move.
+ */
 export function playerCaught(pass: Pass, timing: Timing): Track[] {
   return [
     {
@@ -164,12 +167,15 @@ export function playerCaught(pass: Pass, timing: Timing): Track[] {
       easing: 'out-quad',
       from: [1],
       to: [0],
-      cue: { sound: 'lose', haptic: 'error' },
+      cue: { sound: 'caught' },
     },
   ];
 }
 
-/** The floor is clear: a glow, and a burst of particles in full motion. */
+/**
+ * The floor is clear: a glow, and a burst of particles in full motion. Silent: the last crash
+ * sounds, and the win sound and its success pulse are the Shell's, played for the deciding move.
+ */
 export function floorCleared(pass: Pass, timing: Timing): Track[] {
   const at = { entityId: TURN_ENTITY, startMs: phaseEnd(pass.phase, timing) } as const;
   const glow: Track = {
@@ -179,7 +185,6 @@ export function floorCleared(pass: Pass, timing: Timing): Track[] {
     easing: 'out-quad',
     from: [1],
     to: [0],
-    cue: { sound: 'win', haptic: 'success' },
   };
   const burst: Track = {
     ...at,
