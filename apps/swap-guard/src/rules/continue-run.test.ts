@@ -7,7 +7,7 @@ import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { applyMove } from './apply-move.ts';
-import { continueAfterLoss } from './continue-run.ts';
+import { boardBeforeSwap, continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
@@ -100,6 +100,14 @@ describe('continueAfterLoss', () => {
         reasonKey: 'swap-guard.lose.out-of-swaps',
       });
       expect(continueAfterLoss(lost).state).toStrictEqual({ ...tired, hasContinued: true });
+    });
+  });
+
+  describe('boardBeforeSwap (shared with parseState)', () => {
+    it('stands the board of the last swap again and keeps the continue flag', () => {
+      const lost = applyMove(OPENING, { kind: 'swap', cell: 11 }).state;
+      if (lost.lastSwap === null) throw new Error('no swap on record');
+      expect(boardBeforeSwap(lost, lost.lastSwap)).toStrictEqual(OPENING);
     });
   });
 

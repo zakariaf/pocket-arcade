@@ -5,7 +5,27 @@
 // applyMove; a second continue in the same run, or one on a run that is not lost, is refused.
 import { outcome } from './outcome.ts';
 
-import type { SwapGuardResult, SwapGuardState } from './swap-guard-types.ts';
+import type { LastSwap, SwapGuardResult, SwapGuardState } from './swap-guard-types.ts';
+
+/**
+ * The board before `last`, as the continue stands it again: the guard back on `from`, the swapped
+ * enemy back on `to`, the knocked-out enemies standing where they stood, the swap and its points
+ * given back. The continue flag is left as it was (parseState also reads a run back through it).
+ */
+export function boardBeforeSwap(state: SwapGuardState, last: LastSwap): SwapGuardState {
+  const standing = [...state.enemies, ...last.defeated].sort((a, b) => a.id - b.id);
+  return {
+    ...state,
+    guard: last.from,
+    enemies: standing.map((enemy) =>
+      enemy.cell === last.from ? { ...enemy, cell: last.to } : enemy,
+    ),
+    swaps: state.swaps - 1,
+    score: state.score - last.points,
+    isHit: false,
+    lastSwap: null,
+  };
+}
 
 /** rules.continueRun.apply: a lost run made playable again, with the event that explains it. */
 export function continueAfterLoss(lost: SwapGuardState): SwapGuardResult {
@@ -13,22 +33,9 @@ export function continueAfterLoss(lost: SwapGuardState): SwapGuardResult {
   if (outcome(lost).kind !== 'lost' || last === null || lost.hasContinued) {
     throw new RangeError('no continue: the run is not lost, has no swap to undo or continued once');
   }
-  const standing = [...lost.enemies, ...last.defeated].sort((a, b) => a.id - b.id);
-  const swapped = standing.find((enemy) => enemy.cell === last.from);
-  const enemies = standing.map((enemy) =>
-    enemy.cell === last.from ? { ...enemy, cell: last.to } : enemy,
-  );
+  const swapped = [...lost.enemies, ...last.defeated].find((enemy) => enemy.cell === last.from);
   return {
-    state: {
-      ...lost,
-      guard: last.from,
-      enemies,
-      swaps: lost.swaps - 1,
-      score: lost.score - last.points,
-      isHit: false,
-      lastSwap: null,
-      hasContinued: true,
-    },
+    state: { ...boardBeforeSwap(lost, last), hasContinued: true },
     events: [
       {
         kind: 'swap-reversed',

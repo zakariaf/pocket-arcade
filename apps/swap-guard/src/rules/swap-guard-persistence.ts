@@ -6,6 +6,7 @@ import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import { applyMove } from './apply-move.ts';
 import { FACINGS, squaresAround } from './board-grid.ts';
+import { boardBeforeSwap } from './continue-run.ts';
 import { OPENING_ENEMIES } from './create.ts';
 import { outcome } from './outcome.ts';
 import { TUNING, volleyPoints } from './swap-guard-tuning.ts';
@@ -166,28 +167,9 @@ function isConsistent(state: SwapGuardState): boolean {
   return isPieceOk && isScoreEarned(state) && isRecordOk(state);
 }
 
-/**
- * The board before the last swap, as its continue would stand it again: the guard back on `from`,
- * the swapped enemy back on `to`, the knocked-out enemies standing where they stood.
- */
-function boardBefore(state: SwapGuardState, last: LastSwap): SwapGuardState {
-  const standing = [...state.enemies, ...last.defeated].sort((a, b) => a.id - b.id);
-  return {
-    ...state,
-    guard: last.from,
-    enemies: standing.map((enemy) =>
-      enemy.cell === last.from ? { ...enemy, cell: last.to } : enemy,
-    ),
-    swaps: state.swaps - 1,
-    score: state.score - last.points,
-    isHit: false,
-    lastSwap: null,
-  };
-}
-
 /** True when the last swap, played from the board before it, makes exactly this run. */
 function isReplayed(state: SwapGuardState, last: LastSwap): boolean {
-  const before = boardBefore(state, last);
+  const before = boardBeforeSwap(state, last);
   const cells = new Set([before.guard, ...before.enemies.map((enemy) => enemy.cell)]);
   if (cells.size !== before.enemies.length + 1) return false;
   try {
