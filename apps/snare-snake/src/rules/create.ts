@@ -27,6 +27,7 @@ export function create(seed: number, difficulty: number): SnareSnakeState {
     moves: 0,
     maxMoves: knobs.maxMoves,
     score: 0,
+    heading: null,
     hasContinued: false,
     rng: opening.rng,
   };

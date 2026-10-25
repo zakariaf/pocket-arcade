@@ -58,6 +58,26 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
     expect(parseState(fromJson(START))).toStrictEqual(START);
   });
 
+  it('loads a run saved before the state kept the heading, with the head looking from its neck', () => {
+    // Frozen: a run saved by the first build (no heading field); it must keep loading (N10).
+    const saved = {
+      difficulty: 0,
+      cols: 7,
+      rows: 8,
+      snake: [24, 17, 10],
+      critters: [{ id: 0, cell: 52 }],
+      total: 2,
+      caught: 1,
+      growth: 0,
+      moves: 5,
+      maxMoves: 30,
+      score: 10,
+      hasContinued: false,
+      rng: [1, 2, 3, 4],
+    };
+    expect(parseState(saved)).toStrictEqual({ ...saved, heading: null });
+  });
+
   it('returns every state reached by legal play unchanged (property)', () => {
     fc.assert(
       fc.property(playArb, ([seed, difficulty, choices]) => {
@@ -93,6 +113,7 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
     ['a critter count that does not add up', { ...START, caught: 3 }],
     ['an rng of three words', { ...START, rng: [1, 2, 3] }],
     ['a continue flag that is not a boolean', { ...START, hasContinued: 'no' }],
+    ['a heading that is not a direction', { ...START, heading: 'sideways' }],
   ])('refuses %s', (_name, json) => {
     expect(parseState(fromJson(json))).toBeNull();
   });

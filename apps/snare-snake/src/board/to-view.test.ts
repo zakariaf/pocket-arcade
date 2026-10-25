@@ -3,6 +3,7 @@
 // chosen digits, so the view holds them already localised.
 import fc from 'fast-check';
 
+import { applyMove } from '@e07/snare-snake/rules/apply-move.ts';
 import { create } from '@e07/snare-snake/rules/create.ts';
 
 import { toView } from './to-view.ts';
@@ -45,6 +46,19 @@ describe('toView', () => {
     expect(toView({ ...base, snake: [at(3, 2), at(3, 3)] }, LATIN).heading).toBe('up');
     expect(toView({ ...base, snake: [at(2, 3), at(3, 3)] }, LATIN).heading).toBe('left');
     expect(toView({ ...base, snake: [at(3, 3)] }, LATIN).heading).toBe('right');
+  });
+
+  it('faces the way the player steered after closing a loop, not the bitten segment heading', () => {
+    // Moving down into (3, 3), then steering left bites the segment at (2, 3), which was laid
+    // moving up: the new head's neck sits below it, yet the snake turned left.
+    const state = {
+      ...create(1, 0),
+      snake: [at(3, 3), at(3, 2), at(2, 2), at(2, 3), at(2, 4), at(2, 5)],
+      critters: [{ id: 0, cell: at(6, 7) }],
+    };
+    const looped = applyMove(state, { kind: 'steer', direction: 'left' }).state;
+    expect(looped.snake[0]).toBe(at(2, 3));
+    expect(toView(looped, LATIN).heading).toBe('left');
   });
 
   it('is a pure function of the state (property)', () => {

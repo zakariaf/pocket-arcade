@@ -30,6 +30,11 @@ export type SnareSnakeState = {
   readonly moves: number;
   readonly maxMoves: number;
   readonly score: number;
+  /**
+   * Where the head looks when its neck does not show it: the way the player steered into a loop
+   * (the bitten segment's neck points elsewhere). null when the neck shows it (every other move).
+   */
+  readonly heading: Direction | null;
   /** True once the run used its one continue (spec 8.10). */
   readonly hasContinued: boolean;
   /** The seeded RNG the critters' hops draw from (spec 8.13: same seed and moves, same run). */

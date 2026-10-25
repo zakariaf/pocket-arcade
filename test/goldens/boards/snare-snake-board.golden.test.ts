@@ -44,7 +44,8 @@ const VIEW: SnareSnakeView = {
   cols: 8,
   rows: 10,
   snake: [12, 11, 19, 27, 35, 34, 33, 25, 24, 16],
-  heading: 'right',
+  // The head stepped from 13 to 12 into the loop: it faces left, the way the player steered.
+  heading: 'left',
   critters: [
     { id: 1, cell: 47, isFrozen: false },
     { id: 3, cell: 76, isFrozen: false },

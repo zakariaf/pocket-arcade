@@ -19,11 +19,12 @@ export function continueAfterLoss(lost: SnareSnakeState): SnareSnakeResult {
     throw new RangeError('a continue needs a lost run that has not continued yet (spec 8.10)');
   }
   const events: SnareSnakeEvent[] = [];
-  let snake = lost.snake;
+  let { snake, heading } = lost;
   if (openDirections(lost).length === 0) {
     // A tangled snake always has a neck: one segment never tangles, because the cell it came from
     // stays free (critters never hop next to the snake).
     snake = lost.snake.slice(1);
+    heading = null;
     events.push({
       kind: 'snake-stepped-back',
       from: pickAt(lost.snake, 0),
@@ -33,5 +34,5 @@ export function continueAfterLoss(lost: SnareSnakeState): SnareSnakeResult {
   }
   events.push({ kind: 'moves-added', count: TUNING.continueMoves });
   const maxMoves = Math.max(lost.maxMoves, lost.moves) + TUNING.continueMoves;
-  return { state: { ...lost, snake, maxMoves, hasContinued: true }, events };
+  return { state: { ...lost, snake, heading, maxMoves, hasContinued: true }, events };
 }

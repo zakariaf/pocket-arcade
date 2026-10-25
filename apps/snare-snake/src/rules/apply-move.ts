@@ -13,6 +13,7 @@ import { TUNING, knobsFor } from './snare-snake-tuning.ts';
 import { targetOf } from './steering.ts';
 
 import type {
+  Direction,
   SnareSnakeEvent,
   SnareSnakeMove,
   SnareSnakeResult,
@@ -32,11 +33,14 @@ function slither(state: SnareSnakeState, target: number): SnareSnakeResult {
     length: snake.length,
   };
   const growth = isGrowing ? state.growth - 1 : state.growth;
-  return { state: { ...state, snake, growth }, events: [event] };
+  return { state: { ...state, snake, growth, heading: null }, events: [event] };
 }
 
-/** The head bites its body: the loop catches what is inside or touching it and is spent. */
-function closeLoop(state: SnareSnakeState, target: number): SnareSnakeResult {
+/**
+ * The head bites its body: the loop catches what is inside or touching it and is spent. The head
+ * keeps facing the way it was steered (the bitten segment's neck points elsewhere).
+ */
+function closeLoop(state: SnareSnakeState, target: number, heading: Direction): SnareSnakeResult {
   const bitten = state.snake.indexOf(target);
   const loop = state.snake.slice(0, bitten + 1);
   const enclosed = enclosedBy(state, loop);
@@ -47,7 +51,7 @@ function closeLoop(state: SnareSnakeState, target: number): SnareSnakeResult {
     { kind: 'loop-closed', loop, enclosed, spent: bitten, length: snake.length },
   ];
   const count = caught.length;
-  if (count === 0) return { state: { ...state, snake }, events };
+  if (count === 0) return { state: { ...state, snake, heading }, events };
   const points = TUNING.catchPoints * count * count;
   events.push({
     kind: 'critters-caught',
@@ -60,6 +64,7 @@ function closeLoop(state: SnareSnakeState, target: number): SnareSnakeResult {
   const next = {
     ...state,
     snake,
+    heading,
     critters,
     caught: state.caught + count,
     score: state.score + points,
@@ -94,6 +99,8 @@ export function applyMove(state: SnareSnakeState, move: SnareSnakeMove): SnareSn
   const isPlaying = isKnown && outcome(state).kind === 'playing';
   const target = isPlaying ? targetOf(state, move.direction) : null;
   if (target === null) throw new RangeError(`illegal move ${JSON.stringify(move)}`);
-  const stepped = state.snake.includes(target) ? closeLoop(state, target) : slither(state, target);
+  const stepped = state.snake.includes(target)
+    ? closeLoop(state, target, move.direction)
+    : slither(state, target);
   return finishTurn(stepped);
 }

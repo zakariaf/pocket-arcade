@@ -29,9 +29,12 @@ const STATE_KEYS = [
   'moves',
   'maxMoves',
   'score',
+  'heading',
   'hasContinued',
   'rng',
 ] as const;
+/** The first build saved no heading; such a run still loads, its head looking from its neck. */
+const FIRST_BUILD_KEYS = STATE_KEYS.filter((key) => key !== 'heading');
 /** The largest side any tuning row draws: a saved board must fit the game's rows. */
 const MAX_SIDE = Math.max(...TUNING.levelRows.flatMap((row) => [row.cols, row.rows]));
 
@@ -106,9 +109,22 @@ function isShaped(json: JsonRecord): boolean {
   );
 }
 
+/** This build's keys, or the first build's (no heading). */
+function hasStateKeys(json: JsonRecord): boolean {
+  return hasExactly(json, STATE_KEYS) || hasExactly(json, FIRST_BUILD_KEYS);
+}
+
+/** A saved heading: one of the four directions, or null (or absent in a first-build save). */
+function parseHeading(json: JsonRecord): Direction | null | undefined {
+  const saved = json['heading'] ?? null;
+  return saved === null ? null : DIRECTION_NAMES.find((name) => name === saved);
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): SnareSnakeState | null {
-  if (!isRecord(json) || !hasExactly(json, STATE_KEYS) || !isShaped(json)) return null;
+  if (!isRecord(json) || !hasStateKeys(json) || !isShaped(json)) return null;
+  const heading = parseHeading(json);
+  if (heading === undefined) return null;
   const grid = { cols: Number(json['cols']), rows: Number(json['rows']) };
   const snake = parseSnake(json['snake'], grid);
   const critters = snake === null ? null : parseCritters(json['critters'], grid, snake);
@@ -125,7 +141,7 @@ export function parseState(json: unknown): SnareSnakeState | null {
   if (counts.caught + critters.length !== counts.total) return null;
   const difficulty = Number(json['difficulty']);
   const hasContinued = json['hasContinued'] === true;
-  return { difficulty, ...grid, snake, critters, ...counts, hasContinued, rng };
+  return { difficulty, ...grid, snake, critters, ...counts, heading, hasContinued, rng };
 }
 
 /** One logged move -> a typed move, or null (the Shell then drops only the move log). */

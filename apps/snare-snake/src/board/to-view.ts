@@ -31,8 +31,12 @@ export type SnareSnakeView = {
   readonly total: number;
 };
 
-/** The direction from the neck to the head ('right' for a one-segment snake). */
+/**
+ * The way the head last moved: the state's heading after a loop, else from the neck to the head
+ * ('right' for a one-segment snake).
+ */
 function headingOf(state: SnareSnakeState): Direction {
+  if (state.heading !== null) return state.heading;
   const neck = state.snake[1];
   if (neck === undefined) return 'right';
   const head = pickAt(state.snake, 0);
