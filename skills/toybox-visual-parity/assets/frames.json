@@ -96,6 +96,14 @@
         "progressFullParams": { "moves": 7, "par": 7 },
         "loseReasonId": "stepstone.lose.stuck"
       },
+      "swapGuard": {
+        "gameStats": ["1,146", "2,318", "87"],
+        "progressMid": "2 / 5",
+        "progressFull": "5 / 5",
+        "progressMidParams": { "defeated": 2, "total": 5 },
+        "progressFullParams": { "defeated": 5, "total": 5 },
+        "loseReasonId": "swap-guard.lose.hit"
+      },
       "trailClear": {
         "gameStats": ["214", "1,386", "9"],
         "progressMid": "12 / 30",
@@ -330,6 +338,11 @@
         "levels-at-par": 46,
         "kinds-used": 4
       },
+      "swapGuard": {
+        "enemies-defeated": 1146,
+        "swaps-made": 2318,
+        "double-hits": 87
+      },
       "trailClear": {
         "loops-closed": 214,
         "tiles-placed": 1386,
@@ -408,6 +421,11 @@
           "progressMid": { "moves": 3, "par": 7 },
           "progressFull": { "moves": 7, "par": 7 },
           "loseReasonId": "stepstone.lose.stuck"
+        },
+        "swapGuard": {
+          "progressMid": { "defeated": 2, "total": 5 },
+          "progressFull": { "defeated": 5, "total": 5 },
+          "loseReasonId": "swap-guard.lose.hit"
         },
         "trailClear": {
           "progressMid": { "placed": 12, "total": 30 },

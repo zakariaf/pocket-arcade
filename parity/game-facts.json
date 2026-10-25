@@ -43,6 +43,12 @@
       "winLine": "moves",
       "hasHints": true
     },
+    "swap-guard": {
+      "designGame": "swapGuard",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "trail-clear": {
       "designGame": "trailClear",
       "hasMusic": false,
