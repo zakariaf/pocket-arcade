@@ -1,6 +1,10 @@
 // apps/jump-chain/src/board/to-view.test.ts
+import { continueAfterLoss } from '@e07/jump-chain/rules/continue-run.ts';
 import { create } from '@e07/jump-chain/rules/create.ts';
+import { WAITING_ROW } from '@e07/jump-chain/rules/march.ts';
 
+import { enemyEntity } from './board-ids.ts';
+import { buildTimeline } from './build-timeline.ts';
 import { toView } from './to-view.ts';
 
 import type { JumpChainState, Square } from '@e07/jump-chain/rules/jump-chain-types.ts';
@@ -32,6 +36,26 @@ describe('toView', () => {
       { id: 1, col: 3, row: -1 },
     ]);
     expect(view.enemiesLeft).toBe(3);
+  });
+
+  // Spec 8.10: the continue steps the ranks back one row; the waiting rank slides up out of sight.
+  it('keeps the enemies the continue moves out of the waiting row, so they slide away', () => {
+    const lost = position({ col: 3, row: 7 }, [
+      [1, 9],
+      [3, -1],
+      [5, -1],
+    ]);
+    const stepped = continueAfterLoss(lost);
+    const fromWaiting = buildTimeline(stepped.events, 'full').filter(
+      (track) => track.channel === 'march' && (track.from[0] ?? 0) >= WAITING_ROW,
+    );
+    const shown = toView(stepped.state, PLAIN).enemies.map((enemy) => enemyEntity(enemy.id));
+    expect(fromWaiting.map((track) => track.entityId)).toStrictEqual([
+      enemyEntity(1),
+      enemyEntity(2),
+      enemyEntity(0),
+    ]);
+    for (const track of fromWaiting) expect(shown).toContain(track.entityId);
   });
 
   it('localises the moves left until the ranks advance', () => {

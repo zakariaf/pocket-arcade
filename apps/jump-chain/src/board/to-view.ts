@@ -24,7 +24,10 @@ export type JumpChainView = {
   readonly cols: number;
   readonly rows: number;
   readonly piece: Square;
-  /** Enemies on the board and the rank waiting just above it (row -1), in id order. */
+  /**
+   * Enemies on the board and the rank waiting just above it (row -1), in id order; after the
+   * continue also the rank it stepped back out of that row (draw hides it once it is out of sight).
+   */
   readonly enemies: readonly EnemyView[];
   /** Every enemy still to capture, the ranks waiting further up included (the spoken summary). */
   readonly enemiesLeft: number;
@@ -46,6 +49,15 @@ function capturedAlong(from: Square, path: readonly Square[]): Square[] {
   });
 }
 
+/**
+ * The highest row whose enemies the view keeps. The continue's step back moves the waiting rank
+ * from row -1 to -3, and draw() animates only enemies it is given, so after the continue that band
+ * stays in the view and the rank slides up instead of vanishing at frame 0.
+ */
+function topRowOf(state: JumpChainState): number {
+  return state.hasContinued ? WAITING_ROW - TUNING.continueRows : WAITING_ROW;
+}
+
 /** JS thread, pure: the final state of a move, in the shape draw() reads. */
 export function toView(state: JumpChainState, format: ViewFormat): JumpChainView {
   return {
@@ -53,7 +65,7 @@ export function toView(state: JumpChainState, format: ViewFormat): JumpChainView
     rows: TUNING.rows,
     piece: state.piece,
     enemies: state.enemies
-      .filter((enemy) => enemy.row >= WAITING_ROW)
+      .filter((enemy) => enemy.row >= topRowOf(state))
       .map((enemy) => ({ id: enemy.id, col: enemy.col, row: enemy.row })),
     enemiesLeft: state.enemies.length,
     marchIn: state.marchIn,
