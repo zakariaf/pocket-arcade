@@ -1,0 +1,81 @@
+{
+  "gameId": "merge-siege",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.7,
+      "max": 0.95,
+      "why": "A reasonable player wins most first levels (0.83 measured), but not every one."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.08,
+      "max": 0.35,
+      "why": "The hardest row brings 16s, which only a merged 16 can beat: hard (0.17 measured), yet still winnable."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.3,
+      "why": "Random swipes mostly lose even the first levels (0.17 measured): where the tiles go matters from the start."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 8,
+      "max": 30,
+      "why": "A level lasts a short while (median 12 swipes), never a couple of swipes."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.15
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": {
+    "policy": "greedy",
+    "difficulty": 100,
+    "bands": [
+      {
+        "metric": "medianMoves",
+        "min": 40,
+        "max": 120,
+        "why": "An endless run outlasts a level (median 70 swipes measured) and still ends as the numbers grow."
+      },
+      {
+        "metric": "medianScore",
+        "min": 3000,
+        "max": 15000,
+        "why": "A reasonable endless run scores far more than a level (median 6,732 measured)."
+      },
+      {
+        "metric": "twistPerRun",
+        "min": 1,
+        "max": 10,
+        "why": "Multi-smash swipes keep coming in an endless run (2.04 per run measured)."
+      }
+    ]
+  },
+  "notes": "Merge Siege with the design fix (ties go to the tile, a winning tile ploughs on, a march every second swipe, the prepared opening), four level rows on the 0..100 scale sampled at 0/25/50/75, 100 seeds. First run: greedy won 0.83/0.67/0.18/0.17, a cliff at the third row and no step to the fourth (its 16s, which only a merged 16 beats). Changed one knob: the third row's enemy mix from 2:2:2:1 (2s, 4s, 8s, 16s) to 1:2:3 (no 16s, more 8s); greedy now wins 0.83/0.67/0.47/0.17. Random wins 0.17 of the easiest levels and mostly loses to the march; the lookahead bot wins 0.97 of the second row. The kill test passes: the greedy bot smashes its first enemy on swipe 1 in every easiest run (the prepared opening), and swipes that smash two or more enemies at once come 1.12 times per easiest run (1.47 in the second row). The toy rules (no plough, ties cancel, a march every swipe) won 1 % of runs in the design notes' prototype. The endless run (difficulty 100) is its own block: runs last a median 70 swipes and score a median 6,732."
+}

@@ -6,6 +6,7 @@ import type { SplashColors } from './art-config.ts';
 export const SPLASH_GROUNDS: Readonly<Partial<Record<string, SplashColors>>> = {
   'flock-tilt': { light: '#AEE8C6', dark: '#112A48', accent: '#3DBE66' },
   'line-siege': { light: '#A5DAF3', dark: '#1B1943', accent: '#FF6B4A' },
+  'merge-siege': { light: '#FFD6B8', dark: '#2B1838', accent: '#A98BFF' },
   'scrap-shove': { light: '#F7DF7E', dark: '#261C45', accent: '#1FB5A9' },
   'snare-snake': { light: '#C9B8F0', dark: '#10302B', accent: '#3FA34D' },
 };

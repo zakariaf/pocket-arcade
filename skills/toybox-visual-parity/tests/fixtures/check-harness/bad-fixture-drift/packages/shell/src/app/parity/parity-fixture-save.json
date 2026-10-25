@@ -206,6 +206,11 @@
       "critters-caught": 214,
       "loops-closed": 96,
       "longest-snake": 23
+    },
+    "mergeSiege": {
+      "enemies-smashed": 1532,
+      "tiles-merged": 2876,
+      "biggest-tile": 512
     }
   },
   "hints": {
@@ -289,6 +294,17 @@
           "total": 6
         },
         "loseReasonId": "snare-snake.lose.tangled"
+      },
+      "mergeSiege": {
+        "progressMid": {
+          "smashed": 5,
+          "total": 12
+        },
+        "progressFull": {
+          "smashed": 12,
+          "total": 12
+        },
+        "loseReasonId": "merge-siege.lose.overrun"
       }
     }
   }

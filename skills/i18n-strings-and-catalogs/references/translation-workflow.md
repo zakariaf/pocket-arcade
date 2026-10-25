@@ -15,7 +15,7 @@ How new text is written in four languages, where the approved texts come from (t
 
 ## The copy deck is the source of screen text
 
-`assets/copy-deck.json` holds every visible text of the Shell screens S1-S4 and S6-S15 and of the first three games, in en, de, fa and ckb. The Toybox design mockup renders exactly these texts, so a screen matches its design screenshot only if its catalog texts equal the deck's. It is draft 1 (2026-09-27): **fa and ckb wait for the owner's own review** (owner decision O6: listed in every report under "Owner steps (not blocking)", never waited for).
+`assets/copy-deck.json` holds every visible text of the Shell screens S1-S4 and S6-S15 and of the design games (each game's design pass adds its texts), in en, de, fa and ckb. The Toybox design mockup renders exactly these texts, so a screen matches its design screenshot only if its catalog texts equal the deck's. It is draft 1 (2026-09-27): **fa and ckb wait for the owner's own review** (owner decision O6: listed in every report under "Owner steps (not blocking)", never waited for).
 
 One deck change since then: on 2026-09-30 the lead reworded Line Siege's how-to-play step 4 and tutorial step 4 (decision L4), because the tuned game marches every few placements, not after every block. They now read "The monsters march closer every few blocks." and "Careful: the monsters march closer every few blocks." (de "Alle paar Blöcke rücken die Monster näher." and "Achtung: Alle paar Blöcke rücken die Monster näher."; the fa and ckb drafts are on the review list below). `copy-deck.mjs apply . --game line-siege --overwrite` brings an older game catalog up to date.
 
@@ -31,7 +31,7 @@ A second deck change on 2026-09-30 (owner decision O1, the tracking prompt): the
 | Section | Contents |
 |---|---|
 | `meta` | languages, direction, autonyms (`languageNames`), `numberLocales` (digit tags), the ICU subset, a `glossary`, `samples` and `sampleOverrides` (a value for every placeholder, used by the mockup and useful in tests), `renderNotes`, and `screens` (which keys each screen uses) |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`, `mergeSiege`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
 | `licenceEntries` | example rows for S11d (component and licence names are not translated) |
 | `strings` | 289 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`; all pass the catalog rules |
 
@@ -61,6 +61,7 @@ The deck has one `loseReason` per game, but every way of losing gets its own key
 | `flock-tilt` | `flock-tilt.lose.wolf-got-sheep` | The wolf got a sheep |
 | `scrap-shove` | `scrap-shove.lose.caught` | A robot caught you |
 | `snare-snake` | `snare-snake.lose.tangled` | The snake got tangled |
+| `merge-siege` | `merge-siege.lose.overrun` | The enemies overran the board |
 
 `<id>.lose-reason` and `<id>.result.*` are retired key shapes: never write them. A game that is not in the deck starts with `<id>.lose.out-of-moves` (the scaffold's default `--lose-reason` slug) and renames it for its own reason. The Shell's own fallback for a missing reason stays `result.lose.reason.no-moves`.
 
@@ -176,6 +177,7 @@ Ordered by visibility. Keep this list with the review sheet.
 | `pause.title`, `result.endless.title`, `result.lose.title`, `premium.error` | as in the deck | Natural? |
 | `line-siege.how-to-play.step-4`, `line-siege.tutorial.step-4` (reworded 2026-09-30) | هیولاها هر چند بلوک یک‌بار نزدیک‌تر می‌آیند. | Natural for "the monsters march closer every few blocks"? |
 | `result.win.score-line` (new) | امتیاز ۱٬۸۴۰ – رکورد ۲٬۰۱۰ | Natural win line for a score and the best score? |
+| Merge Siege texts (new, 2026-10-19) | کاشی، ادغام، درهم کوبیدن، محاصره، تسخیر کردند | Tile, merge, smash, siege and overran wording. |
 | `game-screen.undo-button.a11y-label`, `game-screen.hint-button.a11y-label` (new) | واگرد، راهنمایی | Right VoiceOver labels for Undo and Hint? |
 | `consent.tracking.usage-description` (new, 2026-09-30; shown by iOS under "Allow … to track your activity?") | گوگل از این برای نمایش تبلیغ‌هایی متناسب با علاقه‌های شما استفاده می‌کند. در هر صورت تبلیغ می‌بینید و خود بازی هیچ داده‌ای جمع نمی‌کند. | Clear and natural as the reason under Apple's tracking question? Is "داده" the right word for data? |
 
@@ -186,6 +188,7 @@ Ordered by visibility. Keep this list with the review sheet.
 | `common.premium`, all Premium strings | پریمیەم | Spelling of the loanword. |
 | privacy texts (`settings.privacy-policy.label`, `consent.intro.*`, …) | تایبەتێتی | The usual word for privacy, or "تایبەتمەندی"? |
 | Line Siege, Flock Tilt, Scrap Shove texts | دێو، گەوڕ، ئاسنی کۆن … | Monster, pen, scrap, tilt, swipe and crash wording. |
+| Merge Siege texts | کاشی، یەک بخە، تێکبشکێنە، گەمارۆ، داگیر کرد | Tile, merge, smash, siege and overran wording. |
 | `settings.hints.label`, `premium.benefit.free-perks` | ئاماژە | Right word for a game hint? |
 | `premium.small-print` | بێ ئابوونە | "ئابوونە" for subscription, or "بەشداریکردن"? |
 | Tone, all ckb | singular (تۆ) | OK, or the plural (ئێوە)? |

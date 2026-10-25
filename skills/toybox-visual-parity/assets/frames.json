@@ -71,6 +71,14 @@
         "progressMidParams": { "caught": 3, "total": 6 },
         "progressFullParams": { "caught": 6, "total": 6 },
         "loseReasonId": "snare-snake.lose.tangled"
+      },
+      "mergeSiege": {
+        "gameStats": ["1,532", "2,876", "512"],
+        "progressMid": "5 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "smashed": 5, "total": 12 },
+        "progressFullParams": { "smashed": 12, "total": 12 },
+        "loseReasonId": "merge-siege.lose.overrun"
       }
     }
   },
@@ -282,6 +290,11 @@
         "critters-caught": 214,
         "loops-closed": 96,
         "longest-snake": 23
+      },
+      "mergeSiege": {
+        "enemies-smashed": 1532,
+        "tiles-merged": 2876,
+        "biggest-tile": 512
       }
     },
     "hints": {
@@ -341,6 +354,11 @@
           "progressMid": { "caught": 3, "total": 6 },
           "progressFull": { "caught": 6, "total": 6 },
           "loseReasonId": "snare-snake.lose.tangled"
+        },
+        "mergeSiege": {
+          "progressMid": { "smashed": 5, "total": 12 },
+          "progressFull": { "smashed": 12, "total": 12 },
+          "loseReasonId": "merge-siege.lose.overrun"
         }
       }
     }
