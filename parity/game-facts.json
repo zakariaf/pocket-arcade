@@ -25,6 +25,18 @@
       "winLine": "score",
       "hasHints": false
     },
+    "merge-siege": {
+      "designGame": "mergeSiege",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
+    "jump-chain": {
+      "designGame": "jumpChain",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
     "swap-guard": {
       "designGame": "swapGuard",
       "hasMusic": false,

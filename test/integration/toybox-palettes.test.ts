@@ -1,7 +1,9 @@
 // test/integration/toybox-palettes.test.ts
 // One `it` per app: every game's palette passes the Toybox palette rules.
 import { PALETTE as FLOCK_TILT } from '@e07/flock-tilt/theme/palette.ts';
+import { PALETTE as JUMP_CHAIN } from '@e07/jump-chain/theme/palette.ts';
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
+import { PALETTE as MERGE_SIEGE } from '@e07/merge-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
@@ -22,6 +24,14 @@ describe('Toybox palettes', () => {
 
   it('keeps Snare Snake readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(SNARE_SNAKE)).toStrictEqual([]);
+  });
+
+  it('keeps Merge Siege readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(MERGE_SIEGE)).toStrictEqual([]);
+  });
+
+  it('keeps Jump Chain readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(JUMP_CHAIN)).toStrictEqual([]);
   });
 
   it('keeps Swap Guard readable, one-ink in light and colour-blind equal to standard', () => {

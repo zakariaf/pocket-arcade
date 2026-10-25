@@ -72,6 +72,22 @@
         "progressFullParams": { "caught": 6, "total": 6 },
         "loseReasonId": "snare-snake.lose.tangled"
       },
+      "mergeSiege": {
+        "gameStats": ["1,532", "2,876", "512"],
+        "progressMid": "5 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "smashed": 5, "total": 12 },
+        "progressFullParams": { "smashed": 12, "total": 12 },
+        "loseReasonId": "merge-siege.lose.overrun"
+      },
+      "jumpChain": {
+        "gameStats": ["1,462", "318", "×5"],
+        "progressMid": "7 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "captured": 7, "total": 12 },
+        "progressFullParams": { "captured": 12, "total": 12 },
+        "loseReasonId": "jump-chain.lose.overrun"
+      },
       "swapGuard": {
         "gameStats": ["1,146", "2,318", "87"],
         "progressMid": "2 / 5",
@@ -291,6 +307,16 @@
         "loops-closed": 96,
         "longest-snake": 23
       },
+      "mergeSiege": {
+        "enemies-smashed": 1532,
+        "tiles-merged": 2876,
+        "biggest-tile": 512
+      },
+      "jumpChain": {
+        "pieces-captured": 1462,
+        "ranks-cleared": 318,
+        "longest-chain": 5
+      },
       "swapGuard": {
         "enemies-defeated": 1146,
         "swaps-made": 2318,
@@ -354,6 +380,16 @@
           "progressMid": { "caught": 3, "total": 6 },
           "progressFull": { "caught": 6, "total": 6 },
           "loseReasonId": "snare-snake.lose.tangled"
+        },
+        "mergeSiege": {
+          "progressMid": { "smashed": 5, "total": 12 },
+          "progressFull": { "smashed": 12, "total": 12 },
+          "loseReasonId": "merge-siege.lose.overrun"
+        },
+        "jumpChain": {
+          "progressMid": { "captured": 7, "total": 12 },
+          "progressFull": { "captured": 12, "total": 12 },
+          "loseReasonId": "jump-chain.lose.overrun"
         },
         "swapGuard": {
           "progressMid": { "defeated": 2, "total": 5 },
