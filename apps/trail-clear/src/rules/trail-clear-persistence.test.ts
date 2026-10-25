@@ -4,12 +4,15 @@
 import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
+import { playBotLine } from '@e07/game-kit/testing/play-bot.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { trailClearBot } from '@e07/trail-clear/testing/trail-clear-bot.ts';
 import { TRAIL_CLEAR_TESTING } from '@e07/trail-clear/testing/trail-clear-testing.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { outcome } from './outcome.ts';
 import { distinctTurns, edgesOf } from './tiles.ts';
 import { TRAIL_CLEAR_PERSISTENCE, parseMove, parseState } from './trail-clear-persistence.ts';
 import { knobsFor } from './trail-clear-tuning.ts';
@@ -64,6 +67,21 @@ describe('parseState', () => {
         },
       ),
       { numRuns: 50 },
+    );
+  });
+
+  it('returns every state the bot reaches unchanged, high scores and long runs included', () => {
+    fc.assert(
+      fc.property(fc.nat(), fc.constantFrom(0, 30, 60, 90, 100), (seed, difficulty) => {
+        const options = { seed, difficulty, policy: trailClearBot, maxMoves: 60 };
+        const { line } = playBotLine({ create, listMoves, applyMove, outcome }, options);
+        const states = line.map((step) => applyMove(step.state, step.move).state);
+        const refused = states.filter(
+          (state) => parseState(JSON.parse(JSON.stringify(state))) === null,
+        );
+        expect(refused).toStrictEqual([]);
+      }),
+      { numRuns: 12 },
     );
   });
 
@@ -142,6 +160,7 @@ function retagged(cell: number, placedAt: number): TrailClearState {
 describe('parseState refuses a save that legal play cannot reach', () => {
   it('starts from a played state with tiles of its own, which it accepts', () => {
     expect(placedCells.length).toBeGreaterThanOrEqual(2);
+    expect(MID.loopsClosed).toBeGreaterThanOrEqual(1);
     expect(parseState(JSON.parse(JSON.stringify(MID)))).toStrictEqual(MID);
   });
 
@@ -161,6 +180,15 @@ describe('parseState refuses a save that legal play cannot reach', () => {
       () => withGapTile('ford', true),
     ],
     ['a score without a closed loop', () => ({ ...START, score: 40 })],
+    ['a score that is not a whole number of tile points', () => ({ ...MID, score: MID.score + 5 })],
+    [
+      'a score below the smallest loops (two tiles each) its closed loops would score',
+      () => ({ ...MID, score: 10 }),
+    ],
+    [
+      'a score above what its placements could ever score',
+      () => ({ ...MID, score: MID.score + 1_000_000 }),
+    ],
     ['a closed loop without a score', () => ({ ...START, loopsClosed: 1 })],
     [
       'more than two loops for each placement',

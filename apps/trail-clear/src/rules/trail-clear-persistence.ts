@@ -5,7 +5,7 @@ import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import { edgesOf, isTileKind } from './tiles.ts';
-import { TUNING, knobsFor } from './trail-clear-tuning.ts';
+import { TUNING, knobsFor, loopPoints } from './trail-clear-tuning.ts';
 import { closedLoopsAt, fits } from './trails.ts';
 
 import type { PlacedTile, TrailClearMove, TrailClearState } from './trail-clear-types.ts';
@@ -125,11 +125,37 @@ function isBagReachable(state: TrailClearState): boolean {
   return state.placements <= bag && (state.offered === null) === (state.placements === bag);
 }
 
+/** The smallest loop: two end pieces facing each other. */
+const SMALLEST_LOOP = 2;
+/** A tile sits in at most two loops: a road and a river, closed together. */
+const MOST_LOOPS_PER_TILE = 2;
+
+/**
+ * The score its loops can make. Every loop scores loopPoints of its size (a whole number of tile
+ * points), at least the smallest loop's. A loop holds at most every tile ever placed (the opening's
+ * and the placements', never more than the board), and a tile is in at most two loops (a road and
+ * a river closed together), so the loops' sizes sum to at most twice the tiles; with every loop as
+ * large as it can be and doubled, the score cannot pass the bound.
+ */
+function isScoreReachable(state: TrailClearState): boolean {
+  const { score, loopsClosed, placements } = state;
+  const tiles = placements + OPENING_TILES;
+  const largestLoop = Math.min(SIZE * SIZE, tiles);
+  const loopTiles = Math.min(MOST_LOOPS_PER_TILE * tiles, largestLoop * loopsClosed);
+  const most = TUNING.doubleMultiplier * TUNING.tilePoints * largestLoop * loopTiles;
+  return (
+    score % TUNING.tilePoints === 0 &&
+    score >= loopsClosed * loopPoints(SMALLEST_LOOP) &&
+    score <= most
+  );
+}
+
 /** The counters agree: a score exactly when a loop closed, at most two loops a placement, the bag. */
 function areCountsReachable(state: TrailClearState): boolean {
   return (
     (state.score === 0) === (state.loopsClosed === 0) &&
     state.loopsClosed <= MOST_LOOPS_PER_PLACEMENT * state.placements &&
+    isScoreReachable(state) &&
     isBagReachable(state)
   );
 }
