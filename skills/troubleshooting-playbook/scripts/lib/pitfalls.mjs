@@ -156,7 +156,7 @@ function maskStrings(code) {
  * (an isReducedMotion-style flag, a Motion-typed value, a useReduceMotion() result) is tested in a
  * branch (if, ternary, negation, &&, ||, === or !==) or handed to a call that decides (the coach
  * hand's isCoachHandGliding(hand, motion)). A word in a string or a comment, a props type or a
- * dependency list alone is not a gate.
+ * dependency list alone is not a gate, nor is an optional prop type (`isReducedMotion?: boolean`).
  */
 function isLoopGated(body) {
   const code = maskStrings(body);
@@ -166,7 +166,7 @@ function isLoopGated(body) {
   names.delete('useReduceMotion');
   return [...names].some((name) => {
     const n = `\\b${name}\\b`;
-    const gate = new RegExp(`\\bif\\s*\\([^)]*${n}|!\\s*${n}|${n}\\s*(?:\\?(?!\\.)|&&|\\|\\||[!=]==)|(?:&&|\\|\\|)\\s*!?\\s*${n}|\\w\\s*\\([^()]*${n}\\s*\\)`);
+    const gate = new RegExp(`\\bif\\s*\\([^)]*${n}|!\\s*${n}|${n}\\s*(?:\\?(?![.:])|&&|\\|\\||[!=]==)|(?:&&|\\|\\|)\\s*!?\\s*${n}|\\w\\s*\\([^()]*${n}\\s*\\)`);
     return gate.test(code);
   });
 }
