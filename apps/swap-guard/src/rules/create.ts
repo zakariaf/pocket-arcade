@@ -12,7 +12,13 @@ import { strikesOf, struckSquares } from './strikes.ts';
 import { knobsFor } from './swap-guard-tuning.ts';
 
 import type { DifficultyKnobs } from './swap-guard-tuning.ts';
-import type { Enemy, EnemyKind, Facing, SwapGuardState } from './swap-guard-types.ts';
+import type {
+  Enemy,
+  EnemyKind,
+  Facing,
+  SwapGuardMove,
+  SwapGuardState,
+} from './swap-guard-types.ts';
 import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 
 /** The prepared opening: the guard, the spear that threatens it, the enemy that strikes the spear. */
@@ -159,13 +165,19 @@ function withBudget(
 /**
  * The start a seed makes with these knobs: the first drawn start that planLine wins within the cap
  * (spec 8.1: no level is impossible, the daily included), with its budget. Should every draw fail,
- * the last opening pair alone, which its double hit always wins.
+ * the opening pair of the last start checked, alone, which its double hit always wins.
  */
-export function startFor(seed: number, knobs: DifficultyKnobs): SwapGuardState {
+export function startFor(
+  seed: number,
+  knobs: DifficultyKnobs,
+  plan: (start: SwapGuardState) => readonly SwapGuardMove[] | null = planLine,
+): SwapGuardState {
   let drawn = drawStart(seedRng(seed), knobs);
-  for (let count = 1; count <= MAX_DRAWS; count += 1) {
-    const line = planLine(drawn.state);
+  for (let count = 1; ; count += 1) {
+    const line = plan(drawn.state);
     if (line !== null) return withBudget(drawn.state, line.length, knobs);
+    // The last check fails: its own opening pair is the fallback, so no further start is drawn.
+    if (count === MAX_DRAWS) break;
     drawn = drawStart(drawn.rng, knobs);
   }
   const pair = startOf(knobs, drawn.state.guard, drawn.state.enemies.slice(0, OPENING_ENEMIES));

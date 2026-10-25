@@ -109,6 +109,21 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
     expect(state.enemyCount).toBe(2);
   });
 
+  it('builds the fallback pair from the last start it checked, drawing no start it throws away', () => {
+    const checked: SwapGuardState[] = [];
+    const never = (start: SwapGuardState): null => {
+      checked.push(start);
+      return null;
+    };
+    const state = startFor(1, knobsFor(0), never);
+    expect(checked).toHaveLength(64);
+    const last = checked.at(-1);
+    expect({ guard: state.guard, enemies: state.enemies }).toStrictEqual({
+      guard: last?.guard,
+      enemies: last?.enemies.slice(0, 2),
+    });
+  });
+
   it('proves every fallback opening pair won by its one swap, on every row (spec 8.1)', () => {
     // The fallback is any opening pair of the row with a budget of one swap plus the spare ones:
     // every opening of every board size and partner kind must win with the partner swap, so a
