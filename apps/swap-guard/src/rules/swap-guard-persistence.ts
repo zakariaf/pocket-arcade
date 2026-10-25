@@ -6,6 +6,7 @@ import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import { applyMove } from './apply-move.ts';
 import { FACINGS, squaresAround } from './board-grid.ts';
+import { OPENING_ENEMIES } from './create.ts';
 import { TUNING, volleyPoints } from './swap-guard-tuning.ts';
 
 import type {
@@ -39,8 +40,25 @@ const KINDS: readonly EnemyKind[] = ['spear', 'archer', 'brute'];
 /** The board sizes, budgets and enemy counts the tuning rows can make. */
 const ROWS = TUNING.levelRows;
 const SIZES: readonly number[] = ROWS.map((row) => row.size);
-const MAX_SWAPS = Math.max(...ROWS.map((row) => row.maxSwaps));
+const MIN_SIZE = Math.min(...SIZES);
+const MAX_SIZE = Math.max(...SIZES);
 const MAX_ENEMIES = Math.max(...ROWS.map((row) => row.enemies));
+
+/** What the tuning rows of one board size allow: create never makes anything else on it. */
+type SizeLimits = {
+  readonly maxSwaps: number;
+  readonly maxEnemies: number;
+  readonly kinds: readonly EnemyKind[];
+};
+
+function limitsOf(size: number): SizeLimits {
+  const rows = ROWS.filter((row) => row.size === size);
+  return {
+    maxSwaps: Math.max(...rows.map((row) => row.maxSwaps)),
+    maxEnemies: Math.max(...rows.map((row) => row.enemies)),
+    kinds: KINDS.filter((kind) => rows.some((row) => row.kinds.some((name) => name === kind))),
+  };
+}
 /** The largest square index of the largest board: a move naming any other square is impossible. */
 const MAX_CELL = Math.max(...SIZES.map((size) => size * size)) - 1;
 
@@ -66,11 +84,11 @@ function listOf<T>(json: unknown, parse: (item: unknown) => T | null): T[] | nul
   return parsed.every((item): item is T => item !== null) ? parsed : null;
 }
 
-/** One enemy on a board of `size`: a known kind and facing (a brute always faces up). */
+/** One enemy on a board of `size`: a kind its rows draw and a facing (a brute always faces up). */
 function parseEnemy(json: unknown, size: number): Enemy | null {
   if (!isRecord(json) || !hasExactly(json, ENEMY_KEYS)) return null;
   const { id, cell } = json;
-  const kind = KINDS.find((name) => name === json['kind']);
+  const kind = limitsOf(size).kinds.find((name) => name === json['kind']);
   const facing = FACINGS.find((name) => name === json['facing']);
   if (!isWhole(id, 0, MAX_ENEMIES - 1) || !isWhole(cell, 0, size * size - 1)) return null;
   if (kind === undefined || facing === undefined) return null;
@@ -98,14 +116,15 @@ function parseLastSwap(json: unknown, size: number): LastSwap | null {
   return points === volleyPoints(defeated.length) ? { from, to, defeated, points } : null;
 }
 
-/** The scalar fields, each a whole number in its range, the flags booleans. */
+/** The scalar fields, each a whole number in the range its board size's rows allow, flags booleans. */
 function isShaped(json: JsonRecord): boolean {
   const { size, swaps, maxSwaps, enemyCount, score } = json;
+  if (!isWhole(size, MIN_SIZE, MAX_SIZE) || !SIZES.includes(size)) return false;
+  const limits = limitsOf(size);
   return (
-    SIZES.includes(Number(size)) &&
-    isWhole(maxSwaps, 1, MAX_SWAPS) &&
+    isWhole(maxSwaps, 1, limits.maxSwaps) &&
     isWhole(swaps, 0, maxSwaps) &&
-    isWhole(enemyCount, 1, MAX_ENEMIES) &&
+    isWhole(enemyCount, OPENING_ENEMIES, limits.maxEnemies) &&
     isWhole(score, 0, volleyPoints(MAX_ENEMIES)) &&
     typeof json['isHit'] === 'boolean' &&
     typeof json['hasContinued'] === 'boolean'

@@ -3,6 +3,7 @@
 // parses is dropped alone (spec 8.14), never a crash.
 import fc from 'fast-check';
 
+import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
 
 import { applyMove } from './apply-move.ts';
@@ -86,6 +87,36 @@ function withUnstruckKnockOut(): unknown {
   return { ...HIT, enemies: rest, score: points, lastSwap: { ...HIT.lastSwap, defeated, points } };
 }
 
+/** START with `extra` more spears standing in the top row's corners and beyond (ids from 3). */
+function withMoreSpears(extra: number): SwapGuardState {
+  const cells = [0, 4, 20, 24].slice(0, extra);
+  const added = cells.map((cell, index) => ({
+    id: START.enemies.length + index,
+    kind: 'spear' as const,
+    facing: 'up' as const,
+    cell,
+  }));
+  return { ...START, enemies: [...START.enemies, ...added], enemyCount: 3 + extra };
+}
+
+/** Seeded random swaps to the end, with the one continue after a loss: every state on the way. */
+function statesWithContinue(seed: number, difficulty: number, choices: readonly number[]) {
+  const states: SwapGuardState[] = [create(seed, difficulty)];
+  let state = pickAt(states, 0);
+  for (const choice of choices) {
+    if (state.isHit || state.swaps >= state.maxSwaps) {
+      if (state.hasContinued || state.enemies.length === 0) break;
+      state = continueAfterLoss(state).state;
+    } else {
+      const moves = listMoves(state);
+      if (moves.length === 0) break;
+      state = applyMove(state, pickAt(moves, choice % moves.length)).state;
+    }
+    states.push(state);
+  }
+  return states;
+}
+
 describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
   it('returns a saved start unchanged after a JSON round trip', () => {
     expect(parseState(fromJson(START))).toStrictEqual(START);
@@ -107,8 +138,33 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
     );
   });
 
+  it('returns every state of play with a continue after the loss unchanged (property)', () => {
+    fc.assert(
+      fc.property(playArb, ([seed, difficulty, choices]) => {
+        const states = statesWithContinue(seed, difficulty, choices);
+        expect(states.map((state) => parseState(fromJson(state)))).toStrictEqual(states);
+      }),
+    );
+  });
+
   it.each([
     ['text', 'garbage'],
+    // The tuning rows say what a board of each size can hold (create never makes anything else).
+    ['a board size saved as text', { ...START, size: '5' }],
+    ['a budget no row of that size has', { ...START, maxSwaps: 15 }],
+    ['more enemies than any row of that size', withMoreSpears(2)],
+    ['fewer enemies than create ever makes', { ...START, enemies: [SPEAR], enemyCount: 1 }],
+    [
+      'an enemy kind no row of that size draws',
+      {
+        ...START,
+        enemies: [
+          SPEAR,
+          ...START.enemies.slice(1, 2),
+          { id: 2, kind: 'brute', facing: 'up', cell: 0 },
+        ],
+      },
+    ],
     ['null', null],
     ['an array', [START]],
     ['a missing field', { ...START, score: undefined }],

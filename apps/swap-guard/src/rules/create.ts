@@ -97,6 +97,9 @@ function draw<T>(rng: RngState, items: readonly T[]): { readonly item: T; readon
   return { item: pickAt(items, pick.value), rng: pick.state };
 }
 
+/** The fewest enemies a start has: the opening pair (the fallback start is that pair alone). */
+export const OPENING_ENEMIES = 2;
+
 /** Starts drawn for one seed before falling back to the opening pair alone. */
 const MAX_DRAWS = 64;
 
@@ -165,7 +168,7 @@ export function startFor(seed: number, knobs: DifficultyKnobs): SwapGuardState {
     if (line !== null) return withBudget(drawn.state, line.length, knobs);
     drawn = drawStart(drawn.rng, knobs);
   }
-  const pair = startOf(knobs, drawn.state.guard, drawn.state.enemies.slice(0, 2));
+  const pair = startOf(knobs, drawn.state.guard, drawn.state.enemies.slice(0, OPENING_ENEMIES));
   return withBudget(pair, OPENING_SWAPS, knobs);
 }
 
