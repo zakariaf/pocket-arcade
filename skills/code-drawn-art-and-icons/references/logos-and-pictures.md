@@ -63,13 +63,14 @@ A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: 
 - **Flock Tilt** (`examples/flock-tilt-logo-art.ts`): a pop meadow line (`pl`), then a white sheep (`w`) with ink legs (`kl`), ink head (`k`) and a white eye (`w0`), all rotated -10 degrees about (24, 27).
 - **Scrap Shove** (`examples/scrap-shove-logo-art.ts`): a white robot head (`w`) with an ink eye (`k`), a crossed eye and mouth (`kl`), a pop antenna ball and a pop neck (`p`), side bolts (`kl`).
 - **Snare Snake** (its design pass, 2026-10-19; the layers in the token file's `logos.games.snareSnake`): a white snake curled into a closed ring (`w`, a rounded square with a hole), a pop tongue (`pl`), the white head overlapping the ring's top end (`w`) with an ink eye (`k`) and its white glint (`w0`), a pop ladybird inside the loop (`p`), one ink-line layer (`kl`) holding the ring's four segment marks and the ladybird's wing line, and the ladybird's spots (`k`): eight layers, the recipe's limit.
+- **Merge Siege** (its design pass, `logos.games.mergeSiege` in `assets/toybox-tokens.json`): a white spiky enemy (`w`) with two ink eyes (`k`), a white tile (`w`) with two ink up-chevrons (`kl`) smashing into it, and a pop spark where they meet (`p`).
 - **Jump Chain** (its design pass, 2026-10-19; the layers in the token file's `logos.games.jumpChain`): a pop jump arc (`pl`), an ink checker (`k`), a white checker in mid-jump above it (`w`) with its rim line (`kl`), and a pop crown on top (`p`).
 
 `check-icons-and-logos` fails if a design game's logo differs from the Toybox data.
 
 ## Designing a logo for a new game
 
-The other games have no logo yet. Draw one with the same recipe, then show it to the owner (a new logo is a design decision):
+A game outside the token file has no logo yet. Draw one with the same recipe, then show it to the owner (a new logo is a design decision):
 
 1. One object that says what the toy is (a wall, a sheep, a robot), seen from the front or slightly tilted, filling about 80 % of the 48 grid; keep 2 units clear at the edges.
 2. White bodies with toy-ink edges (`w`), ink details as 2.6 lines (`kl`) or solid ink (`k`), one or two pop accents (`p` or `pl`). No text, no gradients, no more than about eight layers.
