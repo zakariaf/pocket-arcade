@@ -7,6 +7,7 @@ import { clampDifficulty, isEndlessDifficulty } from '@e07/game-kit/contract/dif
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { drawOpening, openingCells } from './opening.ts';
+import { isShippedLevel } from './shipped-levels.ts';
 import { TUNING } from './trail-clear-tuning.ts';
 import { TRAIL_CLEAR_WITNESS, WITNESS_MAX_NODES } from './trail-clear-witness.ts';
 
@@ -60,7 +61,8 @@ function searchBoards(rng: RngState, level: number, budget: CreateBudget): Searc
 /**
  * create() with an explicit budget: the first proven board of the seed, or, when none is proven
  * within the budget, the fallback seed's proven board of the difficulty. The endless run is never
- * won, so it is never proven: it keeps the seed's first board. Bounded: at most 2 x attempts
+ * won, so it is never proven: it keeps the seed's first board, as does a shipped pack level, whose
+ * first board the generator proved. Bounded: at most 2 x attempts
  * witness runs.
  */
 export function createWithin(
@@ -69,7 +71,8 @@ export function createWithin(
   budget: CreateBudget,
 ): TrailClearState {
   const level = clampDifficulty(difficulty);
-  if (isEndlessDifficulty(level)) return drawStart(seed, level);
+  // The endless run is never proven; a shipped level was proven when its pack was made.
+  if (isEndlessDifficulty(level) || isShippedLevel(seed, level)) return drawStart(seed, level);
   const found = searchBoards(seedRng(seed), level, budget);
   return found.isProven
     ? found.state

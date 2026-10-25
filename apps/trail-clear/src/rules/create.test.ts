@@ -4,6 +4,10 @@
 // same seed always makes the same level."
 import fc from 'fast-check';
 
+import pack1 from '@e07/trail-clear/levels/pack-1.json';
+import pack2 from '@e07/trail-clear/levels/pack-2.json';
+import pack3 from '@e07/trail-clear/levels/pack-3.json';
+
 import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
 import { TUNING } from './trail-clear-tuning.ts';
 import { TRAIL_CLEAR_WITNESS, WITNESS_MAX_NODES } from './trail-clear-witness.ts';
@@ -133,6 +137,27 @@ describe('create proves every level board it hands out (spec 8.1: no level is im
 
   it("tries at most the tuning's createAttempts boards of a seed (a bounded wait)", () => {
     expect(TUNING.createAttempts).toBe(GOLDEN_CREATE_ATTEMPTS);
+  });
+});
+
+describe('create for a shipped level', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('skips the witness for every pack level: its first board was proven when the pack was made', () => {
+    const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
+    const levels = [...pack1, ...pack2, ...pack3];
+    const boards = levels.map((entry) => create(entry.seed, entry.difficulty));
+    expect(solve).not.toHaveBeenCalled();
+    expect(boards).toStrictEqual(levels.map((entry) => drawStart(entry.seed, entry.difficulty)));
+  });
+
+  it('proves a pack seed at another difficulty (only the shipped pair was proven)', () => {
+    const solve = jest.spyOn(TRAIL_CLEAR_WITNESS, 'solve');
+    const [first] = pack1;
+    create(first?.seed ?? 0, (first?.difficulty ?? 0) + 1);
+    expect(solve).toHaveBeenCalled();
   });
 });
 
