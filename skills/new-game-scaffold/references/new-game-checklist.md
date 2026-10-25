@@ -17,7 +17,7 @@ Everything between "the owner picked the next game" and "the game ships", in ord
 - [ ] The owner picked the game (spec section 13) and approved its design notes: modes (daily on by default, endless optional), pack layout (default 3 x 30), star rule (par for puzzles, score thresholds otherwise), difficulty bands for the bot sims, undo, hints (`none`, or `solver` when a solver proves the next move) and continue (`once` with its rule, or `none`), and the lose reasons (one `<id>.lose.<reason>` key each).
 - [ ] The owner answered the age-rating question for cartoon or fantasy violence (step G1; `NONE` unless the game hits monsters or characters).
 - [ ] The owner approved the app name (step G1). The bundle id is not a question: it is always `io.applander.<game id without hyphens>` on iOS and Android (`io.applander.flocktilt`), and Premium is `<bundle id>.premium` (owner decision O4); the scaffold writes both.
-- [ ] If the game is designed in the copy deck (line-siege, flock-tilt, scrap-shove, stepstone, and every game a later design pass adds), its texts, pack names and modes come from the deck; otherwise the texts are written with the i18n workflow and added to the deck at the next design pass.
+- [ ] If the game is designed in the copy deck (line-siege, flock-tilt, scrap-shove, jump-chain, stepstone, and each game a design pass adds), its texts, pack names and modes come from the deck; otherwise the texts are written with the i18n workflow and added to the deck at the next design pass.
 
 ## Step 0: scaffold the app
 

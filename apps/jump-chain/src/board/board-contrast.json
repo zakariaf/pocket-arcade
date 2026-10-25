@@ -1,0 +1,23 @@
+{
+  "edge": "edge",
+  "text": [["label", "labelBack"]],
+  "graphics": [
+    ["target", "dark"],
+    ["target", "light"],
+    ["path", "dark"],
+    ["path", "light"],
+    ["capture", "enemy"],
+    ["enemyMark", "enemy"]
+  ],
+  "shapes": [
+    ["piece", "dark"],
+    ["piece", "light"],
+    ["piece", "side"],
+    ["enemy", "dark"],
+    ["enemy", "light"],
+    ["enemy", "side"],
+    ["crown", "piece"],
+    ["labelBack", "background"]
+  ],
+  "distinct": [["piece", "enemy"]]
+}

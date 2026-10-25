@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "80fc23f36e7bdf77a41a3f5a24d3257bc412d2c8649bd3af60f62e4586435613",
+  "design": "ab6b5e48162425e4cba46bf591731fce1889903c4a6d17fc34ca63c583341ca1",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "1c169d9a474468da3b69a6160bc593a7aaea415661dc79d1c325ec159436b21b",
+  "frames": "cc60ccc4f420f75bf0785608764081daeed81b1dcdda7f035efb42d07561d743",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1836,6 +1836,22 @@
    "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   },
   {
+   "id": "G-jump-chain",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Jump Chain added to the design as a design game. No reference PNG or layout changed: the manifest inputs were refreshed by re-rendering s4-home light-en alone (byte-identical, Chrome 155), and again by one --update-reference render of s1-splash light-en after main (Snare Snake) was merged in on 2026-10-25; no committed PNG or layout moved. The four fa s7-result-win PNGs that Chrome 155 draws 156 pixels apart from the Chrome 154 set were already apart before this change and were left as rendered.",
+   "why": "spec 13: its design pass (E23-T01), sent to the owner for approval on 2026-10-19 with the drafted design as the default"
+  },
+  {
+   "id": "G-jump-chain-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E23 put Merge Siege and Jump Chain into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
    "id": "G-stepstone",
    "date": "2026-10-19",
    "frames": [],
@@ -1850,6 +1866,14 @@
    "variants": [],
    "what": "Merging main into E24 put Stepstone into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
    "why": "spec 13: each game's design pass; the passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-stepstone-with-jump-chain",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Jump Chain (both palettes, logos, texts and sample counters). No frame or variant of Line Siege changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
+   "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
   }
  ]
 }

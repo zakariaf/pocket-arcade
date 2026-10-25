@@ -1,0 +1,97 @@
+{
+  "gameId": "jump-chain",
+  "status": "proposed",
+  "approvedOn": null,
+  "seedsPerCell": 100,
+  "maxMoves": 400,
+  "grid": {
+    "random": [0, 25, 50, 75],
+    "greedy": [0, 25, 50, 75],
+    "lookahead": [25]
+  },
+  "bands": [
+    {
+      "policy": "greedy",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0.85,
+      "max": 1,
+      "why": "The first row (three ranks, a march every 6 moves) is the warm-up: a reasonable player wins nearly all of them (0.95 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "winRate",
+      "min": 0.7,
+      "max": 0.95,
+      "why": "The second row (the daily's row) marches every 5 moves: a reasonable player still wins most (0.84 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 50,
+      "metric": "winRate",
+      "min": 0.4,
+      "max": 0.7,
+      "why": "Four ranks marching every 4 moves: about half the runs reach the end (0.52 measured)."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 75,
+      "metric": "winRate",
+      "min": 0.15,
+      "max": 0.45,
+      "why": "Six ranks marching every 3 moves are hard (0.30 measured), yet a reasonable player still wins some."
+    },
+    {
+      "policy": "random",
+      "difficulty": 0,
+      "metric": "winRate",
+      "min": 0,
+      "max": 0.4,
+      "why": "Random moves lose most even of the easiest levels (0.24 measured): where a chain ends matters."
+    },
+    {
+      "policy": "greedy",
+      "difficulty": 25,
+      "metric": "medianMoves",
+      "min": 5,
+      "max": 15,
+      "why": "A level takes a handful of moves (median 9), never a single chain."
+    }
+  ],
+  "curve": { "policy": "greedy", "metric": "winRate", "direction": "down", "minStep": 0.1 },
+  "skillGap": {
+    "difficulty": 25,
+    "metric": "winRate",
+    "order": ["random", "greedy", "lookahead"],
+    "better": "higher",
+    "minStep": 0.1
+  },
+  "firstPayoff": { "policy": "greedy", "difficulty": 0, "withinMoves": 3, "minShare": 0.9 },
+  "twist": { "policy": "greedy", "difficulty": 0, "minPerRun": 1 },
+  "endless": {
+    "policy": "greedy",
+    "difficulty": 100,
+    "bands": [
+      {
+        "metric": "medianMoves",
+        "min": 15,
+        "max": 60,
+        "why": "An endless run outlasts a level (median 29 moves measured) and still ends: the march comes sooner every 6 ranks."
+      },
+      {
+        "metric": "medianScore",
+        "min": 400,
+        "max": 1800,
+        "why": "A reasonable endless run scores more than a level (median 890 measured)."
+      },
+      {
+        "metric": "twistPerRun",
+        "min": 3,
+        "max": 20,
+        "why": "Endless runs are where long chains matter most (7.9 chains of two or more jumps per run measured)."
+      }
+    ]
+  },
+  "notes": "Jump Chain on the 0..100 scale, four tuning rows sampled at their lower bounds (0/25/50/75) and the endless run at 100, 100 seeds each. Greedy wins 0.95/0.84/0.52/0.30, random 0.24/0.18/0.07/0.03, lookahead 0.97 on the daily's row: skill matters, and the curve falls by at least 0.11 per row. The kill test passes: on the easiest level the greedy bot captures within two moves in every run (the piece starts two rows below the front rank) and makes 1.6 chains of two or more jumps per run. The first sims found three things to fix: the easiest row was too hard (0.84 with a march every 5 moves, now every 6), the second row was a cliff (0.47 with four ranks every 4 moves, now three ranks every 5), and endless runs either died in 6 moves (front rank on row 5, a march every 3) or never ended (3 of 100 reached the 400-move cap with a march every 4): the endless front now starts on row 3, the march every 4 moves, coming one move sooner every 6 ranks down to every 2, so every run ends (median 29 moves). The bands are proposed until the owner's play-test (O6)."
+}

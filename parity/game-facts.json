@@ -31,6 +31,12 @@
       "winLine": "score",
       "hasHints": false
     },
+    "jump-chain": {
+      "designGame": "jumpChain",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
     "stepstone": {
       "designGame": "stepstone",
       "hasMusic": false,
