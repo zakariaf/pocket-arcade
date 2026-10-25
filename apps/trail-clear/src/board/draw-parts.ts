@@ -6,7 +6,6 @@ import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { TrailClearView } from './to-view.ts';
 import type { BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -45,15 +44,6 @@ export function scaled(rect: Rect, scale: number): Rect {
     width,
     height,
   };
-}
-
-/**
- * An effect that is not a tween of something already visible (a ring, a burst) draws only once its
- * track has started: before that, a sample holds the track's `from` values, and drawing it would
- * show the effect at full strength at moment 0.
- */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
 }
 
 /** The tray slot a target names (the tray lies in one row or one column), or null. */

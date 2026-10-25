@@ -183,6 +183,20 @@ describe('drawBoard', () => {
     );
   });
 
+  it('plays the double ring and its burst to the end of their tracks, and draws neither after', () => {
+    const tracks = buildTimeline(BUSIEST.events, 'full');
+    for (const channel of ['double', 'burst']) {
+      const effect = tracks.find((track) => track.channel === channel);
+      if (effect === undefined) throw new Error(`no ${channel} track`);
+      const others = tracks.filter((track) => track !== effect);
+      const endMs = effect.startMs + effect.durationMs;
+      const drawn = (atMs: number, hasEffect: boolean): Recorded['calls'] =>
+        drawAt({ atMs, view: BUSIEST_VIEW, tracks: hasEffect ? tracks : others }).calls;
+      expect(drawn(endMs - 1, true)).not.toStrictEqual(drawn(endMs - 1, false));
+      expect(drawn(endMs, true)).toStrictEqual(drawn(endMs, false));
+    }
+  });
+
   it('keeps the wiped tiles on the board until they have shrunk away', () => {
     const tracks = buildTimeline(BUSIEST.events, 'full').filter(
       (track) => track.channel === 'wipe',

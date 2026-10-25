@@ -3,11 +3,11 @@
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
-import { drawFace, inset, INSET, isPlaying, MIN_VISIBLE, scaled } from './draw-parts.ts';
+import { drawFace, inset, INSET, MIN_VISIBLE, scaled } from './draw-parts.ts';
 import { drawTile } from './draw-tile.ts';
 import { drawChoice, drawGhost, drawHinted, drawTray } from './draw-tray.ts';
 import { PANEL_PT } from './layout-board.ts';
@@ -73,19 +73,20 @@ function drawCell(canvas: SkCanvas, frame: Frame, index: number): void {
 /** A double: a ring spreads from the placed cell, then particles (full motion only). */
 function drawDouble(canvas: SkCanvas, frame: Frame): void {
   const { kit, colors, fx } = frame;
-  const ring = fxEntry(fx, 'double', TURN_ENTITY);
-  const burst = fxEntry(fx, 'burst', TURN_ENTITY);
-  const cell = cellOf(frame, ring?.values[0] ?? burst?.values[0] ?? 0);
+  // Neither is a tween of something visible: each draws only while its track plays (linear time).
+  const ring = playingEntry(fx, 'double', TURN_ENTITY);
+  const burst = playingEntry(fx, 'burst', TURN_ENTITY);
+  const cell = cellOf(frame, (ring ?? burst)?.values[0] ?? 0);
   if (cell === null) return;
   const cx = cell.x + cell.width / 2;
   const cy = cell.y + cell.height / 2;
-  if (isPlaying(ring)) {
+  if (ring !== undefined) {
     const spread = ring.values[1] ?? 0;
     setPaintColor(kit.stroke, colors.color.glow, 1 - spread);
     kit.stroke.setStrokeWidth(cell.width * 0.1);
     canvas.drawCircle(cx, cy, cell.width * (0.5 + 1.2 * spread), kit.stroke);
   }
-  if (!isPlaying(burst)) return;
+  if (burst === undefined) return;
   const spec = {
     seed: 0x7c1e,
     x: cx,
