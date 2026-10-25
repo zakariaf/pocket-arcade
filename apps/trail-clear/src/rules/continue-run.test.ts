@@ -11,6 +11,7 @@ import { continueAfterLoss, rowsByAge } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
+import { parseState } from './trail-clear-persistence.ts';
 
 import type {
   PlacedTile,
@@ -106,6 +107,21 @@ describe('continueAfterLoss', () => {
           expect(kindsOf(events)).toStrictEqual(['rows-cleared']);
         }),
         { numRuns: 60 },
+      );
+    });
+
+    it('leaves a real lost run playing with consistent counts: its save parses unchanged', () => {
+      fc.assert(
+        fc.property(seedArb, fc.integer({ min: 0, max: 99 }), (seed, difficulty) => {
+          const lost = playToLoss(seed, difficulty);
+          fc.pre(lost !== null);
+          const { state } = continueAfterLoss(lost);
+          const counts = (run: TrailClearState) => [run.placements, run.score, run.loopsClosed];
+          expect(counts(state)).toStrictEqual(counts(lost));
+          expect(listMoves(state).length).toBeGreaterThan(0);
+          expect(parseState(JSON.parse(JSON.stringify(state)))).toStrictEqual(state);
+        }),
+        { numRuns: 40 },
       );
     });
   });
