@@ -23,7 +23,7 @@ export function floorKey(state: ScrapShoveState): string {
       `${String(robot.id)}${robot.kind.charAt(0)}${String(robot.col)}.${String(robot.row)}`,
   );
   const heaps = state.heaps.map((heap) => heap.row * state.cols + heap.col).sort((a, b) => a - b);
-  return `${String(state.player.col)}${String(state.player.row)}|${robots.join(',')}|${heaps.join(',')}`;
+  return `${String(state.player.col)}.${String(state.player.row)}|${robots.join(',')}|${heaps.join(',')}`;
 }
 
 /** The fewest-moves win from `start`, unsolvable, or over the node budget. */

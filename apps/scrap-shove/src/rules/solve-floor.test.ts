@@ -20,6 +20,14 @@ describe('floorKey', () => {
     expect(floorKey(shoved)).toBe(floorKey(state));
     expect(floorKey({ ...state, player: { col: 0, row: 1 } })).not.toBe(floorKey(state));
   });
+
+  it('tells the player on col 1 row 11 from col 11 row 1 on a floor of side 11 or more', () => {
+    const state = stateFromText(
+      Array.from({ length: 12 }, (_, row) => (row === 5 ? '@n..........' : '............')),
+    );
+    const low = floorKey({ ...state, player: { col: 1, row: 11 } });
+    expect(low).not.toBe(floorKey({ ...state, player: { col: 11, row: 1 } }));
+  });
 });
 
 describe('solveFloor (spec 8.1: the solver also calculates par)', () => {
@@ -67,5 +75,5 @@ describe('solveFloor (spec 8.1: the solver also calculates par)', () => {
   });
 });
 
-const GOLDEN_KEY = '11|1n0.0,4f0.3,5h3.3|3,10';
+const GOLDEN_KEY = '1.1|1n0.0,4f0.3,5h3.3|3,10';
 const GOLDEN_SEED_1_PAR = 5;
