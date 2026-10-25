@@ -8,7 +8,7 @@ import { sheepEntity, wolfEntity } from './board-ids.ts';
 import { cellBox, drawUnitShape, indexBox, inset, isPlaying } from './draw-parts.ts';
 
 import type { Frame, Grid } from './draw-parts.ts';
-import type { SheepView, WolfView } from './to-view.ts';
+import type { Sheep, Wolf } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -107,7 +107,7 @@ function dropScale(frame: Frame, entity: number): number {
   return drop.values[0] ?? 0;
 }
 
-function drawOneSheep(canvas: SkCanvas, frame: Frame, at: { grid: Grid; sheep: SheepView }): void {
+function drawOneSheep(canvas: SkCanvas, frame: Frame, at: { grid: Grid; sheep: Sheep }): void {
   const entity = sheepEntity(at.sheep.id);
   const isPenned = at.sheep.status === 'penned';
   if (isPenned && fxEntry(frame.fx, 'pos', entity) === undefined) return;
@@ -126,7 +126,7 @@ export function drawSheep(canvas: SkCanvas, frame: Frame, grid: Grid): void {
   for (const sheep of frame.view.sheep) drawOneSheep(canvas, frame, { grid, sheep });
 }
 
-function drawOneWolf(canvas: SkCanvas, frame: Frame, at: { grid: Grid; wolf: WolfView }): void {
+function drawOneWolf(canvas: SkCanvas, frame: Frame, at: { grid: Grid; wolf: Wolf }): void {
   const entity = wolfEntity(at.wolf.id);
   const rect = placeOf(frame, at.grid, { entity, cell: at.wolf.cell });
   const isSquashed = squash(canvas, frame, { entity, rect });
