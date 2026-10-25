@@ -4,6 +4,7 @@
 // asserted through the recording canvas: a 0.1 % golden cannot see a missing number), the next
 // enemy in the gate and the host's hinted ring.
 import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
+import { timelineEndMs } from '@e07/game-kit/timeline/track.ts';
 import { applyMove } from '@e07/merge-siege/rules/apply-move.ts';
 import { create } from '@e07/merge-siege/rules/create.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
@@ -155,5 +156,60 @@ describe('drawBoard', () => {
     const plain = draw({ tracks: [], atMs: 0 });
     const withHint = draw({ tracks: [], atMs: 0, highlight: { selected: null, hinted } });
     expect(withHint.calls.get('drawRRect')).toBe((plain.calls.get('drawRRect') ?? 0) + 1);
+  });
+});
+
+/** A paint that remembers its alpha the way Skia does: setColor takes the colour's, setAlphaf replaces it. */
+function alphaPaint(): { paint: SkPaint; alpha: () => number } {
+  let alpha = 1;
+  const paint = new Proxy(
+    {
+      setColor: (color: SkColor) => {
+        alpha = color[3] ?? 1;
+      },
+      setAlphaf: (value: number) => {
+        alpha = value;
+      },
+    },
+    { get: (target, name) => Reflect.get(target, name) ?? (() => undefined) },
+  ) as unknown as SkPaint;
+  return { paint, alpha: () => alpha };
+}
+
+/** The alpha of every fill and stroke draw over a whole turn, with every token at `tokenAlpha`. */
+function drawnAlphas(tokenAlpha: number): number[] {
+  const fill = alphaPaint();
+  const stroke = alphaPaint();
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        () =>
+        (...args: unknown[]) => {
+          if (args.includes(fill.paint)) seen.push(fill.alpha());
+          if (args.includes(stroke.paint)) seen.push(stroke.alpha());
+        },
+    },
+  ) as SkCanvas;
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const colors = {
+    ...COLORS,
+    color: Object.fromEntries(TOKENS.map((token) => [token, color])) as Record<BoardToken, SkColor>,
+  };
+  const kit = { ...KIT, fill: fill.paint, stroke: stroke.paint };
+  for (let atMs = 0; atMs <= timelineEndMs(TRACKS); atMs += 20) {
+    const fx = { ...sampleTimeline(TRACKS, atMs), pointer: IDLE_POINTER };
+    drawBoard(canvas, { view: VIEW, fx, highlight: EMPTY_HIGHLIGHT, colors, layout: LAYOUT, kit });
+  }
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  it("fades every piece, number and burst from the token's own alpha (board-rendering-skia)", () => {
+    const opaque = drawnAlphas(1);
+    const half = drawnAlphas(0.5);
+    expect(opaque.some((alpha) => alpha > 0 && alpha < 1)).toBe(true);
+    expect(half).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
   });
 });

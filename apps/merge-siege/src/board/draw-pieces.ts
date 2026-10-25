@@ -2,6 +2,7 @@
 'worklet';
 
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { textWidth } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { ENEMY_KIND, digitsOf } from './board-ids.ts';
@@ -58,11 +59,9 @@ function pieceRect(cell: Rect, scale: number): Rect {
 function drawTileBody(canvas: SkCanvas, frame: Frame, at: { rect: Rect; alpha: number }): void {
   const { kit, colors } = frame;
   const radius = at.rect.width * TILE_CORNER;
-  kit.fill.setColor(colors.color.tile);
-  kit.fill.setAlphaf(at.alpha);
+  setPaintColor(kit.fill, colors.color.tile, at.alpha);
   canvas.drawRRect({ rect: at.rect, rx: radius, ry: radius }, kit.fill);
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setAlphaf(at.alpha);
+  setPaintColor(kit.stroke, colors.color.edge, at.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, at.rect.width * EDGE));
   canvas.drawRRect({ rect: at.rect, rx: radius, ry: radius }, kit.stroke);
 }
@@ -72,10 +71,8 @@ function drawEnemyBody(canvas: SkCanvas, frame: Frame, at: { rect: Rect; alpha: 
   const { kit, colors } = frame;
   const { rect } = at;
   const spikes = kit.paths['enemy'];
-  kit.fill.setColor(colors.color.enemy);
-  kit.fill.setAlphaf(at.alpha);
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setAlphaf(at.alpha);
+  setPaintColor(kit.fill, colors.color.enemy, at.alpha);
+  setPaintColor(kit.stroke, colors.color.edge, at.alpha);
   if (spikes === undefined) {
     const radius = rect.width / 2;
     kit.stroke.setStrokeWidth(Math.max(1, rect.width * EDGE));
@@ -106,8 +103,8 @@ function drawNumber(canvas: SkCanvas, frame: Frame, piece: Shown & { readonly re
     (piece.rect.width * widthShare) / width,
     (piece.rect.height * heightShare) / size,
   );
-  frame.kit.fill.setColor(isEnemy ? frame.colors.color.enemyInk : frame.colors.color.tileInk);
-  frame.kit.fill.setAlphaf(piece.alpha);
+  const ink = isEnemy ? frame.colors.color.enemyInk : frame.colors.color.tileInk;
+  setPaintColor(frame.kit.fill, ink, piece.alpha);
   canvas.save();
   canvas.translate(
     piece.rect.x + piece.rect.width / 2,

@@ -4,6 +4,7 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { ENEMY_KIND, KIND_FROM_VIEW, NEXT_ENTITY, VALUE_FROM_VIEW } from './board-ids.ts';
 import { drawPiece } from './draw-pieces.ts';
@@ -169,10 +170,9 @@ function drawBursts(canvas: SkCanvas, frame: Frame): void {
       gravity: 380,
       lifeMs: 500,
     };
-    kit.fill.setColor(colors.color.burst);
     for (let i = 0; i < spec.count; i += 1) {
       const particle = sampleParticle(spec, i, burst.ageMs);
-      kit.fill.setAlphaf(particle.alpha);
+      setPaintColor(kit.fill, colors.color.burst, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, cell.width * 0.07, kit.fill);
     }
     kit.fill.setAlphaf(1);
