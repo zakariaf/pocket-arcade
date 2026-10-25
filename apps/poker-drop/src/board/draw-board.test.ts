@@ -199,3 +199,92 @@ describe('drawBoard', () => {
     expect(draw({ tracks: [], atMs: 0, view }).texts).toContain('۱');
   });
 });
+
+/** A paint that acts like Skia's: setColor takes the colour's own alpha, setAlphaf replaces it. */
+function tokenPaint(token: SkColor): {
+  paint: SkPaint;
+  alpha: () => number;
+  isToken: () => boolean;
+} {
+  let alpha = 1;
+  let isToken = false;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') {
+          isToken = value === token;
+          alpha = (value as SkColor)[3] ?? 1;
+        }
+        if (name === 'setAlphaf' && typeof value === 'number') alpha = value;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha, isToken: () => isToken };
+}
+
+type TokenSite = {
+  readonly token: BoardToken;
+  readonly paint: 'fill' | 'stroke';
+  readonly call: string;
+};
+
+const LIFTED = (() => {
+  const lost = { ...create(2, 0), cells: create(2, 0).cells.map((_, index) => index % 52) };
+  const result = continueAfterLoss(lost);
+  return { view: toView(result.state, PERSIAN), tracks: buildTimeline(result.events, 'full') };
+})();
+const OVERFLOW = buildTimeline([{ kind: 'well-overflowed', atMs: 0 }], 'full');
+const SCENES = [{ view: VIEW, tracks: TRACKS }, LIFTED, { view: VIEW, tracks: OVERFLOW }];
+
+/** The alpha of every `call` drawn with `token`, over every 25 ms of three scenes, at `tokenAlpha`. */
+function tokenAlphas(site: TokenSite, tokenAlpha: number): number[] {
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const probe = tokenPaint(color);
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (name === site.call && args.includes(probe.paint) && probe.isToken()) {
+            seen.push(probe.alpha());
+          }
+        },
+    },
+  ) as SkCanvas;
+  const colors = { ...COLORS, color: { ...COLORS.color, [site.token]: color } };
+  const kit = { ...KIT, [site.paint]: probe.paint };
+  for (const scene of SCENES) {
+    const layout = layoutBoard({ width: 390, height: 560, view: scene.view, isMirrored: false });
+    const end = timelineEndMs(scene.tracks);
+    for (let atMs = 0; atMs <= end; atMs += 25) {
+      const fx = { ...sampleTimeline(scene.tracks, atMs), pointer: IDLE_POINTER };
+      drawBoard(canvas, { view: scene.view, fx, highlight: EMPTY_HIGHLIGHT, colors, layout, kit });
+    }
+  }
+  return seen;
+}
+
+// spec 8.12: the board draws from its palette tokens; a fade multiplies a translucent token's own
+// alpha instead of replacing it (setPaintColor, check-board-code token-alpha).
+describe('drawBoard with a translucent token', () => {
+  it.each<TokenSite>([
+    { token: 'warn', paint: 'stroke', call: 'drawRRect' },
+    { token: 'edge', paint: 'stroke', call: 'drawRRect' },
+    { token: 'burst', paint: 'stroke', call: 'drawRRect' },
+    { token: 'burst', paint: 'stroke', call: 'drawLine' },
+    { token: 'burst', paint: 'fill', call: 'drawCircle' },
+    { token: 'card', paint: 'fill', call: 'drawRRect' },
+    { token: 'rank', paint: 'fill', call: 'drawText' },
+  ])('fades $token on its $paint ($call) from the token’s own alpha', (site) => {
+    const opaque = tokenAlphas(site, 1);
+    expect(opaque.some((alpha) => alpha < 1)).toBe(true);
+    const half = tokenAlphas(site, 0.5);
+    expect(half).toHaveLength(opaque.length);
+    half.forEach((alpha, index) => {
+      expect(alpha).toBeCloseTo((opaque[index] ?? 0) * 0.5, 5);
+    });
+  });
+});

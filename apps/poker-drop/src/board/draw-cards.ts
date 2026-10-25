@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, goneEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawCard } from './draw-card.ts';
@@ -99,8 +100,7 @@ function drawGlow(
     width: face.width + 2 * out,
     height: face.height + 2 * out,
   };
-  frame.kit.stroke.setColor(frame.colors.color.burst);
-  frame.kit.stroke.setAlphaf(1 - progress);
+  setPaintColor(frame.kit.stroke, frame.colors.color.burst, 1 - progress);
   frame.kit.stroke.setStrokeWidth(Math.max(2, face.width * 0.12));
   canvas.drawRRect({ rect: ring, rx: face.width * 0.2, ry: face.width * 0.2 }, frame.kit.stroke);
   frame.kit.stroke.setAlphaf(1);

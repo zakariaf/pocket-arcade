@@ -3,6 +3,7 @@
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { burstEntity } from './board-ids.ts';
 import { drawScaledText } from './draw-card.ts';
@@ -33,8 +34,7 @@ function drawLine(canvas: SkCanvas, frame: Frame, order: number): void {
   const dx = (to.x - from.x) * reach;
   const dy = (to.y - from.y) * reach;
   const { stroke } = frame.kit;
-  stroke.setColor(frame.colors.color.burst);
-  stroke.setAlphaf(LINE_ALPHA * (1 - line.progress));
+  setPaintColor(stroke, frame.colors.color.burst, LINE_ALPHA * (1 - line.progress));
   stroke.setStrokeWidth(from.cell * LINE_WIDTH);
   canvas.drawLine(from.x - dx, from.y - dy, to.x + dx, to.y + dy, stroke);
   stroke.setAlphaf(1);
@@ -56,10 +56,9 @@ function drawParticles(canvas: SkCanvas, frame: Frame, order: number): void {
     lifeMs: 600,
   };
   const { fill } = frame.kit;
-  fill.setColor(frame.colors.color.burst);
   for (let i = 0; i < spec.count; i += 1) {
     const particle = sampleParticle(spec, i, burst.ageMs);
-    fill.setAlphaf(particle.alpha);
+    setPaintColor(fill, frame.colors.color.burst, particle.alpha);
     canvas.drawCircle(particle.x, particle.y, centre.cell * 0.07, fill);
   }
   fill.setAlphaf(1);

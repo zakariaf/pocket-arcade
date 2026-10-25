@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { TURN_ENTITY } from './board-ids.ts';
 import { drawGoneCards, drawWellCards } from './draw-cards.ts';
@@ -30,8 +31,7 @@ function drawWell(canvas: SkCanvas, frame: Frame, rect: Rect): void {
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
   const overflow = fxEntry(frame.fx, 'overflow', TURN_ENTITY);
   if (!isPlaying(overflow)) return;
-  kit.stroke.setColor(colors.color.warn);
-  kit.stroke.setAlphaf(valueAt(overflow, 0));
+  setPaintColor(kit.stroke, colors.color.warn, valueAt(overflow, 0));
   kit.stroke.setStrokeWidth(8);
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
   kit.stroke.setAlphaf(1);

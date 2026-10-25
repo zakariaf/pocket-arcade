@@ -1,6 +1,7 @@
 // apps/poker-drop/src/board/draw-card.ts
 'worklet';
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { textWidth } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { rankText, suitName } from './board-ids.ts';
@@ -44,8 +45,7 @@ export function drawScaledText(canvas: SkCanvas, label: BoxedText, ink: Ink): vo
 }
 
 function setFill(frame: Frame, color: SkColor, alpha: number): SkPaint {
-  frame.kit.fill.setColor(color);
-  frame.kit.fill.setAlphaf(alpha);
+  setPaintColor(frame.kit.fill, color, alpha);
   return frame.kit.fill;
 }
 
@@ -74,8 +74,7 @@ export function drawCard(canvas: SkCanvas, frame: Frame, face: CardFace): void {
   const { rect } = face;
   const corner = rect.width * CORNER;
   canvas.drawRRect({ rect, rx: corner, ry: corner }, setFill(frame, colors.color.card, face.alpha));
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setAlphaf(face.alpha);
+  setPaintColor(kit.stroke, colors.color.edge, face.alpha);
   kit.stroke.setStrokeWidth(Math.max(1, rect.width * EDGE));
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
   kit.stroke.setAlphaf(1);
