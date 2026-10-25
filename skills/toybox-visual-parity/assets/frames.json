@@ -80,6 +80,14 @@
         "progressFullParams": { "smashed": 12, "total": 12 },
         "loseReasonId": "merge-siege.lose.overrun"
       },
+      "jumpChain": {
+        "gameStats": ["1,462", "318", "×5"],
+        "progressMid": "7 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "captured": 7, "total": 12 },
+        "progressFullParams": { "captured": 12, "total": 12 },
+        "loseReasonId": "jump-chain.lose.overrun"
+      },
       "trailClear": {
         "gameStats": ["214", "1,386", "9"],
         "progressMid": "12 / 30",
@@ -304,6 +312,11 @@
         "tiles-merged": 2876,
         "biggest-tile": 512
       },
+      "jumpChain": {
+        "pieces-captured": 1462,
+        "ranks-cleared": 318,
+        "longest-chain": 5
+      },
       "trailClear": {
         "loops-closed": 214,
         "tiles-placed": 1386,
@@ -372,6 +385,11 @@
           "progressMid": { "smashed": 5, "total": 12 },
           "progressFull": { "smashed": 12, "total": 12 },
           "loseReasonId": "merge-siege.lose.overrun"
+        },
+        "jumpChain": {
+          "progressMid": { "captured": 7, "total": 12 },
+          "progressFull": { "captured": 12, "total": 12 },
+          "loseReasonId": "jump-chain.lose.overrun"
         },
         "trailClear": {
           "progressMid": { "placed": 12, "total": 30 },
