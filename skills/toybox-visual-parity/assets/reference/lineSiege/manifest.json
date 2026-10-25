@@ -1,9 +1,9 @@
 {
  "version": 1,
  "game": "lineSiege",
- "rendered": "2026-09-30",
+ "rendered": "2026-10-25",
  "renderer": {
-  "chrome": "154.0.8037.58",
+  "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "01ba656b7ccd4ed68b0c71d40fc767fd8c035270e918939afe43bd0eddc53743",
-  "map": "6384486374201b48c7838fee37ef07311746fbf77d9bfb7e8a0aa0a0fa7bb51b",
-  "frames": "8b631d666f9d44d9825891be91a012605c43fee7f7e54da70f05ed9c3f40c765",
+  "design": "e5e0fc09ea5f3963153e9aa51d47f2c641f54b5b08fd276763e973586af389ba",
+  "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
+  "frames": "69e9418332b59e0ef2bae8a8e72317667cf58a856e457fa22b934e6284e48092",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1804,12 +1804,68 @@
    "why": "The round-4 gates read these measurements; no design input changed for them, so no other pixel moved (lead, 2026-09-30)."
   },
   {
+   "id": "G-snare-snake",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Snare Snake added to the design as a design game: its paint, logo and texts in the mockup, the token file and the copy deck, and its sample counters in the fixture. The manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en, which came out byte-identical; no committed PNG or layout moved. Chrome 155 (installed after the 2026-09-30 render) moves 156 pixels of s7-result-win and s7-result-win--score in light-fa and dark-fa on its own: that drift is left for the lead and is not re-rendered here.",
+   "why": "spec 13: its design pass (epic E21-T01), drafted 2026-10-19 with the proposed defaults; the owner's approval comes with the design notes, and the drafted design applies until then."
+  },
+  {
+   "id": "G-snare-snake-logo-layers",
+   "date": "2026-10-24",
+   "frames": [],
+   "variants": [],
+   "what": "Snare Snake's logo draws its four ring marks and the ladybird's wing line as one ink-line (kl) layer instead of two, so the logo has the eight layers the new-logo recipe allows. Rendered before and after, the snareSnake logo frames differ only in 16 to 30 anti-aliased edge pixels per frame; no line siege frame uses the logo. The manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en; no committed PNG or layout moved.",
+   "why": "spec 8.12 and the new-logo recipe of code-drawn-art-and-icons (at most eight layers), found when E21-T13 drew the logo in code (lead's helper, 2026-10-24)."
+  },
+  {
+   "id": "G-merge-siege",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Merge Siege added to the design as a design game. No frame or variant changed: the design, map and frames inputs of this manifest were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render) after a full --check found every other frame unchanged, apart from the four fa s7-result-win renders that already drift on main (Chrome 154 to 155, 156 pixels each, left as they are)",
+   "why": "spec 13: its design pass, drafted on 2026-10-19 with the proposed defaults; the owner approves it with the E22-T01 message (pending), and the drafted design applies meanwhile"
+  },
+  {
+   "id": "G-merge-siege-with-snare-snake",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-jump-chain",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Jump Chain added to the design as a design game. No reference PNG or layout changed: the manifest inputs were refreshed by re-rendering s4-home light-en alone (byte-identical, Chrome 155), and again by one --update-reference render of s1-splash light-en after main (Snare Snake) was merged in on 2026-10-25; no committed PNG or layout moved. The four fa s7-result-win PNGs that Chrome 155 draws 156 pixels apart from the Chrome 154 set were already apart before this change and were left as rendered.",
+   "why": "spec 13: its design pass (E23-T01), sent to the owner for approval on 2026-10-19 with the drafted design as the default"
+  },
+  {
+   "id": "G-jump-chain-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E23 put Merge Siege and Jump Chain into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
    "id": "G-toggle-drop",
    "date": "2026-10-19",
    "frames": [],
    "variants": [],
    "what": "Toggle Drop added to the design as a design game: its paint in light and dark, its logo, its sample counters and its texts in en, de, fa and ckb, beside Line Siege, Flock Tilt and Scrap Shove. Only the design input (inputs.design) was recorded; no Line Siege frame or variant changed, and none was re-rendered.",
    "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
+  },
+  {
+   "id": "G-toggle-drop-with-five-games",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege and Jump Chain (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; Toggle Drop's pass was drafted on its own branch and is joined here (lead's helper, 2026-10-25)."
   }
  ]
 }

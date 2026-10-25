@@ -1033,6 +1033,407 @@
         }
       ]
     },
+    "snareSnake": {
+      "id": "snare-snake",
+      "modes": [
+        "levels",
+        "daily"
+      ],
+      "name": {
+        "en": "Snare Snake",
+        "de": "Snare Snake",
+        "fa": "Snare Snake",
+        "ckb": "Snare Snake"
+      },
+      "tagline": {
+        "en": "Loop the snake. Snare the critters.",
+        "de": "Leg die Schlinge. Fang die Krabbler.",
+        "fa": "مار را حلقه کنید و جانورها را به دام بیندازید.",
+        "ckb": "مارەکە بکە بە ئەڵقە و گیانلەبەرەکان بگرە."
+      },
+      "goal": {
+        "en": "Catch every critter before your moves run out.",
+        "de": "Fang jeden Krabbler, bevor deine Züge aufgebraucht sind.",
+        "fa": "پیش از تمام شدن حرکت‌ها، همهٔ جانورها را بگیرید.",
+        "ckb": "پێش ئەوەی جووڵەکانت تەواو ببن، هەموو گیانلەبەرەکان بگرە."
+      },
+      "progress": {
+        "en": "Critters {caught, number} / {total, number}",
+        "de": "Krabbler {caught, number} / {total, number}",
+        "fa": "جانور {caught, number} / {total, number}",
+        "ckb": "گیانلەبەر {caught, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Every critter snared!",
+        "de": "Alle Krabbler gefangen!",
+        "fa": "همهٔ جانورها به دام افتادند!",
+        "ckb": "هەموو گیانلەبەرەکان گیران!"
+      },
+      "loseReason": {
+        "en": "The snake got tangled",
+        "de": "Die Schlange hat sich verknotet",
+        "fa": "مار گره خورد",
+        "ckb": "مارەکە گرێی خوارد"
+      },
+      "stats": {
+        "crittersCaught": {
+          "en": "Critters caught",
+          "de": "Krabbler gefangen",
+          "fa": "جانورهای گرفته‌شده",
+          "ckb": "گیانلەبەری گیراو"
+        },
+        "loopsClosed": {
+          "en": "Loops closed",
+          "de": "Schlingen geschlossen",
+          "fa": "حلقه‌های بسته‌شده",
+          "ckb": "ئەڵقەی داخراو"
+        },
+        "longestSnake": {
+          "en": "Longest snake",
+          "de": "Längste Schlange",
+          "fa": "بلندترین مار",
+          "ckb": "درێژترین مار"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Swipe to steer the snake one cell at a time.",
+          "de": "Wisch, um die Schlange Feld für Feld zu lenken.",
+          "fa": "انگشتتان را بکشید تا مار یک خانه جلو برود.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە خانەیەک بڕوات."
+        },
+        {
+          "en": "Critters freeze when the snake is next to them.",
+          "de": "Krabbler erstarren, wenn die Schlange neben ihnen ist.",
+          "fa": "جانورها وقتی مار کنارشان باشد، از جایشان تکان نمی‌خورند.",
+          "ckb": "گیانلەبەرەکان کاتێک مارەکە لە تەنیشتیانە، ناجووڵێن."
+        },
+        {
+          "en": "Bump into your own body to close a loop.",
+          "de": "Stoß an deinen eigenen Körper, um eine Schlinge zu schließen.",
+          "fa": "سر مار را به بدنش برسانید تا حلقه بسته شود.",
+          "ckb": "سەری مارەکە بگەیەنە لەشی خۆی بۆ داخستنی ئەڵقەیەک."
+        },
+        {
+          "en": "Critters in or next to the loop are caught, and the loop uses up its segments.",
+          "de": "Krabbler in oder neben der Schlinge sind gefangen, und die Schlinge kostet ihre Glieder.",
+          "fa": "جانورهای داخل یا کنار حلقه گرفته می‌شوند و حلقه بندهای خودش را مصرف می‌کند.",
+          "ckb": "گیانلەبەرەکانی ناو ئەڵقەکە یان تەنیشتی دەگیرێن، و ئەڵقەکە بەشەکانی خۆی بەکاردەهێنێت."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Swipe to steer the snake into the gap.",
+          "de": "Wisch, um die Schlange in die Lücke zu lenken.",
+          "fa": "انگشتتان را بکشید تا مار وارد شکاف شود.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی مارەکە بچێتە ناو کەلێنەکە."
+        },
+        {
+          "en": "Keep going: the critters freeze beside you.",
+          "de": "Weiter so: Die Krabbler neben dir erstarren.",
+          "fa": "ادامه دهید؛ جانورهای کنار مار تکان نمی‌خورند.",
+          "ckb": "بەردەوام بە؛ گیانلەبەرەکانی تەنیشتت ناجووڵێن."
+        },
+        {
+          "en": "Now bump into your body to close the loop!",
+          "de": "Jetzt stoß an deinen Körper und schließ die Schlinge!",
+          "fa": "حالا سر مار را به بدنش برسانید و حلقه را ببندید!",
+          "ckb": "ئێستا سەری مارەکە بگەیەنە لەشی و ئەڵقەکە دابخە!"
+        },
+        {
+          "en": "Snared! Catch the rest before your moves run out.",
+          "de": "Gefangen! Fang den Rest, bevor deine Züge aufgebraucht sind.",
+          "fa": "به دام افتادند! بقیه را پیش از تمام شدن حرکت‌ها بگیرید.",
+          "ckb": "گیران! ئەوانی تر بگرە پێش ئەوەی جووڵەکانت تەواو ببن."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Garden patch",
+          "de": "Gartenbeet",
+          "fa": "باغچه",
+          "ckb": "باخچە"
+        },
+        {
+          "en": "Mossy rocks",
+          "de": "Moosige Felsen",
+          "fa": "سنگ‌های خزه‌پوش",
+          "ckb": "بەردە قەوزاوییەکان"
+        },
+        {
+          "en": "Bramble wood",
+          "de": "Brombeerwald",
+          "fa": "جنگل تمشک",
+          "ckb": "دارستانی دڕک"
+        }
+      ]
+    },
+    "mergeSiege": {
+      "id": "merge-siege",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Merge Siege",
+        "de": "Merge Siege",
+        "fa": "Merge Siege",
+        "ckb": "Merge Siege"
+      },
+      "tagline": {
+        "en": "Merge your tiles. Smash the siege.",
+        "de": "Verschmelz deine Kacheln. Zerschlag die Belagerung.",
+        "fa": "کاشی‌ها را ادغام کنید و محاصره را بشکنید.",
+        "ckb": "کاشییەکان یەک بخە و گەمارۆکە بشکێنە."
+      },
+      "goal": {
+        "en": "Smash every enemy before one reaches your bottom row.",
+        "de": "Zerschlag jeden Gegner, bevor einer deine unterste Reihe erreicht.",
+        "fa": "همهٔ دشمنان را پیش از اینکه یکی به ردیف پایینی شما برسد، درهم بکوبید.",
+        "ckb": "هەموو دوژمنەکان تێکبشکێنە پێش ئەوەی یەکێکیان بگاتە ڕیزی خوارەوەت."
+      },
+      "progress": {
+        "en": "Enemies {smashed, number} / {total, number}",
+        "de": "Gegner {smashed, number} / {total, number}",
+        "fa": "دشمن {smashed, number} / {total, number}",
+        "ckb": "دوژمن {smashed, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "The siege is broken!",
+        "de": "Die Belagerung ist gebrochen!",
+        "fa": "محاصره شکسته شد!",
+        "ckb": "گەمارۆکە شکێندرا!"
+      },
+      "loseReason": {
+        "en": "The enemies overran the board",
+        "de": "Die Gegner haben das Feld überrannt",
+        "fa": "دشمنان صفحه را تسخیر کردند",
+        "ckb": "دوژمنەکان تەختەکەیان داگیر کرد"
+      },
+      "stats": {
+        "enemiesSmashed": {
+          "en": "Enemies smashed",
+          "de": "Zerschlagene Gegner",
+          "fa": "دشمنان درهم‌کوبیده",
+          "ckb": "دوژمنی تێکشکاو"
+        },
+        "tilesMerged": {
+          "en": "Tiles merged",
+          "de": "Verschmolzene Kacheln",
+          "fa": "کاشی‌های ادغام‌شده",
+          "ckb": "کاشیی یەکخراو"
+        },
+        "biggestTile": {
+          "en": "Biggest tile",
+          "de": "Größte Kachel",
+          "fa": "بزرگ‌ترین کاشی",
+          "ckb": "گەورەترین کاشی"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Swipe to slide all your tiles at once.",
+          "de": "Wisch, um alle deine Kacheln auf einmal zu schieben.",
+          "fa": "انگشتتان را بکشید تا همهٔ کاشی‌ها با هم سر بخورند.",
+          "ckb": "پەنجە ڕابکێشە بۆ ئەوەی هەموو کاشییەکانت پێکەوە بخلیسکێن."
+        },
+        {
+          "en": "Two equal tiles merge into one bigger tile.",
+          "de": "Zwei gleiche Kacheln verschmelzen zu einer größeren.",
+          "fa": "دو کاشی هم‌عدد با هم یکی می‌شوند و کاشی بزرگ‌تری می‌سازند.",
+          "ckb": "دوو کاشیی وەک یەک دەبنە یەک کاشیی گەورەتر."
+        },
+        {
+          "en": "A tile smashes any enemy with the same number or a smaller one.",
+          "de": "Eine Kachel zerschlägt jeden Gegner mit gleicher oder kleinerer Zahl.",
+          "fa": "هر کاشی، دشمنی با عدد برابر یا کوچک‌تر را درهم می‌کوبد.",
+          "ckb": "کاشی هەر دوژمنێک بە ژمارەی یەکسان یان بچووکتر تێکدەشکێنێت."
+        },
+        {
+          "en": "Enemies march down as you swipe. Keep them off your bottom row.",
+          "de": "Die Gegner rücken vor, während du wischst. Halte sie von deiner untersten Reihe fern.",
+          "fa": "دشمنان همراه با کشیدن‌های شما پایین می‌آیند. نگذارید به ردیف پایینی برسند.",
+          "ckb": "دوژمنەکان لەگەڵ ڕاکێشانەکانت دادەبەزن. مەهێڵە بگەنە ڕیزی خوارەوەت."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Swipe up to send your tiles at the enemies.",
+          "de": "Wisch nach oben und schick deine Kacheln auf die Gegner.",
+          "fa": "انگشتتان را به بالا بکشید تا کاشی‌ها به دشمنان بخورند.",
+          "ckb": "پەنجە بۆ سەرەوە ڕابکێشە بۆ ئەوەی کاشییەکانت بەر دوژمنەکان بکەون."
+        },
+        {
+          "en": "Equal tiles merge. Swipe sideways to join them.",
+          "de": "Gleiche Kacheln verschmelzen. Wisch zur Seite, um sie zu verbinden.",
+          "fa": "کاشی‌های هم‌عدد ادغام می‌شوند. به پهلو بکشید تا یکی شوند.",
+          "ckb": "کاشیی وەک یەک یەک دەگرن. بۆ لاوە ڕایبکێشە بۆ ئەوەی یەک ببن."
+        },
+        {
+          "en": "A bigger tile smashes a bigger enemy. Swipe up!",
+          "de": "Eine größere Kachel zerschlägt einen größeren Gegner. Wisch nach oben!",
+          "fa": "کاشی بزرگ‌تر دشمن بزرگ‌تر را درهم می‌کوبد. به بالا بکشید!",
+          "ckb": "کاشیی گەورەتر دوژمنی گەورەتر تێکدەشکێنێت. بۆ سەرەوە ڕایبکێشە!"
+        },
+        {
+          "en": "Smash the last enemy before it reaches your bottom row.",
+          "de": "Zerschlag den letzten Gegner, bevor er deine unterste Reihe erreicht.",
+          "fa": "آخرین دشمن را پیش از رسیدن به ردیف پایینی درهم بکوبید.",
+          "ckb": "دوا دوژمن تێکبشکێنە پێش ئەوەی بگاتە ڕیزی خوارەوەت."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Outer gate",
+          "de": "Äußeres Tor",
+          "fa": "دروازهٔ بیرونی",
+          "ckb": "دەروازەی دەرەوە"
+        },
+        {
+          "en": "Inner wall",
+          "de": "Innere Mauer",
+          "fa": "دیوار درونی",
+          "ckb": "دیواری ناوەوە"
+        },
+        {
+          "en": "Grand keep",
+          "de": "Großer Bergfried",
+          "fa": "برج اصلی",
+          "ckb": "قەڵای سەرەکی"
+        }
+      ]
+    },
+    "jumpChain": {
+      "id": "jump-chain",
+      "modes": [
+        "levels",
+        "daily",
+        "endless"
+      ],
+      "name": {
+        "en": "Jump Chain",
+        "de": "Jump Chain",
+        "fa": "Jump Chain",
+        "ckb": "Jump Chain"
+      },
+      "tagline": {
+        "en": "Jump, then jump again. Clear the ranks.",
+        "de": "Spring und spring weiter. Räum die Reihen ab.",
+        "fa": "بپرید و باز هم بپرید. صف‌ها را پاک کنید.",
+        "ckb": "باز بدە و دووبارە باز بدە. ڕیزەکان پاک بکەرەوە."
+      },
+      "goal": {
+        "en": "Capture every enemy piece before the ranks reach your side.",
+        "de": "Schlag alle gegnerischen Steine, bevor die Reihen deine Seite erreichen.",
+        "fa": "همهٔ مهره‌های حریف را بگیرید، پیش از آنکه صف‌ها به سمت شما برسند.",
+        "ckb": "هەموو بەردەکانی دوژمن بگرە پێش ئەوەی ڕیزەکان بگەنە لای تۆ."
+      },
+      "progress": {
+        "en": "Captured {captured, number} / {total, number}",
+        "de": "Geschlagen {captured, number} / {total, number}",
+        "fa": "گرفته‌شده {captured, number} / {total, number}",
+        "ckb": "گیراو {captured, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Board cleared!",
+        "de": "Brett geräumt!",
+        "fa": "صفحه پاک شد!",
+        "ckb": "تەختەکە پاک کرایەوە!"
+      },
+      "loseReason": {
+        "en": "The enemy ranks reached your side",
+        "de": "Die gegnerischen Reihen haben deine Seite erreicht",
+        "fa": "صف‌های حریف به سمت شما رسیدند",
+        "ckb": "ڕیزەکانی دوژمن گەیشتنە لای تۆ"
+      },
+      "stats": {
+        "piecesCaptured": {
+          "en": "Pieces captured",
+          "de": "Geschlagene Steine",
+          "fa": "مهره‌های گرفته‌شده",
+          "ckb": "بەردی گیراو"
+        },
+        "ranksCleared": {
+          "en": "Ranks cleared",
+          "de": "Geräumte Reihen",
+          "fa": "صف‌های پاک‌شده",
+          "ckb": "ڕیزی پاککراو"
+        },
+        "longestChain": {
+          "en": "Longest chain",
+          "de": "Längste Kette",
+          "fa": "بلندترین زنجیره",
+          "ckb": "درێژترین زنجیرە"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Drag your piece one square diagonally, or tap where it should go.",
+          "de": "Zieh deinen Stein ein Feld schräg oder tipp auf das Zielfeld.",
+          "fa": "مهرهٔ خود را یک خانه مورب بکشید، یا روی خانهٔ مقصد بزنید.",
+          "ckb": "بەردەکەت خانەیەک بە لار ڕابکێشە، یان دەست لە خانەی مەبەست بدە."
+        },
+        {
+          "en": "Jump over an enemy next to you to capture it.",
+          "de": "Spring über einen Gegner neben dir, um ihn zu schlagen.",
+          "fa": "از روی مهرهٔ حریفِ کنارتان بپرید تا آن را بگیرید.",
+          "ckb": "بەسەر دوژمنێکی تەنیشتتدا باز بدە بۆ ئەوەی بیگریت."
+        },
+        {
+          "en": "Land next to the next enemy and keep jumping: one chain can capture a whole rank.",
+          "de": "Lande neben dem nächsten Gegner und spring weiter: Eine Kette kann eine ganze Reihe schlagen.",
+          "fa": "کنار حریف بعدی فرود بیایید و باز هم بپرید: یک زنجیره می‌تواند یک صف کامل را بگیرد.",
+          "ckb": "لە تەنیشت دوژمنی دواتر دابەزە و بەردەوام باز بدە: یەک زنجیرە دەتوانێت ڕیزێکی تەواو بگرێت."
+        },
+        {
+          "en": "Every few moves the enemy ranks advance. Don’t let them reach your side!",
+          "de": "Alle paar Züge rücken die gegnerischen Reihen vor. Lass sie nicht bis zu deiner Seite kommen!",
+          "fa": "هر چند حرکت یک بار صف‌های حریف جلو می‌آیند. نگذارید به سمت شما برسند!",
+          "ckb": "هەر چەند جووڵەیەک جارێک ڕیزەکانی دوژمن دێنە پێشەوە. مەهێڵە بگەنە لای تۆ!"
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Drag your piece one square up, next to the enemy.",
+          "de": "Zieh deinen Stein ein Feld nach oben, neben den Gegner.",
+          "fa": "مهرهٔ خود را یک خانه بالا ببرید، کنار حریف.",
+          "ckb": "بەردەکەت خانەیەک بەرەو سەرەوە ڕابکێشە، بۆ تەنیشت دوژمن."
+        },
+        {
+          "en": "Now jump! Drag over the enemies to capture them in a chain.",
+          "de": "Jetzt spring! Zieh über die Gegner, um sie in einer Kette zu schlagen.",
+          "fa": "حالا بپرید! از روی حریف‌ها بکشید تا آن‌ها را زنجیره‌وار بگیرید.",
+          "ckb": "ئێستا باز بدە! بەسەر دوژمنەکاندا ڕابکێشە بۆ ئەوەی بە زنجیرە بیانگریت."
+        },
+        {
+          "en": "The ranks advanced. Jump again before they reach your side.",
+          "de": "Die Reihen sind vorgerückt. Spring wieder, bevor sie deine Seite erreichen.",
+          "fa": "صف‌ها جلو آمدند. پیش از آنکه به سمت شما برسند، دوباره بپرید.",
+          "ckb": "ڕیزەکان هاتنە پێشەوە. پێش ئەوەی بگەنە لای تۆ دووبارە باز بدە."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Opening moves",
+          "de": "Eröffnung",
+          "fa": "شروع بازی",
+          "ckb": "دەستپێک"
+        },
+        {
+          "en": "Middle game",
+          "de": "Mittelspiel",
+          "fa": "وسط بازی",
+          "ckb": "ناوەڕاستی یاری"
+        },
+        {
+          "en": "Endgame",
+          "de": "Endspiel",
+          "fa": "پایان بازی",
+          "ckb": "کۆتایی یاری"
+        }
+      ]
+    },
     "toggleDrop": {
       "id": "toggle-drop",
       "modes": [

@@ -4,6 +4,7 @@ import { screen, userEvent } from '@testing-library/react-native';
 import { GameLayout } from '@e07/shell/screens/game/game-layout.tsx';
 import { findInaccessiblePressables } from '@e07/shell/testing/find-inaccessible-pressables.ts';
 import { renderWithShell } from '@e07/shell/testing/render-with-shell.tsx';
+import { COMPONENT_SPECS } from '@e07/shell/ui/component-specs.ts';
 
 import { GameTopBar } from './game-top-bar.tsx';
 
@@ -71,6 +72,22 @@ describe('GameTopBar', () => {
 
     await user.press(screen.getByRole('button', { name: 'Hint' }));
     expect(hint.onPress).toHaveBeenCalledTimes(1);
+    expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
+  });
+
+  it('draws an inert tool raised at rest but unpressable (the bar under the Pause scrim)', async () => {
+    const hint = { label: 'Hint', isAvailable: false, isInert: true, onPress: jest.fn() };
+    const user = userEvent.setup();
+    await renderWithShell(<GameTopBar {...propsWith({ hint })} />);
+
+    const key = screen.getByRole('button', { name: 'Hint' });
+    await user.press(key);
+    expect(key).toBeDisabled();
+    expect(hint.onPress).not.toHaveBeenCalled();
+    // allow-style-assertion: the inert key stays raised (a disabled key sinks by its elevation)
+    expect(screen.getByTestId('game.hint-button')).not.toHaveStyle({
+      top: COMPONENT_SPECS.iconButton.elevation,
+    });
     expect(findInaccessiblePressables(screen.container)).toStrictEqual([]);
   });
 

@@ -1,8 +1,38 @@
 {
   "version": 1,
   "games": {
+    "flock-tilt": {
+      "designGame": "flockTilt",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "line-siege": {
       "designGame": "lineSiege",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
+    "scrap-shove": {
+      "designGame": "scrapShove",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
+    "snare-snake": {
+      "designGame": "snareSnake",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
+    "merge-siege": {
+      "designGame": "mergeSiege",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
+    },
+    "jump-chain": {
+      "designGame": "jumpChain",
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false

@@ -1,0 +1,62 @@
+{
+  "light": {
+    "background": "#EAE3FB",
+    "cell": "#DCD1F7",
+    "snake": "#3FA34D",
+    "head": "#2E8A3C",
+    "edge": "#1D1B3A",
+    "eye": "#FFFFFF",
+    "critter": "#FF6F9F",
+    "spot": "#1D1B3A",
+    "frost": "#1F5FCC",
+    "glow": "#FFD23F",
+    "badge": "#FCFAFF",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A"
+  },
+  "dark": {
+    "background": "#14372F",
+    "cell": "#1B4A40",
+    "snake": "#6CCB5F",
+    "head": "#8EDF7F",
+    "edge": "#D4F7EA",
+    "eye": "#FFFFFF",
+    "critter": "#FF8DB8",
+    "spot": "#04120F",
+    "frost": "#8CC4FF",
+    "glow": "#FFD84D",
+    "badge": "#173E36",
+    "label": "#F0FFF9",
+    "hint": "#D4F7EA"
+  },
+  "colorBlindLight": {
+    "background": "#EAE3FB",
+    "cell": "#DCD1F7",
+    "snake": "#0072B2",
+    "head": "#005A8C",
+    "edge": "#1D1B3A",
+    "eye": "#FFFFFF",
+    "critter": "#E69F00",
+    "spot": "#1D1B3A",
+    "frost": "#1D1B3A",
+    "glow": "#F0E442",
+    "badge": "#FCFAFF",
+    "label": "#1D1B3A",
+    "hint": "#1D1B3A"
+  },
+  "colorBlindDark": {
+    "background": "#14372F",
+    "cell": "#1B4A40",
+    "snake": "#56B4E9",
+    "head": "#8FD0F5",
+    "edge": "#D4F7EA",
+    "eye": "#FFFFFF",
+    "critter": "#E69F00",
+    "spot": "#04120F",
+    "frost": "#F0FFF9",
+    "glow": "#F0E442",
+    "badge": "#173E36",
+    "label": "#F0FFF9",
+    "hint": "#D4F7EA"
+  }
+}

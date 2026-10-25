@@ -2,7 +2,7 @@
 import { pieceAt } from '@e07/line-siege/rules/pieces.ts';
 
 import { drawBoard } from './draw-board.ts';
-import { DRAG_LIFT_PT, layoutBoard } from './layout-board.ts';
+import { DRAG_LIFT_PT, layoutBoard, targetRectOf } from './layout-board.ts';
 import { toView } from './to-view.ts';
 
 import type { BoardToken } from './board-palettes.ts';
@@ -62,4 +62,6 @@ export const lineSiegeBoard: GameBoard<LineSiegeState, LineSiegeView, BoardToken
     values: { monstersCount: view.monsters.length, heartsCount: view.hearts },
   }),
   targetsOfMove,
+  // The tray lies in a row or a column: the tutorial hand starts on the slot as drawn.
+  targetRect: targetRectOf,
 };

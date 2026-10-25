@@ -4,7 +4,7 @@
 import { cellRect, fitGrid } from '@e07/game-kit/geom/board-layout.ts';
 
 import type { LineSiegeView } from './to-view.ts';
-import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { LayoutInput } from '@e07/shell/game-host/board-types.ts';
 
 /**
@@ -95,6 +95,16 @@ export function traySlotRect(layout: BoardLayout, slot: number): Rect | null {
   if (tray === undefined) return null;
   const isRow = tray.cols > 1;
   return cellRect(layout, { regionId: 'tray', col: isRow ? slot : 0, row: isRow ? 0 : slot });
+}
+
+/**
+ * Where a target is drawn (GameBoard.targetRect): a tray target names its slot as col + row, drawn
+ * at traySlotRect whichever way the tray lies; a board cell at its cellRect.
+ */
+export function targetRectOf(layout: BoardLayout, target: BoardTarget): Rect | null {
+  return target.regionId === 'tray'
+    ? traySlotRect(layout, target.col + target.row)
+    : cellRect(layout, target);
 }
 
 /** The wall: the band between the last lane row and the board's first row. */

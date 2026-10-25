@@ -9,6 +9,7 @@ import { BusyBlocks } from '@e07/shell/ui/busy-blocks.tsx';
 import { LogoTile } from '@e07/shell/ui/logo-tile.tsx';
 import { ScreenFrame } from '@e07/shell/ui/screen-frame.tsx';
 import { useBodyBottomTopUp } from '@e07/shell/ui/use-body-bottom-top-up.ts';
+import { useWrappedText } from '@e07/shell/ui/use-wrapped-text.ts';
 
 import type { LogoArt } from '@e07/shell/art/logo-art.ts';
 import type { ReactNode } from 'react';
@@ -35,9 +36,11 @@ const styles = StyleSheet.create({
     paddingTop: LAYOUT.bodyPaddingTop,
   },
   name: { marginTop: 8 },
-  // CSS gives a wrapping text its whole 290 pt box; a React Native box shrinks to its longest line,
-  // which moved the centred Persian tagline 3.6 pt against its element. Keep the full box.
-  tagline: { width: 290, maxWidth: '100%' },
+  // .spl-tag is a centred flex item with max-width 290 px, so CSS fits a one-line tagline to its
+  // text. A wrapping one gets the whole 290 pt box, where a React Native box would shrink to its
+  // longest line (that moved the centred Persian tagline 3.6 pt against its element).
+  tagline: { maxWidth: 290 },
+  taglineWrapped: { width: 290, maxWidth: '100%' },
   loader: { alignSelf: 'center', paddingBottom: 44 },
 });
 
@@ -54,6 +57,8 @@ export function StartupSplash({
   const t = useT();
   const theme = useTheme();
   const bottomTopUp = useBodyBottomTopUp();
+  // The tagline that wrapped: its box takes the full 290 pt, a one-line tagline fits its text.
+  const { isWrapped, onLineCount } = useWrappedText(tagline, { isSticky: false });
   return (
     <ScreenFrame testID="splash.screen">
       <View style={[styles.page, { paddingBottom: bottomTopUp }]}>
@@ -68,9 +73,10 @@ export function StartupSplash({
               testID="splash.game-name"
             />
           </View>
-          <View style={styles.tagline}>
+          <View style={isWrapped ? styles.taglineWrapped : styles.tagline}>
             <AppText
               text={tagline}
+              onLineCount={onLineCount}
               variant="splashTagline"
               tone="muted"
               align="center"

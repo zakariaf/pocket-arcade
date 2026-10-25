@@ -7,7 +7,7 @@
 // file or export. check-i18n-code looks every literal up in the game catalog next to this file,
 // which comes from the copy deck: node <skill>/scripts/copy-deck.mjs apply . --game __GAME_ID__
 // __LOSE_SLUG__ names what happened when the run is lost, in kebab words (line-siege: broke-through,
-// flock-tilt: wolf-got-sheep, scrap-shove: caught, toggle-drop: out-of-balls; out-of-moves for a game
+// flock-tilt: wolf-got-sheep, scrap-shove: caught, merge-siege: overrun, toggle-drop: out-of-balls; out-of-moves for a game
 // the deck lacks). A game with more ways of losing adds one '__GAME_ID__.lose.<slug>' key per way
 // (Line Siege: board-full).
 

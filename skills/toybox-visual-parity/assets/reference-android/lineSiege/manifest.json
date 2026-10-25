@@ -3,9 +3,9 @@
  "game": "lineSiege",
  "platform": "android",
  "set": "A new reference set for a new device: the Android parity emulator e07-android-parity, 402 x 874 dp at density 3.0 like the iPhone 16 Pro (owner default d), with Android's 44 dp status bar (the system image's punch-hole cutout sets it) and gesture navigation. It is not a change to the iOS set in assets/reference, which stays byte for byte.",
- "rendered": "2026-10-16",
+ "rendered": "2026-10-25",
  "renderer": {
-  "chrome": "155.0.8059.84",
+  "chrome": "155.0.8059.85",
   "playwright": "1.63.0",
   "flags": "--force-color-profile=srgb --font-render-hinting=none --disable-lcd-text --hide-scrollbars --disable-gpu"
  },
@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "01ba656b7ccd4ed68b0c71d40fc767fd8c035270e918939afe43bd0eddc53743",
-  "map": "aab591199c373b7ac9b3320c5afb509b9156b833c9e961afd8b91e49b5cf55bf",
-  "frames": "1c287947c5c7f2fc7bc9693f466a5a7964abd1fb1badb439ed81452d0c725c57",
+  "design": "e5e0fc09ea5f3963153e9aa51d47f2c641f54b5b08fd276763e973586af389ba",
+  "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
+  "frames": "69e9418332b59e0ef2bae8a8e72317667cf58a856e457fa22b934e6284e48092",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1646,12 +1646,44 @@
    "why": "The first Android capture (E18-T20) measured the parity emulator's insets as the device profile asks: the pinned google_apis API 35 image draws a punch-hole cutout, so its status bar is 44 dp (132 px); every S2 element sat exactly 20 pt low against the 24 dp profile. A measured inset is a profile change by the skill's own rule (lead, 2026-10-16)."
   },
   {
+   "id": "G-merge-siege",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Merge Siege added to the design as a design game. No frame or variant changed: the design and frames inputs of this manifest were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: its design pass, drafted on 2026-10-19 with the proposed defaults; the owner approves it with the E22-T01 message (pending), and the drafted design applies meanwhile"
+  },
+  {
+   "id": "G-merge-siege-with-snare-snake",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-jump-chain-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E23 put Merge Siege and Jump Chain into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
    "id": "G-toggle-drop",
    "date": "2026-10-19",
    "frames": [],
    "variants": [],
    "what": "Toggle Drop added to the design as a design game: its paint in light and dark, its logo, its sample counters and its texts in en, de, fa and ckb, beside Line Siege, Flock Tilt and Scrap Shove. Only the design input (inputs.design) was recorded; no Line Siege frame or variant changed, and none was re-rendered.",
    "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
+  },
+  {
+   "id": "G-toggle-drop-with-five-games",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege and Jump Chain (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; Toggle Drop's pass was drafted on its own branch and is joined here (lead's helper, 2026-10-25)."
   }
  ]
 }

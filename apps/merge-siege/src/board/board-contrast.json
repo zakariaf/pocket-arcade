@@ -1,0 +1,21 @@
+{
+  "edge": "edge",
+  "text": [
+    ["tileInk", "tile"],
+    ["enemyInk", "enemy"]
+  ],
+  "graphics": [
+    ["hint", "cell"],
+    ["hint", "base"],
+    ["edge", "background"]
+  ],
+  "shapes": [
+    ["tile", "cell"],
+    ["tile", "base"],
+    ["enemy", "cell"],
+    ["enemy", "base"],
+    ["enemy", "gate"],
+    ["floor", "background"]
+  ],
+  "distinct": [["tile", "enemy"]]
+}
