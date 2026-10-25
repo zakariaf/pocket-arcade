@@ -80,6 +80,14 @@
         "progressFullParams": { "smashed": 12, "total": 12 },
         "loseReasonId": "merge-siege.lose.overrun"
       },
+      "jumpChain": {
+        "gameStats": ["1,462", "318", "×5"],
+        "progressMid": "7 / 12",
+        "progressFull": "12 / 12",
+        "progressMidParams": { "captured": 7, "total": 12 },
+        "progressFullParams": { "captured": 12, "total": 12 },
+        "loseReasonId": "jump-chain.lose.overrun"
+      },
       "pokerDrop": {
         "gameStats": ["836", "97", "×4"],
         "progressMid": "3 / 8",
@@ -304,6 +312,11 @@
         "tiles-merged": 2876,
         "biggest-tile": 512
       },
+      "jumpChain": {
+        "pieces-captured": 1462,
+        "ranks-cleared": 318,
+        "longest-chain": 5
+      },
       "pokerDrop": {
         "hands-made": 836,
         "big-hands": 97,
@@ -372,6 +385,11 @@
           "progressMid": { "smashed": 5, "total": 12 },
           "progressFull": { "smashed": 12, "total": 12 },
           "loseReasonId": "merge-siege.lose.overrun"
+        },
+        "jumpChain": {
+          "progressMid": { "captured": 7, "total": 12 },
+          "progressFull": { "captured": 12, "total": 12 },
+          "loseReasonId": "jump-chain.lose.overrun"
         },
         "pokerDrop": {
           "progressMid": { "made": 3, "total": 8 },

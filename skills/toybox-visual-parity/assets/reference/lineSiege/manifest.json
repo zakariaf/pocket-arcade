@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "73fb8c24accaaed11a1a15e411f7683772e9aa097260127956c3f3f9d1afdd36",
+  "design": "7f9474edc0de9a4207543e12bcfea86577ff2d4d4bcbbd26f66e717d9da6bf95",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "80c40bec3147500ff8fde4f3a9a0b89ef1ee0a5695180daaa6aef7047e0670a4",
+  "frames": "541f6962f9d3d1d64a3d7b73599cf4c1bbb013358fa4ab75876cccacc24f1b35",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1833,6 +1833,22 @@
    "frames": [],
    "variants": [],
    "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
+   "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-jump-chain",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Jump Chain added to the design as a design game. No reference PNG or layout changed: the manifest inputs were refreshed by re-rendering s4-home light-en alone (byte-identical, Chrome 155), and again by one --update-reference render of s1-splash light-en after main (Snare Snake) was merged in on 2026-10-25; no committed PNG or layout moved. The four fa s7-result-win PNGs that Chrome 155 draws 156 pixels apart from the Chrome 154 set were already apart before this change and were left as rendered.",
+   "why": "spec 13: its design pass (E23-T01), sent to the owner for approval on 2026-10-19 with the drafted design as the default"
+  },
+  {
+   "id": "G-jump-chain-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E23 put Merge Siege and Jump Chain into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
    "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   },
   {

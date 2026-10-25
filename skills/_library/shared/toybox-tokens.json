@@ -769,6 +769,130 @@
             }
           }
         }
+      },
+      "jumpChain": {
+        "names": {
+          "light": {
+            "ground": "Peach wash",
+            "surface": "Porcelain",
+            "ink": "Toy ink",
+            "inkSoft": "Pencil",
+            "accent": "Checker red",
+            "pop": "Crown lilac"
+          },
+          "dark": {
+            "ground": "Cocoa night",
+            "surface": "Cocoa lid",
+            "ink": "Moonlight",
+            "inkSoft": "Rose dusk",
+            "accent": "Glow red",
+            "pop": "Night lilac"
+          }
+        },
+        "light": {
+          "ground": "#FFCDB2",
+          "surface": "#FFF9F4",
+          "sunken": "#FFE3D3",
+          "ink": "#1D1B3A",
+          "inkSoft": "#43406A",
+          "outline": "#1D1B3A",
+          "shadow": "#1D1B3A",
+          "accent": "#FF5A5F",
+          "onAccent": "#1D1B3A",
+          "pop": "#A996FF",
+          "onPop": "#1D1B3A"
+        },
+        "dark": {
+          "ground": "#2B1820",
+          "surface": "#3F2632",
+          "sunken": "#351F29",
+          "ink": "#FFF3F0",
+          "inkSoft": "#E8BFC8",
+          "outline": "#FFE0E6",
+          "shadow": "#12070C",
+          "accent": "#FF7076",
+          "onAccent": "#2B1820",
+          "pop": "#B9A8FF",
+          "onPop": "#2B1820"
+        },
+        "colorTokens": {
+          "standard": {
+            "light": {
+              "background": "#FFCDB2",
+              "surface": "#FFF9F4",
+              "sunken": "#FFE3D3",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#FF5A5F",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#A996FF",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2B1820",
+              "surface": "#3F2632",
+              "sunken": "#351F29",
+              "text": "#FFF3F0",
+              "textMuted": "#E8BFC8",
+              "primary": "#FF7076",
+              "onPrimary": "#2B1820",
+              "border": "#FFE0E6",
+              "danger": "#FF8593",
+              "icon": "#FFF3F0",
+              "starOn": "#FFD23F",
+              "starOff": "#E8BFC8",
+              "pop": "#B9A8FF",
+              "onPop": "#2B1820",
+              "shadow": "#12070C",
+              "focus": "#FF8AD8"
+            }
+          },
+          "colorBlind": {
+            "light": {
+              "background": "#FFCDB2",
+              "surface": "#FFF9F4",
+              "sunken": "#FFE3D3",
+              "text": "#1D1B3A",
+              "textMuted": "#43406A",
+              "primary": "#FF5A5F",
+              "onPrimary": "#1D1B3A",
+              "border": "#1D1B3A",
+              "danger": "#C4243A",
+              "icon": "#1D1B3A",
+              "starOn": "#FFC928",
+              "starOff": "#43406A",
+              "pop": "#A996FF",
+              "onPop": "#1D1B3A",
+              "shadow": "#1D1B3A",
+              "focus": "#C8157A"
+            },
+            "dark": {
+              "background": "#2B1820",
+              "surface": "#3F2632",
+              "sunken": "#351F29",
+              "text": "#FFF3F0",
+              "textMuted": "#E8BFC8",
+              "primary": "#FF7076",
+              "onPrimary": "#2B1820",
+              "border": "#FFE0E6",
+              "danger": "#FF8593",
+              "icon": "#FFF3F0",
+              "starOn": "#FFD23F",
+              "starOff": "#E8BFC8",
+              "pop": "#B9A8FF",
+              "onPop": "#2B1820",
+              "shadow": "#12070C",
+              "focus": "#FF8AD8"
+            }
+          }
+        }
       }
     },
     "shell": {
@@ -3158,6 +3282,28 @@
         {
           "role": "p",
           "d": "M30.5 12.5L32.5 18.5L38.5 20.5L32.5 22.5L30.5 28.5L28.5 22.5L22.5 20.5L28.5 18.5Z"
+        }
+      ],
+      "jumpChain": [
+        {
+          "role": "pl",
+          "d": "M7 38C10 10 38 10 41 38"
+        },
+        {
+          "role": "k",
+          "d": "M15 32a9 4.5 0 0 1 18 0v4.5a9 4.5 0 0 1-18 0z"
+        },
+        {
+          "role": "w",
+          "d": "M15 13a9 4.5 0 0 1 18 0v4.5a9 4.5 0 0 1-18 0z"
+        },
+        {
+          "role": "kl",
+          "d": "M15 13a9 4.5 0 0 0 18 0"
+        },
+        {
+          "role": "p",
+          "d": "M18.5 13.5 17.5 7l4 3.2L24 5.5l2.5 4.7 4-3.2-1 6.5z"
         }
       ]
     }

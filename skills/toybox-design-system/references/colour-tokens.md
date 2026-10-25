@@ -3,7 +3,7 @@
 ## Contents
 
 - Colour roles (paint -> ColorTokens field)
-- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Poker Drop
+- Paint per game: Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Poker Drop
 - Shell constants (every game, per scheme)
 - Printed parts: fixed toy ink and white
 - Colour-blind variant
@@ -121,6 +121,22 @@ Light is "one ink": `ink`, `outline`, `shadow`, `onAccent` and `onPop` are toy i
 | pop | pop | `#63DDB0` Mint | `#74EBC0` Glow mint |
 | onPop | onPop | `#1D1B3A` | `#2B1838` |
 
+### Jump Chain
+
+| Paint | Field | Light | Dark |
+|---|---|---|---|
+| ground | background | `#FFCDB2` Peach wash | `#2B1820` Cocoa night |
+| surface | surface | `#FFF9F4` Porcelain | `#3F2632` Cocoa lid |
+| sunken | sunken | `#FFE3D3` | `#351F29` |
+| ink | text, icon | `#1D1B3A` Toy ink | `#FFF3F0` Moonlight |
+| inkSoft | textMuted, starOff | `#43406A` Pencil | `#E8BFC8` Rose dusk |
+| outline | border | `#1D1B3A` | `#FFE0E6` |
+| shadow | shadow | `#1D1B3A` | `#12070C` |
+| accent | primary | `#FF5A5F` Checker red | `#FF7076` Glow red |
+| onAccent | onPrimary | `#1D1B3A` | `#2B1820` |
+| pop | pop | `#A996FF` Crown lilac | `#B9A8FF` Night lilac |
+| onPop | onPop | `#1D1B3A` | `#2B1820` |
+
 ### Poker Drop
 
 Added by its own design pass (2026-10-19): a lilac card-room felt with ruby hearts and a green table.
@@ -191,7 +207,7 @@ The colour-blind palette is **identical** to the standard one for the Shell, in 
 
 ## Painting a new game
 
-Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Poker Drop) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
+Only the design games (Line Siege, Flock Tilt, Scrap Shove, Snare Snake, Merge Siege, Jump Chain, Poker Drop) have Toybox paints in the token file. For any other game, design the paints yourself, keep every shape rule, and let the script judge:
 
 1. Pick the game's hue family from its toy (sky, meadow, lemon...). Give each paint a toy-ish name (Sky wash, Brick tomato...).
 2. **Light:** `ground` is a pastel wash of the hue (relative luminance about 0.45 or more, or muted text fails); `surface` is near-white tinted with the hue (like `#F8FBFF`); `sunken` sits halfway between ground and surface; `accent` is a saturated mid tone for "go" and `pop` a second, contrasting paint (both need toy ink on them at 4.5:1, so luminance about 0.24 or more). The ink family is fixed (toy ink, pencil).
