@@ -3,6 +3,7 @@
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { BALL_ENTITY, cupEntity } from './board-ids.ts';
@@ -59,9 +60,8 @@ function drawGutter(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   const miss = fxEntry(frame.fx, 'miss', cupEntity(spot.col));
   if (!isPlaying(miss)) return;
   const left = miss.values[0] ?? 0;
-  kit.stroke.setAlphaf(left);
+  setPaintColor(kit.stroke, colors.color.chute, left);
   canvas.drawCircle(cell.x + cell.width / 2, y, cell.width * (0.4 - 0.2 * left), kit.stroke);
-  kit.stroke.setAlphaf(1);
 }
 
 /**
@@ -162,13 +162,11 @@ function drawBurst(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
     gravity: 380,
     lifeMs: 650,
   };
-  frame.kit.fill.setColor(frame.colors.color.ball);
   for (let i = 0; i < spec.count; i += 1) {
     const particle = sampleParticle(spec, i, burst.ageMs);
-    frame.kit.fill.setAlphaf(particle.alpha);
+    setPaintColor(frame.kit.fill, frame.colors.color.ball, particle.alpha);
     canvas.drawCircle(particle.x, particle.y, cell.width * 0.04, frame.kit.fill);
   }
-  frame.kit.fill.setAlphaf(1);
 }
 
 /** Every column's cup or gutter, below the last peg row. */
@@ -191,12 +189,9 @@ export function drawBall(canvas: SkCanvas, frame: Frame, region: GridRegion): vo
   if (alpha <= 0) return;
   const at = unitPoint(region, ball.values[0] ?? 0, ball.values[1] ?? 0);
   const radius = region.cell * BALL;
-  frame.kit.fill.setColor(frame.colors.color.ball);
-  frame.kit.fill.setAlphaf(alpha);
+  setPaintColor(frame.kit.fill, frame.colors.color.ball, alpha);
   canvas.drawCircle(at.x, at.y, radius, frame.kit.fill);
-  frame.kit.fill.setAlphaf(1);
   setEdge(frame, region.cell);
-  frame.kit.stroke.setAlphaf(alpha);
+  setPaintColor(frame.kit.stroke, frame.colors.color.edge, alpha);
   canvas.drawCircle(at.x, at.y, radius, frame.kit.stroke);
-  frame.kit.stroke.setAlphaf(1);
 }

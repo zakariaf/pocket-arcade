@@ -194,3 +194,100 @@ describe('drawBoard', () => {
     expect([...recorded.calls.keys()]).toStrictEqual(['drawColor']);
   });
 });
+
+/** A paint that acts like Skia's: setColor takes the colour's own alpha, setAlphaf replaces it. */
+function tokenPaint(token: SkColor): {
+  paint: SkPaint;
+  alpha: () => number;
+  isToken: () => boolean;
+} {
+  let alpha = 1;
+  let isToken = false;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') {
+          isToken = value === token;
+          alpha = (value as SkColor)[3] ?? 1;
+        }
+        if (name === 'setAlphaf' && typeof value === 'number') alpha = value;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha, isToken: () => isToken };
+}
+
+type TokenAt = DrawAt & {
+  readonly token: BoardToken;
+  readonly paint: 'fill' | 'stroke';
+};
+
+/** The alpha of every circle drawn with `token` on one frame where the token has `tokenAlpha`. */
+function tokenAlphas(at: TokenAt, tokenAlpha: number): number[] {
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const probe = tokenPaint(color);
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (name === 'drawCircle' && args.at(-1) === probe.paint && probe.isToken()) {
+            seen.push(probe.alpha());
+          }
+        },
+    },
+  ) as SkCanvas;
+  const colors = {
+    ...COLORS,
+    color: new Proxy({}, { get: (_target, name) => (name === at.token ? color : COLOR) }),
+  } as unknown as BoardColors<BoardToken>;
+  const fx = { ...sampleTimeline(at.tracks, at.atMs), pointer: IDLE_POINTER };
+  const kit = { ...KIT, [at.paint]: probe.paint };
+  const view = at.view ?? VIEW;
+  drawBoard(canvas, { view, fx, highlight: EMPTY_HIGHLIGHT, colors, layout: LAYOUT, kit });
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  const busiest = buildTimeline(BUSIEST, 'full');
+  const startOf = (tracks: readonly Track[], channel: string): number =>
+    tracks.find((track) => track.channel === channel)?.startMs ?? 0;
+  const lost = buildTimeline(
+    [
+      { kind: 'ball-dropped', col: 1, x: 180, y: 0, atMs: 0 },
+      {
+        kind: 'ball-landed',
+        col: 1,
+        x: 180,
+        y: 720,
+        isInCup: false,
+        wasRedirected: false,
+        atMs: 1000,
+      },
+    ],
+    'full',
+  );
+  const fading = { tracks: busiest, atMs: startOf(busiest, 'fade') + 40 };
+  const cases: readonly (TokenAt & { readonly name: string })[] = [
+    { name: 'the landing ball', token: 'ball', paint: 'fill', ...fading },
+    { name: 'its ink edge', token: 'edge', paint: 'stroke', ...fading },
+    {
+      name: 'the cup burst',
+      token: 'ball',
+      paint: 'fill',
+      tracks: busiest,
+      atMs: startOf(busiest, 'burst') + 100,
+    },
+    { name: 'the gutter puff', token: 'chute', paint: 'stroke', tracks: lost, atMs: 1200 },
+  ];
+
+  // Spec 8.12: the board draws from its palette tokens, so a token's own alpha must survive a fade.
+  it.each(cases)('keeps the token alpha under the fade of $name', (at) => {
+    const opaque = tokenAlphas(at, 1);
+    expect(opaque.filter((alpha) => alpha > 0 && alpha < 1).length).toBeGreaterThan(0);
+    expect(tokenAlphas(at, 0.5)).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
+  });
+});
