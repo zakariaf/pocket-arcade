@@ -97,14 +97,17 @@ function smashHeap(turn: Turn, robot: Robot, heap: Heap): Turn {
   return withEvents({ ...stepped(turn, robot, robot), floor: { ...turn.floor, heaps } }, [smashed]);
 }
 
-/** A heavy robot shoves the heap ahead of it; a robot behind the heap is crushed. */
+/**
+ * A heavy robot shoves the heap ahead of it; a robot behind the heap is crushed. The heap keeps
+ * the player's shove mark: a robot wrecked on it later is still the player's twist.
+ */
 function heavyShove(turn: Turn, robot: Robot, heap: Heap): Turn {
   const target = beyond(robot, heap);
   if (isShoveBlocked(turn, target)) return smashHeap(turn, robot, heap);
   const { floor } = turn;
   const victim = robotAt(floor, target);
   const heaps = floor.heaps.map((piece) =>
-    piece.id === heap.id ? { ...piece, ...target, isShoved: false } : piece,
+    piece.id === heap.id ? { ...piece, ...target } : piece,
   );
   const pushed = movedRobot({ ...floor, heaps }, robot.id, heap);
   const shoved: ScrapShoveEvent = {

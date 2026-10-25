@@ -96,6 +96,27 @@ describe('the robots turn (spec 13: every robot steps toward the player)', () =>
     ]);
   });
 
+  it("keeps the player's shove mark on scrap a heavy robot pushes, so a wreck on it is still the twist", () => {
+    const { state, events } = waitOn([
+      '.......',
+      '.......',
+      '.......',
+      '..h*..@',
+      '.......',
+      '..f....',
+      '.......',
+    ]);
+    expect(state.heaps).toStrictEqual([{ id: 2, col: 4, row: 3, isShoved: true }]);
+    expect(events).toContainEqual({
+      kind: 'robots-crashed',
+      robotIds: [3],
+      at: { col: 4, row: 3 },
+      cause: 'scrap',
+      heapId: 2,
+      isShovedScrap: true,
+    });
+  });
+
   it('smashes the heap a heavy robot cannot shove (the player, the wall or another heap behind it), and the robot stays put', () => {
     const toPlayer = waitOn(['.....', '.....', '..h..', '...#.', '....@']);
     expect(boardText(toPlayer.state, 5)).toBe(
