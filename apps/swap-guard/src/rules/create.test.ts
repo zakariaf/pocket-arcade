@@ -3,12 +3,14 @@
 // animate. It is played with a tap on the square to swap with (engine.panMode 'none').
 import fc from 'fast-check';
 
+import { applyMove } from './apply-move.ts';
 import { create, joinersOf, openingsOf, startFor } from './create.ts';
 import { outcome } from './outcome.ts';
 import { planLine } from './plan-line.ts';
 import { strikesOf, struckSquares } from './strikes.ts';
 import { knobsFor } from './swap-guard-tuning.ts';
 
+import type { Opening } from './create.ts';
 import type { DifficultyKnobs } from './swap-guard-tuning.ts';
 import type { Enemy, SwapGuardState } from './swap-guard-types.ts';
 
@@ -57,6 +59,21 @@ function struckIdsOf(state: SwapGuardState): number[] {
   return state.enemies.filter((e) => struck.has(e.cell)).map((e) => e.id);
 }
 
+/** The outcome of the partner swap on every opening pair alone, with the row's fallback budget. */
+function fallbackOutcomes(knobs: DifficultyKnobs, openings: readonly Opening[]): string[] {
+  const base = startFor(1, knobs);
+  return openings.map((opening) => {
+    const pair: SwapGuardState = {
+      ...base,
+      guard: opening.guard,
+      enemies: [opening.threat, opening.partner],
+      enemyCount: 2,
+      maxSwaps: 1 + knobs.spareSwaps,
+    };
+    return outcome(applyMove(pair, { kind: 'swap', cell: opening.partner.cell }).state).kind;
+  });
+}
+
 describe('create (turn-based: the swap applies, then its events animate)', () => {
   it('keeps the pinned board for seed 1 (a changed board breaks saved levels)', () => {
     expect(boardText(startFor(1, GOLDEN_KNOBS))).toBe(GOLDEN_SEED_1_BOARD);
@@ -76,6 +93,18 @@ describe('create (turn-based: the swap applies, then its events animate)', () =>
     const state = startFor(1, knobs);
     expect(state.enemies.map((e) => e.id)).toStrictEqual([0, 1]);
     expect(state.enemyCount).toBe(2);
+  });
+
+  it('proves every fallback opening pair won by its one swap, on every row (spec 8.1)', () => {
+    // The fallback is any opening pair of the row with a budget of one swap plus the spare ones:
+    // every opening of every board size and partner kind must win with the partner swap, so a
+    // start that falls back (a daily included) is never unwinnable.
+    const rows = [0, 25, 50, 75].map((difficulty) => knobsFor(difficulty));
+    const won = rows.flatMap((knobs) =>
+      knobs.kinds.flatMap((kind) => fallbackOutcomes(knobs, openingsOf(knobs.size, kind))),
+    );
+    expect(won.length).toBeGreaterThan(100);
+    expect(new Set(won)).toStrictEqual(new Set(['won']));
   });
 
   it('clamps difficulties outside 0..100', () => {
