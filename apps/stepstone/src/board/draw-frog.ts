@@ -2,14 +2,13 @@
 'worklet';
 
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 
 import { FROG_ENTITY } from './board-ids.ts';
 
 import type { BoardToken } from './board-palettes.ts';
 import type { StepstoneView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -30,11 +29,6 @@ function centerOf(rect: Rect): { x: number; y: number } {
   return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
 }
 
-/** An effect that is not a tween of something visible draws only once its track has started. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
-}
-
 /** True while the frog is in the air: a hop track that has not landed yet (moment 0 included). */
 export function isAirborne(frame: Frame): boolean {
   const hop = fxEntry(frame.fx, 'hop', FROG_ENTITY);
@@ -43,8 +37,8 @@ export function isAirborne(frame: Frame): boolean {
 
 /** The sideways offset of a stranded frog: it swings while its track plays, then rests. */
 function shakeOf(frame: Frame, cell: number): number {
-  const stranded = fxEntry(frame.fx, 'stranded', FROG_ENTITY);
-  if (!isPlaying(stranded)) return 0;
+  const stranded = playingEntry(frame.fx, 'stranded', FROG_ENTITY);
+  if (stranded === undefined) return 0;
   const amplitude = pickAt(stranded.values, 0) * cell * SHAKE;
   return Math.floor(stranded.ageMs / SHAKE_HALF_MS) % 2 === 0 ? amplitude : -amplitude;
 }

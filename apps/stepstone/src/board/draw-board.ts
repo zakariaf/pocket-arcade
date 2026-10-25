@@ -4,12 +4,12 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
-import { drawFrog, frogCenter, isAirborne, isPlaying } from './draw-frog.ts';
+import { drawFrog, frogCenter, isAirborne } from './draw-frog.ts';
 import { drawGlyph, drawStone } from './draw-stone.ts';
 
 import type { BoardToken } from './board-palettes.ts';
@@ -59,8 +59,8 @@ function drawRing(canvas: SkCanvas, frame: Frame, ring: Ring): void {
 
 /** Particles from the flag while the burst plays (full motion only: reduced has no burst track). */
 function drawBurst(canvas: SkCanvas, frame: Frame, flag: Rect): void {
-  const burst = fxEntry(frame.fx, 'burst', TURN_ENTITY);
-  if (!isPlaying(burst)) return;
+  const burst = playingEntry(frame.fx, 'burst', TURN_ENTITY);
+  if (burst === undefined) return;
   const spec = {
     seed: frame.view.frog * 31 + frame.view.side,
     x: flag.x + flag.width / 2,
@@ -80,9 +80,9 @@ function drawBurst(canvas: SkCanvas, frame: Frame, flag: Rect): void {
 
 /** The frog reached the flag: a fading glow, the hop count above the flag, then particles. */
 function drawGoal(canvas: SkCanvas, frame: Frame): void {
-  const goal = fxEntry(frame.fx, 'goal', TURN_ENTITY);
+  const goal = playingEntry(frame.fx, 'goal', TURN_ENTITY);
   const flag = cellBox(frame, frame.view.frog);
-  if (!isPlaying(goal) || flag === null) return;
+  if (goal === undefined || flag === null) return;
   const scale = pickAt(goal.values, 0);
   const { fill } = frame.kit;
   setPaintColor(fill, frame.colors.color.glow, 0.5 * (1 - goal.progress));
@@ -138,8 +138,8 @@ export function drawBoard(canvas: SkCanvas, frame: Frame): void {
     const rect = cellBox(frame, i);
     if (rect === null) continue;
     const sink = fxEntry(frame.fx, 'sink', cellEntity(i));
-    const pop = fxEntry(frame.fx, 'pop', cellEntity(i));
-    drawStone(canvas, frame, { index: i, rect, sink, pop: isPlaying(pop) ? pop : undefined });
+    const pop = playingEntry(frame.fx, 'pop', cellEntity(i));
+    drawStone(canvas, frame, { index: i, rect, sink, pop });
   }
   drawRings(canvas, frame);
   const centre = frogCenter(frame, cellBox);

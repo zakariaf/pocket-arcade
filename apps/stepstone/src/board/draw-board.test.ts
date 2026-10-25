@@ -259,6 +259,18 @@ describe('drawBoard', () => {
     expect(glyphAt(0)).toBe(atRest);
     expect(glyphAt(360)).toBeLessThan(atRest);
   });
+
+  it('keeps popping the glyph through its out-back overshoot, until the pop track ends', () => {
+    // The pop starts at 320 ms for 260 ms; its eased scale passes 1 at about 37 % of its time.
+    const at = centre(NEW_KIND_TURN.view, 12);
+    const glyphAt = (atMs: number): number =>
+      Math.min(...sizesCentredOn(draw({ turn: NEW_KIND_TURN, atMs }), at));
+    const atRest = glyphAt(timelineEndMs(NEW_KIND_TURN.tracks));
+    for (const atMs of [450, 500, 560]) {
+      expect(glyphAt(atMs)).toBeGreaterThan(atRest);
+    }
+    expect(glyphAt(580)).toBe(atRest);
+  });
 });
 
 describe('frogCenter', () => {
