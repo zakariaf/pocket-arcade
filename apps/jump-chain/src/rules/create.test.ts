@@ -9,15 +9,24 @@ import { addDays } from '@e07/game-kit/dates/date-key.ts';
 import {
   JUMP_CHAIN_DAILY_DIFFICULTY,
   JUMP_CHAIN_DAILY_SALT,
+  JUMP_CHAIN_LEVELS,
 } from '@e07/jump-chain/levels/jump-chain-levels.ts';
 import { JUMP_CHAIN_SOLVER, WITNESS_MAX_NODES } from '@e07/jump-chain/levels/jump-chain-solver.ts';
 
 import { isDark } from './board-squares.ts';
-import { FALLBACK_SEED, create, createWithin, openingRankRows } from './create.ts';
+import {
+  CREATE_BUDGET,
+  FALLBACK_SEED,
+  create,
+  createLayout,
+  createWithin,
+  openingRankRows,
+} from './create.ts';
 import { TUNING, knobsFor } from './jump-chain-tuning.ts';
 import { outcome } from './outcome.ts';
 
-import type { JumpChainState } from './jump-chain-types.ts';
+import type { JumpChainMove, JumpChainState } from './jump-chain-types.ts';
+import type { Solver } from '@e07/game-kit/contract/levels.ts';
 
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
 const difficultyArb = fc.integer({ min: 0, max: 100 });
@@ -141,6 +150,23 @@ function isProven(state: JumpChainState): boolean {
   return JUMP_CHAIN_SOLVER.solve(state, WITNESS_MAX_NODES).kind === 'solved';
 }
 
+/** The witness, counting how often create() asks it. */
+function countingSolver(): {
+  readonly solver: Solver<JumpChainState, JumpChainMove>;
+  readonly solves: () => number;
+} {
+  let solves = 0;
+  return {
+    solver: {
+      solve: (start, maxNodes) => {
+        solves += 1;
+        return JUMP_CHAIN_SOLVER.solve(start, maxNodes);
+      },
+    },
+    solves: () => solves,
+  };
+}
+
 /** One difficulty inside each level row (rowFor bands 0-24, 25-49, 50-74, 75-99). */
 const ROW_DIFFICULTIES = [0, 24, 25, 49, 50, 74, 75, 99];
 
@@ -183,6 +209,28 @@ describe('create, proven winnable (spec 8.1: no level is impossible)', () => {
       isProven(createWithin(FALLBACK_SEED, difficulty, budget)),
     );
     expect(rows).toStrictEqual(ROW_DIFFICULTIES.map(() => true));
+  });
+
+  // Spec 15.7: every shipped level is proven when the packs are generated (the levels contract test
+  // replays each witness line), so starting one need not search again.
+  it('hands out a shipped level’s own board without running the witness again', () => {
+    const counting = countingSolver();
+    for (const entry of JUMP_CHAIN_LEVELS.table) {
+      const state = createWithin(entry.seed, entry.difficulty, {
+        ...CREATE_BUDGET,
+        solver: counting.solver,
+      });
+      expect(state).toStrictEqual(createLayout(entry.seed, entry.difficulty));
+    }
+    expect(counting.solves()).toBe(0);
+  });
+
+  it('keeps running the witness for the daily and for any seed no pack ships', () => {
+    const counting = countingSolver();
+    const seed = dailySeed('2026-10-25', JUMP_CHAIN_DAILY_SALT);
+    createWithin(seed, JUMP_CHAIN_DAILY_DIFFICULTY, { ...CREATE_BUDGET, solver: counting.solver });
+    createWithin(2, 45, { ...CREATE_BUDGET, solver: counting.solver });
+    expect(counting.solves()).toBeGreaterThanOrEqual(2);
   });
 
   it('leaves the endless run unsearched, as it has no win to prove', () => {
