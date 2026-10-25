@@ -29,6 +29,20 @@ function isCount(value: unknown, min: number, max: number): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= min && value <= max;
 }
 
+/**
+ * A whole-number array of exactly `size` items, each passing `isValid`, or null. A type guard as
+ * `isValid` narrows the items (pegs come back as PegCell[]).
+ */
+function countsOf<T extends number>(
+  json: unknown,
+  size: number,
+  isValid: (value: number, index: number) => value is T,
+): T[] | null;
+function countsOf(
+  json: unknown,
+  size: number,
+  isValid: (value: number, index: number) => boolean,
+): number[] | null;
 function countsOf(
   json: unknown,
   size: number,
@@ -156,7 +170,7 @@ export function parseState(json: unknown): ToggleDropState | null {
   if (filled === null) return null;
   // The rules' own key order, so a saved state reads back byte for byte.
   const { ballsLeft, drops } = sizes;
-  const state = { cols, rows, pegs: pegs.filter(isPeg), flips, needs, filled, ballsLeft, drops };
+  const state = { cols, rows, pegs, flips, needs, filled, ballsLeft, drops };
   return isReachable(state) ? state : null;
 }
 
