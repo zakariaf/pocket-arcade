@@ -6,15 +6,17 @@ import de from '@e07/poker-drop/i18n/de.json';
 import en from '@e07/poker-drop/i18n/en.json';
 import fa from '@e07/poker-drop/i18n/fa.json';
 import { applyMove } from '@e07/poker-drop/rules/apply-move.ts';
-import { create } from '@e07/poker-drop/rules/create.ts';
+import { create, drawStart } from '@e07/poker-drop/rules/create.ts';
 import { listMoves } from '@e07/poker-drop/rules/list-moves.ts';
 import { outcome } from '@e07/poker-drop/rules/outcome.ts';
 import { parseState } from '@e07/poker-drop/rules/poker-drop-persistence.ts';
 
 import { POKER_DROP_TEACHING } from './poker-drop-teaching.ts';
 
+import type * as TeachingModule from './poker-drop-teaching.ts';
 import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { PokerDropState } from '@e07/poker-drop/rules/poker-drop-types.ts';
+import type * as WitnessModule from '@e07/poker-drop/rules/poker-drop-witness.ts';
 
 const { tutorial, howToPlay } = POKER_DROP_TEACHING;
 const CATALOGS = { en, de, fa, ckb } as const;
@@ -40,6 +42,22 @@ function playScript(choices: readonly number[]): PokerDropState[] {
   });
   return states;
 }
+
+// Performance budget (cold start): the teaching module is loaded at app start, so it must not
+// run the witness (a full bot game per board) while it loads.
+describe('loading the teaching module', () => {
+  it('runs no witness search, and starts the tutorial on seed 1’s own first board', () => {
+    jest.isolateModules(() => {
+      const witness = jest.requireActual<typeof WitnessModule>(
+        '@e07/poker-drop/rules/poker-drop-witness.ts',
+      );
+      const solve = jest.spyOn(witness.POKER_DROP_WITNESS, 'solve');
+      const teaching = jest.requireActual<typeof TeachingModule>('./poker-drop-teaching.ts');
+      expect(solve).not.toHaveBeenCalled();
+      expect(teaching.POKER_DROP_TEACHING.tutorial.start).toStrictEqual(drawStart(1, 0));
+    });
+  });
+});
 
 describe('POKER_DROP_TEACHING', () => {
   // Spec S13: "a scripted first level ... one short sentence at a time, no text wall".

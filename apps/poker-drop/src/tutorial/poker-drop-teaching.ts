@@ -1,6 +1,6 @@
 // apps/poker-drop/src/tutorial/poker-drop-teaching.ts
 import { applyMove } from '@e07/poker-drop/rules/apply-move.ts';
-import { create } from '@e07/poker-drop/rules/create.ts';
+import { drawStart } from '@e07/poker-drop/rules/create.ts';
 
 import type { TeachingSpec } from '@e07/game-kit/contract/teaching.ts';
 import type { PokerDropMove, PokerDropState } from '@e07/poker-drop/rules/poker-drop-types.ts';
@@ -8,8 +8,10 @@ import type { PokerDropMove, PokerDropState } from '@e07/poker-drop/rules/poker-
 /**
  * Seed 1, difficulty 0: two prepared rows of two pair beside the empty gap, column 5. The first
  * drop into the gap bursts the bottom row, and the row above falls and bursts too (a cascade).
+ * It is the seed's own first board, which create(1, 0) hands out too (the witness wins it; the
+ * create tests pin that), drawn without the witness so loading this module stays cheap.
  */
-const TUTORIAL_START = create(1, 0);
+const TUTORIAL_START = drawStart(1, 0);
 const DROP_IN_GAP: PokerDropMove = { kind: 'drop-card', col: 4 };
 const AFTER_DROP = applyMove(TUTORIAL_START, DROP_IN_GAP).state;
 const BOTTOM_GAP_CELL = 4;
