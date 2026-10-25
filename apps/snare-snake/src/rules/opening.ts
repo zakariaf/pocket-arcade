@@ -5,7 +5,7 @@
 // critters roam apart from the snake (never on a cell next to it). Every draw comes from the
 // seeded RNG (spec 8.1: the same seed always makes the same level).
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
-import { nextInt } from '@e07/game-kit/rng/sfc32.ts';
+import { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { neighboursOf, touchingCells } from './board-grid.ts';
 import { TUNING } from './snare-snake-tuning.ts';
@@ -141,17 +141,44 @@ function drawLayout(layout: Layout, knobs: DifficultyKnobs): Omit<Opening, 'rng'
   return roamers === null ? null : { snake: coil.snake, critters: [...nested, ...roamers] };
 }
 
-/** The level's opening from the seeded stream: up to layoutAttempts tries, each from fresh draws. */
-export function drawOpening(grid: Grid, knobs: DifficultyKnobs, rng: RngState): Opening {
+/**
+ * The seed of the last-resort opening: its first layout fits every difficulty row (a test checks
+ * each row), so a seed whose layoutAttempts draws all fail (a daily's date seed included) still
+ * makes a level, the same one on every phone.
+ */
+export const FALLBACK_SEED = 1;
+
+/** The board and the knobs one opening is drawn for. */
+type OpeningBoard = { readonly grid: Grid; readonly knobs: DifficultyKnobs };
+
+/** Up to `attempts` layouts from the stream, each from fresh draws; null when none fits. */
+function firstLayout(board: OpeningBoard, rng: RngState, attempts: number): Opening | null {
   let state = rng;
   const draw: Draw = (n) => {
     const next = nextInt(state, n);
     state = next.state;
     return next.value;
   };
-  for (let attempt = 0; attempt < TUNING.layoutAttempts; attempt += 1) {
-    const layout = drawLayout({ grid, draw }, knobs);
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const layout = drawLayout({ grid: board.grid, draw }, board.knobs);
     if (layout !== null) return { ...layout, rng: state };
   }
-  throw new RangeError(`no opening fits a ${String(grid.cols)} x ${String(grid.rows)} board`);
+  return null;
+}
+
+/**
+ * The opening from the seeded stream with an explicit budget: up to `attempts` tries, then the
+ * fallback seed's first layout. Throws only for a board no opening fits at all.
+ */
+export function drawOpeningWithin(board: OpeningBoard, rng: RngState, attempts: number): Opening {
+  const opening =
+    firstLayout(board, rng, attempts) ?? firstLayout(board, seedRng(FALLBACK_SEED), 1);
+  if (opening !== null) return opening;
+  const { cols, rows } = board.grid;
+  throw new RangeError(`no opening fits a ${String(cols)} x ${String(rows)} board`);
+}
+
+/** The level's opening from the seeded stream: up to layoutAttempts tries, then the fallback. */
+export function drawOpening(grid: Grid, knobs: DifficultyKnobs, rng: RngState): Opening {
+  return drawOpeningWithin({ grid, knobs }, rng, TUNING.layoutAttempts);
 }

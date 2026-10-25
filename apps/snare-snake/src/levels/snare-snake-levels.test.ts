@@ -3,12 +3,14 @@
 // spec 15.7 proven here by replaying the witness's line of every shipped level. Spec 8.3: the daily
 // level comes from the date plus the game's own salt, at a medium difficulty.
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
+import { addDays } from '@e07/game-kit/dates/date-key.ts';
 import { dailyStart } from '@e07/game-kit/levels/daily-start.ts';
 import { levelsContractProblems } from '@e07/game-kit/levels/levels-contract.ts';
 import { applyMove } from '@e07/snare-snake/rules/apply-move.ts';
 import { create } from '@e07/snare-snake/rules/create.ts';
 import { listMoves } from '@e07/snare-snake/rules/list-moves.ts';
 import { outcome } from '@e07/snare-snake/rules/outcome.ts';
+import { TUNING, knobsFor } from '@e07/snare-snake/rules/snare-snake-tuning.ts';
 
 import {
   SNARE_SNAKE_DAILY_DIFFICULTY,
@@ -53,6 +55,18 @@ describe('SNARE_SNAKE_LEVELS', () => {
       SNARE_SNAKE_DAILY_DIFFICULTY,
     );
     expect(SNARE_SNAKE_DAILY_DIFFICULTY).toBe(45);
+  });
+
+  it('makes a full daily board for every date of two years (spec 8.3: the date is the seed)', () => {
+    const knobs = knobsFor(SNARE_SNAKE_DAILY_DIFFICULTY);
+    const sizes = new Set<string>();
+    for (let day = 0; day < 731; day += 1) {
+      const start = dailyStart(SNARE_SNAKE_LEVELS, addDays('2026-10-01', day));
+      if (start === null) throw new Error('Snare Snake has a daily mode');
+      const state = create(start.seed, start.difficulty);
+      sizes.add(`${String(state.snake.length)} ${String(state.total)}`);
+    }
+    expect([...sizes]).toStrictEqual([`${String(TUNING.startLength)} ${String(knobs.critters)}`]);
   });
 
   it('has no endless mode, and its levels climb to the top of the level scale', () => {

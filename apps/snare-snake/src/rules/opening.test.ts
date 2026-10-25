@@ -5,7 +5,7 @@ import fc from 'fast-check';
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { neighboursOf } from './board-grid.ts';
-import { drawOpening, nestCells, ringAround } from './opening.ts';
+import { FALLBACK_SEED, drawOpening, drawOpeningWithin, nestCells, ringAround } from './opening.ts';
 import { TUNING } from './snare-snake-tuning.ts';
 
 const GRID = { cols: 7, rows: 8 };
@@ -56,6 +56,18 @@ describe('drawOpening', () => {
   it('passes the stream on: the rng it returns is past the draws it made', () => {
     const start = seedRng(3);
     expect(drawOpening(GRID, knobs, start).rng).not.toStrictEqual(start);
+  });
+
+  // Spec 8.1 and 8.3: every seed, the daily's date seed included, makes a level; a seed whose
+  // layoutAttempts draws all fail gets the fixed fallback opening of its row, never an error.
+  it('falls back to the fixed seed opening when every seeded layout fails, on every row', () => {
+    TUNING.levelRows.forEach((row) => {
+      const board = { grid: { cols: row.cols, rows: row.rows }, knobs: row };
+      const fallback = drawOpeningWithin(board, seedRng(FALLBACK_SEED), 1);
+      expect(drawOpeningWithin(board, seedRng(7), 0)).toStrictEqual(fallback);
+      expect(fallback.snake).toHaveLength(TUNING.startLength);
+      expect(fallback.critters).toHaveLength(row.critters);
+    });
   });
 
   it('gives up with a RangeError when no opening fits the board', () => {
