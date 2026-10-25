@@ -66,6 +66,7 @@ A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: 
 - **Merge Siege** (its design pass, `logos.games.mergeSiege` in `assets/toybox-tokens.json`): a white spiky enemy (`w`) with two ink eyes (`k`), a white tile (`w`) with two ink up-chevrons (`kl`) smashing into it, and a pop spark where they meet (`p`).
 - **Jump Chain** (its design pass, 2026-10-19; the layers in the token file's `logos.games.jumpChain`): a pop jump arc (`pl`), an ink checker (`k`), a white checker in mid-jump above it (`w`) with its rim line (`kl`), and a pop crown on top (`p`).
 - **Stepstone** (added by its design pass, 2026-10-19): a pop stone under the frog (`p`, an ellipse), a squat white frog body (`w`), two white eyes (`w`) with ink pupils (`k`), and one ink line for the smile and the two front feet (`kl`); seven layers, none rotated.
+- **Swap Guard** (`examples/swap-guard-logo-art.ts`, added by its design pass on 2026-10-19): a white shield (`w`) whose left half is pop (`p`, its edge drawing the split down the middle), with two ink swap arrows (`kl`) across it, one pointing to the end and one back.
 - **Toggle Drop** (the token file's `logos.games.toggleDrop`, added by its design pass on 2026-10-19): an ink post and base (`kl`), a white switch lever (`w`) rotated 16 degrees about (24, 26) on an ink pivot (`k`), a pop ball (`p`) with a white shine (`w0`) dropping onto its high end, and an ink flip arrow (`kl`).
 
 `check-icons-and-logos` fails if a design game's logo differs from the Toybox data.

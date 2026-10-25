@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "99c2df5b7b060af7225d8a6cddfdbaef34501b9e71c40fb11e556414f3b711a8",
+  "design": "d67e275bc99cf687cd76d3ab469ae39952e2072c99b2873131cfc164643e29df",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "28badca722a195cba2b5430785abc0b3d6e2354949b038f9a1821a679dc0f1d6",
+  "frames": "0e19979a93cb748539c08c70fe71c8d88caab4be77c529a6e4ed3e7cb13ebdff",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1876,6 +1876,30 @@
    "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
   },
   {
+   "id": "G-swap-guard",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Swap Guard added to the design as a design game (its paint, logo, texts, sample statistics and how-to-play picture); no committed Line Siege reference moves. After the merge with Snare Snake's design pass (2026-10-25) the manifest's inputs were re-recorded by one --update-reference render of s1-splash light-en with Chrome 155.0.8059.85, which came out byte-identical; no committed PNG or layout moved",
+   "why": "spec 13: its design pass (E25-T01), drafted on 2026-10-19 with the proposed defaults; the owner approves it with the lead’s combined message"
+  },
+  {
+   "id": "G-swap-guard-with-jump-chain",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E25 put Swap Guard next to Merge Siege and Jump Chain in the design (every palette, logo, text and sample counter kept). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
+  },
+  {
+   "id": "G-swap-guard-with-stepstone",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E25 put Swap Guard next to Stepstone in the design (both palettes, logos, texts and sample counters kept). No frame or variant changed: the design and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
+  },
+  {
    "id": "G-toggle-drop",
    "date": "2026-10-19",
    "frames": [],
@@ -1890,6 +1914,14 @@
    "variants": [],
    "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege, Jump Chain and Stepstone (two merges of main) (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
    "why": "spec 13: each game's design pass; Toggle Drop's pass was drafted on its own branch and is joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-toggle-drop-with-swap-guard",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E26 put Toggle Drop next to Swap Guard in the design (both palettes, logos, texts and sample counters kept). No frame or variant changed: the design and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
   }
  ]
 }

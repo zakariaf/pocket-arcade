@@ -31,7 +31,7 @@ A second deck change on 2026-09-30 (owner decision O1, the tracking prompt): the
 | Section | Contents |
 |---|---|
 | `meta` | languages, direction, autonyms (`languageNames`), `numberLocales` (digit tags), the ICU subset, a `glossary`, `samples` and `sampleOverrides` (a value for every placeholder, used by the mockup and useful in tests), `renderNotes`, and `screens` (which keys each screen uses) |
-| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`, `mergeSiege`, `jumpChain`, `stepstone`, `toggleDrop`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
+| `games` | `lineSiege`, `flockTilt`, `scrapShove`, `snareSnake`, `mergeSiege`, `jumpChain`, `stepstone`, `swapGuard`, `toggleDrop`: name (always Latin), tagline, goal, progress line, win title, lose reason, 3 stats labels, 4 how-to-play steps, 4 tutorial one-liners, 3 pack names |
 | `licenceEntries` | example rows for S11d (component and licence names are not translated) |
 | `strings` | 289 flat keys, sorted, each with `en`, `de`, `fa` and `ckb`; all pass the catalog rules |
 
@@ -64,6 +64,7 @@ The deck has one `loseReason` per game, but every way of losing gets its own key
 | `merge-siege` | `merge-siege.lose.overrun` | The enemies overran the board |
 | `jump-chain` | `jump-chain.lose.overrun` | The enemy ranks reached your side |
 | `stepstone` | `stepstone.lose.stuck` | No stone can be reached |
+| `swap-guard` | `swap-guard.lose.hit` | A strike hit you |
 | `toggle-drop` | `toggle-drop.lose.out-of-balls` | You ran out of balls |
 
 `<id>.lose-reason` and `<id>.result.*` are retired key shapes: never write them. A game that is not in the deck starts with `<id>.lose.out-of-moves` (the scaffold's default `--lose-reason` slug) and renames it for its own reason. The Shell's own fallback for a missing reason stays `result.lose.reason.no-moves`.

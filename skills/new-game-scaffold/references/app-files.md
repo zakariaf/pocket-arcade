@@ -118,7 +118,7 @@ Four flat catalogs (key to ICU message), keys sorted, every key starting with `<
 | Game | Catalogs | Lose key |
 |---|---|---|
 | the pilot, `line-siege` | the canonical Line Siege set, byte for byte (`assets/line-siege-i18n/`, synced from the skill library; 24 keys: the deck texts plus `line-siege.lose.board-full`, `line-siege.progress.endless`, `line-siege.continue.push-back` and `line-siege.board.summary`, fa and ckb marked for native review) | `line-siege.lose.broke-through` and `line-siege.lose.board-full` |
-| a game in the copy deck (`flock-tilt`, `scrap-shove`, `snare-snake`, `jump-chain`, `stepstone`, `toggle-drop`) | `<id>.name` plus the deck's texts, mapped as below | `<id>.lose.<deck slug>`: `flock-tilt.lose.wolf-got-sheep`, `scrap-shove.lose.caught`, `snare-snake.lose.tangled`, `jump-chain.lose.overrun`, `stepstone.lose.stuck`, `toggle-drop.lose.out-of-balls` |
+| a game in the copy deck (`flock-tilt`, `scrap-shove`, `snare-snake`, `jump-chain`, `stepstone`, `swap-guard`, `toggle-drop`) | `<id>.name` plus the deck's texts, mapped as below | `<id>.lose.<deck slug>`: `flock-tilt.lose.wolf-got-sheep`, `scrap-shove.lose.caught`, `snare-snake.lose.tangled`, `jump-chain.lose.overrun`, `stepstone.lose.stuck`, `swap-guard.lose.hit`, `toggle-drop.lose.out-of-balls` |
 | any other game | the template catalogs (`templates/app/src/i18n/`): every key the Tap Flip templates of the game skills use (rules HUD, counters, continue, lose reason, board summary, win title, tagline, goal, how-to-play, tutorial, pack names), with English, German, Persian and Sorani texts to replace with the game's own | `<id>.lose.<--lose-reason>`, default `<id>.lose.out-of-moves` |
 
 The copy deck's fields map to keys like this:
@@ -127,7 +127,7 @@ The copy deck's fields map to keys like this:
 |---|---|
 | `name`, `tagline`, `goal`, `progress` | `<id>.name`, `<id>.tagline`, `<id>.goal`, `<id>.progress` |
 | `winTitle` | `<id>.win-title` |
-| `loseReason` | `<id>.lose.<slug>`: `line-siege` → `broke-through`, `flock-tilt` → `wolf-got-sheep`, `scrap-shove` → `caught`, `snare-snake` → `tangled`, `jump-chain` → `overrun`, `stepstone` → `stuck`, `toggle-drop` → `out-of-balls` (`--lose-reason <slug>` for any other game; default `out-of-moves`) |
+| `loseReason` | `<id>.lose.<slug>`: `line-siege` → `broke-through`, `flock-tilt` → `wolf-got-sheep`, `scrap-shove` → `caught`, `snare-snake` → `tangled`, `jump-chain` → `overrun`, `stepstone` → `stuck`, `swap-guard` → `hit`, `toggle-drop` → `out-of-balls` (`--lose-reason <slug>` for any other game; default `out-of-moves`) |
 | `stats.fooBar` | `<id>.stats.foo-bar` |
 | `howToPlay[0]` ... | `<id>.how-to-play.step-1` ... |
 | `tutorial[0]` ... | `<id>.tutorial.step-1` ... |

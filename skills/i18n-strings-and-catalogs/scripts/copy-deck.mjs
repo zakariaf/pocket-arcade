@@ -34,7 +34,7 @@ const SPEC = {
     key: { type: 'string', multiple: true, value: 'key', help: 'Select one deck key' },
     all: { type: 'boolean', help: 'Select every Shell key in the deck' },
     extras: { type: 'boolean', help: 'Also select the Shell texts the deck lacks (assets/shell-extras.json: score line, undo/hint labels, tap-then-tap announcements, the debug Performance section)' },
-    game: { type: 'string', value: 'game-id', help: 'Also select one game\'s texts (line-siege, flock-tilt, scrap-shove)' },
+    game: { type: 'string', value: 'game-id', help: 'Also select one game\'s texts (line-siege, flock-tilt, scrap-shove, snare-snake, swap-guard)' },
     root: { type: 'string', value: 'dir', help: 'App repo root (apply, check); same as the positional repo-root (default .)' },
     overwrite: { type: 'boolean', help: 'apply: replace catalog texts that differ from the deck' },
     lang: { type: 'string', default: 'en', value: 'list', help: 'keys: languages to print, comma-separated, or "all"' },
@@ -67,6 +67,7 @@ const SPEC = {
     '  <slug> names what happened (every way of losing has its own id.lose.<slug> key):',
     '    line-siege -> broke-through   flock-tilt -> wolf-got-sheep   scrap-shove -> caught',
     '    snare-snake -> tangled   merge-siege -> overrun   jump-chain -> overrun   stepstone -> stuck',
+    '    swap-guard -> hit',
     '  A text the deck lacks (another lose reason, an endless HUD line, a continue) is written in all',
     '  four catalogs by hand, fa and ckb listed for the owner\'s review; the deck itself is never edited.',
     '',
@@ -83,7 +84,7 @@ const kebab = (text) => text.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(
  * The deck's one loseReason per game becomes '<id>.lose.<slug>', the slug naming what happened.
  * Every way of losing has its own key ('<id>.lose-reason' and '<id>.result.*' are retired).
  */
-const LOSE_SLUGS = { 'line-siege': 'broke-through', 'flock-tilt': 'wolf-got-sheep', 'scrap-shove': 'caught', 'snare-snake': 'tangled', 'merge-siege': 'overrun', 'jump-chain': 'overrun', stepstone: 'stuck', 'toggle-drop': 'out-of-balls' };
+const LOSE_SLUGS = { 'line-siege': 'broke-through', 'flock-tilt': 'wolf-got-sheep', 'scrap-shove': 'caught', 'snare-snake': 'tangled', 'merge-siege': 'overrun', 'jump-chain': 'overrun', stepstone: 'stuck', 'swap-guard': 'hit', 'toggle-drop': 'out-of-balls' };
 
 function loseKey(gameId) {
   const slug = LOSE_SLUGS[gameId];
