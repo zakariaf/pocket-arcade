@@ -102,6 +102,15 @@ function withMoreSpears(extra: number): SwapGuardState {
 /** The run LOST's continue made: the board before the losing swap, the continue used. */
 const CONTINUED = continueAfterLoss(LOST).state;
 
+/** HIT with its second knock-out on record under an id the level never had. */
+function withDefeatedIdBeyondCount(): unknown {
+  if (HIT.lastSwap === null) throw new Error('HIT has no swap on record');
+  const defeated = HIT.lastSwap.defeated.map((enemy, index) =>
+    index === 1 ? { ...enemy, id: 5 } : enemy,
+  );
+  return { ...HIT, lastSwap: { ...HIT.lastSwap, defeated } };
+}
+
 /** Seeded random swaps to the end, with the one continue after a loss: every state on the way. */
 function statesWithContinue(seed: number, difficulty: number, choices: readonly number[]) {
   const states: SwapGuardState[] = [create(seed, difficulty)];
@@ -174,6 +183,7 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
       'a continued run with no enemy standing',
       { ...CONTINUED, enemies: [], swaps: 2, score: volleyPoints(1) * 3 },
     ],
+    ['a knock-out on record under an id the level never had', withDefeatedIdBeyondCount()],
     ['null', null],
     ['an array', [START]],
     ['a missing field', { ...START, score: undefined }],

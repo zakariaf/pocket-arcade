@@ -198,11 +198,16 @@ function isReplayed(state: SwapGuardState, last: LastSwap): boolean {
   }
 }
 
-/** A last swap on record: a swap was made, it ended on the guard, its knock-outs left the board. */
+/**
+ * A last swap on record: a swap was made, it ended on the guard, its knock-outs (enemies of this
+ * level, ids below its count) left the board.
+ */
 function isLastSwapOk(state: SwapGuardState, last: LastSwap): boolean {
   const standing = new Set(state.enemies.map((enemy) => enemy.id));
   const cells = new Set([state.guard, ...state.enemies.map((enemy) => enemy.cell)]);
-  const isGone = last.defeated.every((enemy) => !standing.has(enemy.id) && !cells.has(enemy.cell));
+  const isGone = last.defeated.every(
+    (enemy) => enemy.id < state.enemyCount && !standing.has(enemy.id) && !cells.has(enemy.cell),
+  );
   const isCounted = last.defeated.length <= state.enemyCount - state.enemies.length;
   return state.swaps > 0 && last.to === state.guard && isGone && isCounted;
 }
