@@ -4,6 +4,7 @@
 // the left and a bend on the right. Join them with a straight, turn a bend to lead the road on,
 // close it with a house to clear its five tiles, and place the last tile to win.
 import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
+import { traySlotTarget } from '@e07/trail-clear/board/layout-board.ts';
 import { applyMove } from '@e07/trail-clear/rules/apply-move.ts';
 import { cellAt } from '@e07/trail-clear/rules/board-cells.ts';
 import { create } from '@e07/trail-clear/rules/create.ts';
@@ -56,7 +57,7 @@ function place(turns: number, col: number, row: number): TrailClearMove {
 function drag(offered: TileKind, move: TrailClearMove): TutorialPointer {
   return {
     kind: 'drag',
-    from: { regionId: 'tray', col: distinctTurns(offered).indexOf(move.turns), row: 0 },
+    from: traySlotTarget(distinctTurns(offered).indexOf(move.turns)),
     to: { regionId: 'board', col: move.col, row: move.row },
   };
 }

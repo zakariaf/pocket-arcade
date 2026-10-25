@@ -4,7 +4,7 @@
 import { cellRect, fitGrid } from '@e07/game-kit/geom/board-layout.ts';
 
 import type { TrailClearView } from './to-view.ts';
-import type { BoardLayout, Rect } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardLayout, BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { LayoutInput } from '@e07/shell/game-host/board-types.ts';
 
 /**
@@ -84,12 +84,30 @@ export function layoutBoard(input: LayoutInput<TrailClearView>): BoardLayout {
   };
 }
 
+/**
+ * The target of tray slot `slot` that moves and pointers name (the hint, the coach, the tutorial
+ * hand): they are made without a layout, so they name the slot as col + row, and trayTargetRect
+ * draws it where the layout puts that slot (a row below the board, a column beside a wide one).
+ */
+export function traySlotTarget(slot: number): BoardTarget {
+  return { regionId: 'tray', col: slot, row: 0 };
+}
+
 /** Where a tray slot is drawn and hit: slots run along the tray whichever way it lies. */
 export function traySlotRect(layout: BoardLayout, slot: number): Rect | null {
   const tray = layout.regions[1];
   if (tray === undefined) return null;
   const isRow = tray.cols > 1;
   return cellRect(layout, { regionId: 'tray', col: isRow ? slot : 0, row: isRow ? 0 : slot });
+}
+
+/**
+ * GameBoard.targetRect: a tray target is drawn on the slot it names (col + row, so the target
+ * hit-testing returns in either layout draws on the same slot); any other target on its cell.
+ */
+export function trayTargetRect(layout: BoardLayout, target: BoardTarget): Rect | null {
+  if (target.regionId !== 'tray') return cellRect(layout, target);
+  return traySlotRect(layout, target.col + target.row);
 }
 
 /** The tile inside a tray slot: as large as a board tile, centred, at most TRAY_TILE_SHARE of it. */

@@ -2,7 +2,7 @@
 import { distinctTurns } from '@e07/trail-clear/rules/tiles.ts';
 
 import { drawBoard } from './draw-board.ts';
-import { DRAG_LIFT_PT, layoutBoard } from './layout-board.ts';
+import { DRAG_LIFT_PT, layoutBoard, traySlotTarget, trayTargetRect } from './layout-board.ts';
 import { buildTilePaths } from './tile-paths.ts';
 import { toView } from './to-view.ts';
 
@@ -45,10 +45,7 @@ function looseEnds(view: TrailClearView): number {
 function targetsOfMove(state: TrailClearState, move: TrailClearMove): readonly BoardTarget[] {
   const slot = state.offered === null ? -1 : distinctTurns(state.offered).indexOf(move.turns);
   if (slot < 0) return [];
-  return [
-    { regionId: 'tray', col: slot, row: 0 },
-    { regionId: 'board', col: move.col, row: move.row },
-  ];
+  return [traySlotTarget(slot), { regionId: 'board', col: move.col, row: move.row }];
 }
 
 /** The rendering members of the game module (presentation.board of its ShellGameModule). */
@@ -74,4 +71,6 @@ export const trailClearBoard: GameBoard<
     },
   }),
   targetsOfMove,
+  // A tray target names its slot; the layout says where that slot is (a row or a column).
+  targetRect: trayTargetRect,
 };

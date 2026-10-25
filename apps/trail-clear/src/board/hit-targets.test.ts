@@ -3,8 +3,11 @@
 // lifted drag (the ghost rides DRAG_LIFT_PT above the finger).
 import { cellRect, hitTest } from '@e07/game-kit/geom/board-layout.ts';
 import { HIT_SLOP, liftedPoint } from '@e07/shell/game-host/pan-intent.ts';
+import { create } from '@e07/trail-clear/rules/create.ts';
+import { TRAIL_CLEAR_TEACHING } from '@e07/trail-clear/tutorial/trail-clear-teaching.ts';
 
-import { DRAG_LIFT_PT, layoutBoard } from './layout-board.ts';
+import { DRAG_LIFT_PT, layoutBoard, traySlotRect } from './layout-board.ts';
+import { trailClearBoard } from './trail-clear-board.ts';
 
 import type { TrailClearView } from './to-view.ts';
 import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
@@ -91,6 +94,51 @@ describe('trail clear hit targets', () => {
       const layout = layoutBoard({ ...size, view: LARGEST_VIEW, isMirrored: false });
       expect(layout.regions[1]?.cols).toBe(1);
       expect(edgeCells().filter((cell) => !isReachableByDrag(layout, cell))).toStrictEqual([]);
+    },
+  );
+});
+
+/** The slot a target on the tray names, whichever way the tray lies (null off the tray). */
+function slotOfTarget(target: BoardTarget | null): number | null {
+  return target?.regionId === 'tray' ? target.col + target.row : null;
+}
+
+/** Where the Shell draws a target: the board's targetRect, else the grid cell (board-host-kit). */
+function drawnRect(layout: BoardLayout, target: BoardTarget) {
+  return (trailClearBoard.targetRect ?? cellRect)(layout, target);
+}
+
+/** The tray targets the hint, the coach and the tutorial hand point at, by the slot each names. */
+function pointedTrayTargets(): BoardTarget[] {
+  const start = create(1, 0);
+  const hinted = [{ kind: 'place-tile', turns: 1, col: 3, row: 2 } as const].flatMap(
+    (move) => trailClearBoard.targetsOfMove?.(start, move) ?? [],
+  );
+  const { tutorial, howToPlay } = TRAIL_CLEAR_TEACHING;
+  const pointers = [...tutorial.steps, ...howToPlay].map((step) => step.pointer);
+  const fromHand = pointers.flatMap((pointer) => (pointer.kind === 'drag' ? [pointer.from] : []));
+  return [...hinted, ...fromHand].filter((target) => target.regionId === 'tray');
+}
+
+describe('trail clear tray targets (hint, coach and tutorial hand)', () => {
+  it.each([PHONE_BOARD, ...WIDE_BOARDS])(
+    'draws every pointed tray target on the slot it names, where hit-testing finds that slot, on a $width × $height canvas',
+    (size) => {
+      const layout = layoutBoard({ ...size, view: LARGEST_VIEW, isMirrored: false });
+      const targets = pointedTrayTargets();
+      expect(targets.length).toBeGreaterThan(0);
+      const misplaced = targets.filter((target) => {
+        const slot = slotOfTarget(target) ?? -1;
+        const rect = drawnRect(layout, target);
+        if (rect === null) return true;
+        const centre = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+        const hit = hitTest(layout, centre, HIT_SLOP);
+        return (
+          slotOfTarget(hit) !== slot ||
+          JSON.stringify(rect) !== JSON.stringify(traySlotRect(layout, slot))
+        );
+      });
+      expect(misplaced).toStrictEqual([]);
     },
   );
 });
