@@ -114,6 +114,17 @@ describe('FLOCK_TILT_TEACHING (spec S13)', () => {
     expect(last?.example.wolves.length).toBeGreaterThan(0);
   });
 
+  it('loses the sheep of the wolf page on up and down, and keeps it on left and right', () => {
+    const wolfPage = howToPlay.at(-1)?.example ?? tutorial.start;
+    const losing = listMoves(wolfPage).filter((move) =>
+      applyMove(wolfPage, move).events.some((event) => event.kind === 'sheep-lost'),
+    );
+    expect(losing).toStrictEqual([
+      { kind: 'tilt', direction: 'up' },
+      { kind: 'tilt', direction: 'down' },
+    ]);
+  });
+
   it("records each teaching field's par as the fewest tilts that pen its flock (spec 8.1)", () => {
     // Fields at their first tilt; a later example carries the par of the field it came from.
     const starts = [tutorial.start, ...howToPlay.map((page) => page.example)].filter(

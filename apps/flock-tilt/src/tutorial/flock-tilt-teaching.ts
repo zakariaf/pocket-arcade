@@ -36,7 +36,10 @@ const TUTORIAL_START = fieldOf(
 const AFTER_DOWN = applyMove(TUTORIAL_START, tilt('down')).state;
 const AFTER_RIGHT = applyMove(AFTER_DOWN, tilt('right')).state;
 
-/** How-to-play page 4: down would slide the sheep against the wolf; the other tilts are safe. */
+/**
+ * How-to-play page 4: the sheep shares the wolf's column, so up and down both slide the two the
+ * same way until the sheep ends touching the wolf and is lost; left and right are safe.
+ */
 const WOLF_FIELD = fieldOf(
   ['......o', '.......', '..s....', '.......', '..w.#..', '.......', '.......'],
   2,
