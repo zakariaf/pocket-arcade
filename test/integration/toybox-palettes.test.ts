@@ -7,6 +7,7 @@ import { PALETTE as MERGE_SIEGE } from '@e07/merge-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
+import { PALETTE as TRAIL_CLEAR } from '@e07/trail-clear/theme/palette.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
@@ -31,6 +32,10 @@ describe('Toybox palettes', () => {
 
   it('keeps Jump Chain readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(JUMP_CHAIN)).toStrictEqual([]);
+  });
+
+  it('keeps Trail Clear readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(TRAIL_CLEAR)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including
