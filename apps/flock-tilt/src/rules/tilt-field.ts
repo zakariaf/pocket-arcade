@@ -178,18 +178,19 @@ function wolfOn(wolves: readonly Wolf[], cell: number): Wolf | undefined {
   return cell < 0 ? undefined : wolves.find((wolf) => wolf.cell === cell);
 }
 
-/** Every sheep that touches a wolf along the tilt, in id order (the wolf in front first). */
-function lossesOf(tilt: Tilt, flock: Flock): Loss[] {
+/** Every sheep still on the field that touches a wolf along the tilt, in id order (wolf in front first). */
+function lossesOf(tilt: Tilt, ends: Ends, wolves: readonly Wolf[]): Loss[] {
   const losses: Loss[] = [];
-  for (const one of flock.sheep) {
-    if (one.status !== 'field') continue;
-    const ahead = stepBy(tilt.field, one.cell, tilt.step);
-    const behind = stepBy(tilt.field, one.cell, tilt.back);
-    const wolf = wolfOn(flock.wolves, ahead) ?? wolfOn(flock.wolves, behind);
+  tilt.field.sheep.forEach((one, index) => {
+    const cell = ends.sheep[index] ?? one.cell;
+    if (one.status !== 'field' || cell === tilt.field.pen) return;
+    const ahead = stepBy(tilt.field, cell, tilt.step);
+    const behind = stepBy(tilt.field, cell, tilt.back);
+    const wolf = wolfOn(wolves, ahead) ?? wolfOn(wolves, behind);
     if (wolf !== undefined) {
-      losses.push({ sheepId: one.id, cell: one.cell, wolfId: wolf.id, wolfCell: wolf.cell });
+      losses.push({ sheepId: one.id, cell, wolfId: wolf.id, wolfCell: wolf.cell });
     }
-  }
+  });
   return losses;
 }
 
@@ -213,8 +214,7 @@ export function tiltField(field: Field, direction: Direction): Tilted {
     ...one,
     cell: ends.wolves[index] ?? one.cell,
   }));
-  const moved = sheepAfter(field, ends, []);
-  const losses = lossesOf(tilt, { sheep: moved, wolves });
-  const sheep = losses.length === 0 ? moved : sheepAfter(field, ends, losses);
+  const losses = lossesOf(tilt, ends, wolves);
+  const sheep = sheepAfter(field, ends, losses);
   return { sheep, wolves, slides: ends.slides, penned: ends.penned, losses };
 }
