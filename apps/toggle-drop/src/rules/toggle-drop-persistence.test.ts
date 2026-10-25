@@ -1,7 +1,14 @@
 // apps/toggle-drop/src/rules/toggle-drop-persistence.test.ts
 import fc from 'fast-check';
 
+import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
+import { randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import {
+  TOGGLE_DROP_DAILY_DIFFICULTY,
+  TOGGLE_DROP_LEVELS,
+} from '@e07/toggle-drop/levels/toggle-drop-levels.ts';
+import { toggleDropBot } from '@e07/toggle-drop/testing/toggle-drop-bot.ts';
 import { TOGGLE_DROP_TEACHING } from '@e07/toggle-drop/tutorial/toggle-drop-teaching.ts';
 
 import { applyMove } from './apply-move.ts';
@@ -10,6 +17,7 @@ import { listMoves } from './list-moves.ts';
 import { TOGGLE_DROP_PERSISTENCE, parseMove, parseState } from './toggle-drop-persistence.ts';
 
 import type { ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
+import type { BotPolicy } from '@e07/game-kit/testing/play-bot.ts';
 
 const RULES = { listMoves, applyMove };
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
@@ -156,6 +164,62 @@ describe('parseState with the tutorial run', () => {
     );
     expect(reached).toHaveLength(4);
     expect(reached.map((state) => parseState(throughJson(state)))).toStrictEqual(reached);
+  });
+});
+
+type Policy = BotPolicy<ToggleDropState, ToggleDropMove>;
+
+/** Every state a bot passes through from `start` until the run ends. */
+function botStates(start: ToggleDropState, policy: Policy, seed: number): ToggleDropState[] {
+  const states = [start];
+  let rng = seedRng(seed);
+  for (let state = start, moves = listMoves(state); moves.length > 0; moves = listMoves(state)) {
+    const pick = policy(state, moves, rng);
+    rng = pick.rng;
+    state = applyMove(state, pick.move).state;
+    states.push(state);
+  }
+  return states;
+}
+
+const unparsed = (states: readonly ToggleDropState[]): ToggleDropState[] =>
+  states.filter((state) => parseState(throughJson(state)) === null);
+
+describe('parseState with bot play', () => {
+  const policies: readonly Policy[] = [toggleDropBot, randomPolicy()];
+
+  // Spec 8.6 and N10: no run a player can reach is dropped at boot.
+  it('reads back every state the bots reach on every shipped level', () => {
+    const lost = TOGGLE_DROP_LEVELS.table.flatMap((entry) =>
+      policies.flatMap((policy) =>
+        unparsed(botStates(create(entry.seed, entry.difficulty), policy, entry.level)),
+      ),
+    );
+    expect(lost).toStrictEqual([]);
+  });
+
+  it('reads back every state the bots reach on daily boards and every difficulty (property)', () => {
+    fc.assert(
+      fc.property(
+        seedArb,
+        fc.constantFrom(TOGGLE_DROP_DAILY_DIFFICULTY, 0, 99, 100),
+        fc.nat(),
+        (seed, difficulty, botSeed) => {
+          const start = create(seed, difficulty);
+          const lost = policies.flatMap((policy) => unparsed(botStates(start, policy, botSeed)));
+          expect(lost).toStrictEqual([]);
+        },
+      ),
+    );
+  });
+
+  it('reads back every state random play reaches on the tutorial board (property)', () => {
+    fc.assert(
+      fc.property(fc.nat(), (botSeed) => {
+        const start = TOGGLE_DROP_TEACHING.tutorial.start;
+        expect(unparsed(botStates(start, randomPolicy(), botSeed))).toStrictEqual([]);
+      }),
+    );
   });
 });
 
