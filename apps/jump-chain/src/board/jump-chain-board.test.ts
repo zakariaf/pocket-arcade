@@ -32,6 +32,10 @@ describe('jumpChainBoard', () => {
     expect(jumpChainBoard.toView).toBe(toView);
   });
 
+  it('sizes the S13 how-to picture like the Toybox checker illustration, 320 x 222', () => {
+    expect(jumpChainBoard.exampleAspect).toBe(320 / 222);
+  });
+
   it('points a hint at the landing squares of a move', () => {
     const state = create(1, 0);
     const path = [

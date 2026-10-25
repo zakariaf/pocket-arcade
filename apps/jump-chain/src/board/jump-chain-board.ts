@@ -36,6 +36,8 @@ function targetsOfMove(_state: JumpChainState, move: JumpChainMove): readonly Bo
 export const jumpChainBoard: GameBoard<JumpChainState, JumpChainView, BoardToken, JumpChainMove> = {
   // A board is a physical space: it never mirrors in fa and ckb (spec 7.5).
   isMirroredInRtl: false,
+  // S13: the Toybox checker illustration is drawn in a 320 x 222 viewBox, taller than the default.
+  exampleAspect: 320 / 222,
   // The ghost of the dragged piece floats this far above the finger (applied by the gesture layer).
   dragLiftPt: DRAG_LIFT_PT,
   toView,
