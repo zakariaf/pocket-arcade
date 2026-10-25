@@ -227,6 +227,11 @@
       "swaps-made": 2318,
       "double-hits": 87
     },
+    "pokerDrop": {
+      "hands-made": 836,
+      "big-hands": 97,
+      "biggest-cascade": 4
+    },
     "trailClear": {
       "loops-closed": 214,
       "tiles-placed": 1386,
@@ -358,6 +363,17 @@
           "total": 5
         },
         "loseReasonId": "swap-guard.lose.hit"
+      },
+      "pokerDrop": {
+        "progressMid": {
+          "made": 3,
+          "total": 8
+        },
+        "progressFull": {
+          "made": 8,
+          "total": 8
+        },
+        "loseReasonId": "poker-drop.lose.well-full"
       },
       "trailClear": {
         "progressMid": {

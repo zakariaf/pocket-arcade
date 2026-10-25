@@ -14,7 +14,10 @@ import type { SkPath } from '@shopify/react-native-skia';
 function buildPaths(skia: SkiaApi): Readonly<Partial<Record<string, SkPath>>> {
   const piece = skia.Path.Make();
   piece.addCircle(0.5, 0.5, 0.4);
-  return { piece };
+  // A built path is an SkPath again: adding to it is the mutable API, even after a builder.
+  const ring = skia.PathBuilder.Make().moveTo(0, 0).build();
+  ring.addOval({ x: 0, y: 0, width: 1, height: 1 });
+  return { piece, ring };
 }
 
 /** The rendering members of the game module (presentation.board of its ShellGameModule). */

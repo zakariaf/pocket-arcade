@@ -104,6 +104,14 @@
         "progressFullParams": { "defeated": 5, "total": 5 },
         "loseReasonId": "swap-guard.lose.hit"
       },
+      "pokerDrop": {
+        "gameStats": ["836", "97", "×4"],
+        "progressMid": "3 / 8",
+        "progressFull": "8 / 8",
+        "progressMidParams": { "made": 3, "total": 8 },
+        "progressFullParams": { "made": 8, "total": 8 },
+        "loseReasonId": "poker-drop.lose.well-full"
+      },
       "trailClear": {
         "gameStats": ["214", "1,386", "9"],
         "progressMid": "12 / 30",
@@ -343,6 +351,11 @@
         "swaps-made": 2318,
         "double-hits": 87
       },
+      "pokerDrop": {
+        "hands-made": 836,
+        "big-hands": 97,
+        "biggest-cascade": 4
+      },
       "trailClear": {
         "loops-closed": 214,
         "tiles-placed": 1386,
@@ -426,6 +439,11 @@
           "progressMid": { "defeated": 2, "total": 5 },
           "progressFull": { "defeated": 5, "total": 5 },
           "loseReasonId": "swap-guard.lose.hit"
+        },
+        "pokerDrop": {
+          "progressMid": { "made": 3, "total": 8 },
+          "progressFull": { "made": 8, "total": 8 },
+          "loseReasonId": "poker-drop.lose.well-full"
         },
         "trailClear": {
           "progressMid": { "placed": 12, "total": 30 },
