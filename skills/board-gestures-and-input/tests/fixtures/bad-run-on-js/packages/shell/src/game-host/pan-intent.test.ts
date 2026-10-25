@@ -1,6 +1,6 @@
 // packages/shell/src/game-host/pan-intent.test.ts
 import { IDLE_POINTER } from './board-types.ts';
-import { liftedPoint, panIntent } from './pan-intent.ts';
+import { dragAim, liftedPoint, panIntent } from './pan-intent.ts';
 
 import type { PanMode, PanRelease } from './pan-intent.ts';
 import type { BoardLayout } from '@e07/game-kit/geom/board-layout.ts';
@@ -72,6 +72,33 @@ describe('panIntent', () => {
       kind: 'drag-end',
       from: FROM,
       to: { regionId: 'board', col: 2, row: 2 },
+    });
+  });
+
+  it('puts a lifted drag back when the finger lets go on the cell the drag started from', () => {
+    const from = { regionId: 'board', col: 0, row: 3 };
+    const pointer = { ...POINTER, dragFrom: from };
+    const input = { mode: 'drag', pointer, layout: LAYOUT, dragLiftPt: 50 } as const;
+    // The finger is back in row 3 (y 175), where it started: the lifted point (row 2) is not used.
+    expect(panIntent({ ...input, release: release([25, 175], [0, 10]) })).toStrictEqual({
+      kind: 'drag-end',
+      from,
+      to: from,
+    });
+  });
+
+  it('aims a drag at its start cell while the finger is on it, else one lift above the finger', () => {
+    const from = { regionId: 'board', col: 0, row: 3 };
+    expect(dragAim(LAYOUT, { x: 25, y: 160 }, { from, liftPt: 50 })).toStrictEqual(from);
+    expect(dragAim(LAYOUT, { x: 75, y: 160 }, { from, liftPt: 50 })).toStrictEqual({
+      regionId: 'board',
+      col: 1,
+      row: 2,
+    });
+    expect(dragAim(LAYOUT, { x: 25, y: 160 }, { from: null, liftPt: 50 })).toStrictEqual({
+      regionId: 'board',
+      col: 0,
+      row: 2,
     });
   });
 

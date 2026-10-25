@@ -1,13 +1,13 @@
 // packages/shell/src/game-host/pan-intent.ts
 'worklet';
 
-import { hitTest } from '@e07/game-kit/geom/board-layout.ts';
+import { hitTest, isSameTarget } from '@e07/game-kit/geom/board-layout.ts';
 import { classifySwipe } from '@e07/game-kit/geom/classify-swipe.ts';
 
 import type { PointerSample } from './board-types.ts';
 import type { PanMode } from '@e07/game-kit/contract/game-engine.ts';
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
-import type { BoardLayout } from '@e07/game-kit/geom/board-layout.ts';
+import type { BoardLayout, BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
 
 /**
  * How a game uses pan gestures: 'none' | 'swipe' | 'drag' | 'aim'. The game declares it once as
@@ -28,6 +28,22 @@ type Point = { readonly x: number; readonly y: number };
  */
 export function liftedPoint(point: Point, dragLiftPt: number): Point {
   return { x: point.x, y: point.y - dragLiftPt };
+}
+
+/**
+ * The target a drag aims at for its hover, ghost and drop: one lift above the finger, unless the
+ * finger itself is back on the target the drag started from. Then it is that target, so letting go
+ * there puts the piece back (a cancel), even on the top part of a tray slot whose lifted point
+ * would reach the board's last row.
+ */
+export function dragAim(
+  layout: BoardLayout,
+  finger: Point,
+  drag: { readonly from: BoardTarget | null; readonly liftPt: number },
+): BoardTarget | null {
+  const under = hitTest(layout, finger, HIT_SLOP);
+  if (drag.from !== null && isSameTarget(under, drag.from)) return drag.from;
+  return hitTest(layout, liftedPoint(finger, drag.liftPt), HIT_SLOP);
 }
 
 export type PanRelease = {
@@ -70,7 +86,7 @@ export function panIntent(input: PanIntentInput): InputIntent | null {
         : {
             kind: 'drag-end',
             from: pointer.dragFrom,
-            to: hitTest(layout, liftedPoint(release, dragLiftPt), HIT_SLOP),
+            to: dragAim(layout, release, { from: pointer.dragFrom, liftPt: dragLiftPt }),
           };
     case 'aim':
       return { kind: 'aim', dx: layout.isMirrored ? -release.translationX : release.translationX, dy: release.translationY };

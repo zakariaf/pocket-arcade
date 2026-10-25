@@ -129,6 +129,35 @@ describe('useBoardGestures', () => {
     });
   });
 
+  it('puts a lifted drag back when the finger lets go on the cell it started from', async () => {
+    const onIntent = jest.fn();
+    const onHover = jest.fn();
+    await render(
+      <BoardGestureProbe
+        layout={LAYOUT}
+        panMode="drag"
+        dragLiftPt={50}
+        onIntent={onIntent}
+        onHover={onHover}
+      />,
+    );
+    const back = { x: 30, y: 40, translationX: 5, translationY: 15 };
+    await act(() => {
+      fireGestureHandler(getByGestureTestId('board.pan'), [
+        { state: State.BEGAN, x: 25, y: 25, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, x: 25, y: 125, translationX: 0, translationY: 100 },
+        { state: State.ACTIVE, ...back },
+        { state: State.END, ...back, velocityX: 0, velocityY: 0 },
+      ]);
+    });
+    // The finger goes down the board and comes back to its start cell (0, 0): the hover and the
+    // drop are that cell, not the point one lift above it (off the board), so the host shows no
+    // ghost and makes no move.
+    const start = { regionId: 'board', col: 0, row: 0 };
+    expect(onHover.mock.calls.at(-1)?.[0]).toStrictEqual(start);
+    expect(onIntent).toHaveBeenCalledWith({ kind: 'drag-end', from: start, to: start });
+  });
+
   it('turns a long press into a long-press intent on the held cell', async () => {
     const onIntent = jest.fn();
     await render(<BoardGestureProbe layout={LAYOUT} panMode="none" onIntent={onIntent} />);

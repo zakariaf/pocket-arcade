@@ -10,7 +10,7 @@ import { hitTest, isSameTarget } from '@e07/game-kit/geom/board-layout.ts';
 import { STICK_IDLE, stickCommand } from '@e07/game-kit/geom/stick-command.ts';
 
 import { IDLE_POINTER } from './board-types.ts';
-import { HIT_SLOP, liftedPoint, panIntent } from './pan-intent.ts';
+import { HIT_SLOP, dragAim, liftedPoint, panIntent } from './pan-intent.ts';
 
 import type { PointerSample } from './board-types.ts';
 import type { PanMode } from './pan-intent.ts';
@@ -93,13 +93,14 @@ function makePan({ layout, pointer, handlers }: Wiring): PanGesture {
       const origin = { x: event.x - event.translationX, y: event.y - event.translationY };
       const dragFrom = hitTest(layout.get(), origin, HIT_SLOP);
       const aim = liftedPoint(event, dragLiftPt);
-      const hover = hitTest(layout.get(), aim, HIT_SLOP);
+      const hover = dragAim(layout.get(), event, { from: dragFrom, liftPt: dragLiftPt });
       pointer.set({ isDown: true, x: aim.x, y: aim.y, hover, dragFrom });
     })
     .onUpdate((event) => {
       const previous = pointer.get();
       const aim = liftedPoint(event, dragLiftPt);
-      const hover = hitTest(layout.get(), aim, HIT_SLOP);
+      // Back on its start target, the drag aims there (a release puts it back): no ghost.
+      const hover = dragAim(layout.get(), event, { from: previous.dragFrom, liftPt: dragLiftPt });
       pointer.set({ ...previous, x: aim.x, y: aim.y, hover });
       if (!isSameTarget(hover, previous.hover)) scheduleOnRN(onHover, hover);
     })
