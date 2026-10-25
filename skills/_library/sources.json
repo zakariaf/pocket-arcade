@@ -15528,7 +15528,7 @@
         "sources": [
           {
             "path": "packages/shell/src/ui/use-wrapped-text.test.ts",
-            "sha256": "985f20a80d3eda281e55eb87ff47ec5e96bf45199d598c2542573af54f56871f"
+            "sha256": "4b70b2a7e905bc0f646a79c77f6478834beb8aecf60fd6741212b4109eb826ae"
           }
         ]
       },
@@ -15537,7 +15537,7 @@
         "sources": [
           {
             "path": "packages/shell/src/ui/use-wrapped-text.ts",
-            "sha256": "f83c8a14f09ffb07335685dd062af33ca83d2ae331a00790bd922de65a66ba83"
+            "sha256": "6b0650845a8525a2599344b2b82f25ca90efc127ed4de4ec5d464e9633643bc1"
           }
         ]
       },
