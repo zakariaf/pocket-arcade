@@ -3,6 +3,7 @@ import { seedRng } from '@e07/game-kit/rng/sfc32.ts';
 import { playBot } from '@e07/game-kit/testing/play-bot.ts';
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
 import { create } from '@e07/jump-chain/rules/create.ts';
+import { parseState } from '@e07/jump-chain/rules/jump-chain-persistence.ts';
 import { listMoves } from '@e07/jump-chain/rules/list-moves.ts';
 import { outcome } from '@e07/jump-chain/rules/outcome.ts';
 
@@ -18,6 +19,18 @@ describe('JUMP_CHAIN_TESTING', () => {
     expect(outcome(examples.middle()).kind).toBe('playing');
     expect(outcome(examples.win()).kind).toBe('won');
     expect(outcome(examples.lose()).kind).toBe('lost');
+  });
+
+  // The Shell saves an example it stages (debug links, E2E): a save must restore it (spec 8.6).
+  it('gives only example states legal play reaches, so each one survives a save', () => {
+    for (const example of Object.values(JUMP_CHAIN_TESTING.examples)) {
+      const state = example();
+      expect(parseState(JSON.parse(JSON.stringify(state)))).toStrictEqual(state);
+    }
+  });
+
+  it('loses the lose example with points scored, so an endless best can show it', () => {
+    expect(JUMP_CHAIN_TESTING.examples.lose().score).toBeGreaterThan(0);
   });
 
   it('shows a board with a capture made in the middle example', () => {

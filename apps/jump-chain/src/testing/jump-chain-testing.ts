@@ -1,8 +1,11 @@
 // apps/jump-chain/src/testing/jump-chain-testing.ts
 // Spec 10 TESTING: "A simple bot that can play the game" and "Example states for automatic
 // screenshots (start, middle, win, lose)".
+import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 import { applyMove } from '@e07/jump-chain/rules/apply-move.ts';
 import { create } from '@e07/jump-chain/rules/create.ts';
+import { listMoves } from '@e07/jump-chain/rules/list-moves.ts';
+import { outcome } from '@e07/jump-chain/rules/outcome.ts';
 
 import { jumpChainBot } from './jump-chain-bot.ts';
 
@@ -18,6 +21,22 @@ function middle(): JumpChainState {
   return applyMove(stepped, { kind: 'jump', path: [{ col: 6, row: 4 }] }).state;
 }
 
+/** Moves the lose line may take: the start board is lost in 12 (a test pins the loss). */
+const LOSE_MOVE_CAP = 100;
+
+/**
+ * Played, never written by hand, so a save restores it: from the start, always the last listed
+ * move, until the ranks overrun your side (score 150, an enemy on column 1 of your row).
+ */
+function lose(): JumpChainState {
+  let state = START();
+  for (let played = 0; played < LOSE_MOVE_CAP && outcome(state).kind === 'playing'; played += 1) {
+    const moves = listMoves(state);
+    state = applyMove(state, pickAt(moves, moves.length - 1)).state;
+  }
+  return state;
+}
+
 /** Example states for screenshots, the debug menu and E2E setup: start, middle, win, lose. */
 export const JUMP_CHAIN_TESTING: TestingSpec<JumpChainState, JumpChainMove> = {
   bot: jumpChainBot,
@@ -25,11 +44,6 @@ export const JUMP_CHAIN_TESTING: TestingSpec<JumpChainState, JumpChainMove> = {
     start: START,
     middle,
     win: () => ({ ...START(), enemies: [], captured: START().total, ranksCleared: 3, score: 340 }),
-    lose: () => ({
-      ...START(),
-      enemies: [{ id: 0, rank: 0, col: 1, row: 9 }],
-      captured: START().total - 1,
-      score: 150,
-    }),
+    lose,
   },
 };
