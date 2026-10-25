@@ -13,9 +13,10 @@ const LATIN_NAME = 'Merge Siege';
  * - store.ageRating is the owner's App Store answer set (step G1): violenceCartoonOrFantasy is
  *   NONE unless the game hits monsters or characters.
  * - bundleId is always io.applander.<game id without hyphens> and premium.productId is
- *   <bundleId>.premium (owner decision O4). The AdMob ids, the privacy host and the support
- *   address are placeholders until the owner's steps G5 and G3; check-game-app --stage complete
- *   rejects them.
+ *   <bundleId>.premium (owner decision O4). The privacy host and the support address are the
+ *   owner's AppLander site (step G3; its /terms, /support and /app-ads.txt pages go into the store
+ *   listing, not the app). The AdMob ids are placeholders until the owner's step G5;
+ *   check-game-app --stage complete rejects them.
  * - Premium is the EUR 1.99 App Store price point with Family Sharing off (owner decisions O2, O3);
  *   the app always shows the store's localised price, never this note.
  */
@@ -54,8 +55,8 @@ export const gameConfig: GameConfig = {
   hints: { freePerDay: 0 },
   isContinueAllowed: true,
   links: {
-    privacyPolicy: { host: 'example.com', path: '/merge-siege/privacy' },
-    supportEmail: 'support@example.com',
+    privacyPolicy: { host: 'merge-siege.applander.io', path: '/privacy' },
+    supportEmail: 'zakaria.fatahi@gmail.com',
   },
   store: {
     audience: 'general',
