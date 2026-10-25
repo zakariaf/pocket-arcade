@@ -9,8 +9,8 @@ import type { Direction, FlockTiltMove, FlockTiltState } from './flock-tilt-type
 import type { InputIntent } from '@e07/game-kit/contract/input-intent.ts';
 
 /**
- * The four tilt keys' region ids. Rules never import the board; the board's TILT_KEY_REGIONS
- * (board/board-ids.ts) is this table.
+ * The four tilt keys' region ids: the board's TILT_KEY_REGIONS (board/board-ids.ts), which a board
+ * test pins to these. Rules never import the board, so the ids are written in both places.
  */
 export const TILT_KEY_IDS: Readonly<Record<Direction, string>> = {
   up: 'tilt-up',
