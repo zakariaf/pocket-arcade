@@ -2,6 +2,7 @@
 'worklet';
 
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { inset, isPlaying, rectAt, rectBetween } from './board-geometry.ts';
 import { cellEntity, HEAD_ENTITY, TURN_ENTITY } from './board-ids.ts';
@@ -23,7 +24,7 @@ const BRIDGE = 0.44;
 /** Width of the ink edge, as a share of the cell. */
 const EDGE = 0.05;
 
-/** A segment to draw; alpha below 1 while it fades (set after the colour, which resets it). */
+/** A segment to draw; alpha below 1 while it fades (multiplied onto the token's own alpha). */
 type Segment = { readonly rect: Rect; readonly token: BoardToken; readonly alpha?: number };
 
 /** One rounded segment: the fill, then its ink edge (Toybox fills carry an ink edge). */
@@ -31,11 +32,9 @@ function drawSegment(canvas: SkCanvas, frame: Frame, segment: Segment): void {
   const { kit, colors } = frame;
   const { rect, token } = segment;
   const corner = rect.width * CORNER;
-  kit.fill.setColor(colors.color[token]);
-  kit.fill.setAlphaf(segment.alpha ?? 1);
+  setPaintColor(kit.fill, colors.color[token], segment.alpha ?? 1);
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.fill);
-  kit.stroke.setColor(colors.color.edge);
-  kit.stroke.setAlphaf(segment.alpha ?? 1);
+  setPaintColor(kit.stroke, colors.color.edge, segment.alpha ?? 1);
   kit.stroke.setStrokeWidth(Math.max(1, rect.width * EDGE));
   canvas.drawRRect({ rect, rx: corner, ry: corner }, kit.stroke);
 }
@@ -108,7 +107,7 @@ export function drawSnake(canvas: SkCanvas, frame: Frame): void {
  * spent segments. At moment 0 they still show (a tween of something visible).
  */
 export function drawFadingSegments(canvas: SkCanvas, frame: Frame): void {
-  const { view, layout, kit, fx } = frame;
+  const { view, layout, fx } = frame;
   for (let cell = 0; cell < view.cols * view.rows; cell += 1) {
     const fading = fxEntry(fx, 'spent', cellEntity(cell)) ?? fxEntry(fx, 'tail', cellEntity(cell));
     const alpha = fading?.values[0] ?? 0;
@@ -116,8 +115,6 @@ export function drawFadingSegments(canvas: SkCanvas, frame: Frame): void {
     if (rect === null) continue;
     drawSegment(canvas, frame, { rect: inset(rect, SEGMENT_INSET), token: 'snake', alpha });
   }
-  kit.fill.setAlphaf(1);
-  kit.stroke.setAlphaf(1);
 }
 
 /** One glowing ring around a cell of the closed loop. */
@@ -134,8 +131,7 @@ export function drawLoopFlash(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, kit, colors, fx } = frame;
   const flash = fxEntry(fx, 'loop', TURN_ENTITY);
   if (!isPlaying(flash)) return;
-  kit.stroke.setColor(colors.color.glow);
-  kit.stroke.setAlphaf(flash.values[0] ?? 0);
+  setPaintColor(kit.stroke, colors.color.glow, flash.values[0] ?? 0);
   for (let cell = 0; cell < view.cols * view.rows; cell += 1) {
     const isLoop = fxEntry(fx, 'spent', cellEntity(cell)) !== undefined || cell === view.snake[0];
     const rect = isLoop ? rectAt(layout, view.cols, cell) : null;
@@ -143,5 +139,4 @@ export function drawLoopFlash(canvas: SkCanvas, frame: Frame): void {
     kit.stroke.setStrokeWidth(Math.max(2, rect.width * 0.08));
     drawGlow(canvas, frame, rect);
   }
-  kit.stroke.setAlphaf(1);
 }

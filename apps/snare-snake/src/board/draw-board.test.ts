@@ -216,3 +216,103 @@ describe('drawBoard', () => {
     );
   });
 });
+
+/** A paint that acts like Skia's: setColor takes the colour's own alpha, setAlphaf replaces it. */
+function tokenPaint(token: SkColor): {
+  paint: SkPaint;
+  alpha: () => number;
+  isToken: () => boolean;
+} {
+  let alpha = 1;
+  let isToken = false;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') {
+          isToken = value === token;
+          alpha = (value as SkColor)[3] ?? 1;
+        }
+        if (name === 'setAlphaf' && typeof value === 'number') alpha = value;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha, isToken: () => isToken };
+}
+
+type TokenAt = DrawAt & {
+  readonly token: BoardToken;
+  readonly paint: 'fill' | 'stroke';
+  readonly call: string;
+};
+
+/** The alpha of every `call` drawn with `token` on one frame where the token has `tokenAlpha`. */
+function tokenAlphas(at: TokenAt, tokenAlpha: number): number[] {
+  const color = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const probe = tokenPaint(color);
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (name === at.call && args.at(-1) === probe.paint && probe.isToken()) {
+            seen.push(probe.alpha());
+          }
+        },
+    },
+  ) as SkCanvas;
+  const colors = { ...COLORS, color: { ...COLORS.color, [at.token]: color } };
+  const fx = { ...sampleTimeline(at.tracks, at.atMs), pointer: IDLE_POINTER };
+  const kit = { ...KIT, [at.paint]: probe.paint };
+  drawBoard(canvas, { view: VIEW, fx, highlight: EMPTY_HIGHLIGHT, colors, layout: LAYOUT, kit });
+  return seen;
+}
+
+describe('drawBoard with a translucent token', () => {
+  const tracks = buildTimeline(BUSIEST, 'full');
+  const startOf = (channel: string): number =>
+    tracks.find((track) => track.channel === channel)?.startMs ?? 0;
+  const cases: readonly (TokenAt & { readonly name: string })[] = [
+    {
+      name: 'the spent segments',
+      token: 'snake',
+      paint: 'fill',
+      call: 'drawRRect',
+      tracks,
+      atMs: 250,
+    },
+    {
+      name: 'their ink edge',
+      token: 'edge',
+      paint: 'stroke',
+      call: 'drawRRect',
+      tracks,
+      atMs: 250,
+    },
+    {
+      name: 'the loop flash',
+      token: 'glow',
+      paint: 'stroke',
+      call: 'drawRRect',
+      tracks,
+      atMs: startOf('loop') + 60,
+    },
+    {
+      name: 'the catch burst',
+      token: 'critter',
+      paint: 'fill',
+      call: 'drawCircle',
+      tracks,
+      atMs: startOf('burst') + 100,
+    },
+  ];
+
+  // Spec 8.12: the board draws from its palette tokens, so a token's own alpha must survive a fade.
+  it.each(cases)('keeps the token alpha under the fade of $name', (at) => {
+    const opaque = tokenAlphas(at, 1);
+    expect(opaque.filter((alpha) => alpha > 0 && alpha < 1).length).toBeGreaterThan(0);
+    expect(tokenAlphas(at, 0.5)).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
+  });
+});

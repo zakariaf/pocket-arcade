@@ -3,6 +3,7 @@
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { isPlaying, rectAt, rectBetween } from './board-geometry.ts';
 import { BURST_MS, critterEntity } from './board-ids.ts';
@@ -84,7 +85,6 @@ export function drawCaughtCritters(canvas: SkCanvas, frame: Frame): void {
 /** Particles from each caught critter while its burst plays. */
 export function drawBursts(canvas: SkCanvas, frame: Frame): void {
   const { view, layout, fx, kit, colors } = frame;
-  kit.fill.setColor(colors.color.critter);
   for (let id = 0; id < view.total; id += 1) {
     const burst = fxEntry(fx, 'burst', critterEntity(id));
     const rect = isPlaying(burst) ? rectAt(layout, view.cols, burst.values[0] ?? 0) : null;
@@ -101,9 +101,8 @@ export function drawBursts(canvas: SkCanvas, frame: Frame): void {
     };
     for (let i = 0; i < BURST_PARTICLES; i += 1) {
       const particle = sampleParticle(spec, i, burst.ageMs);
-      kit.fill.setAlphaf(particle.alpha);
+      setPaintColor(kit.fill, colors.color.critter, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, rect.width * 0.08, kit.fill);
     }
   }
-  kit.fill.setAlphaf(1);
 }
