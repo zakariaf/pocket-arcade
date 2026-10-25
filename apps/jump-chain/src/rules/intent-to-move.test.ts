@@ -1,7 +1,8 @@
 // apps/jump-chain/src/rules/intent-to-move.test.ts
 // The piece is dragged from its square to the square where the move should end, or that square is
 // tapped. Either way the move that ends there is played (move-ends.ts): the longest chain, the first
-// listed among equally long ones, or the step onto it.
+// listed among equally long ones, or the step onto it. A drag let go back on the piece's own square
+// cancels (there is no undo, so that is how a player takes a drag back).
 import fc from 'fast-check';
 
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
@@ -55,7 +56,10 @@ function endOf(move: JumpChainMove): Square | undefined {
   return move.kind === 'step' ? move.to : move.path.at(-1);
 }
 
-/** A drag to any square (on the board or off it) plays a listed move or nothing; every end works. */
+/**
+ * A drag to any square (on the board or off it) plays a listed move or nothing; every end but the
+ * piece's own square (where a drag cancels) works.
+ */
 function expectDrags(state: JumpChainState): void {
   const listed = listMoves(state).map((move) => JSON.stringify(move));
   for (let row = -1; row <= 10; row += 1) {
@@ -66,7 +70,10 @@ function expectDrags(state: JumpChainState): void {
   }
   for (const move of listMoves(state)) {
     const end = endOf(move);
-    if (end !== undefined) expect(intentToMove(state, drag(state, end))).not.toBeNull();
+    if (end === undefined) continue;
+    const played = intentToMove(state, drag(state, end));
+    if (end.col === state.piece.col && end.row === state.piece.row) expect(played).toBeNull();
+    else expect(played).not.toBeNull();
   }
 }
 
@@ -82,10 +89,8 @@ describe('intentToMove', () => {
     );
   });
 
-  it('plays the longest chain that ends on the square, even back on the piece’s own square', () => {
-    const loop = intentToMove(CHAINS, drag(CHAINS, PIECE));
-    expect(loop).toMatchObject({ kind: 'jump' });
-    expect(loop?.kind === 'jump' ? loop.path.length : 0).toBe(4);
+  it('cancels a drag let go back on the piece’s own square, even where a loop chain ends', () => {
+    expect(intentToMove(CHAINS, drag(CHAINS, PIECE))).toBeNull();
   });
 
   it('plays a step onto a free neighbour when no jump exists, dragged or tapped', () => {

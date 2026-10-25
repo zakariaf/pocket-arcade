@@ -77,7 +77,8 @@ function position(
   return { ...create(1, 0), piece, enemies, total: enemies.length, nextId: enemies.length };
 }
 
-/** A four-jump chain that clears the front rank and ends where it began; then the ranks advance. */
+/** A four-jump chain that clears the front rank and ends where it began; then the ranks advance.
+ * Its loop end is no drop target (a drag let go on the piece cancels), so previews hover (6, 2). */
 const BEFORE: JumpChainState = {
   ...position({ col: 2, row: 6 }, [
     [1, 5, 0],
@@ -145,7 +146,7 @@ describe('drawBoard', () => {
       tracks: [],
       atMs: 0,
       view: toView(BEFORE, PERSIAN),
-      pointer: dragging({ col: 2, row: 6 }, { col: 2, row: 6 }),
+      pointer: dragging({ col: 2, row: 6 }, { col: 4, row: 0 }),
     });
     expect(totalCalls(preview)).toBeLessThanOrEqual(DRAW_CALL_BUDGET);
   });
@@ -193,7 +194,7 @@ describe('drawBoard', () => {
       tracks: [],
       atMs: 0,
       view,
-      pointer: dragging({ col: 2, row: 6 }, { col: 2, row: 6 }),
+      pointer: dragging({ col: 2, row: 6 }, { col: 6, row: 2 }),
     });
     expect(count(preview, 'drawLine') - count(idle, 'drawLine')).toBe(4);
     expect(count(preview, 'drawCircle') - count(idle, 'drawCircle')).toBeGreaterThanOrEqual(5);
@@ -236,7 +237,7 @@ describe('drawBoard', () => {
       atMs: 0,
       kit,
       view: toView(BEFORE, PERSIAN),
-      pointer: dragging({ col: 2, row: 6 }, { col: 2, row: 6 }),
+      pointer: dragging({ col: 2, row: 6 }, { col: 6, row: 2 }),
     });
     expect(count(preview, 'drawPath')).toBe(2);
   });
@@ -306,7 +307,7 @@ describe('drawBoard with a translucent token', () => {
     tracks: [],
     atMs: 0,
     view: toView(BEFORE, PERSIAN),
-    pointer: dragging({ col: 2, row: 6 }, { col: 2, row: 6 }),
+    pointer: dragging({ col: 2, row: 6 }, { col: 6, row: 2 }),
   };
   const near: JumpChainState = {
     ...position({ col: 3, row: 3 }, [

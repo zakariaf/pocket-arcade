@@ -47,23 +47,40 @@ describe('toView', () => {
       [3, 3],
       [5, 3],
     ]);
-    const target = toView(state, PLAIN).targets.find((end) => end.col === 2 && end.row === 6);
+    const target = toView(state, PLAIN).targets.find((end) => end.col === 6 && end.row === 2);
     expect(target).toStrictEqual({
-      col: 2,
-      row: 6,
+      col: 6,
+      row: 2,
       path: [
         { col: 0, row: 4 },
         { col: 2, row: 2 },
         { col: 4, row: 4 },
-        { col: 2, row: 6 },
+        { col: 6, row: 2 },
       ],
       captured: [
         { col: 1, row: 5 },
         { col: 1, row: 3 },
         { col: 3, row: 3 },
-        { col: 3, row: 5 },
+        { col: 5, row: 3 },
       ],
     });
+  });
+
+  it('offers no target on the piece’s own square, where a released drag cancels', () => {
+    const state = position({ col: 2, row: 6 }, [
+      [1, 5],
+      [3, 5],
+      [1, 3],
+      [3, 3],
+      [5, 3],
+    ]);
+    const ends = toView(state, PLAIN).targets.map((end) => [end.col, end.row]);
+    expect(ends).toStrictEqual([
+      [0, 4],
+      [2, 2],
+      [4, 4],
+      [6, 2],
+    ]);
   });
 
   it('offers a step as its own square with no capture', () => {

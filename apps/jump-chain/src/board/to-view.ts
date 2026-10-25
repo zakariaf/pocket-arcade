@@ -1,4 +1,5 @@
 // apps/jump-chain/src/board/to-view.ts
+import { isSameSquare } from '@e07/jump-chain/rules/board-squares.ts';
 import { TUNING } from '@e07/jump-chain/rules/jump-chain-tuning.ts';
 import { WAITING_ROW } from '@e07/jump-chain/rules/march.ts';
 import { movesByEnd } from '@e07/jump-chain/rules/move-ends.ts';
@@ -31,7 +32,7 @@ export type JumpChainView = {
   readonly marchIn: number;
   /** The same, digits already localised (drawn in the corner of the waiting row). */
   readonly marchInText: string;
-  /** One per end square; empty once the run is over. */
+  /** One per end square but the piece's own (a drag let go there cancels); empty once over. */
   readonly targets: readonly TargetView[];
 };
 
@@ -57,15 +58,17 @@ export function toView(state: JumpChainState, format: ViewFormat): JumpChainView
     enemiesLeft: state.enemies.length,
     marchIn: state.marchIn,
     marchInText: format.formatNumber(state.marchIn),
-    targets: movesByEnd(state).map(({ square, move }) =>
-      move.kind === 'step'
-        ? { col: square.col, row: square.row, path: [move.to], captured: [] }
-        : {
-            col: square.col,
-            row: square.row,
-            path: move.path,
-            captured: capturedAlong(state.piece, move.path),
-          },
-    ),
+    targets: movesByEnd(state)
+      .filter(({ square }) => !isSameSquare(square, state.piece))
+      .map(({ square, move }) =>
+        move.kind === 'step'
+          ? { col: square.col, row: square.row, path: [move.to], captured: [] }
+          : {
+              col: square.col,
+              row: square.row,
+              path: move.path,
+              captured: capturedAlong(state.piece, move.path),
+            },
+      ),
   };
 }
