@@ -4,6 +4,7 @@
 // logs it, 8.14). Never cast. Every move is written before it is shown (after-every-move).
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
+import { applyMove } from './apply-move.ts';
 import { FACINGS, squaresAround } from './board-grid.ts';
 import { TUNING, volleyPoints } from './swap-guard-tuning.ts';
 
@@ -111,17 +112,65 @@ function isShaped(json: JsonRecord): boolean {
   );
 }
 
+/** The score is what volleys earn: 100 per knock-out plus 50 per extra enemy of a volley. */
+function isScoreEarned(state: SwapGuardState): boolean {
+  const knockedOut = state.enemyCount - state.enemies.length;
+  const extra = state.score - knockedOut * TUNING.pointsPerEnemy;
+  return (
+    extra >= 0 &&
+    state.score <= volleyPoints(knockedOut) &&
+    extra % TUNING.pointsPerExtraEnemy === 0
+  );
+}
+
+/** The record agrees: with no swap on record, a start or the board its one continue went back to. */
+function isRecordOk(state: SwapGuardState): boolean {
+  const { lastSwap } = state;
+  if (lastSwap === null) return !state.isHit && (state.swaps === 0 || state.hasContinued);
+  return isLastSwapOk(state, lastSwap) && isReplayed(state, lastSwap);
+}
+
 /** The pieces agree: nobody on the guard, ids within the level's count, the score earned. */
 function isConsistent(state: SwapGuardState): boolean {
-  const { guard, enemies, enemyCount, swaps, score, isHit, lastSwap } = state;
+  const { guard, enemies, enemyCount, swaps } = state;
   const knockedOut = enemyCount - enemies.length;
-  const isScoreEarned =
-    score >= knockedOut * TUNING.pointsPerEnemy && score <= volleyPoints(knockedOut);
   const isPieceOk =
     knockedOut >= 0 &&
     enemies.every((enemy) => enemy.cell !== guard && enemy.id < enemyCount) &&
     (swaps > 0 || knockedOut === 0);
-  return isPieceOk && isScoreEarned && (lastSwap === null ? !isHit : isLastSwapOk(state, lastSwap));
+  return isPieceOk && isScoreEarned(state) && isRecordOk(state);
+}
+
+/**
+ * The board before the last swap, as its continue would stand it again: the guard back on `from`,
+ * the swapped enemy back on `to`, the knocked-out enemies standing where they stood.
+ */
+function boardBefore(state: SwapGuardState, last: LastSwap): SwapGuardState {
+  const standing = [...state.enemies, ...last.defeated].sort((a, b) => a.id - b.id);
+  return {
+    ...state,
+    guard: last.from,
+    enemies: standing.map((enemy) =>
+      enemy.cell === last.from ? { ...enemy, cell: last.to } : enemy,
+    ),
+    swaps: state.swaps - 1,
+    score: state.score - last.points,
+    isHit: false,
+    lastSwap: null,
+  };
+}
+
+/** True when the last swap, played from the board before it, makes exactly this run. */
+function isReplayed(state: SwapGuardState, last: LastSwap): boolean {
+  const before = boardBefore(state, last);
+  const cells = new Set([before.guard, ...before.enemies.map((enemy) => enemy.cell)]);
+  if (cells.size !== before.enemies.length + 1) return false;
+  try {
+    const after = applyMove(before, { kind: 'swap', cell: last.to }).state;
+    return JSON.stringify(after) === JSON.stringify(state);
+  } catch {
+    return false;
+  }
 }
 
 /** A last swap on record: a swap was made, it ended on the guard, its knock-outs left the board. */

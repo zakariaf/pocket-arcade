@@ -10,6 +10,7 @@ import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { SWAP_GUARD_PERSISTENCE, parseMove, parseState } from './swap-guard-persistence.ts';
+import { volleyPoints } from './swap-guard-tuning.ts';
 
 import type { SwapGuardMove, SwapGuardState } from './swap-guard-types.ts';
 
@@ -73,7 +74,17 @@ function afterDoubleHit(): SwapGuardState {
 }
 
 const HIT = afterDoubleHit();
+const LOST = lostRun();
 const SPEAR = START.enemies[0];
+
+/** HIT, with one more enemy on record as knocked out by its volley, though no strike reached it. */
+function withUnstruckKnockOut(): unknown {
+  const [standing, ...rest] = HIT.enemies;
+  if (standing === undefined || HIT.lastSwap === null) throw new Error('HIT has nobody standing');
+  const defeated = [...HIT.lastSwap.defeated, standing];
+  const points = volleyPoints(defeated.length);
+  return { ...HIT, enemies: rest, score: points, lastSwap: { ...HIT.lastSwap, defeated, points } };
+}
 
 describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
   it('returns a saved start unchanged after a JSON round trip', () => {
@@ -147,6 +158,12 @@ describe('parseState (spec 8.6: a saved run comes back exactly)', () => {
       'a knocked-out enemy that still stands',
       { ...HIT, lastSwap: { ...HIT.lastSwap, defeated: [HIT.enemies[0]] } },
     ],
+    // Legal play cannot reach these (spec 8.6: a run comes back exactly, or is dropped alone).
+    ['a score no volleys add up to', { ...HIT, score: HIT.score - 25 }],
+    ['swaps made with none on record and no continue', { ...HIT, lastSwap: null }],
+    ['a hit flag on a guard no strike reached', { ...HIT, isHit: true }],
+    ['a guard standing in a strike with no hit flag', { ...LOST, isHit: false }],
+    ['a knock-out on record that no strike reached', withUnstruckKnockOut()],
   ])('refuses %s', (_name, json) => {
     expect(parseState(fromJson(json))).toBeNull();
   });
