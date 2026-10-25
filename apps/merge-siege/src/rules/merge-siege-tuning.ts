@@ -67,6 +67,9 @@ export const TUNING = {
   endlessStepEvery: 20,
   /** Endless: the numbers step up at most this many times (the biggest enemy is then a 1024). */
   endlessMaxSteps: 5,
+  /** Boards create() draws from a seed's stream before the fallback: each must be proven
+   *  winnable by the witness (spec 8.1); at difficulty 99 about one board in seven is. */
+  createAttempts: 24,
   /** Per-difficulty knobs (the tables above). */
   levelRows: LEVEL_ROWS,
   endlessRow: ENDLESS_ROW,

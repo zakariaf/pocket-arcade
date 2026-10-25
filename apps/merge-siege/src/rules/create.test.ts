@@ -7,7 +7,9 @@ import fc from 'fast-check';
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 
 import { boardText } from './board-text.ts';
-import { create } from './create.ts';
+import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
+import { TUNING } from './merge-siege-tuning.ts';
+import { MERGE_SIEGE_WITNESS, WITNESS_MAX_NODES } from './merge-siege-witness.ts';
 import { outcome } from './outcome.ts';
 
 import type { MergeSiegeState } from './merge-siege-types.ts';
@@ -51,6 +53,55 @@ describe('create (turn-based: the start state of a level)', () => {
       Array.from({ length: 40 }, (_, seed) => boardText(create(seed, 0).cells)),
     );
     expect(layouts.size).toBeGreaterThanOrEqual(20);
+  });
+
+  describe('every board it hands out is proven winnable (spec 8.1: no level is impossible)', () => {
+    const CREATE_BUDGET = { attempts: TUNING.createAttempts, maxNodes: WITNESS_MAX_NODES };
+    const isProven = (state: MergeSiegeState): boolean =>
+      MERGE_SIEGE_WITNESS.solve(state, WITNESS_MAX_NODES).kind === 'solved';
+
+    it('draws again from the seed when the witness loses its first board', () => {
+      // Seed 0 at 99: the witness loses its first board, so one attempt ends in the fallback...
+      const fallback = createWithin(FALLBACK_SEED, 99, CREATE_BUDGET);
+      expect(createWithin(0, 99, { attempts: 1, maxNodes: WITNESS_MAX_NODES })).toStrictEqual(
+        fallback,
+      );
+      // ...while the full budget finds a proven board of seed 0's own stream.
+      expect(create(0, 99)).not.toStrictEqual(fallback);
+      expect(isProven(create(0, 99))).toBe(true);
+    });
+
+    it('falls back to the proven fallback board when no draw can be proven within the budget', () => {
+      const forced = createWithin(12_345, 45, { attempts: 3, maxNodes: 1 });
+      expect(forced).toStrictEqual(createWithin(FALLBACK_SEED, 45, CREATE_BUDGET));
+      expect(isProven(forced)).toBe(true);
+    });
+
+    it('proves the fallback board of every level difficulty 0..99 within the create budget', () => {
+      for (let difficulty = 0; difficulty <= 99; difficulty += 1) {
+        expect(isProven(createWithin(FALLBACK_SEED, difficulty, CREATE_BUDGET))).toBe(true);
+      }
+    });
+
+    it("gives the sims the seed's first board, proven or not (create keeps it when proven)", () => {
+      expect(drawStart(1, 0)).toStrictEqual(create(1, 0));
+      expect(isProven(drawStart(0, 99))).toBe(false);
+    });
+
+    it('keeps the endless run (never won, so never proven) on its first board', () => {
+      expect(createWithin(9, ENDLESS_DIFFICULTY, { attempts: 1, maxNodes: 1 })).toStrictEqual(
+        create(9, ENDLESS_DIFFICULTY),
+      );
+    });
+
+    it('proves the board of any level seed and difficulty', () => {
+      fc.assert(
+        fc.property(seedArb, fc.integer({ min: 0, max: 99 }), (seed, difficulty) => {
+          expect(isProven(create(seed, difficulty))).toBe(true);
+        }),
+        { numRuns: 60 },
+      );
+    });
   });
 
   describe('properties', () => {

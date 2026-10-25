@@ -8,7 +8,7 @@ import { randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { summarizeCell } from '@e07/game-kit/testing/sim-stats.ts';
 import { traceBot } from '@e07/game-kit/testing/trace-bot.ts';
 import { applyMove } from '@e07/merge-siege/rules/apply-move.ts';
-import { create } from '@e07/merge-siege/rules/create.ts';
+import { drawStart } from '@e07/merge-siege/rules/create.ts';
 import { listMoves } from '@e07/merge-siege/rules/list-moves.ts';
 import { outcome } from '@e07/merge-siege/rules/outcome.ts';
 import {
@@ -34,7 +34,17 @@ type Move = MergeSiegeMove;
 
 const GAME_ID = 'merge-siege';
 const BANDS = parseBands(bandsJson);
-const GAME: BotGame<State, Move, MergeSiegeEvent> = { create, listMoves, applyMove, outcome };
+/**
+ * The sims measure the tuning on the seed's first board (drawStart), not on create()'s proven
+ * board: create() keeps only boards the greedy witness wins, which would hide the curve and the
+ * skill gap the bands describe.
+ */
+const GAME: BotGame<State, Move, MergeSiegeEvent> = {
+  create: drawStart,
+  listMoves,
+  applyMove,
+  outcome,
+};
 
 /** The three standard players: the baseline, the reasonable player and the upper bound of skill. */
 const POLICIES: Readonly<Record<string, () => BotPolicy<State, Move>>> = {
