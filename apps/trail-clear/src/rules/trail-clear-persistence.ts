@@ -204,7 +204,13 @@ export function parseState(json: unknown): TrailClearState | null {
   return isReachable(state) ? state : null;
 }
 
-/** One logged move -> a typed move, or null (the Shell then drops only the undo history). */
+/**
+ * One logged move -> a typed move, or null (the Shell then drops only the undo history). It sees
+ * the move alone, without the state, so it checks only the move's shape: whether the offered tile
+ * has that turn or fits that cell is known only when the log is replayed. The Shell's resume
+ * replays it, and a move applyMove refuses (RangeError) is written to the error log there: the run
+ * keeps its snapshot without its undo history (saved-run.test.ts).
+ */
 export function parseMove(json: unknown): TrailClearMove | null {
   if (!isRecord(json) || !hasExactly(json, MOVE_KEYS) || json['kind'] !== 'place-tile') return null;
   const { turns, col, row } = json;
