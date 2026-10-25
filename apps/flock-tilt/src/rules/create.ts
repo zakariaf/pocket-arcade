@@ -75,7 +75,8 @@ function fallbackField(knobs: DifficultyKnobs): Field {
   };
 }
 
-function startState(field: Field, par: number): FlockTiltState {
+/** A fresh run on a field: no tilt made yet, the whole tilt budget, no continue used. */
+export function startState(field: Field, par: number): FlockTiltState {
   return {
     ...field,
     tilts: 0,

@@ -1,7 +1,7 @@
 // apps/flock-tilt/src/tutorial/flock-tilt-teaching.ts
 import { applyMove } from '@e07/flock-tilt/rules/apply-move.ts';
+import { startState } from '@e07/flock-tilt/rules/create.ts';
 import { parseField } from '@e07/flock-tilt/rules/field-text.ts';
-import { TUNING } from '@e07/flock-tilt/rules/flock-tilt-tuning.ts';
 import { TILT_KEY_IDS } from '@e07/flock-tilt/rules/intent-to-move.ts';
 
 import type {
@@ -13,14 +13,7 @@ import type { TeachingSpec, TutorialPointer } from '@e07/game-kit/contract/teach
 
 /** A playing field from a text map, with the whole tilt budget. */
 function fieldOf(lines: readonly string[], par: number): FlockTiltState {
-  return {
-    ...parseField(lines),
-    tilts: 0,
-    tiltLimit: TUNING.tiltLimit,
-    par,
-    hasContinued: false,
-    beforeLoss: null,
-  };
+  return startState(parseField(lines), par);
 }
 
 const tilt = (direction: Direction): FlockTiltMove => ({ kind: 'tilt', direction });
