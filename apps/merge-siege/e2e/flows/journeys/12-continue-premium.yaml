@@ -5,7 +5,11 @@
 # in an ADS_MODE=test build covers the rewarded one.
 # 1. the debug link makes the player a Premium owner and opens level 1;
 # 2. action=lose-level ends the run as a loss the player may still rescue;
-# 3. the Result screen's continue key (the key under test) brings the same run back to play.
+# 3. the Result screen's continue key (the key under test) brings the same run back to play;
+# 4. one more move (a tap at the middle of the top row is a swipe up, intent-to-move.ts) is
+#    played: the run is still in play after it (the lose example's continue is followed by a swipe
+#    up that keeps playing, merge-siege-testing.test.ts), so the Game screen stays and the run's
+#    move count (0 after the jump to the lose example and the continue) reads 1.
 appId: ${APP_ID}
 name: Merge Siege Premium continue after a loss brings the same level back to play
 tags: [merge-siege, premium]
@@ -15,7 +19,7 @@ tags: [merge-siege, premium]
 - runFlow:
     file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
     env:
-      QUERY: 'lang=en&theme=light&seed=42&premium=1&level=1&ads=off&firstRun=0&reduceMotion=1&screen=game'
+      QUERY: 'lang=en&theme=light&seed=42&premium=1&level=1&ads=off&firstRun=0&reduceMotion=1&boardLayout=1&screen=game'
       WAIT_FOR: 'game.screen'
 - runFlow:
     file: ../../../../../packages/shell/e2e/subflows/debug-setup.yaml
@@ -37,3 +41,19 @@ tags: [merge-siege, premium]
 - assertVisible:
     id: 'game.mode-label'
     text: '.*1.*'
+- copyTextFrom:
+    id: 'game.board-layout'
+- evalScript: ${output.board = JSON.parse(maestro.copiedText)}
+- evalScript: ${output.to = output.board.layout.regions.find((region) => region.id === 'board')}
+# Maestro's point taps are window points on iOS and pixels on Android (tapScale, Android only).
+- evalScript: ${output.scale = output.board.tapScale || 1}
+- evalScript: ${output.upPoint = Math.round((output.board.x + output.to.x + (2 + 0.5) * output.to.cell) * output.scale) + ',' + Math.round((output.board.y + output.to.y + (0 + 0.5) * output.to.cell) * output.scale)}
+- tapOn:
+    point: ${output.upPoint}
+- assertVisible:
+    id: 'game.moves-label'
+    text: '1'
+- assertNotVisible:
+    id: 'result.screen'
+- assertVisible:
+    id: 'game.screen'

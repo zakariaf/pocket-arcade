@@ -33,22 +33,26 @@ const WIN = (): MergeSiegeState => ({
   score: 344,
 });
 
-/** Overrun: an enemy has reached the bottom row. */
-const LOSE = (): MergeSiegeState => ({
-  ...START(),
-  cells: parseBoard([
-    '. e4 . . .',
-    '. . . . .',
-    '. 8 . . .',
-    '. . . . .',
-    '2 . 4 . .',
-    '. . e16 . .',
-  ]),
-  swipes: 11,
-  entered: 6,
-  smashed: 4,
-  score: 196,
-});
+/** The swipes of a player who keeps swiping left (up once, when left changes nothing). */
+export const LOSING_SWIPES: readonly MergeSiegeMove[] = [
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'up' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+  { kind: 'swipe', direction: 'left' },
+];
+
+/**
+ * Overrun, reached through the rules: seed 1's start after LOSING_SWIPES, when an enemy has marched
+ * onto the bottom row. Its continue pushes every enemy back a row and the run plays on.
+ */
+const LOSE = (): MergeSiegeState =>
+  LOSING_SWIPES.reduce((state, move) => applyMove(state, move).state, START());
 
 export const MERGE_SIEGE_TESTING: TestingSpec<MergeSiegeState, MergeSiegeMove> = {
   bot: mergeSiegeBot,
