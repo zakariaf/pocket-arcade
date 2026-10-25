@@ -49,36 +49,36 @@ Shell constants (`shell-colors.ts`), per scheme: toast text on toast (4.5), ad t
 
 ## Measured Toybox contrast
 
-WCAG 2.2 ratios of the design's own colours (L = light, D = dark; bold = below the need). Line = Line Siege, Flock = Flock Tilt, Scrap = Scrap Shove.
+WCAG 2.2 ratios of the design's own colours (L = light, D = dark; bold = below the need). Line = Line Siege, Flock = Flock Tilt, Scrap = Scrap Shove, Step = Stepstone (added by its design pass, 2026-10-19).
 
-| Pair (need) | Line L | Line D | Flock L | Flock D | Scrap L | Scrap D |
-|---|---|---|---|---|---|---|
-| Body text on ground (4.5) | 10.96 | 14.99 | 11.93 | 13.48 | 12.45 | 14.31 |
-| Body text on surface (4.5) | 15.93 | 12.00 | 15.94 | 10.43 | 16.36 | 11.41 |
-| Body text on sunken (4.5) | 13.48 | 13.70 | 13.69 | 11.94 | 13.82 | 12.81 |
-| Muted text on ground (4.5) | 6.39 | 8.51 | 6.95 | 8.31 | 7.25 | 8.43 |
-| Muted text on surface (4.5) | 9.28 | 6.81 | 9.29 | 6.43 | 9.53 | 6.72 |
-| Muted text on sunken (4.5) | 7.85 | 7.78 | 7.98 | 7.36 | 8.05 | 7.55 |
-| Text on accent (4.5) | 5.87 | 6.59 | 6.89 | 7.79 | 6.49 | 8.30 |
-| Text on pop (4.5) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 |
-| Danger text on surface (4.5) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 |
-| Danger text on ground (4.5) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 |
-| Danger text and icons on dangerFill (4.5) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
-| Body text on dangerFill (4.5) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 |
-| Muted text on dangerFill (4.5) | 7.59 | 6.96 | 7.59 | 7.78 | 7.59 | 7.27 |
-| Toast text on toast (4.5) | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 |
-| Ad text on ad band (4.5) | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 |
-| Sticker ink on gold (4.5) | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 |
-| Outline vs ground (3) | 10.96 | 12.95 | 11.93 | 11.99 | 12.45 | 12.85 |
-| Outline vs surface (3) | 15.93 | 10.37 | 15.94 | 9.28 | 16.36 | 10.24 |
-| Outline vs accent fill (3) | 5.87 | **1.97** | 6.89 | **1.54** | 6.49 | **1.55** |
-| Accent fill vs ground (3) | **1.87** | 6.59 | **1.73** | 7.79 | **1.92** | 8.30 |
-| Pop fill vs ground (3) | **1.04** | 11.99 | **1.31** | 8.55 | **1.77** | 7.50 |
-| Surface vs ground (3) | **1.45** | **1.25** | **1.34** | **1.29** | **1.31** | **1.25** |
-| Star fill vs surface (3) | **1.48** | 9.19 | **1.48** | 7.77 | **1.52** | 8.69 |
-| Off star vs surface (3) | 9.28 | 6.81 | 9.29 | 6.43 | 9.53 | 6.72 |
-| Focus ring vs ground (3) | 3.62 | 7.80 | 3.94 | 6.82 | 4.11 | 7.40 |
-| Focus ring vs sunken (3) | 4.45 | 7.13 | 4.52 | 6.04 | 4.57 | 6.63 |
+| Pair (need) | Line L | Line D | Flock L | Flock D | Scrap L | Scrap D | Step L | Step D |
+|---|---|---|---|---|---|---|---|---|
+| Body text on ground (4.5) | 10.96 | 14.99 | 11.93 | 13.48 | 12.45 | 14.31 | 10.36 | 14.75 |
+| Body text on surface (4.5) | 15.93 | 12.00 | 15.94 | 10.43 | 16.36 | 11.41 | 15.92 | 11.56 |
+| Body text on sunken (4.5) | 13.48 | 13.70 | 13.69 | 11.94 | 13.82 | 12.81 | 13.45 | 13.13 |
+| Muted text on ground (4.5) | 6.39 | 8.51 | 6.95 | 8.31 | 7.25 | 8.43 | 6.03 | 8.90 |
+| Muted text on surface (4.5) | 9.28 | 6.81 | 9.29 | 6.43 | 9.53 | 6.72 | 9.27 | 6.98 |
+| Muted text on sunken (4.5) | 7.85 | 7.78 | 7.98 | 7.36 | 8.05 | 7.55 | 7.83 | 7.92 |
+| Text on accent (4.5) | 5.87 | 6.59 | 6.89 | 7.79 | 6.49 | 8.30 | 5.41 | 8.65 |
+| Text on pop (4.5) | 11.45 | 11.99 | 9.10 | 8.55 | 7.05 | 7.50 | 7.66 | 8.25 |
+| Danger text on surface (4.5) | 5.53 | 5.70 | 5.53 | 4.82 | 5.68 | 5.39 | 5.52 | 5.38 |
+| Danger text on ground (4.5) | **3.80** | 7.13 | **4.14** | 6.23 | **4.32** | 6.77 | **3.59** | 6.86 |
+| Danger text and icons on dangerFill (4.5) | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 | 4.52 | 5.83 |
+| Body text on dangerFill (4.5) | 13.03 | 12.27 | 13.03 | 12.61 | 13.03 | 12.34 | 13.03 | 12.53 |
+| Muted text on dangerFill (4.5) | 7.59 | 6.96 | 7.59 | 7.78 | 7.59 | 7.27 | 7.59 | 7.56 |
+| Toast text on toast (4.5) | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 | 15.93 | 14.99 |
+| Ad text on ad band (4.5) | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 | 7.09 | 8.16 |
+| Sticker ink on gold (4.5) | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 | 10.74 |
+| Outline vs ground (3) | 10.96 | 12.95 | 11.93 | 11.99 | 12.45 | 12.85 | 10.36 | 12.77 |
+| Outline vs surface (3) | 15.93 | 10.37 | 15.94 | 9.28 | 16.36 | 10.24 | 15.92 | 10.02 |
+| Outline vs accent fill (3) | 5.87 | **1.97** | 6.89 | **1.54** | 6.49 | **1.55** | 5.41 | **1.48** |
+| Accent fill vs ground (3) | **1.87** | 6.59 | **1.73** | 7.79 | **1.92** | 8.30 | **1.91** | 8.65 |
+| Pop fill vs ground (3) | **1.04** | 11.99 | **1.31** | 8.55 | **1.77** | 7.50 | **1.35** | 8.25 |
+| Surface vs ground (3) | **1.45** | **1.25** | **1.34** | **1.29** | **1.31** | **1.25** | **1.54** | **1.28** |
+| Star fill vs surface (3) | **1.48** | 9.19 | **1.48** | 7.77 | **1.52** | 8.69 | **1.48** | 8.67 |
+| Off star vs surface (3) | 9.28 | 6.81 | 9.29 | 6.43 | 9.53 | 6.72 | 9.27 | 6.98 |
+| Focus ring vs ground (3) | 3.62 | 7.80 | 3.94 | 6.82 | 4.11 | 7.40 | 3.42 | 7.51 |
+| Focus ring vs sunken (3) | 4.45 | 7.13 | 4.52 | 6.04 | 4.57 | 6.63 | 4.44 | 6.68 |
 
 What the numbers mean: all text passes where Toybox puts it; light fills are weak against the ground but always outlined; in dark the fills themselves stand 6.6–12:1 off the ground, so the shape is clear even where the chalk outline is close to the fill; panels are delimited by their outline, never by their fill; dark hard shadows (1.2–1.3:1) are depth cues, not boundaries.
 

@@ -1,0 +1,4 @@
+[
+  { "write": { "file": "apps/tap-flip/src/rules/scramble-board.ts", "content": "// apps/tap-flip/src/rules/scramble-board.ts\nimport { nextInt, seedRng } from '@e07/game-kit/rng/sfc32.ts';\n\n/** A generation helper only create() calls: its draws happen before play. */\nexport function scrambleCell(seed: number, size: number): number {\n  return nextInt(seedRng(seed), size).value;\n}\n" } },
+  { "replace": { "file": "apps/tap-flip/src/rules/create.ts", "find": "import { flipCells, neighbourhood } from './flip-cells.ts';", "with": "import { flipCells, neighbourhood } from './flip-cells.ts';\nimport { scrambleCell } from './scramble-board.ts';" } }
+]

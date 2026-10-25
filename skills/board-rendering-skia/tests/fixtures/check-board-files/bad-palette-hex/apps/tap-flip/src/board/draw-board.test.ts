@@ -114,6 +114,15 @@ describe('drawBoard', () => {
     expect(draw({ tracks, atMs: 200 }).texts).toStrictEqual(['۱۲']);
   });
 
+  it('keeps the moves-left label through its out-back overshoot, until its track ends', () => {
+    // The pop's eased progress passes 1 at about 37 % of its time; "playing" is its linear time.
+    const tracks = buildTimeline([{ kind: 'moves-added', count: 3 }], 'full');
+    for (const atMs of [300, 450, 590]) {
+      expect(draw({ tracks, atMs }).texts).toStrictEqual(['۱۲']);
+    }
+    expect(draw({ tracks, atMs: 600 }).texts).toStrictEqual([]);
+  });
+
   it('rings each hinted cell of the host highlight', () => {
     const hinted = [{ regionId: 'board', col: 2, row: 2 }];
     const plain = draw({ tracks: [], atMs: 0 });

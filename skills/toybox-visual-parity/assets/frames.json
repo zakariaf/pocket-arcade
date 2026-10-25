@@ -87,6 +87,14 @@
         "progressMidParams": { "captured": 7, "total": 12 },
         "progressFullParams": { "captured": 12, "total": 12 },
         "loseReasonId": "jump-chain.lose.overrun"
+      },
+      "stepstone": {
+        "gameStats": ["1,342", "46", "×4"],
+        "progressMid": "3 / 7",
+        "progressFull": "7 / 7",
+        "progressMidParams": { "moves": 3, "par": 7 },
+        "progressFullParams": { "moves": 7, "par": 7 },
+        "loseReasonId": "stepstone.lose.stuck"
       }
     }
   },
@@ -308,6 +316,11 @@
         "pieces-captured": 1462,
         "ranks-cleared": 318,
         "longest-chain": 5
+      },
+      "stepstone": {
+        "tiles-stepped": 1342,
+        "levels-at-par": 46,
+        "kinds-used": 4
       }
     },
     "hints": {
@@ -377,6 +390,11 @@
           "progressMid": { "captured": 7, "total": 12 },
           "progressFull": { "captured": 12, "total": 12 },
           "loseReasonId": "jump-chain.lose.overrun"
+        },
+        "stepstone": {
+          "progressMid": { "moves": 3, "par": 7 },
+          "progressFull": { "moves": 7, "par": 7 },
+          "loseReasonId": "stepstone.lose.stuck"
         }
       }
     }

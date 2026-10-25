@@ -1,0 +1,25 @@
+{
+  "edge": "edge",
+  "text": [["label", "background"]],
+  "graphics": [
+    ["glyph", "stoneKing"],
+    ["glyph", "stoneRook"],
+    ["glyph", "stoneBishop"],
+    ["glyph", "stoneKnight"],
+    ["flagMark", "flag"],
+    ["reach", "background"],
+    ["hint", "background"],
+    ["ripple", "background"],
+    ["glyph", "frog"],
+    ["flagMark", "frog"]
+  ],
+  "shapes": [
+    ["stoneKing", "background"],
+    ["stoneRook", "background"],
+    ["stoneBishop", "background"],
+    ["stoneKnight", "background"],
+    ["flag", "background"],
+    ["frog", "stoneRook"]
+  ],
+  "distinct": [["stoneKing", "stoneRook", "stoneBishop", "stoneKnight"]]
+}

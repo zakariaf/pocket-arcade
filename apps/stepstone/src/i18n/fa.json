@@ -1,0 +1,23 @@
+{
+  "stepstone.board.summary": "اندازهٔ برکه: {side, number} × {side, number}. قورباغه {hop, select, king {یک خانه به هر سو} rook {در خط راست} bishop {گوشه به گوشه} knight {به شکل L} other {به هیچ‌جا}} می‌پرد. {reachCount, plural, =0 {هیچ سنگی در دسترس نیست} one {# سنگ در دسترس است} other {# سنگ در دسترس است}}.",
+  "stepstone.goal": "قورباغه را از روی سنگ‌ها تا پرچم ببرید.",
+  "stepstone.how-to-play.step-1": "سنگی که رویش ایستاده‌اید نشان می‌دهد پرش بعدی‌تان چگونه است.",
+  "stepstone.how-to-play.step-2": "روی سنگی که پرشتان به آن می‌رسد بزنید تا آنجا فرود بیایید.",
+  "stepstone.how-to-play.step-3": "هر سنگی که ترکش کنید، پشت سرتان غرق می‌شود.",
+  "stepstone.how-to-play.step-4": "برای سه ستاره، در حد هدف یا کمتر به پرچم برسید.",
+  "stepstone.lose.stuck": "به هیچ سنگی نمی‌رسید",
+  "stepstone.name": "Stepstone",
+  "stepstone.pack-name.1": "برکهٔ نیلوفر",
+  "stepstone.pack-name.2": "نهر مه‌آلود",
+  "stepstone.pack-name.3": "تندآب رودخانه",
+  "stepstone.progress": "حرکت {moves, number} / هدف {par, number}",
+  "stepstone.stats.kinds-used": "انواع پرش استفاده‌شده",
+  "stepstone.stats.levels-at-par": "مرحله‌ها در حد هدف",
+  "stepstone.stats.tiles-stepped": "سنگ‌های پیموده‌شده",
+  "stepstone.tagline": "هر سنگ پرش بعدی شما را تعیین می‌کند.",
+  "stepstone.tutorial.step-1": "روی یک سنگ روشن بزنید تا رویش بپرید.",
+  "stepstone.tutorial.step-2": "این سنگ × شما را مورب می‌پراند.",
+  "stepstone.tutorial.step-3": "سنگ قبلی غرق شد، پس از قبل برنامه بریزید.",
+  "stepstone.tutorial.step-4": "روی پرچم بپرید تا برنده شوید!",
+  "stepstone.win-title": "به آن سو رسیدید!"
+}
