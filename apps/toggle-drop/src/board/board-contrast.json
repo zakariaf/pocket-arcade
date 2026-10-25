@@ -1,0 +1,18 @@
+{
+  "edge": "edge",
+  "text": [["label", "cup"]],
+  "graphics": [
+    ["pivot", "lever"],
+    ["chute", "lane"],
+    ["hint", "lane"],
+    ["edge", "cup"]
+  ],
+  "shapes": [
+    ["ball", "background"],
+    ["ball", "lane"],
+    ["ball", "cup"],
+    ["cup", "lane"],
+    ["lever", "lane"]
+  ],
+  "distinct": [["ball", "cup"]]
+}

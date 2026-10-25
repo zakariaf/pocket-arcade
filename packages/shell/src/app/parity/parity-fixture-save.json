@@ -227,6 +227,11 @@
       "swaps-made": 2318,
       "double-hits": 87
     },
+    "toggleDrop": {
+      "balls-dropped": 412,
+      "switches-flipped": 1938,
+      "cups-filled": 286
+    },
     "pokerDrop": {
       "hands-made": 836,
       "big-hands": 97,
@@ -363,6 +368,17 @@
           "total": 5
         },
         "loseReasonId": "swap-guard.lose.hit"
+      },
+      "toggleDrop": {
+        "progressMid": {
+          "filled": 1,
+          "total": 3
+        },
+        "progressFull": {
+          "filled": 3,
+          "total": 3
+        },
+        "loseReasonId": "toggle-drop.lose.out-of-balls"
       },
       "pokerDrop": {
         "progressMid": {

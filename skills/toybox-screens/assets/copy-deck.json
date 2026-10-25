@@ -1840,6 +1840,135 @@
         }
       ]
     },
+    "toggleDrop": {
+      "id": "toggle-drop",
+      "modes": [
+        "levels",
+        "daily"
+      ],
+      "name": {
+        "en": "Toggle Drop",
+        "de": "Toggle Drop",
+        "fa": "Toggle Drop",
+        "ckb": "Toggle Drop"
+      },
+      "tagline": {
+        "en": "Every switch flips. Plan your drops.",
+        "de": "Jede Weiche kippt. Plane deine Kugeln.",
+        "fa": "هر اهرم برمی‌گردد. توپ‌ها را با نقشه بیندازید.",
+        "ckb": "هەر دەسکێک وەردەگەڕێت. تۆپەکان بە پلان بەربدەوە."
+      },
+      "goal": {
+        "en": "Fill every cup before you run out of balls.",
+        "de": "Füll jeden Becher, bevor dir die Kugeln ausgehen.",
+        "fa": "پیش از تمام شدن توپ‌ها، همهٔ سبدها را پر کنید.",
+        "ckb": "پێش ئەوەی تۆپەکانت تەواو بن، هەموو سەبەتەکان پڕ بکەرەوە."
+      },
+      "progress": {
+        "en": "Cups {filled, number} / {total, number}",
+        "de": "Becher {filled, number} / {total, number}",
+        "fa": "سبد {filled, number} / {total, number}",
+        "ckb": "سەبەتە {filled, number} / {total, number}"
+      },
+      "winTitle": {
+        "en": "Every cup filled!",
+        "de": "Alle Becher voll!",
+        "fa": "همهٔ سبدها پر شد!",
+        "ckb": "هەموو سەبەتەکان پڕ بوون!"
+      },
+      "loseReason": {
+        "en": "You ran out of balls",
+        "de": "Dir sind die Kugeln ausgegangen",
+        "fa": "توپ‌هایتان تمام شد",
+        "ckb": "تۆپەکانت تەواو بوون"
+      },
+      "stats": {
+        "ballsDropped": {
+          "en": "Balls dropped",
+          "de": "Geworfene Kugeln",
+          "fa": "توپ‌های انداخته‌شده",
+          "ckb": "تۆپی بەردراوە"
+        },
+        "switchesFlipped": {
+          "en": "Switches flipped",
+          "de": "Gekippte Weichen",
+          "fa": "اهرم‌های برگشته",
+          "ckb": "دەسکی وەرگەڕاو"
+        },
+        "cupsFilled": {
+          "en": "Cups filled",
+          "de": "Gefüllte Becher",
+          "fa": "سبدهای پرشده",
+          "ckb": "سەبەتەی پڕکراو"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "Tap a column to drop a ball.",
+          "de": "Tipp auf eine Spalte, um eine Kugel fallen zu lassen.",
+          "fa": "روی یک ستون بزنید تا توپی بیفتد.",
+          "ckb": "دەست لە ستوونێک بدە بۆ ئەوەی تۆپێک بەربێتەوە."
+        },
+        {
+          "en": "Each switch sends the ball its way, then flips.",
+          "de": "Jede Weiche schickt die Kugel in ihre Richtung und kippt dann um.",
+          "fa": "هر اهرم توپ را به سمت خودش می‌فرستد و بعد برمی‌گردد.",
+          "ckb": "هەر دەسکێک تۆپەکە بەلای خۆیدا دەنێرێت و پاشان وەردەگەڕێت."
+        },
+        {
+          "en": "The next ball meets the flipped switches.",
+          "de": "Die nächste Kugel trifft auf die gekippten Weichen.",
+          "fa": "توپ بعدی به اهرم‌های برگشته می‌خورد.",
+          "ckb": "تۆپی دواتر بەر دەسکە وەرگەڕاوەکان دەکەوێت."
+        },
+        {
+          "en": "Fill every cup with as few balls as you can.",
+          "de": "Füll jeden Becher mit so wenigen Kugeln wie möglich.",
+          "fa": "همهٔ سبدها را با کمترین توپ ممکن پر کنید.",
+          "ckb": "هەموو سەبەتەکان بە کەمترین تۆپ پڕ بکەرەوە."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Tap this column to drop a ball.",
+          "de": "Tipp auf diese Spalte, um eine Kugel fallen zu lassen.",
+          "fa": "روی این ستون بزنید تا توپی بیفتد.",
+          "ckb": "دەست لەم ستوونە بدە بۆ ئەوەی تۆپێک بەربێتەوە."
+        },
+        {
+          "en": "The switch flipped. Drop here again!",
+          "de": "Die Weiche ist umgekippt. Lass hier noch eine fallen!",
+          "fa": "اهرم برگشت. دوباره همین‌جا بیندازید!",
+          "ckb": "دەسکەکە وەرگەڕا. دیسان لێرە بەری بدەوە!"
+        },
+        {
+          "en": "It went the other way! Now fill the last cup.",
+          "de": "Sie ging in die andere Richtung! Füll jetzt den letzten Becher.",
+          "fa": "توپ به سمت دیگر رفت! حالا آخرین سبد را پر کنید.",
+          "ckb": "تۆپەکە بەلاکەی تردا ڕۆیشت! ئێستا دوایین سەبەتە پڕ بکەرەوە."
+        }
+      ],
+      "packs": [
+        {
+          "en": "Warm-up board",
+          "de": "Aufwärmbrett",
+          "fa": "صفحهٔ گرم کردن",
+          "ckb": "تەختەی گەرمبوونەوە"
+        },
+        {
+          "en": "Switchyard",
+          "de": "Weichenhof",
+          "fa": "حیاط اهرم‌ها",
+          "ckb": "حەوشەی دەسکەکان"
+        },
+        {
+          "en": "Grand cascade",
+          "de": "Große Kaskade",
+          "fa": "آبشار بزرگ",
+          "ckb": "تاڤگەی گەورە"
+        }
+      ]
+    },
     "trailClear": {
       "id": "trail-clear",
       "modes": [

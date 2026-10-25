@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "eae5c716fbda6d32773e809c07907388d4889b3843df0854516b963f12e4475c",
+  "design": "80f475846e427a193a8d2ea0dd7e377687efa10e889f95201b71fc1551f2df59",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "55d77cdd8321ed6461c6b28a8de1142567a06024b0499c00e366e59f18e2a0af",
+  "frames": "7bf0710e2f18edd3ec27ac39244ab0a0048871870b76372c07c16410e3f771c6",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1686,6 +1686,22 @@
    "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (lead helper, 2026-10-25)."
   },
   {
+   "id": "G-toggle-drop",
+   "date": "2026-10-19",
+   "frames": [],
+   "variants": [],
+   "what": "Toggle Drop added to the design as a design game: its paint in light and dark, its logo, its sample counters and its texts in en, de, fa and ckb, beside Line Siege, Flock Tilt and Scrap Shove. Only the design input (inputs.design) was recorded; no Line Siege frame or variant changed, and none was re-rendered.",
+   "why": "spec 13: Toggle Drop's design pass (E26-T01), drafted on 2026-10-19 and sent for the owner's approval, its defaults applying meanwhile (the owner's parallel build decision of 2026-10-19)."
+  },
+  {
+   "id": "G-toggle-drop-joined",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E26 put Toggle Drop into the design beside Snare Snake, Merge Siege, Jump Chain and Stepstone (two merges of main) (its palette, logo, texts and sample counters joined theirs). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; Toggle Drop's pass was drafted on its own branch and is joined here (lead's helper, 2026-10-25)."
+  },
+  {
    "id": "G-poker-drop",
    "date": "2026-10-19",
    "frames": [],
@@ -1718,6 +1734,14 @@
    "why": "spec 13: each game gets its own design pass; the passes were drafted on separate branches and are joined here (E27 helper, 2026-10-25)."
   },
   {
+   "id": "G-toggle-drop-with-poker-drop",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E26 put Toggle Drop next to Poker Drop in the design (both palettes, logos, texts, sample counters and how-to-play pictures kept). No frame or variant changed: the design and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game’s design pass; the passes were drafted on separate branches and are joined here (lead’s helper, 2026-10-25)."
+  },
+  {
    "id": "G-trail-clear-with-stepstone",
    "date": "2026-10-25",
    "frames": [],
@@ -1740,6 +1764,14 @@
    "variants": [],
    "what": "Merging main into E28 put Trail Clear into the design next to Poker Drop (both palettes, logos, texts, sample counters and how-to-play pictures). No Line Siege frame or variant changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
    "why": "spec 13: each game design pass; the two passes were drafted on separate branches and are joined here (E28 game helper, 2026-10-25)."
+  },
+  {
+   "id": "G-trail-clear-with-toggle-drop",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E28 again put Trail Clear into the design after Toggle Drop and Poker Drop (palettes, logos, texts, sample counters and how-to-play pictures). No Line Siege frame or variant changed: the manifest inputs (design, frames) were re-recorded with a one-frame --update-reference of s4-home light-en, which rendered byte-identical.",
+   "why": "spec 13: each game design pass; the passes were drafted on separate branches and are joined here (E28 game helper, 2026-10-25)."
   }
  ]
 }

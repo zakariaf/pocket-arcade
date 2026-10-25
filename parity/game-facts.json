@@ -49,6 +49,12 @@
       "winLine": "moves",
       "hasHints": true
     },
+    "toggle-drop": {
+      "designGame": "toggleDrop",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
+    },
     "poker-drop": {
       "designGame": "pokerDrop",
       "hasMusic": false,
