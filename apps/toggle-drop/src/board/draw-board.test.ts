@@ -2,6 +2,7 @@
 import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 
+import { cupEntity } from './board-ids.ts';
 import { buildTimeline } from './build-timeline.ts';
 import { drawBoard } from './draw-board.ts';
 import { layoutBoard } from './layout-board.ts';
@@ -170,6 +171,39 @@ describe('drawBoard', () => {
     // At 1200 ms the ball has melted away and the puff is still growing; at 1400 ms it is gone.
     expect(draw({ tracks, atMs: 1200 }).calls.get('drawCircle')).toBe(idle + 1);
     expect(draw({ tracks, atMs: 1400 }).calls.get('drawCircle')).toBe(idle);
+  });
+
+  it('keeps a cup popping through an overshooting pop, until its track ends', () => {
+    // An effect plays by its linear time: an out-back pop passes its rest scale early.
+    const pop: Track = {
+      channel: 'catch',
+      entityId: cupEntity(2),
+      startMs: 0,
+      durationMs: 400,
+      easing: 'out-back',
+      from: [1.3],
+      to: [1],
+    };
+    const scales = (atMs: number, tracks: readonly Track[] = [pop]): number[] => {
+      const seen: number[] = [];
+      const canvas = new Proxy(
+        {},
+        {
+          get:
+            (_target, name) =>
+            (...args: unknown[]) => {
+              if (name === 'scale' && typeof args[0] === 'number') seen.push(args[0]);
+            },
+        },
+      ) as SkCanvas;
+      const fx = { ...sampleTimeline(tracks, atMs), pointer: IDLE_POINTER };
+      const frame = { view: VIEW, fx, highlight: EMPTY_HIGHLIGHT, colors: COLORS, layout: LAYOUT };
+      drawBoard(canvas, { ...frame, kit: KIT });
+      return seen;
+    };
+    const atRest = scales(0, []);
+    expect(scales(320)).not.toStrictEqual(atRest);
+    expect(scales(400)).toStrictEqual(atRest);
   });
 
   it('rings the hinted column of the host highlight', () => {

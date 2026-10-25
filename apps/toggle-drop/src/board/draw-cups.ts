@@ -2,7 +2,7 @@
 'worklet';
 
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
-import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { fxEntry, playingEntry } from '@e07/game-kit/timeline/sample.ts';
 import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
@@ -12,7 +12,6 @@ import { unitPoint } from './layout-board.ts';
 import type { BoardToken } from './board-palettes.ts';
 import type { ToggleDropView } from './to-view.ts';
 import type { GridRegion, Rect } from '@e07/game-kit/geom/board-layout.ts';
-import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
 import type { SkCanvas } from '@shopify/react-native-skia';
 
@@ -39,11 +38,6 @@ const SLOT_Y = 0.6;
 const EDGE = 0.045;
 const BURST_COUNT = 14;
 
-/** An effect that is not a tween of something visible draws only once its track has started. */
-export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
-  return entry !== undefined && entry.ageMs > 0 && entry.progress < 1;
-}
-
 function setEdge(frame: Frame, width: number): void {
   frame.kit.stroke.setColor(frame.colors.color.edge);
   frame.kit.stroke.setStrokeWidth(Math.max(1, width * EDGE));
@@ -57,8 +51,9 @@ function drawGutter(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   kit.stroke.setStrokeWidth(Math.max(1, cell.width * EDGE));
   const y = cell.y + cell.height * 0.78;
   canvas.drawLine(cell.x + cell.width * 0.3, y, cell.x + cell.width * 0.7, y, kit.stroke);
-  const miss = fxEntry(frame.fx, 'miss', cupEntity(spot.col));
-  if (!isPlaying(miss)) return;
+  // An effect plays by its linear time (game kit), never by its eased progress.
+  const miss = playingEntry(frame.fx, 'miss', cupEntity(spot.col));
+  if (miss === undefined) return;
   const left = miss.values[0] ?? 0;
   setPaintColor(kit.stroke, colors.color.chute, left);
   canvas.drawCircle(cell.x + cell.width / 2, y, cell.width * (0.4 - 0.2 * left), kit.stroke);
@@ -133,7 +128,8 @@ function drawCupShape(canvas: SkCanvas, frame: Frame, at: { cell: Rect; scale: n
 function drawCup(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   const { view } = frame;
   const caught = fxEntry(frame.fx, 'catch', cupEntity(spot.col));
-  const scale = isPlaying(caught) ? (caught.values[0] ?? 1) : 1;
+  const popping = playingEntry(frame.fx, 'catch', cupEntity(spot.col));
+  const scale = popping?.values[0] ?? 1;
   const isPending = caught !== undefined && caught.ageMs <= 0;
   drawCupShape(canvas, frame, { cell: spot.cell, scale });
   const filled = view.filled[spot.col] ?? 0;
@@ -149,8 +145,8 @@ function drawCup(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
 
 /** A full cup bursts: particles from its middle (full motion only: reduced motion has no track). */
 function drawBurst(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
-  const burst = fxEntry(frame.fx, 'burst', cupEntity(spot.col));
-  if (!isPlaying(burst)) return;
+  const burst = playingEntry(frame.fx, 'burst', cupEntity(spot.col));
+  if (burst === undefined) return;
   const { cell } = spot;
   const spec = {
     seed: spot.col * 31 + frame.view.rows,
