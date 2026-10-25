@@ -124,9 +124,14 @@ function drawRings(canvas: SkCanvas, frame: Frame): void {
   }
 }
 
-/** The frog wears the hop of the stone it stands on: that glyph on its belly (not while in the air). */
+/**
+ * The frog wears the hop of the stone it stands on: that glyph on its belly (not while in the air).
+ * A new hop kind pops it here, where the player sees it (the stone's own glyph is under the frog).
+ */
 function drawBelly(canvas: SkCanvas, frame: Frame, at: FrogAt): void {
   if (isAirborne(frame)) return;
+  const pop = playingEntry(frame.fx, 'pop', cellEntity(frame.view.frog));
+  const scale = pop === undefined ? 1 : pickAt(pop.values, 0);
   const side = at.cell * BELLY;
   const face = {
     x: at.x - side / 2,
@@ -134,7 +139,7 @@ function drawBelly(canvas: SkCanvas, frame: Frame, at: FrogAt): void {
     width: side,
     height: side,
   };
-  drawGlyph(canvas, frame, { code: pickAt(frame.view.cells, frame.view.frog), face, scale: 1 });
+  drawGlyph(canvas, frame, { code: pickAt(frame.view.cells, frame.view.frog), face, scale });
 }
 
 /** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */

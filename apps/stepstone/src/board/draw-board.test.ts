@@ -290,6 +290,23 @@ describe('drawBoard', () => {
   });
 });
 
+describe('drawBoard on the frog', () => {
+  it("pops the glyph on the frog's belly when a new hop kind lands, where the player sees it", () => {
+    // The stone's own glyph is under the frog; the belly glyph sits 0.08 of a cell below its centre.
+    const cell = cellBox(frameAt({ turn: NEW_KIND_TURN, atMs: 0 }), 12);
+    if (cell === null) throw new Error('no cell');
+    const stone = centre(NEW_KIND_TURN.view, 12);
+    const belly = { x: stone.x, y: stone.y + cell.width * 0.08 };
+    const bellyAt = (atMs: number): number[] =>
+      sizesCentredOn(draw({ turn: NEW_KIND_TURN, atMs }), belly);
+    const [atRest] = bellyAt(timelineEndMs(NEW_KIND_TURN.tracks));
+    expect(atRest).toBeDefined();
+    expect(bellyAt(360)).toHaveLength(1);
+    expect(bellyAt(360)[0]).toBeLessThan(atRest ?? 0);
+    expect(bellyAt(500)[0]).toBeGreaterThan(atRest ?? 0);
+  });
+});
+
 describe('frogCenter', () => {
   it('starts the hop on the old stone, arcs above the straight line and lands on the target', () => {
     const { view, tracks } = WIN_TURN;
