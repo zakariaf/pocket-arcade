@@ -11,6 +11,7 @@ import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome } from './outcome.ts';
+import { parseState } from './swap-guard-persistence.ts';
 
 import type { Enemy, EnemyKind, Facing, SwapGuardState } from './swap-guard-types.ts';
 
@@ -131,6 +132,31 @@ describe('continueAfterLoss', () => {
             expect(outcome(state).kind).toBe('playing');
             expect(state.swaps).toBe(lost.swaps - 1);
             expect(state.hasContinued).toBe(true);
+          },
+        ),
+      );
+    });
+
+    // Spec 8.10 and 8.6: the continued run is a real run: a legal swap to make, every enemy of the
+    // level counted (standing or knocked out), and a save of it, or of any swap after it, reloads
+    // unchanged.
+    it('leaves every continued run playable with counts a save reloads unchanged', () => {
+      const reload = (state: SwapGuardState): unknown =>
+        parseState(JSON.parse(JSON.stringify(state)));
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 4_294_967_295 }),
+          fc.integer({ min: 0, max: 99 }),
+          (seed, difficulty) => {
+            const lost = playToEnd(seed, difficulty);
+            fc.pre(outcome(lost).kind === 'lost');
+            const continued = continueAfterLoss(lost).state;
+            expect(listMoves(continued).length).toBeGreaterThan(0);
+            expect(continued.enemyCount).toBe(lost.enemyCount);
+            expect(continued.score).toBe(lost.score - (lost.lastSwap?.points ?? 0));
+            expect(reload(continued)).toStrictEqual(continued);
+            const after = listMoves(continued).map((move) => applyMove(continued, move).state);
+            expect(after.map(reload)).toStrictEqual(after);
           },
         ),
       );
