@@ -20,9 +20,14 @@ function dealCards(from: Dealt, count: number, minRank: number): { cards: Card[]
   return { cards, last };
 }
 
-/** True when the drop that brings the run to `drops` drops is followed by a rising row. */
+/**
+ * True when the drop that brings the run to `drops` drops is followed by a rising row. Each gap is
+ * the interval at the previous rise, so the endless ramp only ever brings the next rise closer.
+ */
 export function isRiseDue(difficulty: number, drops: number): boolean {
-  return drops % riseIntervalFor(difficulty, drops) === 0;
+  let rise = 0;
+  while (rise < drops) rise += riseIntervalFor(difficulty, rise);
+  return rise === drops;
 }
 
 type Rise = { readonly run: Cascade; readonly dealt: Dealt; readonly hasOverflowed: boolean };

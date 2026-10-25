@@ -49,7 +49,7 @@ describe('dropsBeforeRise', () => {
 
   it('follows the endless ramp (the rows rise one drop sooner every 40 drops)', () => {
     expect(dropsBeforeRise(ENDLESS_DIFFICULTY, 0)).toBe(10);
-    expect(dropsBeforeRise(ENDLESS_DIFFICULTY, 38)).toBe(7);
+    expect(dropsBeforeRise(ENDLESS_DIFFICULTY, 38)).toBe(2);
   });
 
   it('names exactly the drop that the rules raise the next row after', () => {

@@ -142,6 +142,17 @@ describe('applyMove', () => {
         true,
       ]);
     });
+
+    it('brings the endless rises one drop closer at each ramp step, never further apart', () => {
+      const rises = Array.from({ length: 130 }, (_, index) => index + 1).filter((drops) =>
+        isRiseDue(ENDLESS_DIFFICULTY, drops),
+      );
+      expect(rises.slice(0, 7)).toStrictEqual([10, 20, 30, 40, 49, 58, 67]);
+      const gaps = rises.slice(1).map((drops, index) => drops - (rises[index] ?? 0));
+      gaps.slice(1).forEach((gap, index) => {
+        expect(gap).toBeLessThanOrEqual(gaps[index] ?? 0);
+      });
+    });
   });
 
   describe('when the move is illegal', () => {
