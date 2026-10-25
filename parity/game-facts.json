@@ -24,6 +24,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "swap-guard": {
+      "designGame": "swapGuard",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
     }
   }
 }
