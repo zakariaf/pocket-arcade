@@ -19,9 +19,9 @@
   "safeTop": 44
  },
  "inputs": {
-  "design": "83db62c99f8c11f5e8f5d28e251c81fb9ebf1fc9a9edcfc926882b174be24660",
+  "design": "80fc23f36e7bdf77a41a3f5a24d3257bc412d2c8649bd3af60f62e4586435613",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "cc63ee25f93d34f9ed3146cc03ada317d724b7531a185edc56c6234df4e33d12",
+  "frames": "1c169d9a474468da3b69a6160bc593a7aaea415661dc79d1c325ec159436b21b",
   "deviceProfile": "5b54e70ffc1c748396631894376b98ea999f57a5b5f42579fda44faebac670e4"
  },
  "themes": [
@@ -1660,6 +1660,14 @@
    "variants": [],
    "what": "Merging main into E22 put Snare Snake and Merge Siege into the design together (both palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render); a full --check finds every other frame unchanged apart from the four fa s7-result-win renders that already drift on main (156 pixels each, left as they are).",
    "why": "spec 13: each game's design pass; the two passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
+  },
+  {
+   "id": "G-stepstone-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   }
  ]
 }

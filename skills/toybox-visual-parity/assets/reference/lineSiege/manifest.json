@@ -17,9 +17,9 @@
   "safeTop": 62
  },
  "inputs": {
-  "design": "83db62c99f8c11f5e8f5d28e251c81fb9ebf1fc9a9edcfc926882b174be24660",
+  "design": "80fc23f36e7bdf77a41a3f5a24d3257bc412d2c8649bd3af60f62e4586435613",
   "map": "aecebf460ceae646acf02c3e4c32e71fbe3e49ed73dea265677efed848203b33",
-  "frames": "cc63ee25f93d34f9ed3146cc03ada317d724b7531a185edc56c6234df4e33d12",
+  "frames": "1c169d9a474468da3b69a6160bc593a7aaea415661dc79d1c325ec159436b21b",
   "deviceProfile": "461cb70ba3c034e79e8f1f982820777f54fae69e064c48554db3b8366fca0c52"
  },
  "themes": [
@@ -1842,6 +1842,14 @@
    "variants": [],
    "what": "Stepstone added to the design as a design game (its palette, logo, texts, how-to-play picture and sample numbers). No reference image moved: the manifest re-recorded the design, map and frames inputs with a one-frame --update-reference (s1-splash light-en, byte-identical), after a full --check showed every other Line Siege reference unchanged except 4 S7 win fa references (base and score, light and dark) that already drifted 156 px on main under Chrome 155 (the underline of the Premium link is drawn shorter); they were left as committed.",
    "why": "spec 13: its design pass (E24-T01, 2026-10-19), drafted with the proposed defaults while the owner's approval comes back through the lead's combined message; no committed reference moves"
+  },
+  {
+   "id": "G-stepstone-with-merge-siege",
+   "date": "2026-10-25",
+   "frames": [],
+   "variants": [],
+   "what": "Merging main into E24 put Stepstone into the design next to Snare Snake and Merge Siege (all palettes, logos, texts and sample counters). No frame or variant changed: the design, map and frames inputs were re-recorded by a one-frame --update-reference (s4-home light-en, a byte-identical render).",
+   "why": "spec 13: each game's design pass; the passes were drafted on separate branches and are joined here (lead's helper, 2026-10-25)."
   }
  ]
 }
