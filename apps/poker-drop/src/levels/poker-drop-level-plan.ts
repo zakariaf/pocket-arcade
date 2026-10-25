@@ -3,7 +3,7 @@
 // winnable by the witness (poker-drop-solver.ts). Poker Drop is a score game: stars come from score
 // thresholds set by the witness's final score, and par (the witness line's length) is only a filter.
 import { MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/poker-drop/rules/create.ts';
+import { drawStart } from '@e07/poker-drop/rules/create.ts';
 
 import { POKER_DROP_SOLVER, WITNESS_MAX_NODES } from './poker-drop-solver.ts';
 
@@ -44,7 +44,9 @@ export const POKER_DROP_LEVEL_PLAN: LevelPlan<PokerDropState, PokerDropMove> = {
   ],
   levelsPerPack: LEVELS_PER_PACK,
   difficultyFor,
-  create,
+  // The seed's own first board: the generator keeps only seeds whose first board the witness wins,
+  // so create() hands a shipped level out as drawn, never re-searched (spec 15.7).
+  create: drawStart,
   solver: POKER_DROP_SOLVER,
   maxNodes: WITNESS_MAX_NODES,
   // Witness losses are retries: on the hardest row about half the candidates fail.

@@ -100,11 +100,11 @@
   },
   {
     "level": 72,
-    "seed": 3859658137,
+    "seed": 3826102899,
     "difficulty": 78,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 240, 288]
+      "thresholds": [0, 250, 300]
     }
   },
   {
@@ -127,7 +127,7 @@
   },
   {
     "level": 75,
-    "seed": 2167250416,
+    "seed": 2184028035,
     "difficulty": 82,
     "stars": {
       "kind": "score",
@@ -145,29 +145,29 @@
   },
   {
     "level": 77,
-    "seed": 3136524814,
+    "seed": 3153302433,
     "difficulty": 84,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 160, 192]
+      "thresholds": [0, 220, 264]
     }
   },
   {
     "level": 78,
-    "seed": 1704822075,
+    "seed": 1771932551,
     "difficulty": 85,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 200, 240]
+      "thresholds": [0, 230, 276]
     }
   },
   {
     "level": 79,
-    "seed": 1843806908,
+    "seed": 1860584527,
     "difficulty": 86,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 300, 360]
+      "thresholds": [0, 370, 444]
     }
   },
   {
@@ -181,20 +181,20 @@
   },
   {
     "level": 81,
-    "seed": 3993971915,
+    "seed": 3977194296,
     "difficulty": 88,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 190, 228]
+      "thresholds": [0, 220, 264]
     }
   },
   {
     "level": 82,
-    "seed": 2972924410,
+    "seed": 2956146791,
     "difficulty": 90,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 200, 240]
+      "thresholds": [0, 230, 276]
     }
   },
   {
@@ -208,11 +208,11 @@
   },
   {
     "level": 84,
-    "seed": 853581528,
+    "seed": 870359147,
     "difficulty": 92,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 320, 384]
+      "thresholds": [0, 220, 264]
     }
   },
   {
@@ -244,11 +244,11 @@
   },
   {
     "level": 88,
-    "seed": 3998480340,
+    "seed": 4032035578,
     "difficulty": 96,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 220, 264]
+      "thresholds": [0, 280, 336]
     }
   },
   {
@@ -262,11 +262,11 @@
   },
   {
     "level": 90,
-    "seed": 717455437,
+    "seed": 700677818,
     "difficulty": 99,
     "stars": {
       "kind": "score",
-      "thresholds": [0, 190, 228]
+      "thresholds": [0, 210, 252]
     }
   }
 ]

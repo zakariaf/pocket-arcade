@@ -64,14 +64,14 @@ Qc .. Qs Tc Ts
 `;
 
 exports[`level table goldens keeps the frozen board of level 60 1`] = `
-"seed 3050592066 difficulty 65 goal 8 hand Kd next 5s rises every 5
+"seed 3067369685 difficulty 65 goal 8 hand Js next 8d rises every 5
 .. .. .. .. ..
 .. .. .. .. ..
 .. .. .. .. ..
 .. .. .. .. ..
-Ad Jd Kh Tc ..
-9c 9s 7c 7h ..
-{"kind":"score","thresholds":[0,210,252]}"
+Th 9d 3c 4h ..
+6h Ac As 6s ..
+{"kind":"score","thresholds":[0,200,240]}"
 `;
 
 exports[`level table goldens keeps the frozen board of level 61 1`] = `
@@ -86,12 +86,12 @@ exports[`level table goldens keeps the frozen board of level 61 1`] = `
 `;
 
 exports[`level table goldens keeps the frozen board of level 90 1`] = `
-"seed 717455437 difficulty 99 goal 8 hand Qc next 3s rises every 4
+"seed 700677818 difficulty 99 goal 8 hand Tc next 8d rises every 4
 .. .. .. .. ..
 .. .. .. .. ..
 .. .. .. .. ..
 .. .. .. .. ..
-.. 6c 3c 8d 8c
-.. 7s 7c Kh Kd
-{"kind":"score","thresholds":[0,190,228]}"
+Ts Jd 2s Qd ..
+Ks Kh 6s 6h ..
+{"kind":"score","thresholds":[0,210,252]}"
 `;

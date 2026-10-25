@@ -1,6 +1,6 @@
 // apps/poker-drop/src/levels/poker-drop-level-plan.test.ts
 import { ENDLESS_DIFFICULTY, MAX_LEVEL_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
-import { create } from '@e07/poker-drop/rules/create.ts';
+import { create, drawStart } from '@e07/poker-drop/rules/create.ts';
 
 import {
   LEVELS_PER_PACK,
@@ -79,6 +79,12 @@ describe('POKER_DROP_LEVEL_PLAN', () => {
     const { candidate } = witnessedSeedOne();
     expect(POKER_DROP_LEVEL_PLAN.rate({ ...candidate, par: MIN_WITNESS_DROPS - 1 })).toBeNull();
     expect(POKER_DROP_LEVEL_PLAN.rate({ ...candidate, par: MIN_WITNESS_DROPS })).not.toBeNull();
+  });
+
+  // Spec 8.1 and 15.7: a shipped level is the board its seed draws, proven when the pack is written,
+  // so create() can hand it out without a second search and a later witness change cannot move it.
+  it("generates each level from its seed's own first board, never from a searched one", () => {
+    expect(POKER_DROP_LEVEL_PLAN.create).toBe(drawStart);
   });
 
   it('declares three packs of thirty levels named by catalog keys', () => {

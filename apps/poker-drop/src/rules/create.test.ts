@@ -4,6 +4,12 @@
 import fc from 'fast-check';
 
 import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
+import { dailySeed } from '@e07/game-kit/dates/daily-seed.ts';
+import {
+  POKER_DROP_DAILY_DIFFICULTY,
+  POKER_DROP_DAILY_SALT,
+  POKER_DROP_LEVELS,
+} from '@e07/poker-drop/levels/poker-drop-levels.ts';
 
 import { rankOf } from './cards.ts';
 import { FALLBACK_SEED, create, createWithin, drawStart } from './create.ts';
@@ -12,7 +18,8 @@ import { TUNING, knobsFor } from './poker-drop-tuning.ts';
 import { POKER_DROP_WITNESS, WITNESS_MAX_NODES } from './poker-drop-witness.ts';
 import { COLS, ROWS, cellIndex } from './well.ts';
 
-import type { Card, Cell, PokerDropState } from './poker-drop-types.ts';
+import type { Card, Cell, PokerDropMove, PokerDropState } from './poker-drop-types.ts';
+import type { Solver } from '@e07/game-kit/contract/levels.ts';
 
 const seedArb = fc.integer({ min: 0, max: 4_294_967_295 });
 const difficultyArb = fc.integer({ min: 0, max: 100 });
@@ -43,6 +50,23 @@ function allCards(state: PokerDropState): Card[] {
 
 function lowestRank(cards: readonly Card[]): number {
   return Math.min(...cards.map(rankOf));
+}
+
+/** The witness, counting how often create() asks it. */
+function countingSolver(): {
+  readonly solver: Solver<PokerDropState, PokerDropMove>;
+  readonly solves: () => number;
+} {
+  let solves = 0;
+  return {
+    solver: {
+      solve: (start, maxNodes) => {
+        solves += 1;
+        return POKER_DROP_WITNESS.solve(start, maxNodes);
+      },
+    },
+    solves: () => solves,
+  };
 }
 
 function cardCount(cells: readonly Cell[]): number {
@@ -132,6 +156,31 @@ describe('create (simulate-then-replay rules: a tap drops a card, the cascade is
       expect(createWithin(9, ENDLESS_DIFFICULTY, { attempts: 1, maxNodes: 1 })).toStrictEqual(
         drawStart(9, ENDLESS_DIFFICULTY),
       );
+    });
+
+    // Spec 15.7: every shipped level is proven when its pack is generated (the levels contract test
+    // replays each witness line), so starting one need not search again.
+    it('hands out a shipped level’s own board without running the witness again', () => {
+      const counting = countingSolver();
+      for (const entry of POKER_DROP_LEVELS.table) {
+        const state = createWithin(entry.seed, entry.difficulty, {
+          ...CREATE_BUDGET,
+          solver: counting.solver,
+        });
+        expect(state).toStrictEqual(drawStart(entry.seed, entry.difficulty));
+      }
+      expect(counting.solves()).toBe(0);
+    });
+
+    it('keeps running the witness for the daily and for any seed no pack ships', () => {
+      const counting = countingSolver();
+      const seed = dailySeed('2026-10-25', POKER_DROP_DAILY_SALT);
+      createWithin(seed, POKER_DROP_DAILY_DIFFICULTY, {
+        ...CREATE_BUDGET,
+        solver: counting.solver,
+      });
+      createWithin(2, 45, { ...CREATE_BUDGET, solver: counting.solver });
+      expect(counting.solves()).toBeGreaterThanOrEqual(2);
     });
 
     it('proves the board of any level seed and difficulty', () => {
