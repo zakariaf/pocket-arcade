@@ -4,6 +4,7 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 import { drawFittedText } from '@e07/shell/game-host/draw-centered-text.ts';
 
 import { kindAt } from './board-ids.ts';
@@ -58,14 +59,11 @@ function drawBody(canvas: SkCanvas, frame: Frame, monster: Vanishing): void {
   const { kind, body, alpha } = monster;
   const rect = rectOf(body);
   const radius = kind === 'armoured' ? body.height * 0.15 : body.height / 2;
-  kit.fill.setColor(colors.color[kind]);
-  kit.fill.setAlphaf(alpha);
+  setPaintColor(kit.fill, colors.color[kind], alpha);
   canvas.drawRRect({ rect, rx: radius, ry: radius }, kit.fill);
-  kit.stroke.setColor(colors.color.wall);
-  kit.stroke.setAlphaf(alpha);
+  setPaintColor(kit.stroke, colors.color.wall, alpha);
   kit.stroke.setStrokeWidth(Math.max(1, body.height * (kind === 'armoured' ? 0.14 : 0.05)));
   canvas.drawRRect({ rect, rx: radius, ry: radius }, kit.stroke);
-  kit.stroke.setAlphaf(1);
   const arrow = kit.paths['arrow'];
   if (kind === 'fast' && arrow !== undefined) {
     canvas.save();
@@ -74,7 +72,6 @@ function drawBody(canvas: SkCanvas, frame: Frame, monster: Vanishing): void {
     canvas.drawPath(arrow, kit.fill);
     canvas.restore();
   }
-  kit.fill.setAlphaf(1);
 }
 
 /** Health digits fitted into the body: the kit has one number size, and a monster is half a cell. */
@@ -104,10 +101,8 @@ export function drawMonsters(canvas: SkCanvas, frame: Frame): void {
     drawBody(canvas, frame, { kind: monster.kind, body, alpha: 1 });
     const flash = fxEntry(fx, 'flash', monster.id);
     if (isPlaying(flash)) {
-      kit.fill.setColor(frame.colors.color.beam);
-      kit.fill.setAlphaf(flash.values[0] ?? 0);
+      setPaintColor(kit.fill, frame.colors.color.beam, flash.values[0] ?? 0);
       canvas.drawCircle(body.cx, body.cy, body.height / 2, kit.fill);
-      kit.fill.setAlphaf(1);
     }
     drawHealth(canvas, frame, { text: monster.hpText, body });
   }
@@ -148,12 +143,10 @@ export function drawBursts(canvas: SkCanvas, frame: Frame): void {
       gravity: 380,
       lifeMs: 600,
     };
-    kit.fill.setColor(colors.color.beam);
     for (let i = 0; i < spec.count; i += 1) {
       const particle = sampleParticle(spec, i, burst.ageMs);
-      kit.fill.setAlphaf(particle.alpha);
+      setPaintColor(kit.fill, colors.color.beam, particle.alpha);
       canvas.drawCircle(particle.x, particle.y, body.height * 0.12, kit.fill);
     }
-    kit.fill.setAlphaf(1);
   }
 }

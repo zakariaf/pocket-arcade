@@ -2,6 +2,7 @@
 import { sampleTimeline } from '@e07/game-kit/timeline/sample.ts';
 import { EMPTY_HIGHLIGHT, IDLE_POINTER } from '@e07/shell/game-host/board-types.ts';
 
+import { BOARD_PALETTES } from './board-palettes.ts';
 import { buildTimeline } from './build-timeline.ts';
 import { drawBoard } from './draw-board.ts';
 import { layoutBoard } from './layout-board.ts';
@@ -54,22 +55,8 @@ const KIT: RenderKit = {
   labels: {},
 };
 const COLOR = new Float32Array([0, 0, 0, 1]) as SkColor;
-const TOKENS: readonly BoardToken[] = [
-  'background',
-  'lane',
-  'wall',
-  'cell',
-  'block',
-  'ghost',
-  'beam',
-  'shock',
-  'number',
-  'tray',
-  'heart',
-  'normal',
-  'armoured',
-  'fast',
-];
+/** Every token of the palette, in its own order. */
+const TOKENS = Object.keys(BOARD_PALETTES.light) as readonly BoardToken[];
 const COLORS: BoardColors<BoardToken> = {
   scheme: 'dark',
   isColorBlind: false,

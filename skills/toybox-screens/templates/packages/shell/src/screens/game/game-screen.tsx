@@ -3,6 +3,7 @@ import { StackActions, useNavigation, usePreventRemove } from '@react-navigation
 import { useEffect, useRef } from 'react';
 
 import { GameTopBar } from '@e07/shell/game-host/game-top-bar.tsx';
+import { isRunLive } from '@e07/shell/game-host/session-view.ts';
 import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import { useLiveRunExit } from '@e07/shell/game-host/use-live-run-exit.ts';
 import { usePauseOnBackground } from '@e07/shell/game-host/use-pause-on-background.ts';
@@ -31,7 +32,7 @@ export function GameScreen({ route }: GameScreenProps): ReactNode {
   const navigation = useNavigation();
   const controls = useGameSessionControls(route.params);
   const isLeavingRef = useRef(false);
-  const isRunLive = controls.status === 'playing' || controls.status === 'paused';
+  const isLive = isRunLive(controls.status);
   const { BoardHost, status } = controls;
   usePauseOnBackground(status, controls.pause);
   const model = useGameScreenModel(controls, {
@@ -50,9 +51,9 @@ export function GameScreen({ route }: GameScreenProps): ReactNode {
     isLeavingRef.current = true;
     controls.leaveToHome();
   };
-  useLiveRunExit(isRunLive ? leaveRun : null);
+  useLiveRunExit(isLive ? leaveRun : null);
 
-  usePreventRemove(isRunLive, ({ data }) => {
+  usePreventRemove(isLive, ({ data }) => {
     if (isLeavingRef.current) {
       navigation.dispatch(data.action);
     } else if (status === 'playing') {

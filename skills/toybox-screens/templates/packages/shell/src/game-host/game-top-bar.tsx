@@ -11,6 +11,11 @@ export type GameTool = {
   readonly label: string;
   /** False while the tool cannot be used right now: the key is drawn disabled. */
   readonly isAvailable: boolean;
+  /**
+   * The tool cannot act now only because an overlay covers the bar (the Pause scrim): the key is
+   * drawn at rest and reported disabled, never dashed.
+   */
+  readonly isInert?: boolean;
   readonly onPress: () => void;
 };
 
@@ -38,7 +43,9 @@ export type GameTopBarViewProps = GameTopBarProps & {
 };
 
 function keyOf(tool: GameTool): GameKey {
-  return { label: tool.label, onPress: tool.onPress, isDisabled: !tool.isAvailable };
+  const key = { label: tool.label, onPress: tool.onPress };
+  if (tool.isAvailable) return key;
+  return tool.isInert === true ? { ...key, isInert: true } : { ...key, isDisabled: true };
 }
 
 /**

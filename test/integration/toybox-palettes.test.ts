@@ -1,5 +1,6 @@
 // test/integration/toybox-palettes.test.ts
 // One `it` per app: every game's palette passes the Toybox palette rules.
+import { PALETTE as FLOCK_TILT } from '@e07/flock-tilt/theme/palette.ts';
 import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
@@ -7,6 +8,10 @@ import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts'
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(LINE_SIEGE)).toStrictEqual([]);
+  });
+
+  it('keeps Flock Tilt readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(FLOCK_TILT)).toStrictEqual([]);
   });
 
   it('keeps Scrap Shove readable, one-ink in light and colour-blind equal to standard', () => {

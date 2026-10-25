@@ -1,9 +1,12 @@
 // packages/shell/src/game-host/board-kit.ts
+'worklet';
+
 // Imports Skia TYPES only and receives the Skia API as a parameter, so the same code runs
 // on device (Skia from the package), in Jest goldens (CanvasKit mock) and in Node art
-// scripts (getSkiaExports() from the headless build).
+// scripts (getSkiaExports() from the headless build). A 'worklet' module: draw() calls
+// setPaintColor on the UI thread; the kit and colours are still built on the JS thread.
 import type { BoardColors, RenderKit, SkiaApi } from './board-types.ts';
-import type { SkColor, SkPath, SkTypeface } from '@shopify/react-native-skia';
+import type { SkColor, SkPaint, SkPath, SkTypeface } from '@shopify/react-native-skia';
 
 /** Hex colours per semantic token, one set per scheme. */
 export type BoardPalette<TToken extends string> = Readonly<Record<TToken, string>>;
@@ -57,4 +60,14 @@ export function makeBoardKit(skia: SkiaApi, input: KitInput): RenderKit {
   const numberFont =
     input.numberTypeface === null ? null : skia.Font(input.numberTypeface, input.numberSize);
   return { fill, stroke, numberFont, paths: input.paths, labels: {} };
+}
+
+/**
+ * Sets a scratch paint to a palette token at `alpha`, on top of the token's own alpha. setColor
+ * sets the paint's alpha from the token and setAlphaf replaces it, so `setColor(token)` followed
+ * by `setAlphaf(alpha)` draws a translucent token (a ghost at half the block colour) too strong.
+ */
+export function setPaintColor(paint: SkPaint, color: SkColor, alpha: number): void {
+  paint.setColor(color);
+  paint.setAlphaf((color[3] ?? 1) * alpha);
 }
