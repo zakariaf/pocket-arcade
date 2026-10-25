@@ -195,6 +195,23 @@ describe('drawBoard', () => {
     expect(draw({ turn: WIN_TURN, atMs: 500 }).texts).toStrictEqual(['۱۲']);
   });
 
+  it('plays the goal glow, the hop count and the burst to the end of each of their tracks', () => {
+    // The goal track (out-back) runs from 320 to 920 ms, the burst (16 particles) from 320 to 1020 ms.
+    // Twelve circles are always there: six ripples and the frog's six eye circles.
+    for (const atMs of [400, 600, 800, 910]) {
+      const recorded = draw({ turn: WIN_TURN, atMs });
+      expect([atMs, recorded.texts, count(recorded, 'drawCircle')]).toStrictEqual([
+        atMs,
+        ['۱۲'],
+        29,
+      ]);
+    }
+    for (const atMs of [930, 1000]) {
+      const recorded = draw({ turn: WIN_TURN, atMs });
+      expect([atMs, recorded.texts, count(recorded, 'drawCircle')]).toStrictEqual([atMs, [], 28]);
+    }
+  });
+
   it('rings every stone in reach once the frog has landed, and none while it is in the air', () => {
     const { view } = NEW_KIND_TURN;
     const without = { ...view, reach: [] };
@@ -358,5 +375,9 @@ describe('drawBoard with a translucent token', () => {
     const half = drawnAlphas(0.5);
     expect(opaque.some((alpha) => alpha > 0 && alpha < 1)).toBe(true);
     expect(half).toStrictEqual(opaque.map((alpha) => alpha * 0.5));
+  });
+
+  it('draws no negative alpha while the glow overshoots', () => {
+    expect(Math.min(...drawnAlphas(1))).toBeGreaterThanOrEqual(0);
   });
 });

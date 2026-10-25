@@ -78,29 +78,35 @@ function drawBurst(canvas: SkCanvas, frame: Frame, flag: Rect): void {
   }
 }
 
-/** The frog reached the flag: a fading glow, the hop count above the flag, then particles. */
-function drawGoal(canvas: SkCanvas, frame: Frame): void {
+/** The frog reached the flag: a fading glow with the hop count above the flag, while the goal plays. */
+function drawGlow(canvas: SkCanvas, frame: Frame, flag: Rect): void {
   const goal = playingEntry(frame.fx, 'goal', TURN_ENTITY);
-  const flag = cellBox(frame, frame.view.frog);
-  if (goal === undefined || flag === null) return;
+  if (goal === undefined) return;
   const scale = pickAt(goal.values, 0);
   const { fill } = frame.kit;
-  setPaintColor(fill, frame.colors.color.glow, 0.5 * (1 - goal.progress));
+  // The out-back pop overshoots past 1: the fade stops at 0 there.
+  setPaintColor(fill, frame.colors.color.glow, 0.5 * Math.max(0, 1 - goal.progress));
   canvas.drawCircle(flag.x + flag.width / 2, flag.y + flag.height / 2, flag.width * scale, fill);
   const font = frame.kit.numberFont;
-  if (font !== null) {
-    // The hop count in a chip above the flag, popping with the glow: it reads over any stone.
-    const width = flag.width * 0.8 * scale;
-    const height = flag.width * 0.44 * scale;
-    const chip = { x: flag.x + (flag.width - width) / 2, y: flag.y - height, width, height };
-    fill.setColor(frame.colors.color.background);
-    canvas.drawRRect({ rect: chip, rx: height / 2, ry: height / 2 }, fill);
-    frame.kit.stroke.setColor(frame.colors.color.label);
-    frame.kit.stroke.setStrokeWidth(Math.max(1, flag.width * 0.03));
-    canvas.drawRRect({ rect: chip, rx: height / 2, ry: height / 2 }, frame.kit.stroke);
-    fill.setColor(frame.colors.color.label);
-    drawFittedText(canvas, { text: frame.view.movesText, rect: chip }, { font, paint: fill });
-  }
+  if (font === null) return;
+  // The hop count in a chip above the flag, popping with the glow: it reads over any stone.
+  const width = flag.width * 0.8 * scale;
+  const height = flag.width * 0.44 * scale;
+  const chip = { x: flag.x + (flag.width - width) / 2, y: flag.y - height, width, height };
+  fill.setColor(frame.colors.color.background);
+  canvas.drawRRect({ rect: chip, rx: height / 2, ry: height / 2 }, fill);
+  frame.kit.stroke.setColor(frame.colors.color.label);
+  frame.kit.stroke.setStrokeWidth(Math.max(1, flag.width * 0.03));
+  canvas.drawRRect({ rect: chip, rx: height / 2, ry: height / 2 }, frame.kit.stroke);
+  fill.setColor(frame.colors.color.label);
+  drawFittedText(canvas, { text: frame.view.movesText, rect: chip }, { font, paint: fill });
+}
+
+/** The win: the glow and count, and the particles, each while its own track plays. */
+function drawGoal(canvas: SkCanvas, frame: Frame): void {
+  const flag = cellBox(frame, frame.view.frog);
+  if (flag === null) return;
+  drawGlow(canvas, frame, flag);
   drawBurst(canvas, frame, flag);
 }
 
