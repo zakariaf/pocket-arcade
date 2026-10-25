@@ -15,8 +15,17 @@ const START = (): StepstoneState => create(1, 0);
 /** The golden route: the king at 12, the king at 18, the flag at 14. */
 const ROUTE: readonly number[] = [12, 18, 14];
 
-/** The frog on a king stone with only water and sunk stones around it. */
-const STUCK = ['K....', '.~~~.', '.~k~.', '.~~~.', 'R...F'].join('\n');
+/**
+ * A pond with a trap: the frog's rook reaches the king at 4 along its row, whose king hop then
+ * reaches only water. The way through is the rook at 10, then the flag (par 2).
+ */
+const TRAP = ['r...K', '.....', 'R...F', '.....', '.....'].join('\n');
+
+/** The frog took the lure: one hop onto the king, stranded (built through the rules). */
+function stranded(): StepstoneState {
+  const start = { ...pondFromText(TRAP), moves: 0, par: 2, kindsUsed: ['rook' as const] };
+  return applyMove(start, { kind: 'hop', to: 4 }).state;
+}
 
 function hopAlong(hops: number): StepstoneState {
   return ROUTE.slice(0, hops).reduce(
@@ -32,6 +41,6 @@ export const STEPSTONE_TESTING: TestingSpec<StepstoneState, StepstoneMove> = {
     start: START,
     middle: () => hopAlong(1),
     win: () => hopAlong(ROUTE.length),
-    lose: () => ({ ...pondFromText(STUCK), moves: 3, par: 5, kindsUsed: ['rook', 'king'] }),
+    lose: stranded,
   },
 };

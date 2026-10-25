@@ -5,6 +5,7 @@ import { applyMove } from '@e07/stepstone/rules/apply-move.ts';
 import { create } from '@e07/stepstone/rules/create.ts';
 import { listMoves } from '@e07/stepstone/rules/list-moves.ts';
 import { outcome } from '@e07/stepstone/rules/outcome.ts';
+import { parseState } from '@e07/stepstone/rules/stepstone-persistence.ts';
 
 import { stepstoneBot } from './stepstone-bot.ts';
 import { STEPSTONE_TESTING } from './stepstone-testing.ts';
@@ -18,6 +19,13 @@ describe('STEPSTONE_TESTING', () => {
     expect(outcome(examples.middle()).kind).toBe('playing');
     expect(outcome(examples.win()).kind).toBe('won');
     expect(outcome(examples.lose()).kind).toBe('lost');
+  });
+
+  it('builds every example state through the rules, so a save of it reads back (spec 8.14)', () => {
+    for (const make of Object.values(STEPSTONE_TESTING.examples)) {
+      const state = make();
+      expect(parseState(JSON.parse(JSON.stringify(state)))).toStrictEqual(state);
+    }
   });
 
   it('shows the frog one hop into the golden route in the middle example, the old stone sunk', () => {
