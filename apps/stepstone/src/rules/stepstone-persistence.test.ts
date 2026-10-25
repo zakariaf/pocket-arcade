@@ -3,11 +3,14 @@
 // a saved run that no longer parses is dropped alone and logged, never a crash.
 import fc from 'fast-check';
 
+import { playBotLine, randomPolicy } from '@e07/game-kit/testing/play-bot.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { stepstoneBot } from '@e07/stepstone/testing/stepstone-bot.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { outcome } from './outcome.ts';
 import {
   parseMove,
   parseState,
@@ -136,8 +139,43 @@ describe('parseState', () => {
     ],
     ["the frog's own stone kind never used", { ...GOLDEN_SAVE_V1, kindsUsed: ['bishop', 'rook'] }],
     ['a par of no hops', { ...GOLDEN_SAVE_V1, par: 0 }],
+    // Par is the fewest hops from the start: no run can be closer to the flag than par allows.
+    [
+      'a frog on the flag in fewer hops than par',
+      {
+        ...GOLDEN_SAVE_V1,
+        cells: ['sunk', 'water', 'flag', 'water', 'king', 'water', 'rook', 'water', 'water'],
+        frog: 2,
+        kindsUsed: ['rook'],
+      },
+    ],
+    ['fewer hops made and left than par', { ...GOLDEN_SAVE_V1, par: 3 }],
+    // The frog came from the stone it left: some hop kind it used reaches it from a sunk stone.
+    [
+      'a frog no used hop kind reaches from a sunk stone',
+      {
+        ...GOLDEN_SAVE_V1,
+        cells: ['water', 'sunk', 'flag', 'water', 'water', 'king', 'water', 'water', 'king'],
+        frog: 8,
+      },
+    ],
   ])('refuses a save legal play cannot reach: %s', (_reason, json) => {
     expect(parseState(viaJson(json))).toBeNull();
+  });
+
+  it('parses every state a bot reaches, the greedy player and the random one alike', () => {
+    const game = { create, listMoves, applyMove, outcome };
+    fc.assert(
+      fc.property(seedArb, difficultyArb, fc.boolean(), (seed, difficulty, isGreedy) => {
+        const policy = isGreedy ? stepstoneBot : randomPolicy<StepstoneState, StepstoneMove>();
+        const run = playBotLine(game, { seed, difficulty, policy, maxMoves: 60 });
+        const last = run.line.at(-1);
+        const reached = run.line.map((step) => step.state);
+        if (last !== undefined) reached.push(applyMove(last.state, last.move).state);
+        for (const state of reached) expect(parseState(viaJson(state))).toStrictEqual(state);
+      }),
+      { numRuns: 100 },
+    );
   });
 });
 

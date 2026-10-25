@@ -3,7 +3,8 @@
 // parse is refused here (null), and the Shell drops only that run (spec 8.14).
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
-import { MOVE_KINDS } from './hops.ts';
+import { hopDistance } from './hop-distance.ts';
+import { MOVE_KINDS, reachOf } from './hops.ts';
 
 import type { Cell, MoveKind, StepstoneMove, StepstoneState } from './stepstone-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -61,9 +62,32 @@ function parseCounts(json: Readonly<Record<string, unknown>>): Counts | null {
 }
 
 /**
+ * After a hop the frog stands where the stone it left sent it: some kind it has used reaches its
+ * cell from a sunk stone (the stone it left sank, and its kind is one the frog stood on).
+ */
+function isLandedFromSunk(state: StepstoneState): boolean {
+  if (state.moves === 0) return true;
+  return state.cells.some(
+    (cell, index) =>
+      cell === 'sunk' &&
+      state.kindsUsed.some((kind) => reachOf(state.side, index, kind).includes(state.frog)),
+  );
+}
+
+/**
+ * Par is the fewest hops from the start, and sinking stones only removes routes: while a route is
+ * left, the hops made and the fewest left never add up to less than par (on the flag: moves >= par).
+ */
+function isParKept(state: StepstoneState): boolean {
+  const left = hopDistance(state);
+  return left === null || state.moves + left >= state.par;
+}
+
+/**
  * True when legal play reaches this run: each hop sinks the stone it leaves (sunk stones = hops),
  * the start stone is a hop kind and each hop adds at most one new kind, the frog's own stone kind
- * is among those used, and par counts at least one hop. The frog never stands in the water.
+ * is among those used, par counts at least one hop and is kept, and the frog came from a sunk
+ * stone. The frog never stands in the water.
  */
 function isReachable(state: StepstoneState): boolean {
   const { cells, frog, moves, par, kindsUsed } = state;
@@ -72,7 +96,8 @@ function isReachable(state: StepstoneState): boolean {
   const sunk = cells.filter((cell) => cell === 'sunk').length;
   const hasKindsInReach = kindsUsed.length >= 1 && kindsUsed.length <= moves + 1;
   const isOwnKindUsed = under === 'flag' || kindsUsed.includes(under);
-  return sunk === moves && hasKindsInReach && isOwnKindUsed && par >= 1;
+  const isCounted = sunk === moves && hasKindsInReach && isOwnKindUsed && par >= 1;
+  return isCounted && isLandedFromSunk(state) && isParKept(state);
 }
 
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
