@@ -15,7 +15,7 @@ Every Pocket Arcade board is one Skia `<Canvas>` whose single `<Picture>` is rec
 4. **The frame callback runs only while something moves** and its body is one call into `runBoardFrame`, which holds the `try/catch`. Why: an idle board must cost nothing, an uncaught UI-thread error kills the app, and React Compiler bails out of hooks with value blocks inside `try/catch`.
 5. **Save before animating; a new move fast-forwards.** The session applies and saves, then `presentMove` cancels old cues, pushes the final view and schedules new cues. Why: killing the app mid-animation must lose nothing; the view is always the final state.
 6. **`buildTimeline(events, motion)` is pure and honours `'reduced'`:** half durations, no particles or shake, no overshoot. Why: reduce motion is a spec requirement and is testable as data.
-7. **An effect layer that is not a tween of something visible (flash, wave, glow, burst, shake) draws only while its track plays (`ageMs > 0`, the `isPlaying` helper).** Why: a sample holds a track's `from` values before it starts, so an unguarded effect shows at full strength at moment 0.
+7. **An effect layer that is not a tween of something visible (flash, wave, glow, burst, shake) draws only while its track plays by linear time (game-kit `playingEntry`), never by the eased progress.** Why: a sample holds a track's `from` values before it starts, so an unguarded effect shows at full strength at moment 0; and an `out-back` track's eased progress passes 1 early, so a `progress < 1` guard cuts the effect off in its overshoot.
 8. **Selection and hints are UI state the host passes as `highlight` (`BoardHighlight`, `EMPTY_HIGHLIGHT`), and the drag ghost sits exactly on the hovered cell.** The gesture layer applies the board's `dragLiftPt` once; draw adds no offset. Why: game state, bots and undo never see a selection, and the ghost cell must be the placed cell.
 9. **`BoardLayout` is a pure worklet of the actual canvas size and is shared by draw and hit-testing.** Why: iPad, landscape and resizable windows need no special case, and draw and touch cannot drift.
 10. **Boards never pixel-flip.** A game that opts in (`isMirroredInRtl`) mirrors positions in `BoardLayout`. Why: `scaleX(-1)` mirrors letters and digits.
@@ -67,7 +67,7 @@ Every Pocket Arcade board is one Skia `<Canvas>` whose single `<Picture>` is rec
 - **Raising the golden tolerance or re-running `-u` without opening the PNGs.** Fix the code or accept a deliberate change with a `Gate-Change:` trailer.
 - **Calling a plain JS helper from `draw()` or `layout()`.** It throws on the UI thread at runtime only; move the helper into a `'worklet'` module (the template's `board-ids.ts`).
 - **Asserting small text through pixels.** Use the recording canvas; 0.1 % tolerance cannot see a missing number.
-- **Drawing a flash or wave whenever its entry exists.** It shows at full strength at moment 0; guard it with `isPlaying` (`ageMs > 0`).
+- **Drawing a flash or wave whenever its entry exists.** It shows at full strength at moment 0; read it through `playingEntry` (linear time), never `progress < 1`.
 - **Offsetting the ghost in `draw()` (`row - 1`).** The block lands elsewhere and an edge row becomes unreachable; set `dragLiftPt` on the board and let the gesture layer lift the pointer.
 - **Keeping a selection or hint in game state.** Bots, par and undo would see it; the host passes it as `highlight`.
 

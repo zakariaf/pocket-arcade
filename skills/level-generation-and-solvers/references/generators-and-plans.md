@@ -35,7 +35,7 @@ A level is `create(seed, difficulty)` on the game's current tuning, so the tunin
 
 ## The generator is `create`
 
-`GameEngine.create(seed, difficulty)` is the level generator (spec 10: "Level generator: seed + difficulty -> level"). There is no second generator for levels, dailies or endless runs: a level is its seed and difficulty. A game may keep the construction in its own module (`levels/generate-level.ts`, called by `create`) when it grows, but the engine function stays the entry point, and it follows the determinism policy (seeded sfc32, exact arithmetic).
+`GameEngine.create(seed, difficulty)` is the level generator (spec 10: "Level generator: seed + difficulty -> level"). There is no second generator for levels, dailies or endless runs: a level is its seed and difficulty. A game may keep the construction in its own rules module (`rules/lay-pond.ts` in Stepstone, called only by `create`; the rules zone imports only game-kit and `rules/`, never `levels/`) when it grows, but the engine function stays the entry point, and it follows the determinism policy (seeded sfc32, exact arithmetic). Its draws all happen inside `create`, so the state needs no `rng` (game-rules-engine's `rng-not-in-state` looks only at the files `applyMove`, `listMoves`, `outcome` and a continue reach).
 
 ## Two ways to guarantee a good level
 

@@ -65,7 +65,7 @@ Accepting baselines is deliberate:
 
 1. `npx jest test/goldens/boards/<game-id>-board.golden.test.ts --selectProjects golden -u` writes them (only this command writes; `jest --ci`, which every script uses, refuses to write a new snapshot).
 2. Open every new PNG with the Read tool and check it against the intended look:
-   - **moment 0 shows no effect that starts later**: the board as it was before the move (old positions, cleared lines still full, lost hearts still full), and no flash, wave, beam, glow, burst or shake yet (an effect drawn at moment 0 means a layer skips the `isPlaying` guard: `ageMs > 0`);
+   - **moment 0 shows no effect that starts later**: the board as it was before the move (old positions, cleared lines still full, lost hearts still full), and no flash, wave, beam, glow, burst or shake yet (an effect drawn at moment 0 means a layer skips the `playingEntry` guard);
    - moment 0.5 shows the effects mid-flight;
    - moment 1 shows the final state (the view), with nothing left of the effects;
    - nothing is clipped at `small`, and the wide canvas rearranges rather than shrinks.

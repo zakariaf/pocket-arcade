@@ -1434,6 +1434,141 @@
         }
       ]
     },
+    "stepstone": {
+      "id": "stepstone",
+      "modes": [
+        "levels",
+        "daily"
+      ],
+      "name": {
+        "en": "Stepstone",
+        "de": "Stepstone",
+        "fa": "Stepstone",
+        "ckb": "Stepstone"
+      },
+      "tagline": {
+        "en": "Each stone picks your next hop.",
+        "de": "Jeder Stein bestimmt deinen nächsten Sprung.",
+        "fa": "هر سنگ پرش بعدی شما را تعیین می‌کند.",
+        "ckb": "هەر بەردێک بازی داهاتووت دیاری دەکات."
+      },
+      "goal": {
+        "en": "Hop your frog across the stones to the flag.",
+        "de": "Bring deinen Frosch über die Steine zur Fahne.",
+        "fa": "قورباغه را از روی سنگ‌ها تا پرچم ببرید.",
+        "ckb": "بۆقەکەت بەسەر بەردەکاندا بگەیەنە ئاڵاکە."
+      },
+      "progress": {
+        "en": "Moves {moves, number} / par {par, number}",
+        "de": "Züge {moves, number} / Par {par, number}",
+        "fa": "حرکت {moves, number} / هدف {par, number}",
+        "ckb": "جووڵە {moves, number} / ئامانج {par, number}"
+      },
+      "winTitle": {
+        "en": "Made it across!",
+        "de": "Sicher hinübergehüpft!",
+        "fa": "به آن سو رسیدید!",
+        "ckb": "گەیشتیتە ئەوبەر!"
+      },
+      "loseReason": {
+        "en": "No stone can be reached",
+        "de": "Kein Stein ist erreichbar",
+        "fa": "به هیچ سنگی نمی‌رسید",
+        "ckb": "ناگەیتە هیچ بەردێک"
+      },
+      "stats": {
+        "tilesStepped": {
+          "en": "Stones stepped",
+          "de": "Betretene Steine",
+          "fa": "سنگ‌های پیموده‌شده",
+          "ckb": "بەردی تێپەڕیو"
+        },
+        "levelsAtPar": {
+          "en": "Levels at par",
+          "de": "Level auf Par",
+          "fa": "مرحله‌ها در حد هدف",
+          "ckb": "ئاستەکان بە ئامانج"
+        },
+        "kindsUsed": {
+          "en": "Hop kinds used",
+          "de": "Genutzte Sprungarten",
+          "fa": "انواع پرش استفاده‌شده",
+          "ckb": "جۆرە بازە بەکارهاتووەکان"
+        }
+      },
+      "howToPlay": [
+        {
+          "en": "The stone you stand on shows how you hop next.",
+          "de": "Der Stein unter dir zeigt, wie du als Nächstes springst.",
+          "fa": "سنگی که رویش ایستاده‌اید نشان می‌دهد پرش بعدی‌تان چگونه است.",
+          "ckb": "ئەو بەردەی لەسەری وەستاویت پیشانی دەدات چۆن باز دەدەیت."
+        },
+        {
+          "en": "Tap a stone your hop reaches to land there.",
+          "de": "Tipp auf einen Stein in Sprungweite, um dort zu landen.",
+          "fa": "روی سنگی که پرشتان به آن می‌رسد بزنید تا آنجا فرود بیایید.",
+          "ckb": "دەست لەو بەردە بدە کە بازەکەت پێی دەگات بۆ ئەوەی لەوێ بنیشیتەوە."
+        },
+        {
+          "en": "Each stone you leave sinks behind you.",
+          "de": "Jeder Stein, den du verlässt, versinkt hinter dir.",
+          "fa": "هر سنگی که ترکش کنید، پشت سرتان غرق می‌شود.",
+          "ckb": "هەر بەردێک جێی بهێڵیت، لە دواتەوە نوقم دەبێت."
+        },
+        {
+          "en": "Reach the flag within par for three stars.",
+          "de": "Erreiche die Fahne innerhalb von Par für drei Sterne.",
+          "fa": "برای سه ستاره، در حد هدف یا کمتر به پرچم برسید.",
+          "ckb": "بۆ سێ ئەستێرە، بە ئامانج یان کەمتر بگە بە ئاڵاکە."
+        }
+      ],
+      "tutorial": [
+        {
+          "en": "Tap a lit stone to hop there.",
+          "de": "Tipp auf einen leuchtenden Stein, um hinzuspringen.",
+          "fa": "روی یک سنگ روشن بزنید تا رویش بپرید.",
+          "ckb": "دەست لە بەردێکی ڕووناک بدە بۆ ئەوەی بازی بدەیتە سەری."
+        },
+        {
+          "en": "This × stone hops you corner to corner.",
+          "de": "Dieser ×-Stein lässt dich schräg springen.",
+          "fa": "این سنگ × شما را مورب می‌پراند.",
+          "ckb": "ئەم بەردە × بە لاری بازت پێدەدات."
+        },
+        {
+          "en": "The stone you left has sunk, so plan ahead.",
+          "de": "Der Stein hinter dir ist versunken, also plane voraus.",
+          "fa": "سنگ قبلی غرق شد، پس از قبل برنامه بریزید.",
+          "ckb": "بەردی پێشوو نوقم بوو، بۆیە پێشتر بیر بکەرەوە."
+        },
+        {
+          "en": "Hop onto the flag to win!",
+          "de": "Spring auf die Fahne, um zu gewinnen!",
+          "fa": "روی پرچم بپرید تا برنده شوید!",
+          "ckb": "باز بدە سەر ئاڵاکە بۆ بردنەوە!"
+        }
+      ],
+      "packs": [
+        {
+          "en": "Lily pond",
+          "de": "Seerosenteich",
+          "fa": "برکهٔ نیلوفر",
+          "ckb": "گۆمی نیلۆفەر"
+        },
+        {
+          "en": "Misty creek",
+          "de": "Nebelbach",
+          "fa": "نهر مه‌آلود",
+          "ckb": "جۆگەی تەماوی"
+        },
+        {
+          "en": "River rapids",
+          "de": "Stromschnellen",
+          "fa": "تندآب رودخانه",
+          "ckb": "خوڕی ڕووبار"
+        }
+      ]
+    },
     "trailClear": {
       "id": "trail-clear",
       "modes": [
