@@ -1,0 +1,5 @@
+{
+  "about": "A design change that reaches the Line Siege set: its light surface paint moves by a few steps, so the re-rendered s12-error differs (judged by the re-render, never waved through).",
+  "from": "light: {ground:'#A5DAF3', surface:'#F8FBFF'",
+  "to": "light: {ground:'#A5DAF3', surface:'#F0F4FF'"
+}

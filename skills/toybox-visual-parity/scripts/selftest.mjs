@@ -85,6 +85,12 @@
 //   capture-app       records the dump's scroll markers in run.json and names the offset reached
 //   check-harness     harness-scroll-marker: the parity root provides the marker, ScreenBody draws it
 //
+// Added 2026-10-25 (E28-T02, merged after the design games became data on main):
+//   shoot-design      a changed design is judged by the re-render, like the map and the frames: the
+//                     good case passes after a design pass that added a game, and a design change that
+//                     reaches the set (bad-design-changed) fails reference-drift, with a note naming
+//                     the frames a partial check proved
+//
 //   node selftest.mjs [--tooling <repo>/.parity/tooling]
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -312,6 +318,19 @@ const editedMap = (dir) => {
 
 // frames-edit.json { "frame", "variant", "derive" }: a copy of the skill's frames manifest whose variant
 // derive is replaced, so a derive that hides the wrong element must fail (variant-derive).
+// design-edit.json { "from": "<text>", "to": "<text>" }: a copy of the skill's design (with its fonts)
+// with one change, so a design change that reaches a reference must show as drift in the re-render.
+const editedDesign = (dir) => {
+  const editPath = join(dir, 'design-edit.json');
+  if (!existsSync(editPath)) return [];
+  const edit = JSON.parse(readFileSync(editPath, 'utf8'));
+  const out = scratch();
+  cpSync(join(HERE, '..', 'assets', 'design'), out, { recursive: true });
+  const html = readFileSync(join(out, 'toybox.html'), 'utf8');
+  if (!html.includes(edit.from)) throw new Error(`${editPath}: the design has no "${edit.from}"`);
+  writeFileSync(join(out, 'toybox.html'), html.replace(edit.from, edit.to));
+  return ['--design', join(out, 'toybox.html')];
+};
 const editedFrames = (dir) => {
   const editPath = join(dir, 'frames-edit.json');
   if (!existsSync(editPath)) return [];
@@ -547,7 +566,7 @@ await runSelftest(import.meta.url, [
   {
     script: 'shoot-design.mjs',
     fixtures: '../tests/fixtures/shoot-design',
-    args: (dir) => ['--check', ...(extraArgs(dir) ?? ['--frame', 's12-error', '--theme', 'light', '--lang', 'en']), ...(existsSync(join(dir, 'reference')) ? ['--reference', join(dir, 'reference')] : []), ...editedMap(dir), ...editedFrames(dir)],
+    args: (dir) => ['--check', ...(extraArgs(dir) ?? ['--frame', 's12-error', '--theme', 'light', '--lang', 'en']), ...(existsSync(join(dir, 'reference')) ? ['--reference', join(dir, 'reference')] : []), ...editedMap(dir), ...editedFrames(dir), ...editedDesign(dir)],
   },
   {
     script: 'run-parity.mjs',

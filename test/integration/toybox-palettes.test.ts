@@ -11,6 +11,7 @@ import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
 import { PALETTE as STEPSTONE } from '@e07/stepstone/theme/palette.ts';
 import { PALETTE as SWAP_GUARD } from '@e07/swap-guard/theme/palette.ts';
 import { PALETTE as TOGGLE_DROP } from '@e07/toggle-drop/theme/palette.ts';
+import { PALETTE as TRAIL_CLEAR } from '@e07/trail-clear/theme/palette.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
@@ -52,6 +53,10 @@ describe('Toybox palettes', () => {
   // spec 8.12: the Shell takes each game's own palette; spec 8.11 (O5): every text 4.5:1.
   it('keeps Poker Drop readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(POKER_DROP)).toStrictEqual([]);
+  });
+
+  it('keeps Trail Clear readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(TRAIL_CLEAR)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including

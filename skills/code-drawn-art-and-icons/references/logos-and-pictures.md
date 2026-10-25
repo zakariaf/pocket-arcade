@@ -68,6 +68,7 @@ A layer may carry `rotate: { deg, cx, cy }` (SVG `rotate(deg cx cy)`). In code: 
 - **Stepstone** (added by its design pass, 2026-10-19): a pop stone under the frog (`p`, an ellipse), a squat white frog body (`w`), two white eyes (`w`) with ink pupils (`k`), and one ink line for the smile and the two front feet (`kl`); seven layers, none rotated.
 - **Swap Guard** (`examples/swap-guard-logo-art.ts`, added by its design pass on 2026-10-19): a white shield (`w`) whose left half is pop (`p`, its edge drawing the split down the middle), with two ink swap arrows (`kl`) across it, one pointing to the end and one back.
 - **Toggle Drop** (the token file's `logos.games.toggleDrop`, added by its design pass on 2026-10-19): an ink post and base (`kl`), a white switch lever (`w`) rotated 16 degrees about (24, 26) on an ink pivot (`k`), a pop ball (`p`) with a white shine (`w0`) dropping onto its high end, and an ink flip arrow (`kl`).
+- **Trail Clear** (its design pass, 2026-10-19, `logos.games.trailClear`): four white tiles in a 2 x 2 square (`w`), a pop loop road with ink edges running through all four (`p`, a ring: the inner outline drawn counter-clockwise so it stays a hole), and ink road dashes on it (`kl`).
 
 `check-icons-and-logos` fails if a design game's logo differs from the Toybox data.
 

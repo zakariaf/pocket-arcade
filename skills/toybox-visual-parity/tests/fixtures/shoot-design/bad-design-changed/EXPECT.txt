@@ -1,0 +1,3 @@
+[reference-drift]
+pixels differ from a fresh render
+the design changed since the references were rendered; only the 1 frame re-rendered here is proven unaffected

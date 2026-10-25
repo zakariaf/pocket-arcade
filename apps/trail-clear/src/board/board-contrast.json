@@ -1,0 +1,26 @@
+{
+  "edge": "edge",
+  "text": [["number", "badge"]],
+  "graphics": [
+    ["edge", "background"],
+    ["edge", "panel"],
+    ["road", "grass"],
+    ["river", "grass"],
+    ["line", "road"],
+    ["house", "grass"],
+    ["wipe", "grass"],
+    ["wipe", "panel"],
+    ["hint", "panel"],
+    ["hint", "tray"],
+    ["hint", "grass"]
+  ],
+  "shapes": [
+    ["panel", "background"],
+    ["grass", "panel"],
+    ["grass", "tray"],
+    ["glow", "panel"],
+    ["badge", "grass"],
+    ["tray", "background"]
+  ],
+  "distinct": [["road", "river", "wipe"]]
+}

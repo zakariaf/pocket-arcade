@@ -60,6 +60,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "trail-clear": {
+      "designGame": "trailClear",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }

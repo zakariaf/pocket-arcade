@@ -236,6 +236,11 @@
       "hands-made": 836,
       "big-hands": 97,
       "biggest-cascade": 4
+    },
+    "trailClear": {
+      "loops-closed": 214,
+      "tiles-placed": 1386,
+      "biggest-loop": 9
     }
   },
   "hints": {
@@ -385,6 +390,17 @@
           "total": 8
         },
         "loseReasonId": "poker-drop.lose.well-full"
+      },
+      "trailClear": {
+        "progressMid": {
+          "placed": 12,
+          "total": 30
+        },
+        "progressFull": {
+          "placed": 30,
+          "total": 30
+        },
+        "loseReasonId": "trail-clear.lose.no-room"
       }
     }
   }

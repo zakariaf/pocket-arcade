@@ -26358,6 +26358,189 @@
           "status": "waived"
         }
       ]
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s1-splash",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "0772a7ac079b303176b7559020529fbbbbd9323685ba5011fe53f56070c43e65",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s2-language-choice",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "74d2bc7dc91cfefb023919403ac469bc944933b8a302c3411e924d47fe40336e",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s3-consent-moment",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c36e3584427d652ab6e922d2c6a2bec28913314a99bb23f980c13c4f0fad9595",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s4-home",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "c4d519b2ab9091fd777fbbde5aa614d67d3d9d083693910b0a22218bd60ecfa4",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The ad slot's inside is empty in this ads-off test build where the design draws the 320 x 50 placeholder; the slot itself, its band and its dashed edges match.",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s4-home-premium",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "25533807817d1533885affa167acedc9edb66ce8a3a5582d958407c9f3ce4fab",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s7-result-win",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b7d921194be6c2f512b4bf0ebe422f2bee82771fc319eec968c6d2ba74c7279e",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": []
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s7-result-lose",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "f244e15b151f522de742c4777f4ea0ce31cda5973b5db0eb542943e0897cbede",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The continue offer's dashed edge: React Native's iOS dashes have their own length and corner phase (pre-listed platform waiver).",
+          "status": "waived"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "game": "trailClear",
+      "frame": "s13-how-to-play",
+      "theme": "light",
+      "lang": "en",
+      "scrollY": 0,
+      "sheetSha256": "b3c54a493a4319f27ac358c7a2b746581f8f74d4fb27fe355a2caeb19002a0ab",
+      "date": "2026-10-25",
+      "looked": ["sheet.png", "zoom-1.png", "zoom-2.png", "zoom-3.png", "zoom-4.png", "eye-1.png"],
+      "eyeChecks": {
+        "icons": "match",
+        "pictures": "match",
+        "shadows": "match",
+        "alignment": "match",
+        "wrapping": "match",
+        "direction": "n/a",
+        "feel": "match"
+      },
+      "differences": [
+        {
+          "what": "The how-to picture is the game's own example board (the 5 x 5 board with the placed road tiles and the four-tile tray) where the design draws a generic tile illustration; the picture is masked for every game, and the stage keeps the design's frame, so no exampleAspect is needed.",
+          "status": "waived"
+        }
+      ]
     }
   ]
 }
