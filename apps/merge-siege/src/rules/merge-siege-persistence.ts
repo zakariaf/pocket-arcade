@@ -3,9 +3,11 @@
 // update. parseState and parseMove rebuild exactly the shapes the rules produce (same keys, whole
 // numbers in range, powers of two on the board) and return null for anything else, so a damaged
 // save drops only that run and is logged (spec 8.14), never a crash.
+import { isEndlessDifficulty } from '@e07/game-kit/contract/difficulty.ts';
 import { pickAt } from '@e07/game-kit/rng/pick-at.ts';
 
 import { CELL_COUNT, COLS } from './board-cells.ts';
+import { knobsFor } from './merge-siege-tuning.ts';
 
 import type {
   Cell,
@@ -118,6 +120,16 @@ function hasFreshIds(cells: readonly Cell[], nextId: number): boolean {
   return new Set(ids).size === ids.length && ids.every((id) => id < nextId);
 }
 
+/**
+ * The wave agrees with the difficulty: the endless run always has an enemy waiting; a level has one
+ * waiting exactly while fewer than its wave's goal have entered, and never more than the goal.
+ */
+function isWaveConsistent(difficulty: number, entered: number, next: NextEnemy | null): boolean {
+  if (isEndlessDifficulty(difficulty)) return next !== null;
+  const { goal } = knobsFor(difficulty);
+  return entered <= goal && (next === null) === (entered === goal);
+}
+
 /** JSON from disk -> a fresh, typed state, or null (the Shell then drops only the run). */
 export function parseState(json: unknown): MergeSiegeState | null {
   const record = recordWith(json, STATE_KEYS);
@@ -130,6 +142,7 @@ export function parseState(json: unknown): MergeSiegeState | null {
   if (!isWhole(difficulty, 0, 100) || typeof hasContinued !== 'boolean') return null;
   if (cells === null || next === undefined || rng === null || counts === null) return null;
   if (!hasFreshIds(cells, counts.nextId)) return null;
+  if (!isWaveConsistent(difficulty, counts.entered, next)) return null;
   return { difficulty, cells, next, ...counts, hasContinued, rng };
 }
 

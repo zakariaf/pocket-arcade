@@ -4,12 +4,14 @@
 // spec 8.14); the save policy writes every move before it is shown.
 import fc from 'fast-check';
 
+import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
 import { MERGE_SIEGE_PERSISTENCE, parseMove, parseState } from './merge-siege-persistence.ts';
+import { knobsFor } from './merge-siege-tuning.ts';
 
 import type { MergeSiegeState } from './merge-siege-types.ts';
 
@@ -20,6 +22,8 @@ const choicesArb = fc.array(fc.nat(), { maxLength: 40 });
 
 const roundTrip = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 const START: MergeSiegeState = create(1, 0);
+const ENDLESS: MergeSiegeState = create(1, ENDLESS_DIFFICULTY);
+const GOAL = knobsFor(START.difficulty).goal;
 const EMPTY_CELL = START.cells.indexOf(null);
 const withCell = (index: number, cell: unknown): unknown => ({
   ...START,
@@ -52,12 +56,23 @@ describe('parseState', () => {
     ['two pieces with the same id', withCell(EMPTY_CELL, { id: 1, kind: 'tile', value: 2 })],
     ['a next id already used on the board', { ...START, nextId: 5 }],
     ['a next id below a piece id', withCell(EMPTY_CELL, { id: 6, kind: 'tile', value: 2 })],
+    ['an endless run with no enemy waiting', { ...ENDLESS, next: null }],
+    ['a level wave with no enemy waiting before it all entered', { ...START, next: null }],
+    [
+      'a level with more enemies entered than its wave',
+      { ...START, entered: GOAL + 1, next: null },
+    ],
+    ['a level with an enemy waiting after its whole wave entered', { ...START, entered: GOAL }],
   ])('rejects %s', (_name, json) => {
     expect(parseState(roundTrip(json) ?? json)).toBeNull();
   });
 
+  it('keeps an endless run with an enemy waiting', () => {
+    expect(parseState(roundTrip(ENDLESS))).toStrictEqual(ENDLESS);
+  });
+
   it('keeps a run whose whole wave has entered (next null)', () => {
-    const done = { ...START, next: null };
+    const done = { ...START, entered: GOAL, next: null };
     expect(parseState(roundTrip(done))).toStrictEqual(done);
   });
 
