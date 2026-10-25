@@ -1,27 +1,11 @@
 // apps/toggle-drop/src/tutorial/toggle-drop-teaching.ts
 import { applyMove } from '@e07/toggle-drop/rules/apply-move.ts';
+import { TUTORIAL_START } from '@e07/toggle-drop/rules/tutorial-board.ts';
 
 import type { TeachingSpec, TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { ToggleDropMove, ToggleDropState } from '@e07/toggle-drop/rules/toggle-drop-types.ts';
 
-const COLS = 4;
-const ROWS = 2;
-
-/**
- * The tutorial board: 4 columns, 2 peg rows, a switch in column 2 of the top row pointing left
- * and one in column 3 of the bottom row pointing right; cups under columns 1, 2 and 4 need one
- * ball each, and the player has exactly the three balls the script drops.
- */
-const TUTORIAL_START: ToggleDropState = {
-  cols: COLS,
-  rows: ROWS,
-  pegs: [-1, 0, -1, -1, -1, -1, 1, -1],
-  flips: Array.from({ length: COLS * ROWS }, () => 0),
-  needs: [1, 1, 0, 1],
-  filled: [0, 0, 0, 0],
-  ballsLeft: 3,
-  drops: 0,
-};
+const ROWS = TUTORIAL_START.rows;
 
 const dropIn = (col: number): ToggleDropMove => ({ kind: 'drop', col });
 /** The hand points at a column's chute: a tap anywhere in the column drops there. */

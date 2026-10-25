@@ -1,8 +1,7 @@
 // apps/toggle-drop/src/rules/toggle-drop-persistence.ts
-import { TOGGLE_DROP_TEACHING } from '@e07/toggle-drop/tutorial/toggle-drop-teaching.ts';
-
 import { FALLBACK_CUPS } from './create.ts';
 import { TUNING } from './toggle-drop-tuning.ts';
+import { TUTORIAL_START } from './tutorial-board.ts';
 
 import type { PegCell, ToggleDropMove, ToggleDropState } from './toggle-drop-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -110,10 +109,7 @@ function shapeOfStart(start: ToggleDropState): RunShape {
   };
 }
 
-const SHAPES: readonly RunShape[] = [
-  ...LEVEL_SHAPES,
-  shapeOfStart(TOGGLE_DROP_TEACHING.tutorial.start),
-];
+const SHAPES: readonly RunShape[] = [...LEVEL_SHAPES, shapeOfStart(TUTORIAL_START)];
 
 /**
  * Whether legal play can reach this run: it starts from a board create() makes or from the
