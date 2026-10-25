@@ -115,14 +115,22 @@ function isBoardReachable(cells: readonly (PlacedTile | null)[]): boolean {
   });
 }
 
+/**
+ * The bag agrees with the offered tile: a level offers none exactly once its last tile is placed
+ * (placements === bag, the level is won); the endless run's bag never empties, so it always offers.
+ */
+function isBagReachable(state: TrailClearState): boolean {
+  if (isEndlessDifficulty(state.difficulty)) return state.offered !== null;
+  const { bag } = knobsFor(state.difficulty);
+  return state.placements <= bag && (state.offered === null) === (state.placements === bag);
+}
+
 /** The counters agree: a score exactly when a loop closed, at most two loops a placement, the bag. */
 function areCountsReachable(state: TrailClearState): boolean {
-  const isWithinBag =
-    isEndlessDifficulty(state.difficulty) || state.placements <= knobsFor(state.difficulty).bag;
   return (
     (state.score === 0) === (state.loopsClosed === 0) &&
     state.loopsClosed <= MOST_LOOPS_PER_PLACEMENT * state.placements &&
-    isWithinBag
+    isBagReachable(state)
   );
 }
 

@@ -3,7 +3,9 @@
 // is dropped alone (8.14), never a crash.
 import fc from 'fast-check';
 
+import { ENDLESS_DIFFICULTY } from '@e07/game-kit/contract/difficulty.ts';
 import { playChoices } from '@e07/game-kit/testing/play-choices.ts';
+import { TRAIL_CLEAR_TESTING } from '@e07/trail-clear/testing/trail-clear-testing.ts';
 
 import { applyMove } from './apply-move.ts';
 import { create } from './create.ts';
@@ -72,8 +74,10 @@ describe('parseState', () => {
     );
   });
 
-  it('keeps an empty bag (offered null) and a finished continue', () => {
-    const won = { ...START, offered: null, hasContinued: true };
+  it('keeps an empty bag (a won level: every tile placed, offered null) and a finished continue', () => {
+    const won = { ...TRAIL_CLEAR_TESTING.examples.win(), hasContinued: true };
+    expect(won.offered).toBeNull();
+    expect(won.placements).toBe(knobsFor(won.difficulty).bag);
     expect(parseState(JSON.parse(JSON.stringify(won)))).toStrictEqual(won);
   });
 
@@ -165,6 +169,15 @@ describe('parseState refuses a save that legal play cannot reach', () => {
     [
       'more placements than the level bag holds',
       () => ({ ...START, placements: knobsFor(0).bag + 1 }),
+    ],
+    ['an empty bag before the last tile is placed', () => ({ ...START, offered: null })],
+    [
+      'an offered tile after the last tile of the bag was placed',
+      () => ({ ...TRAIL_CLEAR_TESTING.examples.win(), offered: 'ford' }),
+    ],
+    [
+      'an endless run with nothing offered (its bag never empties)',
+      () => ({ ...create(1, ENDLESS_DIFFICULTY), offered: null }),
     ],
   ])('refuses %s', (_, make) => {
     expect(parseState(JSON.parse(JSON.stringify(make())))).toBeNull();
