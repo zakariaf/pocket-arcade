@@ -48,7 +48,7 @@ A task is done only when every line that applies is true and the evidence is in 
 | Change | Evidence required |
 |---|---|
 | Pure logic (rules, levels, reducers, policies, game-kit) | example tests + fast-check properties + one pinned golden value (docs/07 rule 15); coverage at or above the gates; for a finished rules module or policy, a Stryker run with survivors explained |
-| Levels, daily challenge, board drawing | data or pixel goldens created or changed only on purpose, each PNG opened with the Read tool, `Gate-Change:` trailer (docs/07 rule 18); daily goldens for existing dates never change |
+| Levels, daily challenge, board drawing | data or pixel goldens created or changed only on purpose, each PNG opened with the Read tool, `Gate-Change:` trailer (docs/07 rule 18); daily goldens for existing dates never change once the game has a release tag (before it, only with a `Gate-Change:` trailer naming the daily) |
 | Save format | new schema version, pure migration, frozen `save-vN.*.json` fixtures, migration test and property, `node:sqlite` tests, then the simulator kill test (docs/06 sections 6.11 to 6.13) |
 | UI (screens, components) | RNTL tests through `renderWithShell` (docs/07 section 3.8.7), `findInaccessiblePressables` clean (docs/15); simulator screenshots of each changed screen in at least `en` and `fa`, light and dark, opened with the Read tool; before a release, the full matrix |
 | Navigation, flows, first run, restart for direction | the Maestro flows that cover them pass on a Release simulator build of the test variant with `ADS_MODE=off` (docs/07 section 3.11) |

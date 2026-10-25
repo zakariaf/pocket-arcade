@@ -12,6 +12,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "scrap-shove": {
+      "designGame": "scrapShove",
+      "hasMusic": false,
+      "winLine": "moves",
+      "hasHints": true
     }
   }
 }

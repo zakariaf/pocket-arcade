@@ -106,6 +106,62 @@ export function checkRuleFiles(repo, gameId, report) {
   }
 }
 
+/** The file a path names as written, or with a .ts/.tsx extension or an index.ts (Metro and Jest resolve all of them). */
+function resolveRule(path, byRel) {
+  const candidates = [path, `${path}.ts`, `${path}.tsx`, `${path}/index.ts`];
+  return candidates.map((candidate) => byRel.get(candidate)).find((hit) => hit !== undefined) ?? null;
+}
+
+/** The rules file a value import names (a relative path or @e07/<id>/rules/...), or null. */
+function importedRule(file, specifier, byRel) {
+  const own = /^@e07\/([a-z0-9-]+)\/rules\/(.+)$/.exec(specifier);
+  if (own) return resolveRule(`apps/${own[1]}/src/rules/${own[2]}`, byRel);
+  if (!specifier.startsWith('.')) return null;
+  const parts = file.rel.split('/').slice(0, -1);
+  for (const part of specifier.split('/')) {
+    if (part === '..') parts.pop();
+    else if (part !== '.') parts.push(part);
+  }
+  return resolveRule(parts.join('/'), byRel);
+}
+
+/** Every file reachable from `starts` through value imports, never entering `stop`. */
+function reachable(starts, byRel, stop) {
+  const seen = new Set();
+  const queue = [...starts];
+  while (queue.length > 0) {
+    const file = queue.shift();
+    if (file === stop || seen.has(file)) continue;
+    seen.add(file);
+    for (const { specifier, isType } of importsOf(file.text)) {
+      const next = isType ? null : importedRule(file, specifier, byRel);
+      if (next !== null) queue.push(next);
+    }
+  }
+  return seen;
+}
+
+/** The engine functions that run during play (create.ts runs once, before it). */
+const PLAY_ENGINE_FILES = Object.keys(RULE_FILES).filter((file) => file !== 'create.ts');
+
+/**
+ * The rules files that run during play: the play-time engine functions (listMoves, applyMove,
+ * outcome, even when create.ts calls them, for example to prove its layout winnable), everything
+ * else outside create.ts that is not reached only through create.ts, and all they import. A layout
+ * helper only create.ts imports (an opening module) draws at create time, so it needs no RNG in
+ * the state; a file a play-time file reaches does.
+ */
+function playTimeFiles(files) {
+  const nonTest = files.filter((file) => !file.isTest);
+  const byRel = new Map(nonTest.map((file) => [file.rel, file]));
+  const create = nonTest.find((file) => file.rel.endsWith('/create.ts'));
+  if (create === undefined) return nonTest;
+  const createOnly = reachable([create], byRel, null);
+  const isPlayEngine = (file) => PLAY_ENGINE_FILES.some((name) => file.rel.endsWith(`/${name}`));
+  const roots = nonTest.filter((file) => !createOnly.has(file) || isPlayEngine(file));
+  return [...reachable(roots, byRel, create)];
+}
+
 export function checkStateTypes(repo, gameId, files, report) {
   const typesRel = `apps/${gameId}/src/rules/${gameId}-types.ts`;
   const types = files.find((file) => file.rel === typesRel);
@@ -114,7 +170,7 @@ export function checkStateTypes(repo, gameId, files, report) {
   for (const { match, line } of matchesWithLines(text, /\b(Map|Set|WeakMap|Date|bigint|symbol)\b|\bclass\s/g)) {
     report.problem({ file: typesRel, line, rule: 'state-not-json', message: `uses ${match[0].trim()}; states, moves and events are saved and compared as JSON`, fix: 'Use plain objects, arrays, numbers, strings, booleans and null only.' });
   }
-  const drawsAfterCreate = files.filter((file) => !file.isTest && !file.rel.endsWith('/create.ts')).some((file) => importsOf(file.text).some(({ specifier, isType }) => !isType && specifier.endsWith('/rng/sfc32.ts')) && /\bnext(Int|U32|Unit)\s*\(/.test(bare(file.text)));
+  const drawsAfterCreate = playTimeFiles(files).some((file) => importsOf(file.text).some(({ specifier, isType }) => !isType && specifier.endsWith('/rng/sfc32.ts')) && /\bnext(Int|U32|Unit)\s*\(/.test(bare(file.text)));
   if (drawsAfterCreate && !/\bRngState\b/.test(code(types.text))) {
     report.problem({ file: typesRel, line: 1, rule: 'rng-not-in-state', message: 'rules draw random numbers after create() but the state holds no RngState', fix: 'Keep `rng: RngState` in the state and thread it: const draw = nextInt(state.rng, n); ...{ rng: draw.state }.' });
   }
