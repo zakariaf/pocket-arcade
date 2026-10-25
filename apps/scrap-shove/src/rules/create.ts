@@ -55,32 +55,64 @@ function stateOf(floor: Floor): ScrapShoveState {
   };
 }
 
+/** A layout search's result: the floor found, and whether the solver proved it winnable. */
+type Search = { readonly state: ScrapShoveState; readonly isProven: boolean };
+
 /**
- * The first layout of the seed's random stream that the solver proves winnable within the budget
- * (spec 8.1: no level is impossible), or the last one tried. Each try keeps the player's square and
- * lays robots and heaps again from where the stream stopped, so the result is the same everywhere.
+ * Tries layouts of the seed's random stream until the solver proves one winnable within the
+ * budget, or the attempts run out. Each try keeps the player's square and lays robots and heaps
+ * again from where the stream stopped, so the result is the same everywhere.
+ */
+function searchLayouts(start: Layout, knobs: DifficultyKnobs, budget: LayoutBudget): Search {
+  const laid = layFloor(start, knobs);
+  const state = stateOf(laid.floor);
+  const isProven = solveFloor(state, budget.maxNodes).kind === 'solved';
+  if (isProven || budget.attempts <= 1) return { state, isProven };
+  const next = { floor: start.floor, rng: laid.rng };
+  return searchLayouts(next, knobs, { ...budget, attempts: budget.attempts - 1 });
+}
+
+/**
+ * The first layout of the seed's stream proven winnable within the budget, or the last one tried
+ * (then unproven: create() never hands that one out, it takes the fallback floor instead).
  */
 export function firstWinnable(
   start: Layout,
   knobs: DifficultyKnobs,
   budget: LayoutBudget,
 ): ScrapShoveState {
-  const laid = layFloor(start, knobs);
-  const state = stateOf(laid.floor);
-  if (budget.attempts <= 1 || solveFloor(state, budget.maxNodes).kind === 'solved') return state;
-  const next = { floor: start.floor, rng: laid.rng };
-  return firstWinnable(next, knobs, { ...budget, attempts: budget.attempts - 1 });
+  return searchLayouts(start, knobs, budget).state;
+}
+
+/**
+ * The seed of the last-resort floor: its first layout is proven winnable for every difficulty row
+ * with the create budget (a test checks every row), so it needs no search when it is used.
+ */
+export const FALLBACK_SEED = 1;
+
+/**
+ * create() with an explicit budget: the first proven layout of the seed, or, when none is proven
+ * within the budget, the fallback floor of the difficulty row (spec 8.1: no level is impossible).
+ * Deterministic and bounded: at most `attempts` solver runs.
+ */
+export function createWithin(
+  seed: number,
+  difficulty: number,
+  budget: LayoutBudget,
+): ScrapShoveState {
+  const knobs = knobsFor(clampDifficulty(difficulty));
+  const found = searchLayouts(startLayout(seed), knobs, budget);
+  return found.isProven ? found.state : stateOf(layFloor(startLayout(FALLBACK_SEED), knobs).floor);
 }
 
 /**
  * Start state from (seed, difficulty): the same pair gives the same floor on every phone. The
  * difficulty's tuning row says how many robots of each kind and how many heaps; the opening crash
- * pair counts as two of the normal robots; every floor is proven winnable, so every level and
- * every daily can be won. Nothing is drawn after this: the robots are deterministic, so the state
- * carries no random stream.
+ * pair counts as two of the normal robots; every floor is proven winnable (or is the proven
+ * fallback), so every level and every daily can be won. Nothing is drawn after this: the robots
+ * are deterministic, so the state carries no random stream.
  */
 export function create(seed: number, difficulty: number): ScrapShoveState {
-  const knobs = knobsFor(clampDifficulty(difficulty));
   const budget = { attempts: TUNING.createAttempts, maxNodes: TUNING.createMaxNodes };
-  return firstWinnable(startLayout(seed), knobs, budget);
+  return createWithin(seed, difficulty, budget);
 }

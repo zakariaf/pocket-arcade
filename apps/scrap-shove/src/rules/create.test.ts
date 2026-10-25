@@ -7,7 +7,7 @@ import { jsonShapeProblems } from '@e07/game-kit/testing/json-shape.ts';
 
 import { applyMove } from './apply-move.ts';
 import { boardText } from './board-text.ts';
-import { create, firstWinnable, startLayout } from './create.ts';
+import { FALLBACK_SEED, create, createWithin, firstWinnable, startLayout } from './create.ts';
 import { distanceBetween, isSameCell, stepToward } from './floor-squares.ts';
 import { outcome } from './outcome.ts';
 import { TUNING, knobsFor } from './scrap-shove-tuning.ts';
@@ -89,6 +89,29 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
     const third = firstWinnable(startLayout(1), knobsFor(0), { attempts: 3, maxNodes: 0 });
     expect(third).not.toStrictEqual(create(1, 0));
     expect(third.robots).toHaveLength(5);
+  });
+
+  it('hands out only proven floors: with no layout proven within the budget it gives the proven fallback (spec 8.1)', () => {
+    // Seed 48: with a budget no layout can meet, its 20th layout cannot be won at all.
+    const lastTried = firstWinnable(startLayout(48), knobsFor(0), { attempts: 20, maxNodes: 0 });
+    expect(solveFloor(lastTried, TUNING.createMaxNodes).kind).toBe('unsolvable');
+    const forced = createWithin(48, 0, { attempts: 20, maxNodes: 0 });
+    expect(solveFloor(forced, TUNING.createMaxNodes).kind).toBe('solved');
+    expect(forced).toStrictEqual(createWithin(FALLBACK_SEED, 0, { attempts: 1, maxNodes: 0 }));
+    expect(kindCounts(forced)).toStrictEqual([4, 0, 1]);
+  });
+
+  it('proves the fallback floor of every difficulty row winnable with the create budget', () => {
+    const fallbacks = [0, 25, 50, 75].map((difficulty) =>
+      firstWinnable(startLayout(FALLBACK_SEED), knobsFor(difficulty), { attempts: 1, maxNodes: 0 }),
+    );
+    const kinds = fallbacks.map((state) => solveFloor(state, TUNING.createMaxNodes).kind);
+    expect(kinds).toStrictEqual(['solved', 'solved', 'solved', 'solved']);
+  });
+
+  it('gives create() the floor createWithin finds with the tuning budget', () => {
+    const budget = { attempts: TUNING.createAttempts, maxNodes: TUNING.createMaxNodes };
+    expect(create(39, 0)).toStrictEqual(createWithin(39, 0, budget));
   });
 
   it('clamps difficulties outside 0..100', () => {
