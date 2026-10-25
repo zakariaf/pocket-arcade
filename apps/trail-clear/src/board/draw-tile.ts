@@ -5,6 +5,8 @@
 // pond; the road carries centre dashes and the river runs wider, so the two never differ by colour
 // alone (spec 8.11).
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
+
 import { drawFace, inset, INSET } from './draw-parts.ts';
 import { capCentre, partPath, trailParts } from './tile-parts.ts';
 
@@ -53,15 +55,13 @@ function drawLayer(canvas: SkCanvas, frame: Frame, layer: Layer): void {
 function drawRiver(canvas: SkCanvas, frame: Frame, look: TileLook): void {
   const { fill } = frame.kit;
   const parts = trailParts(look.edges, RIVER);
-  fill.setColor(frame.colors.color.river);
-  fill.setAlphaf(look.alpha ?? 1);
+  setPaintColor(fill, frame.colors.color.river, look.alpha ?? 1);
   drawLayer(canvas, frame, { parts, terrain: RIVER, paint: fill });
   const end = endOf(parts);
   if (end !== null) {
     const cap = capCentre(end.turn);
     canvas.drawCircle(cap.x, cap.y, POND_RADIUS, fill);
   }
-  fill.setAlphaf(1);
 }
 
 /** The road: its bands, its centre dashes, and a house where it ends. */
@@ -70,22 +70,17 @@ function drawRoad(canvas: SkCanvas, frame: Frame, look: TileLook): void {
   const { color } = frame.colors;
   const alpha = look.alpha ?? 1;
   const parts = trailParts(look.edges, ROAD);
-  fill.setColor(color.road);
-  fill.setAlphaf(alpha);
+  setPaintColor(fill, color.road, alpha);
   drawLayer(canvas, frame, { parts, terrain: ROAD, paint: fill });
-  stroke.setColor(color.line);
-  stroke.setAlphaf(alpha);
+  setPaintColor(stroke, color.line, alpha);
   stroke.setStrokeWidth(DASH_WIDTH);
   drawLayer(canvas, frame, { parts, terrain: DASHES, paint: stroke });
-  stroke.setAlphaf(1);
   const end = endOf(parts);
   const home = end === null ? undefined : paths[`house-${String(end.turn)}`];
   if (home !== undefined) {
-    fill.setColor(color.house);
-    fill.setAlphaf(alpha);
+    setPaintColor(fill, color.house, alpha);
     canvas.drawPath(home, fill);
   }
-  fill.setAlphaf(1);
 }
 
 /** Pure worklet: the tile on its cell, faded by `alpha`. */

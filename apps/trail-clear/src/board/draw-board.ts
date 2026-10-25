@@ -4,6 +4,7 @@
 import { cellRect } from '@e07/game-kit/geom/board-layout.ts';
 import { sampleParticle } from '@e07/game-kit/timeline/particles.ts';
 import { fxEntry } from '@e07/game-kit/timeline/sample.ts';
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
 
 import { cellEntity, TURN_ENTITY } from './board-ids.ts';
 import { drawFace, inset, INSET, isPlaying, MIN_VISIBLE, scaled } from './draw-parts.ts';
@@ -80,11 +81,9 @@ function drawDouble(canvas: SkCanvas, frame: Frame): void {
   const cy = cell.y + cell.height / 2;
   if (isPlaying(ring)) {
     const spread = ring.values[1] ?? 0;
-    kit.stroke.setColor(colors.color.glow);
-    kit.stroke.setAlphaf(1 - spread);
+    setPaintColor(kit.stroke, colors.color.glow, 1 - spread);
     kit.stroke.setStrokeWidth(cell.width * 0.1);
     canvas.drawCircle(cx, cy, cell.width * (0.5 + 1.2 * spread), kit.stroke);
-    kit.stroke.setAlphaf(1);
   }
   if (!isPlaying(burst)) return;
   const spec = {
@@ -97,13 +96,11 @@ function drawDouble(canvas: SkCanvas, frame: Frame): void {
     gravity: 380,
     lifeMs: 700,
   };
-  kit.fill.setColor(colors.color.glow);
   for (let i = 0; i < spec.count; i += 1) {
     const particle = sampleParticle(spec, i, burst.ageMs);
-    kit.fill.setAlphaf(particle.alpha);
+    setPaintColor(kit.fill, colors.color.glow, particle.alpha);
     canvas.drawCircle(particle.x, particle.y, cell.width * 0.05, kit.fill);
   }
-  kit.fill.setAlphaf(1);
 }
 
 /** Pure worklet: reads only its arguments, allocates no Skia objects, reads no clock. */

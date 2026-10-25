@@ -1,6 +1,8 @@
 // apps/trail-clear/src/board/draw-parts.ts
 'worklet';
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
+
 import type { BoardToken } from './board-palettes.ts';
 import type { TrailClearView } from './to-view.ts';
 import type { BoardTarget, Rect } from '@e07/game-kit/geom/board-layout.ts';
@@ -72,15 +74,11 @@ export function drawFace(
   const { fill, stroke } = frame.kit;
   const alpha = face.alpha ?? 1;
   const r = rect.width * CORNER;
-  fill.setColor(frame.colors.color[face.token]);
-  fill.setAlphaf(alpha);
+  setPaintColor(fill, frame.colors.color[face.token], alpha);
   canvas.drawRRect({ rect, rx: r, ry: r }, fill);
-  stroke.setColor(frame.colors.color.edge);
-  stroke.setAlphaf(alpha);
+  setPaintColor(stroke, frame.colors.color.edge, alpha);
   stroke.setStrokeWidth(Math.min(EDGE_PT.max, Math.max(EDGE_PT.min, rect.width * EDGE)));
   canvas.drawRRect({ rect, rx: r, ry: r }, stroke);
-  fill.setAlphaf(1);
-  stroke.setAlphaf(1);
 }
 
 /** A ring in `token` around a cell or a tray slot (selection, hints, what a placement wipes). */

@@ -275,3 +275,82 @@ describe('drawBoard', () => {
     expect([...drawn.calls.keys()]).toStrictEqual(['drawColor']);
   });
 });
+
+/** A paint that acts like Skia's: setColor takes the colour's own alpha, setAlphaf replaces it. */
+function alphaPaint(): { readonly paint: SkPaint; readonly alpha: () => number } {
+  let alpha = 1;
+  const paint = new Proxy(
+    {},
+    {
+      get: (_target, name) => (value: unknown) => {
+        if (name === 'setColor') alpha = (value as SkColor)[3] ?? 1;
+        if (name === 'setAlphaf' && typeof value === 'number') alpha = value;
+      },
+    },
+  ) as SkPaint;
+  return { paint, alpha: () => alpha };
+}
+
+/** The alpha of every draw call of one frame where every palette token has alpha `tokenAlpha`. */
+function drawnAlphas(input: DrawInput, tokenAlpha: number): number[] {
+  const fill = alphaPaint();
+  const stroke = alphaPaint();
+  const seen: number[] = [];
+  const canvas = new Proxy(
+    {},
+    {
+      get:
+        (_target, name) =>
+        (...args: unknown[]) => {
+          if (!String(name).startsWith('draw')) return;
+          const paint = args.at(-1);
+          if (paint === fill.paint) seen.push(fill.alpha());
+          if (paint === stroke.paint) seen.push(stroke.alpha());
+        },
+    },
+  ) as SkCanvas;
+  const translucent = new Float32Array([0, 0, 0, tokenAlpha]) as SkColor;
+  const colors = {
+    ...COLORS,
+    color: new Proxy({}, { get: () => translucent }),
+  } as BoardColors<BoardToken>;
+  const fx = {
+    ...sampleTimeline(input.tracks ?? [], input.atMs ?? 0),
+    pointer: input.pointer ?? IDLE_POINTER,
+  };
+  drawBoard(canvas, {
+    view: input.view ?? OPENING_VIEW,
+    fx,
+    highlight: input.highlight ?? EMPTY_HIGHLIGHT,
+    colors,
+    layout: input.layout ?? LAYOUT,
+    kit: { ...KIT, fill: fill.paint, stroke: stroke.paint },
+  });
+  return seen;
+}
+
+describe('drawBoard with translucent tokens', () => {
+  const tracks = buildTimeline(BUSIEST.events, 'full');
+  const frames: readonly (DrawInput & { readonly name: string })[] = [
+    { name: 'the dimmed ghost that does not fit', pointer: dragging(0, SPOT) },
+    {
+      name: 'the wiped tiles, the double ring and its burst',
+      atMs: 400,
+      view: BUSIEST_VIEW,
+      tracks,
+    },
+  ];
+
+  it.each(frames)('draws $name no stronger than the token itself', (frame) => {
+    const alphas = drawnAlphas(frame, 0.5);
+    expect(alphas.length).toBeGreaterThan(0);
+    expect(alphas.filter((alpha) => alpha > 0.5 + 1e-6)).toStrictEqual([]);
+  });
+
+  it.each(frames)('fades $name from the token alpha, never past it', (frame) => {
+    const faded = drawnAlphas(frame, 1).filter((alpha) => alpha < 1);
+    const halved = drawnAlphas(frame, 0.5).filter((alpha) => alpha < 0.5 - 1e-6);
+    expect(faded.length).toBeGreaterThan(0);
+    expect(halved).toStrictEqual(faded.map((alpha) => alpha * 0.5));
+  });
+});
