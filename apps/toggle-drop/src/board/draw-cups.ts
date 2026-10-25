@@ -43,6 +43,21 @@ function setEdge(frame: Frame, width: number): void {
   frame.kit.stroke.setStrokeWidth(Math.max(1, width * EDGE));
 }
 
+/**
+ * The puff of a lost ball: in the gutter, or at a full cup the ball bounced off. An effect plays by
+ * its linear time (game kit), never by its eased progress.
+ */
+function drawMissPuff(canvas: SkCanvas, frame: Frame, at: { spot: CupSpot; y: number }): void {
+  const miss = playingEntry(frame.fx, 'miss', cupEntity(at.spot.col));
+  if (miss === undefined) return;
+  const { kit, colors } = frame;
+  const { cell } = at.spot;
+  const left = miss.values[0] ?? 0;
+  kit.stroke.setStrokeWidth(Math.max(1, cell.width * EDGE));
+  setPaintColor(kit.stroke, colors.color.chute, left);
+  canvas.drawCircle(cell.x + cell.width / 2, at.y, cell.width * (0.4 - 0.2 * left), kit.stroke);
+}
+
 /** The gutter: a flat line where a ball is lost, with a puff while one lands there. */
 function drawGutter(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   const { kit, colors } = frame;
@@ -51,12 +66,7 @@ function drawGutter(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   kit.stroke.setStrokeWidth(Math.max(1, cell.width * EDGE));
   const y = cell.y + cell.height * 0.78;
   canvas.drawLine(cell.x + cell.width * 0.3, y, cell.x + cell.width * 0.7, y, kit.stroke);
-  // An effect plays by its linear time (game kit), never by its eased progress.
-  const miss = playingEntry(frame.fx, 'miss', cupEntity(spot.col));
-  if (miss === undefined) return;
-  const left = miss.values[0] ?? 0;
-  setPaintColor(kit.stroke, colors.color.chute, left);
-  canvas.drawCircle(cell.x + cell.width / 2, y, cell.width * (0.4 - 0.2 * left), kit.stroke);
+  drawMissPuff(canvas, frame, { spot, y });
 }
 
 /**
@@ -122,7 +132,7 @@ function drawCupShape(canvas: SkCanvas, frame: Frame, at: { cell: Rect; scale: n
 }
 
 /**
- * A cup: it pops when it takes the ball. The view is the final state, so while the move's ball
+ * A cup: it pops when it takes the ball, and puffs when a ball lands in it full. The view is the final state, so while the move's ball
  * still falls toward this cup (its catch track has not started) it shows one ball fewer.
  */
 function drawCup(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
@@ -141,6 +151,8 @@ function drawCup(canvas: SkCanvas, frame: Frame, spot: CupSpot): void {
   };
   drawHeldBalls(canvas, frame, content);
   drawCupMark(canvas, frame, content);
+  // A ball that lands in a full cup is lost: it puffs at the cup's rim.
+  drawMissPuff(canvas, frame, { spot, y: spot.cell.y + spot.cell.height * 0.2 });
 }
 
 /** A full cup bursts: particles from its middle (full motion only: reduced motion has no track). */

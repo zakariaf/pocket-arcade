@@ -173,6 +173,30 @@ describe('drawBoard', () => {
     expect(draw({ tracks, atMs: 1400 }).calls.get('drawCircle')).toBe(idle);
   });
 
+  it('pops a puff at a full cup while a ball it no longer takes lands there, and only then', () => {
+    // Column 0's cup is full (needs 1, holds 1): the ball bounces off it, lost like in the gutter.
+    const bounced: readonly ToggleDropEvent[] = [
+      { kind: 'ball-dropped', col: 0, x: 60, y: 0, atMs: 0 },
+      {
+        kind: 'ball-landed',
+        col: 0,
+        x: 60,
+        y: 720,
+        isInCup: false,
+        wasRedirected: false,
+        atMs: 1000,
+      },
+    ];
+    const tracks = buildTimeline(bounced, 'full');
+    expect(
+      tracks.some((track) => track.channel === 'miss' && track.entityId === cupEntity(0)),
+    ).toBe(true);
+    const idle = draw({ tracks: [], atMs: 0 }).calls.get('drawCircle') ?? 0;
+    // At 1200 ms the ball has melted away and the puff is still growing; at 1400 ms it is gone.
+    expect(draw({ tracks, atMs: 1200 }).calls.get('drawCircle')).toBe(idle + 1);
+    expect(draw({ tracks, atMs: 1400 }).calls.get('drawCircle')).toBe(idle);
+  });
+
   it('keeps a cup popping through an overshooting pop, until its track ends', () => {
     // An effect plays by its linear time: an out-back pop passes its rest scale early.
     const pop: Track = {
@@ -304,6 +328,21 @@ describe('drawBoard with a translucent token', () => {
     ],
     'full',
   );
+  const bounced = buildTimeline(
+    [
+      { kind: 'ball-dropped', col: 0, x: 60, y: 0, atMs: 0 },
+      {
+        kind: 'ball-landed',
+        col: 0,
+        x: 60,
+        y: 720,
+        isInCup: false,
+        wasRedirected: false,
+        atMs: 1000,
+      },
+    ],
+    'full',
+  );
   const fading = { tracks: busiest, atMs: startOf(busiest, 'fade') + 40 };
   const cases: readonly (TokenAt & { readonly name: string })[] = [
     { name: 'the landing ball', token: 'ball', paint: 'fill', ...fading },
@@ -316,6 +355,7 @@ describe('drawBoard with a translucent token', () => {
       atMs: startOf(busiest, 'burst') + 100,
     },
     { name: 'the gutter puff', token: 'chute', paint: 'stroke', tracks: lost, atMs: 1200 },
+    { name: 'the full-cup puff', token: 'chute', paint: 'stroke', tracks: bounced, atMs: 1200 },
   ];
 
   // Spec 8.12: the board draws from its palette tokens, so a token's own alpha must survive a fade.
