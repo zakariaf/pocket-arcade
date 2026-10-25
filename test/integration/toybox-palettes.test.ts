@@ -5,6 +5,7 @@ import { PALETTE as LINE_SIEGE } from '@e07/line-siege/theme/palette.ts';
 import { PALETTE as SCRAP_SHOVE } from '@e07/scrap-shove/theme/palette.ts';
 import { checkToyboxPalette } from '@e07/shell/testing/toybox-palette-checks.ts';
 import { PALETTE as SNARE_SNAKE } from '@e07/snare-snake/theme/palette.ts';
+import { PALETTE as SWAP_GUARD } from '@e07/swap-guard/theme/palette.ts';
 
 describe('Toybox palettes', () => {
   it('keeps Line Siege readable, one-ink in light and colour-blind equal to standard', () => {
@@ -21,6 +22,10 @@ describe('Toybox palettes', () => {
 
   it('keeps Snare Snake readable, one-ink in light and colour-blind equal to standard', () => {
     expect(checkToyboxPalette(SNARE_SNAKE)).toStrictEqual([]);
+  });
+
+  it('keeps Swap Guard readable, one-ink in light and colour-blind equal to standard', () => {
+    expect(checkToyboxPalette(SWAP_GUARD)).toStrictEqual([]);
   });
 
   // spec 8.11 (O5): every text reaches 4.5:1 against what is behind it, in every state, including
