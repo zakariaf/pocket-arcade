@@ -70,3 +70,11 @@ export function continueStateOf<TState, TMove, TEvent>(
   if (session.continuesUsed > 0) return 'used';
   return session.status === 'lost' ? 'offered' : 'none';
 }
+
+/**
+ * A run still in play: playing, or paused under the Pause scrim. Won and lost runs are over, and
+ * 'missing' (the Game screen's controls with no run open) is not a run.
+ */
+export function isRunLive(status: SessionStatus | 'missing'): boolean {
+  return status === 'playing' || status === 'paused';
+}

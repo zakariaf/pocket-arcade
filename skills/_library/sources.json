@@ -5280,12 +5280,21 @@
           }
         ]
       },
+      "templates/packages/shell/src/game-host/session-view.test.ts": {
+        "recorded": "2026-10-25",
+        "sources": [
+          {
+            "path": "packages/shell/src/game-host/session-view.test.ts",
+            "sha256": "0a5345e11f4055d682bdafb8cdc4ff3410e545fdf45dfec7bf82f9a1c8aa3963"
+          }
+        ]
+      },
       "templates/packages/shell/src/game-host/session-view.ts": {
-        "recorded": "2026-10-18",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/game-host/session-view.ts",
-            "sha256": "94bac77f340e6f2a9dc4aaa2164abb3526e8521ff02afd6e980f9ef8b818c3e0"
+            "sha256": "234b34248a92ae51a3d7c19a84dec2483ee3f891215f306557453c442234d3b8"
           }
         ]
       },
@@ -5481,11 +5490,11 @@
         ]
       },
       "templates/packages/shell/src/screens/first-run/use-tutorial-model.ts": {
-        "recorded": "2026-10-24",
+        "recorded": "2026-10-25",
         "sources": [
           {
             "path": "packages/shell/src/screens/first-run/use-tutorial-model.ts",
-            "sha256": "3c47918889f81cf3444782128541a7c4f40b37c0b339c90126822e2e30761e00"
+            "sha256": "a5ed12882164e70dac101673861a9c48763a5afd6dcc5da557ec3964d92c1536"
           }
         ]
       },

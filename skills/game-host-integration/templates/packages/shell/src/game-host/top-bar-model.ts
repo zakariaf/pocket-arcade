@@ -1,5 +1,6 @@
 // packages/shell/src/game-host/top-bar-model.ts
 import { MODE_LABEL_KEYS } from '@e07/shell/game-host/hud-model.ts';
+import { isRunLive } from '@e07/shell/game-host/session-view.ts';
 import { stripIsolates } from '@e07/shell/i18n/bidi.ts';
 import { formatDayMonth } from '@e07/shell/i18n/format-date.ts';
 
@@ -75,8 +76,7 @@ function hintTool(input: TopBarInput): GameTool | null {
   const { view } = input;
   if (!view.isHintSupported || input.hintOffer === 'hidden') return null;
   // Paused counts as in play: the key rests under the Pause scrim as the S6 frame draws it.
-  const isInPlay = view.status === 'playing' || view.status === 'paused';
-  const isAvailable = isInPlay && !view.isHintShown;
+  const isAvailable = isRunLive(view.status) && !view.isHintShown;
   return { label: input.labels.hint, isAvailable, onPress: input.onHint };
 }
 

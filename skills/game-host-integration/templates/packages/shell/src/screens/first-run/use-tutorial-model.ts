@@ -8,6 +8,7 @@ import { useEffect, useEffectEvent, useRef } from 'react';
 import { useAnnounce } from '@e07/shell/app/use-announce.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
+import { isRunLive } from '@e07/shell/game-host/session-view.ts';
 import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import { useHintsDuringPlay } from '@e07/shell/game-host/use-hints-during-play.ts';
 import { usePauseOnBackground } from '@e07/shell/game-host/use-pause-on-background.ts';
@@ -88,8 +89,7 @@ function useFinishTutorial(controls: GameSessionControls): {
 /** Back never leaves the tutorial (the FirstRun group has no Home): it pauses or resumes. */
 function useBackPauses(controls: GameSessionControls, isLeaving: () => boolean): void {
   const navigation = useNavigation();
-  const isRunLive = controls.status === 'playing' || controls.status === 'paused';
-  usePreventRemove(isRunLive, ({ data }) => {
+  usePreventRemove(isRunLive(controls.status), ({ data }) => {
     if (isLeaving()) navigation.dispatch(data.action);
     else if (controls.status === 'playing') controls.pause();
     else controls.resume();
