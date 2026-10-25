@@ -97,7 +97,13 @@ describe('POKER_DROP_TEACHING', () => {
     ]);
     for (const page of howToPlay) {
       expect(outcome(page.example).kind).toBe('playing');
-      expect(parseState(JSON.parse(JSON.stringify(page.example)))).toStrictEqual(page.example);
+    }
+    // Only the first page is a resting well a save can hold; the others are drawn mid-cascade
+    // (a full row before it bursts, a row hanging over the holes), which no save may contain.
+    const [first, ...midCascade] = howToPlay.map((page) => page.example);
+    expect(parseState(JSON.parse(JSON.stringify(first)))).toStrictEqual(first);
+    for (const frame of midCascade) {
+      expect(parseState(JSON.parse(JSON.stringify(frame)))).toBeNull();
     }
   });
 

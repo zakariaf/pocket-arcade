@@ -4,6 +4,8 @@
 // cards no play can reach (the Shell then drops only the run, 8.14). Never cast.
 import { rankOf } from './cards.ts';
 import { TUNING, knobsFor } from './poker-drop-tuning.ts';
+import { burstingLines, wouldOverflow } from './simulate-cascade.ts';
+import { settle } from './well.ts';
 
 import type { Card, Cell, PokerDropMove, PokerDropState } from './poker-drop-types.ts';
 import type { PersistenceSpec } from '@e07/game-kit/contract/persistence.ts';
@@ -92,8 +94,21 @@ const POINT_STEP = HAND_POINTS.reduce(gcd);
 const MIN_HAND_POINTS = Math.min(...HAND_POINTS);
 
 /**
+ * The well play leaves behind: every column packed down (no card over an empty cell), no full line
+ * left unburst, a full column when the well overflowed, and a continue only after a drop.
+ */
+function isReachableWell(state: PokerDropState): boolean {
+  return (
+    settle(state.cells).moves.length === 0 &&
+    burstingLines(state.cells).length === 0 &&
+    (!state.hasOverflowed || wouldOverflow(state.cells)) &&
+    (!state.hasContinued || state.drops > 0)
+  );
+}
+
+/**
  * The checks only play can guarantee: the goal and the ranks of the difficulty's row, one deck in
- * the pile, and a score that the hands made can add up to (none before a drop).
+ * the pile, a score that the hands made can add up to (none before a drop), and a settled well.
  */
 function isReachable(state: PokerDropState): boolean {
   const knobs = knobsFor(state.difficulty);
@@ -106,7 +121,8 @@ function isReachable(state: PokerDropState): boolean {
     (handsMade === 0) === (score === 0) &&
     score % POINT_STEP === 0 &&
     score >= handsMade * MIN_HAND_POINTS &&
-    (handsMade === 0 || state.drops > 0)
+    (handsMade === 0 || state.drops > 0) &&
+    isReachableWell(state)
   );
 }
 

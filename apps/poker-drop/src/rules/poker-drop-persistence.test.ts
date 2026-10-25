@@ -1,11 +1,17 @@
 // apps/poker-drop/src/rules/poker-drop-persistence.test.ts
 import fc from 'fast-check';
 
+import { playBotLine } from '@e07/game-kit/testing/play-bot.ts';
+import { POKER_DROP_TESTING } from '@e07/poker-drop/testing/poker-drop-testing.ts';
+
 import { applyMove } from './apply-move.ts';
 import { cardOf } from './cards.ts';
+import { continueAfterLoss } from './continue-run.ts';
 import { create } from './create.ts';
 import { listMoves } from './list-moves.ts';
+import { outcome } from './outcome.ts';
 import { POKER_DROP_PERSISTENCE, parseMove, parseState } from './poker-drop-persistence.ts';
+import { cellIndex } from './well.ts';
 
 import type { PokerDropMove, PokerDropState } from './poker-drop-types.ts';
 
@@ -51,6 +57,26 @@ describe('parseState', () => {
         },
       ),
       { numRuns: 50 },
+    );
+  });
+
+  it('returns every state the bot reaches unchanged, the continue after a loss included', () => {
+    const game = { create, listMoves, applyMove, outcome };
+    fc.assert(
+      fc.property(fc.nat({ max: 10_000 }), fc.integer({ min: 0, max: 100 }), (seed, difficulty) => {
+        const run = playBotLine(game, {
+          seed,
+          difficulty,
+          policy: POKER_DROP_TESTING.bot,
+          maxMoves: 120,
+        });
+        const states = run.line.map((step) => step.state);
+        const last = run.line.at(-1);
+        const end = last === undefined ? START : applyMove(last.state, last.move).state;
+        const rescued = outcome(end).kind === 'lost' ? [continueAfterLoss(end).state] : [];
+        expect([...states, end, ...rescued].every(parsesBack)).toBe(true);
+      }),
+      { numRuns: 20 },
     );
   });
 
@@ -101,6 +127,11 @@ const PLAYED = (() => {
   return states.find((state) => state.handsMade > 0) ?? START;
 })();
 const LOW_CARD = cardOf(2, 0);
+/** The column of START's opening that is still empty (the gap beside the dealt rows). */
+const GAP = [0, 1, 2, 3, 4].find((col) => START.cells[cellIndex(col, 0)] === null) ?? 0;
+/** START's well with START's hand in the cell `row` of the gap column. */
+const withGapCard = (row: number): PokerDropState['cells'] =>
+  START.cells.map((cell, index) => (index === cellIndex(GAP, row) ? START.hand : cell));
 
 describe('parseState with counts or cards no play can reach', () => {
   it('starts from a played state that parses (the cases below change one thing each)', () => {
@@ -132,6 +163,10 @@ describe('parseState with counts or cards no play can reach', () => {
     ],
     ['a score no sum of hands makes', { ...PLAYED, score: PLAYED.score + 5 }],
     ['hands made before any drop', { ...START, handsMade: 1, score: 20 }],
+    ['a card floating over an empty cell', { ...START, cells: withGapCard(3) }],
+    ['a full line of two pair that never burst', { ...START, cells: withGapCard(0) }],
+    ['an overflowed well with no full column', { ...START, hasOverflowed: true }],
+    ['a continue used before any drop', { ...START, hasContinued: true }],
   ])('rejects %s', (_name, json) => {
     expect(parseState(roundTrip(json))).toBeNull();
   });
