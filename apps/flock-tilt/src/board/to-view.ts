@@ -1,4 +1,6 @@
 // apps/flock-tilt/src/board/to-view.ts
+import { pennedCount as countPenned } from '@e07/flock-tilt/rules/tilt-field.ts';
+
 import type { FlockTiltState, SheepStatus } from '@e07/flock-tilt/rules/flock-tilt-types.ts';
 import type { ViewFormat } from '@e07/shell/game-host/board-types.ts';
 
@@ -27,7 +29,7 @@ export type FlockTiltView = {
 
 /** JS thread, pure: the final state of a move, in the shape draw() reads. */
 export function toView(state: FlockTiltState, format: ViewFormat): FlockTiltView {
-  const pennedCount = state.sheep.filter((sheep) => sheep.status === 'penned').length;
+  const pennedCount = countPenned(state.sheep);
   return {
     cols: state.cols,
     rows: state.rows,

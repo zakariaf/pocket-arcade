@@ -8,6 +8,7 @@ import { create } from './create.ts';
 import { intentToMove } from './intent-to-move.ts';
 import { listMoves } from './list-moves.ts';
 import { outcome, runScore } from './outcome.ts';
+import { pennedCount } from './tilt-field.ts';
 
 import type { FlockTiltEvent, FlockTiltMove, FlockTiltState } from './flock-tilt-types.ts';
 import type { GameEngine } from '@e07/game-kit/contract/game-engine.ts';
@@ -29,7 +30,7 @@ export const FLOCK_TILT_ENGINE: GameEngine<FlockTiltState, FlockTiltMove, FlockT
 
 /** The top bar: the score, and the sheep in the pen out of the whole flock. */
 export function flockTiltHud(state: FlockTiltState): Hud {
-  const penned = state.sheep.filter((sheep) => sheep.status === 'penned').length;
+  const penned = pennedCount(state.sheep);
   return {
     score: runScore(state),
     goal: { id: 'flock-tilt.progress', values: { penned, total: state.sheep.length } },

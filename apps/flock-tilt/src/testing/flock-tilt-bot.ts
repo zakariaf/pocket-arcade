@@ -5,7 +5,7 @@
 import { applyMove } from '@e07/flock-tilt/rules/apply-move.ts';
 import { listMoves } from '@e07/flock-tilt/rules/list-moves.ts';
 import { outcome, runScore } from '@e07/flock-tilt/rules/outcome.ts';
-import { DIRECTIONS, stepFrom } from '@e07/flock-tilt/rules/tilt-field.ts';
+import { isBesideWolf } from '@e07/flock-tilt/rules/tilt-field.ts';
 import { greedyPolicy } from '@e07/game-kit/testing/bot-policies.ts';
 
 import type {
@@ -47,20 +47,13 @@ export function isOnOpenLine(state: FlockTiltState, cell: number): boolean {
   return !state.rocks.some((rock) => rock > low && rock < high && (rock - low) % stride === 0);
 }
 
-function besideWolf(state: FlockTiltState, cell: number): boolean {
-  return DIRECTIONS.some((direction) => {
-    const next = stepFrom(state, cell, direction);
-    return state.wolves.some((wolf) => wolf.cell === next);
-  });
-}
-
 /** How far one sheep on the field is from the pen, as a person reads it. */
 function sheepCost(state: FlockTiltState, sheep: Sheep): number {
   const distance =
     Math.abs(colOf(state, sheep.cell) - colOf(state, state.pen)) +
     Math.abs(rowOf(state, sheep.cell) - rowOf(state, state.pen));
   const lineCost = isOnOpenLine(state, sheep.cell) ? ON_OPEN_LINE : OFF_LINE + distance;
-  return SHEEP_OUTSIDE + lineCost + (besideWolf(state, sheep.cell) ? BESIDE_WOLF : 0);
+  return SHEEP_OUTSIDE + lineCost + (isBesideWolf(state, sheep.cell) ? BESIDE_WOLF : 0);
 }
 
 /**

@@ -88,6 +88,19 @@ export function stepFrom(
   return stepBy(field, cell, STEP[direction]);
 }
 
+/** True when a wolf stands on one of the cell's four sides. */
+export function isBesideWolf(field: Field, cell: number): boolean {
+  return DIRECTIONS.some((direction) => {
+    const next = stepFrom(field, cell, direction);
+    return next >= 0 && field.wolves.some((wolf) => wolf.cell === next);
+  });
+}
+
+/** How many sheep are in the pen. */
+export function pennedCount(sheep: readonly Sheep[]): number {
+  return sheep.filter((one) => one.status === 'penned').length;
+}
+
 /** What stands on each cell before the tilt (the pen is always free). */
 function groundOf(field: Field): Occupant[] {
   const ground = new Array<Occupant>(field.cols * field.rows).fill(null);

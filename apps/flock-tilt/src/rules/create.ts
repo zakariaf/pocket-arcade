@@ -6,7 +6,7 @@ import { nextInt, nextU32, seedRng } from '@e07/game-kit/rng/sfc32.ts';
 
 import { sheepBlocks, solveField } from './field-search.ts';
 import { TUNING, knobsFor } from './flock-tilt-tuning.ts';
-import { DIRECTIONS, stepFrom } from './tilt-field.ts';
+import { isBesideWolf } from './tilt-field.ts';
 
 import type { DifficultyKnobs } from './flock-tilt-tuning.ts';
 import type { Field, FlockTiltState } from './flock-tilt-types.ts';
@@ -29,10 +29,7 @@ function shuffledCells(rng: RngState, size: number): { cells: number[]; rng: Rng
 
 /** True when a sheep stands next to a wolf on any of its four sides. */
 function hasSheepByWolf(field: Field): boolean {
-  const wolfCells = field.wolves.map((wolf) => wolf.cell);
-  return field.sheep.some((sheep) =>
-    DIRECTIONS.some((direction) => wolfCells.includes(stepFrom(field, sheep.cell, direction))),
-  );
+  return field.sheep.some((sheep) => isBesideWolf(field, sheep.cell));
 }
 
 /** One candidate field: rocks, then the pen, the sheep and the wolves on the shuffled cells. */

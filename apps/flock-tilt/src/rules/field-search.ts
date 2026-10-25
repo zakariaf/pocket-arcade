@@ -4,7 +4,7 @@
 // that moves nothing gives the same key and is skipped, a lost sheep is a dead end.
 import { bfsSolve } from '@e07/game-kit/solver/bfs-solve.ts';
 
-import { DIRECTIONS, tiltField } from './tilt-field.ts';
+import { DIRECTIONS, pennedCount, tiltField } from './tilt-field.ts';
 
 import type { Blocker, Direction, Field, Flock } from './flock-tilt-types.ts';
 import type { SearchProblem } from '@e07/game-kit/solver/search-problem.ts';
@@ -28,7 +28,7 @@ function sortedCells(cells: readonly number[]): string {
  */
 export function fieldKey(flock: Flock): string {
   const onField = flock.sheep.filter((sheep) => sheep.status === 'field').map((s) => s.cell);
-  const penned = flock.sheep.filter((sheep) => sheep.status === 'penned').length;
+  const penned = pennedCount(flock.sheep);
   const lost = flock.sheep.filter((sheep) => sheep.status === 'lost').length;
   const wolves = flock.wolves.map((wolf) => wolf.cell);
   return `${sortedCells(onField)}/${String(penned)}/${String(lost)}|${sortedCells(wolves)}`;

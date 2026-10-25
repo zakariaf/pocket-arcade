@@ -1,6 +1,7 @@
 // apps/flock-tilt/src/rules/outcome.ts
 import { fieldStatus } from './field-status.ts';
 import { TUNING } from './flock-tilt-tuning.ts';
+import { pennedCount } from './tilt-field.ts';
 
 import type { FlockTiltState } from './flock-tilt-types.ts';
 import type { Outcome } from '@e07/game-kit/contract/game-engine.ts';
@@ -19,7 +20,7 @@ export function winScore(state: FlockTiltState): number {
 
 /** The score the top bar shows while playing and the result shows at the end. */
 export function runScore(state: FlockTiltState): number {
-  const penned = state.sheep.filter((sheep) => sheep.status === 'penned').length;
+  const penned = pennedCount(state.sheep);
   return penned === state.sheep.length ? winScore(state) : penned * TUNING.pointsPerSheep;
 }
 

@@ -2,7 +2,7 @@
 import fc from 'fast-check';
 
 import { fieldText, parseField } from './field-text.ts';
-import { DIRECTIONS, stepFrom, tiltField } from './tilt-field.ts';
+import { DIRECTIONS, isBesideWolf, pennedCount, stepFrom, tiltField } from './tilt-field.ts';
 
 import type { Direction, Field } from './flock-tilt-types.ts';
 
@@ -146,5 +146,54 @@ describe('tiltField (spec 13: "everything slides until it hits something")', () 
         }),
       );
     });
+  });
+});
+
+describe('isBesideWolf', () => {
+  const field = parseField(['o....', '..w..', '.....', '.....', 'w....']);
+
+  it('is true on each of the four sides of a wolf', () => {
+    expect([2, 6, 8, 12].map((cell) => isBesideWolf(field, cell))).toStrictEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  it('is false on a diagonal, the wolf cell itself, or across the fence', () => {
+    expect([1, 3, 11, 13, 7, 4, 19, 24].map((cell) => isBesideWolf(field, cell))).toStrictEqual(
+      new Array<boolean>(8).fill(false),
+    );
+  });
+
+  it('pins the cells beside any wolf of a field', () => {
+    const beside = Array.from({ length: 25 }, (_, cell) => cell).filter((cell) =>
+      isBesideWolf(field, cell),
+    );
+    expect(beside).toStrictEqual([2, 6, 8, 12, 15, 21]);
+  });
+});
+
+describe('pennedCount', () => {
+  it('counts only the sheep in the pen', () => {
+    expect(
+      pennedCount([
+        { id: 0, cell: 0, status: 'penned' },
+        { id: 1, cell: 3, status: 'field' },
+        { id: 2, cell: 0, status: 'penned' },
+        { id: 3, cell: 7, status: 'lost' },
+      ]),
+    ).toBe(2);
+  });
+
+  it('counts the sheep a tilt drops in, on fields with none in the pen yet', () => {
+    fc.assert(
+      fc.property(FIELD_ARB, DIRECTION_ARB, (field, direction) => {
+        const after = tiltField(field, direction);
+        const count = pennedCount(after.sheep);
+        expect(count).toBe(after.penned.length);
+      }),
+    );
   });
 });
