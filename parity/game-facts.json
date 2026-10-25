@@ -30,6 +30,12 @@
       "hasMusic": false,
       "winLine": "score",
       "hasHints": false
+    },
+    "poker-drop": {
+      "designGame": "pokerDrop",
+      "hasMusic": false,
+      "winLine": "score",
+      "hasHints": false
     }
   }
 }
