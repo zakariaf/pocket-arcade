@@ -1,17 +1,20 @@
 // apps/line-siege/src/board/draw-parts.ts
 'worklet';
 
+import { setPaintColor } from '@e07/shell/game-host/board-kit.ts';
+
 import type { BoardToken } from './board-palettes.ts';
 import type { LineSiegeView } from './to-view.ts';
 import type { Rect } from '@e07/game-kit/geom/board-layout.ts';
 import type { FxEntry } from '@e07/game-kit/timeline/sample.ts';
 import type { DrawFrame } from '@e07/shell/game-host/board-types.ts';
-import type { SkCanvas } from '@shopify/react-native-skia';
+import type { SkCanvas, SkColor } from '@shopify/react-native-skia';
 
 /** The frame every Line Siege draw function receives. */
 export type Frame = DrawFrame<LineSiegeView, BoardToken>;
 
-const CORNER = 0.14;
+/** A block's corner radius, as a share of its width (blocks, rings and hinted cells). */
+export const CORNER = 0.14;
 /** Blocks sit this share of a cell inside it; their ink edge is this share of a cell wide. */
 export const INSET = 0.06;
 const EDGE = 0.05;
@@ -36,37 +39,35 @@ export function isPlaying(entry: FxEntry | undefined): entry is FxEntry {
 }
 
 /**
- * A rounded block in the current fill colour, edged in the wall ink (Toybox: fills carry an
- * outline). `alpha` fades fill and edge together (setColor resets a paint's alpha, so it is set here).
+ * A rounded block in `color`, edged in the wall ink (Toybox: fills carry an outline). `alpha` fades
+ * fill and edge together, on top of the colour's own alpha (setPaintColor), so a translucent token
+ * (the ghost, half the block colour) never draws like a placed block.
  */
 export function drawBlock(
   canvas: SkCanvas,
   frame: Frame,
-  block: { readonly rect: Rect; readonly alpha?: number },
+  block: { readonly rect: Rect; readonly color: SkColor; readonly alpha?: number },
 ): void {
   const { rect } = block;
   const { fill, stroke } = frame.kit;
-  const alpha = block.alpha ?? 1;
+  const alpha = (block.alpha ?? 1) * (block.color[3] ?? 1);
   const r = rect.width * CORNER;
-  fill.setAlphaf(alpha);
+  setPaintColor(fill, block.color, block.alpha ?? 1);
   canvas.drawRRect({ rect, rx: r, ry: r }, fill);
-  stroke.setColor(frame.colors.color.wall);
-  stroke.setAlphaf(alpha);
+  setPaintColor(stroke, frame.colors.color.wall, alpha);
   stroke.setStrokeWidth(Math.max(1, rect.width * EDGE));
   canvas.drawRRect({ rect, rx: r, ry: r }, stroke);
-  fill.setAlphaf(1);
-  stroke.setAlphaf(1);
 }
 
-/** A ring in the wall ink around a cell or a tray slot (selection and hints). */
+/** A ring around a cell or a tray slot (selection and hints), in the wall ink unless told. */
 export function drawRing(
   canvas: SkCanvas,
   frame: Frame,
-  ring: { readonly rect: Rect; readonly width: number },
+  ring: { readonly rect: Rect; readonly width: number; readonly color?: SkColor },
 ): void {
   const { rect } = ring;
   const r = rect.width * CORNER;
-  frame.kit.stroke.setColor(frame.colors.color.wall);
+  frame.kit.stroke.setColor(ring.color ?? frame.colors.color.wall);
   frame.kit.stroke.setStrokeWidth(ring.width);
   canvas.drawRRect({ rect, rx: r, ry: r }, frame.kit.stroke);
 }
@@ -75,12 +76,13 @@ export function drawRing(
 export function drawPiece(
   canvas: SkCanvas,
   frame: Frame,
-  piece: { readonly offsets: readonly number[]; readonly at: Rect },
+  piece: { readonly offsets: readonly number[]; readonly at: Rect; readonly color: SkColor },
 ): void {
-  const { offsets, at } = piece;
+  const { offsets, at, color } = piece;
   for (let i = 0; i + 1 < offsets.length; i += 2) {
     const x = at.x + (offsets[i] ?? 0) * at.width;
     const y = at.y + (offsets[i + 1] ?? 0) * at.width;
-    drawBlock(canvas, frame, { rect: inset({ x, y, width: at.width, height: at.width }, INSET) });
+    const rect = inset({ x, y, width: at.width, height: at.width }, INSET);
+    drawBlock(canvas, frame, { rect, color });
   }
 }

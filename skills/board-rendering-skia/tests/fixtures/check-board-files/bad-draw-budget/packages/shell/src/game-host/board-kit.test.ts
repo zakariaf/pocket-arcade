@@ -1,9 +1,9 @@
 // packages/shell/src/game-host/board-kit.test.ts
-import { makeBoardColors, makeBoardKit, pickPalette } from './board-kit.ts';
+import { makeBoardColors, makeBoardKit, pickPalette, setPaintColor } from './board-kit.ts';
 
 import type { PaletteSet } from './board-kit.ts';
 import type { SkiaApi } from './board-types.ts';
-import type { SkTypeface } from '@shopify/react-native-skia';
+import type { SkColor, SkPaint, SkTypeface } from '@shopify/react-native-skia';
 
 const SET: PaletteSet<'ink'> = {
   light: { ink: '#111111' },
@@ -74,5 +74,27 @@ describe('makeBoardKit', () => {
     expect(
       makeBoardKit(skia, { paths: {}, numberTypeface: null, numberSize: 18 }).numberFont,
     ).toBeNull();
+  });
+});
+
+describe('setPaintColor', () => {
+  it("sets a palette token at an alpha on top of the token's own alpha", () => {
+    // Spec 7.x palettes: a translucent token (the ghost, half the block colour) keeps its own
+    // alpha. setColor sets a paint's alpha from the token and setAlphaf replaces it, so setting
+    // the alpha alone after the colour drew a half-alpha token opaque.
+    const calls: PaintCall[] = [];
+    const paint = {
+      setColor: (color: SkColor) => calls.push(['color', color]),
+      setAlphaf: (alpha: number) => calls.push(['alpha', alpha]),
+    } as unknown as SkPaint;
+    const ghost = new Float32Array([1, 0.4, 0.3, 0.5]) as SkColor;
+    setPaintColor(paint, ghost, 0.6);
+    setPaintColor(paint, new Float32Array([0, 0, 0, 1]), 0.7);
+    expect(calls).toStrictEqual([
+      ['color', ghost],
+      ['alpha', 0.3],
+      ['color', new Float32Array([0, 0, 0, 1])],
+      ['alpha', 0.7],
+    ]);
   });
 });

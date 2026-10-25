@@ -3,11 +3,14 @@
 // tutorial run, follows it step by step, and ends the FirstRun group with finish-tutorial (Skip
 // from the second step, or the last step's continue key). TutorialView only draws what this returns.
 import { useNavigation, usePreventRemove } from '@react-navigation/native';
-import { useRef } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 
+import { useAnnounce } from '@e07/shell/app/use-announce.ts';
 import { useReduceMotion } from '@e07/shell/app/use-reduce-motion.ts';
 import { useGameHost } from '@e07/shell/game-host/game-host-context.tsx';
+import { isRunLive } from '@e07/shell/game-host/session-view.ts';
 import { useGameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
+import { useHintsDuringPlay } from '@e07/shell/game-host/use-hints-during-play.ts';
 import { usePauseOnBackground } from '@e07/shell/game-host/use-pause-on-background.ts';
 import { gameMessageText } from '@e07/shell/i18n/game-message-text.ts';
 import { useT } from '@e07/shell/i18n/t-context.ts';
@@ -17,8 +20,9 @@ import { useSettingsStore } from '@e07/shell/stores/settings-store.ts';
 import { tutorialCoachOf } from './tutorial-coach.ts';
 
 import type { TutorialCoach } from './tutorial-coach.ts';
-import type { BoardTarget } from '@e07/game-kit/geom/board-layout.ts';
+import type { TutorialPointer } from '@e07/game-kit/contract/teaching.ts';
 import type { BoardHostProps } from '@e07/shell/game-host/game-host.ts';
+import type { SessionView } from '@e07/shell/game-host/session-view.ts';
 import type { GameSessionControls } from '@e07/shell/game-host/use-game-session-controls.ts';
 import type { TFunction } from '@e07/shell/i18n/create-t.ts';
 import type { GameParams } from '@e07/shell/navigation/route-params.ts';
@@ -34,8 +38,21 @@ export type TutorialModel = {
   readonly welcomeText: string | null;
   /** The step's sentence, "Tap to continue" while paused, "Nice! ..." once the script is over. */
   readonly coachText: string;
-  /** The pointer's board cells, outlined on the board with the hinted ones. */
-  readonly coachTargets: readonly BoardTarget[];
+  /**
+   * The step's pointer while the stage is 'step', else null. The board host resolves it through
+   * the game (coachPointerOf): a drag marks the slot and every cell the block fills, and the
+   * pointing hand moves from the slot to the gap.
+   */
+  readonly coachPointer: TutorialPointer | null;
+  /**
+   * The nudge over the step's sentence while the step has refused a try (spec S13 is silent:
+   * never a silent no-op, never an auto-skip): "Follow the hand." where the step draws a hand (a
+   * target or drag pointer), "Try again" where it draws none ('hud', 'none'). Null otherwise, and
+   * while Hints during play (S11: tutorial tips and nudges) is off.
+   */
+  readonly nudgeText: string | null;
+  /** The refused tries at this step: each one makes the board's pointing hand play again. */
+  readonly coachReplay: number;
   /** The continue key: resume while paused, leave the tutorial once it is over; else hidden. */
   readonly continueKey: { readonly label: string; readonly onPress: () => void } | null;
   /** Skip, shown from the second step on (spec S13); null while hidden. */
@@ -72,12 +89,44 @@ function useFinishTutorial(controls: GameSessionControls): {
 /** Back never leaves the tutorial (the FirstRun group has no Home): it pauses or resumes. */
 function useBackPauses(controls: GameSessionControls, isLeaving: () => boolean): void {
   const navigation = useNavigation();
-  const isRunLive = controls.status === 'playing' || controls.status === 'paused';
-  usePreventRemove(isRunLive, ({ data }) => {
+  usePreventRemove(isRunLive(controls.status), ({ data }) => {
     if (isLeaving()) navigation.dispatch(data.action);
     else if (controls.status === 'playing') controls.pause();
     else controls.resume();
   });
+}
+
+type CoachNudge = Pick<TutorialModel, 'nudgeText' | 'coachReplay'>;
+
+/** Only a target or drag pointer draws the hand; any other step gets the pointer-neutral line. */
+function nudgeKeyOf(pointer: TutorialPointer | null): 'tutorial.follow-hand' | 'common.try-again' {
+  return pointer?.kind === 'target' || pointer?.kind === 'drag'
+    ? 'tutorial.follow-hand'
+    : 'common.try-again';
+}
+
+/**
+ * The nudge after a try the step on screen refused, counted only while Hints during play is on
+ * (S11): "Follow the hand." (or "Try again" where no hand is drawn) and the replay count, and
+ * VoiceOver and TalkBack hear the nudge and the step's sentence once per refusal.
+ */
+function useCoachNudge(
+  coach: TutorialCoach,
+  view: SessionView | null,
+  coachText: string,
+): CoachNudge {
+  const t = useT();
+  const announce = useAnnounce();
+  const isNudgeOn = useHintsDuringPlay();
+  const refused = isNudgeOn && coach.stage === 'step' ? (view?.refusedMoves ?? 0) : 0;
+  const nudgeText = refused > 0 ? t(nudgeKeyOf(coach.pointer)) : null;
+  const speak = useEffectEvent(() => {
+    if (nudgeText !== null) announce(`${nudgeText} ${coachText}`);
+  });
+  useEffect(() => {
+    if (refused > 0) speak();
+  }, [refused]);
+  return { nudgeText, coachReplay: refused };
 }
 
 export function useTutorialModel(): TutorialModel {
@@ -90,12 +139,16 @@ export function useTutorialModel(): TutorialModel {
   useBackPauses(controls, isLeaving);
   const gameName = gameMessageText(t, { id: host.nameId });
   const isFirstStep = coach.stage === 'step' && coach.stepIndex === 0;
+  const coachText = coachTextOf(t, coach);
+  const nudge = useCoachNudge(coach, controls.view, coachText);
   const continueLabel = t('tutorial.tap-to-continue');
   return {
     BoardHost: controls.BoardHost,
-    welcomeText: isFirstStep ? t('tutorial.welcome', { gameName }) : null,
-    coachText: coachTextOf(t, coach),
-    coachTargets: coach.targets,
+    welcomeText:
+      isFirstStep && nudge.nudgeText === null ? t('tutorial.welcome', { gameName }) : null,
+    coachText,
+    ...nudge,
+    coachPointer: coach.pointer,
     continueKey:
       coach.stage === 'step'
         ? null

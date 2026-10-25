@@ -1,5 +1,4 @@
 // packages/shell/src/ui/note-panel.tsx
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useTheme } from '@e07/shell/theme/use-theme.ts';
@@ -8,6 +7,7 @@ import { AppText } from './app-text.tsx';
 import { IconTile } from './icon-tile.tsx';
 import { Icon } from './icons/icon.tsx';
 import { Panel } from './panel.tsx';
+import { useWrappedText } from './use-wrapped-text.ts';
 
 import type { IconTilePaint } from './icon-tile.tsx';
 import type { IconName } from './icons/icon-paths.ts';
@@ -48,11 +48,7 @@ export function NotePanel(props: NotePanelProps): ReactNode {
   const theme = useTheme();
   const isError = props.isError === true;
   // The text that laid out on one line: that note's box fits its text, a longer one fills the row.
-  const [oneLineText, setOneLineText] = useState<string | null>(null);
-  const isOneLine = oneLineText === props.text;
-  const handleLineCount = (lines: number): void => {
-    setOneLineText(lines === 1 ? props.text : null);
-  };
+  const { isOneLine, onLineCount } = useWrappedText(props.text, { isSticky: false });
   return (
     <Panel testID={props.testID} tone={isError ? 'error' : 'default'} isRow>
       {props.iconTile === undefined ? (
@@ -72,7 +68,7 @@ export function NotePanel(props: NotePanelProps): ReactNode {
       <View style={isOneLine ? styles.oneLine : styles.text}>
         <AppText
           text={props.text}
-          onLineCount={handleLineCount}
+          onLineCount={onLineCount}
           // Strong notes are the body in Bold (17, line height 1.32 / 1.5), as the design's <b>.
           variant={props.isStrong === true ? 'rowLabelStrong' : 'body'}
           testID={`${props.testID}.label`}

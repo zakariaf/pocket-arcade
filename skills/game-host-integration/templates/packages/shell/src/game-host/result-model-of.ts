@@ -1,4 +1,5 @@
 // packages/shell/src/game-host/result-model-of.ts
+import { isRunLive } from '@e07/shell/game-host/session-view.ts';
 import { modeTextOf, progressTextOf } from '@e07/shell/game-host/top-bar-model.ts';
 
 import type { GameHost } from '@e07/shell/game-host/game-host.ts';
@@ -107,9 +108,7 @@ function recordedResult(input: ResultInput, base: Base, summary: RunSummary): Re
  */
 export function resultModelOf(input: ResultInput): ResultModel | null {
   const { view } = input;
-  if (view.ref.kind === 'tutorial' || view.status === 'playing' || view.status === 'paused') {
-    return null;
-  }
+  if (view.ref.kind === 'tutorial' || isRunLive(view.status)) return null;
   const base = {
     modeText: modeTextOf(view.ref, input.text),
     isReducedMotion: input.isReducedMotion,
