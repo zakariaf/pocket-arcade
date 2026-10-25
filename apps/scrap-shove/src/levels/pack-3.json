@@ -5,7 +5,7 @@
     "difficulty": 66,
     "stars": {
       "kind": "par",
-      "par": 4
+      "par": 5
     }
   },
   {
@@ -14,7 +14,7 @@
     "difficulty": 67,
     "stars": {
       "kind": "par",
-      "par": 4
+      "par": 6
     }
   },
   {
@@ -32,7 +32,7 @@
     "difficulty": 70,
     "stars": {
       "kind": "par",
-      "par": 7
+      "par": 5
     }
   },
   {
@@ -194,7 +194,7 @@
     "difficulty": 90,
     "stars": {
       "kind": "par",
-      "par": 4
+      "par": 7
     }
   },
   {
@@ -203,7 +203,7 @@
     "difficulty": 91,
     "stars": {
       "kind": "par",
-      "par": 5
+      "par": 7
     }
   },
   {

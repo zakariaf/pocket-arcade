@@ -19,8 +19,15 @@ import { TUNING } from './scrap-shove-tuning.ts';
 import type { Cell, Floor, RobotKind } from './scrap-shove-types.ts';
 import type { RngState } from '@e07/game-kit/rng/sfc32.ts';
 
-/** A floor being laid out, with the random stream that lays it. */
-export type Layout = { readonly floor: Floor; readonly rng: RngState };
+/**
+ * A floor being laid out, with the random stream that lays it and the squares later pieces must
+ * leave free (the opening pair's meet square: a piece there would stop the first crash).
+ */
+export type Layout = {
+  readonly floor: Floor;
+  readonly rng: RngState;
+  readonly reserved?: readonly Cell[];
+};
 
 /** One seeded pick from a non-empty list (an empty list throws: the tuning never asks for one). */
 export function drawFrom<T>(
@@ -44,6 +51,21 @@ export function freeSquares(floor: Floor, min: number, max: number): Cell[] {
   return squares;
 }
 
+function isReserved(layout: Layout, cell: Cell): boolean {
+  return (layout.reserved ?? []).some((square) => isSameCell(square, cell));
+}
+
+/**
+ * One seeded pick from free squares that is not reserved: a pick of a reserved square draws again
+ * from the rest, so a layout that never meets a reserved square keeps every draw it had.
+ */
+function drawSquare(layout: Layout, squares: readonly Cell[]): ReturnType<typeof drawFrom<Cell>> {
+  const pick = drawFrom(layout, squares);
+  if (!isReserved(layout, pick.item)) return pick;
+  const open = squares.filter((square) => !isReserved(layout, square));
+  return drawFrom({ ...layout, rng: pick.rng }, open);
+}
+
 /** The layout with one more robot of `kind` on `cell` (the layout already carries the next rng). */
 function withRobot(layout: Layout, kind: RobotKind, cell: Cell): Layout {
   const { floor } = layout;
@@ -55,7 +77,8 @@ function withRobot(layout: Layout, kind: RobotKind, cell: Cell): Layout {
 function withHeap(layout: Layout, cell: Cell, rng: RngState): Layout {
   const { floor } = layout;
   const heap = { id: floor.nextId, ...cell, isShoved: false };
-  return { floor: { ...floor, heaps: [...floor.heaps, heap], nextId: floor.nextId + 1 }, rng };
+  const heaps = [...floor.heaps, heap];
+  return { ...layout, floor: { ...floor, heaps, nextId: floor.nextId + 1 }, rng };
 }
 
 /** Pairs of free squares whose robots both step onto one square on the first robots' turn. */
@@ -71,11 +94,16 @@ function crashPairs(floor: Floor): (readonly [Cell, Cell])[] {
   });
 }
 
-/** The opening crash pair: two normal robots that meet on the first robots' turn. */
+/**
+ * The opening crash pair: two normal robots that meet on the first robots' turn. Their meet square
+ * is reserved, so no robot or heap placed after them stands where they crash.
+ */
 export function placeCrashPair(layout: Layout): Layout {
   const pick = drawFrom(layout, crashPairs(layout.floor));
   const [first, second] = pick.item;
-  const withFirst = withRobot({ ...layout, rng: pick.rng }, 'normal', first);
+  const meet = stepToward(first, layout.floor.player);
+  const reserved = [...(layout.reserved ?? []), meet];
+  const withFirst = withRobot({ ...layout, rng: pick.rng, reserved }, 'normal', first);
   return withRobot(withFirst, 'normal', second);
 }
 
@@ -90,20 +118,20 @@ export type RobotGroup = {
 export function placeRobots(layout: Layout, group: RobotGroup): Layout {
   let placed = layout;
   for (let index = 0; index < group.count; index += 1) {
-    const pick = drawFrom(placed, freeSquares(placed.floor, group.minDistance, TUNING.side));
+    const pick = drawSquare(placed, freeSquares(placed.floor, group.minDistance, TUNING.side));
     placed = withRobot({ ...placed, rng: pick.rng }, group.kind, pick.item);
   }
   return placed;
 }
 
 function randomHeap(layout: Layout): Layout {
-  const pick = drawFrom(layout, freeSquares(layout.floor, TUNING.heapStartDistance, TUNING.side));
+  const pick = drawSquare(layout, freeSquares(layout.floor, TUNING.heapStartDistance, TUNING.side));
   return withHeap(layout, pick.item, pick.rng);
 }
 
-/** True when a heap may start on the square: on the floor and free. */
-function isHeapSquare(floor: Floor, cell: Cell): boolean {
-  return isOnFloor(cell, TUNING.side) && !isTaken(floor, cell);
+/** True when a heap may start on the square: on the floor, free and not reserved. */
+function isHeapSquare(layout: Layout, cell: Cell): boolean {
+  return isOnFloor(cell, TUNING.side) && !isTaken(layout.floor, cell) && !isReserved(layout, cell);
 }
 
 /** A heap in the lane of a heavy robot: two of its steps toward the player, else one, else anywhere. */
@@ -111,8 +139,8 @@ function laneHeap(layout: Layout, heavy: Cell): Layout {
   const { floor } = layout;
   const first = stepToward(heavy, floor.player);
   const second = stepToward(first, floor.player);
-  if (isHeapSquare(floor, second)) return withHeap(layout, second, layout.rng);
-  return isHeapSquare(floor, first) ? withHeap(layout, first, layout.rng) : randomHeap(layout);
+  if (isHeapSquare(layout, second)) return withHeap(layout, second, layout.rng);
+  return isHeapSquare(layout, first) ? withHeap(layout, first, layout.rng) : randomHeap(layout);
 }
 
 /** A heap a few steps ahead of a seeded normal robot, or on a random square when that is taken. */
@@ -124,7 +152,7 @@ function leadHeap(layout: Layout): Layout {
     ahead = stepToward(ahead, layout.floor.player);
   const isFarEnough = distanceBetween(ahead, layout.floor.player) >= TUNING.heapStartDistance;
   const picked = { ...layout, rng: pick.rng };
-  return isFarEnough && isHeapSquare(layout.floor, ahead)
+  return isFarEnough && isHeapSquare(layout, ahead)
     ? withHeap(picked, ahead, pick.rng)
     : randomHeap(picked);
 }

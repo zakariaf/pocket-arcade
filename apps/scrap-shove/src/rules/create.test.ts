@@ -5,6 +5,7 @@ import fc from 'fast-check';
 
 import { jsonShapeProblems } from '@e07/game-kit/testing/json-shape.ts';
 
+import { applyMove } from './apply-move.ts';
 import { boardText } from './board-text.ts';
 import { create, firstWinnable, startLayout } from './create.ts';
 import { distanceBetween, isSameCell, stepToward } from './floor-squares.ts';
@@ -133,6 +134,23 @@ describe('create (turn-based; a tap next to the player steps or shoves)', () => 
       fc.property(seedArb, difficultyArb, (seed, difficulty) => {
         expect(hasMeetingPair(create(seed, difficulty))).toBe(true);
       }),
+    );
+  });
+
+  it('crashes the opening pair into each other when the player waits on move 1 (the first payoff)', () => {
+    const pairCrashes = (seed: number, difficulty: number): boolean =>
+      applyMove(create(seed, difficulty), { kind: 'wait' }).events.some(
+        (event) =>
+          event.kind === 'robots-crashed' &&
+          event.cause === 'robot' &&
+          [...event.robotIds].sort().join() === '1,2',
+      );
+    expect(pairCrashes(13, 0)).toBe(true);
+    fc.assert(
+      fc.property(seedArb, difficultyArb, (seed, difficulty) => {
+        expect(pairCrashes(seed, difficulty)).toBe(true);
+      }),
+      { numRuns: 300 },
     );
   });
 

@@ -15,13 +15,13 @@ f.......
 exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2026-12-31 1`] = `
 "seed 3431423884 difficulty 45 robots 5 normal, 1 fast, 1 heavy; heaps 3
 .....n..
-.n.....#
-........
+.n......
+......#.
 ....@...
 ........
-....#.#.
+..#.....
 ....nn..
-n....hf."
+n....hf#"
 `;
 
 exports[`daily challenge goldens (hard compatibility contract) keeps the frozen daily board for 2027-01-01 1`] = `
@@ -90,15 +90,15 @@ f.......
 
 exports[`level table goldens keeps the frozen board of level 61 1`] = `
 "seed 3060975355 difficulty 66 robots 7 normal, 1 fast, 2 heavy; heaps 4
-.....fn.
-n...h...
-h...#...
-...#...n
-..#@..n.
-.......n
+.n.h.n..
+...n....
+n..#.#..
 ........
-.n.#..n.
-{"kind":"par","par":4}"
+...@..n.
+.#....nf
+.......h
+n.#.....
+{"kind":"par","par":5}"
 `;
 
 exports[`level table goldens keeps the frozen board of level 90 1`] = `
