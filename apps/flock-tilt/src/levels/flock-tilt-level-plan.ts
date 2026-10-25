@@ -19,15 +19,19 @@ export const RANDOM_TRIALS = 24;
 /** A field more random swipers than this share win within twice par plus two is rejected. */
 export const MAX_RANDOM_WIN_SHARE = 0.25;
 
+/** A level's place in the table from 0, with levels outside 1..90 held to the nearest end. */
+function levelStep(level: number): number {
+  return Math.min(Math.max(level, 1), LAST_LEVEL) - 1;
+}
+
 /** 0 at level 1, rising evenly to 99 at level 90; never falls. */
 export function difficultyFor(level: number): number {
-  const step = Math.min(Math.max(level, 1), LAST_LEVEL) - 1;
-  return Math.floor((step * MAX_LEVEL_DIFFICULTY) / (LAST_LEVEL - 1));
+  return Math.floor((levelStep(level) * MAX_LEVEL_DIFFICULTY) / (LAST_LEVEL - 1));
 }
 
 /** Fewest tilts a level of this pack must need: 3, 4, then 5 (no trivial level). */
 export function minParFor(level: number): number {
-  return 3 + Math.floor((Math.min(Math.max(level, 1), LAST_LEVEL) - 1) / LEVELS_PER_PACK);
+  return 3 + Math.floor(levelStep(level) / LEVELS_PER_PACK);
 }
 
 /** One seeded random swiper: does it win within `cap` tilts? */
