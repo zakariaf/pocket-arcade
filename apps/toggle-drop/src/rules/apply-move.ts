@@ -35,7 +35,8 @@ function landingOf(state: ToggleDropState, land: FallPoint, flipped: Set<number>
     col: land.col,
     isInCup,
     isCupFilled: isInCup && filled + 1 === need,
-    wasRedirected: [...flipped].some((index) => (state.flips[index] ?? 0) > 0),
+    // A switch points away from the side it started on after an odd number of flips.
+    wasRedirected: [...flipped].some((index) => (state.flips[index] ?? 0) % 2 === 1),
   };
 }
 

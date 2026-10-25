@@ -101,6 +101,15 @@ describe('applyMove', () => {
     expect(second.state.filled).toStrictEqual([1, 1, 0]);
   });
 
+  it('does not call a ball redirected by switches flipped back to the side they started on', () => {
+    // Both switches the first ball meets were flipped twice: they point as at the start again.
+    const flippedBack = board({ flips: [0, 2, 0, 0, 0, 2], ballsLeft: 1, drops: 2 });
+    const landed = applyMove(flippedBack, DROP_1).events.find(
+      (event) => event.kind === 'ball-landed',
+    );
+    expect(landed).toMatchObject({ col: 1, isInCup: true, wasRedirected: false });
+  });
+
   it('passes a row without a switch, and loses a ball that lands in the gutter', () => {
     const { state, events } = applyMove(board({ needs: [1, 0, 0] }), { kind: 'drop', col: 2 });
     expect(events.slice(0, 2)).toStrictEqual([

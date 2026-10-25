@@ -71,7 +71,7 @@ export type ToggleDropEvent =
       readonly y: number;
       /** True when the ball went into a cup that still needed it, false in the gutter. */
       readonly isInCup: boolean;
-      /** True when a switch an earlier ball had flipped sent this ball on its way. */
+      /** True when a switch earlier balls left pointing away from its starting side sent it on. */
       readonly wasRedirected: boolean;
       readonly atMs: number;
     }
